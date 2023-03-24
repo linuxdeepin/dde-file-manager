@@ -42,15 +42,14 @@ CanvasViewMenuProxy::~CanvasViewMenuProxy()
 
 bool CanvasViewMenuProxy::disableMenu()
 {
-    // the gsetting control is higher than json profile. it doesn't check json profile if there is gsetting value.
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.desktop")) {
-        QGSettings set("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
-        QVariant var = set.get("contextMenu");
-        if (var.isValid())
-            return !var.toBool();
-    }
+    QVariantHash params;
+    //use qApp->applicationName by defalut;
+    //params.insert("ApplicationName", "dde-desktop");
+    auto ret = dpfSlotChannel->push("dfmplugin_menu", "slot_Menu_IsDisable", params);
 
-    return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
+    if (ret.isValid())
+        return ret.toBool();
+    return false;
 }
 
 void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos)
@@ -80,16 +79,15 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
         return;
     }
 
-    QMenu menu(this->view);
-
+    QMenu menu(view);
     canvasScene->create(&menu);
     canvasScene->updateState(&menu);
-
     if (QAction *act = menu.exec(QCursor::pos())) {
         QList<QUrl> urls { view->model()->rootUrl() };
         dpfSignalDispatcher->publish("ddplugin_canvas", "signal_CanvasView_ReportMenuData", act->text(), urls);
         canvasScene->triggered(act);
     }
+
     delete canvasScene;
 }
 

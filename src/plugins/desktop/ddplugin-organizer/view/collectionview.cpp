@@ -1913,7 +1913,6 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
 
 void CollectionView::contextMenuEvent(QContextMenuEvent *event)
 {
-    qInfo() << "request menus........" << event->pos();
     if (CollectionViewMenu::disableMenu())
         return;
 

@@ -34,15 +34,14 @@ CollectionViewMenu::CollectionViewMenu(CollectionView *parent)
 
 bool CollectionViewMenu::disableMenu()
 {
-    // same as canvas
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.desktop")) {
-        QGSettings set("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
-        QVariant var = set.get("contextMenu");
-        if (var.isValid())
-            return !var.toBool();
-    }
+    QVariantHash params;
+    // use qApp->applicationName by defalut;
+    //params.insert("ApplicationName", "dde-desktop");
+    auto ret = dpfSlotChannel->push("dfmplugin_menu", "slot_Menu_IsDisable", params);
 
-    return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
+    if (ret.isValid())
+        return ret.toBool();
+    return false;
 }
 
 void CollectionViewMenu::emptyAreaMenu()

@@ -33,9 +33,8 @@ public:
     void updateState(QMenu *parent) override;
 
 private:
-    void diableScene();
+    void disableScene();
     void updateActionHidden(QMenu *parent);
-    void updateMenuHidden(QMenu *parent);
 };
 
 DPMENU_END_NAMESPACE

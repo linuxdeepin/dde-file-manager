@@ -36,8 +36,8 @@ bool DConfigHiddenMenuScene::initialize(const QVariantHash &params)
     auto currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     if (currentDir.isValid()) {
         // extend menu scene
-        if (Helper::isHiddenExtMenuByDConfig(currentDir))
-            diableScene();
+        if (Helper::isHiddenExtMenu(currentDir))
+            disableScene();
     }
 
     return true;
@@ -45,22 +45,20 @@ bool DConfigHiddenMenuScene::initialize(const QVariantHash &params)
 
 void dfmplugin_menu::DConfigHiddenMenuScene::updateState(QMenu *parent)
 {
-    updateMenuHidden(parent);
     updateActionHidden(parent);
     AbstractMenuScene::updateState(parent);
 }
 
-void DConfigHiddenMenuScene::diableScene()
+void DConfigHiddenMenuScene::disableScene()
 {
     qDebug() << "disable extend menu scene..";
     static const QSet<QString> extendScenes{"OemMenu", "ExtendMenu"};
-    // this scene must be the child of root scene.
+    // this scene must be the sibling of extendScenes.
     if (auto parent = dynamic_cast<AbstractMenuScene *>(this->parent())) {
         auto subs = parent->subscene();
         for (auto sub : subs) {
             if (extendScenes.contains(sub->name())) {
                 parent->removeSubscene(sub);
-                qInfo() << "delete scene" << sub->name();
                 delete sub;
             }
         }
@@ -97,22 +95,6 @@ void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)
                 menus.append(subMenu);
         }
     } while (menus.count() > 0);
-}
-
-void DConfigHiddenMenuScene::updateMenuHidden(QMenu *parent)
-{
-    auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
-    if (hiddenMenus.isEmpty())
-        return;
-
-    qDebug() << "menu: hidden menu in app: " << qApp->applicationName() << hiddenMenus;
-    if ((hiddenMenus.contains("dde-file-manager") && qApp->applicationName() == "dde-file-manager")
-        || (hiddenMenus.contains("dde-desktop") && qApp->applicationName() == "dde-desktop")
-        || (hiddenMenus.contains("dde-file-dialog") && qApp->applicationName().startsWith("dde-select-dialog"))) {
-        auto acts = parent->actions();
-        for (auto act : acts)
-            act->setVisible(false);
-    }
 }
 
 AbstractMenuScene *DConfigHiddenMenuCreator::create()

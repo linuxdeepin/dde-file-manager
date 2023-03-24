@@ -1196,6 +1196,10 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
         DialogManager::instance()->showUnableToVistDir(rootUrl().path());
         return;
     }
+
+    if (FileViewMenuHelper::disableMenu())
+        return;
+
     const QModelIndex &index = indexAt(event->pos());
     if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index)
         setFocus(Qt::FocusReason::OtherFocusReason);
