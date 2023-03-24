@@ -36,7 +36,8 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
     currentHoverIndexUrl = QUrl();
     const QMimeData *data = event->mimeData();
     currentDragUrls = data->urls();
-    currentDragSourceUrls = UrlRoute::byteArrayToUrls(data->data(DFMGLOBAL_NAMESPACE::Mime::kSourceUrlsKey));
+    const auto &virtualUrls { UrlRoute::byteArrayToUrls(data->data(DFMGLOBAL_NAMESPACE::Mime::kSourceUrlsKey)) };
+    currentDragSourceUrls = virtualUrls.isEmpty() ? currentDragUrls : virtualUrls;
 
     // Filter the event that cannot be dragged
     if (checkProhibitPaths(event, currentDragUrls))
