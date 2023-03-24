@@ -26,6 +26,7 @@ public:
 
 private:
     void followEvents();
+    void regCustomPropertyDialog();
 };
 }   // namespace dfmplugin_trashcore
 

@@ -18,7 +18,9 @@ void VirtualOpenWithPlugin::initialize()
 bool VirtualOpenWithPlugin::start()
 {
     auto propertyDialogPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-propertydialog") };
-    if (propertyDialogPlugin && propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kInitialized) {
+    if (propertyDialogPlugin
+            && (propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kInitialized
+                || propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted)) {
         regViewToPropertyDialog();
     } else {
         connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginInitialized,

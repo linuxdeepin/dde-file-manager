@@ -4,6 +4,7 @@
 
 #include "propertymenuscene.h"
 #include "propertymenuscene_p.h"
+#include "events/propertyeventreceiver.h"
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 
@@ -141,8 +142,10 @@ bool PropertyMenuScene::triggered(QAction *action)
         return false;
 
     QString id = d->predicateAction.key(action);
-    if (id == PropertyActionId::kProperty)
-        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", d->selectFiles, QVariantHash());
+    if (id == PropertyActionId::kProperty) {
+        PropertyEventReceiver::instance()->handleShowPropertyDialog(d->selectFiles, QVariantHash());
+        return true;
+    }
 
     return AbstractMenuScene::triggered(action);
 }
