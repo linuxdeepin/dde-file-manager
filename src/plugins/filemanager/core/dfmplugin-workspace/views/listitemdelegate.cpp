@@ -164,7 +164,7 @@ void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     // 这里设置了光标选中位置后最终还是会被全选，移到eventFilter中处理
-    return QStyledItemDelegate::setEditorData(editor, index);
+    return QAbstractItemDelegate::setEditorData(editor, index);
 }
 
 bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
