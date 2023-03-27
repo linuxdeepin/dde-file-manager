@@ -12,7 +12,7 @@
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
 #include <QObject>
@@ -163,7 +163,7 @@ public:
     QList<QUrl> completeSourceFiles;   // List of all copied files
     QList<QUrl> completeTargetFiles;   // List of all complete target files
     QVariantList completeCustomInfos;
-    QList<AbstractFileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
+    QList<FileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
     bool isTargetFileExBlock { false };   // target file on extra block device

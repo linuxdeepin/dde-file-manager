@@ -240,7 +240,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     CanvasProxyModel *canvasModel = qobject_cast<CanvasProxyModel *>(model);
     Q_ASSERT(canvasModel);
 
-    if (const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
+    if (const FileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
         QUrl oldUrl = fileInfo->urlOf(UrlInfoType::kUrl);
         QUrl newUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, newName);
         QMetaObject::invokeMethod(FileOperatorProxyIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId()), Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));

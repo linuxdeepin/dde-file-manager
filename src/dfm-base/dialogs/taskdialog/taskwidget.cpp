@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "taskwidget.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
@@ -192,7 +192,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         rVLayout->addWidget(widConfict);
     }
     QString error;
-    const AbstractFileInfoPointer &originInfo = InfoFactory::create<AbstractFileInfo>(source, true, &error);
+    const FileInfoPointer &originInfo = InfoFactory::create<FileInfo>(source, true, &error);
     if (!originInfo) {
         lbErrorMsg->setText(QString(tr("create source file %1 Info failed in show conflict Info function!")).arg(source.path()));
         showBtnByAction(AbstractJobHandler::SupportAction::kCancelAction);
@@ -202,7 +202,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         return;
     }
     error.clear();
-    AbstractFileInfoPointer targetInfo = InfoFactory::create<AbstractFileInfo>(target, true, &error);
+    FileInfoPointer targetInfo = InfoFactory::create<FileInfo>(target, true, &error);
     if (!targetInfo) {
         lbErrorMsg->setText(QString(tr("create target file %1 Info failed in show conflict Info function!")).arg(target.path()));
         lbErrorMsg->show();

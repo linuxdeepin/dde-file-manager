@@ -38,14 +38,14 @@
 namespace dfmbase {
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new LocalFileInfoPrivate(url, this))
+    : FileInfo(url), d(new LocalFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     init(url);
 }
 
 LocalFileInfo::LocalFileInfo(const QUrl &url, QSharedPointer<DFileInfo> dfileInfo)
-    : AbstractFileInfo(url), d(new LocalFileInfoPrivate(url, this))
+    : FileInfo(url), d(new LocalFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     init(url, dfileInfo);
@@ -86,7 +86,7 @@ bool LocalFileInfo::initQuerier()
     return false;
 }
 
-void LocalFileInfo::initQuerierAsync(int ioPriority, AbstractFileInfo::initQuerierAsyncCallback func, void *userData)
+void LocalFileInfo::initQuerierAsync(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)
 {
     if (d->dfmFileInfo)
         d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
@@ -166,7 +166,7 @@ QString LocalFileInfo::nameOf(const NameInfoType type) const
     case FileNameInfoType::kMimeTypeName:
         return d->mimeTypeName();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 /*!
@@ -190,7 +190,7 @@ QString LocalFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kSymLinkTarget:
         return d->symLinkTarget();
     default:
-        return AbstractFileInfo::pathOf(type);
+        return FileInfo::pathOf(type);
     }
 }
 /*!
@@ -204,7 +204,7 @@ QUrl LocalFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return d->redirectedFileUrl();
     default:
-        return AbstractFileInfo::urlOf(type);
+        return FileInfo::urlOf(type);
     }
 }
 
@@ -232,7 +232,7 @@ bool LocalFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsPrivate:
         return d->isPrivate();
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     }
 }
 
@@ -250,7 +250,7 @@ bool LocalFileInfo::canAttributes(const CanableInfoType type) const
             return false;
         return true;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return FileInfo::canAttributes(type);
     }
 }
 
@@ -277,7 +277,7 @@ QVariant LocalFileInfo::extendAttributes(const ExtInfoType type) const
         return d->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
     default:
         QReadLocker(&d->lock);
-        return AbstractFileInfo::extendAttributes(type);
+        return FileInfo::extendAttributes(type);
     }
 }
 /*!
@@ -373,7 +373,7 @@ QVariant LocalFileInfo::timeOf(const TimeInfoType type) const
     case TimeInfoType::kLastReadMSecond:
         return data;
     default:
-        return AbstractFileInfo::timeOf(type);
+        return FileInfo::timeOf(type);
     }
 }
 
@@ -457,7 +457,7 @@ QString LocalFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (type == DisPlayInfoType::kFileDisplayName)
         return d->fileDisplayName();
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 
 /*!
@@ -571,7 +571,7 @@ QString LocalFileInfo::viewOfTip(const ViewType type) const
         }
     }
 
-    return AbstractFileInfo::viewOfTip(type);
+    return FileInfo::viewOfTip(type);
 }
 
 QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
@@ -604,7 +604,7 @@ void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const
         break;
     }
     default:
-        AbstractFileInfo::setExtendedAttributes(key, value);
+        FileInfo::setExtendedAttributes(key, value);
         break;
     }
 }
@@ -708,7 +708,7 @@ QIcon LocalFileInfoPrivate::defaultIcon()
     if (q->isAttributes(OptInfoType::kIsSymLink)) {
         const auto &&target = symLinkTarget();
         if (target != filePath()) {
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(target));
+            FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
             if (info)
                 icon = info->fileIcon();
         }

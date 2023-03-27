@@ -9,7 +9,7 @@
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <dfm-io/dfile.h>
 
@@ -38,8 +38,8 @@ protected:
     bool translateUrls();
     bool doRestoreTrashFiles();
     //check disk space available before do move job
-    bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, AbstractFileInfoPointer &targetFileInfo, bool *result);
-    bool checkRestoreInfo(const QUrl &url, AbstractFileInfoPointer &restoreInfo);
+    bool createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo, FileInfoPointer &targetFileInfo, bool *result);
+    bool checkRestoreInfo(const QUrl &url, FileInfoPointer &restoreInfo);
 
 private:
     bool mergeDir(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);

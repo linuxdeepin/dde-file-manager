@@ -208,7 +208,7 @@ bool SendToDiscMenuScene::create(QMenu *parent)
     d->addToSendto(parent);
 
     // mount image
-    auto focusInfo { InfoFactory::create<AbstractFileInfo>(d->focusFile) };
+    auto focusInfo { InfoFactory::create<FileInfo>(d->focusFile) };
     if (focusInfo) {
         static QSet<QString> mountable { "application/x-cd-image", "application/x-iso9660-image" };
         if (mountable.contains(focusInfo->nameOf(NameInfoType::kMimeTypeName))) {

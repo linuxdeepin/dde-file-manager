@@ -66,7 +66,7 @@ void DeviceBasicWidget::initUI()
 
 void DeviceBasicWidget::selectFileUrl(const QUrl &url)
 {
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     fileCount->setRightValue(QString::number(info->countChildFile()));
     fileCount->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 }

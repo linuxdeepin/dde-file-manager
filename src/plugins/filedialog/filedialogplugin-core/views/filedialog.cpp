@@ -103,7 +103,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     case QFileDialog::AnyFile:
     case QFileDialog::ExistingFile:
         if (urls.count() == 1) {
-            auto fileInfo = InfoFactory::create<AbstractFileInfo>(urls.first());
+            auto fileInfo = InfoFactory::create<FileInfo>(urls.first());
             if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
                 q->cd(urls.first());
             } else {
@@ -114,7 +114,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     case QFileDialog::ExistingFiles: {
         bool doCdWhenPossible = urls.count() == 1;
         for (const QUrl &url : urls) {
-            auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+            auto fileInfo = InfoFactory::create<FileInfo>(url);
             if (!fileInfo)
                 continue;
 
@@ -134,7 +134,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     }
     default: {
         for (const QUrl &url : urls) {
-            auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+            auto fileInfo = InfoFactory::create<FileInfo>(url);
 
             if (!fileInfo->isAttributes(OptInfoType::kIsDir))
                 return;
@@ -335,7 +335,7 @@ QList<QUrl> FileDialog::selectedUrls() const
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
         QUrl fileUrl = list.isEmpty() ? currentUrl() : list.first();
-        auto fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+        auto fileInfo = InfoFactory::create<FileInfo>(fileUrl);
 
         if (fileInfo) {
             if (list.isEmpty()) {
@@ -819,7 +819,7 @@ void FileDialog::updateAcceptButtonState()
     if (!d->isFileView)
         return;
     QUrl url = currentUrl();
-    auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
     if (!fileInfo)
         return;
 
@@ -849,7 +849,7 @@ void FileDialog::handleEnterPressed()
     bool exit { false };
     auto &&urls = CoreEventsCaller::sendGetSelectedFiles(internalWinId());
     for (const QUrl &url : urls) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        auto info = InfoFactory::create<FileInfo>(url);
         if (!info || info->isAttributes(OptInfoType::kIsDir)) {
             exit = true;
             break;
@@ -914,7 +914,7 @@ void FileDialog::onViewItemClicked(const QVariantMap &data)
     if (!url.isValid() || url.isEmpty() || displayName.isEmpty())
         return;
 
-    const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    const auto &fileInfo = InfoFactory::create<FileInfo>(url);
     if (fileInfo && !fileInfo->isAttributes(OptInfoType::kIsDir)) {
         QMimeDatabase db;
         // TODO(gongheng): Encapsulate get true suffix interface to fileinfo like QMimeDatabase::suffix.
@@ -961,7 +961,7 @@ void FileDialog::showEvent(QShowEvent *event)
         overrideWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
     }
 
-    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(currentUrl());
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(currentUrl());
     if (info)
         setWindowTitle(info->displayOf(DisPlayInfoType::kFileDisplayName));
 

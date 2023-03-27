@@ -7,7 +7,7 @@
 
 #include "dfmplugin_dirshare_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QObject>
 #include <QTimer>
@@ -32,8 +32,8 @@ public:
     static UserShareHelper *instance();
     virtual ~UserShareHelper() override;
 
-    static bool canShare(AbstractFileInfoPointer info);
-    static bool needDisableShareWidget(AbstractFileInfoPointer info);
+    static bool canShare(FileInfoPointer info);
+    static bool needDisableShareWidget(FileInfoPointer info);
 
     bool share(const QVariantMap &info);
     bool isUserSharePasswordSet(const QString &username);

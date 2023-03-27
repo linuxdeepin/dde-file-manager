@@ -47,7 +47,7 @@ bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl>
             int count = transformedUrls.count();
 
             for (int i = 0; i < count; ++i) {
-                const auto &info = InfoFactory::create<AbstractFileInfo>(transformedUrls.at(i));
+                const auto &info = InfoFactory::create<FileInfo>(transformedUrls.at(i));
                 if (info && info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
                     fromFilePath << info->urlOf(UrlInfoType::kRedirectedFileUrl).path();
                 } else {
@@ -100,7 +100,7 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
         return false;
     }
 
-    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(toUrl);
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(toUrl);
     if (info && info->isAttributes(OptInfoType::kIsWritable) && isCompressedFile(toUrl))
         return true;
 
@@ -109,7 +109,7 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
 
 bool AppendCompressHelper::isCompressedFile(const QUrl &toUrl)
 {
-    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(toUrl);
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(toUrl);
     if (info) {
         const QString &fileTypeName = info->nameOf(NameInfoType::kMimeTypeName);
         if (info->isAttributes(OptInfoType::kIsFile) && ((fileTypeName == "application/zip") || (fileTypeName == "application/x-7z-compressed" && !info->nameOf(NameInfoType::kFileName).endsWith(".tar.7z")))) {

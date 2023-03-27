@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filestatisticsjob.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "base/schemefactory.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
@@ -43,8 +43,8 @@ public:
     void processFileByFts(const QUrl &url, const bool followLink);
     void emitSizeChanged();
     int countFileCount(const char *name);
-    bool checkFileType(const AbstractFileInfo::FileType &fileType);
-    AbstractFileInfo::FileType getFileType(const uint mode);
+    bool checkFileType(const FileInfo::FileType &fileType);
+    FileInfo::FileType getFileType(const uint mode);
     void statisticDir(const QUrl &url, FTS *fts, const bool singleDepth, FTSENT *ent);
     void statisticFile(FTSENT *ent);
     void statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink);
@@ -146,7 +146,7 @@ bool FileStatisticsJobPrivate::stateCheck()
 
 void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue)
 {
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
     if (!info) {
         qDebug() << "Url not yet supported: " << url;
@@ -177,7 +177,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
                 break;
             }
 
-            const AbstractFileInfo::FileType &type = info->fileType();
+            const FileInfo::FileType &type = info->fileType();
 
             if (!checkFileType(type))
                 break;
@@ -204,7 +204,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
             }
 
             do {
-                info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget)));
+                info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget)));
             } while (info && info->isAttributes(OptInfoType::kIsSymLink));
 
             if (!info) {
@@ -340,46 +340,46 @@ int FileStatisticsJobPrivate::countFileCount(const char *name)
     return fileCount;
 }
 
-bool FileStatisticsJobPrivate::checkFileType(const AbstractFileInfo::FileType &fileType)
+bool FileStatisticsJobPrivate::checkFileType(const FileInfo::FileType &fileType)
 {
-    if (fileType == AbstractFileInfo::FileType::kCharDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipCharDeviceFile)) {
+    if (fileType == FileInfo::FileType::kCharDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipCharDeviceFile)) {
         return false;
     }
 
-    if (fileType == AbstractFileInfo::FileType::kBlockDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipBlockDeviceFile)) {
+    if (fileType == FileInfo::FileType::kBlockDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipBlockDeviceFile)) {
         return false;
     }
 
-    if (fileType == AbstractFileInfo::FileType::kFIFOFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipFIFOFile)) {
+    if (fileType == FileInfo::FileType::kFIFOFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipFIFOFile)) {
         return false;
     }
 
-    if (fileType == AbstractFileInfo::FileType::kSocketFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipSocketFile)) {
+    if (fileType == FileInfo::FileType::kSocketFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipSocketFile)) {
         return false;
     }
 
-    if (fileType == AbstractFileInfo::FileType::kUnknown) {
+    if (fileType == FileInfo::FileType::kUnknown) {
         return false;
     }
 
     return true;
 }
 
-AbstractFileInfo::FileType FileStatisticsJobPrivate::getFileType(const uint mode)
+FileInfo::FileType FileStatisticsJobPrivate::getFileType(const uint mode)
 {
-    AbstractFileInfo::FileType fileType { AbstractFileInfo::FileType::kUnknown };
+    FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
     if (S_ISDIR(mode))
-        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kDirectory);
+        fileType = FileInfo::FileType(MimeDatabase::FileType::kDirectory);
     else if (S_ISCHR(mode))
-        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kCharDevice);
+        fileType = FileInfo::FileType(MimeDatabase::FileType::kCharDevice);
     else if (S_ISBLK(mode))
-        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kBlockDevice);
+        fileType = FileInfo::FileType(MimeDatabase::FileType::kBlockDevice);
     else if (S_ISFIFO(mode))
-        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kFIFOFile);
+        fileType = FileInfo::FileType(MimeDatabase::FileType::kFIFOFile);
     else if (S_ISSOCK(mode))
-        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kSocketFile);
+        fileType = FileInfo::FileType(MimeDatabase::FileType::kSocketFile);
     else if (S_ISREG(mode))
-        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kRegularFile);
+        fileType = FileInfo::FileType(MimeDatabase::FileType::kRegularFile);
 
     return fileType;
 }
@@ -399,7 +399,7 @@ void FileStatisticsJobPrivate::statisticDir(const QUrl &url, FTS *fts, const boo
 
 void FileStatisticsJobPrivate::statisticFile(FTSENT *ent)
 {
-    const AbstractFileInfo::FileType &fileType = getFileType(ent->fts_statp->st_mode);
+    const FileInfo::FileType &fileType = getFileType(ent->fts_statp->st_mode);
     if (!checkFileType(fileType))
         return;
     filesCount++;
@@ -409,7 +409,7 @@ void FileStatisticsJobPrivate::statisticFile(FTSENT *ent)
 
 void FileStatisticsJobPrivate::statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink)
 {
-    auto info = InfoFactory::create<AbstractFileInfo>(currentUrl);
+    auto info = InfoFactory::create<FileInfo>(currentUrl);
     if (!info) {
         filesCount++;
         return;
@@ -424,7 +424,7 @@ void FileStatisticsJobPrivate::statisticSysLink(const QUrl &currentUrl, FTS *fts
     }
 
     if (info->isAttributes(OptInfoType::kIsFile)) {
-        const AbstractFileInfo::FileType &type = info->fileType();
+        const FileInfo::FileType &type = info->fileType();
         if (!checkFileType(type))
             return;
 
@@ -592,7 +592,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 continue;
 
             d->sizeInfo->allFiles << url;
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
             if (!info) {
                 qDebug() << "Url not yet supported: " << url;
@@ -615,7 +615,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 if (d->fileStatistics.contains(symLinkTargetUrl) || d->sizeInfo->allFiles.contains(symLinkTargetUrl))
                     continue;
 
-                info = InfoFactory::create<AbstractFileInfo>(symLinkTargetUrl);
+                info = InfoFactory::create<FileInfo>(symLinkTargetUrl);
 
                 if (info->isAttributes(OptInfoType::kIsSymLink)) {
                     continue;

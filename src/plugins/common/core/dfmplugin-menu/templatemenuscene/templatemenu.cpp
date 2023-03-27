@@ -65,13 +65,13 @@ void TemplateMenuPrivate::createActionByNormalFile(const QString &path)
         return;
 
     QString errString;
-    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path), false, &errString);
+    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path), false, &errString);
     if (!fileInfo) {
         qInfo() << "createActionByDesktopFile create LocalFileInfo error: " << errString << path;
         return;
     }
 
-    const QString &entryText = fileInfo->nameOf(AbstractFileInfo::FileNameInfoType::kCompleteBaseName);
+    const QString &entryText = fileInfo->nameOf(FileInfo::FileNameInfoType::kCompleteBaseName);
     const QIcon &icon = fileInfo->fileIcon();
     QAction *action = new QAction(icon, entryText, Q_NULLPTR);
     action->setData(QVariant::fromValue(path));

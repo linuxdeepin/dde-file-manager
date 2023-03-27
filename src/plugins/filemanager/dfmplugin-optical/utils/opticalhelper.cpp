@@ -199,7 +199,7 @@ void OpticalHelper::createStagingFolder(const QString &dev)
 
 bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
 {
-    auto info { InfoFactory::create<AbstractFileInfo>(url) };
+    auto info { InfoFactory::create<FileInfo>(url) };
     if (!info || path.isEmpty())
         return false;
     QDir dir { path };

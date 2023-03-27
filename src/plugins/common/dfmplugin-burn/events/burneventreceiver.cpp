@@ -84,7 +84,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
         QString devId { DeviceUtils::getBlockDeviceId(dev) };
         auto &&map = DevProxyMng->queryBlockInfo(devId);
         bool isBlank { map[DeviceProperty::kOpticalBlank].toBool() };
-        auto fi { InfoFactory::create<AbstractFileInfo>(urls.front()) };
+        auto fi { InfoFactory::create<FileInfo>(urls.front()) };
         static const QSet<QString> imageTypes { Global::Mime::kTypeCdImage, Global::Mime::kTypeISO9660Image };
 
         if (isBlank && fi && imageTypes.contains(fi->nameOf(NameInfoType::kMimeTypeName)) && destDir.count() == 0) {
@@ -157,7 +157,7 @@ void BurnEventReceiver::handleMountImage(quint64 winId, const QUrl &isoUrl)
 {
     qInfo() << "Mount image:" << isoUrl;
     QString archiveuri;
-    auto info { InfoFactory::create<AbstractFileInfo>(isoUrl) };
+    auto info { InfoFactory::create<FileInfo>(isoUrl) };
     if (info && info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
         archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->urlOf(UrlInfoType::kRedirectedFileUrl).toString()));
         qInfo() << "Mount image redirect the url to:" << info->urlOf(UrlInfoType::kRedirectedFileUrl);

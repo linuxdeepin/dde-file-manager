@@ -131,7 +131,7 @@ void ReportLogEventReceiver::handleMenuData(const QString &name, const QList<QUr
         location = "File";
 
         for (auto url : urlList) {
-            auto info = InfoFactory::create<AbstractFileInfo>(url);
+            auto info = InfoFactory::create<FileInfo>(url);
             if (info) {
                 QString type = info->nameOf(NameInfoType::kMimeTypeName);
                 if (!types.contains(type))

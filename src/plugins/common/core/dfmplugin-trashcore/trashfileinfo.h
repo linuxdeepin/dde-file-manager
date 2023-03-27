@@ -6,12 +6,12 @@
 #define TRASHFILEINFO_H
 
 #include "dfmplugin_trashcore_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 namespace dfmplugin_trashcore {
 
 class TrashFileInfoPrivate;
-class TrashFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class TrashFileInfo : public DFMBASE_NAMESPACE::FileInfo
 {
     friend class TrashFileInfoPrivate;
 

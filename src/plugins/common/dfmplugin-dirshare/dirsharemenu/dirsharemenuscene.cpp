@@ -68,7 +68,7 @@ bool DirShareMenuScene::initialize(const QVariantHash &params)
     if (u.scheme() != Global::Scheme::kFile)
         return false;
 
-    auto info = InfoFactory::create<AbstractFileInfo>(u, true);
+    auto info = InfoFactory::create<FileInfo>(u, true);
     if (!info->isAttributes(OptInfoType::kIsDir))
         return false;
 
@@ -83,7 +83,7 @@ bool DirShareMenuScene::create(QMenu *parent)
     if (d->selectFiles.count() != 1)
         return false;
 
-    auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first(), true);
+    auto info = InfoFactory::create<FileInfo>(d->selectFiles.first(), true);
     if (info->isAttributes(OptInfoType::kIsDir)) {
         bool shared = UserShareHelperInstance->isShared(info->pathOf(PathInfoType::kAbsoluteFilePath));
         if (shared) {

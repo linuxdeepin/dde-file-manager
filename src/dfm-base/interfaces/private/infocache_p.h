@@ -25,8 +25,8 @@ class InfoCachePrivate
     DThreadList<QString> disableCahceSchemes;
 
     QAtomicInt status { kCacheMain };   // 当前状态缓存的状态
-    QHash<QUrl, AbstractFileInfoPointer> mainCache;   // 主信息缓存
-    QHash<QUrl, AbstractFileInfoPointer> copyCache;   // 副信息缓存
+    QHash<QUrl, FileInfoPointer> mainCache;   // 主信息缓存
+    QHash<QUrl, FileInfoPointer> copyCache;   // 副信息缓存
     QReadWriteLock mianLock;
     QReadWriteLock copyLock;
 

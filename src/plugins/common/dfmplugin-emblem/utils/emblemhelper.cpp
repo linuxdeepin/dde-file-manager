@@ -45,7 +45,7 @@ void GioEmblemWorker::onClear()
 
 QList<QIcon> GioEmblemWorker::fetchEmblems(const QUrl &url) const
 {
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info)
         return {};
 
@@ -75,12 +75,12 @@ QList<QIcon> GioEmblemWorker::fetchEmblems(const QUrl &url) const
     return emblemList;
 }
 
-QMap<int, QIcon> GioEmblemWorker::getGioEmblems(const AbstractFileInfoPointer &info) const
+QMap<int, QIcon> GioEmblemWorker::getGioEmblems(const FileInfoPointer &info) const
 {
     QMap<int, QIcon> emblemsMap;
 
     // use AbstractFileInfo to access emblems, avoid query again
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->urlOf(UrlInfoType::kUrl), false);
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(info->urlOf(UrlInfoType::kUrl), false);
     if (!fileInfo)
         return {};
     const QStringList &emblemData = fileInfo->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
@@ -135,7 +135,7 @@ bool GioEmblemWorker::parseEmblemString(QIcon *emblem, QString &pos, const QStri
             if (dfile.size() > 102400)   // size small than 100kb
                 return false;
 
-            auto info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(imgPath));
+            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(imgPath));
             const QString &suffix = info->nameOf(NameInfoType::kCompleteSuffix);
             // check support type
             if (suffix != "svg" && suffix != "png" && suffix != "gif" && suffix != "bmp" && suffix != "jpg")
@@ -205,7 +205,7 @@ EmblemHelper::~EmblemHelper()
 
 QList<QIcon> EmblemHelper::systemEmblems(const QUrl &url) const
 {
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info)
         return {};
 

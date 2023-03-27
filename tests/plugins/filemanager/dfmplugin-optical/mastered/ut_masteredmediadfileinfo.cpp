@@ -34,7 +34,7 @@ TEST_F(UT_MasteredMediaFileInfo, SupportedDropActions)
     stub.set_lamda(OpticalHelper::isBurnEnabled, [&] { __DBG_STUB_INVOKE__ return ret; });
 
     EXPECT_EQ(Qt::IgnoreAction, info->supportedOfAttributes(SupportedType::kDrop));
-    stub.set_lamda(VADDR(AbstractFileInfo, supportedOfAttributes), [] { __DBG_STUB_INVOKE__ return Qt::IgnoreAction; });
+    stub.set_lamda(VADDR(FileInfo, supportedOfAttributes), [] { __DBG_STUB_INVOKE__ return Qt::IgnoreAction; });
     ret = true;
     EXPECT_EQ(Qt::IgnoreAction, info->supportedOfAttributes(SupportedType::kDrop));
 }

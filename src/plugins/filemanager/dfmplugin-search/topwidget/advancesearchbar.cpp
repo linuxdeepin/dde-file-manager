@@ -7,7 +7,7 @@
 #include "utils/searchhelper.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -231,7 +231,7 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     q->onOptionChanged();
 }
 
-bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info, QVariant data)
+bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVariant data)
 {
     if (!data.isValid())
         return true;

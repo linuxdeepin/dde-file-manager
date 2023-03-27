@@ -7,7 +7,7 @@
 
 #include "dfmplugin_emblem_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -33,7 +33,7 @@ Q_SIGNALS:
     void emblemChanged(const QUrl &url, const Product &product);
 
 private:
-    QMap<int, QIcon> getGioEmblems(const AbstractFileInfoPointer &info) const;
+    QMap<int, QIcon> getGioEmblems(const FileInfoPointer &info) const;
     bool parseEmblemString(QIcon *emblem, QString &pos, const QString &emblemStr) const;
     bool iconNamesEqual(const QList<QIcon> &first, const QList<QIcon> &second);
     void setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QMap<int, QIcon> *iconMap) const;

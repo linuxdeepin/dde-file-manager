@@ -10,7 +10,7 @@
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QObject>
 
@@ -33,7 +33,7 @@ protected:
 
 protected:
     bool cleanAllTrashFiles();
-    bool clearTrashFile(const AbstractFileInfoPointer &trashInfo);
+    bool clearTrashFile(const FileInfoPointer &trashInfo);
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const bool isTo = false,

@@ -149,7 +149,7 @@ TEST(SearchMenuSceneTest, ut_triggered)
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
     QSharedPointer<LocalFileInfo> info(new LocalFileInfo(QUrl::fromLocalFile("/home")));
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [&info] { return info; });
+    st.set_lamda(&InfoFactory::create<FileInfo>, [&info] { return info; });
     st.set_lamda(&SearchMenuScenePrivate::openFileLocation, [] { return true; });
 
     typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, quint64);

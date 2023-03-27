@@ -99,7 +99,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     bool ok = true;
     for (auto &url : sourceUrls) {
-        const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &info = InfoFactory::create<FileInfo>(url);
         if (!info) {
             // pause and emit error msg
             if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction)
@@ -152,7 +152,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
  * \param dir delete dir
  * \return delete success
  */
-bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &dir)
+bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
 {
     if (!stateCheck())
         return false;

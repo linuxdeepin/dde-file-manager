@@ -13,11 +13,11 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_myshares;
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new ShareFileInfoPrivate(url, this))
+    : FileInfo(url), d(new ShareFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     QString path = url.path();
-    setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path)));
+    setProxy(InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path)));
 }
 
 ShareFileInfo::~ShareFileInfo()
@@ -28,7 +28,7 @@ QString ShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 
 QString ShareFileInfo::nameOf(const NameInfoType type) const
@@ -39,7 +39,7 @@ QString ShareFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 
@@ -49,7 +49,7 @@ QUrl ShareFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return QUrl::fromLocalFile(dptr->url.path());
     default:
-        return AbstractFileInfo::urlOf(type);
+        return FileInfo::urlOf(type);
     }
 }
 
@@ -59,7 +59,7 @@ bool ShareFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsDir:
         return true;
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     }
 }
 
@@ -73,12 +73,12 @@ bool ShareFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRedirectionFileUrl:
         return dptr->proxy;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return FileInfo::canAttributes(type);
     }
 }
 
-ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, FileInfo *qq)
+    : FileInfoPrivate(url, qq)
 {
     refresh();
 }

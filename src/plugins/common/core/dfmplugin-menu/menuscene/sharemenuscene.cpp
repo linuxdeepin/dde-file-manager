@@ -56,7 +56,7 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
     for (auto url : d->selectFiles) {
-        auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
+        auto f = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, true);
         if (f->isAttributes(OptInfoType::kIsDir)) {
             d->folderSelected = true;
             break;
@@ -159,7 +159,7 @@ void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
 
     QStringList filePaths;
     for (const auto &url : selectFiles) {
-        auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
+        auto f = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, true);
         filePaths << f->pathOf(PathInfoType::kAbsoluteFilePath);
     }
     QString actId = act->property(ActionPropertyKey::kActionID).toString();

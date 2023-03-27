@@ -8,7 +8,7 @@
 #include "dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.h"
 #include "dfm-base/dialogs/settingsdialog/settingdialog.h"
 #include "dfm-base/dialogs/taskdialog/taskdialog.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/file/local/localfileinfo.h"
@@ -302,7 +302,7 @@ int DialogManager::showRunExcutableScriptDialog(const QUrl &url)
     DDialog d;
     const int maxDisplayNameLength = 250;
 
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
     const QString &fileDisplayName = info->displayOf(DisPlayInfoType::kFileDisplayName);
     const QString &fileDisplayNameNew = d.fontMetrics().elidedText(fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
@@ -331,7 +331,7 @@ int DialogManager::showRunExcutableScriptDialog(const QUrl &url)
 int DialogManager::showRunExcutableFileDialog(const QUrl &url)
 {
     DDialog d;
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
     const int maxDisplayNameLength = 200;
     const QString &fileDisplayName = info->displayOf(DisPlayInfoType::kFileDisplayName);
@@ -456,7 +456,7 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     const QUrl &urlFirst = urls.first();
     if (dfmbase::FileUtils::isLocalFile(urlFirst)) {   // delete local file
         if (urls.size() == 1) {
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlFirst);
+            FileInfoPointer info = InfoFactory::create<FileInfo>(urlFirst);
             d.setTitle(deleteFileName.arg(fm.elidedText(info->displayOf(DisPlayInfoType::kFileDisplayName), Qt::ElideMiddle, NAME_MAX)));
         } else {
             d.setTitle(deleteFileItems.arg(urls.size()));

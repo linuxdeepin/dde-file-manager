@@ -10,7 +10,7 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dfm_event_defines.h>
-#include <dfm-base/interfaces/abstractfileinfo.h>
+#include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/devicemanager.h>
@@ -100,9 +100,9 @@ void travers_prehandler::doChangeCurrentUrl(quint64 winId, const QString &mpt, c
     targetPath.append(subPath);
 
     QUrl url = QUrl::fromLocalFile(targetPath);
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-    if (fileInfo && fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile))
-        url = fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl);
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
+    if (fileInfo && fileInfo->isAttributes(FileInfo::FileIsType::kIsFile))
+        url = fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl);
     dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 
     // remove sourceUrl from history stack.

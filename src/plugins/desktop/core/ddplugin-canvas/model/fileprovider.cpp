@@ -158,7 +158,7 @@ void FileProvider::preupdateData(const QUrl &url)
     if (!url.isValid())
         return;
     // file info that is slow at first using should be called there to cache it.
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
     if (updateing && info) {
         // get file mime type for sorting.
         info->fileMimeType();

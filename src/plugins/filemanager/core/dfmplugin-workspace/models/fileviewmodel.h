@@ -60,7 +60,7 @@ public:
     void refresh();
 
     ModelState currentState() const;
-    AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+    FileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> getChildrenUrls() const;
     QModelIndex getIndexByUrl(const QUrl &url) const;
 

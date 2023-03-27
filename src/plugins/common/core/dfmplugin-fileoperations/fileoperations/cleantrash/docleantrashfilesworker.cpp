@@ -102,7 +102,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
             }
         }
 
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
             AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError);
@@ -129,7 +129,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
  * \param trashInfo File information in Recycle Bin
  * \return Is the execution successful
  */
-bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &trashInfo)
+bool DoCleanTrashFilesWorker::clearTrashFile(const FileInfoPointer &trashInfo)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {

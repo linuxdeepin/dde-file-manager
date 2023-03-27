@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef FILEINFO_H
-#define FILEINFO_H
+#ifndef LOCALFILEINFO_H
+#define LOCALFILEINFO_H
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QIcon>
 #include <QPointF>
@@ -15,7 +15,7 @@
 namespace dfmbase {
 
 class LocalFileInfoPrivate;
-class LocalFileInfo : public AbstractFileInfo
+class LocalFileInfo : public FileInfo
 {
     LocalFileInfoPrivate *d = nullptr;
 
@@ -49,7 +49,7 @@ public:
     virtual QVariant timeOf(const FileTimeType type) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() override;
-    virtual AbstractFileInfo::FileType fileType() const override;
+    virtual FileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
     virtual int countChildFileAsync() const override;
     virtual QString displayOf(const DisplayInfoType type) const override;
@@ -71,4 +71,4 @@ private:
 typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;
 Q_DECLARE_METATYPE(DFMLocalFileInfoPointer)
 
-#endif   // FILEINFO_H
+#endif   // LOCALFILEINFO_H

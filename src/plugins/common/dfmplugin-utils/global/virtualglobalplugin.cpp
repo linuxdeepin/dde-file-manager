@@ -13,7 +13,7 @@
 using namespace dfmplugin_utils;
 DFMBASE_USE_NAMESPACE
 
-static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
+static QSharedPointer<dfmbase::FileInfo> transFileInfo(QSharedPointer<dfmbase::FileInfo> fileInfo)
 {
     // no translate for gvfs file, invoking suffix/mimeTypeName might cost huge time
     if (fileInfo->urlOf(UrlInfoType::kUrl).path().contains(QRegularExpression(DFMBASE_NAMESPACE::Global::Regex::kGvfsRoot)))
@@ -37,7 +37,7 @@ void VirtualGlobalPlugin::initialize()
 {
     eventReceiver->initEventConnect();
 
-    DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::AbstractFileInfo>(DFMBASE_NAMESPACE::Global::Scheme::kFile, transFileInfo);
+    DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::FileInfo>(DFMBASE_NAMESPACE::Global::Scheme::kFile, transFileInfo);
 }
 
 bool VirtualGlobalPlugin::start()

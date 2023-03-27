@@ -6,7 +6,7 @@
 #define ABSTRACTMENUSCENE_P_H
 
 #include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 namespace dfmbase {
 
@@ -31,7 +31,7 @@ public:
     quint64 windowId { 0 };
     Qt::ItemFlags indexFlags;
 
-    AbstractFileInfoPointer focusFileInfo;
+    FileInfoPointer focusFileInfo;
     QMap<QString, QAction *> predicateAction;   // id -- instance
     QMap<QString, QString> predicateName;   // id -- text
 };

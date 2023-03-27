@@ -7,17 +7,17 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 
 namespace dfmplugin_vault {
 
 class VaultFileInfo;
-class VaultFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
+class VaultFileInfoPrivate : public DFMBASE_NAMESPACE::FileInfoPrivate
 {
     friend class VaultFileInfo;
 
 public:
-    explicit VaultFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
+    explicit VaultFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::FileInfo *qq);
     virtual ~VaultFileInfoPrivate();
 
 private:

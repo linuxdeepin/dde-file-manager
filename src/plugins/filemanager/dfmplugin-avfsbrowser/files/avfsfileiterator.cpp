@@ -45,7 +45,7 @@ QUrl AvfsFileIterator::fileUrl() const
     return AvfsUtils::localUrlToAvfsUrl(LocalDirIterator::fileUrl());
 }
 
-const AbstractFileInfoPointer AvfsFileIterator::fileInfo() const
+const FileInfoPointer AvfsFileIterator::fileInfo() const
 {
     return nullptr;
 }

@@ -84,7 +84,7 @@ TEST(SearchFileWatcherTest, ut_onFileRenamed)
 
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [&toUrl] {
+    st.set_lamda(&InfoFactory::create<FileInfo>, [&toUrl] {
         return QSharedPointer<LocalFileInfo>(new LocalFileInfo(toUrl));
     });
     st.set_lamda(VADDR(LocalFileInfo, displayOf), [] {

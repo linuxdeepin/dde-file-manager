@@ -117,7 +117,7 @@ void MultiFilePropertyDialog::calculateFileCount()
     int fileCount = 0;
 
     for (QUrl &url : urlList) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (info.isNull())
             return;
 

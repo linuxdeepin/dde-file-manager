@@ -14,7 +14,7 @@
 namespace dfmbase {
 
 EntryFileInfoPrivate::EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+    : FileInfoPrivate(url, qq)
 {
 }
 
@@ -43,7 +43,7 @@ EntryFileInfoPrivate::~EntryFileInfoPrivate()
  * \brief this is a proxy class for file info, the real info is in private class and should be registered by suffix
  */
 EntryFileInfo::EntryFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new EntryFileInfoPrivate(url, this))
+    : FileInfo(url), d(new EntryFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     d->init();
@@ -140,7 +140,7 @@ QString EntryFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kSuffix:
         return d->suffix();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 
@@ -153,7 +153,7 @@ QString EntryFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kFilePath:
         return dptr->url.path();
     default:
-        return AbstractFileInfo::pathOf(type);
+        return FileInfo::pathOf(type);
     }
 }
 

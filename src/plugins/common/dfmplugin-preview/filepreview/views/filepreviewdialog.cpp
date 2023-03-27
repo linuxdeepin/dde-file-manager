@@ -249,7 +249,7 @@ void FilePreviewDialog::switchToPage(int index)
     statusBar->preButton()->setEnabled(index > 0);
     statusBar->nextButton()->setEnabled(index < fileList.count() - 1);
 
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(fileList.at(index));
+    FileInfoPointer info = InfoFactory::create<FileInfo>(fileList.at(index));
     if (info.isNull())
         return;
 

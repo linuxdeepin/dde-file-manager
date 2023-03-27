@@ -122,7 +122,7 @@ void NewCreateMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
-    auto curDirInfo = InfoFactory::create<AbstractFileInfo>(d->currentDir);
+    auto curDirInfo = InfoFactory::create<FileInfo>(d->currentDir);
     if (!curDirInfo)
         return;
     curDirInfo->refresh();

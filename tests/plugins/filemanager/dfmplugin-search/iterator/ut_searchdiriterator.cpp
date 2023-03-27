@@ -53,7 +53,7 @@ TEST(SearchDirIteratorTest, ut_fileName)
 {
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home")));
     });
     st.set_lamda(VADDR(LocalFileInfoPrivate, fileName), [] {

@@ -254,7 +254,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
     }
 }
 
-void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPointer child, const AbstractFileInfoPointer info)
+void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPointer child, const FileInfoPointer info)
 {
     if (isCanceled)
         return;
@@ -266,7 +266,7 @@ void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPoint
     addChild(child, info);
 }
 
-void FileSortWorker::handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<AbstractFileInfoPointer> infos)
+void FileSortWorker::handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<FileInfoPointer> infos)
 {
     if (isCanceled)
         return;
@@ -461,7 +461,7 @@ void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
     if (!child->url.isValid() || !childrenUrlList.contains(child->url))
         return;
 
-    const auto &info = InfoFactory::create<AbstractFileInfo>(child->url);
+    const auto &info = InfoFactory::create<FileInfo>(child->url);
     if (!info)
         return;
     info->refresh();
@@ -492,7 +492,7 @@ void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
         if (isCanceled)
             return;
 
-        auto info = InfoFactory::create<AbstractFileInfo>(child->url);
+        auto info = InfoFactory::create<FileInfo>(child->url);
         if (!info)
             continue;
         auto fileName = info->nameOf(NameInfoType::kFileName);
@@ -581,11 +581,11 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
 {
     // 先回掉函数
     if (sortInfo && filterCallback)
-        return filterCallback(InfoFactory::create<AbstractFileInfo>(sortInfo->url).data(), filterData);
+        return filterCallback(InfoFactory::create<FileInfo>(sortInfo->url).data(), filterData);
 
     // 在处理继承
     if (sortInfo && sortAndFilter) {
-        auto result = sortAndFilter->checkFiters(InfoFactory::create<AbstractFileInfo>(sortInfo->url), filters, filterData);
+        auto result = sortAndFilter->checkFiters(InfoFactory::create<FileInfo>(sortInfo->url), filters, filterData);
         if (result >= 0)
             return result;
     }
@@ -593,7 +593,7 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     if (!sortInfo || filters == QDir::NoFilter)
         return true;
 
-    AbstractFileInfoPointer fileInfo = byInfo ? InfoFactory::create<AbstractFileInfo>(sortInfo->url) : nullptr;
+    FileInfoPointer fileInfo = byInfo ? InfoFactory::create<FileInfo>(sortInfo->url) : nullptr;
 
     const bool isDir = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsDir) : sortInfo->isDir;
 
@@ -784,7 +784,7 @@ void FileSortWorker::sortOnlyOrderChange()
 
     QList<QUrl> dirList, fileList;
     for (const auto &url : visibleChildren) {
-        const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &info = InfoFactory::create<FileInfo>(url);
         if (!info)
             continue;
         if (info->isAttributes(OptInfoType::kIsDir)) {
@@ -803,7 +803,7 @@ void FileSortWorker::sortOnlyOrderChange()
     return;
 }
 
-void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const AbstractFileInfoPointer &info)
+void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info)
 {
     if (isCanceled)
         return;
@@ -890,12 +890,12 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortA
     const auto &leftItem = childrenDataMap.value(left);
     const auto &rightItem = childrenDataMap.value(right);
 
-    const AbstractFileInfoPointer &leftInfo = leftItem && leftItem->fileInfo()
+    const FileInfoPointer &leftInfo = leftItem && leftItem->fileInfo()
             ? leftItem->fileInfo()
-            : InfoFactory::create<AbstractFileInfo>(left);
-    const AbstractFileInfoPointer &rightInfo = rightItem && rightItem->fileInfo()
+            : InfoFactory::create<FileInfo>(left);
+    const FileInfoPointer &rightInfo = rightItem && rightItem->fileInfo()
             ? rightItem->fileInfo()
-            : InfoFactory::create<AbstractFileInfo>(right);
+            : InfoFactory::create<FileInfo>(right);
 
     if (!leftInfo)
         return false;
@@ -945,7 +945,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortA
     }
 }
 
-QVariant FileSortWorker::data(const AbstractFileInfoPointer &info, ItemRoles role)
+QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
 {
     if (info.isNull())
         return QVariant();

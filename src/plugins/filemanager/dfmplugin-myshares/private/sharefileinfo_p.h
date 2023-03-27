@@ -7,17 +7,17 @@
 
 #include "dfmplugin_myshares_global.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 
 namespace dfmplugin_myshares {
 
 class ShareFileInfo;
-class ShareFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
+class ShareFileInfoPrivate : public DFMBASE_NAMESPACE::FileInfoPrivate
 {
     friend class ShareFileInfo;
 
 public:
-    explicit ShareFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
+    explicit ShareFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::FileInfo *qq);
     virtual ~ShareFileInfoPrivate();
     void refresh();
 

@@ -147,7 +147,7 @@ void CrumbInterface::onUpdateChildren(QList<QUrl> children)
     QStringList list;
 
     for (const auto &child : children) {
-        auto info = InfoFactory::create<AbstractFileInfo>(child);
+        auto info = InfoFactory::create<FileInfo>(child);
         if (info)
             list.append(info->nameOf(NameInfoType::kFileName));
     }

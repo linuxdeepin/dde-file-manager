@@ -5,7 +5,7 @@
 #ifndef LOCALFILEINFO_P_H
 #define LOCALFILEINFO_P_H
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "infodatafuture.h"
@@ -26,7 +26,7 @@
 #include <QReadLocker>
 
 namespace dfmbase {
-class LocalFileInfoPrivate : public AbstractFileInfoPrivate
+class LocalFileInfoPrivate : public FileInfoPrivate
 {
     friend class LocalFileInfo;
     std::atomic_bool loadingThumbnail = { false };
@@ -164,7 +164,7 @@ private:
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+    : FileInfoPrivate(url, qq)
 {
 }
 

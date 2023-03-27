@@ -700,7 +700,7 @@ void BluetoothTransDialog::sendFiles()
         if (!url.isValid())
             continue;
 
-        auto info = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::AbstractFileInfo>(url);
+        auto info = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(url);
         if (!info) {
             qWarning() << "cannot create file info: " << url;
             close();

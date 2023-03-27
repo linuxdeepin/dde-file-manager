@@ -38,7 +38,7 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     if (ok && !urls.isEmpty())
         titleUrl = urls.first();
 
-    auto fileInfo = InfoFactory::create<AbstractFileInfo>(titleUrl);
+    auto fileInfo = InfoFactory::create<FileInfo>(titleUrl);
     if (fileInfo) {
         QUrl url { fileInfo->urlOf(UrlInfoType::kUrl) };
         window->setWindowTitle(fileInfo->displayOf(DisPlayInfoType::kFileDisplayName));

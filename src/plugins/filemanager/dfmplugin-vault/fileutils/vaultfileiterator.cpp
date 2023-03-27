@@ -50,9 +50,9 @@ QUrl VaultFileIterator::fileUrl() const
     return url;
 }
 
-const AbstractFileInfoPointer VaultFileIterator::fileInfo() const
+const FileInfoPointer VaultFileIterator::fileInfo() const
 {
-    return InfoFactory::create<AbstractFileInfo>(fileUrl());
+    return InfoFactory::create<FileInfo>(fileUrl());
 }
 
 QUrl VaultFileIterator::url() const

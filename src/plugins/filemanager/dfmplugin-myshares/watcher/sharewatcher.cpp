@@ -25,7 +25,7 @@ ShareWatcher::~ShareWatcher()
 void ShareWatcher::shareAdded(const QString &path)
 {
     auto &&url = ShareUtils::makeShareUrl(path);
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
     if (info)
         info->refresh();   // make sure that the cache can be updated if share's name updated.
     Q_EMIT subfileCreated(url);

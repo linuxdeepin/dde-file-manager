@@ -6,7 +6,7 @@
 #define UNKNOWFILEPREVIEW_H
 #include "dfmplugin_filepreview_global.h"
 #include "dfm-base/interfaces/abstractbasepreview.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
 #include <QLabel>
@@ -27,7 +27,7 @@ public:
     QWidget *contentWidget() const override;
 
 private:
-    void setFileInfo(const AbstractFileInfoPointer &info);
+    void setFileInfo(const FileInfoPointer &info);
 
 signals:
     void requestStartFolderSize();

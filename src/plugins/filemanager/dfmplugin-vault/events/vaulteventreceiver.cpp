@@ -171,7 +171,7 @@ void VaultEventReceiver::handleHideFilesResult(const quint64 &winId, const QList
     Q_UNUSED(winId)
     if (ok && !urls.isEmpty()) {
         const QUrl &url = urls.first();
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (info) {
             const QUrl &parentUrlVirtual = VaultHelper::instance()->pathToVaultVirtualUrl(
                     info->pathOf(PathInfoType::kPath));

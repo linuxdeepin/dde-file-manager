@@ -5,13 +5,13 @@
 #include "searchfileinfo.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
 namespace dfmplugin_search {
 
 SearchFileInfo::SearchFileInfo(const QUrl &url)
-    : AbstractFileInfo(url)
+    : FileInfo(url)
 {
 }
 
@@ -24,7 +24,7 @@ bool SearchFileInfo::exists() const
     if (SearchHelper::isRootUrl(dptr->url))
         return true;
 
-    return AbstractFileInfo::exists();
+    return FileInfo::exists();
 }
 
 Qt::DropActions SearchFileInfo::supportedOfAttributes(const SupportType type) const
@@ -32,7 +32,7 @@ Qt::DropActions SearchFileInfo::supportedOfAttributes(const SupportType type) co
     if (SearchHelper::isRootUrl(dptr->url) && type == SupportType::kDrop)
         return Qt::IgnoreAction;
 
-    return AbstractFileInfo::supportedOfAttributes(type);
+    return FileInfo::supportedOfAttributes(type);
 }
 
 bool SearchFileInfo::isAttributes(const OptInfoType type) const
@@ -41,23 +41,23 @@ bool SearchFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsDir:
         if (SearchHelper::isRootUrl(dptr->url))
             return true;
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     case FileIsType::kIsReadable:
         if (SearchHelper::isRootUrl(dptr->url))
             return true;
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     case FileIsType::kIsWritable:
         if (SearchHelper::isRootUrl(dptr->url))
             return true;
 
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     case FileIsType::kIsHidden:
         if (SearchHelper::isRootUrl(dptr->url))
             return false;
 
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     }
 }
 
@@ -66,10 +66,10 @@ qint64 SearchFileInfo::size() const
     if (SearchHelper::isRootUrl(dptr->url))
         return -1;
 
-    return AbstractFileInfo::size();
+    return FileInfo::size();
 }
 
-QString SearchFileInfo::displayOf(const AbstractFileInfo::DisplayInfoType type) const
+QString SearchFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type) {
         if (UrlRoute::isRootUrl(dptr->url)) {
@@ -77,7 +77,7 @@ QString SearchFileInfo::displayOf(const AbstractFileInfo::DisplayInfoType type) 
         }
     }
 
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 
 QString SearchFileInfo::nameOf(const NameInfoType type) const
@@ -88,7 +88,7 @@ QString SearchFileInfo::nameOf(const NameInfoType type) const
             return QObject::tr("Search");
         [[fallthrough]];
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 

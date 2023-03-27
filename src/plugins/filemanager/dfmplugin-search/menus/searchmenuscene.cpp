@@ -350,7 +350,7 @@ bool SearchMenuScene::triggered(QAction *action)
         // open file location
         if (actionId == SearchActionId::kOpenFileLocation) {
             for (const auto &file : d->selectFiles) {
-                auto info = InfoFactory::create<AbstractFileInfo>(file);
+                auto info = InfoFactory::create<FileInfo>(file);
                 d->openFileLocation(info->pathOf(PathInfoType::kAbsoluteFilePath));
             }
 

@@ -63,7 +63,7 @@ bool OpenDirMenuScene::initialize(const QVariantHash &params)
 
     if (!d->isEmptyArea) {
         QString errString;
-        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, true, &errString);
         if (d->focusFileInfo.isNull()) {
             qDebug() << errString;
             return false;

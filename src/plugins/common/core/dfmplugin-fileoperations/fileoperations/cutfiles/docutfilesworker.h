@@ -10,7 +10,7 @@
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <dfm-io/dfile.h>
 
@@ -35,15 +35,15 @@ protected:
     void onUpdateProgress() override;
 
     bool cutFiles();
-    bool doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &targetPathInfo);
-    bool doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetPathInfo, AbstractFileInfoPointer &toInfo, bool *ok);
-    bool renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
+    bool doCutFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo);
+    bool doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, bool *ok);
+    bool renameFileByHandler(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
 
 private:
-    bool checkSymLink(const AbstractFileInfoPointer &fromInfo);
-    bool checkSelf(const AbstractFileInfoPointer &fromInfo);
+    bool checkSymLink(const FileInfoPointer &fromInfo);
+    bool checkSelf(const FileInfoPointer &fromInfo);
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

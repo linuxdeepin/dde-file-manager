@@ -60,7 +60,7 @@ bool OpticalEventReceiver::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMa
     if (url.scheme() == DFMBASE_NAMESPACE::Global::Scheme::kBurn) {
         QUrl curUrl(url);
         while (true) {
-            auto fileInfo = InfoFactory::create<AbstractFileInfo>(curUrl);
+            auto fileInfo = InfoFactory::create<FileInfo>(curUrl);
             if (!fileInfo)
                 break;
             QVariantMap map;

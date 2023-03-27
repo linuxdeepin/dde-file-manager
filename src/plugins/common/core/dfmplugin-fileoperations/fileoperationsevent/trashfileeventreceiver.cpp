@@ -12,7 +12,7 @@
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
@@ -116,7 +116,7 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
     } else {
         // Show clear trash dialog
         int count = 0;
-        auto info = InfoFactory::create<AbstractFileInfo>(FileUtils::trashRootUrl());
+        auto info = InfoFactory::create<FileInfo>(FileUtils::trashRootUrl());
         if (info) {
             count = info->countChildFile();
         }

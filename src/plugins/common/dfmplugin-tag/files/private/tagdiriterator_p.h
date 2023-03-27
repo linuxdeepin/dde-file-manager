@@ -27,7 +27,7 @@ private:
     QUrl rootUrl;
     QUrl currentUrl;
     QQueue<QUrl> urlList;
-    QMap<QUrl, AbstractFileInfoPointer> tagNodes;
+    QMap<QUrl, FileInfoPointer> tagNodes;
     TagDirIterator *q { nullptr };
 };
 

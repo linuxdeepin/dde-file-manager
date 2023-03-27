@@ -51,7 +51,7 @@ InfoCache::~InfoCache()
  *
  * \return
  */
-void InfoCache::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos)
+void InfoCache::disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos)
 {
     if (d->cacheWorkerStoped)
         return;
@@ -123,7 +123,7 @@ void InfoCache::setCacheDisbale(const QString &scheme, bool disable)
  *
  * \return
  */
-void InfoCache::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
+void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
 {
     Q_D(InfoCache);
     if (!info || d->cacheWorkerStoped)
@@ -205,7 +205,7 @@ void InfoCache::removeCaches(const QList<QUrl> urls)
 
     // 读取主缓存，插入到
     d->status = kCacheCopy;
-    QMap<QUrl, AbstractFileInfoPointer> infos;
+    QMap<QUrl, FileInfoPointer> infos;
     {
         QWriteLocker wlk(&d->mianLock);
         for (const auto &url : urls) {
@@ -238,12 +238,12 @@ void InfoCache::removeCaches(const QList<QUrl> urls)
  *
  * \return 文件的info
  */
-AbstractFileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
+FileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
 {
     Q_D(InfoCache);
     // 要异步线程重置计时器 todo 开辟一个可控制的线程来处理时间排序的问题
     // 读取副缓存和临时缓存返回
-    AbstractFileInfoPointer info(nullptr);
+    FileInfoPointer info(nullptr);
     if (d->status == kCacheMain) {   // 可以读取主缓存返回
         QReadLocker wlk(&d->mianLock);
         info = d->mainCache.value(url);
@@ -267,7 +267,7 @@ AbstractFileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
  */
 void InfoCache::refreshFileInfo(const QUrl &url)
 {
-    AbstractFileInfoPointer info = getCacheInfo(url);
+    FileInfoPointer info = getCacheInfo(url);
     if (info)
         info->refresh();
 }
@@ -325,7 +325,7 @@ CacheWorker::~CacheWorker()
 {
 }
 
-void CacheWorker::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
+void CacheWorker::cacheInfo(const QUrl url, const FileInfoPointer info)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
     InfoCache::instance().cacheInfo(url, info);
@@ -355,7 +355,7 @@ void CacheWorker::removeInfosTime(const QList<QUrl> urls)
     InfoCache::instance().removeInfosTimeWorker(urls);
 }
 
-void CacheWorker::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos)
+void CacheWorker::disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
     InfoCache::instance().disconnectWatcher(infos);
@@ -385,7 +385,7 @@ void InfoCacheController::setCacheDisbale(const QString &scheme, bool disable)
     return InfoCache::instance().setCacheDisbale(scheme, disable);
 }
 
-AbstractFileInfoPointer InfoCacheController::getCacheInfo(const QUrl &url)
+FileInfoPointer InfoCacheController::getCacheInfo(const QUrl &url)
 {
     return InfoCache::instance().getCacheInfo(url);
 }

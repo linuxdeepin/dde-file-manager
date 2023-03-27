@@ -256,7 +256,7 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     CollectionModel *regionModel = qobject_cast<CollectionModel *>(model);
     Q_ASSERT(regionModel);
 
-    if (const AbstractFileInfoPointer &fileInfo = regionModel->fileInfo(index)) {
+    if (const FileInfoPointer &fileInfo = regionModel->fileInfo(index)) {
         QUrl oldUrl = fileInfo->urlOf(UrlInfoType::kUrl);
         QUrl newUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, newName);
         QMetaObject::invokeMethod(FileOperatorIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId()), Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));

@@ -27,8 +27,8 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_vault {
 
-VaultFileInfoPrivate::VaultFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+VaultFileInfoPrivate::VaultFileInfoPrivate(const QUrl &url, FileInfo *qq)
+    : FileInfoPrivate(url, qq)
 {
 }
 
@@ -104,11 +104,11 @@ bool VaultFileInfoPrivate::isRoot() const
 }
 
 VaultFileInfo::VaultFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new VaultFileInfoPrivate(url, this))
+    : FileInfo(url), d(new VaultFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
-    setProxy(InfoFactory::create<AbstractFileInfo>(tempUrl));
+    setProxy(InfoFactory::create<FileInfo>(tempUrl));
 }
 
 VaultFileInfo::~VaultFileInfo()
@@ -117,7 +117,7 @@ VaultFileInfo::~VaultFileInfo()
 
 VaultFileInfo &VaultFileInfo::operator=(const VaultFileInfo &fileinfo)
 {
-    AbstractFileInfo::operator=(fileinfo);
+    FileInfo::operator=(fileinfo);
     if (!d->proxy)
         setProxy(fileinfo.d->proxy);
     else {
@@ -143,7 +143,7 @@ QString VaultFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kAbsolutePath:
         return d->absolutePath();
     default:
-        return AbstractFileInfo::pathOf(type);
+        return FileInfo::pathOf(type);
     }
 }
 
@@ -155,7 +155,7 @@ QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return VaultHelper::vaultToLocalUrl(d->url);
     default:
-        return AbstractFileInfo::urlOf(type);
+        return FileInfo::urlOf(type);
     }
 }
 bool VaultFileInfo::exists() const
@@ -174,7 +174,7 @@ void VaultFileInfo::refresh()
 
     d->proxy->refresh();
 
-    setProxy(InfoFactory::create<AbstractFileInfo>(d->proxy->urlOf(UrlInfoType::kUrl)));
+    setProxy(InfoFactory::create<FileInfo>(d->proxy->urlOf(UrlInfoType::kUrl)));
 }
 
 bool VaultFileInfo::isAttributes(const OptInfoType type) const
@@ -195,7 +195,7 @@ bool VaultFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsHidden:
         return !d->proxy || d->proxy->isAttributes(type);
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     }
 }
 
@@ -211,14 +211,14 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRedirectionFileUrl:
         return dptr->proxy;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return FileInfo::canAttributes(type);
     }
 }
 
 QVariantHash VaultFileInfo::extraProperties() const
 {
     if (!d->proxy)
-        AbstractFileInfo::extraProperties();
+        FileInfo::extraProperties();
     return d->proxy->extraProperties();
 }
 
@@ -228,7 +228,7 @@ QUrl VaultFileInfo::getUrlByType(const UrlInfoType type, const QString &fileName
     case FileUrlInfoType::kGetUrlByNewFileName:
         return d->getUrlByNewFileName(fileName);
     default:
-        return AbstractFileInfo::getUrlByType(type, fileName);
+        return FileInfo::getUrlByType(type, fileName);
     }
 }
 
@@ -238,14 +238,14 @@ QIcon VaultFileInfo::fileIcon()
         return QIcon::fromTheme(d->iconName());
 
     if (!d->proxy)
-        AbstractFileInfo::fileIcon();
+        FileInfo::fileIcon();
     return d->proxy->fileIcon();
 }
 
 qint64 VaultFileInfo::size() const
 {
     if (!d->proxy)
-        AbstractFileInfo::size();
+        FileInfo::size();
     return d->proxy->size();
 }
 
@@ -266,10 +266,10 @@ QVariant VaultFileInfo::extendAttributes(const ExtInfoType type) const
     switch (type) {
     case FileExtendedInfoType::kSizeFormat:
         if (!d->proxy)
-            return AbstractFileInfo::extendAttributes(type);
+            return FileInfo::extendAttributes(type);
         return d->proxy->extendAttributes(type);
     default:
-        return AbstractFileInfo::extendAttributes(type);
+        return FileInfo::extendAttributes(type);
     }
 }
 
@@ -282,7 +282,7 @@ QString VaultFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kIconName:
         return d->iconName();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 
@@ -298,6 +298,6 @@ QString VaultFileInfo::displayOf(const DisPlayInfoType type) const
         return d->fileDisplayPath();
     }
 
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 }

@@ -40,7 +40,7 @@ void BasicStatusBar::clearLayoutAndAnchors()
     DAnchorsBase::clearAnchors(this);
 }
 
-void BasicStatusBar::itemSelected(const QList<AbstractFileInfo *> &infoList)
+void BasicStatusBar::itemSelected(const QList<FileInfo *> &infoList)
 {
     if (!d->tip)
         return;
@@ -51,7 +51,7 @@ void BasicStatusBar::itemSelected(const QList<AbstractFileInfo *> &infoList)
     d->folderContains = 0;
 
     QList<QUrl> dirUrlList;
-    for (const AbstractFileInfo *info : infoList) {
+    for (const FileInfo *info : infoList) {
         if (info->isAttributes(OptInfoType::kIsDir)) {
             d->folderCount += 1;
             dirUrlList << info->urlOf(UrlInfoType::kUrl);

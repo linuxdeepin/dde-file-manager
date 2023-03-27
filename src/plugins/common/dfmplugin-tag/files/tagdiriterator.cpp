@@ -43,19 +43,19 @@ bool TagDirIterator::hasNext() const
 
 QString TagDirIterator::fileName() const
 {
-    AbstractFileInfoPointer currentInfo = d->tagNodes.value(d->currentUrl);
+    FileInfoPointer currentInfo = d->tagNodes.value(d->currentUrl);
 
     return currentInfo ? currentInfo->nameOf(NameInfoType::kFileName) : QString();
 }
 
 QUrl TagDirIterator::fileUrl() const
 {
-    AbstractFileInfoPointer currentInfo = d->tagNodes.value(d->currentUrl);
+    FileInfoPointer currentInfo = d->tagNodes.value(d->currentUrl);
 
     return currentInfo ? currentInfo->urlOf(UrlInfoType::kUrl) : QString();
 }
 
-const AbstractFileInfoPointer TagDirIterator::fileInfo() const
+const FileInfoPointer TagDirIterator::fileInfo() const
 {
     return d->tagNodes.value(d->currentUrl);
 }

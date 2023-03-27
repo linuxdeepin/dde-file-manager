@@ -12,7 +12,7 @@ using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 SmbShareFileInfo::SmbShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new SmbShareFileInfoPrivate(url, this))
+    : FileInfo(url), d(new SmbShareFileInfoPrivate(url, this))
 {
     dptr.reset(d);
 }
@@ -29,7 +29,7 @@ QString SmbShareFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 
@@ -39,7 +39,7 @@ QString SmbShareFileInfo::displayOf(const DisPlayInfoType type) const
         return QObject::tr("Computers in LAN");
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 
 QIcon SmbShareFileInfo::fileIcon()
@@ -63,7 +63,7 @@ bool SmbShareFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsWritable:
         return true;
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     }
 }
 
@@ -73,12 +73,12 @@ bool SmbShareFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanDrag:
         return false;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return FileInfo::canAttributes(type);
     }
 }
 
-SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, FileInfo *qq)
+    : FileInfoPrivate(url, qq)
 {
     {
         QMutexLocker locker(&smb_browser_utils::nodesMutex());

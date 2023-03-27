@@ -7,7 +7,7 @@
 
 #include "dfmplugin_computer_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DArrowLineDrawer>

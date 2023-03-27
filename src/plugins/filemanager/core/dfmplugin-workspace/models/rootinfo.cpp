@@ -157,7 +157,7 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
 {
     doFileDeleted(fromUrl);
 
-    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
+    FileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
     if (info)
         info->refresh();
 
@@ -256,17 +256,17 @@ void RootInfo::doThreadWatcherEvent()
     });
 }
 
-void RootInfo::handleTraversalResult(const AbstractFileInfoPointer &child)
+void RootInfo::handleTraversalResult(const FileInfoPointer &child)
 {
     auto sortInfo = addChild(child);
     if (sortInfo)
         Q_EMIT iteratorAddFile(currentKey, sortInfo, child);
 }
 
-void RootInfo::handleTraversalResults(QList<AbstractFileInfoPointer> children)
+void RootInfo::handleTraversalResults(QList<FileInfoPointer> children)
 {
     QList<SortInfoPointer> sortInfos;
-    QList<AbstractFileInfoPointer> infos;
+    QList<FileInfoPointer> infos;
     for (const auto &info : children) {
         auto sortInfo = addChild(info);
         if (!sortInfo)
@@ -345,7 +345,7 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
     }
 }
 
-void RootInfo::addChildren(const QList<AbstractFileInfoPointer> &children)
+void RootInfo::addChildren(const QList<FileInfoPointer> &children)
 {
     for (auto &child : children) {
         addChild(child);
@@ -364,7 +364,7 @@ void RootInfo::addChildren(const QList<SortInfoPointer> &children)
     }
 }
 
-SortInfoPointer RootInfo::addChild(const AbstractFileInfoPointer &child)
+SortInfoPointer RootInfo::addChild(const FileInfoPointer &child)
 {
     if (!child)
         return nullptr;
@@ -389,7 +389,7 @@ SortInfoPointer RootInfo::addChild(const AbstractFileInfoPointer &child)
     return sort;
 }
 
-SortInfoPointer RootInfo::sortFileInfo(const AbstractFileInfoPointer &info)
+SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
 {
     if (!info)
         return nullptr;
@@ -490,9 +490,9 @@ QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 // When monitoring the mtp directory, the monitor monitors that the scheme of the
 // url used for adding and deleting files is mtp (mtp://path).
 // Here, the monitor's url is used to re-complete the current url
-AbstractFileInfoPointer RootInfo::fileInfo(const QUrl &url)
+FileInfoPointer RootInfo::fileInfo(const QUrl &url)
 {
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
     if (info)
         return info;
 
@@ -511,6 +511,6 @@ AbstractFileInfoPointer RootInfo::fileInfo(const QUrl &url)
 
     auto currentUrl = parentUrl;
     currentUrl.setPath(currentUrl.path(QUrl::PrettyDecoded) + QDir::separator() + url.fileName());
-    info = InfoFactory::create<AbstractFileInfo>(currentUrl);
+    info = InfoFactory::create<FileInfo>(currentUrl);
     return info;
 }

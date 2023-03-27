@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef ABSTRACTFILEINFO_H
-#define ABSTRACTFILEINFO_H
+#ifndef FILEINFO_H
+#define FILEINFO_H
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_base_global.h"
@@ -21,14 +21,14 @@ class QDir;
 class QDateTime;
 
 namespace dfmbase {
-class AbstractFileInfo;
+class FileInfo;
 }
 
-typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPointer;
+typedef QSharedPointer<DFMBASE_NAMESPACE::FileInfo> FileInfoPointer;
 
 namespace dfmbase {
-class AbstractFileInfoPrivate;
-class AbstractFileInfo : public QSharedData, public QEnableSharedFromThis<AbstractFileInfo>
+class FileInfoPrivate;
+class FileInfo : public QSharedData, public QEnableSharedFromThis<FileInfo>
 {
 public:
     /*!
@@ -221,11 +221,11 @@ public:
     using initQuerierAsyncCallback = std::function<void(bool, void *)>;
 
 public:
-    explicit AbstractFileInfo() = delete;
-    virtual ~AbstractFileInfo();
-    virtual AbstractFileInfo &operator=(const AbstractFileInfo &fileinfo);
-    virtual bool operator==(const AbstractFileInfo &fileinfo) const;
-    virtual bool operator!=(const AbstractFileInfo &fileinfo) const;
+    explicit FileInfo() = delete;
+    virtual ~FileInfo();
+    virtual FileInfo &operator=(const FileInfo &fileinfo);
+    virtual bool operator==(const FileInfo &fileinfo) const;
+    virtual bool operator!=(const FileInfo &fileinfo) const;
 
     virtual bool initQuerier();
     virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr);
@@ -259,27 +259,27 @@ public:
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value);
 
 protected:
-    explicit AbstractFileInfo(const QUrl &url);
-    void setProxy(const AbstractFileInfoPointer &proxy);
-    QSharedPointer<AbstractFileInfoPrivate> dptr;
+    explicit FileInfo(const QUrl &url);
+    void setProxy(const FileInfoPointer &proxy);
+    QSharedPointer<FileInfoPrivate> dptr;
 
 private:
     bool hasProxy();
     friend class InfoCache;
 };
 
-using NameInfoType = AbstractFileInfo::FileNameInfoType;
-using PathInfoType = AbstractFileInfo::FilePathInfoType;
-using DisPlayInfoType = AbstractFileInfo::DisplayInfoType;
-using UrlInfoType = AbstractFileInfo::FileUrlInfoType;
-using ExtInfoType = AbstractFileInfo::FileExtendedInfoType;
-using ViewInfoType = AbstractFileInfo::ViewType;
-using SupportedType = AbstractFileInfo::SupportType;
-using TimeInfoType = AbstractFileInfo::FileTimeType;
-using OptInfoType = AbstractFileInfo::FileIsType;
-using CanableInfoType = AbstractFileInfo::FileCanType;
+using NameInfoType = FileInfo::FileNameInfoType;
+using PathInfoType = FileInfo::FilePathInfoType;
+using DisPlayInfoType = FileInfo::DisplayInfoType;
+using UrlInfoType = FileInfo::FileUrlInfoType;
+using ExtInfoType = FileInfo::FileExtendedInfoType;
+using ViewInfoType = FileInfo::ViewType;
+using SupportedType = FileInfo::SupportType;
+using TimeInfoType = FileInfo::FileTimeType;
+using OptInfoType = FileInfo::FileIsType;
+using CanableInfoType = FileInfo::FileCanType;
 }
-Q_DECLARE_METATYPE(AbstractFileInfoPointer);
-Q_DECLARE_METATYPE(QList<AbstractFileInfoPointer>);
+Q_DECLARE_METATYPE(FileInfoPointer);
+Q_DECLARE_METATYPE(QList<FileInfoPointer>);
 
-#endif   // ABSTRACTFILEINFO_H
+#endif   // FILEINFO_H

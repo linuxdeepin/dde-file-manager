@@ -5,7 +5,7 @@
 #ifndef MIMETYPEDISPLAYMANAGER_H
 #define MIMETYPEDISPLAYMANAGER_H
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QObject>
 #include <QMap>
@@ -24,10 +24,10 @@ public:
     void initConnect();
 
     QString displayName(const QString &mimeType);
-    AbstractFileInfo::FileType displayNameToEnum(const QString &mimeType);
+    FileInfo::FileType displayNameToEnum(const QString &mimeType);
     QString defaultIcon(const QString &mimeType);
 
-    QMap<AbstractFileInfo::FileType, QString> displayNames();
+    QMap<FileInfo::FileType, QString> displayNames();
     QStringList readlines(const QString &path);
     void loadSupportMimeTypes();
     QStringList supportArchiveMimetypes();
@@ -37,8 +37,8 @@ public:
 
 private:
     static MimeTypeDisplayManager *self;
-    QMap<AbstractFileInfo::FileType, QString> displayNamesMap;
-    QMap<AbstractFileInfo::FileType, QString> defaultIconNames;
+    QMap<FileInfo::FileType, QString> displayNamesMap;
+    QMap<FileInfo::FileType, QString> defaultIconNames;
     QStringList ArchiveMimeTypes;
     QStringList AvfsBlackList;
     QStringList TextMimeTypes;

@@ -6,7 +6,7 @@
 #include "utils/tagmanager.h"
 #include "tagfileinfo_p.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
@@ -14,7 +14,7 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagFileInfo::TagFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new TagFileInfoPrivate(url, this))
+    : FileInfo(url), d(new TagFileInfoPrivate(url, this))
 {
     dptr.reset(d);
 }
@@ -72,7 +72,7 @@ QString TagFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 
@@ -80,10 +80,10 @@ QString TagFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 
-AbstractFileInfo::FileType TagFileInfo::fileType() const
+FileInfo::FileType TagFileInfo::fileType() const
 {
     return FileType::kDirectory;
 }
@@ -98,8 +98,8 @@ QString TagFileInfo::tagName() const
     return d->fileName();
 }
 
-TagFileInfoPrivate::TagFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+TagFileInfoPrivate::TagFileInfoPrivate(const QUrl &url, FileInfo *qq)
+    : FileInfoPrivate(url, qq)
 {
 }
 

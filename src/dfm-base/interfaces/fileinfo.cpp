@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "private/abstractfileinfo_p.h"
-#include "abstractfileinfo.h"
+#include "private/fileinfo_p.h"
+#include "fileinfo.h"
 #include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/fileutils.h"
@@ -22,10 +22,10 @@ USING_IO_NAMESPACE
 #define CALL_PROXY(Fun) \
     if (dptr->proxy) return dptr->proxy->Fun;
 namespace dfmbase {
-Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") })
+Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<FileInfoPointer>("FileInfo") })
 
 /*!
- * \class DAbstractFileInfo 抽象文件信息类
+ * \class DFileInfo 抽象文件信息类
  *
  * \brief 内部实现Url到真实路径的信息关联，设置的真实本地路径总是指向虚拟路径Url
  *
@@ -35,37 +35,37 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPoin
  */
 
 /*!
- * \brief DAbstractFileInfo 构造函数
+ * \brief DFileInfo 构造函数
  *
  * \param QUrl & 文件的URL
  */
-AbstractFileInfo::AbstractFileInfo(const QUrl &url)
-    : dptr(new AbstractFileInfoPrivate(url, this))
+FileInfo::FileInfo(const QUrl &url)
+    : dptr(new FileInfoPrivate(url, this))
 {
     Q_UNUSED(type_id)
 }
 
-void DFMBASE_NAMESPACE::AbstractFileInfo::setProxy(const AbstractFileInfoPointer &proxy)
+void DFMBASE_NAMESPACE::FileInfo::setProxy(const FileInfoPointer &proxy)
 {
     dptr->proxy = proxy;
 }
 
-bool dfmbase::AbstractFileInfo::hasProxy()
+bool dfmbase::FileInfo::hasProxy()
 {
     return dptr->proxy != nullptr;
 }
 
-AbstractFileInfo::~AbstractFileInfo()
+FileInfo::~FileInfo()
 {
 }
 /*!
  * \brief = 重载操作符=
  *
- * \param const DAbstractFileInfo & DAbstractFileInfo实例对象的引用
+ * \param const DFileInfo & DFileInfo实例对象的引用
  *
- * \return DAbstractFileInfo & 新DAbstractFileInfo实例对象的引用
+ * \return DFileInfo & 新DFileInfo实例对象的引用
  */
-AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
+FileInfo &FileInfo::operator=(const FileInfo &fileinfo)
 {
     dptr->url = fileinfo.dptr->url;
     return *this;
@@ -73,34 +73,34 @@ AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
 /*!
  * \brief == 重载操作符==
  *
- * \param const DAbstractFileInfo & DAbstractFileInfo实例对象的引用
+ * \param const DFileInfo & DFileInfo实例对象的引用
  *
- * \return bool 传入的DAbstractFileInfo实例对象和自己是否相等
+ * \return bool 传入的DFileInfo实例对象和自己是否相等
  */
-bool AbstractFileInfo::operator==(const AbstractFileInfo &fileinfo) const
+bool FileInfo::operator==(const FileInfo &fileinfo) const
 {
     return dptr->url == fileinfo.dptr->url;
 }
 /*!
  * \brief != 重载操作符!=
  *
- * \param const DAbstractFileInfo & DAbstractFileInfo实例对象的引用
+ * \param const DFileInfo & DFileInfo实例对象的引用
  *
- * \return bool 传入的DAbstractFileInfo实例对象和自己是否不相等
+ * \return bool 传入的DFileInfo实例对象和自己是否不相等
  */
-bool AbstractFileInfo::operator!=(const AbstractFileInfo &fileinfo) const
+bool FileInfo::operator!=(const FileInfo &fileinfo) const
 {
     return !(operator==(fileinfo));
 }
 
-bool DFMBASE_NAMESPACE::AbstractFileInfo::initQuerier()
+bool DFMBASE_NAMESPACE::FileInfo::initQuerier()
 {
     CALL_PROXY(initQuerier());
 
     return false;
 }
 
-void DFMBASE_NAMESPACE::AbstractFileInfo::initQuerierAsync(int ioPriority, DFMBASE_NAMESPACE::AbstractFileInfo::initQuerierAsyncCallback func, void *userData)
+void DFMBASE_NAMESPACE::FileInfo::initQuerierAsync(int ioPriority, DFMBASE_NAMESPACE::FileInfo::initQuerierAsyncCallback func, void *userData)
 {
     CALL_PROXY(initQuerierAsync(ioPriority, func, userData));
 }
@@ -111,7 +111,7 @@ void DFMBASE_NAMESPACE::AbstractFileInfo::initQuerierAsync(int ioPriority, DFMBA
  *
  * \return 返回文件是否存在
  */
-bool AbstractFileInfo::exists() const
+bool FileInfo::exists() const
 {
     CALL_PROXY(exists());
 
@@ -124,12 +124,12 @@ bool AbstractFileInfo::exists() const
  *
  * \return
  */
-void AbstractFileInfo::refresh()
+void FileInfo::refresh()
 {
     CALL_PROXY(refresh());
 }
 
-void dfmbase::AbstractFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
+void dfmbase::FileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
 {
     CALL_PROXY(cacheAttribute(id, value));
 }
@@ -138,7 +138,7 @@ void dfmbase::AbstractFileInfo::cacheAttribute(DFileInfo::AttributeID id, const 
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString dfmbase::AbstractFileInfo::nameOf(const NameInfoType type) const
+QString dfmbase::FileInfo::nameOf(const NameInfoType type) const
 {
     CALL_PROXY(nameOf(type));
     switch (type) {
@@ -153,9 +153,9 @@ QString dfmbase::AbstractFileInfo::nameOf(const NameInfoType type) const
     case FileNameInfoType::kSuffix:
         return dptr->suffix();
     case FileNameInfoType::kIconName:
-        return const_cast<AbstractFileInfo *>(this)->fileMimeType().iconName();
+        return const_cast<FileInfo *>(this)->fileMimeType().iconName();
     case FileNameInfoType::kGenericIconName:
-        return const_cast<AbstractFileInfo *>(this)->fileMimeType().genericIconName();
+        return const_cast<FileInfo *>(this)->fileMimeType().genericIconName();
     default:
         return QString();
     }
@@ -165,7 +165,7 @@ QString dfmbase::AbstractFileInfo::nameOf(const NameInfoType type) const
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString dfmbase::AbstractFileInfo::pathOf(const PathInfoType type) const
+QString dfmbase::FileInfo::pathOf(const PathInfoType type) const
 {
     CALL_PROXY(pathOf(type));
 
@@ -184,7 +184,7 @@ QString dfmbase::AbstractFileInfo::pathOf(const PathInfoType type) const
  *
  * \return bool 是否有传入的权限
  */
-bool AbstractFileInfo::permission(QFileDevice::Permissions permissions) const
+bool FileInfo::permission(QFileDevice::Permissions permissions) const
 {
     CALL_PROXY(permission(permissions));
 
@@ -197,7 +197,7 @@ bool AbstractFileInfo::permission(QFileDevice::Permissions permissions) const
  *
  * \return QFile::Permissions 文件的全部权限
  */
-QFileDevice::Permissions AbstractFileInfo::permissions() const
+QFileDevice::Permissions FileInfo::permissions() const
 {
     CALL_PROXY(permissions());
 
@@ -214,7 +214,7 @@ QFileDevice::Permissions AbstractFileInfo::permissions() const
  *
  * \return qint64 文件的大小
  */
-qint64 AbstractFileInfo::size() const
+qint64 FileInfo::size() const
 {
     CALL_PROXY(size());
 
@@ -225,7 +225,7 @@ qint64 AbstractFileInfo::size() const
   * \brief 获取文件的时间信息
   * \param FileTimeType
   */
-QVariant dfmbase::AbstractFileInfo::timeOf(const TimeInfoType type) const
+QVariant dfmbase::FileInfo::timeOf(const TimeInfoType type) const
 {
     CALL_PROXY(timeOf(type));
 
@@ -271,17 +271,17 @@ QVariant dfmbase::AbstractFileInfo::timeOf(const TimeInfoType type) const
     }
 }
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::countChildFile 获取目录下有多少个文件（只有下一级）
+ * \brief DFMBASE_NAMESPACE::FileInfo::countChildFile 获取目录下有多少个文件（只有下一级）
  * \return 返回文件数量
  */
-int DFMBASE_NAMESPACE::AbstractFileInfo::countChildFile() const
+int DFMBASE_NAMESPACE::FileInfo::countChildFile() const
 {
     CALL_PROXY(countChildFile());
 
     return -1;
 }
 
-int dfmbase::AbstractFileInfo::countChildFileAsync() const
+int dfmbase::FileInfo::countChildFileAsync() const
 {
     CALL_PROXY(countChildFileAsync());
 
@@ -289,10 +289,10 @@ int dfmbase::AbstractFileInfo::countChildFileAsync() const
 }
 
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileType 获取文件的设备类型
+ * \brief DFMBASE_NAMESPACE::FileInfo::fileType 获取文件的设备类型
  * \return 返回文件的设备类型
  */
-AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
+FileInfo::FileType DFMBASE_NAMESPACE::FileInfo::fileType() const
 {
     CALL_PROXY(fileType());
 
@@ -304,7 +304,7 @@ AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
  * 处理或者字符串处理，这都比较快
  * \param FileNameInfoType
  */
-QString dfmbase::AbstractFileInfo::displayOf(const DisPlayInfoType type) const
+QString dfmbase::FileInfo::displayOf(const DisPlayInfoType type) const
 {
     CALL_PROXY(displayOf(type));
     switch (type) {
@@ -320,7 +320,7 @@ QString dfmbase::AbstractFileInfo::displayOf(const DisPlayInfoType type) const
     case DisPlayInfoType::kFileTypeDisplayName:
         return QString::number(static_cast<int>(MimeTypeDisplayManager::
                                                         instance()
-                                                                ->displayNameToEnum(const_cast<AbstractFileInfo *>(this)->fileMimeType().name())))
+                                                                ->displayNameToEnum(const_cast<FileInfo *>(this)->fileMimeType().name())))
                 .append(nameOf(FileNameInfoType::kSuffix));
     case DisPlayInfoType::kFileDisplayPinyinName:
         if (dptr->pinyinName.isEmpty()) {
@@ -339,7 +339,7 @@ QString dfmbase::AbstractFileInfo::displayOf(const DisPlayInfoType type) const
  * 处理或者字符串处理，这都比较快
  * \param FileUrlInfoType
  */
-QUrl dfmbase::AbstractFileInfo::urlOf(const UrlInfoType type) const
+QUrl dfmbase::FileInfo::urlOf(const UrlInfoType type) const
 {
     // FileUrlInfoType::kUrl don't you proxy,must use the original url
     if (FileUrlInfoType::kUrl == type)
@@ -357,7 +357,7 @@ QUrl dfmbase::AbstractFileInfo::urlOf(const UrlInfoType type) const
     }
 }
 
-QUrl dfmbase::AbstractFileInfo::getUrlByType(const UrlInfoType type, const QString &fileName) const
+QUrl dfmbase::FileInfo::getUrlByType(const UrlInfoType type, const QString &fileName) const
 {
     CALL_PROXY(getUrlByType(type, fileName));
     switch (type) {
@@ -373,7 +373,7 @@ QUrl dfmbase::AbstractFileInfo::getUrlByType(const UrlInfoType type, const QStri
   * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
   * \param SupportType
   */
-Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedOfAttributes(const SupportedType type) const
+Qt::DropActions DFMBASE_NAMESPACE::FileInfo::supportedOfAttributes(const SupportedType type) const
 {
     CALL_PROXY(supportedOfAttributes(type));
 
@@ -399,7 +399,7 @@ Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedOfAttributes(const
  * 默认，获取了就是读取属性
  * \param FileIsType
  */
-bool dfmbase::AbstractFileInfo::isAttributes(const OptInfoType type) const
+bool dfmbase::FileInfo::isAttributes(const OptInfoType type) const
 {
     CALL_PROXY(isAttributes(type));
     switch (type) {
@@ -410,7 +410,7 @@ bool dfmbase::AbstractFileInfo::isAttributes(const OptInfoType type) const
     }
 }
 
-bool dfmbase::AbstractFileInfo::canAttributes(const CanableInfoType type) const
+bool dfmbase::FileInfo::canAttributes(const CanableInfoType type) const
 {
     CALL_PROXY(canAttributes(type));
     switch (type) {
@@ -430,7 +430,7 @@ bool dfmbase::AbstractFileInfo::canAttributes(const CanableInfoType type) const
     }
 }
 
-QVariant dfmbase::AbstractFileInfo::extendAttributes(const ExtInfoType type) const
+QVariant dfmbase::FileInfo::extendAttributes(const ExtInfoType type) const
 {
     CALL_PROXY(extendAttributes(type));
     switch (type) {
@@ -455,7 +455,7 @@ QVariant dfmbase::AbstractFileInfo::extendAttributes(const ExtInfoType type) con
  * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
  * \param ViewType
  */
-QString DFMBASE_NAMESPACE::AbstractFileInfo::viewOfTip(const ViewInfoType type) const
+QString DFMBASE_NAMESPACE::FileInfo::viewOfTip(const ViewInfoType type) const
 {
     switch (type) {
     case ViewType::kEmptyDir:
@@ -467,14 +467,14 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::viewOfTip(const ViewInfoType type) 
     }
 }
 
-QVariant DFMBASE_NAMESPACE::AbstractFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
+QVariant DFMBASE_NAMESPACE::FileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
 {
     CALL_PROXY(customAttribute(key, type));
 
     return QVariant();
 }
 
-QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
+QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::FileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
     CALL_PROXY(mediaInfoAttributes(type, ids));
     return QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>();
@@ -485,16 +485,16 @@ QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::AbstractF
   * \param ExInfo 扩展属性key \param QVariant 属性
   * return
   */
-void DFMBASE_NAMESPACE::AbstractFileInfo::setExtendedAttributes(const ExtInfoType &key, const QVariant &value)
+void DFMBASE_NAMESPACE::FileInfo::setExtendedAttributes(const ExtInfoType &key, const QVariant &value)
 {
     CALL_PROXY(setExtendedAttributes(key, value));
     dptr->extendOtherCache.insert(key, value);
 }
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon
+ * \brief DFMBASE_NAMESPACE::FileInfo::fileIcon
  * \return
  */
-QIcon DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon()
+QIcon DFMBASE_NAMESPACE::FileInfo::fileIcon()
 {
     CALL_PROXY(fileIcon());
 
@@ -502,17 +502,17 @@ QIcon DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon()
 }
 
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType
+ * \brief DFMBASE_NAMESPACE::FileInfo::fileMimeType
  * \return
  */
-QMimeType DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
+QMimeType DFMBASE_NAMESPACE::FileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
     CALL_PROXY(fileMimeType(mode));
 
     return QMimeType();
 }
 
-QMimeType dfmbase::AbstractFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
+QMimeType dfmbase::FileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
 {
     CALL_PROXY(fileMimeTypeAsync(mode));
 
@@ -523,39 +523,39 @@ QMimeType dfmbase::AbstractFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode 
  * \brief 用于获取特定类型文件的特定属性扩展接口
  * \return 返回特定属性的hash表
  */
-QVariantHash DFMBASE_NAMESPACE::AbstractFileInfo::extraProperties() const
+QVariantHash DFMBASE_NAMESPACE::FileInfo::extraProperties() const
 {
     CALL_PROXY(extraProperties());
 
     return QVariantHash();
 }
 
-QVariant DFMBASE_NAMESPACE::AbstractFileInfo::customData(int role) const
+QVariant DFMBASE_NAMESPACE::FileInfo::customData(int role) const
 {
     CALL_PROXY(customData(role));
     return QVariant();
 }
 
 /*!
- * \class DAbstractFileInfoPrivate 抽象文件信息私有类
+ * \class DFileInfoPrivate 抽象文件信息私有类
  *
  * \brief 主要存储文件信息的成员变量和数据
  */
-AbstractFileInfoPrivate::AbstractFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
+FileInfoPrivate::FileInfoPrivate(const QUrl &url, FileInfo *qq)
     : url(url), q(qq)
 {
 }
 
-AbstractFileInfoPrivate::~AbstractFileInfoPrivate()
+FileInfoPrivate::~FileInfoPrivate()
 {
 }
 
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
+ * \brief DFMBASE_NAMESPACE::FileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
  * \param fileName Sub file name
  * \return URL of the file
  */
-QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByChildFileName(const QString &fileName) const
+QUrl DFMBASE_NAMESPACE::FileInfoPrivate::getUrlByChildFileName(const QString &fileName) const
 {
     if (!q->isAttributes(OptInfoType::kIsDir)) {
         return QUrl();
@@ -567,11 +567,11 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByChildFileName(const QSt
 }
 
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName Get URL based on new file name
+ * \brief DFMBASE_NAMESPACE::FileInfo::getUrlByNewFileName Get URL based on new file name
  * \param fileName New file name
  * \return URL of the file
  */
-QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
+QUrl DFMBASE_NAMESPACE::FileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
 {
     QUrl theUrl = url;
     const QString &newPath = DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsolutePath).toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
@@ -591,7 +591,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByNewFileName(const QStri
  *
  * \return
  */
-QString AbstractFileInfoPrivate::fileName() const
+QString FileInfoPrivate::fileName() const
 {
     QString filePath = q->pathOf(PathInfoType::kFilePath);
 
@@ -618,7 +618,7 @@ QString AbstractFileInfoPrivate::fileName() const
  *
  * \return
  */
-QString AbstractFileInfoPrivate::baseName() const
+QString FileInfoPrivate::baseName() const
 {
     const QString &fileName = this->fileName();
     const QString &suffix = q->nameOf(NameInfoType::kSuffix);
@@ -630,7 +630,7 @@ QString AbstractFileInfoPrivate::baseName() const
     return fileName.left(fileName.length() - suffix.length() - 1);
 }
 
-QString dfmbase::AbstractFileInfoPrivate::suffix() const
+QString dfmbase::FileInfoPrivate::suffix() const
 {
     if (q->isAttributes(OptInfoType::kIsDir)) {
         return QString();
@@ -651,10 +651,10 @@ QString dfmbase::AbstractFileInfoPrivate::suffix() const
 }
 
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDrop
+ * \brief DFMBASE_NAMESPACE::FileInfo::canDrop
  * \return
  */
-bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
+bool DFMBASE_NAMESPACE::FileInfoPrivate::canDrop()
 {
     if (q->isAttributes(OptInfoType::kIsPrivate)) {
         return false;
@@ -665,7 +665,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
         return q->isAttributes(OptInfoType::kIsDir) || isDesktop;
     }
 
-    AbstractFileInfoPointer info = nullptr;
+    FileInfoPointer info = nullptr;
     QString linkTargetPath = q->pathOf(PathInfoType::kSymLinkTarget);
 
     do {
@@ -675,7 +675,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
             return false;
         }
 
-        info = InfoFactory::create<AbstractFileInfo>(targetUrl);
+        info = InfoFactory::create<FileInfo>(targetUrl);
 
         if (!info) {
             return false;

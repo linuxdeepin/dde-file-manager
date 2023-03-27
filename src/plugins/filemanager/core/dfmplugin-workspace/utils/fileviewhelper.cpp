@@ -57,7 +57,7 @@ FileView *FileViewHelper::parent() const
 
 bool FileViewHelper::isTransparent(const QModelIndex &index) const
 {
-    AbstractFileInfoPointer file = fileInfo(index);
+    FileInfoPointer file = fileInfo(index);
     if (!file.get())
         return false;
 
@@ -94,7 +94,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
     return false;
 }
 
-const AbstractFileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
+const FileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
 {
     return parent()->model()->fileInfo(index);
 }
@@ -306,7 +306,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     }
 
     const auto &index = itemDelegate()->editingIndex();
-    const AbstractFileInfoPointer &fileInfo = parent()->model()->fileInfo(index);
+    const FileInfoPointer &fileInfo = parent()->model()->fileInfo(index);
 
     if (!fileInfo) {
         return;

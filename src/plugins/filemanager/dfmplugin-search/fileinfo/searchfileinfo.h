@@ -7,12 +7,12 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {
 
-class SearchFileInfo : public AbstractFileInfo
+class SearchFileInfo : public FileInfo
 {
 public:
     explicit SearchFileInfo(const QUrl &url);

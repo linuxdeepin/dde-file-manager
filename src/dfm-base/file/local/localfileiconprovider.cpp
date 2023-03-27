@@ -108,7 +108,7 @@ QIcon LocalFileIconProvider::icon(const QString &path, const QIcon &feedback) co
     return icon;
 }
 
-QIcon LocalFileIconProvider::icon(AbstractFileInfo *info, const QIcon &feedback)
+QIcon LocalFileIconProvider::icon(FileInfo *info, const QIcon &feedback)
 {
     QIcon icon = d->fromTheme(info->nameOf(NameInfoType::kIconName));
 

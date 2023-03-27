@@ -54,9 +54,9 @@ void SearchFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool en
     // When 'subfileUrl' is a directory, unable to receive it rename event,
     // so monitor it's parent
     QUrl tmpUrl = subfileUrl;
-    auto fileInfo = InfoFactory::create<AbstractFileInfo>(tmpUrl);
-    if (fileInfo && fileInfo->fileType() == AbstractFileInfo::FileType::kDirectory)
-        tmpUrl = fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl);
+    auto fileInfo = InfoFactory::create<FileInfo>(tmpUrl);
+    if (fileInfo && fileInfo->fileType() == FileInfo::FileType::kDirectory)
+        tmpUrl = fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl);
 
     if (enabled) {
         addWatcher(tmpUrl);
@@ -107,7 +107,7 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
     if (toUrl.path().startsWith(targetUrl.path())) {
         const auto &keyword = SearchHelper::instance()->checkWildcardAndToRegularExpression((SearchHelper::searchKeyword(url())));
         QRegularExpression regexp(keyword, QRegularExpression::CaseInsensitiveOption);
-        const auto &info = InfoFactory::create<AbstractFileInfo>(toUrl);
+        const auto &info = InfoFactory::create<FileInfo>(toUrl);
         auto match = regexp.match(info->displayOf(DisPlayInfoType::kFileDisplayName));
 
         if (match.hasMatch()) {

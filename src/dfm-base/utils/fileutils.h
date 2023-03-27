@@ -6,7 +6,7 @@
 #define FILEUTILS_H
 
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/desktopfile.h"
@@ -76,7 +76,7 @@ public:
 
     static QString dateTimeFormat();
     static bool setBackGround(const QString &pictureFilePath);
-    static QString nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir);
+    static QString nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer targetDir);
 
     // If toDevice is true, convert the path to the device name
     // otherwise convert the path to the mount point name

@@ -106,7 +106,7 @@ QString ThumbnailProviderPrivate::sizeToFilePath(ThumbnailProvider::Size size) c
 
 bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 {
-    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
 
     if (!fileInfo->isAttributes(OptInfoType::kIsReadable) || !fileInfo->isAttributes(OptInfoType::kIsFile))
         return false;
@@ -238,7 +238,7 @@ bool ThumbnailProvider::thumbnailEnable(const QUrl &url) const
 
 QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
 {
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
     if (!fileInfo)
         return QString();
 
@@ -290,7 +290,7 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 {
     d->errorString.clear();
 
-    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
 
     const QString &DirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
@@ -499,7 +499,7 @@ void ThumbnailProvider::createTextThumbnail(const QString &filePath, ThumbnailPr
         d->errorString = dfile.lastError().errorMsg();
         return;
     }
-    AbstractFileInfoPointer fileinfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(filePath));
+    FileInfoPointer fileinfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     if (!fileinfo)
         return;
 

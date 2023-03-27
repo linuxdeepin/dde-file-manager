@@ -4,7 +4,7 @@
 
 #include "hidefilehelper.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-io/dfile.h>
@@ -52,14 +52,14 @@ public:
         for (const QString &name : hideListUpdate) {
             const QString &path = dirUrl.toLocalFile() + "/" + name;
             const QUrl &url = QUrl::fromLocalFile(path);
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
             info->refresh();
 
             DFMIO::DFileInfo dfileInfo { url };
             dfileInfo.setCustomAttribute("xattr::update",
                                          DFMIO::DFileInfo::DFileAttributeType::kTypeString, "");
         }
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(fileUrl);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(fileUrl);
         info->refresh();
         // TODO(gongheng): why return false in vault
         DFMIO::DFileInfo dfileInfo { fileUrl };

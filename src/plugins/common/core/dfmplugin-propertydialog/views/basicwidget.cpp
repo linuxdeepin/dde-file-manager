@@ -8,7 +8,7 @@
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/utils/fileutils.h"
 #include <dfm-framework/event/event.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -189,7 +189,7 @@ void BasicWidget::basicFieldFilter(const QUrl &url)
 
 void BasicWidget::basicFill(const QUrl &url)
 {
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (info.isNull())
         return;
     if (!info->canAttributes(CanableInfoType::kCanHidden))
@@ -208,7 +208,7 @@ void BasicWidget::basicFill(const QUrl &url)
             auto &&symlink = info->pathOf(PathInfoType::kSymLinkTarget);
             connect(filePosition, &KeyValueLabel::valueAreaClicked, this, [symlink] {
                 const QUrl &url = QUrl::fromLocalFile(symlink);
-                const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+                const auto &fileInfo = InfoFactory::create<FileInfo>(url);
                 QUrl parentUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);
                 parentUrl.setQuery("selectUrl=" + url.toString());
 
@@ -253,9 +253,9 @@ void BasicWidget::basicFill(const QUrl &url)
         fileCount->setVisible(false);
 
     if (fileType && fileType->RightValue().isEmpty()) {
-        const AbstractFileInfo::FileType type = info->fileType();
+        const FileInfo::FileType type = info->fileType();
         fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideMiddle, Qt::AlignVCenter, true);
-        if (type == AbstractFileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
+        if (type == FileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
             fileCount->setVisible(true);
             fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
             if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {

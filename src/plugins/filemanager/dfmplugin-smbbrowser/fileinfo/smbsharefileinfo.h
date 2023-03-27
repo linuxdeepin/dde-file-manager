@@ -7,11 +7,11 @@
 
 #include "dfmplugin_smbbrowser_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 namespace dfmplugin_smbbrowser {
 class SmbShareFileInfoPrivate;
-class SmbShareFileInfo : public dfmbase::AbstractFileInfo
+class SmbShareFileInfo : public dfmbase::FileInfo
 {
     SmbShareFileInfoPrivate *d;
 

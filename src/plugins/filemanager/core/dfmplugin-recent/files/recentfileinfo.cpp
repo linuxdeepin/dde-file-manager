@@ -8,16 +8,16 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_recent {
 
 RecentFileInfo::RecentFileInfo(const QUrl &url)
-    : AbstractFileInfo(url)
+    : FileInfo(url)
 {
     if (url.path() != "/") {
-        setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(url.path())));
+        setProxy(InfoFactory::create<FileInfo>(QUrl::fromLocalFile(url.path())));
     }
 }
 
@@ -27,7 +27,7 @@ RecentFileInfo::~RecentFileInfo()
 
 bool RecentFileInfo::exists() const
 {
-    return AbstractFileInfo::exists() || dptr->url == RecentHelper::rootUrl();
+    return FileInfo::exists() || dptr->url == RecentHelper::rootUrl();
 }
 
 QFile::Permissions RecentFileInfo::permissions() const
@@ -35,7 +35,7 @@ QFile::Permissions RecentFileInfo::permissions() const
     if (dptr->url == RecentHelper::rootUrl()) {
         return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
     }
-    return AbstractFileInfo::permissions();
+    return FileInfo::permissions();
 }
 
 bool RecentFileInfo::isAttributes(const OptInfoType type) const
@@ -46,7 +46,7 @@ bool RecentFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsWritable:
         return permissions().testFlag(QFile::Permission::WriteUser);
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     }
 }
 
@@ -58,7 +58,7 @@ bool RecentFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRedirectionFileUrl:
         return dptr->proxy;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return FileInfo::canAttributes(type);
     }
 }
 
@@ -74,7 +74,7 @@ QString RecentFileInfo::nameOf(const NameInfoType type) const
 
         return QString();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 
@@ -84,7 +84,7 @@ QUrl RecentFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return dptr->proxy ? dptr->proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
     default:
-        return AbstractFileInfo::urlOf(type);
+        return FileInfo::urlOf(type);
     }
 }
 
@@ -99,14 +99,14 @@ QVariant RecentFileInfo::customData(int role) const
         return QVariant();
 }
 
-QString RecentFileInfo::displayOf(const AbstractFileInfo::DisplayInfoType type) const
+QString RecentFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type) {
         if (UrlRoute::isRootUrl(dptr->url)) {
             return QObject::tr("Recent");
         }
     }
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 
 }

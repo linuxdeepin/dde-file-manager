@@ -36,12 +36,12 @@ LocalDirIteratorPrivate::~LocalDirIteratorPrivate()
 {
 }
 
-AbstractFileInfoPointer LocalDirIteratorPrivate::fileInfo()
+FileInfoPointer LocalDirIteratorPrivate::fileInfo()
 {
     auto fileinfo = dfmioDirIterator->fileInfo();
     auto url = dfmioDirIterator->next();
     QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(url, fileinfo));
-    auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(url.scheme(), info);
+    auto infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
 
     const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
     bool isHidden = false;
@@ -146,7 +146,7 @@ QUrl LocalDirIterator::fileUrl() const
  *
  * \return DAbstractFileInfoPointer 返回文件迭代器当前文件的文件信息的智能指针
  **/
-const AbstractFileInfoPointer LocalDirIterator::fileInfo() const
+const FileInfoPointer LocalDirIterator::fileInfo() const
 {
     return d->fileInfo();
 }

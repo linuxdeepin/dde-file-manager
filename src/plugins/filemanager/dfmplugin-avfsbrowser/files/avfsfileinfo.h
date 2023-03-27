@@ -11,7 +11,7 @@
 
 namespace dfmplugin_avfsbrowser {
 
-class AvfsFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class AvfsFileInfo : public DFMBASE_NAMESPACE::FileInfo
 {
 public:
     explicit AvfsFileInfo(const QUrl &url);

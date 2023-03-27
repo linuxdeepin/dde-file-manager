@@ -49,7 +49,7 @@ std::pair<qint64, int> TrashCoreHelper::calculateTrashRoot()
     while (enumerator.hasNext()) {
         const QUrl &urlNext = enumerator.next();
         ++count;
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(urlNext);
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(urlNext);
         if (!fileInfo)
             continue;
         size += fileInfo->size();

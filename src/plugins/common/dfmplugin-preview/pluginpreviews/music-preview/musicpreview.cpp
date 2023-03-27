@@ -6,7 +6,7 @@
 #include "musicmessageview.h"
 #include "toolbarframe.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
@@ -114,7 +114,7 @@ void MusicPreview::stop()
 
 bool MusicPreview::canPreview(const QUrl &url) const
 {
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
     if (!info)
         return false;

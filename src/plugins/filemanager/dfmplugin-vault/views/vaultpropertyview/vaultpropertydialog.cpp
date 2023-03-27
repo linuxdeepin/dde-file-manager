@@ -56,7 +56,7 @@ void VaultPropertyDialog::createHeadUI(const QUrl &url)
 {
     fileIconLabel = new QLabel(this);
     fileIconLabel->setFixedHeight(128);
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info.isNull())
         fileIconLabel->setPixmap(info->fileIcon().pixmap(128, 128));
 

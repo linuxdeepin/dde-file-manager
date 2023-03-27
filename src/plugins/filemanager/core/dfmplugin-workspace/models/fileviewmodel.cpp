@@ -144,7 +144,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     return index;
 }
 
-AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
+FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
     if (!index.isValid() || index.row() < 0 || filterSortWorker.isNull())
         return nullptr;
@@ -331,7 +331,7 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
-    const AbstractFileInfoPointer &info = fileInfo(index);
+    const FileInfoPointer &info = fileInfo(index);
     if (!info)
         return flags;
 
@@ -372,7 +372,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
-            const AbstractFileInfoPointer &fileInfo = this->fileInfo(*it);
+            const FileInfoPointer &fileInfo = this->fileInfo(*it);
             const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
 
             if (urlsSet.contains(url))
@@ -401,7 +401,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (!dropIndex.isValid())
         return false;
 
-    const AbstractFileInfoPointer &targetFileInfo = fileInfo(dropIndex);
+    const FileInfoPointer &targetFileInfo = fileInfo(dropIndex);
     if (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable)) {
         qInfo() << "current dir is not writable!!!!!!!!";
         return false;

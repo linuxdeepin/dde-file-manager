@@ -212,7 +212,7 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     SideBarItem *tgItem = sidebarModel->itemFromIndex(index);
     if (!tgItem)
         return nullptr;
-    auto sourceInfo = InfoFactory::create<AbstractFileInfo>(tgItem->url());
+    auto sourceInfo = InfoFactory::create<FileInfo>(tgItem->url());
     if (!sourceInfo)
         return nullptr;
     if (!sourceInfo->exists())
@@ -297,7 +297,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
     return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
-void SideBarItemDelegate::onEditorTextChanged(const QString &text, const AbstractFileInfoPointer &info) const
+void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInfoPointer &info) const
 {
     QLineEdit *editor = qobject_cast<QLineEdit *>(sender());
     if (!editor)
@@ -308,7 +308,7 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const Abstrac
     bool useCharCount = false;
     const QString &fs = info->extraProperties()[GlobalServerDefines::DeviceProperty::kFileSystem].toString();
     if (fs.isEmpty()) {
-        const auto &url = info->urlOf(AbstractFileInfo::FileUrlInfoType::kUrl);
+        const auto &url = info->urlOf(FileInfo::FileUrlInfoType::kUrl);
         if (FileUtils::isLocalFile(url)) {
             maxLen = NAME_MAX;
             const auto &path = url.path();

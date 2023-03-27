@@ -6,7 +6,7 @@
 #define WORKERDATA_H
 #include "dfmplugin_fileoperations_global.h"
 #include <dfm-base/interfaces/abstractjobhandler.h>
-#include <dfm-base/interfaces/abstractfileinfo.h>
+#include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/threadcontainer.hpp>
 
 #include <QSharedPointer>
@@ -24,8 +24,8 @@ public:
         bool closeflag;
         bool isdir;
         QAtomicInt openFlag { O_CREAT | O_WRONLY | O_TRUNC };
-        AbstractFileInfoPointer frominfo;
-        AbstractFileInfoPointer toinfo;
+        FileInfoPointer frominfo;
+        FileInfoPointer toinfo;
         char *buffer;
         qint64 size;
         qint64 currentpos;

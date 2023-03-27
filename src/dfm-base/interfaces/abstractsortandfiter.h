@@ -8,7 +8,7 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include "abstractfileinfo.h"
+#include "fileinfo.h"
 
 #include <QDirIterator>
 
@@ -28,11 +28,11 @@ public:
     AbstractSortAndFiter();
     virtual ~AbstractSortAndFiter() {}
     // 左边比右边小返回true
-    virtual int lessThan(const AbstractFileInfoPointer &left, const AbstractFileInfoPointer &right,
+    virtual int lessThan(const FileInfoPointer &left, const FileInfoPointer &right,
                          const bool isMixDirAndFile,
                          const Global::ItemRoles role,
                          const SortScenarios ss);
-    virtual int checkFiters(const AbstractFileInfoPointer &info, const QDir::Filters filter, const QVariant &custum);
+    virtual int checkFiters(const FileInfoPointer &info, const QDir::Filters filter, const QVariant &custum);
 };
 }
 

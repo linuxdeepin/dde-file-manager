@@ -83,7 +83,7 @@ void onClipboardDataChanged()
             clipboardFileUrls << url;
         }
         //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
-        const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url, true, &errorStr);
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, true, &errorStr);
 
         if (!info) {
             qWarning() << QString("create file info error, case : %1").arg(errorStr);
@@ -142,7 +142,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
 
         const QString &path = qurl.toLocalFile();
 
-        const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(qurl, true, &error);
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(qurl, true, &error);
 
         if (!info) {
             qWarning() << QString("create file info error, case : %1").arg(error);
@@ -162,9 +162,9 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             // TODO lanxs::目前缩略图还没有处理，等待处理完成了在修改
             // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
             QIcon icon = LocalFileIconProvider::globalProvider()->icon(info.data());
-            AbstractFileInfo::FileType fileType = MimeTypeDisplayManager::
+            FileInfo::FileType fileType = MimeTypeDisplayManager::
                     instance()->displayNameToEnum(info->nameOf(NameInfoType::kMimeTypeName));
-            if (list.size() == 1 && fileType == AbstractFileInfo::FileType::kImages) {
+            if (list.size() == 1 && fileType == FileInfo::FileType::kImages) {
                 QIcon thumb(DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->thumbnailFilePath(QFileInfo(info->pathOf(PathInfoType::kAbsoluteFilePath)),
                                                                                                  DTK_GUI_NAMESPACE::DThumbnailProvider::Large));
                 if (thumb.isNull()) {

@@ -179,7 +179,7 @@ void FileBaseInfoView::basicFieldFilter(const QUrl &url)
 
 void FileBaseInfoView::basicFill(const QUrl &url)
 {
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (info.isNull())
         return;
 
@@ -212,14 +212,14 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 
-    AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
+    FileInfoPointer localinfo = InfoFactory::create<FileInfo>(localUrl);
     if (localinfo && localinfo->isAttributes(OptInfoType::kIsSymLink)) {
         const QUrl &targetUrl = QUrl::fromLocalFile(localinfo->pathOf(PathInfoType::kSymLinkTarget));
-        localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
+        localinfo = InfoFactory::create<FileInfo>(targetUrl);
     }
     if (localinfo && FileUtils::isTrashFile(localUrl) && !UniversalUtils::urlEquals(localUrl, FileUtils::trashRootUrl())) {
         const QUrl &targetUrl = localinfo->urlOf(UrlInfoType::kRedirectedFileUrl);
-        localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
+        localinfo = InfoFactory::create<FileInfo>(targetUrl);
     }
 
     if (fileType && fileType->RightValue().isEmpty() && localinfo) {

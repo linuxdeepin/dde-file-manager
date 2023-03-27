@@ -297,7 +297,7 @@ void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
 
 void ShareControlWidget::init()
 {
-    info = InfoFactory::create<AbstractFileInfo>(url);
+    info = InfoFactory::create<FileInfo>(url);
     if (!info) {
         qWarning() << "cannot create file info of " << url;
         return;

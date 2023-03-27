@@ -394,8 +394,8 @@ bool UniversalUtils::urlsTransform(const QList<QUrl> &sourceUrls, QList<QUrl> *t
     bool ret { false };
 
     for (const auto &url : sourceUrls) {
-        auto info { InfoFactory::create<AbstractFileInfo>(url) };
-        if (info && info->canAttributes(AbstractFileInfo::FileCanType::kCanRedirectionFileUrl)) {
+        auto info { InfoFactory::create<FileInfo>(url) };
+        if (info && info->canAttributes(FileInfo::FileCanType::kCanRedirectionFileUrl)) {
             ret = true;
             targetUrls->append(info->urlOf(UrlInfoType::kRedirectedFileUrl));
         } else {

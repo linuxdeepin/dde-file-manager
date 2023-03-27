@@ -64,7 +64,7 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_1)
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home/test")));
     });
     st.set_lamda(VADDR(LocalFileInfo, exists), [] { return false; });
@@ -79,7 +79,7 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_2)
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home")));
     });
     st.set_lamda(&QCompleter::setCompletionPrefix, [] {});
@@ -97,7 +97,7 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_3)
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home")));
     });
     st.set_lamda(&QCompleter::setCompletionPrefix, [] {});

@@ -10,7 +10,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
@@ -20,7 +20,7 @@ namespace dfmplugin_optical {
 using namespace GlobalServerDefines;
 
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new MasteredMediaFileInfoPrivate(url, this))
+    : FileInfo(url), d(new MasteredMediaFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     d->backupInfo(url);
@@ -55,7 +55,7 @@ QString MasteredMediaFileInfo::displayOf(const DisPlayInfoType type) const
             return "";
         return d->proxy->displayOf(DisPlayInfoType::kFileDisplayName);
     }
-    return AbstractFileInfo::displayOf(type);
+    return FileInfo::displayOf(type);
 }
 
 QString MasteredMediaFileInfo::nameOf(const NameInfoType type) const
@@ -64,7 +64,7 @@ QString MasteredMediaFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return MasteredMediaFileInfo::displayOf(DisPlayInfoType::kFileDisplayName);
     default:
-        return AbstractFileInfo::nameOf(type);
+        return FileInfo::nameOf(type);
     }
 }
 
@@ -75,11 +75,11 @@ QUrl MasteredMediaFileInfo::urlOf(const UrlInfoType type) const
         if (d->proxy) {
             return d->proxy->urlOf(UrlInfoType::kUrl);
         }
-        return AbstractFileInfo::urlOf(UrlInfoType::kUrl);
+        return FileInfo::urlOf(UrlInfoType::kUrl);
     case FileUrlInfoType::kParentUrl:
         return d->parentUrl();
     default:
-        return AbstractFileInfo::urlOf(type);
+        return FileInfo::urlOf(type);
     }
 }
 
@@ -98,7 +98,7 @@ bool MasteredMediaFileInfo::isAttributes(const OptInfoType type) const
             return false;
         return d->proxy->isAttributes(type);
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return FileInfo::isAttributes(type);
     }
 }
 
@@ -114,7 +114,7 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
 
 void MasteredMediaFileInfo::refresh()
 {
-    AbstractFileInfo::refresh();
+    FileInfo::refresh();
     if (d->proxy) {
         return;
     }
@@ -139,7 +139,7 @@ bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanHidden:
         return false;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return FileInfo::canAttributes(type);
     }
 }
 
@@ -148,18 +148,18 @@ Qt::DropActions MasteredMediaFileInfo::supportedOfAttributes(const SupportedType
     if (type == SupportType::kDrop)
         if (!OpticalHelper::isBurnEnabled())
             return Qt::IgnoreAction;
-    return AbstractFileInfo::supportedOfAttributes(type);
+    return FileInfo::supportedOfAttributes(type);
 }
 
 QString MasteredMediaFileInfo::viewOfTip(const ViewInfoType type) const
 {
     if (type == ViewType::kEmptyDir)
         return QObject::tr("Folder is empty");
-    return AbstractFileInfo::viewOfTip(type);
+    return FileInfo::viewOfTip(type);
 }
 
 MasteredMediaFileInfoPrivate::MasteredMediaFileInfoPrivate(const QUrl &url, MasteredMediaFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+    : FileInfoPrivate(url, qq)
 {
 }
 
@@ -182,7 +182,7 @@ void MasteredMediaFileInfoPrivate::backupInfo(const QUrl &url)
     } else {
         backerUrl = OpticalHelper::localStagingFile(url);
     }
-    proxy = InfoFactory::create<AbstractFileInfo>(backerUrl);
+    proxy = InfoFactory::create<FileInfo>(backerUrl);
 }
 
 QUrl MasteredMediaFileInfoPrivate::parentUrl() const

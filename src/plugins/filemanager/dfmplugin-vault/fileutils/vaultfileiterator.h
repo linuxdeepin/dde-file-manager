@@ -30,7 +30,7 @@ public:
 
     virtual QUrl fileUrl() const override;
 
-    virtual const AbstractFileInfoPointer fileInfo() const override;
+    virtual const FileInfoPointer fileInfo() const override;
 
     virtual QUrl url() const override;
 

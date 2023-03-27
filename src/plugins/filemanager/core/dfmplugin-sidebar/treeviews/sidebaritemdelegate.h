@@ -7,7 +7,7 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <DStyledItemDelegate>
 
@@ -34,7 +34,7 @@ public:
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 public Q_SLOTS:
-    void onEditorTextChanged(const QString &text, const AbstractFileInfoPointer &info) const;
+    void onEditorTextChanged(const QString &text, const FileInfoPointer &info) const;
 
 private:
     void drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const;

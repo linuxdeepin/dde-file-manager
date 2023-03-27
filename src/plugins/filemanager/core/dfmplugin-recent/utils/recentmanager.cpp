@@ -48,7 +48,7 @@ RecentManager *RecentManager::instance()
     return &instance;
 }
 
-QMap<QUrl, AbstractFileInfoPointer> RecentManager::getRecentNodes() const
+QMap<QUrl, FileInfoPointer> RecentManager::getRecentNodes() const
 {
     return recentNodes;
 }
@@ -211,7 +211,7 @@ void RecentManager::updateRecent()
 void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime)
 {
     if (!recentNodes.contains(url)) {
-        recentNodes[url] = InfoFactory::create<AbstractFileInfo>(url);
+        recentNodes[url] = InfoFactory::create<FileInfo>(url);
         recentOriginPaths[url] = originPath;
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
         if (watcher) {
@@ -295,7 +295,7 @@ bool RecentHelper::openFileLocation(const QUrl &url)
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 
-    const auto &fileInfo { InfoFactory::create<AbstractFileInfo>(localUrl) };
+    const auto &fileInfo { InfoFactory::create<FileInfo>(localUrl) };
     QUrl parentUrl { fileInfo->urlOf(UrlInfoType::kParentUrl) };
     parentUrl.setQuery("selectUrl=" + localUrl.toString());
 
@@ -338,7 +338,7 @@ void RecentHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const Q
 ExpandFieldMap RecentHelper::propetyExtensionFunc(const QUrl &url)
 {
     BasicExpand expand;
-    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+    const auto &info = InfoFactory::create<FileInfo>(url);
     const QString &sourcePath = info->urlOf(UrlInfoType::kRedirectedFileUrl).toLocalFile();
     expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
 

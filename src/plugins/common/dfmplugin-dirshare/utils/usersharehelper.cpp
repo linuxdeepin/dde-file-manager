@@ -263,7 +263,7 @@ UserShareHelper::~UserShareHelper()
 {
 }
 
-bool UserShareHelper::canShare(AbstractFileInfoPointer info)
+bool UserShareHelper::canShare(FileInfoPointer info)
 {
     if (!info || !info->isAttributes(OptInfoType::kIsDir) || !info->isAttributes(OptInfoType::kIsReadable))
         return false;
@@ -277,7 +277,7 @@ bool UserShareHelper::canShare(AbstractFileInfoPointer info)
     return true;
 }
 
-bool UserShareHelper::needDisableShareWidget(AbstractFileInfoPointer info)
+bool UserShareHelper::needDisableShareWidget(FileInfoPointer info)
 {
     return (info && info->extendAttributes(ExtInfoType::kOwnerId).toUInt() != static_cast<uint>(SysInfoUtils::getUserId()) && !SysInfoUtils::isRootUser());
 }

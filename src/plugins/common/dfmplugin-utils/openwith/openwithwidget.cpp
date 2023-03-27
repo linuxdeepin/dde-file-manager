@@ -61,7 +61,7 @@ void OpenWithWidget::openWithBtnChecked(QAbstractButton *btn)
 void OpenWithWidget::slotExpandChange(bool state)
 {
     if (state && currentFileUrl.isValid()) {
-        AbstractFileInfoPointer fileinfo = InfoFactory::create<AbstractFileInfo>(currentFileUrl);
+        FileInfoPointer fileinfo = InfoFactory::create<FileInfo>(currentFileUrl);
         if (fileinfo.isNull())
             return;
 

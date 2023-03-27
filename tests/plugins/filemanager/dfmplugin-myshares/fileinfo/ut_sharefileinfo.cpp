@@ -21,7 +21,7 @@ protected:
     virtual void SetUp() override
     {
         conStub.set_lamda(&ShareFileInfo::setProxy, [] { __DBG_STUB_INVOKE__ });
-        conStub.set_lamda(InfoFactory::create<AbstractFileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
+        conStub.set_lamda(InfoFactory::create<FileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
         typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
         auto pushAddr = static_cast<Push>(&dpf::EventChannelManager::push);
         conStub.set_lamda(pushAddr, [] { __DBG_STUB_INVOKE__ return QVariant(); });

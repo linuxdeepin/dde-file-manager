@@ -40,7 +40,7 @@ void DCustomActionBuilder::setActiveDir(const QUrl &dir)
 {
     dirPath = dir;
     QString errString;
-    auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(dir, true, &errString);
+    auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(dir, true, &errString);
     if (info.isNull()) {
         qDebug() << errString;
         return;
@@ -62,7 +62,7 @@ void DCustomActionBuilder::setFocusFile(const QUrl &file)
 {
     filePath = file;
     QString errString;
-    auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(file, true, &errString);
+    auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, true, &errString);
     if (info.isNull()) {
         qDebug() << errString;
         return;
@@ -127,7 +127,7 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList
         if (file.isEmpty())
             continue;
 
-        auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(file, true, &errString);
+        auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, true, &errString);
         if (info.isNull()) {
             qDebug() << errString;
             continue;
@@ -186,7 +186,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
     for (auto &singleUrl : selects) {
         //协议、后缀
         QString errString;
-        const AbstractFileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(singleUrl, true, &errString);
+        const FileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(singleUrl, true, &errString);
         if (fileInfo.isNull()) {
             qWarning() << "create selected FileInfo failed: " << singleUrl.toString() << errString;
             continue;
@@ -429,7 +429,7 @@ bool DCustomActionBuilder::isSchemeSupport(const DCustomActionEntry &action, con
 bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, const QUrl &url)
 {
     QString errString;
-    const AbstractFileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
+    const FileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, true, &errString);
 
     auto supportList = action.supportStuffix();
     if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || supportList.isEmpty() || supportList.contains("*")) {
@@ -455,7 +455,7 @@ bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, con
     return match;
 }
 
-void DCustomActionBuilder::appendAllMimeTypes(const AbstractFileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes)
+void DCustomActionBuilder::appendAllMimeTypes(const FileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes)
 {
     noParentmimeTypes.append(fileInfo->fileMimeType().name());
     noParentmimeTypes.append(fileInfo->fileMimeType().aliases());

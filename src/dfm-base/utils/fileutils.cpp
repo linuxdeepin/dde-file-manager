@@ -283,8 +283,8 @@ bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const bool infoCa
     if (UniversalUtils::urlEquals(url1, url2))
         return true;
 
-    auto info1 = InfoFactory::create<AbstractFileInfo>(url1, infoCache);
-    auto info2 = InfoFactory::create<AbstractFileInfo>(url2, infoCache);
+    auto info1 = InfoFactory::create<FileInfo>(url1, infoCache);
+    auto info2 = InfoFactory::create<FileInfo>(url2, infoCache);
     if (!info1 || !info2)
         return false;
 
@@ -364,7 +364,7 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 bool FileUtils::trashIsEmpty()
 {
     // not use cache, because some times info unreliable, such as watcher inited temporality
-    auto info = InfoFactory::create<AbstractFileInfo>(trashRootUrl(), false);
+    auto info = InfoFactory::create<FileInfo>(trashRootUrl(), false);
     if (info) {
         return info->countChildFile() == 0;
     }
@@ -444,7 +444,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
     QMap<QUrl, QUrl> result;
 
     for (const auto &url : originUrls) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
         if (!info)
             continue;
@@ -494,7 +494,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
     QMap<QUrl, QUrl> result;
 
     for (auto url : originUrls) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
         if (!info)
             continue;
@@ -558,7 +558,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
 
     bool needRecombination = false;
     for (auto url : originUrls) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
         if (!info)
             continue;
@@ -674,7 +674,7 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
 
 QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)
 {
-    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(fileUrl);
 
     if (info && DFMIO::DFile(fileUrl).exists()) {
         QString baseName = info->displayOf(DisPlayInfoType::kFileDisplayName) == info->nameOf(NameInfoType::kFileName)
@@ -1173,7 +1173,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
     return true;
 }
 
-QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir)
+QString FileUtils::nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer targetDir)
 {
     if (!targetDir || !DFMIO::DFile(targetDir->urlOf(UrlInfoType::kUrl)).exists()) {
         return QString();

@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef ABSTRACTFILEINFO_P_H
-#define ABSTRACTFILEINFO_P_H
+#ifndef FILEINFO_P_H
+#define FILEINFO_P_H
 
 #include "dfm-base/utils/threadcontainer.hpp"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <dfm-io/dfileinfo.h>
 
@@ -15,17 +15,17 @@
 USING_IO_NAMESPACE
 namespace dfmbase {
 
-class AbstractFileInfoPrivate
+class FileInfoPrivate
 {
-    friend class AbstractFileInfo;
+    friend class FileInfo;
 
 public:
     QUrl url;   // 文件的url
-    explicit AbstractFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq);
-    virtual ~AbstractFileInfoPrivate();
+    explicit FileInfoPrivate(const QUrl &url, FileInfo *qq);
+    virtual ~FileInfoPrivate();
 
-    AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
-    AbstractFileInfoPointer proxy { nullptr };
+    FileInfo *const q;   // DAbstractFileInfo实例对象
+    FileInfoPointer proxy { nullptr };
     QMap<ExtInfoType, QVariant> extendOtherCache;
     QString pinyinName;
     QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;
@@ -41,4 +41,4 @@ private:
 
 }
 
-#endif   // ABSTRACTFILEINFO_P_H
+#endif   // FILEINFO_P_H

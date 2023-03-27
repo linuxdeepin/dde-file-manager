@@ -8,7 +8,7 @@
 #include "dfmplugin_fileoperations_global.h"
 #include "workerdata.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
@@ -42,12 +42,12 @@ public:
     void stop();
     void skipMemcpyBigFile(const QUrl url);
     void operateAction(const AbstractJobHandler::SupportAction action);
-    bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo,
+    bool doCopyFilePractically(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                                bool *skip);
-    void doFileCopy(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
-    void readExblockFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    void doFileCopy(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
+    void readExblockFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
     void writeExblockFile();
-    void doMemcpyLocalBigFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, char *dest, char *source, size_t size);
+    void doMemcpyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, char *dest, char *source, size_t size);
 signals:
     void ErrorFinished();
     void CompleteSize(const int size);
@@ -67,30 +67,30 @@ private:   // file copy
                                                            const bool isTo = false,
                                                            const QString &errorMsg = QString());
 
-    void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
-    bool createFileDevices(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    void readAheadSourceFile(const FileInfoPointer &fileInfo);
+    bool createFileDevices(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                            QSharedPointer<DFMIO::DFile> &fromeFile, QSharedPointer<DFMIO::DFile> &toFile,
                            bool *skip);
-    bool createFileDevice(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                          const AbstractFileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
+    bool createFileDevice(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+                          const FileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
                           bool *skip);
-    bool openFiles(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    bool openFiles(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                    const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
                    bool *skip);
-    bool openFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    bool openFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                   const QSharedPointer<DFMIO::DFile> &file, const DFMIO::DFile::OpenFlags &flags,
                   bool *skip);
-    bool resizeTargetFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    bool resizeTargetFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                           const QSharedPointer<DFMIO::DFile> &file, bool *skip);
-    bool doReadFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    bool doReadFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                     const QSharedPointer<DFMIO::DFile> &fromDevice,
                     char *data, const qint64 &blockSize, qint64 &readSize, bool *skip);
-    bool doWriteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    bool doWriteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                      const QSharedPointer<DFMIO::DFile> &toDevice,
                      const char *data, const qint64 readSize, bool *skip);
-    void setTargetPermissions(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
+    void setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo);
     bool verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
-                             const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                             const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                              QSharedPointer<DFMIO::DFile> &toFile);
     void checkRetry();
     bool isStopped();
@@ -101,12 +101,12 @@ private:   // block file copy
     bool writeBlockFile(const BlockFileCopyInfoPointer &info, bool *skip);
     void syncBlockFile(const BlockFileCopyInfoPointer &info, bool doOnce);
     bool doWriteBlockFileCopy(const BlockFileCopyInfoPointer blockFileInfo);
-    int doOpenFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, const bool isTo,
+    int doOpenFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const bool isTo,
                    const int openFlag, bool *skip);
-    BlockFileCopyInfoPointer doReadExBlockFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo,
+    BlockFileCopyInfoPointer doReadExBlockFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                                                const int fd, bool *skip);
-    void createExBlockFileCopyInfo(const AbstractFileInfoPointer fromInfo,
-                                   const AbstractFileInfoPointer toInfo,
+    void createExBlockFileCopyInfo(const FileInfoPointer fromInfo,
+                                   const FileInfoPointer toInfo,
                                    const qint64 currentPos,
                                    const bool closeFlag,
                                    const qint64 size,
