@@ -546,7 +546,7 @@ void FileSortWorker::handleFilterCallFunc(FileViewFilterCallback callback)
     filterAllFilesOrdered();
 }
 
-void FileSortWorker::handleClean()
+void FileSortWorker::handleRefresh()
 {
     bool empty { false };
     {
@@ -572,6 +572,7 @@ void FileSortWorker::handleClean()
 
     if (!empty)
         Q_EMIT removeFinish();
+    Q_EMIT requestFetchMore();
 }
 
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)

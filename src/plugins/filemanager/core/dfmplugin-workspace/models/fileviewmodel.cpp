@@ -287,8 +287,7 @@ void FileViewModel::refresh()
 {
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey, true);
 
-    canFetchFiles = true;
-    fetchMore(rootIndex());
+    Q_EMIT requestRefreshAllChildren();
 }
 
 ModelState FileViewModel::currentState() const
@@ -306,7 +305,6 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         return;
     }
     canFetchFiles = false;
-    Q_EMIT requestClearAllChildren();
 
     bool ret { false };
     if (filterSortWorker.isNull()) {
@@ -665,6 +663,7 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::insertFinish, this, &FileViewModel::onInsertFinish, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeRows, this, &FileViewModel::onRemove, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeFinish, this, &FileViewModel::onRemoveFinish, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() { canFetchFiles = true; fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() { this->changeState(ModelState::kIdle); }, Qt::QueuedConnection);
@@ -676,7 +675,7 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestSetFilterData, filterSortWorker.data(), &FileSortWorker::handleFilterData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
-    connect(this, &FileViewModel::requestClearAllChildren, filterSortWorker.data(), &FileSortWorker::handleClean, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 
