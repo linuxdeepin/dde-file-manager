@@ -82,7 +82,17 @@ void computer_sidebar_event_calls::callItemRemove(const QUrl &vEntryUrl)
 void computer_sidebar_event_calls::callComputerRefresh()
 {
     // remove all virtual entry from sidebar.
-    const QStringList &allStdSmbs = VirtualEntryDbHandler::instance()->allSmbIDs();
+    QStringList allStdSmbs = VirtualEntryDbHandler::instance()->allSmbIDs();
+
+    const QStringList &allMounted = protocol_display_utilities::getStandardSmbPaths(protocol_display_utilities::getMountedSmb());
+    for (const auto &mounted : allMounted) {
+        if (!allStdSmbs.contains(mounted))
+            allStdSmbs.append(mounted);
+        auto host = protocol_display_utilities::getSmbHostPath(mounted);
+        if (!allStdSmbs.contains(host))
+            allStdSmbs.append(host);
+    }
+
     std::for_each(allStdSmbs.cbegin(), allStdSmbs.cend(), [=](const QString &smb) {
         dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, QUrl(smb));
     });
