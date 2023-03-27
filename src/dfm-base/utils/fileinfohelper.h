@@ -16,6 +16,7 @@
 #include <QThread>
 #include <QVariant>
 #include <QMimeDatabase>
+#include <QThreadPool>
 
 namespace dfmbase {
 class FileInfoHelper : public QObject

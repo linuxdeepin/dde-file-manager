@@ -15,7 +15,7 @@
 
 class QUrl;
 namespace dfmbase {
-class LocalFileInfo;
+class SyncFileInfo;
 class LocalDirIteratorPrivate;
 
 class LocalDirIterator : public AbstractDirIterator

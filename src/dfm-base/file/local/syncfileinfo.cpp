@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "localfileinfo.h"
-#include "private/localfileinfo_p.h"
+#include "syncfileinfo.h"
+#include "private/syncfileinfo_p.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/standardpaths.h"
@@ -37,21 +37,21 @@
  */
 namespace dfmbase {
 
-LocalFileInfo::LocalFileInfo(const QUrl &url)
-    : FileInfo(url), d(new LocalFileInfoPrivate(url, this))
+SyncFileInfo::SyncFileInfo(const QUrl &url)
+    : FileInfo(url), d(new SyncFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     init(url);
 }
 
-LocalFileInfo::LocalFileInfo(const QUrl &url, QSharedPointer<DFileInfo> dfileInfo)
-    : FileInfo(url), d(new LocalFileInfoPrivate(url, this))
+SyncFileInfo::SyncFileInfo(const QUrl &url, QSharedPointer<DFileInfo> dfileInfo)
+    : FileInfo(url), d(new SyncFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     init(url, dfileInfo);
 }
 
-LocalFileInfo::~LocalFileInfo()
+SyncFileInfo::~SyncFileInfo()
 {
     d = nullptr;
 }
@@ -63,7 +63,7 @@ LocalFileInfo::~LocalFileInfo()
  *
  * \return bool 传入的DAbstractFileInfo实例对象和自己是否相等
  */
-bool LocalFileInfo::operator==(const LocalFileInfo &fileinfo) const
+bool SyncFileInfo::operator==(const SyncFileInfo &fileinfo) const
 {
     return d->dfmFileInfo == fileinfo.d->dfmFileInfo && d->url == fileinfo.d->url;
 }
@@ -74,19 +74,19 @@ bool LocalFileInfo::operator==(const LocalFileInfo &fileinfo) const
  *
  * \return bool 传入的LocalFileInfo实例对象和自己是否不相等
  */
-bool LocalFileInfo::operator!=(const LocalFileInfo &fileinfo) const
+bool SyncFileInfo::operator!=(const SyncFileInfo &fileinfo) const
 {
     return !(operator==(fileinfo));
 }
 
-bool LocalFileInfo::initQuerier()
+bool SyncFileInfo::initQuerier()
 {
     if (d->dfmFileInfo)
         return d->dfmFileInfo->initQuerier();
     return false;
 }
 
-void LocalFileInfo::initQuerierAsync(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)
+void SyncFileInfo::initQuerierAsync(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)
 {
     if (d->dfmFileInfo)
         d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
@@ -98,7 +98,7 @@ void LocalFileInfo::initQuerierAsync(int ioPriority, FileInfo::initQuerierAsyncC
  *
  * \return 返回文件是否存在
  */
-bool LocalFileInfo::exists() const
+bool SyncFileInfo::exists() const
 {
     return DFMIO::DFile(d->url.path()).exists();
 }
@@ -109,14 +109,10 @@ bool LocalFileInfo::exists() const
  *
  * \return
  */
-void LocalFileInfo::refresh()
+void SyncFileInfo::refresh()
 {
     QWriteLocker locker(&d->lock);
-    if (FileUtils::isGvfsFile(d->url)) {
-        FileInfoHelper::instance().fileRefreshAsync(d->url, d->dfmFileInfo);
-    } else {
-        d->dfmFileInfo->refresh();
-    }
+    d->dfmFileInfo->refresh();
     d->fileCountFuture.reset(nullptr);
     d->fileMimeTypeFuture.reset(nullptr);
     d->iconFuture.reset(nullptr);
@@ -136,13 +132,13 @@ void LocalFileInfo::refresh()
     d->clearIcon();
 }
 
-void LocalFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
+void SyncFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
 {
     QWriteLocker locker(&d->lock);
     d->cacheAttributes.insert(id, value);
 }
 
-QString LocalFileInfo::nameOf(const NameInfoType type) const
+QString SyncFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case FileNameInfoType::kFileName:
@@ -162,7 +158,7 @@ QString LocalFileInfo::nameOf(const NameInfoType type) const
     case FileNameInfoType::kIconName:
         return d->iconName();
     case FileNameInfoType::kGenericIconName:
-        return const_cast<LocalFileInfo *>(this)->fileMimeType().genericIconName();
+        return const_cast<SyncFileInfo *>(this)->fileMimeType().genericIconName();
     case FileNameInfoType::kMimeTypeName:
         return d->mimeTypeName();
     default:
@@ -174,7 +170,7 @@ QString LocalFileInfo::nameOf(const NameInfoType type) const
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString LocalFileInfo::pathOf(const PathInfoType type) const
+QString SyncFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kFilePath:
@@ -198,7 +194,7 @@ QString LocalFileInfo::pathOf(const PathInfoType type) const
  * 处理或者字符串处理，这都比较快
  * \param FileUrlInfoType
  */
-QUrl LocalFileInfo::urlOf(const UrlInfoType type) const
+QUrl SyncFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
@@ -208,7 +204,7 @@ QUrl LocalFileInfo::urlOf(const UrlInfoType type) const
     }
 }
 
-bool LocalFileInfo::isAttributes(const OptInfoType type) const
+bool SyncFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsFile:
@@ -236,7 +232,7 @@ bool LocalFileInfo::isAttributes(const OptInfoType type) const
     }
 }
 
-bool LocalFileInfo::canAttributes(const CanableInfoType type) const
+bool SyncFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanDelete:
@@ -254,7 +250,7 @@ bool LocalFileInfo::canAttributes(const CanableInfoType type) const
     }
 }
 
-QVariant LocalFileInfo::extendAttributes(const ExtInfoType type) const
+QVariant SyncFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kFileLocalDevice:
@@ -293,7 +289,7 @@ QVariant LocalFileInfo::extendAttributes(const ExtInfoType type) const
  *
  * \return bool 是否有传入的权限
  */
-bool LocalFileInfo::permission(QFileDevice::Permissions permissions) const
+bool SyncFileInfo::permission(QFileDevice::Permissions permissions) const
 {
     return this->permissions() & permissions;
 }
@@ -304,7 +300,7 @@ bool LocalFileInfo::permission(QFileDevice::Permissions permissions) const
  *
  * \return QFile::Permissions 文件的全部权限
  */
-QFileDevice::Permissions LocalFileInfo::permissions() const
+QFileDevice::Permissions SyncFileInfo::permissions() const
 {
     QFileDevice::Permissions ps;
 
@@ -326,7 +322,7 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
  *
  * \return qint64 文件的大小
  */
-qint64 LocalFileInfo::size() const
+qint64 SyncFileInfo::size() const
 {
     return d->attribute(DFileInfo::AttributeID::kStandardSize).value<qint64>();
 }
@@ -335,7 +331,7 @@ qint64 LocalFileInfo::size() const
  *
  * \return QVariant 普通的返回QDateTime, second和msecond返回qint64
  */
-QVariant LocalFileInfo::timeOf(const TimeInfoType type) const
+QVariant SyncFileInfo::timeOf(const TimeInfoType type) const
 {
     qint64 data { 0 };
     if (type < FileTimeType::kDeletionTimeMSecond)
@@ -382,7 +378,7 @@ QVariant LocalFileInfo::timeOf(const TimeInfoType type) const
  *
  * \return DMimeDatabase::FileType 文件设备类型
  */
-LocalFileInfo::FileType LocalFileInfo::fileType() const
+SyncFileInfo::FileType SyncFileInfo::fileType() const
 {
     FileType fileType { FileType::kUnknown };
     {
@@ -432,12 +428,12 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
  *
  * \return int 子文件个数
  */
-int LocalFileInfo::countChildFile() const
+int SyncFileInfo::countChildFile() const
 {
     return isAttributes(FileIsType::kIsDir) ? FileUtils::dirFfileCount(d->url) : -1;
 }
 
-int LocalFileInfo::countChildFileAsync() const
+int SyncFileInfo::countChildFileAsync() const
 {
     if (isAttributes(FileIsType::kIsDir)) {
         QReadLocker locker(&d->lock);
@@ -453,7 +449,7 @@ int LocalFileInfo::countChildFileAsync() const
     return -1;
 }
 
-QString LocalFileInfo::displayOf(const DisPlayInfoType type) const
+QString SyncFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (type == DisPlayInfoType::kFileDisplayName)
         return d->fileDisplayName();
@@ -465,12 +461,12 @@ QString LocalFileInfo::displayOf(const DisPlayInfoType type) const
  *
  * \return QVariantHash 文件的扩展属性Hash
  */
-QVariantHash LocalFileInfo::extraProperties() const
+QVariantHash SyncFileInfo::extraProperties() const
 {
     return d->extraProperties;
 }
 
-QIcon LocalFileInfo::fileIcon()
+QIcon SyncFileInfo::fileIcon()
 {
     const QUrl &fileUrl = d->url;
 
@@ -514,7 +510,7 @@ QIcon LocalFileInfo::fileIcon()
     return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
 }
 
-QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
+QMimeType SyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
     const QUrl &url = d->url;
     QMimeType type;
@@ -535,7 +531,7 @@ QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDat
     return type;
 }
 
-QMimeType LocalFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
+QMimeType SyncFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
 {
     QMimeType type;
     QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
@@ -558,7 +554,7 @@ QMimeType LocalFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
     return type;
 }
 
-QString LocalFileInfo::viewOfTip(const ViewType type) const
+QString SyncFileInfo::viewOfTip(const ViewType type) const
 {
     if (type == ViewType::kEmptyDir) {
         if (!exists()) {
@@ -574,7 +570,7 @@ QString LocalFileInfo::viewOfTip(const ViewType type) const
     return FileInfo::viewOfTip(type);
 }
 
-QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
+QVariant SyncFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
 {
     if (d->dfmFileInfo) {
         QReadLocker locker(&d->lock);
@@ -583,12 +579,12 @@ QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileA
     return QVariant();
 }
 
-QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
+QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> SyncFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
     return d->mediaInfo(type, ids);
 }
 
-void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value)
+void SyncFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value)
 {
     QWriteLocker locker(&d->lock);
     switch (key) {
@@ -609,7 +605,7 @@ void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const
     }
 }
 
-void LocalFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
+void SyncFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
 {
     d->mimeTypeMode = QMimeDatabase::MatchDefault;
     if (url.isEmpty()) {
@@ -642,7 +638,7 @@ void LocalFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfile
     }
 }
 
-QMimeType LocalFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
+QMimeType SyncFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
 {
     static DFMBASE_NAMESPACE::DMimeDatabase db;
     if (isGvfs) {
@@ -651,7 +647,7 @@ QMimeType LocalFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchM
     return db.mimeTypeForFile(this->sharedFromThis(), mode);
 }
 
-QIcon LocalFileInfoPrivate::thumbIcon()
+QIcon SyncFileInfoPrivate::thumbIcon()
 {
     QIcon icon;
     {   // if already loaded thumb just return it.
@@ -693,12 +689,12 @@ QIcon LocalFileInfoPrivate::thumbIcon()
     return defaultIcon();
 }
 
-QIcon LocalFileInfoPrivate::defaultIcon()
+QIcon SyncFileInfoPrivate::defaultIcon()
 {
     QIcon icon;
     {
         QReadLocker rlk(&iconLock);
-        icon = icons.value(LocalFileInfoPrivate::kDefaultIcon);
+        icon = icons.value(SyncFileInfoPrivate::kDefaultIcon);
     }
 
     if (!icon.isNull())
@@ -716,7 +712,7 @@ QIcon LocalFileInfoPrivate::defaultIcon()
 
     {
         QWriteLocker wlk(&iconLock);
-        icons.insert(LocalFileInfoPrivate::kDefaultIcon, icon);
+        icons.insert(SyncFileInfoPrivate::kDefaultIcon, icon);
     }
 
     return icon;
@@ -732,7 +728,7 @@ QIcon LocalFileInfoPrivate::defaultIcon()
  *
  * \return
  */
-QString LocalFileInfoPrivate::fileName() const
+QString SyncFileInfoPrivate::fileName() const
 {
     QString fileName = this->attribute(DFileInfo::AttributeID::kStandardName).toString();
     if (fileName == R"(/)" && FileUtils::isGvfsFile(url))
@@ -750,7 +746,7 @@ QString LocalFileInfoPrivate::fileName() const
  *
  * \return
  */
-QString LocalFileInfoPrivate::baseName() const
+QString SyncFileInfoPrivate::baseName() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardBaseName).toString();
 }
@@ -765,7 +761,7 @@ QString LocalFileInfoPrivate::baseName() const
  *
  * \return
  */
-QString LocalFileInfoPrivate::completeBaseName() const
+QString SyncFileInfoPrivate::completeBaseName() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardCompleteBaseName).toString();
 }
@@ -780,7 +776,7 @@ QString LocalFileInfoPrivate::completeBaseName() const
  *
  * \return
  */
-QString LocalFileInfoPrivate::suffix() const
+QString SyncFileInfoPrivate::suffix() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardSuffix).toString();
 }
@@ -795,12 +791,12 @@ QString LocalFileInfoPrivate::suffix() const
  *
  * \return
  */
-QString LocalFileInfoPrivate::completeSuffix() const
+QString SyncFileInfoPrivate::completeSuffix() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardCompleteSuffix).toString();
 }
 
-QString LocalFileInfoPrivate::iconName() const
+QString SyncFileInfoPrivate::iconName() const
 {
     QString iconNameValue;
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
@@ -818,7 +814,7 @@ QString LocalFileInfoPrivate::iconName() const
     return iconNameValue;
 }
 
-QString LocalFileInfoPrivate::mimeTypeName() const
+QString SyncFileInfoPrivate::mimeTypeName() const
 {
     // At present, there is no dfmio library code. For temporary repair
     // local file use the method on v20 to obtain mimeType
@@ -833,7 +829,7 @@ QString LocalFileInfoPrivate::mimeTypeName() const
  *
  * \return QString 文件的显示名称
  */
-QString LocalFileInfoPrivate::fileDisplayName() const
+QString SyncFileInfoPrivate::fileDisplayName() const
 {
     QString &&path { filePath() };
     if (SystemPathUtil::instance()->isSystemPath(path)) {
@@ -860,7 +856,7 @@ QString LocalFileInfoPrivate::fileDisplayName() const
  *
  * \return
  */
-QString LocalFileInfoPrivate::path() const
+QString SyncFileInfoPrivate::path() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardParentPath).toString();
 }
@@ -876,7 +872,7 @@ QString LocalFileInfoPrivate::path() const
  *
  * \return
  */
-QString LocalFileInfoPrivate::filePath() const
+QString SyncFileInfoPrivate::filePath() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardFilePath).toString();
 }
@@ -896,7 +892,7 @@ QString LocalFileInfoPrivate::filePath() const
  *
  * \return QString 链接目标文件的路径
  */
-QString LocalFileInfoPrivate::symLinkTarget() const
+QString SyncFileInfoPrivate::symLinkTarget() const
 {
     QString symLinkTarget;
 
@@ -914,7 +910,7 @@ QString LocalFileInfoPrivate::symLinkTarget() const
     return symLinkTarget;
 }
 
-QUrl LocalFileInfoPrivate::redirectedFileUrl() const
+QUrl SyncFileInfoPrivate::redirectedFileUrl() const
 {
     if (q->isAttributes(OptInfoType::kIsSymLink))
         return QUrl::fromLocalFile(symLinkTarget());
@@ -928,7 +924,7 @@ QUrl LocalFileInfoPrivate::redirectedFileUrl() const
  *
  * \return bool 返回文件是否可执行
  */
-bool LocalFileInfoPrivate::isExecutable() const
+bool SyncFileInfoPrivate::isExecutable() const
 {
     bool isExecutable = false;
     bool success = false;
@@ -957,18 +953,18 @@ bool LocalFileInfoPrivate::isExecutable() const
     return isExecutable;
 }
 
-bool LocalFileInfoPrivate::isPrivate() const
+bool SyncFileInfoPrivate::isPrivate() const
 {
-    const QString &path = const_cast<LocalFileInfoPrivate *>(this)->path();
+    const QString &path = const_cast<SyncFileInfoPrivate *>(this)->path();
     const QString &name = fileName();
 
     static DFMBASE_NAMESPACE::Match match("PrivateFiles");
 
-    QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+    QReadLocker locker(&const_cast<SyncFileInfoPrivate *>(this)->lock);
     return match.match(path, name);
 }
 
-bool LocalFileInfoPrivate::canDelete() const
+bool SyncFileInfoPrivate::canDelete() const
 {
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
         return false;
@@ -980,7 +976,7 @@ bool LocalFileInfoPrivate::canDelete() const
     return canDelete;
 }
 
-bool LocalFileInfoPrivate::canTrash() const
+bool SyncFileInfoPrivate::canTrash() const
 {
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
         return false;
@@ -992,7 +988,7 @@ bool LocalFileInfoPrivate::canTrash() const
     return canTrash;
 }
 
-bool LocalFileInfoPrivate::canRename() const
+bool SyncFileInfoPrivate::canRename() const
 {
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
         return false;
@@ -1005,7 +1001,7 @@ bool LocalFileInfoPrivate::canRename() const
     return canRename;
 }
 
-bool LocalFileInfoPrivate::canFetch() const
+bool SyncFileInfoPrivate::canFetch() const
 {
     if (isPrivate())
         return false;
@@ -1022,7 +1018,7 @@ bool LocalFileInfoPrivate::canFetch() const
  * \brief sizeFormat 格式化大小
  * \return QString 大小格式化后的大小
  */
-QString LocalFileInfoPrivate::sizeFormat() const
+QString SyncFileInfoPrivate::sizeFormat() const
 {
     if (q->isAttributes(OptInfoType::kIsDir)) {
         return QStringLiteral("-");
@@ -1031,11 +1027,11 @@ QString LocalFileInfoPrivate::sizeFormat() const
     return FileUtils::formatSize(q->size());
 }
 
-QVariant LocalFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
+QVariant SyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
     if (dfmFileInfo) {
         {
-            QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+            QReadLocker locker(&const_cast<SyncFileInfoPrivate *>(this)->lock);
             if (cacheAttributes.count(key) > 0) {
                 if (ok)
                     *ok = true;
@@ -1049,7 +1045,7 @@ QVariant LocalFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) c
     return QVariant();
 }
 
-QMap<DFileInfo::AttributeExtendID, QVariant> LocalFileInfoPrivate::mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids)
+QMap<DFileInfo::AttributeExtendID, QVariant> SyncFileInfoPrivate::mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids)
 {
     if (dfmFileInfo) {
         extendIDs = ids;
@@ -1073,7 +1069,7 @@ QMap<DFileInfo::AttributeExtendID, QVariant> LocalFileInfoPrivate::mediaInfo(DFi
     return attributesExtend;
 }
 
-bool LocalFileInfoPrivate::canThumb() const
+bool SyncFileInfoPrivate::canThumb() const
 {
     return !loadingThumbnail
             || (iconFuture && iconFuture->finish && iconFuture->data.toString().isEmpty());

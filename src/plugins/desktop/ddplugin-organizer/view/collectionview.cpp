@@ -441,7 +441,7 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     }
 
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(targetUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<SyncFileInfo>(targetUrl, true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qWarning() << "create LocalFileInfo error: " << errString << targetUrl;
         return;
@@ -617,7 +617,7 @@ void CollectionViewPrivate::clearClipBoard()
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     if (!urls.isEmpty()) {
         QString errString;
-        auto itemInfo = InfoFactory::create<LocalFileInfo>(urls.first(), true, &errString);
+        auto itemInfo = InfoFactory::create<SyncFileInfo>(urls.first(), true, &errString);
         if (Q_UNLIKELY(!itemInfo)) {
             qInfo() << "create LocalFileInfo error: " << errString << urls.first();
             return;
@@ -679,7 +679,7 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
         if (index.isValid()) {
             QUrl targetItem = q->model()->fileUrl(index);
             QString errString;
-            auto itemInfo = InfoFactory::create<LocalFileInfo>(targetItem, true, &errString);
+            auto itemInfo = InfoFactory::create<SyncFileInfo>(targetItem, true, &errString);
             if (Q_UNLIKELY(!itemInfo)) {
                 qWarning() << "create LocalFileInfo error: " << errString << targetItem;
                 return false;
@@ -813,7 +813,7 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     }
 
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(firstUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<SyncFileInfo>(firstUrl, true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qWarning() << "create LocalFileInfo error: " << errString << firstUrl;
         return false;
@@ -1510,8 +1510,8 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     if (!leftIdx.isValid() || !rightIdx.isValid())
         return false;
 
-    DFMLocalFileInfoPointer leftInfo = m->fileInfo(leftIdx);
-    DFMLocalFileInfoPointer rightInfo = m->fileInfo(rightIdx);
+    DFMSyncFileInfoPointer leftInfo = m->fileInfo(leftIdx);
+    DFMSyncFileInfoPointer rightInfo = m->fileInfo(rightIdx);
 
     // The folder is fixed in the front position
     if (leftInfo->isAttributes(OptInfoType::kIsDir)) {

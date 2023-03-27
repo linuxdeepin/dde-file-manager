@@ -7,7 +7,7 @@
 
 #include "collectionmodel.h"
 
-#include <dfm-base/file/local/localfileinfo.h>
+#include <dfm-base/file/local/syncfileinfo.h>
 
 #include <QTimer>
 
@@ -43,7 +43,7 @@ public:
     FileInfoModelShell *shell = nullptr;
     ModelDataHandler *handler = nullptr;
     QList<QUrl> fileList;
-    QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
+    QMap<QUrl, DFMSyncFileInfoPointer> fileMap;
     QSharedPointer<QTimer> refreshTimer;
     QUrl waitForRenameFile;
 

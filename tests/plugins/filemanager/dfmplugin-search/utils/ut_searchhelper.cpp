@@ -6,7 +6,7 @@
 #include "topwidget/advancesearchbar.h"
 #include "stubext.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/event/event.h>

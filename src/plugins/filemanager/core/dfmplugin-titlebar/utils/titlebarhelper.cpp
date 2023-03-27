@@ -12,7 +12,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -164,7 +164,7 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
         if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
             QString displayText = oneUrl.fileName();
             // Check for possible display text.
-            auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(oneUrl);
+            auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::SyncFileInfo>(oneUrl);
             if (infoPointer) {
                 const QString &displayName = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
                 if (!displayName.isEmpty())

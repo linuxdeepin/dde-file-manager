@@ -11,7 +11,7 @@
 #include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/windowutils.h"
@@ -368,7 +368,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
     bool isLocalFile = dfmbase::FileUtils::isLocalFile(urlList.first());
     if (isLocalFile) {
         if (urlList.size() == 1) {
-            LocalFileInfo f(urlList.first());
+            SyncFileInfo f(urlList.first());
             fileName = f.displayOf(DisPlayInfoType::kFileDisplayName);
         } else {
             title = DeleteFileItems.arg(urlList.size());

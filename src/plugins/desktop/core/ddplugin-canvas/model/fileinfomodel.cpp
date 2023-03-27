@@ -35,7 +35,7 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
 {
     qDebug() << "to reset file, count:" << urls.size();
     QList<QUrl> fileUrls;
-    QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
+    QMap<QUrl, DFMSyncFileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
             fileUrls.append(itemInfo->urlOf(UrlInfoType::kUrl));
@@ -259,7 +259,7 @@ QModelIndex FileInfoModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMLocalFileInfoPointer FileInfoModel::fileInfo(const QModelIndex &index) const
+DFMSyncFileInfoPointer FileInfoModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return FileCreator->createFileInfo(rootUrl());

@@ -11,7 +11,7 @@
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/utils/sysinfoutils.h"
 
 #include "stubext.h"
@@ -147,8 +147,8 @@ TEST(SearchMenuSceneTest, ut_updateState)
 TEST(SearchMenuSceneTest, ut_triggered)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    QSharedPointer<LocalFileInfo> info(new LocalFileInfo(QUrl::fromLocalFile("/home")));
+    st.set_lamda(&SyncFileInfo::init, [] {});
+    QSharedPointer<SyncFileInfo> info(new SyncFileInfo(QUrl::fromLocalFile("/home")));
     st.set_lamda(&InfoFactory::create<FileInfo>, [&info] { return info; });
     st.set_lamda(&SearchMenuScenePrivate::openFileLocation, [] { return true; });
 

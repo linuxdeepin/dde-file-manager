@@ -5,7 +5,7 @@
 #ifndef DESKTOPFILEINFO_H
 #define DESKTOPFILEINFO_H
 
-#include "localfileinfo.h"
+#include "syncfileinfo.h"
 
 #include <QUrl>
 #include <QObject>
@@ -13,7 +13,7 @@
 namespace dfmbase {
 
 class DesktopFileInfoPrivate;
-class DesktopFileInfo : public LocalFileInfo
+class DesktopFileInfo : public SyncFileInfo
 {
 public:
     explicit DesktopFileInfo(const QUrl &fileUrl);

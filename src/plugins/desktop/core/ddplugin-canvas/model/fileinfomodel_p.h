@@ -34,7 +34,7 @@ public:
     ModelState modelState = NullState;
     FileProvider *fileProvider = nullptr;
     QList<QUrl> fileList;
-    QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
+    QMap<QUrl, DFMSyncFileInfoPointer> fileMap;
     QReadWriteLock lock;
 private:
     FileInfoModel *q = nullptr;

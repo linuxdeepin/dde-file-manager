@@ -7,7 +7,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 
@@ -27,7 +27,7 @@ void Core::initialize()
     // 注册路由
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+    InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
 }

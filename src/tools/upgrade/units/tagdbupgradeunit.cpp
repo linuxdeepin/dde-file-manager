@@ -9,7 +9,7 @@
 #include "beans/oldtagproperty.h"
 #include "beans/sqlitemaster.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/db/sqliteconnectionpool.h"

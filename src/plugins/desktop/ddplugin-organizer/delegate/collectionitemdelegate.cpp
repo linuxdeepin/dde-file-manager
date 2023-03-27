@@ -388,7 +388,7 @@ bool CollectionItemDelegate::isTransparent(const QModelIndex &index) const
 {
     // in cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
-        DFMLocalFileInfoPointer file = parent()->model()->fileInfo(index);
+        DFMSyncFileInfoPointer file = parent()->model()->fileInfo(index);
         if (!file.get())
             return false;
 

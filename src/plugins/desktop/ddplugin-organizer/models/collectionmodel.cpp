@@ -89,7 +89,7 @@ void CollectionModelPrivate::createMapping()
     }
 
     fileList = handler->acceptReset(shell->files());
-    QMap<QUrl, DFMLocalFileInfoPointer> maps;
+    QMap<QUrl, DFMSyncFileInfoPointer> maps;
     for (const QUrl &url : fileList)
         maps.insert(url, shell->fileInfo(shell->index(url)));
 
@@ -342,7 +342,7 @@ QModelIndex CollectionModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMLocalFileInfoPointer CollectionModel::fileInfo(const QModelIndex &index) const
+DFMSyncFileInfoPointer CollectionModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return d->shell->fileInfo(index);
@@ -529,7 +529,7 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     }
 
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(targetFileUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<SyncFileInfo>(targetFileUrl, true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "create LocalFileInfo error: " << errString << targetFileUrl;
         return false;

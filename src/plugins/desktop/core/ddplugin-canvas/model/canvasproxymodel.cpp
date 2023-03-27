@@ -275,8 +275,8 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     if (!leftIdx.isValid() || !rightIdx.isValid())
         return false;
 
-    DFMLocalFileInfoPointer leftInfo = fileMap.value(left);
-    DFMLocalFileInfoPointer rightInfo = fileMap.value(right);
+    DFMSyncFileInfoPointer leftInfo = fileMap.value(left);
+    DFMSyncFileInfoPointer rightInfo = fileMap.value(right);
 
     // The folder is fixed in the front position
     if (isNotMixDirAndFile) {
@@ -349,7 +349,7 @@ void CanvasProxyModelPrivate::createMapping()
     resetFilter(urls);
 
     // sort
-    QMap<QUrl, DFMLocalFileInfoPointer> maps;
+    QMap<QUrl, DFMSyncFileInfoPointer> maps;
     for (const QUrl &url : urls)
         maps.insert(url, srcModel->fileInfo(srcModel->index(url)));
 
@@ -482,7 +482,7 @@ QModelIndex CanvasProxyModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMLocalFileInfoPointer CanvasProxyModel::fileInfo(const QModelIndex &index) const
+DFMSyncFileInfoPointer CanvasProxyModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return d->srcModel->fileInfo(mapToSource(index));
@@ -791,7 +791,7 @@ bool CanvasProxyModel::sort()
     if (d->fileList.isEmpty())
         return true;
 
-    QMap<QUrl, DFMLocalFileInfoPointer> tempFileMap;
+    QMap<QUrl, DFMSyncFileInfoPointer> tempFileMap;
     QList<QUrl> orderFiles = d->fileList;
     if (!d->doSort(orderFiles))
         return false;

@@ -70,10 +70,10 @@ QModelIndex FileInfoModelShell::index(const QUrl &url, int column) const
     return ret.toModelIndex();
 }
 
-DFMLocalFileInfoPointer FileInfoModelShell::fileInfo(const QModelIndex &index) const
+DFMSyncFileInfoPointer FileInfoModelShell::fileInfo(const QModelIndex &index) const
 {
     QVariant ret = FileInfoModelPush2(slot_FileInfoModel_FileInfo, index);
-    return ret.value<DFMLocalFileInfoPointer>();
+    return ret.value<DFMSyncFileInfoPointer>();
 }
 
 QUrl FileInfoModelShell::fileUrl(const QModelIndex &index) const

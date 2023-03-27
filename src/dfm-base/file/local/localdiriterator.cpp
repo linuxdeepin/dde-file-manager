@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfm-base/file/local/private/localdiriterator_p.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -40,7 +40,7 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo()
 {
     auto fileinfo = dfmioDirIterator->fileInfo();
     auto url = dfmioDirIterator->next();
-    QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(url, fileinfo));
+    QSharedPointer<SyncFileInfo> info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url, fileinfo));
     auto infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
 
     const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();

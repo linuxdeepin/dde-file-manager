@@ -68,7 +68,7 @@ public:
 }
 
 DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl)
-    : LocalFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
+    : SyncFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
 {
 }
 
@@ -166,7 +166,7 @@ QIcon DesktopFileInfo::fileIcon()
     d->icon = QIcon::fromTheme(iconName);   // todo(lxs) LocalFileInfo::fileIcon() 统一处理
 
     if (d->icon.isNull())
-        return LocalFileInfo::fileIcon();
+        return SyncFileInfo::fileIcon();
 
     return d->icon;
 }
@@ -181,13 +181,13 @@ QString DesktopFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kSuffixOfRename:
         return QString();
     case NameInfoType::kFileCopyName:
-        return LocalFileInfo::nameOf(NameInfoType::kFileName);
+        return SyncFileInfo::nameOf(NameInfoType::kFileName);
     case NameInfoType::kIconName:
         return desktopIconName();
     case NameInfoType::kGenericIconName:
         return QStringLiteral("application-default-icon");
     default:
-        return LocalFileInfo::nameOf(type);
+        return SyncFileInfo::nameOf(type);
     }
 }
 
@@ -196,12 +196,12 @@ QString DesktopFileInfo::displayOf(const DisPlayInfoType type) const
     if (type == DisPlayInfoType::kFileDisplayName && !desktopName().isEmpty())
         return desktopName();
 
-    return LocalFileInfo::displayOf(type);
+    return SyncFileInfo::displayOf(type);
 }
 
 void DesktopFileInfo::refresh()
 {
-    LocalFileInfo::refresh();
+    SyncFileInfo::refresh();
     d->updateInfo(urlOf(UrlInfoType::kUrl));
 }
 
@@ -211,7 +211,7 @@ Qt::DropActions DesktopFileInfo::supportedOfAttributes(const SupportType type) c
         return Qt::IgnoreAction;
     }
 
-    return LocalFileInfo::supportedOfAttributes(type);
+    return SyncFileInfo::supportedOfAttributes(type);
 }
 
 bool DesktopFileInfo::canTag() const
@@ -243,9 +243,9 @@ bool DesktopFileInfo::canAttributes(const CanableInfoType type) const
         if (d->deepinID == "dde-computer")
             return false;
 
-        return LocalFileInfo::canAttributes(type);
+        return SyncFileInfo::canAttributes(type);
     default:
-        return LocalFileInfo::canAttributes(type);
+        return SyncFileInfo::canAttributes(type);
     }
 }
 

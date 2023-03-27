@@ -14,10 +14,10 @@
 
 namespace dfmbase {
 
-class LocalFileInfoPrivate;
-class LocalFileInfo : public FileInfo
+class SyncFileInfoPrivate;
+class SyncFileInfo : public FileInfo
 {
-    LocalFileInfoPrivate *d = nullptr;
+    SyncFileInfoPrivate *d = nullptr;
 
 public:
     enum FlagIcon {
@@ -27,11 +27,11 @@ public:
     };
     Q_ENUMS(FlagIcon)
 
-    explicit LocalFileInfo(const QUrl &url);
-    LocalFileInfo(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo);
-    virtual ~LocalFileInfo() override;
-    virtual bool operator==(const LocalFileInfo &fileinfo) const;
-    virtual bool operator!=(const LocalFileInfo &fileinfo) const;
+    explicit SyncFileInfo(const QUrl &url);
+    SyncFileInfo(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo);
+    virtual ~SyncFileInfo() override;
+    virtual bool operator==(const SyncFileInfo &fileinfo) const;
+    virtual bool operator!=(const SyncFileInfo &fileinfo) const;
     virtual bool initQuerier() override;
     virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr) override;
     virtual bool exists() const override;
@@ -68,7 +68,7 @@ private:
     QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString &inod = QString(), const bool isGvfs = false);
 };
 }
-typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;
-Q_DECLARE_METATYPE(DFMLocalFileInfoPointer)
+typedef QSharedPointer<DFMBASE_NAMESPACE::SyncFileInfo> DFMSyncFileInfoPointer;
+Q_DECLARE_METATYPE(DFMSyncFileInfoPointer)
 
 #endif   // LOCALFILEINFO_H

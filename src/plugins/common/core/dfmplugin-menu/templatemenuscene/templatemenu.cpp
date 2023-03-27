@@ -6,7 +6,7 @@
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -89,7 +89,7 @@ void TemplateMenuPrivate::createActionByDesktopFile(const QDir &dir, const QStri
     const QString &entryText = desktopFile.localizedValue("Name");
 
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(QUrl::fromLocalFile(entrySourcePath), true, &errString);
+    auto itemInfo = InfoFactory::create<SyncFileInfo>(QUrl::fromLocalFile(entrySourcePath), true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "createActionByDesktopFile create LocalFileInfo error: " << errString << entrySourcePath;
         return;
