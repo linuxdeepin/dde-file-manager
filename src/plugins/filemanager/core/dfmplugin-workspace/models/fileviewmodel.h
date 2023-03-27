@@ -103,7 +103,7 @@ Q_SIGNALS:
     void requestChangeFilters(QDir::Filters filters);
     void requestChangeNameFilters(const QStringList &nameFilters);
     void requestUpdateFile(const QUrl &url);
-    void requestClearAllChildren();
+    void requestRefreshAllChildren();
 
     void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
     void requestSetFilterData(const QVariant &data);

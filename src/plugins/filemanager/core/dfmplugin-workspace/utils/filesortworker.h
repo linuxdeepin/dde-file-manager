@@ -63,6 +63,7 @@ signals:
     void insertFinish();
     void removeRows(int first, int count);
     void removeFinish();
+    void requestFetchMore();
     void selectAndEditFile(const QUrl &url);
 
     void requestSetIdel();
@@ -109,7 +110,7 @@ public slots:
     void handleUpdateFile(const QUrl &url);
     void handleFilterData(const QVariant &data);
     void handleFilterCallFunc(FileViewFilterCallback callback);
-    void handleClean();
+    void handleRefresh();
 
 private:
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
