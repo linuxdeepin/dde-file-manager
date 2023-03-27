@@ -15,31 +15,7 @@
 #include <QDebug>
 #include <QtConcurrent>
 
-static constexpr char kModelitemMimetype[] { "application/x-dfmsidebaritemmodeldata" };
-
 DPSIDEBAR_USE_NAMESPACE
-
-namespace GlobalPrivate {
-QByteArray generateMimeData(const QModelIndexList &indexes)
-{
-    if (indexes.isEmpty())
-        return QByteArray();
-    QByteArray encoded;
-    QDataStream stream(&encoded, QIODevice::WriteOnly);
-    stream << indexes.first().row();
-
-    return encoded;
-}
-
-int getRowIndexFromMimeData(const QByteArray &data)
-{
-    int row;
-    QDataStream stream(data);
-    stream >> row;
-
-    return row;
-}
-}   // namespace GlobalPrivate
 
 /*!
  * \class SideBarModel
@@ -69,29 +45,23 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
     };
 
     SideBarItem *targetItem = this->itemFromIndex(row, parent);
-    SideBarItem *sourceItem = nullptr;
 
     if (isSeparator(targetItem))   //According to the requirement，sparator does not support to drop.
         return false;
 
     // check if is item internal move by action and mimetype:
-    if (action == Qt::MoveAction && data->formats().contains(kModelitemMimetype)) {
-        int oriRowIndex = GlobalPrivate::getRowIndexFromMimeData(data->data(kModelitemMimetype));
-        if (oriRowIndex >= 0) {
-            sourceItem = this->itemFromIndex(oriRowIndex, parent);
-        }
+    if (action == Qt::MoveAction) {
+        SideBarItem *sourceItem = curDragItem;
 
         // normal drag tag or bookmark or quick access
-        if (isItemDragEnabled(targetItem) && isTheSameGroup(sourceItem, targetItem)) {
+        if (isItemDragEnabled(targetItem) && isTheSameGroup(sourceItem, targetItem))
             return true;
-        }
 
         SideBarItem *prevItem = itemFromIndex(row - 1, parent);
         // drag tag item to bottom, targetItem is null
         // drag bookmark item on the bookmark bottom separator, targetItem is Separator
-        if ((!targetItem || isSeparator(targetItem)) && sourceItem != prevItem) {
+        if ((!targetItem || isSeparator(targetItem)) && sourceItem != prevItem)
             return isItemDragEnabled(prevItem) && isTheSameGroup(prevItem, sourceItem);
-        }
 
         return false;
     }
@@ -101,10 +71,12 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
 
 QMimeData *SideBarModel::mimeData(const QModelIndexList &indexes) const
 {
+    curDragItem = nullptr;
     QMimeData *data = QStandardItemModel::mimeData(indexes);
     if (!data)
         return nullptr;
-    data->setData(kModelitemMimetype, GlobalPrivate::generateMimeData(indexes));
+    if (!indexes.isEmpty())
+        curDragItem = itemFromIndex(indexes.first().row(), indexes.first().parent());
     return data;
 }
 

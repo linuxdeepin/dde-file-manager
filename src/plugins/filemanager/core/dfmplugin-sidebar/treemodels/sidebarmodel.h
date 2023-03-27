@@ -34,6 +34,7 @@ public:
 
 private:
     QMutex locker;
+    mutable SideBarItem *curDragItem { nullptr };
 };
 
 DPSIDEBAR_END_NAMESPACE
