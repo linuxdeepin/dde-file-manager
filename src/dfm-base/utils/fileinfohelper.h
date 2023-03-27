@@ -17,6 +17,7 @@
 #include <QVariant>
 #include <QMimeDatabase>
 #include <QThreadPool>
+#include <QReadWriteLock>
 
 namespace dfmbase {
 class FileInfoHelper : public QObject
@@ -29,11 +30,12 @@ public:
     QSharedPointer<FileInfoHelperUeserData> fileMimeTypeAsync(const QUrl &url, const QMimeDatabase::MatchMode mode,
                                                               const QString &inod, const bool isGvfs);
     QSharedPointer<FileInfoHelperUeserData> fileThumbAsync(const QUrl &url, ThumbnailProvider::Size size);
-    void fileRefreshAsync(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo);
+    void fileRefreshAsync(const QSharedPointer<dfmio::DFileInfo> dfileInfo);
 
 private:
     explicit FileInfoHelper(QObject *parent = nullptr);
     void init();
+    void threadHandleDfmFileInfo(const QSharedPointer<dfmio::DFileInfo> dfileInfo);
 
 private:
     // send for other
@@ -49,6 +51,8 @@ Q_SIGNALS:
                       const bool isGvfs, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileInfoRefresh(const QUrl &url, QSharedPointer<dfmio::DFileInfo> dfileInfo);
+    // 第二个参数表示，当前是链接文件的原文件更新完成
+    void fileRefreshFinished(const QUrl url, const bool isLinkOrg);
 private Q_SLOTS:
     void aboutToQuit();
 
@@ -56,6 +60,9 @@ private:
     QSharedPointer<QThread> thread { nullptr };
     QSharedPointer<FileInfoAsycWorker> worker { nullptr };
     std::atomic_bool stoped { false };
+    QThreadPool pool;
+    QReadWriteLock symLinkHashLock;
+    QHash<QUrl, QUrl> symLinkHash;
 };
 }
 

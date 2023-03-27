@@ -77,11 +77,7 @@ bool AsyncFileInfo::exists() const
 void AsyncFileInfo::refresh()
 {
     QWriteLocker locker(&d->lock);
-    if (FileUtils::isGvfsFile(d->url)) {
-        FileInfoHelper::instance().fileRefreshAsync(d->url, d->dfmFileInfo);
-    } else {
-        d->dfmFileInfo->refresh();
-    }
+    FileInfoHelper::instance().fileRefreshAsync(d->dfmFileInfo);
     d->fileCountFuture.reset(nullptr);
     d->fileMimeTypeFuture.reset(nullptr);
     d->iconFuture.reset(nullptr);
