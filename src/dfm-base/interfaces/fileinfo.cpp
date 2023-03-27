@@ -40,7 +40,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<FileInfoPointer>("Fi
  * \param QUrl & 文件的URL
  */
 FileInfo::FileInfo(const QUrl &url)
-    : dptr(new FileInfoPrivate(url, this))
+    : AbstractFileInfo(url), dptr(new FileInfoPrivate(url, this))
 {
     Q_UNUSED(type_id)
 }

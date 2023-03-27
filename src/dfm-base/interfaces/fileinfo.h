@@ -8,6 +8,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"
+#include "abstractfileinfo.h"
 
 #include <dfm-io/dfileinfo.h>
 
@@ -28,7 +29,7 @@ typedef QSharedPointer<DFMBASE_NAMESPACE::FileInfo> FileInfoPointer;
 
 namespace dfmbase {
 class FileInfoPrivate;
-class FileInfo : public QSharedData, public QEnableSharedFromThis<FileInfo>
+class FileInfo : public AbstractFileInfo, public QEnableSharedFromThis<FileInfo>
 {
 public:
     /*!

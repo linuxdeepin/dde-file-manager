@@ -13,6 +13,10 @@ class ProxyFileInfo : public FileInfo
 public:
     explicit ProxyFileInfo(const QUrl &url);
     ~ProxyFileInfo() override;
+
+protected:
+    void setProxy(const FileInfoPointer &proxy);
+    FileInfoPointer proxy { nullptr };
 };
 }
 #endif   // PROXYFILEINFO_H

@@ -1044,11 +1044,6 @@ QVariant LocalFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) c
         }
 
         auto value = dfmFileInfo->attribute(key, ok);
-        {
-            QWriteLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-            const_cast<LocalFileInfoPrivate *>(this)->cacheAttributes.insert(key, value);
-        }
-
         return value;
     }
     return QVariant();

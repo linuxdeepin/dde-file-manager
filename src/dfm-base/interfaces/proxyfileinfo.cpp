@@ -10,3 +10,8 @@ ProxyFileInfo::ProxyFileInfo(const QUrl &url)
 ProxyFileInfo::~ProxyFileInfo()
 {
 }
+
+void ProxyFileInfo::setProxy(const FileInfoPointer &proxy)
+{
+    this->proxy = proxy;
+}
