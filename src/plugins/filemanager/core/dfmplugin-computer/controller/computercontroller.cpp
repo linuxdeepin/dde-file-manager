@@ -533,7 +533,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
 {
     // 1. forget passwd
     const QString &id = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
-    QString uri;
+    QString uri(id);
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb)) {
         uri = id;
     } else if (DeviceUtils::isSamba(id)) {
