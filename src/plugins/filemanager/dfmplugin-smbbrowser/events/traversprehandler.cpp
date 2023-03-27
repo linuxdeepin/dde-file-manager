@@ -94,7 +94,7 @@ QString prehandler_utils::splitMountSource(const QString &source, QString *subPa
 void travers_prehandler::doChangeCurrentUrl(quint64 winId, const QString &mpt, const QString &subPath, const QUrl &sourceUrl)
 {
     QString targetPath = mpt;
-    if (!targetPath.endsWith("/"))
+    if (!subPath.isEmpty() && !targetPath.endsWith("/"))
         targetPath.append("/");
     targetPath.append(subPath);
 
