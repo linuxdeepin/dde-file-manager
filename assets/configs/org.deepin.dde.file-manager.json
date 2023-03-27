@@ -68,7 +68,7 @@
             "permissions": "readwrite",
             "visibility": "private"
         },
-        "dfd.menu.protocoldev.enable": {
+        "dfm.menu.protocoldev.enable": {
             "value": true,
             "serial":0,
             "flags":[],
@@ -79,12 +79,12 @@
             "permissions":"readwrite",
             "visibility":"public"
         },
-        "dfd.menu.blockdev.enable": {
+        "dfm.menu.blockdev.enable": {
             "value": true,
             "serial":0,
             "flags":[],
-            "name":"Enable block devices to display extension menu",
-            "name[zh_CN]":"启用块设备显示右键扩展菜单",
+            "name":"Enable removable block devices to display extension menu",
+            "name[zh_CN]":"启用可移动块设备显示右键扩展菜单",
             "description[zh_CN]":"用于控制是否启用块设备显示右键扩展菜单",
             "description":"It's used to control whether to enable block devices to display extension menu is enabled",
             "permissions":"readwrite",
