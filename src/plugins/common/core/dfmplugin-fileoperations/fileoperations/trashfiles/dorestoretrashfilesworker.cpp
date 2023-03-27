@@ -270,7 +270,7 @@ bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, FileInfoPointe
                                                             fileInfo->nameOf(NameInfoType::kFileCopyName).toStdString().c_str(), nullptr);
         }
 
-        restoreInfo = InfoFactory::create<FileInfo>(restoreFileUrl, false);
+        restoreInfo = InfoFactory::create<FileInfo>(restoreFileUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!restoreInfo) {
             // pause and emit error msg
             action = doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError);

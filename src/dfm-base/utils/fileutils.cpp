@@ -278,7 +278,7 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
     return url1.host() == url2.host() && url1.port() == url1.port();
 }
 
-bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const bool infoCache)
+bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const Global::CreateFileInfoType infoCache)
 {
     if (UniversalUtils::urlEquals(url1, url2))
         return true;
@@ -364,7 +364,7 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 bool FileUtils::trashIsEmpty()
 {
     // not use cache, because some times info unreliable, such as watcher inited temporality
-    auto info = InfoFactory::create<FileInfo>(trashRootUrl(), false);
+    auto info = InfoFactory::create<FileInfo>(trashRootUrl(), Global::CreateFileInfoType::kCreateFileInfoSync);
     if (info) {
         return info->countChildFile() == 0;
     }

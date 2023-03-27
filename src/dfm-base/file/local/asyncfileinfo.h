@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef LOCALFILEINFO_H
-#define LOCALFILEINFO_H
+#ifndef ASYNCFILEINFO_H
+#define ASYNCFILEINFO_H
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"
@@ -67,4 +67,4 @@ private:
 typedef QSharedPointer<DFMBASE_NAMESPACE::AsyncFileInfo> DFMAsyncFileInfoPointer;
 Q_DECLARE_METATYPE(DFMAsyncFileInfoPointer)
 
-#endif   // LOCALFILEINFO_H
+#endif   // ASYNCFILEINFO_H

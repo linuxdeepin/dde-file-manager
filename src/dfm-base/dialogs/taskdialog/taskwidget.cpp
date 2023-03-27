@@ -192,7 +192,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         rVLayout->addWidget(widConfict);
     }
     QString error;
-    const FileInfoPointer &originInfo = InfoFactory::create<FileInfo>(source, true, &error);
+    const FileInfoPointer &originInfo = InfoFactory::create<FileInfo>(source, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
     if (!originInfo) {
         lbErrorMsg->setText(QString(tr("create source file %1 Info failed in show conflict Info function!")).arg(source.path()));
         showBtnByAction(AbstractJobHandler::SupportAction::kCancelAction);
@@ -202,7 +202,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         return;
     }
     error.clear();
-    FileInfoPointer targetInfo = InfoFactory::create<FileInfo>(target, true, &error);
+    FileInfoPointer targetInfo = InfoFactory::create<FileInfo>(target, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
     if (!targetInfo) {
         lbErrorMsg->setText(QString(tr("create target file %1 Info failed in show conflict Info function!")).arg(target.path()));
         lbErrorMsg->show();

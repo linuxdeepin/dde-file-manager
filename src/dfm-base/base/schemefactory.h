@@ -15,6 +15,7 @@
 #include "dfm-base/interfaces/private/infocache.h"
 #include "dfm-base/interfaces/private/watchercache.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QCoreApplication>
 #include <QSharedPointer>
@@ -124,16 +125,20 @@ public:
      */
     QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
+        return create(url.scheme(), url, errorString);
+    }
+
+    QSharedPointer<T> create(const QString &scheme, const QUrl &url, QString *errorString = nullptr)
+    {
         QString error;
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-        if (!UrlRoute::hasScheme(url.scheme())) {
+        if (!UrlRoute::hasScheme(scheme)) {
             error = "No scheme found for "
                     "URL registration";
             return nullptr;
         }
 
-        QString &&scheme = url.scheme();
         CreateFunc constantFunc = constructList.value(scheme);
         if (!constantFunc) {
             error = "Scheme should be call registered 'regClass()' function "
@@ -202,15 +207,30 @@ public:
     // 提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
     // 与qSharedPointerDynamicCast保持一致
     template<class T>
-    static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
+    static QSharedPointer<T> create(const QUrl &url,
+                                    const Global::CreateFileInfoType type = Global::CreateFileInfoType::kCreateFileInfoAuto,
+                                    QString *errorString = nullptr)
     {
-        if (Q_UNLIKELY(!cache) || InfoCacheController::instance().cacheDisable(url.scheme()))
+        if (InfoCacheController::instance().cacheDisable(url.scheme()))
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                         create(url, errorString));
 
+        if (url.scheme() == Global::Scheme::kFile) {
+            if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
+                return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
+                                                            create(url, errorString));
+            } else if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
+                return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
+                                                            create(Global::Scheme::kAsyncFile, url, errorString));
+            }
+        }
+
         QSharedPointer<FileInfo> info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
-            info = instance().SchemeFactory<FileInfo>::create(url, errorString);
+            auto scheme = url.scheme();
+            if (scheme == Global::Scheme::kFile && !FileUtils::isLocalDevice(url))
+                scheme = Global::Scheme::kAsyncFile;
+            info = instance().SchemeFactory<FileInfo>::create(scheme, url, errorString);
 
             if (info) {
                 emit InfoCacheController::instance().cacheFileInfo(url, info);
@@ -488,7 +508,6 @@ private:
     explicit SortAndFitersFactory() {}
     QMap<QString, QSharedPointer<AbstractSortAndFiter>> sortAndFitersMap;
 };
-
 }
 
 #endif   // SCHEMEFACTORY_H

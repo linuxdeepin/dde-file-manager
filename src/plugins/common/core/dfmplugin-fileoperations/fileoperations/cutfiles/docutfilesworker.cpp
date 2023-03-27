@@ -103,7 +103,7 @@ bool DoCutFilesWorker::cutFiles()
             return false;
         }
 
-        const auto &fileInfo = InfoFactory::create<FileInfo>(url, false);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
@@ -235,7 +235,7 @@ bool DoCutFilesWorker::checkSelf(const FileInfoPointer &fileInfo)
     DFMIO::DFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
 
     if (newFileInfo.uri() == fileInfo->urlOf(UrlInfoType::kUrl)
-        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.uri(), false) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
+        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.uri(), Global::CreateFileInfoType::kCreateFileInfoSync) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
         return true;
     }
     return false;

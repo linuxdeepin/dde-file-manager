@@ -39,7 +39,8 @@ public:
     static bool isComputerDesktopFile(const QUrl &url);
     static bool isHomeDesktopFile(const QUrl &url);
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
-    static bool isSameFile(const QUrl &url1, const QUrl &url2, const bool infoCache = true);
+    static bool isSameFile(const QUrl &url1, const QUrl &url2,
+                           const Global::CreateFileInfoType infoCache = Global::CreateFileInfoType::kCreateFileInfoAuto);
     static bool isLowSpeedDevice(const QUrl &url);
     static bool isLocalDevice(const QUrl &url);
     static bool isCdRomDevice(const QUrl &url);

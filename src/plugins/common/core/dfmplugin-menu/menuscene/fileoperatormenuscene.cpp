@@ -75,7 +75,7 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
 
     if (!d->isEmptyArea) {
         QString errString;
-        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, true, &errString);
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
             qDebug() << errString;
             return false;
@@ -190,7 +190,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
             QList<QUrl> redirectedUrls;
 
             for (auto url : d->selectFiles) {
-                auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, true, &errString);
+                auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
                 if (Q_UNLIKELY(info.isNull())) {
                     qDebug() << errString;
                     break;
@@ -201,7 +201,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
                     QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
                     QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
-                    auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, true, &errString);
+                    auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
                     if (!info.isNull()) {
                         mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
                     }

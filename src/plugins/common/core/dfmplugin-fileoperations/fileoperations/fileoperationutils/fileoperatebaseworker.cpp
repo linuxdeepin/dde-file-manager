@@ -59,7 +59,7 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
         return currentAction;
     }
 
-    if (FileUtils::isSameFile(urlFrom, urlTo, false)) {
+    if (FileUtils::isSameFile(urlFrom, urlTo, Global::CreateFileInfoType::kCreateFileInfoSync)) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
         return currentAction;
     }
@@ -971,7 +971,7 @@ bool FileOperateBaseWorker::createNewTargetInfo(const FileInfoPointer &fromInfo,
     newTargetInfo.reset();
 
     QString error;
-    newTargetInfo = InfoFactory::create<FileInfo>(fileNewUrl, false, &error);
+    newTargetInfo = InfoFactory::create<FileInfo>(fileNewUrl, Global::CreateFileInfoType::kCreateFileInfoSync, &error);
 
     if (!newTargetInfo || !error.isEmpty()) {
         qWarning() << "newTargetInfo is null = " << !newTargetInfo << ", error message = " << error;

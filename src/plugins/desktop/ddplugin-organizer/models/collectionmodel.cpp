@@ -529,7 +529,7 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     }
 
     QString errString;
-    auto itemInfo = InfoFactory::create<SyncFileInfo>(targetFileUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<SyncFileInfo>(targetFileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "create LocalFileInfo error: " << errString << targetFileUrl;
         return false;

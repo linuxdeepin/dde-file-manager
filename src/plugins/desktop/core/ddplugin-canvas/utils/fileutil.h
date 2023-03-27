@@ -8,6 +8,7 @@
 #include "ddplugin_canvas_global.h"
 
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 
 #include <QUrl>
@@ -32,7 +33,8 @@ class DesktopFileCreator
 {
 public:
     static DesktopFileCreator *instance();
-    DFMSyncFileInfoPointer createFileInfo(const QUrl &url, bool cache = true);
+    DFMSyncFileInfoPointer createFileInfo(const QUrl &url,
+                                          dfmbase::Global::CreateFileInfoType cache = dfmbase::Global::CreateFileInfoType::kCreateFileInfoAuto);
 
 protected:
     explicit DesktopFileCreator();

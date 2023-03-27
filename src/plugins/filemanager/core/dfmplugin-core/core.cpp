@@ -12,6 +12,7 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/file/local/syncfileinfo.h"
+#include "dfm-base/file/local/asyncfileinfo.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
@@ -41,6 +42,7 @@ void Core::initialize()
     UrlRoute::regScheme(Global::Scheme::kFile, "/", QIcon(), false, QObject::tr("System Disk"));
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+    InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
     // 初始化剪切板

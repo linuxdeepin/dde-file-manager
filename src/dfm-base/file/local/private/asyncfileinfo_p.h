@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef LOCALFILEINFO_P_H
-#define LOCALFILEINFO_P_H
+#ifndef ASYNCFILEINFO_P_H
+#define ASYNCFILEINFO_P_H
 
 #include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/file/local/asyncfileinfo.h"
@@ -184,4 +184,4 @@ QMimeType AsyncFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) cons
 }
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AsyncFileInfoPrivate *)
 
-#endif   // LOCALFILEINFO_P_H
+#endif   // ASYNCFILEINFO_P_H

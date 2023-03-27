@@ -336,13 +336,13 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             else
                 currentUrl = QUrl(actualEffectivedWallpaper);
 
-            FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(currentUrl, true, &errString);
+            FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(currentUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
             while (fileInfo && fileInfo->isAttributes(OptInfoType::kIsSymLink)) {
                 QUrl targetUrl = QUrl::fromLocalFile(fileInfo->pathOf(PathInfoType::kSymLinkTarget));
                 if (targetUrl == fileInfo->urlOf(UrlInfoType::kUrl))
                     break;
 
-                fileInfo = InfoFactory::create<FileInfo>(targetUrl, true, &errString);
+                fileInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
             }
 
             if (!fileInfo) {
@@ -1150,9 +1150,9 @@ bool WallpaperSettings::isWallpaperLocked() const
     if (QFileInfo::exists("/var/lib/deepin/permission-manager/wallpaper_locked")) {
         QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
         notify.asyncCall(QString("Notify"),
-                         QString("dde-file-manager"), // title
+                         QString("dde-file-manager"),   // title
                          static_cast<uint>(0),
-                         QString("dde-file-manager"), // icon
+                         QString("dde-file-manager"),   // icon
                          tr("This system wallpaper is locked. Please contact your admin."),
                          QString(), QStringList(), QVariantMap(), 5000);
         qInfo() << "wallpaper is locked..";

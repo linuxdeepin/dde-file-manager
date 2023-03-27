@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef LOCALFILEINFO_H
-#define LOCALFILEINFO_H
+#ifndef SYNCFILEINFO_H
+#define SYNCFILEINFO_H
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"

@@ -72,7 +72,7 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
     QList<AbstractMenuScene *> currentScene;
     if (!d->isEmptyArea) {
         QString errString;
-        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, true, &errString);
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
             qDebug() << errString;
             return false;

@@ -68,7 +68,7 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
     }
 
     QString errString;
-    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, true, &errString);
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (d->focusFileInfo.isNull()) {
         qDebug() << errString;
         return false;
@@ -114,7 +114,7 @@ bool OpenWithMenuScene::create(QMenu *parent)
     QList<QUrl> redirectedUrlList;
     for (const auto &fileUrl : d->selectFiles) {
         QString errString;
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(fileUrl, true, &errString);
+        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(fileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
             qDebug() << errString;
             continue;
@@ -162,7 +162,7 @@ void OpenWithMenuScene::updateState(QMenu *parent)
         QList<QUrl> redirectedUrls;
 
         for (auto url : d->selectFiles) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, true, &errString);
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
             if (Q_UNLIKELY(info.isNull())) {
                 qDebug() << errString;
                 break;
@@ -173,7 +173,7 @@ void OpenWithMenuScene::updateState(QMenu *parent)
 
                 QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
                 QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
-                auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, true, &errString);
+                auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
                 if (!info.isNull()) {
                     mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
                 }
