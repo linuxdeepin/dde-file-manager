@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <QProcess>
+#include <QTimer>
 #include <QThread>
 
 DFMBASE_USE_NAMESPACE
@@ -451,7 +452,7 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
         if (!fromSidebar)
             Q_EMIT controller->requestRename(winId, devUrl);
         else
-            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, devUrl);
+            QTimer::singleShot(200, [=] { dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, devUrl); });
     };
 
     if (info->extraProperty(DeviceProperty::kRemovable).toBool() && info->targetUrl().isValid()) {
