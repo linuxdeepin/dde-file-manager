@@ -25,10 +25,10 @@ bool isHiddenExtMenu(const QUrl &dirUrl)
 
     const auto &hiddenMenus { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList() };
     bool enableProtocolDev { DConfigManager::instance()
-                                     ->value(kDefaultCfgPath, "dfd.menu.protocoldev.enable", true)
+                                     ->value(kDefaultCfgPath, "dfm.menu.protocoldev.enable", true)
                                      .toBool() };
     bool enableBlockDev { DConfigManager::instance()
-                                  ->value(kDefaultCfgPath, "dfd.menu.blockdev.enable", true)
+                                  ->value(kDefaultCfgPath, "dfm.menu.blockdev.enable", true)
                                   .toBool() };
 
     // hidden by `dfm.menu.hidden`
@@ -36,11 +36,11 @@ bool isHiddenExtMenu(const QUrl &dirUrl)
     if (hiddenMenus.contains("extension-menu"))
         hidden = true;
 
-    // hidden by `dfd.menu.protocoldev.enable`
+    // hidden by `dfm.menu.protocoldev.enable`
     if (!enableProtocolDev && FileUtils::isGvfsFile(dirUrl))
         hidden = true;
 
-    // hidden by `dfd.menu.blockdev.enable`
+    // hidden by `dfm.menu.blockdev.enable`
     // NOTE: SMB mounted by cifs that mount point is local but it's a protocol device
     if (!enableBlockDev && DFMIO::DFMUtils::fileIsRemovable(dirUrl) && !FileUtils::isGvfsFile(dirUrl))
         hidden = true;
