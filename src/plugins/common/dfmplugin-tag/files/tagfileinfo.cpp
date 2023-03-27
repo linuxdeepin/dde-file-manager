@@ -41,6 +41,30 @@ QFileDevice::Permissions TagFileInfo::permissions() const
             | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
 }
 
+bool TagFileInfo::isAttributes(const OptInfoType type) const
+{
+    switch (type) {
+    case FileIsType::kIsReadable:
+        return true;
+    case FileIsType::kIsWritable:
+        return true;
+    case FileIsType::kIsExecutable:
+        return true;
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
+}
+
+bool TagFileInfo::canAttributes(const CanableInfoType type) const
+{
+    switch (type) {
+    case FileCanType::kCanDrop:
+        return true;
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
+}
+
 QString TagFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {

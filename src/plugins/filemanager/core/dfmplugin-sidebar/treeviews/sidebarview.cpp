@@ -559,6 +559,10 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     } else {
         targetItemUrl = item->url();
     }
+
+    if (!targetItemUrl.isValid())
+        return Qt::IgnoreAction;
+
     auto itemInfo = InfoFactory::create<AbstractFileInfo>(targetItemUrl);
     if (!itemInfo || !itemInfo->canAttributes(CanableInfoType::kCanDrop)) {
         return Qt::IgnoreAction;
