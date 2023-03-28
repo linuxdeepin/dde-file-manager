@@ -388,7 +388,7 @@ bool TagManager::pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const Q
             return true;
 
         const auto &tagInfo = InfoFactory::create<TagFileInfo>(to);
-        TagManager::setTagsForFiles(QList<QString>() << tagInfo->tagName(), canTagFiles);
+        TagManager::addTagsForFiles(QList<QString>() << tagInfo->tagName(), canTagFiles);
         return true;
     }
 

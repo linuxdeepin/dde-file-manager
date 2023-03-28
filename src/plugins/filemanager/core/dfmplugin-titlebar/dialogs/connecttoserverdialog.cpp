@@ -219,7 +219,7 @@ void ConnectToServerDialog::initializeUi()
                      << QString("%1://").arg(Scheme::kSFtp);
     schemeComboBox->addItems(supportedSchemes);
     theAddButton = new DIconButton(nullptr);
-    DLabel *collectionLabel = new DLabel(tr("My Favorites"));
+    DLabel *collectionLabel = new DLabel(tr("My Favorites Address"));
     collectionServerView = new DListView(contentFrame);
     delegate = new CollectionDelegate(collectionServerView);
     connect(delegate, &CollectionDelegate::removeItemManually, [this](const QString &text, int row) {
@@ -228,7 +228,7 @@ void ConnectToServerDialog::initializeUi()
     collectionServerView->setItemDelegate(delegate);
 
     theAddButton->setFixedSize(38, 38);
-    collectionLabel->setFixedSize(98, 20);
+    collectionLabel->setFixedHeight(20);
 
     theAddButton->setIcon(QIcon::fromTheme("dfm_add_server"));
     theAddButton->setIconSize({ 44, 44 });
@@ -354,7 +354,7 @@ void ConnectToServerDialog::initializeUi()
         emptyIcon->setPixmap(QPixmap(":icons/deepin/builtin/dark/icons/no_favorites_yet.svg").scaled(145, 145));
 
     centerNotes->setMaximumHeight(30);
-    centerNotes->setText("No favorites yet");
+    centerNotes->setText(tr("No favorites yet"));
 
     emptyLayout->addWidget(emptyIcon, Qt::AlignHCenter);
     emptyLayout->addSpacing(5);
