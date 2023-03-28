@@ -114,7 +114,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         keepDrawingHighlighted = true;
     }
 
-    if (selected || keepDrawingHighlighted) {   //Draw selected background
+    if (selected || keepDrawingHighlighted) {   // Draw selected background
         QPalette::ColorGroup colorGroup = QPalette::Normal;
         QColor bgColor = option.palette.color(colorGroup, QPalette::Highlight);
 
@@ -129,13 +129,13 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         painter->setBrush(bgColor);
         painter->setPen(Qt::NoPen);
         painter->drawRoundedRect(r, kRadius, kRadius);
-    } else if (opt.state.testFlag(QStyle::State_MouseOver)) {   //Draw mouse over background
+    } else if (opt.state.testFlag(QStyle::State_MouseOver)) {   // Draw mouse over background
         drawMouseHoverBackground(painter, palette, r, widgetColor);
         if (separatorItem)
             drawMouseHoverExpandButton(painter, r, separatorItem->isExpanded());
     }
 
-    //Draw item icon
+    // Draw item icon
 #ifdef DTKWIDGET_CLASS_DSizeMode
     QSize iconSize(DSizeModeHelper::element(QSize(kCompactModeIcon, kCompactModeIcon), QSize(kItemIconSize, kItemIconSize)));
 #else
@@ -150,10 +150,10 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         isEjectable = info.isEjectable;
         QIcon icon = item->icon();
         drawIcon(opt, painter, icon, itemRect, iconMode, isEjectable);
-        //notes: if draw eject icon with `DStyledItemDelegate::paint(painter, option, index)`,
-        //could not match the UI style of requirement, so here use `drawIcon()`, but this way would trigger the item-action-event
-        //as clicking the eject icon.
-        //need some research for this promblem.
+        // notes: if draw eject icon with `DStyledItemDelegate::paint(painter, option, index)`,
+        // could not match the UI style of requirement, so here use `drawIcon()`, but this way would trigger the item-action-event
+        // as clicking the eject icon.
+        // need some research for this promblem.
         /*
         if (!isEjectable)
             drawIcon(painter, icon, itemRect, iconMode, isEjectable);
@@ -162,7 +162,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         */
     }
 
-    //Draw item text
+    // Draw item text
     QFontMetrics metricsLabel(option.widget->font());
     painter->setPen(separatorItem ? Qt::gray : qApp->palette().color(QPalette::ColorRole::Text));
     if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
@@ -176,7 +176,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (metricsLabel.horizontalAdvance(text) > (isEjectable ? min : max))
         text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? int(min) : int(max)));
     int rowHeight = itemRect.height();
-    qreal txtDx = (separatorItem ? 21 : 46) * qApp->devicePixelRatio();
+    qreal txtDx = (separatorItem ? 21 : 46);
     qreal txtDy = (itemRect.height() - metricsLabel.lineSpacing()) / 2;
     painter->drawText(QRectF(itemRect.x() + txtDx, itemRect.y() + txtDy, itemRect.width(), rowHeight), Qt::AlignLeft, text);
     painter->restore();
@@ -236,7 +236,7 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
 {
     Q_UNUSED(index);
     DStyledItemDelegate::updateEditorGeometry(editor, option, index);
-    //When DTK calculates the width of editor, it does not care about the icon width, so adjust the width of editor here.
+    // When DTK calculates the width of editor, it does not care about the icon width, so adjust the width of editor here.
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
     editor->setFixedWidth(sidebarView->width() - 50);
     QRect rect = editor->geometry();
@@ -266,24 +266,24 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                 QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 10, 24, 24);
                 QRect ejectBtRect(option.rect.bottomRight() + QPoint(-28, -26), option.rect.bottomRight() + QPoint(-kItemMargin, -kItemMargin));
                 QPoint pos = e->pos();
-                if (event->type() != QEvent::MouseButtonRelease && separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
+                if (event->type() != QEvent::MouseButtonRelease && separatorItem && expandBtRect.contains(pos)) {   // The expand/unexpand icon is pressed.
                     if (sidebarView)
                         Q_EMIT changeExpandState(index, !sidebarView->isExpanded(index));
 
                     event->accept();
                     return true;
-                } else if (event->type() == QEvent::MouseButtonRelease && ejectable && ejectBtRect.contains(pos)) {   //The eject icon is pressed.
+                } else if (event->type() == QEvent::MouseButtonRelease && ejectable && ejectBtRect.contains(pos)) {   // The eject icon is pressed.
                     if (sidebarItem) {
                         QUrl url = sidebarItem->itemInfo().url;
                         SideBarEventCaller::sendEject(url);
-                        //onItemActived() slot function would be triggered with mouse clicking,
-                        //in order to avoid mount device again, we set item action to disable state as a mark.
+                        // onItemActived() slot function would be triggered with mouse clicking,
+                        // in order to avoid mount device again, we set item action to disable state as a mark.
                         DViewItemActionList list = sidebarItem->actionList(Qt::RightEdge);
                         if (list.count() > 0 && sidebarView) {
                             list.first()->setDisabled(true);
-                            //fix bug: #185137, save the current url and highlight it in `SideBarWidget::onItemActived`
-                            //that is triggered by cliking eject icon.
-                            //this is the temporary solution.
+                            // fix bug: #185137, save the current url and highlight it in `SideBarWidget::onItemActived`
+                            // that is triggered by cliking eject icon.
+                            // this is the temporary solution.
                             list.first()->setProperty("currentItem", sidebarView->currentUrl());
                         }
                     }
@@ -341,28 +341,23 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter 
 #endif
     QIcon::State state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
     QStyle *style = option.widget ? option.widget->style() : QApplication::style();
-    auto dpi = qApp->devicePixelRatio();
-    iconSize *= dpi;
 
-    qreal iconDx = 2 * kItemMargin * dpi;
+    qreal iconDx = 2 * kItemMargin;
     qreal iconDy = (itemRect.height() - iconSize.height()) / 2;
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
 
     auto px = icon.pixmap(iconSize, iconMode, state);
-    px.setDevicePixelRatio(dpi);
     style->drawItemPixmap(painter, QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), Qt::AlignCenter, px);
 
     if (isEjectable) {
         QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
-        ejectIconSize *= dpi;
 
         QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
         QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
         QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
 
         auto px = ejectIcon.pixmap(iconSize, iconMode, state);
-        px.setDevicePixelRatio(dpi);
         style->drawItemPixmap(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignCenter, px);
     }
 }
