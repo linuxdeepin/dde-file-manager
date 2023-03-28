@@ -5,6 +5,7 @@
 #include "windowutils.h"
 
 #include <QApplication>
+#include <QScreen>
 
 bool DFMBASE_NAMESPACE::WindowUtils::isWayLand()
 {
@@ -26,4 +27,24 @@ bool DFMBASE_NAMESPACE::WindowUtils::keyCtrlIsPressed()
 bool DFMBASE_NAMESPACE::WindowUtils::keyAltIsPressed()
 {
     return qApp->keyboardModifiers() == Qt::AltModifier;
+}
+
+QScreen *DFMBASE_NAMESPACE::WindowUtils::cursorScreen()
+{
+    QScreen *cursorScreen = nullptr;
+    const QPoint &cursorPos = QCursor::pos();
+
+    QList<QScreen *> screens = qApp->screens();
+    QList<QScreen *>::const_iterator it = screens.begin();
+    for (; it != screens.end(); ++it) {
+        if ((*it)->geometry().contains(cursorPos)) {
+            cursorScreen = *it;
+            break;
+        }
+    }
+
+    if (!cursorScreen)
+        cursorScreen = qApp->primaryScreen();
+
+    return cursorScreen;
 }

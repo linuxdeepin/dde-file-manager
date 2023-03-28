@@ -7,6 +7,12 @@
 
 #include "dfm-base/dfm_base_global.h"
 
+#include <QObject>
+
+QT_BEGIN_NAMESPACE
+class QScreen;
+QT_END_NAMESPACE
+
 namespace dfmbase {
 
 class WindowUtils
@@ -19,6 +25,7 @@ public:
     static bool keyCtrlIsPressed();
 
     static bool keyAltIsPressed();
+    static QScreen *cursorScreen();
 };
 
 }

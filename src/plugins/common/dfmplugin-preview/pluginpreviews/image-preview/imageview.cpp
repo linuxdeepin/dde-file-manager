@@ -4,6 +4,8 @@
 
 #include "imageview.h"
 
+#include <dfm-base/utils/windowutils.h>
+
 #include <QUrl>
 #include <QImageReader>
 #include <QApplication>
@@ -15,6 +17,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QMovie>
+#include <QScreen>
 
 using namespace plugin_filepreview;
 #define MIN_SIZE QSize(400, 300)
@@ -58,7 +61,7 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
 
     sourceImageSize = reader.size();
 
-    const QSize &dsize = qApp->desktop()->size();
+    const QSize &dsize = DFMBASE_NAMESPACE::WindowUtils::cursorScreen()->geometry().size();
     qreal device_pixel_ratio = this->devicePixelRatioF();
 
     QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(QSize(qMin(static_cast<int>(dsize.width() * 0.7 * device_pixel_ratio), sourceImageSize.width()),
