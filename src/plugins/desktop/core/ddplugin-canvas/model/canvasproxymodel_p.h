@@ -24,6 +24,7 @@ public:
     void clearMapping();
     void createMapping();
     QModelIndexList indexs() const;
+    QModelIndexList indexs(const QList<QUrl> &files) const;
     bool doSort(QList<QUrl> &files) const;
     bool lessThan(const QUrl &left, const QUrl &right) const;
 public slots:

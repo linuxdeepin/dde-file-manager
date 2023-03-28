@@ -133,9 +133,6 @@ void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &
     int row = fileList.indexOf(oldUrl);
     if (ignore) {
         if (row >= 0) {
-            // see as remove
-            removeFilter(oldUrl);
-
             q->beginRemoveRows(q->rootIndex(), row, row);
             fileList.removeAt(row);
             fileMap.remove(oldUrl);
@@ -329,8 +326,6 @@ void CanvasProxyModelPrivate::standardSort(QList<QUrl> &files) const
         return lessThan(left, right);
     });
 
-    // advanced sort for special case.
-    specialSort(files);
     return;
 }
 
@@ -378,11 +373,19 @@ void CanvasProxyModelPrivate::createMapping()
 QModelIndexList CanvasProxyModelPrivate::indexs() const
 {
     QModelIndexList results;
-    for (int i = 0; i < q->rowCount(); i++) {
+    for (int i = 0; i < q->rowCount(q->rootIndex()); i++) {
         QModelIndex childIndex = q->index(i);
         results << childIndex;
     }
     return results;
+}
+
+QModelIndexList CanvasProxyModelPrivate::indexs(const QList<QUrl> &files) const
+{
+    QModelIndexList idxs;
+    for (const QUrl &toUrl : files)
+        idxs << q->index(toUrl);
+    return idxs;
 }
 
 bool CanvasProxyModelPrivate::doSort(QList<QUrl> &files) const
@@ -397,6 +400,9 @@ bool CanvasProxyModelPrivate::doSort(QList<QUrl> &files) const
 
     // standard sort function
     standardSort(files);
+
+    // advanced sort for special case.
+    specialSort(files);
     return true;
 }
 
@@ -795,10 +801,15 @@ bool CanvasProxyModel::sort()
 
     layoutAboutToBeChanged();
     {
+        // get the indexs and urls before sorting.
         QModelIndexList from = d->indexs();
+        auto fromUlrs = d->fileList;
+
         d->fileList = orderFiles;
         d->fileMap = tempFileMap;
-        QModelIndexList to = d->indexs();
+
+        // get the indexs of fromUlrs after sorting
+        QModelIndexList to = d->indexs(fromUlrs);
         changePersistentIndexList(from, to);
     }
     layoutChanged();
