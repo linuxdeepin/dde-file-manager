@@ -11,6 +11,8 @@
 
 #include <dfm-framework/event/event.h>
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QApplication>
 #include <QtConcurrent>
 
@@ -20,19 +22,8 @@ using namespace dfmplugin_workspace;
 RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
     : QObject(parent), url(u), canCache(canCache)
 {
-    QString localFilePath = url.path();
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
-    if (info)
-        localFilePath = info->pathOf(PathInfoType::kPath);
-    hiddenFileUrl = QUrl::fromLocalFile(localFilePath + "/.hidden");
-
-    // create watcher
-    watcher = WatcherFactory::create<AbstractFileWatcher>(url);
-    if (watcher.isNull()) {
-        qWarning() << "Create watcher failed! url = " << url;
-    } else {
-        startWatcher();
-    }
+    hiddenFileUrl.setScheme(url.scheme());
+    hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
 }
 
 RootInfo::~RootInfo()
@@ -88,6 +79,14 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
 
 void RootInfo::startWork(const QString &key, const bool getCache)
 {
+    // create watcher
+    watcher = WatcherFactory::create<AbstractFileWatcher>(url);
+    if (watcher.isNull()) {
+        qWarning() << "Create watcher failed! url = " << url;
+    } else {
+        startWatcher();
+    }
+
     if (!traversalThreads.contains(key))
         return;
     if (getCache)

@@ -58,7 +58,7 @@ void VaultVisibleManager::infoRegister()
 
         //注册Scheme为"vault"的扩展的文件信息
         InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());
-        WatcherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme());
+        WatcherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme(), WatcherFactory::kNoCache);
         DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
         EntryEntityFactor::registCreator<VaultEntryFileEntity>("vault");
         infoRegisterState = true;
