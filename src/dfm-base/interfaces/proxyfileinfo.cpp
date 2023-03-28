@@ -2,6 +2,9 @@
 
 DFMBASE_USE_NAMESPACE
 
+#define CALL_PROXY(Fun) \
+    if (proxy) return proxy->Fun;
+
 ProxyFileInfo::ProxyFileInfo(const QUrl &url)
     : FileInfo(url)
 {

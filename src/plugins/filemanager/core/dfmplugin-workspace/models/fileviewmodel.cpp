@@ -42,6 +42,10 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FileViewModel::onFileLinkOrgUpdated, Qt::QueuedConnection);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FileViewModel::onFileLinkOrgUpdated, Qt::QueuedConnection);
 }
 
 FileViewModel::~FileViewModel()
@@ -613,6 +617,18 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url)
     auto updateIndex = getIndexByUrl(url);
     if (updateIndex.isValid())
         Q_EMIT dataChanged(updateIndex, updateIndex);
+}
+
+void FileViewModel::onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg)
+{
+    auto updateIndex = getIndexByUrl(url);
+    if (!updateIndex.isValid())
+        return;
+    if (isLinkOrg) {
+        auto info = fileInfo(updateIndex);
+    }
+
+    Q_EMIT dataChanged(updateIndex, updateIndex);
 }
 
 void FileViewModel::onFileUpdated(int show)

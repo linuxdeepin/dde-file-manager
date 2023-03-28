@@ -56,6 +56,24 @@ AsyncFileInfo::~AsyncFileInfo()
     d = nullptr;
 }
 
+bool AsyncFileInfo::initQuerier()
+{
+    if (d->cacheing)
+        return false;
+    d->cacheing = true;
+    if (!d->notInit || !d->dfmFileInfo)
+        init(d->url);
+    if (!d->dfmFileInfo) {
+        d->cacheing = false;
+        d->notInit = false;
+        return false;
+    }
+    d->cacheAllAttributes();
+    d->cacheing = false;
+    d->notInit = false;
+    return true;
+}
+
 /*!
  * \brief exists 文件是否存在
  *
@@ -65,7 +83,7 @@ AsyncFileInfo::~AsyncFileInfo()
  */
 bool AsyncFileInfo::exists() const
 {
-    return DFMIO::DFile(d->url.path()).exists();
+    return d->asyncAttribute(AsyncAttributeID::kStandardFileExists).toBool();
 }
 /*!
  * \brief refresh 更新文件信息，清理掉缓存的所有的文件信息
@@ -76,50 +94,47 @@ bool AsyncFileInfo::exists() const
  */
 void AsyncFileInfo::refresh()
 {
-    QWriteLocker locker(&d->lock);
-    FileInfoHelper::instance().fileRefreshAsync(d->dfmFileInfo);
-    d->fileCountFuture.reset(nullptr);
-    d->fileMimeTypeFuture.reset(nullptr);
-    d->iconFuture.reset(nullptr);
-    d->mediaFuture.reset(nullptr);
-    d->loadingThumbnail = false;
-    d->fileType = MimeDatabase::FileType::kUnknown;
-    d->mimeTypeMode = QMimeDatabase::MatchMode::MatchDefault;
-    d->enableThumbnail = false;
-    d->extraProperties.clear();
-    d->attributesExtend.clear();
-    d->extendIDs.clear();
-    d->isLocalDevice = QVariant();
-    d->isCdRomDevice = QVariant();
-    d->mimeType = QMimeType();
-    d->mimeTypeMode = QMimeDatabase::MatchDefault;
-    d->cacheAttributes.clear();
-    d->clearIcon();
+    {
+        FileInfoHelper::instance().fileRefreshAsync(sharedFromThis());
+        QWriteLocker locker(&d->lock);
+        d->fileCountFuture.reset(nullptr);
+        d->fileMimeTypeFuture.reset(nullptr);
+        d->mediaFuture.reset(nullptr);
+        d->mimeTypeMode = QMimeDatabase::MatchMode::MatchDefault;
+        d->extraProperties.clear();
+        d->attributesExtend.clear();
+        d->extendIDs.clear();
+        d->mimeTypeMode = QMimeDatabase::MatchDefault;
+    }
+    {
+        QWriteLocker wlk(&d->iconLock);
+        d->clearIcon();
+    }
 }
 
 void AsyncFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
 {
     QWriteLocker locker(&d->lock);
-    d->cacheAttributes.insert(id, value);
+    d->cacheAsyncAttributes.insert(static_cast<AsyncFileInfo::AsyncAttributeID>(id), value);
 }
 
 QString AsyncFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case FileNameInfoType::kFileName:
-        return d->fileName();
+        return d->asyncAttribute(AsyncAttributeID::kStandardName).toString();
     case FileNameInfoType::kBaseName:
-        return d->baseName();
+        return d->asyncAttribute(AsyncAttributeID::kStandardBaseName).toString();
     case FileNameInfoType::kCompleteBaseName:
-        return d->completeBaseName();
+        return d->asyncAttribute(AsyncAttributeID::kStandardCompleteBaseName).toString();
     case FileNameInfoType::kSuffix:
         [[fallthrough]];
     case FileNameInfoType::kSuffixOfRename:
-        return d->suffix();
+        return d->asyncAttribute(AsyncAttributeID::kStandardSuffix).toString();
     case FileNameInfoType::kCompleteSuffix:
-        return d->completeSuffix();
+        return d->asyncAttribute(AsyncAttributeID::kStandardCompleteSuffix).toString();
     case FileNameInfoType::kFileCopyName:
-        return d->fileDisplayName();
+        return d->asyncAttribute(AsyncAttributeID::kStandardDisplayName).toString();
     case FileNameInfoType::kIconName:
         return d->iconName();
     case FileNameInfoType::kGenericIconName:
@@ -143,13 +158,13 @@ QString AsyncFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kAbsoluteFilePath:
         [[fallthrough]];
     case FilePathInfoType::kCanonicalPath:
-        return d->filePath();
+        return d->asyncAttribute(AsyncAttributeID::kStandardFilePath).toString();
     case FilePathInfoType::kPath:
         [[fallthrough]];
     case FilePathInfoType::kAbsolutePath:
-        return d->path();
+        return d->asyncAttribute(AsyncAttributeID::kStandardParentPath).toString();
     case FilePathInfoType::kSymLinkTarget:
-        return d->symLinkTarget();
+        return d->asyncAttribute(AsyncAttributeID::kStandardSymlinkTarget).toString();
     default:
         return FileInfo::pathOf(type);
     }
@@ -182,16 +197,12 @@ bool AsyncFileInfo::isAttributes(const OptInfoType type) const
         [[fallthrough]];
     case FileIsType::kIsHidden:
         [[fallthrough]];
-    case FileIsType::kIsSymLink:
-        return d->attribute(d->getAttributeIDIsVector()[static_cast<int>(type)]).toBool();
     case FileIsType::kIsExecutable:
-        return d->isExecutable();
+        [[fallthrough]];
+    case FileIsType::kIsSymLink:
+        return d->asyncAttribute(d->getAttributeIDIsVector()[static_cast<int>(type)]).toBool();
     case FileIsType::kIsRoot:
-        return d->filePath() == "/";
-    case FileIsType::kIsBundle:
-        return QFileInfo(d->url.path()).isBundle();
-    case FileIsType::kIsPrivate:
-        return d->isPrivate();
+        return d->asyncAttribute(AsyncAttributeID::kStandardFilePath).toString() == "/";
     default:
         return FileInfo::isAttributes(type);
     }
@@ -201,11 +212,11 @@ bool AsyncFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanDelete:
-        return d->canDelete();
+        return d->asyncAttribute(AsyncAttributeID::kAccessCanDelete).toBool();
     case FileCanType::kCanTrash:
-        return d->canTrash();
+        return d->asyncAttribute(AsyncAttributeID::kAccessCanTrash).toBool();
     case FileCanType::kCanRename:
-        return d->canRename();
+        return d->asyncAttribute(AsyncAttributeID::kAccessCanRename).toBool();
     case FileCanType::kCanHidden:
         if (FileUtils::isGphotoFile(d->url))
             return false;
@@ -219,9 +230,9 @@ QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kFileLocalDevice:
-        return d->isLocalDevice;
+        return d->asyncAttribute(AsyncAttributeID::kStandardIsLocalDevice).toBool();
     case FileExtendedInfoType::kFileCdRomDevice:
-        return d->isCdRomDevice;
+        return d->asyncAttribute(AsyncAttributeID::kStandardIsCdRomDevice).toBool();
     case FileExtendedInfoType::kSizeFormat:
         return d->sizeFormat();
     case FileExtendedInfoType::kInode:
@@ -235,7 +246,7 @@ QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kOwnerId:
         [[fallthrough]];
     case FileExtendedInfoType::kGroupId:
-        return d->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
+        return d->asyncAttribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
     default:
         QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
@@ -269,10 +280,10 @@ QFileDevice::Permissions AsyncFileInfo::permissions() const
 {
     QFileDevice::Permissions ps;
 
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        ps = static_cast<QFileDevice::Permissions>(static_cast<uint16_t>(d->dfmFileInfo->permissions()));
-    }
+    if (d->dfmFileInfo)
+        ps = static_cast<QFileDevice::Permissions>(
+                static_cast<uint16_t>(
+                        d->asyncAttribute(AsyncAttributeID::kAccessPermissions).value<DFile::Permissions>()));
 
     return ps;
 }
@@ -289,7 +300,7 @@ QFileDevice::Permissions AsyncFileInfo::permissions() const
  */
 qint64 AsyncFileInfo::size() const
 {
-    return d->attribute(DFileInfo::AttributeID::kStandardSize).value<qint64>();
+    return d->asyncAttribute(AsyncAttributeID::kStandardSize).value<qint64>();
 }
 /*!
  * \brief timeInfo 获取文件的时间信息
@@ -300,7 +311,7 @@ QVariant AsyncFileInfo::timeOf(const TimeInfoType type) const
 {
     qint64 data { 0 };
     if (type < FileTimeType::kDeletionTimeMSecond)
-        data = d->attribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
+        data = d->asyncAttribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
 
     switch (type) {
     case TimeInfoType::kCreateTime:
@@ -345,48 +356,7 @@ QVariant AsyncFileInfo::timeOf(const TimeInfoType type) const
  */
 AsyncFileInfo::FileType AsyncFileInfo::fileType() const
 {
-    FileType fileType { FileType::kUnknown };
-    {
-        QReadLocker locker(&d->lock);
-        if (d->fileType != MimeDatabase::FileType::kUnknown) {
-            fileType = FileType(d->fileType);
-            return fileType;
-        }
-    }
-
-    const QUrl &fileUrl = d->url;
-    if (FileUtils::isTrashFile(fileUrl) && isAttributes(FileIsType::kIsSymLink)) {
-        {
-            QWriteLocker locker(&d->lock);
-            d->fileType = MimeDatabase::FileType::kRegularFile;
-        }
-        fileType = FileType(MimeDatabase::FileType::kRegularFile);
-        return fileType;
-    }
-
-    // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
-    // In addition we want to follow symlinks.
-    const QString &absoluteFilePath = d->filePath();
-    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
-    QT_STATBUF statBuffer;
-    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
-        if (S_ISDIR(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kDirectory);
-        else if (S_ISCHR(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kCharDevice);
-        else if (S_ISBLK(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kBlockDevice);
-        else if (S_ISFIFO(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kFIFOFile);
-        else if (S_ISSOCK(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kSocketFile);
-        else if (S_ISREG(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kRegularFile);
-
-        QWriteLocker locker(&d->lock);
-        d->fileType = MimeDatabase::FileType(fileType);
-    }
-    return fileType;
+    return d->asyncAttribute(AsyncAttributeID::kStandardFileType).value<FileType>();
 }
 /*!
  * \brief countChildFile 文件夹下子文件的个数，只统计下一层不递归
@@ -395,7 +365,13 @@ AsyncFileInfo::FileType AsyncFileInfo::fileType() const
  */
 int AsyncFileInfo::countChildFile() const
 {
-    return isAttributes(FileIsType::kIsDir) ? FileUtils::dirFfileCount(d->url) : -1;
+    if (isAttributes(FileIsType::kIsDir)) {
+        QReadLocker locker(&d->lock);
+        if (!d->fileCountFuture)
+            return -1;
+        return d->fileCountFuture->finish ? d->fileCountFuture->data.toInt() : -1;
+    }
+    return -1;
 }
 
 int AsyncFileInfo::countChildFileAsync() const
@@ -417,7 +393,7 @@ int AsyncFileInfo::countChildFileAsync() const
 QString AsyncFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (type == DisPlayInfoType::kFileDisplayName)
-        return d->fileDisplayName();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName).toString();
     return FileInfo::displayOf(type);
 }
 
@@ -438,6 +414,22 @@ QIcon AsyncFileInfo::fileIcon()
     if (FileUtils::containsCopyingFileUrl(fileUrl))
         return LocalFileIconProvider::globalProvider()->icon(this);
 
+    if (d->cacheing) {
+        QIcon icon, deIcon;
+        {   // if already loaded thumb just return it.
+            QReadLocker rlk(&d->iconLock);
+            icon = d->icons.value(AsyncFileInfoPrivate::IconType::kThumbIcon);
+            deIcon = d->icons.value(AsyncFileInfoPrivate::IconType::kDefaultIcon);
+        }
+        if (!icon.isNull())
+            return icon;
+
+        if (!deIcon.isNull())
+            return deIcon;
+
+        return QIcon::fromTheme("unknown");
+    }
+
 #ifdef DFM_MINIMUM
     d->enableThumbnail = 0;
 #else
@@ -445,13 +437,13 @@ QIcon AsyncFileInfo::fileIcon()
         bool isLocalDevice = false;
         bool isCdRomDevice = false;
 
-        if (d->isLocalDevice.isValid())
-            isLocalDevice = d->isLocalDevice.toBool();
+        if (d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsLocalDevice).isValid())
+            isLocalDevice = d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsLocalDevice).toBool();
         else
             isLocalDevice = FileUtils::isLocalDevice(fileUrl);
 
-        if (d->isCdRomDevice.isValid())
-            isCdRomDevice = d->isCdRomDevice.toBool();
+        if (d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsCdRomDevice).isValid())
+            isCdRomDevice = d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsCdRomDevice).toBool();
         else
             isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
 
@@ -477,23 +469,9 @@ QIcon AsyncFileInfo::fileIcon()
 
 QMimeType AsyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
-    const QUrl &url = d->url;
-    QMimeType type;
-    QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
-    {
-        QReadLocker locker(&d->lock);
-        type = d->mimeType;
-        modeCache = d->mimeTypeMode;
-    }
-
-    if (!type.isValid() || modeCache != mode) {
-        type = this->mimeType(url.path(), mode);
-        QWriteLocker locker(&d->lock);
-        d->mimeType = type;
-        d->mimeTypeMode = mode;
-    }
-
-    return type;
+    Q_UNUSED(mode);
+    QReadLocker locker(&d->lock);
+    return d->mimeType;
 }
 
 QMimeType AsyncFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
@@ -527,7 +505,7 @@ QString AsyncFileInfo::viewOfTip(const ViewType type) const
         } else if (!isAttributes(FileIsType::kIsReadable)) {
             return QObject::tr("You do not have permission to access this folder");
         } else if (isAttributes(FileIsType::kIsDir)) {
-            if (!d->isExecutable())
+            if (!isAttributes(FileIsType::kIsExecutable))
                 return QObject::tr("You do not have permission to traverse files in it");
         }
     }
@@ -551,16 +529,14 @@ QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> AsyncFileInfo::mediaInfoAttr
 
 void AsyncFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value)
 {
-    QWriteLocker locker(&d->lock);
     switch (key) {
     case FileExtendedInfoType::kFileLocalDevice:
-        d->isLocalDevice = value;
+        cacheAttribute(static_cast<DFileInfo::AttributeID>(AsyncFileInfo::AsyncAttributeID::kStandardIsLocalDevice), value);
         break;
     case FileExtendedInfoType::kFileCdRomDevice:
-        d->isCdRomDevice = value;
+        cacheAttribute(static_cast<DFileInfo::AttributeID>(AsyncFileInfo::AsyncAttributeID::kStandardIsCdRomDevice), value);
         break;
     case FileExtendedInfoType::kFileIsHid: {
-        locker.unlock();
         cacheAttribute(DFileInfo::AttributeID::kStandardIsHidden, value);
         break;
     }
@@ -591,10 +567,10 @@ void AsyncFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfile
     }
 
     if (dfileInfo) {
+        d->notInit = true;
         d->dfmFileInfo = dfileInfo;
         return;
     }
-
     d->dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
 
     if (!d->dfmFileInfo) {
@@ -603,13 +579,13 @@ void AsyncFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfile
     }
 }
 
-QMimeType AsyncFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
+QMimeType AsyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
 {
     static DFMBASE_NAMESPACE::DMimeDatabase db;
     if (isGvfs) {
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }
-    return db.mimeTypeForFile(this->sharedFromThis(), mode);
+    return db.mimeTypeForFile(q->sharedFromThis(), mode);
 }
 
 QIcon AsyncFileInfoPrivate::thumbIcon()
@@ -764,15 +740,14 @@ QString AsyncFileInfoPrivate::completeSuffix() const
 QString AsyncFileInfoPrivate::iconName() const
 {
     QString iconNameValue;
-    if (SystemPathUtil::instance()->isSystemPath(filePath()))
-        iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(filePath());
+    if (SystemPathUtil::instance()->isSystemPath(asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardFilePath).toString()))
+        iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardFilePath).toString());
 
     if (iconNameValue.isEmpty()) {
-        const QStringList &list = this->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();
+        const QStringList &list = asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIcon).toStringList();
         if (!list.isEmpty())
             iconNameValue = list.first();
     }
-
     if (!FileUtils::isGvfsFile(url) && iconNameValue.isEmpty())
         iconNameValue = q->fileMimeType().iconName();
 
@@ -784,7 +759,7 @@ QString AsyncFileInfoPrivate::mimeTypeName() const
     // At present, there is no dfmio library code. For temporary repair
     // local file use the method on v20 to obtain mimeType
     if (FileUtils::isGvfsFile(url)) {
-        return this->attribute(DFileInfo::AttributeID::kStandardContentType).toString();
+        return asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardContentType).toString();
     }
     return q->fileMimeType().name();
 }
@@ -865,10 +840,10 @@ QString AsyncFileInfoPrivate::symLinkTarget() const
         symLinkTarget = this->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
     }
     // the link target may be a relative path.
-    if (!symLinkTarget.startsWith("/")) {
+    if (!symLinkTarget.startsWith(QDir::separator())) {
         auto currPath = path();
-        if (currPath.right(1) != "/")
-            currPath += "/";
+        if (currPath.right(1) != QDir::separator())
+            currPath += QDir::separator();
         symLinkTarget.prepend(currPath);
     }
 
@@ -877,8 +852,8 @@ QString AsyncFileInfoPrivate::symLinkTarget() const
 
 QUrl AsyncFileInfoPrivate::redirectedFileUrl() const
 {
-    if (q->isAttributes(OptInfoType::kIsSymLink))
-        return QUrl::fromLocalFile(symLinkTarget());
+    if (asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink).toBool())
+        return QUrl::fromLocalFile(asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardSymlinkTarget).toString());
     return url;
 }
 
@@ -985,29 +960,26 @@ bool AsyncFileInfoPrivate::canFetch() const
  */
 QString AsyncFileInfoPrivate::sizeFormat() const
 {
-    if (q->isAttributes(OptInfoType::kIsDir)) {
+    if (asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsDir).toBool()) {
         return QStringLiteral("-");
     }
 
-    return FileUtils::formatSize(q->size());
+    return FileUtils::formatSize(cacheAsyncAttributes.value(AsyncFileInfo::AsyncAttributeID::kStandardSize).toInt());
 }
 
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
     if (dfmFileInfo) {
-        {
-            QReadLocker locker(&const_cast<AsyncFileInfoPrivate *>(this)->lock);
-            if (cacheAttributes.count(key) > 0) {
-                if (ok)
-                    *ok = true;
-                return cacheAttributes.value(key);
-            }
-        }
-
         auto value = dfmFileInfo->attribute(key, ok);
         return value;
     }
     return QVariant();
+}
+
+QVariant AsyncFileInfoPrivate::asyncAttribute(AsyncFileInfo::AsyncAttributeID key) const
+{
+    QReadLocker lk(&const_cast<AsyncFileInfoPrivate *>(this)->lock);
+    return cacheAsyncAttributes.value(key);
 }
 
 QMap<DFileInfo::AttributeExtendID, QVariant> AsyncFileInfoPrivate::mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids)
@@ -1038,6 +1010,120 @@ bool AsyncFileInfoPrivate::canThumb() const
 {
     return !loadingThumbnail
             || (iconFuture && iconFuture->finish && iconFuture->data.toString().isEmpty());
+}
+
+FileInfo::FileType AsyncFileInfoPrivate::fileType() const
+{
+    FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
+
+    const QUrl &fileUrl = url;
+    if (FileUtils::isTrashFile(fileUrl)
+        && cacheAsyncAttributes.value(AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink).toBool()) {
+        fileType = FileInfo::FileType(MimeDatabase::FileType::kRegularFile);
+        return fileType;
+    }
+
+    // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
+    // In addition we want to follow symlinks.
+    const QString &absoluteFilePath = filePath();
+    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
+    QT_STATBUF statBuffer;
+    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
+        if (S_ISDIR(statBuffer.st_mode))
+            fileType = FileInfo::FileType(MimeDatabase::FileType::kDirectory);
+        else if (S_ISCHR(statBuffer.st_mode))
+            fileType = FileInfo::FileType(MimeDatabase::FileType::kCharDevice);
+        else if (S_ISBLK(statBuffer.st_mode))
+            fileType = FileInfo::FileType(MimeDatabase::FileType::kBlockDevice);
+        else if (S_ISFIFO(statBuffer.st_mode))
+            fileType = FileInfo::FileType(MimeDatabase::FileType::kFIFOFile);
+        else if (S_ISSOCK(statBuffer.st_mode))
+            fileType = FileInfo::FileType(MimeDatabase::FileType::kSocketFile);
+        else if (S_ISREG(statBuffer.st_mode))
+            fileType = FileInfo::FileType(MimeDatabase::FileType::kRegularFile);
+    }
+    return fileType;
+}
+
+void AsyncFileInfoPrivate::cacheAllAttributes()
+{
+    QMap<AsyncFileInfo::AsyncAttributeID, QVariant> tmp;
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, dfmFileInfo->exists());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardName, fileName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardBaseName, baseName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardCompleteBaseName, completeBaseName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSuffix, suffix());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardCompleteSuffix, completeSuffix());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName, fileDisplayName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSize, attribute(DFileInfo::AttributeID::kStandardSize));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFilePath, filePath());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardParentPath, path());
+    // redirectedFileUrl
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSymlinkTarget, symLinkTarget());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanRead, attribute(DFileInfo::AttributeID::kAccessCanRead));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanWrite, attribute(DFileInfo::AttributeID::kAccessCanWrite));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanExecute, isExecutable());
+    if (!notInit)
+        tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsHidden, attribute(DFileInfo::AttributeID::kStandardIsHidden));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsFile, attribute(DFileInfo::AttributeID::kStandardIsFile));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsDir, attribute(DFileInfo::AttributeID::kStandardIsDir));
+    if (attribute(DFileInfo::AttributeID::kStandardIsDir).toBool())
+        countChildFileAsync();
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink, attribute(DFileInfo::AttributeID::kStandardIsSymlink));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanDelete, canDelete());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanTrash, canTrash());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanRename, canRename());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kOwnerUser, attribute(DFileInfo::AttributeID::kOwnerUser));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kOwnerGroup, attribute(DFileInfo::AttributeID::kOwnerGroup));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixInode, attribute(DFileInfo::AttributeID::kUnixInode));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixUID, attribute(DFileInfo::AttributeID::kUnixUID));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixGID, attribute(DFileInfo::AttributeID::kUnixGID));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(dfmFileInfo->permissions()));
+    for (auto key : getAttributeIDVector()) {
+        tmp.insert(key, attribute(static_cast<DFileInfo::AttributeID>(key)));
+    }
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileType, QVariant::fromValue(fileType()));
+    // GenericIconName
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardContentType, attribute(DFileInfo::AttributeID::kStandardContentType));
+    // iconname
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIcon, attribute(DFileInfo::AttributeID::kStandardIcon));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsLocalDevice, FileUtils::isLocalDevice(url));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsCdRomDevice, FileUtils::isCdRomDevice(url));
+    {
+        QWriteLocker lk(&lock);
+        QVariant hid = cacheAsyncAttributes.value(AsyncFileInfo::AsyncAttributeID::kStandardIsHidden);
+        cacheAsyncAttributes = tmp;
+        if (notInit && hid.isValid())
+            cacheAsyncAttributes.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsHidden, hid);
+    }
+
+    // kMimeTypeName
+    fileMimeTypeAsync();
+
+    {
+        QWriteLocker wlk(&iconLock);
+        clearIcon();
+    }
+}
+
+void AsyncFileInfoPrivate::countChildFileAsync()
+{
+    QWriteLocker lk(&lock);
+    auto future = FileInfoHelper::instance().fileCountAsync(url);
+    fileCountFuture = future;
+}
+
+void AsyncFileInfoPrivate::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
+{
+    QMimeType type;
+    QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
+    if (!type.isValid() || modeCache != mode) {
+        type = mimeTypes(url.path(), mode);
+
+        QWriteLocker lk(&lock);
+        mimeType = type;
+        mimeTypeMode = mode;
+    }
 }
 
 }

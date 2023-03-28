@@ -282,5 +282,6 @@ using CanableInfoType = FileInfo::FileCanType;
 }
 Q_DECLARE_METATYPE(FileInfoPointer);
 Q_DECLARE_METATYPE(QList<FileInfoPointer>);
+Q_DECLARE_METATYPE(dfmbase::FileInfo::FileType);
 
 #endif   // FILEINFO_H

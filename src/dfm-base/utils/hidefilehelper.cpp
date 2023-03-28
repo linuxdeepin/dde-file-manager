@@ -108,7 +108,7 @@ bool HideFileHelper::save() const
     QByteArray data;
     data.append(dataStr);
 
-    if (d->dfile->open(DFMIO::DFile::OpenFlag::kWriteOnly)) {
+    if (d->dfile->open(DFMIO::DFile::OpenFlag::kWriteOnly | DFMIO::DFile::OpenFlag::kTruncate)) {
         d->dfile->write(data);
         d->dfile->close();
         d->updateAttribute();

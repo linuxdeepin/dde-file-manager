@@ -22,6 +22,20 @@ InfoFactory &InfoFactory::instance()
     return *ins;
 }
 
+QString InfoFactory::scheme(const QUrl &url)
+{
+    auto scheme = url.scheme();
+    if (scheme == Global::Scheme::kFile && !FileUtils::isLocalDevice(url))
+        return Global::Scheme::kAsyncFile;
+
+    dfmio::DFileInfo dinfo(url);
+    auto targetPath = dinfo.attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
+    if (!targetPath.isEmpty() && !FileUtils::isLocalDevice(QUrl::fromLocalFile(targetPath)))
+        scheme = Global::Scheme::kAsyncFile;
+
+    return scheme;
+}
+
 WatcherFactory &WatcherFactory::instance()
 {
     if (!ins) {

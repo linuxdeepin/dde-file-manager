@@ -220,19 +220,20 @@ public:
                 return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                             create(url, errorString));
             } else if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
-                return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
-                                                            create(Global::Scheme::kAsyncFile, url, errorString));
+                auto info = qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
+                                                                 create(Global::Scheme::kAsyncFile, url, errorString));
+                if (info)
+                    info->refresh();
+                return info;
             }
         }
 
         QSharedPointer<FileInfo> info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
-            auto scheme = url.scheme();
-            if (scheme == Global::Scheme::kFile && !FileUtils::isLocalDevice(url))
-                scheme = Global::Scheme::kAsyncFile;
-            info = instance().SchemeFactory<FileInfo>::create(scheme, url, errorString);
+            info = instance().SchemeFactory<FileInfo>::create(scheme(url), url, errorString);
 
             if (info) {
+                info->refresh();
                 emit InfoCacheController::instance().cacheFileInfo(url, info);
             } else {
                 qWarning() << "info is nullptr url = " << url;
@@ -244,6 +245,7 @@ public:
 private:
     static InfoFactory &instance();   // 获取全局实例
     explicit InfoFactory() {}
+    static QString scheme(const QUrl &url);
 };
 
 class ViewFactory final : public SchemeFactory<AbstractBaseView>

@@ -93,6 +93,8 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
 
         // 调用一次fileinfo进行文件缓存
         const auto &fileUrl = dirIterator->next();
+        if (!fileUrl.isValid())
+            continue;
         auto fileInfo = dirIterator->fileInfo();
         if (fileUrl.isValid() && !fileInfo)
             fileInfo = InfoFactory::create<FileInfo>(fileUrl);

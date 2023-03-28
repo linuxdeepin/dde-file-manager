@@ -28,30 +28,30 @@
 namespace dfmbase {
 class AsyncFileInfoPrivate : public FileInfoPrivate
 {
+public:
     friend class AsyncFileInfo;
-    std::atomic_bool loadingThumbnail = { false };
-    MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };   // 缓存文件的FileType
-    QMimeDatabase::MatchMode mimeTypeMode;
     std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
+    std::atomic_bool loadingThumbnail = { false };
+    std::atomic_bool notInit { false };
+    std::atomic_bool cacheing { false };
+    QMimeDatabase::MatchMode mimeTypeMode;
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
     QVariantHash extraProperties;   // 扩展属性列表
     QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
     QList<DFileInfo::AttributeExtendID> extendIDs;
     QMimeType mimeType;
     QReadWriteLock lock;
-    QMutex mutex;
     enum IconType {
         kDefaultIcon,
         kThumbIcon,
     };
     QReadWriteLock iconLock;
     QMap<IconType, QIcon> icons;
-    QVariant isLocalDevice;
-    QVariant isCdRomDevice;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
     InfoHelperUeserDataPointer iconFuture { nullptr };
+    QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
 
 public:
     explicit AsyncFileInfoPrivate(const QUrl &url, AsyncFileInfo *qq);
@@ -78,6 +78,8 @@ public:
 
     void clearIcon()
     {
+        if (url == QUrl("file:///run/user/1000/gvfs/smb-share:server=10.8.11.130,share=lixu-share/test/New Folder/测试(副本 6)(副本 1)(副本 3).smil"))
+            qInfo() << "11111122" << cacheing;
         icons.clear();
         loadingThumbnail = false;
         enableThumbnail = -1;
@@ -99,40 +101,40 @@ private:
     QString path() const;
     QString filePath() const;
     QString symLinkTarget() const;
-    QVector<DFileInfo::AttributeID> getAttributeIDVector() const
+    QVector<AsyncFileInfo::AsyncAttributeID> getAttributeIDVector() const
     {
-        static QVector<DFileInfo::AttributeID> kTimeInfoToDFile = {
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeChanged,
-            DFileInfo::AttributeID::kTimeModified,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeChanged,
-            DFileInfo::AttributeID::kTimeModified,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeCreatedUsec,
-            DFileInfo::AttributeID::kTimeCreatedUsec,
-            DFileInfo::AttributeID::kTimeChangedUsec,
-            DFileInfo::AttributeID::kTimeModifiedUsec,
-            DFileInfo::AttributeID::kTimeAccessUsec,
+        static QVector<AsyncFileInfo::AsyncAttributeID> kTimeInfoToDFile = {
+            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
+            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
+            AsyncFileInfo::AsyncAttributeID::kTimeChanged,
+            AsyncFileInfo::AsyncAttributeID::kTimeModified,
+            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
+            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
+            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
+            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
+            AsyncFileInfo::AsyncAttributeID::kTimeChanged,
+            AsyncFileInfo::AsyncAttributeID::kTimeModified,
+            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
+            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
+            AsyncFileInfo::AsyncAttributeID::kTimeCreatedUsec,
+            AsyncFileInfo::AsyncAttributeID::kTimeCreatedUsec,
+            AsyncFileInfo::AsyncAttributeID::kTimeChangedUsec,
+            AsyncFileInfo::AsyncAttributeID::kTimeModifiedUsec,
+            AsyncFileInfo::AsyncAttributeID::kTimeAccessUsec,
         };
         return kTimeInfoToDFile;
     }
     QUrl redirectedFileUrl() const;
-    QVector<DFileInfo::AttributeID> getAttributeIDIsVector() const
+    QVector<AsyncFileInfo::AsyncAttributeID> getAttributeIDIsVector() const
     {
-        static QVector<DFileInfo::AttributeID> kIsToDFile = {
-            DFileInfo::AttributeID::kAccessCanRead,
-            DFileInfo::AttributeID::kAccessCanWrite,
-            DFileInfo::AttributeID::kAccessCanExecute,
-            DFileInfo::AttributeID::kStandardIsHidden,
-            DFileInfo::AttributeID::kStandardIsFile,
-            DFileInfo::AttributeID::kStandardIsDir,
-            DFileInfo::AttributeID::kStandardIsSymlink,
+        static QVector<AsyncFileInfo::AsyncAttributeID> kIsToDFile = {
+            AsyncFileInfo::AsyncAttributeID::kAccessCanRead,
+            AsyncFileInfo::AsyncAttributeID::kAccessCanWrite,
+            AsyncFileInfo::AsyncAttributeID::kAccessCanExecute,
+            AsyncFileInfo::AsyncAttributeID::kStandardIsHidden,
+            AsyncFileInfo::AsyncAttributeID::kStandardIsFile,
+            AsyncFileInfo::AsyncAttributeID::kStandardIsDir,
+            AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink,
         };
 
         return kIsToDFile;
@@ -143,24 +145,31 @@ private:
     bool canTrash() const;
     bool canRename() const;
     bool canFetch() const;
-    QVector<DFileInfo::AttributeID> getAttributeIDExtendVector() const
+    QVector<AsyncFileInfo::AsyncAttributeID> getAttributeIDExtendVector() const
     {
-        static QVector<DFileInfo::AttributeID> kExtendToDFile = {
-            DFileInfo::AttributeID::kOwnerUser,
-            DFileInfo::AttributeID::kOwnerGroup,
-            DFileInfo::AttributeID::kAttributeIDMax,
-            DFileInfo::AttributeID::kUnixInode,
-            DFileInfo::AttributeID::kUnixUID,
-            DFileInfo::AttributeID::kUnixGID,
-            DFileInfo::AttributeID::kStandardIsHidden,
+        static QVector<AsyncFileInfo::AsyncAttributeID> kExtendToDFile = {
+            AsyncFileInfo::AsyncAttributeID::kOwnerUser,
+            AsyncFileInfo::AsyncAttributeID::kOwnerGroup,
+            AsyncFileInfo::AsyncAttributeID::kAttributeIDMax,
+            AsyncFileInfo::AsyncAttributeID::kUnixInode,
+            AsyncFileInfo::AsyncAttributeID::kUnixUID,
+            AsyncFileInfo::AsyncAttributeID::kUnixGID,
+            AsyncFileInfo::AsyncAttributeID::kStandardIsHidden,
         };
 
         return kExtendToDFile;
     }
     QString sizeFormat() const;
     QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
+    QVariant asyncAttribute(AsyncFileInfo::AsyncAttributeID key) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
     bool canThumb() const;
+
+    FileInfo::FileType fileType() const;
+    void cacheAllAttributes();
+    void countChildFileAsync();
+    void fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
+    QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString &inod = QString(), const bool isGvfs = false);
 };
 
 AsyncFileInfoPrivate::AsyncFileInfoPrivate(const QUrl &url, AsyncFileInfo *qq)
