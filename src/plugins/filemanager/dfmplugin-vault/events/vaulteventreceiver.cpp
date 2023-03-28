@@ -18,6 +18,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <dfm-io/dfmio_utils.h>
+
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QString *)
@@ -175,9 +177,10 @@ void VaultEventReceiver::handleHideFilesResult(const quint64 &winId, const QList
                     info->pathOf(PathInfoType::kPath));
             QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(parentUrlVirtual);
             if (!watcher.isNull()) {
-                const QString &hideFilePath = info->pathOf(PathInfoType::kPath) + "/.hidden";
-                const QUrl &hideFileUrl = QUrl::fromLocalFile(hideFilePath);
-                emit watcher->fileAttributeChanged(hideFileUrl);
+                QUrl hiddenFileUrl;
+                hiddenFileUrl.setScheme(url.scheme());
+                hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
+                emit watcher->fileAttributeChanged(hiddenFileUrl);
             }
         }
     }

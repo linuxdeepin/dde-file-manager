@@ -484,8 +484,10 @@ void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
 {
     if (isCanceled)
         return;
-
-    auto hidlist = DFMUtils::hideListFromUrl(hidUrl);
+    auto hiddenFileInfo = InfoFactory::create<AbstractFileInfo>(hidUrl);
+    if (!hiddenFileInfo)
+        return;
+    auto hidlist = DFMUtils::hideListFromUrl(QUrl::fromLocalFile(hiddenFileInfo->pathOf(PathInfoType::kFilePath)));
     for (const auto &child : children) {
         if (isCanceled)
             return;
@@ -682,8 +684,19 @@ void FileSortWorker::filterAllFiles(const bool byInfo)
             return;
     }
 
-    if (filterUrls.isEmpty())
+    if (filterUrls.isEmpty()) {
+        int count = childrenCount();
+        if (count > 0) {
+            Q_EMIT removeRows(0, count);
+            {
+                QWriteLocker lk(&locker);
+                visibleChildren.clear();
+            }
+            Q_EMIT removeFinish();
+        }
         return;
+    }
+
 
     Q_EMIT insertRows(0, filterUrls.length());
     {
