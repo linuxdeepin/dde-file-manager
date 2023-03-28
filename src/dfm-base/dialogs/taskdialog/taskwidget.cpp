@@ -315,6 +315,9 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
         widConfict->hide();
     if (widButton)
         widButton->hide();
+
+    adjustSize();
+    emit heightChanged();
 }
 /*!
  * \brief TaskWidget::showTaskProccess 显示当前任务进度
@@ -561,21 +564,9 @@ QWidget *TaskWidget::createConflictWidget()
     conflictMainLayout->setContentsMargins(0, 0, 0, 0);
     conflictMainLayout->setColumnMinimumWidth(1, kMsgLabelWidth - 100);
 
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addStretch();
-    layout->addWidget(btnPause, Qt::AlignTop);
-    layout->addSpacing(10);
-    layout->addWidget(btnStop, Qt::AlignTop);
-    layout->setContentsMargins(50, 0, 0, 50);
-    QSizePolicy policy;
-    policy.setRetainSizeWhenHidden(true);
-    btnPause->setSizePolicy(policy);
-    btnStop->setSizePolicy(policy);
-
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->addStretch();
     hLayout->addLayout(conflictMainLayout);
-    hLayout->addLayout(layout);
+    hLayout->addStretch();
     conflictWidget->setLayout(hLayout);
     conflictWidget->setMaximumWidth(565);
 
@@ -695,6 +686,7 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
         widButton->hide();
         widConfict->hide();
     }
+    adjustSize();
     emit heightChanged();
 }
 
