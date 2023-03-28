@@ -30,7 +30,7 @@ public:
     void removeFilter(QSharedPointer<FileFilter> filter);
 
     Q_INVOKABLE QModelIndex index(const QUrl &url, int column = 0) const;
-    Q_INVOKABLE DFMSyncFileInfoPointer fileInfo(const QModelIndex &index) const;
+    Q_INVOKABLE FileInfoPointer fileInfo(const QModelIndex &index) const;
     Q_INVOKABLE QUrl fileUrl(const QModelIndex &index) const;
     Q_INVOKABLE QList<QUrl> files() const;
     Q_INVOKABLE void refresh(const QModelIndex &parent);

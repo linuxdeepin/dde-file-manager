@@ -74,7 +74,7 @@ QModelIndex FileInfoModelBroker::urlIndex(const QUrl &url)
     return model->index(url);
 }
 
-DFMSyncFileInfoPointer FileInfoModelBroker::fileInfo(const QModelIndex &index)
+FileInfoPointer FileInfoModelBroker::fileInfo(const QModelIndex &index)
 {
     return model->fileInfo(index);
 }

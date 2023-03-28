@@ -12,16 +12,16 @@
 using namespace ddplugin_organizer;
 
 #define FileInfoModelSubscribe(topic, func) \
-        dpfSignalDispatcher->subscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
+    dpfSignalDispatcher->subscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
 
 #define FileInfoModelUnsubscribe(topic, func) \
-        dpfSignalDispatcher->unsubscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
+    dpfSignalDispatcher->unsubscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
 
 #define FileInfoModelPush(topic) \
-        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic))
+    dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic))
 
 #define FileInfoModelPush2(topic, args...) \
-        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
+    dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
 
 FileInfoModelShell::FileInfoModelShell(QObject *parent)
     : QObject(parent)
@@ -70,10 +70,10 @@ QModelIndex FileInfoModelShell::index(const QUrl &url, int column) const
     return ret.toModelIndex();
 }
 
-DFMSyncFileInfoPointer FileInfoModelShell::fileInfo(const QModelIndex &index) const
+FileInfoPointer FileInfoModelShell::fileInfo(const QModelIndex &index) const
 {
     QVariant ret = FileInfoModelPush2(slot_FileInfoModel_FileInfo, index);
-    return ret.value<DFMSyncFileInfoPointer>();
+    return ret.value<FileInfoPointer>();
 }
 
 QUrl FileInfoModelShell::fileUrl(const QModelIndex &index) const

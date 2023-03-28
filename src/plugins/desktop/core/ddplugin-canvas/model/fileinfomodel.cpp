@@ -35,7 +35,7 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
 {
     qDebug() << "to reset file, count:" << urls.size();
     QList<QUrl> fileUrls;
-    QMap<QUrl, DFMSyncFileInfoPointer> fileMaps;
+    QMap<QUrl, FileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
             fileUrls.append(itemInfo->urlOf(UrlInfoType::kUrl));
@@ -175,6 +175,21 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
     emit q->dataChanged(index, index);
 }
 
+void FileInfoModelPrivate::onFileInfoRefreshFinished(const QUrl &url, const bool isLinkOrg)
+{
+    const QModelIndex &index = q->index(url);
+    if (Q_UNLIKELY(!index.isValid()))
+        return;
+
+    if (isLinkOrg) {
+        auto info = q->fileInfo(index);
+        if (info)
+            info->customData(Global::ItemRoles::kItemFileRefreshIcon);
+    }
+
+    emit q->dataChanged(index, index);
+}
+
 FileInfoModel::FileInfoModel(QObject *parent)
     : QAbstractItemModel(parent),
       d(new FileInfoModelPrivate(this))
@@ -188,6 +203,7 @@ FileInfoModel::FileInfoModel(QObject *parent)
     connect(d->fileProvider, &FileProvider::fileRemoved, d, &FileInfoModelPrivate::removeData);
     connect(d->fileProvider, &FileProvider::fileUpdated, d, &FileInfoModelPrivate::updateData);
     connect(d->fileProvider, &FileProvider::fileRenamed, d, &FileInfoModelPrivate::replaceData);
+    connect(d->fileProvider, &FileProvider::fileInfoRefreshFinished, d, &FileInfoModelPrivate::onFileInfoRefreshFinished);
 }
 
 FileInfoModel::~FileInfoModel()
@@ -259,7 +275,7 @@ QModelIndex FileInfoModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMSyncFileInfoPointer FileInfoModel::fileInfo(const QModelIndex &index) const
+FileInfoPointer FileInfoModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return FileCreator->createFileInfo(rootUrl());

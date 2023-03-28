@@ -522,6 +522,18 @@ QVariant AsyncFileInfo::customAttribute(const char *key, const DFileInfo::DFileA
     return QVariant();
 }
 
+QVariant AsyncFileInfo::customData(int role) const
+{
+    using namespace dfmbase::Global;
+    if (role == kItemFileRefreshIcon) {
+        QWriteLocker locker(&d->iconLock);
+        d->clearIcon();
+        return QVariant();
+    }
+
+    return FileInfo::customData(role);
+}
+
 QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> AsyncFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
     return d->mediaInfo(type, ids);

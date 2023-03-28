@@ -28,7 +28,7 @@ public slots:
     QModelIndex urlIndex(const QUrl &url);
     QUrl indexUrl(const QModelIndex &index);
     QList<QUrl> files();
-    DFMSyncFileInfoPointer fileInfo(const QModelIndex &index);
+    FileInfoPointer fileInfo(const QModelIndex &index);
     void refresh(const QModelIndex &parent);
     int modelState();
     void updateFile(const QUrl &url);

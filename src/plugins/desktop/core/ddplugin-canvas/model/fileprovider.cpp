@@ -18,6 +18,8 @@ FileProvider::FileProvider(QObject *parent)
 {
     qRegisterMetaType<QList<QUrl>>();
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileProvider::update);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FileProvider::onFileInfoRefreshFinished, Qt::QueuedConnection);
 }
 
 bool FileProvider::setRoot(const QUrl &url)
@@ -163,4 +165,17 @@ void FileProvider::preupdateData(const QUrl &url)
         // get file mime type for sorting.
         info->fileMimeType();
     }
+}
+
+void FileProvider::onFileInfoRefreshFinished(const QUrl &url, const bool isLinkOrg)
+{
+    if (UrlRoute::urlParent(url) != rootUrl && url != rootUrl)
+        return;
+    bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
+                              [&url](const QSharedPointer<FileFilter> &filter) {
+                                  return filter->fileUpdatedFilter(url);
+                              });
+
+    if (!ignore)
+        emit fileInfoRefreshFinished(url, isLinkOrg);
 }

@@ -85,6 +85,7 @@ enum ItemRoles {
     kItemFileIconModelToolTipRole = Qt::UserRole + 19,
     kItemFileOriginalPath = Qt::UserRole + 23,
     kItemFileDeletionDate = Qt::UserRole + 24,
+    kItemFileRefreshIcon = Qt::UserRole + 25,
 
     kItemUnknowRole = Qt::UserRole + 999
 };

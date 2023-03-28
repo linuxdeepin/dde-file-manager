@@ -1510,8 +1510,8 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     if (!leftIdx.isValid() || !rightIdx.isValid())
         return false;
 
-    DFMSyncFileInfoPointer leftInfo = m->fileInfo(leftIdx);
-    DFMSyncFileInfoPointer rightInfo = m->fileInfo(rightIdx);
+    FileInfoPointer leftInfo = m->fileInfo(leftIdx);
+    FileInfoPointer rightInfo = m->fileInfo(rightIdx);
 
     // The folder is fixed in the front position
     if (leftInfo->isAttributes(OptInfoType::kIsDir)) {

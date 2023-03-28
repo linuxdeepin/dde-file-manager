@@ -89,7 +89,7 @@ void CollectionModelPrivate::createMapping()
     }
 
     fileList = handler->acceptReset(shell->files());
-    QMap<QUrl, DFMSyncFileInfoPointer> maps;
+    QMap<QUrl, FileInfoPointer> maps;
     for (const QUrl &url : fileList)
         maps.insert(url, shell->fileInfo(shell->index(url)));
 
@@ -342,7 +342,7 @@ QModelIndex CollectionModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMSyncFileInfoPointer CollectionModel::fileInfo(const QModelIndex &index) const
+FileInfoPointer CollectionModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return d->shell->fileInfo(index);

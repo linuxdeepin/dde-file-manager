@@ -33,8 +33,8 @@ class DesktopFileCreator
 {
 public:
     static DesktopFileCreator *instance();
-    DFMSyncFileInfoPointer createFileInfo(const QUrl &url,
-                                          dfmbase::Global::CreateFileInfoType cache = dfmbase::Global::CreateFileInfoType::kCreateFileInfoAuto);
+    FileInfoPointer createFileInfo(const QUrl &url,
+                                   dfmbase::Global::CreateFileInfoType cache = dfmbase::Global::CreateFileInfoType::kCreateFileInfoAuto);
 
 protected:
     explicit DesktopFileCreator();

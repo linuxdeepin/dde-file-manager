@@ -15,10 +15,10 @@
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
-static DFMSyncFileInfoPointer createFileInfo(const QUrl &url)
+static FileInfoPointer createFileInfo(const QUrl &url)
 {
     QString errString;
-    auto itemInfo = InfoFactory::create<SyncFileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    auto itemInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "create LocalFileInfo error: " << errString << url;
         return nullptr;

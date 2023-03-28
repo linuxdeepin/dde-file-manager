@@ -43,7 +43,7 @@ public:
     FileInfoModelShell *shell = nullptr;
     ModelDataHandler *handler = nullptr;
     QList<QUrl> fileList;
-    QMap<QUrl, DFMSyncFileInfoPointer> fileMap;
+    QMap<QUrl, FileInfoPointer> fileMap;
     QSharedPointer<QTimer> refreshTimer;
     QUrl waitForRenameFile;
 

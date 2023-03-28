@@ -44,8 +44,6 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FileViewModel::onFileLinkOrgUpdated, Qt::QueuedConnection);
-    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
-            &FileViewModel::onFileLinkOrgUpdated, Qt::QueuedConnection);
 }
 
 FileViewModel::~FileViewModel()
@@ -626,6 +624,8 @@ void FileViewModel::onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg)
         return;
     if (isLinkOrg) {
         auto info = fileInfo(updateIndex);
+        if (info)
+            info->customData(Global::ItemRoles::kItemFileRefreshIcon);
     }
 
     Q_EMIT dataChanged(updateIndex, updateIndex);

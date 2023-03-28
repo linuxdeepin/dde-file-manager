@@ -22,7 +22,7 @@ DesktopFileCreator *DesktopFileCreator::instance()
     return desktopFileCreatorGlogal;
 }
 
-DFMSyncFileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, dfmbase::Global::CreateFileInfoType cache)
+FileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, dfmbase::Global::CreateFileInfoType cache)
 {
     QString errString;
     auto itemInfo = InfoFactory::create<SyncFileInfo>(url, cache, &errString);
