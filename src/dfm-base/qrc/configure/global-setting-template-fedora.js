@@ -452,7 +452,7 @@
                             "key": "hide_loop_partitions",
                             "text": "Hide loop partitions on the Computer page",
                             "type": "checkbox",
-                            "default": true
+                            "default": false
                         },
                         {
                             "key": "show_filesystemtag_on_diskicon",
