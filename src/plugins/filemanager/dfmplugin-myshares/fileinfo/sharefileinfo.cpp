@@ -13,7 +13,7 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_myshares;
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
-    : FileInfo(url), d(new ShareFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new ShareFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     QString path = url.path();
@@ -71,7 +71,7 @@ bool ShareFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanDrag:
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return dptr->proxy;
+        return proxy;
     default:
         return FileInfo::canAttributes(type);
     }

@@ -12,7 +12,7 @@ using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 AvfsFileInfo::AvfsFileInfo(const QUrl &url)
-    : FileInfo(url)
+    : ProxyFileInfo(url)
 {
     setProxy(InfoFactory::create<FileInfo>(AvfsUtils::avfsUrlToLocal(url)));
 }
@@ -25,7 +25,7 @@ QUrl AvfsFileInfo::urlOf(const FileInfo::FileUrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        return dptr->proxy ? dptr->proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
+        return proxy ? proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
     default:
         return FileInfo::urlOf(type);
     }
@@ -35,7 +35,7 @@ bool AvfsFileInfo::canAttributes(const FileInfo::FileCanType type) const
 {
     switch (type) {
     case FileCanType::kCanRedirectionFileUrl:
-        return dptr->proxy;
+        return proxy;
     default:
         return FileInfo::canAttributes(type);
     }

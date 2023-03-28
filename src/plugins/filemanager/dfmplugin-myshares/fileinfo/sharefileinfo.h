@@ -6,11 +6,11 @@
 #define SHAREFILEINFO_H
 
 #include "dfmplugin_myshares_global.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 namespace dfmplugin_myshares {
 class ShareFileInfoPrivate;
-class ShareFileInfo : public DFMBASE_NAMESPACE::FileInfo
+class ShareFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
     ShareFileInfoPrivate *d;
 

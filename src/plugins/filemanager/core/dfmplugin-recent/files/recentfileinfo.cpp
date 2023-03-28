@@ -14,7 +14,7 @@ DFMBASE_USE_NAMESPACE
 namespace dfmplugin_recent {
 
 RecentFileInfo::RecentFileInfo(const QUrl &url)
-    : FileInfo(url)
+    : ProxyFileInfo(url)
 {
     if (url.path() != "/") {
         setProxy(InfoFactory::create<FileInfo>(QUrl::fromLocalFile(url.path())));
@@ -56,7 +56,7 @@ bool RecentFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRename:
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return dptr->proxy;
+        return proxy;
     default:
         return FileInfo::canAttributes(type);
     }
@@ -66,8 +66,8 @@ QString RecentFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case NameInfoType::kFileName:
-        if (dptr->proxy)
-            return dptr->proxy->nameOf(NameInfoType::kFileName);
+        if (proxy)
+            return proxy->nameOf(NameInfoType::kFileName);
 
         if (UrlRoute::isRootUrl(dptr->url))
             return QObject::tr("Recent");
@@ -82,7 +82,7 @@ QUrl RecentFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        return dptr->proxy ? dptr->proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
+        return proxy ? proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
     default:
         return FileInfo::urlOf(type);
     }
