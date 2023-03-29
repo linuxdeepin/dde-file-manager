@@ -33,7 +33,7 @@ void IconItemEditorPrivate::init()
     icon->setFrameShape(QFrame::NoFrame);
     icon->installEventFilter(q);
 
-    edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    edit->setWordWrapMode(QTextOption::WrapAnywhere);
     edit->setAlignment(Qt::AlignHCenter);
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

@@ -35,15 +35,16 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
     const qreal scale = view->devicePixelRatioF();
     QStyleOptionViewItem option = view->viewOptions();
     option.state |= QStyle::State_Selected;
+    option.rect = option.rect.translated(kDragIconOutline, kDragIconOutline);
+
     if (mode == ViewMode::kIconMode) {
         QRectF rect = view->visualRect(topIndex);
         QRectF iconRect = view->itemDelegate()->itemIconRect(rect);
-        dragIconSize = iconRect.width();
+        dragIconSize = static_cast<int>(iconRect.width());
 
-        option.rect = option.rect.translated(kDragIconOutline, kDragIconOutline);
         int pixmapSize = dragIconSize + kDragIconOutline * 2;
-
-        QRect pixRect(0, 0, pixmapSize, pixmapSize);
+        int textLineHeight = view->fontMetrics().height();
+        QRect pixRect(0, 0, pixmapSize, pixmapSize + (textLineHeight * 2 - kDragIconOutline));
 
         QPixmap pixmap(pixRect.size() * scale);
         pixmap.setDevicePixelRatio(scale);
@@ -54,13 +55,16 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
         drawDragIcons(&painter, option, pixRect, indexes, topIndex);
         if (dragCount != 1)
             drawDragCount(&painter, topIndex, option, dragCount);
+        else
+            drawDragText(&painter, topIndex, rect.width() - 2 * kIconModeTextPadding - 2 * kIconModeColumuPadding - kIconModeBackRadius);
 
         return pixmap;
     } else if (mode == ViewMode::kListMode) {
         dragIconSize = kDragIconSize;
-        option.rect = option.rect.translated((kListDragIconSize - dragIconSize) / 2, 0);
+        int pixmapSize = dragIconSize + kDragIconOutline * 2;
+        int textLineHeight = view->fontMetrics().height();
 
-        QRect pixRect(0, 0, kListDragIconSize, dragIconSize + kListDragTextHeight);
+        QRect pixRect(0, 0, pixmapSize, pixmapSize + (textLineHeight * 2 - kDragIconOutline));
         QPixmap pixmap(pixRect.size() * scale);
         pixmap.setDevicePixelRatio(scale);
         pixmap.fill(Qt::transparent);
@@ -69,7 +73,7 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
 
         if (indexes.isEmpty()) {
             drawDragIcons(&painter, option, pixRect, indexes, topIndex);
-            drawDragText(&painter, topIndex);
+            drawDragText(&painter, topIndex, kListDragTextWidth);
         } else {
             drawDragIcons(&painter, option, pixRect, indexes, topIndex);
             drawDragCount(&painter, topIndex, option, dragCount);
@@ -136,15 +140,15 @@ void ViewDrawHelper::drawDragCount(QPainter *painter, const QModelIndex &topInde
     painter->drawText(QRect(x, y, length, length), Qt::AlignCenter, countStr);
 }
 
-void ViewDrawHelper::drawDragText(QPainter *painter, const QModelIndex &index) const
+void ViewDrawHelper::drawDragText(QPainter *painter, const QModelIndex &index, qreal textWidth) const
 {
     painter->setPen(Qt::white);
 
     QString fileName = view->model()->data(index, ItemRoles::kItemFileDisplayNameRole).toString();
-    QRectF boundingRect((kListDragIconSize - kListDragTextWidth) / 2, dragIconSize, kListDragTextWidth, kListDragTextHeight);
-    QTextOption::WrapMode wordWrap(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    int textLineHeight = view->fontMetrics().height();
+    QRectF boundingRect(kDragIconOutline + (dragIconSize - textWidth) / 2, dragIconSize + kDragIconOutline, textWidth, textLineHeight * 2);
+    QTextOption::WrapMode wordWrap(QTextOption::WrapAnywhere);
     Qt::TextElideMode mode(Qt::ElideLeft);
-    int textLineHeight = view->fontMetrics().lineSpacing();
     int flags = Qt::AlignHCenter;
     QBrush background(view->palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight));
 

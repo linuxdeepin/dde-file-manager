@@ -66,6 +66,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
 
     auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines](QTextLine &line) {
         QRectF lRect = line.naturalTextRect();
+        lRect.setTop(lRect.top() - (textLineHeight - line.height()));
         lRect.setHeight(textLineHeight);
 
         ret.append(lRect);

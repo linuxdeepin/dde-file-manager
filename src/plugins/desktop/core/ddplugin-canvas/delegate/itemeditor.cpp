@@ -202,7 +202,7 @@ void ItemEditor::setOpacity(qreal opacity)
 RenameEdit *ItemEditor::createEditor()
 {
     auto edit = new RenameEdit();
-    edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    edit->setWordWrapMode(QTextOption::WrapAnywhere);
     edit->setAlignment(Qt::AlignHCenter);
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
