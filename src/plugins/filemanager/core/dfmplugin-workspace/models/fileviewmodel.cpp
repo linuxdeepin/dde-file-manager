@@ -334,6 +334,11 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
     if (!info)
         return flags;
 
+    if (!passNameFilters(info)) {
+        flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+        return flags;
+    }
+
     if (info->canAttributes(CanableInfoType::kCanRename))
         flags |= Qt::ItemIsEditable;
 
@@ -566,6 +571,7 @@ QDir::Filters FileViewModel::getFilters() const
 
 void FileViewModel::setNameFilters(const QStringList &filters)
 {
+    nameFiltersMatchResultMap.clear();
     Q_EMIT requestChangeNameFilters(filters);
 }
 
@@ -725,4 +731,37 @@ void FileViewModel::changeState(ModelState newState)
 
     state = newState;
     Q_EMIT stateChanged();
+}
+
+bool FileViewModel::passNameFilters(const AbstractFileInfoPointer &info) const
+{
+    if (!info || !filterSortWorker)
+        return true;
+
+    if (filterSortWorker->getNameFilters().isEmpty())
+        return true;
+
+    const QString &filePath = info->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath);
+    if (nameFiltersMatchResultMap.contains(filePath))
+        return nameFiltersMatchResultMap.value(filePath, false);
+
+    // Check the name regularexpression filters
+    if (!(info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && (filterSortWorker->getFilters() & QDir::Dirs))) {
+        const Qt::CaseSensitivity caseSensitive = (filterSortWorker->getFilters() & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+        const QString &fileDisplayName = info->displayOf(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        QRegExp re("", caseSensitive, QRegExp::Wildcard);
+
+        for (int i = 0; i < filterSortWorker->getNameFilters().size(); ++i) {
+            re.setPattern(filterSortWorker->getNameFilters().at(i));
+            if (re.exactMatch(fileDisplayName)) {
+                nameFiltersMatchResultMap[filePath] = true;
+                return true;
+            }
+        }
+        nameFiltersMatchResultMap[filePath] = false;
+        return false;
+    }
+
+    nameFiltersMatchResultMap[filePath] = true;
+    return true;
 }
