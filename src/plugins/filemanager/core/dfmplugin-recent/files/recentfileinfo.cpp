@@ -27,7 +27,7 @@ RecentFileInfo::~RecentFileInfo()
 
 bool RecentFileInfo::exists() const
 {
-    return FileInfo::exists() || dptr->url == RecentHelper::rootUrl();
+    return ProxyFileInfo::exists() || dptr->url == RecentHelper::rootUrl();
 }
 
 QFile::Permissions RecentFileInfo::permissions() const
@@ -35,7 +35,7 @@ QFile::Permissions RecentFileInfo::permissions() const
     if (dptr->url == RecentHelper::rootUrl()) {
         return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
     }
-    return FileInfo::permissions();
+    return ProxyFileInfo::permissions();
 }
 
 bool RecentFileInfo::isAttributes(const OptInfoType type) const
@@ -46,7 +46,7 @@ bool RecentFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsWritable:
         return permissions().testFlag(QFile::Permission::WriteUser);
     default:
-        return FileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -58,7 +58,7 @@ bool RecentFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRedirectionFileUrl:
         return proxy;
     default:
-        return FileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
@@ -74,7 +74,7 @@ QString RecentFileInfo::nameOf(const NameInfoType type) const
 
         return QString();
     default:
-        return FileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -84,7 +84,7 @@ QUrl RecentFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return proxy ? proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
     default:
-        return FileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 
@@ -106,7 +106,7 @@ QString RecentFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
             return QObject::tr("Recent");
         }
     }
-    return FileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 }

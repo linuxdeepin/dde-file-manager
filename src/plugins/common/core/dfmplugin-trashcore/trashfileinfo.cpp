@@ -183,7 +183,7 @@ QDateTime TrashFileInfoPrivate::deletionTime() const
 }
 
 TrashFileInfo::TrashFileInfo(const QUrl &url)
-    : FileInfo(url), d(new TrashFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new TrashFileInfoPrivate(url, this))
 {
     dptr.reset(d);
 
@@ -213,7 +213,7 @@ TrashFileInfo::~TrashFileInfo()
 
 bool TrashFileInfo::exists() const
 {
-    return FileInfo::exists()
+    return ProxyFileInfo::exists()
             || FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
 }
 
@@ -228,13 +228,13 @@ Qt::DropActions TrashFileInfo::supportedOfAttributes(const FileInfo::SupportType
     case FileInfo::SupportType::kDrag:
         return Qt::CopyAction | Qt::MoveAction;
     default:
-        return FileInfo::supportedOfAttributes(type);
+        return ProxyFileInfo::supportedOfAttributes(type);
     }
 }
 
 void TrashFileInfo::refresh()
 {
-    FileInfo::refresh();
+    ProxyFileInfo::refresh();
 }
 
 QString TrashFileInfo::nameOf(const NameInfoType type) const
@@ -253,7 +253,7 @@ QString TrashFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kMimeTypeName:
         return const_cast<TrashFileInfoPrivate *>(d)->mimeTypeName();
     default:
-        return FileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -276,7 +276,7 @@ QString TrashFileInfo::displayOf(const DisPlayInfoType type) const
         return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
     }
 
-    return FileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 QString TrashFileInfo::pathOf(const PathInfoType type) const
 {
@@ -284,7 +284,7 @@ QString TrashFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kSymLinkTarget:
         return d->symLinkTarget();
     default:
-        return FileInfo::pathOf(type);
+        return ProxyFileInfo::pathOf(type);
     }
 }
 
@@ -296,7 +296,7 @@ QUrl TrashFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kOriginalUrl:
         return d->originalUrl;
     default:
-        return FileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 
@@ -325,7 +325,7 @@ bool TrashFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRedirectionFileUrl:
         return true;
     default:
-        return FileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
@@ -350,7 +350,7 @@ QIcon TrashFileInfo::fileIcon()
         }
     }
 
-    return FileInfo::fileIcon();
+    return ProxyFileInfo::fileIcon();
 }
 
 qint64 TrashFileInfo::size() const
@@ -402,13 +402,13 @@ bool TrashFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsDir:
         if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl)))
             return true;
-        return FileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     case FileIsType::kIsReadable:
         if (!d->dFileInfo)
             return false;
 
         if (d->targetUrl.isValid())
-            return FileInfo::isAttributes(OptInfoType::kIsReadable);
+            return ProxyFileInfo::isAttributes(OptInfoType::kIsReadable);
 
         return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, nullptr).toBool();
     case FileIsType::kIsWritable:
@@ -416,7 +416,7 @@ bool TrashFileInfo::isAttributes(const OptInfoType type) const
             return false;
 
         if (d->targetUrl.isValid())
-            return FileInfo::isAttributes(type);
+            return ProxyFileInfo::isAttributes(type);
 
         return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, nullptr).toBool();
     case FileIsType::kIsHidden:
@@ -427,7 +427,7 @@ bool TrashFileInfo::isAttributes(const OptInfoType type) const
 
         return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, nullptr).toBool();
     default:
-        return FileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -441,7 +441,7 @@ QVariant TrashFileInfo::timeOf(const TimeInfoType type) const
     case TimeInfoType::kDeletionTime:
         return d->deletionTime();
     default:
-        return FileInfo::timeOf(type);
+        return ProxyFileInfo::timeOf(type);
     }
 }
 

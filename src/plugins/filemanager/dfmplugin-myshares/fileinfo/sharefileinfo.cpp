@@ -28,7 +28,7 @@ QString ShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return FileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 QString ShareFileInfo::nameOf(const NameInfoType type) const
@@ -39,7 +39,7 @@ QString ShareFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return FileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -49,7 +49,7 @@ QUrl ShareFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return QUrl::fromLocalFile(dptr->url.path());
     default:
-        return FileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 
@@ -59,7 +59,7 @@ bool ShareFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsDir:
         return true;
     default:
-        return FileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -73,7 +73,7 @@ bool ShareFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRedirectionFileUrl:
         return proxy;
     default:
-        return FileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 

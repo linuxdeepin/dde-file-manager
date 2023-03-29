@@ -56,7 +56,7 @@ QString MasteredMediaFileInfo::displayOf(const DisPlayInfoType type) const
             return "";
         return proxy->displayOf(DisPlayInfoType::kFileDisplayName);
     }
-    return FileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 QString MasteredMediaFileInfo::nameOf(const NameInfoType type) const
@@ -65,7 +65,7 @@ QString MasteredMediaFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return MasteredMediaFileInfo::displayOf(DisPlayInfoType::kFileDisplayName);
     default:
-        return FileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -76,11 +76,11 @@ QUrl MasteredMediaFileInfo::urlOf(const UrlInfoType type) const
         if (proxy) {
             return proxy->urlOf(UrlInfoType::kUrl);
         }
-        return FileInfo::urlOf(UrlInfoType::kUrl);
+        return ProxyFileInfo::urlOf(UrlInfoType::kUrl);
     case FileUrlInfoType::kParentUrl:
         return d->parentUrl();
     default:
-        return FileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 
@@ -99,7 +99,7 @@ bool MasteredMediaFileInfo::isAttributes(const OptInfoType type) const
             return false;
         return proxy->isAttributes(type);
     default:
-        return FileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -115,7 +115,7 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
 
 void MasteredMediaFileInfo::refresh()
 {
-    FileInfo::refresh();
+    ProxyFileInfo::refresh();
     if (proxy) {
         return;
     }
@@ -141,7 +141,7 @@ bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanHidden:
         return false;
     default:
-        return FileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
@@ -150,14 +150,14 @@ Qt::DropActions MasteredMediaFileInfo::supportedOfAttributes(const SupportedType
     if (type == SupportType::kDrop)
         if (!OpticalHelper::isBurnEnabled())
             return Qt::IgnoreAction;
-    return FileInfo::supportedOfAttributes(type);
+    return ProxyFileInfo::supportedOfAttributes(type);
 }
 
 QString MasteredMediaFileInfo::viewOfTip(const ViewInfoType type) const
 {
     if (type == ViewType::kEmptyDir)
         return QObject::tr("Folder is empty");
-    return FileInfo::viewOfTip(type);
+    return ProxyFileInfo::viewOfTip(type);
 }
 
 MasteredMediaFileInfoPrivate::MasteredMediaFileInfoPrivate(const QUrl &url, MasteredMediaFileInfo *qq)

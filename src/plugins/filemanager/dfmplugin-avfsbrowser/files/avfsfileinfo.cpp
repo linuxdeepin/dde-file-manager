@@ -27,7 +27,7 @@ QUrl AvfsFileInfo::urlOf(const FileInfo::FileUrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return proxy ? proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
     default:
-        return FileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 
@@ -37,6 +37,6 @@ bool AvfsFileInfo::canAttributes(const FileInfo::FileCanType type) const
     case FileCanType::kCanRedirectionFileUrl:
         return proxy;
     default:
-        return FileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
