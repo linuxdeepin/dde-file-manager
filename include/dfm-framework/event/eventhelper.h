@@ -11,6 +11,8 @@
 #include <QVariant>
 #include <QObject>
 #include <QUrl>
+#include <QThread>
+#include <QCoreApplication>
 
 #include <mutex>
 
@@ -52,6 +54,29 @@ inline EventType genCustomEventId()
 inline bool isValidEventType(EventType type)
 {
     return type > EventTypeScope::kInValid && type <= EventTypeScope::kCustomTop;
+}
+
+inline bool isWellKnownEvenType(EventType type)
+{
+    return type >= EventTypeScope::kWellKnownEventBase && type < EventTypeScope::kWellKnownEventTop;
+}
+
+inline void threadEventAlert(const QString &eventName)
+{
+    if (Q_UNLIKELY(QThread::currentThread() != QCoreApplication::instance()->thread()))
+        qWarning() << "[Event Thread]: The event call does not run in the main thread: " << eventName;
+}
+
+inline void threadEventAlert(const QString &space, const QString &topic)
+{
+    threadEventAlert(space + "::" + topic);
+}
+
+inline void threadEventAlert(EventType type)
+{
+    if (!isWellKnownEvenType(type))
+        return;
+    threadEventAlert(QString::number(type));
 }
 
 class EventConverter

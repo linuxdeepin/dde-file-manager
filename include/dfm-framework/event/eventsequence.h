@@ -139,12 +139,14 @@ public:
     inline bool run(const QString &space, const QString &topic, T param, Args &&... args)
     {
         Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+        threadEventAlert(space, topic);
         return run(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
     }
 
     template<class T, class... Args>
     inline bool run(EventType type, T param, Args &&... args)
     {
+        threadEventAlert(type);
         QReadLocker lk(&rwLock);
         if (Q_LIKELY(sequenceMap.contains(type))) {
             auto sequence = sequenceMap.value(type);
@@ -158,11 +160,13 @@ public:
     inline bool run(const QString &space, const QString &topic)
     {
         Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+        threadEventAlert(space, topic);
         return run(EventConverter::convert(space, topic));
     }
 
     inline bool run(EventType type)
     {
+        threadEventAlert(type);
         QReadLocker lk(&rwLock);
         if (Q_LIKELY(sequenceMap.contains(type))) {
             auto sequence = sequenceMap.value(type);
