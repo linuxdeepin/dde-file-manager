@@ -452,12 +452,17 @@ void TaskWidget::initUI()
     hLayout2->addWidget(lbRmTime, Qt::AlignRight);
     hLayout2->addStretch();
 
+    lbErrorMsg = new ElidedLable;
+    lbErrorMsg->setStyleSheet("color:red;");
+    lbErrorMsg->setFixedWidth(kMsgLabelWidth + kSpeedLabelWidth);
+    QHBoxLayout *hLayout3 = new QHBoxLayout;
+    hLayout3->addSpacing(15);
+    hLayout3->addWidget(lbErrorMsg, Qt::AlignLeft);
+    hLayout3->addStretch();
+
     rVLayout->addLayout(hLayout1);
     rVLayout->addLayout(hLayout2);
-
-    lbErrorMsg = new ElidedLable;
-    lbErrorMsg->setFixedWidth(kMsgLabelWidth + kSpeedLabelWidth);
-    rVLayout->addWidget(lbErrorMsg);
+    rVLayout->addLayout(hLayout3);
 
     normalLayout->addLayout(rVLayout);
 

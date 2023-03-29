@@ -43,12 +43,13 @@ EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
     QPalette pa = emptyTrashButton->palette();
     pa.setColor(QPalette::ColorRole::Text, QColor("#FF5736"));
     emptyTrashButton->setPalette(pa);
+    emptyTrashLayout->addSpacing(11);
     emptyTrashLayout->addWidget(trashLabel, 0, Qt::AlignLeft);
     emptyTrashLayout->addWidget(emptyTrashButton, 0, Qt::AlignRight);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(emptyTrashLayout);
-    mainLayout->setContentsMargins(10, 8, 10, 8);
+    mainLayout->setContentsMargins(10, 12, 10, 8);
 
     this->setLayout(mainLayout);
 }
