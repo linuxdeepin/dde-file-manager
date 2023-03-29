@@ -28,7 +28,6 @@ public:
     virtual ~BaseItemDelegatePrivate();
 
     void init();
-    dfmbase::ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
 
     int textLineHeight { -1 };
     QSize itemSizeHint;

@@ -333,7 +333,7 @@ QString IconItemDelegate::displayFileName(const QModelIndex &index) const
 
 QList<QRectF> IconItemDelegate::calFileNameRect(const QString &name, const QRectF &rect, Qt::TextElideMode elideMode) const
 {
-    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(name, QTextOption::WrapAtWordBoundaryOrAnywhere,
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(name, QTextOption::WrapAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter));
     return layout->layout(rect, elideMode);
 }
@@ -552,7 +552,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 
     //图标拖拽时保持活动色
     auto background = isDragMode ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight)) : QBrush(Qt::NoBrush);
-    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
     const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
