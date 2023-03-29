@@ -7,11 +7,11 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 namespace dfmplugin_tag {
 class TagFileInfoPrivate;
-class TagFileInfo : public DFMBASE_NAMESPACE::FileInfo
+class TagFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
     Q_GADGET
     friend class TagFileInfoPrivate;

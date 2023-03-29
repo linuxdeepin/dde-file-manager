@@ -14,7 +14,7 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagFileInfo::TagFileInfo(const QUrl &url)
-    : FileInfo(url), d(new TagFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new TagFileInfoPrivate(url, this))
 {
     dptr.reset(d);
 }
@@ -51,7 +51,7 @@ bool TagFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsExecutable:
         return true;
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -61,7 +61,7 @@ bool TagFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanDrop:
         return true;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
@@ -72,7 +72,7 @@ QString TagFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return FileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -80,7 +80,7 @@ QString TagFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return FileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 FileInfo::FileType TagFileInfo::fileType() const
