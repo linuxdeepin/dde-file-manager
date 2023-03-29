@@ -219,7 +219,7 @@ void ConnectToServerDialog::initializeUi()
                      << QString("%1://").arg(Scheme::kSFtp);
     schemeComboBox->addItems(supportedSchemes);
     theAddButton = new DIconButton(nullptr);
-    DLabel *collectionLabel = new DLabel(tr("My Favorites Address"));
+    DLabel *collectionLabel = new DLabel(tr("My Favorites"));
     collectionServerView = new DListView(contentFrame);
     delegate = new CollectionDelegate(collectionServerView);
     connect(delegate, &CollectionDelegate::removeItemManually, [this](const QString &text, int row) {

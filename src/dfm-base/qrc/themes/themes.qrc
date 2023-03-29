@@ -88,5 +88,7 @@
         <file>dark/icons/property_bt_copy.svg</file>
         <file>light/icons/property_bt_copy.svg</file>
         <file>light/icons/tab_close_normal.svg</file>
+        <file>light/icons/tab_close_hover.svg</file>
+        <file>light/icons/tab_close_press.svg</file>
     </qresource>
 </RCC>
