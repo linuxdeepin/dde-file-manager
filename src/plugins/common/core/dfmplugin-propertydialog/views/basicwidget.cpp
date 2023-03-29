@@ -11,6 +11,10 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
 #include <dfm-framework/event/event.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
+#include <DGuiApplicationHelper>
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -101,11 +105,18 @@ void BasicWidget::basicExpand(const QUrl &url)
     }
 
     DLabel *label = new DLabel(frameMain);
-    label->setFixedSize(hideFile->size());
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    label->setFixedWidth(DSizeModeHelper::element(60, 100));
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [label, this]() {
+        label->setFixedWidth(DSizeModeHelper::element(60, 100));
+    });
+#else
+    label->setFixedWidth(100);
+#endif
     QGridLayout *gl = new QGridLayout;
     gl->setMargin(0);
-    gl->addWidget(label, 0, 0, 1, 2);
-    gl->addWidget(hideFile, 0, 1, 1, 5);
+    gl->addWidget(label);
+    gl->addWidget(hideFile, 0, Qt::AlignLeft);
     gl->setColumnStretch(0, 2);
     gl->setColumnStretch(1, 3);
     QFrame *tempFrame = new QFrame(frameMain);
