@@ -41,9 +41,6 @@ private:
     void drawDragCount(QPainter *painter, const QModelIndex &topIndex, const QStyleOptionViewItem &option, int count) const;
     void drawDragText(QPainter *painter, const QModelIndex &index, qreal textWidth) const;
 
-    void paintSingleIcon();
-    void paintMultiIcons();
-
     FileView *view { nullptr };
     int dragIconSize;
 };
