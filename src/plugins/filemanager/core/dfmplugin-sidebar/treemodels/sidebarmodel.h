@@ -22,6 +22,8 @@ public:
     explicit SideBarModel(QObject *parent = nullptr);
     bool canDropMimeData(const QMimeData *data, Qt::DropAction action,
                          int row, int column, const QModelIndex &parent) const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+                      int row, int column, const QModelIndex &parent) override;
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
     SideBarItem *itemFromIndex(const QModelIndex &index) const;
     SideBarItem *itemFromIndex(int index, const QModelIndex &parent = QModelIndex()) const;

@@ -69,6 +69,14 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
     return QStandardItemModel::canDropMimeData(data, action, row, column, parent);
 }
 
+bool SideBarModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    if (!canDropMimeData(data, action, row, column, parent))
+        return false;
+
+    return QStandardItemModel::dropMimeData(data, action, row, column, parent);
+}
+
 QMimeData *SideBarModel::mimeData(const QModelIndexList &indexes) const
 {
     curDragItem = nullptr;
