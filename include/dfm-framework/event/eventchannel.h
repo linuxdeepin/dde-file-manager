@@ -116,12 +116,14 @@ public:
     inline QVariant push(const QString &space, const QString &topic, T param, Args &&... args)
     {
         Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+        threadEventAlert(space, topic);
         return push(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
     }
 
     template<class T, class... Args>
     [[gnu::hot]] inline QVariant push(EventType type, T param, Args &&... args)
     {
+        threadEventAlert(type);
         QReadLocker guard(&rwLock);
         if (Q_LIKELY(channelMap.contains(type))) {
             auto channel = channelMap.value(type);
@@ -134,11 +136,13 @@ public:
     inline QVariant push(const QString &space, const QString &topic)
     {
         Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+        threadEventAlert(space, topic);
         return push(EventConverter::convert(space, topic));
     }
 
     inline QVariant push(const EventType &type)
     {
+        threadEventAlert(type);
         QReadLocker guard(&rwLock);
         if (Q_LIKELY(channelMap.contains(type))) {
             auto channel = channelMap.value(type);

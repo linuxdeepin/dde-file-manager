@@ -180,12 +180,14 @@ public:
     inline bool publish(const QString &space, const QString &topic, T param, Args &&... args)
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        threadEventAlert(space, topic);
         return publish(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
     }
 
     template<class T, class... Args>
     [[gnu::hot]] inline bool publish(EventType type, T param, Args &&... args)
     {
+        threadEventAlert(type);
         if (!globalFilterMap.isEmpty()) {
             QVariantList ret;
             makeVariantList(&ret, param, std::forward<Args>(args)...);
@@ -206,11 +208,13 @@ public:
     inline bool publish(const QString &space, const QString &topic)
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        threadEventAlert(space, topic);
         return publish(EventConverter::convert(space, topic));
     }
 
     inline bool publish(EventType type)
     {
+        threadEventAlert(type);
         if (!globalFilterMap.isEmpty() && globalFiltered(type, QVariantList()))
             return false;
 
