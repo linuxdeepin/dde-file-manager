@@ -6,6 +6,7 @@
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QDir>
 #include <QSettings>
@@ -68,8 +69,14 @@ public:
 }
 
 DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl)
-    : SyncFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
+    : DesktopFileInfo(fileUrl, InfoFactory::create<FileInfo>(fileUrl))
 {
+}
+
+DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl, const FileInfoPointer &info)
+    : ProxyFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
+{
+    setProxy(info);
 }
 
 DesktopFileInfo::~DesktopFileInfo()
@@ -166,7 +173,7 @@ QIcon DesktopFileInfo::fileIcon()
     d->icon = QIcon::fromTheme(iconName);   // todo(lxs) LocalFileInfo::fileIcon() 统一处理
 
     if (d->icon.isNull())
-        return SyncFileInfo::fileIcon();
+        return ProxyFileInfo::fileIcon();
 
     return d->icon;
 }
@@ -181,13 +188,13 @@ QString DesktopFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kSuffixOfRename:
         return QString();
     case NameInfoType::kFileCopyName:
-        return SyncFileInfo::nameOf(NameInfoType::kFileName);
+        return ProxyFileInfo::nameOf(NameInfoType::kFileName);
     case NameInfoType::kIconName:
         return desktopIconName();
     case NameInfoType::kGenericIconName:
         return QStringLiteral("application-default-icon");
     default:
-        return SyncFileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -196,12 +203,12 @@ QString DesktopFileInfo::displayOf(const DisPlayInfoType type) const
     if (type == DisPlayInfoType::kFileDisplayName && !desktopName().isEmpty())
         return desktopName();
 
-    return SyncFileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 void DesktopFileInfo::refresh()
 {
-    SyncFileInfo::refresh();
+    ProxyFileInfo::refresh();
     d->updateInfo(urlOf(UrlInfoType::kUrl));
 }
 
@@ -211,7 +218,7 @@ Qt::DropActions DesktopFileInfo::supportedOfAttributes(const SupportType type) c
         return Qt::IgnoreAction;
     }
 
-    return SyncFileInfo::supportedOfAttributes(type);
+    return ProxyFileInfo::supportedOfAttributes(type);
 }
 
 bool DesktopFileInfo::canTag() const
@@ -243,9 +250,9 @@ bool DesktopFileInfo::canAttributes(const CanableInfoType type) const
         if (d->deepinID == "dde-computer")
             return false;
 
-        return SyncFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     default:
-        return SyncFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 

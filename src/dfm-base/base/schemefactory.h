@@ -148,7 +148,7 @@ public:
         finally.dismiss();
         QSharedPointer<T> info = QSharedPointer<T>(constantFunc(url));
 
-        TransFunc func = transList.value(scheme);
+        TransFunc func = transList.value(url.scheme());
         if (func)
             info = func(info);
 

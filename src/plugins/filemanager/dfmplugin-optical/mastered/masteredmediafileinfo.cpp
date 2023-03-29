@@ -20,10 +20,11 @@ namespace dfmplugin_optical {
 using namespace GlobalServerDefines;
 
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
-    : FileInfo(url), d(new MasteredMediaFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new MasteredMediaFileInfoPrivate(url, this))
 {
     dptr.reset(d);
     d->backupInfo(url);
+    setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
 bool MasteredMediaFileInfo::exists() const
@@ -37,7 +38,7 @@ bool MasteredMediaFileInfo::exists() const
         return false;
     }
 
-    return d->proxy && d->proxy->exists();
+    return proxy && proxy->exists();
 }
 
 QString MasteredMediaFileInfo::displayOf(const DisPlayInfoType type) const
@@ -51,9 +52,9 @@ QString MasteredMediaFileInfo::displayOf(const DisPlayInfoType type) const
             return idLabel;
         }
 
-        if (!d->proxy)
+        if (!proxy)
             return "";
-        return d->proxy->displayOf(DisPlayInfoType::kFileDisplayName);
+        return proxy->displayOf(DisPlayInfoType::kFileDisplayName);
     }
     return FileInfo::displayOf(type);
 }
@@ -72,8 +73,8 @@ QUrl MasteredMediaFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        if (d->proxy) {
-            return d->proxy->urlOf(UrlInfoType::kUrl);
+        if (proxy) {
+            return proxy->urlOf(UrlInfoType::kUrl);
         }
         return FileInfo::urlOf(UrlInfoType::kUrl);
     case FileUrlInfoType::kParentUrl:
@@ -87,16 +88,16 @@ bool MasteredMediaFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
-        return !d->proxy || d->proxy->isAttributes(type);
+        return !proxy || proxy->isAttributes(type);
     case FileIsType::kIsReadable:
-        if (!d->proxy)
+        if (!proxy)
             return true;
 
-        return d->proxy->isAttributes(type);
+        return proxy->isAttributes(type);
     case FileIsType::kIsWritable:
-        if (!d->proxy)
+        if (!proxy)
             return false;
-        return d->proxy->isAttributes(type);
+        return proxy->isAttributes(type);
     default:
         return FileInfo::isAttributes(type);
     }
@@ -105,8 +106,8 @@ bool MasteredMediaFileInfo::isAttributes(const OptInfoType type) const
 QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
     QVariantHash ret;
-    if (d->proxy) {
-        ret = d->proxy->extraProperties();
+    if (proxy) {
+        ret = proxy->extraProperties();
     }
     ret["mm_backer"] = d->backerUrl.path();
     return ret;
@@ -115,19 +116,20 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
 void MasteredMediaFileInfo::refresh()
 {
     FileInfo::refresh();
-    if (d->proxy) {
+    if (proxy) {
         return;
     }
 
     d->backupInfo(urlOf(UrlInfoType::kUrl));
+    setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
 bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanRename:
-        if (d->proxy)
-            return d->proxy->canAttributes(type);
+        if (proxy)
+            return proxy->canAttributes(type);
 
         return false;
     case FileCanType::kCanRedirectionFileUrl:
@@ -182,7 +184,6 @@ void MasteredMediaFileInfoPrivate::backupInfo(const QUrl &url)
     } else {
         backerUrl = OpticalHelper::localStagingFile(url);
     }
-    proxy = InfoFactory::create<FileInfo>(backerUrl);
 }
 
 QUrl MasteredMediaFileInfoPrivate::parentUrl() const

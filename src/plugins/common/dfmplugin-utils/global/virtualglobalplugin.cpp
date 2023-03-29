@@ -27,7 +27,7 @@ static QSharedPointer<dfmbase::FileInfo> transFileInfo(QSharedPointer<dfmbase::F
         if (mt.name() == "application/x-desktop"
             && mt.suffixes().contains(DFMBASE_NAMESPACE::Global::Scheme::kDesktop, Qt::CaseInsensitive)) {
             const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
-            return DFMSyncFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
+            return FileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
         }
     }
     return fileInfo;
