@@ -19,9 +19,7 @@ inline constexpr int kDragIconMaxCount { 99 };
 inline constexpr int kDragIconSize { 128 };
 inline constexpr int kDragIconOutline { 30 };
 inline constexpr int kDragIconMax { 4 };
-inline constexpr int kListDragIconSize { 120 };
 inline constexpr int kListDragTextWidth { 116 };
-inline constexpr int kListDragTextHeight { 47 };
 inline constexpr qreal kDragIconRotate { 10.0 };
 inline constexpr qreal kDragIconOpacity { 0.1 };
 }
@@ -41,7 +39,10 @@ public:
 private:
     void drawDragIcons(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QModelIndexList &indexes, const QModelIndex &topIndex) const;
     void drawDragCount(QPainter *painter, const QModelIndex &topIndex, const QStyleOptionViewItem &option, int count) const;
-    void drawDragText(QPainter *painter, const QModelIndex &index) const;
+    void drawDragText(QPainter *painter, const QModelIndex &index, qreal textWidth) const;
+
+    void paintSingleIcon();
+    void paintMultiIcons();
 
     FileView *view { nullptr };
     int dragIconSize;

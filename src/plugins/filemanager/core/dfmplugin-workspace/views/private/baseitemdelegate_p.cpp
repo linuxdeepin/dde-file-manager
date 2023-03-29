@@ -29,21 +29,3 @@ void BaseItemDelegatePrivate::init()
     q->connect(q, &BaseItemDelegate::commitData, q->parent(), &FileViewHelper::handleCommitData);
     q->connect(q->parent()->parent(), &QAbstractItemView::iconSizeChanged, q, &BaseItemDelegate::updateItemSizeHint);
 }
-
-ElideTextLayout *BaseItemDelegatePrivate::createTextlayout(const QModelIndex &index, const QPainter *painter) const
-{
-    bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
-    QString name = showSuffix ? index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
-                              : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
-    ElideTextLayout *layout = new ElideTextLayout(name);
-    layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
-    layout->setAttribute(ElideTextLayout::kLineHeight, textLineHeight);
-    layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignCenter);
-
-    if (painter) {
-        layout->setAttribute(ElideTextLayout::kFont, painter->font());
-        layout->setAttribute(ElideTextLayout::kTextDirection, painter->layoutDirection());
-    }
-
-    return layout;
-}

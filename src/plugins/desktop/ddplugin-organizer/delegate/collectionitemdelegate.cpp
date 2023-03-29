@@ -64,7 +64,7 @@ ElideTextLayout *CollectionItemDelegatePrivate::createTextlayout(const QModelInd
     QString name = showSuffix ? index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
                               : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
-    layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
+    layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAnywhere);
     layout->setAttribute(ElideTextLayout::kLineHeight, textLineHeight);
     layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignCenter);
     if (painter) {
