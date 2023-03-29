@@ -44,6 +44,7 @@ void UserSharePasswordSettingDialog::initializeUi()
     DLabel *notice = new DLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
     QPalette pe;
     pe.setColor(QPalette::WindowText, QColor("#526A7F"));
+    notice->setMargin(5);
     notice->setPalette(pe);
     DFontSizeManager::instance()->bind(notice, DFontSizeManager::SizeType::T8);
     insertContent(1, notice);

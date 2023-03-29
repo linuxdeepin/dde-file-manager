@@ -133,12 +133,12 @@ void ShareControlWidget::setupUi(bool disableState)
     lay->addWidget(shareSwitcher);
     lay->setAlignment(Qt::AlignLeft);
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    lay->setContentsMargins(DSizeModeHelper::element(65, 112), 0, 0, 0);
+    lay->setContentsMargins(DSizeModeHelper::element(60, 107), 0, 0, 0);
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [lay]() {
-        lay->setContentsMargins(DSizeModeHelper::element(65, 112), 0, 0, 0);
+        lay->setContentsMargins(DSizeModeHelper::element(60, 107), 0, 0, 0);
     });
 #else
-    lay->setContentsMargins(112, 0, 0, 0);
+    lay->setContentsMargins(107, 0, 0, 0);
 #endif
     mainLay->addRow(switcherContainer);
 
@@ -240,20 +240,18 @@ void ShareControlWidget::setupUserName()
 
 void ShareControlWidget::setupSharePassword()
 {
-    sharePasswordlineEditor = new QLineEdit(this);
-    sharePasswordlineEditor->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");   // just clear the background
+    sharePassword = new DLabel(this);
+    sharePassword->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");   // just clear the background
     QFont font = this->font();
     int defaultFontSize = font.pointSize();
     font.setLetterSpacing(QFont::AbsoluteSpacing, 5);
     font.setPointSize(isSharePasswordSet ? 5 : defaultFontSize);
-    sharePasswordlineEditor->setFont(font);
-    sharePasswordlineEditor->setEchoMode(isSharePasswordSet ? QLineEdit::Password : QLineEdit::Normal);
-    sharePasswordlineEditor->setAlignment(Qt::AlignJustify | Qt::AlignLeft);
-    sharePasswordlineEditor->setText(isSharePasswordSet ? "-----" : tr("None"));
-    sharePasswordlineEditor->setDisabled(true);
-    sharePasswordlineEditor->setCursorPosition(0);
+    sharePassword->setFont(font);
+    sharePassword->setAlignment(Qt::AlignJustify | Qt::AlignLeft | Qt::AlignVCenter);
+    sharePassword->setText(isSharePasswordSet ? "●●●●●" : tr("None"));
+
     QHBoxLayout *hBoxLine3 = new QHBoxLayout(this);
-    hBoxLine3->addWidget(sharePasswordlineEditor);
+    hBoxLine3->addWidget(sharePassword);
     hBoxLine3->setContentsMargins(0, 0, 0, 0);
 
     setPasswordBt = new DCommandLinkButton(tr("Set password"));
@@ -278,8 +276,8 @@ void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
 
     static QString notice = tr("This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. ");
     m_shareNotes->setPlainText(notice);
-    DFontSizeManager::instance()->bind(m_shareNotes, DFontSizeManager::SizeType::T7, QFont::DemiBold);
-    m_shareNotes->setFixedHeight(60);
+    DFontSizeManager::instance()->bind(m_shareNotes, DFontSizeManager::SizeType::T7, QFont::Normal);
+    m_shareNotes->setFixedHeight(50);
     m_shareNotes->setReadOnly(true);
     m_shareNotes->setFrameStyle(QFrame::NoFrame);
     connect(m_shareNotes, &QTextBrowser::copyAvailable, this, [=](bool yesCopy) {
@@ -516,13 +514,12 @@ void ShareControlWidget::onSambaPasswordSet(bool result)
 {
     isSharePasswordSet = result;
 
-    QFont font = this->font();
+    QFont font = sharePassword->font();
     int defaultFontSize = font.pointSize();
-    font.setPointSize(isSharePasswordSet ? 4 : defaultFontSize);
-    sharePasswordlineEditor->setFont(font);
-    sharePasswordlineEditor->setFixedWidth(isSharePasswordSet ? ConstDef::kWidgetFixedWidth - 140 : ConstDef::kWidgetFixedWidth - 128);
-    sharePasswordlineEditor->setEchoMode(isSharePasswordSet ? QLineEdit::Password : QLineEdit::Normal);
-    sharePasswordlineEditor->setText(isSharePasswordSet ? "-----" : tr("None"));
+    font.setPointSize(isSharePasswordSet ? 5 : defaultFontSize);
+    sharePassword->setFont(font);
+    sharePassword->setFixedWidth(isSharePasswordSet ? ConstDef::kWidgetFixedWidth - 140 : ConstDef::kWidgetFixedWidth - 128);
+    sharePassword->setText(isSharePasswordSet ? "●●●●●" : tr("None"));
     setPasswordBt->setText(isSharePasswordSet ? tr("Change password") : tr("Set password"));
 }
 
