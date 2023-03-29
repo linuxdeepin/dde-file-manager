@@ -443,7 +443,7 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     QString errString;
     auto itemInfo = InfoFactory::create<SyncFileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qWarning() << "create LocalFileInfo error: " << errString << targetUrl;
+        qWarning() << "create SyncFileInfo error: " << errString << targetUrl;
         return;
     }
 
@@ -619,7 +619,7 @@ void CollectionViewPrivate::clearClipBoard()
         QString errString;
         auto itemInfo = InfoFactory::create<SyncFileInfo>(urls.first(), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (Q_UNLIKELY(!itemInfo)) {
-            qInfo() << "create LocalFileInfo error: " << errString << urls.first();
+            qInfo() << "create SyncFileInfo error: " << errString << urls.first();
             return;
         }
         auto homePath = q->model()->rootUrl().toLocalFile();
@@ -681,7 +681,7 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
             QString errString;
             auto itemInfo = InfoFactory::create<SyncFileInfo>(targetItem, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
             if (Q_UNLIKELY(!itemInfo)) {
-                qWarning() << "create LocalFileInfo error: " << errString << targetItem;
+                qWarning() << "create SyncFileInfo error: " << errString << targetItem;
                 return false;
             }
             if (itemInfo->isAttributes(OptInfoType::kIsDir) || itemInfo->urlOf(UrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
@@ -815,7 +815,7 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     QString errString;
     auto itemInfo = InfoFactory::create<SyncFileInfo>(firstUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qWarning() << "create LocalFileInfo error: " << errString << firstUrl;
+        qWarning() << "create SyncFileInfo error: " << errString << firstUrl;
         return false;
     }
 

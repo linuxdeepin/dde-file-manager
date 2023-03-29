@@ -32,7 +32,7 @@
 #include <mntent.h>
 
 /*!
- * \class LocalFileInfo 本地文件信息类
+ * \class SyncFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
  */
 namespace dfmbase {
@@ -70,9 +70,9 @@ bool SyncFileInfo::operator==(const SyncFileInfo &fileinfo) const
 /*!
  * \brief != 重载操作符!=
  *
- * \param const LocalFileInfo & LocalFileInfo实例对象的引用
+ * \param const SyncFileInfo & SyncFileInfo实例对象的引用
  *
- * \return bool 传入的LocalFileInfo实例对象和自己是否不相等
+ * \return bool 传入的SyncFileInfo实例对象和自己是否不相等
  */
 bool SyncFileInfo::operator!=(const SyncFileInfo &fileinfo) const
 {

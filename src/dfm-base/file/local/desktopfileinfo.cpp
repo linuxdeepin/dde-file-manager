@@ -170,7 +170,7 @@ QIcon DesktopFileInfo::fileIcon()
     }
 
     // 临时代码
-    d->icon = QIcon::fromTheme(iconName);   // todo(lxs) LocalFileInfo::fileIcon() 统一处理
+    d->icon = QIcon::fromTheme(iconName);   // todo(lxs) SyncFileInfo::fileIcon() 统一处理
 
     if (d->icon.isNull())
         return ProxyFileInfo::fileIcon();

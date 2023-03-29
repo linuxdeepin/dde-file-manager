@@ -27,7 +27,7 @@ FileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, dfmbase::Glo
     QString errString;
     auto itemInfo = InfoFactory::create<SyncFileInfo>(url, cache, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create LocalFileInfo error: " << errString << url;
+        qInfo() << "create SyncFileInfo error: " << errString << url;
         return nullptr;
     }
 

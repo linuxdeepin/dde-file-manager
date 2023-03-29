@@ -162,7 +162,7 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
             return;
 
         // Although the files cached in InfoCache will be refreshed automatically,
-        // a redundant refresh is still required here, because the current variant of LocalFileInfo
+        // a redundant refresh is still required here, because the current variant of SyncFileInfo
         // (like DesktopFileInfo created from DesktopFileCreator) is not in InfoCache and will not be refreshed automatically.
         if (auto info = fileMap.value(url))
             info->refresh();

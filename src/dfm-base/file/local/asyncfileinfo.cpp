@@ -32,7 +32,7 @@
 #include <mntent.h>
 
 /*!
- * \class LocalFileInfo 本地文件信息类
+ * \class SyncFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
  */
 namespace dfmbase {
