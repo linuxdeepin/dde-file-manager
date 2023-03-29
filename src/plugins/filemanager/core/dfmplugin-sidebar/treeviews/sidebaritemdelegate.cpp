@@ -170,7 +170,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 
     QString text = index.data().toString();
     qreal baseValue = itemRect.width() - iconSize.width() - 2 * kItemMargin;
-    qreal min = baseValue - 2 * ejectIconSize.width();
+    qreal min = baseValue - 2 * ejectIconSize.width() - 10;
     qreal max = baseValue - ejectIconSize.width();
 
     if (metricsLabel.horizontalAdvance(text) > (isEjectable ? min : max))
