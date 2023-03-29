@@ -82,7 +82,7 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
 
         return false;
     } else {   // fix bug 189699 When the iPhone creates a file, the gio is created successfully, but there is no file
-        auto info = InfoFactory::create<FileInfo>(url);
+        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info || !info->exists()) {
             d->lastError.setCode(DFMIOErrorCode::DFM_IO_ERROR_NOT_SUPPORTED);
             return false;

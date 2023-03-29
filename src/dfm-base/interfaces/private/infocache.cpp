@@ -56,7 +56,7 @@ void InfoCache::disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos)
     if (d->cacheWorkerStoped)
         return;
     for (const auto &info : infos) {
-        if (!info || info->hasProxy())
+        if (!info)
             continue;
         // 断开信号连接
         auto url = UrlRoute::urlParent(info->urlOf(UrlInfoType::kUrl));
@@ -129,22 +129,20 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
     if (!info || d->cacheWorkerStoped)
         return;
 
-    if (!info->hasProxy()) {
-        //获取监视器，监听当前的file的改变
-        QSharedPointer<AbstractFileWatcher> watcher { nullptr };
-        watcher = WatcherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
-        if (watcher) {
-            if (watcher->getCacheInfoConnectSize() == 0) {
-                connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::removeCache);
-                connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this,
-                        &InfoCache::refreshFileInfo);
-                connect(watcher.data(), &AbstractFileWatcher::fileRename, this,
-                        &InfoCache::removeCache);
-                connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,
-                        &InfoCache::refreshFileInfo);
-            }
-            watcher->addCacheInfoConnectSize();
+    //获取监视器，监听当前的file的改变
+    QSharedPointer<AbstractFileWatcher> watcher { nullptr };
+    watcher = WatcherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
+    if (watcher) {
+        if (watcher->getCacheInfoConnectSize() == 0) {
+            connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::removeCache);
+            connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this,
+                    &InfoCache::refreshFileInfo);
+            connect(watcher.data(), &AbstractFileWatcher::fileRename, this,
+                    &InfoCache::removeCache);
+            connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,
+                    &InfoCache::refreshFileInfo);
         }
+        watcher->addCacheInfoConnectSize();
     }
 
     // 插入到主和副的所有缓存中

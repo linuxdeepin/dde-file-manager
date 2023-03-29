@@ -25,7 +25,6 @@ public:
     virtual ~FileInfoPrivate();
 
     FileInfo *const q;   // DAbstractFileInfo实例对象
-    FileInfoPointer proxy { nullptr };
     QMap<ExtInfoType, QVariant> extendOtherCache;
     QString pinyinName;
     QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;

@@ -261,12 +261,7 @@ public:
 
 protected:
     explicit FileInfo(const QUrl &url);
-    void setProxy(const FileInfoPointer &proxy);
     QSharedPointer<FileInfoPrivate> dptr;
-
-private:
-    bool hasProxy();
-    friend class InfoCache;
 };
 
 using NameInfoType = FileInfo::FileNameInfoType;

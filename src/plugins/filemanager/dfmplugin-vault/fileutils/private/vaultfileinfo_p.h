@@ -23,8 +23,8 @@ public:
 private:
     QString iconName();
     QString fileDisplayPath() const;
-    QString absolutePath() const;
-    QUrl vaultUrl() const;
+    QString absolutePath(const QString &path) const;
+    QUrl vaultUrl(const QUrl &url) const;
     QUrl getUrlByNewFileName(const QString &fileName) const;
     bool isRoot() const;
 };

@@ -19,8 +19,6 @@
 
 USING_IO_NAMESPACE
 
-#define CALL_PROXY(Fun) \
-    if (dptr->proxy) return dptr->proxy->Fun;
 namespace dfmbase {
 Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<FileInfoPointer>("FileInfo") })
 
@@ -40,22 +38,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<FileInfoPointer>("Fi
  * \param QUrl & 文件的URL
  */
 FileInfo::FileInfo(const QUrl &url)
-    : AbstractFileInfo(url), dptr(new FileInfoPrivate(url, this))
-{
-    Q_UNUSED(type_id)
-}
+    : AbstractFileInfo(url), dptr(new FileInfoPrivate(url, this)) { Q_UNUSED(type_id) }
 
-void DFMBASE_NAMESPACE::FileInfo::setProxy(const FileInfoPointer &proxy)
-{
-    dptr->proxy = proxy;
-}
-
-bool dfmbase::FileInfo::hasProxy()
-{
-    return dptr->proxy != nullptr;
-}
-
-FileInfo::~FileInfo()
+      FileInfo::~FileInfo()
 {
 }
 /*!
@@ -95,14 +80,14 @@ bool FileInfo::operator!=(const FileInfo &fileinfo) const
 
 bool DFMBASE_NAMESPACE::FileInfo::initQuerier()
 {
-    CALL_PROXY(initQuerier());
-
     return false;
 }
 
 void DFMBASE_NAMESPACE::FileInfo::initQuerierAsync(int ioPriority, DFMBASE_NAMESPACE::FileInfo::initQuerierAsyncCallback func, void *userData)
 {
-    CALL_PROXY(initQuerierAsync(ioPriority, func, userData));
+    Q_UNUSED(ioPriority);
+    Q_UNUSED(func);
+    Q_UNUSED(userData);
 }
 /*!
  * \brief exists 文件是否存在
@@ -113,8 +98,6 @@ void DFMBASE_NAMESPACE::FileInfo::initQuerierAsync(int ioPriority, DFMBASE_NAMES
  */
 bool FileInfo::exists() const
 {
-    CALL_PROXY(exists());
-
     return false;
 }
 /*!
@@ -126,12 +109,12 @@ bool FileInfo::exists() const
  */
 void FileInfo::refresh()
 {
-    CALL_PROXY(refresh());
 }
 
 void dfmbase::FileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
 {
-    CALL_PROXY(cacheAttribute(id, value));
+    Q_UNUSED(id);
+    Q_UNUSED(value);
 }
 /*!
   * \brief 获取文件名称，默认是获取文件的全名称带suffix，此接口不会实现异步，全部使用Qurl去
@@ -140,7 +123,6 @@ void dfmbase::FileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant
   */
 QString dfmbase::FileInfo::nameOf(const NameInfoType type) const
 {
-    CALL_PROXY(nameOf(type));
     switch (type) {
     case FileNameInfoType::kFileName:
         [[fallthrough]];
@@ -167,8 +149,7 @@ QString dfmbase::FileInfo::nameOf(const NameInfoType type) const
   */
 QString dfmbase::FileInfo::pathOf(const PathInfoType type) const
 {
-    CALL_PROXY(pathOf(type));
-
+    Q_UNUSED(type);
     return QString();
 }
 /*!
@@ -186,8 +167,6 @@ QString dfmbase::FileInfo::pathOf(const PathInfoType type) const
  */
 bool FileInfo::permission(QFileDevice::Permissions permissions) const
 {
-    CALL_PROXY(permission(permissions));
-
     return this->permissions() & permissions;
 }
 /*!
@@ -199,8 +178,6 @@ bool FileInfo::permission(QFileDevice::Permissions permissions) const
  */
 QFileDevice::Permissions FileInfo::permissions() const
 {
-    CALL_PROXY(permissions());
-
     return QFileDevice::Permissions();
 }
 /*!
@@ -216,8 +193,6 @@ QFileDevice::Permissions FileInfo::permissions() const
  */
 qint64 FileInfo::size() const
 {
-    CALL_PROXY(size());
-
     return 0;
 }
 
@@ -227,8 +202,6 @@ qint64 FileInfo::size() const
   */
 QVariant dfmbase::FileInfo::timeOf(const TimeInfoType type) const
 {
-    CALL_PROXY(timeOf(type));
-
     switch (type) {
     case TimeInfoType::kCreateTime:
         [[fallthrough]];
@@ -276,15 +249,11 @@ QVariant dfmbase::FileInfo::timeOf(const TimeInfoType type) const
  */
 int DFMBASE_NAMESPACE::FileInfo::countChildFile() const
 {
-    CALL_PROXY(countChildFile());
-
     return -1;
 }
 
 int dfmbase::FileInfo::countChildFileAsync() const
 {
-    CALL_PROXY(countChildFileAsync());
-
     return -1;
 }
 
@@ -294,8 +263,6 @@ int dfmbase::FileInfo::countChildFileAsync() const
  */
 FileInfo::FileType DFMBASE_NAMESPACE::FileInfo::fileType() const
 {
-    CALL_PROXY(fileType());
-
     return FileType::kUnknown;
 }
 
@@ -306,7 +273,6 @@ FileInfo::FileType DFMBASE_NAMESPACE::FileInfo::fileType() const
  */
 QString dfmbase::FileInfo::displayOf(const DisPlayInfoType type) const
 {
-    CALL_PROXY(displayOf(type));
     switch (type) {
     case DisPlayInfoType::kSizeDisplayName:
         if (isAttributes(OptInfoType::kIsDir))
@@ -344,7 +310,6 @@ QUrl dfmbase::FileInfo::urlOf(const UrlInfoType type) const
     // FileUrlInfoType::kUrl don't you proxy,must use the original url
     if (FileUrlInfoType::kUrl == type)
         return dptr->url;
-    CALL_PROXY(urlOf(type));
     switch (type) {
     case FileUrlInfoType::kOriginalUrl:
         [[fallthrough]];
@@ -359,7 +324,6 @@ QUrl dfmbase::FileInfo::urlOf(const UrlInfoType type) const
 
 QUrl dfmbase::FileInfo::getUrlByType(const UrlInfoType type, const QString &fileName) const
 {
-    CALL_PROXY(getUrlByType(type, fileName));
     switch (type) {
     case FileUrlInfoType::kGetUrlByNewFileName:
         return dptr->getUrlByNewFileName(fileName);
@@ -375,8 +339,6 @@ QUrl dfmbase::FileInfo::getUrlByType(const UrlInfoType type, const QString &file
   */
 Qt::DropActions DFMBASE_NAMESPACE::FileInfo::supportedOfAttributes(const SupportedType type) const
 {
-    CALL_PROXY(supportedOfAttributes(type));
-
     switch (type) {
     case SupportType::kDrag:
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
@@ -401,7 +363,6 @@ Qt::DropActions DFMBASE_NAMESPACE::FileInfo::supportedOfAttributes(const Support
  */
 bool dfmbase::FileInfo::isAttributes(const OptInfoType type) const
 {
-    CALL_PROXY(isAttributes(type));
     switch (type) {
     case FileIsType::kIsRoot:
         return pathOf(PathInfoType::kFilePath) == "/";
@@ -412,7 +373,6 @@ bool dfmbase::FileInfo::isAttributes(const OptInfoType type) const
 
 bool dfmbase::FileInfo::canAttributes(const CanableInfoType type) const
 {
-    CALL_PROXY(canAttributes(type));
     switch (type) {
     case FileCanType::kCanFetch:
         return isAttributes(OptInfoType::kIsDir)
@@ -432,7 +392,6 @@ bool dfmbase::FileInfo::canAttributes(const CanableInfoType type) const
 
 QVariant dfmbase::FileInfo::extendAttributes(const ExtInfoType type) const
 {
-    CALL_PROXY(extendAttributes(type));
     switch (type) {
     case FileExtendedInfoType::kInode:
         return 0;
@@ -469,14 +428,15 @@ QString DFMBASE_NAMESPACE::FileInfo::viewOfTip(const ViewInfoType type) const
 
 QVariant DFMBASE_NAMESPACE::FileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
 {
-    CALL_PROXY(customAttribute(key, type));
-
+    Q_UNUSED(type);
+    Q_UNUSED(key);
     return QVariant();
 }
 
 QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::FileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
-    CALL_PROXY(mediaInfoAttributes(type, ids));
+    Q_UNUSED(type);
+    Q_UNUSED(ids);
     return QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>();
 }
 
@@ -487,7 +447,6 @@ QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::FileInfo:
   */
 void DFMBASE_NAMESPACE::FileInfo::setExtendedAttributes(const ExtInfoType &key, const QVariant &value)
 {
-    CALL_PROXY(setExtendedAttributes(key, value));
     dptr->extendOtherCache.insert(key, value);
 }
 /*!
@@ -496,8 +455,6 @@ void DFMBASE_NAMESPACE::FileInfo::setExtendedAttributes(const ExtInfoType &key, 
  */
 QIcon DFMBASE_NAMESPACE::FileInfo::fileIcon()
 {
-    CALL_PROXY(fileIcon());
-
     return QIcon();
 }
 
@@ -507,15 +464,13 @@ QIcon DFMBASE_NAMESPACE::FileInfo::fileIcon()
  */
 QMimeType DFMBASE_NAMESPACE::FileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
-    CALL_PROXY(fileMimeType(mode));
-
+    Q_UNUSED(mode);
     return QMimeType();
 }
 
 QMimeType dfmbase::FileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
 {
-    CALL_PROXY(fileMimeTypeAsync(mode));
-
+    Q_UNUSED(mode);
     return QMimeType();
 }
 
@@ -525,14 +480,12 @@ QMimeType dfmbase::FileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
  */
 QVariantHash DFMBASE_NAMESPACE::FileInfo::extraProperties() const
 {
-    CALL_PROXY(extraProperties());
-
     return QVariantHash();
 }
 
 QVariant DFMBASE_NAMESPACE::FileInfo::customData(int role) const
 {
-    CALL_PROXY(customData(role));
+    Q_UNUSED(role);
     return QVariant();
 }
 

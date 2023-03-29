@@ -295,6 +295,8 @@ QUrl TrashFileInfo::urlOf(const UrlInfoType type) const
         return d->targetUrl;
     case FileUrlInfoType::kOriginalUrl:
         return d->originalUrl;
+    case FileUrlInfoType::kUrl:
+        return d->url;
     default:
         return ProxyFileInfo::urlOf(type);
     }
