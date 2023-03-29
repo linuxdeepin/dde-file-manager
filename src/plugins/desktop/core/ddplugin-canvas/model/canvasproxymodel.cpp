@@ -183,7 +183,7 @@ void CanvasProxyModelPrivate::sortMainDesktopFile(QList<QUrl> &files, Qt::SortOr
 {
     // let the main desktop files always on front or back.
 
-    //! warrning: the root url and SyncFileInfo::url must be like file://
+    //! warrning: the root url and FileInfo::url must be like file://
     QDir dir(q->rootUrl().toString());
     QList<QPair<QString, QUrl>> mainDesktop = { { dir.filePath("dde-home.desktop"), QUrl() },
                                                 { dir.filePath("dde-trash.desktop"), QUrl() },

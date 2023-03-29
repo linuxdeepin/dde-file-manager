@@ -20,7 +20,7 @@ static FileInfoPointer createFileInfo(const QUrl &url)
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create SyncFileInfo error: " << errString << url;
+        qInfo() << "create FileInfo error: " << errString << url;
         return nullptr;
     }
 

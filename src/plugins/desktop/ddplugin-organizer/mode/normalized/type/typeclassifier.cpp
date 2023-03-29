@@ -137,7 +137,7 @@ QStringList TypeClassifier::classes() const
 
 QString TypeClassifier::classify(const QUrl &url) const
 {
-    auto itemInfo = InfoFactory::create<SyncFileInfo>(url);
+    auto itemInfo = InfoFactory::create<FileInfo>(url);
     if (!itemInfo)
         return QString();   // must return null string to represent the file is not existed.
 
@@ -145,7 +145,7 @@ QString TypeClassifier::classify(const QUrl &url) const
     //Classify whether it is a symlink according to the symlink's target
     if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
         QUrl fileUrl = itemInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
-        itemInfo = InfoFactory::create<SyncFileInfo>(fileUrl);
+        itemInfo = InfoFactory::create<FileInfo>(fileUrl);
         if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
             key = kTypeKeyOth;
             return key;

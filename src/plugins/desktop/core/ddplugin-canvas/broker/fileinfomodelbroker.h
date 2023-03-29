@@ -7,7 +7,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 

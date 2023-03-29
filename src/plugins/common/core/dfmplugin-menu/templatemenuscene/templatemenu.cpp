@@ -67,7 +67,7 @@ void TemplateMenuPrivate::createActionByNormalFile(const QString &path)
     QString errString;
     auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path), Global::CreateFileInfoType::kCreateFileInfoSync, &errString);
     if (!fileInfo) {
-        qInfo() << "createActionByDesktopFile create SyncFileInfo error: " << errString << path;
+        qInfo() << "createActionByDesktopFile create FileInfo error: " << errString << path;
         return;
     }
 
@@ -89,9 +89,9 @@ void TemplateMenuPrivate::createActionByDesktopFile(const QDir &dir, const QStri
     const QString &entryText = desktopFile.localizedValue("Name");
 
     QString errString;
-    auto itemInfo = InfoFactory::create<SyncFileInfo>(QUrl::fromLocalFile(entrySourcePath), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    auto itemInfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(entrySourcePath), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "createActionByDesktopFile create SyncFileInfo error: " << errString << entrySourcePath;
+        qInfo() << "createActionByDesktopFile create FileInfo error: " << errString << entrySourcePath;
         return;
     }
 

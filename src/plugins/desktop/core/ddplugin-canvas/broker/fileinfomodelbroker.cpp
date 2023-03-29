@@ -9,7 +9,7 @@
 
 Q_DECLARE_METATYPE(QUrl *)
 Q_DECLARE_METATYPE(QModelIndex *)
-Q_DECLARE_METATYPE(QSharedPointer<DFMBASE_NAMESPACE::SyncFileInfo> *)
+Q_DECLARE_METATYPE(QSharedPointer<DFMBASE_NAMESPACE::FileInfo> *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 using namespace ddplugin_canvas;
