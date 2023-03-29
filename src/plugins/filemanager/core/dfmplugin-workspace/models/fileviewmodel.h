@@ -123,6 +123,7 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
+    bool passNameFilters(const AbstractFileInfoPointer &info) const;
 
     QUrl dirRootUrl;
 
@@ -138,6 +139,7 @@ private:
     QString currentKey;
 
     QList<QSharedPointer<QObject>> discardedObjects {};
+    mutable QMap<QString, bool> nameFiltersMatchResultMap;
 };
 
 }
