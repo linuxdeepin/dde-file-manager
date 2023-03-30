@@ -33,6 +33,7 @@
 #include <QMouseEvent>
 #include <QSignalBlocker>
 #include <QStyle>
+#include <QToolTip>
 
 #include <linux/limits.h>
 
@@ -171,7 +172,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QString text = index.data().toString();
     qreal baseValue = itemRect.width() - iconSize.width() - 2 * kItemMargin;
     qreal min = baseValue - 2 * ejectIconSize.width() - 10;
-    qreal max = baseValue - ejectIconSize.width();
+    qreal max = baseValue - ejectIconSize.width() - 10;
 
     if (metricsLabel.horizontalAdvance(text) > (isEjectable ? min : max))
         text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? int(min) : int(max)));
@@ -180,6 +181,32 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     qreal txtDy = (itemRect.height() - metricsLabel.lineSpacing()) / 2;
     painter->drawText(QRectF(itemRect.x() + txtDx, itemRect.y() + txtDy, itemRect.width(), rowHeight), Qt::AlignLeft, text);
     painter->restore();
+}
+
+bool SideBarItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (event->type() == QEvent::ToolTip) {
+        const QString tooltip = index.data().toString();
+        QFontMetrics metricsLabel(option.widget->font());
+        QRect itemRect = option.rect;
+        qreal baseValue = itemRect.width() - kItemIconSize - 2 * kItemMargin;
+        qreal min = baseValue - 2 * kItemIconSize - 10;
+        qreal max = baseValue - kItemIconSize - 10;
+        DStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+        SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
+        bool isEjectable = false;
+        if (sidebarItem) {
+            ItemInfo info = sidebarItem->itemInfo();
+            isEjectable = info.isEjectable;
+        }
+        if (metricsLabel.horizontalAdvance(tooltip) < (isEjectable ? min : max)) {
+            QToolTip::hideText();
+            return true;
+        }
+        QToolTip::showText(event->globalPos(), tooltip, view);
+        return true;
+    }
+    return QStyledItemDelegate::helpEvent(event, view, option, index);
 }
 
 QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

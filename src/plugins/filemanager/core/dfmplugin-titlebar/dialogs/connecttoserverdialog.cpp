@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QCompleter>
 #include <QWindow>
+#include <QLineEdit>
 #include <QSpacerItem>
 
 DFMBASE_USE_NAMESPACE
@@ -159,7 +160,10 @@ void ConnectToServerDialog::onCurrentInputChanged(const QString &text)
         serverComboBox->setEditText(temText.remove(schemeWithSlash(scheme)));
         schemeComboBox->setCurrentText(schemeWithSlash(scheme));
     }
-
+    if (serverComboBox->lineEdit()->text().isEmpty())
+        theAddButton->setDisabled(true);
+    else
+        theAddButton->setDisabled(false);
     upateUiState();
 }
 
