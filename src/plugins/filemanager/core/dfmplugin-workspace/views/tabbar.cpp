@@ -495,6 +495,7 @@ void TabBar::updateScreen()
 {
     int counter = 0;
     int lastX = 0;
+    historyWidth = width();
     for (Tab *tab : tabList) {
         QSize tabSize = tabSizeHint(counter);
         QRect rect(lastX, 0, tabSize.width(), tabSize.height());
