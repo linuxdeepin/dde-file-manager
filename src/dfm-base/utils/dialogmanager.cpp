@@ -53,7 +53,7 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
     // dialog show top
     d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d.setIcon(errorIcon);
-    d.addButton(tr("Confirm", "button"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("Confirm", "button"), true, DDialog::ButtonNormal);
     d.setMaximumWidth(640);
     d.exec();
 }
@@ -219,7 +219,7 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
         d.addContent(contentFrame, Qt::AlignCenter);
     }
 
-    d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK", "button"), true, DDialog::ButtonNormal);
     d.exec();
 }
 
@@ -230,7 +230,7 @@ void DialogManager::showCopyMoveToSelfDialog()
     d.setMessage(tr("Target folder is inside the source folder!"));
     QStringList buttonTexts;
     buttonTexts.append(tr("OK", "button"));
-    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.setDefaultButton(0);
     d.setIcon(warningIcon);
     d.exec();
@@ -487,7 +487,7 @@ void DialogManager::showRestoreFailedDialog(const int count)
         d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(count)));
     }
     d.setIcon(warningIcon);
-    d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK", "button"), true, DDialog::ButtonNormal);
     d.exec();
 }
 
@@ -498,7 +498,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name)
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
     QStringList buttonTexts;
     buttonTexts.append(tr("Confirm", "button"));
-    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.setDefaultButton(0);
     d.setIcon(warningIcon);
     int code = d.exec();
@@ -512,7 +512,7 @@ void DialogManager::showRenameBusyErrDialog()
     d.setTitle(tr("Device or resource busy"));
     QStringList buttonTexts;
     buttonTexts.append(tr("Confirm", "button"));
-    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.setDefaultButton(0);
     d.setIcon(warningIcon);
     d.exec();
@@ -607,7 +607,7 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
     DDialog d(FMWindowsIns.findWindowById(winId));
     d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
     d.setIcon(warningIcon);
-    d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK", "button"), true, DDialog::ButtonNormal);
     d.exec();
 }
 
