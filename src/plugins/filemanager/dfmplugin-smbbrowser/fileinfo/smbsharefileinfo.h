@@ -13,7 +13,7 @@ namespace dfmplugin_smbbrowser {
 class SmbShareFileInfoPrivate;
 class SmbShareFileInfo : public dfmbase::FileInfo
 {
-    SmbShareFileInfoPrivate *d;
+    QSharedPointer<SmbShareFileInfoPrivate> d { nullptr };
 
 public:
     explicit SmbShareFileInfo(const QUrl &url);

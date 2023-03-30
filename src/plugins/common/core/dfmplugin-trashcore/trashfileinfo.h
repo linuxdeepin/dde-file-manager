@@ -38,7 +38,7 @@ public:
     virtual QVariant customData(int role) const override;
 
 private:
-    TrashFileInfoPrivate *d;
+    QSharedPointer<TrashFileInfoPrivate> d { nullptr };
 };
 
 }

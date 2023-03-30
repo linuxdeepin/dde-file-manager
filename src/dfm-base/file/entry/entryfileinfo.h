@@ -63,7 +63,7 @@ public:
     virtual QVariantHash extraProperties() const override;
 
 private:
-    EntryFileInfoPrivate *d = nullptr;
+    QSharedPointer<EntryFileInfoPrivate> d = nullptr;
 };
 
 }

@@ -13,7 +13,7 @@ namespace dfmplugin_optical {
 class MasteredMediaFileInfoPrivate;
 class MasteredMediaFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
-    MasteredMediaFileInfoPrivate *d;
+    QSharedPointer<MasteredMediaFileInfoPrivate> d { nullptr };
 
 public:
     explicit MasteredMediaFileInfo(const QUrl &url);

@@ -8,6 +8,7 @@
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/file/local/syncfileinfo.h"
+#include "dfm-base/file/local/private/syncfileinfo_p.h"
 
 #include "stubext.h"
 
@@ -154,7 +155,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_2)
 {
     auto searchUrl = SearchHelper::fromSearchFile(QUrl::fromLocalFile("/home"), "test", "123");
     stub_ext::StubExt st;
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(VADDR(SyncFileInfo, pathOf), [] { return "/home/test/test"; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [&searchUrl] {
         AdvanceSearchBarPrivate::FileFilter filter;
@@ -181,7 +182,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_2)
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_3)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(VADDR(SyncFileInfo, displayOf), [] { return "test/test"; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
@@ -207,7 +208,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_3)
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_4)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(VADDR(SyncFileInfo, size), [] { return 10; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
@@ -234,7 +235,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_4)
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_5)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(VADDR(SyncFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
@@ -265,7 +266,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_5)
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_6)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(VADDR(SyncFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
@@ -297,7 +298,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_6)
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_7)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(VADDR(SyncFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;

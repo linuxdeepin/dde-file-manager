@@ -14,11 +14,11 @@ ProxyFileInfo::~ProxyFileInfo()
 {
 }
 
-QUrl ProxyFileInfo::url() const
+QUrl ProxyFileInfo::fileUrl() const
 {
-    CALL_PROXY(url());
+    CALL_PROXY(fileUrl());
 
-    return FileInfo::url();
+    return FileInfo::fileUrl();
 }
 
 bool ProxyFileInfo::exists() const

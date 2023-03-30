@@ -19,11 +19,11 @@
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_trashcore {
-class TrashFileInfoPrivate : public FileInfoPrivate
+class TrashFileInfoPrivate
 {
 public:
-    explicit TrashFileInfoPrivate(const QUrl &url, FileInfo *qq)
-        : FileInfoPrivate(url, qq)
+    explicit TrashFileInfoPrivate(TrashFileInfo *qq)
+        : q(qq)
     {
     }
 
@@ -42,6 +42,7 @@ public:
     QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
     QUrl targetUrl;
     QUrl originalUrl;
+    TrashFileInfo *const q;
 };
 
 TrashFileInfoPrivate::~TrashFileInfoPrivate()
@@ -55,9 +56,9 @@ QUrl TrashFileInfoPrivate::initTarget()
         targetUrl = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
 
     originalUrl = QUrl::fromUserInput(dFileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString());
-    const bool urlIsRoot = UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), url);
+    const bool urlIsRoot = UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), q->fileUrl());
     if (!targetUrl.isValid() && !urlIsRoot) {
-        QUrl ancestors = url;
+        QUrl ancestors = q->fileUrl();
         while (TrashCoreHelper::rootUrl().isParentOf(ancestors)) {
             QUrl urlPre = ancestors;
             ancestors = UrlRoute::urlParent(ancestors);
@@ -72,7 +73,7 @@ QUrl TrashFileInfoPrivate::initTarget()
             const QUrl &ancestorsTargetUrl = fileinfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
             if (ancestorsTargetUrl.isValid()) {
                 QString localRootPath = ancestorsTargetUrl.toString();
-                const QString &fileSuffix = url.path().mid(url.path().indexOf("/", 1));
+                const QString &fileSuffix = q->fileUrl().path().mid(q->fileUrl().path().indexOf("/", 1));
                 const QUrl &urlReal = localRootPath + fileSuffix;
 
                 targetUrl = urlReal;
@@ -183,10 +184,8 @@ QDateTime TrashFileInfoPrivate::deletionTime() const
 }
 
 TrashFileInfo::TrashFileInfo(const QUrl &url)
-    : ProxyFileInfo(url), d(new TrashFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new TrashFileInfoPrivate(this))
 {
-    dptr.reset(d);
-
     d->dFileInfo.reset(new DFileInfo(url));
     if (!d->dFileInfo) {
         qWarning() << "dfm-io use factory create fileinfo Failed, url: " << url;
@@ -194,7 +193,7 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
     }
     bool init = d->dFileInfo->initQuerier();
     if (!init) {
-        qWarning() << "querier init failed, url: " << url;
+        //        qWarning() << "querier init failed, url: " << url;
         return;
     }
 
@@ -221,7 +220,7 @@ Qt::DropActions TrashFileInfo::supportedOfAttributes(const FileInfo::SupportType
 {
     switch (type) {
     case FileInfo::SupportType::kDrop: {
-        const QString &path = d->url.path();
+        const QString &path = url.path();
 
         return path.isEmpty() || path == "/" ? Qt::MoveAction : Qt::IgnoreAction;
     }
@@ -251,7 +250,7 @@ QString TrashFileInfo::nameOf(const NameInfoType type) const
         return displayOf(DisPlayInfoType::kFileDisplayName);
     }
     case NameInfoType::kMimeTypeName:
-        return const_cast<TrashFileInfoPrivate *>(d)->mimeTypeName();
+        return d->mimeTypeName();
     default:
         return ProxyFileInfo::nameOf(type);
     }
@@ -296,7 +295,7 @@ QUrl TrashFileInfo::urlOf(const UrlInfoType type) const
     case FileUrlInfoType::kOriginalUrl:
         return d->originalUrl;
     case FileUrlInfoType::kUrl:
-        return d->url;
+        return url;
     default:
         return ProxyFileInfo::urlOf(type);
     }

@@ -9,7 +9,7 @@
 #include "utils/titlebarhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/syncfileinfo.h"
+#include "dfm-base/file/local/private/syncfileinfo_p.h"
 
 #include "stubext.h"
 
@@ -63,7 +63,7 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_1)
     stub_ext::StubExt st;
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home/test")));
     });
@@ -78,7 +78,7 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_2)
     stub_ext::StubExt st;
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home")));
     });
@@ -96,7 +96,7 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_3)
     stub_ext::StubExt st;
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home")));
     });

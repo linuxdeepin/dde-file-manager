@@ -14,9 +14,8 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagFileInfo::TagFileInfo(const QUrl &url)
-    : ProxyFileInfo(url), d(new TagFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new TagFileInfoPrivate(this))
 {
-    dptr.reset(d);
 }
 
 TagFileInfo::~TagFileInfo()
@@ -98,8 +97,8 @@ QString TagFileInfo::tagName() const
     return d->fileName();
 }
 
-TagFileInfoPrivate::TagFileInfoPrivate(const QUrl &url, FileInfo *qq)
-    : FileInfoPrivate(url, qq)
+TagFileInfoPrivate::TagFileInfoPrivate(TagFileInfo *qq)
+    : q(qq)
 {
 }
 
@@ -109,5 +108,5 @@ TagFileInfoPrivate::~TagFileInfoPrivate()
 
 QString TagFileInfoPrivate::fileName() const
 {
-    return url.path().mid(1, url.path().length() - 1);
+    return q->fileUrl().path().mid(1, q->fileUrl().path().length() - 1);
 }

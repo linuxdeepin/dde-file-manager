@@ -26,7 +26,7 @@ protected:
         auto pushAddr = static_cast<Push>(&dpf::EventChannelManager::push);
         conStub.set_lamda(pushAddr, [] { __DBG_STUB_INVOKE__ return QVariant(); });
         info = new ShareFileInfo(QUrl("share:///test"));
-        auto d = dynamic_cast<ShareFileInfoPrivate *>(info->dptr.data());
+        auto d = dynamic_cast<ShareFileInfoPrivate *>(info->d.data());
         d->info = { { "shareName", "test" },
                     { "path", "/test" },
                     { "comment", "" },
@@ -94,7 +94,7 @@ protected:
     virtual void SetUp() override
     {
         info = new ShareFileInfo(QUrl("share:///test"));
-        d = dynamic_cast<ShareFileInfoPrivate *>(info->dptr.data());
+        d = dynamic_cast<ShareFileInfoPrivate *>(info->d.data());
     }
     virtual void TearDown() override
     {

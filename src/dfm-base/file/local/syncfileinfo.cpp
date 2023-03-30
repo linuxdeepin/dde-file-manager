@@ -38,17 +38,15 @@
 namespace dfmbase {
 
 SyncFileInfo::SyncFileInfo(const QUrl &url)
-    : FileInfo(url), d(new SyncFileInfoPrivate(url, this))
+    : FileInfo(url), d(new SyncFileInfoPrivate(this))
 {
-    dptr.reset(d);
-    init(url);
+    d->init(url);
 }
 
 SyncFileInfo::SyncFileInfo(const QUrl &url, QSharedPointer<DFileInfo> dfileInfo)
-    : FileInfo(url), d(new SyncFileInfoPrivate(url, this))
+    : FileInfo(url), d(new SyncFileInfoPrivate(this))
 {
-    dptr.reset(d);
-    init(url, dfileInfo);
+    d->init(url, dfileInfo);
 }
 
 SyncFileInfo::~SyncFileInfo()
@@ -65,7 +63,7 @@ SyncFileInfo::~SyncFileInfo()
  */
 bool SyncFileInfo::operator==(const SyncFileInfo &fileinfo) const
 {
-    return d->dfmFileInfo == fileinfo.d->dfmFileInfo && d->url == fileinfo.d->url;
+    return d->dfmFileInfo == fileinfo.d->dfmFileInfo && url == fileinfo.url;
 }
 /*!
  * \brief != 重载操作符!=
@@ -100,7 +98,7 @@ void SyncFileInfo::initQuerierAsync(int ioPriority, FileInfo::initQuerierAsyncCa
  */
 bool SyncFileInfo::exists() const
 {
-    return DFMIO::DFile(d->url.path()).exists();
+    return DFMIO::DFile(url.path()).exists();
 }
 /*!
  * \brief refresh 更新文件信息，清理掉缓存的所有的文件信息
@@ -224,7 +222,7 @@ bool SyncFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsRoot:
         return d->filePath() == "/";
     case FileIsType::kIsBundle:
-        return QFileInfo(d->url.path()).isBundle();
+        return QFileInfo(url.path()).isBundle();
     case FileIsType::kIsPrivate:
         return d->isPrivate();
     default:
@@ -242,7 +240,7 @@ bool SyncFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRename:
         return d->canRename();
     case FileCanType::kCanHidden:
-        if (FileUtils::isGphotoFile(d->url))
+        if (FileUtils::isGphotoFile(url))
             return false;
         return true;
     default:
@@ -389,7 +387,7 @@ SyncFileInfo::FileType SyncFileInfo::fileType() const
         }
     }
 
-    const QUrl &fileUrl = d->url;
+    const QUrl &fileUrl = url;
     if (FileUtils::isTrashFile(fileUrl) && isAttributes(FileIsType::kIsSymLink)) {
         {
             QWriteLocker locker(&d->lock);
@@ -430,23 +428,12 @@ SyncFileInfo::FileType SyncFileInfo::fileType() const
  */
 int SyncFileInfo::countChildFile() const
 {
-    return isAttributes(FileIsType::kIsDir) ? FileUtils::dirFfileCount(d->url) : -1;
+    return isAttributes(FileIsType::kIsDir) ? FileUtils::dirFfileCount(url) : -1;
 }
 
 int SyncFileInfo::countChildFileAsync() const
 {
-    if (isAttributes(FileIsType::kIsDir)) {
-        QReadLocker locker(&d->lock);
-        if (!d->fileCountFuture) {
-            locker.unlock();
-            auto future = FileInfoHelper::instance().fileCountAsync(d->url);
-            QWriteLocker locker(&d->lock);
-            d->fileCountFuture = future;
-        } else {
-            return d->fileCountFuture->finish ? d->fileCountFuture->data.toInt() : -1;
-        }
-    }
-    return -1;
+    return countChildFile();
 }
 
 QString SyncFileInfo::displayOf(const DisPlayInfoType type) const
@@ -468,7 +455,7 @@ QVariantHash SyncFileInfo::extraProperties() const
 
 QIcon SyncFileInfo::fileIcon()
 {
-    const QUrl &fileUrl = d->url;
+    const QUrl &fileUrl = url;
 
     if (FileUtils::containsCopyingFileUrl(fileUrl))
         return LocalFileIconProvider::globalProvider()->icon(this);
@@ -512,7 +499,6 @@ QIcon SyncFileInfo::fileIcon()
 
 QMimeType SyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
-    const QUrl &url = d->url;
     QMimeType type;
     QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
     {
@@ -522,7 +508,7 @@ QMimeType SyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeData
     }
 
     if (!type.isValid() || modeCache != mode) {
-        type = this->mimeType(url.path(), mode);
+        type = d->mimeTypes(url.path(), mode);
         QWriteLocker locker(&d->lock);
         d->mimeType = type;
         d->mimeTypeMode = mode;
@@ -542,7 +528,7 @@ QMimeType SyncFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
 
     if (!d->fileMimeTypeFuture && (!type.isValid() || modeCache != mode)) {
         rlk.unlock();
-        auto future = FileInfoHelper::instance().fileMimeTypeAsync(d->url, mode, QString(), false);
+        auto future = FileInfoHelper::instance().fileMimeTypeAsync(url, mode, QString(), false);
         QWriteLocker wlk(&d->lock);
         d->mimeType = type;
         d->mimeTypeMode = mode;
@@ -605,9 +591,9 @@ void SyncFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const 
     }
 }
 
-void SyncFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
+void SyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
 {
-    d->mimeTypeMode = QMimeDatabase::MatchDefault;
+    mimeTypeMode = QMimeDatabase::MatchDefault;
     if (url.isEmpty()) {
         qWarning("Failed, can't use empty url init fileinfo");
         abort();
@@ -626,25 +612,25 @@ void SyncFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileI
     }
 
     if (dfileInfo) {
-        d->dfmFileInfo = dfileInfo;
+        dfmFileInfo = dfileInfo;
         return;
     }
 
-    d->dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
+    dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
 
-    if (!d->dfmFileInfo) {
+    if (!dfmFileInfo) {
         qWarning("Failed, dfm-io use factory create fileinfo");
         abort();
     }
 }
 
-QMimeType SyncFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
+QMimeType SyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
 {
     static DFMBASE_NAMESPACE::DMimeDatabase db;
     if (isGvfs) {
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }
-    return db.mimeTypeForFile(this->sharedFromThis(), mode);
+    return db.mimeTypeForFile(q->sharedFromThis(), mode);
 }
 
 QIcon SyncFileInfoPrivate::thumbIcon()
@@ -656,6 +642,8 @@ QIcon SyncFileInfoPrivate::thumbIcon()
     }
     if (!icon.isNull())
         return icon;
+
+    QUrl url = q->fileUrl();
 
     icon = QIcon(ThumbnailProvider::instance()->thumbnailPixmap(url, ThumbnailProvider::kLarge));
     if (!icon.isNull()) {
@@ -731,7 +719,7 @@ QIcon SyncFileInfoPrivate::defaultIcon()
 QString SyncFileInfoPrivate::fileName() const
 {
     QString fileName = this->attribute(DFileInfo::AttributeID::kStandardName).toString();
-    if (fileName == R"(/)" && FileUtils::isGvfsFile(url))
+    if (fileName == R"(/)" && FileUtils::isGvfsFile(q->fileUrl()))
         fileName = this->attribute(DFileInfo::AttributeID::kIdFilesystem).toString();
     return fileName;
 }
@@ -808,7 +796,7 @@ QString SyncFileInfoPrivate::iconName() const
             iconNameValue = list.first();
     }
 
-    if (!FileUtils::isGvfsFile(url) && iconNameValue.isEmpty())
+    if (!FileUtils::isGvfsFile(q->fileUrl()) && iconNameValue.isEmpty())
         iconNameValue = q->fileMimeType().iconName();
 
     return iconNameValue;
@@ -818,7 +806,7 @@ QString SyncFileInfoPrivate::mimeTypeName() const
 {
     // At present, there is no dfmio library code. For temporary repair
     // local file use the method on v20 to obtain mimeType
-    if (FileUtils::isGvfsFile(url)) {
+    if (FileUtils::isGvfsFile(q->fileUrl())) {
         return this->attribute(DFileInfo::AttributeID::kStandardContentType).toString();
     }
     return q->fileMimeType().name();
@@ -839,7 +827,7 @@ QString SyncFileInfoPrivate::fileDisplayName() const
     }
 
     QString fileDisplayName = this->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
-    if (fileDisplayName == R"(/)" && FileUtils::isGvfsFile(url))
+    if (fileDisplayName == R"(/)" && FileUtils::isGvfsFile(q->fileUrl()))
         fileDisplayName = this->attribute(DFileInfo::AttributeID::kIdFilesystem).toString();
 
     return fileDisplayName;
@@ -914,7 +902,7 @@ QUrl SyncFileInfoPrivate::redirectedFileUrl() const
 {
     if (q->isAttributes(OptInfoType::kIsSymLink))
         return QUrl::fromLocalFile(symLinkTarget());
-    return url;
+    return q->fileUrl();
 }
 
 /*!
@@ -932,10 +920,10 @@ bool SyncFileInfoPrivate::isExecutable() const
         isExecutable = this->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
     }
     if (!success) {
-        qDebug() << "cannot obtain the property kAccessCanExecute of" << url;
+        qDebug() << "cannot obtain the property kAccessCanExecute of" << q->fileUrl();
 
-        if (FileUtils::isGvfsFile(url)) {
-            qDebug() << "trying to get isExecutable by judging whether the dir can be iterated" << url;
+        if (FileUtils::isGvfsFile(q->fileUrl())) {
+            qDebug() << "trying to get isExecutable by judging whether the dir can be iterated" << q->fileUrl();
             struct dirent *next { nullptr };
             DIR *dirp = opendir(filePath().toUtf8().constData());
             if (!dirp) {
@@ -946,7 +934,7 @@ bool SyncFileInfoPrivate::isExecutable() const
                 closedir(dirp);
                 isExecutable = (next || errno == 0);
             }
-            qDebug() << "dir can be iterated? " << isExecutable << url;
+            qDebug() << "dir can be iterated? " << isExecutable << q->fileUrl();
         }
     }
 
@@ -1008,7 +996,7 @@ bool SyncFileInfoPrivate::canFetch() const
 
     bool isArchive = false;
     if (q->exists())
-        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(url).name());
+        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(q->fileUrl()).name());
 
     return q->isAttributes(OptInfoType::kIsDir)
             || (isArchive
@@ -1073,6 +1061,25 @@ bool SyncFileInfoPrivate::canThumb() const
 {
     return !loadingThumbnail
             || (iconFuture && iconFuture->finish && iconFuture->data.toString().isEmpty());
+}
+
+SyncFileInfoPrivate::SyncFileInfoPrivate(SyncFileInfo *qq)
+    : q(qq)
+{
+}
+
+SyncFileInfoPrivate::~SyncFileInfoPrivate()
+{
+}
+
+QMimeType SyncFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
+{
+    QUrl url = q->urlOf(UrlInfoType::kUrl);
+    if (dfmbase::FileUtils::isLocalFile(url))
+        return MimeDatabase::mimeTypeForUrl(url);
+    else
+        return MimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),
+                                             mode);
 }
 
 }

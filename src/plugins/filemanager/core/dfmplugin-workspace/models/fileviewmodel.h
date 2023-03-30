@@ -124,7 +124,7 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
-    bool passNameFilters(const AbstractFileInfoPointer &info) const;
+    bool passNameFilters(const FileInfoPointer &info) const;
 
     QUrl dirRootUrl;
 

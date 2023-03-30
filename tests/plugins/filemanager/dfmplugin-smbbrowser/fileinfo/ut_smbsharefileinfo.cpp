@@ -16,8 +16,6 @@ protected:
     virtual void SetUp() override
     {
         info = new SmbShareFileInfo(QUrl::fromLocalFile("/hello/world"));
-        d = dynamic_cast<SmbShareFileInfoPrivate *>(info->dptr.data());
-
         d->node = { "/hello/world", "HelloWorld", "folder-remote" };
     }
     virtual void TearDown() override

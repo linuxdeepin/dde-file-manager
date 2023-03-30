@@ -261,6 +261,10 @@ public:
 
 protected:
     explicit FileInfo(const QUrl &url);
+    QMap<FileInfo::FileExtendedInfoType, QVariant> extendOtherCache;
+    QString pinyinName;
+
+private:
     QSharedPointer<FileInfoPrivate> dptr;
 };
 

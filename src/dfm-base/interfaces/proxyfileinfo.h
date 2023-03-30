@@ -13,7 +13,7 @@ class ProxyFileInfo : public FileInfo
 public:
     explicit ProxyFileInfo(const QUrl &url);
     ~ProxyFileInfo() override;
-    virtual QUrl url() const override;
+    virtual QUrl fileUrl() const override;
     virtual bool exists() const override;
     virtual void refresh() override;
 
@@ -72,8 +72,8 @@ public:
     virtual int countChildFileAsync() const override;
     virtual QVariant timeOf(const FileTimeType type) const override;
     virtual QIcon fileIcon() override;
-    virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode) override;
-    virtual QMimeType fileMimeTypeAsync(QMimeDatabase::MatchMode mode) override;
+    virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
+    virtual QMimeType fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
     virtual QVariantHash extraProperties() const override;
     virtual QVariant customData(int role) const override;
     virtual FileType fileType() const override;

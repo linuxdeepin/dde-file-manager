@@ -15,7 +15,7 @@ class TagFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
     Q_GADGET
     friend class TagFileInfoPrivate;
-    TagFileInfoPrivate *d;
+    QSharedPointer<TagFileInfoPrivate> d { nullptr };
 
 public:
     explicit TagFileInfo(const QUrl &url);

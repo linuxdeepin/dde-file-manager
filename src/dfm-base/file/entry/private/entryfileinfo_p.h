@@ -16,7 +16,7 @@ class EntryFileInfoPrivate : public FileInfoPrivate
     QScopedPointer<AbstractEntryFileEntity> entity { nullptr };
 
 public:
-    explicit EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq);
+    explicit EntryFileInfoPrivate(EntryFileInfo *qq);
     void init();
     QString suffix() const;
     virtual ~EntryFileInfoPrivate() override;

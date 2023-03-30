@@ -13,9 +13,8 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_myshares;
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
-    : ProxyFileInfo(url), d(new ShareFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new ShareFileInfoPrivate(this))
 {
-    dptr.reset(d);
     QString path = url.path();
     setProxy(InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path)));
 }
@@ -47,7 +46,9 @@ QUrl ShareFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        return QUrl::fromLocalFile(dptr->url.path());
+        return QUrl::fromLocalFile(url.path());
+    case FileUrlInfoType::kUrl:
+        return url;
     default:
         return ProxyFileInfo::urlOf(type);
     }
@@ -77,8 +78,8 @@ bool ShareFileInfo::canAttributes(const CanableInfoType type) const
     }
 }
 
-ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, FileInfo *qq)
-    : FileInfoPrivate(url, qq)
+ShareFileInfoPrivate::ShareFileInfoPrivate(ShareFileInfo *qq)
+    : q(qq)
 {
     refresh();
 }
@@ -89,8 +90,8 @@ ShareFileInfoPrivate::~ShareFileInfoPrivate()
 
 void ShareFileInfoPrivate::refresh()
 {
-    if (url.path() != "/")
-        info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", url.path()).value<QVariantMap>();
+    if (q->fileUrl().path() != "/")
+        info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", q->fileUrl().path()).value<QVariantMap>();
 }
 
 QString ShareFileInfoPrivate::fileName() const

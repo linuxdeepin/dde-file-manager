@@ -10,6 +10,7 @@
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/private/localfilewatcher_p.h"
 #include "dfm-base/file/local/syncfileinfo.h"
+#include "dfm-base/file/local/private/syncfileinfo_p.h"
 
 #include "stubext.h"
 
@@ -83,7 +84,7 @@ TEST(SearchFileWatcherTest, ut_onFileRenamed)
     auto toUrl = QUrl::fromUserInput("/home/test123");
 
     stub_ext::StubExt st;
-    st.set_lamda(&SyncFileInfo::init, [] {});
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
     st.set_lamda(&InfoFactory::create<FileInfo>, [&toUrl] {
         return QSharedPointer<SyncFileInfo>(new SyncFileInfo(toUrl));
     });

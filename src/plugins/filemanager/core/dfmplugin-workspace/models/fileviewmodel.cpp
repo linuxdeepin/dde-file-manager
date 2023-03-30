@@ -750,7 +750,7 @@ void FileViewModel::changeState(ModelState newState)
     Q_EMIT stateChanged();
 }
 
-bool FileViewModel::passNameFilters(const AbstractFileInfoPointer &info) const
+bool FileViewModel::passNameFilters(const FileInfoPointer &info) const
 {
     if (!info || !filterSortWorker)
         return true;
@@ -758,14 +758,14 @@ bool FileViewModel::passNameFilters(const AbstractFileInfoPointer &info) const
     if (filterSortWorker->getNameFilters().isEmpty())
         return true;
 
-    const QString &filePath = info->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath);
+    const QString &filePath = info->pathOf(FileInfo::FilePathInfoType::kFilePath);
     if (nameFiltersMatchResultMap.contains(filePath))
         return nameFiltersMatchResultMap.value(filePath, false);
 
     // Check the name regularexpression filters
-    if (!(info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && (filterSortWorker->getFilters() & QDir::Dirs))) {
+    if (!(info->isAttributes(FileInfo::FileIsType::kIsDir) && (filterSortWorker->getFilters() & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filterSortWorker->getFilters() & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        const QString &fileDisplayName = info->displayOf(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        const QString &fileDisplayName = info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName);
         QRegExp re("", caseSensitive, QRegExp::Wildcard);
 
         for (int i = 0; i < filterSortWorker->getNameFilters().size(); ++i) {

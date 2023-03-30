@@ -38,7 +38,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<FileInfoPointer>("Fi
  * \param QUrl & 文件的URL
  */
 FileInfo::FileInfo(const QUrl &url)
-    : AbstractFileInfo(url), dptr(new FileInfoPrivate(url, this)) { Q_UNUSED(type_id) }
+    : AbstractFileInfo(url), dptr(new FileInfoPrivate(this)) { Q_UNUSED(type_id) }
 
       FileInfo::~FileInfo()
 {
@@ -52,7 +52,7 @@ FileInfo::FileInfo(const QUrl &url)
  */
 FileInfo &FileInfo::operator=(const FileInfo &fileinfo)
 {
-    dptr->url = fileinfo.dptr->url;
+    url = fileinfo.url;
     return *this;
 }
 /*!
@@ -64,7 +64,7 @@ FileInfo &FileInfo::operator=(const FileInfo &fileinfo)
  */
 bool FileInfo::operator==(const FileInfo &fileinfo) const
 {
-    return dptr->url == fileinfo.dptr->url;
+    return url == fileinfo.url;
 }
 /*!
  * \brief != 重载操作符!=
@@ -280,7 +280,7 @@ QString dfmbase::FileInfo::displayOf(const DisPlayInfoType type) const
         else
             return FileUtils::formatSize(size());
     case DisPlayInfoType::kFileDisplayPath:
-        return dptr->url.path();
+        return url.path();
     case DisPlayInfoType::kMimeTypeDisplayName:
         return MimeTypeDisplayManager::instance()->displayName(nameOf(FileNameInfoType::kMimeTypeName));
     case DisPlayInfoType::kFileTypeDisplayName:
@@ -289,12 +289,12 @@ QString dfmbase::FileInfo::displayOf(const DisPlayInfoType type) const
                                                                 ->displayNameToEnum(const_cast<FileInfo *>(this)->fileMimeType().name())))
                 .append(nameOf(FileNameInfoType::kSuffix));
     case DisPlayInfoType::kFileDisplayPinyinName:
-        if (dptr->pinyinName.isEmpty()) {
+        if (pinyinName.isEmpty()) {
             const QString &displayName = this->displayOf(DisplayInfoType::kFileDisplayName);
-            dptr->pinyinName = Pinyin::Chinese2Pinyin(displayName);
+            const_cast<FileInfo *>(this)->pinyinName = Pinyin::Chinese2Pinyin(displayName);
         }
 
-        return dptr->pinyinName;
+        return pinyinName;
     default:
         return QString();
     }
@@ -309,14 +309,14 @@ QUrl dfmbase::FileInfo::urlOf(const UrlInfoType type) const
 {
     // FileUrlInfoType::kUrl don't you proxy,must use the original url
     if (FileUrlInfoType::kUrl == type)
-        return dptr->url;
+        return url;
     switch (type) {
     case FileUrlInfoType::kOriginalUrl:
         [[fallthrough]];
     case FileUrlInfoType::kRedirectedFileUrl:
-        return dptr->url;
+        return url;
     case FileUrlInfoType::kParentUrl:
-        return UrlRoute::urlParent(dptr->url);
+        return UrlRoute::urlParent(url);
     default:
         return QUrl();
     }
@@ -406,7 +406,7 @@ QVariant dfmbase::FileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kGroupId:
         return static_cast<uint>(-1);
     default:
-        return dptr->extendOtherCache.value(type);
+        return extendOtherCache.value(type);
     }
 }
 
@@ -447,7 +447,7 @@ QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::FileInfo:
   */
 void DFMBASE_NAMESPACE::FileInfo::setExtendedAttributes(const ExtInfoType &key, const QVariant &value)
 {
-    dptr->extendOtherCache.insert(key, value);
+    extendOtherCache.insert(key, value);
 }
 /*!
  * \brief DFMBASE_NAMESPACE::FileInfo::fileIcon
@@ -494,8 +494,8 @@ QVariant DFMBASE_NAMESPACE::FileInfo::customData(int role) const
  *
  * \brief 主要存储文件信息的成员变量和数据
  */
-FileInfoPrivate::FileInfoPrivate(const QUrl &url, FileInfo *qq)
-    : url(url), q(qq)
+FileInfoPrivate::FileInfoPrivate(FileInfo *qq)
+    : q(qq)
 {
 }
 
@@ -513,7 +513,7 @@ QUrl DFMBASE_NAMESPACE::FileInfoPrivate::getUrlByChildFileName(const QString &fi
     if (!q->isAttributes(OptInfoType::kIsDir)) {
         return QUrl();
     }
-    QUrl theUrl = url;
+    QUrl theUrl = q->fileUrl();
     theUrl.setPath(DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsoluteFilePath).toStdString().c_str(),
                                                   fileName.toStdString().c_str(), nullptr));
     return theUrl;
@@ -526,7 +526,7 @@ QUrl DFMBASE_NAMESPACE::FileInfoPrivate::getUrlByChildFileName(const QString &fi
  */
 QUrl DFMBASE_NAMESPACE::FileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
 {
-    QUrl theUrl = url;
+    QUrl theUrl = q->fileUrl();
     const QString &newPath = DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsolutePath).toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
     theUrl.setPath(newPath);
 
@@ -624,7 +624,7 @@ bool DFMBASE_NAMESPACE::FileInfoPrivate::canDrop()
     do {
         const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
 
-        if (targetUrl == url) {
+        if (targetUrl == q->fileUrl()) {
             return false;
         }
 

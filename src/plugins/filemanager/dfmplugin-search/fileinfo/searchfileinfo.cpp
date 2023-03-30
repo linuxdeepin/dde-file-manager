@@ -21,7 +21,7 @@ SearchFileInfo::~SearchFileInfo()
 
 bool SearchFileInfo::exists() const
 {
-    if (SearchHelper::isRootUrl(dptr->url))
+    if (SearchHelper::isRootUrl(url))
         return true;
 
     return FileInfo::exists();
@@ -29,7 +29,7 @@ bool SearchFileInfo::exists() const
 
 Qt::DropActions SearchFileInfo::supportedOfAttributes(const SupportType type) const
 {
-    if (SearchHelper::isRootUrl(dptr->url) && type == SupportType::kDrop)
+    if (SearchHelper::isRootUrl(url) && type == SupportType::kDrop)
         return Qt::IgnoreAction;
 
     return FileInfo::supportedOfAttributes(type);
@@ -39,20 +39,20 @@ bool SearchFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
-        if (SearchHelper::isRootUrl(dptr->url))
+        if (SearchHelper::isRootUrl(url))
             return true;
         return FileInfo::isAttributes(type);
     case FileIsType::kIsReadable:
-        if (SearchHelper::isRootUrl(dptr->url))
+        if (SearchHelper::isRootUrl(url))
             return true;
         return FileInfo::isAttributes(type);
     case FileIsType::kIsWritable:
-        if (SearchHelper::isRootUrl(dptr->url))
+        if (SearchHelper::isRootUrl(url))
             return true;
 
         return FileInfo::isAttributes(type);
     case FileIsType::kIsHidden:
-        if (SearchHelper::isRootUrl(dptr->url))
+        if (SearchHelper::isRootUrl(url))
             return false;
 
         return FileInfo::isAttributes(type);
@@ -63,7 +63,7 @@ bool SearchFileInfo::isAttributes(const OptInfoType type) const
 
 qint64 SearchFileInfo::size() const
 {
-    if (SearchHelper::isRootUrl(dptr->url))
+    if (SearchHelper::isRootUrl(url))
         return -1;
 
     return FileInfo::size();
@@ -72,7 +72,7 @@ qint64 SearchFileInfo::size() const
 QString SearchFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type) {
-        if (UrlRoute::isRootUrl(dptr->url)) {
+        if (UrlRoute::isRootUrl(url)) {
             return QObject::tr("Search");
         }
     }
@@ -84,7 +84,7 @@ QString SearchFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case NameInfoType::kFileName:
-        if (SearchHelper::isRootUrl(dptr->url))
+        if (SearchHelper::isRootUrl(url))
             return QObject::tr("Search");
         [[fallthrough]];
     default:

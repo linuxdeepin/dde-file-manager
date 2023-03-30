@@ -89,6 +89,8 @@ QVariant FileItemData::data(int role) const
     case kItemEditRole:
     case kItemFileDisplayNameRole:
         return info->displayOf(DisPlayInfoType::kFileDisplayName);
+    case kItemFileLastReadRole:
+        return info->customData(dfmbase::Global::kItemFileLastReadRole);
     case kItemFilePinyinNameRole:
         return info->displayOf(DisPlayInfoType::kFileDisplayPinyinName);
     case kItemFileBaseNameRole:

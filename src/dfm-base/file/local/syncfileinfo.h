@@ -17,7 +17,7 @@ namespace dfmbase {
 class SyncFileInfoPrivate;
 class SyncFileInfo : public FileInfo
 {
-    SyncFileInfoPrivate *d = nullptr;
+    QSharedPointer<SyncFileInfoPrivate> d = nullptr;
 
 public:
     enum FlagIcon {
@@ -62,10 +62,6 @@ public:
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
     // cache attribute
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
-
-private:
-    void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
-    QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString &inod = QString(), const bool isGvfs = false);
 };
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::SyncFileInfo> DFMSyncFileInfoPointer;

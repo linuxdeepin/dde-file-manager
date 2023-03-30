@@ -12,7 +12,7 @@ namespace dfmplugin_myshares {
 class ShareFileInfoPrivate;
 class ShareFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
-    ShareFileInfoPrivate *d;
+    QSharedPointer<ShareFileInfoPrivate> d { nullptr };
 
 public:
     explicit ShareFileInfo(const QUrl &url);

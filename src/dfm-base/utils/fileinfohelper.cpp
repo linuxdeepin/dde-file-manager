@@ -41,19 +41,19 @@ void FileInfoHelper::init()
 void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfileInfo)
 {
     auto success = dfileInfo->initQuerier();
-    queryingList.removeOneByLock(dfileInfo->url());
+    queryingList.removeOneByLock(dfileInfo->fileUrl());
     if (!success)
         return;
 
-    emit fileRefreshFinished(dfileInfo->url(), false);
+    emit fileRefreshFinished(dfileInfo->fileUrl(), false);
     if (dfileInfo->isAttributes(OptInfoType::kIsSymLink)) {
         QUrl tar =
                 QUrl::fromLocalFile(dfileInfo->pathOf(PathInfoType::kSymLinkTarget));
         QWriteLocker lk(&symLinkHashLock);
-        symLinkHash.insert(tar, dfileInfo->url());
+        symLinkHash.insert(tar, dfileInfo->fileUrl());
     } else {
         QWriteLocker lk(&symLinkHashLock);
-        QUrl org = symLinkHash.take(dfileInfo->url());
+        QUrl org = symLinkHash.take(dfileInfo->fileUrl());
         if (org.isValid())
             emit fileRefreshFinished(org, true);
     }
@@ -97,9 +97,9 @@ void FileInfoHelper::fileRefreshAsync(const QSharedPointer<FileInfo> dfileInfo)
 {
     if (stoped)
         return;
-    if (!dfileInfo || queryingList.containsByLock(dfileInfo->url()))
+    if (!dfileInfo || queryingList.containsByLock(dfileInfo->fileUrl()))
         return;
-    queryingList.insertByLock(dfileInfo->url());
+    queryingList.insertByLock(dfileInfo->fileUrl());
     QtConcurrent::run(&pool, [this, dfileInfo]() {
         threadHandleDfmFileInfo(dfileInfo);
     });

@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "private/abstractfileinfo_p.h"
 #include "abstractfileinfo.h"
 #include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
@@ -36,17 +35,20 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPoin
  * \param QUrl & 文件的URL
  */
 AbstractFileInfo::AbstractFileInfo(const QUrl &url)
-    : dptr(new AbstractFileInfoPrivate(url, this)) {
-          Q_UNUSED(type_id)
-      }
+    : url(url)
+{
+    if (url.path().endsWith(QDir::separator()) && url.path() != QDir::separator())
+        this->url.setPath(url.path().left(url.path().lastIndexOf(QDir::separator())));
+    Q_UNUSED(type_id)
+}
 
-      AbstractFileInfo::~AbstractFileInfo()
+AbstractFileInfo::~AbstractFileInfo()
 {
 }
 
-QUrl dfmbase::AbstractFileInfo::url() const
+QUrl dfmbase::AbstractFileInfo::fileUrl() const
 {
-    return dptr->url;
+    return url;
 }
 
 /*!
@@ -73,7 +75,7 @@ void AbstractFileInfo::refresh()
 
 QString dfmbase::AbstractFileInfo::filePath() const
 {
-    return dptr->url.path();
+    return url.path();
 }
 
 QString dfmbase::AbstractFileInfo::absoluteFilePath() const
@@ -314,19 +316,4 @@ quint32 dfmbase::AbstractFileInfo::lastRead() const
     return 0;
 }
 
-/*!
- * \class DAbstractFileInfoPrivate 抽象文件信息私有类
- *
- * \brief 主要存储文件信息的成员变量和数据
- */
-AbstractFileInfoPrivate::AbstractFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : url(url), q(qq)
-{
-    if (url.path().endsWith(QDir::separator()) && url.path() != QDir::separator())
-        this->url.setPath(url.path().left(url.path().lastIndexOf(QDir::separator())));
-}
-
-AbstractFileInfoPrivate::~AbstractFileInfoPrivate()
-{
-}
 }

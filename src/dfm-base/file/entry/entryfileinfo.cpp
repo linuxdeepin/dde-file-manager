@@ -13,8 +13,8 @@
 
 namespace dfmbase {
 
-EntryFileInfoPrivate::EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq)
-    : FileInfoPrivate(url, qq)
+EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
+    : FileInfoPrivate(qq)
 {
 }
 
@@ -27,7 +27,7 @@ void EntryFileInfoPrivate::init()
 QString EntryFileInfoPrivate::suffix() const
 {
     QRegularExpression re(".*\\.(.*)$");
-    auto rem = re.match(url.path());
+    auto rem = re.match(q->fileUrl().path());
     if (!rem.hasMatch()) {
         return "";
     }
@@ -43,9 +43,8 @@ EntryFileInfoPrivate::~EntryFileInfoPrivate()
  * \brief this is a proxy class for file info, the real info is in private class and should be registered by suffix
  */
 EntryFileInfo::EntryFileInfo(const QUrl &url)
-    : FileInfo(url), d(new EntryFileInfoPrivate(url, this))
+    : FileInfo(url), d(new EntryFileInfoPrivate(this))
 {
-    dptr.reset(d);
     d->init();
     Q_ASSERT_X(url.scheme() == Global::Scheme::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
 }
@@ -151,7 +150,7 @@ QString EntryFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kPath:
         [[fallthrough]];
     case FilePathInfoType::kFilePath:
-        return dptr->url.path();
+        return url.path();
     default:
         return FileInfo::pathOf(type);
     }

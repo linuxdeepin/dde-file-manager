@@ -27,8 +27,8 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_vault {
 
-VaultFileInfoPrivate::VaultFileInfoPrivate(const QUrl &url, FileInfo *qq)
-    : FileInfoPrivate(url, qq)
+VaultFileInfoPrivate::VaultFileInfoPrivate(VaultFileInfo *qq)
+    : q(qq)
 {
 }
 
@@ -38,7 +38,7 @@ VaultFileInfoPrivate::~VaultFileInfoPrivate()
 
 QString VaultFileInfoPrivate::fileDisplayPath() const
 {
-    QUrl currentUrl = url;
+    QUrl currentUrl = q->fileUrl();
     currentUrl.setHost("");
     QString urlStr = currentUrl.toString();
     QByteArray array = urlStr.toLocal8Bit();
@@ -82,9 +82,8 @@ bool VaultFileInfoPrivate::isRoot() const
 }
 
 VaultFileInfo::VaultFileInfo(const QUrl &url)
-    : ProxyFileInfo(url), d(new VaultFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new VaultFileInfoPrivate(this))
 {
-    dptr.reset(d);
     QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
     setProxy(InfoFactory::create<FileInfo>(tempUrl));
 }
@@ -99,7 +98,7 @@ VaultFileInfo &VaultFileInfo::operator=(const VaultFileInfo &fileinfo)
     if (!proxy)
         setProxy(fileinfo.proxy);
     else {
-        d->url = fileinfo.d->url;
+        url = fileinfo.url;
         proxy = fileinfo.proxy;
     }
     return *this;
@@ -107,7 +106,7 @@ VaultFileInfo &VaultFileInfo::operator=(const VaultFileInfo &fileinfo)
 
 bool VaultFileInfo::operator==(const VaultFileInfo &fileinfo) const
 {
-    return proxy == fileinfo.proxy && d->url == fileinfo.d->url;
+    return proxy == fileinfo.proxy && url == fileinfo.url;
 }
 
 bool VaultFileInfo::operator!=(const VaultFileInfo &fileinfo) const
@@ -135,7 +134,7 @@ QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
             return QUrl();
         return d->vaultUrl(proxy->urlOf(type));
     case FileUrlInfoType::kRedirectedFileUrl:
-        return VaultHelper::vaultToLocalUrl(d->url);
+        return VaultHelper::vaultToLocalUrl(url);
     default:
         return ProxyFileInfo::urlOf(type);
     }

@@ -12,12 +12,12 @@
 namespace dfmplugin_vault {
 
 class VaultFileInfo;
-class VaultFileInfoPrivate : public DFMBASE_NAMESPACE::FileInfoPrivate
+class VaultFileInfoPrivate
 {
     friend class VaultFileInfo;
 
 public:
-    explicit VaultFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::FileInfo *qq);
+    explicit VaultFileInfoPrivate(VaultFileInfo *qq);
     virtual ~VaultFileInfoPrivate();
 
 private:
@@ -27,6 +27,8 @@ private:
     QUrl vaultUrl(const QUrl &url) const;
     QUrl getUrlByNewFileName(const QString &fileName) const;
     bool isRoot() const;
+
+    VaultFileInfo *const q;
 };
 
 }

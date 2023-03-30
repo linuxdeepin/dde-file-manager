@@ -16,9 +16,8 @@ namespace dfmplugin_recent {
 RecentFileInfo::RecentFileInfo(const QUrl &url)
     : ProxyFileInfo(url)
 {
-    if (url.path() != "/") {
+    if (url.path() != "/")
         setProxy(InfoFactory::create<FileInfo>(QUrl::fromLocalFile(url.path())));
-    }
 }
 
 RecentFileInfo::~RecentFileInfo()
@@ -27,12 +26,12 @@ RecentFileInfo::~RecentFileInfo()
 
 bool RecentFileInfo::exists() const
 {
-    return ProxyFileInfo::exists() || dptr->url == RecentHelper::rootUrl();
+    return ProxyFileInfo::exists() || url == RecentHelper::rootUrl();
 }
 
 QFile::Permissions RecentFileInfo::permissions() const
 {
-    if (dptr->url == RecentHelper::rootUrl()) {
+    if (url == RecentHelper::rootUrl()) {
         return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
     }
     return ProxyFileInfo::permissions();
@@ -69,7 +68,7 @@ QString RecentFileInfo::nameOf(const NameInfoType type) const
         if (proxy)
             return proxy->nameOf(NameInfoType::kFileName);
 
-        if (UrlRoute::isRootUrl(dptr->url))
+        if (UrlRoute::isRootUrl(url))
             return QObject::tr("Recent");
 
         return QString();
@@ -82,7 +81,9 @@ QUrl RecentFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        return proxy ? proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
+        return proxy ? proxy->urlOf(UrlInfoType::kUrl) : url;
+    case FileUrlInfoType::kUrl:
+        return url;
     default:
         return ProxyFileInfo::urlOf(type);
     }
@@ -102,7 +103,7 @@ QVariant RecentFileInfo::customData(int role) const
 QString RecentFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type) {
-        if (UrlRoute::isRootUrl(dptr->url)) {
+        if (UrlRoute::isRootUrl(url)) {
             return QObject::tr("Recent");
         }
     }

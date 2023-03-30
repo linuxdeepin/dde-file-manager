@@ -5,9 +5,7 @@
 #ifndef ASYNCFILEINFO_P_H
 #define ASYNCFILEINFO_P_H
 
-#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/file/local/asyncfileinfo.h"
-#include "dfm-base/mimetype/mimedatabase.h"
 #include "infodatafuture.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
@@ -26,7 +24,7 @@
 #include <QReadLocker>
 
 namespace dfmbase {
-class AsyncFileInfoPrivate : public FileInfoPrivate
+class AsyncFileInfoPrivate
 {
 public:
     friend class AsyncFileInfo;
@@ -52,9 +50,10 @@ public:
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
     InfoHelperUeserDataPointer iconFuture { nullptr };
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
+    AsyncFileInfo *const q;
 
 public:
-    explicit AsyncFileInfoPrivate(const QUrl &url, AsyncFileInfo *qq);
+    explicit AsyncFileInfoPrivate(AsyncFileInfo *qq);
     virtual ~AsyncFileInfoPrivate();
     QString sizeString(const QString &str) const
     {
@@ -78,8 +77,6 @@ public:
 
     void clearIcon()
     {
-        if (url == QUrl("file:///run/user/1000/gvfs/smb-share:server=10.8.11.130,share=lixu-share/test/New Folder/测试(副本 6)(副本 1)(副本 3).smil"))
-            qInfo() << "11111122" << cacheing;
         icons.clear();
         loadingThumbnail = false;
         enableThumbnail = -1;
@@ -89,7 +86,7 @@ public:
     QIcon thumbIcon();
     QIcon defaultIcon();
 
-private:
+public:
     QString fileName() const;
     QString baseName() const;
     QString completeBaseName() const;
@@ -169,11 +166,13 @@ private:
     void cacheAllAttributes();
     void countChildFileAsync();
     void fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
-    QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString &inod = QString(), const bool isGvfs = false);
+    QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
+                        const QString &inod = QString(), const bool isGvfs = false);
+    void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
 };
 
-AsyncFileInfoPrivate::AsyncFileInfoPrivate(const QUrl &url, AsyncFileInfo *qq)
-    : FileInfoPrivate(url, qq)
+AsyncFileInfoPrivate::AsyncFileInfoPrivate(AsyncFileInfo *qq)
+    : q(qq)
 {
 }
 

@@ -20,21 +20,20 @@ namespace dfmplugin_optical {
 using namespace GlobalServerDefines;
 
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
-    : ProxyFileInfo(url), d(new MasteredMediaFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new MasteredMediaFileInfoPrivate(this))
 {
-    dptr.reset(d);
     d->backupInfo(url);
     setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
 bool MasteredMediaFileInfo::exists() const
 {
-    if (d->url.isEmpty()
+    if (url.isEmpty()
         || !d->backerUrl.isValid()
         || d->backerUrl.isEmpty()) {
         return false;
     }
-    if (d->url.fragment() == "dup") {
+    if (url.fragment() == "dup") {
         return false;
     }
 
@@ -160,8 +159,8 @@ QString MasteredMediaFileInfo::viewOfTip(const ViewInfoType type) const
     return ProxyFileInfo::viewOfTip(type);
 }
 
-MasteredMediaFileInfoPrivate::MasteredMediaFileInfoPrivate(const QUrl &url, MasteredMediaFileInfo *qq)
-    : FileInfoPrivate(url, qq)
+MasteredMediaFileInfoPrivate::MasteredMediaFileInfoPrivate(MasteredMediaFileInfo *qq)
+    : q(qq)
 {
 }
 
@@ -188,11 +187,11 @@ void MasteredMediaFileInfoPrivate::backupInfo(const QUrl &url)
 
 QUrl MasteredMediaFileInfoPrivate::parentUrl() const
 {
-    QString burnPath { OpticalHelper::burnFilePath(url) };
+    QString burnPath { OpticalHelper::burnFilePath(q->fileUrl()) };
     if (burnPath.contains(QRegularExpression("^(/*)$"))) {
         return QUrl::fromLocalFile(QDir::homePath());
     }
-    return UrlRoute::urlParent(url);
+    return UrlRoute::urlParent(q->fileUrl());
 }
 
 bool MasteredMediaFileInfoPrivate::canDrop()

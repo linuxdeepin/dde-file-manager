@@ -12,16 +12,17 @@
 namespace dfmplugin_tag {
 
 class TagFileInfo;
-class TagFileInfoPrivate : public DFMBASE_NAMESPACE::FileInfoPrivate
+class TagFileInfoPrivate
 {
     friend class TagFileInfo;
 
 public:
-    explicit TagFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::FileInfo *qq);
+    explicit TagFileInfoPrivate(TagFileInfo *qq);
     virtual ~TagFileInfoPrivate();
 
 private:
     QString fileName() const;
+    TagFileInfo *const q;
 };
 
 }

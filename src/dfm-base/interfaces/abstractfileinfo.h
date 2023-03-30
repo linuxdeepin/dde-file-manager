@@ -27,7 +27,6 @@ class AbstractFileInfo;
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPointer;
 
 namespace dfmbase {
-class AbstractFileInfoPrivate;
 class AbstractFileInfo : public QSharedData
 {
 public:
@@ -35,7 +34,7 @@ public:
     explicit AbstractFileInfo(const QUrl &url);
     virtual ~AbstractFileInfo();
 
-    virtual QUrl url() const;
+    virtual QUrl fileUrl() const;
     virtual bool exists() const;
     virtual void refresh();
     virtual QString filePath() const;
@@ -79,7 +78,7 @@ public:
     virtual quint32 lastRead() const;
 
 protected:
-    QSharedPointer<AbstractFileInfoPrivate> dptr { nullptr };
+    QUrl url;
 };
 
 }

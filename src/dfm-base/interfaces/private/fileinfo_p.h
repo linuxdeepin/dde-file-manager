@@ -8,8 +8,6 @@
 #include "dfm-base/utils/threadcontainer.hpp"
 #include "dfm-base/interfaces/fileinfo.h"
 
-#include <dfm-io/dfileinfo.h>
-
 #include <QPointer>
 
 USING_IO_NAMESPACE
@@ -17,19 +15,13 @@ namespace dfmbase {
 
 class FileInfoPrivate
 {
-    friend class FileInfo;
-
 public:
-    QUrl url;   // 文件的url
-    explicit FileInfoPrivate(const QUrl &url, FileInfo *qq);
+    explicit FileInfoPrivate(FileInfo *qq);
     virtual ~FileInfoPrivate();
 
     FileInfo *const q;   // DAbstractFileInfo实例对象
-    QMap<ExtInfoType, QVariant> extendOtherCache;
-    QString pinyinName;
-    QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;
 
-private:
+public:
     QUrl getUrlByChildFileName(const QString &fileName) const;
     QUrl getUrlByNewFileName(const QString &fileName) const;
     QString fileName() const;
