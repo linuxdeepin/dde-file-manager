@@ -10,6 +10,8 @@
 #include "utils/policy/policymanager.h"
 #include "utils/encryption/vaultconfig.h"
 
+#include <dfm-base/utils/windowutils.h>
+
 #include <QDebug>
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -17,11 +19,19 @@
 #include <QSpacerItem>
 #include <QHBoxLayout>
 #include <QMouseEvent>
+#include <QWindow>
 
 using namespace dfmplugin_vault;
 VaultActiveView::VaultActiveView(QWidget *parent)
     : VaultPageBase(parent)
 {
+    setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+    if (dfmbase::WindowUtils::isWayLand()) {
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+
     this->setIcon(QIcon::fromTheme("dfm_vault"));
 
     //! 初始化试图容器

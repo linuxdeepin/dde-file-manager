@@ -22,6 +22,7 @@
 #include <QDateTime>
 #include <QLineEdit>
 #include <QShowEvent>
+#include <QGridLayout>
 
 using namespace PolkitQt1;
 
@@ -42,7 +43,7 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
 
     filePathEdit = new DFileChooserEdit(this);
     filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    DFileDialog *fileDialog = new DFileDialog(this, QDir::homePath());
+    fileDialog = new DFileDialog(this, QDir::homePath());
     filePathEdit->setDirectoryUrl(QDir::homePath());
     filePathEdit->setFileMode(DFileDialog::ExistingFiles);
     filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
@@ -59,11 +60,9 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     DFontSizeManager::instance()->bind(verificationPrompt, DFontSizeManager::T7, QFont::Medium);
 
     //! 布局
-    QVBoxLayout *funLayout = new QVBoxLayout();
-    funLayout->addWidget(savePathTypeComboBox);
-    funLayout->addSpacing(4);
-    funLayout->addWidget(filePathEdit);
-    funLayout->addWidget(defaultFilePathEdit);
+    funLayout = new QGridLayout();
+    funLayout->addWidget(savePathTypeComboBox, 0, 0, 1, 2);
+    funLayout->addWidget(defaultFilePathEdit, 1, 0, 1, 2);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(25, 10, 25, 0);
@@ -166,6 +165,8 @@ void RetrievePasswordView::onComboBoxIndex(int index)
 {
     switch (index) {
     case 0: {
+        funLayout->removeWidget(filePathEdit);
+        funLayout->addWidget(defaultFilePathEdit, 1, 0, 1, 2);
         defaultFilePathEdit->show();
         filePathEdit->hide();
         if (QFile::exists(defaultKeyPath)) {
@@ -179,8 +180,11 @@ void RetrievePasswordView::onComboBoxIndex(int index)
         verificationPrompt->setText("");
     } break;
     case 1:
+        funLayout->removeWidget(defaultFilePathEdit);
+        funLayout->addWidget(filePathEdit, 1, 0, 1, 2);
         defaultFilePathEdit->hide();
         filePathEdit->show();
+        fileDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         if (QFile::exists(filePathEdit->text()))
             emit sigBtnEnabled(1, true);
         else if (!filePathEdit->text().isEmpty() && filePathEdit->lineEdit()->placeholderText() != QString(tr("Unable to get the key file"))) {

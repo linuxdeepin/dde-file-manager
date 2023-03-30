@@ -15,15 +15,20 @@
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
 
 #include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/vaultreportdata.h"
-#include "dfm-framework/dpf.h"
+
+#include <dfm-framework/event/event.h>
+
+#include <dfm-base/utils/windowutils.h>
 
 #include <DLabel>
+
 #include <QFrame>
 #include <QRegExpValidator>
 #include <QStackedWidget>
 #include <QAbstractButton>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QWindow>
 
 Q_DECLARE_METATYPE(const char *)
 
@@ -40,6 +45,12 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
       progressView(new VaultRemoveProgressView(this)),
       stackedWidget(new QStackedWidget(this))
 {
+    setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+    if (dfmbase::WindowUtils::isWayLand()) {
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
     setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
     //! 修复bug-41001 提示信息显示不全
     this->setFixedWidth(396);

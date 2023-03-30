@@ -9,8 +9,10 @@
 #include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 #include "utils/vaultautolock.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/application/settings.h"
+
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <DPushButton>
 #include <DPasswordEdit>
@@ -29,6 +31,7 @@
 #include <QEvent>
 #include <QTimer>
 #include <QProcess>
+#include <QWindow>
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -36,6 +39,12 @@ using namespace dfmplugin_vault;
 VaultUnlockPages::VaultUnlockPages(QWidget *parent)
     : VaultPageBase(parent)
 {
+    setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+    if (WindowUtils::isWayLand()) {
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
     setIcon(QIcon::fromTheme("dfm_vault"));
     connect(this, &VaultUnlockPages::buttonClicked, this, &VaultUnlockPages::onButtonClicked);
     setOnButtonClickedClose(false);
