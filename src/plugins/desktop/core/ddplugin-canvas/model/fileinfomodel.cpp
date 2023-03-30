@@ -187,7 +187,7 @@ void FileInfoModelPrivate::onFileInfoRefreshFinished(const QUrl &url, const bool
             info->customData(Global::ItemRoles::kItemFileRefreshIcon);
     }
 
-    emit q->dataChanged(index, index);
+    //    emit q->dataChanged(index, index);
 }
 
 FileInfoModel::FileInfoModel(QObject *parent)

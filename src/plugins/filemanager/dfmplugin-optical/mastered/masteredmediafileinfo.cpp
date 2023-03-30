@@ -78,6 +78,8 @@ QUrl MasteredMediaFileInfo::urlOf(const UrlInfoType type) const
         return ProxyFileInfo::urlOf(UrlInfoType::kUrl);
     case FileUrlInfoType::kParentUrl:
         return d->parentUrl();
+    case FileUrlInfoType::kUrl:
+        return url;
     default:
         return ProxyFileInfo::urlOf(type);
     }
