@@ -222,7 +222,7 @@ void RootInfo::doWatcherEvent()
             if (event.second == kAddFile)
                 continue;
             else if (event.second == kRmFile) {
-                dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", fileUrl);
+                emit requestCloseTab(fileUrl);
                 break;
             }
         }
@@ -236,7 +236,7 @@ void RootInfo::doWatcherEvent()
             updateChild(fileUrl);
         } else {
             removeChildren({ fileUrl });
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", fileUrl);
+            emit requestCloseTab(fileUrl);
         }
     }
 
