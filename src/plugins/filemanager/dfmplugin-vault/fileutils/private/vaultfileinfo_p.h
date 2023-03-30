@@ -21,7 +21,6 @@ public:
     virtual ~VaultFileInfoPrivate();
 
 private:
-    QString iconName();
     QString fileDisplayPath() const;
     QString absolutePath(const QString &path) const;
     QUrl vaultUrl(const QUrl &url) const;

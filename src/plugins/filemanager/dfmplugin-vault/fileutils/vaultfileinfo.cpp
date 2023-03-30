@@ -270,8 +270,18 @@ QString VaultFileInfo::nameOf(const NameInfoType type) const
     switch (type) {
     case NameInfoType::kFileCopyName:
         return displayOf(DisPlayInfoType::kFileDisplayName);
-    case NameInfoType::kIconName:
-        return d->iconName();
+    case NameInfoType::kIconName: {
+        QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
+        if (isRoot())
+            return iconName;
+        else {
+            if (!proxy)
+                return const_cast<VaultFileInfo *>(this)->fileMimeType(QMimeDatabase::MatchDefault).iconName();
+            else
+                proxy->nameOf(NameInfoType::kIconName);
+        }
+        return QString();
+    }
     default:
         return ProxyFileInfo::nameOf(type);
     }
