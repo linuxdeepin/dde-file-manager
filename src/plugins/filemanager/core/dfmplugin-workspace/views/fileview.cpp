@@ -1125,6 +1125,10 @@ void FileView::updateGeometries()
 
 void FileView::startDrag(Qt::DropActions supportedActions)
 {
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
+        DialogManager::instance()->showUnableToVistDir(rootUrl().path());
+        return;
+    }
     QModelIndexList indexes = d->selectedDraggableIndexes();
     if (!indexes.isEmpty()) {
         QMimeData *data = model()->mimeData(indexes);

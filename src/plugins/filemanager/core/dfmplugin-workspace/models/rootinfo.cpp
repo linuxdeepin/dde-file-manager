@@ -371,6 +371,7 @@ void RootInfo::addChildren(const QList<SortInfoPointer> &children)
             continue;
 
         QWriteLocker lk(&childrenLock);
+        file->url.setPath(FileUtils::bindPathTransform(file->url.path(), false));
         childrenUrlList.append(file->url);
         sourceDataList.append(file);
     }
