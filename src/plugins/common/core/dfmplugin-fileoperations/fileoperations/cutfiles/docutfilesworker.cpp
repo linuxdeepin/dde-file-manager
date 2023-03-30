@@ -78,7 +78,7 @@ bool DoCutFilesWorker::initArgs()
         doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
-    targetInfo = InfoFactory::create<FileInfo>(targetUrl);
+    targetInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!targetInfo) {
         // pause and emit error msg
         doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
