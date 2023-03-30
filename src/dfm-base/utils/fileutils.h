@@ -84,6 +84,9 @@ public:
     static QString bindPathTransform(const QString &path, bool toDevice);
     static int dirFfileCount(const QUrl &url);
     static bool fileCanTrash(const QUrl &url);
+    static QUrl bindUrlTransform(const QUrl &url);
+    static QString trashPathToNormal(const QString &trash);
+    static QString normalPathToTrash(const QString &normal);
 
 private:
     static QMutex cacheCopyingMutex;

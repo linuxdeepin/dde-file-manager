@@ -1271,6 +1271,40 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     return !match.hasMatch();
 }
 
+QUrl FileUtils::bindUrlTransform(const QUrl &url)
+{
+    auto tmp = url;
+
+    if (!FileUtils::isTrashFile(url) || !url.path().contains("\\")) {
+        tmp.setPath(FileUtils::bindPathTransform(url.path(), false));
+        return tmp;
+    }
+
+    auto path = FileUtils::trashPathToNormal(url.path());
+    path = FileUtils::bindPathTransform(path, false);
+    path = FileUtils::normalPathToTrash(path);
+    tmp.setPath(path);
+    return tmp;
+}
+
+QString FileUtils::trashPathToNormal(const QString &trash)
+{
+    if (!trash.contains("\\"))
+        return trash;
+    QString normal = trash;
+    normal = normal.replace("\\", "/");
+    normal = normal.replace("//", "/");
+    return normal;
+}
+
+QString FileUtils::normalPathToTrash(const QString &normal)
+{
+    QString trash = normal;
+    trash = trash.replace("/", "\\");
+    trash.push_front("/");
+    return trash;
+}
+
 QUrl DesktopAppUrl::trashDesktopFileUrl()
 {
     static QUrl trash = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-trash.desktop");

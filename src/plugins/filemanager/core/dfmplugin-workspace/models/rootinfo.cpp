@@ -8,6 +8,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -149,7 +150,8 @@ void RootInfo::reset()
 
 void RootInfo::doFileDeleted(const QUrl &url)
 {
-    enqueueEvent(QPair<QUrl, EventType>(url, kRmFile));
+    auto tmp = FileUtils::bindUrlTransform(url);
+    enqueueEvent(QPair<QUrl, EventType>(tmp, kRmFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -157,11 +159,13 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
 {
     doFileDeleted(fromUrl);
 
-    FileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
+    auto tmp = FileUtils::bindUrlTransform(url);
+
+    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(tmp);
     if (info)
         info->refresh();
 
-    if (!containsChild(toUrl)) {
+    if (!containsChild(tmp)) {
         {
             // Before the file moved signal is received, `toUrl` may be filtered if it received a created signal
             QMutexLocker lk(&watcherEventMutex);
@@ -186,19 +190,21 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     // but renamed from a .goutputstream_xxx file
     // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
     // when the file is modified in other way.
-    if (UniversalUtils::urlEquals(hiddenFileUrl, toUrl))
-        Q_EMIT watcherUpdateHideFile(toUrl);
+    if (UniversalUtils::urlEquals(hiddenFileUrl, tmp))
+        Q_EMIT watcherUpdateHideFile(tmp);
 }
 
 void RootInfo::dofileCreated(const QUrl &url)
 {
-    enqueueEvent(QPair<QUrl, EventType>(url, kAddFile));
+    auto tmp = FileUtils::bindUrlTransform(url);
+    enqueueEvent(QPair<QUrl, EventType>(tmp, kAddFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
 void RootInfo::doFileUpdated(const QUrl &url)
 {
-    enqueueEvent(QPair<QUrl, EventType>(url, kUpdateFile));
+    auto tmp = FileUtils::bindUrlTransform(url);
+    enqueueEvent(QPair<QUrl, EventType>(tmp, kUpdateFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 

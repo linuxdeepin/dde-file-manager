@@ -54,8 +54,11 @@ bool DoCleanTrashFilesWorker::statisticsFilesSize()
         const QUrl &urlSource = sourceUrls[0];
         if (UniversalUtils::urlEquals(urlSource, FileUtils::trashRootUrl())) {
             DFMIO::DEnumerator enumerator(urlSource);
-            while (enumerator.hasNext())
-                allFilesList.append(enumerator.next());
+            while (enumerator.hasNext()) {
+                auto url = FileUtils::bindUrlTransform(enumerator.next());
+                if (!allFilesList.contains(url))
+                    allFilesList.append(url);
+            }
         }
     }
 
