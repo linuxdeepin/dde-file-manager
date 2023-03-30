@@ -357,7 +357,7 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
     // draw background
     if (option.widget) {
         DPalette pl(DPaletteHelper::instance()->palette(option.widget));
-        QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+        QColor baseColor = pl.color(DPalette::ColorGroup::Disabled, DPalette::ColorType::ItemBackground);
 
         QColor adjustColor = baseColor;
 

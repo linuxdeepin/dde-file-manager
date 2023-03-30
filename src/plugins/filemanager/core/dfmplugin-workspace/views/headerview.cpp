@@ -216,7 +216,7 @@ void HeaderView::contextMenuEvent(QContextMenuEvent *event)
 void HeaderView::paintEvent(QPaintEvent *e)
 {
     QHeaderView::paintEvent(e);
-    int idealHeight = qMax(kListViewIconSize, fontMetrics().height());
+    int idealHeight = qMax(kListViewHeaderHeight, fontMetrics().height());
     if (idealHeight != this->height())
         this->setFixedHeight(idealHeight);
 }
