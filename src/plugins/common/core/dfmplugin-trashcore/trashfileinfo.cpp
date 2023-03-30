@@ -212,6 +212,12 @@ TrashFileInfo::~TrashFileInfo()
 
 bool TrashFileInfo::exists() const
 {
+    if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl)))
+        return true;
+
+    if (d->dFileInfo)
+        return d->dFileInfo->exists();
+
     return ProxyFileInfo::exists()
             || FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
 }

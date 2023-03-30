@@ -332,10 +332,10 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
     }
     // 检查源文件是否存在
     if (!fromInfo->exists()) {
-        qCritical() << " check file from file is  not exists !!!!!!!";
+        qCritical() << " check file from file is  not exists !!!!!!!" << fromInfo->fileUrl();
         auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
         fromUrl.setPath(fromUrl.path().replace("\\", "/"));
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kAbsolutePath).startsWith("/root/")
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
@@ -1093,12 +1093,12 @@ bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
     if (getuid() == 0)
         return true;
 
-    auto info = InfoFactory::create<FileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
     if (info.isNull())
         return false;
 
-    auto parentInfo = InfoFactory::create<FileInfo>(info->urlOf(UrlInfoType::kParentUrl));
+    auto parentInfo = InfoFactory::create<FileInfo>(info->urlOf(UrlInfoType::kParentUrl), Global::CreateFileInfoType::kCreateFileInfoSync);
     if (parentInfo.isNull())
         return false;
 

@@ -38,6 +38,7 @@ void ProxyFileInfo::refresh()
 void ProxyFileInfo::setProxy(const FileInfoPointer &proxy)
 {
     this->proxy = proxy;
+    this->proxy->refresh();
 }
 
 QString dfmbase::ProxyFileInfo::filePath() const

@@ -149,6 +149,9 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     for (const auto &url : urlsSource) {
         if (!stateCheck())
             return false;
+        auto fileUrl = FileUtils::bindUrlTransform(url);
+        if (completeSourceFiles.contains(fileUrl))
+            continue;
 
         FileInfoPointer restoreInfo { nullptr };
         if (!checkRestoreInfo(url, restoreInfo)) {
@@ -156,7 +159,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             continue;
         }
 
-        const auto &fileInfo = InfoFactory::create<FileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         FileInfoPointer targetInfo = nullptr;
         if (!createParentDir(fileInfo, restoreInfo, targetInfo, &result)) {
             if (result) {
@@ -180,8 +183,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         bool trashSucc = fileHandler.moveFile(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
         if (trashSucc) {
             completeFilesCount++;
-            if (!completeSourceFiles.contains(url)) {
-                completeSourceFiles.append(url);
+            if (!completeSourceFiles.contains(fileUrl)) {
+                completeSourceFiles.append(fileUrl);
                 completeCustomInfos.append(trashInfoCache);
             }
             if (!completeTargetFiles.contains(restoreInfo->urlOf(UrlInfoType::kUrl)))
@@ -219,7 +222,7 @@ bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo
     if (!parentUrl.isValid())
         return false;
     targetFileInfo.reset();
-    targetFileInfo = InfoFactory::create<FileInfo>(parentUrl);
+    targetFileInfo = InfoFactory::create<FileInfo>(parentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!targetFileInfo)
         return false;
 
@@ -248,7 +251,7 @@ bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, FileInfoPointe
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         result = true;
-        const auto &fileInfo = InfoFactory::create<FileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
             // pause and emit error msg
             action = doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
