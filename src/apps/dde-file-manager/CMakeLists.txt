@@ -5,7 +5,7 @@ project(dde-file-manager)
 message("PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
 
 configure_file(
-    "config.h.in"
+    "../config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 

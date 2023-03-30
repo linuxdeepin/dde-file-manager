@@ -54,22 +54,17 @@ static void initLog()
 
 static bool pluginsLoad()
 {
-    QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     QStringList pluginsDirs;
-    if (!QDir(pluginsDir).exists()) {
-        qInfo() << QString("Path does not exist, use path : %1").arg(DFM_PLUGIN_COMMON_CORE_DIR);
-        pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
-                    << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
-                    << QString(DFM_PLUGIN_COMMON_EDGE_DIR)
-                    << QString(DFM_PLUGIN_DAEMON_EDGE_DIR)
-                    << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
-    } else {
-        pluginsDirs.push_back(pluginsDir + "/daemon");
-        pluginsDirs.push_back(pluginsDir + "/common");
-        pluginsDirs.push_back(pluginsDir);
-    }
-
-    qDebug() << "using plugins dir:" << pluginsDirs;
+#ifdef QT_DEBUG
+    const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
+    qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
+    pluginsDirs.push_back(pluginsDir + "/daemon");
+    pluginsDirs.push_back(pluginsDir);
+#else
+    pluginsDirs << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
+                << QString(DFM_PLUGIN_DAEMON_EDGE_DIR);
+#endif
+    qInfo() << "Using plugins dir:" << pluginsDirs;
     DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs);
 
     qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();

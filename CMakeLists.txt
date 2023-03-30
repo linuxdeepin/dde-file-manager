@@ -50,6 +50,11 @@ if(NOT DEFINED DFM_PLUGIN_DIR)
     set(DFM_PLUGIN_DIR ${LIB_INSTALL_DIR}/dde-file-manager/plugins)
 endif()
 
+# build plugins dir
+if(NOT DEFINED DFM_BUILD_PLUGIN_DIR)
+    set(DFM_BUILD_PLUGIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/plugins)
+endif()
+
 # common-core plugins dir
 if(NOT DEFINED DFM_PLUGIN_COMMON_CORE_DIR)
     set(DFM_PLUGIN_COMMON_CORE_DIR ${DFM_PLUGIN_DIR}/common-core)
