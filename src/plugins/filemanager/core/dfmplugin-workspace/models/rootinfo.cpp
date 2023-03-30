@@ -13,6 +13,7 @@
 #include <dfm-framework/event/event.h>
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/dfile.h>
 
 #include <QApplication>
 #include <QtConcurrent>
@@ -337,7 +338,12 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
 
         auto child = fileInfo(url);
 
-        if (!child || !child->exists())
+        if (!child)
+            continue;
+
+        dfmio::DFile tmpFile(child->fileUrl());
+
+        if (!tmpFile.exists())
             continue;
 
         auto sortInfo = addChild(child);
@@ -499,6 +505,7 @@ QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 FileInfoPointer RootInfo::fileInfo(const QUrl &url)
 {
     auto info = InfoFactory::create<FileInfo>(url);
+    info->refresh();
     if (info)
         return info;
 
