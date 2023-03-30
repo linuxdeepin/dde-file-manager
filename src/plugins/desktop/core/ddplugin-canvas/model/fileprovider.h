@@ -21,6 +21,7 @@ class FileProvider : public QObject
     Q_OBJECT
 public:
     explicit FileProvider(QObject *parent = nullptr);
+    ~FileProvider() override;
     bool setRoot(const QUrl &url);
     QUrl root() const;
     bool isUpdating() const;
@@ -51,7 +52,7 @@ protected:
 
 private:
     QAtomicInteger<bool> updateing = false;
-    QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
+    DFMBASE_NAMESPACE::TraversalDirThread *traversalThread { nullptr };
 };
 
 }

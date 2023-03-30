@@ -22,6 +22,14 @@ FileProvider::FileProvider(QObject *parent)
             &FileProvider::onFileInfoRefreshFinished, Qt::QueuedConnection);
 }
 
+FileProvider::~FileProvider()
+{
+    if (traversalThread) {
+        traversalThread->disconnect(this);
+        traversalThread->stopAndDeleteLater();
+    }
+}
+
 bool FileProvider::setRoot(const QUrl &url)
 {
     if (!url.isValid()) {
@@ -63,17 +71,17 @@ bool FileProvider::isUpdating() const
 void FileProvider::refresh(QDir::Filters filters)
 {
     updateing = false;
-    if (!traversalThread.isNull()) {
+    if (traversalThread) {
         traversalThread->disconnect(this);
         traversalThread->stopAndDeleteLater();
     }
 
-    traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags));
-    connect(traversalThread.get(), &TraversalDirThread::updateChildren, this, &FileProvider::reset);
-    connect(traversalThread.get(), &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
+    traversalThread = new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags);
+    connect(traversalThread, &TraversalDirThread::updateChildren, this, &FileProvider::reset);
+    connect(traversalThread, &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
 
     // get file property in thread of TraversalDir to improve performance.
-    connect(traversalThread.get(), &TraversalDirThread::updateChild, this, &FileProvider::preupdateData, Qt::DirectConnection);
+    connect(traversalThread, &TraversalDirThread::updateChild, this, &FileProvider::preupdateData, Qt::DirectConnection);
 
     updateing = true;
     traversalThread->start();
