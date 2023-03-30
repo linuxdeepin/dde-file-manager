@@ -98,15 +98,9 @@ void AsyncFileInfo::refresh()
         d->fileCountFuture.reset(nullptr);
         d->fileMimeTypeFuture.reset(nullptr);
         d->mediaFuture.reset(nullptr);
-        d->mimeTypeMode = QMimeDatabase::MatchMode::MatchDefault;
         d->extraProperties.clear();
         d->attributesExtend.clear();
         d->extendIDs.clear();
-        d->mimeTypeMode = QMimeDatabase::MatchDefault;
-    }
-    {
-        QWriteLocker wlk(&d->iconLock);
-        d->clearIcon();
     }
 }
 
@@ -490,6 +484,10 @@ QMimeType AsyncFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
         d->fileMimeTypeFuture = future;
     } else if (d->fileMimeTypeFuture->finish) {
         type = d->fileMimeTypeFuture->data.value<QMimeType>();
+        {
+            QWriteLocker wlk(&d->iconLock);
+            d->clearIcon();
+        }
     }
 
     return type;
@@ -1127,13 +1125,17 @@ void AsyncFileInfoPrivate::countChildFileAsync()
 void AsyncFileInfoPrivate::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
 {
     QMimeType type;
-    QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
-    if (!type.isValid() || modeCache != mode) {
-        type = mimeTypes(q->fileUrl().path(), mode);
-
+    bool clearIcons = false;
+    type = mimeTypes(q->fileUrl().path(), mode);
+    {
         QWriteLocker lk(&lock);
+        clearIcons = mimeType != type;
         mimeType = type;
         mimeTypeMode = mode;
+    }
+    if (!icons.value(kThumbIcon).isNull() || clearIcons) {
+        QWriteLocker lk(&iconLock);
+        clearIcon();
     }
 }
 
