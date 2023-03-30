@@ -73,6 +73,7 @@ Q_SIGNALS:
     void watcherUpdateFile(const SortInfoPointer sortInfo);
     void watcherUpdateHideFile(const QUrl &hidUrl);
     void requestSort(const QString &key);
+    void requestCloseTab(const QUrl &url);
 
 public Q_SLOTS:
     void doFileDeleted(const QUrl &url);

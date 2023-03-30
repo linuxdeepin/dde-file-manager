@@ -134,6 +134,7 @@ WorkspaceWidget *WorkspaceHelper::findWorkspaceByWindowId(quint64 windowId)
 
 void WorkspaceHelper::closeTab(const QUrl &url)
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     for (auto iter = kWorkspaceMap.cbegin(); iter != kWorkspaceMap.cend(); ++iter) {
         if (iter.value())
             iter.value()->closeTab(iter.key(), url);
