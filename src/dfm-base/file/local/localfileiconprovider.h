@@ -6,7 +6,7 @@
 #define LOCALFILEICONPROVIDER_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QFileIconProvider>
 #include <QScopedPointer>
@@ -27,7 +27,7 @@ public:
     QIcon icon(const QString &path) const;
     QIcon icon(const QFileInfo &info, const QIcon &feedback) const;
     QIcon icon(const QString &path, const QIcon &feedback) const;
-    QIcon icon(AbstractFileInfo *info, const QIcon &feedback = QIcon());
+    QIcon icon(FileInfo *info, const QIcon &feedback = QIcon());
 
 private:
     QScopedPointer<LocalFileIconProviderPrivate> d;

@@ -173,7 +173,7 @@ bool OemMenuPrivate::isSchemeSupport(const QAction *action, const QUrl &url) con
 bool OemMenuPrivate::isSuffixSupport(const QAction *action, const QUrl &url, const bool allEx7z) const
 {
     QString errString;
-    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
+    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
 
     // X-DFM-SupportSuffix not exist
     if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || !action || (!action->property(kSupportSuffixKey).isValid() && !action->property(kSupportSuffixAliasKey).isValid())) {
@@ -211,7 +211,7 @@ bool OemMenuPrivate::isAllEx7zFile(const QList<QUrl> &files) const
     QString errString;
     for (const QUrl &f : files) {
 
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(f, true, &errString);
+        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(f, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
             qDebug() << errString;
             return false;
@@ -483,7 +483,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
 
     QString errString;
     if (1 == files.count()) {
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(files.first(), true, &errString);
+        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(files.first(), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (!fileInfo) {
             qDebug() << errString;
             return {};
@@ -502,7 +502,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
     bool bex7z = d->isAllEx7zFile(files);
     for (const QUrl &file : files) {
 
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(file, true, &errString);
+        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
 
         if (!fileInfo) {
             qWarning() << "createFileInfo failed: " << file;

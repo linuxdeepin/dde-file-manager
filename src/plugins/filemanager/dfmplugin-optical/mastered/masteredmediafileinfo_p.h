@@ -5,15 +5,15 @@
 #ifndef MASTEREDMEDIAFILEINFOPRIVATE_H
 #define MASTEREDMEDIAFILEINFOPRIVATE_H
 #include "dfmplugin_optical_global.h"
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 namespace dfmplugin_optical {
 class MasteredMediaFileInfo;
-class MasteredMediaFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
+class MasteredMediaFileInfoPrivate
 {
     friend class MasteredMediaFileInfo;
 
 public:
-    explicit MasteredMediaFileInfoPrivate(const QUrl &url, MasteredMediaFileInfo *qq);
+    explicit MasteredMediaFileInfoPrivate(MasteredMediaFileInfo *qq);
     virtual ~MasteredMediaFileInfoPrivate();
 
 private:
@@ -25,6 +25,7 @@ private:
     QUrl backerUrl;
     QString curDevId;
     QVariantMap devInfoMap;
+    MasteredMediaFileInfo *const q;
 };
 }
 #endif   // MASTEREDMEDIAFILEINFOPRIVATE_H

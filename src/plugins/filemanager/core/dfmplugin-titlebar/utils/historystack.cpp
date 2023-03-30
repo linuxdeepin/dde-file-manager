@@ -58,7 +58,7 @@ QUrl HistoryStack::back()
 
         // TODO(zhangs): check network, computer, cellphone...
 
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url);
 
         if (url.scheme() != Global::Scheme::kFile && !fileInfo)
             break;
@@ -87,7 +87,7 @@ QUrl HistoryStack::forward()
 
         // TODO(zhangs): check network, computer, cellphone...
 
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url);
 
         if (url.scheme() != Global::Scheme::kFile && !fileInfo)
             break;

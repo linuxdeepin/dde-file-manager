@@ -6,6 +6,7 @@
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QDir>
 #include <QSettings>
@@ -68,8 +69,14 @@ public:
 }
 
 DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl)
-    : LocalFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
+    : DesktopFileInfo(fileUrl, InfoFactory::create<FileInfo>(fileUrl))
 {
+}
+
+DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl, const FileInfoPointer &info)
+    : ProxyFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
+{
+    setProxy(info);
 }
 
 DesktopFileInfo::~DesktopFileInfo()
@@ -163,10 +170,10 @@ QIcon DesktopFileInfo::fileIcon()
     }
 
     // 临时代码
-    d->icon = QIcon::fromTheme(iconName);   // todo(lxs) LocalFileInfo::fileIcon() 统一处理
+    d->icon = QIcon::fromTheme(iconName);   // todo(lxs) SyncFileInfo::fileIcon() 统一处理
 
     if (d->icon.isNull())
-        return LocalFileInfo::fileIcon();
+        return ProxyFileInfo::fileIcon();
 
     return d->icon;
 }
@@ -181,13 +188,13 @@ QString DesktopFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kSuffixOfRename:
         return QString();
     case NameInfoType::kFileCopyName:
-        return LocalFileInfo::nameOf(NameInfoType::kFileName);
+        return ProxyFileInfo::nameOf(NameInfoType::kFileName);
     case NameInfoType::kIconName:
         return desktopIconName();
     case NameInfoType::kGenericIconName:
         return QStringLiteral("application-default-icon");
     default:
-        return LocalFileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -196,12 +203,12 @@ QString DesktopFileInfo::displayOf(const DisPlayInfoType type) const
     if (type == DisPlayInfoType::kFileDisplayName && !desktopName().isEmpty())
         return desktopName();
 
-    return LocalFileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 void DesktopFileInfo::refresh()
 {
-    LocalFileInfo::refresh();
+    ProxyFileInfo::refresh();
     d->updateInfo(urlOf(UrlInfoType::kUrl));
 }
 
@@ -211,7 +218,7 @@ Qt::DropActions DesktopFileInfo::supportedOfAttributes(const SupportType type) c
         return Qt::IgnoreAction;
     }
 
-    return LocalFileInfo::supportedOfAttributes(type);
+    return ProxyFileInfo::supportedOfAttributes(type);
 }
 
 bool DesktopFileInfo::canTag() const
@@ -243,9 +250,9 @@ bool DesktopFileInfo::canAttributes(const CanableInfoType type) const
         if (d->deepinID == "dde-computer")
             return false;
 
-        return LocalFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     default:
-        return LocalFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 

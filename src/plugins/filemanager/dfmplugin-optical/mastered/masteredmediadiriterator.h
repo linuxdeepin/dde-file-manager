@@ -25,7 +25,7 @@ public:
     bool hasNext() const override;
     QString fileName() const override;
     QUrl fileUrl() const override;
-    virtual const AbstractFileInfoPointer fileInfo() const override;
+    virtual const FileInfoPointer fileInfo() const override;
     QUrl url() const override;
 
 private:

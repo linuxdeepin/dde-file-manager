@@ -9,7 +9,7 @@
 #include "utils/titlebarhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/private/syncfileinfo_p.h"
 
 #include "stubext.h"
 
@@ -63,11 +63,11 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_1)
     stub_ext::StubExt st;
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
-        return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home/test")));
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
+        return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home/test")));
     });
-    st.set_lamda(VADDR(LocalFileInfo, exists), [] { return false; });
+    st.set_lamda(VADDR(SyncFileInfo, exists), [] { return false; });
 
     AddressBar bar;
     EXPECT_NO_FATAL_FAILURE(bar.d->completeLocalPath("/home/test", QUrl::fromLocalFile("/home"), 5));
@@ -78,9 +78,9 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_2)
     stub_ext::StubExt st;
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
-        return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home")));
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
+        return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home")));
     });
     st.set_lamda(&QCompleter::setCompletionPrefix, [] {});
     st.set_lamda(&AddressBarPrivate::onCompletionModelCountChanged, [] {});
@@ -96,9 +96,9 @@ TEST(AddressBarPrivateTest, ut_completeLocalPath_3)
     stub_ext::StubExt st;
     st.set_lamda(&SearchHistroyManager::getSearchHistroy, [] { return QStringList(); });
     st.set_lamda(&SearchHistroyManager::getIPHistory, [] { return QList<IPHistroyData>(); });
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
-        return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home")));
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
+        return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home")));
     });
     st.set_lamda(&QCompleter::setCompletionPrefix, [] {});
     st.set_lamda(&AddressBarPrivate::clearCompleterModel, [] {});

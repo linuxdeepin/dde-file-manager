@@ -104,7 +104,7 @@ void BasicWidget::initUI()
 void BasicWidget::selectFileUrl(const QUrl &url)
 {
     QUrl realurl = VaultHelper::instance()->vaultToLocalUrl(url);
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (info.isNull())
         return;
 

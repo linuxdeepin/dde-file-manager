@@ -6,7 +6,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/elidetextlayout.h"
@@ -274,7 +274,7 @@ void EditStackedWidget::showTextShowFrame()
 void EditStackedWidget::selectFile(const QUrl &url)
 {
     fileUrl = url;
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info.isNull()) {
         initTextShowFrame(info->displayOf(DisPlayInfoType::kFileDisplayName));
         if (!info->canAttributes(CanableInfoType::kCanRename)) {

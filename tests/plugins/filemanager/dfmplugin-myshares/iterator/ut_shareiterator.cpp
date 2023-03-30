@@ -68,7 +68,7 @@ TEST_F(UT_ShareIterator, FileUrl)
 
 TEST_F(UT_ShareIterator, FileInfo)
 {
-    stub.set_lamda(InfoFactory::create<AbstractFileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
+    stub.set_lamda(InfoFactory::create<FileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
     EXPECT_TRUE(it->fileInfo() == nullptr);
 }
 

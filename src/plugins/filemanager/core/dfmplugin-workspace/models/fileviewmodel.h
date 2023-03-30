@@ -7,7 +7,7 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -60,7 +60,7 @@ public:
     void refresh();
 
     ModelState currentState() const;
-    AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+    FileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> getChildrenUrls() const;
     QModelIndex getIndexByUrl(const QUrl &url) const;
 
@@ -111,6 +111,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void onFileThumbUpdated(const QUrl &url);
+    void onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg);
     void onFileUpdated(int show);
     void onInsert(int firstIndex, int count);
     void onInsertFinish();
@@ -123,7 +124,7 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
-    bool passNameFilters(const AbstractFileInfoPointer &info) const;
+    bool passNameFilters(const FileInfoPointer &info) const;
 
     QUrl dirRootUrl;
 

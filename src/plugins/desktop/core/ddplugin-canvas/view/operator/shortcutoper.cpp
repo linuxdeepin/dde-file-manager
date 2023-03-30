@@ -232,7 +232,7 @@ void ShortcutOper::clearClipBoard()
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     auto homePath = view->model()->rootUrl();
     if (!urls.isEmpty()) {
-        auto itemInfo = FileCreator->createFileInfo(urls.first(), false);
+        auto itemInfo = FileCreator->createFileInfo(urls.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
         if (itemInfo && (itemInfo->pathOf(PathInfoType::kAbsolutePath) == homePath.toLocalFile()))
             ClipBoard::instance()->clearClipboard();
     }

@@ -149,15 +149,18 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     for (const auto &url : urlsSource) {
         if (!stateCheck())
             return false;
+        auto fileUrl = FileUtils::bindUrlTransform(url);
+        if (completeSourceFiles.contains(fileUrl))
+            continue;
 
-        AbstractFileInfoPointer restoreInfo { nullptr };
+        FileInfoPointer restoreInfo { nullptr };
         if (!checkRestoreInfo(url, restoreInfo)) {
             completeFilesCount++;
             continue;
         }
 
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-        AbstractFileInfoPointer targetInfo = nullptr;
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        FileInfoPointer targetInfo = nullptr;
         if (!createParentDir(fileInfo, restoreInfo, targetInfo, &result)) {
             if (result) {
                 completeFilesCount++;
@@ -171,7 +174,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         QUrl trashInfoUrl { fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl).toString().replace("/files/", "/info/") + ".trashinfo" };
         const QString &trashInfoCache { DFMIO::DFile(trashInfoUrl).readAll() };
         emitCurrentTaskNotify(url, restoreInfo->urlOf(UrlInfoType::kUrl));
-        AbstractFileInfoPointer newTargetInfo(nullptr);
+        FileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
         if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
             continue;
@@ -180,8 +183,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         bool trashSucc = fileHandler.moveFile(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
         if (trashSucc) {
             completeFilesCount++;
-            if (!completeSourceFiles.contains(url)) {
-                completeSourceFiles.append(url);
+            if (!completeSourceFiles.contains(fileUrl)) {
+                completeSourceFiles.append(fileUrl);
                 completeCustomInfos.append(trashInfoCache);
             }
             if (!completeTargetFiles.contains(restoreInfo->urlOf(UrlInfoType::kUrl)))
@@ -210,8 +213,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     return true;
 }
 
-bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
-                                                AbstractFileInfoPointer &targetFileInfo, bool *result)
+bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo,
+                                                FileInfoPointer &targetFileInfo, bool *result)
 {
     const QUrl &fromUrl = trashInfo->urlOf(UrlInfoType::kUrl);
     const QUrl &toUrl = restoreInfo->urlOf(UrlInfoType::kUrl);
@@ -219,7 +222,7 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
     if (!parentUrl.isValid())
         return false;
     targetFileInfo.reset();
-    targetFileInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
+    targetFileInfo = InfoFactory::create<FileInfo>(parentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!targetFileInfo)
         return false;
 
@@ -242,13 +245,13 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
     return true;
 }
 
-bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, AbstractFileInfoPointer &restoreInfo)
+bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, FileInfoPointer &restoreInfo)
 {
     bool result;
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         result = true;
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
             // pause and emit error msg
             action = doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
@@ -270,7 +273,7 @@ bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, AbstractFileIn
                                                             fileInfo->nameOf(NameInfoType::kFileCopyName).toStdString().c_str(), nullptr);
         }
 
-        restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl, false);
+        restoreInfo = InfoFactory::create<FileInfo>(restoreFileUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!restoreInfo) {
             // pause and emit error msg
             action = doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError);

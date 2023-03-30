@@ -7,7 +7,7 @@
 
 #include "dfmplugin_workspace_global.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/interfaces/abstractsortandfiter.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
@@ -88,8 +88,8 @@ public slots:
                               const Qt::SortOrder sortOrder,
                               const bool isMixDirAndFile,
                               const bool isFinished);
-    void handleIteratorChild(const QString &key, const SortInfoPointer child, const AbstractFileInfoPointer info);
-    void handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<AbstractFileInfoPointer> infos);
+    void handleIteratorChild(const QString &key, const SortInfoPointer child, const FileInfoPointer info);
+    void handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<FileInfoPointer> infos);
     //Get data from the data area according to the url, filter and sort the data
     void handleModelGetSourceData();
     void setFilters(QDir::Filters filters);
@@ -119,13 +119,13 @@ private:
     void sortAllFiles();
     // 有序的情况下只是点击升序还是降序特殊处理
     void sortOnlyOrderChange();
-    void addChild(const SortInfoPointer &sortInfo, const AbstractFileInfoPointer &info);
+    void addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info);
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortAndFiter::SortScenarios sort);
 
 private:
     bool lessThan(const QUrl &left, const QUrl &right, AbstractSortAndFiter::SortScenarios sort);
-    QVariant data(const AbstractFileInfoPointer &info, Global::ItemRoles role);
+    QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
                        AbstractSortAndFiter::SortScenarios sort);
 

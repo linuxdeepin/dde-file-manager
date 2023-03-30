@@ -42,6 +42,8 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FileViewModel::onFileLinkOrgUpdated, Qt::QueuedConnection);
 }
 
 FileViewModel::~FileViewModel()
@@ -144,7 +146,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     return index;
 }
 
-AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
+FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
     if (!index.isValid() || index.row() < 0 || filterSortWorker.isNull())
         return nullptr;
@@ -331,7 +333,7 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
-    const AbstractFileInfoPointer &info = fileInfo(index);
+    const FileInfoPointer &info = fileInfo(index);
     if (!info)
         return flags;
 
@@ -372,7 +374,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
-            const AbstractFileInfoPointer &fileInfo = this->fileInfo(*it);
+            const FileInfoPointer &fileInfo = this->fileInfo(*it);
             const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
 
             if (urlsSet.contains(url))
@@ -401,7 +403,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (!dropIndex.isValid())
         return false;
 
-    const AbstractFileInfoPointer &targetFileInfo = fileInfo(dropIndex);
+    const FileInfoPointer &targetFileInfo = fileInfo(dropIndex);
     if (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable)) {
         qInfo() << "current dir is not writable!!!!!!!!";
         return false;
@@ -615,6 +617,20 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url)
         Q_EMIT dataChanged(updateIndex, updateIndex);
 }
 
+void FileViewModel::onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg)
+{
+    auto updateIndex = getIndexByUrl(url);
+    if (!updateIndex.isValid())
+        return;
+    if (isLinkOrg) {
+        auto info = fileInfo(updateIndex);
+        if (info)
+            info->customData(Global::ItemRoles::kItemFileRefreshIcon);
+    }
+
+    Q_EMIT dataChanged(updateIndex, updateIndex);
+}
+
 void FileViewModel::onFileUpdated(int show)
 {
     Q_EMIT dataChanged(index(show, 0, rootIndex()), index(show, 0, rootIndex()));
@@ -734,7 +750,7 @@ void FileViewModel::changeState(ModelState newState)
     Q_EMIT stateChanged();
 }
 
-bool FileViewModel::passNameFilters(const AbstractFileInfoPointer &info) const
+bool FileViewModel::passNameFilters(const FileInfoPointer &info) const
 {
     if (!info || !filterSortWorker)
         return true;
@@ -742,14 +758,14 @@ bool FileViewModel::passNameFilters(const AbstractFileInfoPointer &info) const
     if (filterSortWorker->getNameFilters().isEmpty())
         return true;
 
-    const QString &filePath = info->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath);
+    const QString &filePath = info->pathOf(FileInfo::FilePathInfoType::kFilePath);
     if (nameFiltersMatchResultMap.contains(filePath))
         return nameFiltersMatchResultMap.value(filePath, false);
 
     // Check the name regularexpression filters
-    if (!(info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && (filterSortWorker->getFilters() & QDir::Dirs))) {
+    if (!(info->isAttributes(FileInfo::FileIsType::kIsDir) && (filterSortWorker->getFilters() & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filterSortWorker->getFilters() & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        const QString &fileDisplayName = info->displayOf(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        const QString &fileDisplayName = info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName);
         QRegExp re("", caseSensitive, QRegExp::Wildcard);
 
         for (int i = 0; i < filterSortWorker->getNameFilters().size(); ++i) {

@@ -121,7 +121,7 @@ QUrl TrashHelper::transToTrashFile(const QString &filePath)
 
 QUrl TrashHelper::trashFileToTargetUrl(const QUrl &url)
 {
-    auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
     if (fileInfo)
         return fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
 
@@ -161,7 +161,7 @@ void TrashHelper::emptyTrash(const quint64 windowId)
 
 TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
 {
-    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+    const auto &info = InfoFactory::create<FileInfo>(url);
 
     ExpandFieldMap map;
     {
@@ -184,7 +184,7 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
 
 TrashHelper::ExpandFieldMap TrashHelper::detailExtensionFunc(const QUrl &url)
 {
-    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+    const auto &info = InfoFactory::create<FileInfo>(url);
 
     ExpandFieldMap map;
     {

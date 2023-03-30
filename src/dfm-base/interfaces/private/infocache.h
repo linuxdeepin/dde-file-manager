@@ -7,7 +7,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/threadcontainer.hpp"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QObject>
 #include <QMutex>
@@ -28,12 +28,12 @@ class CacheWorker : public QObject
 public:
     ~CacheWorker() override;
 public Q_SLOTS:
-    void cacheInfo(const QUrl url, const AbstractFileInfoPointer info);
+    void cacheInfo(const QUrl url, const FileInfoPointer info);
     void removeCaches(const QList<QUrl> urls);
     void updateInfoTime(const QUrl url);
     void dealRemoveInfo();
     void removeInfosTime(const QList<QUrl> urls);
-    void disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos);
+    void disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos);
 
 private:
     explicit CacheWorker(QObject *parent = nullptr);
@@ -54,7 +54,7 @@ public:
 
 Q_SIGNALS:
     void cacheRemoveCaches(const QList<QUrl> &key);
-    void cacheDisconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos);
+    void cacheDisconnectWatcher(const QMap<QUrl, FileInfoPointer> infos);
     void cacheUpdateInfoTime(const QUrl url);
     void cacheRemoveInfosTime(const QList<QUrl> urls);
 
@@ -63,10 +63,10 @@ private:
     static InfoCache &instance();
     bool cacheDisable(const QString &scheme);
     void setCacheDisbale(const QString &scheme, bool disable = true);
-    AbstractFileInfoPointer getCacheInfo(const QUrl &url);
+    FileInfoPointer getCacheInfo(const QUrl &url);
     void stop();
-    void cacheInfo(const QUrl url, const AbstractFileInfoPointer info);
-    void disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos);
+    void cacheInfo(const QUrl url, const FileInfoPointer info);
+    void disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos);
     void removeCaches(const QList<QUrl> urls);
     void updateSortTimeWorker(const QUrl url);
     void timeRemoveCache();
@@ -90,9 +90,9 @@ public:
     static InfoCacheController &instance();
     bool cacheDisable(const QString &scheme);
     void setCacheDisbale(const QString &scheme, bool disable = true);
-    AbstractFileInfoPointer getCacheInfo(const QUrl &url);
+    FileInfoPointer getCacheInfo(const QUrl &url);
 Q_SIGNALS:
-    void cacheFileInfo(const QUrl url, const AbstractFileInfoPointer info);
+    void cacheFileInfo(const QUrl url, const FileInfoPointer info);
 
 private:
     explicit InfoCacheController(QObject *parent = nullptr);

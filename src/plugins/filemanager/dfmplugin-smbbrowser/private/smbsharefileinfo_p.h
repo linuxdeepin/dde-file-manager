@@ -8,22 +8,21 @@
 #include "dfmplugin_smbbrowser_global.h"
 #include "typedefines.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
-
 namespace dfmplugin_smbbrowser {
 
 class SmbShareFileInfo;
-class SmbShareFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
+class SmbShareFileInfoPrivate
 {
     friend class SmbShareFileInfo;
 
 public:
-    explicit SmbShareFileInfoPrivate(const QUrl &url, dfmbase::AbstractFileInfo *qq);
+    explicit SmbShareFileInfoPrivate(SmbShareFileInfo *qq);
     virtual ~SmbShareFileInfoPrivate();
 
 private:
     SmbShareNode node;
     QString fileName() const;
+    SmbShareFileInfo *const q;
 };
 
 }

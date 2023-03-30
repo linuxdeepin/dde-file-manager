@@ -59,8 +59,8 @@ Q_SIGNALS:
                             const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                             const Qt::SortOrder sortOrder,
                             const bool isMixDirAndFile);
-    void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo, const AbstractFileInfoPointer info);
-    void iteratorAddFiles(const QString &key, QList<SortInfoPointer> sortInfos, QList<AbstractFileInfoPointer> infos);
+    void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo, const FileInfoPointer info);
+    void iteratorAddFiles(const QString &key, QList<SortInfoPointer> sortInfos, QList<FileInfoPointer> infos);
     void watcherAddFiles(QList<SortInfoPointer> children);
     void watcherRemoveFiles(QList<SortInfoPointer> children);
     void traversalFinished(const QString &key);
@@ -83,8 +83,8 @@ public Q_SLOTS:
     void doWatcherEvent();
     void doThreadWatcherEvent();
 
-    void handleTraversalResult(const AbstractFileInfoPointer &child);
-    void handleTraversalResults(QList<AbstractFileInfoPointer> children);
+    void handleTraversalResult(const FileInfoPointer &child);
+    void handleTraversalResults(QList<FileInfoPointer> children);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                     Qt::SortOrder sortOrder,
@@ -98,10 +98,10 @@ private:
     void initConnection(const TraversalThreadManagerPointer &traversalThread);
 
     void addChildren(const QList<QUrl> &urlList);
-    void addChildren(const QList<AbstractFileInfoPointer> &children);
+    void addChildren(const QList<FileInfoPointer> &children);
     void addChildren(const QList<SortInfoPointer> &children);
-    SortInfoPointer addChild(const AbstractFileInfoPointer &child);
-    SortInfoPointer sortFileInfo(const AbstractFileInfoPointer &info);
+    SortInfoPointer addChild(const FileInfoPointer &child);
+    SortInfoPointer sortFileInfo(const FileInfoPointer &info);
     void removeChildren(const QList<QUrl> &urlList);
     bool containsChild(const QUrl &url);
     void updateChild(const QUrl &url);
@@ -110,7 +110,7 @@ private:
     bool checkFileEventQueue();
     void enqueueEvent(const QPair<QUrl, EventType> &e);
     QPair<QUrl, EventType> dequeueEvent();
-    AbstractFileInfoPointer fileInfo(const QUrl &url);
+    FileInfoPointer fileInfo(const QUrl &url);
 
 public:
     AbstractFileWatcherPointer watcher;

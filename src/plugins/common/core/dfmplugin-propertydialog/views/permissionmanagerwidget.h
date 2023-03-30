@@ -6,7 +6,7 @@
 #define PERMISSIONMANAGERWIDGET_H
 
 #include "dfmplugin_propertydialog_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <DArrowLineDrawer>
 
@@ -42,7 +42,7 @@ private:
 
     void toggleFileExecutable(bool isChecked);
 
-    bool canChmod(const AbstractFileInfoPointer &info);
+    bool canChmod(const FileInfoPointer &info);
 
     void setExecText();
 

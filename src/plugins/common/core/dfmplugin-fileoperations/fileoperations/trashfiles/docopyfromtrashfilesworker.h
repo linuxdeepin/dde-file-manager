@@ -9,7 +9,7 @@
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <dfm-io/dfile.h>
 
@@ -33,7 +33,7 @@ protected:
 
 protected:
     bool doOperate();
-    bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, AbstractFileInfoPointer &targetFileInfo, bool *result);
+    bool createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo, FileInfoPointer &targetFileInfo, bool *result);
 
 private:
     QAtomicInteger<qint64> completeFilesCount { 0 };

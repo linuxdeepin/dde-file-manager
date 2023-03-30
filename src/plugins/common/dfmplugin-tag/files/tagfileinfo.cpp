@@ -6,7 +6,7 @@
 #include "utils/tagmanager.h"
 #include "tagfileinfo_p.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
@@ -14,9 +14,8 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagFileInfo::TagFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new TagFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new TagFileInfoPrivate(this))
 {
-    dptr.reset(d);
 }
 
 TagFileInfo::~TagFileInfo()
@@ -51,7 +50,7 @@ bool TagFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsExecutable:
         return true;
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -61,7 +60,7 @@ bool TagFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanDrop:
         return true;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
@@ -72,7 +71,7 @@ QString TagFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -80,10 +79,10 @@ QString TagFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return AbstractFileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
-AbstractFileInfo::FileType TagFileInfo::fileType() const
+FileInfo::FileType TagFileInfo::fileType() const
 {
     return FileType::kDirectory;
 }
@@ -98,8 +97,8 @@ QString TagFileInfo::tagName() const
     return d->fileName();
 }
 
-TagFileInfoPrivate::TagFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+TagFileInfoPrivate::TagFileInfoPrivate(TagFileInfo *qq)
+    : q(qq)
 {
 }
 
@@ -109,5 +108,5 @@ TagFileInfoPrivate::~TagFileInfoPrivate()
 
 QString TagFileInfoPrivate::fileName() const
 {
-    return url.path().mid(1, url.path().length() - 1);
+    return q->fileUrl().path().mid(1, q->fileUrl().path().length() - 1);
 }

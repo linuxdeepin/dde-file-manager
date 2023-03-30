@@ -6,7 +6,7 @@
 #define FILEVIEWHELPER_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QObject>
 
@@ -29,7 +29,7 @@ public:
 
     FileView *parent() const;
     virtual bool isTransparent(const QModelIndex &index) const;
-    const AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+    const FileInfoPointer fileInfo(const QModelIndex &index) const;
     QMargins fileViewViewportMargins() const;
     QWidget *indexWidget(const QModelIndex &index) const;
     int selectedIndexsCount() const;

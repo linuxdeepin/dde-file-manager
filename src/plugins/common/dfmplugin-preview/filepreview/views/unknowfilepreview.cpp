@@ -72,7 +72,7 @@ UnknowFilePreview::~UnknowFilePreview()
 bool UnknowFilePreview::setFileUrl(const QUrl &url)
 {
     this->url = url;
-    const AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    const FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
     if (!info.isNull()) {
         setFileInfo(info);
@@ -92,7 +92,7 @@ QWidget *UnknowFilePreview::contentWidget() const
     return contentView;
 }
 
-void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
+void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
 {
     const QIcon &icon = info->fileIcon();
 

@@ -7,7 +7,7 @@
 
 #include "ddplugin_organizer_global.h"
 
-#include <dfm-base/file/local/localfileinfo.h>
+#include <dfm-base/file/local/syncfileinfo.h>
 
 #include <QAbstractProxyModel>
 
@@ -31,7 +31,7 @@ public:
     QUrl rootUrl() const;
     QModelIndex rootIndex() const;
     QModelIndex index(const QUrl &url, int column = 0) const;
-    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
+    FileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> files() const;
     QUrl fileUrl(const QModelIndex &index) const;
     void refresh(const QModelIndex &parent, bool global = false, int ms = 50);

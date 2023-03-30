@@ -30,7 +30,7 @@ void TrashPropertyDialog::initUI()
     setTitle(tr("Trash"));
 
     const QUrl &trashRootUrl = FileUtils::trashRootUrl();
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(trashRootUrl);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(trashRootUrl);
 
     trashIconLabel = new DLabel(this);
     trashIconLabel->setFixedSize(160, 160);

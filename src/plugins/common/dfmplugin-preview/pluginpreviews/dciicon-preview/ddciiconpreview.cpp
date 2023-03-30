@@ -6,7 +6,7 @@
 
 #include "dfm-base/interfaces/abstractbasepreview.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
 

@@ -6,7 +6,7 @@
 #define FILEUTILS_H
 
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/desktopfile.h"
@@ -39,7 +39,8 @@ public:
     static bool isComputerDesktopFile(const QUrl &url);
     static bool isHomeDesktopFile(const QUrl &url);
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
-    static bool isSameFile(const QUrl &url1, const QUrl &url2, const bool infoCache = true);
+    static bool isSameFile(const QUrl &url1, const QUrl &url2,
+                           const Global::CreateFileInfoType infoCache = Global::CreateFileInfoType::kCreateFileInfoAuto);
     static bool isLowSpeedDevice(const QUrl &url);
     static bool isLocalDevice(const QUrl &url);
     static bool isCdRomDevice(const QUrl &url);
@@ -76,13 +77,16 @@ public:
 
     static QString dateTimeFormat();
     static bool setBackGround(const QString &pictureFilePath);
-    static QString nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir);
+    static QString nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer targetDir);
 
     // If toDevice is true, convert the path to the device name
     // otherwise convert the path to the mount point name
     static QString bindPathTransform(const QString &path, bool toDevice);
     static int dirFfileCount(const QUrl &url);
     static bool fileCanTrash(const QUrl &url);
+    static QUrl bindUrlTransform(const QUrl &url);
+    static QString trashPathToNormal(const QString &trash);
+    static QString normalPathToTrash(const QString &normal);
 
 private:
     static QMutex cacheCopyingMutex;

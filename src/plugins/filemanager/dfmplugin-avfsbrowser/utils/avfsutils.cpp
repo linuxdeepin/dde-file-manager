@@ -32,7 +32,7 @@ AvfsUtils *AvfsUtils::instance()
 
 bool AvfsUtils::isSupportedArchives(const QUrl &url)
 {
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
     if (!info || info->nameOf(NameInfoType::kMimeTypeName) == kTypeCdImage)
         return false;
 

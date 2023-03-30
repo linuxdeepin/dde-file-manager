@@ -21,6 +21,7 @@ class FileProvider : public QObject
     Q_OBJECT
 public:
     explicit FileProvider(QObject *parent = nullptr);
+    ~FileProvider() override;
     bool setRoot(const QUrl &url);
     QUrl root() const;
     bool isUpdating() const;
@@ -33,6 +34,7 @@ signals:
     void fileInserted(const QUrl &url);
     void fileRenamed(const QUrl &oldurl, const QUrl &newurl);
     void fileUpdated(const QUrl &url);
+    void fileInfoUpdated(const QUrl &url, const bool isLinkOrg);
 protected slots:
     void traversalFinished();
     void reset(QList<QUrl> children);
@@ -41,6 +43,7 @@ protected slots:
     void rename(const QUrl &oldUrl, const QUrl &newUrl);
     void update(const QUrl &url);
     void preupdateData(const QUrl &url);
+    void onFileInfoUpdated(const QUrl &url, const bool isLinkOrg);
 
 protected:
     QUrl rootUrl;
@@ -49,7 +52,7 @@ protected:
 
 private:
     QAtomicInteger<bool> updateing = false;
-    QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
+    DFMBASE_NAMESPACE::TraversalDirThread *traversalThread { nullptr };
 };
 
 }

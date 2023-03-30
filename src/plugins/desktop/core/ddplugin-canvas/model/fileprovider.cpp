@@ -18,6 +18,16 @@ FileProvider::FileProvider(QObject *parent)
 {
     qRegisterMetaType<QList<QUrl>>();
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileProvider::update);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FileProvider::onFileInfoUpdated, Qt::QueuedConnection);
+}
+
+FileProvider::~FileProvider()
+{
+    if (traversalThread) {
+        traversalThread->disconnect(this);
+        traversalThread->stopAndDeleteLater();
+    }
 }
 
 bool FileProvider::setRoot(const QUrl &url)
@@ -61,17 +71,17 @@ bool FileProvider::isUpdating() const
 void FileProvider::refresh(QDir::Filters filters)
 {
     updateing = false;
-    if (!traversalThread.isNull()) {
+    if (traversalThread) {
         traversalThread->disconnect(this);
         traversalThread->stopAndDeleteLater();
     }
 
-    traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags));
-    connect(traversalThread.get(), &TraversalDirThread::updateChildren, this, &FileProvider::reset);
-    connect(traversalThread.get(), &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
+    traversalThread = new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags);
+    connect(traversalThread, &TraversalDirThread::updateChildren, this, &FileProvider::reset);
+    connect(traversalThread, &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
 
     // get file property in thread of TraversalDir to improve performance.
-    connect(traversalThread.get(), &TraversalDirThread::updateChild, this, &FileProvider::preupdateData, Qt::DirectConnection);
+    connect(traversalThread, &TraversalDirThread::updateChild, this, &FileProvider::preupdateData, Qt::DirectConnection);
 
     updateing = true;
     traversalThread->start();
@@ -142,7 +152,7 @@ void FileProvider::rename(const QUrl &oldUrl, const QUrl &newUrl)
 
 void FileProvider::update(const QUrl &url)
 {
-    if (UrlRoute::urlParent(url) != rootUrl && url != rootUrl)
+    if (UrlRoute::urlParent(url) != rootUrl)
         return;
     bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
                               [&url](const QSharedPointer<FileFilter> &filter) {
@@ -158,9 +168,16 @@ void FileProvider::preupdateData(const QUrl &url)
     if (!url.isValid())
         return;
     // file info that is slow at first using should be called there to cache it.
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
     if (updateing && info) {
         // get file mime type for sorting.
         info->fileMimeType();
     }
+}
+
+void FileProvider::onFileInfoUpdated(const QUrl &url, const bool isLinkOrg)
+{
+    if (UrlRoute::urlParent(url) != rootUrl)
+        return;
+    emit fileInfoUpdated(url, isLinkOrg);
 }

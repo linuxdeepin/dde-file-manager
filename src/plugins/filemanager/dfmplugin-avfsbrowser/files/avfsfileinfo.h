@@ -7,11 +7,11 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 namespace dfmplugin_avfsbrowser {
 
-class AvfsFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class AvfsFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
 public:
     explicit AvfsFileInfo(const QUrl &url);

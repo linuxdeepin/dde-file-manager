@@ -21,7 +21,7 @@ OpenWithHelper::OpenWithHelper(QObject *parent)
 QWidget *OpenWithHelper::createOpenWithWidget(const QUrl &url)
 {
     if (url.isValid()) {
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
         if (fileInfo.isNull())
             return nullptr;
         if (fileInfo->isAttributes(OptInfoType::kIsDir))

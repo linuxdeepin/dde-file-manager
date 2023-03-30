@@ -39,7 +39,7 @@ public:
     void setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole, const bool isMixDirAndFile);
 
 Q_SIGNALS:
-    void updateChildrenManager(QList<AbstractFileInfoPointer> children);
+    void updateChildrenManager(QList<FileInfoPointer> children);
     // Special processing If it is a local file, directly read all the simple sorting lists of the file
     void updateLocalChildren(QList<SortInfoPointer> children,
                              dfmio::DEnumerator::SortRoleCompareFlag sortRole,

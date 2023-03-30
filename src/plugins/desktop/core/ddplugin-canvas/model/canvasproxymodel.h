@@ -7,7 +7,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <dfm-base/file/local/localfileinfo.h>
+#include <dfm-base/file/local/syncfileinfo.h>
 
 #include <QAbstractProxyModel>
 #include <QDir>
@@ -27,7 +27,7 @@ public:
     QModelIndex rootIndex() const;
     inline QUrl rootUrl() const { return fileUrl(rootIndex()); }
     QModelIndex index(const QUrl &url, int column = 0) const;
-    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
+    FileInfoPointer fileInfo(const QModelIndex &index) const;
     QUrl fileUrl(const QModelIndex &index) const;
     QList<QUrl> files() const;
     bool showHiddenFiles() const;

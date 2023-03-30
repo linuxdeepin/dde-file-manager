@@ -113,7 +113,7 @@ bool PropertyMenuScene::create(QMenu *parent)
     QList<QUrl> redirectedUrlList;
     for (const auto &fileUrl : d->selectFiles) {
         QString errString;
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(fileUrl, true, &errString);
+        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(fileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
             qDebug() << errString;
             continue;

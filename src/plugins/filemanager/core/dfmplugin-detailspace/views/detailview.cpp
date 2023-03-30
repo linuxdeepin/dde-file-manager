@@ -126,7 +126,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
     if (widgetFilter == DetailFilterType::kIconView) {
         return;
     } else {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (info.isNull())
             return;
 

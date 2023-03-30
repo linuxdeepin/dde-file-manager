@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef LOCALFILEINFO_P_H
-#define LOCALFILEINFO_P_H
+#ifndef SYNCFILEINFO_P_H
+#define SYNCFILEINFO_P_H
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "infodatafuture.h"
 #include "dfm-base/utils/fileutils.h"
@@ -26,9 +26,10 @@
 #include <QReadLocker>
 
 namespace dfmbase {
-class LocalFileInfoPrivate : public AbstractFileInfoPrivate
+class SyncFileInfoPrivate
 {
-    friend class LocalFileInfo;
+public:
+    SyncFileInfo *const q;
     std::atomic_bool loadingThumbnail = { false };
     MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };   // 缓存文件的FileType
     QMimeDatabase::MatchMode mimeTypeMode;
@@ -52,10 +53,11 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
     InfoHelperUeserDataPointer iconFuture { nullptr };
+    QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;
 
 public:
-    explicit LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq);
-    virtual ~LocalFileInfoPrivate();
+    explicit SyncFileInfoPrivate(SyncFileInfo *qq);
+    virtual ~SyncFileInfoPrivate();
     QString sizeString(const QString &str) const
     {
         int begin_pos = str.indexOf('.');
@@ -87,7 +89,7 @@ public:
     QIcon thumbIcon();
     QIcon defaultIcon();
 
-private:
+public:
     QString fileName() const;
     QString baseName() const;
     QString completeBaseName() const;
@@ -161,27 +163,11 @@ private:
     QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
     bool canThumb() const;
+    void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
+    QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
+                        const QString &inod = QString(), const bool isGvfs = false);
 };
-
-LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
-{
 }
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::SyncFileInfoPrivate *)
 
-LocalFileInfoPrivate::~LocalFileInfoPrivate()
-{
-}
-
-QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
-{
-    QUrl url = q->urlOf(UrlInfoType::kUrl);
-    if (dfmbase::FileUtils::isLocalFile(url))
-        return MimeDatabase::mimeTypeForUrl(url);
-    else
-        return MimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),
-                                             mode);
-}
-}
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::LocalFileInfoPrivate *)
-
-#endif   // LOCALFILEINFO_P_H
+#endif   // SYNCFILEINFO_P_H

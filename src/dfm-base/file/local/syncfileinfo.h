@@ -2,22 +2,22 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef FILEINFO_H
-#define FILEINFO_H
+#ifndef SYNCFILEINFO_H
+#define SYNCFILEINFO_H
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QIcon>
 #include <QPointF>
 
 namespace dfmbase {
 
-class LocalFileInfoPrivate;
-class LocalFileInfo : public AbstractFileInfo
+class SyncFileInfoPrivate;
+class SyncFileInfo : public FileInfo
 {
-    LocalFileInfoPrivate *d = nullptr;
+    QSharedPointer<SyncFileInfoPrivate> d = nullptr;
 
 public:
     enum FlagIcon {
@@ -27,11 +27,11 @@ public:
     };
     Q_ENUMS(FlagIcon)
 
-    explicit LocalFileInfo(const QUrl &url);
-    LocalFileInfo(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo);
-    virtual ~LocalFileInfo() override;
-    virtual bool operator==(const LocalFileInfo &fileinfo) const;
-    virtual bool operator!=(const LocalFileInfo &fileinfo) const;
+    explicit SyncFileInfo(const QUrl &url);
+    SyncFileInfo(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo);
+    virtual ~SyncFileInfo() override;
+    virtual bool operator==(const SyncFileInfo &fileinfo) const;
+    virtual bool operator!=(const SyncFileInfo &fileinfo) const;
     virtual bool initQuerier() override;
     virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr) override;
     virtual bool exists() const override;
@@ -49,7 +49,7 @@ public:
     virtual QVariant timeOf(const FileTimeType type) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() override;
-    virtual AbstractFileInfo::FileType fileType() const override;
+    virtual FileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
     virtual int countChildFileAsync() const override;
     virtual QString displayOf(const DisplayInfoType type) const override;
@@ -62,13 +62,9 @@ public:
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
     // cache attribute
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
-
-private:
-    void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
-    QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString &inod = QString(), const bool isGvfs = false);
 };
 }
-typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;
-Q_DECLARE_METATYPE(DFMLocalFileInfoPointer)
+typedef QSharedPointer<DFMBASE_NAMESPACE::SyncFileInfo> DFMSyncFileInfoPointer;
+Q_DECLARE_METATYPE(DFMSyncFileInfoPointer)
 
-#endif   // FILEINFO_H
+#endif   // LOCALFILEINFO_H

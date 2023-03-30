@@ -29,7 +29,8 @@ private:
     explicit InfoDataFuture(DFileFuture *future, QObject *parent = nullptr);
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo() const;
     bool isFinished() const;
-    friend class LocalFileInfoPrivate;
+    friend class AsyncFileInfoPrivate;
+    friend class SyncFileInfoPrivate;
 
 private:
     QSharedPointer<DFileFuture> future { nullptr };

@@ -16,7 +16,7 @@
 #include <QModelIndex>
 
 namespace dfmbase {
-class AbstractFileInfo;
+class FileInfo;
 }
 
 namespace dfmplugin_workspace {
@@ -38,7 +38,7 @@ public:
 private:
     bool handleDFileDrag(const QMimeData *data, const QUrl &url);
     void handleDropEvent(QDropEvent *event, bool *fall = nullptr);
-    QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> fileInfoAtPos(const QPoint &pos);
+    QSharedPointer<DFMBASE_NAMESPACE::FileInfo> fileInfoAtPos(const QPoint &pos);
 
     bool checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl> &urls) const;
     Qt::DropAction checkAction(Qt::DropAction srcAction, bool sameUser);

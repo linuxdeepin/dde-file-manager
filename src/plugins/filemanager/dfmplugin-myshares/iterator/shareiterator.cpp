@@ -48,9 +48,9 @@ QUrl ShareIterator::fileUrl() const
     return ShareUtils::makeShareUrl(d->currentInfo.value(ShareInfoKeys::kPath).toString());
 }
 
-const AbstractFileInfoPointer ShareIterator::fileInfo() const
+const FileInfoPointer ShareIterator::fileInfo() const
 {
-    return InfoFactory::create<AbstractFileInfo>(fileUrl());
+    return InfoFactory::create<FileInfo>(fileUrl());
 }
 
 QUrl ShareIterator::url() const

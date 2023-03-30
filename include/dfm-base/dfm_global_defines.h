@@ -85,6 +85,7 @@ enum ItemRoles {
     kItemFileIconModelToolTipRole = Qt::UserRole + 19,
     kItemFileOriginalPath = Qt::UserRole + 23,
     kItemFileDeletionDate = Qt::UserRole + 24,
+    kItemFileRefreshIcon = Qt::UserRole + 25,
 
     kItemUnknowRole = Qt::UserRole + 999
 };
@@ -102,6 +103,12 @@ enum CreateFileType : uint8_t {
     kCreateFileTypeWord,
     kCreateFileTypePowerpoint,
     kCreateFileTypeDefault = 0xff,
+};
+
+enum CreateFileInfoType : uint8_t {
+    kCreateFileInfoAuto = 0,   // auto can cache file info, other type can't
+    kCreateFileInfoSync = 1,
+    kCreateFileInfoAsync = 2,
 };
 
 namespace Mime {
@@ -147,6 +154,7 @@ inline constexpr char kSFtp[] { "sftp" };
 inline constexpr char kGPhoto[] { "gphoto" };
 inline constexpr char kGPhoto2[] { "gphoto2" };
 inline constexpr char kFile[] { "file" };
+inline constexpr char kAsyncFile[] { "asyncfile" };
 inline constexpr char kDesktop[] { "desktop" };
 inline constexpr char kMtp[] { "mtp" };
 inline constexpr char kAfc[] { "afc" };

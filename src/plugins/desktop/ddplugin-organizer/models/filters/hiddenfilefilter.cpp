@@ -6,7 +6,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -15,12 +15,12 @@
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
-static DFMLocalFileInfoPointer createFileInfo(const QUrl &url)
+static FileInfoPointer createFileInfo(const QUrl &url)
 {
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(url, true, &errString);
+    auto itemInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create LocalFileInfo error: " << errString << url;
+        qInfo() << "create FileInfo error: " << errString << url;
         return nullptr;
     }
 

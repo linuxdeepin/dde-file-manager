@@ -58,19 +58,19 @@ bool RecentDirIterator::hasNext() const
 
 QString RecentDirIterator::fileName() const
 {
-    AbstractFileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
+    FileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
 
     return currentInfo ? currentInfo->nameOf(NameInfoType::kFileName) : QString();
 }
 
 QUrl RecentDirIterator::fileUrl() const
 {
-    AbstractFileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
+    FileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
 
     return currentInfo ? currentInfo->urlOf(UrlInfoType::kUrl) : QString();
 }
 
-const AbstractFileInfoPointer RecentDirIterator::fileInfo() const
+const FileInfoPointer RecentDirIterator::fileInfo() const
 {
     return d->recentNodes.value(d->currentUrl);
 }

@@ -7,7 +7,8 @@
 #include "utils/searchhelper.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
+#include "dfm-base/file/local/private/syncfileinfo_p.h"
 
 #include "stubext.h"
 
@@ -154,8 +155,8 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_2)
 {
     auto searchUrl = SearchHelper::fromSearchFile(QUrl::fromLocalFile("/home"), "test", "123");
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, pathOf), [] { return "/home/test/test"; });
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(VADDR(SyncFileInfo, pathOf), [] { return "/home/test/test"; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [&searchUrl] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kSearchRange] = true;
@@ -174,15 +175,15 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_2)
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = QVariant();
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = searchUrl;
 
-    LocalFileInfo info(QUrl::fromLocalFile("/home/test/test"));
+    SyncFileInfo info(QUrl::fromLocalFile("/home/test/test"));
     EXPECT_FALSE(bar.d->shouldVisiableByFilterRule(&info, QVariant::fromValue(formData)));
 }
 
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_3)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, displayOf), [] { return "test/test"; });
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(VADDR(SyncFileInfo, displayOf), [] { return "test/test"; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = true;
@@ -200,15 +201,15 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_3)
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = QVariant();
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = QUrl();
 
-    LocalFileInfo info(QUrl::fromLocalFile("/home/test/test"));
+    SyncFileInfo info(QUrl::fromLocalFile("/home/test/test"));
     EXPECT_FALSE(bar.d->shouldVisiableByFilterRule(&info, QVariant::fromValue(formData)));
 }
 
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_4)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, size), [] { return 10; });
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(VADDR(SyncFileInfo, size), [] { return 10; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
@@ -227,15 +228,15 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_4)
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = QVariant();
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = QUrl();
 
-    LocalFileInfo info(QUrl::fromLocalFile("/home/test/test"));
+    SyncFileInfo info(QUrl::fromLocalFile("/home/test/test"));
     EXPECT_FALSE(bar.d->shouldVisiableByFilterRule(&info, QVariant::fromValue(formData)));
 }
 
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_5)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(VADDR(SyncFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
@@ -258,15 +259,15 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_5)
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = QVariant();
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = QUrl();
 
-    LocalFileInfo info(QUrl::fromLocalFile("/home/test/test"));
+    SyncFileInfo info(QUrl::fromLocalFile("/home/test/test"));
     EXPECT_FALSE(bar.d->shouldVisiableByFilterRule(&info, QVariant::fromValue(formData)));
 }
 
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_6)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(VADDR(SyncFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
@@ -290,15 +291,15 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_6)
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = QVariant();
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = QUrl();
 
-    LocalFileInfo info(QUrl::fromLocalFile("/home/test/test"));
+    SyncFileInfo info(QUrl::fromLocalFile("/home/test/test"));
     EXPECT_FALSE(bar.d->shouldVisiableByFilterRule(&info, QVariant::fromValue(formData)));
 }
 
 TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_7)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(VADDR(SyncFileInfo, timeOf), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
@@ -323,7 +324,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_7)
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = 730;
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = QUrl();
 
-    LocalFileInfo info(QUrl::fromLocalFile("/home/test/test"));
+    SyncFileInfo info(QUrl::fromLocalFile("/home/test/test"));
     EXPECT_FALSE(bar.d->shouldVisiableByFilterRule(&info, QVariant::fromValue(formData)));
 }
 

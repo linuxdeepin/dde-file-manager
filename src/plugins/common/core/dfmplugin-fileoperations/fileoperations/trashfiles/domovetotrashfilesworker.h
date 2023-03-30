@@ -9,7 +9,7 @@
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QObject>
 
@@ -38,7 +38,7 @@ protected:
     bool isCanMoveToTrash(const QUrl &url, bool *result);
 
 private:
-    AbstractFileInfoPointer targetFileInfo { nullptr };   // target file information
+    FileInfoPointer targetFileInfo { nullptr };   // target file information
     QAtomicInteger<qint64> completeFilesCount { 0 };   // move to trash success file count
     qint8 isSameDisk { -1 };   // the source file and trash files is in same disk
     QString trashLocalDir;   // the trash file locak dir

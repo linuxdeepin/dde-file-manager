@@ -49,7 +49,7 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
     }
 
     for (const QUrl &url : currentDragUrls) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        auto info = InfoFactory::create<FileInfo>(url);
         if (!info || !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
             event->ignore();
             return true;
@@ -72,7 +72,7 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 
 bool DragDropHelper::dragMove(QDragMoveEvent *event)
 {
-    AbstractFileInfoPointer hoverFileInfo = fileInfoAtPos(event->pos());
+    FileInfoPointer hoverFileInfo = fileInfoAtPos(event->pos());
     if (hoverFileInfo) {
         bool fall = true;
         handleDropEvent(event, &fall);
@@ -95,7 +95,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         }
 
         for (const QUrl &url : fromUrls) {
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
             if (event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(CanableInfoType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
                 view->setViewSelectState(false);
                 event->ignore();
@@ -178,7 +178,7 @@ bool DragDropHelper::drop(QDropEvent *event)
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
         event->setDropAction(Qt::CopyAction);
 
-        AbstractFileInfoPointer info = fileInfoAtPos(event->pos());
+        FileInfoPointer info = fileInfoAtPos(event->pos());
         if (info && dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl))) {
             if (info->isAttributes(OptInfoType::kIsDir)) {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", info->urlOf(UrlInfoType::kUrl));
@@ -197,7 +197,7 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (!hoverIndex.isValid()) {
             hoverIndex = view->rootIndex();
         } else {
-            const AbstractFileInfoPointer &fileInfo = view->model()->fileInfo(hoverIndex);
+            const FileInfoPointer &fileInfo = view->model()->fileInfo(hoverIndex);
             if (fileInfo) {
                 bool isDrop = dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_IsDrop", fileInfo->urlOf(UrlInfoType::kUrl));
                 // NOTE: if item can not drop, the drag item will drop to root dir.
@@ -297,7 +297,7 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
         if (currentDragUrls.isEmpty())
             return;
 
-        AbstractFileInfoPointer info = fileInfoAtPos(event->pos());
+        FileInfoPointer info = fileInfoAtPos(event->pos());
         if (!info)
             return;
 
@@ -335,7 +335,7 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
     }
 }
 
-QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos)
+QSharedPointer<FileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos)
 {
     QModelIndex index = view->indexAt(pos);
     if (!index.isValid())

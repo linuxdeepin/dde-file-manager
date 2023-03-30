@@ -72,10 +72,10 @@ QUrl MasteredMediaDirIterator::fileUrl() const
     return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->filePath() : stagingIterator->filePath()));
 }
 
-const AbstractFileInfoPointer MasteredMediaDirIterator::fileInfo() const
+const FileInfoPointer MasteredMediaDirIterator::fileInfo() const
 {
-    AbstractFileInfoPointer fileinfo = AbstractFileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
-    return fileinfo->exists() ? fileinfo : AbstractFileInfoPointer();   //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
+    FileInfoPointer fileinfo = FileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+    return fileinfo->exists() ? fileinfo : FileInfoPointer();   //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
 }
 
 QUrl MasteredMediaDirIterator::url() const

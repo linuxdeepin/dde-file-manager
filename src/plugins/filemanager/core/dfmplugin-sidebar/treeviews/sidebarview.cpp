@@ -400,7 +400,7 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
             return true;
     }
 
-    auto dstInfo = InfoFactory::create<AbstractFileInfo>(dstUrl);
+    auto dstInfo = InfoFactory::create<FileInfo>(dstUrl);
 
     // convert destnation url to real path if it's a symbol link.
     if (dstInfo->isAttributes(OptInfoType::kIsSymLink))
@@ -563,18 +563,18 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     if (!targetItemUrl.isValid())
         return Qt::IgnoreAction;
 
-    auto itemInfo = InfoFactory::create<AbstractFileInfo>(targetItemUrl);
+    auto itemInfo = InfoFactory::create<FileInfo>(targetItemUrl);
     if (!itemInfo || !itemInfo->canAttributes(CanableInfoType::kCanDrop)) {
         return Qt::IgnoreAction;
     }
-    if (itemInfo->fileType() == AbstractFileInfo::FileType::kDirectory) {
+    if (itemInfo->fileType() == FileInfo::FileType::kDirectory) {
         // when the dir not have writeable and executable permissions, then can not drop
         if (!itemInfo->isAttributes(OptInfoType::kIsExecutable) || !itemInfo->isAttributes(OptInfoType::kIsWritable))
             return Qt::IgnoreAction;
     }
 
     for (const QUrl &url : urls) {
-        auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        auto fileInfo = InfoFactory::create<FileInfo>(url);
         if (!fileInfo)
             return Qt::IgnoreAction;
 

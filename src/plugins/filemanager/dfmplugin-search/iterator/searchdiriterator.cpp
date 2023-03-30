@@ -156,12 +156,12 @@ QUrl SearchDirIterator::fileUrl() const
     return d->currentFileUrl;
 }
 
-const AbstractFileInfoPointer SearchDirIterator::fileInfo() const
+const FileInfoPointer SearchDirIterator::fileInfo() const
 {
     if (!d->currentFileUrl.isValid())
         return nullptr;
 
-    return InfoFactory::create<AbstractFileInfo>(d->currentFileUrl);
+    return InfoFactory::create<FileInfo>(d->currentFileUrl);
 }
 
 QUrl SearchDirIterator::url() const

@@ -66,7 +66,7 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
 
     if (!d->isEmptyArea) {
         QString errString;
-        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
             qDebug() << errString;
             return false;
@@ -115,7 +115,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
 
     if (d->isEmptyArea) {
         if (auto paste = d->predicateAction.value(ActionID::kPaste)) {
-            auto curDirInfo = InfoFactory::create<AbstractFileInfo>(d->currentDir);
+            auto curDirInfo = InfoFactory::create<FileInfo>(d->currentDir);
             if (!curDirInfo)
                 return;
 
@@ -137,7 +137,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
         }
     } else {
         for (const auto &file : d->selectFiles) {
-            auto info = InfoFactory::create<AbstractFileInfo>(file);
+            auto info = InfoFactory::create<FileInfo>(file);
             if (!info)
                 continue;
             info->refresh();

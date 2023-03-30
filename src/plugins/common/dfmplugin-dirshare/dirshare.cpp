@@ -48,7 +48,7 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
     if (!supported.contains(url.scheme()))
         return nullptr;
 
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
     bool disableWidget = UserShareHelper::needDisableShareWidget(info);
     if (!UserShareHelper::canShare(info))
         return nullptr;

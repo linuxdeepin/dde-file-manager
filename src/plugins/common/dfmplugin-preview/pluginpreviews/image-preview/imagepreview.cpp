@@ -4,7 +4,7 @@
 
 #include "imagepreview.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
 #include "imageview.h"
@@ -82,7 +82,7 @@ bool ImagePreview::setFileUrl(const QUrl &url)
         return true;
 
     QUrl tmpUrl = UrlRoute::fromLocalFile(url.path());
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (info.isNull())
         return false;
 

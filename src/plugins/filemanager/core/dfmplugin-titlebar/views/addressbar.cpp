@@ -372,7 +372,7 @@ void AddressBarPrivate::completeLocalPath(const QString &text, const QUrl &url, 
     setIndicator(AddressBar::IndicatorType::JumpTo);
 
     // Check if (now is parent) url exist.
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
     if (url.isValid() && info && !info->exists())
         return;
 

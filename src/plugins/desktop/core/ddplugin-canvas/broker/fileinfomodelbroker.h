@@ -7,7 +7,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <dfm-base/file/local/localfileinfo.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 
@@ -28,7 +28,7 @@ public slots:
     QModelIndex urlIndex(const QUrl &url);
     QUrl indexUrl(const QModelIndex &index);
     QList<QUrl> files();
-    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index);
+    FileInfoPointer fileInfo(const QModelIndex &index);
     void refresh(const QModelIndex &parent);
     int modelState();
     void updateFile(const QUrl &url);

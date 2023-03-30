@@ -11,7 +11,7 @@
 #include "events/workspaceeventcaller.h"
 
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
@@ -69,7 +69,7 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
 
         int dirCount = 0;
         for (const QUrl &url : urls) {
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
             if (info->isAttributes(OptInfoType::kIsDir))
                 ++dirCount;
             if (dirCount > 1)
@@ -103,7 +103,7 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     case Qt::Key_F2: {
         const auto &urls = view->selectedUrlList();
         for (const QUrl &url : urls) {
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
             info->refresh();
         }
         break;
@@ -247,7 +247,7 @@ void ShortcutHelper::pasteFiles()
     const QUrl &rootUrl { view->rootUrl() };
     // Use `hook_ShortCut_PasteFiles` if url isn't local
     if (rootUrl.scheme() == Global::Scheme::kFile) {
-        const auto &currentFileInfo = InfoFactory::create<AbstractFileInfo>(rootUrl);
+        const auto &currentFileInfo = InfoFactory::create<FileInfo>(rootUrl);
         if (currentFileInfo && currentFileInfo->isAttributes(OptInfoType::kIsDir) && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
             // show error tip message
             DialogManager::instance()->showNoPermissionDialog(QList<QUrl>() << rootUrl);

@@ -7,7 +7,7 @@
 
 #include "dfmplugin_dirshare_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
 #include <DLabel>
@@ -84,7 +84,7 @@ private:
     QTimer *timer { nullptr };
 
     QUrl url;
-    AbstractFileInfoPointer info { nullptr };
+    FileInfoPointer info { nullptr };
     AbstractFileWatcherPointer watcher { nullptr };
 };
 }

@@ -78,7 +78,7 @@ bool DoCutFilesWorker::initArgs()
         doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
-    targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
+    targetInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!targetInfo) {
         // pause and emit error msg
         doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
@@ -103,7 +103,7 @@ bool DoCutFilesWorker::cutFiles()
             return false;
         }
 
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url, false);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
@@ -144,11 +144,11 @@ bool DoCutFilesWorker::cutFiles()
     return true;
 }
 
-bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &targetPathInfo)
+bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo)
 {
     // try rename
     bool ok = false;
-    AbstractFileInfoPointer toInfo = nullptr;
+    FileInfoPointer toInfo = nullptr;
     if (doRenameFile(fromInfo, targetPathInfo, toInfo, &ok) || ok) {
         workData->currentWriteSize += fromInfo->size();
         if (fromInfo->isAttributes(OptInfoType::kIsFile)) {
@@ -203,10 +203,10 @@ void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
     emit stateChangedNotify(info);
 }
 
-bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
+bool DoCutFilesWorker::checkSymLink(const FileInfoPointer &fileInfo)
 {
     const QUrl &sourceUrl = fileInfo->urlOf(UrlInfoType::kUrl);
-    AbstractFileInfoPointer newTargetInfo(nullptr);
+    FileInfoPointer newTargetInfo(nullptr);
     bool result = false;
     bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName),
                           newTargetInfo, &result);
@@ -225,7 +225,7 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
     return true;
 }
 
-bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
+bool DoCutFilesWorker::checkSelf(const FileInfoPointer &fileInfo)
 {
     const QString &fileName = fileInfo->nameOf(NameInfoType::kFileName);
     QString newFileUrl = targetInfo->urlOf(UrlInfoType::kUrl).toString();
@@ -235,13 +235,13 @@ bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
     DFMIO::DFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
 
     if (newFileInfo.uri() == fileInfo->urlOf(UrlInfoType::kUrl)
-        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.uri(), false) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
+        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.uri(), Global::CreateFileInfoType::kCreateFileInfoSync) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
         return true;
     }
     return false;
 }
 
-bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
+bool DoCutFilesWorker::renameFileByHandler(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetInfo)
 {
     if (localFileHandler) {
         const QUrl &sourceUrl = sourceInfo->urlOf(UrlInfoType::kUrl);
@@ -251,7 +251,7 @@ bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &source
     return false;
 }
 
-bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetPathInfo, AbstractFileInfoPointer &toInfo, bool *ok)
+bool DoCutFilesWorker::doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, bool *ok)
 {
     QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
     sourceStorageInfo.reset(new QStorageInfo(sourceInfo->urlOf(UrlInfoType::kUrl).path()));

@@ -10,7 +10,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
@@ -20,24 +20,24 @@ namespace dfmplugin_optical {
 using namespace GlobalServerDefines;
 
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new MasteredMediaFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new MasteredMediaFileInfoPrivate(this))
 {
-    dptr.reset(d);
     d->backupInfo(url);
+    setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
 bool MasteredMediaFileInfo::exists() const
 {
-    if (d->url.isEmpty()
+    if (url.isEmpty()
         || !d->backerUrl.isValid()
         || d->backerUrl.isEmpty()) {
         return false;
     }
-    if (d->url.fragment() == "dup") {
+    if (url.fragment() == "dup") {
         return false;
     }
 
-    return d->proxy && d->proxy->exists();
+    return proxy && proxy->exists();
 }
 
 QString MasteredMediaFileInfo::displayOf(const DisPlayInfoType type) const
@@ -51,11 +51,11 @@ QString MasteredMediaFileInfo::displayOf(const DisPlayInfoType type) const
             return idLabel;
         }
 
-        if (!d->proxy)
+        if (!proxy)
             return "";
-        return d->proxy->displayOf(DisPlayInfoType::kFileDisplayName);
+        return proxy->displayOf(DisPlayInfoType::kFileDisplayName);
     }
-    return AbstractFileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 QString MasteredMediaFileInfo::nameOf(const NameInfoType type) const
@@ -64,7 +64,7 @@ QString MasteredMediaFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return MasteredMediaFileInfo::displayOf(DisPlayInfoType::kFileDisplayName);
     default:
-        return AbstractFileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -72,14 +72,16 @@ QUrl MasteredMediaFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        if (d->proxy) {
-            return d->proxy->urlOf(UrlInfoType::kUrl);
+        if (proxy) {
+            return proxy->urlOf(UrlInfoType::kUrl);
         }
-        return AbstractFileInfo::urlOf(UrlInfoType::kUrl);
+        return ProxyFileInfo::urlOf(UrlInfoType::kUrl);
     case FileUrlInfoType::kParentUrl:
         return d->parentUrl();
+    case FileUrlInfoType::kUrl:
+        return url;
     default:
-        return AbstractFileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 
@@ -87,26 +89,26 @@ bool MasteredMediaFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
-        return !d->proxy || d->proxy->isAttributes(type);
+        return !proxy || proxy->isAttributes(type);
     case FileIsType::kIsReadable:
-        if (!d->proxy)
+        if (!proxy)
             return true;
 
-        return d->proxy->isAttributes(type);
+        return proxy->isAttributes(type);
     case FileIsType::kIsWritable:
-        if (!d->proxy)
+        if (!proxy)
             return false;
-        return d->proxy->isAttributes(type);
+        return proxy->isAttributes(type);
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
 QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
     QVariantHash ret;
-    if (d->proxy) {
-        ret = d->proxy->extraProperties();
+    if (proxy) {
+        ret = proxy->extraProperties();
     }
     ret["mm_backer"] = d->backerUrl.path();
     return ret;
@@ -114,24 +116,25 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
 
 void MasteredMediaFileInfo::refresh()
 {
-    AbstractFileInfo::refresh();
-    if (d->proxy) {
+    ProxyFileInfo::refresh();
+    if (proxy) {
         return;
     }
 
     d->backupInfo(urlOf(UrlInfoType::kUrl));
+    setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
 bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanRename:
-        if (d->proxy)
-            return d->proxy->canAttributes(type);
+        if (proxy)
+            return proxy->canAttributes(type);
 
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return dptr->proxy;
+        return proxy;
     case FileCanType::kCanDrop:
         return d->canDrop();
     case FileCanType::kCanDragCompress:
@@ -139,7 +142,7 @@ bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanHidden:
         return false;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
@@ -148,18 +151,18 @@ Qt::DropActions MasteredMediaFileInfo::supportedOfAttributes(const SupportedType
     if (type == SupportType::kDrop)
         if (!OpticalHelper::isBurnEnabled())
             return Qt::IgnoreAction;
-    return AbstractFileInfo::supportedOfAttributes(type);
+    return ProxyFileInfo::supportedOfAttributes(type);
 }
 
 QString MasteredMediaFileInfo::viewOfTip(const ViewInfoType type) const
 {
     if (type == ViewType::kEmptyDir)
         return QObject::tr("Folder is empty");
-    return AbstractFileInfo::viewOfTip(type);
+    return ProxyFileInfo::viewOfTip(type);
 }
 
-MasteredMediaFileInfoPrivate::MasteredMediaFileInfoPrivate(const QUrl &url, MasteredMediaFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+MasteredMediaFileInfoPrivate::MasteredMediaFileInfoPrivate(MasteredMediaFileInfo *qq)
+    : q(qq)
 {
 }
 
@@ -182,16 +185,15 @@ void MasteredMediaFileInfoPrivate::backupInfo(const QUrl &url)
     } else {
         backerUrl = OpticalHelper::localStagingFile(url);
     }
-    proxy = InfoFactory::create<AbstractFileInfo>(backerUrl);
 }
 
 QUrl MasteredMediaFileInfoPrivate::parentUrl() const
 {
-    QString burnPath { OpticalHelper::burnFilePath(url) };
+    QString burnPath { OpticalHelper::burnFilePath(q->fileUrl()) };
     if (burnPath.contains(QRegularExpression("^(/*)$"))) {
         return QUrl::fromLocalFile(QDir::homePath());
     }
-    return UrlRoute::urlParent(url);
+    return UrlRoute::urlParent(q->fileUrl());
 }
 
 bool MasteredMediaFileInfoPrivate::canDrop()

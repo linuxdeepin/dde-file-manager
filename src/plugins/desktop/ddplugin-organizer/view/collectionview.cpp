@@ -441,9 +441,9 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     }
 
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(targetUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qWarning() << "create LocalFileInfo error: " << errString << targetUrl;
+        qWarning() << "create FileInfo error: " << errString << targetUrl;
         return;
     }
 
@@ -617,9 +617,9 @@ void CollectionViewPrivate::clearClipBoard()
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     if (!urls.isEmpty()) {
         QString errString;
-        auto itemInfo = InfoFactory::create<LocalFileInfo>(urls.first(), true, &errString);
+        auto itemInfo = InfoFactory::create<FileInfo>(urls.first(), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (Q_UNLIKELY(!itemInfo)) {
-            qInfo() << "create LocalFileInfo error: " << errString << urls.first();
+            qInfo() << "create FileInfo error: " << errString << urls.first();
             return;
         }
         auto homePath = q->model()->rootUrl().toLocalFile();
@@ -679,14 +679,14 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
         if (index.isValid()) {
             QUrl targetItem = q->model()->fileUrl(index);
             QString errString;
-            auto itemInfo = InfoFactory::create<LocalFileInfo>(targetItem, true, &errString);
+            auto itemInfo = InfoFactory::create<FileInfo>(targetItem, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
             if (Q_UNLIKELY(!itemInfo)) {
-                qWarning() << "create LocalFileInfo error: " << errString << targetItem;
+                qWarning() << "create FileInfo error: " << errString << targetItem;
                 return false;
             }
             if (itemInfo->isAttributes(OptInfoType::kIsDir) || itemInfo->urlOf(UrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
                 auto sourceUrls = event->mimeData()->urls();
-                bool find = std::any_of(sourceUrls.begin(), sourceUrls.end(), [](const QUrl &url){
+                bool find = std::any_of(sourceUrls.begin(), sourceUrls.end(), [](const QUrl &url) {
                     return (DesktopAppUrl::computerDesktopFileUrl() == url)
                             || (DesktopAppUrl::trashDesktopFileUrl() == url)
                             || (DesktopAppUrl::homeDesktopFileUrl() == url);
@@ -813,9 +813,9 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     }
 
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(firstUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<FileInfo>(firstUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qWarning() << "create LocalFileInfo error: " << errString << firstUrl;
+        qWarning() << "create FileInfo error: " << errString << firstUrl;
         return false;
     }
 
@@ -1510,8 +1510,8 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     if (!leftIdx.isValid() || !rightIdx.isValid())
         return false;
 
-    DFMLocalFileInfoPointer leftInfo = m->fileInfo(leftIdx);
-    DFMLocalFileInfoPointer rightInfo = m->fileInfo(rightIdx);
+    FileInfoPointer leftInfo = m->fileInfo(leftIdx);
+    FileInfoPointer rightInfo = m->fileInfo(rightIdx);
 
     // The folder is fixed in the front position
     if (leftInfo->isAttributes(OptInfoType::kIsDir)) {

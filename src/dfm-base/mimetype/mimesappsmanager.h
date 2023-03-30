@@ -7,7 +7,7 @@
 
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QObject>

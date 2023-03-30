@@ -6,7 +6,7 @@
 #define ABSTRACTDIRITERATOR_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QDir>
 #include <QDirIterator>
@@ -107,7 +107,7 @@ public:
      *
      * \return DAbstractFileInfoPointer 返回文件迭代器当前文件的文件信息的智能指针
      */
-    virtual const AbstractFileInfoPointer fileInfo() const = 0;
+    virtual const FileInfoPointer fileInfo() const = 0;
     /*!
      * \brief url 获取文件迭代器的基本文件路径的url
      *

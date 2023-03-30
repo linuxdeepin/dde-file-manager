@@ -259,7 +259,7 @@ QVariant TagManager::getTagsByUrls(const QList<QUrl> &filePaths, bool same) cons
 
     QStringList paths;
     for (const auto &temp : filePaths) {
-        const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(temp);
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(temp);
         if (info) {
             paths.append(temp.path());
         } else {
@@ -356,9 +356,9 @@ bool TagManager::removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl>
     QMap<QString, QVariant> fileWithTag;
 
     for (const QUrl &url : files) {
-        const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
         if (info) {
-            fileWithTag[info->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath)] = QVariant(tags);
+            fileWithTag[info->pathOf(FileInfo::FilePathInfoType::kFilePath)] = QVariant(tags);
         } else {
             fileWithTag[UrlRoute::urlToLocalPath(url)] = QVariant(tags);
         }
@@ -479,19 +479,19 @@ bool TagManager::deleteTagData(const QStringList &data, const TagActionType &typ
 
 bool TagManager::localFileCanTagFilter(const QUrl &url) const
 {
-    auto &&fileInfo { InfoFactory::create<AbstractFileInfo>(url) };
+    auto &&fileInfo { InfoFactory::create<FileInfo>(url) };
     if (!fileInfo)
         return false;
 
-    if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
+    if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
         return false;
 
-    const QString filePath { fileInfo->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath) };
+    const QString filePath { fileInfo->pathOf(FileInfo::FilePathInfoType::kFilePath) };
     const QString &compressPath { QDir::homePath() + "/.avfs/" };
     if (filePath.startsWith(compressPath))
         return false;
 
-    const QString &parentPath { fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).path() };
+    const QString &parentPath { fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl).path() };
     if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
         return false;
 

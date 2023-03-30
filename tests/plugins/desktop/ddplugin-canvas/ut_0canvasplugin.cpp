@@ -11,7 +11,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
@@ -31,7 +31,7 @@ namespace {
     {
         GlobalEnv() {
             UrlRoute::regScheme(Global::Scheme::kFile, "/");
-            InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
             DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
             WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
         }

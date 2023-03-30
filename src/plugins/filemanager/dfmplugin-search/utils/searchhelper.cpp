@@ -5,7 +5,7 @@
 #include "searchhelper.h"
 #include "topwidget/advancesearchbar.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/dpf.h>

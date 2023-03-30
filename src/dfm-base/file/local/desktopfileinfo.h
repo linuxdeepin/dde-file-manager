@@ -5,7 +5,7 @@
 #ifndef DESKTOPFILEINFO_H
 #define DESKTOPFILEINFO_H
 
-#include "localfileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 #include <QUrl>
 #include <QObject>
@@ -13,10 +13,11 @@
 namespace dfmbase {
 
 class DesktopFileInfoPrivate;
-class DesktopFileInfo : public LocalFileInfo
+class DesktopFileInfo : public ProxyFileInfo
 {
 public:
     explicit DesktopFileInfo(const QUrl &fileUrl);
+    explicit DesktopFileInfo(const QUrl &fileUrl, const FileInfoPointer &info);
     bool canTag() const;
 
 public:

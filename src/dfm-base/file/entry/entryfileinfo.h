@@ -7,12 +7,12 @@
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 namespace dfmbase {
 
 class EntryFileInfoPrivate;
-class EntryFileInfo : public AbstractFileInfo
+class EntryFileInfo : public FileInfo
 {
 public:
     enum EntryOrder {
@@ -63,7 +63,7 @@ public:
     virtual QVariantHash extraProperties() const override;
 
 private:
-    EntryFileInfoPrivate *d = nullptr;
+    QSharedPointer<EntryFileInfoPrivate> d = nullptr;
 };
 
 }

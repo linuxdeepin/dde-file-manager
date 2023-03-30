@@ -7,7 +7,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
@@ -15,6 +15,7 @@
 #include "dfm-base/interfaces/private/infocache.h"
 #include "dfm-base/interfaces/private/watchercache.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QCoreApplication>
 #include <QSharedPointer>
@@ -124,16 +125,20 @@ public:
      */
     QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
+        return create(url.scheme(), url, errorString);
+    }
+
+    QSharedPointer<T> create(const QString &scheme, const QUrl &url, QString *errorString = nullptr)
+    {
         QString error;
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-        if (!UrlRoute::hasScheme(url.scheme())) {
+        if (!UrlRoute::hasScheme(scheme)) {
             error = "No scheme found for "
                     "URL registration";
             return nullptr;
         }
 
-        QString &&scheme = url.scheme();
         CreateFunc constantFunc = constructList.value(scheme);
         if (!constantFunc) {
             error = "Scheme should be call registered 'regClass()' function "
@@ -143,7 +148,7 @@ public:
         finally.dismiss();
         QSharedPointer<T> info = QSharedPointer<T>(constantFunc(url));
 
-        TransFunc func = transList.value(scheme);
+        TransFunc func = transList.value(url.scheme());
         if (func)
             info = func(info);
 
@@ -161,7 +166,7 @@ public:
     }
 };
 
-class InfoFactory final : public SchemeFactory<AbstractFileInfo>
+class InfoFactory final : public SchemeFactory<FileInfo>
 {
     Q_DISABLE_COPY(InfoFactory)
     friend class GC<InfoFactory>;
@@ -174,45 +179,61 @@ public:
         // add other opt like `kAnyOpt = 1 << 1 ... n`
     };
 
-    template<class CT = AbstractFileInfo>
+    template<class CT = FileInfo>
     static bool regClass(const QString &scheme, RegOpts opts = RegOpts::kNoOpt, QString *errorString = nullptr)
     {
         if (opts & RegOpts::kNoCache)
             InfoCacheController::instance().setCacheDisbale(scheme);
-        return instance().SchemeFactory<AbstractFileInfo>::regClass<CT>(scheme, errorString);
+        return instance().SchemeFactory<FileInfo>::regClass<CT>(scheme, errorString);
     }
 
     template<class CT>
     static bool regInfoTransFunc(const QString &scheme, std::function<QSharedPointer<CT>(QSharedPointer<CT>)> func)
     {
-        return instance().SchemeFactory<AbstractFileInfo>::transClass(scheme, func);
+        return instance().SchemeFactory<FileInfo>::transClass(scheme, func);
     }
 
     static bool regCreator(const QString &scheme, CreateFunc creator, QString *errorString = nullptr)
     {
-        return instance().SchemeFactory<AbstractFileInfo>::regCreator(scheme, creator, errorString);
+        return instance().SchemeFactory<FileInfo>::regCreator(scheme, creator, errorString);
     }
 
     template<class T>
     static QSharedPointer<T> transfromInfo(const QString &scheme, QSharedPointer<T> info)
     {
-        return instance().SchemeFactory<AbstractFileInfo>::transformInfo(scheme, info);
+        return instance().SchemeFactory<FileInfo>::transformInfo(scheme, info);
     }
 
     // 提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
     // 与qSharedPointerDynamicCast保持一致
     template<class T>
-    static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
+    static QSharedPointer<T> create(const QUrl &url,
+                                    const Global::CreateFileInfoType type = Global::CreateFileInfoType::kCreateFileInfoAuto,
+                                    QString *errorString = nullptr)
     {
-        if (Q_UNLIKELY(!cache) || InfoCacheController::instance().cacheDisable(url.scheme()))
-            return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileInfo>::
+        if (InfoCacheController::instance().cacheDisable(url.scheme()))
+            return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                         create(url, errorString));
 
-        QSharedPointer<AbstractFileInfo> info = InfoCacheController::instance().getCacheInfo(url);
+        if (url.scheme() == Global::Scheme::kFile) {
+            if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
+                return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
+                                                            create(url, errorString));
+            } else if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
+                auto info = qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
+                                                                 create(Global::Scheme::kAsyncFile, url, errorString));
+                if (info)
+                    info->refresh();
+                return info;
+            }
+        }
+
+        QSharedPointer<FileInfo> info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
-            info = instance().SchemeFactory<AbstractFileInfo>::create(url, errorString);
+            info = instance().SchemeFactory<FileInfo>::create(scheme(url), url, errorString);
 
             if (info) {
+                info->refresh();
                 emit InfoCacheController::instance().cacheFileInfo(url, info);
             } else {
                 qWarning() << "info is nullptr url = " << url;
@@ -224,6 +245,7 @@ public:
 private:
     static InfoFactory &instance();   // 获取全局实例
     explicit InfoFactory() {}
+    static QString scheme(const QUrl &url);
 };
 
 class ViewFactory final : public SchemeFactory<AbstractBaseView>
@@ -488,7 +510,6 @@ private:
     explicit SortAndFitersFactory() {}
     QMap<QString, QSharedPointer<AbstractSortAndFiter>> sortAndFitersMap;
 };
-
 }
 
 #endif   // SCHEMEFACTORY_H

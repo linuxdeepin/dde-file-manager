@@ -9,10 +9,9 @@
 #include "events/searcheventcaller.h"
 #include "searchmanager/searchmanager.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/private/localfilewatcher_p.h"
-#include "dfm-base/file/local/private/localfileinfo_p.h"
+#include "dfm-base/file/local/private/syncfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include "stubext.h"
@@ -52,11 +51,11 @@ TEST(SearchDirIteratorTest, ut_hasNext)
 TEST(SearchDirIteratorTest, ut_fileName)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
-        return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home")));
+    st.set_lamda(&SyncFileInfoPrivate::init, [] {});
+    st.set_lamda(&InfoFactory::create<FileInfo>, [] {
+        return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home")));
     });
-    st.set_lamda(VADDR(LocalFileInfoPrivate, fileName), [] {
+    st.set_lamda(VADDR(SyncFileInfoPrivate, fileName), [] {
         return "/home";
     });
 

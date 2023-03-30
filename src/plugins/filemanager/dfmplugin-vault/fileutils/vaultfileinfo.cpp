@@ -27,8 +27,8 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_vault {
 
-VaultFileInfoPrivate::VaultFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+VaultFileInfoPrivate::VaultFileInfoPrivate(VaultFileInfo *qq)
+    : q(qq)
 {
 }
 
@@ -36,23 +36,9 @@ VaultFileInfoPrivate::~VaultFileInfoPrivate()
 {
 }
 
-QString VaultFileInfoPrivate::iconName()
-{
-    QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
-    if (isRoot())
-        return iconName;
-    else {
-        if (!proxy)
-            return q->fileMimeType().iconName();
-        else
-            proxy->nameOf(NameInfoType::kIconName);
-    }
-    return QString();
-}
-
 QString VaultFileInfoPrivate::fileDisplayPath() const
 {
-    QUrl currentUrl = url;
+    QUrl currentUrl = q->fileUrl();
     currentUrl.setHost("");
     QString urlStr = currentUrl.toString();
     QByteArray array = urlStr.toLocal8Bit();
@@ -60,31 +46,23 @@ QString VaultFileInfoPrivate::fileDisplayPath() const
     return filePath;
 }
 
-QString VaultFileInfoPrivate::absolutePath() const
+QString VaultFileInfoPrivate::absolutePath(const QString &path) const
 {
-    if (!proxy)
-        return "";
-
-    QString path = proxy->pathOf(PathInfoType::kPath);
     QUrl virtualUrl = VaultHelper::instance()->pathToVaultVirtualUrl(path);
     return virtualUrl.path();
 }
 
-QUrl VaultFileInfoPrivate::vaultUrl() const
+QUrl VaultFileInfoPrivate::vaultUrl(const QUrl &url) const
 {
-    if (!proxy)
-        return QUrl();
-
-    QUrl url = proxy->urlOf(UrlInfoType::kUrl);
-    url = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
-    return url;
+    auto tmpurl = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    return tmpurl;
 }
 
 QUrl VaultFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
 {
-    QUrl theUrl = vaultUrl();
+    QUrl theUrl = q->urlOf(FileInfo::FileUrlInfoType::kUrl);
 
-    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(absolutePath().toStdString().c_str(),
+    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsolutePath).toStdString().c_str(),
                                                   fileName.toStdString().c_str(), nullptr));
 
     theUrl.setHost("");
@@ -104,11 +82,10 @@ bool VaultFileInfoPrivate::isRoot() const
 }
 
 VaultFileInfo::VaultFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new VaultFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new VaultFileInfoPrivate(this))
 {
-    dptr.reset(d);
     QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
-    setProxy(InfoFactory::create<AbstractFileInfo>(tempUrl));
+    setProxy(InfoFactory::create<FileInfo>(tempUrl));
 }
 
 VaultFileInfo::~VaultFileInfo()
@@ -117,19 +94,19 @@ VaultFileInfo::~VaultFileInfo()
 
 VaultFileInfo &VaultFileInfo::operator=(const VaultFileInfo &fileinfo)
 {
-    AbstractFileInfo::operator=(fileinfo);
-    if (!d->proxy)
-        setProxy(fileinfo.d->proxy);
+    ProxyFileInfo::operator=(fileinfo);
+    if (!proxy)
+        setProxy(fileinfo.proxy);
     else {
-        d->url = fileinfo.d->url;
-        d->proxy = fileinfo.d->proxy;
+        url = fileinfo.url;
+        proxy = fileinfo.proxy;
     }
     return *this;
 }
 
 bool VaultFileInfo::operator==(const VaultFileInfo &fileinfo) const
 {
-    return d->proxy == fileinfo.d->proxy && d->url == fileinfo.d->url;
+    return proxy == fileinfo.proxy && url == fileinfo.url;
 }
 
 bool VaultFileInfo::operator!=(const VaultFileInfo &fileinfo) const
@@ -141,9 +118,11 @@ QString VaultFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kAbsolutePath:
-        return d->absolutePath();
+        if (!proxy)
+            return "";
+        return d->absolutePath(proxy->pathOf(type));
     default:
-        return AbstractFileInfo::pathOf(type);
+        return ProxyFileInfo::pathOf(type);
     }
 }
 
@@ -151,11 +130,13 @@ QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kUrl:
-        return d->vaultUrl();
+        if (!proxy)
+            return QUrl();
+        return d->vaultUrl(proxy->urlOf(type));
     case FileUrlInfoType::kRedirectedFileUrl:
-        return VaultHelper::vaultToLocalUrl(d->url);
+        return VaultHelper::vaultToLocalUrl(url);
     default:
-        return AbstractFileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 bool VaultFileInfo::exists() const
@@ -163,18 +144,18 @@ bool VaultFileInfo::exists() const
     if (urlOf(UrlInfoType::kUrl).isEmpty())
         return false;
 
-    return d->proxy && d->proxy->exists();
+    return proxy && proxy->exists();
 }
 
 void VaultFileInfo::refresh()
 {
-    if (!d->proxy) {
+    if (!proxy) {
         return;
     }
 
-    d->proxy->refresh();
+    proxy->refresh();
 
-    setProxy(InfoFactory::create<AbstractFileInfo>(d->proxy->urlOf(UrlInfoType::kUrl)));
+    setProxy(InfoFactory::create<FileInfo>(proxy->urlOf(UrlInfoType::kUrl)));
 }
 
 bool VaultFileInfo::isAttributes(const OptInfoType type) const
@@ -193,9 +174,9 @@ bool VaultFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsSymLink:
         [[fallthrough]];
     case FileIsType::kIsHidden:
-        return !d->proxy || d->proxy->isAttributes(type);
+        return !proxy || proxy->isAttributes(type);
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -207,19 +188,19 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
             return false;
         }
 
-        return !d->proxy || d->proxy->canAttributes(type);
+        return !proxy || proxy->canAttributes(type);
     case FileCanType::kCanRedirectionFileUrl:
-        return dptr->proxy;
+        return proxy;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
 QVariantHash VaultFileInfo::extraProperties() const
 {
-    if (!d->proxy)
-        AbstractFileInfo::extraProperties();
-    return d->proxy->extraProperties();
+    if (!proxy)
+        ProxyFileInfo::extraProperties();
+    return proxy->extraProperties();
 }
 
 QUrl VaultFileInfo::getUrlByType(const UrlInfoType type, const QString &fileName) const
@@ -228,25 +209,35 @@ QUrl VaultFileInfo::getUrlByType(const UrlInfoType type, const QString &fileName
     case FileUrlInfoType::kGetUrlByNewFileName:
         return d->getUrlByNewFileName(fileName);
     default:
-        return AbstractFileInfo::getUrlByType(type, fileName);
+        return ProxyFileInfo::getUrlByType(type, fileName);
     }
 }
 
 QIcon VaultFileInfo::fileIcon()
 {
-    if (d->isRoot())
-        return QIcon::fromTheme(d->iconName());
+    if (d->isRoot()) {
+        QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
+        if (isRoot())
+            return QIcon::fromTheme(iconName);
+        else {
+            if (!proxy)
+                return QIcon::fromTheme(fileMimeType(QMimeDatabase::MatchDefault).iconName());
+            else
+                QIcon::fromTheme(proxy->nameOf(NameInfoType::kIconName));
+        }
+        return QIcon::fromTheme("");
+    }
 
-    if (!d->proxy)
-        AbstractFileInfo::fileIcon();
-    return d->proxy->fileIcon();
+    if (!proxy)
+        ProxyFileInfo::fileIcon();
+    return proxy->fileIcon();
 }
 
 qint64 VaultFileInfo::size() const
 {
-    if (!d->proxy)
-        AbstractFileInfo::size();
-    return d->proxy->size();
+    if (!proxy)
+        ProxyFileInfo::size();
+    return proxy->size();
 }
 
 int VaultFileInfo::countChildFile() const
@@ -265,11 +256,11 @@ QVariant VaultFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kSizeFormat:
-        if (!d->proxy)
-            return AbstractFileInfo::extendAttributes(type);
-        return d->proxy->extendAttributes(type);
+        if (!proxy)
+            return ProxyFileInfo::extendAttributes(type);
+        return proxy->extendAttributes(type);
     default:
-        return AbstractFileInfo::extendAttributes(type);
+        return ProxyFileInfo::extendAttributes(type);
     }
 }
 
@@ -279,10 +270,20 @@ QString VaultFileInfo::nameOf(const NameInfoType type) const
     switch (type) {
     case NameInfoType::kFileCopyName:
         return displayOf(DisPlayInfoType::kFileDisplayName);
-    case NameInfoType::kIconName:
-        return d->iconName();
+    case NameInfoType::kIconName: {
+        QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
+        if (isRoot())
+            return iconName;
+        else {
+            if (!proxy)
+                return const_cast<VaultFileInfo *>(this)->fileMimeType(QMimeDatabase::MatchDefault).iconName();
+            else
+                proxy->nameOf(NameInfoType::kIconName);
+        }
+        return QString();
+    }
     default:
-        return AbstractFileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -292,12 +293,12 @@ QString VaultFileInfo::displayOf(const DisPlayInfoType type) const
         if (d->isRoot()) {
             return QObject::tr("My Vault");
         }
-        if (d->proxy)
-            return d->proxy->displayOf(DisPlayInfoType::kFileDisplayName);
+        if (proxy)
+            return proxy->displayOf(DisPlayInfoType::kFileDisplayName);
     } else if (DisPlayInfoType::kFileDisplayPath == type) {
         return d->fileDisplayPath();
     }
 
-    return AbstractFileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 }

@@ -81,7 +81,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     for (const QUrl &url : urls) {
-        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(url);
+        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url);
         if (fileInfoPtr && fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
             if (mode == DirOpenMode::kOpenNewWindow) {
                 WorkspaceEventCaller::sendOpenWindow({ url });
@@ -131,7 +131,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
         selectedUrls = urls;
 
     if (selectedUrls.size() == 1) {
-        const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(selectedUrls.first());
+        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(selectedUrls.first());
         if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsReadable))
             return;
     }
@@ -148,7 +148,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 void FileOperatorHelper::cutFiles(const FileView *view)
 {
     qInfo() << "cut shortcut key to clipboard";
-    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(view->rootUrl());
+    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(view->rootUrl());
     if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable))
         return;
     QList<QUrl> selectedUrls = view->selectedUrlList();

@@ -7,10 +7,10 @@
 
 #include "dfmplugin_recent_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 namespace dfmplugin_recent {
-class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class RecentFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
 public:
     explicit RecentFileInfo(const QUrl &url);

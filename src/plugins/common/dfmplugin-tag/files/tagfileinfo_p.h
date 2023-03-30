@@ -7,21 +7,22 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 
 namespace dfmplugin_tag {
 
 class TagFileInfo;
-class TagFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
+class TagFileInfoPrivate
 {
     friend class TagFileInfo;
 
 public:
-    explicit TagFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
+    explicit TagFileInfoPrivate(TagFileInfo *qq);
     virtual ~TagFileInfoPrivate();
 
 private:
     QString fileName() const;
+    TagFileInfo *const q;
 };
 
 }

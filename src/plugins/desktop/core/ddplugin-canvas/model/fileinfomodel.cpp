@@ -35,7 +35,7 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
 {
     qDebug() << "to reset file, count:" << urls.size();
     QList<QUrl> fileUrls;
-    QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
+    QMap<QUrl, FileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
             fileUrls.append(itemInfo->urlOf(UrlInfoType::kUrl));
@@ -162,7 +162,7 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
             return;
 
         // Although the files cached in InfoCache will be refreshed automatically,
-        // a redundant refresh is still required here, because the current variant of LocalFileInfo
+        // a redundant refresh is still required here, because the current variant of FileInfo
         // (like DesktopFileInfo created from DesktopFileCreator) is not in InfoCache and will not be refreshed automatically.
         if (auto info = fileMap.value(url))
             info->refresh();
@@ -171,6 +171,27 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
     const QModelIndex &index = q->index(url);
     if (Q_UNLIKELY(!index.isValid()))
         return;
+
+    emit q->dataChanged(index, index);
+}
+
+void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
+{
+    {
+        QReadLocker lk(&lock);
+        if (Q_UNLIKELY(!fileMap.contains(url)))
+            return;
+    }
+
+    const QModelIndex &index = q->index(url);
+    if (Q_UNLIKELY(!index.isValid()))
+        return;
+
+    if (isLinkOrg) {
+        auto info = q->fileInfo(index);
+        if (info)
+            info->customData(Global::ItemRoles::kItemFileRefreshIcon);
+    }
 
     emit q->dataChanged(index, index);
 }
@@ -188,6 +209,7 @@ FileInfoModel::FileInfoModel(QObject *parent)
     connect(d->fileProvider, &FileProvider::fileRemoved, d, &FileInfoModelPrivate::removeData);
     connect(d->fileProvider, &FileProvider::fileUpdated, d, &FileInfoModelPrivate::updateData);
     connect(d->fileProvider, &FileProvider::fileRenamed, d, &FileInfoModelPrivate::replaceData);
+    connect(d->fileProvider, &FileProvider::fileInfoUpdated, d, &FileInfoModelPrivate::dataUpdated);
 }
 
 FileInfoModel::~FileInfoModel()
@@ -259,7 +281,7 @@ QModelIndex FileInfoModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMLocalFileInfoPointer FileInfoModel::fileInfo(const QModelIndex &index) const
+FileInfoPointer FileInfoModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return FileCreator->createFileInfo(rootUrl());

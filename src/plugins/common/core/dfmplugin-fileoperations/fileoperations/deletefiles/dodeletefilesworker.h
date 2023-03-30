@@ -9,7 +9,7 @@
 #include "fileoperations/fileoperationutils/abstractworker.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 
 #include <QObject>
 
@@ -34,7 +34,7 @@ protected:
     bool deleteFilesOnCanNotRemoveDevice();
     bool deleteFilesOnOtherDevice();
     bool deleteFileOnOtherDevice(const QUrl &url);
-    bool deleteDirOnOtherDevice(const AbstractFileInfoPointer &dir);
+    bool deleteDirOnOtherDevice(const FileInfoPointer &dir);
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());

@@ -98,7 +98,7 @@ TEST(FileInfoModel, rootUrl)
 TEST(FileInfoModel, index)
 {
     auto in = QUrl::fromLocalFile("/home");
-    DFMLocalFileInfoPointer info(new LocalFileInfo(in));
+    DFMSyncFileInfoPointer info(new SyncFileInfo(in));
     FileInfoModel model;
     model.d->fileList.append(in);
     model.d->fileMap.insert(in, info);
@@ -123,7 +123,7 @@ TEST(FileInfoModel, index)
 TEST(FileInfoModel, index2)
 {
     auto in = QUrl::fromLocalFile("/home/test");
-    DFMLocalFileInfoPointer info(new LocalFileInfo(in));
+    DFMSyncFileInfoPointer info(new SyncFileInfo(in));
     FileInfoModel model;
     model.d->fileProvider->rootUrl = QUrl::fromLocalFile("/home");
     model.d->fileList.append(in);
@@ -146,14 +146,14 @@ TEST(FileInfoModel, index2)
 TEST(FileInfoModel, fileInfo)
 {
     auto in = QUrl::fromLocalFile("/home/test");
-    DFMLocalFileInfoPointer info(new LocalFileInfo(in));
+    DFMSyncFileInfoPointer info(new SyncFileInfo(in));
     FileInfoModel model;
     model.d->fileProvider->rootUrl = QUrl::fromLocalFile("/home");
     model.d->fileList.append(in);
     model.d->fileMap.insert(in, info);
 
     auto local = model.fileInfo(model.rootIndex());
-    EXPECT_EQ(local->urlOf(LocalFileInfo::FileUrlInfoType::kUrl), model.d->fileProvider->rootUrl);
+    EXPECT_EQ(local->urlOf(SyncFileInfo::FileUrlInfoType::kUrl), model.d->fileProvider->rootUrl);
 
     local = model.fileInfo(QModelIndex(-1, 0, nullptr, nullptr));
     EXPECT_EQ(local, nullptr);
@@ -213,15 +213,15 @@ TEST(FileInfoModel, update)
     model.d->fileList.append(in1);
     model.d->fileList.append(in2);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
 
     model.d->fileMap.insert(in1, info1);
     model.d->fileMap.insert(in2, info2);
 
     stub_ext::StubExt stub;
     int refresh = 0;
-    stub.set_lamda(VADDR(LocalFileInfo,refresh), [&refresh](){
+    stub.set_lamda(VADDR(SyncFileInfo,refresh), [&refresh](){
         refresh++;
     });
 
@@ -246,12 +246,12 @@ TEST(FileInfoModel, updateFile)
 
     auto in1 = QUrl::fromLocalFile("/home/test");
     model.d->fileList.append(in1);
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
     model.d->fileMap.insert(in1, info1);
 
     stub_ext::StubExt stub;
     int refresh = 0;
-    stub.set_lamda(VADDR(LocalFileInfo,refresh), [&refresh](){
+    stub.set_lamda(VADDR(SyncFileInfo,refresh), [&refresh](){
         refresh++;
     });
 
@@ -329,7 +329,7 @@ TEST(FileInfoModel, flags)
 
     auto in1 = QUrl::fromLocalFile("/home/test");
     model.d->fileList.append(in1);
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
     model.d->fileMap.insert(in1, info1);
 
     EXPECT_EQ(model.flags(QModelIndex()), model.QAbstractItemModel::flags(QModelIndex()));
@@ -337,17 +337,17 @@ TEST(FileInfoModel, flags)
     stub_ext::StubExt stub;
     bool canRenmae = false;;
     bool canDrop = false;
-    stub.set_lamda(VADDR(LocalFileInfo,canAttributes), [&canRenmae, &canDrop](LocalFileInfo *, const LocalFileInfo::FileCanType type){
-        if (type == LocalFileInfo::FileCanType::kCanRename)
+    stub.set_lamda(VADDR(SyncFileInfo,canAttributes), [&canRenmae, &canDrop](SyncFileInfo *, const SyncFileInfo::FileCanType type){
+        if (type == SyncFileInfo::FileCanType::kCanRename)
             return canRenmae;
-        else if (type == LocalFileInfo::FileCanType::kCanDrop)
+        else if (type == SyncFileInfo::FileCanType::kCanDrop)
             return canDrop;
         return true;
     });
 
     bool isWrite = false;
-    stub.set_lamda(VADDR(LocalFileInfo,isAttributes), [&isWrite](LocalFileInfo *, const LocalFileInfo::FileIsType type){
-        if (type == LocalFileInfo::FileIsType::kIsWritable)
+    stub.set_lamda(VADDR(SyncFileInfo,isAttributes), [&isWrite](SyncFileInfo *, const SyncFileInfo::FileIsType type){
+        if (type == SyncFileInfo::FileIsType::kIsWritable)
             return isWrite;
 
         return true;
@@ -457,7 +457,7 @@ TEST(FileInfoModelPrivate, removeData)
     FileInfoModel model;
     auto in1 = QUrl::fromLocalFile("/home/test");
     model.d->fileList.append(in1);
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
     model.d->fileMap.insert(in1, info1);
 
     bool be = false;
@@ -495,8 +495,8 @@ TEST(FileInfoModelPrivate, replaceData)
     auto in1 = QUrl::fromLocalFile("/home/test");
     auto in2 = QUrl::fromLocalFile("/home/test2");
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
 
     bool up = false;
     QObject::connect(&model, &FileInfoModel::dataChanged, &model,

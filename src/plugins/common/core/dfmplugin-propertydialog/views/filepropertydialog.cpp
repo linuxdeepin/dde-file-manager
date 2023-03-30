@@ -73,7 +73,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
 {
     QLabel *fileIcon = new QLabel(this);
     fileIcon->setFixedHeight(128);
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info.isNull())
         fileIcon->setPixmap(info->fileIcon().pixmap(128, 128));
 

@@ -12,7 +12,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
+#include "dfm-base/file/local/asyncfileinfo.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
@@ -32,7 +33,9 @@ DDPCORE_USE_NAMESPACE
 static void registerFileSystem()
 {
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
-    InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+    UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/");
+    InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+    InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
 }

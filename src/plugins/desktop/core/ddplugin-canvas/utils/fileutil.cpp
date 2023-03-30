@@ -22,12 +22,12 @@ DesktopFileCreator *DesktopFileCreator::instance()
     return desktopFileCreatorGlogal;
 }
 
-DFMLocalFileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, bool cache)
+FileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, dfmbase::Global::CreateFileInfoType cache)
 {
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(url, cache, &errString);
+    auto itemInfo = InfoFactory::create<FileInfo>(url, cache, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create LocalFileInfo error: " << errString << url;
+        qInfo() << "create FileInfo error: " << errString << url;
         return nullptr;
     }
 

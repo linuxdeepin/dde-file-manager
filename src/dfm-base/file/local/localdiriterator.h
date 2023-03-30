@@ -15,7 +15,7 @@
 
 class QUrl;
 namespace dfmbase {
-class LocalFileInfo;
+class SyncFileInfo;
 class LocalDirIteratorPrivate;
 
 class LocalDirIterator : public AbstractDirIterator
@@ -33,7 +33,7 @@ public:
     virtual void close() override;
     virtual QString fileName() const override;
     virtual QUrl fileUrl() const override;
-    virtual const AbstractFileInfoPointer fileInfo() const override;
+    virtual const FileInfoPointer fileInfo() const override;
     virtual QUrl url() const override;
     virtual void cacheBlockIOAttribute() override;
     bool enableIteratorByKeyword(const QString &keyword) override

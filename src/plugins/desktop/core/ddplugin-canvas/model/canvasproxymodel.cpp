@@ -183,7 +183,7 @@ void CanvasProxyModelPrivate::sortMainDesktopFile(QList<QUrl> &files, Qt::SortOr
 {
     // let the main desktop files always on front or back.
 
-    //! warrning: the root url and LocalFileInfo::url must be like file://
+    //! warrning: the root url and FileInfo::url must be like file://
     QDir dir(q->rootUrl().toString());
     QList<QPair<QString, QUrl>> mainDesktop = { { dir.filePath("dde-home.desktop"), QUrl() },
                                                 { dir.filePath("dde-trash.desktop"), QUrl() },
@@ -211,8 +211,8 @@ bool CanvasProxyModelPrivate::insertFilter(const QUrl &url)
 {
     bool ret = std::any_of(modelFilters.begin(), modelFilters.end(),
                            [&url](const QSharedPointer<CanvasModelFilter> &filter) {
-        return filter->insertFilter(url);
-    });
+                               return filter->insertFilter(url);
+                           });
 
     return ret;
 }
@@ -221,8 +221,8 @@ bool CanvasProxyModelPrivate::resetFilter(QList<QUrl> &urls)
 {
     bool ret = std::any_of(modelFilters.begin(), modelFilters.end(),
                            [&urls](const QSharedPointer<CanvasModelFilter> &filter) {
-        return filter->resetFilter(urls);
-    });
+                               return filter->resetFilter(urls);
+                           });
 
     return ret;
 }
@@ -233,10 +233,10 @@ bool CanvasProxyModelPrivate::updateFilter(const QUrl &url)
     // so it will don't interrupt when some one return true.
     bool ret = false;
     auto unused = std::all_of(modelFilters.begin(), modelFilters.end(),
-                           [&ret,&url](const QSharedPointer<CanvasModelFilter> &filter) {
-        ret |= filter->updateFilter(url);
-        return true;
-    });
+                              [&ret, &url](const QSharedPointer<CanvasModelFilter> &filter) {
+                                  ret |= filter->updateFilter(url);
+                                  return true;
+                              });
     Q_UNUSED(unused);
 
     return ret;
@@ -246,10 +246,10 @@ bool CanvasProxyModelPrivate::removeFilter(const QUrl &url)
 {
     bool ret = false;
     auto unused = std::all_of(modelFilters.begin(), modelFilters.end(),
-                           [&ret,&url](const QSharedPointer<CanvasModelFilter> &filter) {
-        ret |= filter->removeFilter(url);
-        return true;
-    });
+                              [&ret, &url](const QSharedPointer<CanvasModelFilter> &filter) {
+                                  ret |= filter->removeFilter(url);
+                                  return true;
+                              });
     Q_UNUSED(unused);
     return ret;
 }
@@ -258,10 +258,10 @@ bool CanvasProxyModelPrivate::renameFilter(const QUrl &oldUrl, const QUrl &newUr
 {
     bool ret = false;
     auto unused = std::all_of(modelFilters.begin(), modelFilters.end(),
-                           [&ret,&oldUrl, &newUrl](const QSharedPointer<CanvasModelFilter> &filter) {
-        ret |= filter->renameFilter(oldUrl, newUrl);
-        return true;
-    });
+                              [&ret, &oldUrl, &newUrl](const QSharedPointer<CanvasModelFilter> &filter) {
+                                  ret |= filter->renameFilter(oldUrl, newUrl);
+                                  return true;
+                              });
     Q_UNUSED(unused);
 
     return ret;
@@ -275,8 +275,8 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     if (!leftIdx.isValid() || !rightIdx.isValid())
         return false;
 
-    DFMLocalFileInfoPointer leftInfo = fileMap.value(left);
-    DFMLocalFileInfoPointer rightInfo = fileMap.value(right);
+    FileInfoPointer leftInfo = fileMap.value(left);
+    FileInfoPointer rightInfo = fileMap.value(right);
 
     // The folder is fixed in the front position
     if (isNotMixDirAndFile) {
@@ -349,7 +349,7 @@ void CanvasProxyModelPrivate::createMapping()
     resetFilter(urls);
 
     // sort
-    QMap<QUrl, DFMLocalFileInfoPointer> maps;
+    QMap<QUrl, FileInfoPointer> maps;
     for (const QUrl &url : urls)
         maps.insert(url, srcModel->fileInfo(srcModel->index(url)));
 
@@ -482,7 +482,7 @@ QModelIndex CanvasProxyModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMLocalFileInfoPointer CanvasProxyModel::fileInfo(const QModelIndex &index) const
+FileInfoPointer CanvasProxyModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return d->srcModel->fileInfo(mapToSource(index));
@@ -791,7 +791,7 @@ bool CanvasProxyModel::sort()
     if (d->fileList.isEmpty())
         return true;
 
-    QMap<QUrl, DFMLocalFileInfoPointer> tempFileMap;
+    QMap<QUrl, FileInfoPointer> tempFileMap;
     QList<QUrl> orderFiles = d->fileList;
     if (!d->doSort(orderFiles))
         return false;

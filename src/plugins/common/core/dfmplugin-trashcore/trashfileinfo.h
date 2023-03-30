@@ -6,12 +6,12 @@
 #define TRASHFILEINFO_H
 
 #include "dfmplugin_trashcore_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 namespace dfmplugin_trashcore {
 
 class TrashFileInfoPrivate;
-class TrashFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class TrashFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
     friend class TrashFileInfoPrivate;
 
@@ -38,7 +38,7 @@ public:
     virtual QVariant customData(int role) const override;
 
 private:
-    TrashFileInfoPrivate *d;
+    QSharedPointer<TrashFileInfoPrivate> d { nullptr };
 };
 
 }

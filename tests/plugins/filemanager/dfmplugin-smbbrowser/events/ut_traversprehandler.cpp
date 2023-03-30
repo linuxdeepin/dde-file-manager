@@ -12,7 +12,7 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localdiriterator.h"
 
@@ -85,7 +85,7 @@ TEST_F(UT_TraversPrehandler, DoChangeCurrentUrl)
 {
     DFMBASE_USE_NAMESPACE
     UrlRoute::regScheme("file", "/");
-    InfoFactory::regClass<LocalFileInfo>("file");
+    InfoFactory::regClass<SyncFileInfo>("file");
     DirIteratorFactory::regClass<LocalDirIterator>("file");
     WatcherFactory::regClass<LocalFileWatcher>("file");
 

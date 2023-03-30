@@ -5,18 +5,18 @@
 #ifndef ENTRYFILEINFO_P_H
 #define ENTRYFILEINFO_P_H
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 #include "file/entry/entities/abstractentryfileentity.h"
 #include "file/entry/entryfileinfo.h"
 
 namespace dfmbase {
-class EntryFileInfoPrivate : public AbstractFileInfoPrivate
+class EntryFileInfoPrivate : public FileInfoPrivate
 {
     friend class EntryFileInfo;
     QScopedPointer<AbstractEntryFileEntity> entity { nullptr };
 
 public:
-    explicit EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq);
+    explicit EntryFileInfoPrivate(EntryFileInfo *qq);
     void init();
     QString suffix() const;
     virtual ~EntryFileInfoPrivate() override;

@@ -13,11 +13,10 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_myshares;
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new ShareFileInfoPrivate(url, this))
+    : ProxyFileInfo(url), d(new ShareFileInfoPrivate(this))
 {
-    dptr.reset(d);
     QString path = url.path();
-    setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path)));
+    setProxy(InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path)));
 }
 
 ShareFileInfo::~ShareFileInfo()
@@ -28,7 +27,7 @@ QString ShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return AbstractFileInfo::displayOf(type);
+    return ProxyFileInfo::displayOf(type);
 }
 
 QString ShareFileInfo::nameOf(const NameInfoType type) const
@@ -39,7 +38,7 @@ QString ShareFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return AbstractFileInfo::nameOf(type);
+        return ProxyFileInfo::nameOf(type);
     }
 }
 
@@ -47,9 +46,11 @@ QUrl ShareFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        return QUrl::fromLocalFile(dptr->url.path());
+        return QUrl::fromLocalFile(url.path());
+    case FileUrlInfoType::kUrl:
+        return url;
     default:
-        return AbstractFileInfo::urlOf(type);
+        return ProxyFileInfo::urlOf(type);
     }
 }
 
@@ -59,7 +60,7 @@ bool ShareFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsDir:
         return true;
     default:
-        return AbstractFileInfo::isAttributes(type);
+        return ProxyFileInfo::isAttributes(type);
     }
 }
 
@@ -71,14 +72,14 @@ bool ShareFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanDrag:
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return dptr->proxy;
+        return proxy;
     default:
-        return AbstractFileInfo::canAttributes(type);
+        return ProxyFileInfo::canAttributes(type);
     }
 }
 
-ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
+ShareFileInfoPrivate::ShareFileInfoPrivate(ShareFileInfo *qq)
+    : q(qq)
 {
     refresh();
 }
@@ -89,8 +90,8 @@ ShareFileInfoPrivate::~ShareFileInfoPrivate()
 
 void ShareFileInfoPrivate::refresh()
 {
-    if (url.path() != "/")
-        info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", url.path()).value<QVariantMap>();
+    if (q->fileUrl().path() != "/")
+        info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", q->fileUrl().path()).value<QVariantMap>();
 }
 
 QString ShareFileInfoPrivate::fileName() const

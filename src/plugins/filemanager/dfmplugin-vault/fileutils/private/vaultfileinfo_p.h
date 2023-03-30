@@ -7,26 +7,27 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/fileinfo_p.h"
 
 namespace dfmplugin_vault {
 
 class VaultFileInfo;
-class VaultFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
+class VaultFileInfoPrivate
 {
     friend class VaultFileInfo;
 
 public:
-    explicit VaultFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
+    explicit VaultFileInfoPrivate(VaultFileInfo *qq);
     virtual ~VaultFileInfoPrivate();
 
 private:
-    QString iconName();
     QString fileDisplayPath() const;
-    QString absolutePath() const;
-    QUrl vaultUrl() const;
+    QString absolutePath(const QString &path) const;
+    QUrl vaultUrl(const QUrl &url) const;
     QUrl getUrlByNewFileName(const QString &fileName) const;
     bool isRoot() const;
+
+    VaultFileInfo *const q;
 };
 
 }

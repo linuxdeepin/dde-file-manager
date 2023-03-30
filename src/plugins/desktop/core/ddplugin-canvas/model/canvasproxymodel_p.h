@@ -58,7 +58,7 @@ private:
 public:
     QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     QList<QUrl> fileList;
-    QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
+    QMap<QUrl, FileInfoPointer> fileMap;
     FileInfoModel *srcModel = nullptr;
     QSharedPointer<QTimer> refreshTimer;
     int fileSortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;

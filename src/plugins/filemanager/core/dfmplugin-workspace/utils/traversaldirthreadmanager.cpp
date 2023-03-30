@@ -19,8 +19,8 @@ TraversalDirThreadManager::TraversalDirThreadManager(const QUrl &url,
                                                      QObject *parent)
     : TraversalDirThread(url, nameFilters, filters, flags, parent)
 {
-    qRegisterMetaType<QList<AbstractFileInfoPointer>>();
-    qRegisterMetaType<AbstractFileInfoPointer>();
+    qRegisterMetaType<QList<FileInfoPointer>>();
+    qRegisterMetaType<FileInfoPointer>();
     qRegisterMetaType<QList<SortInfoPointer>>();
     qRegisterMetaType<SortInfoPointer>();
 }
@@ -86,16 +86,18 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
 
     timer->restart();
 
-    QList<AbstractFileInfoPointer> childrenList;   // 当前遍历出来的所有文件
+    QList<FileInfoPointer> childrenList;   // 当前遍历出来的所有文件
     while (dirIterator->hasNext()) {
         if (stopFlag)
             break;
 
         // 调用一次fileinfo进行文件缓存
         const auto &fileUrl = dirIterator->next();
+        if (!fileUrl.isValid())
+            continue;
         auto fileInfo = dirIterator->fileInfo();
         if (fileUrl.isValid() && !fileInfo)
-            fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+            fileInfo = InfoFactory::create<FileInfo>(fileUrl);
 
         if (!fileInfo)
             continue;

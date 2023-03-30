@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfm-base/file/local/private/localdiriterator_p.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
+#include "dfm-base/file/local/asyncfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -36,13 +37,11 @@ LocalDirIteratorPrivate::~LocalDirIteratorPrivate()
 {
 }
 
-AbstractFileInfoPointer LocalDirIteratorPrivate::fileInfo()
+FileInfoPointer LocalDirIteratorPrivate::fileInfo()
 {
-    auto fileinfo = dfmioDirIterator->fileInfo();
     auto url = dfmioDirIterator->next();
-    QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(url, fileinfo));
-    auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(url.scheme(), info);
-
+    auto fileinfo = dfmioDirIterator->fileInfo();
+    QSharedPointer<FileInfo> info { nullptr };
     const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
     bool isHidden = false;
     if (fileName.startsWith(".")) {
@@ -50,6 +49,16 @@ AbstractFileInfoPointer LocalDirIteratorPrivate::fileInfo()
     } else {
         isHidden = hideFileList.contains(fileName);
     }
+    auto targetPath = fileinfo->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
+    if (FileUtils::isLocalDevice(url) && (targetPath.isEmpty() || FileUtils::isLocalDevice(QUrl::fromLocalFile(targetPath)))) {
+        info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url, fileinfo));
+    } else {
+        info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, fileinfo));
+        info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+        info->initQuerier();
+    }
+
+    auto infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
     infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
     infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
     infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
@@ -146,7 +155,7 @@ QUrl LocalDirIterator::fileUrl() const
  *
  * \return DAbstractFileInfoPointer 返回文件迭代器当前文件的文件信息的智能指针
  **/
-const AbstractFileInfoPointer LocalDirIterator::fileInfo() const
+const FileInfoPointer LocalDirIterator::fileInfo() const
 {
     return d->fileInfo();
 }
@@ -215,5 +224,6 @@ bool LocalDirIterator::oneByOne()
 {
     if (!url().isValid())
         return true;
+    qInfo() << "11" << url() << FileUtils::isLocalDevice(url());
     return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
 }

@@ -14,7 +14,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
@@ -88,12 +88,12 @@ QString FileOperationsEventReceiver::newDocmentName(const QUrl &url, const QStri
     QString localTargetDir { targetdir };
     QString fileLocalPath { filePath };
     if (!dfmbase::FileUtils::isLocalFile(url)) {
-        auto &&parentFileInfo { InfoFactory::create<AbstractFileInfo>(url) };
+        auto &&parentFileInfo { InfoFactory::create<FileInfo>(url) };
         if (!parentFileInfo) {
             qCritical() << "create parent file info failed!";
             return QString();
         }
-        localTargetDir = parentFileInfo->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath);
+        localTargetDir = parentFileInfo->pathOf(FileInfo::FilePathInfoType::kFilePath);
         if (localTargetDir.endsWith(QDir::separator()))
             localTargetDir.chop(1);
         fileLocalPath = suffix.isEmpty() ? QString("%1/%2").arg(localTargetDir, baseName) : QString("%1/%2.%3").arg(localTargetDir, baseName, suffix);
@@ -252,8 +252,8 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
         }
     }
 
-    AbstractFileInfoPointer newFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-    AbstractFileInfoPointer oldFileInfo = InfoFactory::create<AbstractFileInfo>(oldUrl);
+    FileInfoPointer newFileInfo = InfoFactory::create<FileInfo>(newUrl);
+    FileInfoPointer oldFileInfo = InfoFactory::create<FileInfo>(oldUrl);
     const QString &newName = newFileInfo->displayOf(DisPlayInfoType::kFileDisplayName);
     const QString &oldName = oldFileInfo->displayOf(DisPlayInfoType::kFileDisplayName);
     if (newName == oldName)
@@ -383,7 +383,7 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
     } else {
         // Show clear trash dialog
         int count = 0;
-        auto info = InfoFactory::create<AbstractFileInfo>(FileUtils::trashRootUrl());
+        auto info = InfoFactory::create<FileInfo>(FileUtils::trashRootUrl());
         if (info) {
             count = info->countChildFile();
         }
@@ -482,12 +482,12 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
 
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix, const QVariant custom, OperatorCallback callbackImmediately)
 {
-    auto fileInfo = InfoFactory::create<AbstractFileInfo>(tempUrl);
+    auto fileInfo = InfoFactory::create<FileInfo>(tempUrl);
     if (!fileInfo)
         return QString();
 
-    const QString &newPath = newDocmentName(url, fileInfo->nameOf(AbstractFileInfo::FileNameInfoType::kCompleteBaseName),
-                                            suffix.isEmpty() ? fileInfo->nameOf(AbstractFileInfo::FileNameInfoType::kSuffix) : suffix);
+    const QString &newPath = newDocmentName(url, fileInfo->nameOf(FileInfo::FileNameInfoType::kCompleteBaseName),
+                                            suffix.isEmpty() ? fileInfo->nameOf(FileInfo::FileNameInfoType::kSuffix) : suffix);
     if (newPath.isEmpty())
         return QString();
 
@@ -772,7 +772,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         }
     }
 
-    AbstractFileInfoPointer toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+    FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl);
     if (toFileInfo && toFileInfo->exists()) {
         dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameOf(NameInfoType::kFileName));
         return false;
@@ -983,7 +983,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     // check link
     if (force) {
-        AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(link);
+        FileInfoPointer toInfo = InfoFactory::create<FileInfo>(link);
         if (toInfo && toInfo->exists()) {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
             fileHandlerDelete.deleteFile(link);
@@ -1046,7 +1046,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("set file permissions error", error);
     }
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     info->refresh();
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
@@ -1153,7 +1153,7 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
 
     bool ok { true };
     for (const QUrl &url : urls) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (info) {
             const QUrl &parentUrl = info->urlOf(UrlInfoType::kParentUrl);
             const QString &fileName = info->nameOf(NameInfoType::kFileName);

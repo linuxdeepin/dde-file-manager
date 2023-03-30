@@ -6,7 +6,7 @@
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -65,13 +65,13 @@ void TemplateMenuPrivate::createActionByNormalFile(const QString &path)
         return;
 
     QString errString;
-    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path), false, &errString);
+    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path), Global::CreateFileInfoType::kCreateFileInfoSync, &errString);
     if (!fileInfo) {
-        qInfo() << "createActionByDesktopFile create LocalFileInfo error: " << errString << path;
+        qInfo() << "createActionByDesktopFile create FileInfo error: " << errString << path;
         return;
     }
 
-    const QString &entryText = fileInfo->nameOf(AbstractFileInfo::FileNameInfoType::kCompleteBaseName);
+    const QString &entryText = fileInfo->nameOf(FileInfo::FileNameInfoType::kCompleteBaseName);
     const QIcon &icon = fileInfo->fileIcon();
     QAction *action = new QAction(icon, entryText, Q_NULLPTR);
     action->setData(QVariant::fromValue(path));
@@ -89,9 +89,9 @@ void TemplateMenuPrivate::createActionByDesktopFile(const QDir &dir, const QStri
     const QString &entryText = desktopFile.localizedValue("Name");
 
     QString errString;
-    auto itemInfo = InfoFactory::create<LocalFileInfo>(QUrl::fromLocalFile(entrySourcePath), true, &errString);
+    auto itemInfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(entrySourcePath), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "createActionByDesktopFile create LocalFileInfo error: " << errString << entrySourcePath;
+        qInfo() << "createActionByDesktopFile create FileInfo error: " << errString << entrySourcePath;
         return;
     }
 

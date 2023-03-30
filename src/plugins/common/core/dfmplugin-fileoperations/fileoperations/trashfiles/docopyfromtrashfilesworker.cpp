@@ -72,7 +72,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         if (!stateCheck())
             return false;
 
-        const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
@@ -86,7 +86,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         const QUrl &targetFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
                                                                    fileInfo->displayOf(DisPlayInfoType::kFileDisplayName).toStdString().c_str(), nullptr);
 
-        const AbstractFileInfoPointer &targetFileInfo = InfoFactory::create<AbstractFileInfo>(targetFileUrl);
+        const FileInfoPointer &targetFileInfo = InfoFactory::create<FileInfo>(targetFileUrl);
         if (!targetFileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
@@ -97,7 +97,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
             }
         }
 
-        AbstractFileInfoPointer targetInfo = nullptr;
+        FileInfoPointer targetInfo = nullptr;
         if (!createParentDir(fileInfo, targetFileInfo, targetInfo, &result)) {
             if (result) {
                 completeFilesCount++;
@@ -110,7 +110,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         // read trash info
         emitCurrentTaskNotify(url, targetFileUrl);
 
-        AbstractFileInfoPointer newTargetInfo(nullptr);
+        FileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
         if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
             continue;
@@ -131,8 +131,8 @@ bool DoCopyFromTrashFilesWorker::doOperate()
     return true;
 }
 
-bool DoCopyFromTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
-                                                 AbstractFileInfoPointer &targetFileInfo, bool *result)
+bool DoCopyFromTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo,
+                                                 FileInfoPointer &targetFileInfo, bool *result)
 {
     const QUrl &fromUrl = trashInfo->urlOf(UrlInfoType::kUrl);
     const QUrl &toUrl = restoreInfo->urlOf(UrlInfoType::kUrl);
@@ -140,7 +140,7 @@ bool DoCopyFromTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &
     if (!parentUrl.isValid())
         return false;
     targetFileInfo.reset();
-    targetFileInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
+    targetFileInfo = InfoFactory::create<FileInfo>(parentUrl);
     if (!targetFileInfo)
         return false;
 

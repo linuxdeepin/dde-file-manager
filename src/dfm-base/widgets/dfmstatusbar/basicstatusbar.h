@@ -11,7 +11,7 @@
 
 namespace dfmbase {
 
-class AbstractFileInfo;
+class FileInfo;
 class BasicStatusBarPrivate;
 class BasicStatusBar : public QFrame
 {
@@ -22,7 +22,7 @@ public:
     virtual QSize sizeHint() const override;
     virtual void clearLayoutAndAnchors();
 
-    void itemSelected(const QList<AbstractFileInfo *> &infoList);
+    void itemSelected(const QList<FileInfo *> &infoList);
     void itemCounted(const int count);
 
     void updateStatusMessage();

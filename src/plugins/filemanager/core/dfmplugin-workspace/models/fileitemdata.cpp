@@ -14,7 +14,7 @@ using namespace dfmbase;
 using namespace dfmbase::Global;
 using namespace dfmplugin_workspace;
 
-FileItemData::FileItemData(const QUrl &url, const AbstractFileInfoPointer &info, FileItemData *parent)
+FileItemData::FileItemData(const QUrl &url, const FileInfoPointer &info, FileItemData *parent)
     : parent(parent),
       url(url),
       info(info)
@@ -44,10 +44,10 @@ void FileItemData::refreshInfo()
         info->refresh();
 }
 
-AbstractFileInfoPointer FileItemData::fileInfo() const
+FileInfoPointer FileItemData::fileInfo() const
 {
     if (!info)
-        const_cast<FileItemData *>(this)->info = InfoFactory::create<AbstractFileInfo>(url);
+        const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
     return info;
 }
 
@@ -59,7 +59,7 @@ FileItemData *FileItemData::parentData() const
 QVariant FileItemData::data(int role) const
 {
     if (!info)
-        const_cast<FileItemData *>(this)->info = InfoFactory::create<AbstractFileInfo>(url);
+        const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
 
     if (info.isNull())
         return QVariant();
@@ -89,6 +89,8 @@ QVariant FileItemData::data(int role) const
     case kItemEditRole:
     case kItemFileDisplayNameRole:
         return info->displayOf(DisPlayInfoType::kFileDisplayName);
+    case kItemFileLastReadRole:
+        return info->customData(dfmbase::Global::kItemFileLastReadRole);
     case kItemFilePinyinNameRole:
         return info->displayOf(DisPlayInfoType::kFileDisplayPinyinName);
     case kItemFileBaseNameRole:

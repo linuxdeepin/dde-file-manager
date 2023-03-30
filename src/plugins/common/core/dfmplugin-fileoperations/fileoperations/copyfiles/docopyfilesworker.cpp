@@ -94,7 +94,7 @@ bool DoCopyFilesWorker::initArgs()
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
-    targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
+    targetInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!targetInfo) {
         // pause and emit error msg
         qCritical() << "create target info error, url = " << targetUrl;
@@ -124,7 +124,7 @@ void DoCopyFilesWorker::endWork()
     waitThreadPoolOver();
 
     // deal target files
-    for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
+    for (FileInfoPointer info : precompleteTargetFileInfo) {
         if (info->exists()) {
             const QUrl &url = info->urlOf(UrlInfoType::kUrl);
             completeTargetFiles.append(url);
@@ -145,7 +145,7 @@ bool DoCopyFilesWorker::copyFiles()
         if (!stateCheck()) {
             return false;
         }
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url, false);
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo || !targetInfo) {
             // pause and emit error msg
             qCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (fileInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);

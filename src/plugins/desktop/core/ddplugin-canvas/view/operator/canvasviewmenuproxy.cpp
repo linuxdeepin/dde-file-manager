@@ -17,7 +17,7 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/utils/clipboard.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"

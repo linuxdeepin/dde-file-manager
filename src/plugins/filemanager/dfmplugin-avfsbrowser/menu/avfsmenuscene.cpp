@@ -49,7 +49,7 @@ bool AvfsMenuScene::initialize(const QVariantHash &params)
 
     d->showOpenWith = d->selectFiles.count() == 1;
     if (d->showOpenWith) {
-        auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first());
+        auto info = InfoFactory::create<FileInfo>(d->selectFiles.first());
         d->showOpenWith = info && !info->isAttributes(OptInfoType::kIsDir) && !AvfsUtils::isSupportedArchives(AvfsUtils::avfsUrlToLocal(d->selectFiles.first()));
     }
 

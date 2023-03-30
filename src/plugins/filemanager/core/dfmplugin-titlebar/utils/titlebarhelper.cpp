@@ -12,7 +12,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/syncfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -164,7 +164,7 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
         if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
             QString displayText = oneUrl.fileName();
             // Check for possible display text.
-            auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(oneUrl);
+            auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(oneUrl);
             if (infoPointer) {
                 const QString &displayName = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
                 if (!displayName.isEmpty())
@@ -223,7 +223,7 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         if (url.path().isEmpty())
             url.setPath("/");
         qInfo() << "jump :" << inputStr;
-        const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
         if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
             TitleBarEventCaller::sendOpenFile(sender, url);
         } else {

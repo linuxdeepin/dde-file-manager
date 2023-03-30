@@ -6,11 +6,11 @@
 #define VAULTFILEINFO_H
 
 #include "dfmplugin_vault_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 namespace dfmplugin_vault {
 class VaultFileInfoPrivate;
-class VaultFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class VaultFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
     friend class VaultFileInfoPrivate;
     VaultFileInfoPrivate *d;

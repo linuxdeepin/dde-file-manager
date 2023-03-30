@@ -8,10 +8,12 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/event/event.h>
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/dfile.h>
 
 #include <QApplication>
 #include <QtConcurrent>
@@ -149,7 +151,8 @@ void RootInfo::reset()
 
 void RootInfo::doFileDeleted(const QUrl &url)
 {
-    enqueueEvent(QPair<QUrl, EventType>(url, kRmFile));
+    auto tmp = FileUtils::bindUrlTransform(url);
+    enqueueEvent(QPair<QUrl, EventType>(tmp, kRmFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -157,11 +160,13 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
 {
     doFileDeleted(fromUrl);
 
-    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
+    auto tmp = FileUtils::bindUrlTransform(url);
+
+    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(tmp);
     if (info)
         info->refresh();
 
-    if (!containsChild(toUrl)) {
+    if (!containsChild(tmp)) {
         {
             // Before the file moved signal is received, `toUrl` may be filtered if it received a created signal
             QMutexLocker lk(&watcherEventMutex);
@@ -186,19 +191,21 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     // but renamed from a .goutputstream_xxx file
     // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
     // when the file is modified in other way.
-    if (UniversalUtils::urlEquals(hiddenFileUrl, toUrl))
-        Q_EMIT watcherUpdateHideFile(toUrl);
+    if (UniversalUtils::urlEquals(hiddenFileUrl, tmp))
+        Q_EMIT watcherUpdateHideFile(tmp);
 }
 
 void RootInfo::dofileCreated(const QUrl &url)
 {
-    enqueueEvent(QPair<QUrl, EventType>(url, kAddFile));
+    auto tmp = FileUtils::bindUrlTransform(url);
+    enqueueEvent(QPair<QUrl, EventType>(tmp, kAddFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
 void RootInfo::doFileUpdated(const QUrl &url)
 {
-    enqueueEvent(QPair<QUrl, EventType>(url, kUpdateFile));
+    auto tmp = FileUtils::bindUrlTransform(url);
+    enqueueEvent(QPair<QUrl, EventType>(tmp, kUpdateFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -256,17 +263,17 @@ void RootInfo::doThreadWatcherEvent()
     });
 }
 
-void RootInfo::handleTraversalResult(const AbstractFileInfoPointer &child)
+void RootInfo::handleTraversalResult(const FileInfoPointer &child)
 {
     auto sortInfo = addChild(child);
     if (sortInfo)
         Q_EMIT iteratorAddFile(currentKey, sortInfo, child);
 }
 
-void RootInfo::handleTraversalResults(QList<AbstractFileInfoPointer> children)
+void RootInfo::handleTraversalResults(QList<FileInfoPointer> children)
 {
     QList<SortInfoPointer> sortInfos;
-    QList<AbstractFileInfoPointer> infos;
+    QList<FileInfoPointer> infos;
     for (const auto &info : children) {
         auto sortInfo = addChild(info);
         if (!sortInfo)
@@ -331,7 +338,12 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
 
         auto child = fileInfo(url);
 
-        if (!child || !child->exists())
+        if (!child)
+            continue;
+
+        dfmio::DFile tmpFile(child->fileUrl());
+
+        if (!tmpFile.exists())
             continue;
 
         auto sortInfo = addChild(child);
@@ -345,7 +357,7 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
     }
 }
 
-void RootInfo::addChildren(const QList<AbstractFileInfoPointer> &children)
+void RootInfo::addChildren(const QList<FileInfoPointer> &children)
 {
     for (auto &child : children) {
         addChild(child);
@@ -364,7 +376,7 @@ void RootInfo::addChildren(const QList<SortInfoPointer> &children)
     }
 }
 
-SortInfoPointer RootInfo::addChild(const AbstractFileInfoPointer &child)
+SortInfoPointer RootInfo::addChild(const FileInfoPointer &child)
 {
     if (!child)
         return nullptr;
@@ -389,7 +401,7 @@ SortInfoPointer RootInfo::addChild(const AbstractFileInfoPointer &child)
     return sort;
 }
 
-SortInfoPointer RootInfo::sortFileInfo(const AbstractFileInfoPointer &info)
+SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
 {
     if (!info)
         return nullptr;
@@ -490,9 +502,10 @@ QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 // When monitoring the mtp directory, the monitor monitors that the scheme of the
 // url used for adding and deleting files is mtp (mtp://path).
 // Here, the monitor's url is used to re-complete the current url
-AbstractFileInfoPointer RootInfo::fileInfo(const QUrl &url)
+FileInfoPointer RootInfo::fileInfo(const QUrl &url)
 {
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url);
+    info->refresh();
     if (info)
         return info;
 
@@ -511,6 +524,6 @@ AbstractFileInfoPointer RootInfo::fileInfo(const QUrl &url)
 
     auto currentUrl = parentUrl;
     currentUrl.setPath(currentUrl.path(QUrl::PrettyDecoded) + QDir::separator() + url.fileName());
-    info = InfoFactory::create<AbstractFileInfo>(currentUrl);
+    info = InfoFactory::create<FileInfo>(currentUrl);
     return info;
 }

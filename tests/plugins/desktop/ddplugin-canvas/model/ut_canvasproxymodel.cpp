@@ -16,7 +16,6 @@
 #include <QModelIndex>
 #include <QUrl>
 
-
 DDP_CANVAS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -33,12 +32,12 @@ TEST(CanvasProxyModel, setSourceModel)
     model.d->fileList.append(QUrl());
 
     bool br = false;
-    QObject::connect(&model, &CanvasProxyModel::modelAboutToBeReset, &model,[&br](){
+    QObject::connect(&model, &CanvasProxyModel::modelAboutToBeReset, &model, [&br]() {
         br = true;
     });
 
     bool er = false;
-    QObject::connect(&model, &CanvasProxyModel::modelReset, &model,[&er](){
+    QObject::connect(&model, &CanvasProxyModel::modelReset, &model, [&er]() {
         er = true;
     });
 
@@ -55,8 +54,7 @@ TEST(CanvasProxyModel, setSourceModel)
     {
         QUrl oldurl;
         QUrl newurl;
-        stub.set_lamda(&CanvasProxyModelPrivate::sourceDataRenamed, [&oldurl, &newurl]
-                       (CanvasProxyModelPrivate *, const QUrl &t1, const QUrl &t2){
+        stub.set_lamda(&CanvasProxyModelPrivate::sourceDataRenamed, [&oldurl, &newurl](CanvasProxyModelPrivate *, const QUrl &t1, const QUrl &t2) {
             oldurl = t1;
             newurl = t2;
         });
@@ -70,8 +68,7 @@ TEST(CanvasProxyModel, setSourceModel)
     {
         QModelIndex tl;
         QModelIndex br;
-        stub.set_lamda(&CanvasProxyModelPrivate::sourceDataChanged, [&tl, &br]
-                       (CanvasProxyModelPrivate *, const QModelIndex &sourceTopleft, const QModelIndex &sourceBottomright, const QVector<int> &roles){
+        stub.set_lamda(&CanvasProxyModelPrivate::sourceDataChanged, [&tl, &br](CanvasProxyModelPrivate *, const QModelIndex &sourceTopleft, const QModelIndex &sourceBottomright, const QVector<int> &roles) {
             tl = sourceTopleft;
             br = sourceBottomright;
         });
@@ -85,8 +82,7 @@ TEST(CanvasProxyModel, setSourceModel)
     {
         int istart = -1;
         int iend = -1;
-        stub.set_lamda(&CanvasProxyModelPrivate::sourceRowsInserted, [&istart, &iend]
-                       (CanvasProxyModelPrivate *, const QModelIndex &sourceParent, int start, int end){
+        stub.set_lamda(&CanvasProxyModelPrivate::sourceRowsInserted, [&istart, &iend](CanvasProxyModelPrivate *, const QModelIndex &sourceParent, int start, int end) {
             istart = start;
             iend = end;
         });
@@ -98,8 +94,7 @@ TEST(CanvasProxyModel, setSourceModel)
     {
         int istart = -1;
         int iend = -1;
-        stub.set_lamda(&CanvasProxyModelPrivate::sourceRowsAboutToBeRemoved, [&istart, &iend]
-                       (CanvasProxyModelPrivate *, const QModelIndex &sourceParent, int start, int end){
+        stub.set_lamda(&CanvasProxyModelPrivate::sourceRowsAboutToBeRemoved, [&istart, &iend](CanvasProxyModelPrivate *, const QModelIndex &sourceParent, int start, int end) {
             istart = start;
             iend = end;
         });
@@ -110,7 +105,7 @@ TEST(CanvasProxyModel, setSourceModel)
 
     {
         bool be = false;
-        stub.set_lamda(&CanvasProxyModelPrivate::sourceAboutToBeReset, [&be](){
+        stub.set_lamda(&CanvasProxyModelPrivate::sourceAboutToBeReset, [&be]() {
             be = true;
         });
         emit fm.modelAboutToBeReset({});
@@ -119,7 +114,7 @@ TEST(CanvasProxyModel, setSourceModel)
 
     {
         bool end = false;
-        stub.set_lamda(&CanvasProxyModelPrivate::sourceReset, [&end](){
+        stub.set_lamda(&CanvasProxyModelPrivate::sourceReset, [&end]() {
             end = true;
         });
         emit fm.modelReset({});
@@ -138,7 +133,7 @@ TEST(CanvasProxyModel, rootUrl)
     CanvasProxyModel model;
     stub_ext::StubExt stub;
     QModelIndex index;
-    stub.set_lamda(&CanvasProxyModel::fileUrl, [&index](CanvasProxyModel *m, const QModelIndex &idx){
+    stub.set_lamda(&CanvasProxyModel::fileUrl, [&index](CanvasProxyModel *m, const QModelIndex &idx) {
         index = idx;
         return QUrl::fromLocalFile("/home");
     });
@@ -175,7 +170,7 @@ TEST(CanvasProxyModel, fileUrl)
     CanvasProxyModel model;
     FileInfoModel fm;
     stub_ext::StubExt stub;
-    stub.set_lamda(&FileInfoModel::rootUrl, [](){
+    stub.set_lamda(&FileInfoModel::rootUrl, []() {
         return QUrl::fromLocalFile("/home");
     });
     model.d->srcModel = &fm;
@@ -194,12 +189,12 @@ TEST(CanvasProxyModel, fileInfo)
     CanvasProxyModel model;
     FileInfoModel fm;
     stub_ext::StubExt stub;
-    stub.set_lamda(&FileInfoModel::rootUrl, [](){
+    stub.set_lamda(&FileInfoModel::rootUrl, []() {
         return QUrl::fromLocalFile("/home");
     });
     model.d->srcModel = &fm;
 
-    EXPECT_EQ(model.fileInfo(model.rootIndex())->urlOf(AbstractFileInfo::FileUrlInfoType::kUrl), QUrl::fromLocalFile("/home"));
+    EXPECT_EQ(model.fileInfo(model.rootIndex())->urlOf(FileInfo::FileUrlInfoType::kUrl), QUrl::fromLocalFile("/home"));
 
     auto in1 = QUrl::fromLocalFile("/home/test");
     auto in2 = QUrl::fromLocalFile("/home/test2");
@@ -208,8 +203,8 @@ TEST(CanvasProxyModel, fileInfo)
     fm.d->fileList.append(in1);
     fm.d->fileList.append(in2);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
 
     model.d->fileMap.insert(in1, info1);
     model.d->fileMap.insert(in2, info2);
@@ -222,7 +217,6 @@ TEST(CanvasProxyModel, fileInfo)
     EXPECT_EQ(model.fileInfo(QModelIndex(0, 0, nullptr, &model)), info1);
     EXPECT_EQ(model.fileInfo(QModelIndex(1, 0, nullptr, &model)), info2);
 }
-
 
 TEST(CanvasProxyModel, rowCount)
 {
@@ -252,24 +246,24 @@ TEST(CanvasProxyModel, data_and_map)
 
     auto in1 = QUrl::fromLocalFile("/home/test");
     auto in2 = QUrl::fromLocalFile("/home/test2");
-    model.d->fileList.append(QUrl::fromLocalFile("/home/test3")); // for mapToSource
+    model.d->fileList.append(QUrl::fromLocalFile("/home/test3"));   // for mapToSource
     model.d->fileList.append(in1);
 
     fm.d->fileList.append(in1);
     fm.d->fileList.append(in2);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
     fm.d->fileMap.insert(in1, info1);
     fm.d->fileMap.insert(in2, info2);
 
     stub_ext::StubExt stub;
     QModelIndex index;
     int itemRole = -1;
-    stub.set_lamda(VADDR(FileInfoModel, data), [&index, &itemRole](FileInfoModel *, const QModelIndex &idx, int role){
-       index = idx;
-       itemRole = role;
-       return QVariant("test");
+    stub.set_lamda(VADDR(FileInfoModel, data), [&index, &itemRole](FileInfoModel *, const QModelIndex &idx, int role) {
+        index = idx;
+        itemRole = role;
+        return QVariant("test");
     });
 
     {
@@ -316,15 +310,15 @@ TEST(CanvasProxyModel, mimeData)
     model.d->fileList.append(in1);
     model.d->fileList.append(in2);
 
-   auto mm = model.mimeData({QModelIndex(0,0,nullptr, &model),QModelIndex(1,0,nullptr, &model)});
-   ASSERT_NE(mm, nullptr);
-   auto ret = mm->urls();
-   ASSERT_EQ(ret.size(), 2);
-   EXPECT_EQ(ret.first(), in1);
-   EXPECT_EQ(ret.last(), in2);
+    auto mm = model.mimeData({ QModelIndex(0, 0, nullptr, &model), QModelIndex(1, 0, nullptr, &model) });
+    ASSERT_NE(mm, nullptr);
+    auto ret = mm->urls();
+    ASSERT_EQ(ret.size(), 2);
+    EXPECT_EQ(ret.first(), in1);
+    EXPECT_EQ(ret.last(), in2);
 
-   EXPECT_EQ(mm->data("userid_for_drag"), QString::number(getuid()));
-   delete mm;
+    EXPECT_EQ(mm->data("userid_for_drag"), QString::number(getuid()));
+    delete mm;
 }
 
 TEST(CanvasProxyModel, sort)
@@ -340,8 +334,8 @@ TEST(CanvasProxyModel, sort)
     fm.d->fileList.append(in1);
     fm.d->fileList.append(in2);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
     model.d->fileMap.insert(in1, info1);
     model.d->fileMap.insert(in2, info2);
     fm.d->fileMap.insert(in1, info1);
@@ -351,18 +345,17 @@ TEST(CanvasProxyModel, sort)
     QPersistentModelIndex idx2 = model.index(in2);
 
     bool lac = false;
-    QObject::connect(&model, &CanvasProxyModel::layoutAboutToBeChanged, &model,[&lac](){
+    QObject::connect(&model, &CanvasProxyModel::layoutAboutToBeChanged, &model, [&lac]() {
         lac = true;
     });
 
-
     bool lc = false;
-    QObject::connect(&model, &CanvasProxyModel::layoutChanged, &model,[&lc](){
+    QObject::connect(&model, &CanvasProxyModel::layoutChanged, &model, [&lc]() {
         lc = true;
     });
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&CanvasProxyModelPrivate::doSort, [](CanvasProxyModelPrivate *, QList<QUrl> &files){
+    stub.set_lamda(&CanvasProxyModelPrivate::doSort, [](CanvasProxyModelPrivate *, QList<QUrl> &files) {
         EXPECT_EQ(files.size(), 2);
         files.move(0, 1);
         return true;
@@ -396,7 +389,7 @@ TEST(CanvasProxyModelPrivate, indexs)
     EXPECT_EQ(idxs.first().row(), 0);
     EXPECT_EQ(idxs.last().row(), 1);
 
-    idxs = model.d->indexs({QUrl(), in1, QUrl::fromLocalFile("/home/test3"), in2});
+    idxs = model.d->indexs({ QUrl(), in1, QUrl::fromLocalFile("/home/test3"), in2 });
     ASSERT_EQ(idxs.size(), 4);
     EXPECT_FALSE(idxs.first().isValid());
     EXPECT_TRUE(idxs.at(1).isValid());
@@ -412,8 +405,8 @@ TEST(CanvasProxyModel, fetch)
 
     auto in1 = QUrl::fromLocalFile("/home/test");
     auto in2 = QUrl::fromLocalFile("/home/test2");
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
 
     model.d->fileList.append(in1);
     model.d->fileMap.insert(in1, info1);
@@ -427,13 +420,13 @@ TEST(CanvasProxyModel, fetch)
     fm.d->fileMap.insert(in2, info2);
 
     int bi = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeInserted, &model,[&bi, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeInserted, &model, [&bi, &model](const QModelIndex &parent, int first, int last) {
         bi = first;
         EXPECT_EQ(parent, model.rootIndex());
         EXPECT_EQ(first, last);
     });
     int ei = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsInserted, &model,[&ei, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsInserted, &model, [&ei, &model](const QModelIndex &parent, int first, int last) {
         ei = first;
         EXPECT_EQ(parent, model.rootIndex());
         EXPECT_EQ(first, last);
@@ -442,7 +435,7 @@ TEST(CanvasProxyModel, fetch)
     bool filter = true;
     QUrl filterUrl;
     stub_ext::StubExt stub;
-    stub.set_lamda(&CanvasProxyModelPrivate::insertFilter, [&filter, &filterUrl](CanvasProxyModelPrivate *, const QUrl &url){
+    stub.set_lamda(&CanvasProxyModelPrivate::insertFilter, [&filter, &filterUrl](CanvasProxyModelPrivate *, const QUrl &url) {
         filterUrl = url;
         return filter;
     });
@@ -477,7 +470,6 @@ TEST(CanvasProxyModel, fetch)
         EXPECT_EQ(model.d->fileList.size(), 1);
     }
 
-
     {
         filterUrl.clear();
         ei = -1;
@@ -497,19 +489,19 @@ TEST(CanvasProxyModel, take)
     CanvasProxyModel model;
 
     auto in1 = QUrl::fromLocalFile("/home/test");
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
 
     model.d->fileList.append(in1);
     model.d->fileMap.insert(in1, info1);
 
     int br = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeRemoved, &model,[&br, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeRemoved, &model, [&br, &model](const QModelIndex &parent, int first, int last) {
         br = first;
         EXPECT_EQ(parent, model.rootIndex());
         EXPECT_EQ(first, last);
     });
     int er = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsRemoved, &model,[&er, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsRemoved, &model, [&er, &model](const QModelIndex &parent, int first, int last) {
         er = first;
         EXPECT_EQ(parent, model.rootIndex());
         EXPECT_EQ(first, last);
@@ -517,7 +509,7 @@ TEST(CanvasProxyModel, take)
 
     QUrl filterUrl;
     stub_ext::StubExt stub;
-    stub.set_lamda(&CanvasProxyModelPrivate::removeFilter, [&filterUrl](CanvasProxyModelPrivate *, const QUrl &url){
+    stub.set_lamda(&CanvasProxyModelPrivate::removeFilter, [&filterUrl](CanvasProxyModelPrivate *, const QUrl &url) {
         filterUrl = url;
         return false;
     });
@@ -557,9 +549,9 @@ TEST(CanvasProxyModelPrivate, createMapping)
     fm.d->fileList.append(in3);
     model.d->fileList.append(in3);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
-    DFMLocalFileInfoPointer info3(new LocalFileInfo(in3));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
+    DFMSyncFileInfoPointer info3(new SyncFileInfo(in3));
     fm.d->fileMap.insert(in1, info1);
     fm.d->fileMap.insert(in2, info2);
     fm.d->fileMap.insert(in3, info3);
@@ -567,7 +559,7 @@ TEST(CanvasProxyModelPrivate, createMapping)
 
     stub_ext::StubExt stub;
     QList<QUrl> filterUrl;
-    stub.set_lamda(&CanvasProxyModelPrivate::resetFilter, [&filterUrl](CanvasProxyModelPrivate *, QList<QUrl> &url){
+    stub.set_lamda(&CanvasProxyModelPrivate::resetFilter, [&filterUrl](CanvasProxyModelPrivate *, QList<QUrl> &url) {
         filterUrl = url;
         EXPECT_EQ(url.size(), 3);
         url.removeAt(1);
@@ -575,7 +567,7 @@ TEST(CanvasProxyModelPrivate, createMapping)
     });
 
     bool sort = false;
-    stub.set_lamda(&CanvasProxyModelPrivate::doSort, [&sort](CanvasProxyModelPrivate *, QList<QUrl> &url){
+    stub.set_lamda(&CanvasProxyModelPrivate::doSort, [&sort](CanvasProxyModelPrivate *, QList<QUrl> &url) {
         EXPECT_EQ(url.size(), 2);
         sort = true;
         url.move(0, 1);
@@ -591,7 +583,6 @@ TEST(CanvasProxyModelPrivate, createMapping)
     EXPECT_EQ(model.d->fileMap.value(in1), info1);
     EXPECT_EQ(model.d->fileMap.value(in3), info3);
     EXPECT_FALSE(model.d->fileMap.contains(in2));
-
 }
 
 TEST(CanvasProxyModelPrivate, sourceRowsInserted)
@@ -607,9 +598,9 @@ TEST(CanvasProxyModelPrivate, sourceRowsInserted)
     fm.d->fileList.append(in2);
     fm.d->fileList.append(in3);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
-    DFMLocalFileInfoPointer info3(new LocalFileInfo(in3));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
+    DFMSyncFileInfoPointer info3(new SyncFileInfo(in3));
     fm.d->fileMap.insert(in1, info1);
     fm.d->fileMap.insert(in2, info2);
     fm.d->fileMap.insert(in3, info3);
@@ -617,14 +608,14 @@ TEST(CanvasProxyModelPrivate, sourceRowsInserted)
     QUrl filterUrl;
     stub_ext::StubExt stub;
     bool filterIns = true;
-    stub.set_lamda(&CanvasProxyModelPrivate::insertFilter, [&filterUrl, &filterIns](CanvasProxyModelPrivate *, const QUrl &url){
+    stub.set_lamda(&CanvasProxyModelPrivate::insertFilter, [&filterUrl, &filterIns](CanvasProxyModelPrivate *, const QUrl &url) {
         filterUrl = url;
         return filterIns;
     });
 
     int br = -1;
     int br2 = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeInserted, &model,[&br, &br2, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeInserted, &model, [&br, &br2, &model](const QModelIndex &parent, int first, int last) {
         br = first;
         br2 = last;
         EXPECT_EQ(parent, model.rootIndex());
@@ -632,7 +623,7 @@ TEST(CanvasProxyModelPrivate, sourceRowsInserted)
 
     int er = -1;
     int er2 = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsInserted, &model,[&er, &er2, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsInserted, &model, [&er, &er2, &model](const QModelIndex &parent, int first, int last) {
         er = first;
         er2 = last;
         EXPECT_EQ(parent, model.rootIndex());
@@ -682,9 +673,9 @@ TEST(CanvasProxyModelPrivate, sourceRowsAboutToBeRemoved)
     model.d->fileList.append(in2);
     model.d->fileList.append(in3);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
-    DFMLocalFileInfoPointer info3(new LocalFileInfo(in3));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
+    DFMSyncFileInfoPointer info3(new SyncFileInfo(in3));
     fm.d->fileMap.insert(in1, info1);
     fm.d->fileMap.insert(in2, info2);
     fm.d->fileMap.insert(in3, info3);
@@ -694,14 +685,14 @@ TEST(CanvasProxyModelPrivate, sourceRowsAboutToBeRemoved)
 
     QUrl filterUrl;
     stub_ext::StubExt stub;
-    stub.set_lamda(&CanvasProxyModelPrivate::removeFilter, [&filterUrl](CanvasProxyModelPrivate *, const QUrl &url){
+    stub.set_lamda(&CanvasProxyModelPrivate::removeFilter, [&filterUrl](CanvasProxyModelPrivate *, const QUrl &url) {
         filterUrl = url;
         return true;
     });
 
     int br = -1;
     int br2 = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeRemoved, &model,[&br, &br2, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsAboutToBeRemoved, &model, [&br, &br2, &model](const QModelIndex &parent, int first, int last) {
         br = first;
         br2 = last;
         EXPECT_EQ(parent, model.rootIndex());
@@ -709,7 +700,7 @@ TEST(CanvasProxyModelPrivate, sourceRowsAboutToBeRemoved)
 
     int er = -1;
     int er2 = -1;
-    QObject::connect(&model, &CanvasProxyModel::rowsRemoved, &model,[&er, &er2, &model](const QModelIndex &parent, int first, int last){
+    QObject::connect(&model, &CanvasProxyModel::rowsRemoved, &model, [&er, &er2, &model](const QModelIndex &parent, int first, int last) {
         er = first;
         er2 = last;
         EXPECT_EQ(parent, model.rootIndex());
@@ -752,32 +743,32 @@ TEST(CanvasProxyModelPrivate, sourceDataRenamed)
     fm.d->fileList.append(in1);
     fm.d->fileList.append(in2);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
     fm.d->fileMap.insert(in1, info1);
     fm.d->fileMap.insert(in2, info2);
 
     bool up = false;
     QObject::connect(&model, &FileInfoModel::dataChanged, &model,
-                     [&up, &model](const QModelIndex &topLeft, const QModelIndex &bottomRight){
-        up = true;
-        EXPECT_EQ(topLeft.row(), bottomRight.row());
-    });
+                     [&up, &model](const QModelIndex &topLeft, const QModelIndex &bottomRight) {
+                         up = true;
+                         EXPECT_EQ(topLeft.row(), bottomRight.row());
+                     });
 
     QUrl oldu;
     QUrl newu;
     QObject::connect(&model, &CanvasProxyModel::dataReplaced, &model,
-                     [&oldu, &newu](const QUrl &t1, const QUrl &t2){
-        oldu = t1;
-        newu = t2;
-    });
+                     [&oldu, &newu](const QUrl &t1, const QUrl &t2) {
+                         oldu = t1;
+                         newu = t2;
+                     });
 
     model.d->fileList.append(in1);
     model.d->fileMap.insert(in1, info1);
 
     stub_ext::StubExt stub;
     bool filter = true;
-    stub.set_lamda(&CanvasProxyModelPrivate::renameFilter, [&filter](CanvasProxyModelPrivate *, const QUrl &oldUrl, const QUrl &newUrl){
+    stub.set_lamda(&CanvasProxyModelPrivate::renameFilter, [&filter](CanvasProxyModelPrivate *, const QUrl &oldUrl, const QUrl &newUrl) {
         return filter;
     });
 
@@ -864,8 +855,8 @@ TEST(CanvasProxyModelPrivate, lessThan)
     model.d->fileList.append(in1);
     model.d->fileList.append(in2);
 
-    DFMLocalFileInfoPointer info1(new LocalFileInfo(in1));
-    DFMLocalFileInfoPointer info2(new LocalFileInfo(in2));
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
     fm.d->fileMap.insert(in1, info1);
     fm.d->fileMap.insert(in2, info2);
     model.d->fileMap.insert(in1, info1);
@@ -886,10 +877,10 @@ TEST(CanvasProxyModelPrivate, doSort)
     CanvasProxyModel model;
     QUrl root = QUrl::fromLocalFile("/home/test");
     stub_ext::StubExt stub;
-    stub.set_lamda(&CanvasProxyModel::rootUrl, [&root](){
+    stub.set_lamda(&CanvasProxyModel::rootUrl, [&root]() {
         return root;
     });
-    stub.set_lamda(&CanvasProxyModelPrivate::lessThan, [](CanvasProxyModelPrivate *d, const QUrl &left, const QUrl &right){
+    stub.set_lamda(&CanvasProxyModelPrivate::lessThan, [](CanvasProxyModelPrivate *d, const QUrl &left, const QUrl &right) {
         return FileUtils::compareString(left.fileName(), right.fileName(), d->fileSortOrder);
     });
 
@@ -900,7 +891,7 @@ TEST(CanvasProxyModelPrivate, doSort)
     QUrl fileb = QUrl::fromLocalFile("/home/test/b.txt");
     QUrl filec = QUrl::fromLocalFile("/home/test/c.txt");
 
-    const QList<QUrl> urls = {filea, trash, computer, home, fileb, filec};
+    const QList<QUrl> urls = { filea, trash, computer, home, fileb, filec };
 
     {
         auto check = urls;
@@ -962,25 +953,31 @@ TEST(CanvasProxyModelPrivate, doSort)
 class TCanvastModelFilter : public CanvasModelFilter
 {
 public:
-    TCanvastModelFilter():CanvasModelFilter(nullptr){}
-    bool resetFilter(QList<QUrl> &urls) override {
+    TCanvastModelFilter()
+        : CanvasModelFilter(nullptr) {}
+    bool resetFilter(QList<QUrl> &urls) override
+    {
         urls.clear();
         ct = true;
         return false;
     }
-    bool removeFilter(const QUrl &url) override {
+    bool removeFilter(const QUrl &url) override
+    {
         cd = true;
         return rd;
     }
-    bool insertFilter(const QUrl &url) override {
+    bool insertFilter(const QUrl &url) override
+    {
         cc = true;
         return rc;
     }
-    bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl) override {
+    bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl) override
+    {
         cr = true;
         return rr;
     }
-    bool updateFilter(const QUrl &url) override {
+    bool updateFilter(const QUrl &url) override
+    {
         cu = true;
         return ru;
     }
@@ -995,10 +992,11 @@ public:
     bool ru = false;
 };
 
-class TestCanvasModelFilter: public testing::Test
+class TestCanvasModelFilter : public testing::Test
 {
 public:
-    void SetUp() override {
+    void SetUp() override
+    {
         QSharedPointer<CanvasModelFilter> filter1(new TCanvastModelFilter);
         f1 = dynamic_cast<TCanvastModelFilter *>(filter1.get());
         model.d->modelFilters.append(filter1);
@@ -1018,7 +1016,8 @@ public:
 TEST_F(TestCanvasModelFilter, insertFilter)
 {
     QUrl in = QUrl::fromLocalFile("/home");
-    bool ret = true;;
+    bool ret = true;
+    ;
     {
         ret = model.d->insertFilter(in);
         EXPECT_FALSE(ret);

@@ -5,7 +5,7 @@
 #include "localfilehandler.h"
 #include "localfilehandler_p.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/fileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/mimetype/mimedatabase.h"
@@ -82,7 +82,7 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
 
         return false;
     } else {   // fix bug 189699 When the iPhone creates a file, the gio is created successfully, but there is no file
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info || !info->exists()) {
             d->lastError.setCode(DFMIOErrorCode::DFM_IO_ERROR_NOT_SUPPORTED);
             return false;
@@ -117,7 +117,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
         return false;
     }
 
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(dir);
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(dir);
     fileInfo->refresh();
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, dir);
@@ -178,7 +178,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
         const QUrl &fromParentUrl = UrlRoute::urlParent(url);
         const QUrl &toParentUrl = UrlRoute::urlParent(newUrl);
         if (fromParentUrl == toParentUrl) {
-            AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+            FileInfoPointer toInfo = InfoFactory::create<FileInfo>(newUrl);
             const QString &newName = toInfo->nameOf(NameInfoType::kFileName);
             QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
             if (!oper) {
@@ -207,7 +207,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
         FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
         FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
 
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(newUrl);
         fileInfo->refresh();
         return true;
     }
@@ -227,7 +227,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
         return false;
     }
 
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(newUrl);
     fileInfo->refresh();
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
@@ -260,12 +260,12 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     bool result = false;
 
     for (QUrl &fileUrl : urls) {
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
 
-        AbstractFileInfoPointer fileInfoLink = fileInfo;
+        FileInfoPointer fileInfoLink = fileInfo;
         while (fileInfoLink->isAttributes(OptInfoType::kIsSymLink)) {
             const QString &targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
-            fileInfoLink = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetLink));
+            fileInfoLink = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(targetLink));
             if (!fileInfoLink) {
                 DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
                 return false;
@@ -442,7 +442,7 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
 
 bool LocalFileHandler::setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions)
 {
-    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+    FileInfoPointer info { InfoFactory::create<FileInfo>(url) };
     if (!info)
         return false;
     bool isFile { info->isAttributes(OptInfoType::kIsFile) };
@@ -455,7 +455,7 @@ bool LocalFileHandler::setPermissionsRecursive(const QUrl &url, QFileDevice::Per
         bool succ { false };
         while (enumerator.hasNext()) {
             const QUrl &nextUrl = enumerator.next();
-            info = InfoFactory::create<AbstractFileInfo>(nextUrl);
+            info = InfoFactory::create<FileInfo>(nextUrl);
             isDir = info->isAttributes(OptInfoType::kIsDir);
             if (isDir)
                 succ = setPermissionsRecursive(nextUrl, permissions);
@@ -561,7 +561,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
         abort();
     }
 
-    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+    FileInfoPointer info { InfoFactory::create<FileInfo>(url) };
     if (!info)
         return false;
 
@@ -577,7 +577,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
     bool succ { false };
     while (enumerator->hasNext()) {
         const QUrl &urlNext = enumerator->next();
-        info = InfoFactory::create<AbstractFileInfo>(urlNext);
+        info = InfoFactory::create<FileInfo>(urlNext);
         if (info->isAttributes(OptInfoType::kIsDir))
             succ = deleteFileRecursive(urlNext);
         else
@@ -681,7 +681,7 @@ bool LocalFileHandlerPrivate::isFileManagerSelf(const QString &desktopFile)
 
 bool LocalFileHandlerPrivate::isInvalidSymlinkFile(const QUrl &url)
 {
-    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+    FileInfoPointer info { InfoFactory::create<FileInfo>(url) };
     if (!info)
         return true;
 
@@ -737,14 +737,14 @@ bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
-    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue)) };
+    FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
         return false;
     bool isSymLink { info->isAttributes(OptInfoType::kIsSymLink) };
     while (isSymLink) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
-        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue));
+        info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue));
     }
 
     // blumia: it's not a good idea to check if it is a executable script by just checking
@@ -757,7 +757,7 @@ bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
 
 bool LocalFileHandlerPrivate::isFileExecutable(const QString &path)
 {
-    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path)) };
+    FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path)) };
     if (!info)
         return false;
 
@@ -825,14 +825,14 @@ bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
-    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue)) };
+    FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
         return false;
 
     while (info->isAttributes(OptInfoType::kIsSymLink)) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
-        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue));
+        info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue));
     }
 
     // blumia: about AppImage mime type, please refer to:
@@ -852,14 +852,14 @@ bool LocalFileHandlerPrivate::shouldAskUserToAddExecutableFlag(const QString &pa
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
-    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue)) };
+    FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
         return false;
 
     while (info->isAttributes(OptInfoType::kIsSymLink)) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
-        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue));
+        info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue));
     }
 
     if (mimetype == "application/x-executable"
@@ -912,7 +912,7 @@ void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &temp
 {
     QUrl templateFile = templateUrl;
     if (!templateFile.isValid()) {
-        AbstractFileInfoPointer targetFileInfo { InfoFactory::create<AbstractFileInfo>(url) };
+        FileInfoPointer targetFileInfo { InfoFactory::create<FileInfo>(url) };
         const QString &suffix = targetFileInfo->nameOf(NameInfoType::kSuffix);
 
         const QUrl &trashUrl { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTemplatesPath)) };
@@ -937,7 +937,7 @@ void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &temp
                 qWarning() << "file touch succ, but write template failed";
         }
 
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
         fileInfo->refresh();
     }
 }
@@ -953,7 +953,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
 
     QList<QUrl> transUrls = urls;
     for (const QUrl &url : urls) {
-        AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+        FileInfoPointer info { InfoFactory::create<FileInfo>(url) };
         if (info->nameOf(NameInfoType::kSuffix) == Global::Scheme::kDesktop) {
             ret = launchApp(url.path()) || ret;   //有一个成功就成功
             transUrls.removeOne(url);
@@ -966,7 +966,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
     const QUrl &fileUrl = transUrls.first();
     const QString &filePath = fileUrl.path();
 
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
 
     QString mimeType;
     if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
@@ -1067,7 +1067,7 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
             continue;
         }
 
-        auto fileinfo = InfoFactory::create<AbstractFileInfo>(expectedName);
+        auto fileinfo = InfoFactory::create<FileInfo>(expectedName);
 
         if (!check) {
             bool checkPass = doHiddenFileRemind(fileinfo->nameOf(NameInfoType::kFileName), &check);

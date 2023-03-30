@@ -297,6 +297,8 @@ QUrl UrlRoute::pathToReal(const QString &path)
         //同层级所有的scheme
         auto &&schemeList = kSchemeRealTree.values(treeLevel);
         for (auto val : schemeList) {
+            if (val == dfmbase::Global::Scheme::kAsyncFile)
+                continue;
             // 包含映射的根路径，判断是否转换为当前scheme
             QString rootPath = kSchemeInfos[val].rootPath();
             if (path.contains(rootPath)

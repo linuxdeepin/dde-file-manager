@@ -79,7 +79,7 @@ QUrl SmbShareIterator::fileUrl() const
     return {};
 }
 
-const AbstractFileInfoPointer SmbShareIterator::fileInfo() const
+const FileInfoPointer SmbShareIterator::fileInfo() const
 {
     return nullptr;
 }

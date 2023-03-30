@@ -695,7 +695,7 @@ public:
         obj.d->canvasModel->setSourceModel(obj.d->sourceModel);
         {
             obj.d->sourceModel->d->fileList.append(fakeFile);
-            fakeInfo.reset(new LocalFileInfo(fakeFile));
+            fakeInfo.reset(new SyncFileInfo(fakeFile));
             obj.d->sourceModel->d->fileMap.insert(fakeFile, fakeInfo);
 
             obj.d->canvasModel->d->fileList.append(fakeFile);
@@ -716,7 +716,7 @@ public:
     CanvasManager obj;
     stub_ext::StubExt stub;
     QUrl fakeFile = QUrl::fromLocalFile("/home/test222");
-    DFMLocalFileInfoPointer fakeInfo;
+    DFMSyncFileInfoPointer fakeInfo;
 };
 
 TEST_F(TestCanvasMrgFile, onFileRenamed)

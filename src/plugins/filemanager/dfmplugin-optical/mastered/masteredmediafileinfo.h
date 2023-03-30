@@ -7,13 +7,13 @@
 
 #include "dfmplugin_optical_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/proxyfileinfo.h"
 
 namespace dfmplugin_optical {
 class MasteredMediaFileInfoPrivate;
-class MasteredMediaFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class MasteredMediaFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
-    MasteredMediaFileInfoPrivate *d;
+    QSharedPointer<MasteredMediaFileInfoPrivate> d { nullptr };
 
 public:
     explicit MasteredMediaFileInfo(const QUrl &url);
