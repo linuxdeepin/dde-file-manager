@@ -10,6 +10,7 @@
 
 #include <DFileChooserEdit>
 #include <DLabel>
+#include <DFileDialog>
 
 #include <QComboBox>
 
@@ -111,6 +112,9 @@ private:
     QStringList btnList {};
 
     QString validationResults;
+
+    QGridLayout *funLayout { nullptr };
+    DTK_WIDGET_NAMESPACE::DFileDialog *fileDialog { nullptr };
 };
 }
 #endif   // VAULTRETRIEVEPASSWORD_H
