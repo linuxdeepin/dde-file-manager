@@ -34,6 +34,8 @@ bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, Q
     Q_ASSERT(painter);
     Q_ASSERT(paintArea);
 
+    painter->setRenderHints(QPainter::SmoothPixmapTransform);
+
     if (role != kItemIconRole || !url.isValid())
         return false;
 
