@@ -29,7 +29,7 @@ public slots:
     void removeData(const QUrl &url);
     void replaceData(const QUrl &oldUrl, const QUrl &newUrl);
     void updateData(const QUrl &url);
-    void onFileInfoRefreshFinished(const QUrl &url, const bool isLinkOrg);
+    void dataUpdated(const QUrl &url, const bool isLinkOrg);
 
 public:
     QDir::Filters filters = QDir::NoFilter;

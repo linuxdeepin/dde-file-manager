@@ -175,8 +175,14 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
     emit q->dataChanged(index, index);
 }
 
-void FileInfoModelPrivate::onFileInfoRefreshFinished(const QUrl &url, const bool isLinkOrg)
+void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
 {
+    {
+        QReadLocker lk(&lock);
+        if (Q_UNLIKELY(!fileMap.contains(url)))
+            return;
+    }
+
     const QModelIndex &index = q->index(url);
     if (Q_UNLIKELY(!index.isValid()))
         return;
@@ -187,7 +193,7 @@ void FileInfoModelPrivate::onFileInfoRefreshFinished(const QUrl &url, const bool
             info->customData(Global::ItemRoles::kItemFileRefreshIcon);
     }
 
-    //    emit q->dataChanged(index, index);
+    emit q->dataChanged(index, index);
 }
 
 FileInfoModel::FileInfoModel(QObject *parent)
@@ -203,7 +209,7 @@ FileInfoModel::FileInfoModel(QObject *parent)
     connect(d->fileProvider, &FileProvider::fileRemoved, d, &FileInfoModelPrivate::removeData);
     connect(d->fileProvider, &FileProvider::fileUpdated, d, &FileInfoModelPrivate::updateData);
     connect(d->fileProvider, &FileProvider::fileRenamed, d, &FileInfoModelPrivate::replaceData);
-    connect(d->fileProvider, &FileProvider::fileInfoRefreshFinished, d, &FileInfoModelPrivate::onFileInfoRefreshFinished);
+    connect(d->fileProvider, &FileProvider::fileInfoUpdated, d, &FileInfoModelPrivate::dataUpdated);
 }
 
 FileInfoModel::~FileInfoModel()

@@ -34,7 +34,7 @@ signals:
     void fileInserted(const QUrl &url);
     void fileRenamed(const QUrl &oldurl, const QUrl &newurl);
     void fileUpdated(const QUrl &url);
-    void fileInfoRefreshFinished(const QUrl &url, const bool isLinkOrg);
+    void fileInfoUpdated(const QUrl &url, const bool isLinkOrg);
 protected slots:
     void traversalFinished();
     void reset(QList<QUrl> children);
@@ -43,7 +43,7 @@ protected slots:
     void rename(const QUrl &oldUrl, const QUrl &newUrl);
     void update(const QUrl &url);
     void preupdateData(const QUrl &url);
-    void onFileInfoRefreshFinished(const QUrl &url, const bool isLinkOrg);
+    void onFileInfoUpdated(const QUrl &url, const bool isLinkOrg);
 
 protected:
     QUrl rootUrl;
