@@ -5,11 +5,11 @@
 #include "private/oemmenu_p.h"
 #include "oemmenu.h"
 
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/mimetype/dmimedatabase.h"
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <QDir>
 #include <QFileInfo>

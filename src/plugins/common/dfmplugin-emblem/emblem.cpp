@@ -5,7 +5,7 @@
 #include "emblem.h"
 #include "events/emblemeventrecevier.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 DPEMBLEM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

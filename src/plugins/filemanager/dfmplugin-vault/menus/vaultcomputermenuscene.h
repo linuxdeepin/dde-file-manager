@@ -7,8 +7,8 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/abstractscenecreator.h"
+#include <dfm-base/interfaces/abstractmenuscene.h>
+#include <dfm-base/interfaces/abstractscenecreator.h>
 
 namespace dfmplugin_vault {
 

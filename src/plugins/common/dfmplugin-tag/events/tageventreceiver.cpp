@@ -5,10 +5,10 @@
 #include "tageventreceiver.h"
 #include "utils/tagmanager.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 

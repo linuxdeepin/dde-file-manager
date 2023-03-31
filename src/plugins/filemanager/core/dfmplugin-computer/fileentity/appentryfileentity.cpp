@@ -6,7 +6,7 @@
 #include "utils/computerutils.h"
 #include "utils/computerdatastruct.h"
 
-#include "dfm-base/utils/desktopfile.h"
+#include <dfm-base/utils/desktopfile.h>
 
 #include <QFile>
 

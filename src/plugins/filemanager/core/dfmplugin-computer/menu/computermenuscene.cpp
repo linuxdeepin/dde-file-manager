@@ -7,10 +7,10 @@
 #include "utils/computerdatastruct.h"
 #include "controller/computercontroller.h"
 
-#include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/file/entry/entryfileinfo.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/dfm_menu_defines.h>
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 

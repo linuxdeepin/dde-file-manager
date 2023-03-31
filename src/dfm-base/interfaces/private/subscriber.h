@@ -5,7 +5,7 @@
 #ifndef SUBSCRIBER_H
 #define SUBSCRIBER_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 class QString;
 namespace dfmbase {

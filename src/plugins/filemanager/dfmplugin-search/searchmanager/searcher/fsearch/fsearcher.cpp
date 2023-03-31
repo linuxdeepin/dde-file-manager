@@ -6,7 +6,7 @@
 #include "fsearchhandler.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/base/urlroute.h"
+#include <dfm-base/base/urlroute.h>
 
 #include <QDebug>
 

@@ -6,7 +6,7 @@
 #define TEXTPREVIEWPLUGIN_H
 
 #include "preview_plugin_global.h"
-#include "dfm-base/interfaces/abstractfilepreviewplugin.h"
+#include <dfm-base/interfaces/abstractfilepreviewplugin.h>
 
 #include "textpreview.h"
 

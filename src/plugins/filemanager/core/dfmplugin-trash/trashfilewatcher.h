@@ -6,7 +6,7 @@
 #define TRASHFILEWATCHER_H
 
 #include "dfmplugin_trash_global.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 namespace dfmplugin_trash {
 

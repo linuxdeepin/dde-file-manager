@@ -6,7 +6,7 @@
 #define IMAGEPREVIEWPLUGIN_H
 
 #include "preview_plugin_global.h"
-#include "dfm-base/interfaces/abstractfilepreviewplugin.h"
+#include <dfm-base/interfaces/abstractfilepreviewplugin.h>
 #include "imagepreview.h"
 
 namespace plugin_filepreview {

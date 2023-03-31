@@ -6,10 +6,10 @@
 #include "private/tab_p.h"
 #include "utils/filedatamanager.h"
 
-#include "dfm-base/interfaces/abstractbaseview.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/systempathutil.h"
+#include <dfm-base/interfaces/abstractbaseview.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/systempathutil.h>
 
 #include <dfm-framework/event/event.h>
 

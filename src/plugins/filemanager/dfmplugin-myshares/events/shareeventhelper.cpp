@@ -6,7 +6,7 @@
 #include "shareeventscaller.h"
 #include "utils/shareutils.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QDebug>
 

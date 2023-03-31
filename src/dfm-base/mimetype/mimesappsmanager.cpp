@@ -4,10 +4,10 @@
 
 #include "mimesappsmanager.h"
 
-#include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/mimetype/dmimedatabase.h"
-#include "dfm-base/mimetype/mimetypedisplaymanager.h"
-#include "dfm-base/base/standardpaths.h"
+#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+#include <dfm-base/base/standardpaths.h>
 
 #include <QDir>
 #include <QSettings>

@@ -7,9 +7,9 @@
 #include "events/coreeventscaller.h"
 #include "utils/corehelper.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include <QPointer>
 #include <QWindow>

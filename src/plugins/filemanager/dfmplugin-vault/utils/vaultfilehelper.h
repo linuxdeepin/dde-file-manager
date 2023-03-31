@@ -7,10 +7,10 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QObject>
 #include <QFileDevice>

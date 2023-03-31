@@ -5,7 +5,7 @@
 #ifndef PDFPREVIEWPLUGIN_H
 #define PDFPREVIEWPLUGIN_H
 #include "preview_plugin_global.h"
-#include "dfm-base/interfaces/abstractfilepreviewplugin.h"
+#include <dfm-base/interfaces/abstractfilepreviewplugin.h>
 
 #include "pdfpreview.h"
 

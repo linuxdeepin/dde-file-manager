@@ -4,11 +4,11 @@
 
 #include "private/fileinfo_p.h"
 #include "fileinfo.h"
-#include "dfm-base/utils/chinese2pinyin.h"
-#include "dfm-base/mimetype/mimetypedisplaymanager.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/utils/chinese2pinyin.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 

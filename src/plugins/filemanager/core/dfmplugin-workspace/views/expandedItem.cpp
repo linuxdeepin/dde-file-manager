@@ -11,7 +11,7 @@
 #include "models/fileviewmodel.h"
 #include "events/workspaceeventsequence.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QPainter>
 #include <QDebug>

@@ -5,7 +5,7 @@
 #ifndef Splitter_H
 #define Splitter_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QSplitter>
 #include <QSplitterHandle>

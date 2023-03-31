@@ -12,7 +12,7 @@
 #include "backgrounddefault.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#include "dfm-base/dfm_desktop_defines.h"
+#include <dfm-base/dfm_desktop_defines.h>
 
 #include <QImageReader>
 #include <QtConcurrent>

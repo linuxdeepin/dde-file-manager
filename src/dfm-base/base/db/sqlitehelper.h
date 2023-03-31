@@ -5,8 +5,8 @@
 #ifndef SQLITEHELPER_H
 #define SQLITEHELPER_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/db/sqliteconnectionpool.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/base/db/sqliteconnectionpool.h>
 
 #include <QObject>
 #include <QMetaObject>

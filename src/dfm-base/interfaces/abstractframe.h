@@ -5,7 +5,7 @@
 #ifndef ABSTRACTFRAME_H
 #define ABSTRACTFRAME_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QFrame>
 #include <QUrl>

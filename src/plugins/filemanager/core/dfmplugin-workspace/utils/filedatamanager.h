@@ -7,9 +7,9 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/utils/traversaldirthread.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/traversaldirthread.h>
+#include <dfm-base/base/application/application.h>
 
 #include <QObject>
 

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include "pdfpreview.h"
 #include "pdfwidget.h"

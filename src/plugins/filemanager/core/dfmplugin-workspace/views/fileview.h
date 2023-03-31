@@ -6,9 +6,9 @@
 #define FILEVIEW_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/interfaces/abstractbaseview.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/interfaces/abstractbaseview.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/application/application.h>
 
 #include <DListView>
 #include <QDir>

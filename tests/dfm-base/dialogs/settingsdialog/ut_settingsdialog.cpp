@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/dialogs/settingsdialog/settingdialog.h"
+#include <dfm-base/dialogs/settingsdialog/settingdialog.h>
 
 #include <QSet>
 #include <QFile>

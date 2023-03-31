@@ -11,7 +11,7 @@
 #include "views/completerviewdelegate.h"
 #include "models/completerviewmodel.h"
 
-#include "dfm-base/base/urlroute.h"
+#include <dfm-base/base/urlroute.h>
 
 #include <DSpinner>
 #include <DAnchors>

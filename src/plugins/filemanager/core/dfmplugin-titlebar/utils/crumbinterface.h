@@ -7,7 +7,7 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include "dfm-base/utils/traversaldirthread.h"
+#include <dfm-base/utils/traversaldirthread.h>
 
 #include <QObject>
 #include <QPointer>

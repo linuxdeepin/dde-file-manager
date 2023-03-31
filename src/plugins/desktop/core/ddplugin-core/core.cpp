@@ -6,17 +6,17 @@
 #include "frame/windowframe.h"
 #include "screen/screenproxyqt.h"
 
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
 
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/file/local/asyncfileinfo.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/file/local/localfilewatcher.h"
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
+#include <dfm-base/file/local/localdiriterator.h>
+#include <dfm-base/file/local/localfilewatcher.h>
 
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE

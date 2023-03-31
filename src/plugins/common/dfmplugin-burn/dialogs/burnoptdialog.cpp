@@ -6,8 +6,8 @@
 #include "utils/burnjobmanager.h"
 #include "utils/burnhelper.h"
 
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-burn/dopticaldiscmanager.h>
 #include <dfm-burn/dopticaldiscinfo.h>

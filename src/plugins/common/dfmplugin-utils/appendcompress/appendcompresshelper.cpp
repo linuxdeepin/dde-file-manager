@@ -4,9 +4,9 @@
 
 #include "appendcompresshelper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/event/event.h>
 #include <QProcess>

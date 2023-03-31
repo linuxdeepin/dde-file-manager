@@ -7,8 +7,8 @@
 
 #include "fileoperations/fileoperationutils/abstractworker.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/utils/threadcontainer.hpp"
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/threadcontainer.hpp>
 
 #include <QTime>
 

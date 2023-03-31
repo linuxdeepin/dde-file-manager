@@ -5,12 +5,12 @@
 #ifndef ASYNCFILEINFO_P_H
 #define ASYNCFILEINFO_P_H
 
-#include "dfm-base/file/local/asyncfileinfo.h"
+#include <dfm-base/file/local/asyncfileinfo.h>
 #include "infodatafuture.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/thumbnailprovider.h"
-#include "dfm-base/utils/fileinfohelper.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/thumbnailprovider.h>
+#include <dfm-base/utils/fileinfohelper.h>
 
 #include <dfm-io/dfilefuture.h>
 

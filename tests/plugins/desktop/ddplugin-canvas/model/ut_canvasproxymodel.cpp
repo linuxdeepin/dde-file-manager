@@ -6,8 +6,8 @@
 
 #include "stubext.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <gtest/gtest.h>
 

@@ -6,8 +6,8 @@
 #include "events/fileprevieweventreceiver.h"
 #include "utils/previewhelper.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <QSurfaceFormat>
 

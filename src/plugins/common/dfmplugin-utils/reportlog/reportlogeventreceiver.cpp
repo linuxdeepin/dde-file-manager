@@ -6,8 +6,8 @@
 #include "rlog/rlog.h"
 #include "rlog/datas/smbreportdata.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/devicemanager.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/devicemanager.h>
 
 #include <dfm-framework/dpf.h>
 

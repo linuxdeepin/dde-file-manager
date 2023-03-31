@@ -5,9 +5,9 @@
 #include "trashpropertydialog.h"
 #include "utils/trashcorehelper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <DHorizontalLine>
 

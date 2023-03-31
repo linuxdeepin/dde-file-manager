@@ -6,8 +6,8 @@
 #include "models/generalmodelfilter.h"
 #include "config/configpresenter.h"
 
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/base/schemefactory.h>
 
 using namespace ddplugin_organizer;
 DFMBASE_USE_NAMESPACE

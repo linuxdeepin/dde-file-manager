@@ -5,8 +5,8 @@
 #ifndef LOCALDIRITERATOR_H
 #define LOCALDIRITERATOR_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <dfm-io/denumerator.h>
 

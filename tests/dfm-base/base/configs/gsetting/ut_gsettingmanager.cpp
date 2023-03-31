@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/base/configs/gsetting/gsettingmanager.h"
-#include "dfm-base/base/configs/gsetting/private/gsettingmanager_p.h"
+#include <dfm-base/base/configs/gsetting/gsettingmanager.h>
+#include <dfm-base/base/configs/gsetting/private/gsettingmanager_p.h>
 
 #include <QGSettings>
 

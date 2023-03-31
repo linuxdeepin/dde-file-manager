@@ -9,14 +9,14 @@
 #include "utils/burnjobmanager.h"
 #include "events/burneventcaller.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-framework/event/event.h>
 

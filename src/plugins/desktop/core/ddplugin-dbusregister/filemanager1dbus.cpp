@@ -4,9 +4,9 @@
 
 #include "filemanager1dbus.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <dfm-framework/dpf.h>
 

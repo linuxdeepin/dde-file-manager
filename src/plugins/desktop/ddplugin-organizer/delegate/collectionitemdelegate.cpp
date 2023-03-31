@@ -9,14 +9,14 @@
 #include "models/collectionmodel.h"
 #include "utils/fileoperator.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 

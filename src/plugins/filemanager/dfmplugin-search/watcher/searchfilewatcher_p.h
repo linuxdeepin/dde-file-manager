@@ -7,7 +7,7 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
+#include <dfm-base/interfaces/private/abstractfilewatcher_p.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {

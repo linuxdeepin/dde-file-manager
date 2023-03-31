@@ -9,11 +9,11 @@
 #include "sidebarview.h"
 #include "events/sidebareventcaller.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/base/device/deviceutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>

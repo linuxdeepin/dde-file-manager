@@ -9,12 +9,12 @@
 #include "beans/oldtagproperty.h"
 #include "beans/sqlitemaster.h"
 
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/db/sqliteconnectionpool.h"
-#include "dfm-base/base/db/sqlitehandle.h"
-#include "dfm-base/base/db/sqlitehelper.h"
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/db/sqliteconnectionpool.h>
+#include <dfm-base/base/db/sqlitehandle.h>
+#include <dfm-base/base/db/sqlitehelper.h>
 
 #include <dfm-io/dfmio_utils.h>
 

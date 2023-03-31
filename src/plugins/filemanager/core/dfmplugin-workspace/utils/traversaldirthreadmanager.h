@@ -6,9 +6,9 @@
 #define TRAVERSALDIRTHREADMANAGER_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/utils/traversaldirthread.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/interfaces/abstractdiriterator.h>
+#include <dfm-base/utils/traversaldirthread.h>
 
 #include <QThread>
 #include <QUrl>

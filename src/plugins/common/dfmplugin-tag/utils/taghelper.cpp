@@ -6,7 +6,7 @@
 #include "tagmanager.h"
 #include "widgets/tageditor.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include <QMap>
 #include <QVector>

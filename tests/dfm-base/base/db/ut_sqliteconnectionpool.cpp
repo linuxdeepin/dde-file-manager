@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/base/db/sqliteconnectionpool.h"
-#include "dfm-base/base/db/private/sqliteconnectionpool_p.h"
+#include <dfm-base/base/db/sqliteconnectionpool.h>
+#include <dfm-base/base/db/private/sqliteconnectionpool_p.h>
 
 #include <QCryptographicHash>
 #include <QtConcurrent>

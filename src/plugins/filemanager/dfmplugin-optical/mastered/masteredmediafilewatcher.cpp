@@ -7,11 +7,11 @@
 #include "utils/opticalhelper.h"
 #include "utils/opticalsignalmanager.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/universalutils.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_optical;

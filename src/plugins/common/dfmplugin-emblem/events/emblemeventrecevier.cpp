@@ -5,7 +5,7 @@
 #include "emblemeventrecevier.h"
 #include "utils/emblemmanager.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/event/event.h>
 

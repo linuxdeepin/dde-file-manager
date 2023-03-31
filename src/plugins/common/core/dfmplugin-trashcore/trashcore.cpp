@@ -8,8 +8,8 @@
 #include "events/trashcoreeventreceiver.h"
 #include "events/trashcoreeventsender.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)

@@ -7,8 +7,8 @@
 
 #include "dfmplugin_bookmark_global.h"
 
-#include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/abstractscenecreator.h"
+#include <dfm-base/interfaces/abstractmenuscene.h>
+#include <dfm-base/interfaces/abstractscenecreator.h>
 
 namespace dfmplugin_bookmark {
 

@@ -7,7 +7,7 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "dfm-base/utils/elidetextlayout.h"
+#include <dfm-base/utils/elidetextlayout.h>
 
 #include <QModelIndex>
 #include <QSize>

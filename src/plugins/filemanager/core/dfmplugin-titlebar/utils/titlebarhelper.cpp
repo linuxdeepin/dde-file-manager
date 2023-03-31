@@ -8,16 +8,16 @@
 #include "dialogs/diskpasswordchangingdialog.h"
 #include "views/titlebarwidget.h"
 
-#include "dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/finallyutil.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 

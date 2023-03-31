@@ -7,7 +7,7 @@
 
 #include "menuscene/sharemenuscene.h"
 
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 namespace dfmplugin_menu {
 DFMBASE_USE_NAMESPACE

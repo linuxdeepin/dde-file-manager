@@ -8,9 +8,9 @@
 #include "utils/pathmanager.h"
 #include "private/vaultfileinfo_p.h"
 
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-io/dfmio_utils.h>
 

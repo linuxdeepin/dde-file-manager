@@ -4,12 +4,12 @@
 
 #include "private/filemanagerwindowsmanager_p.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/finallyutil.h"
-#include "dfm-base/shortcut/shortcut.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/shortcut/shortcut.h>
 
 #include <QDebug>
 #include <QEvent>

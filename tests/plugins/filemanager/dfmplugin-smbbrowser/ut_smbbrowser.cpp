@@ -12,10 +12,10 @@
 #include "stubmenueventinterface.h"
 #include "plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.h"
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.cpp"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.cpp>
 
 #include <dfm-framework/event/eventchannel.h>
 

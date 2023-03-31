@@ -8,8 +8,8 @@
 #include "utils/searchhistroymanager.h"
 #include "utils/titlebarhelper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/private/syncfileinfo_p.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/private/syncfileinfo_p.h>
 
 #include "stubext.h"
 

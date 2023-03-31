@@ -6,7 +6,7 @@
 #include "private/iconitemeditor_p.h"
 #include "utils/itemdelegatehelper.h"
 
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include <DTextEdit>
 #include <QMenu>

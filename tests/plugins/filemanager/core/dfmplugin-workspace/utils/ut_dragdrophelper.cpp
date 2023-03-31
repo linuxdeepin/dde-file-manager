@@ -4,7 +4,7 @@
 
 #include "stubext.h"
 #include "utils/dragdrophelper.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include <gtest/gtest.h>
 

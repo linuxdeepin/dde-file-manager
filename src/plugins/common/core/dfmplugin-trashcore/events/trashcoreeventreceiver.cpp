@@ -4,10 +4,10 @@
 
 #include "trashcoreeventreceiver.h"
 #include "utils/trashcorehelper.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-framework/dpf.h>
 

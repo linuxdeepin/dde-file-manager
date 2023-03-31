@@ -5,7 +5,7 @@
 #ifndef CLIPBOARD_H
 #define CLIPBOARD_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QObject>
 class QMimeData;

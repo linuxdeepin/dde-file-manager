@@ -4,9 +4,9 @@
 
 #include "discstatemanager.h"
 
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <QTimer>
 #include <QDebug>

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sqliteconnectionpool.h"
-#include "dfm-base/base/db/private/sqliteconnectionpool_p.h"
+#include <dfm-base/base/db/private/sqliteconnectionpool_p.h>
 
 #include <QDebug>
 #include <QString>

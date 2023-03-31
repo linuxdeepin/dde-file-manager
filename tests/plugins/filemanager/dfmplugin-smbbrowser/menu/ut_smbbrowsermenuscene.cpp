@@ -7,9 +7,9 @@
 #include "plugins/filemanager/dfmplugin-smbbrowser/private/smbbrowsermenuscene_p.h"
 #include "plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/dpf.h>
 

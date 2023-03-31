@@ -10,7 +10,7 @@
 #include "interface/fileinfomodelshell.h"
 #include "config/configpresenter.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
-#include "dfm-base/dfm_desktop_defines.h"
+#include <dfm-base/dfm_desktop_defines.h>
 #include "utils/fileoperator.h"
 
 #include <QDebug>

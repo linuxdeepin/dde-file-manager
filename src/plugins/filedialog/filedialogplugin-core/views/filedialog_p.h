@@ -7,7 +7,7 @@
 
 #include "filedialogplugin_core_global.h"
 #include "filedialogstatusbar.h"
-#include "dfm-base/interfaces/abstractframe.h"
+#include <dfm-base/interfaces/abstractframe.h>
 
 #include <QObject>
 #include <QEventLoop>

@@ -7,8 +7,8 @@
 
 #include "dfmplugin_optical_global.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
-#include "dfm-base/utils/filestatisticsjob.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/utils/filestatisticsjob.h>
 
 #include <QWidget>
 #include <QHBoxLayout>

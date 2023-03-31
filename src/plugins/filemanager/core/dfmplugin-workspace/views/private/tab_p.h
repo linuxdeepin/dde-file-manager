@@ -5,7 +5,7 @@
 #ifndef TABPRIVATE_H
 #define TABPRIVATE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "dfmplugin_workspace_global.h"
 
 #include <QVariant>

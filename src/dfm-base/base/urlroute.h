@@ -5,7 +5,7 @@
 #ifndef URLROUTE_H
 #define URLROUTE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QString>
 #include <QIcon>

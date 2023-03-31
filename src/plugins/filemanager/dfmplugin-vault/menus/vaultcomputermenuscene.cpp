@@ -6,7 +6,7 @@
 #include "vaultcomputermenuscene_p.h"
 #include "utils/vaulthelper.h"
 
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/dfm_menu_defines.h>
 #include "dfm-framework/dpf.h"
 
 #include <QMenu>

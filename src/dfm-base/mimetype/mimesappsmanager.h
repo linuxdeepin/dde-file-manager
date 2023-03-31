@@ -5,10 +5,10 @@
 #ifndef MIMESAPPSMANAGER_H
 #define MIMESAPPSMANAGER_H
 
-#include "dfm-base/utils/desktopfile.h"
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/utils/desktopfile.h>
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QObject>
 #include <QSet>

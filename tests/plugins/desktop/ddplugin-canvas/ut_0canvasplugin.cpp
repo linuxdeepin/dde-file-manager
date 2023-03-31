@@ -5,16 +5,16 @@
 #include "canvasplugin.h"
 #include "canvasmanager.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
 
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/file/local/localfilewatcher.h"
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
+#include <dfm-base/file/local/localdiriterator.h>
+#include <dfm-base/file/local/localfilewatcher.h>
 
 #include "stubext.h"
 

@@ -8,9 +8,9 @@
 #include "dfmplugin_workspace_global.h"
 #include "utils/traversaldirthreadmanager.h"
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/utils/traversaldirthread.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/utils/traversaldirthread.h>
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <QReadWriteLock>
 #include <QQueue>

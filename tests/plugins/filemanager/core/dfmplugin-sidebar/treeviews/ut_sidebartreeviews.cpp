@@ -7,8 +7,8 @@
 #include "plugins/filemanager/core/dfmplugin-sidebar/treemodels/sidebarmodel.h"
 #include "plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebaritem.h"
 
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <gtest/gtest.h>
 

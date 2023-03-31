@@ -7,12 +7,12 @@
 #include "plugins/common/core/dfmplugin-bookmark/controller/defaultitemmanager.h"
 #include "plugins/common/core/dfmplugin-bookmark/utils/bookmarkhelper.h"
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/event/event.h>
 

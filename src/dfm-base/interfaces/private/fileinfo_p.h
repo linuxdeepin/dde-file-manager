@@ -5,8 +5,8 @@
 #ifndef FILEINFO_P_H
 #define FILEINFO_P_H
 
-#include "dfm-base/utils/threadcontainer.hpp"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/utils/threadcontainer.hpp>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QPointer>
 

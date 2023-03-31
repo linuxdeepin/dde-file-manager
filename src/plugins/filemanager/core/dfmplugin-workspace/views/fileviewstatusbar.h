@@ -6,8 +6,8 @@
 #define FILEVIEWSTATUSBAR_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/widgets/dfmstatusbar/basicstatusbar.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/widgets/dfmstatusbar/basicstatusbar.h>
 
 #include <dpicturesequenceview.h>
 #include <dslider.h>

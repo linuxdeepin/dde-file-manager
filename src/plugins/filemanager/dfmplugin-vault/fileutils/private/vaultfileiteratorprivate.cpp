@@ -5,8 +5,8 @@
 #include "vaultfileiteratorprivate.h"
 #include "fileutils/vaultfileiterator.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-io/denumerator.h>
 

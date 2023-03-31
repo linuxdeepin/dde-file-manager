@@ -6,11 +6,11 @@
 
 #include "plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.h"
 #include "plugins/filemanager/core/dfmplugin-computer/utils/computerutils.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/base/configs/configsynchronizer.h"
+#include <dfm-base/file/entry/entryfileinfo.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
 
 #include <dfm-framework/event/event.h>
 

@@ -7,9 +7,9 @@
 #include "dbus/filedialog_adaptor.h"
 #include "utils/appexitcontroller.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/mimetype/dmimedatabase.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <dfm-framework/event/event.h>
 

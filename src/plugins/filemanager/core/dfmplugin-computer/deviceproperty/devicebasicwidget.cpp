@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "devicebasicwidget.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

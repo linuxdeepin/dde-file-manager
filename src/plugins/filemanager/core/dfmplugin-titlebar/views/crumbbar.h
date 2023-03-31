@@ -7,9 +7,9 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QFrame>
 #include <QUrl>

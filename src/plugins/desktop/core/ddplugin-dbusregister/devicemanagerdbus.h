@@ -5,7 +5,7 @@
 #ifndef DEVICEMANAGERDBUS_H
 #define DEVICEMANAGERDBUS_H
 
-#include "dfm-base/base/device/devicemanager.h"
+#include <dfm-base/base/device/devicemanager.h>
 
 #include <QDBusVariant>
 #include <QVariantMap>

@@ -9,10 +9,10 @@
 #include "events/workspaceeventcaller.h"
 #include "utils/filedatamanager.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
 
 #include <dfm-framework/dpf.h>
 

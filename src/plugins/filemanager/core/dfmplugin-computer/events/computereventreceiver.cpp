@@ -8,10 +8,10 @@
 #include "utils/computerutils.h"
 #include "fileentity/protocolentryfileentity.h"
 
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QDebug>
 

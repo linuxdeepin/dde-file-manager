@@ -6,7 +6,7 @@
 #define VAULTFILEINFO_H
 
 #include "dfmplugin_vault_global.h"
-#include "dfm-base/interfaces/proxyfileinfo.h"
+#include <dfm-base/interfaces/proxyfileinfo.h>
 
 namespace dfmplugin_vault {
 class VaultFileInfoPrivate;

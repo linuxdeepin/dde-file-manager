@@ -5,7 +5,7 @@
 #ifndef FILESTATISTICSJOB_H
 #define FILESTATISTICSJOB_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "fileutils.h"
 
 #include <QThread>

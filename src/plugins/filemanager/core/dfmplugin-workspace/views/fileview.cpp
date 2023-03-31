@@ -22,15 +22,15 @@
 #include "utils/fileoperatorhelper.h"
 #include "events/workspaceeventsequence.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/networkutils.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #    include <DGuiApplicationHelper>

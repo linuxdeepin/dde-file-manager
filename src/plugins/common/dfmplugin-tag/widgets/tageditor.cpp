@@ -6,7 +6,7 @@
 #include "utils/tagmanager.h"
 #include "utils/taghelper.h"
 
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/utils/windowutils.h>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_tag;

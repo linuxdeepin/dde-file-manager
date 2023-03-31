@@ -6,12 +6,12 @@
 #include "trashhelper.h"
 #include "events/trasheventcaller.h"
 
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/clipboard.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/clipboard.h>
 
 #include <dfm-framework/event/event.h>
 #include <dfm-io/dfmio_utils.h>

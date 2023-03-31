@@ -7,7 +7,7 @@
 
 #include "dfmplugin_recent_global.h"
 
-#include "dfm-base/interfaces/proxyfileinfo.h"
+#include <dfm-base/interfaces/proxyfileinfo.h>
 
 namespace dfmplugin_recent {
 class RecentFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo

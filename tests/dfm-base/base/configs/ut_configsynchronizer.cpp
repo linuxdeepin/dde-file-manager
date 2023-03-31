@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/base/configs/configsyncdefs.h"
-#include "dfm-base/base/configs/configsynchronizer.h"
-#include "dfm-base/base/configs/private/configsynchronizer_p.h"
-#include "dfm-base/base/configs/settingbackend.h"
+#include <dfm-base/base/configs/configsyncdefs.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
+#include <dfm-base/base/configs/private/configsynchronizer_p.h>
+#include <dfm-base/base/configs/settingbackend.h>
 
 #include <gtest/gtest.h>
 

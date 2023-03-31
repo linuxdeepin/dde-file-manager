@@ -7,21 +7,21 @@
 #include "utils/computerutils.h"
 #include "fileentity/appentryfileentity.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/configs/configsynchronizer.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-framework/event/event.h>
 

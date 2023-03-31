@@ -5,8 +5,8 @@
 #ifndef BASICSTATUSBAR_P_H
 #define BASICSTATUSBAR_P_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/utils/filestatisticsjob.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/utils/filestatisticsjob.h>
 
 #include <DAnchors>
 

@@ -5,7 +5,7 @@
 #include "filepreviewfactory.h"
 #include "previewpluginloader.h"
 #include "private/pluginloader_p.h"
-#include "dfm-base/interfaces/abstractfilepreviewplugin.h"
+#include <dfm-base/interfaces/abstractfilepreviewplugin.h>
 
 #include <QStringList>
 

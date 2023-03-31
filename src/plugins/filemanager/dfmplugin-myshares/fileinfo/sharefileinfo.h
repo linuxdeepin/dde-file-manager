@@ -6,7 +6,7 @@
 #define SHAREFILEINFO_H
 
 #include "dfmplugin_myshares_global.h"
-#include "dfm-base/interfaces/proxyfileinfo.h"
+#include <dfm-base/interfaces/proxyfileinfo.h>
 
 namespace dfmplugin_myshares {
 class ShareFileInfoPrivate;

@@ -11,7 +11,7 @@
 #include "views/crumbbar.h"
 #include "views/optionbuttonbox.h"
 
-#include "dfm-base/interfaces/abstractframe.h"
+#include <dfm-base/interfaces/abstractframe.h>
 
 #include <QHBoxLayout>
 

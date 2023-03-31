@@ -5,8 +5,8 @@
 #ifndef DMIMEDATABASE_H
 #define DMIMEDATABASE_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QMimeDatabase>
 

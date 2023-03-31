@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileviewstatusbar.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include <DAnchors>
 

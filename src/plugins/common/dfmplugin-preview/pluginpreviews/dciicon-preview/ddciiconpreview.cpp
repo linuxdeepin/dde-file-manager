@@ -4,11 +4,11 @@
 
 #include "ddciiconpreview.h"
 
-#include "dfm-base/interfaces/abstractbasepreview.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/mimetype/dmimedatabase.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/interfaces/abstractbasepreview.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dtkgui_config.h>
 

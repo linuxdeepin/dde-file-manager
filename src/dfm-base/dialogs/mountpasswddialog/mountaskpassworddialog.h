@@ -5,7 +5,7 @@
 #ifndef MOUNTASKPASSWORDDIALOG_H
 #define MOUNTASKPASSWORDDIALOG_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QDialog>
 #include <QLabel>

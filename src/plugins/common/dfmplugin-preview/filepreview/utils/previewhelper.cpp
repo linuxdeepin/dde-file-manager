@@ -5,9 +5,9 @@
 #include "dfmplugin_filepreview_global.h"
 #include "previewhelper.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/base/configs/configsynchronizer.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
+#include <dfm-base/base/application/application.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_filepreview;

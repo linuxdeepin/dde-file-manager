@@ -6,7 +6,7 @@
 #define FILEPREVIEWFACTORY_H
 
 #include "dfmplugin_filepreview_global.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
+#include <dfm-base/interfaces/abstractbasepreview.h>
 
 #include <QString>
 

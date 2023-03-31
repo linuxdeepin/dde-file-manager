@@ -5,8 +5,8 @@
 #ifndef SETTINGBACKEND_H
 #define SETTINGBACKEND_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/base/application/application.h>
 
 #include <dsettingsbackend.h>
 

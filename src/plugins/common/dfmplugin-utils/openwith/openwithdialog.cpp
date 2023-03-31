@@ -5,12 +5,12 @@
 #include "openwithdialog.h"
 #include "dfileservices.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/mimetype/mimesappsmanager.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/properties.h"
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/mimetype/mimesappsmanager.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/properties.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-framework/dpf.h>
 

@@ -5,12 +5,12 @@
 #include "computereventcaller.h"
 #include "utils/computerutils.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 

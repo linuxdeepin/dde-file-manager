@@ -6,7 +6,7 @@
 
 #include "plugins/filemanager/dfmplugin-myshares/iterator/shareiterator.h"
 #include "plugins/filemanager/dfmplugin-myshares/private/shareiterator_p.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <gtest/gtest.h>
 

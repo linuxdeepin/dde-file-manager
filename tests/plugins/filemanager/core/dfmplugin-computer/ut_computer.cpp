@@ -9,8 +9,8 @@
 #include "plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.h"
 #include "plugins/filemanager/core/dfmplugin-computer/utils/computerutils.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include <gtest/gtest.h>
 #include <functional>

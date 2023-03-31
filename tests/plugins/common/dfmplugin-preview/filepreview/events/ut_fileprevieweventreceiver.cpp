@@ -8,7 +8,7 @@
 #include "plugins/common/dfmplugin-preview/filepreview/utils/previewdialogmanager.h"
 #include "plugins/common/dfmplugin-preview/filepreview/utils/previewhelper.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 

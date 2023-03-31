@@ -8,7 +8,7 @@
 #include "displaycontrol/datahelper/virtualentrydbhandler.h"
 #include "displaycontrol/utilities/protocoldisplayutilities.h"
 
-#include "dfm-base/base/db/sqlitehandle.h"
+#include <dfm-base/base/db/sqlitehandle.h>
 
 #include <gtest/gtest.h>
 

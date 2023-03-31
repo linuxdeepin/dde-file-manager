@@ -5,7 +5,7 @@
 #include "maincontroller.h"
 #include "searchmanager/searcher/fulltext/fulltextsearcher.h"
 
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/application/settings.h>
 
 #include <QFileSystemWatcher>
 #include <QApplication>

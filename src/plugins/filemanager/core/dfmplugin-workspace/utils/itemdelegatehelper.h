@@ -7,7 +7,7 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "dfm-base/utils/elidetextlayout.h"
+#include <dfm-base/utils/elidetextlayout.h>
 
 #include <QStyledItemDelegate>
 #include <QTextLayout>

@@ -5,7 +5,7 @@
 #include "itemeditor.h"
 #include "canvasitemdelegate.h"
 
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include <DArrowRectangle>
 #include <DStyle>

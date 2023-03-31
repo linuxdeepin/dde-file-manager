@@ -6,11 +6,11 @@
 #include "watcher/searchfilewatcher_p.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/file/local/private/localfilewatcher_p.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/file/local/private/syncfileinfo_p.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/file/local/private/localfilewatcher_p.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/private/syncfileinfo_p.h>
 
 #include "stubext.h"
 

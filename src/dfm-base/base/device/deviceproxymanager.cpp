@@ -7,7 +7,7 @@
 #include "deviceutils.h"
 #include "private/deviceproxymanager_p.h"
 
-#include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
+#include <dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h>
 
 #include <QDBusServiceWatcher>
 

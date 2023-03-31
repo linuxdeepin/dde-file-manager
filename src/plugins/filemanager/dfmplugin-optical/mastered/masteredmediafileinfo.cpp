@@ -7,11 +7,11 @@
 
 #include "utils/opticalhelper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/interfaces/private/fileinfo_p.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/interfaces/private/fileinfo_p.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 DFMBASE_USE_NAMESPACE
 

@@ -4,13 +4,13 @@
 
 #include "editstackedwidget.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/utils/elidetextlayout.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 

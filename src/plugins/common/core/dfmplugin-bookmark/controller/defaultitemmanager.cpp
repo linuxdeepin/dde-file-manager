@@ -5,10 +5,10 @@
 #include "defaultitemmanager.h"
 #include "defaultitemmanager_p.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 USING_IO_NAMESPACE
 

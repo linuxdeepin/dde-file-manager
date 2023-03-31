@@ -5,8 +5,8 @@
 #ifndef MENU_EVENTINTERFACE_HELPER_H
 #define MENU_EVENTINTERFACE_HELPER_H
 
-#include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/abstractscenecreator.h"
+#include <dfm-base/interfaces/abstractmenuscene.h>
+#include <dfm-base/interfaces/abstractscenecreator.h>
 
 #include <dfm-framework/event/event.h>
 

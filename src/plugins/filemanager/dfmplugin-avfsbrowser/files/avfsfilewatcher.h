@@ -7,7 +7,7 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 namespace dfmplugin_avfsbrowser {
 

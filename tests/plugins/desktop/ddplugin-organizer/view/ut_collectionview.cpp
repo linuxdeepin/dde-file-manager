@@ -9,7 +9,7 @@
 #include "mode/normalized/type/typeclassifier.h"
 #include "models/collectionmodel_p.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 #include "stubext.h"
 
 #include <gtest/gtest.h>

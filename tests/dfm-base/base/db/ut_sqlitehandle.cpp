@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/base/db/sqlitehandle.h"
+#include <dfm-base/base/db/sqlitehandle.h>
 
 #include <gtest/gtest.h>
 

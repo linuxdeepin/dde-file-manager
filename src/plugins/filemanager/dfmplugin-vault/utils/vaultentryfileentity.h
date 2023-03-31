@@ -6,9 +6,9 @@
 #define VAULTENTRYFILEENTITY_H
 
 #include "dfmplugin_vault_global.h"
-#include "dfm-base/file/entry/entities/abstractentryfileentity.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/utils/filestatisticsjob.h"
+#include <dfm-base/file/entry/entities/abstractentryfileentity.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
+#include <dfm-base/utils/filestatisticsjob.h>
 
 namespace dfmplugin_vault {
 class VaultEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity

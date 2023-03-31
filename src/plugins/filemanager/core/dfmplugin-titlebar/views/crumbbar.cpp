@@ -9,10 +9,10 @@
 #include "utils/titlebarhelper.h"
 #include "events/titlebareventcaller.h"
 
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
 

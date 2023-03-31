@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "previewdialogmanager.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 

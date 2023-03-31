@@ -5,8 +5,8 @@
 #include "trasheventcaller.h"
 #include "utils/trashhelper.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-framework/dpf.h>
 
 #include <QUrl>

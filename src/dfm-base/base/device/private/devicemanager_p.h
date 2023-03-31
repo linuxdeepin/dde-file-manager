@@ -5,7 +5,7 @@
 #ifndef DEVICEMANAGER_P_H
 #define DEVICEMANAGER_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QTimer>
 #include <QHash>

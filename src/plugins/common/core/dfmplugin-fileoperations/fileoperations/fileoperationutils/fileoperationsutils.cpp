@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileoperationsutils.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QDirIterator>
 #include <QUrl>

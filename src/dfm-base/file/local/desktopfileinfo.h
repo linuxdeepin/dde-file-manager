@@ -5,7 +5,7 @@
 #ifndef DESKTOPFILEINFO_H
 #define DESKTOPFILEINFO_H
 
-#include "dfm-base/interfaces/proxyfileinfo.h"
+#include <dfm-base/interfaces/proxyfileinfo.h>
 
 #include <QUrl>
 #include <QObject>

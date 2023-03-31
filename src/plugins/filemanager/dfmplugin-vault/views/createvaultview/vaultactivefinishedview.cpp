@@ -11,9 +11,9 @@
 #include "utils/encryption/vaultconfig.h"
 
 #include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/vaultreportdata.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/dialogmanager.h>
 #include "dfm-framework/dpf.h"
 
 #include <DLabel>

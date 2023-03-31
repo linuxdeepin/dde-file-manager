@@ -5,7 +5,7 @@
 #ifndef MASTEREDMEDIAFILEINFOPRIVATE_H
 #define MASTEREDMEDIAFILEINFOPRIVATE_H
 #include "dfmplugin_optical_global.h"
-#include "dfm-base/interfaces/private/fileinfo_p.h"
+#include <dfm-base/interfaces/private/fileinfo_p.h>
 namespace dfmplugin_optical {
 class MasteredMediaFileInfo;
 class MasteredMediaFileInfoPrivate

@@ -6,7 +6,7 @@
 #include "private/entryfileinfo_p.h"
 #include "dbusservice/global_server_defines.h"
 #include "base/standardpaths.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QRegularExpression>
 #include <QAction>

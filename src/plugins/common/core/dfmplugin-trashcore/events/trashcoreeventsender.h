@@ -7,7 +7,7 @@
 
 #include "dfmplugin_trashcore_global.h"
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QObject>
 #include <QSharedPointer>

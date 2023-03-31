@@ -5,7 +5,7 @@
 #ifndef KEYVALUELABEL_H
 #define KEYVALUELABEL_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <DFontSizeManager>
 #include <DPalette>

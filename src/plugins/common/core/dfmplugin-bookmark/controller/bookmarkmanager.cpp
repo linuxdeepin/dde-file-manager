@@ -9,18 +9,18 @@
 #include "events/bookmarkeventcaller.h"
 #include "utils/bookmarkhelper.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
 

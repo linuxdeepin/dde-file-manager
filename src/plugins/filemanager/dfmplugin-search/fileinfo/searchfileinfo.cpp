@@ -5,8 +5,8 @@
 #include "searchfileinfo.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/interfaces/private/fileinfo_p.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/interfaces/private/fileinfo_p.h>
+#include <dfm-base/base/schemefactory.h>
 
 namespace dfmplugin_search {
 

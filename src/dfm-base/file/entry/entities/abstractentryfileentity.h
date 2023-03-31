@@ -5,8 +5,8 @@
 #ifndef ENTRYFILEENTITY_H
 #define ENTRYFILEENTITY_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
 
 #include <QUrl>
 #include <QIcon>
