@@ -4,8 +4,8 @@
 
 #include "operationsstackmanagerdbus.h"
 
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-framework/dpf.h>
 

@@ -7,8 +7,8 @@
 #include "utils/recentmanager.h"
 #include "private/recentfilewatcher_p.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 DFMBASE_USE_NAMESPACE
 

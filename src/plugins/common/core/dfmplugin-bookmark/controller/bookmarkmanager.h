@@ -7,7 +7,7 @@
 
 #include "dfmplugin_bookmark_global.h"
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <QObject>
 #include <QUrl>

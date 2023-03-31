@@ -4,7 +4,7 @@
 
 #include "stubext.h"
 #include "ut_testobj_user.h"
-#include "dfm-base/base/db/sqlitequeryable.h"
+#include <dfm-base/base/db/sqlitequeryable.h>
 
 #include <gtest/gtest.h>
 

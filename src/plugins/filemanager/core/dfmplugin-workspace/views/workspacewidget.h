@@ -7,8 +7,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "dfm-base/interfaces/abstractframe.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/interfaces/abstractframe.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include "dtkwidget_global.h"
 

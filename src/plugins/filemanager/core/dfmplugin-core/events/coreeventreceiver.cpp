@@ -5,7 +5,7 @@
 #include "coreeventreceiver.h"
 #include "utils/corehelper.h"
 
-#include "dfm-base/base/urlroute.h"
+#include <dfm-base/base/urlroute.h>
 
 #include <dfm-framework/lifecycle/lifecycle.h>
 

@@ -5,7 +5,7 @@
 #ifndef PREVIEWHELPER_H
 #define PREVIEWHELPER_H
 
-#include "dfm-base/utils/clipboard.h"
+#include <dfm-base/utils/clipboard.h>
 
 namespace dfmplugin_filepreview {
 class PreviewHelper : public QObject

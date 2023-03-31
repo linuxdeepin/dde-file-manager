@@ -10,10 +10,10 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/interfaces/abstractframe.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/interfaces/abstractframe.h>
 
 #include <gtest/gtest.h>
 

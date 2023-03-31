@@ -8,17 +8,17 @@
 #include "fileview.h"
 #include "listitemeditor.h"
 #include "models/fileviewmodel.h"
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
 #include "events/workspaceeventcaller.h"
 #include "events/workspaceeventsequence.h"
 #include "utils/workspacehelper.h"
 
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/elidetextlayout.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/elidetextlayout.h>
 
 #include <DListView>
 #include <DArrowRectangle>

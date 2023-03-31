@@ -5,7 +5,7 @@
 #ifndef FILEEXTENDATTRIBTHREADPRIVATE_H
 #define FILEEXTENDATTRIBTHREADPRIVATE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QUrl>
 #include <QList>

@@ -4,7 +4,7 @@
 
 #include "bookmarkupgradeunit.h"
 #include "bookmarkupgrade/defaultitemmanager.h"
-#include "dfm-base/base/urlroute.h"
+#include <dfm-base/base/urlroute.h>
 #include <QDebug>
 
 #include <QJsonArray>

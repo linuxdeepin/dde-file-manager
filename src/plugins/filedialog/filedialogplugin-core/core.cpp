@@ -10,7 +10,7 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include <QDBusError>
 #include <QDBusConnection>

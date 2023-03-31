@@ -11,15 +11,15 @@
 #include "events/sidebareventcaller.h"
 #include "events/sidebareventreceiver.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/configs/settingbackend.h"
-#include "dfm-base/base/configs/configsynchronizer.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/networkutils.h"
-#include "dfm-base/dialogs/settingsdialog/settingdialog.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/dialogs/settingsdialog/settingdialog.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/dpf.h>
 

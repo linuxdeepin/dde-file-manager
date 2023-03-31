@@ -4,9 +4,9 @@
 
 #include "fileitemdata.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QStandardPaths>
 

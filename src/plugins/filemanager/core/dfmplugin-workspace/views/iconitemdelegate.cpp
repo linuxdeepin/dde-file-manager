@@ -14,10 +14,10 @@
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/device/deviceutils.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <DApplicationHelper>
 #include <DStyleOption>

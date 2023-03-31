@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "usersharepasswordsettingdialog.h"
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/utils/windowutils.h>
 
 //#include <dfm-framework/event/event.h>
 

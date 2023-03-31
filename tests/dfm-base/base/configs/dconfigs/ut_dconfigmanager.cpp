@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/base/configs/dconfig/private/dconfigmanager_p.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/dconfig/private/dconfigmanager_p.h>
 
 #include <DConfig>
 

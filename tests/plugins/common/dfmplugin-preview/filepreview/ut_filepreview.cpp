@@ -6,7 +6,7 @@
 #include "addr_any.h"
 
 #include "plugins/common/dfmplugin-preview/filepreview/filepreview.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <gtest/gtest.h>
 DFMBASE_USE_NAMESPACE

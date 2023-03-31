@@ -5,10 +5,10 @@
 #include "trashcorehelper.h"
 #include "views/trashpropertydialog.h"
 
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 

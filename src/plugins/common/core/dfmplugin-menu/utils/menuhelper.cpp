@@ -4,10 +4,10 @@
 
 #include "menuhelper.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <dfm-io/dfmio_utils.h>
 

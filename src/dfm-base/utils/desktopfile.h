@@ -5,7 +5,7 @@
 #ifndef DESKTOPFILE_H
 #define DESKTOPFILE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QStringList>
 

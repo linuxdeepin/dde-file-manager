@@ -6,7 +6,7 @@
 
 #include "events/smbbrowsereventreceiver.h"
 
-#include "dfm-base/utils/systempathutil.h"
+#include <dfm-base/utils/systempathutil.h>
 
 #include <QUrl>
 

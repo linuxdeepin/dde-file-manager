@@ -5,8 +5,8 @@
 #ifndef ABSTRACTMENUSCENE_P_H
 #define ABSTRACTMENUSCENE_P_H
 
-#include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/interfaces/abstractmenuscene.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 namespace dfmbase {
 

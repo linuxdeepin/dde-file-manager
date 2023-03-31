@@ -5,7 +5,7 @@
 #ifndef THREADCONTAINER_H
 #define THREADCONTAINER_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QList>
 #include <QMap>

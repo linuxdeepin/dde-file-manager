@@ -5,7 +5,7 @@
 #ifndef ENTRYFILEINFO_P_H
 #define ENTRYFILEINFO_P_H
 
-#include "dfm-base/interfaces/private/fileinfo_p.h"
+#include <dfm-base/interfaces/private/fileinfo_p.h>
 #include "file/entry/entities/abstractentryfileentity.h"
 #include "file/entry/entryfileinfo.h"
 

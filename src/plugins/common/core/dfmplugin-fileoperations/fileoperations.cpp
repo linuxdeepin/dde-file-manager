@@ -5,11 +5,11 @@
 #include "fileoperations.h"
 #include "fileoperationsevent/fileoperationseventreceiver.h"
 #include "fileoperationsevent/trashfileeventreceiver.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_global_defines.h>
 
 Q_DECLARE_METATYPE(bool *)
 

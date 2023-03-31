@@ -6,7 +6,7 @@
 #define BURNJOB_H
 
 #include "dfmplugin_burn_global.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <dfm-burn/dopticaldiscmanager.h>
 

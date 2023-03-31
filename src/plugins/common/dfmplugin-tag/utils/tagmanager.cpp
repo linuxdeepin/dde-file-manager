@@ -15,15 +15,15 @@
 #include "utils/tagtextformat.h"
 #include "data/tagproxyhandle.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
 
 #include <dfm-framework/dpf.h>
 

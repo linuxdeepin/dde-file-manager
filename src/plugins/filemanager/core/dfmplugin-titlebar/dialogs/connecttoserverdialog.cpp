@@ -8,12 +8,12 @@
 #include "utils/titlebarhelper.h"
 #include "events/titlebareventcaller.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <DIconButton>
 #include <DListView>

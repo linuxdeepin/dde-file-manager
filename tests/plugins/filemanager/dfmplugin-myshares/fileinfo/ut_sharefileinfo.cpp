@@ -5,7 +5,7 @@
 #include "stubext.h"
 #include "plugins/filemanager/dfmplugin-myshares/fileinfo/sharefileinfo.h"
 #include "plugins/filemanager/dfmplugin-myshares/private/sharefileinfo_p.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/event/eventchannel.h>
 

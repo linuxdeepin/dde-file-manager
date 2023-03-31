@@ -4,8 +4,8 @@
 
 #include "universalutils.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <DDBusSender>
 

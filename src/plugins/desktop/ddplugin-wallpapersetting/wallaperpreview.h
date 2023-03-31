@@ -8,7 +8,7 @@
 #include "ddplugin_wallpapersetting_global.h"
 #include "backgroundpreview.h"
 
-#include "dfm-base/interfaces/screen/abstractscreen.h"
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 #ifdef COMPILE_ON_V23
 #    include "dbus/appearance_interface.h"

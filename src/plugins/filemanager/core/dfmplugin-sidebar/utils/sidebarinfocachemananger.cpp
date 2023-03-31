@@ -4,7 +4,7 @@
 
 #include "sidebarinfocachemananger.h"
 
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/utils/universalutils.h>
 
 DPSIDEBAR_USE_NAMESPACE
 

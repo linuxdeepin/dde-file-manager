@@ -4,8 +4,8 @@
 
 #include "remotepasswdmanager.h"
 
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QFile>
 #include <QDebug>

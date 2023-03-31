@@ -7,10 +7,10 @@
 #include "fulltext/chineseanalyzer.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
 
 // Lucune++ headers
 #include <FileUtils.h>

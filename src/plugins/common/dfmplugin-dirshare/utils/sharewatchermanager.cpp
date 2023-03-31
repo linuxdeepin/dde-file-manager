@@ -4,7 +4,7 @@
 
 #include "sharewatchermanager.h"
 
-#include "dfm-base/file/local/localfilewatcher.h"
+#include <dfm-base/file/local/localfilewatcher.h>
 
 using namespace dfmplugin_dirshare;
 DFMBASE_USE_NAMESPACE

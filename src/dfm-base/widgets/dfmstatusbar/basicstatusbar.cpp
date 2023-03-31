@@ -6,7 +6,7 @@
 #include "private/basicstatusbar_p.h"
 #include "utils/fileutils.h"
 
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/application/application.h>
 
 #include <DAnchors>
 

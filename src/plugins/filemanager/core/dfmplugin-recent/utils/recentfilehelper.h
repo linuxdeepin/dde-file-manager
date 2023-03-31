@@ -7,8 +7,8 @@
 
 #include "dfmplugin_recent_global.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/utils/clipboard.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/clipboard.h>
 
 #include <QUrl>
 #include <QMimeData>

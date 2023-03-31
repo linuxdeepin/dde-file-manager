@@ -5,7 +5,7 @@
 #ifndef TAGDBHANDLE_H
 #define TAGDBHANDLE_H
 
-#include "dfm-base/base/db/sqlitehandle.h"
+#include <dfm-base/base/db/sqlitehandle.h>
 
 #include <QObject>
 #include <QMap>

@@ -6,7 +6,7 @@
 #define COMPUTEREVENTCALLER_H
 
 #include "dfmplugin_computer_global.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
+#include <dfm-base/file/entry/entryfileinfo.h>
 
 #include <QUrl>
 

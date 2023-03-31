@@ -5,7 +5,7 @@
 #include "sharefileinfo.h"
 #include "private/sharefileinfo_p.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/event/event.h>
 

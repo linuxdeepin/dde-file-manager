@@ -11,10 +11,10 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
 
-#include "dfm-base/utils/systempathutil.h"
+#include <dfm-base/utils/systempathutil.h>
 
 using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;

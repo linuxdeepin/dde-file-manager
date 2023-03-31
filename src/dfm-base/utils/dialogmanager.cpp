@@ -4,19 +4,19 @@
 
 #include "dialogmanager.h"
 
-#include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
-#include "dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.h"
-#include "dfm-base/dialogs/settingsdialog/settingdialog.h"
-#include "dfm-base/dialogs/taskdialog/taskdialog.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h>
+#include <dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.h>
+#include <dfm-base/dialogs/settingsdialog/settingdialog.h>
+#include <dfm-base/dialogs/taskdialog/taskdialog.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QDir>
 #include <QApplication>

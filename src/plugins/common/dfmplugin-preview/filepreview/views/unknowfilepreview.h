@@ -5,9 +5,9 @@
 #ifndef UNKNOWFILEPREVIEW_H
 #define UNKNOWFILEPREVIEW_H
 #include "dfmplugin_filepreview_global.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/utils/filestatisticsjob.h"
+#include <dfm-base/interfaces/abstractbasepreview.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/filestatisticsjob.h>
 
 #include <QLabel>
 #include <QUrl>

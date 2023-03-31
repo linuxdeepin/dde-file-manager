@@ -4,8 +4,8 @@
 
 #include "permissionmanagerwidget.h"
 #include "events/propertyeventcall.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-framework/event/event.h>
 

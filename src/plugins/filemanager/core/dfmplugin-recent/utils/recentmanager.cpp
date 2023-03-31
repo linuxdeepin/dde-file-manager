@@ -8,12 +8,12 @@
 #include "utils/recentfilehelper.h"
 #include "events/recenteventcaller.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-framework/event/event.h>
 

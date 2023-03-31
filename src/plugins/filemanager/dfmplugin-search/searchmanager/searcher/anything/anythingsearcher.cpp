@@ -5,9 +5,9 @@
 #include "anythingsearcher.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/dbusservice/dbus_interface/anything_interface.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/dbusservice/dbus_interface/anything_interface.h>
 
 #include <QDBusReply>
 #include <QDebug>

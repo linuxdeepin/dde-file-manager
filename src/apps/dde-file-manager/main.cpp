@@ -8,7 +8,7 @@
 
 #include "tools/upgrade/builtininterface.h"
 
-#include "dfm-base/utils/sysinfoutils.h"
+#include <dfm-base/utils/sysinfoutils.h>
 
 #include <dfm-framework/dpf.h>
 

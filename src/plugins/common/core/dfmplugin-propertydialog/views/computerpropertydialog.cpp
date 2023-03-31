@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "computerpropertydialog.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/utils/universalutils.h>
 
 #include <DSysInfo>
 #include <DFontSizeManager>

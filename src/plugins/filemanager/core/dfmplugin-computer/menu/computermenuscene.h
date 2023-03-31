@@ -8,8 +8,8 @@
 #include "dfmplugin_computer_global.h"
 #include "utils/computerutils.h"
 
-#include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/abstractscenecreator.h"
+#include <dfm-base/interfaces/abstractmenuscene.h>
+#include <dfm-base/interfaces/abstractscenecreator.h>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 

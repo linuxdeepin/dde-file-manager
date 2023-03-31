@@ -4,8 +4,8 @@
 
 #include "openwithwidget.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/mimetype/mimesappsmanager.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/mimetype/mimesappsmanager.h>
 
 #include <QCheckBox>
 #include <QVBoxLayout>

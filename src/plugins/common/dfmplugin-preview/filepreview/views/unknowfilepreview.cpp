@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "unknowfilepreview.h"
-#include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/utils/fileutils.h>
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <QVBoxLayout>
 

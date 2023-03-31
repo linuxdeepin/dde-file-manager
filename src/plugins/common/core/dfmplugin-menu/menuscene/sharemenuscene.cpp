@@ -7,12 +7,12 @@
 #include "action_defines.h"
 #include "menuutils.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 

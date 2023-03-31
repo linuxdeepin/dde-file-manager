@@ -7,7 +7,7 @@
 
 #include "dfmplugin_trashcore_global.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 #include <QUrl>

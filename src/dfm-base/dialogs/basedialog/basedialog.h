@@ -5,7 +5,7 @@
 #ifndef BASEDIALOG_H
 #define BASEDIALOG_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <ddialog.h>
 

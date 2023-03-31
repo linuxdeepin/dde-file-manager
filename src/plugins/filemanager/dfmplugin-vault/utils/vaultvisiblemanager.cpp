@@ -19,9 +19,9 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/file/entry/entities/abstractentryfileentity.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/file/entry/entities/abstractentryfileentity.h>
 
 #include <dfm-framework/event/event.h>
 

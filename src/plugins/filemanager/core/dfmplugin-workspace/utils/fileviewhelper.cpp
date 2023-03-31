@@ -12,11 +12,11 @@
 #include "utils/fileoperatorhelper.h"
 #include "events/workspaceeventsequence.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/event/event.h>
 

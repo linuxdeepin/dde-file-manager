@@ -5,9 +5,9 @@
 #ifndef PREVIEWWIDGET_H
 #define PREVIEWWIDGET_H
 #include "dfmplugin_filepreview_global.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
+#include <dfm-base/interfaces/abstractbasepreview.h>
 #include "filepreviewdialogstatusbar.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <DAbstractDialog>
 #include <DHorizontalLine>

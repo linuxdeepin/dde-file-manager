@@ -4,8 +4,8 @@
 
 #include "dmimedatabase.h"
 
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QUrl>
 #include <QFileInfo>

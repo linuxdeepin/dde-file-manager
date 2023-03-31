@@ -7,9 +7,9 @@
 
 #include "dfmplugin_computer_global.h"
 
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dfm_framework_global.h>
 

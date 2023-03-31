@@ -5,8 +5,8 @@
 #include "backgrounddefault.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#include "dfm-base/dfm_desktop_defines.h"
-#include "dfm-base/interfaces/screen/abstractscreen.h"
+#include <dfm-base/dfm_desktop_defines.h>
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 #include <QPaintEvent>
 #include <QBackingStore>

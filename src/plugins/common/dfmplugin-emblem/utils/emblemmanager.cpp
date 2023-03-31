@@ -7,8 +7,8 @@
 #include "utils/emblemhelper.h"
 #include "events/emblemeventsequence.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QPainter>
 

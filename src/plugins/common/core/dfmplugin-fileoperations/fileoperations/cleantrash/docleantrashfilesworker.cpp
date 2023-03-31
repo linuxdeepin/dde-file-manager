@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "docleantrashfilesworker.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-io/denumerator.h>
 

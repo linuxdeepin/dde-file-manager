@@ -12,8 +12,8 @@
 #include "utils/fileencrypthandle.h"
 #include "dbus/vaultdbusutils.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <DFontSizeManager>
 #include <DDialog>

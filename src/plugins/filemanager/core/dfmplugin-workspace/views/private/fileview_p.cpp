@@ -15,9 +15,9 @@
 #include "utils/fileoperatorhelper.h"
 #include "utils/fileviewmenuhelper.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QScrollBar>
 

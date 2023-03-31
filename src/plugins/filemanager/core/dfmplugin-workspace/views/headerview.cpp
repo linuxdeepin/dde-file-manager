@@ -6,8 +6,8 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <QApplication>
 #include <QMouseEvent>

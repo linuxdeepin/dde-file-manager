@@ -5,8 +5,8 @@
 #ifndef ABSTRACTDESKTOPFRAME_H
 #define ABSTRACTDESKTOPFRAME_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/dfm_desktop_defines.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/dfm_desktop_defines.h>
 
 #include <QObject>
 

@@ -6,7 +6,7 @@
 #define FILEVIEWHELPER_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 

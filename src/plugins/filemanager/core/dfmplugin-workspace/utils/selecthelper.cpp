@@ -7,7 +7,7 @@
 #include "models/fileselectionmodel.h"
 #include "models/fileviewmodel.h"
 
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/utils/windowutils.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #include <DSizeMode>
 #endif

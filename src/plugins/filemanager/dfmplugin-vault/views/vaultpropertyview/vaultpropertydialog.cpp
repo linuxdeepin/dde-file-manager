@@ -4,7 +4,7 @@
 
 #include "vaultpropertydialog.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <denhancedwidget.h>
 

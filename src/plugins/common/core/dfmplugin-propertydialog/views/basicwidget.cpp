@@ -6,10 +6,10 @@
 #include "events/propertyeventcall.h"
 #include "utils/propertydialogmanager.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-framework/event/event.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>

@@ -7,8 +7,8 @@
 
 #include "dfmplugin_menu_global.h"
 #include "dcustomactiondata.h"
-#include "dfm-base/mimetype/dmimedatabase.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/mimetype/dmimedatabase.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 #include <QIcon>

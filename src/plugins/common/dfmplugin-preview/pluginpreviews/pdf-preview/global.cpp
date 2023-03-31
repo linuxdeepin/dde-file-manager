@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "global.h"
-#include "dfm-base/mimetype/dmimedatabase.h"
+#include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <QMimeType>
 #include <QDebug>

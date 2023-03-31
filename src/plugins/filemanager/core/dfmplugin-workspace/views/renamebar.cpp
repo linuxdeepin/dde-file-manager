@@ -5,7 +5,7 @@
 #include "renamebar.h"
 #include "private/renamebar_p.h"
 #include "utils/fileoperatorhelper.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
 #include "workspacewidget.h"
 #include "views/fileview.h"
 

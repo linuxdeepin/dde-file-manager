@@ -5,7 +5,7 @@
 #ifndef UNIVERSALUTILS_H
 #define UNIVERSALUTILS_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QString>
 #include <QtDBus/QDBusReply>

@@ -15,10 +15,10 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 

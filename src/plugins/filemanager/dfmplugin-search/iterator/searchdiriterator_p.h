@@ -7,7 +7,7 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 #include <QQueue>

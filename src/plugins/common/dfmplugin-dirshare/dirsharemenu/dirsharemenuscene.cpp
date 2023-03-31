@@ -6,9 +6,9 @@
 #include "private/dirsharemenuscene_p.h"
 #include "utils/usersharehelper.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_menu_defines.h>
 #include "widget/sharecontrolwidget.h"
 
 #include <dfm-framework/event/event.h>

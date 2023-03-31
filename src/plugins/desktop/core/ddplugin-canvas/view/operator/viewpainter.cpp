@@ -6,7 +6,7 @@
 #include "grid/canvasgrid.h"
 #include "boxselector.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <QPainterPath>
 

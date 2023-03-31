@@ -7,7 +7,7 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 namespace dfmplugin_tag {
 

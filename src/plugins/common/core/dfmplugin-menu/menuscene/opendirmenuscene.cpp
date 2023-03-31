@@ -5,12 +5,12 @@
 #include "private/opendirmenuscene_p.h"
 #include "action_defines.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/utils/sysinfoutils.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
 #include <dfm-framework/dpf.h>
 

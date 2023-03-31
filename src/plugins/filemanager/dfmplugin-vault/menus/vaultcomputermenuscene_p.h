@@ -7,7 +7,7 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 class QAction;
 

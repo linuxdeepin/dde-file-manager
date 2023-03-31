@@ -5,7 +5,7 @@
 #include "stubext.h"
 #include "plugins/filemanager/core/dfmplugin-workspace/views/fileview.h"
 #include "plugins/filemanager/core/dfmplugin-workspace/views/private/fileview_p.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/application/application.h>
 
 #include <gtest/gtest.h>
 

@@ -6,9 +6,9 @@
 #include "plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.h"
 #include "plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/datahelper/virtualentrydbhandler.h"
 
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
 
 #include <dfm-framework/event/event.h>
 

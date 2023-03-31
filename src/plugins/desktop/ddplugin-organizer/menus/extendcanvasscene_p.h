@@ -10,7 +10,7 @@
 #include "extendcanvasscene.h"
 #include "organizer_defines.h"
 
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 DFMBASE_USE_NAMESPACE
 namespace ddplugin_organizer {

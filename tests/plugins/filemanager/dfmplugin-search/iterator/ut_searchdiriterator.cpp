@@ -9,10 +9,10 @@
 #include "events/searcheventcaller.h"
 #include "searchmanager/searchmanager.h"
 
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/file/local/private/localfilewatcher_p.h"
-#include "dfm-base/file/local/private/syncfileinfo_p.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/file/local/private/localfilewatcher_p.h>
+#include <dfm-base/file/local/private/syncfileinfo_p.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include "stubext.h"
 

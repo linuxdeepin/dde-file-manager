@@ -5,8 +5,8 @@
 #ifndef SQLITEQUERYABLEH
 #define SQLITEQUERYABLEH
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/db/sqlitehelper.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/base/db/sqlitehelper.h>
 
 #include <QString>
 #include <QList>

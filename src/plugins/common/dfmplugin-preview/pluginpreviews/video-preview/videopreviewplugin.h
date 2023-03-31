@@ -7,7 +7,7 @@
 
 #include "preview_plugin_global.h"
 #include "videopreview.h"
-#include "dfm-base/interfaces/abstractfilepreviewplugin.h"
+#include <dfm-base/interfaces/abstractfilepreviewplugin.h>
 
 #include <libdmr/player_widget.h>
 

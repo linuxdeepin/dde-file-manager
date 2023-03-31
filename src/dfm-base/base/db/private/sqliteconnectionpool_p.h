@@ -5,7 +5,7 @@
 #ifndef SQLITECONNECTIONPOOL_P_H
 #define SQLITECONNECTIONPOOL_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QString>
 #include <QtSql>

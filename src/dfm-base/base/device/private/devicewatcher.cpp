@@ -5,10 +5,10 @@
 #include "devicewatcher.h"
 #include "devicewatcher_p.h"
 #include "devicehelper.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <QVariantMap>
 #include <QDebug>

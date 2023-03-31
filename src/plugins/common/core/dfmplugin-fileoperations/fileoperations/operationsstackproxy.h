@@ -7,7 +7,7 @@
 
 #include "dfmplugin_fileoperations_global.h"
 
-#include "dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h"
+#include <dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h>
 
 #include <QObject>
 

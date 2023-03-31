@@ -4,8 +4,8 @@
 
 #include "hidefilehelper.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-io/dfile.h>
 #include <dfm-io/dfileinfo.h>

@@ -6,18 +6,18 @@
 #include "fileoperations/filecopymovejob.h"
 #include "fileoperationsevent/fileoperationseventhandler.h"
 
-#include "dfm-base/utils/hidefilehelper.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/properties.h"
-#include "dfm-base/utils/systempathutil.h"
+#include <dfm-base/utils/hidefilehelper.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/properties.h>
+#include <dfm-base/utils/systempathutil.h>
 
 #include <dfm-io/dfmio_utils.h>
 

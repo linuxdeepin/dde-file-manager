@@ -5,11 +5,11 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/utils/desktopfile.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/desktopfile.h>
 
 namespace dfmbase {
 

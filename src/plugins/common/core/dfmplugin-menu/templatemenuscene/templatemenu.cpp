@@ -4,9 +4,9 @@
 
 #include "private/templatemenu_p.h"
 
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/syncfileinfo.h"
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/syncfileinfo.h>
 
 #include <dfm-io/dfmio_utils.h>
 

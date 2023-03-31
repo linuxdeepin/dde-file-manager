@@ -7,11 +7,11 @@
 #include "events/workspaceeventcaller.h"
 #include "views/fileview.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include "dfm-framework/dpf.h"
 

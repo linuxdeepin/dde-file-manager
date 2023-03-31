@@ -4,7 +4,7 @@
 
 #include "fsearchhandler.h"
 
-#include "dfm-base/base/device/deviceutils.h"
+#include <dfm-base/base/device/deviceutils.h>
 
 DPSEARCH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

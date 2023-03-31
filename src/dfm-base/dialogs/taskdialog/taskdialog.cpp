@@ -4,7 +4,7 @@
 
 #include "taskdialog.h"
 #include "taskwidget.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/utils/universalutils.h>
 
 #include <QListWidgetItem>
 #include <QListWidget>

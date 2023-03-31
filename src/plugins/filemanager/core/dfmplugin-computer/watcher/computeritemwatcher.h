@@ -8,7 +8,7 @@
 #include "dfmplugin_computer_global.h"
 #include "utils/computerdatastruct.h"
 
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/application/application.h>
 
 #include <QObject>
 #include <QUrl>

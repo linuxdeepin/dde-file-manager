@@ -5,7 +5,7 @@
 #ifndef DDPUGIN_EVENTINTERFACE_HELPER_H
 #define DDPUGIN_EVENTINTERFACE_HELPER_H
 
-#include "dfm-base/interfaces/screen/abstractscreenproxy.h"
+#include <dfm-base/interfaces/screen/abstractscreenproxy.h>
 
 #include <dfm-framework/dpf.h>
 

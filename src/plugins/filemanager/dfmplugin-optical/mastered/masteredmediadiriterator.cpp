@@ -7,10 +7,10 @@
 
 #include "utils/opticalhelper.h"
 
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <QStandardPaths>
 

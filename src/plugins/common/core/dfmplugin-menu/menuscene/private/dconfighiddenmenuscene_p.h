@@ -7,7 +7,7 @@
 
 #include "menuscene/dconfighiddenmenuscene.h"
 
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 DFMBASE_USE_NAMESPACE
 DPMENU_BEGIN_NAMESPACE

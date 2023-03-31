@@ -9,7 +9,7 @@
 #include "backgroundservice.h"
 #include "appearance_interface.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <DWindowManagerHelper>
 

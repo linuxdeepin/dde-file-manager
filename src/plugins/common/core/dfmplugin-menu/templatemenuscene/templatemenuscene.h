@@ -7,8 +7,8 @@
 
 #include "dfmplugin_menu_global.h"
 
-#include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/abstractscenecreator.h"
+#include <dfm-base/interfaces/abstractmenuscene.h>
+#include <dfm-base/interfaces/abstractscenecreator.h>
 
 #include <mutex>
 

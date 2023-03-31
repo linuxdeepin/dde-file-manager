@@ -7,7 +7,7 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QUrl>
 #include <QWidget>

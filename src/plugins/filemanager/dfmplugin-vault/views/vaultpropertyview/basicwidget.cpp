@@ -6,10 +6,10 @@
 #include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <QFileInfo>
 #include <QDateTime>

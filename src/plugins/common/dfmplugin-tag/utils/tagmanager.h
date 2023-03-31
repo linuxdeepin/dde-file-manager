@@ -7,7 +7,7 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include "dfm-base/utils/elidetextlayout.h"
+#include <dfm-base/utils/elidetextlayout.h>
 
 #include <QObject>
 #include <QPainter>

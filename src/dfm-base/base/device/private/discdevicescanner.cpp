@@ -4,9 +4,9 @@
 
 #include "discdevicescanner.h"
 
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
+#include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <QDebug>
 #include <QCoreApplication>

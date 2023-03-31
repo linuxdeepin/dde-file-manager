@@ -7,13 +7,13 @@
 #include "menuutils.h"
 #include "action_defines.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 

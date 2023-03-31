@@ -7,8 +7,8 @@
 #include "pathmanager.h"
 #include "dbus/vaultdbusutils.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <QDebug>
 

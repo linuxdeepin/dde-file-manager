@@ -6,9 +6,9 @@
 #define WORKSPACEEVENTCALLER_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/utils/clipboard.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/utils/clipboard.h>
 
 #include <QObject>
 #include <QPainter>

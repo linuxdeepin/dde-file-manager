@@ -7,8 +7,8 @@
 
 #include "dfmplugin_computer_global.h"
 
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 

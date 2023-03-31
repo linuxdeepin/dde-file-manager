@@ -7,7 +7,7 @@
 
 #include "dfmplugin_trashcore_global.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QObject>
 #include <QIcon>

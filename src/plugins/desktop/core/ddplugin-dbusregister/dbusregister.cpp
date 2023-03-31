@@ -10,10 +10,10 @@
 #include "dbus_adaptor/vaultmanagerdbus_adaptor.h"
 #include "dbus_adaptor/filemanager1dbus_adaptor.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dpf.h>
 

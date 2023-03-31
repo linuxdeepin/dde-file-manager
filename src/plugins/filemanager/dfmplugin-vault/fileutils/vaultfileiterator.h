@@ -6,7 +6,7 @@
 #define VAULTFILEDIRITERATOR_H
 
 #include "dfmplugin_vault_global.h"
-#include "dfm-base/file/local/localdiriterator.h"
+#include <dfm-base/file/local/localdiriterator.h>
 
 namespace dfmplugin_vault {
 class VaultFileIterator : public DFMBASE_NAMESPACE::AbstractDirIterator

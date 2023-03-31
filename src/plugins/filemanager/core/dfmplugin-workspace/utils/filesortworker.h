@@ -6,12 +6,12 @@
 #define FILESORTWORKER_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/interfaces/abstractsortandfiter.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/abstractsortandfiter.h>
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/application/application.h>
 
 #include <dfm-io/denumerator.h>
 

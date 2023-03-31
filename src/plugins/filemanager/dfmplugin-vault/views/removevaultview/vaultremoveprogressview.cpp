@@ -5,7 +5,7 @@
 #include "vaultremoveprogressview.h"
 #include "utils/vaultdefine.h"
 #include "utils/vaultautolock.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/application/settings.h>
 
 #include <DWaterProgress>
 

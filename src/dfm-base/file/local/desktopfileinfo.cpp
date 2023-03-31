@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktopfileinfo.h"
-#include "dfm-base/utils/desktopfile.h"
-#include "dfm-base/utils/properties.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/utils/desktopfile.h>
+#include <dfm-base/utils/properties.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QDir>
 #include <QSettings>

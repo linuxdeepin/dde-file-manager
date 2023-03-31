@@ -6,8 +6,8 @@
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "fileoperations/copyfiles/storageinfo.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QUrl>
 #include <QProcess>

@@ -6,7 +6,7 @@
 #include "view/canvasview_p.h"
 #include "view/operator/dragdropoper.h"
 #include "model/canvasproxymodel.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include <DFileDragClient>
 

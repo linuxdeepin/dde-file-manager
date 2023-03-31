@@ -5,7 +5,7 @@
 #ifndef FILEMANAGERWINDOW_H
 #define FILEMANAGERWINDOW_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <DMainWindow>
 

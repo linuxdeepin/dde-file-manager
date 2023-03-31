@@ -7,7 +7,7 @@
 #include "data/tagdbhandle.h"
 #include "utils/tagmanager.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 DPTAG_USE_NAMESPACE
 

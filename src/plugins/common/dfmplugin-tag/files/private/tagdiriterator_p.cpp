@@ -5,9 +5,9 @@
 #include "tagdiriterator_p.h"
 #include "utils/tagmanager.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/fileutils.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;

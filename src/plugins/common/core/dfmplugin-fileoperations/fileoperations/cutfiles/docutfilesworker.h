@@ -9,8 +9,8 @@
 #include "fileoperations/fileoperationutils/abstractworker.h"
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <dfm-io/dfile.h>
 

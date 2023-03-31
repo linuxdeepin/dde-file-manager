@@ -4,8 +4,8 @@
 
 #include "infocache.h"
 
-#include "dfm-base/interfaces/private/infocache_p.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/interfaces/private/infocache_p.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-io/dfileinfo.h>
 

@@ -5,7 +5,7 @@
 #ifndef DEVICEPROXYMANAGER_P_H
 #define DEVICEPROXYMANAGER_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QScopedPointer>
 #include <QList>

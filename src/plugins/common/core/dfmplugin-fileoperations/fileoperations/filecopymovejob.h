@@ -8,8 +8,8 @@
 #include "dfmplugin_fileoperations_global.h"
 #include "fileoperations/fileoperationsservice.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <QObject>
 #include <QPointer>

@@ -13,10 +13,10 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/dfm_desktop_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_desktop_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 

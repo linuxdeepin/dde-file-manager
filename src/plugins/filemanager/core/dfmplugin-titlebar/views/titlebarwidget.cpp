@@ -7,8 +7,8 @@
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
 

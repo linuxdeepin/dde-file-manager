@@ -6,8 +6,8 @@
 #define MASTEREDMEDIAFILEWATCHER_P_H
 
 #include "dfmplugin_optical_global.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
+#include <dfm-base/interfaces/private/abstractfilewatcher_p.h>
 
 #include <QPointer>
 

@@ -7,7 +7,7 @@
 
 #include "canvasitemdelegate.h"
 
-#include "dfm-base/utils/elidetextlayout.h"
+#include <dfm-base/utils/elidetextlayout.h>
 
 #include <QPointer>
 #include <QTextDocument>

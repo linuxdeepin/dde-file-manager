@@ -5,7 +5,7 @@
 #ifndef ABSTRACTFILEWATCHER_H
 #define ABSTRACTFILEWATCHER_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <dfm-io/dfileinfo.h>
 

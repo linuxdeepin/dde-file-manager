@@ -6,7 +6,7 @@
 #define TAGDIRITERATOR_P_H
 
 #include "dfmplugin_tag_global.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <QQueue>
 

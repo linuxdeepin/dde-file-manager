@@ -7,7 +7,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/utils/windowutils.h>
 
 #include <QWidget>
 #include <QApplication>

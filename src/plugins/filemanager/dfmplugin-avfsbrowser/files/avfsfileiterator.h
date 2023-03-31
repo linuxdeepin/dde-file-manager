@@ -7,7 +7,7 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "dfm-base/file/local/localdiriterator.h"
+#include <dfm-base/file/local/localdiriterator.h>
 
 namespace dfmplugin_avfsbrowser {
 

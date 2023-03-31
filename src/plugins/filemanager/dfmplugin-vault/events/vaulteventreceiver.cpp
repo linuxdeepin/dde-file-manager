@@ -7,14 +7,14 @@
 #include "utils/vaulthelper.h"
 #include "utils/vaultfilehelper.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/interfaces/private/watchercache.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/interfaces/abstractfilewatcher.h>
+#include <dfm-base/interfaces/private/watchercache.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 
