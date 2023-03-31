@@ -214,7 +214,12 @@ void BackgroundManager::restBackgroundManager()
 
 void BackgroundManager::onBackgroundChanged()
 {
-    d->bridge->request(true);
+    if (d->bridge->isRunning()) {
+        qWarning() << "there is running requetion, redo after it's finished.";
+        d->bridge->setRepeat();
+    } else {
+        d->bridge->request(true);
+    }
 }
 
 void BackgroundManager::onGeometryChanged()
@@ -393,6 +398,12 @@ void BackgroundBridge::onFinished(void *pData)
     }
 
     delete images;
+
+    if (repeat) {
+        qInfo() << "need to request again.";
+        request(true);
+        repeat = false;
+    }
 }
 
 void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)

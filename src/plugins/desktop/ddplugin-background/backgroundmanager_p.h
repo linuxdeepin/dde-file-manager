@@ -29,6 +29,12 @@ public:
     explicit BackgroundBridge(class BackgroundManagerPrivate *ptr);
     ~BackgroundBridge();
 public:
+    inline bool isRunning() const {
+        return future.isRunning();
+    }
+    inline void setRepeat() {
+        repeat = true;
+    }
     void request(bool refresh);
     void forceRequest();
     void terminate(bool wait);
@@ -41,6 +47,7 @@ private:
     volatile bool getting = false;
     volatile bool force = false;
     QFuture<void> future;
+    bool repeat = false;
 };
 
 class BackgroundManagerPrivate : public QObject
