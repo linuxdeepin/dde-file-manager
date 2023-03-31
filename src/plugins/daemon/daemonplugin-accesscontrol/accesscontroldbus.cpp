@@ -280,7 +280,7 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
         QtConcurrent::run([deviceId, dev]() {
             int retry = 5;
             while (retry-- && !dev->powerOff()) {
-                qWarning() << "poweroff device failed: " << deviceId << DFMMOUNT::Utils::errorMessage(dev->lastError());
+                qWarning() << "poweroff device failed: " << deviceId << dev->lastError().message;
                 QThread::msleep(500);
             }
         });
@@ -434,9 +434,9 @@ void AccessControlDBus::changeMountedOptical(int mode, const QString &device)
             continue;
 
         if (!dev->mountPoint().isEmpty()) {
-            dev->unmountAsync({}, [id, dev](bool ok, DeviceError err) {
+            dev->unmountAsync({}, [id, dev](bool ok, const OperationErrorInfo &err) {
                 if (!ok) {
-                    qDebug() << "Error occured while unmount optical device: " << id << DFMMOUNT::Utils::errorMessage(err);
+                    qDebug() << "Error occured while unmount optical device: " << id << err.message;
                 } else {
                     QThread::msleep(500);
                     QtConcurrent::run([dev, id]() {

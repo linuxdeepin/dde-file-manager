@@ -159,18 +159,18 @@ void SmbBrowserMenuScenePrivate::actUnmount()
     const QString &devId = smb_browser_utils::getDeviceIdByStdSmb(smbPath);
     qDebug() << "get device id of" << url << devId;
 
-    DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [](bool ok, DFMMOUNT::DeviceError err) {
+    DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
         if (!ok)
-            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err);
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err.code);
     });
 }
 
 void SmbBrowserMenuScenePrivate::actMount()
 {
     const QString &smbPath = url.toString().toLower();
-    DeviceManager::instance()->mountNetworkDeviceAsync(smbPath, [](bool ok, DFMMOUNT::DeviceError err, const QString &) {
-        if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted)
-            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+    DeviceManager::instance()->mountNetworkDeviceAsync(smbPath, [](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &) {
+        if (!ok && err.code != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted)
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err.code);
     });
 }
 

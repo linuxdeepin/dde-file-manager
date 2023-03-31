@@ -66,7 +66,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     // Acquire blank disc info
     curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
     if (!retry && isBlank && curAvial == 0) {
-        DevMngIns->mountBlockDevAsync(devId, {}, [this, url](bool, DFMMOUNT::DeviceError, const QString &) {
+        DevMngIns->mountBlockDevAsync(devId, {}, [this, url](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
             this->updateDiscInfo(url, true);
         });
     }
@@ -184,7 +184,7 @@ void OpticalMediaWidget::handleErrorMount()
         return;
     }
 
-    DevMngIns->ejectBlockDevAsync(devId, {}, [](bool, DFMMOUNT::DeviceError) {
+    DevMngIns->ejectBlockDevAsync(devId, {}, [](bool, const DFMMOUNT::OperationErrorInfo &) {
         DialogManagerInstance->showErrorDialog(tr("Mounting failed"), {});
     });
 }

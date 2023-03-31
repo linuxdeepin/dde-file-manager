@@ -56,7 +56,7 @@ void DiscStateManager::onDevicePropertyChanged(const QString &id, const QString 
         qint64 curAvial { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
 
         if (blank && curAvial == 0) {
-            DevMngIns->mountBlockDevAsync(id, {}, [id](bool, DFMMOUNT::DeviceError, const QString &) {
+            DevMngIns->mountBlockDevAsync(id, {}, [id](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
                 DevProxyMng->reloadOpticalInfo(id);
             });
         }

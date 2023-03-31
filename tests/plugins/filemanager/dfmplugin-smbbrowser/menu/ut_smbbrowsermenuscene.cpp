@@ -87,7 +87,8 @@ TEST_F(UT_SmbBrowserMenuScene, Triggered)
     QList<QString> arg3 { "/hello/world", "" };
     stub.set_lamda(&DeviceManager::mountNetworkDeviceAsync, [&](void *, const QString &, CallbackType1 cb, int) {
         __DBG_STUB_INVOKE__
-        cb(arg1.first(), arg2.first(), arg3.first());
+        DFMMOUNT::OperationErrorInfo errInfo { arg2.first() };
+        cb(arg1.first(), errInfo, arg3.first());
     });
     stub.set_lamda(&DialogManager::showErrorDialogWhenOperateDeviceFailed, [] { __DBG_STUB_INVOKE__ });
 
@@ -175,7 +176,8 @@ TEST_F(UT_SmbBrowserMenuScenePrivate, ActUnmount)
     stub.set_lamda(&dfmbase::DeviceManager::unmountProtocolDevAsync,
                    [](void *, const QString &, const QVariantMap &, dfmbase::CallbackType2 cb) {
                        __DBG_STUB_INVOKE__
-                       cb(false, DFMMOUNT::DeviceError::kNoError);
+                       DFMMOUNT::OperationErrorInfo info;
+                       cb(false, info);
                    });
     stub.set_lamda(&dfmbase::DialogManager::showErrorDialogWhenOperateDeviceFailed, [] { __DBG_STUB_INVOKE__ });
 
@@ -188,7 +190,7 @@ TEST_F(UT_SmbBrowserMenuScenePrivate, ActMount)
     stub.set_lamda(&dfmbase::DeviceManager::mountNetworkDeviceAsync,
                    [](void *, const QString &, dfmbase::CallbackType1 cb, int) {
                        __DBG_STUB_INVOKE__
-                       cb(false, DFMMOUNT::DeviceError::kNoError, "");
+                       cb(false, DFMMOUNT::OperationErrorInfo(), "");
                    });
     stub.set_lamda(&dfmbase::DialogManager::showErrorDialogWhenOperateDeviceFailed, [] { __DBG_STUB_INVOKE__ });
 
