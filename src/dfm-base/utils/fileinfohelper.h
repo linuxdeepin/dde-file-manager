@@ -62,8 +62,6 @@ private:
     QSharedPointer<FileInfoAsycWorker> worker { nullptr };
     std::atomic_bool stoped { false };
     QThreadPool pool;
-    QReadWriteLock symLinkHashLock;
-    QHash<QUrl, QUrl> symLinkHash;
     DThreadList<QUrl> queryingList;
 };
 }

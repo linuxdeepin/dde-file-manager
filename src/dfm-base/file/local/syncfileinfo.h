@@ -17,7 +17,7 @@ namespace dfmbase {
 class SyncFileInfoPrivate;
 class SyncFileInfo : public FileInfo
 {
-    QSharedPointer<SyncFileInfoPrivate> d = nullptr;
+    QSharedPointer<SyncFileInfoPrivate> d { nullptr };
 
 public:
     enum FlagIcon {

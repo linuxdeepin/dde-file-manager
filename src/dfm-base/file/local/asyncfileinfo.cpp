@@ -554,6 +554,23 @@ void AsyncFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const
     }
 }
 
+QList<QUrl> AsyncFileInfo::notifyUrls() const
+{
+    QReadLocker lk(&const_cast<AsyncFileInfoPrivate *>(d.data())->notifyLock);
+    return d->notifyUrls;
+}
+// if url is unvalid, it will clear all notify urls
+void AsyncFileInfo::setNotifyUrls(const QUrl &url)
+{
+    if (!url.isValid()) {
+        QWriteLocker lk(&d->notifyLock);
+        d->notifyUrls.clear();
+        return;
+    }
+    QWriteLocker lk(&d->notifyLock);
+    d->notifyUrls.append(url);
+}
+
 void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
 {
     mimeTypeMode = QMimeDatabase::MatchDefault;
@@ -1067,6 +1084,15 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFilePath, filePath());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardParentPath, path());
     // redirectedFileUrl
+    auto symlink = symLinkTarget();
+    if (!symlink.isEmpty() && !FileUtils::isLocalFile(QUrl::fromLocalFile(symlink))) {
+        FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(symlink));
+        auto asyncInfo = info.dynamicCast<AsyncFileInfo>();
+        if (asyncInfo) {
+            asyncInfo->setNotifyUrls(q->fileUrl());
+            asyncInfo->refresh();
+        }
+    }
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSymlinkTarget, symLinkTarget());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanRead, attribute(DFileInfo::AttributeID::kAccessCanRead));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanWrite, attribute(DFileInfo::AttributeID::kAccessCanWrite));
