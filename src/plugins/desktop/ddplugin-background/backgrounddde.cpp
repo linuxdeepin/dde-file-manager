@@ -17,7 +17,7 @@ BackgroundDDE::BackgroundDDE(QObject *parent)
     qInfo() << "create org.deepin.dde.Appearance1";
     interface = new InterFace("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
                           QDBusConnection::sessionBus(), this);
-    interface->setTimeout(1000);
+    interface->setTimeout(200);
     qInfo() << "create org.deepin.dde.Appearance1 end";
 
     apperanceConf = DConfig::create("org.deepin.dde.appearance", "org.deepin.dde.appearance", "", this);
@@ -38,31 +38,17 @@ QString BackgroundDDE::getBackgroundFromDDE(const QString &screen)
     if (screen.isEmpty())
         return path;
 
-    int retry = 5;
-    static const int timeOut = 200;
-    int oldTimeOut = interface->timeout();
-    interface->setTimeout(timeOut);
+    qInfo() << "Get background by DDE GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+    QDBusPendingReply<QString> reply = interface->GetCurrentWorkspaceBackgroundForMonitor(screen);
+    reply.waitForFinished();
 
-    while (retry--) {
-        qInfo() << "Get background by DDE GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
-        QDBusPendingReply<QString> reply = interface->GetCurrentWorkspaceBackgroundForMonitor(screen);
-        reply.waitForFinished();
-
-        if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "Get background failed by DDE_DBus and times:" << (5-retry)
-                       << reply.error().type() << reply.error().name() << reply.error().message();
-        } else {
-            path = reply.argumentAt<0>();
-            qInfo() << "Get background path succeed:" << path << "screen" << screen << "   times:" << (5 - retry);
-            break;
-        }
+    if (reply.error().type() != QDBusError::NoError) {
+        qWarning() << "Get background failed by DDE_DBus"
+                   << reply.error().type() << reply.error().name() << reply.error().message();
+    } else {
+        path = reply.argumentAt<0>();
     }
-    interface->setTimeout(oldTimeOut);
 
-    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile()))
-        qCritical() << "get background fail path :" << path << "screen" << screen;
-    else
-        qInfo() << "getBackgroundFromDDE path :" << path << "screen" << screen;
     return path;
 }
 
@@ -136,15 +122,17 @@ QString BackgroundDDE::background(const QString &screen)
 
         //1.Get the background from DDE
         path = getBackgroundFromDDE(screen);
+        qInfo() << "getBackgroundFromDDE path :" << path << "screen" << screen;
+
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
-            // 2Parse background from config file
+            // 2.Parse background from config file
             path = getBackgroundFromConfig(screen);
-            qInfo() << "getBackgroundFormConfig path :" << path << "screen" << screen;
+            qWarning() << "getBackgroundFormConfig path :" << path << "screen" << screen;
 
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 // 3.Use the default background
                 path = getDefaultBackground();
-                qInfo() << "getDefaultBackground path :" << path << "screen" << screen;
+                qCritical() << "getDefaultBackground path :" << path << "screen" << screen;
             }
         }
     } else {

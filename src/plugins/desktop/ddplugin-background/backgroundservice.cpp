@@ -12,7 +12,7 @@ BackgroundService::BackgroundService(QObject *parent)
     qInfo() << "create com.deepin.wm";
     wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm",
                           QDBusConnection::sessionBus(), this);
-    wmInter->setTimeout(10);
+    wmInter->setTimeout(200);
     qInfo() << "create com.deepin.wm end";
 
     connect(wmInter, &WMInter::WorkspaceSwitched, this, &BackgroundService::onWorkspaceSwitched);
@@ -28,7 +28,7 @@ BackgroundService::~BackgroundService()
 
 void BackgroundService::onWorkspaceSwitched(int from, int to)
 {
-    qInfo() << "workspace changed " << from << to;
+    qInfo() << "workspace changed " << from << to << "current" << currentWorkspaceIndex;
     currentWorkspaceIndex = to;
     emit backgroundChanged();
 }

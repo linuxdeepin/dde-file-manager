@@ -39,9 +39,11 @@ static bool validPrimaryChanged(const ScreenProxyQt *proxy)
             }
             return false;
         } else {
-            qInfo() << "Primary screen changed, the screen name obtained by Qt is " << qApp->primaryScreen()->name() <<".Current times:" << times;
+            bool isValid = times > 0;
+            qInfo() << "Primary screen changed, the screen name obtained by Qt is " << qApp->primaryScreen()->name()
+                    <<".Current times:" << times << isValid;
             times = 0;
-            return true;
+            return isValid;
         }
     } else {
         // 多屏由其余正常逻辑处理，不在本特殊处理范围内
@@ -68,8 +70,10 @@ QList<ScreenPointer> ScreenProxyQt::screens() const
     QList<ScreenPointer> order;
     for (QScreen *sc : qApp->screens()) {
         if (screenMap.contains(sc)) {
-            if (sc->geometry().size() == QSize(0, 0))
-                qCritical() << "screen error. does it is closed?";
+            if (sc->name().isEmpty() || sc->geometry().size() == QSize(0, 0)) {
+                qCritical() << "screen error. does it is closed?" << sc->name();
+                continue;
+            }
             order.append(screenMap.value(sc));
         }
     }
@@ -88,6 +92,10 @@ QList<ScreenPointer> ScreenProxyQt::logicScreens() const
 
     for (QScreen *sc : allScreen) {
         if (screenMap.contains(sc))
+            if (sc->name().isEmpty() || sc->geometry().size() == QSize(0, 0)) {
+                qCritical() << "screen error. does it is closed?" << sc->name();
+                continue;
+            }
             order.append(screenMap.value(sc));
     }
     return order;
