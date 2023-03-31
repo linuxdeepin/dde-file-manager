@@ -49,7 +49,7 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
-            DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err.code);
+            DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
         }
     });
 }

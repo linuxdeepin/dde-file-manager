@@ -77,7 +77,7 @@ int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, co
     return code;
 }
 
-void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::DeviceError err)
+void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::OperationErrorInfo err)
 {
     static const QString kOpFailed = tr("Operating failed");
     static const QString kMountFailed = tr("Mount failed");
@@ -85,7 +85,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
 
     DFM_MOUNT_USE_NS
 
-    switch (err) {
+    switch (err.code) {
     case DeviceError::kUDisksBusyFileSystemUnmounting:
         showErrorDialog(kOpFailed, tr("Unmounting device now..."));
         return;
@@ -135,20 +135,25 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
     QString errMsg = "", title = "";
     if (type == OperateType::kMount) {
         title = kMountFailed;
-        qWarning() << "mount device failed: " << err;
+        qWarning() << "mount device failed: " << err.code << err.message;
 
-        if (err == DeviceError::kUserErrorNetworkAnonymousNotAllowed)
+        if (err.code == DeviceError::kUserErrorNetworkAnonymousNotAllowed)
             errMsg = tr("Anonymous mount is not allowed");
-        else if (err == DeviceError ::kUserErrorNetworkWrongPasswd)
+        else if (err.code == DeviceError ::kUserErrorNetworkWrongPasswd)
             errMsg = tr("Wrong password");
-        else if (err == DeviceError::kUserErrorUserCancelled)
+        else if (err.code == DeviceError::kUserErrorUserCancelled)
             errMsg.clear();
-        else if (static_cast<int>(err) == EACCES)
+        else if (static_cast<int>(err.code) == EACCES)
             errMsg = tr("Permission denied");
-        else if (static_cast<int>(err) == ENOENT)
+        else if (static_cast<int>(err.code) == ENOENT)
             errMsg = tr("No such file or directory");
         else
             errMsg = tr("Error occured while mounting device");
+
+        if (err.message.contains("Operation not permitted.")) {   // TASK(222725)
+            errMsg = tr("The device has been blocked and you do not have permission to access it. "
+                        "Please configure its connection policy in Security Center or contact your administrator.");
+        }
     } else if (type == OperateType::kRemove || type == OperateType::kUnmount) {
         title = kUnmountFailed;
         errMsg = tr("The device is busy, cannot remove now");

@@ -47,7 +47,7 @@ public:
 
     void showErrorDialog(const QString &title, const QString &message);
 
-    void showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::DeviceError err);
+    void showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::OperationErrorInfo err);
     void showNoPermissionDialog(const QList<QUrl> &urls);
     void showCopyMoveToSelfDialog();
 
