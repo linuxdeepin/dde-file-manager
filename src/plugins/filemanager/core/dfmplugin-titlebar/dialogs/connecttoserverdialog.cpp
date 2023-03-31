@@ -34,6 +34,7 @@
 #include <QWindow>
 #include <QLineEdit>
 #include <QSpacerItem>
+#include <QIcon>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -178,9 +179,9 @@ void ConnectToServerDialog::onCollectionViewClicked(const QModelIndex &index)
             serverComboBox->setCurrentIndex(checkedIndex);
         serverComboBox->setCurrentText(history);
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            theAddButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect_cancel.svg").scaled(16, 16)));
+            theAddButton->setIcon(QIcon(":icons/deepin/builtin/light/icons/collect_cancel.svg"));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            theAddButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect_cancel.svg").scaled(16, 16)));
+            theAddButton->setIcon(QIcon(":icons/deepin/builtin/dark/icons/collect_cancel.svg"));
         isAddState = false;
         theAddButton->setToolTip(tr("Unfavorite"));
     }
@@ -235,8 +236,8 @@ void ConnectToServerDialog::initializeUi()
     collectionLabel->setFixedHeight(20);
 
     theAddButton->setIcon(QIcon::fromTheme("dfm_add_server"));
-    theAddButton->setIconSize({ 44, 44 });
     theAddButton->setFlat(false);
+    theAddButton->setIconSize({ 16, 16 });
 
     QHBoxLayout *comboButtonLayout = new QHBoxLayout();
     comboButtonLayout->addWidget(schemeComboBox, 0, Qt::AlignVCenter);
@@ -353,9 +354,9 @@ void ConnectToServerDialog::initializeUi()
     emptyIcon->setContentsMargins(120, 40, 0, 0);
     emptyIcon->setMaximumHeight(200);
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-        emptyIcon->setPixmap(QPixmap(":icons/deepin/builtin/light/icons/no_favorites_yet.svg").scaled(145, 145));
+        emptyIcon->setPixmap(QIcon(":icons/deepin/builtin/light/icons/no_favorites_yet.svg").pixmap({ 145, 145 }));
     else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-        emptyIcon->setPixmap(QPixmap(":icons/deepin/builtin/dark/icons/no_favorites_yet.svg").scaled(145, 145));
+        emptyIcon->setPixmap(QIcon(":icons/deepin/builtin/dark/icons/no_favorites_yet.svg").pixmap({ 145, 145 }));
 
     centerNotes->setMaximumHeight(30);
     centerNotes->setText(tr("No favorites yet"));
@@ -427,16 +428,16 @@ void ConnectToServerDialog::upateUiState()
     if (serverData.contains(text)) {
         //Current text is already collected, collection button display the cancel icon.
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            theAddButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect_cancel.svg").scaled(16, 16)));
+            theAddButton->setIcon(QIcon(":icons/deepin/builtin/light/icons/collect_cancel.svg"));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            theAddButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect_cancel.svg").scaled(16, 16)));
+            theAddButton->setIcon(QIcon(":icons/deepin/builtin/dark/icons/collect_cancel.svg"));
         isAddState = false;
         theAddButton->setToolTip(tr("Unfavorite"));
     } else {   //Current text is not collected, collection button display the collection icon.
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            theAddButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect.svg").scaled(16, 16)));
+            theAddButton->setIcon(QIcon(":icons/deepin/builtin/light/icons/collect.svg"));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            theAddButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect.svg").scaled(16, 16)));
+            theAddButton->setIcon(QIcon(":icons/deepin/builtin/dark/icons/collect.svg"));
         isAddState = true;
         theAddButton->setToolTip(tr("Favorite"));
     }
