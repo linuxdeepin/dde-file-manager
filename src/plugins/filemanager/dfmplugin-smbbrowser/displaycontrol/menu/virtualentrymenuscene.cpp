@@ -229,7 +229,7 @@ void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
         DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             pddmDbg << "unmount device:" << devId << "which represents" << toStdSmb << "result:" << ok << err.code << err.message;
             if (!ok)
-                return DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err.code);
+                return DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             if (removeEntry)
                 tryRemoveAggregatedEntry(stdSmbRoot, toStdSmb);
         });
@@ -254,7 +254,7 @@ void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
 
     DevMngIns->mountNetworkDeviceAsync(path, [](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &) {
         if (ok) return;
-        DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err.code);
+        DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
     });
 }
 

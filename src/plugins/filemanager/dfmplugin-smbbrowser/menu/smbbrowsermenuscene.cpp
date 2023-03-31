@@ -161,7 +161,7 @@ void SmbBrowserMenuScenePrivate::actUnmount()
 
     DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
         if (!ok)
-            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err.code);
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err);
     });
 }
 
@@ -170,7 +170,7 @@ void SmbBrowserMenuScenePrivate::actMount()
     const QString &smbPath = url.toString().toLower();
     DeviceManager::instance()->mountNetworkDeviceAsync(smbPath, [](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &) {
         if (!ok && err.code != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted)
-            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err.code);
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
     });
 }
 
