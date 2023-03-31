@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "proxyfileinfo.h"
+#include "dfm-base/file/local/asyncfileinfo.h"
 
 DFMBASE_USE_NAMESPACE
 
@@ -42,7 +43,11 @@ void ProxyFileInfo::refresh()
 void ProxyFileInfo::setProxy(const FileInfoPointer &proxy)
 {
     this->proxy = proxy;
-    this->proxy->refresh();
+    auto asyncInfo = this->proxy.dynamicCast<AsyncFileInfo>();
+    if (asyncInfo) {
+        asyncInfo->setNotifyUrl(url);
+        asyncInfo->refresh();
+    }
 }
 
 QString dfmbase::ProxyFileInfo::filePath() const

@@ -2,16 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "trashfileinfo.h"
+#include "asynctrashfileinfo.h"
 #include "utils/trashcorehelper.h"
 
-#include <dfm-base/interfaces/private/fileinfo_p.h>
-#include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/utils/fileutils.h>
-#include <dfm-base/file/local/desktopfileinfo.h>
-#include <dfm-base/utils/universalutils.h>
-#include <dfm-base/base/standardpaths.h>
+#include "dfm-base/interfaces/private/fileinfo_p.h"
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
+#include "dfm-base/file/local/asyncfileinfo.h"
+#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/fileinfohelper.h"
 
 #include <dfm-io/denumerator.h>
 
@@ -19,16 +21,17 @@
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_trashcore {
-class TrashFileInfoPrivate
+class AsyncTrashFileInfoPrivate
 {
 public:
-    explicit TrashFileInfoPrivate(TrashFileInfo *qq)
+    explicit AsyncTrashFileInfoPrivate(AsyncTrashFileInfo *qq)
         : q(qq)
     {
     }
 
-    virtual ~TrashFileInfoPrivate();
+    virtual ~AsyncTrashFileInfoPrivate();
 
+    bool init();
     QUrl initTarget();
     QString fileName() const;
     QString copyName() const;
@@ -37,19 +40,25 @@ public:
     QDateTime lastModified() const;
     QDateTime deletionTime() const;
     QString symLinkTarget() const;
+    QVariant asyncAttribute(const AsyncFileInfo::AsyncAttributeID id);
+    void cacheingAllAttributes();
+    QString displayName();
 
     QSharedPointer<DFileInfo> dFileInfo { nullptr };
     QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
     QUrl targetUrl;
     QUrl originalUrl;
-    TrashFileInfo *const q;
+    QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
+    AsyncTrashFileInfo *const q;
+    QReadWriteLock cacheLock;
+    std::atomic_bool cacheing { false };
 };
 
-TrashFileInfoPrivate::~TrashFileInfoPrivate()
+AsyncTrashFileInfoPrivate::~AsyncTrashFileInfoPrivate()
 {
 }
 
-QUrl TrashFileInfoPrivate::initTarget()
+QUrl AsyncTrashFileInfoPrivate::initTarget()
 {
     QVariant attributeTargetUri = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri);
     if (!attributeTargetUri.toString().isEmpty())
@@ -97,7 +106,7 @@ QUrl TrashFileInfoPrivate::initTarget()
     return targetUrl;
 }
 
-QString TrashFileInfoPrivate::fileName() const
+QString AsyncTrashFileInfoPrivate::fileName() const
 {
     if (!dFileInfo)
         return QString();
@@ -112,7 +121,7 @@ QString TrashFileInfoPrivate::fileName() const
     return dFileInfo->attribute(DFileInfo::AttributeID::kStandardName).toString();
 }
 
-QString TrashFileInfoPrivate::copyName() const
+QString AsyncTrashFileInfoPrivate::copyName() const
 {
     if (!dFileInfo)
         return QString();
@@ -127,7 +136,7 @@ QString TrashFileInfoPrivate::copyName() const
     return dFileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString();
 }
 
-QString TrashFileInfoPrivate::mimeTypeName()
+QString AsyncTrashFileInfoPrivate::mimeTypeName()
 {
     if (!dFileInfo)
         return QString();
@@ -138,7 +147,7 @@ QString TrashFileInfoPrivate::mimeTypeName()
     return type;
 }
 
-QDateTime TrashFileInfoPrivate::lastRead() const
+QDateTime AsyncTrashFileInfoPrivate::lastRead() const
 {
     if (!dFileInfo)
         return QDateTime();
@@ -155,7 +164,7 @@ QDateTime TrashFileInfoPrivate::lastRead() const
     return time;
 }
 
-QDateTime TrashFileInfoPrivate::lastModified() const
+QDateTime AsyncTrashFileInfoPrivate::lastModified() const
 {
     if (!dFileInfo)
         return QDateTime();
@@ -172,7 +181,7 @@ QDateTime TrashFileInfoPrivate::lastModified() const
     return time;
 }
 
-QDateTime TrashFileInfoPrivate::deletionTime() const
+QDateTime AsyncTrashFileInfoPrivate::deletionTime() const
 {
     if (dAncestorsFileInfo)
         return QDateTime::fromString(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
@@ -183,18 +192,31 @@ QDateTime TrashFileInfoPrivate::deletionTime() const
     return QDateTime::fromString(dFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
 }
 
-TrashFileInfo::TrashFileInfo(const QUrl &url)
-    : ProxyFileInfo(url), d(new TrashFileInfoPrivate(this))
+AsyncTrashFileInfo::AsyncTrashFileInfo(const QUrl &url)
+    : ProxyFileInfo(url), d(new AsyncTrashFileInfoPrivate(this))
 {
+}
+
+AsyncTrashFileInfo::~AsyncTrashFileInfo()
+{
+}
+
+bool AsyncTrashFileInfo::initQuerier()
+{
+    if (d->cacheing)
+        return false;
+    d->cacheing = true;
     d->dFileInfo.reset(new DFileInfo(url));
     if (!d->dFileInfo) {
         qWarning() << "dfm-io use factory create fileinfo Failed, url: " << url;
-        return;
+        d->cacheing = false;
+        return false;
     }
     bool init = d->dFileInfo->initQuerier();
     if (!init) {
         //        qWarning() << "querier init failed, url: " << url;
-        return;
+        d->cacheing = false;
+        return false;
     }
 
     const QUrl &urlTarget = d->initTarget();
@@ -203,26 +225,24 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
     } else {
         if (!FileUtils::isTrashRootFile(url))
             qWarning() << "create proxy failed, target url is invalid, url: " << url;
+        return false;
     }
+
+    d->cacheingAllAttributes();
+
+    d->cacheing = false;
+    return true;
 }
 
-TrashFileInfo::~TrashFileInfo()
-{
-}
-
-bool TrashFileInfo::exists() const
+bool AsyncTrashFileInfo::exists() const
 {
     if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl)))
         return true;
 
-    if (d->dFileInfo)
-        return d->dFileInfo->exists();
-
-    return ProxyFileInfo::exists()
-            || FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
+    return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardFileExists).toBool();
 }
 
-Qt::DropActions TrashFileInfo::supportedOfAttributes(const FileInfo::SupportType type) const
+Qt::DropActions AsyncTrashFileInfo::supportedOfAttributes(const FileInfo::SupportType type) const
 {
     switch (type) {
     case FileInfo::SupportType::kDrop: {
@@ -237,63 +257,51 @@ Qt::DropActions TrashFileInfo::supportedOfAttributes(const FileInfo::SupportType
     }
 }
 
-void TrashFileInfo::refresh()
+void AsyncTrashFileInfo::refresh()
 {
+    FileInfoHelper::instance().fileRefreshAsync(this->sharedFromThis());
     ProxyFileInfo::refresh();
 }
 
-QString TrashFileInfo::nameOf(const NameInfoType type) const
+QString AsyncTrashFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case NameInfoType::kFileName:
-        return d->fileName();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardFileName).toString();
     case NameInfoType::kFileCopyName: {
         if (d->targetUrl.isValid()) {
             if (FileUtils::isDesktopFile(d->targetUrl)) {
-                return d->copyName();
+                return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardCopyName).toString();
             }
         }
         return displayOf(DisPlayInfoType::kFileDisplayName);
     }
     case NameInfoType::kMimeTypeName:
-        return d->mimeTypeName();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardContentType).toString();
     default:
         return ProxyFileInfo::nameOf(type);
     }
 }
 
-QString TrashFileInfo::displayOf(const DisPlayInfoType type) const
+QString AsyncTrashFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type) {
-        if (urlOf(UrlInfoType::kUrl) == TrashCoreHelper::rootUrl())
-            return QCoreApplication::translate("PathManager", "Trash");
-
-        if (!d->dFileInfo)
-            return QString();
-
-        if (d->targetUrl.isValid()) {
-            if (FileUtils::isDesktopFile(d->targetUrl)) {
-                DesktopFileInfo dfi(d->targetUrl);
-                return dfi.displayOf(DisPlayInfoType::kFileDisplayName);
-            }
-        }
-
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName).toString();
     }
 
     return ProxyFileInfo::displayOf(type);
 }
-QString TrashFileInfo::pathOf(const PathInfoType type) const
+QString AsyncTrashFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kSymLinkTarget:
-        return d->symLinkTarget();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardSymlinkTarget).toString();
     default:
         return ProxyFileInfo::pathOf(type);
     }
 }
 
-QUrl TrashFileInfo::urlOf(const UrlInfoType type) const
+QUrl AsyncTrashFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
@@ -307,24 +315,24 @@ QUrl TrashFileInfo::urlOf(const UrlInfoType type) const
     }
 }
 
-bool TrashFileInfo::canAttributes(const CanableInfoType type) const
+bool AsyncTrashFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanDelete:
         if (!d->dFileInfo)
             return false;
 
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kAccessCanDelete).toBool();
     case FileCanType::kCanTrash:
         if (!d->dFileInfo)
             return false;
 
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kAccessCanTrash).toBool();
     case FileCanType::kCanRename:
         if (!d->dFileInfo)
             return false;
 
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kAccessCanRename).toBool();
     case FileCanType::kCanDrop:
         return FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
     case FileCanType::kCanHidden:
@@ -336,35 +344,30 @@ bool TrashFileInfo::canAttributes(const CanableInfoType type) const
     }
 }
 
-QFile::Permissions TrashFileInfo::permissions() const
+QFile::Permissions AsyncTrashFileInfo::permissions() const
 {
-    QFileDevice::Permissions ps;
+    QFileDevice::Permissions p = d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kAccessPermissions).value<QFileDevice::Permissions>();
 
-    if (d->dFileInfo) {
-        ps = static_cast<QFileDevice::Permissions>(static_cast<uint16_t>(d->dFileInfo->permissions()));
-    }
+    p &= ~QFileDevice::WriteOwner;
+    p &= ~QFileDevice::WriteUser;
+    p &= ~QFileDevice::WriteGroup;
+    p &= ~QFileDevice::WriteOther;
 
-    ps &= ~QFileDevice::WriteOwner;
-    ps &= ~QFileDevice::WriteUser;
-    ps &= ~QFileDevice::WriteGroup;
-    ps &= ~QFileDevice::WriteOther;
-
-    return ps;
+    return p;
 }
 
-QIcon TrashFileInfo::fileIcon()
+QIcon AsyncTrashFileInfo::fileIcon()
 {
-    if (d->targetUrl.isValid()) {
-        if (FileUtils::isDesktopFile(d->targetUrl)) {
-            DesktopFileInfo dfi(d->targetUrl);
-            return dfi.fileIcon();
-        }
+    if (d->targetUrl.isValid() && FileUtils::isDesktopFile(d->targetUrl)) {
+        auto dfi = InfoFactory::create<FileInfo>(d->targetUrl);
+        if (dfi)
+            return dfi->fileIcon();
     }
 
     return ProxyFileInfo::fileIcon();
 }
 
-qint64 TrashFileInfo::size() const
+qint64 AsyncTrashFileInfo::size() const
 {
     if (!d->dFileInfo)
         return qint64();
@@ -372,16 +375,14 @@ qint64 TrashFileInfo::size() const
     qint64 size = 0;
     const QUrl &fileUrl = urlOf(UrlInfoType::kUrl);
     if (FileUtils::isTrashRootFile(fileUrl)) {
-        auto data = TrashCoreHelper::calculateTrashRoot();
-        return data.first;
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTrashItemCount).value<qint64>();
     }
 
-    bool success = false;
-    size = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardSize, &success).value<qint64>();
+    size = d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardSize).value<qint64>();
     return size;
 }
 
-QString TrashFileInfoPrivate::symLinkTarget() const
+QString AsyncTrashFileInfoPrivate::symLinkTarget() const
 {
     if (!dFileInfo)
         return QString();
@@ -392,7 +393,62 @@ QString TrashFileInfoPrivate::symLinkTarget() const
     return symLinkTarget;
 }
 
-int TrashFileInfo::countChildFile() const
+QVariant AsyncTrashFileInfoPrivate::asyncAttribute(const AsyncFileInfo::AsyncAttributeID id)
+{
+    QReadLocker lk(&cacheLock);
+    return cacheAsyncAttributes.value(id);
+}
+
+void AsyncTrashFileInfoPrivate::cacheingAllAttributes()
+{
+    if (!dFileInfo)
+        return;
+    QMap<AsyncFileInfo::AsyncAttributeID, QVariant> tmp;
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, dFileInfo->exists());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileName, fileName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardCopyName, copyName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardContentType, mimeTypeName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName, displayName());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSymlinkTarget, symLinkTarget());
+
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanDelete,
+               dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanTrash,
+               dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanRename,
+               dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(dFileInfo->permissions()));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSize,
+               dFileInfo->attribute(DFileInfo::AttributeID::kStandardSize));
+    const QUrl &fileUrl = q->urlOf(UrlInfoType::kUrl);
+    if (FileUtils::isTrashRootFile(fileUrl)) {
+        auto data = TrashCoreHelper::calculateTrashRoot();
+        tmp.insert(AsyncFileInfo::AsyncAttributeID::kTrashItemCount, data.first);
+    }
+
+    QWriteLocker lk(&cacheLock);
+    cacheAsyncAttributes = tmp;
+}
+
+QString AsyncTrashFileInfoPrivate::displayName()
+{
+    if (q->urlOf(UrlInfoType::kUrl) == TrashCoreHelper::rootUrl())
+        return QCoreApplication::translate("PathManager", "Trash");
+
+    if (!dFileInfo)
+        return QString();
+
+    if (targetUrl.isValid()) {
+        if (FileUtils::isDesktopFile(targetUrl)) {
+            DesktopFileInfo dfi(targetUrl);
+            return dfi.displayOf(DisPlayInfoType::kFileDisplayName);
+        }
+    }
+
+    return dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
+}
+
+int AsyncTrashFileInfo::countChildFile() const
 {
     if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl))) {
         if (d->dFileInfo)
@@ -407,7 +463,7 @@ int TrashFileInfo::countChildFile() const
     return -1;
 }
 
-bool TrashFileInfo::isAttributes(const OptInfoType type) const
+bool AsyncTrashFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -442,7 +498,7 @@ bool TrashFileInfo::isAttributes(const OptInfoType type) const
     }
 }
 
-QVariant TrashFileInfo::timeOf(const TimeInfoType type) const
+QVariant AsyncTrashFileInfo::timeOf(const TimeInfoType type) const
 {
     switch (type) {
     case TimeInfoType::kLastRead:
@@ -456,7 +512,7 @@ QVariant TrashFileInfo::timeOf(const TimeInfoType type) const
     }
 }
 
-QVariant TrashFileInfo::customData(int role) const
+QVariant AsyncTrashFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
     if (role == kItemFileOriginalPath)
@@ -467,4 +523,9 @@ QVariant TrashFileInfo::customData(int role) const
         return QVariant();
 }
 
+}
+
+QUrl dfmplugin_trashcore::AsyncTrashFileInfo::fileUrl() const
+{
+    return url;
 }

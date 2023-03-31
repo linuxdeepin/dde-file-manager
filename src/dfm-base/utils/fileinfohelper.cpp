@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileinfohelper.h"
+#include "dfm-base/file/local/asyncfileinfo.h"
 
 #include <QGuiApplication>
 #include <QTimer>
@@ -41,22 +42,25 @@ void FileInfoHelper::init()
 void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfileInfo)
 {
     auto success = dfileInfo->initQuerier();
-    queryingList.removeOneByLock(dfileInfo->fileUrl());
-    if (!success)
+    if (!success) {
+        queryingList.removeOneByLock(dfileInfo->fileUrl());
         return;
+    }
 
     emit fileRefreshFinished(dfileInfo->fileUrl(), false);
-    if (dfileInfo->isAttributes(OptInfoType::kIsSymLink)) {
-        QUrl tar =
-                QUrl::fromLocalFile(dfileInfo->pathOf(PathInfoType::kSymLinkTarget));
-        QWriteLocker lk(&symLinkHashLock);
-        symLinkHash.insert(tar, dfileInfo->fileUrl());
-    } else {
-        QWriteLocker lk(&symLinkHashLock);
-        QUrl org = symLinkHash.take(dfileInfo->fileUrl());
-        if (org.isValid())
-            emit fileRefreshFinished(org, true);
+
+    auto asyncInfo = dfileInfo.dynamicCast<AsyncFileInfo>();
+    if (!asyncInfo) {
+        queryingList.removeOneByLock(dfileInfo->fileUrl());
+        return;
     }
+
+    auto notifyUrls = asyncInfo->notifyUrls();
+    for (const auto &url : notifyUrls) {
+        emit fileRefreshFinished(url, true);
+    }
+
+    queryingList.removeOneByLock(dfileInfo->fileUrl());
 }
 
 QSharedPointer<FileInfoHelperUeserData> FileInfoHelper::fileCountAsync(QUrl &url)
