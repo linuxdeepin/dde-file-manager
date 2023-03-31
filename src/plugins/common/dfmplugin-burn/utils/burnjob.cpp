@@ -272,7 +272,8 @@ void AbstractBurnJob::workingInSubProcess()
 DOpticalDiscManager *AbstractBurnJob::createManager(int fd)
 {
     DOpticalDiscManager *manager = new DOpticalDiscManager(curDev, this);
-    connect(manager, &DOpticalDiscManager::jobStatusChanged, this,
+    connect(
+            manager, &DOpticalDiscManager::jobStatusChanged, this,
             [=](DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message) {
                 QByteArray bytes(updatedInSubProcess(status, progress, speed, message));
                 if (bytes.size() < kPipeBufferSize) {
@@ -381,7 +382,7 @@ void EraseJob::work()
     DeviceManager::instance()->rescanBlockDev(curDevId);
 
     // Due to disc don't ejected after erase, we must readlod optical info again
-    DevMngIns->mountBlockDevAsync(curDevId, {}, [this](bool, DFMMOUNT::DeviceError, const QString &) {
+    DevMngIns->mountBlockDevAsync(curDevId, {}, [this](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
         DevProxyMng->reloadOpticalInfo(curDevId);
     });
 }

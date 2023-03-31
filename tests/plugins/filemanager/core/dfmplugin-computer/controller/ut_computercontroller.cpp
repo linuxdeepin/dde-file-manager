@@ -26,7 +26,7 @@ DFMBASE_USE_NAMESPACE
 class UT_ComputerController : public testing::Test
 {
 protected:
-    virtual void SetUp() override {}
+    virtual void SetUp() override { }
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -135,7 +135,7 @@ TEST_F(UT_ComputerController, DoRename)
 
     stub.set_lamda(ComputerUtils::getBlockDevIdByUrl, [] { __DBG_STUB_INVOKE__ return ""; });
     stub.set_lamda(&DeviceManager::renameBlockDevAsync, [](void *, const QString &, const QString &, const QVariantMap &, CallbackType2 cb) {
-        if (cb) cb(false, dfmmount::DeviceError::kNoError);
+        if (cb) cb(false, DFMMOUNT::OperationErrorInfo());
     });
 
     name = "hello";
@@ -190,16 +190,16 @@ TEST_F(UT_ComputerController, MountDevice)
     //                return properties;
     //    });
 }
-TEST_F(UT_ComputerController, ActEject) {}
-TEST_F(UT_ComputerController, ActOpenInNewWindow) {}
-TEST_F(UT_ComputerController, ActOpenInNewTab) {}
-TEST_F(UT_ComputerController, ActMount) {}
-TEST_F(UT_ComputerController, ActUnmount) {}
-TEST_F(UT_ComputerController, ActSafelyRemove) {}
-TEST_F(UT_ComputerController, ActRename) {}
-TEST_F(UT_ComputerController, ActFormat) {}
-TEST_F(UT_ComputerController, ActRemove) {}
-TEST_F(UT_ComputerController, ActProperties) {}
-TEST_F(UT_ComputerController, ActLogoutAndForgetPasswd) {}
-TEST_F(UT_ComputerController, ActErase) {}
-TEST_F(UT_ComputerController, WaitUDisks2DataReady) {}
+TEST_F(UT_ComputerController, ActEject) { }
+TEST_F(UT_ComputerController, ActOpenInNewWindow) { }
+TEST_F(UT_ComputerController, ActOpenInNewTab) { }
+TEST_F(UT_ComputerController, ActMount) { }
+TEST_F(UT_ComputerController, ActUnmount) { }
+TEST_F(UT_ComputerController, ActSafelyRemove) { }
+TEST_F(UT_ComputerController, ActRename) { }
+TEST_F(UT_ComputerController, ActFormat) { }
+TEST_F(UT_ComputerController, ActRemove) { }
+TEST_F(UT_ComputerController, ActProperties) { }
+TEST_F(UT_ComputerController, ActLogoutAndForgetPasswd) { }
+TEST_F(UT_ComputerController, ActErase) { }
+TEST_F(UT_ComputerController, WaitUDisks2DataReady) { }

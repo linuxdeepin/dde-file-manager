@@ -118,7 +118,7 @@ void DeviceWatcherLite::detachBlockDevice(const QString &id)
         const QString &mpt = devPtr->mountPoint();
         unmountStacked(mpt);
 
-        devPtr->unmountAsync({}, [=](bool ok, DeviceError err) {
+        devPtr->unmountAsync({}, [=](bool ok, const OperationErrorInfo &) {
             *unmountDone &= ok;
             *unmountCount -= 1;
             if (*unmountCount == 0) {
@@ -137,10 +137,10 @@ void DeviceWatcherLite::detachProtocolDevice(const QString &id)
         return;
 
     QPointer<DeviceWatcherLite> that(this);
-    proPtr->unmountAsync({}, [=](bool ok, DeviceError err) {
+    proPtr->unmountAsync({}, [=](bool ok, const OperationErrorInfo &err) {
         if (!ok && that)
             Q_EMIT this->operationFailed(kUnmount);
-        qDebug() << "[disk-mount]: detach protocol device: " << id << err;
+        qDebug() << "[disk-mount]: detach protocol device: " << id << err.message << err.code;
     });
 }
 
@@ -200,16 +200,16 @@ void DeviceWatcherLite::removeDevice(bool unmountDone, QSharedPointer<dfmmount::
     QPointer<DeviceWatcherLite> that(this);
 
     if (blk->optical()) {
-        blk->ejectAsync({}, [=](bool ok, DeviceError err) {
+        blk->ejectAsync({}, [=](bool ok, const OperationErrorInfo &err) {
             if (that && !ok)
                 Q_EMIT this->operationFailed(kEject);
-            qDebug() << "[disk-mount]: eject device: " << err;
+            qDebug() << "[disk-mount]: eject device: " << err.message << err.code;
         });
     } else {
-        blk->powerOffAsync({}, [=](bool ok, DeviceError err) {
+        blk->powerOffAsync({}, [=](bool ok, const OperationErrorInfo &err) {
             if (that && !ok)
                 Q_EMIT this->operationFailed(kPowerOff);
-            qDebug() << "[disk-mount]: poweroff device: " << err;
+            qDebug() << "[disk-mount]: poweroff device: " << err.message << err.code;
         });
     }
 }

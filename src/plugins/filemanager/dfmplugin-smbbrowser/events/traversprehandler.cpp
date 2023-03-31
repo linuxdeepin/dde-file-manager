@@ -43,13 +43,13 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
         isSmb = true;
     }
 
-    DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+    DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
         if (!mpt.isEmpty()) {
             doChangeCurrentUrl(winId, mpt, subPath, url);
-        } else if (ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
+        } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
-            DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+            DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err.code);
         }
     });
 }

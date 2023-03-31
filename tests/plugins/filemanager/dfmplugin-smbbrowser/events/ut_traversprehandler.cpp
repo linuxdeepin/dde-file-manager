@@ -49,11 +49,11 @@ TEST_F(UT_TraversPrehandler, NetworkAccessPrehandler)
     int type = 0;
     stub.set_lamda(&dfmbase::DeviceManager::mountNetworkDeviceAsync, [&](void *, const QString &, dfmbase::CallbackType1 cb, int) {
         if (type == 0 && cb)
-            cb(false, DFMMOUNT::DeviceError::kNoError, "/");
+            cb(false, DFMMOUNT::OperationErrorInfo(), "/");
         else if (type == 1 && cb)
-            cb(true, DFMMOUNT::DeviceError::kNoError, "");
+            cb(true, DFMMOUNT::OperationErrorInfo(), "");
         else if (type == 2 && cb)
-            cb(false, DFMMOUNT::DeviceError::kNoError, "");
+            cb(false, DFMMOUNT::OperationErrorInfo(), "");
     });
 
     EXPECT_NO_FATAL_FAILURE(travers_prehandler::networkAccessPrehandler(0, QUrl("smb://1.2.3.4/hello/world"), nullptr));
