@@ -502,6 +502,7 @@ void WallpaperSettingsPrivate::onMousePressed(const QPoint &pos, int button)
             }
         } else {
             qCritical() << "lost screen " << screenName << "closed";
+            q->hide();
             return;
         }
     }
@@ -801,7 +802,14 @@ QStringList WallpaperSettings::availableWallpaperSlide()
 
 void WallpaperSettings::adjustGeometry()
 {
-    const QRect screenRect = ddplugin_desktop_util::screenProxyScreen(d->screenName)->geometry();
+    QRect screenRect;
+    if (auto sc = ddplugin_desktop_util::screenProxyScreen(d->screenName)) {
+        screenRect = sc->geometry();
+    } else {
+        qCritical() << "invalid screen name:" << d->screenName;
+        screenRect = QRect(0, 0, 1920, 1080);
+    }
+
     int actualHeight = d->kFrameHeight + d->kHeaderSwitcherHeight;
     setFixedSize(screenRect.width() - 20, actualHeight);
 

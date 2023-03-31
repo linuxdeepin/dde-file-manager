@@ -40,26 +40,17 @@ QString BackgroundWM::getBackgroundFromWm(const QString &screen)
         return path;
     }
 
-    int retry = 3;
-    while (retry--) {
-        qInfo() << "Get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
-        QDBusPendingReply<QString> reply = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);
-        reply.waitForFinished();
+    qInfo() << "Get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+    QDBusPendingReply<QString> reply = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);
+    reply.waitForFinished();
 
-        if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "Get background failed by wmDBus and times:" << (3-retry)
-                       << reply.error().type() << reply.error().name() << reply.error().message();
-        } else {
-            path = reply.argumentAt<0>();
-            qInfo() << "Get background path succeed:" << path << "screen" << screen << "   times:" << (3 - retry);
-            break;
-        }
+    if (reply.error().type() != QDBusError::NoError) {
+        qWarning() << "Get background failed by wmDBus"
+                   << reply.error().type() << reply.error().name() << reply.error().message();
+    } else {
+        path = reply.argumentAt<0>();
     }
 
-    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile()))
-        qCritical() << "get background fail path :" << path << "screen" << screen;
-    else
-        qInfo() << "getBackgroundFromWm path :" << path << "screen" << screen;
     return path;
 }
 
@@ -110,17 +101,17 @@ QString BackgroundWM::background(const QString &screen)
     if (!screen.isEmpty()) {
         //1.Get the background from wm
         path = getBackgroundFromWm(screen);
-        qInfo() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
+        qInfo() << "getBackgroundFromWm  path :" << path << "screen" << screen;
 
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
             // 2.Parse background from config file
             path = getBackgroundFromConfig(screen);
-            qInfo() << "getBackgroundFormConfig path :" << path << "screen" << screen;
+            qWarning() << "getBackgroundFormConfig path :" << path << "screen" << screen;
 
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 // 3.Use the default background
                 path = getDefaultBackground();
-                qInfo() << "getDefaultBackground path :" << path << "screen" << screen;
+                qCritical() << "getDefaultBackground path :" << path << "screen" << screen;
             }
         }
     } else {
