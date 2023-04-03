@@ -154,6 +154,9 @@ void RootInfo::doFileDeleted(const QUrl &url)
     auto tmp = FileUtils::bindUrlTransform(url);
     enqueueEvent(QPair<QUrl, EventType>(tmp, kRmFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
+
+    if (UniversalUtils::urlEquals(hiddenFileUrl, tmp))
+        Q_EMIT watcherUpdateHideFile(tmp);
 }
 
 void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
