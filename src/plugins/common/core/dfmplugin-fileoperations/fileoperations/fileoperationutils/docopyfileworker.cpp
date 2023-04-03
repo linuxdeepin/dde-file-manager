@@ -536,7 +536,7 @@ bool DoCopyFileWorker::openFiles(const FileInfoPointer &fromInfo, const FileInfo
                                  const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
                                  bool *skip)
 {
-    if (fromInfo->size() > 0 && !openFile(fromInfo, toInfo, fromeFile, DFMIO::DFile::OpenFlag::kReadOnly, skip)) {
+    if (!openFile(fromInfo, toInfo, fromeFile, DFMIO::DFile::OpenFlag::kReadOnly, skip)) {
         return false;
     }
 
