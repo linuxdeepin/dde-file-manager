@@ -232,7 +232,7 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
             iconName.append("-symbolic");
         bookmarkIcon = QIcon::fromTheme(iconName);
         displayName = SystemPathUtil::instance()->systemPathDisplayName(bookmarkName);
-        Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled };
+        Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled };
         if (DefaultItemManager::instance()->isDefaultPluginItem(bookmarkName)) {   // It's a plugin item
             const QVariantMap &bookmarkMap = DefaultItemManager::instance()->pluginItemData().value(bookmarkName);
             bool isPluginItemAdded = bookmarkMap.contains("Property_Key_PluginItemData");
