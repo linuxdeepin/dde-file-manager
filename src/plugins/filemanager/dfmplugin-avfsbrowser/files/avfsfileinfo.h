@@ -7,7 +7,7 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "dfm-base/interfaces/proxyfileinfo.h"
+#include <dfm-base/interfaces/proxyfileinfo.h>
 
 namespace dfmplugin_avfsbrowser {
 

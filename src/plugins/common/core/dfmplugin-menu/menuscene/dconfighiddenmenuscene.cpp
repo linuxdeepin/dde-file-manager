@@ -6,8 +6,8 @@
 #include "private/dconfighiddenmenuscene_p.h"
 #include "utils/menuhelper.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QMenu>
 #include <QStringList>

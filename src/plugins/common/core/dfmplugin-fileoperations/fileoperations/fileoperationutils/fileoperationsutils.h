@@ -6,7 +6,7 @@
 #define FILEOPERATIONSUTILS_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include <QSharedPointer>
 #include <QThread>

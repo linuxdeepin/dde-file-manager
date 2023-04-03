@@ -6,8 +6,8 @@
 #define VAULTFILEWATCHERPRIVATE_H
 
 #include "dfmplugin_vault_global.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
+#include <dfm-base/interfaces/private/abstractfilewatcher_p.h>
 
 namespace dfmplugin_vault {
 class VaultFileWatcher;

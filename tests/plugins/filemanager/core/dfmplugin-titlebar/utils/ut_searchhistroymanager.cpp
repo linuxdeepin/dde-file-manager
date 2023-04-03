@@ -4,7 +4,7 @@
 
 #include "utils/searchhistroymanager.h"
 
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/application/settings.h>
 
 #include "stubext.h"
 

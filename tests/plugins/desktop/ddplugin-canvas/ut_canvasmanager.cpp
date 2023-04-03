@@ -11,7 +11,7 @@
 #include "model/fileinfomodel_p.h"
 #include "view/operator/fileoperatorproxy_p.h"
 
-#include "dfm-base/dfm_desktop_defines.h"
+#include <dfm-base/dfm_desktop_defines.h>
 
 #include "dfm-framework/dpf.h"
 

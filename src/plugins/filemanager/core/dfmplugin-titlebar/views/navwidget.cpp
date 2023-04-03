@@ -6,7 +6,7 @@
 #include "views/navwidget.h"
 #include "events/titlebareventcaller.h"
 
-#include "dfm-base/base/device/deviceproxymanager.h"
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-framework/event/event.h>
 

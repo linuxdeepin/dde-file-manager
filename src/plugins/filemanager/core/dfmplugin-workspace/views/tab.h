@@ -5,7 +5,7 @@
 #ifndef TAB_H
 #define TAB_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "dfmplugin_workspace_global.h"
 
 #include <QSharedPointer>

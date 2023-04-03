@@ -7,7 +7,7 @@
 
 #include "dfmplugin_dirshare_global.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 #include <QTimer>

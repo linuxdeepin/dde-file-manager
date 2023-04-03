@@ -7,7 +7,7 @@
 
 #include "videowidget.h"
 #include "videostatusbar.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
+#include <dfm-base/interfaces/abstractbasepreview.h>
 
 #include <QFileInfo>
 #include <QPointer>

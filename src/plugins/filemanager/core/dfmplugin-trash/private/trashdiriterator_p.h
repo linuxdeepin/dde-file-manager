@@ -6,7 +6,7 @@
 #define TRASHDIRITERATORPRIVATE_H
 
 #include "dfmplugin_trash_global.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <dfm-io/denumerator.h>
 

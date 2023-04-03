@@ -9,7 +9,7 @@
  * before re-generating it.
  */
 
-#include "dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h"
+#include <dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h>
 
 /*
  * Implementation of interface class OperationsStackManagerInterface

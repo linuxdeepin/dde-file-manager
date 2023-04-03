@@ -7,7 +7,7 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 namespace dfmplugin_search {
 

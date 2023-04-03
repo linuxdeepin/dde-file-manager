@@ -7,8 +7,8 @@
 #include "utils/shareutils.h"
 #include "fileinfo/sharefileinfo.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/event/event.h>
 

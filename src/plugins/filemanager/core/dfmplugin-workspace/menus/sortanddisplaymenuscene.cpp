@@ -8,9 +8,9 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-framework/dpf.h>
 

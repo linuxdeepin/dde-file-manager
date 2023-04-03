@@ -6,7 +6,7 @@
 #include "private/bluetoothmanager.h"
 #include "private/bluetoothtransdialog.h"
 
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/utils/dialogmanager.h>
 
 using namespace dfmplugin_utils;
 

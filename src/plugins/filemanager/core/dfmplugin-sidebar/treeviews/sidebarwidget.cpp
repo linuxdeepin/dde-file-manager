@@ -13,13 +13,13 @@
 #include "utils/sidebarinfocachemananger.h"
 
 #include <dfm-framework/event/event.h>
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/networkutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <QApplication>
 #include <QVBoxLayout>

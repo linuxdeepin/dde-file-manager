@@ -9,11 +9,11 @@
 #include "beans/tagproperty.h"
 #include "beans/sqlitemaster.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/finallyutil.h"
-#include "dfm-base/base/db/sqlitehandle.h"
-#include "dfm-base/base/db/sqlitehelper.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/base/db/sqlitehandle.h>
+#include <dfm-base/base/db/sqlitehelper.h>
 
 #include <dfm-io/dfmio_utils.h>
 

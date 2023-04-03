@@ -6,9 +6,9 @@
 #include "utils/burnjob.h"
 #include "utils/auditlogjob.h"
 
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/event/event.h>
 

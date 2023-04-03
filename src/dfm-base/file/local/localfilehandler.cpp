@@ -5,20 +5,20 @@
 #include "localfilehandler.h"
 #include "localfilehandler_p.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/mimetype/mimesappsmanager.h"
-#include "dfm-base/mimetype/mimetypedisplaymanager.h"
-#include "dfm-base/utils/desktopfile.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/mimetype/mimesappsmanager.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+#include <dfm-base/utils/desktopfile.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-io/doperator.h>
 #include <dfm-io/dfile.h>

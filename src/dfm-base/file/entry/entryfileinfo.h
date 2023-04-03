@@ -5,9 +5,9 @@
 #ifndef ENTRYFILEINFO_H
 #define ENTRYFILEINFO_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 namespace dfmbase {
 

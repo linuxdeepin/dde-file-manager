@@ -12,17 +12,17 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/networkutils.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-framework/dpf.h>
 #include <DMenu>

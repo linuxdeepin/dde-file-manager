@@ -11,12 +11,12 @@
 #include "utils/sidebarhelper.h"
 #include "private/sidebarview_p.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/sysinfoutils.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
 #include "events/sidebareventcaller.h"
 
 #include <dfm-framework/dpf.h>

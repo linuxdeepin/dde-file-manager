@@ -6,8 +6,8 @@
 #include "utils/vaulthelper.h"
 #include "private/vaultfilewatcherprivate.h"
 
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/schemefactory.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;

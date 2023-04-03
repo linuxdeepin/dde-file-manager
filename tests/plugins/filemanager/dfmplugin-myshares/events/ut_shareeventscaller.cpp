@@ -5,8 +5,8 @@
 #include "stubext.h"
 
 #include "plugins/filemanager/dfmplugin-myshares/events/shareeventscaller.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/event/eventchannel.h>
 #include <dfm-framework/event/eventdispatcher.h>

@@ -9,9 +9,9 @@
 #include "bluetoothmodel.h"
 #include "dfileservices.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/dialogmanager.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <QStackedWidget>
 #include <QVBoxLayout>

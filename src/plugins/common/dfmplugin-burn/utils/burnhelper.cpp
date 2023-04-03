@@ -4,13 +4,13 @@
 
 #include "burnhelper.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <DDialog>
 

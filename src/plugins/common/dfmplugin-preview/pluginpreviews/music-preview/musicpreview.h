@@ -6,7 +6,7 @@
 #define MUSICPREVIEW_H
 
 #include "preview_plugin_global.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
+#include <dfm-base/interfaces/abstractbasepreview.h>
 
 #include <QUrl>
 #include <QPointer>

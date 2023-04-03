@@ -4,7 +4,7 @@
 
 #include "mimetypedisplaymanager.h"
 
-#include "dfm-base/base/standardpaths.h"
+#include <dfm-base/base/standardpaths.h>
 
 #include <QFile>
 #include <QTextStream>

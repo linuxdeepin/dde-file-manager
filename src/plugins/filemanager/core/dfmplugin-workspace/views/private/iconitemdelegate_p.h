@@ -5,7 +5,7 @@
 #ifndef ICONITEMDELEGATE_P_H
 #define ICONITEMDELEGATE_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "baseitemdelegate_p.h"
 #include "views/iconitemdelegate.h"
 #include "views/expandedItem.h"

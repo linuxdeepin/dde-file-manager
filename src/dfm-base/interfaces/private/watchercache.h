@@ -5,7 +5,7 @@
 #ifndef WATCHERCACHE_H
 #define WATCHERCACHE_H
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <QObject>
 #include <QUrl>

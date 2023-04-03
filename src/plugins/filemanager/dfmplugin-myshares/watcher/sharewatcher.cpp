@@ -6,7 +6,7 @@
 #include "private/sharewatcher_p.h"
 #include "utils/shareutils.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 

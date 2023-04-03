@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/application/application.h>
 
 #include <gtest/gtest.h>
 #include <sanitizer/asan_interface.h>

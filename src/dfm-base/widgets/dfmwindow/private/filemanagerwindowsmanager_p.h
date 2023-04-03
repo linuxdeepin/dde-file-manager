@@ -5,8 +5,8 @@
 #ifndef FILEMANAGERWINDOWSMANAGER_P_H
 #define FILEMANAGERWINDOWSMANAGER_P_H
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include <QObject>
 #include <QPointer>

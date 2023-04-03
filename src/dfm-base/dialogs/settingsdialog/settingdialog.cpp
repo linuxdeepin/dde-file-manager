@@ -5,10 +5,10 @@
 #include "settingdialog.h"
 #include "controls/checkboxwithmessage.h"
 
-#include "dfm-base/base/configs/settingbackend.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <dtkcore_global.h>
 #include <DSettingsOption>

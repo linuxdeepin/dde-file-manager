@@ -6,7 +6,7 @@
 #define TAGFILEWATCHER_H
 
 #include "dfmplugin_tag_global.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 namespace dfmplugin_tag {
 

@@ -5,7 +5,7 @@
 #ifndef DCONFIGMANAGER_P_H
 #define DCONFIGMANAGER_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <dtkcore_global.h>
 #include <QMap>

@@ -6,9 +6,9 @@
 #include "plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.h"
 #include "plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebaritem.h"
 
-#include "dfm-base/base/configs/settingbackend.h"
-#include "dfm-base/base/configs/configsynchronizer.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <gtest/gtest.h>
 

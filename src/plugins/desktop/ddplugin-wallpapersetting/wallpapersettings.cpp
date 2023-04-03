@@ -8,8 +8,8 @@
 #include "desktoputils/widgetutil.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <DApplicationHelper>
 #include <DDBusSender>

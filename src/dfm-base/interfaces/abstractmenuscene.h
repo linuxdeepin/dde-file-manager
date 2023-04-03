@@ -5,7 +5,7 @@
 #ifndef ABSTRACTMENUSCENE_H
 #define ABSTRACTMENUSCENE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QObject>
 QT_BEGIN_NAMESPACE

@@ -6,12 +6,12 @@
 #include "vaulthelper.h"
 #include "events/vaulteventcaller.h"
 
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/desktopfile.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/desktopfile.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/event/event.h>
 #include <QUrl>

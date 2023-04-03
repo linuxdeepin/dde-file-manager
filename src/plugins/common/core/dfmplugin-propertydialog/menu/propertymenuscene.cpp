@@ -8,7 +8,7 @@
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/desktopfileinfo.h>

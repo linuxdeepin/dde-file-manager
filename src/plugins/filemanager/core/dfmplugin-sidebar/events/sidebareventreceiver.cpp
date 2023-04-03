@@ -9,8 +9,8 @@
 #include "utils/sidebarhelper.h"
 #include "utils/sidebarinfocachemananger.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 

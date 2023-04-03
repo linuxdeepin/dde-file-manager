@@ -7,7 +7,7 @@
 
 #include "dfmplugin_recent_global.h"
 
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
 namespace dfmplugin_recent {
 

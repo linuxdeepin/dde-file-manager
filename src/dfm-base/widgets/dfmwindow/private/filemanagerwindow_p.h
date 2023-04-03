@@ -5,9 +5,9 @@
 #ifndef FILEMANAGERWINDOW_P_H
 #define FILEMANAGERWINDOW_P_H
 
-#include "dfm-base/widgets/dfmsplitter/splitter.h"
-#include "dfm-base/interfaces/abstractbaseview.h"
-#include "dfm-base/interfaces/abstractframe.h"
+#include <dfm-base/widgets/dfmsplitter/splitter.h>
+#include <dfm-base/interfaces/abstractbaseview.h>
+#include <dfm-base/interfaces/abstractframe.h>
 
 #include <DTitlebar>
 #include <DButtonBox>

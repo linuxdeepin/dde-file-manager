@@ -4,7 +4,7 @@
 
 #include "stubext.h"
 #include "plugins/common/dfmplugin-burn/utils/burnhelper.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <gtest/gtest.h>
 

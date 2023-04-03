@@ -8,7 +8,7 @@
 #include "utils/recentmanager.h"
 #include "private/recentdiriterator_p.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE

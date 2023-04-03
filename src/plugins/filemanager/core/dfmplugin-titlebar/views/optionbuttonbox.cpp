@@ -7,8 +7,8 @@
 #include "events/titlebareventcaller.h"
 #include "utils/optionbuttonmanager.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <dfm-framework/event/event.h>
 

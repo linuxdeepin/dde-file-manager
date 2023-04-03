@@ -4,9 +4,9 @@
 
 #ifndef UT_FILEUTILS
 #define UT_FILEUTILS
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/standardpaths.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/standardpaths.h>
 
 #include <QDebug>
 #include <QDir>

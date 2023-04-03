@@ -6,7 +6,7 @@
 #define RECENTDIRITERATORPRIVATE_H
 
 #include "dfmplugin_recent_global.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <QQueue>
 

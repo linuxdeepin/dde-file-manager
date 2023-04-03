@@ -7,7 +7,7 @@
 #include "searchmanager/searchmanager.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 
 #include "stubext.h"
 

@@ -6,7 +6,7 @@
 #include "private/tagfilewatcher_p.h"
 #include "utils/taghelper.h"
 
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/utils/universalutils.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;

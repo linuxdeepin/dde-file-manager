@@ -8,9 +8,9 @@
 #include "dfmplugin_fileoperations_global.h"
 #include "workerdata.h"
 
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-io/dfile.h>
 

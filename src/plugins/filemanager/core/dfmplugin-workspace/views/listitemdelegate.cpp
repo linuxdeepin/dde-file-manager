@@ -8,17 +8,17 @@
 #include "fileview.h"
 #include "listitemeditor.h"
 #include "models/fileviewmodel.h"
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
 #include "events/workspaceeventcaller.h"
 #include "events/workspaceeventsequence.h"
 #include "utils/workspacehelper.h"
 
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/elidetextlayout.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/elidetextlayout.h>
 
 #include <DListView>
 #include <DArrowRectangle>
@@ -319,7 +319,7 @@ void ListItemDelegate::updateItemSizeHint()
     Q_D(ListItemDelegate);
 
     d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
-    d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.1), d->textLineHeight));
+    d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.33), d->textLineHeight));
 }
 
 QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
@@ -343,7 +343,6 @@ QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
 void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->save();
-
     FileView *view = parent()->parent();
     if (!view)
         return;
@@ -357,8 +356,7 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
     // draw background
     if (option.widget) {
         DPalette pl(DPaletteHelper::instance()->palette(option.widget));
-        QColor baseColor = pl.color(DPalette::ColorGroup::Disabled, DPalette::ColorType::ItemBackground);
-
+        QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
         QColor adjustColor = baseColor;
 
         bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
@@ -379,8 +377,10 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
             adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
         } else {
             // alternately background color
-            if (index.row() % 2 == 1)
+            if (index.row() % 2 == 1) {
                 adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
+                painter->setOpacity(0);
+            }
         }
 
         // set paint path

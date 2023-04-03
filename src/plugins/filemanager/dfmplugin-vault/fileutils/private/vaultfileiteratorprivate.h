@@ -6,8 +6,8 @@
 #define VAULTFILEDIRITERATORPTIVATE_H
 
 #include "dfmplugin_vault_global.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <QDirIterator>
 #include <QDebug>

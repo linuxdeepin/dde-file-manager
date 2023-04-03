@@ -7,8 +7,8 @@
 #include "models/computermodel.h"
 #include "utils/computerdatastruct.h"
 
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
 
 #include <DApplication>
 #include <DApplicationHelper>

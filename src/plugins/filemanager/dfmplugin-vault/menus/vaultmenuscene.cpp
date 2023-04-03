@@ -8,7 +8,7 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/dfm_menu_defines.h>
 
 #include <QMenu>
 #include <QList>

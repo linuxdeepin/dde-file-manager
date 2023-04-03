@@ -5,7 +5,7 @@
 #include "openwithhelper.h"
 #include "openwith/openwithwidget.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 

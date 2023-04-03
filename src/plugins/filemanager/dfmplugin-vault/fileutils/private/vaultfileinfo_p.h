@@ -7,7 +7,7 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "dfm-base/interfaces/private/fileinfo_p.h"
+#include <dfm-base/interfaces/private/fileinfo_p.h>
 
 namespace dfmplugin_vault {
 

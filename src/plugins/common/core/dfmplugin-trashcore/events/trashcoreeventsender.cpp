@@ -5,12 +5,12 @@
 #include "trashcoreeventsender.h"
 #include "utils/trashcorehelper.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <dfm-framework/dpf.h>
 

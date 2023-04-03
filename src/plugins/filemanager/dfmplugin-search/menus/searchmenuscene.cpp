@@ -9,9 +9,9 @@
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_menu_defines.h>
 
 #include <DDesktopServices>
 

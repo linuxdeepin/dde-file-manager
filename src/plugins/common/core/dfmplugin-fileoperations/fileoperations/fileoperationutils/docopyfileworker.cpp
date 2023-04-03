@@ -4,7 +4,7 @@
 
 #include "docopyfileworker.h"
 
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 

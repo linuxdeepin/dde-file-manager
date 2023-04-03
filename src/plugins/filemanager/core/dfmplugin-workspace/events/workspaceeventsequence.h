@@ -7,8 +7,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/utils/elidetextlayout.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/elidetextlayout.h>
 #include <dfm-framework/dpf.h>
 
 #include <QAbstractItemView>

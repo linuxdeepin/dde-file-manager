@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/base/configs/settingbackend.h"
-#include "dfm-base/base/configs/private/settingbackend_p.h"
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/base/configs/private/settingbackend_p.h>
 
 #include <gtest/gtest.h>
 

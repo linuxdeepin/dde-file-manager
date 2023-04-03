@@ -6,8 +6,8 @@
 #define DEVICEPROPERTYVIEW_H
 
 #include "dfmplugin_computer_global.h"
-#include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
+#include <dfm-base/interfaces/fileinfo.h>
 #include "devicebasicwidget.h"
 
 #include <DDialog>

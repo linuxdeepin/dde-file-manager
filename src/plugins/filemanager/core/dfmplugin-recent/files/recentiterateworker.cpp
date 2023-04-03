@@ -7,8 +7,8 @@
 #include "utils/recentmanager.h"
 #include "files/recentfileinfo.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QDir>
 #include <QXmlStreamReader>

@@ -8,7 +8,7 @@
 #include "windowframe.h"
 #include "basewindow.h"
 
-#include "dfm-base/interfaces/screen/abstractscreen.h"
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 #include <QMap>
 #include <QReadWriteLock>

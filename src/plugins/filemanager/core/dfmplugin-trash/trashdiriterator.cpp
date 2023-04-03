@@ -6,9 +6,9 @@
 #include "utils/trashhelper.h"
 #include "private/trashdiriterator_p.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/device/deviceutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;

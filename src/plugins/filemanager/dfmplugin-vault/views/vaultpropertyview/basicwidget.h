@@ -7,8 +7,8 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "dfm-base/utils/filestatisticsjob.h"
+#include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
+#include <dfm-base/utils/filestatisticsjob.h>
 
 #include <DArrowLineDrawer>
 

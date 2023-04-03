@@ -4,9 +4,9 @@
 
 #include "computerpropertyhelper.h"
 #include "views/computerpropertydialog.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;

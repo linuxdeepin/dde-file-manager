@@ -7,7 +7,7 @@
 
 #include "dfmplugin_menu_global.h"
 #include "templatemenuscene/templatemenu.h"
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 #include <QSharedData>
 

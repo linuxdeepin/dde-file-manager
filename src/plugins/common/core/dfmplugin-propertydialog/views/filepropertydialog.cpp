@@ -7,7 +7,7 @@
 #include "permissionmanagerwidget.h"
 #include "utils/propertydialogmanager.h"
 
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>

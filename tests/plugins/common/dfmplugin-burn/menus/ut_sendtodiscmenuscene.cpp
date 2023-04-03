@@ -5,7 +5,7 @@
 #include "stubext.h"
 #include "plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.h"
 #include "plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene_p.h"
-#include "dfm-base/base/device/deviceutils.h"
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <QMenu>
 

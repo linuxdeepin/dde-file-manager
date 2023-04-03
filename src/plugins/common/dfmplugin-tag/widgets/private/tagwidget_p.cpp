@@ -7,7 +7,7 @@
 #include "widgets/tagcolorlistwidget.h"
 #include "widgets/tagcrumbedit.h"
 
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/utils/universalutils.h>
 #include <DGuiApplicationHelper>
 #include <DFontSizeManager>
 #include <dtkwidget_global.h>

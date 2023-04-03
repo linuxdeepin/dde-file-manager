@@ -7,7 +7,7 @@
 
 #include "filedialogplugin_core_global.h"
 
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/utils/windowutils.h>
 
 #include <QMimeDatabase>
 #include <QWidget>

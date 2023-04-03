@@ -4,8 +4,8 @@
 
 #include "listitemeditor.h"
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/fileutils.h>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

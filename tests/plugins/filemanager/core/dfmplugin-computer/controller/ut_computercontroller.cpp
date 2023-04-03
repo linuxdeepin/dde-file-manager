@@ -9,11 +9,11 @@
 #include "plugins/filemanager/core/dfmplugin-computer/events/computereventcaller.h"
 #include "plugins/filemanager/core/dfmplugin-computer/menu/computermenuscene.h"
 
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/networkutils.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <QProcess>
 #include <QMenu>

@@ -5,7 +5,7 @@
 #ifndef DRAGDROPHELPER_H
 #define DRAGDROPHELPER_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "dfmplugin_workspace_global.h"
 
 #include <QObject>

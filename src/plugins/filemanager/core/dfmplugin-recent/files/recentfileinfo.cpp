@@ -5,10 +5,10 @@
 #include "recentfileinfo.h"
 #include "utils/recentmanager.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/interfaces/private/fileinfo_p.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/interfaces/private/fileinfo_p.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_recent {

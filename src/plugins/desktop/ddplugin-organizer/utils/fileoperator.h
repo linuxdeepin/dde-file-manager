@@ -8,7 +8,7 @@
 #include "ddplugin_organizer_global.h"
 #include "mode/collectiondataprovider.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QObject>
 #include <QSharedPointer>

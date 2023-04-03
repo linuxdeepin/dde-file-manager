@@ -5,12 +5,12 @@
 #ifndef ASYNCFILEINFO_P_H
 #define ASYNCFILEINFO_P_H
 
-#include "dfm-base/file/local/asyncfileinfo.h"
+#include <dfm-base/file/local/asyncfileinfo.h>
 #include "infodatafuture.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/thumbnailprovider.h"
-#include "dfm-base/utils/fileinfohelper.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/thumbnailprovider.h>
+#include <dfm-base/utils/fileinfohelper.h>
 
 #include <dfm-io/dfilefuture.h>
 
@@ -28,11 +28,12 @@ class AsyncFileInfoPrivate
 {
 public:
     friend class AsyncFileInfo;
+    QMimeDatabase::MatchMode mimeTypeMode;
     std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
     std::atomic_bool loadingThumbnail = { false };
     std::atomic_bool notInit { false };
     std::atomic_bool cacheing { false };
-    QMimeDatabase::MatchMode mimeTypeMode;
+    char memrySeat[5];
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
     QVariantHash extraProperties;   // 扩展属性列表
     QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
@@ -50,6 +51,8 @@ public:
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
     InfoHelperUeserDataPointer iconFuture { nullptr };
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
+    QReadWriteLock notifyLock;
+    QList<QUrl> notifyUrls;
     AsyncFileInfo *const q;
 
 public:

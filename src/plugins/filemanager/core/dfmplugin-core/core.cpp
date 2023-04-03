@@ -5,20 +5,20 @@
 #include "core.h"
 #include "events/coreeventreceiver.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/file/local/asyncfileinfo.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
+#include <dfm-base/file/local/localdiriterator.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-mount/ddevicemanager.h>
 

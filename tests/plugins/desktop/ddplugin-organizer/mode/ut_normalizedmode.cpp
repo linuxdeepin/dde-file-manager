@@ -7,7 +7,7 @@
 #include "mode/normalized/type/typeclassifier.h"
 #include "config/configpresenter.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dpf.h>
 

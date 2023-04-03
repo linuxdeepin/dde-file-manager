@@ -7,13 +7,13 @@
 #include "private/openwithmenuscene_p.h"
 #include "menuutils.h"
 
-#include "dfm-base/mimetype/mimesappsmanager.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
-#include "dfm-base/mimetype/mimesappsmanager.h"
-#include "dfm-base/utils/properties.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/mimetype/mimesappsmanager.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
+#include <dfm-base/mimetype/mimesappsmanager.h>
+#include <dfm-base/utils/properties.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dfm_menu_defines.h>
 
 #include <dfm-framework/dpf.h>
 

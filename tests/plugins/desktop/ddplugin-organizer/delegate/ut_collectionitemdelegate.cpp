@@ -8,7 +8,7 @@
 #include "view/collectionview_p.h"
 #include "models/collectionmodel.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dpf.h>
 

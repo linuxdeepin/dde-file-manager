@@ -7,7 +7,7 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {

@@ -7,7 +7,7 @@
 
 #include "dfmplugin_optical_global.h"
 
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <QSet>
 

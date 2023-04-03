@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "textpreview.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/interfaces/fileinfo.h>
 #include "dfileservices.h"
 #include "textbrowseredit.h"
 

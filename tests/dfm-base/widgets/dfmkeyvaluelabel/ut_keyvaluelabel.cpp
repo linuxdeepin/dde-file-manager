@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "stubext.h"
-#include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
+#include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
 
 #include <DLabel>
 #include <QMouseEvent>

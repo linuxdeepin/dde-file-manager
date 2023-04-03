@@ -5,17 +5,17 @@
 #ifndef SCHEMEFACTORY_H
 #define SCHEMEFACTORY_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/interfaces/abstractbaseview.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/interfaces/abstractsortandfiter.h"
-#include "dfm-base/interfaces/private/infocache.h"
-#include "dfm-base/interfaces/private/watchercache.h"
-#include "dfm-base/utils/finallyutil.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/abstractbaseview.h>
+#include <dfm-base/interfaces/abstractfilewatcher.h>
+#include <dfm-base/interfaces/abstractdiriterator.h>
+#include <dfm-base/interfaces/abstractsortandfiter.h>
+#include <dfm-base/interfaces/private/infocache.h>
+#include <dfm-base/interfaces/private/watchercache.h>
+#include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QCoreApplication>
 #include <QSharedPointer>

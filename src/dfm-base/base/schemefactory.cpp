@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "schemefactory.h"
-#include "dfm-base/base/singleton.h"
+#include <dfm-base/base/singleton.h>
 
 namespace dfmbase {
 

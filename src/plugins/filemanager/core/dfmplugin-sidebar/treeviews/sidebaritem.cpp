@@ -6,7 +6,7 @@
 #include "sidebarmodel.h"
 #include "utils/sidebarinfocachemananger.h"
 
-#include "dfm-base/base/standardpaths.h"
+#include <dfm-base/base/standardpaths.h>
 
 #include <QObject>
 #include <QVariant>

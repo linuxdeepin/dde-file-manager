@@ -6,7 +6,7 @@
 #define RECENTFILEWATCHER_H
 
 #include "dfmplugin_recent_global.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 namespace dfmplugin_recent {
 

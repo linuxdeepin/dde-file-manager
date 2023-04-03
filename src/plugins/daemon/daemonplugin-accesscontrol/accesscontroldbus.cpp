@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "polkit/policykithelper.h"
 
-#include "dfm-base/base/device/deviceutils.h"
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <QDebug>
 #include <QDBusConnection>

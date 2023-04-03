@@ -6,7 +6,7 @@
 #include "private/smbsharefileinfo_p.h"
 #include "utils/smbbrowserutils.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE

@@ -7,9 +7,9 @@
 
 #include "ddplugin_core_global.h"
 
-#include "dfm-base/interfaces/screen/abstractscreenproxy.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/interfaces/abstractdesktopframe.h"
+#include <dfm-base/interfaces/screen/abstractscreenproxy.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/interfaces/abstractdesktopframe.h>
 
 #include <dfm-framework/dpf.h>
 

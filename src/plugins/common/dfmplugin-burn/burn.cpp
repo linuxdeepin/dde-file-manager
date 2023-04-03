@@ -11,13 +11,13 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QWidget>
 #include <QTimer>

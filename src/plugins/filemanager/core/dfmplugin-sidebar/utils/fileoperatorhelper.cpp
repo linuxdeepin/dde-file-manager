@@ -5,7 +5,7 @@
 #include "fileoperatorhelper.h"
 #include "utils/sidebarhelper.h"
 #include "sidebarview.h"
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-framework/dpf.h>
 
 DFMBASE_USE_NAMESPACE

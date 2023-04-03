@@ -5,8 +5,8 @@
 #ifndef ASYNCFILEINFO_H
 #define ASYNCFILEINFO_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QIcon>
 #include <QPointF>
@@ -16,7 +16,7 @@ namespace dfmbase {
 class AsyncFileInfoPrivate;
 class AsyncFileInfo : public FileInfo
 {
-    AsyncFileInfoPrivate *d = nullptr;
+    QSharedPointer<AsyncFileInfoPrivate> d { nullptr };
 
 public:
     enum class AsyncAttributeID : uint16_t {
@@ -180,6 +180,8 @@ public:
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
     // cache attribute
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
+    QList<QUrl> notifyUrls() const;
+    void setNotifyUrl(const QUrl &url);
 };
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::AsyncFileInfo> DFMAsyncFileInfoPointer;

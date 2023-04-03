@@ -48,7 +48,7 @@ inline constexpr int kCompactIconModeColumnPadding { 5 };
 inline constexpr int kDefualtHeaderSectionWidth { 140 };
 inline constexpr int kMinimumHeaderSectionWidth { 120 };
 inline constexpr int kListViewHeaderHeight { 36 };
-inline constexpr int kListViewIconSize { 29 };
+inline constexpr int kListViewIconSize { 24 };
 inline constexpr int kLeftPadding { 10 };
 inline constexpr int kRightPadding { 10 };
 inline constexpr int kListModeLeftMargin { 10 };

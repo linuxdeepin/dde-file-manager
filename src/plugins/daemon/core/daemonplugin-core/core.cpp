@@ -4,13 +4,13 @@
 
 #include "core.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/file/local/asyncfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/file/local/localfilewatcher.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
+#include <dfm-base/file/local/localdiriterator.h>
+#include <dfm-base/file/local/localfilewatcher.h>
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>

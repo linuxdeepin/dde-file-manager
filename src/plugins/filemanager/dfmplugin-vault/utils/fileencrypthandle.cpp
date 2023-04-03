@@ -6,7 +6,7 @@
 #include "fileencrypthandle_p.h"
 #include "encryption/vaultconfig.h"
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QDirIterator>
 #include <QStandardPaths>

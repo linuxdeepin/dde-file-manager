@@ -5,7 +5,7 @@
 #ifndef LISTITEMDELEGATE_P_H
 #define LISTITEMDELEGATE_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 #include "baseitemdelegate_p.h"
 #include "views/listitemdelegate.h"
 

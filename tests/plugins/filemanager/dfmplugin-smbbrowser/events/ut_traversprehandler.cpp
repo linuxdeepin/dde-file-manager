@@ -9,12 +9,12 @@
 #include "displaycontrol/datahelper/virtualentrydbhandler.h"
 #include "displaycontrol/utilities/protocoldisplayutilities.h"
 
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/file/local/localdiriterator.h"
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/file/local/localdiriterator.h>
 
 #include <dfm-framework/event/event.h>
 

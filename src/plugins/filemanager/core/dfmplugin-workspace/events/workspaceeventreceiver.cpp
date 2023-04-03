@@ -8,9 +8,9 @@
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 #include <functional>

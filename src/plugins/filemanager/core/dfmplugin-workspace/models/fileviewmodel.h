@@ -7,9 +7,9 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>

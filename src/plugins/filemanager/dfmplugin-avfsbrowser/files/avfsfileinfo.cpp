@@ -5,8 +5,8 @@
 #include "avfsfileinfo.h"
 #include "utils/avfsutils.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/private/fileinfo_p.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/interfaces/private/fileinfo_p.h>
 
 using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE

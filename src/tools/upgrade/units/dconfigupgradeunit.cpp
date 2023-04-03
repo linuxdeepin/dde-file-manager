@@ -4,7 +4,7 @@
 
 #include "dconfigupgradeunit.h"
 #include "utils/upgradeutils.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QDebug>
 

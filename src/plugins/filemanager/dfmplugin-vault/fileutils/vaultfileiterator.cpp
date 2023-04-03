@@ -5,7 +5,7 @@
 #include "vaultfileiterator.h"
 #include "private/vaultfileiteratorprivate.h"
 #include "utils/vaulthelper.h"
-#include "dfm-base/base/schemefactory.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <QDirIterator>
 #include <QSharedPointer>

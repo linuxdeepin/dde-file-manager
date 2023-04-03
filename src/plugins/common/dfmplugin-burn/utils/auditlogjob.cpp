@@ -5,13 +5,13 @@
 #include "auditlogjob.h"
 #include "utils/burnhelper.h"
 
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <QDebug>
 #include <QDateTime>

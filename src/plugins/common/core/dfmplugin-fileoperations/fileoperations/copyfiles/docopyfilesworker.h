@@ -10,10 +10,10 @@
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/utils/threadcontainer.hpp"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/threadcontainer.hpp>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-io/dfile.h>
 

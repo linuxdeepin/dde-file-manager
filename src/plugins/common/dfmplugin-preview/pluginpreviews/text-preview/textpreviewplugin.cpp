@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "textpreviewplugin.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
+#include <dfm-base/interfaces/abstractbasepreview.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace plugin_filepreview;

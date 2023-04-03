@@ -10,12 +10,12 @@
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 
-#include "dfm-base/interfaces/abstractbaseview.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-base/interfaces/abstractbaseview.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
 #include <dfm-framework/event/event.h>
 
 #include <DIconButton>

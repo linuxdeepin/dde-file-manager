@@ -5,7 +5,7 @@
 #ifndef DEVICEUTILS_H
 #define DEVICEUTILS_H
 
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QString>
 

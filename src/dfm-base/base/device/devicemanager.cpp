@@ -9,15 +9,15 @@
 #include "private/devicewatcher.h"
 #include "private/discdevicescanner.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/networkutils.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h>
 
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>

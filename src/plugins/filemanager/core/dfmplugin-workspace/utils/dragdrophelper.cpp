@@ -7,12 +7,12 @@
 #include "models/fileviewmodel.h"
 #include "events/workspaceeventsequence.h"
 
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/windowutils.h"
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/event/event.h>
 

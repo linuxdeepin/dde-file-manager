@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
+#include <dfm-base/interfaces/abstractfilewatcher.h>
+#include <dfm-base/interfaces/private/abstractfilewatcher_p.h>
 
-#include "dfm-base/base/urlroute.h"
+#include <dfm-base/base/urlroute.h>
 
 #include <QEvent>
 #include <QDir>

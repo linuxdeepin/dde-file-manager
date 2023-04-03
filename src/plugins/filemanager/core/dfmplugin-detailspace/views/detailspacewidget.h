@@ -6,7 +6,7 @@
 #define DETAILSPACEWIDGET_H
 
 #include "dfmplugin_detailspace_global.h"
-#include "dfm-base/interfaces/abstractframe.h"
+#include <dfm-base/interfaces/abstractframe.h>
 
 #include <QUrl>
 

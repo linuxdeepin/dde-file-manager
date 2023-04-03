@@ -6,7 +6,7 @@
 #define TAGDBUPGRADEUNIT_H
 
 #include "core/upgradeunit.h"
-#include "dfm-base/base/db/sqlitehandle.h"
+#include <dfm-base/base/db/sqlitehandle.h>
 
 DFMBASE_USE_NAMESPACE
 

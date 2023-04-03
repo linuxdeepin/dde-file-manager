@@ -5,8 +5,8 @@
 #ifndef SETTINGBACKEND_P_H
 #define SETTINGBACKEND_P_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/base/application/application.h>
 
 #include <QMap>
 #include <QVariant>

@@ -6,11 +6,11 @@
 #include "base/schemefactory.h"
 #include "base/urlroute.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/file/local/localfileiconprovider.h"
-#include "dfm-base/mimetype/mimetypedisplaymanager.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/file/local/localfileiconprovider.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QApplication>
 #include <QClipboard>

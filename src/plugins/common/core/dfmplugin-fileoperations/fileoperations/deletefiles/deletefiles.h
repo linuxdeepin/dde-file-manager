@@ -7,7 +7,7 @@
 
 #include "fileoperations/fileoperationutils/abstractjob.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 #include <QThread>

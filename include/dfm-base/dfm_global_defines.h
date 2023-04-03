@@ -5,8 +5,8 @@
 #ifndef DFM_GLOBAL_DEFINES_H
 #define DFM_GLOBAL_DEFINES_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 

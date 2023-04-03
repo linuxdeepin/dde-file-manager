@@ -8,9 +8,9 @@
 #include "dfmplugin_vault_global.h"
 #include "utils/vaultdefine.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/dfm_global_defines.h>
 #include <DMenu>
 
 #include <QObject>

@@ -6,7 +6,7 @@
 #define PERMISSIONMANAGERWIDGET_H
 
 #include "dfmplugin_propertydialog_global.h"
-#include "dfm-base/interfaces/fileinfo.h"
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <DArrowLineDrawer>
 

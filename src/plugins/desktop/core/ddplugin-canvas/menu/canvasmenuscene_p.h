@@ -9,8 +9,8 @@
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 #include <QMap>
 #include <QMultiHash>

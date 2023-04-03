@@ -5,14 +5,14 @@
 #ifndef SYNCFILEINFO_P_H
 #define SYNCFILEINFO_P_H
 
-#include "dfm-base/interfaces/private/fileinfo_p.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/mimetype/mimedatabase.h"
+#include <dfm-base/interfaces/private/fileinfo_p.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/mimetype/mimedatabase.h>
 #include "infodatafuture.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/thumbnailprovider.h"
-#include "dfm-base/utils/fileinfohelper.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/thumbnailprovider.h>
+#include <dfm-base/utils/fileinfohelper.h>
 
 #include <dfm-io/dfilefuture.h>
 

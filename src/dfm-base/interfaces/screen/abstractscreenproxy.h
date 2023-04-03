@@ -5,8 +5,8 @@
 #ifndef ABSTRACTSCREENPROXY_H
 #define ABSTRACTSCREENPROXY_H
 
-#include "dfm-base/dfm_desktop_defines.h"
-#include "dfm-base/interfaces/screen/abstractscreen.h"
+#include <dfm-base/dfm_desktop_defines.h>
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 #include <QObject>
 #include <QMultiMap>

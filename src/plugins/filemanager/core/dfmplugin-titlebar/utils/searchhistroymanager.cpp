@@ -4,9 +4,9 @@
 
 #include "searchhistroymanager.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <QDateTime>
 #include <QDebug>

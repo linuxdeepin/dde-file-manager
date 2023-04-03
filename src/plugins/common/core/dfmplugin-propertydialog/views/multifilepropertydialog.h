@@ -6,8 +6,8 @@
 #define MULTIFILEPROPERTYDIALOG_H
 
 #include "dfmplugin_propertydialog_global.h"
-#include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "dfm-base/utils/filestatisticsjob.h"
+#include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
+#include <dfm-base/utils/filestatisticsjob.h>
 
 #include <DDialog>
 

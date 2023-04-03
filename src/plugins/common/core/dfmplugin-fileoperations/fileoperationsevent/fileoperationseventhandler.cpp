@@ -4,7 +4,7 @@
 
 #include "fileoperationseventhandler.h"
 
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-framework/event/event.h>
 

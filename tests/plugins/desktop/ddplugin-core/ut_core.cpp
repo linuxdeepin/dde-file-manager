@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "core.h"
-#include "dfm-base/utils/windowutils.h"
+#include <dfm-base/utils/windowutils.h>
 #include "screen/screenproxyqt.h"
 #include "frame/windowframe.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/application/private/application_p.h"
-#include "dfm-base/interfaces/screen/abstractscreen.h"
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/application/private/application_p.h>
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 #include "stubext.h"
 

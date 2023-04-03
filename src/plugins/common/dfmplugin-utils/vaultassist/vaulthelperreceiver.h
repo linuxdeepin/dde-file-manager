@@ -6,7 +6,7 @@
 #define VAULTHELPERRECEIVER_H
 
 #include "dfmplugin_utils_global.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 #include <QDBusMessage>

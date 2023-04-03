@@ -7,9 +7,9 @@
 #include "extendmenuscene/extendmenu/dcustomactionbuilder.h"
 #include "utils/menuhelper.h"
 
-#include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 

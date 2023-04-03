@@ -5,13 +5,13 @@
 #include "trashfileinfo.h"
 #include "utils/trashcorehelper.h"
 
-#include "dfm-base/interfaces/private/fileinfo_p.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/standardpaths.h"
+#include <dfm-base/interfaces/private/fileinfo_p.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/standardpaths.h>
 
 #include <dfm-io/denumerator.h>
 
@@ -338,14 +338,18 @@ bool TrashFileInfo::canAttributes(const CanableInfoType type) const
 
 QFile::Permissions TrashFileInfo::permissions() const
 {
-    QFileDevice::Permissions p = FileInfo::permissions();
+    QFileDevice::Permissions ps;
 
-    p &= ~QFileDevice::WriteOwner;
-    p &= ~QFileDevice::WriteUser;
-    p &= ~QFileDevice::WriteGroup;
-    p &= ~QFileDevice::WriteOther;
+    if (d->dFileInfo) {
+        ps = static_cast<QFileDevice::Permissions>(static_cast<uint16_t>(d->dFileInfo->permissions()));
+    }
 
-    return p;
+    ps &= ~QFileDevice::WriteOwner;
+    ps &= ~QFileDevice::WriteUser;
+    ps &= ~QFileDevice::WriteGroup;
+    ps &= ~QFileDevice::WriteOther;
+
+    return ps;
 }
 
 QIcon TrashFileInfo::fileIcon()

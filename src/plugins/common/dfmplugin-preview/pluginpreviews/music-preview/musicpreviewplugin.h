@@ -6,7 +6,7 @@
 #define MUSICPREVIEWPLUGIN_H
 
 #include "preview_plugin_global.h"
-#include "dfm-base/interfaces/abstractfilepreviewplugin.h"
+#include <dfm-base/interfaces/abstractfilepreviewplugin.h>
 #include "musicpreview.h"
 
 namespace plugin_filepreview {

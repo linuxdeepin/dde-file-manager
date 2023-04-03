@@ -6,9 +6,9 @@
 #include "displaycontrol/utilities/protocoldisplayutilities.h"
 #include "utils/smbbrowserutils.h"
 
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/base/configs/settingbackend.cpp"
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/base/configs/settingbackend.cpp>
 
 #include <dfm-framework/dpf.h>
 

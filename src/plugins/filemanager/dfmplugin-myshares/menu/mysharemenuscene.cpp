@@ -6,7 +6,7 @@
 #include "private/mysharemenuscene_p.h"
 #include "events/shareeventscaller.h"
 
-#include "dfm-base/dfm_menu_defines.h"
+#include <dfm-base/dfm_menu_defines.h>
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <QMenu>

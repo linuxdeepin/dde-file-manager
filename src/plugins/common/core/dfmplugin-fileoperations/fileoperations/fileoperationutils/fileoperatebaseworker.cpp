@@ -7,10 +7,10 @@
 #include "fileoperations/copyfiles/storageinfo.h"
 #include "workerdata.h"
 
-#include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/file/local/localfilehandler.h"
+#include <dfm-base/interfaces/abstractdiriterator.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/denumerator.h>

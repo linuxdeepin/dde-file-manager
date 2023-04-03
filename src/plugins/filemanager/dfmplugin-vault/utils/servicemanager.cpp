@@ -5,8 +5,8 @@
 #include "servicemanager.h"
 #include "vaulthelper.h"
 
-#include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/application/settings.h"
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <mutex>
 #include <QUrl>

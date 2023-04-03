@@ -7,7 +7,7 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "dfm-base/mimetype/mimetypedisplaymanager.h"
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <QString>
 #include <QUrl>

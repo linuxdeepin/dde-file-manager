@@ -5,14 +5,14 @@
 #include "thumbnailprovider.h"
 #include "videothumbnailprovider.h"
 
-#include "dfm-base/mimetype/dmimedatabase.h"
-#include "dfm-base/mimetype/mimetypedisplaymanager.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <dfm-base/mimetype/dmimedatabase.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-io/dfmio_utils.h>
 

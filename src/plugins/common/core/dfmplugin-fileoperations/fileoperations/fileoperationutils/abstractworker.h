@@ -10,10 +10,10 @@
 #include "workerdata.h"
 #include "docopyfileworker.h"
 
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/utils/filestatisticsjob.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/filestatisticsjob.h>
 
 #include <QObject>
 #include <QUrl>

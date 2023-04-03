@@ -5,8 +5,8 @@
 #ifndef ABSTRACTSORTANDFITER_H
 #define ABSTRACTSORTANDFITER_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_base_global.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include "fileinfo.h"
 

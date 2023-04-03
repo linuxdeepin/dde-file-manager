@@ -6,9 +6,9 @@
 #include "topwidget/advancesearchbar_p.h"
 #include "utils/searchhelper.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "dfm-base/file/local/syncfileinfo.h"
-#include "dfm-base/file/local/private/syncfileinfo_p.h"
+#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/private/syncfileinfo_p.h>
 
 #include "stubext.h"
 

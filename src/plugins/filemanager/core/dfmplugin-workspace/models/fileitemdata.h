@@ -6,9 +6,9 @@
 #define FILEITEMDATA_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm-base/interfaces/fileinfo.h"
-#include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/dfm_base_global.h"
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/abstractdiriterator.h>
+#include <dfm-base/dfm_base_global.h>
 
 namespace dfmplugin_workspace {
 

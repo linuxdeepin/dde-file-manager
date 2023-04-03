@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "closealldialog.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/universalutils.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <DLabel>
 #include <DCommandLinkButton>

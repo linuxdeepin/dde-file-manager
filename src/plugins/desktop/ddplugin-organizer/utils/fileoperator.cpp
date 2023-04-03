@@ -6,10 +6,10 @@
 #include "view/collectionview.h"
 #include "models/collectionmodel.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/utils/fileutils.h"
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
 
