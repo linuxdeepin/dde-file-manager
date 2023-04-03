@@ -912,8 +912,8 @@ void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &temp
 {
     QUrl templateFile = templateUrl;
     if (!templateFile.isValid()) {
-        FileInfoPointer targetFileInfo { InfoFactory::create<FileInfo>(url) };
-        const QString &suffix = targetFileInfo->nameOf(NameInfoType::kSuffix);
+        FileInfoPointer targetFileInfo { InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync) };
+        const QString &suffix = targetFileInfo->suffix();
 
         const QUrl &trashUrl { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTemplatesPath)) };
         DFMIO::DEnumerator enumerator(trashUrl,
