@@ -1085,7 +1085,9 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardParentPath, path());
     // redirectedFileUrl
     auto symlink = symLinkTarget();
-    if (!symlink.isEmpty() && !FileUtils::isLocalFile(QUrl::fromLocalFile(symlink))) {
+    if (attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+        && !symlink.isEmpty()
+        && !FileUtils::isLocalDevice(QUrl::fromLocalFile(symlink))) {
         FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(symlink));
         auto asyncInfo = info.dynamicCast<AsyncFileInfo>();
         if (asyncInfo) {
