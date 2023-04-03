@@ -297,6 +297,13 @@ void SideBarView::dropEvent(QDropEvent *event)
     else
         targetItemUrl = item->url();
 
+    //Customized file droptions，Used to distinguish between real path files and virtual path files
+    const auto &virtualUrls { UrlRoute::byteArrayToUrls(event->mimeData()->data(DFMGLOBAL_NAMESPACE::Mime::kSourceUrlsKey)) };
+    const auto &realUrls { event->mimeData()->urls() };
+    QList<QUrl> currentDragSourceUrls = virtualUrls.isEmpty() ? realUrls : virtualUrls;
+    if (dpfHookSequence->run("dfmplugin_sidebar", "hook_DragDrop_FileDrop", currentDragSourceUrls, targetItemUrl))
+        return;
+
     qDebug() << "source: " << event->mimeData()->urls();
     qDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
     qDebug() << "item->itemInfo().finalUrl: " << item->itemInfo().finalUrl;

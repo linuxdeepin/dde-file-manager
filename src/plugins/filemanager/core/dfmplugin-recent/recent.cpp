@@ -135,6 +135,7 @@ void Recent::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_CheckTransparent", RecentManager::instance(), &RecentManager::isTransparent);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", RecentManager::instance(), &RecentManager::checkDragDropAction);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", RecentManager::instance(), &RecentManager::handleDropFiles);
+    dpfHookSequence->follow("dfmplugin_sidebar", "hook_DragDrop_FileDrop", RecentManager::instance(), &RecentManager::handleDropFiles);
 
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);

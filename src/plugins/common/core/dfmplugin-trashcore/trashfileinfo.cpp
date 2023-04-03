@@ -227,8 +227,7 @@ Qt::DropActions TrashFileInfo::supportedOfAttributes(const FileInfo::SupportType
     switch (type) {
     case FileInfo::SupportType::kDrop: {
         const QString &path = url.path();
-
-        return path.isEmpty() || path == "/" ? Qt::MoveAction : Qt::IgnoreAction;
+        return path.isEmpty() || path == "/" ? Qt::CopyAction | Qt::MoveAction : Qt::IgnoreAction;
     }
     case FileInfo::SupportType::kDrag:
         return Qt::CopyAction | Qt::MoveAction;
