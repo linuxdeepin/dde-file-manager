@@ -129,6 +129,18 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
     if (!info || d->cacheWorkerStoped)
         return;
 
+    {
+        QReadLocker rlk(&d->mianLock);
+        if (d->mainCache.contains(url))
+            return;
+    }
+
+    {
+        QReadLocker rlk(&d->copyLock);
+        if (d->copyCache.contains(url))
+            return;
+    }
+
     //获取监视器，监听当前的file的改变
     QSharedPointer<AbstractFileWatcher> watcher { nullptr };
     watcher = WatcherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
