@@ -114,3 +114,26 @@ TEST_F(UT_SidebarView, testDragEnterEvent)
     view->dragEnterEvent(&event);
     EXPECT_TRUE(isCall);
 }
+
+TEST_F(UT_SidebarView, testDragLeaveEvent)
+{
+    bool isCall { false };
+    stub.set_lamda(&QAbstractItemView::setCurrentIndex, []() {
+        return;
+    });
+    stub.set_lamda(&QAbstractItemView::setState, []() {
+        return;
+    });
+
+    auto upDate = static_cast<void (QWidget::*)()>(&QWidget::update);
+    stub.set_lamda(upDate, [&]() {
+        __DBG_STUB_INVOKE__
+        isCall = true;
+        return;
+    });
+
+    QDragLeaveEvent event;
+
+    view->dragLeaveEvent(&event);
+    EXPECT_FALSE(isCall);
+}
