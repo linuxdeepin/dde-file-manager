@@ -387,7 +387,7 @@
                             "key": "loop",
                             "text": "Loop partitions",
                             "type": "checkbox",
-                            "default": true
+                            "default": false
                         },
                         {
                             "key": "other_disks",
@@ -452,7 +452,7 @@
                             "key": "hide_loop_partitions",
                             "text": "Hide loop partitions on the Computer page",
                             "type": "checkbox",
-                            "default": false
+                            "default": true
                         },
                         {
                             "key": "show_filesystemtag_on_diskicon",
