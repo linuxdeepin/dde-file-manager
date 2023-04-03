@@ -13,6 +13,7 @@
 #include <dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/networkutils.h>
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -142,6 +143,9 @@ QVariantMap DeviceHelper::loadProtocolInfo(const ProtocolDevAutoPtr &dev)
     using namespace GlobalServerDefines::DeviceProperty;
     using namespace DFMMOUNT;
     QVariantMap datas;
+    if (!checkNetworkConnection(dev->path()))
+        return makeFakeProtocolInfo(dev->path());
+
     datas[kId] = dev->path();
     datas[kFileSystem] = dev->fileSystem();
     datas[kSizeTotal] = dev->sizeTotal();
@@ -328,4 +332,51 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
                  << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << "\n"
                  << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
     }
+}
+
+bool DeviceHelper::checkNetworkConnection(const QString &id)
+{
+    QUrl url(id);
+    if (!(DeviceUtils::isSamba(url) || DeviceUtils::isSftp(url) || DeviceUtils::isFtp(url)))
+        return true;
+
+    QString host, port;
+    if (NetworkUtils::instance()->parseIp(url.path(), host, port))
+        return NetworkUtils::instance()->checkNetConnection(host, port);
+
+    qWarning() << "cannot parse host and port of" << id;
+    return true;
+}
+
+/* this is used to get a fake protocol device info.
+ * if network disconnected, and a network device is already mounted before that
+ * then dde-desktop will be stocked in launch process.
+ * gio api blocked at query info of protocol device.
+ * so if network disconnected, return a fake info and return real info when network resumed.
+ * */
+QVariantMap DeviceHelper::makeFakeProtocolInfo(const QString &id)
+{
+    using namespace GlobalServerDefines;
+    QString path = QUrl::fromPercentEncoding(id.toLocal8Bit());
+    QVariantMap fakeInfo;
+    fakeInfo[DeviceProperty::kId] = id;
+    fakeInfo[DeviceProperty::kMountPoint] = path.remove(QRegularExpression(R"(^file://)"));
+    fakeInfo[DeviceProperty::kDeviceIcon] = "folder-remote";
+    fakeInfo["fake"] = true;
+
+    if (DeviceUtils::isSamba(QUrl(path))) {
+        QString host, share;
+        if (DeviceUtils::parseSmbInfo(path, host, share))
+            fakeInfo[DeviceProperty::kDisplayName] = QObject::tr("%1 on %2").arg(share).arg(host);
+        else
+            fakeInfo[DeviceProperty::kDisplayName] = QObject::tr("Unknown");
+    } else {
+        QString host, port;
+        if (NetworkUtils::instance()->parseIp(QUrl(id).path(), host, port))
+            fakeInfo[DeviceProperty::kDisplayName] = host;
+        else
+            fakeInfo[DeviceProperty::kDisplayName] = QObject::tr("Unknown");
+    }
+
+    return fakeInfo;
 }
