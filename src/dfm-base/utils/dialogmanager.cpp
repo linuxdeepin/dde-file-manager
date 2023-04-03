@@ -359,7 +359,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
     if (urlList.isEmpty())
         return QDialog::Rejected;
 
-    static QString DeleteFileItems = tr("Permanently delete %1 items?");
+    static QString DeleteFileItems = tr("Cannot move the selected %1 items to the trash. Do you want to permanently delete them?");
 
     const int maxFileNameWidth = NAME_MAX;
 
@@ -389,7 +389,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
 
     QFontMetrics fm(d.font());
     if (!fileName.isEmpty()) {
-        static QString DeleteFileName = tr("Permanently delete %1?");
+        static QString DeleteFileName = tr("Cannot move \"%1\" to the trash. Do you want to permanently delete it?");
         title = DeleteFileName.arg(fm.elidedText(fileName, Qt::ElideMiddle, maxFileNameWidth));
     }
 
@@ -401,6 +401,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
     d.moveToCenter();
+    d.setFixedWidth(480);
     int code = d.exec();
     return code;
 }
