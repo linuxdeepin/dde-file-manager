@@ -60,18 +60,6 @@ void SideBarViewPrivate::currentChanged(const QModelIndex &curIndex)
     sidebarUrl = curIndex.data(SideBarItem::kItemUrlRole).toUrl();
 }
 
-void SideBarViewPrivate::highlightAfterDraggedToSort()
-{
-    QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
-        QModelIndex ret = q->model()->findRowByUrl(draggedUrl);   // ret is the sub item of group item
-        if (ret.row() >= 0) {
-            // The top item do not support any drop event currently.
-            q->setCurrentIndex(q->model()->index(ret.row(), 0, ret.parent()));
-        }
-        draggedUrl = QUrl {};
-    });
-}
-
 void SideBarViewPrivate::notifyOrderChanged()
 {
     if (draggedGroup.isEmpty())
@@ -175,25 +163,6 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
     DTreeView::mousePressEvent(event);
 }
 
-void SideBarView::mouseMoveEvent(QMouseEvent *event)
-{
-    DTreeView::mouseMoveEvent(event);
-    // The following code is from the history code and must be commented, otherwise if operate computer by VPN,
-    // the bookmark or tag items can not response mouse click event.
-    //#if QT_CONFIG(draganddrop)
-    //     if (state() == DraggingState) {
-    //         startDrag(Qt::MoveAction);
-    //         setState(NoState);   // the startDrag will return when the dnd operation is done
-    //         stopAutoScroll();
-    //         QPoint pt = mapFromGlobal(QCursor::pos());
-    //         QRect rc = geometry();
-    //         if (!rc.contains(pt)) {
-    //             Q_EMIT requestRemoveItem();   // model()->removeRow(currentIndex().row());
-    //         }
-    //     }
-    //#endif   // QT_CONFIG(draganddrop)
-}
-
 void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 {
     d->draggedUrl = QUrl {};
@@ -274,10 +243,9 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 
 void SideBarView::dragLeaveEvent(QDragLeaveEvent *event)
 {
-    setCurrentIndex(d->current);
+    Q_UNUSED(event)
     d->draggedUrl = QUrl("");
-    setState(State::NoState);   //qAbastarctItemView::dragLeaveEvent
-    return;
+    setState(State::NoState);
 }
 
 void SideBarView::dropEvent(QDropEvent *event)
@@ -381,16 +349,6 @@ void SideBarView::dropEvent(QDropEvent *event)
 QModelIndex SideBarView::indexAt(const QPoint &p) const
 {
     return QTreeView::indexAt(p);
-}
-
-QModelIndex SideBarView::getPreviousIndex() const
-{
-    return d->previous;
-}
-
-QModelIndex SideBarView::getCurrentIndex() const
-{
-    return d->current;
 }
 
 bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const

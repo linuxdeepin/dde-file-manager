@@ -265,22 +265,6 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
     }
 }
 
-/*
-QStringList SideBarModel::groups() const
-{
-    QStringList list;
-    auto controller = QtConcurrent::run([&]() {
-        for (int row = rowCount() - 1; row <= 0; row--) {
-            auto findedItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
-            if (!list.contains(findedItem->group()))
-                list.push_front(findedItem->group());
-        }
-    });
-    controller.waitForFinished();
-    return list;
-}
-*/
-
 QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
 {
     QModelIndex retIndex;

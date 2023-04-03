@@ -35,7 +35,6 @@ class SideBarViewPrivate : public QObject
     explicit SideBarViewPrivate(SideBarView *qq);
     bool checkOpTime();   //检查当前操作与上次操作的时间间隔
     void currentChanged(const QModelIndex &curIndex);
-    void highlightAfterDraggedToSort();
     void notifyOrderChanged();
 };
 
