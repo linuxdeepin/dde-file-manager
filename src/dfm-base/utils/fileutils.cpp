@@ -5,6 +5,7 @@
 #include "utils/fileutils.h"
 #include "desktopfile.h"
 #include "windowutils.h"
+#include "sysinfoutils.h"
 #include <dfm-base/dfm_global_defines.h>
 #include "utils/dialogmanager.h"
 #include "mimetype/mimedatabase.h"
@@ -1257,6 +1258,14 @@ int FileUtils::dirFfileCount(const QUrl &url)
 
 bool FileUtils::fileCanTrash(const QUrl &url)
 {
+    // gio does not support root user to move ordinary user files to trash
+    if (SysInfoUtils::isRootUser()) {
+        auto info = InfoFactory::create<FileInfo>(url);
+        int ownerId = info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
+        if (ownerId != 0)
+            return false;
+    }
+
     // 获取当前配置
     bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.trash.allfiletotrash").toBool();
     if (!alltotrash)

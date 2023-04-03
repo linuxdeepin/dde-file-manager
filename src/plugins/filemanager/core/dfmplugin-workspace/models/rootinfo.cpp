@@ -151,8 +151,7 @@ void RootInfo::reset()
 
 void RootInfo::doFileDeleted(const QUrl &url)
 {
-    auto tmp = FileUtils::bindUrlTransform(url);
-    enqueueEvent(QPair<QUrl, EventType>(tmp, kRmFile));
+    enqueueEvent(QPair<QUrl, EventType>(url, kRmFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -160,13 +159,11 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
 {
     doFileDeleted(fromUrl);
 
-    auto tmp = FileUtils::bindUrlTransform(url);
-
-    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(tmp);
+    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
     if (info)
         info->refresh();
 
-    if (!containsChild(tmp)) {
+    if (!containsChild(toUrl)) {
         {
             // Before the file moved signal is received, `toUrl` may be filtered if it received a created signal
             QMutexLocker lk(&watcherEventMutex);
@@ -191,21 +188,19 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     // but renamed from a .goutputstream_xxx file
     // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
     // when the file is modified in other way.
-    if (UniversalUtils::urlEquals(hiddenFileUrl, tmp))
-        Q_EMIT watcherUpdateHideFile(tmp);
+    if (UniversalUtils::urlEquals(hiddenFileUrl, toUrl))
+        Q_EMIT watcherUpdateHideFile(toUrl);
 }
 
 void RootInfo::dofileCreated(const QUrl &url)
 {
-    auto tmp = FileUtils::bindUrlTransform(url);
-    enqueueEvent(QPair<QUrl, EventType>(tmp, kAddFile));
+    enqueueEvent(QPair<QUrl, EventType>(url, kAddFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
 void RootInfo::doFileUpdated(const QUrl &url)
 {
-    auto tmp = FileUtils::bindUrlTransform(url);
-    enqueueEvent(QPair<QUrl, EventType>(tmp, kUpdateFile));
+    enqueueEvent(QPair<QUrl, EventType>(url, kUpdateFile));
     metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -371,7 +366,6 @@ void RootInfo::addChildren(const QList<SortInfoPointer> &children)
             continue;
 
         QWriteLocker lk(&childrenLock);
-        file->url.setPath(FileUtils::bindPathTransform(file->url.path(), false));
         childrenUrlList.append(file->url);
         sourceDataList.append(file);
     }

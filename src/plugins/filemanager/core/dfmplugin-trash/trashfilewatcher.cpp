@@ -54,10 +54,18 @@ void TrashFileWatcherPrivate::initFileWatcher()
 
 void TrashFileWatcherPrivate::initConnect()
 {
-    connect(watcher.data(), &DWatcher::fileChanged, q, &AbstractFileWatcher::fileAttributeChanged);
-    connect(watcher.data(), &DWatcher::fileDeleted, q, &AbstractFileWatcher::fileDeleted);
-    connect(watcher.data(), &DWatcher::fileAdded, q, &AbstractFileWatcher::subfileCreated);
-    connect(watcher.data(), &DWatcher::fileRenamed, q, &AbstractFileWatcher::fileRename);
+    connect(watcher.data(), &DWatcher::fileChanged, q, [&](const QUrl &url){
+        emit q->fileAttributeChanged(FileUtils::bindUrlTransform(url));
+    });
+    connect(watcher.data(), &DWatcher::fileDeleted, q, [&](const QUrl &url){
+        emit q->fileDeleted(FileUtils::bindUrlTransform(url));
+    });
+    connect(watcher.data(), &DWatcher::fileAdded, q, [&](const QUrl &url){
+        emit q->subfileCreated(FileUtils::bindUrlTransform(url));
+    });
+    connect(watcher.data(), &DWatcher::fileRenamed, q, [&](const QUrl &from, const QUrl &to){
+        emit q->fileRename(FileUtils::bindUrlTransform(from), FileUtils::bindUrlTransform(to));
+    });
 }
 
 TrashFileWatcher::TrashFileWatcher(const QUrl &url, QObject *parent)
