@@ -331,7 +331,6 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
 void DeviceWatcher::onProtoDevAdded(const QString &id)
 {
     qDebug() << "new protocol device added: " << id;
-    auto dev = DeviceHelper::createProtocolDevice(id);
     d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
 
     emit DevMngIns->protocolDevAdded(id);
@@ -349,7 +348,6 @@ void DeviceWatcher::onProtoDevRemoved(const QString &id)
 
 void DeviceWatcher::onProtoDevMounted(const QString &id, const QString &mpt)
 {
-    auto dev = DeviceHelper::createProtocolDevice(id);
     d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
 
     emit DevMngIns->protocolDevMounted(id, mpt);
@@ -375,8 +373,11 @@ QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType ty
 
         return d->allBlockInfos.value(id);
     } else if (type == DFMMOUNT::DeviceType::kProtocolDevice) {
-        if (reload)
-            d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
+        if (reload) {
+            const auto &&info = DeviceHelper::loadProtocolInfo(id);
+            if (!info.value("fake", false).toBool())   // only update with real info.
+                d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
+        }
 
         return d->allProtocolInfos.value(id);
     }

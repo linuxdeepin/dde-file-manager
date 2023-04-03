@@ -56,6 +56,10 @@ public:
 
     static void persistentOpticalInfo(const QVariantMap &datas);
     static void readOpticalInfo(QVariantMap &datas);
+
+private:
+    static bool checkNetworkConnection(const QString &id);
+    static QVariantMap makeFakeProtocolInfo(const QString &id);
 };
 
 }
