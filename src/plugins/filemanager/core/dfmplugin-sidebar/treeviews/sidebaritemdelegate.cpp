@@ -45,11 +45,8 @@ DWIDGET_USE_NAMESPACE
 
 static constexpr int kRadius = 8;
 static constexpr int kExpandIconSize = 12;
-static constexpr int kCompactExpandIconSize = 10;
 static constexpr int kItemMargin = 10;
-static constexpr int kCompactItemMargin = 6;
 static constexpr int kItemIconSize = 16;
-static constexpr int kCompactModeIcon = 16;
 static constexpr int kEjectIconSize = 16;
 
 namespace GlobalPrivate {
@@ -151,16 +148,6 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         isEjectable = info.isEjectable;
         QIcon icon = item->icon();
         drawIcon(opt, painter, icon, itemRect, iconMode, isEjectable);
-        // notes: if draw eject icon with `DStyledItemDelegate::paint(painter, option, index)`,
-        // could not match the UI style of requirement, so here use `drawIcon()`, but this way would trigger the item-action-event
-        // as clicking the eject icon.
-        // need some research for this promblem.
-        /*
-        if (!isEjectable)
-            drawIcon(painter, icon, itemRect, iconMode, isEjectable);
-        else
-            return DStyledItemDelegate::paint(painter, option, index);
-        */
     }
 
     // Draw item text

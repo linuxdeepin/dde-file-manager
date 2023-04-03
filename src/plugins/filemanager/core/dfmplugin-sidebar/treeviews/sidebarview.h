@@ -26,8 +26,6 @@ public:
     explicit SideBarView(QWidget *parent = nullptr);
     virtual SideBarModel *model() const;
     QModelIndex indexAt(const QPoint &p) const override;
-    QModelIndex getPreviousIndex() const;
-    QModelIndex getCurrentIndex() const;
     SideBarItem *itemAt(const QPoint &pt) const;
     QUrl urlAt(const QPoint &pt) const;
     void saveStateWhenClose();
@@ -40,7 +38,6 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;
