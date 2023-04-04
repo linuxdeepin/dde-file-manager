@@ -19,7 +19,8 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/device/deviceutils.h>
 
-#include <DApplicationHelper>
+#include <DPaletteHelper>
+#include <DGuiApplicationHelper>
 #include <DStyleOption>
 #include <DStyle>
 #include <DApplication>
@@ -372,15 +373,18 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
                                                               const QModelIndex &index, int backgroundMargin) const
 {
     Q_UNUSED(index);
+
+    painter->save();
+
     bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
     bool isSelected = !isDragMode && (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
-    DPalette pl(DApplicationHelper::instance()->palette(option.widget));
+    DPalette pl(DPaletteHelper::instance()->palette(option.widget));
     QColor backgroundColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+
     QColor baseColor = backgroundColor;
     if (option.widget) {
-        DPalette pa = DApplicationHelper::instance()->palette(option.widget);
         baseColor = option.widget->palette().base().color();
         DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
         if (ct == DGuiApplicationHelper::DarkType) {
@@ -430,6 +434,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
         painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
     }
+
     if (isSelected) {
         QRect rc = option.rect;
         rc.setSize({ 20, 20 });
@@ -445,6 +450,8 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
 
         DApplication::style()->drawPrimitive(DStyle::PE_IndicatorItemViewItemCheck, &check, painter);
     }
+
+    painter->restore();
 
     return path;
 }
