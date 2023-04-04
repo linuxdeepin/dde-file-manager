@@ -99,7 +99,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     bool ok = true;
     for (auto &url : sourceUrls) {
-        const auto &info = InfoFactory::create<FileInfo>(url);
+        const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info) {
             // pause and emit error msg
             if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction)

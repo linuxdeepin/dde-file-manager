@@ -108,7 +108,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             return false;
         }
 
-        const auto &fileInfo = InfoFactory::create<FileInfo>(urlSource);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(urlSource, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(urlSource, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
