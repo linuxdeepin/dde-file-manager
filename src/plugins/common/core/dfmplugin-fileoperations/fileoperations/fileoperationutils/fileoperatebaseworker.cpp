@@ -214,7 +214,7 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
 
 bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl &urlTarget, DFile::CopyFlag flag)
 {
-    auto fileinfo = InfoFactory::create<FileInfo>(urlSource);
+    auto fileinfo = InfoFactory::create<FileInfo>(urlSource, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (fileinfo->isAttributes(OptInfoType::kIsDir)) {
         if (!DFMIO::DFile(urlTarget).exists()) {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
@@ -228,11 +228,11 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
             return false;
         while (iterator->hasNext()) {
             const QUrl &url = iterator->next();
-            auto fileinfoNext = InfoFactory::create<FileInfo>(url);
+            auto fileinfoNext = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
             FileInfoPointer newTargetInfo(nullptr);
             bool ok = false;
-            FileInfoPointer toInfo = InfoFactory::create<FileInfo>(urlTarget);
+            FileInfoPointer toInfo = InfoFactory::create<FileInfo>(urlTarget, Global::CreateFileInfoType::kCreateFileInfoSync);
             if (!toInfo) {
                 // pause and emit error msg
                 qCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (toInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
@@ -414,7 +414,7 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
         do {
             QUrl newUrl = newFromInfo->urlOf(UrlInfoType::kUrl);
             newUrl.setPath(newFromInfo->pathOf(PathInfoType::kSymLinkTarget));
-            const FileInfoPointer &symlinkTarget = InfoFactory::create<FileInfo>(newUrl);
+            const FileInfoPointer &symlinkTarget = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
 
             if (!symlinkTarget || !symlinkTarget->exists()) {
                 break;
@@ -594,12 +594,6 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
         }
     }
 
-    if (fromInfo->countChildFile() <= 0) {
-        //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
-        if (permissions != 0000)
-            localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
-        return true;
-    }
     // 遍历源文件，执行一个一个的拷贝
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->urlOf(UrlInfoType::kUrl), &error);
