@@ -14,8 +14,7 @@
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
 FileCopyMoveJob::FileCopyMoveJob(QObject *parent)
-    : QObject(parent),
-      dialogManager(DialogManagerInstance)
+    : QObject(parent)
 {
     copyMoveTaskMutex.reset(new QMutex);
     getOperationsAndDialogServiceMutex.reset(new QMutex);
@@ -27,7 +26,11 @@ FileCopyMoveJob::~FileCopyMoveJob()
 
 bool FileCopyMoveJob::getOperationsAndDialogService()
 {
-    operationsService.reset(new FileOperationsService(this));
+    if (!operationsService)
+        operationsService.reset(new FileOperationsService(this));
+
+    if (!dialogManager)
+        dialogManager = DialogManagerInstance;
 
     return operationsService && dialogManager;
 }
@@ -57,7 +60,6 @@ void FileCopyMoveJob::onHandleAddTaskWithArgs(const JobInfoPointer info)
     }
 
     dialogManager->addTask(jobHandler);
-
 }
 
 void FileCopyMoveJob::onHandleTaskFinished(const JobInfoPointer info)

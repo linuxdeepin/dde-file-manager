@@ -24,6 +24,8 @@
 #include <DDesktopServices>
 
 #include <QDebug>
+#include <QtConcurrent>
+#include <QCoreApplication>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(bool *)
@@ -37,6 +39,14 @@ TrashFileEventReceiver::TrashFileEventReceiver(QObject *parent)
     : QObject(parent)
 {
     copyMoveJob.reset(new FileCopyMoveJob);
+    connect(this, &TrashFileEventReceiver::cleanTrashUrls, this, &TrashFileEventReceiver::onCleanTrashUrls, Qt::QueuedConnection);
+    connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
+        stoped = true;
+        if (trashIterator)
+            trashIterator->cancel();
+
+        future.waitForFinished();
+    });
 }
 
 JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
@@ -65,7 +75,6 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     } else {
         // check url permission
         QList<QUrl> urlsCanTrash = sources;
-
         if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
             if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
                 return nullptr;
@@ -104,23 +113,29 @@ JobHandlePointer TrashFileEventReceiver::doCopyFromTrash(const quint64 windowId,
     return handle;
 }
 
-JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback)
+JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback, const bool showDelet)
 {
     Q_UNUSED(windowId)
     Q_UNUSED(deleteNoticeType)
 
-    if (!sources.isEmpty()) {
+    if (stoped)
+        return nullptr;
+
+    if (!sources.isEmpty() && showDelet) {
         // Show delete files dialog
         if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
             return nullptr;
-    } else {
-        // Show clear trash dialog
-        int count = 0;
-        auto info = InfoFactory::create<FileInfo>(FileUtils::trashRootUrl());
-        if (info) {
-            count = info->countChildFile();
-        }
-        if (DialogManagerInstance->showClearTrashDialog(static_cast<quint64>(count)) != QDialog::Accepted) return nullptr;
+    }
+
+    if (sources.isEmpty()) {
+        future = QtConcurrent::run([&]() {
+            countTrashFile(windowId, deleteNoticeType, handleCallback);
+        });
+        return nullptr;
+    }
+
+    if (!showDelet) {
+        if (DialogManagerInstance->showClearTrashDialog(static_cast<quint64>(sources.length())) != QDialog::Accepted) return nullptr;
     }
 
     DWIDGET_USE_NAMESPACE
@@ -134,6 +149,30 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
     if (handleCallback)
         handleCallback(handle);
     return handle;
+}
+
+void TrashFileEventReceiver::countTrashFile(const quint64 windowId, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
+                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+{
+    if (stoped)
+        return;
+    DFMIO::DEnumerator enumerator(FileUtils::trashRootUrl());
+    QList<QUrl> allFilesList;
+    while (enumerator.hasNext()) {
+        if (stoped)
+            return;
+        auto url = FileUtils::bindUrlTransform(enumerator.next());
+        if (!allFilesList.contains(url))
+            allFilesList.append(url);
+    }
+
+    if (stoped)
+        return;
+
+    if (allFilesList.isEmpty())
+        return;
+
+    emit cleanTrashUrls(windowId, allFilesList, deleteNoticeType, handleCallback);
 }
 
 TrashFileEventReceiver *TrashFileEventReceiver::instance()
@@ -240,4 +279,11 @@ void TrashFileEventReceiver::handleOperationCopyFromTrash(const quint64 windowId
         callback(args);
     }
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
+}
+
+JobHandlePointer TrashFileEventReceiver::onCleanTrashUrls(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback)
+{
+    if (stoped)
+        return nullptr;
+    return doCleanTrash(windowId, sources, deleteNoticeType, handleCallback, false);
 }
