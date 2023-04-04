@@ -9,7 +9,7 @@
 #include "tagcrumbedit.h"
 #include "tagcolorlistwidget.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-framework/event/event.h>
 
 #include <DArrowRectangle>

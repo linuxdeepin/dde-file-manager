@@ -50,12 +50,14 @@ public:
 
 private:
     explicit FileOperatorHelper(QObject *parent = nullptr);
-    void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
+    void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
 
-    DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
+    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack;
 };
 
-#define FileOperatorHelperIns using namespace dfmplugin_workspace;::FileOperatorHelper::instance()
+#define FileOperatorHelperIns            \
+    using namespace dfmplugin_workspace; \
+    ::FileOperatorHelper::instance()
 }
 
 #endif   // FILEOPERATORHELPER_H

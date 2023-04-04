@@ -11,7 +11,7 @@
 #include "events/sidebareventcaller.h"
 #include "events/sidebareventreceiver.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/configs/settingbackend.h>
 #include <dfm-base/base/configs/configsynchronizer.h>

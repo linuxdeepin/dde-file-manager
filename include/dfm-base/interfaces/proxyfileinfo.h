@@ -5,7 +5,7 @@
 #ifndef PROXYFILEINFO_H
 #define PROXYFILEINFO_H
 
-#include "fileinfo.h"
+#include <dfm-base/interfaces/fileinfo.h>
 
 namespace dfmbase {
 class ProxyFileInfo : public FileInfo

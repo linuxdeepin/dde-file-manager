@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractframe.h"
+#include <dfm-base/interfaces/abstractframe.h>
 
 using namespace dfmbase;
 

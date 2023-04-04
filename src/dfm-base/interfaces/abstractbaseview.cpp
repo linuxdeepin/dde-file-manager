@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractbaseview.h"
-
-#include "widgets/dfmwindow/filemanagerwindow.h"
+#include <dfm-base/interfaces/abstractbaseview.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 namespace dfmbase {
 

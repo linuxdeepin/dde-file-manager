@@ -7,7 +7,7 @@
 #include "models/fileitemdata.h"
 
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/interfaces/private/watchercache.h>
+#include <dfm-base/utils/watchercache.h>
 
 #include <QApplication>
 

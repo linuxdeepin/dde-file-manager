@@ -19,7 +19,7 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 

@@ -5,7 +5,7 @@
 #include "corehelper.h"
 
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/event/event.h>

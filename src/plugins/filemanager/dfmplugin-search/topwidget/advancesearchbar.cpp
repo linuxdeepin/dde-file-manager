@@ -6,7 +6,7 @@
 #include "advancesearchbar_p.h"
 #include "utils/searchhelper.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/interfaces/fileinfo.h>
 
 #include <dfm-framework/dpf.h>

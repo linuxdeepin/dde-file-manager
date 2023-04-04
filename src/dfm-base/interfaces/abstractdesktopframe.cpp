@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractdesktopframe.h"
+#include <dfm-base/interfaces/abstractdesktopframe.h>
 
 using namespace dfmbase;
 
-AbstractDesktopFrame::AbstractDesktopFrame(QObject *parent) : QObject(parent)
+AbstractDesktopFrame::AbstractDesktopFrame(QObject *parent)
+    : QObject(parent)
 {
-
 }

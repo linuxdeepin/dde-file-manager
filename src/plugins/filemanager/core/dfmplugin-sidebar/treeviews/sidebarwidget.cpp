@@ -13,7 +13,7 @@
 #include "utils/sidebarinfocachemananger.h"
 
 #include <dfm-framework/event/event.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>

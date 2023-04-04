@@ -7,8 +7,6 @@
 
 #include <dfm-base/dfm_base_global.h>
 
-#include <dfm-io/dfileinfo.h>
-
 #include <QObject>
 
 class QUrl;

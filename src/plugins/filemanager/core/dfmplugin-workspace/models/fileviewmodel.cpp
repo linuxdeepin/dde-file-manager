@@ -20,7 +20,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/fileinfohelper.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
 

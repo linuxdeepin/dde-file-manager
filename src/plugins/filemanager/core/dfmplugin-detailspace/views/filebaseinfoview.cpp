@@ -9,6 +9,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/mimetype/mimedatabase.h>
 
 #include <dfm-framework/event/event.h>
 

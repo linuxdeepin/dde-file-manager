@@ -385,9 +385,9 @@ void FileOperatorProxy::clearRenameFileData()
     d->renameFileData.clear();
 }
 
-void FileOperatorProxy::callBackFunction(const CallbackArgus args)
+void FileOperatorProxy::callBackFunction(const AbstractJobHandler::CallbackArgus args)
 {
-    const QVariant &customValue = args->value(CallbackKey::kCustom);
+    const QVariant &customValue = args->value(AbstractJobHandler::CallbackKey::kCustom);
     const QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> &custom = customValue.value<QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant>>();
     const FileOperatorProxyPrivate::CallBackFunc funcKey = custom.first;
 
@@ -397,7 +397,7 @@ void FileOperatorProxy::callBackFunction(const CallbackArgus args)
         // Folder also belong to files
         // touch file is sync operation
 
-        auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         if (Q_UNLIKELY(targets.count() != 1)) {
             qWarning() << "unknow error.touch file successed,target urls is:" << targets;
         }
@@ -406,7 +406,7 @@ void FileOperatorProxy::callBackFunction(const CallbackArgus args)
     } break;
     case FileOperatorProxyPrivate::CallBackFunc::kCallBackPasteFiles: {
         // paste files is async operation
-        JobHandlePointer jobHandle = args->value(CallbackKey::kJobHandle).value<JobHandlePointer>();
+        JobHandlePointer jobHandle = args->value(AbstractJobHandler::CallbackKey::kJobHandle).value<JobHandlePointer>();
         if (jobHandle) {
             if (jobHandle->currentState() != AbstractJobHandler::JobState::kStopState) {
                 connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), &FileOperatorProxyPrivate::callBackPasteFiles);
@@ -417,8 +417,8 @@ void FileOperatorProxy::callBackFunction(const CallbackArgus args)
         }
     } break;
     case FileOperatorProxyPrivate::CallBackFunc::kCallBackRenameFiles: {
-        auto sources = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
-        auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        auto sources = args->value(AbstractJobHandler::CallbackKey::kSourceUrls).value<QList<QUrl>>();
+        auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         d->callBackRenameFiles(sources, targets);
     } break;
     default:

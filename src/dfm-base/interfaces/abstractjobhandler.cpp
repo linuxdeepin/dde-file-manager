@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractjobhandler.h"
+#include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/dialogmanager.h>
 
 #include <QUrl>

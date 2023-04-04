@@ -166,6 +166,15 @@ public:
         kCopyMoveToSelf,
     };
 
+    enum class CallbackKey : uint8_t {
+        kWindowId,   // quint64 windowId
+        kSuccessed,   // bool
+        kSourceUrls,   // QList<QUrl>
+        kTargets,   // QList<QUrl>
+        kJobHandle,   // JobHandlePointer
+        kCustom,   // QVariant
+    };
+
     explicit AbstractJobHandler(QObject *parent = nullptr);
     virtual ~AbstractJobHandler();
     virtual qreal currentJobProcess() const;
@@ -251,17 +260,25 @@ public Q_SLOTS:
 public:
     void start();
 
+public:
+    using CallbackArgus = QSharedPointer<QMap<AbstractJobHandler::CallbackKey, QVariant>>;
+    using OperatorCallback = std::function<void(const CallbackArgus args)>;
+    using OperatorHandleCallback = std::function<void(QSharedPointer<AbstractJobHandler>)>;
+
 private:
     QAtomicInteger<bool> isSignalConnectOver { false };
     QMutex taskInfoMutex;
     QMap<NotifyType, JobInfoPointer> taskInfo;
 };
-}
+
+}   // namespace dfmbase
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::SupportActions)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType)
-typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractJobHandler> JobHandlePointer;
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback);
+using JobHandlePointer = QSharedPointer<DFMBASE_NAMESPACE::AbstractJobHandler>;
 Q_DECLARE_METATYPE(JobHandlePointer)
 
 #endif   // DABSTRACTJOBHANDLER_H

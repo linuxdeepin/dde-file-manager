@@ -2,9 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "infocache.h"
-
-#include <dfm-base/interfaces/private/infocache_p.h>
+#include "private/infocache_p.h"
 #include <dfm-base/base/schemefactory.h>
 
 #include <dfm-io/dfileinfo.h>

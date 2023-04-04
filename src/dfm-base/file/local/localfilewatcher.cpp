@@ -4,7 +4,7 @@
 
 #include "file/local/localfilewatcher.h"
 #include "file/local/private/localfilewatcher_p.h"
-#include "base/urlroute.h"
+#include <dfm-base/base/urlroute.h>
 
 #include <dfm-io/dwatcher.h>
 

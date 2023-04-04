@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filestatisticsjob.h"
-#include <dfm-base/interfaces/fileinfo.h>
-#include "base/schemefactory.h"
-#include <dfm-base/interfaces/abstractdiriterator.h>
 
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/interfaces/abstractdiriterator.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/mimetype/mimedatabase.h>
 
 #include <dfm-io/dfmio_utils.h>
 

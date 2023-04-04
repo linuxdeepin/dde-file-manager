@@ -16,7 +16,6 @@ class FileOperatorPrivate : public QObject
 {
     Q_OBJECT
 public:
-
     enum CallBackFunc {
         kCallBackTouchFile,
         kCallBackTouchFolder,
@@ -38,11 +37,12 @@ public:
 
     QList<QUrl> getSelectedUrls(const CollectionView *view) const;
     static void filterDesktopFile(QList<QUrl> &urls);
+
 public:
     FileOperator *q = nullptr;
     QPointer<CollectionDataProvider> provider = nullptr;
 
-    DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
+    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack;
 
     QPair<QString, QPair<int, QPoint>> touchFileData;
     QHash<QUrl, QUrl> renameFileData;
@@ -52,4 +52,4 @@ public:
 
 Q_DECLARE_METATYPE(ddplugin_organizer::FileOperatorPrivate::CallBackFunc)
 
-#endif // FILEOPERATOR_P_H
+#endif   // FILEOPERATOR_P_H
