@@ -14,6 +14,8 @@
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/dialogmanager.h>
 
+#include <dfm-io/denumerator.h>
+
 #include <QObject>
 #include <QPointer>
 #include <QFileDevice>
@@ -27,6 +29,10 @@ class TrashFileEventReceiver final : public QObject
 
 public:
     static TrashFileEventReceiver *instance();
+
+Q_SIGNALS:
+    void cleanTrashUrls(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
+                        DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
 
 public slots:
     void handleOperationMoveToTrash(const quint64 windowId,
@@ -71,6 +77,10 @@ public slots:
                                       DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
                                       const QVariant custom,
                                       DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+private slots:
+    JobHandlePointer onCleanTrashUrls(const quint64 windowId, const QList<QUrl> sources,
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
+                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
 
 private:
     explicit TrashFileEventReceiver(QObject *parent = nullptr);
@@ -82,10 +92,15 @@ private:
     JobHandlePointer doCopyFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
     JobHandlePointer doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback, const bool showDelet = true);
+    void countTrashFile(const quint64 windowId, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
+                        DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };
+    QSharedPointer<DFMIO::DEnumerator> trashIterator { nullptr };
+    QFuture<void> future;
+    std::atomic_bool stoped { false };
 };
 
 DPFILEOPERATIONS_END_NAMESPACE
