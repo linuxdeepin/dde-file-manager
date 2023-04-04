@@ -37,46 +37,46 @@ public slots:
                              const QList<QUrl> sources,
                              const QUrl target,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationCopy(const quint64 windowId,
                              const QList<QUrl> sources,
                              const QUrl target,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
+                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                              const QVariant custom,
-                             DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     void handleOperationCut(const quint64 windowId,
                             const QList<QUrl> sources,
                             const QUrl target,
                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                            DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
 
     void handleOperationCut(const quint64 windowId,
                             const QList<QUrl> sources,
                             const QUrl target,
                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
+                            DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                             const QVariant custom,
-                            DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                            DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                                DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
+                                DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                 const QVariant custom,
-                                DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     bool handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls);
     bool handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls, bool *ok);
     void handleOperationOpenFiles(const quint64 windowId,
                                   const QList<QUrl> urls,
                                   const QVariant custom,
-                                  DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                  DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     bool handleOperationOpenFilesByApp(const quint64 windowId,
                                        const QList<QUrl> urls,
@@ -85,7 +85,7 @@ public slots:
                                        const QList<QUrl> urls,
                                        const QList<QString> apps,
                                        const QVariant custom,
-                                       DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     bool handleOperationRenameFile(const quint64 windowId,
                                    const QUrl oldUrl,
@@ -96,7 +96,7 @@ public slots:
                                    const QUrl newUrl,
                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                    const QVariant custom,
-                                   DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     bool handleOperationRenameFiles(const quint64 windowId,
                                     const QList<QUrl> urls,
@@ -107,7 +107,7 @@ public slots:
                                     const QPair<QString, QString> pair,
                                     const bool replace,
                                     const QVariant custom,
-                                    DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
     bool handleOperationRenameFiles(const quint64 windowId,
                                     const QList<QUrl> urls,
                                     const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair);
@@ -115,14 +115,14 @@ public slots:
                                     const QList<QUrl> urls,
                                     const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair,
                                     const QVariant custom,
-                                    DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     bool handleOperationMkdir(const quint64 windowId,
                               const QUrl url);
     void handleOperationMkdir(const quint64 windowId,
                               const QUrl url,
                               const QVariant custom,
-                              DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                              DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     QString handleOperationTouchFile(const quint64 windowId,
                                      const QUrl url,
@@ -137,13 +137,13 @@ public slots:
                                   const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
                                   const QString suffix,
                                   const QVariant custom,
-                                  DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);
+                                  DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
     void handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url,
                                   const QUrl tempUrl,
                                   const QString suffix,
                                   const QVariant custom,
-                                  DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);
+                                  DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
 
     bool handleOperationLinkFile(const quint64 windowId,
                                  const QUrl url,
@@ -156,7 +156,7 @@ public slots:
                                  const bool force,
                                  const bool silence,
                                  const QVariant custom,
-                                 DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     bool handleOperationSetPermission(const quint64 windowId,
                                       const QUrl url,
@@ -165,7 +165,7 @@ public slots:
                                       const QUrl url,
                                       const QFileDevice::Permissions permissions,
                                       const QVariant custom,
-                                      DFMBASE_NAMESPACE::Global::OperatorCallback callBack);
+                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack);
 
     bool handleOperationWriteToClipboard(const quint64 windowId,
                                          const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
@@ -177,11 +177,11 @@ public slots:
     void handleOperationSaveOperations(const QVariantMap values);
     void handleOperationCleanSaveOperationsStack();
     void handleOperationRevocation(const quint64 windowId,
-                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
 
     bool handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls);
     void handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
-                                  const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                  const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
 private:
     enum class RenameTypes {
@@ -198,34 +198,34 @@ private:
                            const QString &suffix);
 
     bool revocation(const quint64 windowId, const QVariantMap &ret,
-                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
 
     bool doRenameFiles(const quint64 windowId, const QList<QUrl> urls,
                        const QPair<QString, QString> pair,
                        const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair2,
                        const RenameTypes type,
                        QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
-                       const QVariant custom = QVariant(), DFMBASE_NAMESPACE::Global::OperatorCallback callback = nullptr);
+                       const QVariant custom = QVariant(), DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback = nullptr);
     bool doRenameDesktopFile(const quint64 windowId,
                              const QUrl oldUrl,
                              const QUrl newUrl,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
     JobHandlePointer doCopyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
-                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle);
+                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback callbaskHandle);
     JobHandlePointer doCutFile(quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                               DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                               DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
     JobHandlePointer doDeleteFile(const quint64 windowId, const QList<QUrl> sources,
-                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
     JobHandlePointer doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
-    bool doMkdir(const quint64 windowId, const QUrl url, const QVariant custom, dfmbase::Global::OperatorCallback callback);
+                                  DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
+    bool doMkdir(const quint64 windowId, const QUrl url, const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
     QString doTouchFilePremature(const quint64 windowId, const QUrl url,
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType, const QString suffix,
-                                 const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);
+                                 const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
     QString doTouchFilePremature(const quint64 windowId, const QUrl url,
                                  const QUrl tempUrl, const QString suffix,
-                                 const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);
+                                 const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
     bool doTouchFilePractically(const quint64 windowId, const QUrl url, const QUrl &tempUrl = QUrl());
     void saveFileOperation(const QList<QUrl> &sourcesUrls, const QList<QUrl> &targetUrls, DFMBASE_NAMESPACE::GlobalEventType type);
     QUrl checkTargetUrl(const QUrl &url);

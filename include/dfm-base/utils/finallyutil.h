@@ -27,6 +27,6 @@ private:
     bool hasDismissed { false };
 };
 
-}
+}   // namespace dfmbase
 
 #endif   // FINALLYUTIL_H

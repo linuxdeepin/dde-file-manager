@@ -7,15 +7,14 @@
 
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/utils/infocache.h>
+#include <dfm-base/utils/watchercache.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/interfaces/abstractbaseview.h>
 #include <dfm-base/interfaces/abstractfilewatcher.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
-#include <dfm-base/interfaces/abstractsortandfiter.h>
-#include <dfm-base/interfaces/private/infocache.h>
-#include <dfm-base/interfaces/private/watchercache.h>
-#include <dfm-base/utils/finallyutil.h>
-#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/interfaces/abstractsortfilter.h>
 
 #include <QCoreApplication>
 #include <QSharedPointer>
@@ -170,7 +169,6 @@ class InfoFactory final : public SchemeFactory<FileInfo>
 {
     Q_DISABLE_COPY(InfoFactory)
     friend class GC<InfoFactory>;
-    static InfoFactory *ins;
 
 public:
     enum RegOpts : uint32_t {
@@ -252,7 +250,6 @@ class ViewFactory final : public SchemeFactory<AbstractBaseView>
 {
     Q_DISABLE_COPY(ViewFactory)
     friend class GC<ViewFactory>;
-    static ViewFactory *ins;
 
 public:
     template<class CT = AbstractBaseView>
@@ -286,7 +283,6 @@ class WatcherFactory final : public SchemeFactory<AbstractFileWatcher>
 {
     Q_DISABLE_COPY(WatcherFactory)
     friend class GC<WatcherFactory>;
-    static WatcherFactory *ins;
 
 public:
     enum RegOpts : uint32_t {
@@ -432,7 +428,6 @@ class DirIteratorFactory final : public DirIteratorFactoryT1<AbstractDirIterator
 {
     Q_DISABLE_COPY(DirIteratorFactory)
     friend class GC<DirIteratorFactory>;
-    static DirIteratorFactory *ins;
 
 public:
     /*!
@@ -485,31 +480,29 @@ private:
     static DirIteratorFactory &instance();   // 获取全局实例
 };
 
-class SortAndFitersFactory final : public SchemeFactory<AbstractSortAndFiter>
+class SortFilterFactory final : public SchemeFactory<AbstractSortFilter>
 {
-    Q_DISABLE_COPY(SortAndFitersFactory)
-    friend class GC<SortAndFitersFactory>;
-    static SortAndFitersFactory *ins;
+    Q_DISABLE_COPY(SortFilterFactory)
+    friend class GC<SortFilterFactory>;
 
 public:
-    template<class CT = AbstractSortAndFiter>
+    template<class CT = AbstractSortFilter>
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        return instance().SchemeFactory<AbstractSortAndFiter>::regClass<CT>(scheme, errorString);
+        return instance().SchemeFactory<AbstractSortFilter>::regClass<CT>(scheme, errorString);
     }
 
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
-        auto sortAndFiters = instance().SchemeFactory<AbstractSortAndFiter>::create(url, errorString);
-        return qSharedPointerDynamicCast<T>(sortAndFiters);
+        auto sortFilters = instance().SchemeFactory<AbstractSortFilter>::create(url, errorString);
+        return qSharedPointerDynamicCast<T>(sortFilters);
     }
 
 private:
-    static SortAndFitersFactory &instance();   // 获取全局实例
-    explicit SortAndFitersFactory() {}
-    QMap<QString, QSharedPointer<AbstractSortAndFiter>> sortAndFitersMap;
+    static SortFilterFactory &instance();   // 获取全局实例
+    explicit SortFilterFactory() {}
 };
-}
+}   // namespace dfmbase
 
 #endif   // SCHEMEFACTORY_H

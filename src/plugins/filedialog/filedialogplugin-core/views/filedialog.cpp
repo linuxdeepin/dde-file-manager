@@ -11,7 +11,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
 

@@ -24,7 +24,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/application/settings.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
 

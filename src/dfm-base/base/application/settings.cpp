@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "base/application/settings.h"
-#include "base/standardpaths.h"
-#include "base/schemefactory.h"
-#include "utils/fileutils.h"
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QCoreApplication>
 #include <QStandardPaths>

@@ -11,8 +11,8 @@
 #include "events/titlebareventreceiver.h"
 
 #include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_event_defines.h>
 

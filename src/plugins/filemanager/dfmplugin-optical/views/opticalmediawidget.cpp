@@ -11,7 +11,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/devicemanager.h>

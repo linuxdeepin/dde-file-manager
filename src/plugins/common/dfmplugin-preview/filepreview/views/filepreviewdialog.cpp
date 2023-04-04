@@ -10,6 +10,7 @@
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/mimetype/mimedatabase.h>
 
 #include <DWindowCloseButton>
 #include <DGuiApplicationHelper>

@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "proxyfileinfo.h"
-#include "dfm-base/file/local/asyncfileinfo.h"
+#include <dfm-base/interfaces/proxyfileinfo.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
 
 DFMBASE_USE_NAMESPACE
 

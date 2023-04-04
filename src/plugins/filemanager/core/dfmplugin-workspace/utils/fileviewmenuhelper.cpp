@@ -13,7 +13,7 @@
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 

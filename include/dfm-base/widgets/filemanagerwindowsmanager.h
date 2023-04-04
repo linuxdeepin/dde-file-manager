@@ -6,7 +6,7 @@
 #define FILEMANAGERWINDOWSMANAGER_H
 
 #include <dfm-base/dfm_base_global.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 #include <QObject>
 

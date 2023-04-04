@@ -7,7 +7,7 @@
 
 #include "filedialogplugin_core_global.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 #include <QWidget>
 #include <QFileDialog>

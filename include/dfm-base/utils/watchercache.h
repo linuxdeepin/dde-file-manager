@@ -35,6 +35,6 @@ public:
     bool cacheDisable(const QString &scheme);
     void setCacheDisbale(const QString &scheme, bool disbale = true);
 };
-}
+}   // namespace dfmbase
 
 #endif   // WATCHERCACHE_H

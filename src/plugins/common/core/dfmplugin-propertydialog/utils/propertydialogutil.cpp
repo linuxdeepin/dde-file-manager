@@ -6,7 +6,7 @@
 #include "views/multifilepropertydialog.h"
 #include "propertydialogmanager.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <DArrowLineDrawer>
 

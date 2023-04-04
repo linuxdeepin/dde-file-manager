@@ -98,6 +98,6 @@ private:
     explicit InfoCacheController(QObject *parent = nullptr);
     void init();
 };
-}
+}   // namespace dfmbase
 
 #endif   // INFOCACHE_H

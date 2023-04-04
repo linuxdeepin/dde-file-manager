@@ -10,7 +10,7 @@
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/urlroute.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 

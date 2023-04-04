@@ -2,18 +2,17 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef ABSTRACTSORTANDFITER_H
-#define ABSTRACTSORTANDFITER_H
+#ifndef ABSTRACTSORTFILTER_H
+#define ABSTRACTSORTFILTER_H
 
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/dfm_global_defines.h>
-
-#include "fileinfo.h"
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QDirIterator>
 
 namespace dfmbase {
-class AbstractSortAndFiter
+class AbstractSortFilter
 {
 public:
     enum class SortScenarios : u_int8_t {
@@ -25,17 +24,17 @@ public:
     };
 
 public:
-    AbstractSortAndFiter();
-    virtual ~AbstractSortAndFiter() {}
+    AbstractSortFilter();
+    virtual ~AbstractSortFilter() {}
     // 左边比右边小返回true
     virtual int lessThan(const FileInfoPointer &left, const FileInfoPointer &right,
                          const bool isMixDirAndFile,
                          const Global::ItemRoles role,
                          const SortScenarios ss);
-    virtual int checkFiters(const FileInfoPointer &info, const QDir::Filters filter, const QVariant &custum);
+    virtual int checkFilters(const FileInfoPointer &info, const QDir::Filters filter, const QVariant &custum);
 };
 }
 
-typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractSortAndFiter> AbstractSortAndFiterPointer;
+typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractSortFilter> AbstractSortFilterPointer;
 
-#endif   // ABSTRACTSORTANDFITER_H
+#endif   // ABSTRACTSORTFILTER_H

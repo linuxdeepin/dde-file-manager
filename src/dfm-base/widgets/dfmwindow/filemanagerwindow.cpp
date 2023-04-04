@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "filemanagerwindow.h"
 #include "private/filemanagerwindow_p.h"
 
 #include <dfm-base/base/application/application.h>

@@ -8,7 +8,7 @@
 #include "dfmplugin_workspace_global.h"
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
-#include <dfm-base/interfaces/abstractsortandfiter.h>
+#include <dfm-base/interfaces/abstractsortfilter.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <dfm-base/base/application/application.h>
@@ -121,13 +121,13 @@ private:
     void sortOnlyOrderChange();
     void addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info);
     void addChild(const SortInfoPointer &sortInfo,
-                  const AbstractSortAndFiter::SortScenarios sort);
+                  const AbstractSortFilter::SortScenarios sort);
 
 private:
-    bool lessThan(const QUrl &left, const QUrl &right, AbstractSortAndFiter::SortScenarios sort);
+    bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
     QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
-                       AbstractSortAndFiter::SortScenarios sort);
+                       AbstractSortFilter::SortScenarios sort);
 
 private:
     QUrl current;
@@ -140,7 +140,7 @@ private:
     QMap<QUrl, FileItemData *> childrenDataMap {};
     QList<QUrl> visibleChildren {};
     QReadWriteLock locker;
-    AbstractSortAndFiterPointer sortAndFilter { nullptr };
+    AbstractSortFilterPointer sortAndFilter { nullptr };
     FileViewFilterCallback filterCallback { nullptr };
     QVariant filterData;
     FileItemData *rootdata { nullptr };

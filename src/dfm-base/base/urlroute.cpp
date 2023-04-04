@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "urlroute.h"
+#include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_global_defines.h>
-
-#include "utils/finallyutil.h"
-#include "utils/fileutils.h"
+#include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QDir>
 #include <QRegularExpression>

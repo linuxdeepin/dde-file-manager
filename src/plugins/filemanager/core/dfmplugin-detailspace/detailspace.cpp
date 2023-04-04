@@ -6,7 +6,7 @@
 #include "utils/detailspacehelper.h"
 #include "events/detailspaceeventreceiver.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 using namespace dfmplugin_detailspace;
 DFMBASE_USE_NAMESPACE

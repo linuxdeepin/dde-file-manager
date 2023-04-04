@@ -9,8 +9,8 @@
 #include "utils/sidebarhelper.h"
 #include "events/sidebareventreceiver.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>

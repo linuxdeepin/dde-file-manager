@@ -2,24 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "schemefactory.h"
-#include <dfm-base/base/singleton.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
 
 namespace dfmbase {
 
-InfoFactory *InfoFactory::ins { nullptr };
-ViewFactory *ViewFactory::ins { nullptr };
-WatcherFactory *WatcherFactory::ins { nullptr };
-DirIteratorFactory *DirIteratorFactory::ins { nullptr };
-SortAndFitersFactory *SortAndFitersFactory::ins { nullptr };
-
 InfoFactory &InfoFactory::instance()
 {
-    if (!ins) {
-        ins = new InfoFactory();
-        static GC<InfoFactory> gc(ins);
-    }
-    return *ins;
+    static InfoFactory ins;
+    return ins;
 }
 
 QString InfoFactory::scheme(const QUrl &url)
@@ -41,38 +32,26 @@ QString InfoFactory::scheme(const QUrl &url)
 
 WatcherFactory &WatcherFactory::instance()
 {
-    if (!ins) {
-        ins = new WatcherFactory();
-        static GC<WatcherFactory> gc(ins);
-    }
-    return *ins;
+    static WatcherFactory ins;
+    return ins;
 }
 
 DirIteratorFactory &DirIteratorFactory::instance()
 {
-    if (!ins) {
-        ins = new DirIteratorFactory();
-        static GC<DirIteratorFactory> gc(ins);
-    }
-    return *ins;
+    static DirIteratorFactory ins;
+    return ins;
 }
 
 ViewFactory &ViewFactory::instance()
 {
-    if (!ins) {
-        ins = new ViewFactory();
-        static GC<ViewFactory> gc(ins);
-    }
-    return *ins;
+    static ViewFactory ins;
+    return ins;
 }
 
-SortAndFitersFactory &SortAndFitersFactory::instance()
+SortFilterFactory &SortFilterFactory::instance()
 {
-    if (!ins) {
-        ins = new SortAndFitersFactory();
-        static GC<SortAndFitersFactory> gc(ins);
-    }
-    return *ins;
+    static SortFilterFactory ins;
+    return ins;
 }
 
-}
+}   // namespace dfmbase

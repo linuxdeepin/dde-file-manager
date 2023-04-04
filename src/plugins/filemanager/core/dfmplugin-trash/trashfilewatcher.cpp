@@ -8,6 +8,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-io/dwatcher.h>
 
@@ -54,16 +55,16 @@ void TrashFileWatcherPrivate::initFileWatcher()
 
 void TrashFileWatcherPrivate::initConnect()
 {
-    connect(watcher.data(), &DWatcher::fileChanged, q, [&](const QUrl &url){
+    connect(watcher.data(), &DWatcher::fileChanged, q, [&](const QUrl &url) {
         emit q->fileAttributeChanged(FileUtils::bindUrlTransform(url));
     });
-    connect(watcher.data(), &DWatcher::fileDeleted, q, [&](const QUrl &url){
+    connect(watcher.data(), &DWatcher::fileDeleted, q, [&](const QUrl &url) {
         emit q->fileDeleted(FileUtils::bindUrlTransform(url));
     });
-    connect(watcher.data(), &DWatcher::fileAdded, q, [&](const QUrl &url){
+    connect(watcher.data(), &DWatcher::fileAdded, q, [&](const QUrl &url) {
         emit q->subfileCreated(FileUtils::bindUrlTransform(url));
     });
-    connect(watcher.data(), &DWatcher::fileRenamed, q, [&](const QUrl &from, const QUrl &to){
+    connect(watcher.data(), &DWatcher::fileRenamed, q, [&](const QUrl &from, const QUrl &to) {
         emit q->fileRename(FileUtils::bindUrlTransform(from), FileUtils::bindUrlTransform(to));
     });
 }

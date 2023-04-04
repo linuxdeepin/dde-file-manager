@@ -8,7 +8,7 @@
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 #include <dfm-mount/base/dmount_global.h>
 

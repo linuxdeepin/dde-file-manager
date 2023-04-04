@@ -16,8 +16,8 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/application/application.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 #include <dfm-framework/event/event.h>
 

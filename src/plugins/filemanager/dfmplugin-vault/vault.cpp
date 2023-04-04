@@ -7,7 +7,7 @@
 #include "utils/vaulthelper.h"
 #include "events/vaulteventreceiver.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QUrl>
 

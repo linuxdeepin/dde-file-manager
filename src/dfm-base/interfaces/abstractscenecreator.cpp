@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractscenecreator.h"
+#include <dfm-base/interfaces/abstractscenecreator.h>
 
 using namespace dfmbase;
 

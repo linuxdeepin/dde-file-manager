@@ -16,7 +16,6 @@ class FileOperatorProxyPrivate : public QObject
 {
     Q_OBJECT
 public:
-
     enum CallBackFunc {
         kCallBackTouchFile,
         kCallBackTouchFolder,
@@ -40,10 +39,11 @@ public:
     void doSelectUrls(const QList<QUrl> &urls);
 
     void filterDesktopFile(QList<QUrl> &urls);
+
 public:
     FileOperatorProxy *const q = nullptr;
     QSharedPointer<QTimer> selectTimer;
-    DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
+    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack;
 
     QPair<QString, QPair<int, QPoint>> touchFileData;
     QHash<QUrl, QUrl> renameFileData;
@@ -53,4 +53,4 @@ public:
 
 Q_DECLARE_METATYPE(DDP_CANVAS_NAMESPACE::FileOperatorProxyPrivate::CallBackFunc)
 
-#endif // FILEOPERATORPROXY_P_H
+#endif   // FILEOPERATORPROXY_P_H

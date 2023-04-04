@@ -6,7 +6,6 @@
 #define DFM_GLOBAL_DEFINES_H
 
 #include <dfm-base/dfm_base_global.h>
-#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 
@@ -30,15 +29,6 @@ enum class TransparentStatus : uint8_t {
     kDefault,
     kTransparent,
     kUntransparent
-};
-
-enum class CallbackKey : uint8_t {
-    kWindowId,   // quint64 windowId
-    kSuccessed,   // bool
-    kSourceUrls,   // QList<QUrl>
-    kTargets,   // QList<QUrl>
-    kJobHandle,   // JobHandlePointer
-    kCustom,   // QVariant
 };
 
 enum class FileNotifyType : uint8_t {
@@ -89,11 +79,6 @@ enum ItemRoles {
 
     kItemUnknowRole = Qt::UserRole + 999
 };
-
-using CallbackArgus = QSharedPointer<QMap<CallbackKey, QVariant>>;
-using OperatorCallback = std::function<void(const CallbackArgus args)>;
-
-using OperatorHandleCallback = std::function<void(QSharedPointer<AbstractJobHandler>)>;
 
 enum CreateFileType : uint8_t {
     kCreateFileTypeUnknow = 0,
@@ -174,15 +159,12 @@ inline constexpr char kGvfsRoot[] { R"(^/run/user/.*/gvfs/|^/root/.gvfs/)" };
 
 namespace DataBase {
 inline constexpr char kDfmDBName[] { "dfmruntime.db" };
-}
+}   // namespace DataBase
 
 }   // namespace Global
-
-}
+}   // namespace dfmbase
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorCallback);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorHandleCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ItemRoles);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::TransparentStatus);

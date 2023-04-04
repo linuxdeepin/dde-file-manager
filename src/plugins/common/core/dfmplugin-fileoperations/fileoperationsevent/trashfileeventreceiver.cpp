@@ -50,7 +50,7 @@ TrashFileEventReceiver::TrashFileEventReceiver(QObject *parent)
 }
 
 JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                       DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId);
 
@@ -87,7 +87,7 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
 }
 
 JobHandlePointer TrashFileEventReceiver::doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
-                                                            const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+                                                            const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId)
 
@@ -100,7 +100,8 @@ JobHandlePointer TrashFileEventReceiver::doRestoreFromTrash(const quint64 window
     return handle;
 }
 
-JobHandlePointer TrashFileEventReceiver::doCopyFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+JobHandlePointer TrashFileEventReceiver::doCopyFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
+                                                         const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId)
 
@@ -113,7 +114,8 @@ JobHandlePointer TrashFileEventReceiver::doCopyFromTrash(const quint64 windowId,
     return handle;
 }
 
-JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback, const bool showDelet)
+JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
+                                                      AbstractJobHandler::OperatorHandleCallback handleCallback, const bool showDelet)
 {
     Q_UNUSED(windowId)
     Q_UNUSED(deleteNoticeType)
@@ -152,7 +154,7 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
 }
 
 void TrashFileEventReceiver::countTrashFile(const quint64 windowId, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                            AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     if (stoped)
         return;
@@ -182,7 +184,7 @@ TrashFileEventReceiver *TrashFileEventReceiver::instance()
 }
 
 void TrashFileEventReceiver::handleOperationMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                        DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                                        DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     auto handle = doMoveToTrash(windowId, sources, flags, handleCallback);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kMoveToTrashType, handle);
@@ -190,14 +192,14 @@ void TrashFileEventReceiver::handleOperationMoveToTrash(const quint64 windowId, 
 
 void TrashFileEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     auto handle = doRestoreFromTrash(windowId, sources, target, flags, handleCallback);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
 }
 
 void TrashFileEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                                       DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     auto handle = doCleanTrash(windowId, sources, deleteNoticeType, handleCallback);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
@@ -206,17 +208,17 @@ void TrashFileEventReceiver::handleOperationCleanTrash(const quint64 windowId, c
 void TrashFileEventReceiver::handleOperationMoveToTrash(const quint64 windowId,
                                                         const QList<QUrl> sources,
                                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                        DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
+                                                        DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                         const QVariant custom,
-                                                        DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                        DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
 
     JobHandlePointer handle = doMoveToTrash(windowId, sources, flags, handleCallback);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kMoveToTrashType, handle);
@@ -225,31 +227,31 @@ void TrashFileEventReceiver::handleOperationMoveToTrash(const quint64 windowId,
 void TrashFileEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId,
                                                              const QList<QUrl> sources, const QUrl target,
                                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
+                                                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                              const QVariant custom,
-                                                             DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     JobHandlePointer handle = doRestoreFromTrash(windowId, sources, target, flags, handleCallback);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
 }
 
 void TrashFileEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources,
-                                                       DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
-                                                       const QVariant custom, OperatorCallback callback)
+                                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
+                                                       const QVariant custom, AbstractJobHandler::OperatorCallback callback)
 {
     JobHandlePointer handle = doCleanTrash(windowId, sources, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, handleCallback);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
@@ -257,7 +259,7 @@ void TrashFileEventReceiver::handleOperationCleanTrash(const quint64 windowId, c
 
 void TrashFileEventReceiver::handleOperationCopyFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                          DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     auto handle = doCopyFromTrash(windowId, sources, target, flags, handleCallback);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
@@ -265,23 +267,25 @@ void TrashFileEventReceiver::handleOperationCopyFromTrash(const quint64 windowId
 
 void TrashFileEventReceiver::handleOperationCopyFromTrash(const quint64 windowId,
                                                           const QList<QUrl> sources, const QUrl target,
-                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                          DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
+                                                          const AbstractJobHandler::JobFlags flags,
+                                                          AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                           const QVariant custom,
-                                                          DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                          AbstractJobHandler::OperatorCallback callback)
 {
     JobHandlePointer handle = doCopyFromTrash(windowId, sources, target, flags, handleCallback);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
 }
 
-JobHandlePointer TrashFileEventReceiver::onCleanTrashUrls(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback)
+JobHandlePointer TrashFileEventReceiver::onCleanTrashUrls(const quint64 windowId, const QList<QUrl> sources,
+                                                          const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
+                                                          AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     if (stoped)
         return nullptr;
