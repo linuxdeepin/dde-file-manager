@@ -49,6 +49,12 @@ static constexpr int kItemMargin = 10;
 static constexpr int kItemIconSize = 16;
 static constexpr int kEjectIconSize = 16;
 
+#ifdef DTKWIDGET_CLASS_DSizeMode
+static constexpr int kCompactExpandIconSize = 10;
+static constexpr int kCompactItemMargin = 6;
+static constexpr int kCompactModeIcon = 16;
+#endif
+
 namespace GlobalPrivate {
 const static char *const kRegPattern { "^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*" };
 void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option)
