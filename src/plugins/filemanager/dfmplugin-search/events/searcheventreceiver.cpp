@@ -7,7 +7,7 @@
 #include "utils/searchhelper.h"
 #include "searchmanager/searchmanager.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {

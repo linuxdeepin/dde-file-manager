@@ -6,7 +6,7 @@
 #define LOCALFILEDIRITERATOR_P_H
 
 #include "file/local/localdiriterator.h"
-#include "base/urlroute.h"
+#include <dfm-base/base/urlroute.h>
 
 #include <QDirIterator>
 #include <QPointer>

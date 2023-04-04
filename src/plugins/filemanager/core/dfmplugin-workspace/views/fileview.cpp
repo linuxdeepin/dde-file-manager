@@ -30,7 +30,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/utils/dialogmanager.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #    include <DGuiApplicationHelper>

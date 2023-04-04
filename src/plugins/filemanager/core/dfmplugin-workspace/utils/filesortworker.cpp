@@ -19,7 +19,7 @@ using namespace dfmio;
 FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilterCallback callfun, const QStringList &nameFilters, const QDir::Filters filters, const QDirIterator::IteratorFlags flags, QObject *parent)
     : QObject(parent), current(url), nameFilters(nameFilters), filters(filters), flags(flags), filterCallback(callfun), currentKey(key)
 {
-    sortAndFilter = SortAndFitersFactory::create<AbstractSortAndFiter>(url);
+    sortAndFilter = SortFilterFactory::create<AbstractSortFilter>(url);
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
 }
 
@@ -231,7 +231,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
         Q_EMIT insertRows(0, newChildren.length());
     for (const auto &url : newChildren) {
         int showIndex = insertSortList(url, visibleChildren,
-                                       AbstractSortAndFiter::SortScenarios::kSortScenariosIteratorExistingFile);
+                                       AbstractSortFilter::SortScenarios::kSortScenariosIteratorExistingFile);
         if (isCanceled)
             return;
         if (onebyone)
@@ -381,7 +381,7 @@ void FileSortWorker::handleWatcherAddChildren(QList<SortInfoPointer> children)
             return;
         if (this->childrenUrlList.contains(sortInfo->url))
             continue;
-        addChild(sortInfo, AbstractSortAndFiter::SortScenarios::kSortScenariosWatcherAddFile);
+        addChild(sortInfo, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
     }
 }
 
@@ -585,7 +585,7 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
 
     // 在处理继承
     if (sortInfo && sortAndFilter) {
-        auto result = sortAndFilter->checkFiters(InfoFactory::create<FileInfo>(sortInfo->url), filters, filterData);
+        auto result = sortAndFilter->checkFilters(InfoFactory::create<FileInfo>(sortInfo->url), filters, filterData);
         if (result >= 0)
             return result;
     }
@@ -719,7 +719,7 @@ void FileSortWorker::filterAllFilesOrdered()
             continue;
         if (show) {
             auto showIndex = insertSortList(sortInfo->url, visibleChildren,
-                                            AbstractSortAndFiter::SortScenarios::kSortScenariosWatcherOther);
+                                            AbstractSortFilter::SortScenarios::kSortScenariosWatcherOther);
             Q_EMIT insertRows(showIndex, 1);
             {
                 QWriteLocker lk(&locker);
@@ -749,7 +749,7 @@ void FileSortWorker::sortAllFiles()
     for (const auto &url : visibleChildren) {
         if (isCanceled)
             return;
-        sortList.insert(insertSortList(url, sortList, AbstractSortAndFiter::SortScenarios::kSortScenariosNormal), url);
+        sortList.insert(insertSortList(url, sortList, AbstractSortFilter::SortScenarios::kSortScenariosNormal), url);
     }
     Q_EMIT insertRows(0, sortList.length());
     {
@@ -838,7 +838,7 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const FileInfoPoi
 }
 
 void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
-                              const AbstractSortAndFiter::SortScenarios sort)
+                              const AbstractSortFilter::SortScenarios sort)
 {
     if (isCanceled)
         return;
@@ -877,11 +877,11 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     }
     Q_EMIT insertFinish();
 
-    if (sort == AbstractSortAndFiter::SortScenarios::kSortScenariosWatcherAddFile)
+    if (sort == AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile)
         Q_EMIT selectAndEditFile(sortInfo->url);
 }
 // 左边比右边小返回true，
-bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortAndFiter::SortScenarios sort)
+bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort)
 {
     if (isCanceled)
         return false;
@@ -992,7 +992,7 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
 }
 
 int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list,
-                                   AbstractSortAndFiter::SortScenarios sort)
+                                   AbstractSortFilter::SortScenarios sort)
 {
     int begin = 0;
     int end = list.count();

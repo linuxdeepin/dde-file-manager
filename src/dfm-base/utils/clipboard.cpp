@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "clipboard.h"
-#include "base/schemefactory.h"
-#include "base/urlroute.h"
 
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/file/local/localfileiconprovider.h>

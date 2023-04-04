@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractfilepreviewplugin.h"
+#include <dfm-base/interfaces/abstractfilepreviewplugin.h>
 
 using namespace dfmbase;
 AbstractFilePreviewPlugin::AbstractFilePreviewPlugin(QObject *parent)

@@ -5,7 +5,7 @@
 #ifndef INFOCACHE_P_H
 #define INFOCACHE_P_H
 
-#include "infocache.h"
+#include <dfm-base/utils/infocache.h>
 
 #include <QReadWriteLock>
 #include <QMutex>

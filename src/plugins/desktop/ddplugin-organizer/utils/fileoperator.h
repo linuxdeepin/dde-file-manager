@@ -9,6 +9,7 @@
 #include "mode/collectiondataprovider.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 #include <QSharedPointer>
@@ -21,6 +22,7 @@ class FileOperator : public QObject
 {
     Q_OBJECT
     friend class FileOperatorPrivate;
+
 public:
     ~FileOperator();
     static FileOperator *instance();
@@ -48,8 +50,9 @@ public:
     QHash<QUrl, QUrl> renameFileData() const;
     void removeRenameFileData(const QUrl &oldUrl);
     void clearRenameFileData();
+
 public:
-    void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
+    void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
 
 protected:
     explicit FileOperator(QObject *parent = nullptr);
@@ -62,4 +65,4 @@ private:
 
 }
 
-#endif // FILEOPERATOR_H
+#endif   // FILEOPERATOR_H

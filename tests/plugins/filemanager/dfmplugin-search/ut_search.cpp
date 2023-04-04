@@ -12,7 +12,7 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/interfaces/abstractframe.h>
 
 #include <gtest/gtest.h>

@@ -17,7 +17,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/entry/entryfileinfo.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)

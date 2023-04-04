@@ -6,7 +6,7 @@
 #define SERVICEMANAGER_H
 #include "dfmplugin_vault_global.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QObject>
 namespace dfmplugin_vault {

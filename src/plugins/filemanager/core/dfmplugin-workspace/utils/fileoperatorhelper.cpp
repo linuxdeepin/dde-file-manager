@@ -12,8 +12,9 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
-#include "dfm-framework/dpf.h"
+#include <dfm-framework/dpf.h>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -357,19 +358,19 @@ FileOperatorHelper::FileOperatorHelper(QObject *parent)
     callBack = std::bind(&FileOperatorHelper::callBackFunction, this, std::placeholders::_1);
 }
 
-void FileOperatorHelper::callBackFunction(const CallbackArgus args)
+void FileOperatorHelper::callBackFunction(const AbstractJobHandler::CallbackArgus args)
 {
-    const QVariant &customValue = args->value(CallbackKey::kCustom);
+    const QVariant &customValue = args->value(AbstractJobHandler::CallbackKey::kCustom);
     GlobalEventType type = static_cast<GlobalEventType>(customValue.toInt());
 
     switch (type) {
     case kMkdir: {
-        quint64 windowID = args->value(CallbackKey::kWindowId).toULongLong();
-        QList<QUrl> sourceUrlList = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
+        quint64 windowID = args->value(AbstractJobHandler::CallbackKey::kWindowId).toULongLong();
+        QList<QUrl> sourceUrlList = args->value(AbstractJobHandler::CallbackKey::kSourceUrls).value<QList<QUrl>>();
         if (sourceUrlList.isEmpty())
             break;
 
-        QList<QUrl> targetUrlList = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        QList<QUrl> targetUrlList = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         if (targetUrlList.isEmpty())
             break;
 
@@ -379,18 +380,19 @@ void FileOperatorHelper::callBackFunction(const CallbackArgus args)
         break;
     }
     case kTouchFile: {
-        quint64 windowID = args->value(CallbackKey::kWindowId).toULongLong();
-        QList<QUrl> sourceUrlList = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
+        quint64 windowID = args->value(AbstractJobHandler::CallbackKey::kWindowId).toULongLong();
+        QList<QUrl> sourceUrlList = args->value(AbstractJobHandler::CallbackKey::kSourceUrls).value<QList<QUrl>>();
         if (sourceUrlList.isEmpty())
             break;
 
-        QList<QUrl> targetUrlList = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        QList<QUrl> targetUrlList = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         if (targetUrlList.isEmpty())
             break;
 
         QUrl rootUrl = sourceUrlList.first();
         QUrl newFile = targetUrlList.first();
         WorkspaceHelper::kSelectionAndRenameFile[windowID] = qMakePair(rootUrl, newFile);
+        break;
     }
     default:
         break;

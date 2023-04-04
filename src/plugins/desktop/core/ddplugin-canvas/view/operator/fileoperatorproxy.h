@@ -8,6 +8,7 @@
 #include "ddplugin_canvas_global.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 #include <QPoint>
@@ -48,8 +49,9 @@ public:
     QHash<QUrl, QUrl> renameFileData() const;
     void removeRenameFileData(const QUrl &oldUrl);
     void clearRenameFileData();
+
 public:
-    void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
+    void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
 
 protected:
     explicit FileOperatorProxy(QObject *parent = nullptr);

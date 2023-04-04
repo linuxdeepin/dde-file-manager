@@ -20,6 +20,8 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DPVAULT_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
 VaultFileHelper *VaultFileHelper::instance()
 {
     static VaultFileHelper ins;
@@ -31,7 +33,7 @@ VaultFileHelper::VaultFileHelper(QObject *parent)
 {
 }
 
-bool VaultFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+bool VaultFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
     if (target.scheme() != scheme())
         return false;
@@ -50,7 +52,7 @@ bool VaultFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources,
     return true;
 }
 
-bool VaultFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+bool VaultFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
     if (target.scheme() != scheme())
         return false;
@@ -70,7 +72,7 @@ bool VaultFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources
     return true;
 }
 
-bool VaultFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+bool VaultFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
 {
     if (sources.isEmpty())
         return false;
@@ -84,7 +86,7 @@ bool VaultFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sour
     return true;
 }
 
-bool VaultFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+bool VaultFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
 {
     if (sources.isEmpty())
         return false;
@@ -114,7 +116,7 @@ bool VaultFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
     return true;
 }
 
-bool VaultFileHelper::renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+bool VaultFileHelper::renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const AbstractJobHandler::JobFlags flags)
 {
     if (oldUrl.scheme() != scheme())
         return false;
@@ -129,7 +131,7 @@ bool VaultFileHelper::renameFile(const quint64 windowId, const QUrl oldUrl, cons
 bool VaultFileHelper::makeDir(const quint64 windowId, const QUrl url,
                               const QUrl &targetUrl,
                               const QVariant custom,
-                              OperatorCallback callback)
+                              AbstractJobHandler::OperatorCallback callback)
 {
     if (url.scheme() != scheme())
         return false;
@@ -137,12 +139,12 @@ bool VaultFileHelper::makeDir(const quint64 windowId, const QUrl url,
     const QUrl dirUrl = transUrlsToLocal({ url }).first();
     if (dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdir, windowId, dirUrl)) {
         if (callback) {
-            CallbackArgus args(new QMap<CallbackKey, QVariant>);
-            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
-            args->insert(CallbackKey::kSuccessed, QVariant::fromValue(true));
-            args->insert(CallbackKey::kCustom, custom);
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+            args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(true));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callback(args);
         }
     }
@@ -154,7 +156,7 @@ bool VaultFileHelper::touchFile(const quint64 windowId,
                                 const QUrl url, const QUrl &targetUrl,
                                 const DFMGLOBAL_NAMESPACE::CreateFileType type,
                                 const QString &suffix,
-                                const QVariant &custom, DFMGLOBAL_NAMESPACE::OperatorCallback callback,
+                                const QVariant &custom, AbstractJobHandler::OperatorCallback callback,
                                 QString *error)
 {
     if (url.scheme() != scheme())
@@ -164,11 +166,11 @@ bool VaultFileHelper::touchFile(const quint64 windowId,
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile, windowId, dirUrl, type, suffix);
 
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 
@@ -177,7 +179,7 @@ bool VaultFileHelper::touchFile(const quint64 windowId,
 
 bool VaultFileHelper::touchCustomFile(const quint64 windowId, const QUrl url, const QUrl &targetUrl,
                                       const QUrl tempUrl, const QString &suffix,
-                                      const QVariant &custom, OperatorCallback callback,
+                                      const QVariant &custom, AbstractJobHandler::OperatorCallback callback,
                                       QString *error)
 {
     if (url.scheme() != scheme())
@@ -188,11 +190,11 @@ bool VaultFileHelper::touchCustomFile(const quint64 windowId, const QUrl url, co
                                  windowId, dirUrl, tempUrl, suffix);
 
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 

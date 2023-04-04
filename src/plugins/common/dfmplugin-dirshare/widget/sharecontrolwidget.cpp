@@ -9,7 +9,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/file/local/localfilewatcher.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.h>
 
 #include <dfm-framework/dpf.h>

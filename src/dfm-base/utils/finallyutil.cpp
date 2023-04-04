@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "finallyutil.h"
+#include <dfm-base/utils/finallyutil.h>
 
 namespace dfmbase {
 
@@ -22,4 +22,4 @@ void FinallyUtil::dismiss(bool dismissed)
     hasDismissed = dismissed;
 }
 
-}
+}   // namespace dfmbase

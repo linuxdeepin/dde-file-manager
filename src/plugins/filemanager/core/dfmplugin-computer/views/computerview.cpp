@@ -10,7 +10,7 @@
 #include "events/computereventcaller.h"
 #include "controller/computercontroller.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-framework/dpf.h>

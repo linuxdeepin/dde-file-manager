@@ -6,7 +6,7 @@
 #include "views/detailspacewidget.h"
 #include "utils/detailmanager.h"
 
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 

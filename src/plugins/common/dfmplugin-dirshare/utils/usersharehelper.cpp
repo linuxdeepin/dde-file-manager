@@ -9,7 +9,7 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/sysinfoutils.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
 

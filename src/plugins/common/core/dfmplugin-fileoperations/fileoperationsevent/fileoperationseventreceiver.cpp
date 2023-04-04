@@ -116,7 +116,7 @@ QString FileOperationsEventReceiver::newDocmentName(const QUrl &url, const QStri
 }
 
 bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVariantMap &ret,
-                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle)
+                                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle)
 {
     if (!ret.contains("event") || !ret.contains("sources") || !ret.contains("targets"))
         return false;
@@ -178,7 +178,7 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
 bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair,
                                                 const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair2,
                                                 const RenameTypes type, QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
-                                                const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     bool ok = false;
@@ -186,11 +186,11 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
     case RenameTypes::kBatchRepalce: {
         QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchReplaceText(urls, pair);
         if (callback) {
-            CallbackArgus args(new QMap<CallbackKey, QVariant>);
-            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(CallbackKey::kCustom, custom);
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callback(args);
         }
         ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
@@ -199,11 +199,11 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
     case RenameTypes::kBatchCustom: {
         QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
         if (callback) {
-            CallbackArgus args(new QMap<CallbackKey, QVariant>);
-            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(CallbackKey::kCustom, custom);
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callback(args);
         }
         ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
@@ -212,11 +212,11 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
     case RenameTypes::kBatchAppend: {
         QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair2);
         if (callback) {
-            CallbackArgus args(new QMap<CallbackKey, QVariant>);
-            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(CallbackKey::kCustom, custom);
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callback(args);
         }
         ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
@@ -277,7 +277,7 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
 }
 
 JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
-                                                         const AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle)
+                                                         const AbstractJobHandler::JobFlags flags, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback callbaskHandle)
 {
     if (sources.isEmpty())
         return nullptr;
@@ -307,7 +307,7 @@ JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId,
     return handle;
 }
 
-JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     if (sources.isEmpty())
         return nullptr;
@@ -343,7 +343,7 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
     return handle;
 }
 
-JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     if (sources.isEmpty())
         return nullptr;
@@ -371,7 +371,7 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
     return handle;
 }
 
-JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback)
+JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId)
     Q_UNUSED(deleteNoticeType)
@@ -402,7 +402,7 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
 
 bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url,
                                           const QVariant custom,
-                                          OperatorCallback callback)
+                                          AbstractJobHandler::OperatorCallback callback)
 {
     const QString newPath = newDocmentName(url, QString(), CreateFileType::kCreateFileTypeFolder);
     if (newPath.isEmpty())
@@ -434,12 +434,12 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
     saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles);
 
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 
@@ -447,7 +447,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
 }
 
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const CreateFileType fileType, const QString suffix,
-                                                          const QVariant custom, OperatorCallback callbackImmediately)
+                                                          const QVariant custom, AbstractJobHandler::OperatorCallback callbackImmediately)
 {
     const QString newPath = newDocmentName(url, suffix, fileType);
     if (newPath.isEmpty())
@@ -459,11 +459,11 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
 
     if (dfmbase::FileUtils::isLocalFile(url)) {
         if (callbackImmediately) {
-            CallbackArgus args(new QMap<CallbackKey, QVariant>);
-            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
-            args->insert(CallbackKey::kCustom, custom);
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callbackImmediately(args);
         }
 
@@ -480,7 +480,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
     }
 }
 
-QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix, const QVariant custom, OperatorCallback callbackImmediately)
+QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix, const QVariant custom, AbstractJobHandler::OperatorCallback callbackImmediately)
 {
     auto fileInfo = InfoFactory::create<FileInfo>(tempUrl);
     if (!fileInfo)
@@ -497,11 +497,11 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
 
     if (dfmbase::FileUtils::isLocalFile(url)) {
         if (callbackImmediately) {
-            CallbackArgus args(new QMap<CallbackKey, QVariant>);
-            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
-            args->insert(CallbackKey::kCustom, custom);
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callbackImmediately(args);
         }
 
@@ -552,14 +552,14 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QList<QUrl> sources,
                                                       const QUrl target,
                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle)
+                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback callbaskHandle)
 {
     auto handle = doCopyFile(windowId, sources, target, flags, callbaskHandle);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCopyType, handle);
 }
 
 void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     auto handle = doCutFile(windowId, sources, target, flags, handleCallback);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCutType, handle);
@@ -568,7 +568,7 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+                                                         DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     auto handle = doDeleteFile(windowId, sources, flags, handleCallback);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteType, handle);
@@ -578,17 +578,17 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QList<QUrl> sources,
                                                       const QUrl target,
                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
+                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                       const QVariant custom,
-                                                      DFMGLOBAL_NAMESPACE::OperatorCallback callback)
+                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     JobHandlePointer handle = doCopyFile(windowId, sources, target, flags, handleCallback);
 
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 
@@ -599,16 +599,16 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
                                                      const QList<QUrl> sources,
                                                      const QUrl target,
                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
+                                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                      const QVariant custom,
-                                                     DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     JobHandlePointer handle = doCutFile(windowId, sources, target, flags, handleCallback);
     if (callback && handle) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 
@@ -618,16 +618,16 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
+                                                         DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                          const QVariant custom,
-                                                         DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                         DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     JobHandlePointer handle = doDeleteFile(windowId, sources, flags, handleCallback);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteType, handle);
@@ -690,15 +690,15 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
 void FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId,
                                                            const QList<QUrl> urls,
                                                            const QVariant custom,
-                                                           DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                           DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     bool ok = handleOperationOpenFiles(windowId, urls);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(urls));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(urls));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -707,15 +707,15 @@ void FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
                                                                 const QList<QUrl> urls,
                                                                 const QList<QString> apps,
                                                                 const QVariant custom,
-                                                                DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                                DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     bool ok = handleOperationOpenFilesByApp(windowId, urls, apps);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(urls));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(urls));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -798,16 +798,16 @@ void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
                                                             const QUrl newUrl,
                                                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                             const QVariant custom,
-                                                            OperatorCallback callback)
+                                                            AbstractJobHandler::OperatorCallback callback)
 {
     bool ok = handleOperationRenameFile(windowId, oldUrl, newUrl, flags);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << oldUrl));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << oldUrl));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << oldUrl));
+        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << oldUrl));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -843,7 +843,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     return ok;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, OperatorCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, AbstractJobHandler::OperatorCallback callback)
 {
     QMap<QUrl, QUrl> successUrls;
     QString error;
@@ -886,7 +886,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     return ok;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, OperatorCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, AbstractJobHandler::OperatorCallback callback)
 {
     QMap<QUrl, QUrl> successUrls;
     QString error;
@@ -906,7 +906,7 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, c
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                        const QUrl url,
                                                        const QVariant custom,
-                                                       OperatorCallback callback)
+                                                       AbstractJobHandler::OperatorCallback callback)
 {
     doMkdir(windowId, url, custom, callback);
 }
@@ -949,7 +949,7 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
                                                            const CreateFileType fileType,
                                                            const QString suffix,
                                                            const QVariant custom,
-                                                           OperatorCallback callbackImmediately)
+                                                           AbstractJobHandler::OperatorCallback callbackImmediately)
 {
     doTouchFilePremature(windowId, url, fileType, suffix, custom, callbackImmediately);
 }
@@ -959,7 +959,7 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
                                                            const QUrl tempUrl,
                                                            const QString suffix,
                                                            const QVariant custom,
-                                                           OperatorCallback callbackImmediately)
+                                                           AbstractJobHandler::OperatorCallback callbackImmediately)
 {
     doTouchFilePremature(windowId, url, tempUrl, suffix, custom, callbackImmediately);
 }
@@ -1009,17 +1009,17 @@ void FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
                                                           const bool force,
                                                           const bool silence,
                                                           const QVariant custom,
-                                                          DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     bool ok = handleOperationLinkFile(windowId, url, link, force, silence);
 
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << link));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << link));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -1057,15 +1057,15 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
 void FileOperationsEventReceiver::handleOperationSetPermission(const quint64 windowId,
                                                                const QUrl url,
                                                                const QFileDevice::Permissions permissions, const QVariant custom,
-                                                               DFMBASE_NAMESPACE::Global::OperatorCallback callback)
+                                                               DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     bool ok = handleOperationSetPermission(windowId, url, permissions);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -1141,7 +1141,7 @@ void FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack()
 }
 
 void FileOperationsEventReceiver::handleOperationRevocation(const quint64 windowId,
-                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle)
+                                                            DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle)
 {
     const QVariantMap &ret { OperationsStackProxy::instance().revocationOperations() };
     revocation(windowId, ret, handle);
@@ -1173,16 +1173,16 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
 }
 
 void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
-                                                           const QVariant custom, OperatorCallback callback)
+                                                           const QVariant custom, AbstractJobHandler::OperatorCallback callback)
 {
     bool ok = handleOperationHideFiles(windowId, urls);
     if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
         callback(args);
     }
 }
-}
+}   // namespace dfmplugin_fileoperations

@@ -32,69 +32,69 @@ public:
 
 Q_SIGNALS:
     void cleanTrashUrls(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                        DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                        DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
 
 public slots:
     void handleOperationMoveToTrash(const quint64 windowId,
                                     const QList<QUrl> sources,
                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationMoveToTrash(const quint64 windowId,
                                     const QList<QUrl> sources,
                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
+                                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                     const QVariant custom,
-                                    DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     void handleOperationRestoreFromTrash(const quint64 windowId,
                                          const QList<QUrl> sources, const QUrl target,
                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                                         DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationRestoreFromTrash(const quint64 windowId,
                                          const QList<QUrl> sources, const QUrl target,
                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
+                                         DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                          const QVariant custom,
-                                         DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                         DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     void handleOperationCleanTrash(const quint64 windowId,
                                    const QList<QUrl> sources,
                                    const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationCleanTrash(const quint64 windowId,
                                    const QList<QUrl> sources,
-                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
+                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                    const QVariant custom,
-                                   DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     void handleOperationCopyFromTrash(const quint64 windowId,
                                       const QList<QUrl> sources, const QUrl target,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
+                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationCopyFromTrash(const quint64 windowId,
                                       const QList<QUrl> sources, const QUrl target,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
+                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                       const QVariant custom,
-                                      DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 private slots:
     JobHandlePointer onCleanTrashUrls(const quint64 windowId, const QList<QUrl> sources,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
 
 private:
     explicit TrashFileEventReceiver(QObject *parent = nullptr);
 
     JobHandlePointer doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
     JobHandlePointer doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
-                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
     JobHandlePointer doCopyFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
-                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
     JobHandlePointer doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback, const bool showDelet = true);
+                                  DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback, const bool showDelet = true);
     void countTrashFile(const quint64 windowId, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                        DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+                        DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };

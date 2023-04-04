@@ -328,9 +328,9 @@ void FileOperator::clearRenameFileData()
     d->renameFileData.clear();
 }
 
-void FileOperator::callBackFunction(const Global::CallbackArgus args)
+void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args)
 {
-    const QVariant &customValue = args->value(CallbackKey::kCustom);
+    const QVariant &customValue = args->value(AbstractJobHandler::CallbackKey::kCustom);
     const QPair<FileOperatorPrivate::CallBackFunc, QVariant> &custom = customValue.value<QPair<FileOperatorPrivate::CallBackFunc, QVariant>>();
     const FileOperatorPrivate::CallBackFunc funcKey = custom.first;
 
@@ -340,7 +340,7 @@ void FileOperator::callBackFunction(const Global::CallbackArgus args)
         // Folder also belong to files
         // touch file is sync operation
 
-        auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         if (Q_UNLIKELY(targets.count() != 1)) {
             qWarning() << "unknow error.touch file successed,target urls is:" << targets;
         }
@@ -349,7 +349,7 @@ void FileOperator::callBackFunction(const Global::CallbackArgus args)
     } break;
     case FileOperatorPrivate::CallBackFunc::kCallBackPasteFiles: {
         // paste files is async operation
-        JobHandlePointer jobHandle = args->value(CallbackKey::kJobHandle).value<JobHandlePointer>();
+        JobHandlePointer jobHandle = args->value(AbstractJobHandler::CallbackKey::kJobHandle).value<JobHandlePointer>();
 
         if (jobHandle->currentState() != AbstractJobHandler::JobState::kStopState) {
             connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), &FileOperatorPrivate::callBackPasteFiles);
@@ -359,8 +359,8 @@ void FileOperator::callBackFunction(const Global::CallbackArgus args)
         }
     } break;
     case FileOperatorPrivate::CallBackFunc::kCallBackRenameFiles: {
-        auto sources = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
-        auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        auto sources = args->value(AbstractJobHandler::CallbackKey::kSourceUrls).value<QList<QUrl>>();
+        auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         auto viewData = custom.second.toMap();
         CollectionView *view = reinterpret_cast<CollectionView *>(viewData.value(kViewObject).toLongLong());
         if (Q_UNLIKELY(!view)) {

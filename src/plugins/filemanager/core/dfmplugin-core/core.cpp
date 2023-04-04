@@ -17,7 +17,7 @@
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/utils/clipboard.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-mount/ddevicemanager.h>

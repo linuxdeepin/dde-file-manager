@@ -10,8 +10,8 @@
 #include "plugins/filemanager/dfmplugin-myshares/utils/shareutils.h"
 #include "plugins/filemanager/dfmplugin-myshares/utils/sharefilehelper.h"
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
-#include <dfm-base/widgets/dfmwindow/filemanagerwindow.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/eventchannel.h>
 

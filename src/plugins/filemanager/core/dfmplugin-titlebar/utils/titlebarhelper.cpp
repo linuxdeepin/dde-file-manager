@@ -16,7 +16,7 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/dialogmanager.h>
-#include <dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
