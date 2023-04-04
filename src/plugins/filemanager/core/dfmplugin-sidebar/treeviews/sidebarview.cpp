@@ -235,6 +235,8 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
     if (isAccepteDragEvent(event))
         return;
 
+    DTreeView::dragMoveEvent(event);
+
     if (event->source() != this)
         event->ignore();
 }
