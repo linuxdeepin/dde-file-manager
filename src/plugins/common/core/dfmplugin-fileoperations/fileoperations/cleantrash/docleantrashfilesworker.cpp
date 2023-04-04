@@ -105,7 +105,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
             }
         }
 
-        const auto &fileInfo = InfoFactory::create<FileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
             // pause and emit error msg
             AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError);
