@@ -116,8 +116,9 @@ target_include_directories(${BIN_NAME} PUBLIC
     ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
     )
 
+set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager) # also use for install
 target_compile_definitions(
-    ${BIN_NAME} PRIVATE APPSHAREDIR="/usr/share/dde-file-manager"
+	${BIN_NAME} PRIVATE APPSHAREDIR="${ShareDir}"
 )
 
 add_library(DFM::base ALIAS ${BIN_NAME})
@@ -151,7 +152,6 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}Config.cmake DESTINATION ${
 
 # install resources files
 set(AssetsPath ${PROJECT_SOURCE_DIR}/assets)
-set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager)
 
 FILE(GLOB SCHEMA_FILES ${AssetsPath}/gschema/*)
 install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
