@@ -131,7 +131,7 @@ void VaultRemovePages::showRemoveWidget()
 {
     setInfo(tr("Removing..."));
     clearButtons();
-    addButton(tr("OK", "button"), true, ButtonType::ButtonRecommend);
+    addButton(tr("OK", "button"), true);
     getButton(0)->setEnabled(false);
     stackedWidget->setCurrentIndex(2);
 }

@@ -8,12 +8,12 @@
 #include <dfm-base/base/application/settings.h>
 
 #include <DWaterProgress>
+#include <DLabel>
 
 #include <QProgressBar>
 #include <QFile>
 #include <QDir>
 #include <QThread>
-#include <QHBoxLayout>
 
 #include <thread>
 
@@ -22,14 +22,21 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
-    : QWidget(parent), vaultRmProgressBar(new DWaterProgress(this))
+    : QWidget(parent)
+    , vaultRmProgressBar(new DWaterProgress(this))
+    , deleteFinishedImageLabel(new DLabel(this))
+    , layout(new QHBoxLayout())
 {
-//    vaultRmProgressBar->setFixedSize(80, 80);
-    QHBoxLayout *layout = new QHBoxLayout();
+    vaultRmProgressBar->setFixedSize(80, 80);
+
+    deleteFinishedImageLabel->setPixmap(QIcon::fromTheme("dfm_vault_active_finish").pixmap(90, 90));
+    deleteFinishedImageLabel->setAlignment(Qt::AlignHCenter);
+    deleteFinishedImageLabel->hide();
+
     layout->setMargin(0);
     layout->addWidget(vaultRmProgressBar, 1, Qt::AlignCenter);
-
     this->setLayout(layout);
+
     connect(this, &VaultRemoveProgressView::fileRemoved, this, &VaultRemoveProgressView::onFileRemove);
 }
 
@@ -157,4 +164,10 @@ void VaultRemoveProgressView::onFileRemove(int value)
 {
     if (vaultRmProgressBar->value() != 100)
         vaultRmProgressBar->setValue(value);
+    if (value == 100) { // 100: the vaule of progress bar
+        layout->removeWidget(vaultRmProgressBar);
+        vaultRmProgressBar->hide();
+        layout->addWidget(deleteFinishedImageLabel);
+        deleteFinishedImageLabel->show();
+    }
 }
