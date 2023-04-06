@@ -4,7 +4,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 project(test-ddplugin-grandsearchdaemon)
 
-add_definitions(-DGRANDSEARCHDAEMON_LIB_DIR="/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/dde-grand-search-daemon")
+add_definitions(-DGRANDSEARCHDAEMON_LIB_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/dde-grand-search-daemon")
 
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE

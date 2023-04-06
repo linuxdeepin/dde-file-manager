@@ -16,7 +16,7 @@ add_library(${PROJECT_NAME}
     ${SRC_FILES}
 )
 
-add_definitions(-DGRANDSEARCHDAEMON_LIB_DIR="/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/dde-grand-search-daemon")
+add_definitions(-DGRANDSEARCHDAEMON_LIB_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/dde-grand-search-daemon")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
