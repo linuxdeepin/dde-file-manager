@@ -9,7 +9,7 @@
 
 #include <QScopedPointer>
 #include <QList>
-#include <qt5/QtCore/qobjectdefs.h>
+#include <QtCore/qobjectdefs.h>
 
 class DeviceManagerInterface;
 class QDBusServiceWatcher;
