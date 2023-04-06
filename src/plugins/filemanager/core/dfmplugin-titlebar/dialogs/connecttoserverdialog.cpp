@@ -21,6 +21,10 @@
 #include <DComboBox>
 #include <DLabel>
 #include <DFrame>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -208,8 +212,6 @@ void ConnectToServerDialog::initializeUi()
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
 
-    setFixedSize(430, 490);
-
     QStringList buttonTexts;
     buttonTexts.append(tr("Cancel", "button"));
     buttonTexts.append(tr("Connect", "button"));
@@ -232,9 +234,7 @@ void ConnectToServerDialog::initializeUi()
     });
     collectionServerView->setItemDelegate(delegate);
 
-    theAddButton->setFixedSize(38, 38);
-    collectionLabel->setFixedHeight(20);
-
+    theAddButton->setMaximumSize(38, 38);
     theAddButton->setIcon(QIcon::fromTheme("dfm_add_server"));
     theAddButton->setFlat(false);
     theAddButton->setIconSize({ 16, 16 });
@@ -367,13 +367,14 @@ void ConnectToServerDialog::initializeUi()
     emptyLayout->addWidget(centerNotes, 0, Qt::AlignHCenter | Qt::AlignTop);
     emptyLayout->setSpacing(0);
 
-    emptyFrame->setFixedHeight(295);
+    emptyFrame->setMaximumHeight(295);
     emptyFrame->setLayout(emptyLayout);
 
     centerNotesLayout->addWidget(emptyFrame);
     contentLayout->addLayout(centerNotesLayout, Qt::AlignVCenter);
     emptyFrame->setVisible(!hasCollections);
     collectionServerView->setVisible(hasCollections);
+    initUiForSizeMode();
 }
 
 void ConnectToServerDialog::initConnect()
@@ -387,6 +388,9 @@ void ConnectToServerDialog::initConnect()
 
     connect(theAddButton, &DTK_WIDGET_NAMESPACE::DIconButton::clicked, this, &ConnectToServerDialog::collectionOperate);
     connect(collectionServerView, &DListView::clicked, this, &ConnectToServerDialog::onCollectionViewClicked);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &ConnectToServerDialog::initUiForSizeMode);
+#endif
 }
 
 void ConnectToServerDialog::onAddButtonClicked()
@@ -452,4 +456,17 @@ void ConnectToServerDialog::upateUiState()
 QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
 {
     return scheme + "://";
+}
+
+void ConnectToServerDialog::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    setFixedSize(430, DSizeModeHelper::element(450, 490));
+    int size = DSizeModeHelper::element(32, 38);
+    theAddButton->setFixedSize(size, size);
+    schemeComboBox->setFixedHeight(DSizeModeHelper::element(32, QWIDGETSIZE_MAX));
+    serverComboBox->setFixedHeight(DSizeModeHelper::element(32, 38));
+#else
+    setFixedSize(430, 490);
+#endif
 }

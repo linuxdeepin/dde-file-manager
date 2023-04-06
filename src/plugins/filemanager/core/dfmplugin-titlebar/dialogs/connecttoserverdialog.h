@@ -41,6 +41,9 @@ public slots:
     void onCollectionViewClicked(const QModelIndex &index);
     void onCompleterActivated(const QString &text);
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     void initializeUi();
     void initConnect();
