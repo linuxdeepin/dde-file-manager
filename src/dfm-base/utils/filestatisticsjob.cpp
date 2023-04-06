@@ -146,7 +146,7 @@ bool FileStatisticsJobPrivate::stateCheck()
 
 void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue)
 {
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
     if (!info) {
         qDebug() << "Url not yet supported: " << url;
@@ -204,7 +204,8 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
             }
 
             do {
-                info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget)));
+                info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget)),
+                                                     Global::CreateFileInfoType::kCreateFileInfoSync);
             } while (info && info->isAttributes(OptInfoType::kIsSymLink));
 
             if (!info) {
@@ -409,7 +410,7 @@ void FileStatisticsJobPrivate::statisticFile(FTSENT *ent)
 
 void FileStatisticsJobPrivate::statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink)
 {
-    auto info = InfoFactory::create<FileInfo>(currentUrl);
+    auto info = InfoFactory::create<FileInfo>(currentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!info) {
         filesCount++;
         return;
@@ -592,7 +593,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 continue;
 
             d->sizeInfo->allFiles << url;
-            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+            FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
             if (!info) {
                 qDebug() << "Url not yet supported: " << url;
@@ -615,7 +616,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 if (d->fileStatistics.contains(symLinkTargetUrl) || d->sizeInfo->allFiles.contains(symLinkTargetUrl))
                     continue;
 
-                info = InfoFactory::create<FileInfo>(symLinkTargetUrl);
+                info = InfoFactory::create<FileInfo>(symLinkTargetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
 
                 if (info->isAttributes(OptInfoType::kIsSymLink)) {
                     continue;
