@@ -8,10 +8,13 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dtkwidget_global.h>
+
 #include <QWidget>
+#include <QHBoxLayout>
 
 DWIDGET_BEGIN_NAMESPACE
 class DWaterProgress;
+class DLabel;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_vault {
@@ -46,7 +49,6 @@ private:
 
 signals:
     void fileRemoved(int value);
-
     void removeFinished(bool result);
 
 private slots:
@@ -54,6 +56,8 @@ private slots:
 
 private:
     DTK_WIDGET_NAMESPACE::DWaterProgress *vaultRmProgressBar { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *deleteFinishedImageLabel { nullptr };
+    QHBoxLayout *layout { nullptr };
 
     int filesCount { 0 };   //!文件、文件夹数量
     int removeFileCount { 0 };   //! 删除文件数量
