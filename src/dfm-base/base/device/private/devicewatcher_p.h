@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QMutex>
 #include <QHash>
-#include <qt5/QtCore/qobjectdefs.h>
+#include <QtCore/qobjectdefs.h>
 
 #include <dfm-mount/base/dmount_global.h>
 
