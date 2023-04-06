@@ -158,10 +158,10 @@ install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
 install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
 
 set(DLNFS_SCRIPT ${AssetsPath}/scripts/dfm-dlnfs-automount)
-install(FILES ${DLNFS_SCRIPT} DESTINATION /etc/deepin/dde-file-manager)
+install(FILES ${DLNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
 
 set(DLNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-dlnfs-automount)
-install(FILES ${DLNFS_SCRIPT_LAUNCHER} DESTINATION /etc/X11/Xsession.d)
+install(FILES ${DLNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
 
 set(Mimetypes "${ShareDir}/mimetypes")
 FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
