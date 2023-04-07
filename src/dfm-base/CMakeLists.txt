@@ -57,6 +57,7 @@ pkg_search_module(dfm-burn REQUIRED dfm-burn IMPORTED_TARGET)
 pkg_search_module(dfm-io REQUIRED dfm-io IMPORTED_TARGET)
 pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
 pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
+pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 pkg_search_module(Dtk REQUIRED dtkcore IMPORTED_TARGET)
 
 # for generating middle source files of SettingsTemplate to translate.
@@ -105,6 +106,7 @@ target_link_libraries(${BIN_NAME} PUBLIC
     PkgConfig::dfm-mount
     PkgConfig::dfm-io
     PkgConfig::gsettings
+    PkgConfig::mount
     poppler-cpp
     KF5::Codecs
     ${DtkWidget_LIBRARIES}
