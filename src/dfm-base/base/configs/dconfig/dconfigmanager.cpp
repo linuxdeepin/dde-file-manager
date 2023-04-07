@@ -115,7 +115,7 @@ QVariant DConfigManager::value(const QString &config, const QString &key, const 
         qWarning() << "Config: " << config << "is not registered!!!";
     return fallback;
 #else
-    return QVariant();
+    return fallback;
 #endif
 }
 

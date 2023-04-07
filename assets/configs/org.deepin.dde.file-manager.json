@@ -144,6 +144,17 @@
             "description":"外设和网络挂载设备nas盘删除文件进入到回收站",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dd.disabled": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Disabled Desktop",
+            "name[zh_CN]":"禁用桌面。",
+            "description[zh_CN]":"如果值为true，DDE桌面将不加载任何插件，无桌面窗口。",
+            "description":"If the value is set to true, the DDE Desktop will not load any plugins and no desktop window.",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }
