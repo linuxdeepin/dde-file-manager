@@ -545,7 +545,7 @@ bool DFMRootFileInfo::canSetAlias() const
 {
     // 系统盘、数据盘均可设置别名
     auto type = static_cast<ItemType>(fileType());
-    if (dfm_util::isContains(type, ItemType::UDisksRoot, ItemType::UDisksData)) {
+    if (dfm_util::isContains(type, ItemType::UDisksRoot, ItemType::UDisksData, ItemType::UDisksFixed)) {
         return true;
     }
 
