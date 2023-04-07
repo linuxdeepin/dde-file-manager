@@ -10,6 +10,10 @@
 
 #include <dfm-framework/dpf.h>
 
+static constexpr char kServerInterface[] { "org.deepin.plugin.server" };
+static constexpr char kPluginCore[] { "serverplugin-core" };
+static constexpr char kLibCore[] { "libserverplugin-core.so" };
+
 static void initLog()
 {
     dpfLogManager->registerConsoleAppender();
@@ -18,9 +22,41 @@ static void initLog()
 
 static bool pluginsLoad()
 {
-    dpfCheckTimeBegin();
+    QStringList pluginsDirs;
+#ifdef QT_DEBUG
+    const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
+    qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
+    pluginsDirs.push_back(pluginsDir + "/server");
+    pluginsDirs.push_back(pluginsDir);
+#else
+    pluginsDirs << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
+                << QString(DFM_PLUGIN_SERVER_EDGE_DIR);
+#endif
+    qInfo() << "Using plugins dir:" << pluginsDirs;
+    DPF_NAMESPACE::LifeCycle::initialize({ kServerInterface }, pluginsDirs);
 
-    dpfCheckTimeEnd();
+    qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
+    qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+
+    // read all plugins in setting paths
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
+        return false;
+
+    // We should make sure that the core plugin is loaded first
+    auto corePlugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(kPluginCore);
+    if (corePlugin.isNull())
+        return false;
+    if (!corePlugin->fileName().contains(kLibCore)) {
+        qWarning() << corePlugin->fileName() << "is not" << kLibCore;
+        return false;
+    }
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
+        return false;
+
+    // load plugins without core
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
+        return false;
+
     return true;
 }
 
