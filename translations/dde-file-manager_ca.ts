@@ -121,6 +121,7 @@
 <context>
     <name>PathManager</name>
     <message>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/asynctrashfileinfo.cpp" line="436"/>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="269"/>
         <source>Trash</source>
         <translation>Paperera</translation>
@@ -172,6 +173,8 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="378"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="99"/>
         <source>Unknown</source>
@@ -193,20 +196,25 @@
         <translation>Volum: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="237"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="241"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="284"/>
         <source>Scanning the device, stop it?</source>
         <translation>S&apos;escaneja el dispositiu. Voleu interrompre-ho?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="248"/>
         <source>Unmount failed</source>
         <translation>Ha fallat el desmuntatge.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="248"/>
         <source>Cannot stop scanning device</source>
         <translation>No es pot aturar l&apos;escaneig del dispositiu.</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="370"/>
+        <source>%1 on %2</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="201"/>
@@ -890,23 +898,23 @@
         <translation>Interromp</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="683"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="684"/>
         <source>Shortcut</source>
         <translation>Drecera</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1128"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1129"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Aquest fons de pantalla del sistema està blocat. Poseu-vos en contacte amb l&apos;administrador.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1186"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1187"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (còpia)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1187"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1188"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (copia %1)</translation>
@@ -2416,10 +2424,10 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="56"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="500"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="553"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="574"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="506"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="559"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="54"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2502,215 +2510,220 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="154"/>
+        <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
         <source>The device is busy, cannot remove now</source>
         <translation>El dispositiu està ocupat. No es pot suprimir ara.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="176"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="181"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>No teniu permís per fer operacions amb el fitxer o carpeta!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="193"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="198"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Disculpeu, no teniu permís per fer operacions amb els %1 fitxers o carpetes següents!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="222"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="232"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="490"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="610"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="227"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="237"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="496"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="616"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>D&apos;acord</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="229"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="483"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="234"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="489"/>
         <source>Operation failed!</source>
         <translation>Ha fallat l&apos;operació!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="230"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="235"/>
         <source>Target folder is inside the source folder!</source>
         <translation>La carpeta de destinació és dins de la carpeta d&apos;origen!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="285"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="290"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>Cal contrasenya per accedir a les dades encriptades a %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="293"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="342"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="409"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="469"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="597"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="298"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="603"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="294"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="299"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formatació</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="295"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="300"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Per accedir al dispositiu, primer heu de formatar el disc. Segur que el voleu formatar ara?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="309"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="314"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Voleu executar %1 o veure&apos;n el contingut?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="310"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="315"/>
         <source>It is an executable text file.</source>
         <translation>És un fitxer de text executable.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="314"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="344"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="598"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="319"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="604"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Executa</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="315"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="343"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="348"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Executa al terminal</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="316"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="321"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Mostra</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="344"/>
         <source>Do you want to run %1?</source>
         <translation>Voleu executar %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="340"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
         <source>It is an executable file.</source>
         <translation>És un fitxer executable.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="357"/>
-        <source>Permanently delete %1 items?</source>
-        <translation>Voleu eliminar permanentment %1 elements?</translation>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
+        <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="410"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="470"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="392"/>
+        <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="416"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Elimina</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="387"/>
-        <source>Permanently delete %1?</source>
-        <translation>Voleu eliminar permanentment %1?</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="393"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="429"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="398"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="435"/>
         <source>This action cannot be undone</source>
         <translation>Aquesta acció no es pot desfer</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="405"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="411"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Segur que voleu eliminar %1 element?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="412"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Segur que voleu eliminar %1 elements?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="421"/>
         <source>Empty</source>
         <translation>Buit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="453"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="459"/>
         <source>Do you want to delete %1?</source>
         <translation>Voleu eliminar %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="454"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="460"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Voleu eliminar els %1 elements seleccionats?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="485"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>No s&apos;ha pogut restaurar %1 fitxer, la carpeta de destinació és de només lectura.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="487"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>No s&apos;han pogut restaurar %1 fitxers, la carpeta de destinació és de només lectura.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="498"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="504"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; ja existeix; si us plau, trieu un altre nom.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="518"/>
         <source>Device or resource busy</source>
         <translation>Dispositiu o recurs ocupat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="531"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Aquest fitxer serà ocult si el nom comença amb un punt. Voleu amagar-lo?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="526"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="532"/>
         <source>Hide</source>
         <translation>Amaga</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="533"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="556"/>
         <source>Unable to access %1</source>
         <translation>No es pot accedir a %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="567"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1: la referència d&apos;aquesta drecera ha canviat o s&apos;ha desplaçat.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="571"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Voleu eliminar aquesta drecera?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="602"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Aquest fitxer no és executable. Voleu afegir-hi el permís d&apos;execució i executar-lo?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="608"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Els fitxers seleccionats contenen fitxers / directoris del sistema i no es poden eliminar.</translation>
     </message>
@@ -2851,19 +2864,9 @@
         <translation>Selecciona fins al primer element</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="18"/>
-        <source>Shift + Home </source>
-        <translation>Maj. + Inici</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="19"/>
         <source>Select to the last item</source>
         <translation>Selecciona fins al darrer element</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="19"/>
-        <source>Shift + End </source>
-        <translation>Maj. + Fi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="20"/>
@@ -2871,19 +2874,9 @@
         <translation>Selecciona cap a l&apos;esquerra</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="20"/>
-        <source>Shift + Left </source>
-        <translation>Maj. + Esquerra</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="21"/>
         <source>Select rightwards</source>
         <translation>Selecciona cap a la dreta</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="21"/>
-        <source>Shift + Right </source>
-        <translation>Maj. + Dreta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="22"/>
@@ -2891,24 +2884,9 @@
         <translation>Selecciona cap a la línia superior</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="22"/>
-        <source>Shift + Up </source>
-        <translation>Maj. + Amunt</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="23"/>
         <source>Select to lower row</source>
         <translation>Selecciona cap a la línia inferior</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="23"/>
-        <source>Shift + Down </source>
-        <translation>Maj. + Avall</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
-        <source>Ctrl + Shift + I </source>
-        <translation>Ctrl + Maj. + I </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
@@ -2921,19 +2899,9 @@
         <translation>Obre</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
-        <source>Ctrl + Down </source>
-        <translation>Ctrl + Avall</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="26"/>
         <source>To parent directory</source>
         <translation>Cap al directori pare</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="26"/>
-        <source>Ctrl + Up </source>
-        <translation>Ctrl + Amunt</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="27"/>
@@ -2941,19 +2909,9 @@
         <translation>Elimina permanentment</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="27"/>
-        <source>Shift + Delete </source>
-        <translation>Maj. + Elimina</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>Delete file</source>
         <translation>Elimina el fitxer</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
-        <source>Delete</source>
-        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="29"/>
@@ -2961,19 +2919,9 @@
         <translation>Selecciona-ho tot</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="29"/>
-        <source>Ctrl + A </source>
-        <translation>Ctrl + A </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="30"/>
         <source>Copy</source>
         <translation>Copia</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="30"/>
-        <source>Ctrl + C </source>
-        <translation>Ctrl + C </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="31"/>
@@ -2981,29 +2929,14 @@
         <translation>Retalla</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="31"/>
-        <source>Ctrl + X </source>
-        <translation>Ctrl + X </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="32"/>
         <source>Paste</source>
         <translation>Enganxa</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="32"/>
-        <source>Ctrl + V </source>
-        <translation>Ctrl + V </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="33"/>
         <source>Rename</source>
         <translation>Canvia&apos;n el nom</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="33"/>
-        <source>F2 </source>
-        <translation>F2 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
@@ -3016,19 +2949,9 @@
         <translation>Finestra nova</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
-        <source>Ctrl + N </source>
-        <translation>Ctrl + N </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>New folder</source>
         <translation>Carpeta nova</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
-        <source>Ctrl + Shift + N </source>
-        <translation>Ctrl + Maj. + N </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
@@ -3036,19 +2959,9 @@
         <translation>Cerca</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
-        <source>Ctrl + F</source>
-        <translation>Ctrl + F</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
         <source>New tab</source>
         <translation>Pestanya nova</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
-        <source>Ctrl + T </source>
-        <translation>Ctrl + T </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
@@ -3061,29 +2974,14 @@
         <translation>Informació de l&apos;element</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
-        <source>Ctrl + I </source>
-        <translation>Ctrl + I </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
-        <source>F1 </source>
-        <translation>F1 </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
         <source>Keyboard shortcuts</source>
         <translation>Dreceres del teclat</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
-        <source>Ctrl + Shift + / </source>
-        <translation>Ctrl + Maj. + / </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
@@ -3096,19 +2994,9 @@
         <translation>Amaga l&apos;element</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
-        <source>Ctrl + H </source>
-        <translation>Ctrl + H </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
         <source>Input in address bar</source>
         <translation>Entrada a la barra d&apos;adreces</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
-        <source>Ctrl + L </source>
-        <translation>Ctrl + L </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
@@ -3116,19 +3004,9 @@
         <translation>Canvia a la visualització d&apos;icona</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
-        <source>Ctrl + 1 </source>
-        <translation>Ctrl + 1 </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
         <source>Switch to list view</source>
         <translation>Canvia a la visualització de llista</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
-        <source>Ctrl + 2 </source>
-        <translation>Ctrl + 2 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
@@ -3141,19 +3019,9 @@
         <translation>Tanca</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
-        <source>Alt + F4 </source>
-        <translation>Alt + F4 </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
         <source>Close current tab</source>
         <translation>Tanca la pestanya actual</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
-        <source>Ctrl + W</source>
-        <translation>Ctrl + W</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
@@ -3161,19 +3029,9 @@
         <translation>Enrere</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
-        <source>Alt + Left </source>
-        <translation>Alt + Esquerra</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Forward</source>
         <translation>Endavant</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
-        <source>Alt + Right </source>
-        <translation>Alt + Dreta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
@@ -3181,19 +3039,9 @@
         <translation>Canvia a la pestanya següent</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
-        <source>Ctrl + Tab </source>
-        <translation>Ctrl + Tab </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
         <source>Switch to previous tab</source>
         <translation>Canvia a la pestanya anterior</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
-        <source>Ctrl + Shift + Tab </source>
-        <translation>Ctrl + Maj. + Tab </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
@@ -3201,29 +3049,14 @@
         <translation>Fitxer següent</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
-        <source>Tab </source>
-        <translation>Tab </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
         <source>Previous file</source>
         <translation>Fitxer anterior</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
-        <source>Shift + Tab </source>
-        <translation>Maj. + Tab </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
         <source>Switch tab by specified number between 1 to 8</source>
         <translation>Canvia de pestanya especificant un número d&apos;entre l&apos;1 al 8</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
-        <source>Alt + [1-8] </source>
-        <translation>Alt + [1-8] </translation>
     </message>
 </context>
 <context>
@@ -3513,7 +3346,7 @@
 <context>
     <name>dfmplugin_burn::BurnISOFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="410"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="411"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>El nom del fitxer o del camí és massa llarg. Escurceu el nom del fitxer o el camí i torneu-ho a provar.</translation>
     </message>
@@ -3636,7 +3469,7 @@
 <context>
     <name>dfmplugin_burn::BurnUDFFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="503"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="504"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>El nom del fitxer o del camí és massa llarg. Escurceu el nom del fitxer o el camí i torneu-ho a provar.</translation>
     </message>
@@ -3644,12 +3477,12 @@
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="552"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="553"/>
         <source>Creating an ISO image</source>
         <translation>Es crea una imatge ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="553"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="554"/>
         <source>to %1</source>
         <translation>a %1</translation>
     </message>
@@ -3681,7 +3514,7 @@
 <context>
     <name>dfmplugin_burn::EraseJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="357"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="358"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>S&apos;esborra el disc %1. Espereu, si us plau...</translation>
     </message>
@@ -3716,32 +3549,32 @@
         <translation>Contrasenya incorrecta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="458"/>
         <source>Rename failed</source>
         <translation>Ha fallat canviar-ne el nom.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="458"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>El dispositiu està ocupat i no se&apos;n pot canviar el nom ara.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="486"/>
         <source>Format failed</source>
         <translation>Ha fallat la formatació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="486"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>El dispositiu està ocupat i no es pot formatar ara.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="637"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="627"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="637"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="627"/>
         <source>Cannot access %1</source>
         <translation>No es pot accedir a %1</translation>
     </message>
@@ -3822,82 +3655,82 @@
 <context>
     <name>dfmplugin_detailspace::FileBaseInfoView</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="35"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="38"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="39"/>
         <source>Size</source>
         <translation>Mida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="43"/>
         <source>Dimension</source>
         <translation>Dimensió</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="47"/>
         <source>Duration</source>
         <translation>Durada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="51"/>
         <source>Type</source>
         <translation>Tipus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="55"/>
         <source>Accessed</source>
         <translation>Accedit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="59"/>
         <source>Modified</source>
         <translation>Modificat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="231"/>
         <source>Directory</source>
         <translation>Directori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="234"/>
         <source>Documents</source>
         <translation>Documents</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="237"/>
         <source>Videos</source>
         <translation>Vídeos</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="246"/>
         <source>Images</source>
         <translation>Imatges</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="255"/>
         <source>Audio</source>
         <translation>Àudio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="264"/>
         <source>Executable</source>
         <translation>Executable</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="267"/>
         <source>Archives</source>
         <translation>Arxius</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="270"/>
         <source>Unknown</source>
         <translation>Desconegut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="273"/>
         <source>Application</source>
         <translation>Aplicació</translation>
     </message>
@@ -4229,12 +4062,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="153"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut analitzar l&apos;URL de la paperera.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="155"/>
         <source>Failed to obtain the trash original file</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut obtenir el fitxer original de la paperera.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="176"/>

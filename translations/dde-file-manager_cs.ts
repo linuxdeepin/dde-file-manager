@@ -121,6 +121,7 @@
 <context>
     <name>PathManager</name>
     <message>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/asynctrashfileinfo.cpp" line="436"/>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="269"/>
         <source>Trash</source>
         <translation>Koš</translation>
@@ -172,6 +173,8 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="378"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="99"/>
         <source>Unknown</source>
@@ -193,20 +196,25 @@
         <translation>%1 svazek</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="237"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="241"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="284"/>
         <source>Scanning the device, stop it?</source>
         <translation>Prohledává se zařízení. Zastavit?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="248"/>
         <source>Unmount failed</source>
         <translation>Odpojení se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="248"/>
         <source>Cannot stop scanning device</source>
         <translation>Nelze ukončit kontrolu zařízení</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="370"/>
+        <source>%1 on %2</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="201"/>
@@ -890,23 +898,23 @@
         <translation>Zastavit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="683"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="684"/>
         <source>Shortcut</source>
         <translation>-odkaz_na</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1128"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1129"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1186"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1187"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>(kopírovat)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1187"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1188"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>(kopírovat %1)</translation>
@@ -2416,10 +2424,10 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="56"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="500"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="553"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="574"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="506"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="559"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="54"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2502,215 +2510,220 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="154"/>
+        <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
         <source>The device is busy, cannot remove now</source>
         <translation>Zařízení je něčím využíváno, proto ho není možné nyní odebrat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="176"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="181"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Nemáte oprávnění pro přistupování k této složce/souboru!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="193"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="198"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Je nám líto, ale nemáte oprávnění pro přístup k následujícímu %1 souboru/složce(kám)!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="222"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="232"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="490"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="610"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="227"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="237"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="496"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="616"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="229"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="483"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="234"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="489"/>
         <source>Operation failed!</source>
         <translation>Operace se nezdařila!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="230"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="235"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Cílová složka je uvnitř zdrojové složky (nelze samo do sebe)!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="285"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="290"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>Pro přístup k zašifrovaným datům na %1 je třeba zadat přístupovou frázi.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="293"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="342"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="409"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="469"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="597"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="298"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="603"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="294"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="299"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="295"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="300"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Aby bylo možné k zařízení přistupovat, je třeba ho nejprve naformátovat. Chcete to provést nyní?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="309"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="314"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Chcete %1 spustit nebo zobrazit jeho obsah?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="310"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="315"/>
         <source>It is an executable text file.</source>
         <translation>Je spustitelným textovým souborem.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="314"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="344"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="598"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="319"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="604"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Spustit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="315"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="343"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="348"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Spustit v terminálu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="316"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="321"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="344"/>
         <source>Do you want to run %1?</source>
         <translation>Chcete %1 spustit?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="340"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
         <source>It is an executable file.</source>
         <translation>Je spustitelným textovým souborem.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="357"/>
-        <source>Permanently delete %1 items?</source>
-        <translation>Nadobro smazat %1 položek?</translation>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
+        <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="410"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="470"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="392"/>
+        <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="416"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="387"/>
-        <source>Permanently delete %1?</source>
-        <translation>Nadobro smazat %1?</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="393"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="429"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="398"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="435"/>
         <source>This action cannot be undone</source>
         <translation>Tuto akci není možné vzít zpět</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="405"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="411"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Chcete smazat %1 položku?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="412"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Chcete smazat %1 položek?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="421"/>
         <source>Empty</source>
         <translation>Vyprázdnit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="453"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="459"/>
         <source>Do you want to delete %1?</source>
         <translation>Opravdu chcete %1 smazat?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="454"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="460"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Opravdu chcete označených %1 položek smazat?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="485"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Nepodařilo se obnovit %1 soubor, cílová složka je jen pro čtení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="487"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Nepodařilo se obnovit %1 souborů, cílová složka je jen pro čtení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="498"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="504"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>„%1“ už existuje. Použijte jiný název.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="518"/>
         <source>Device or resource busy</source>
         <translation>Zařízení nebo prostředek je zaneprázdněn</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="531"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Pokud název souboru bude začínat na tečku, bude skrytý. Opravdu to chcete?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="526"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="532"/>
         <source>Hide</source>
         <translation>Skrýt</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="533"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="556"/>
         <source>Unable to access %1</source>
         <translation>Nedaří se přistupovat k %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="567"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 odkazující na tuto zkratku byl změněn nebo přesunut</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="571"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Chcete smazat tuto klávesovou zkratku?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="602"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Tento soubor není spustitelný. Chcete přidat oprávnění pro spouštění a spustit ho?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="608"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Vybrané soubory obsahují systémový soubor/složku, a nelze je proto smazat</translation>
     </message>
@@ -2851,19 +2864,9 @@
         <translation>Vybrat po první položku</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="18"/>
-        <source>Shift + Home </source>
-        <translation>Shift + Home </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="19"/>
         <source>Select to the last item</source>
         <translation>Vybrat po poslední položku</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="19"/>
-        <source>Shift + End </source>
-        <translation>Shift + End </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="20"/>
@@ -2871,19 +2874,9 @@
         <translation>Vybrat směrem doleva</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="20"/>
-        <source>Shift + Left </source>
-        <translation>Shift + Left </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="21"/>
         <source>Select rightwards</source>
         <translation>Vybrat směrem doprava</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="21"/>
-        <source>Shift + Right </source>
-        <translation>Shift + Right </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="22"/>
@@ -2891,24 +2884,9 @@
         <translation>Vybrat po vyšší řádek</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="22"/>
-        <source>Shift + Up </source>
-        <translation>Shift + Up </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="23"/>
         <source>Select to lower row</source>
         <translation>Vybrat po nižší řádek</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="23"/>
-        <source>Shift + Down </source>
-        <translation>Shift + Down </translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
-        <source>Ctrl + Shift + I </source>
-        <translation>Ctrl + Shift + I</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
@@ -2921,19 +2899,9 @@
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
-        <source>Ctrl + Down </source>
-        <translation>Ctrl + Down </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="26"/>
         <source>To parent directory</source>
         <translation>Do nadřazené složky</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="26"/>
-        <source>Ctrl + Up </source>
-        <translation>Ctrl + Up </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="27"/>
@@ -2941,19 +2909,9 @@
         <translation>Nadobro smazat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="27"/>
-        <source>Shift + Delete </source>
-        <translation>Shift + Delete </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>Delete file</source>
         <translation>Smazat soubor</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
-        <source>Delete</source>
-        <translation>Smazat</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="29"/>
@@ -2961,19 +2919,9 @@
         <translation>Vybrat vše</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="29"/>
-        <source>Ctrl + A </source>
-        <translation>Ctrl + A </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="30"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="30"/>
-        <source>Ctrl + C </source>
-        <translation>Ctrl + C </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="31"/>
@@ -2981,29 +2929,14 @@
         <translation>Vyjmout</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="31"/>
-        <source>Ctrl + X </source>
-        <translation>Ctrl + X </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="32"/>
         <source>Paste</source>
         <translation>Vložit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="32"/>
-        <source>Ctrl + V </source>
-        <translation>Ctrl + V </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="33"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="33"/>
-        <source>F2 </source>
-        <translation>F2 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
@@ -3016,19 +2949,9 @@
         <translation>Nové okno</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
-        <source>Ctrl + N </source>
-        <translation>Ctrl + N </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>New folder</source>
         <translation>Nová složka</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
-        <source>Ctrl + Shift + N </source>
-        <translation>Ctrl + Shift + N </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
@@ -3036,19 +2959,9 @@
         <translation>Hledat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
-        <source>Ctrl + F</source>
-        <translation>Ctrl + F</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
         <source>New tab</source>
         <translation>Nová karta</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
-        <source>Ctrl + T </source>
-        <translation>Ctrl + T </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
@@ -3061,29 +2974,14 @@
         <translation>Informace o položce</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
-        <source>Ctrl + I </source>
-        <translation>Ctrl + I </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
         <source>Help</source>
         <translation>Nápověda</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
-        <source>F1 </source>
-        <translation>F1 </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
         <source>Keyboard shortcuts</source>
         <translation>Klávesové zkratky</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
-        <source>Ctrl + Shift + / </source>
-        <translation>Ctrl + Shift + / </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
@@ -3096,19 +2994,9 @@
         <translation>Skrýt položku</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
-        <source>Ctrl + H </source>
-        <translation>Ctrl + H </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
         <source>Input in address bar</source>
         <translation>Zadat v adresním řádku</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
-        <source>Ctrl + L </source>
-        <translation>Ctrl + L </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
@@ -3116,19 +3004,9 @@
         <translation>Přepnout na pohled s ikonami</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
-        <source>Ctrl + 1 </source>
-        <translation>Ctrl + 1 </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
         <source>Switch to list view</source>
         <translation>Přepnout na podrobný pohled</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
-        <source>Ctrl + 2 </source>
-        <translation>Ctrl + 2 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
@@ -3141,19 +3019,9 @@
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
-        <source>Alt + F4 </source>
-        <translation>Alt + F4 </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
         <source>Close current tab</source>
         <translation>Zavřít stávající kartu</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
-        <source>Ctrl + W</source>
-        <translation>Ctrl + W</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
@@ -3161,19 +3029,9 @@
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
-        <source>Alt + Left </source>
-        <translation>Alt + šipka vlevo </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Forward</source>
         <translation>Vpřed</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
-        <source>Alt + Right </source>
-        <translation>Alt + šipka vpravo </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
@@ -3181,19 +3039,9 @@
         <translation>Přepnout na další kartu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
-        <source>Ctrl + Tab </source>
-        <translation>Ctrl + Tab </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
         <source>Switch to previous tab</source>
         <translation>Přepnout na předchozí kartu</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
-        <source>Ctrl + Shift + Tab </source>
-        <translation>Ctrl + Shift + Tab </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
@@ -3201,29 +3049,14 @@
         <translation>Následující soubor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
-        <source>Tab </source>
-        <translation>Karta</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
         <source>Previous file</source>
         <translation>Předchozí soubor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
-        <source>Shift + Tab </source>
-        <translation>Shift + Tab </translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
         <source>Switch tab by specified number between 1 to 8</source>
         <translation>Přepnout kartu pomocí zadaného čísla z rozmezí 1 až 8</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
-        <source>Alt + [1-8] </source>
-        <translation>Alt + [1-8] </translation>
     </message>
 </context>
 <context>
@@ -3513,7 +3346,7 @@
 <context>
     <name>dfmplugin_burn::BurnISOFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="410"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="411"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Název souboru nebo cesta jsou příliš dlouhé. Zkraťte prosím název souboru nebo cestu a zkuste to znovu.</translation>
     </message>
@@ -3636,7 +3469,7 @@
 <context>
     <name>dfmplugin_burn::BurnUDFFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="503"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="504"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Název souboru nebo cesta jsou příliš dlouhé. Zkraťte prosím název souboru nebo cestu a zkuste to znovu.</translation>
     </message>
@@ -3644,12 +3477,12 @@
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="552"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="553"/>
         <source>Creating an ISO image</source>
         <translation>Vytváření obrazu ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="553"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="554"/>
         <source>to %1</source>
         <translation>do %1</translation>
     </message>
@@ -3681,7 +3514,7 @@
 <context>
     <name>dfmplugin_burn::EraseJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="357"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="358"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Maže se disk %1 – čekejte prosím…</translation>
     </message>
@@ -3716,32 +3549,32 @@
         <translation>Chybné heslo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="458"/>
         <source>Rename failed</source>
         <translation>Přejmenování se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="458"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>Zařízení je právě používáno a nemůže být přejmenováno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="486"/>
         <source>Format failed</source>
         <translation>Fortmátování s nezdařilo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="486"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>Zařízení je právě používáno a nemůže být naformátováno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="637"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="627"/>
         <source>Mount error</source>
         <translation>Připojení se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="637"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="627"/>
         <source>Cannot access %1</source>
         <translation>Nelze přistupovat k %1</translation>
     </message>
@@ -3822,82 +3655,82 @@
 <context>
     <name>dfmplugin_detailspace::FileBaseInfoView</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="35"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="38"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="39"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="43"/>
         <source>Dimension</source>
         <translation>Rozměr</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="47"/>
         <source>Duration</source>
         <translation>Doba trvání</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="51"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="55"/>
         <source>Accessed</source>
         <translation>Dostupné</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="59"/>
         <source>Modified</source>
         <translation>Upraveno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="231"/>
         <source>Directory</source>
         <translation>Složka</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="234"/>
         <source>Documents</source>
         <translation>Dokumenty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="237"/>
         <source>Videos</source>
         <translation>Obrazy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="246"/>
         <source>Images</source>
         <translation>Obrazy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="255"/>
         <source>Audio</source>
         <translation>Zvuk</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="264"/>
         <source>Executable</source>
         <translation>Spustitelný</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="267"/>
         <source>Archives</source>
         <translation>Archivy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="270"/>
         <source>Unknown</source>
         <translation>Neznámý</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="273"/>
         <source>Application</source>
         <translation>Aplikace</translation>
     </message>
