@@ -60,6 +60,7 @@ TEST(SearchDirIteratorTest, ut_fileName)
     });
 
     SearchDirIterator it({});
+    it.d->currentFileUrl = QUrl::fromLocalFile("/home");
     auto filename = it.fileName();
     EXPECT_FALSE(filename.isEmpty());
 }
