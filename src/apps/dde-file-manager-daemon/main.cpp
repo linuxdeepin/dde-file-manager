@@ -5,7 +5,6 @@
 #include "config.h"   // cmake
 
 #include <QCoreApplication>
-
 #include <QDebug>
 #include <QDir>
 

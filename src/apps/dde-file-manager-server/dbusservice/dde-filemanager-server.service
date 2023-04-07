@@ -1,0 +1,12 @@
+[Unit]
+Description=DDE File Manager Server
+
+[Service]
+Type=dbus
+BusName=org.deepin.filemanager.server
+ExecStart=/usr/bin/dde-file-manager-server
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
