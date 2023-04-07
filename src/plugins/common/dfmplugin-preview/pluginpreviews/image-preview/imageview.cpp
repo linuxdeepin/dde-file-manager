@@ -32,6 +32,9 @@ ImageView::ImageView(const QString &fileName, const QByteArray &format, QWidget 
 
 void ImageView::setFile(const QString &fileName, const QByteArray &format)
 {
+    const QSize &dsize = DFMBASE_NAMESPACE::WindowUtils::cursorScreen()->geometry().size();
+    qreal device_pixel_ratio = this->devicePixelRatioF();
+
     if (format == QByteArrayLiteral("gif")) {
         if (movie) {
             movie->stop();   // blumia: we need to stop it first before we load a new file
@@ -39,11 +42,12 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         } else {
             movie = new QMovie(fileName, format, this);
         }
-
         setMovie(movie);
         movie->start();
-        sourceImageSize = movie->frameRect().size();
-
+        sourceImageSize = QSize(qMin(static_cast<int>(dsize.width() * 0.7 * device_pixel_ratio), movie->frameRect().size().width()),
+                                qMin(static_cast<int>(dsize.height() * 0.7 * device_pixel_ratio), movie->frameRect().size().height()));
+        setFixedSize(sourceImageSize);
+        movie->setScaledSize(sourceImageSize);
         return;
     } else {
         setMovie(nullptr);
@@ -58,18 +62,11 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
     }
 
     QImageReader reader(fileName, format);
-
     sourceImageSize = reader.size();
-
-    const QSize &dsize = DFMBASE_NAMESPACE::WindowUtils::cursorScreen()->geometry().size();
-    qreal device_pixel_ratio = this->devicePixelRatioF();
-
     QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(QSize(qMin(static_cast<int>(dsize.width() * 0.7 * device_pixel_ratio), sourceImageSize.width()),
-                                                                    qMin(static_cast<int>(dsize.height() * 0.8 * device_pixel_ratio), sourceImageSize.height())),
+                                                                    qMin(static_cast<int>(dsize.height() * 0.7 * device_pixel_ratio), sourceImageSize.height())),
                                                               Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
     pixmap.setDevicePixelRatio(device_pixel_ratio);
-
     setPixmap(pixmap);
 }
 
