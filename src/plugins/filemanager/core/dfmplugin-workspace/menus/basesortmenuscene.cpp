@@ -180,6 +180,7 @@ QStringList BaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("sort-by");   // 排序方式
 
         ret.append("icon-size");   // icon size
+        ret.append("refresh");
         ret.append(ActionID::kSeparatorLine);
 
         ret.append("stage-file-to-burning");   // 添加至光盘刻录
@@ -197,9 +198,6 @@ QStringList BaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("delete");   // 删除
         ret.append("paste");
         ret.append("select-all");
-        ret.append(ActionID::kSeparatorLine);
-
-        ret.append("refresh");
         ret.append(ActionID::kSeparatorLine);
 
         ret.append("add-share");   // 添加共享
