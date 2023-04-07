@@ -168,7 +168,6 @@ public:
 
     FileInfo::FileType fileType() const;
     void cacheAllAttributes();
-    void countChildFileAsync();
     void fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
                         const QString &inod = QString(), const bool isGvfs = false);

@@ -503,9 +503,10 @@ QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 FileInfoPointer RootInfo::fileInfo(const QUrl &url)
 {
     auto info = InfoFactory::create<FileInfo>(url);
-    info->refresh();
-    if (info)
+    if (info) {
+        info->refresh();
         return info;
+    }
 
     const QUrl &parentUrl = QUrl::fromPercentEncoding(watcher->url().toString().toUtf8());
     auto path = url.path();

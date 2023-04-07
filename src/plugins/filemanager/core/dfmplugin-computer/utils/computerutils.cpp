@@ -188,8 +188,10 @@ bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
         QThread::msleep(100);
         int ret = access(path.c_str(), F_OK);
         exist = (ret == 0);
-        qDebug() << "gvfs path: " << path.c_str() << ", exist: " << exist << ", error: " << strerror(ret);
 
+        qInfo() << "gvfs path: " << path.c_str() << ", exist: " << exist << ", error: " << strerror(errno);
+
+        exist = true;
         QMutexLocker lk(&mtxForCheckGvfs);
         condForCheckGvfs.wakeAll();
     });

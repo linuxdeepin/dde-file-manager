@@ -1107,8 +1107,6 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
         tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsHidden, attribute(DFileInfo::AttributeID::kStandardIsHidden));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsFile, attribute(DFileInfo::AttributeID::kStandardIsFile));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsDir, attribute(DFileInfo::AttributeID::kStandardIsDir));
-    if (attribute(DFileInfo::AttributeID::kStandardIsDir).toBool())
-        countChildFileAsync();
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink, attribute(DFileInfo::AttributeID::kStandardIsSymlink));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanDelete, canDelete());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessCanTrash, canTrash());
@@ -1144,14 +1142,6 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
         QWriteLocker wlk(&iconLock);
         clearIcon();
     }
-}
-
-void AsyncFileInfoPrivate::countChildFileAsync()
-{
-    QUrl url = q->fileUrl();
-    QWriteLocker lk(&lock);
-    auto future = FileInfoHelper::instance().fileCountAsync(url);
-    fileCountFuture = future;
 }
 
 void AsyncFileInfoPrivate::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
