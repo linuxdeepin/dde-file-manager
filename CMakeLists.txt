@@ -80,6 +80,11 @@ if(NOT DEFINED DFM_PLUGIN_DAEMON_EDGE_DIR)
     set(DFM_PLUGIN_DAEMON_EDGE_DIR ${DFM_PLUGIN_DIR}/daemon-edge)
 endif()
 
+# server-edge plugins dir
+if(NOT DEFINED DFM_PLUGIN_SERVER_EDGE_DIR)
+    set(DFM_PLUGIN_SERVER_EDGE_DIR ${DFM_PLUGIN_DIR}/server-edge)
+endif()
+
 # desktop-edge plugins dir
 if(NOT DEFINED DFM_PLUGIN_DESKTOP_EDGE_DIR)
     set(DFM_PLUGIN_DESKTOP_EDGE_DIR ${DFM_PLUGIN_DIR}/desktop-edge)

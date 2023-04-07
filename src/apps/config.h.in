@@ -44,6 +44,12 @@
 #    warning "cmake unseting definition DFM_PLUGIN_DAEMON_EDGE_DIR"
 #endif
 
+#ifndef DFM_PLUGIN_SERVER_EDGE_DIR
+#    define DFM_PLUGIN_SERVER_EDGE_DIR "${DFM_PLUGIN_SERVER_EDGE_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_PLUGIN_SERVER_EDGE_DIR"
+#endif
+
 #ifndef DFM_PLUGIN_DESKTOP_EDGE_DIR
 #    define DFM_PLUGIN_DESKTOP_EDGE_DIR "${DFM_PLUGIN_DESKTOP_EDGE_DIR}"
 #elif
