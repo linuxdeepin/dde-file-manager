@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(daemonplugin-core)
+project(serverplugin-core)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -20,7 +20,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file
