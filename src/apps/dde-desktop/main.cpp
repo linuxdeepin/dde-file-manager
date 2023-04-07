@@ -7,6 +7,10 @@
 #include "config.h"   //cmake
 #include "tools/upgrade/builtininterface.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+#include <dfm-framework/dpf.h>
+
 #include <DApplication>
 #include <DMainWindow>
 
@@ -19,8 +23,6 @@
 #include <QDBusInterface>
 #include <QProcess>
 #include <QDateTime>
-
-#include <dfm-framework/dpf.h>
 
 #include <iostream>
 #include <algorithm>
@@ -165,6 +167,16 @@ static void checkUpgrade(DApplication *app)
     return;
 }
 
+static bool isDesktopEnable()
+{
+    bool enable = !(dfmbase::DConfigManager::instance()->value(
+                   dfmbase::kDefaultCfgPath,
+                   "dd.disabled",
+                   false
+                   ).toBool());
+    return enable;
+}
+
 int main(int argc, char *argv[])
 {
     QString mainTime = QDateTime::currentDateTime().toString();
@@ -208,11 +220,15 @@ int main(int argc, char *argv[])
         registerDDESession();
     }
 
-    checkUpgrade(&a);
+    if (isDesktopEnable()) {
+        checkUpgrade(&a);
 
-    if (!pluginsLoad()) {
-        qCritical() << "Load pugin failed!";
-        abort();
+        if (!pluginsLoad()) {
+            qCritical() << "Load pugin failed!";
+            abort();
+        }
+    } else {
+        qWarning() << "desktop is disabled...";
     }
 
     int ret { a.exec() };
