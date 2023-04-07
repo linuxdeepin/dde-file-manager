@@ -227,3 +227,10 @@ bool LocalDirIterator::oneByOne()
     qInfo() << "11" << url() << FileUtils::isLocalDevice(url());
     return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
 }
+
+DEnumeratorFuture *LocalDirIterator::asyncIterator()
+{
+    if (d->dfmioDirIterator)
+        return d->dfmioDirIterator->asyncIterator();
+    return nullptr;
+}

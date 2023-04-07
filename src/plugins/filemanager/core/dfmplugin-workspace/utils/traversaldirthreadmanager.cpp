@@ -4,6 +4,7 @@
 
 #include "traversaldirthreadmanager.h"
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/localdiriterator.h>
 
 #include <QElapsedTimer>
 #include <QDebug>
@@ -29,6 +30,10 @@ TraversalDirThreadManager::~TraversalDirThreadManager()
 {
     quit();
     wait();
+    if (future) {
+        future->deleteLater();
+        future = nullptr;
+    }
 }
 
 void TraversalDirThreadManager::setSortAgruments(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile)
@@ -51,6 +56,26 @@ void TraversalDirThreadManager::setSortAgruments(const Qt::SortOrder order, cons
     default:
         this->sortRole = dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault;
     }
+}
+
+void TraversalDirThreadManager::start()
+{
+    auto local = dirIterator.dynamicCast<LocalDirIterator>();
+    if (local && local->oneByOne()) {
+        future = local->asyncIterator();
+        if (future) {
+            connect(future, &DEnumeratorFuture::asyncIteratorOver, this, &TraversalDirThreadManager::onAsyncIteratorOver);
+            future->startAsyncIterator();
+            return;
+        }
+    }
+
+    TraversalDirThread::start();
+}
+
+void TraversalDirThreadManager::onAsyncIteratorOver()
+{
+    TraversalDirThread::start();
 }
 
 void TraversalDirThreadManager::run()

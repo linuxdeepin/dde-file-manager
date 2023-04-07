@@ -8,7 +8,7 @@
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
 
-#include <dfm-io/denumerator.h>
+#include <dfm-io/denumeratorfuture.h>
 
 #include <QDirIterator>
 #include <QSharedPointer>
@@ -44,6 +44,7 @@ public:
     void setArguments(const QVariantMap &args) override;
     QList<SortInfoPointer> sortFileInfoList() override;
     bool oneByOne() override;
+    DFMIO::DEnumeratorFuture *asyncIterator();
 };
 }
 

@@ -15,6 +15,7 @@
 #include <QElapsedTimer>
 
 #include <dfm-io/denumerator.h>
+#include <dfm-io/denumeratorfuture.h>
 
 using namespace dfmbase;
 
@@ -29,6 +30,7 @@ class TraversalDirThreadManager : public TraversalDirThread
     QElapsedTimer *timer = Q_NULLPTR;
     int timeCeiling = 200;
     int countCeiling = 300;
+    dfmio::DEnumeratorFuture *future { nullptr };
 
 public:
     explicit TraversalDirThreadManager(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -37,6 +39,10 @@ public:
                                        QObject *parent = nullptr);
     virtual ~TraversalDirThreadManager() override;
     void setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole, const bool isMixDirAndFile);
+    void start();
+
+public Q_SLOTS:
+    void onAsyncIteratorOver();
 
 Q_SIGNALS:
     void updateChildrenManager(QList<FileInfoPointer> children);
