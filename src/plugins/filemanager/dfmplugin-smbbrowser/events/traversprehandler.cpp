@@ -119,6 +119,9 @@ void travers_prehandler::onSmbRootMounted(const QString &mountSource, Handler af
     if (ProtocolDeviceDisplayManager::instance()->displayMode() != SmbDisplayMode::kAggregation)
         return;
 
+    if (QUrl(mountSource).host().isEmpty())
+        return;
+
     pddmDbg << "do cache root entry" << mountSource;
     VirtualEntryDbHandler::instance()->saveData(VirtualEntryData(mountSource));
 
