@@ -15,46 +15,46 @@ Shortcut::Shortcut(QObject *parent)
     ShortcutGroup group4;
     ShortcutGroup group5;
     group1.groupName = tr("Item");
-    group1.groupItems << ShortcutItem(tr("Select to the first item"), tr("Shift + Home "))
-                      << ShortcutItem(tr("Select to the last item"), tr("Shift + End "))
-                      << ShortcutItem(tr("Select leftwards"), tr("Shift + Left "))
-                      << ShortcutItem(tr("Select rightwards"), tr("Shift + Right "))
-                      << ShortcutItem(tr("Select to upper row"), tr("Shift + Up "))
-                      << ShortcutItem(tr("Select to lower row"), tr("Shift + Down "))
-                      << ShortcutItem(tr("Reverse selection"), tr("Ctrl + Shift + I "))
-                      << ShortcutItem(tr("Open"), tr("Ctrl + Down "))
-                      << ShortcutItem(tr("To parent directory"), tr("Ctrl + Up "))
-                      << ShortcutItem(tr("Permanently delete"), tr("Shift + Delete "))
-                      << ShortcutItem(tr("Delete file"), tr("Delete"))
-                      << ShortcutItem(tr("Select all"), tr("Ctrl + A "))
-                      << ShortcutItem(tr("Copy"), tr("Ctrl + C "))
-                      << ShortcutItem(tr("Cut"), tr("Ctrl + X "))
-                      << ShortcutItem(tr("Paste"), tr("Ctrl + V "))
-                      << ShortcutItem(tr("Rename"), tr("F2 "));
+    group1.groupItems << ShortcutItem(tr("Select to the first item"), "Shift + Home ")
+                      << ShortcutItem(tr("Select to the last item"), "Shift + End ")
+                      << ShortcutItem(tr("Select leftwards"), "Shift + Left ")
+                      << ShortcutItem(tr("Select rightwards"), "Shift + Right ")
+                      << ShortcutItem(tr("Select to upper row"), "Shift + Up ")
+                      << ShortcutItem(tr("Select to lower row"), "Shift + Down ")
+                      << ShortcutItem(tr("Reverse selection"), "Ctrl + Shift + I ")
+                      << ShortcutItem(tr("Open"), "Ctrl + Down ")
+                      << ShortcutItem(tr("To parent directory"), "Ctrl + Up ")
+                      << ShortcutItem(tr("Permanently delete"), "Shift + Delete ")
+                      << ShortcutItem(tr("Delete file"), "Delete")
+                      << ShortcutItem(tr("Select all"), "Ctrl + A ")
+                      << ShortcutItem(tr("Copy"), "Ctrl + C ")
+                      << ShortcutItem(tr("Cut"), "Ctrl + X ")
+                      << ShortcutItem(tr("Paste"), "Ctrl + V ")
+                      << ShortcutItem(tr("Rename"), "F2 ");
     group2.groupName = tr("New/Search");
-    group2.groupItems << ShortcutItem(tr("New window"), tr("Ctrl + N "))
-                      << ShortcutItem(tr("New folder"), tr("Ctrl + Shift + N "))
-                      << ShortcutItem(tr("Search"), tr("Ctrl + F"))
-                      << ShortcutItem(tr("New tab"), tr("Ctrl + T "));
+    group2.groupItems << ShortcutItem(tr("New window"), "Ctrl + N ")
+                      << ShortcutItem(tr("New folder"), "Ctrl + Shift + N ")
+                      << ShortcutItem(tr("Search"), "Ctrl + F")
+                      << ShortcutItem(tr("New tab"), "Ctrl + T ");
     group3.groupName = tr("View");
-    group3.groupItems << ShortcutItem(tr("Item information"), tr("Ctrl + I "))
-                      << ShortcutItem(tr("Help"), tr("F1 "))
-                      << ShortcutItem(tr("Keyboard shortcuts"), tr("Ctrl + Shift + / "));
+    group3.groupItems << ShortcutItem(tr("Item information"), "Ctrl + I ")
+                      << ShortcutItem(tr("Help"), "F1 ")
+                      << ShortcutItem(tr("Keyboard shortcuts"), "Ctrl + Shift + / ");
     group4.groupName = tr("Switch display status");
-    group4.groupItems << ShortcutItem(tr("Hide item"), tr("Ctrl + H "))
-                      << ShortcutItem(tr("Input in address bar"), tr("Ctrl + L "))
-                      << ShortcutItem(tr("Switch to icon view"), tr("Ctrl + 1 "))
-                      << ShortcutItem(tr("Switch to list view"), tr("Ctrl + 2 "));
+    group4.groupItems << ShortcutItem(tr("Hide item"), "Ctrl + H ")
+                      << ShortcutItem(tr("Input in address bar"), "Ctrl + L ")
+                      << ShortcutItem(tr("Switch to icon view"), "Ctrl + 1 ")
+                      << ShortcutItem(tr("Switch to list view"), "Ctrl + 2 ");
     group5.groupName = tr("Others");
-    group5.groupItems << ShortcutItem(tr("Close"), tr("Alt + F4 "))
-                      << ShortcutItem(tr("Close current tab"), tr("Ctrl + W"))
-                      << ShortcutItem(tr("Back"), tr("Alt + Left "))
-                      << ShortcutItem(tr("Forward"), tr("Alt + Right "))
-                      << ShortcutItem(tr("Switch to next tab"), tr("Ctrl + Tab "))
-                      << ShortcutItem(tr("Switch to previous tab"), tr("Ctrl + Shift + Tab "))
-                      << ShortcutItem(tr("Next file"), tr("Tab "))
-                      << ShortcutItem(tr("Previous file"), tr("Shift + Tab "))
-                      << ShortcutItem(tr("Switch tab by specified number between 1 to 8"), tr("Alt + [1-8] "));
+    group5.groupItems << ShortcutItem(tr("Close"), "Alt + F4 ")
+                      << ShortcutItem(tr("Close current tab"), "Ctrl + W")
+                      << ShortcutItem(tr("Back"), "Alt + Left ")
+                      << ShortcutItem(tr("Forward"), "Alt + Right ")
+                      << ShortcutItem(tr("Switch to next tab"), "Ctrl + Tab ")
+                      << ShortcutItem(tr("Switch to previous tab"), "Ctrl + Shift + Tab ")
+                      << ShortcutItem(tr("Next file"), "Tab ")
+                      << ShortcutItem(tr("Previous file"), "Shift + Tab ")
+                      << ShortcutItem(tr("Switch tab by specified number between 1 to 8"), "Alt + [1-8] ");
 
     shortcutGroups << group1 << group2 << group3 << group4 << group5;
 
