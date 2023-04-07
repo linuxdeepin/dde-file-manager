@@ -60,14 +60,15 @@ bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString
     auto task = new TaskCommander(taskId, url, keyword);
     qInfo() << "new task: " << task << task->taskID();
     Q_ASSERT(task);
-    taskManager.insert(taskId, task);
 
     //直连，防止1被事件循环打乱时序
     connect(task, &TaskCommander::matched, this, &MainController::matched, Qt::DirectConnection);
     connect(task, &TaskCommander::finished, this, &MainController::onFinished, Qt::DirectConnection);
 
-    if (task->start())
+    if (task->start()) {
+        taskManager.insert(taskId, task);
         return true;
+    }
 
     qWarning() << "fail to start task " << task << task->taskID();
     task->deleteSelf();
