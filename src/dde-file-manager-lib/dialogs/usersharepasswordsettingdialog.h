@@ -20,6 +20,9 @@ public:
 
 signals:
 
+protected:
+    virtual void showEvent(QShowEvent *event) override;
+
 public slots:
     void onButtonClicked(const int& index);
 
