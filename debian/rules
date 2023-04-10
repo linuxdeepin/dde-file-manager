@@ -22,3 +22,6 @@ override_dh_auto_configure:
 
 override_dh_auto_build:
 	dh_auto_build -- -j8
+
+override_dh_auto_test:
+	cd tests && bash test-prj-running.sh
