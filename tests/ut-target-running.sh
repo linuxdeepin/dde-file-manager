@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-export DISPLAY=":0"
+export DISPLAY=":1"
 export QT_QPA_PLATFORM=
 
 #报告生成的地方
@@ -38,7 +38,7 @@ RESULT_UT_REPORT_FILE=$REPORT_DIR/report/report_$REPORT_NAME.xml
 ASAN_OPTIONS="new_delete_type_mismatch=0" $BUILD_DIR/$APP_NAME --gtest_output=xml:$RESULT_UT_REPORT_FILE
 
 if [ ! -f "$RESULT_UT_REPORT_FILE" ]; then
-　　echo "Error: UT process is broken by: " $RESULT_UT_REPORT_FILE
+   echo "Error: UT process is broken by: " $RESULT_UT_REPORT_FILE
    exit 1
 fi
 
@@ -57,7 +57,7 @@ mv $RESULT_COVERAGE_DIR/index-sort-f.html $RESULT_COVERAGE_DIR/index-sort-f_$REP
 mv $RESULT_COVERAGE_DIR/index-sort-l.html $RESULT_COVERAGE_DIR/index-sort-l_$REPORT_NAME.html
 
 if [ ! -f "$LOV_REPORT_FILE" ]; then
-　　echo "Error: UT lcov process is broken by: " $LOV_REPORT_FILE
+   echo "Error: UT lcov process is broken by: " $LOV_REPORT_FILE
    exit 2
 fi
 

@@ -44,7 +44,9 @@ Build-Depends:
  libpcre3-dev,
  deepin-anything-dev[i386 amd64],
  deepin-anything-server-dev[i386 amd64],
- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
+ deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
+ xvfb <!nocheck>,
+ lcov <!nocheck>
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 

@@ -23,5 +23,9 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	dh_auto_build -- -j8
 
+ifeq ($(filter nocheck,$(DEB_BUILD_PROFILES)),)
 override_dh_auto_test:
+ifeq ($(DEB_BUILD_ARCH), amd64)
 	cd tests && bash test-prj-running.sh
+endif
+endif

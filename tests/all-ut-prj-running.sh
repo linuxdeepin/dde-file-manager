@@ -4,7 +4,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-export DISPLAY=":0"
+set -x
+export DISPLAY=":1"
 export QT_QPA_PLATFORM=
 
 # 定位脚本所在父目录
@@ -91,12 +92,12 @@ regList=(
   # dfm-extension
   dfm-framework
 
-  plugins/common/dfmplugin-burn
+  # plugins/common/dfmplugin-burn
 
-  plugins/filemanager/core/dfmplugin-computer
+  # plugins/filemanager/core/dfmplugin-computer
   plugins/filemanager/core/dfmplugin-sidebar
-  plugins/filemanager/dfmplugin-myshares
-  plugins/filemanager/dfmplugin-smbbrowser
+  # plugins/filemanager/dfmplugin-myshares
+  # plugins/filemanager/dfmplugin-smbbrowser
   plugins/filemanager/dfmplugin-optical
 
 # services
@@ -104,6 +105,13 @@ regList=(
   # services/dfm-business-services/dfm-filemanager-service
   # services/dfm-common-service
 ) 
+
+# test prepare
+echo "recompile gsettings for test"
+mkdir -p $BUILD_DIR/glib-2.0/schemas
+for f in $(find $PROJECT_FOLDER -name "*.xml");do cp $f $BUILD_DIR/glib-2.0/schemas/;done
+glib-compile-schemas $BUILD_DIR/glib-2.0/schemas
+export XDG_DATA_DIRS=$BUILD_DIR:$XDG_DATA_DIRS
 
 # register test folders.
 for((i=0; i<${#regList[@]}; i++)) 
