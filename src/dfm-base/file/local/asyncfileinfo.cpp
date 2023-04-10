@@ -1073,7 +1073,6 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
 void AsyncFileInfoPrivate::cacheAllAttributes()
 {
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> tmp;
-    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, dfmFileInfo->exists());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardName, fileName());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardBaseName, baseName());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardCompleteBaseName, completeBaseName());
@@ -1083,6 +1082,7 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSize, attribute(DFileInfo::AttributeID::kStandardSize));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFilePath, filePath());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardParentPath, path());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, dfmFileInfo->exists());
     // redirectedFileUrl
     auto symlink = symLinkTarget();
     if (attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
