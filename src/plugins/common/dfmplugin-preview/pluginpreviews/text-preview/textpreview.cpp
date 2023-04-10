@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "textpreview.h"
-#include <dfm-base/interfaces/fileinfo.h>
 #include "dfileservices.h"
 #include "textbrowseredit.h"
+#include "textcontextwidget.h"
+
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QProcess>
 #include <QUrl>
@@ -43,13 +45,7 @@ bool TextPreview::setFileUrl(const QUrl &url)
     }
 
     if (!textBrowser) {
-        textBrowser = new TextBrowserEdit;
-        textBrowser->setReadOnly(true);
-        textBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
-        textBrowser->setLineWrapMode(QPlainTextEdit::WidgetWidth);
-        textBrowser->setFixedSize(800, 500);
-        textBrowser->setFocusPolicy(Qt::NoFocus);
-        textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
+        textBrowser = new TextContextWidget;
     }
 
     titleStr = QFileInfo(url.toLocalFile()).fileName();
@@ -65,7 +61,7 @@ bool TextPreview::setFileUrl(const QUrl &url)
     device.seekg(0, ios::beg).read(buf, static_cast<streamsize>(len));
     device.close();
     std::string strBuf(buf, len);
-    textBrowser->setFileData(strBuf);
+    textBrowser->textBrowserEdit()->setFileData(strBuf);
     delete[] buf;
     buf = nullptr;
 
@@ -91,5 +87,5 @@ QString TextPreview::title() const
 
 bool TextPreview::showStatusBarSeparator() const
 {
-    return true;
+    return false;
 }
