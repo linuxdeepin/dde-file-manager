@@ -19,7 +19,7 @@
 #include <QTextList>
 
 DTagEdit::DTagEdit(QWidget *const parent)
-    : DArrowRectangle{ DArrowRectangle::ArrowTop,  parent }
+    : DArrowRectangle { DArrowRectangle::ArrowTop, parent }
 {
     this->initializeWidgets();
     this->initializeParameters();
@@ -35,10 +35,10 @@ DTagEdit::DTagEdit(QWidget *const parent)
         setWindowFlags(Qt::Tool);
 }
 
-void DTagEdit::setFocusOutSelfClosing(bool value)noexcept
+void DTagEdit::setFocusOutSelfClosing(bool value) noexcept
 {
     ///###: CAS!
-    bool excepted{ !value };
+    bool excepted { !value };
     m_flagForShown.compare_exchange_strong(excepted, value, std::memory_order_release);
 }
 
@@ -95,7 +95,7 @@ void DTagEdit::mouseMoveEvent(QMouseEvent *event)
 void DTagEdit::initializeWidgets()
 {
     m_crumbEdit = new DCrumbEdit;
-    m_promptLabel = new QLabel{
+    m_promptLabel = new QLabel {
         QObject::tr("Input tag info, such as work, family. A comma is used between two tags.")
     };
     m_totalLayout = new QVBoxLayout;
@@ -112,13 +112,13 @@ void DTagEdit::initializeParameters()
 
     m_promptLabel->setFixedWidth(140);
     m_promptLabel->setWordWrap(true);
-    m_BGFrame->setContentsMargins(QMargins{0, 0, 0, 0});
+    m_BGFrame->setContentsMargins(QMargins { 0, 0, 0, 0 });
 
     this->setMargin(0);
     this->setFixedWidth(140);
     this->setFocusPolicy(Qt::StrongFocus);
-    this->setBorderColor(QColor{"#ffffff"});
-    this->setBackgroundColor(QColor{"#ffffff"});
+    this->setBorderColor(QColor { "#ffffff" });
+    this->setBackgroundColor(QColor { "#ffffff" });
     this->setWindowFlags(Qt::FramelessWindowHint);
 }
 
@@ -138,20 +138,20 @@ void DTagEdit::initializeConnect()
 {
     QObject::connect(this, &DTagEdit::windowDeactivate, this, &DTagEdit::onFocusOut);
 
-    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, [=]{
+    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, [=] {
         if (!m_crumbEdit->property("updateCrumbsColor").toBool()) {
             processTags();
         }
     });
 
-    QObject::connect(m_crumbEdit, &QTextEdit::textChanged, this, [=]{
-        QString srcTcxt =  m_crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter);
+    QObject::connect(m_crumbEdit, &QTextEdit::textChanged, this, [=] {
+        QString srcTcxt = m_crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter);
         QRegExp rx("[\\\\/\':\\*\\?\"<>|%&]");
         if (!srcTcxt.isEmpty() && srcTcxt.contains(rx)) {
-            QList<QString> tagList{ m_crumbEdit->crumbList() };
+            QList<QString> tagList { m_crumbEdit->crumbList() };
             m_crumbEdit->textCursor().document()->setPlainText(srcTcxt.remove(rx));
 
-            QMap<QString, QColor> tagsColors {tagsColor(tagList)};
+            QMap<QString, QColor> tagsColors { tagsColor(tagList) };
             m_crumbEdit->setProperty("updateCrumbsColor", true);
             for (auto it = tagsColors.begin(); it != tagsColors.end(); ++it) {
                 DCrumbTextFormat format = m_crumbEdit->makeTextFormat();
@@ -165,12 +165,11 @@ void DTagEdit::initializeConnect()
             m_crumbEdit->setProperty("updateCrumbsColor", false);
         }
     });
-
 }
 
 void DTagEdit::processTags()
 {
-    QList<QString> tagList{ m_crumbEdit->crumbList() };
+    QList<QString> tagList { m_crumbEdit->crumbList() };
     //防止DTagEdit对象被析构后m_files无法访问
     QList<DUrl> files = m_files;
 
@@ -193,7 +192,7 @@ void DTagEdit::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
         format.setBackground(QBrush(it.value()));
         format.setBackgroundRadius(5);
 
-        m_crumbEdit->insertCrumb(format, 0);
+        m_crumbEdit->insertCrumb(format);
     }
 
     m_crumbEdit->setProperty("updateCrumbsColor", false);
