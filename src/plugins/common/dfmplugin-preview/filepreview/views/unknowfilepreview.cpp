@@ -3,12 +3,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "unknowfilepreview.h"
+
 #include <dfm-base/mimetype/mimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
-
+#include <dfm-base/utils/elidetextlayout.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <QVBoxLayout>
+#include <QTextDocument>
+#include <QTextBlock>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_filepreview;
@@ -24,7 +27,6 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     nameLabel = new QLabel(contentView);
     nameLabel->setObjectName("NameLabel");
     nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    nameLabel->setWordWrap(true);
     QFont font;
     font.setWeight(QFont::DemiBold);
     font.setPointSize(12);
@@ -34,7 +36,7 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     sizeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     typeLabel = new QLabel(contentView);
     typeLabel->setObjectName("TypeLabel");
-
+    typeLabel->setWordWrap(true);
     typeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     typeLabel->adjustSize();
     QVBoxLayout *vlayout = new QVBoxLayout();
@@ -99,9 +101,12 @@ void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
     iconLabel->setPixmap(icon.pixmap(180));
 
     QFont font = nameLabel->font();
-    QFontMetrics fm(font);
-    QString elidedText = fm.elidedText(info->nameOf(NameInfoType::kFileName), Qt::ElideMiddle, 800);
-
+    QRect rect(QPoint(0, 0), QSize(240, 80));
+    QStringList labelTexts;
+    ElideTextLayout layout(info->nameOf(NameInfoType::kFileName));
+    layout.documentHandle()->firstBlock().layout()->setFont(font);
+    layout.layout(rect, Qt::ElideMiddle, nullptr, Qt::NoBrush, &labelTexts);
+    const QString &elidedText = labelTexts.join('\n');
     nameLabel->setText(elidedText);
 
     if (info->isAttributes(OptInfoType::kIsFile) || info->isAttributes(OptInfoType::kIsSymLink)) {
