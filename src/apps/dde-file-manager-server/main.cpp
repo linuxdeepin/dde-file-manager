@@ -15,6 +15,12 @@ static constexpr char kServerInterface[] { "org.deepin.plugin.server" };
 static constexpr char kPluginCore[] { "serverplugin-core" };
 static constexpr char kLibCore[] { "libserverplugin-core.so" };
 
+#ifdef DFM_ORGANIZATION_NAME
+#    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
+#else
+#    define ORGANIZATION_NAME "deepin"
+#endif
+
 static void initLog()
 {
     dpfLogManager->registerConsoleAppender();
@@ -66,7 +72,14 @@ DWIDGET_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
-    a.setOrganizationName(DFM_BUILD_PLUGIN_DIR);
+    a.setOrganizationName(ORGANIZATION_NAME);
+    {
+        // load translation
+        QString appName = a.applicationName();
+        a.setApplicationName("dde-file-manager");
+        a.loadTranslator();
+        a.setApplicationName(appName);
+    }
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
