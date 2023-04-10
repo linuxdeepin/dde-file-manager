@@ -7,7 +7,7 @@
 #include <QLibrary>
 #include <QDebug>
 
-DDP_GRANDSEARCHDAEMON_USE_NAMESPACE
+SERVERPGRANDSEARCH_NAMESPACE_USE_NAMESPACE
 
 DaemonLibrary::DaemonLibrary(const QString &filePtah, QObject *parent)
     : QObject(parent)

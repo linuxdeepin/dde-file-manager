@@ -15,10 +15,15 @@ add_library(${PROJECT_NAME}
     ${SRC_FILES}
 )
 
+add_definitions(-DGRANDSEARCHDAEMON_LIB_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/dde-grand-search-daemon")
+
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
+find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
+
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
     DFM::framework
 )
 

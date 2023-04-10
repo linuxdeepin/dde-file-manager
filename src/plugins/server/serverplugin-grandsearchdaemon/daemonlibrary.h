@@ -5,7 +5,7 @@
 #ifndef DAEMONLIBRARY_H
 #define DAEMONLIBRARY_H
 
-#include "ddplugin_grandsearchdaemon_global.h"
+#include "serverplugin_grandsearchdaemon_global.h"
 
 #include <QObject>
 
@@ -14,7 +14,7 @@ typedef int (*StopDaemon)();
 typedef const char *(*VerDaemon)();
 class QLibrary;
 
-DDP_GRANDSEARCHDAEMON_BEGIN_NAMESPACE
+SERVERPGRANDSEARCH_NAMESPACE_BEGIN_NAMESPACE
 
 class DaemonLibrary : public QObject
 {
@@ -34,6 +34,6 @@ protected:
     QLibrary *library = nullptr;
 };
 
-DDP_GRANDSEARCHDAEMON_END_NAMESPACE
+SERVERPGRANDSEARCH_NAMESPACE_END_NAMESPACE
 
 #endif // DAEMONLIBRARY_H
