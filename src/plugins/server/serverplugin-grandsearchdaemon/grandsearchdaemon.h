@@ -10,7 +10,7 @@
 #include <dfm-framework/dpf.h>
 
 SERVERPGRANDSEARCH_NAMESPACE_BEGIN_NAMESPACE
-
+class DaemonLibrary;
 class GrandSearchDaemon : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
@@ -19,6 +19,9 @@ class GrandSearchDaemon : public DPF_NAMESPACE::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
+    virtual void stop() override;
+private:
+    DaemonLibrary *library = nullptr;
 };
 
 SERVERPGRANDSEARCH_NAMESPACE_END_NAMESPACE

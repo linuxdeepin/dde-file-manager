@@ -4,7 +4,8 @@
 
 #include "config.h"
 
-#include <QCoreApplication>
+#include <DApplication>
+
 #include <QDebug>
 #include <QDir>
 
@@ -60,9 +61,11 @@ static bool pluginsLoad()
     return true;
 }
 
+DWIDGET_USE_NAMESPACE
+
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    DApplication a(argc, argv);
     a.setOrganizationName(DFM_BUILD_PLUGIN_DIR);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
