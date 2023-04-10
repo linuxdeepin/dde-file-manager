@@ -68,10 +68,14 @@ void UserSharePasswordSettingDialog::initUI()
         this->setFixedSize(QSize(390, 210));
     }
 
-    // The default first tab focus is window close button;
-    // The second one is m_passwordEdit, then the third one is eyes button;
-    // the last tab focus is cancel button(this->getButton(0));
-    QWidget::setTabOrder(m_passwordEdit, this->getButton(0));
+    setTabOrder(m_passwordEdit, getButton(0));
+    setTabOrder(getButton(0), this);
+}
+
+void UserSharePasswordSettingDialog::showEvent(QShowEvent *event)
+{
+    m_passwordEdit->setFocus();
+    DDialog::showEvent(event);
 }
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
