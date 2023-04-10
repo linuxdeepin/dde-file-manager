@@ -9,7 +9,20 @@
 
 #include <dfm-framework/dpf.h>
 
+class FileManager1DBus;
+
 SERVERFILEMANAGER1_BEGIN_NAMESPACE
+
+class FileManager1DBusWorker : public QObject
+{
+    Q_OBJECT
+
+public Q_SLOTS:
+    void launchService();
+
+private:
+    QScopedPointer<FileManager1DBus> filemanager1;
+};
 
 class FileManager1 : public DPF_NAMESPACE::Plugin
 {
@@ -19,6 +32,13 @@ class FileManager1 : public DPF_NAMESPACE::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
+    virtual void stop() override;
+
+Q_SIGNALS:
+    void requestLaunch();
+
+private:
+    QThread workerThread;
 };
 
 SERVERFILEMANAGER1_END_NAMESPACE
