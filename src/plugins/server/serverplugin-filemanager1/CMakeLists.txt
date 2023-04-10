@@ -10,6 +10,14 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
+find_package(Qt5 COMPONENTS
+    Core
+    DBus
+    REQUIRED)
+
+qt5_add_dbus_adaptor(SRC_FILES org.freedesktop.FileManager1.xml
+    filemanager1dbus.h FileManager1DBus)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}
@@ -20,6 +28,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
+    Qt5::Core
+    Qt5::DBus
 )
 
 #install library file

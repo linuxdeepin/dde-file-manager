@@ -12,6 +12,8 @@
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
 
+#include <QDBusConnection>
+
 SERVERPCORE_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -19,6 +21,7 @@ void Core::initialize()
 {
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
     UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/");
+    UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);   // Why??
     InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
     InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
@@ -27,6 +30,12 @@ void Core::initialize()
 
 bool Core::start()
 {
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    if (!connection.isConnected()) {
+        qWarning("Cannot connect to the D-Bus session bus.\n"
+                 "Please check your system settings and try again.\n");
+        return false;
+    }
     return true;
 }
 
