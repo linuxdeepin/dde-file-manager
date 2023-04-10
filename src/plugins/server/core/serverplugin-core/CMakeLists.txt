@@ -8,7 +8,45 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+    "${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml"
+    "${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml"
+    "${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml"
     )
+# TODO: tag manager
+find_package(Qt5 COMPONENTS
+    Core
+    DBus
+    REQUIRED)
+
+# DBus: DeviceManager
+qt5_generate_dbus_interface(
+    devicemanagerdbus.h
+    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
+    OPTIONS -M -S
+)
+
+qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
+    devicemanagerdbus.h DeviceManagerDBus)
+
+# DBus: VaultManager
+qt5_generate_dbus_interface(
+    vaultmanagerdbus.h
+    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
+    OPTIONS -M -S
+)
+
+qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
+    vaultmanagerdbus.h VaultManagerDBus)
+
+# DBus: OperationsStackManager
+qt5_generate_dbus_interface(
+    operationsstackmanagerdbus.h
+    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
+    OPTIONS -M -S
+)
+
+qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
+    operationsstackmanagerdbus.h OperationsStackManagerDbus)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -20,6 +58,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
+    Qt5::Core
+    Qt5::DBus
 )
 
 #install library file

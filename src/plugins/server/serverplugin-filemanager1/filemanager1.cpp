@@ -12,6 +12,7 @@ SERVERFILEMANAGER1_BEGIN_NAMESPACE
 
 void FileManager1DBusWorker::launchService()
 {
+    Q_ASSERT(QThread::currentThread() != qApp->thread());
     auto conn { QDBusConnection::sessionBus() };
     if (!conn.registerService("org.freedesktop.FileManager1")) {
         qWarning("Cannot register the \"org.freedesktop.FileManager1\" service.\n");

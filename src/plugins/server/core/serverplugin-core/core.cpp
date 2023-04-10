@@ -21,7 +21,6 @@ void Core::initialize()
 {
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
     UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/");
-    UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);   // Why??
     InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
     InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);

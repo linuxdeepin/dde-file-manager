@@ -4,10 +4,12 @@ project(serverplugin-filemanager1)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+    "${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml"
     )
 
 find_package(Qt5 COMPONENTS
@@ -15,7 +17,13 @@ find_package(Qt5 COMPONENTS
     DBus
     REQUIRED)
 
-qt5_add_dbus_adaptor(SRC_FILES org.freedesktop.FileManager1.xml
+qt5_generate_dbus_interface(
+    filemanager1dbus.h
+    ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml
+    OPTIONS -M -S
+)
+
+qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml
     filemanager1dbus.h FileManager1DBus)
 
 add_library(${PROJECT_NAME}

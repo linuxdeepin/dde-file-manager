@@ -40,6 +40,10 @@ else()
 endif()
 
 include(GNUInstallDirs)
+
+# dbus xml dir
+set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus/)
+
 # defines plugins install dir
 if(NOT DEFINED LIB_INSTALL_DIR)
     set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
