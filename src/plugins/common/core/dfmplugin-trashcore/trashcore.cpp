@@ -21,7 +21,6 @@ void TrashCore::initialize()
     TrashCoreEventSender::instance();
 
     DFMBASE_NAMESPACE::UrlRoute::regScheme(TrashCoreHelper::scheme(), "/", TrashCoreHelper::icon(), true, tr("Trash"));
-    // TODO(lanxs): 目前缓存存在问题，trash由于其特性，容易触发缓存更新问题，所以trash里面暂不使用缓存，等后期缓存完善再放开
     DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme());
 
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPTRASHCORE_NAMESPACE), "slot_TrashCore_EmptyTrash",
