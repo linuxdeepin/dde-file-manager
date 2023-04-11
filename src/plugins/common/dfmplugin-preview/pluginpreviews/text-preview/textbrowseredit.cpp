@@ -14,7 +14,14 @@ constexpr int kReadTextSize { 1024 * 1024 * 5 };
 TextBrowserEdit::TextBrowserEdit(QWidget *parent)
     : QPlainTextEdit(parent)
 {
-    setViewportMargins(0, 0, 30, 0);
+    setReadOnly(true);
+    setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+    setLineWrapMode(QPlainTextEdit::WidgetWidth);
+    setFixedSize(800, 500);
+    setFocusPolicy(Qt::NoFocus);
+    setContextMenuPolicy(Qt::NoContextMenu);
+    setFrameStyle(QFrame::NoFrame);
+
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &TextBrowserEdit::scrollbarValueChange);
     connect(verticalScrollBar(), &QScrollBar::sliderMoved, this, &TextBrowserEdit::sliderPositionValueChange);
 }

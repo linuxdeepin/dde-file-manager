@@ -61,7 +61,7 @@ QString PDFPreview::title() const
 
 bool PDFPreview::showStatusBarSeparator() const
 {
-    return true;
+    return false;
 }
 
 void PDFPreview::initialize(QWidget *window, QWidget *statusBar)

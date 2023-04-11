@@ -6,6 +6,7 @@
 #define TEXTPREVIEW_H
 
 #include "preview_plugin_global.h"
+
 #include <dfm-base/interfaces/abstractbasepreview.h>
 
 #include <QWidget>
@@ -16,7 +17,7 @@
 #include <fstream>
 
 namespace plugin_filepreview {
-class TextBrowserEdit;
+class TextContextWidget;
 class TextPreview : public DFMBASE_NAMESPACE::AbstractBasePreview
 {
     Q_OBJECT
@@ -37,7 +38,7 @@ private:
     QUrl selectUrl;
     QString titleStr;
 
-    TextBrowserEdit *textBrowser { nullptr };
+    TextContextWidget *textBrowser { nullptr };
 
     //! 操作文件的对象
     std::ifstream device;
