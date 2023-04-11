@@ -8,7 +8,6 @@
 #include "dfmplugin_fileoperations_global.h"
 #include "fileoperations/fileoperationsservice.h"
 
-#include <dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/clipboard.h>

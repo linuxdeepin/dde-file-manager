@@ -43,12 +43,6 @@ bool Core::start()
     }
 
     initServiceDBusInterfaces(&connection);
-    QTimer::singleShot(1000, []() {
-        if (!DevProxyMng->connectToService()) {
-            qCritical() << "device manager cannot connect to server!";
-            DevMngIns->startMonitor();
-        }
-    });
 
     return true;
 }
@@ -60,8 +54,8 @@ void Core::initServiceDBusInterfaces(QDBusConnection *connection)
     std::call_once(flag, [&connection, this]() {
         // add our D-Bus interface and connect to D-Bus
         if (!connection->registerService("org.deepin.filemanager.server")) {
-            qWarning("Cannot register the \"org.deepin.filemanager.server\" service.\n");
-            return;
+            qCritical("Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
+            ::abort();
         }
 
         qInfo() << "Init DBus OperationsStackManager start";

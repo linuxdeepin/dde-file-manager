@@ -7,8 +7,6 @@
 #include "deviceutils.h"
 #include "private/deviceproxymanager_p.h"
 
-#include <dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h>
-
 #include <QDBusServiceWatcher>
 
 using namespace dfmbase;
@@ -21,7 +19,7 @@ DeviceProxyManager *DeviceProxyManager::instance()
     return &ins;
 }
 
-const DeviceManagerInterface *DeviceProxyManager::getDBusIFace() const
+const OrgDeepinFilemanagerServerDeviceManagerInterface *DeviceProxyManager::getDBusIFace() const
 {
     return d->devMngDBus.data();
 }
@@ -120,6 +118,8 @@ bool DeviceProxyManager::connectToService()
 {
     qInfo() << "Start initilize dbus: `DeviceManagerInterface`";
     d->devMngDBus.reset(new DeviceManagerInterface(kDesktopService, kDevMngPath, QDBusConnection::sessionBus(), this));
+    if (!d->isDBusRuning())
+        d->devMngDBus->IsMonotorWorking();   // NOTE: active server app!
     d->initConnection();
     return d->isDBusRuning();
 }
@@ -206,10 +206,6 @@ DeviceProxyManagerPrivate::~DeviceProxyManagerPrivate()
 
 bool DeviceProxyManagerPrivate::isDBusRuning()
 {
-    // TODO(zhangs): refactor it! (bug-189717)
-    static const QStringList kAppWhileList { "dde-file-manager", "dde-desktop" };
-    if (!kAppWhileList.contains(qApp->applicationName()))
-        return false;
     return devMngDBus && devMngDBus->isValid();
 }
 

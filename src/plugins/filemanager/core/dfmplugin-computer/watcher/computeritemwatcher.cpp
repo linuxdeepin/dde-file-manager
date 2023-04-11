@@ -11,7 +11,6 @@
 #include <dfm-base/base/configs/configsynchronizer.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
-#include <dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/file/entry/entryfileinfo.h>
