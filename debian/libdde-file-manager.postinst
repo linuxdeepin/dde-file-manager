@@ -22,5 +22,42 @@ do
 done
 }
 
+function installServer(){
+echo "File manager is ready to install server."
+# 后端服务进程名称
+serverAppName="dde-file-manager-server"
+# 后端服务名称
+serverServiceName="dde-filemanager-server.service"
+# 后端服务进程id
+servicePid=($(pidof ${serverAppName}))
+
+# 判断后端是否在运行。如果在运行则kill掉
+if [ ${#servicePid[@]} -gt 0 ]
+then
+    killall ${serverAppName}
+fi
+
+# 获取已登陆的用户
+userNameArr=($(who -q | head -n 1))
+
+# 根据已登陆的用户开启服务
+for userName in ${userNameArr[@]} ; do
+    # 获取服务状态
+    serviceStatus=$(runuser -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user is-active ${serverServiceName}")
+    # 活跃的关键字
+    activeStr="active"
+    # 如果为活跃的则表示服务已开启
+    if [ "$serviceStatus" = "$activeStr" ];then
+        # 如果服务已经启动则重新加载
+        runuser -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user daemon-reload"
+    else
+        # 如果服务没有启动则设置开启
+        runuser -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user enable ${serverServiceName}"
+        runuser -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user start ${serverServiceName}"
+    fi
+done
+}
+
 createUpgradeFlag
+installServer
 #end dfm-upgrade
