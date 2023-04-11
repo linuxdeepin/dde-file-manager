@@ -12,7 +12,7 @@
 class TagDBus : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.service.Tag")
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.server.Tag")
 
 public:
     explicit TagDBus(QObject *parent = nullptr);

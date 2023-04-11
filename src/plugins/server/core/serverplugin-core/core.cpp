@@ -4,9 +4,15 @@
 
 #include "core.h"
 
+#include "devicemanageradaptor.h"
+#include "operationsstackmanageradaptor.h"
+#include "vaultmanageradaptor.h"
+
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/localdiriterator.h>
@@ -35,7 +41,77 @@ bool Core::start()
                  "Please check your system settings and try again.\n");
         return false;
     }
+
+    initServiceDBusInterfaces(&connection);
+    QTimer::singleShot(1000, []() {
+        if (!DevProxyMng->connectToService()) {
+            qCritical() << "device manager cannot connect to server!";
+            DevMngIns->startMonitor();
+        }
+    });
+
     return true;
+}
+
+void Core::initServiceDBusInterfaces(QDBusConnection *connection)
+{
+    // TODO(zhangs): move to thread!
+    static std::once_flag flag;
+    std::call_once(flag, [&connection, this]() {
+        // add our D-Bus interface and connect to D-Bus
+        if (!connection->registerService("org.deepin.filemanager.server")) {
+            qWarning("Cannot register the \"org.deepin.filemanager.server\" service.\n");
+            return;
+        }
+
+        qInfo() << "Init DBus OperationsStackManager start";
+        initOperationsDBus(connection);
+        qInfo() << "Init DBus OperationsStackManager end";
+
+        qInfo() << "Init DBus VaultManager start";
+        initVaultDBus(connection);
+        qInfo() << "Init DBus VaultManager end";
+
+        qInfo() << "Init DBus DeviceManager start";
+        initDeviceDBus(connection);
+        qInfo() << "Init DBus DeviceManager end";
+    });
+}
+
+void Core::initDeviceDBus(QDBusConnection *connection)
+{
+    // register object
+    deviceManager.reset(new DeviceManagerDBus);
+    Q_UNUSED(new DeviceManagerAdaptor(deviceManager.data()));
+    if (!connection->registerObject("/org/deepin/filemanager/server/DeviceManager",
+                                    deviceManager.data())) {
+        qWarning("Cannot register the \"/org/deepin/filemanager/server/DeviceManager\" object.\n");
+        deviceManager.reset(nullptr);
+    }
+}
+
+void Core::initOperationsDBus(QDBusConnection *connection)
+{
+    // register object
+    operationsStackManager.reset(new OperationsStackManagerDbus);
+    Q_UNUSED(new OperationsStackManagerAdaptor(operationsStackManager.data()));
+    if (!connection->registerObject("/org/deepin/filemanager/server/OperationsStackManager",
+                                    operationsStackManager.data())) {
+        qWarning("Cannot register the \"/org/deepin/filemanager/server/OperationsStackManager\" object.\n");
+        operationsStackManager.reset(nullptr);
+    }
+}
+
+void Core::initVaultDBus(QDBusConnection *connection)
+{
+    // register object
+    vaultManager.reset(new VaultManagerDBus);
+    Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
+    if (!connection->registerObject("/org/deepin/filemanager/server/VaultManager",
+                                    vaultManager.data())) {
+        qWarning("Cannot register the \"/org/deepin/filemanager/server/VaultManager\" object.\n");
+        vaultManager.reset(nullptr);
+    }
 }
 
 SERVERPCORE_END_NAMESPACE

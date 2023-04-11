@@ -14,7 +14,7 @@
 class DeviceManagerDBus : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.service.DeviceManager")
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.server.DeviceManager")
 
 public:
     explicit DeviceManagerDBus(QObject *parent = nullptr);

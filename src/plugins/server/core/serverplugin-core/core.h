@@ -9,6 +9,11 @@
 
 #include <dfm-framework/dpf.h>
 
+class QDBusConnection;
+class DeviceManagerDBus;
+class OperationsStackManagerDbus;
+class VaultManagerDBus;
+
 SERVERPCORE_BEGIN_NAMESPACE
 
 class Core : public DPF_NAMESPACE::Plugin
@@ -19,6 +24,17 @@ class Core : public DPF_NAMESPACE::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
+
+private:
+    void initServiceDBusInterfaces(QDBusConnection *connection);
+    void initDeviceDBus(QDBusConnection *connection);
+    void initOperationsDBus(QDBusConnection *connection);
+    void initVaultDBus(QDBusConnection *connection);
+
+private:
+    QScopedPointer<DeviceManagerDBus> deviceManager;
+    QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
+    QScopedPointer<VaultManagerDBus> vaultManager;
 };
 
 SERVERPCORE_END_NAMESPACE

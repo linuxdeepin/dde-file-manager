@@ -219,8 +219,8 @@ void Tag::initServiceDBusInterfaces(QDBusConnection *connection)
     static std::once_flag flag;
     std::call_once(flag, [&connection, this]() {
         // add our D-Bus interface and connect to D-Bus
-        if (!connection->registerService("org.deepin.filemanager.service")) {
-            qWarning("Cannot register the \"org.deepin.filemanager.service\" service.\n");
+        if (!connection->registerService("org.deepin.filemanager.server")) {
+            qWarning("Cannot register the \"org.deepin.filemanager.server\" service.\n");
             return;
         }
 
@@ -229,9 +229,9 @@ void Tag::initServiceDBusInterfaces(QDBusConnection *connection)
         // register object
         tagDBus.reset(new TagDBus);
         Q_UNUSED(new TagDBusAdaptor(tagDBus.data()));
-        if (!connection->registerObject("/org/deepin/filemanager/service/Tag",
+        if (!connection->registerObject("/org/deepin/filemanager/server/Tag",
                                         tagDBus.data())) {
-            qWarning("Cannot register the \"/org/deepin/filemanager/Tag\" object.\n");
+            qWarning("Cannot register the \"/org/deepin/filemanager/server/Tag\" object.\n");
             tagDBus.reset(nullptr);
         }
 
