@@ -18,6 +18,7 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/networkutils.h>
 #include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-io/doperator.h>
@@ -265,6 +266,11 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
         FileInfoPointer fileInfoLink = fileInfo;
         while (fileInfoLink->isAttributes(OptInfoType::kIsSymLink)) {
             const QString &targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
+            // 网络文件检查
+            if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(targetLink))) {
+                DialogManager::instance()->showUnableToVistDir(targetLink);
+                return true;
+            }
             fileInfoLink = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(targetLink));
             if (!fileInfoLink) {
                 DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
