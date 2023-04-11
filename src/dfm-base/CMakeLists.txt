@@ -36,7 +36,7 @@ set(QRC_FILES
 qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
 
 # add code
-file(GLOB_RECURSE INCLUDE_FILES  CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*")
+file(GLOB_RECURSE INCLUDE_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*")
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
     "./*.h"
     "./*.hpp"
@@ -44,6 +44,7 @@ file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
 )
 
 # add depends
+find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
@@ -59,6 +60,11 @@ pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
 pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 pkg_search_module(Dtk REQUIRED dtkcore IMPORTED_TARGET)
+
+# generate dbus interface
+qt5_add_dbus_interface(SRCS
+    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
+    devicemanager_interface)
 
 # for generating middle source files of SettingsTemplate to translate.
 set(TRANS_OF_SETTINGS_CPP)
@@ -97,6 +103,7 @@ add_library(${BIN_NAME}
 )
 
 target_link_libraries(${BIN_NAME} PUBLIC
+    Qt5::Core
     Qt5::Widgets
     Qt5::Concurrent
     Qt5::DBus

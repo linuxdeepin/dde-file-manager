@@ -10,13 +10,16 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/dfm_event_defines.h>
-
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/desktopfileinfo.h>
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
+
+#include <dfm-io/dfmio_utils.h>
 
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
@@ -46,6 +49,13 @@ void ddplugin_core::Core::initialize()
     connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Core::onStart);
     dpfSignalDispatcher->subscribe(GlobalEventType::kLoadPlugins,
                                    this, &Core::handleLoadPlugins);
+
+    // NOTE(xust): this is used to launch GVolumeMonitor in main thread, this function obtained the GVolumeMonitor instance indirectly,
+    // a GVolumeMonitor instance must run in main thread to make sure the messages about device change can be send correctly,
+    // the GVolumeMonitor instance is expected to be initialized in DDeviceManager but the DDeviceManager is delay intialized when
+    // main window of desktop showed. So invoke the method here to make sure the instance is initialized in main thread.
+    // NOTE(xust): this may take 10ms when app launch, but no better way to solve the level-2 issue for now.
+    DFMIO::DFMUtils::fileIsRemovable(QUrl::fromLocalFile("/"));
 }
 
 bool ddplugin_core::Core::start()
@@ -87,6 +97,11 @@ void Core::onFrameReady()
 
 void Core::handleLoadPlugins(const QStringList &names)
 {
+    if (!DevProxyMng->connectToService()) {
+        qCritical() << "device manager cannot connect to server!";
+        DevMngIns->startMonitor();
+    }
+
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
         qInfo() << "About to load plugin:" << name;
@@ -110,7 +125,7 @@ bool Core::eventFilter(QObject *watched, QEvent *event)
 
 void Core::loadLazyPlugins()
 {
-    std::call_once(lazyFlag, [this]() {
+    std::call_once(lazyFlag, []() {
         const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
         qInfo() << "load lazy plugins" << list;
         dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);

@@ -12,7 +12,7 @@
 
 #define DevProxyMng DFMBASE_NAMESPACE::DeviceProxyManager::instance()
 
-class DeviceManagerInterface;
+class OrgDeepinFilemanagerServerDeviceManagerInterface;
 namespace dfmbase {
 
 class DeviceProxyManagerPrivate;
@@ -30,7 +30,7 @@ class DeviceProxyManager : public QObject
 public:
     static DeviceProxyManager *instance();
 
-    const DeviceManagerInterface *getDBusIFace() const;
+    const OrgDeepinFilemanagerServerDeviceManagerInterface *getDBusIFace() const;
 
     // device info getter
     QStringList getAllBlockIds(GlobalServerDefines::DeviceQueryOptions opts = GlobalServerDefines::DeviceQueryOption::kNoCondition);
@@ -87,6 +87,6 @@ private:
     QScopedPointer<DeviceProxyManagerPrivate> d;
 };
 
-}
+}   // namespace dfmbase
 
 #endif   // DEVICEPROXYMANAGER_H

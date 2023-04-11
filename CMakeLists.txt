@@ -42,7 +42,7 @@ endif()
 include(GNUInstallDirs)
 
 # dbus xml dir
-set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus/)
+set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus)
 
 # defines plugins install dir
 if(NOT DEFINED LIB_INSTALL_DIR)

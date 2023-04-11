@@ -69,9 +69,9 @@ static bool pluginsLoad()
     // TODO(xust): the GVolumeMonitor object MUST be initialized in MAIN thread, so a initialize operation is added in dbusregister::initialize.
     // the function `DFMIO::DFMUtils::fileIsRemovable` indirectly initialized the GVolumeMonitor object and the function is invoked everywhere.
     // solve the indirectly initialize issue and then push the plugin to lazy list.
-    static const QStringList kLazyLoadPluginNames { "ddplugin-wallpapersetting", "ddplugin-grandsearchdaemon",
-                                                    "dfmplugin-bookmark", "dfmplugin-propertydialog", "dfmplugin-tag",
-                                                    "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem", "dfmplugin-filepreview" };
+    static const QStringList kLazyLoadPluginNames { "ddplugin-wallpapersetting", "dfmplugin-bookmark", "dfmplugin-propertydialog",
+                                                    "dfmplugin-tag", "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem",
+                                                    "dfmplugin-filepreview" };
 
     DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, {}, kLazyLoadPluginNames);
 

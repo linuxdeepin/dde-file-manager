@@ -31,6 +31,8 @@ pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
 pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
 pkg_search_module(Dtk REQUIRED dtkcore IMPORTED_TARGET)
 
+qt5_add_dbus_interface(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml devicemanager_interface)
+
 add_executable(${PROJECT_NAME}
     ${HEADER_FILES}
     ${SRC_FILES}

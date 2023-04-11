@@ -5,13 +5,15 @@
 #ifndef DEVICEPROXYMANAGER_P_H
 #define DEVICEPROXYMANAGER_P_H
 
+#include "devicemanager_interface.h"
+
 #include <dfm-base/dfm_base_global.h>
 
 #include <QScopedPointer>
 #include <QList>
 #include <QtCore/qobjectdefs.h>
 
-class DeviceManagerInterface;
+using DeviceManagerInterface = OrgDeepinFilemanagerServerDeviceManagerInterface;
 class QDBusServiceWatcher;
 namespace dfmbase {
 

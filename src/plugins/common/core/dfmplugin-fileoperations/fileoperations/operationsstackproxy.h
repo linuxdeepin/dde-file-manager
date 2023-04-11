@@ -6,10 +6,11 @@
 #define OPERATIONSSTACK_H
 
 #include "dfmplugin_fileoperations_global.h"
-
-#include <dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h>
+#include "operationsstackmanager_interface.h"
 
 #include <QObject>
+
+using OperationsStackManagerInterface = OrgDeepinFilemanagerServerOperationsStackManagerInterface;
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 
