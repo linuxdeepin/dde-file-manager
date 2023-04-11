@@ -22,7 +22,7 @@ void TrashCore::initialize()
 
     DFMBASE_NAMESPACE::UrlRoute::regScheme(TrashCoreHelper::scheme(), "/", TrashCoreHelper::icon(), true, tr("Trash"));
     // TODO(lanxs): 目前缓存存在问题，trash由于其特性，容易触发缓存更新问题，所以trash里面暂不使用缓存，等后期缓存完善再放开
-    DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme(), DFMBASE_NAMESPACE::InfoFactory::kNoCache);
+    DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme());
 
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPTRASHCORE_NAMESPACE), "slot_TrashCore_EmptyTrash",
                             TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::handleEmptyTrash);
@@ -33,18 +33,16 @@ void TrashCore::initialize()
 bool TrashCore::start()
 {
     auto propertyDialogPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-propertydialog") };
-    if (propertyDialogPlugin &&
-            (propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kInitialized
-             || propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted)) {
+    if (propertyDialogPlugin && (propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kInitialized || propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted)) {
         regCustomPropertyDialog();
     } else {
         connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginInitialized,
                 this, [this](const QString &iid, const QString &name) {
-            Q_UNUSED(iid)
-            if (name == "dfmplugin-propertydialog")
-                regCustomPropertyDialog();
-        },
-        Qt::DirectConnection);
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-propertydialog")
+                        regCustomPropertyDialog();
+                },
+                Qt::DirectConnection);
     }
 
     return true;

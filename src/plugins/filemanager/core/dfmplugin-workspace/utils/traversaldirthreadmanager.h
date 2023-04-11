@@ -28,8 +28,8 @@ class TraversalDirThreadManager : public TraversalDirThread
     dfmio::DEnumerator::SortRoleCompareFlag sortRole { dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
     bool isMixDirAndFile { false };
     QElapsedTimer *timer = Q_NULLPTR;
-    int timeCeiling = 200;
-    int countCeiling = 300;
+    int timeCeiling = 1500;
+    int countCeiling = 500;
     dfmio::DEnumeratorFuture *future { nullptr };
 
 public:
