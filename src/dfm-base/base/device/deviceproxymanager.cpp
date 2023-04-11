@@ -12,8 +12,8 @@
 #include <QDBusServiceWatcher>
 
 using namespace dfmbase;
-static constexpr char kDesktopService[] { "org.deepin.filemanager.service" };
-static constexpr char kDevMngPath[] { "/org/deepin/filemanager/service/DeviceManager" };
+static constexpr char kDesktopService[] { "org.deepin.filemanager.server" };
+static constexpr char kDevMngPath[] { "/org/deepin/filemanager/server/DeviceManager" };
 
 DeviceProxyManager *DeviceProxyManager::instance()
 {

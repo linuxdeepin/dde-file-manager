@@ -7,8 +7,8 @@
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 
 static constexpr uint8_t kMaxStep { 2 };   // BUG: 116699
-static const char *kOperationsStackService { "org.deepin.filemanager.service" };
-static const char *kOperationsStackPath { "/org/deepin/filemanager/service/OperationsStackManager" };
+static const char *kOperationsStackService { "org.deepin.filemanager.server" };
+static const char *kOperationsStackPath { "/org/deepin/filemanager/server/OperationsStackManager" };
 
 OperationsStackProxy &OperationsStackProxy::instance()
 {

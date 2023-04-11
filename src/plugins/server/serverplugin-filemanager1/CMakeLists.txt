@@ -47,3 +47,7 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_SERVER_EDGE_DIR}
 )
+
+# install dbus
+install(FILES org.freedesktop.FileManager.service DESTINATION
+    ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services)

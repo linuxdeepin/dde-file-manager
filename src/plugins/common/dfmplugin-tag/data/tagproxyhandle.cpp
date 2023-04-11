@@ -9,8 +9,8 @@
 #include "utils/tagmanager.h"
 
 using namespace dfmplugin_tag;
-static constexpr char kDesktopService[] { "org.deepin.filemanager.service" };
-static constexpr char kTagDBusPath[] { "/org/deepin/filemanager/service/Tag" };
+static constexpr char kDesktopService[] { "org.deepin.filemanager.server" };
+static constexpr char kTagDBusPath[] { "/org/deepin/filemanager/server/Tag" };
 
 TagProxyHandlePrivate::TagProxyHandlePrivate(TagProxyHandle *qq, QObject *parent)
     : QObject(parent),
