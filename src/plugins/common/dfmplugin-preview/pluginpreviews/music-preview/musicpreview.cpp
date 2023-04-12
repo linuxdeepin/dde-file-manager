@@ -14,7 +14,6 @@
 #include <QFileInfo>
 #include <QMimeType>
 #include <QFrame>
-#include <QSlider>
 #include <QLabel>
 #include <QUrl>
 #include <QBoxLayout>
