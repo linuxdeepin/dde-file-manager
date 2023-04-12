@@ -64,19 +64,3 @@ void TagFileWatcher::onFilesUntagged(const QVariantMap &fileAndTags)
         ++iter;
     }
 }
-
-void TagFileWatcher::addWatcher(const QUrl &url)
-{
-}
-
-void TagFileWatcher::removeWatcher(const QUrl &url)
-{
-}
-
-void TagFileWatcher::onFileDeleted(const QUrl &url)
-{
-}
-
-void TagFileWatcher::onFileAttributeChanged(const QUrl &url)
-{
-}
