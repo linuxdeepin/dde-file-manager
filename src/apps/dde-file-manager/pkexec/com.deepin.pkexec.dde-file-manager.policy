@@ -6,8 +6,12 @@
   <vendor>LinuxDeepin</vendor>
   <vendor_url>https://www.deepin.com/</vendor_url>
   <action id="com.deepin.pkexec.dde-file-manager">
-    <message>Authentication is required to run the Deepin File Manager</message>
+    <message>Authentication is required to view the folder</message>
     <message xml:lang="zh_CN">查看文件夹需要输入密码</message>
+    <message xml:lang="zh_HK">查看文件夾需要輸入密碼</message>
+    <message xml:lang="zh_TW">查看資料夾需要輸入密碼</message>
+    <message xml:lang="ug">ھۆججەت قىسقۇچنى كۆرۈش ئۈچۈن پارول كىرگۈزۈشىڭىز كېرەك</message>
+    <message xml:lang="bo">ཡིག་ཁུག་ལ་ལྟ་བར་གསང་ཨང་འཇུག་དགོས།</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
