@@ -41,6 +41,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(Qt5Svg REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
@@ -57,6 +58,7 @@ target_link_libraries(${PROJECT_NAME}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
+    Qt5::Svg
     )
 
 #install library file

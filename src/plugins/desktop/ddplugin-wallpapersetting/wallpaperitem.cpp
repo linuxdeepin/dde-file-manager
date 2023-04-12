@@ -13,6 +13,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QGridLayout>
+#include <QSvgRenderer>
 
 using namespace ddplugin_wallpapersetting;
 
@@ -192,15 +193,21 @@ void WallpaperItem::setEntranceIconOfSettings(const QString &id)
     EditLabel *editLabel = new EditLabel(wrapper);
     const QSize fixSize(36, 36);
     editLabel->setFixedSize(fixSize);
-    QPixmap pmap(":/images/edit.svg");
     // scale
     {
         auto ratio = devicePixelRatioF();
-        pmap = pmap.scaled(fixSize * ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QPixmap pmap(fixSize * ratio);
+        pmap.fill(Qt::transparent);
+        {
+            QSvgRenderer svg(QString(":/images/edit.svg"));
+            QPainter painter(&pmap);
+            svg.render(&painter, QRect(QPoint(0,0), pmap.size()));
+        }
+
         pmap.setDevicePixelRatio(ratio);
+        editLabel->setPixmap(pmap);
     }
 
-    editLabel->setPixmap(pmap);
     const QSize visibleSize(28, 28);
     editLabel->setHotZoom(QRect(fixSize.width() - visibleSize.width(), 0,
                                 visibleSize.width(), visibleSize.height())); // the edit.svg has 28pix area that is visible.
