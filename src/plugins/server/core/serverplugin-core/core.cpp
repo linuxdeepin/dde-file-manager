@@ -55,7 +55,7 @@ void Core::initServiceDBusInterfaces(QDBusConnection *connection)
         // add our D-Bus interface and connect to D-Bus
         if (!connection->registerService("org.deepin.filemanager.server")) {
             qCritical("Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
-            ::abort();
+            ::exit(EXIT_FAILURE);
         }
 
         qInfo() << "Init DBus OperationsStackManager start";

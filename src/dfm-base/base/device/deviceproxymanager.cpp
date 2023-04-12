@@ -118,8 +118,6 @@ bool DeviceProxyManager::connectToService()
 {
     qInfo() << "Start initilize dbus: `DeviceManagerInterface`";
     d->devMngDBus.reset(new DeviceManagerInterface(kDesktopService, kDevMngPath, QDBusConnection::sessionBus(), this));
-    if (!d->isDBusRuning())
-        d->devMngDBus->IsMonotorWorking();   // NOTE: active server app!
     d->initConnection();
     return d->isDBusRuning();
 }
