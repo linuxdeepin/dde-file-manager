@@ -848,19 +848,17 @@ void FileView::onModelReseted()
     updateModelActiveIndex();
 }
 
-void FileView::setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data)
+void FileView::setFilterData(const QUrl &url, const QVariant &data)
 {
-    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
-    if (thisWindId == windowID && url == rootUrl() && isVisible()) {
+    if (url == rootUrl() && isVisible()) {
         clearSelection();
         model()->setFilterData(data);
     }
 }
 
-void FileView::setFilterCallback(const quint64 windowID, const QUrl &url, const FileViewFilterCallback callback)
+void FileView::setFilterCallback(const QUrl &url, const FileViewFilterCallback callback)
 {
-    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
-    if (thisWindId == windowID && url == rootUrl() && isVisible()) {
+    if (url == rootUrl() && isVisible()) {
         clearSelection();
         model()->setFilterCallback(callback);
     }
@@ -1510,9 +1508,6 @@ void FileView::initializeConnect()
 
     connect(this, &FileView::clicked, this, &FileView::onClicked, Qt::UniqueConnection);
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
-
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterData, this, &FileView::setFilterData);
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
 
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);

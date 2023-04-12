@@ -69,7 +69,7 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     const QUrl &sourceFirst = sources.first();
     JobHandlePointer handle = nullptr;
     if (!FileUtils::fileCanTrash(sourceFirst)) {
-        if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
+        if (DialogManagerInstance->showDeleteFilesDialog(sources, true) != QDialog::Accepted)
             return nullptr;
         handle = copyMoveJob->deletes(sources, flags);
     } else {

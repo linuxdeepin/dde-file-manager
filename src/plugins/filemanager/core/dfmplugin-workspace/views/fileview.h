@@ -85,6 +85,9 @@ public:
     void setSort(const DFMGLOBAL_NAMESPACE::ItemRoles role, const Qt::SortOrder order);
     void setViewSelectState(bool isSelect);
 
+    void setFilterData(const QUrl &url, const QVariant &data);
+    void setFilterCallback(const QUrl &url, const FileViewFilterCallback callback);
+
     inline void setViewModeToList()
     {
         setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
@@ -128,8 +131,6 @@ public slots:
     void viewModeChanged(quint64 windowId, int viewMode);
     void onRowCountChanged();
     void onModelReseted();
-    void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
-    void setFilterCallback(const quint64 windowID, const QUrl &url, const FileViewFilterCallback callback);
     void trashStateChanged();
     void onHeaderViewSectionChanged(const QUrl &url);
 

@@ -97,8 +97,6 @@ public Q_SLOTS:
 
 signals:
     void openNewTab(quint64 windowId, const QUrl &url);
-    void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
-    void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback);
     void requestSelectFiles(const QList<QUrl> &urlList);
     void trashStateChanged();
 
