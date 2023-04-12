@@ -60,6 +60,11 @@ void ddplugin_core::Core::initialize()
 
 bool ddplugin_core::Core::start()
 {
+    if (!DevProxyMng->connectToService()) {
+        qCritical() << "device manager cannot connect to server!";
+        DevMngIns->startMonitor();
+    }
+
     // 手动初始化application
     app = new DFMBASE_NAMESPACE::Application();
 
@@ -97,11 +102,6 @@ void Core::onFrameReady()
 
 void Core::handleLoadPlugins(const QStringList &names)
 {
-    if (!DevProxyMng->connectToService()) {
-        qCritical() << "device manager cannot connect to server!";
-        DevMngIns->startMonitor();
-    }
-
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
         qInfo() << "About to load plugin:" << name;

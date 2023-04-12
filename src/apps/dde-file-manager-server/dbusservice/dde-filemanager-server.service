@@ -6,7 +6,7 @@ Type=dbus
 BusName=org.deepin.filemanager.server
 ExecStart=/usr/bin/dde-file-manager-server
 Restart=always
-RestartSec=2
+RestartSec=1
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical-session.target

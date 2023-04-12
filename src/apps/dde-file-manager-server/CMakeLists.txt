@@ -46,3 +46,7 @@ install(FILES dbusservice/org.deepin.filemanager.server.service
 # systemd service
 install(FILES dbusservice/dde-filemanager-server.service
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
+
+# xdg-autostart
+install(FILES dbusservice/dde-filemanager-server.desktop
+    DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/xdg/autostart)
