@@ -21,6 +21,7 @@ public:
     explicit AdvanceSearchBar(QWidget *parent = nullptr);
     void resetForm();
     void refreshOptions(const QUrl &url);
+    void setCurrentUrl(const QUrl &url);
 
 public slots:
     void onOptionChanged();

@@ -79,6 +79,7 @@ public:
     using FilterData = QMap<int, QVariant>;
     using FilterInfoCache = QHash<QUrl, FilterData>;
     FilterInfoCache filterInfoCache;
+    QUrl currentSearchUrl;
 
     AdvanceSearchBar *q;
 };

@@ -224,7 +224,7 @@ bool LocalDirIterator::oneByOne()
 {
     if (!url().isValid())
         return true;
-    qInfo() << "11" << url() << FileUtils::isLocalDevice(url());
+
     return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
 }
 
