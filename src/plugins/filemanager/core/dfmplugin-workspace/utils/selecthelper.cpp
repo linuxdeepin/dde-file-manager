@@ -120,6 +120,7 @@ void SelectHelper::select(const QList<QModelIndex> &indexes)
 
     const QModelIndex &root = view->rootIndex();
     view->selectionModel()->clearSelection();
+    view->setCurrentIndex(QModelIndex());
     for (const QModelIndex &index : indexes) {
         if (!index.isValid() || index == root) {
             continue;
@@ -134,7 +135,7 @@ void SelectHelper::select(const QList<QModelIndex> &indexes)
     }
 
     if (lastIndex.isValid())
-        view->setCurrentIndex(lastIndex);
+        view->selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
 
     if (firstIndex.isValid())
         view->scrollTo(firstIndex, QAbstractItemView::PositionAtTop);
