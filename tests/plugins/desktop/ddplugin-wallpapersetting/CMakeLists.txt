@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME}
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(Qt5Svg REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
@@ -42,6 +43,7 @@ target_link_libraries(${PROJECT_NAME}
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
     ${Xcb_LIBRARIES}
+    Qt5::Svg
 )
 
 add_test(
