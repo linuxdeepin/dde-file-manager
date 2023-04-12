@@ -91,7 +91,7 @@ void RootInfo::startWork(const QString &key, const bool getCache)
 
     if (!traversalThreads.contains(key))
         return;
-    if (getCache)
+    if (getCache && !sourceDataList.isEmpty())
         return handleGetSourceData(key);
 
     currentKey = key;
