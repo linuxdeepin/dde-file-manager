@@ -1,25 +1,31 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(serverplugin-filemanager1)
+project(serverplugin-tagdaemon)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(FILEMANGER1_XML ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml)
+set(TagManager_XML ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.TagManager.xml)
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    "${FILEMANGER1_XML}"
+    "${TagManager_XML}"
     )
 
 find_package(Qt5 COMPONENTS
     Core
     DBus
+    Sql
     REQUIRED)
 
+#qt5_generate_dbus_interface(
+#    tagmanagerdbus.h
+#    ${TagManager_XML}
+#    OPTIONS -M -S
+#)
 
-qt5_add_dbus_adaptor(SRC_FILES ${FILEMANGER1_XML}
-    filemanager1dbus.h FileManager1DBus)
+qt5_add_dbus_adaptor(SRC_FILES ${TagManager_XML}
+    tagmanagerdbus.h TagManagerDBus)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -33,6 +39,7 @@ target_link_libraries(${PROJECT_NAME}
     DFM::framework
     Qt5::Core
     Qt5::DBus
+    Qt5::Sql
 )
 
 #install library file
@@ -42,7 +49,3 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_SERVER_EDGE_DIR}
 )
-
-# install dbus
-install(FILES org.freedesktop.FileManager.service DESTINATION
-    ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services)

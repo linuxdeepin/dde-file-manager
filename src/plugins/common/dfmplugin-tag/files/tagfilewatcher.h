@@ -27,12 +27,6 @@ public slots:
     void onFilesUntagged(const QVariantMap &fileAndTags);
 
 private:
-    void addWatcher(const QUrl &url);
-    void removeWatcher(const QUrl &url);
-
-    void onFileDeleted(const QUrl &url);
-    void onFileAttributeChanged(const QUrl &url);
-
     TagFileWatcherPrivate *dptr = nullptr;
 };
 
