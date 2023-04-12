@@ -124,6 +124,8 @@ bool SearchHelper::showTopWidget(QWidget *w, const QUrl &url)
     if (!topWidget)
         return false;
 
+    topWidget->setCurrentUrl(url);
+
     bool visible = w->isVisible();
     if (visible)
         topWidget->refreshOptions(url);

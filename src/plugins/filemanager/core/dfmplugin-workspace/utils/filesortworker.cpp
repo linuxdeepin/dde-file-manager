@@ -579,11 +579,7 @@ void FileSortWorker::handleRefresh()
 
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
 {
-    // 先回掉函数
-    if (sortInfo && filterCallback)
-        return filterCallback(InfoFactory::create<FileInfo>(sortInfo->url).data(), filterData);
-
-    // 在处理继承
+    // 处理继承
     if (sortInfo && sortAndFilter) {
         auto result = sortAndFilter->checkFilters(InfoFactory::create<FileInfo>(sortInfo->url), filters, filterData);
         if (result >= 0)
@@ -661,8 +657,11 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
             return true;
     }
 
-    if (nameFilters.isEmpty())
+    if (nameFilters.isEmpty()) {
+        if (sortInfo && filterCallback)
+            return filterCallback(InfoFactory::create<FileInfo>(sortInfo->url).data(), filterData);
         return true;
+    }
 
     QString path(sortInfo->url.path());
     const QString &fileInfoName = path.right(path.lastIndexOf("/"));
@@ -670,6 +669,9 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     const bool caseSensitive = (filters & QDir::CaseSensitive) == QDir::CaseSensitive;
     if (nameFilters.contains(fileInfoName, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive))
         return false;
+
+    if (sortInfo && filterCallback)
+        return filterCallback(InfoFactory::create<FileInfo>(sortInfo->url).data(), filterData);
 
     return true;
 }

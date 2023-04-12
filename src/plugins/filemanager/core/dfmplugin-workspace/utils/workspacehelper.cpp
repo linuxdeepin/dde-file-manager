@@ -70,12 +70,16 @@ void WorkspaceHelper::setCustomTopWidgetVisible(quint64 windowId, const QString 
 
 void WorkspaceHelper::setFilterData(quint64 windowId, const QUrl &url, const QVariant &data)
 {
-    emit requestSetViewFilterData(windowId, url, data);
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        view->setFilterData(url, data);
 }
 
 void WorkspaceHelper::setFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback)
 {
-    emit requestSetViewFilterCallback(windowId, url, callback);
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        view->setFilterCallback(url, callback);
 }
 
 void WorkspaceHelper::setWorkspaceMenuScene(const QString &scheme, const QString &scene)

@@ -384,16 +384,26 @@ void AdvanceSearchBar::initUiForSizeMode()
 
 void AdvanceSearchBar::resetForm()
 {
+    bool changed = false;
     for (int i = 0; i < AdvanceSearchBarPrivate::kLabelCount; ++i) {
+        if (d->asbCombos[i]->currentIndex() != 0)
+            changed = true;
         QSignalBlocker blocker(d->asbCombos[i]);
         d->asbCombos[i]->setCurrentIndex(0);
     }
-    onOptionChanged();
+
+    if (changed)
+        onOptionChanged();
 }
 
 void AdvanceSearchBar::refreshOptions(const QUrl &url)
 {
     d->refreshOptions(url);
+}
+
+void AdvanceSearchBar::setCurrentUrl(const QUrl &url)
+{
+    d->currentSearchUrl = url;
 }
 
 void AdvanceSearchBar::onOptionChanged()
@@ -407,18 +417,14 @@ void AdvanceSearchBar::onOptionChanged()
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kCreateDateRange]->currentData();
 
     auto winId = FMWindowsIns.findWindowId(this);
-    auto window = FMWindowsIns.findWindowById(winId);
-    if (!window)
-        return;
 
-    const QUrl &curUrl = window->currentUrl();
-    formData[AdvanceSearchBarPrivate::kCurrentUrl] = curUrl;
-    d->filterInfoCache[curUrl] = formData;
+    formData[AdvanceSearchBarPrivate::kCurrentUrl] = d->currentSearchUrl;
+    d->filterInfoCache[d->currentSearchUrl] = formData;
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterData", winId, curUrl, QVariant::fromValue(formData));
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterData", winId, d->currentSearchUrl, QVariant::fromValue(formData));
 
     FilterCallback callback { AdvanceSearchBarPrivate::shouldVisiableByFilterRule };
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterCallback", winId, curUrl, QVariant::fromValue(callback));
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterCallback", winId, d->currentSearchUrl, QVariant::fromValue(callback));
 }
 
 void AdvanceSearchBar::onResetButtonPressed()
