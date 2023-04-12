@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "musicmessageview.h"
+#include "cover.h"
 
 #include <QLabel>
 #include <QHBoxLayout>
@@ -37,20 +38,38 @@ void MusicMessageView::initUI()
 
     titleLabel = new QLabel(this);
     titleLabel->setObjectName("Title");
+    QFont titleFont = titleLabel->font();
+    titleFont.setPixelSize(18);
+    titleLabel->setFont(titleFont);
+    QPalette titlePe;
+    titlePe.setColor(QPalette::WindowText, QColor("#101010"));
+    titleLabel->setPalette(titlePe);
 
     artistLabel = new QLabel(this);
     artistLabel->setObjectName("Artist");
     artistLabel->setText(tr("Artist:"));
+    QFont artistLabelFont = artistLabel->font();
+    artistLabelFont.setPixelSize(12);
+    artistLabel->setFont(artistLabelFont);
     artistValue = new QLabel(this);
     artistValue->setObjectName("artistValue");
+    QFont artistValueFont = artistValue->font();
+    artistValueFont.setPixelSize(12);
+    artistValue->setFont(artistValueFont);
 
     albumLabel = new QLabel(this);
     albumLabel->setObjectName("Album");
     albumLabel->setText(tr("Album:"));
+    QFont albumLabelFont = albumLabel->font();
+    albumLabelFont.setPixelSize(12);
+    albumLabel->setFont(albumLabelFont);
     albumValue = new QLabel(this);
     albumValue->setObjectName("albumValue");
+    QFont albumValueFont = albumValue->font();
+    albumValueFont.setPixelSize(12);
+    albumValue->setFont(albumValueFont);
 
-    imgLabel = new QLabel(this);
+    imgLabel = new Cover(this);
     imgLabel->setFixedSize(QSize(240, 240));
 
     mediaPlayer = new QMediaPlayer(this);
@@ -85,40 +104,18 @@ void MusicMessageView::initUI()
     mainLayout->addStretch();
 
     setLayout(mainLayout);
-
-    setStyleSheet("QLabel#Title{"
-                  "font-size: 18px;"
-                  "font:demibold;"
-                  "}"
-                  "QLabel#Artist{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}"
-                  "QLabel#Album{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}"
-                  "QLabel#artistValue{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}"
-                  "QLabel#albumValue{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}");
 }
 
 void MusicMessageView::updateElidedText()
 {
-    QFont font;
-    font.setPixelSize(16);
-    QFontMetrics fm(font);
-    titleLabel->setText(fm.elidedText(fileTitle, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
+    QFontMetrics fmTitleLabel(titleLabel->font());
+    titleLabel->setText(fmTitleLabel.elidedText(fileTitle, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
 
-    font.setPixelSize(12);
-    fm = QFontMetrics(font);
-    artistValue->setText(fm.elidedText(fileArtist, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
-    albumValue->setText(fm.elidedText(fileAlbum, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
+    QFontMetrics fmArtistValue = QFontMetrics(artistValue->font());
+    artistValue->setText(fmArtistValue.elidedText(fileArtist, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
+
+    QFontMetrics fmAlbumValue = QFontMetrics(albumValue->font());
+    albumValue->setText(fmAlbumValue.elidedText(fileAlbum, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
 }
 
 void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
@@ -143,7 +140,7 @@ void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
         if (img.isNull()) {
             img = QImage(":/icons/icons/default_music_cover.png");
         }
-        imgLabel->setPixmap(QPixmap::fromImage(img).scaled(imgLabel->size(), Qt::KeepAspectRatio));
+        imgLabel->setCoverPixmap(QPixmap::fromImage(img).scaled(imgLabel->size(), Qt::KeepAspectRatio));
 
         mediaPlayer->deleteLater();
 

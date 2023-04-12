@@ -7,14 +7,22 @@
 
 #include "preview_plugin_global.h"
 
+#include <dtkwidget_global.h>
+
 #include <QFrame>
 #include <QMediaPlayer>
 
+QT_BEGIN_NAMESPACE
 class QPushButton;
 class QSlider;
 class QLabel;
 class QMediaPlayer;
 class QTimer;
+QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DSlider;
+DWIDGET_END_NAMESPACE
 
 namespace plugin_filepreview {
 class ToolBarFrame : public QFrame
@@ -46,7 +54,7 @@ private:
 private:
     QMediaPlayer *mediaPlayer { nullptr };
     QPushButton *playControlButton { nullptr };
-    QSlider *progressSlider { nullptr };
+    DTK_WIDGET_NAMESPACE::DSlider *progressSlider { nullptr };
     QLabel *durationLabel { nullptr };
     QTimer *updateProgressTimer { nullptr };
 };

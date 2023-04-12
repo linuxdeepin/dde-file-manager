@@ -12,6 +12,7 @@
 class QLabel;
 
 namespace plugin_filepreview {
+class Cover;
 /**
  * @brief MediaMeta 音频文件信息结构体
  */
@@ -73,7 +74,7 @@ private:
     QLabel *titleLabel { nullptr };
     QLabel *artistLabel { nullptr };
     QLabel *albumLabel { nullptr };
-    QLabel *imgLabel { nullptr };
+    Cover *imgLabel { nullptr };
     QLabel *artistValue { nullptr };
     QLabel *albumValue { nullptr };
 
