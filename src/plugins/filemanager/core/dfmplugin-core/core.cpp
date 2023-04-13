@@ -24,6 +24,8 @@
 
 #include <QTimer>
 #include <QApplication>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
 
 DFMBASE_USE_NAMESPACE
 DPCORE_USE_NAMESPACE
@@ -63,12 +65,7 @@ bool Core::start()
     qDebug() << __PRETTY_FUNCTION__;
     GlobalPrivate::kDFMApp = new Application;   // must create it
 
-    // mount business
-    if (!DevProxyMng->initService()) {
-        qCritical() << "device manager cannot connect to service!";
-        DevMngIns->startMonitor();
-        DevMngIns->startPollingDeviceUsage();
-    }
+    connectToServer();
 
     // the object must be initialized in main thread, otherwise the GVolumeMonitor do not have an event loop.
     static std::once_flag flg;
@@ -83,6 +80,21 @@ void Core::stop()
 {
     if (GlobalPrivate::kDFMApp)
         delete GlobalPrivate::kDFMApp;
+}
+
+void Core::connectToServer()
+{
+    // mount business
+    if (!DevProxyMng->initService()) {
+        // active server
+        QDBusInterface ifs("org.deepin.filemanager.server",
+                           "/org/deepin/filemanager/server");
+        ifs.asyncCall("Ping");
+
+        qCritical() << "device manager cannot connect to service!";
+        DevMngIns->startMonitor();
+        DevMngIns->startPollingDeviceUsage();
+    }
 }
 
 void Core::onAllPluginsInitialized()
