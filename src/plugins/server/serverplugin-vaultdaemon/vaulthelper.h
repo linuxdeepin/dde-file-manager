@@ -2,19 +2,20 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef VAULTASSITCONTROL_H
-#define VAULTASSITCONTROL_H
+#ifndef VAULTHELPER_H
+#define VAULTHELPER_H
 
-#include "dfmplugin_utils_global.h"
+#include "serverplugin_vaultdaemon_global.h"
 
 #include <QObject>
-namespace dfmplugin_utils {
-class VaultAssitControl : public QObject
+
+SERVERVAULT_BEGIN_NAMESPACE
+class VaultHelper : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(VaultAssitControl)
+    Q_DISABLE_COPY(VaultHelper)
 public:
-    static VaultAssitControl *instance();
+    static VaultHelper *instance();
 
     inline QString scheme()
     {
@@ -29,8 +30,8 @@ public:
     QList<QUrl> transUrlsToLocal(const QList<QUrl> &urls);
 
 private:
-    explicit VaultAssitControl(QObject *parent = Q_NULLPTR);
-
+    explicit VaultHelper(QObject *parent = nullptr);
 };
-}
-#endif // VAULTASSITCONTROL_H
+SERVERVAULT_END_NAMESPACE
+
+#endif // VAULTHELPER_H

@@ -12,8 +12,6 @@ FILE(GLOB_RECURSE UTILS_FILES CONFIGURE_DEPENDS
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(Qt5 COMPONENTS Svg REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(Secret REQUIRED libsecret-1)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -28,7 +26,6 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${DtkWidget_INCLUDE_DIRS}
         ${Qt5Svg_INCLUDE_DIRS}
-        ${Secret_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -37,7 +34,6 @@ target_link_libraries(${PROJECT_NAME}
     DFM::extension
     Qt5::Svg
     ${DtkWidget_LIBRARIES}
-    ${Secret_LIBRARIES}
 )
 
 #install library file

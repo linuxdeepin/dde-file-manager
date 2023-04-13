@@ -5,7 +5,7 @@
 #ifndef VAULTCONFIGOPERATOR_H
 #define VAULTCONFIGOPERATOR_H
 
-#include "dfmplugin_utils_global.h"
+#include "serverplugin_vaultdaemon_global.h"
 
 #include <QVariant>
 
@@ -13,7 +13,8 @@ QT_BEGIN_NAMESPACE
 class QSettings;
 QT_END_NAMESPACE
 
-namespace dfmplugin_utils {
+SERVERVAULT_BEGIN_NAMESPACE
+
 inline constexpr char kConfigNodeName[] { "INFO" };
 inline constexpr char kConfigKeyEncryptionMethod[] { "encryption_method" };
 inline constexpr char kConfigValueMethodKey[] { "key_encryption" };
@@ -34,6 +35,6 @@ private:
     QString currentFilePath;
     QSettings *setting;
 };
+SERVERVAULT_END_NAMESPACE
 
-}
 #endif // VAULTCONFIGOPERATOR_H

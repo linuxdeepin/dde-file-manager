@@ -6,7 +6,6 @@
 
 #include "devicemanageradaptor.h"
 #include "operationsstackmanageradaptor.h"
-#include "vaultmanageradaptor.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
@@ -67,10 +66,6 @@ void Core::initServiceDBusInterfaces(QDBusConnection *connection)
         initOperationsDBus(connection);
         qInfo() << "Init DBus OperationsStackManager end";
 
-        qInfo() << "Init DBus VaultManager start";
-        initVaultDBus(connection);
-        qInfo() << "Init DBus VaultManager end";
-
         qInfo() << "Init DBus DeviceManager start";
         initDeviceDBus(connection);
         qInfo() << "Init DBus DeviceManager end";
@@ -98,18 +93,6 @@ void Core::initOperationsDBus(QDBusConnection *connection)
                                     operationsStackManager.data())) {
         qWarning("Cannot register the \"/org/deepin/filemanager/server/OperationsStackManager\" object.\n");
         operationsStackManager.reset(nullptr);
-    }
-}
-
-void Core::initVaultDBus(QDBusConnection *connection)
-{
-    // register object
-    vaultManager.reset(new VaultManagerDBus);
-    Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
-    if (!connection->registerObject("/org/deepin/filemanager/server/VaultManager",
-                                    vaultManager.data())) {
-        qWarning("Cannot register the \"/org/deepin/filemanager/server/VaultManager\" object.\n");
-        vaultManager.reset(nullptr);
     }
 }
 

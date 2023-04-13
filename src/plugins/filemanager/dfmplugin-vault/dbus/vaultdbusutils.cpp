@@ -27,7 +27,6 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
         if (vaule.isNull()) {
             QDBusPendingCall call = sessionManagerIface.asyncCall(function);
             call.waitForFinished();
-            qInfo() << call.error().message();
             if (!call.isError()) {
                 QDBusReply<quint64> reply = call.reply();
                 value = QVariant::fromValue(reply.value());

@@ -3,13 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultconfigoperator.h"
-#include "vaulthelper_global.h"
 
 #include <dfm-io/dfmio_utils.h>
 
 #include <QSettings>
 
-DPUTILS_USE_NAMESPACE
+SERVERVAULT_USE_NAMESPACE
 
 VaultConfigOperator::VaultConfigOperator(const QString &filePath)
     : currentFilePath(filePath)
