@@ -60,9 +60,8 @@ void SearchHistroyManager::clearHistory(const QStringList &schemeFilters)
         QStringList historyList = DFMApplication::appObtuselySetting()->value("Cache", "SearchHistroy").toStringList();
         for (const QString &data : historyList) {
             QUrl url(data);
-            if (url.isValid() && schemeFilters.startsWith(url.scheme()))
-                historyList.removeOne(data);
-
+            if (url.isValid() && schemeFilters.contains(url.scheme() + "://"))
+                historyList.removeAll(data);
         }
         DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", historyList);
     }
