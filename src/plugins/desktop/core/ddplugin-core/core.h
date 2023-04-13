@@ -58,11 +58,15 @@ class Core : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "core.json")
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
+
+    void connectToServer();
     Q_INVOKABLE void loadLazyPlugins();
+
 protected slots:
     void onStart();
     void onFrameReady();
