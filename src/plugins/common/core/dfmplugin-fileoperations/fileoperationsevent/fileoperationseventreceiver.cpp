@@ -361,7 +361,7 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
     }
 
     // Delete local file with shift+delete, show a confirm dialog.
-    if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
         return nullptr;
 
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
