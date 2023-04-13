@@ -34,6 +34,7 @@
 #include <poppler/cpp/poppler-page-renderer.h>
 
 constexpr char kFormat[] { ".png" };
+constexpr char cacheDirSign[] { ".thumbnailCacheDir" };
 
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
@@ -242,17 +243,16 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     if (!fileInfo)
         return QString();
 
-    const QString &absolutePath = fileInfo->pathOf(PathInfoType::kPath);
-    const QString &absoluteFilePath = fileInfo->pathOf(PathInfoType::kFilePath);
+    const QString &DirPath = fileInfo->pathOf(PathInfoType::kPath);
+    const QString &filePath = fileInfo->pathOf(PathInfoType::kFilePath);
 
-    if (absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
-        || absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)
-        || absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kLarge)
-        || absolutePath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
-        return absoluteFilePath;
+    // 目录下存在signFile，说明是缓存目录
+    // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
+    if (QFile::exists(QDir(DirPath).absoluteFilePath(cacheDirSign))) {
+        return filePath;
     }
 
-    const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded)).toLocal8Bit()) + kFormat;
+    const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded)).toLocal8Bit()) + kFormat;
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
     if (!DFMIO::DFile(thumbnail).exists()) {
         return QString();
@@ -295,10 +295,9 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
     const QString &DirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
 
-    if (DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
-        || DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)
-        || DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kLarge)
-        || DirPath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
+    // 目录下存在signFile，说明是缓存目录
+    // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
+    if (QFile::exists(QDir(DirPath).absoluteFilePath(cacheDirSign))) {
         return filePath;
     }
 
@@ -353,6 +352,15 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 
     // create path
     QFileInfo(thumbnail).absoluteDir().mkpath(".");
+
+    // 当前缓存文件夹下不存在signFile，则生成
+    const QString signFilePath = QFileInfo(thumbnail).absoluteDir().absoluteFilePath(cacheDirSign);
+    if (!QFile::exists(signFilePath)) {
+        QFile signFile(signFilePath);
+        if(!signFile.open(QIODevice::WriteOnly)) {
+            signFile.close();
+        }
+    }
 
     if (!image->save(thumbnail, Q_NULLPTR, 50)) {
         d->errorString = QStringLiteral("Can not save image to ") + thumbnail;
