@@ -21,6 +21,8 @@
 
 #include <dfm-io/dfmio_utils.h>
 
+#include <QDBusInterface>
+
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
 
@@ -60,10 +62,7 @@ void ddplugin_core::Core::initialize()
 
 bool ddplugin_core::Core::start()
 {
-    if (!DevProxyMng->connectToService()) {
-        qCritical() << "device manager cannot connect to server!";
-        DevMngIns->startMonitor();
-    }
+    connectToServer();
 
     // 手动初始化application
     app = new DFMBASE_NAMESPACE::Application();
@@ -79,6 +78,21 @@ void ddplugin_core::Core::stop()
 
     delete app;
     app = nullptr;
+}
+
+void Core::connectToServer()
+{
+    // active server
+    QDBusInterface ifs("org.deepin.filemanager.server",
+                       "/org/deepin/filemanager/server");
+    ifs.setTimeout(1000);
+    ifs.call("Ping");
+
+    if (!DevProxyMng->initService()) {
+        qCritical() << "device manager cannot connect to server!";
+        DevMngIns->startMonitor();
+    }
+    qInfo() << "connectToServer finished";
 }
 
 void Core::onStart()

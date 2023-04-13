@@ -45,7 +45,7 @@ public:
     void detachAllDevices();
     void reloadOpticalInfo(const QString &id);
 
-    bool connectToService();
+    bool initService();
     bool isMonitorWorking();
     bool isDBusRuning();
 
