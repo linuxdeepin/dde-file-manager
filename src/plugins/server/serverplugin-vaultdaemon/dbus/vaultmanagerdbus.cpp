@@ -34,10 +34,6 @@ VaultManagerDBus::VaultManagerDBus(QObject *parent)
 
     UniversalUtils::userChange(this, SLOT(SysUserChanged(QString)));
     UniversalUtils::prepareForSleep(this, SLOT(computerSleep(bool)));
-
-    // TODO: cannot access
-    dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_ConnectLockScreenDBus");
-    dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_TransparentUnlockVault");
 }
 
 void VaultManagerDBus::SysUserChanged(const QString &curUser)

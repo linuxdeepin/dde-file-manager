@@ -21,6 +21,12 @@
 #include <QtGlobal>
 #include <QProcess>
 
+#undef signals
+extern "C" {
+#include <libsecret/secret.h>
+}
+#define signals public
+
 using namespace dfmplugin_vault;
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent), strCryfsPassword(""), strUserKey(""), standOutput("")
@@ -567,10 +573,67 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
 
 bool OperatorCenter::savePasswordToKeyring(const QString &password)
 {
-    return dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_SavePasswordToKeyring", password).toBool();
+    qInfo() << "Vault: start store password to keyring!";
+
+    GError *error = Q_NULLPTR;
+    SecretService *service = Q_NULLPTR;
+    QByteArray baPassword = password.toLatin1();
+    const char *cPassword = baPassword.data();
+    // Create a password struceture
+    SecretValue *value = secret_value_new_full(g_strdup(cPassword), strlen(cPassword), "text/plain", (GDestroyNotify)secret_password_free);
+    // Obtain password service synchronously
+    service = secret_service_get_sync(SECRET_SERVICE_NONE, Q_NULLPTR, &error);
+    if (error == Q_NULLPTR) {
+        GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+        // Get the currently logged in user information
+        char *userName = getlogin();
+        qInfo() << "Get user name : " << QString(userName);
+        g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
+        g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
+        secret_service_store_sync(service, Q_NULLPTR, attributes, Q_NULLPTR, "uos cryfs password", value, Q_NULLPTR, &error);
+    }
+    secret_value_unref(value);
+    g_object_unref(value);
+
+    if (error != Q_NULLPTR) {
+        qWarning() << "Vault: Store password failed! error :" << QString(error->message);
+        return false;
+    }
+
+    qInfo() << "Vault: Store password end!";
+
+    return true;
 }
 
 QString OperatorCenter::passwordFromKeyring()
 {
-    return dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_PasswordFromKeyring").toString();
+    qInfo() << "Vault: Read password start!";
+
+    QString result { "" };
+
+    GError *error = Q_NULLPTR;
+    SecretService *service = Q_NULLPTR;
+    char *userName = getlogin();
+    qInfo() << "Vault: Get user name : " << QString(userName);
+    GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+    g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
+    g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
+
+    service = secret_service_get_sync(SECRET_SERVICE_NONE, Q_NULLPTR, &error);
+
+    SecretValue *value_read = secret_service_lookup_sync(service, Q_NULLPTR, attributes, Q_NULLPTR, &error);
+    gsize length;
+    const gchar *passwd = secret_value_get(value_read, &length);
+    if (length > 0) {
+        qInfo() << "Vault: Read password not empty!";
+        result = QString(passwd);
+    }
+
+    secret_value_unref(value_read);
+    g_hash_table_unref(attributes);
+    g_object_unref(service);
+
+    qWarning() << "Vault: Read password end!";
+
+    return result;
 }

@@ -9,7 +9,6 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     "${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml"
-    "${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml"
     "${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml"
     )
 # TODO: tag manager
@@ -27,16 +26,6 @@ qt5_generate_dbus_interface(
 
 qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
     devicemanagerdbus.h DeviceManagerDBus)
-
-# DBus: VaultManager
-qt5_generate_dbus_interface(
-    vaultmanagerdbus.h
-    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
-    OPTIONS -M -S
-)
-
-qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
-    vaultmanagerdbus.h VaultManagerDBus)
 
 # DBus: OperationsStackManager
 qt5_generate_dbus_interface(

@@ -2,27 +2,22 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vaultassitcontrol.h"
-#include "vaulthelper_global.h"
+#include "vaulthelper.h"
 
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
 #include <QDebug>
 
-DPUTILS_USE_NAMESPACE
+SERVERVAULT_USE_NAMESPACE
 
-VaultAssitControl::VaultAssitControl(QObject *parent) : QObject(parent)
+VaultHelper *VaultHelper::instance()
 {
-}
-
-VaultAssitControl *VaultAssitControl::instance()
-{
-    static VaultAssitControl ins;
+    static VaultHelper ins;
     return &ins;
 }
 
-bool VaultAssitControl::isVaultFile(const QUrl &url)
+bool VaultHelper::isVaultFile(const QUrl &url)
 {
     if (url.scheme() == scheme()
             || url.path().startsWith(vaultMountDirLocalPath())) {
@@ -32,27 +27,27 @@ bool VaultAssitControl::isVaultFile(const QUrl &url)
     return false;
 }
 
-QString VaultAssitControl::vaultBaseDirLocalPath()
+QString VaultHelper::vaultBaseDirLocalPath()
 {
     return buildVaultLocalPath("", kVaultBaseDirName);
 }
 
-QString VaultAssitControl::vaultMountDirLocalPath()
+QString VaultHelper::vaultMountDirLocalPath()
 {
     return buildVaultLocalPath("", kVaultMountDirName);
 }
 
-QString VaultAssitControl::buildVaultLocalPath(const QString &path, const QString &base)
+QString VaultHelper::buildVaultLocalPath(const QString &path, const QString &base)
 {
     if (base.isEmpty()) {
         return DFMIO::DFMUtils::buildFilePath(kVaultConfigPath.toStdString().c_str(), QString(kVaultMountDirName).toStdString().c_str(),
-                                              path.toStdString().c_str(), Q_NULLPTR);
+                                              path.toStdString().c_str(), nullptr);
     }
     return DFMIO::DFMUtils::buildFilePath(kVaultConfigPath.toStdString().c_str(), base.toStdString().c_str(),
-                                          path.toStdString().c_str(), Q_NULLPTR);
+                                          path.toStdString().c_str(), nullptr);
 }
 
-QUrl VaultAssitControl::vaultUrlToLocalUrl(const QUrl &url)
+QUrl VaultHelper::vaultUrlToLocalUrl(const QUrl &url)
 {
     if (url.scheme() != scheme()) {
         qWarning() << "No vault url, can't change to local url!";
@@ -66,7 +61,7 @@ QUrl VaultAssitControl::vaultUrlToLocalUrl(const QUrl &url)
     }
 }
 
-QList<QUrl> VaultAssitControl::transUrlsToLocal(const QList<QUrl> &urls)
+QList<QUrl> VaultHelper::transUrlsToLocal(const QList<QUrl> &urls)
 {
     QList<QUrl> urlsTrans {};
 
@@ -81,4 +76,8 @@ QList<QUrl> VaultAssitControl::transUrlsToLocal(const QList<QUrl> &urls)
     }
 
     return urlsTrans;
+}
+
+VaultHelper::VaultHelper(QObject *parent) : QObject(parent)
+{
 }

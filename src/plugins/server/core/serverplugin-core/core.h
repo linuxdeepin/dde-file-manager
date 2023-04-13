@@ -12,7 +12,6 @@
 class QDBusConnection;
 class DeviceManagerDBus;
 class OperationsStackManagerDbus;
-class VaultManagerDBus;
 
 SERVERPCORE_BEGIN_NAMESPACE
 
@@ -29,12 +28,10 @@ private:
     void initServiceDBusInterfaces(QDBusConnection *connection);
     void initDeviceDBus(QDBusConnection *connection);
     void initOperationsDBus(QDBusConnection *connection);
-    void initVaultDBus(QDBusConnection *connection);
 
 private:
     QScopedPointer<DeviceManagerDBus> deviceManager;
     QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
-    QScopedPointer<VaultManagerDBus> vaultManager;
 };
 
 SERVERPCORE_END_NAMESPACE

@@ -19,12 +19,4 @@ inline constexpr char kGroupPolicyKeyVaultAlgoName[] { "dfm.vault.algo.name" };
 inline constexpr char kVaultTimeConfigFilePath[] { "/../dde-file-manager/vaultTimeConfig" };
 }
 
-#ifdef COMPILE_ON_V23
-#    define APP_SESSION_SERVICE "org.deepin.dde.SessionManager1"
-#    define APP_SESSION_PATH "/org/deepin/dde/SessionManager1"
-#else
-#    define APP_SESSION_SERVICE "com.deepin.SessionManager"
-#    define APP_SESSION_PATH "/com/deepin/SessionManager"
-#endif
-
 #endif   // VAULTHELPER_GLOBAL_H

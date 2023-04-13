@@ -11,18 +11,9 @@
 #include <dfm-framework/dpf.h>
 
 namespace dfmplugin_utils {
-
-
-
 class VirtualVaultHelperPlugin : public dpf::Plugin
 {
     Q_OBJECT
-    DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
-
-    DPF_EVENT_REG_SLOT(slot_VaultHelper_ConnectLockScreenDBus)
-    DPF_EVENT_REG_SLOT(slot_VaultHelper_TransparentUnlockVault)
-    DPF_EVENT_REG_SLOT(slot_VaultHelper_PasswordFromKeyring)
-    DPF_EVENT_REG_SLOT(slot_VaultHelper_SavePasswordToKeyring)
 
 public:
     virtual void initialize() override;
