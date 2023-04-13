@@ -22,6 +22,7 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
+    void connectToServer();
 
 private slots:
     void onAllPluginsInitialized();
