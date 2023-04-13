@@ -44,6 +44,11 @@ bool Core::start()
 
     initServiceDBusInterfaces(&connection);
 
+    if (!DevProxyMng->initService()) {
+        qCritical() << "device manager cannot connect to server!";
+        DevMngIns->startMonitor();
+    }
+
     return true;
 }
 
