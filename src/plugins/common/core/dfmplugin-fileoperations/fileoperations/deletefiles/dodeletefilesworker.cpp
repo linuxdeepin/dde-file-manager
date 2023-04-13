@@ -179,7 +179,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
     while (iterator->hasNext()) {
         const QUrl &url = iterator->next();
 
-        const auto &info = iterator->fileInfo();
+        const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);;
         if (!info) {
             // pause and emit error msg
             if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction)
