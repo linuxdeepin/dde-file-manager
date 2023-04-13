@@ -64,7 +64,7 @@ bool Core::start()
     GlobalPrivate::kDFMApp = new Application;   // must create it
 
     // mount business
-    if (!DevProxyMng->connectToService()) {
+    if (!DevProxyMng->initService()) {
         qCritical() << "device manager cannot connect to service!";
         DevMngIns->startMonitor();
         DevMngIns->startPollingDeviceUsage();

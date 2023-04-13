@@ -114,7 +114,7 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
         DevMngIns->getBlockDevInfo(id, true);
 }
 
-bool DeviceProxyManager::connectToService()
+bool DeviceProxyManager::initService()
 {
     qInfo() << "Start initilize dbus: `DeviceManagerInterface`";
     d->devMngDBus.reset(new DeviceManagerInterface(kDesktopService, kDevMngPath, QDBusConnection::sessionBus(), this));
