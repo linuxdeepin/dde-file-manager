@@ -562,8 +562,8 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
-    const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
-    if (WorkspaceEventSequence::instance()->doPaintIconItemText(url, labelRect, painter, layout.data()))
+    const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
+    if (WorkspaceEventSequence::instance()->doPaintIconItemText(info, labelRect, painter, layout.data()))
         return;
 
     layout->layout(labelRect, opt.textElideMode, painter, background);

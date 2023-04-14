@@ -155,7 +155,9 @@ TEST_F(UT_TagDBus, CanTagFile)
 {
     stub_ext::StubExt stub;
     bool in = false;
-    stub.set_lamda(&TagManager::canTagFile, [&in] {
+
+
+    stub.set_lamda((bool(TagManager::*)(const QUrl&) const)ADDR(TagManager, canTagFile), [&in]() {
         in = true;
         return in;
     });

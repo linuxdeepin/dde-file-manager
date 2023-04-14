@@ -7,7 +7,6 @@
 #include "utils/emblemhelper.h"
 #include "events/emblemeventsequence.h"
 
-#include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <QPainter>
@@ -28,7 +27,7 @@ EmblemManager *EmblemManager::instance()
     return &ins;
 }
 
-bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, QRectF *paintArea)
+bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter *painter, QRectF *paintArea)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     Q_ASSERT(painter);
@@ -36,16 +35,17 @@ bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, Q
 
     painter->setRenderHints(QPainter::SmoothPixmapTransform);
 
-    if (role != kItemIconRole || !url.isValid())
+    if (role != kItemIconRole || info.isNull())
         return false;
 
     // add system emblem icons
-    QList<QIcon> emblems { helper->systemEmblems(url) };
+    QList<QIcon> emblems { helper->systemEmblems(info) };
 
     //  only paitn system emblem icons if url is prohibited
+    const QUrl &url = info->urlOf(UrlInfoType::kUrl);
     if (!helper->isExtEmblemProhibited(url)) {
         // add gio embelm icons
-        helper->pending(url);
+        helper->pending(info);
         emblems.append(helper->gioEmblemIcons(url));
 
         // add custom emblem icons

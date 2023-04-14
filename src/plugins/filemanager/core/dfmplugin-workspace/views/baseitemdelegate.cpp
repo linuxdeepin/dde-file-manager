@@ -51,8 +51,8 @@ QList<QRectF> BaseItemDelegate::getCornerGeometryList(const QRectF &baseRect, co
 
 void BaseItemDelegate::paintEmblems(QPainter *painter, const QRectF &iconRect, const QModelIndex &index) const
 {
-    const QUrl &url = parent()->parent()->model()->data(index, DFMGLOBAL_NAMESPACE::ItemRoles::kItemUrlRole).toUrl();
-    WorkspaceEventCaller::sendPaintEmblems(painter, iconRect, url);
+    const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
+    WorkspaceEventCaller::sendPaintEmblems(painter, iconRect, info);
 }
 
 BaseItemDelegate::~BaseItemDelegate()

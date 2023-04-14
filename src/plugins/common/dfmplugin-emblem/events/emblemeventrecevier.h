@@ -6,6 +6,7 @@
 #define EMBLEMEVENTRECEVIER_H
 
 #include "dfmplugin_emblem_global.h"
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 #include <QPainter>
@@ -19,7 +20,7 @@ class EmblemEventRecevier : public QObject
 public:
     static EmblemEventRecevier *instance();
 
-    bool handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
+    bool handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const FileInfoPointer &info);
 
     void initializeConnections() const;
 

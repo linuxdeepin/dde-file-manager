@@ -8,6 +8,7 @@
 #include "dfmplugin_tag_global.h"
 
 #include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
 #include <QPainter>
@@ -35,9 +36,10 @@ public:
     static QUrl rootUrl();
 
     bool canTagFile(const QUrl &url) const;
+    bool canTagFile(const FileInfoPointer &info) const;
     bool pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
-    bool paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
-    bool paintIconTagsHandle(const QUrl &url, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout);
+    bool paintListTagsHandle(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect);
+    bool paintIconTagsHandle(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout);
     bool fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
@@ -84,7 +86,7 @@ private:
 
     QMap<QString, QString> getTagsColorName(const QStringList &tags) const;
     bool deleteTagData(const QStringList &data, const TagActionType &type);
-    bool localFileCanTagFilter(const QUrl &url) const;
+    bool localFileCanTagFilter(const FileInfoPointer &info) const;
     QVariant transformQueryData(const QDBusVariant &var) const;
 
 private:
