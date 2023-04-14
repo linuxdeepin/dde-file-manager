@@ -19,7 +19,7 @@ public:
     ~VaultClock();
     static QString vaultBasePath();
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief setRefreshTime 设置保险箱刷新时间
      * @param time
@@ -60,7 +60,7 @@ public slots:
      */
     void addTickTime(qint64 seconds);
 
-protected slots:
+protected Q_SLOTS:
     /**
      * @brief tick 秒针
      */

@@ -21,11 +21,9 @@
 #include <QFile>
 #include <QDateTime>
 
-#undef signals
 extern "C" {
 #include <libsecret/secret.h>
 }
-#define signals public
 
 inline constexpr int kArgumentsNum { 3 };
 
@@ -71,7 +69,7 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
 
     QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
     QStringList keys = changedProps.keys();
-    foreach (const QString &prop, keys) {
+    Q_FOREACH (const QString &prop, keys) {
         if (prop == "Locked") {
             bool isLocked = changedProps[prop].toBool();
             if (!isLocked) {

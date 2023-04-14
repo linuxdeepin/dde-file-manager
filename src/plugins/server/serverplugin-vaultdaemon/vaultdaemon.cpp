@@ -47,7 +47,7 @@ bool VaultDaemon::start()
 {
     VaultControl::instance()->connectLockScreenDBus();
     VaultControl::instance()->transparentUnlockVault();
-    emit requesLaunch();
+    Q_EMIT requesLaunch();
     return true;
 }
 

@@ -28,7 +28,7 @@ public:
 
     virtual void stop();
 
-signals:
+Q_SIGNALS:
     void asyncStopFinished();
 };
 
