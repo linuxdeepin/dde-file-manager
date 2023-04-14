@@ -20,12 +20,13 @@ DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
-void GioEmblemWorker::onProduce(const QUrl &url)
+void GioEmblemWorker::onProduce(const FileInfoPointer &info)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
 
-    const auto &emblems { fetchEmblems(url) };
+    const auto &emblems { fetchEmblems(info) };
 
+    const QUrl &url = info->urlOf(UrlInfoType::kUrl);
     if (cache.contains(url)) {
         const auto &old { cache.value(url) };
         if (!iconNamesEqual(old, emblems)) {
@@ -43,9 +44,8 @@ void GioEmblemWorker::onClear()
     cache.clear();
 }
 
-QList<QIcon> GioEmblemWorker::fetchEmblems(const QUrl &url) const
+QList<QIcon> GioEmblemWorker::fetchEmblems(const FileInfoPointer &info) const
 {
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info)
         return {};
 
@@ -79,11 +79,9 @@ QMap<int, QIcon> GioEmblemWorker::getGioEmblems(const FileInfoPointer &info) con
 {
     QMap<int, QIcon> emblemsMap;
 
-    // use AbstractFileInfo to access emblems, avoid query again
-    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(info->urlOf(UrlInfoType::kUrl));
-    if (!fileInfo)
+    if (!info)
         return {};
-    const QStringList &emblemData = fileInfo->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
+    const QStringList &emblemData = info->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
 
     if (emblemData.isEmpty())
         return emblemsMap;
@@ -203,9 +201,8 @@ EmblemHelper::~EmblemHelper()
     workerThread.wait();
 }
 
-QList<QIcon> EmblemHelper::systemEmblems(const QUrl &url) const
+QList<QIcon> EmblemHelper::systemEmblems(const FileInfoPointer &info) const
 {
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info)
         return {};
 
@@ -255,9 +252,9 @@ QList<QIcon> EmblemHelper::gioEmblemIcons(const QUrl &url) const
     return {};
 }
 
-void EmblemHelper::pending(const QUrl &url)
+void EmblemHelper::pending(const FileInfoPointer &info)
 {
-    emit requestProduce(url);
+    emit requestProduce(info);
 }
 
 bool EmblemHelper::isExtEmblemProhibited(const QUrl &url)

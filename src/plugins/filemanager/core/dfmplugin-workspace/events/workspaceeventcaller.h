@@ -9,6 +9,7 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QObject>
 #include <QPainter>
@@ -32,7 +33,7 @@ public:
     static void sendTabRemoved(const quint64 windowID, const int index);
     static void sendShowCustomTopWidget(const quint64 windowId, const QString &scheme, bool visible);
 
-    static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
+    static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const FileInfoPointer &info);
 
     static void sendViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
 

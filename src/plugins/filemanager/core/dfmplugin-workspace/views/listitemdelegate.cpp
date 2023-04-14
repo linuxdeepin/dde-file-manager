@@ -423,9 +423,6 @@ QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
-    const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
-    WorkspaceEventSequence::instance()->doPaintListItem(kItemIconRole, url, painter, &iconRect);
-
     paintEmblems(painter, iconRect, index);
 
     return iconRect;
@@ -475,9 +472,8 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
 
-        const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
-
-        if (WorkspaceEventSequence::instance()->doPaintListItem(rol, url, painter, &columnRect))
+        const FileInfoPointer& info = parent()->parent()->model()->fileInfo(index);
+        if (WorkspaceEventSequence::instance()->doPaintListItem(rol, info, painter, &columnRect))
             continue;
 
         QPalette::ColorGroup cGroup = QPalette::Inactive;
@@ -487,6 +483,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         textRect.setHeight(d->textLineHeight);
         textRect.moveTop(((columnRect.height() - textRect.height()) / 2) + columnRect.top());
 
+        const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
         if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
             paintFileName(painter, opt, index, rol, textRect, d->textLineHeight, url);
         } else {

@@ -147,7 +147,7 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
                   (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   // why Enabled?
 
         // paint emblems to icon
-        paintEmblems(painter, rIcon, parent()->model()->fileUrl(index));
+        paintEmblems(painter, rIcon, parent()->model()->fileInfo(index));
 
         // do not draw text if index is in editing,
         if (!parent()->isPersistentEditorOpen(index)) {
@@ -426,7 +426,7 @@ void CollectionItemDelegate::drawNormlText(QPainter *painter, const QStyleOption
         QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, &p));
 
         // extend layout paint
-        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileUrl(index), rText, painter, layout.data()))
+        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rText, painter, layout.data()))
             return;
 
         // elide and draw
@@ -471,7 +471,7 @@ void CollectionItemDelegate::drawHighlightText(QPainter *painter, const QStyleOp
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
         // extend layout paint
-        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileUrl(index), rText, painter, layout.data()))
+        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rText, painter, layout.data()))
             return;
 
         // elide and draw
@@ -491,7 +491,7 @@ void CollectionItemDelegate::drawExpandText(QPainter *painter, const QStyleOptio
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
     // extend layout paint
-    if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileUrl(index), rect, painter, layout.data()))
+    if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rect, painter, layout.data()))
         return;
 
     // elide and draw
@@ -771,10 +771,10 @@ QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
     return QRect(qRound(x), qRound(y), w, h);
 }
 
-QRectF CollectionItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
+QRectF CollectionItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info)
 {
     // todo(zy) uing extend painter by registering.
-    if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, url).toBool()) {
+    if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {
             qWarning() << "publish `kPaintEmblems` event failed!";

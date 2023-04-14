@@ -92,8 +92,10 @@ bool TagManager::canTagFile(const QUrl &url) const
         }
     }
 
-    if (!localUrl.isEmpty() && localUrl.scheme() == Global::Scheme::kFile)
-        return localFileCanTagFilter(localUrl);
+    if (!localUrl.isEmpty() && localUrl.scheme() == Global::Scheme::kFile) {
+        auto info = InfoFactory::create<FileInfo>(localUrl);
+        return localFileCanTagFilter(info);
+    }
 
     if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
         return true;
@@ -101,15 +103,30 @@ bool TagManager::canTagFile(const QUrl &url) const
     return false;
 }
 
-bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect)
+bool TagManager::canTagFile(const FileInfoPointer &info) const
 {
-    if (!canTagFile(url.toString()))
+    if (info.isNull())
+        return false;
+
+    bool canTag = localFileCanTagFilter(info);
+    if (!canTag) {
+        const QUrl& url = info->urlOf(UrlInfoType::kUrl);
+        if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
+            return true;
+    }
+
+    return canTag;
+}
+
+bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect)
+{
+    if (!canTagFile(info))
         return false;
 
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
         return false;
 
-    const auto &tags = FileTagCacheController::instance().getCacheFileTags(url.path());
+    const auto &tags = FileTagCacheController::instance().getCacheFileTags(info->pathOf(PathInfoType::kFilePath));
     if (tags.isEmpty())
         return false;
 
@@ -127,15 +144,15 @@ bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painte
     return false;
 }
 
-bool TagManager::paintIconTagsHandle(const QUrl &url, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
+bool TagManager::paintIconTagsHandle(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
 {
     Q_UNUSED(rect)
     Q_UNUSED(painter)
 
-    if (!canTagFile(url.toString()))
+    if (!canTagFile(info))
         return false;
 
-    const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(url.path());
+    const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(info->pathOf(PathInfoType::kFilePath));
     if (fileTags.isEmpty())
         return false;
 
@@ -477,26 +494,26 @@ bool TagManager::deleteTagData(const QStringList &data, const TagActionType &typ
     return ret;
 }
 
-bool TagManager::localFileCanTagFilter(const QUrl &url) const
+bool TagManager::localFileCanTagFilter(const FileInfoPointer &info) const
 {
-    auto &&fileInfo { InfoFactory::create<FileInfo>(url) };
-    if (!fileInfo)
+    if (info.isNull())
         return false;
 
-    if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
+    const QUrl &url = info->urlOf(UrlInfoType::kRedirectedFileUrl);
+    if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(UrlRoute::urlParent(url).toLocalFile()))
         return false;
 
-    const QString filePath { fileInfo->pathOf(FileInfo::FilePathInfoType::kFilePath) };
+    const QString filePath { url.path() };
     const QString &compressPath { QDir::homePath() + "/.avfs/" };
     if (filePath.startsWith(compressPath))
         return false;
 
-    const QString &parentPath { fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl).path() };
+    const QString &parentPath { UrlRoute::urlParent(filePath).path() };
     if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
         return false;
 
     if (FileUtils::isDesktopFile(url)) {
-        auto desktopInfo { dynamic_cast<DesktopFileInfo *>(fileInfo.data()) };
+        auto desktopInfo { dynamic_cast<DesktopFileInfo *>(info.data()) };
         if (desktopInfo)
             return desktopInfo->canTag();
     }

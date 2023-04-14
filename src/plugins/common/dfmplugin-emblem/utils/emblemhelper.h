@@ -23,10 +23,10 @@ class GioEmblemWorker : public QObject
     Q_OBJECT
 
 public:
-    QList<QIcon> fetchEmblems(const QUrl &url) const;
+    QList<QIcon> fetchEmblems(const FileInfoPointer &info) const;
 
 public Q_SLOTS:
-    void onProduce(const QUrl &url);
+    void onProduce(const FileInfoPointer &info);
     void onClear();
 
 Q_SIGNALS:
@@ -53,14 +53,14 @@ public:
     inline bool hasEmblem(const QUrl &url) const { return productQueue.contains(url); }
     inline void clearEmblem() { productQueue.clear(); }
 
-    QList<QIcon> systemEmblems(const QUrl &url) const;
+    QList<QIcon> systemEmblems(const FileInfoPointer &info) const;
     QList<QRectF> emblemRects(const QRectF &paintArea) const;
     QList<QIcon> gioEmblemIcons(const QUrl &url) const;
-    void pending(const QUrl &url);
+    void pending(const FileInfoPointer &info);
     bool isExtEmblemProhibited(const QUrl &url);
 
 Q_SIGNALS:
-    void requestProduce(const QUrl &url);
+    void requestProduce(const FileInfoPointer &info);
     void requestClear();
 
 private Q_SLOTS:

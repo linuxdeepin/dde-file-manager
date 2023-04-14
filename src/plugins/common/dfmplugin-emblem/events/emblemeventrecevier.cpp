@@ -23,11 +23,11 @@ EmblemEventRecevier *EmblemEventRecevier::instance()
     return &ins;
 }
 
-bool EmblemEventRecevier::handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
+bool EmblemEventRecevier::handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const FileInfoPointer &info)
 {
     int role = kItemIconRole;
     QRectF rect = paintArea;
-    return EmblemManager::instance()->paintEmblems(role, url, painter, &rect);
+    return EmblemManager::instance()->paintEmblems(role, info, painter, &rect);
 }
 
 void EmblemEventRecevier::initializeConnections() const

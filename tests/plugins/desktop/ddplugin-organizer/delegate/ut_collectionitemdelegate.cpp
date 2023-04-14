@@ -9,6 +9,7 @@
 #include "models/collectionmodel.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -83,7 +84,8 @@ TEST_F(CollectionItemDelegateTest, paintEmblems)
     QPainter p;
     QRectF r(10, 10, 10, 10);
     QUrl url = QUrl::fromLocalFile("/usr");
-    CollectionItemDelegate::paintEmblems(&p, r, url);
+    FileInfoPointer info = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(url);
+    CollectionItemDelegate::paintEmblems(&p, r, info);
 
     EXPECT_EQ(inspace, QString("dfmplugin_emblem"));
     EXPECT_EQ(intopic, QString("slot_FileEmblems_Paint"));
