@@ -10,6 +10,7 @@
 #include "mode/collectiondataprovider.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/mimedata/dfmmimedata.h>
 
 #include <QAtomicInteger>
 #include <QTimer>
@@ -70,6 +71,9 @@ public:
     void showFilesProperty();
     bool continuousSelection(QEvent *event, QPersistentModelIndex &newCurrent) const;
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
+
+    void updateDFMMimeData(QDropEvent *event);
+    bool checkTargetEnable(const QUrl &targetUrl);
 
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);
@@ -135,6 +139,8 @@ public:
 
     QString searchKeys;
     QTimer *searchTimer = nullptr;
+
+    DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };
 
 }

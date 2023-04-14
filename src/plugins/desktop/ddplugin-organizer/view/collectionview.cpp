@@ -988,6 +988,26 @@ QModelIndex CollectionViewPrivate::findIndex(const QString &key, bool matchStart
     return QModelIndex();
 }
 
+void CollectionViewPrivate::updateDFMMimeData(QDropEvent *event)
+{
+    dfmmimeData.clear();
+    const QMimeData *data = event->mimeData();
+
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
+        dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
+}
+
+bool CollectionViewPrivate::checkTargetEnable(const QUrl &targetUrl)
+{
+    if (!dfmmimeData.isValid())
+        return true;
+
+    if (FileUtils::isTrashDesktopFile(targetUrl))
+        return dfmmimeData.canTrash();
+
+    return true;
+}
+
 void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &itemHeight)
 {
     const int availableHeight = viewHeight - viewMargins.top() - viewMargins.bottom();
@@ -1977,6 +1997,7 @@ void CollectionView::dragEnterEvent(QDragEnterEvent *event)
     if (d->checkProhibitPaths(event))
         return;
 
+    d->updateDFMMimeData(event);
     d->dropTargetUrl = model()->fileUrl(model()->rootIndex());
 
     if (d->checkClientMimeData(event))
@@ -1995,7 +2016,9 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     auto pos = event->pos();
     auto hoverIndex = indexAt(pos);
     auto currentUrl = hoverIndex.isValid() ? model()->fileUrl(hoverIndex) : model()->fileUrl(model()->rootIndex());
-    if (hoverIndex.isValid()) {
+    if (!d->checkTargetEnable(currentUrl)) {
+        event->ignore();
+    } else if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
             // hook
             {

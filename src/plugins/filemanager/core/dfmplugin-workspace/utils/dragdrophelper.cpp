@@ -13,6 +13,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/mimedata/dfmmimedata.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -32,12 +33,17 @@ DragDropHelper::DragDropHelper(FileView *parent)
 }
 
 bool DragDropHelper::dragEnter(QDragEnterEvent *event)
-{
+{    
+    dfmmimeData.clear();
     currentHoverIndexUrl = QUrl();
     const QMimeData *data = event->mimeData();
-    currentDragUrls = data->urls();
-    const auto &virtualUrls { UrlRoute::byteArrayToUrls(data->data(DFMGLOBAL_NAMESPACE::Mime::kSourceUrlsKey)) };
-    currentDragSourceUrls = virtualUrls.isEmpty() ? currentDragUrls : virtualUrls;
+    currentDragUrls = data->urls();    
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
+        dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
+    currentDragSourceUrls = dfmmimeData.isValid() ? dfmmimeData.urls() : currentDragUrls;
+
+    if (!checkTargetEnable(view->rootUrl()))
+        return true;
 
     // Filter the event that cannot be dragged
     if (checkProhibitPaths(event, currentDragUrls))
@@ -81,6 +87,12 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             return true;
 
         QUrl toUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
+        if (!checkTargetEnable(toUrl)) {
+            event->ignore();
+            currentHoverIndexUrl = toUrl;
+            return true;
+        }
+
         QList<QUrl> fromUrls = event->mimeData()->urls();
         Qt::DropAction dropAction = event->dropAction();
         if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
@@ -354,6 +366,17 @@ bool DragDropHelper::checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl
     }
 
     return false;
+}
+
+bool DragDropHelper::checkTargetEnable(const QUrl &targetUrl) const
+{
+    if (!dfmmimeData.isValid())
+        return true;
+
+    if (FileUtils::isTrashFile(targetUrl) || FileUtils::isTrashDesktopFile(targetUrl))
+        return dfmmimeData.canTrash();
+
+    return true;
 }
 
 Qt::DropAction DragDropHelper::checkAction(Qt::DropAction srcAction, bool sameUser)

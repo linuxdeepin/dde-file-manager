@@ -22,6 +22,7 @@
 #include "utils/fileoperatorhelper.h"
 #include "events/workspaceeventsequence.h"
 
+#include <dfm-base/mimedata/dfmmimedata.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/application/application.h>
@@ -1140,7 +1141,9 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         UniversalUtils::urlsTransform(data->urls(), &transformedUrls);
         qDebug() << "Drag source urls: " << data->urls();
         qDebug() << "Drag transformed urls: " << transformedUrls;
-        data->setData(DFMGLOBAL_NAMESPACE::Mime::kSourceUrlsKey, UrlRoute::urlsToByteArray(data->urls()));
+        DFMMimeData dfmmimeData;
+        dfmmimeData.setUrls(data->urls());
+        data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey, dfmmimeData.toByteArray());
         data->setUrls(transformedUrls);
 
         QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(currentViewMode(), indexes);
