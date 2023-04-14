@@ -34,7 +34,7 @@
 #include <poppler/cpp/poppler-page-renderer.h>
 
 constexpr char kFormat[] { ".png" };
-constexpr char cacheDirSign[] { ".thumbnailCacheDir" };
+constexpr char kCacheDirSign[] { ".thumbnailCacheDir" };
 
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
@@ -243,12 +243,12 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     if (!fileInfo)
         return QString();
 
-    const QString &DirPath = fileInfo->pathOf(PathInfoType::kPath);
+    const QString &dirPath = fileInfo->pathOf(PathInfoType::kPath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kFilePath);
 
     // 目录下存在signFile，说明是缓存目录
     // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    if (QFile::exists(QDir(DirPath).absoluteFilePath(cacheDirSign))) {
+    if (QFile::exists(QDir(dirPath).absoluteFilePath(kCacheDirSign))) {
         return filePath;
     }
 
@@ -292,12 +292,12 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 
     const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
 
-    const QString &DirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
+    const QString &dirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
 
     // 目录下存在signFile，说明是缓存目录
     // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    if (QFile::exists(QDir(DirPath).absoluteFilePath(cacheDirSign))) {
+    if (QFile::exists(QDir(dirPath).absoluteFilePath(kCacheDirSign))) {
         return filePath;
     }
 
@@ -354,7 +354,7 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
     QFileInfo(thumbnail).absoluteDir().mkpath(".");
 
     // 当前缓存文件夹下不存在signFile，则生成
-    const QString signFilePath = QFileInfo(thumbnail).absoluteDir().absoluteFilePath(cacheDirSign);
+    const QString signFilePath = QFileInfo(thumbnail).absoluteDir().absoluteFilePath(kCacheDirSign);
     if (!QFile::exists(signFilePath)) {
         QFile signFile(signFilePath);
         if(!signFile.open(QIODevice::WriteOnly)) {
