@@ -248,7 +248,7 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
 
     // 目录下存在signFile，说明是缓存目录
     // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    if (QFile::exists(QDir(dirPath).absoluteFilePath(kCacheDirSign))) {
+    if (DFMIO::DFile(QDir(dirPath).absoluteFilePath(kCacheDirSign)).exists()){
         return filePath;
     }
 
@@ -297,7 +297,7 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 
     // 目录下存在signFile，说明是缓存目录
     // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    if (QFile::exists(QDir(dirPath).absoluteFilePath(kCacheDirSign))) {
+    if (DFMIO::DFile(QDir(dirPath).absoluteFilePath(kCacheDirSign)).exists()) {
         return filePath;
     }
 
@@ -355,9 +355,9 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 
     // 当前缓存文件夹下不存在signFile，则生成
     const QString signFilePath = QFileInfo(thumbnail).absoluteDir().absoluteFilePath(kCacheDirSign);
-    if (!QFile::exists(signFilePath)) {
+    if (!DFMIO::DFile(signFilePath).exists()) {
         QFile signFile(signFilePath);
-        if(!signFile.open(QIODevice::WriteOnly)) {
+        if(signFile.open(QIODevice::WriteOnly)) {
             signFile.close();
         }
     }
@@ -661,7 +661,7 @@ void ThumbnailProvider::initThumnailTool()
                 const QStringList keys = document.object().toVariantMap().value("Keys").toStringList();
                 const QString &toolFilePath = fileInfo.absoluteDir().filePath(fileInfo.baseName());
 
-                if (!QFile::exists(toolFilePath)) {
+                if (!DFMIO::DFile(toolFilePath).exists()) {
                     continue;
                 }
 
