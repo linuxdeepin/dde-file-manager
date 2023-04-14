@@ -34,7 +34,6 @@
 #include <poppler/cpp/poppler-page-renderer.h>
 
 constexpr char kFormat[] { ".png" };
-constexpr char kCacheDirSign[] { ".thumbnailCacheDir" };
 
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
@@ -51,6 +50,7 @@ public:
     void init();
 
     QString sizeToFilePath(ThumbnailProvider::Size size) const;
+    uint64_t filePathToInode(QString filePath) const;
 
     ThumbnailProvider *q = nullptr;
     QString errorString;
@@ -103,6 +103,12 @@ QString ThumbnailProviderPrivate::sizeToFilePath(ThumbnailProvider::Size size) c
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailLargePath);
     }
     return "";
+}
+
+uint64_t ThumbnailProviderPrivate::filePathToInode(QString filePath) const
+{
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
+    return fileInfo->extendAttributes(FileInfo::FileExtendedInfoType::kInode).toULongLong();
 }
 
 bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
@@ -246,9 +252,13 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     const QString &dirPath = fileInfo->pathOf(PathInfoType::kPath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kFilePath);
 
-    // 目录下存在signFile，说明是缓存目录
+    // 判断目录inode值，是否为缓存目录
     // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    if (DFMIO::DFile(QDir(dirPath).absoluteFilePath(kCacheDirSign)).exists()){
+    uint64_t dirInode = d->filePathToInode(dirPath);
+    if (dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kSmall))
+        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kNormal))
+        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kLarge))
+        || dirInode == d->filePathToInode(StandardPaths::location(StandardPaths::kThumbnailFailPath))) {
         return filePath;
     }
 
@@ -295,9 +305,13 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
     const QString &dirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
 
-    // 目录下存在signFile，说明是缓存目录
+    // 判断目录inode值，是否为缓存目录
     // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    if (DFMIO::DFile(QDir(dirPath).absoluteFilePath(kCacheDirSign)).exists()) {
+    uint64_t dirInode = d->filePathToInode(dirPath);
+    if (dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kSmall))
+        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kNormal))
+        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kLarge))
+        || dirInode == d->filePathToInode(StandardPaths::location(StandardPaths::kThumbnailFailPath))) {
         return filePath;
     }
 
@@ -352,15 +366,6 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 
     // create path
     QFileInfo(thumbnail).absoluteDir().mkpath(".");
-
-    // 当前缓存文件夹下不存在signFile，则生成
-    const QString signFilePath = QFileInfo(thumbnail).absoluteDir().absoluteFilePath(kCacheDirSign);
-    if (!DFMIO::DFile(signFilePath).exists()) {
-        QFile signFile(signFilePath);
-        if(signFile.open(QIODevice::WriteOnly)) {
-            signFile.close();
-        }
-    }
 
     if (!image->save(thumbnail, Q_NULLPTR, 50)) {
         d->errorString = QStringLiteral("Can not save image to ") + thumbnail;
