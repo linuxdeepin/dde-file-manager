@@ -8,6 +8,8 @@
 #include <dfm-base/dfm_base_global.h>
 #include "dfmplugin_workspace_global.h"
 
+#include <dfm-base/mimedata/dfmmimedata.h>
+
 #include <QObject>
 #include <QSharedPointer>
 #include <QDragEnterEvent>
@@ -41,12 +43,14 @@ private:
     QSharedPointer<DFMBASE_NAMESPACE::FileInfo> fileInfoAtPos(const QPoint &pos);
 
     bool checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl> &urls) const;
+    bool checkTargetEnable(const QUrl &targetUrl) const;
     Qt::DropAction checkAction(Qt::DropAction srcAction, bool sameUser);
 
     FileView *view { nullptr };
     QList<QUrl> currentDragUrls;
     QList<QUrl> currentDragSourceUrls;
     QUrl currentHoverIndexUrl;
+    DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };
 
 }   // namespace dfmplugin_workspace

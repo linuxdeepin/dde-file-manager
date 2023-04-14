@@ -8,6 +8,8 @@
 #include "ddplugin_canvas_global.h"
 #include "view/canvasview.h"
 
+#include <dfm-base/mimedata/dfmmimedata.h>
+
 #include <QObject>
 #include <QModelIndex>
 #include <QUrl>
@@ -44,11 +46,14 @@ private:
     void tryDodge(QDragMoveEvent *event);
     void updateDragHover(const QPoint &pos);
     void stopDelayDodge();
+    void updateDFMMimeData(QDropEvent *event);
+    bool checkTargetEnable(const QUrl &targetUrl);
 
 protected:
     CanvasView *view = nullptr;
     QUrl m_target;   //must be file:///
     QPersistentModelIndex dragHoverIndex;
+    DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };
 
 }

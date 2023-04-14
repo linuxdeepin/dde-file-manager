@@ -15,6 +15,7 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/mimedata/dfmmimedata.h>
 
 #include <DFileDragClient>
 
@@ -34,6 +35,7 @@ DragDropOper::DragDropOper(CanvasView *parent)
 
 bool DragDropOper::enter(QDragEnterEvent *event)
 {
+    updateDFMMimeData(event);
     updateDragHover(event->pos());
 
     // Filter the event that cannot be dragged
@@ -95,7 +97,9 @@ bool DragDropOper::move(QDragMoveEvent *event)
         }
     }
     QUrl curUrl = hoverIdx.isValid() ? view->model()->fileUrl(hoverIdx) : view->model()->rootUrl();
-    if (hoverIdx.isValid()) {
+    if (!checkTargetEnable(curUrl)) {
+        event->ignore();
+    } else if (hoverIdx.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIdx)) {
             bool canDrop = !fileInfo->canAttributes(CanableInfoType::kCanDrop) || (fileInfo->isAttributes(OptInfoType::kIsDir) && !fileInfo->isAttributes(OptInfoType::kIsWritable)) || !fileInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
@@ -513,4 +517,24 @@ void DragDropOper::updateDragHover(const QPoint &pos)
 void DragDropOper::stopDelayDodge()
 {
     view->d->dodgeOper->stopDelayDodge();
+}
+
+void DragDropOper::updateDFMMimeData(QDropEvent *event)
+{
+    dfmmimeData.clear();
+    const QMimeData *data = event->mimeData();
+
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
+        dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
+}
+
+bool DragDropOper::checkTargetEnable(const QUrl &targetUrl)
+{
+    if (!dfmmimeData.isValid())
+        return true;
+
+    if (FileUtils::isTrashDesktopFile(targetUrl))
+        return dfmmimeData.canTrash();
+
+    return true;
 }
