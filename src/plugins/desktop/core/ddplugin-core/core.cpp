@@ -21,6 +21,9 @@
 
 #include <dfm-io/dfmio_utils.h>
 
+#include <QDBusInterface>
+#include <QDBusPendingCall>
+
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
 
@@ -84,6 +87,26 @@ void Core::connectToServer()
         qCritical() << "device manager cannot connect to server!";
         DevMngIns->startMonitor();
     }
+    auto refreshDesktop = [](const QString &msg) {
+        qDebug() << "refresh desktop start..." << msg;
+        QDBusInterface ifs("com.deepin.dde.desktop",
+                           "/com/deepin/dde/desktop",
+                           "com.deepin.dde.desktop");
+        ifs.asyncCall("Refresh");
+        qDebug() << "refresh desktop async finished..." << msg;
+    };
+    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, [refreshDesktop](const QString &, const QString &) {
+        refreshDesktop("onBlockDevMounted");
+    });
+
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, [refreshDesktop](const QString &, const QString &) {
+        refreshDesktop("onBlockDevUnmounted");
+    });
+
+    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, [refreshDesktop](const QString &, const QString &) {
+        refreshDesktop("onBlockDevRemoved");
+    });
+
     qInfo() << "connectToServer finished";
 }
 
