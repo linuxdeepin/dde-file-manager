@@ -26,42 +26,30 @@
     </signal>
     <method name="Query">
       <arg type="v" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
+      <arg name="type" type="i" direction="in"/>
       <arg name="value" type="as" direction="in"/>
     </method>
     <method name="Query">
       <arg type="v" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
+      <arg name="type" type="i" direction="in"/>
     </method>
     <method name="Insert">
       <arg type="b" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
-      <arg name="value" type="a{sv}" direction="in"/>
-      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
-    </method>
-    <method name="Insert">
-      <arg type="b" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
-    </method>
-    <method name="Delete">
-      <arg type="b" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
+      <arg name="type" type="i" direction="in"/>
       <arg name="value" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <method name="Delete">
       <arg type="b" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
-    </method>
-    <method name="Update">
-      <arg type="b" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
+      <arg name="type" type="i" direction="in"/>
       <arg name="value" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <method name="Update">
       <arg type="b" direction="out"/>
-      <arg name="type" type="u" direction="in"/>
+      <arg name="type" type="i" direction="in"/>
+      <arg name="value" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <method name="CanTagFile">
       <arg type="b" direction="out"/>
