@@ -95,13 +95,14 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
             return { { kMountPoint, mntPath }, { kResult, true }, { kErrorCode, 0 } };
         } else {
             // if params contains 'timeout', remove and retry.
+            // the if branch is for compatibility with cifs which does not support the timeout param
             if (params.contains(MountOptionsField::kTimeout)) {
                 params.remove(MountOptionsField::kTimeout);
                 qInfo() << "mount: remove timeout param and remount...";
                 continue;
             } else {
                 errNum = errno;
-                errMsg = strerror(errno);
+                errMsg = strerror(errNum);
                 qWarning() << "mount: failed: " << path << errNum << errMsg;
                 qInfo() << "mount: clean dir" << mntPath;
                 rmdir(mntPath);
@@ -282,7 +283,7 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
     // this param is supported by cifs only.
     if (opts.contains(kTimeout) /* && isTimeoutSupported()*/)
         param += QString("echo_interval=1,wait_reconnect_timeout=%1,")
-                         .arg(opts.value(kTimeout).toString());
+                         .arg(/*opts.value(kTimeout).toString()*/ 0);
 
     auto user = getpwuid(invokerUid());
     if (user) {
