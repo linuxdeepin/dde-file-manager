@@ -287,7 +287,6 @@ void ConnectToServerDialog::initializeUi()
     QString recentAccessOne = historyList.count() > 0 ? historyList.last() : QString();
     historyList.removeDuplicates();
 
-    serverComboBox->setEditable(true);
     serverComboBox->addItems(historyList);
     serverComboBox->setEditable(true);
     serverComboBox->setMaxVisibleItems(maxHistoryItems);
@@ -461,11 +460,9 @@ QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
 void ConnectToServerDialog::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    setFixedSize(430, DSizeModeHelper::element(450, 490));
-    int size = DSizeModeHelper::element(32, 38);
+    setFixedSize(430, DSizeModeHelper::element(440, 490));
+    int size = serverComboBox->height();
     theAddButton->setFixedSize(size, size);
-    schemeComboBox->setFixedHeight(DSizeModeHelper::element(32, QWIDGETSIZE_MAX));
-    serverComboBox->setFixedHeight(DSizeModeHelper::element(32, 38));
 #else
     setFixedSize(430, 490);
 #endif
