@@ -19,7 +19,7 @@ class VaultManagerDBus : public QObject, public QDBusContext
 public:
     explicit VaultManagerDBus(QObject *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
     /*!
      * \brief  用户切换槽函数
      * \param curUser
@@ -99,7 +99,7 @@ public slots:
      */
     void RestoreNeedWaitMinutes(int userID);
 
-signals:
+Q_SIGNALS:
     /**
      * @brief LockEventTriggered 锁屏信号
      * @param user

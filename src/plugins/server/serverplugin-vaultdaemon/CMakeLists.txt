@@ -6,6 +6,8 @@ find_package(Qt5 COMPONENTS DBus REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(dfm-io REQUIRED dfm-io IMPORTED_TARGET)
 
+add_definitions(-DQT_NO_KEYWORDS)
+
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"

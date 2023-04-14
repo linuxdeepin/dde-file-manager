@@ -56,7 +56,7 @@ public:
     void connectLockScreenDBus();
     bool transparentUnlockVault();
 
-private slots:
+private Q_SLOTS:
     void responseLockScreenDBus(const QDBusMessage &msg);
 
 private:
