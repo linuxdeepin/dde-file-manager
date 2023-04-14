@@ -185,7 +185,7 @@ void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
     }
 
     const QByteArray &json = file.readAll();
-
+    file.close();
     if (json.isEmpty()) {
         return;
     }
@@ -921,6 +921,7 @@ void Settings::setWatchChanges(bool watchChanges)
                 if (info.absoluteDir().mkpath(info.absolutePath())) {
                     QFile file(d->settingFile);
                     file.open(QFile::WriteOnly);
+                    file.close();
                 }
             }
         }

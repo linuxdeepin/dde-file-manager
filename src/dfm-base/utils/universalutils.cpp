@@ -336,7 +336,7 @@ QMap<QString, QString> UniversalUtils::getKernelParameters()
     QFile cmdline("/proc/cmdline");
     cmdline.open(QIODevice::ReadOnly);
     QByteArray content = cmdline.readAll();
-
+    cmdline.close();
     QByteArrayList paraList(content.split(' '));
 
     QMap<QString, QString> result;

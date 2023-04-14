@@ -116,6 +116,7 @@ int ProcessDialog::targetUid(const QString &proc)
         int tmp = str.toInt(&ok);
         if (ok)
             ret = tmp;
+        loginUid.close();
     }
 
     return ret;
