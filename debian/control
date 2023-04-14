@@ -77,7 +77,8 @@ Depends:
  libblockdev-crypto2,
  dde-device-formatter,
  dde-file-manager-plugins, 
- dde-file-manager-daemon-plugins
+ dde-file-manager-daemon-plugins,
+ dde-file-manager-server-plugins
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
 Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
@@ -125,6 +126,12 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - daemon edge plugins module
  Deepin Desktop Environment (DDE) - daemon edge plugins module.
 
+Package: dde-file-manager-server-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - server edge plugins module
+ Deepin Desktop Environment (DDE) - server edge plugins module.
+ 
 Package: dde-file-manager-preview-plugins
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
