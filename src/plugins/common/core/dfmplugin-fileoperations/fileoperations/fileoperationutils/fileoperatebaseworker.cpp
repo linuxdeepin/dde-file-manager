@@ -609,8 +609,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
         }
 
         const QUrl &url = iterator->next();
-        Q_UNUSED(url);
-        const FileInfoPointer &info = iterator->fileInfo();
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         bool ok = doCopyFile(info, toInfo, skip);
         if (!ok && !skip) {
             return false;
