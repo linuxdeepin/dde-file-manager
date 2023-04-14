@@ -81,25 +81,14 @@ void DeviceManagerDBus::initConnection()
     connect(DevMngIns, &DeviceManager::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
     connect(DevMngIns, &DeviceManager::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
 
-    auto refreshDesktop = [](const QString &msg) {
-        qDebug() << "refresh desktop start..." << msg;
-        QDBusInterface ifs("com.deepin.dde.desktop",
-                           "/com/deepin/dde/desktop",
-                           "com.deepin.dde.desktop");
-        ifs.asyncCall("Refresh");
-        qDebug() << "refresh desktop async finished..." << msg;
-    };
-    connect(DevMngIns, &DeviceManager::blockDevMounted, this, [this, refreshDesktop](const QString &id, const QString &mpt) {
+    connect(DevMngIns, &DeviceManager::blockDevMounted, this, [this](const QString &id, const QString &mpt) {
         emit BlockDeviceMounted(id, mpt);
-        refreshDesktop("onBlockDevMounted");
     });
-    connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, [this, refreshDesktop](const QString &id, const QString &oldMpt) {
+    connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, [this](const QString &id, const QString &oldMpt) {
         emit BlockDeviceUnmounted(id, oldMpt);
-        refreshDesktop("onBlockDevUnmounted");
     });
-    connect(DevMngIns, &DeviceManager::blockDevRemoved, this, [this, refreshDesktop](const QString &id, const QString &oldMpt) {
+    connect(DevMngIns, &DeviceManager::blockDevRemoved, this, [this](const QString &id, const QString &oldMpt) {
         emit BlockDeviceRemoved(id, oldMpt);
-        refreshDesktop("onBlockDevRemoved");
     });
 }
 
