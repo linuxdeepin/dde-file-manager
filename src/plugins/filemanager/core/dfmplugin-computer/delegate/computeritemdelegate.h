@@ -36,7 +36,7 @@ private:
     void paintCustomWidget(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintSmallItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintLargeItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void prepareColor(QPainter *painter, const QStyleOptionViewItem &option) const;
+    void prepareColor(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void drawDeviceIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawDeviceLabelAndFs(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

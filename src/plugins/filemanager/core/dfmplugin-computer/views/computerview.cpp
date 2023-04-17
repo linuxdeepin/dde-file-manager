@@ -96,12 +96,15 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
             this->event(event);
             return true;
         }
+
         if (ke->key() == Qt::Key::Key_Enter || ke->key() == Qt::Key::Key_Return) {
             const auto &idx = this->selectionModel()->currentIndex();
             if (idx.isValid()) {
                 if (!this->model()->data(idx, ComputerModel::DataRoles::kItemIsEditingRole).toBool()) {
                     Q_EMIT enterPressed(idx);
                     return true;
+                } else {
+                    this->setCurrentIndex(idx);
                 }
             }
         }
