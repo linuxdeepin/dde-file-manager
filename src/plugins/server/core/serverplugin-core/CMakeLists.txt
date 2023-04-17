@@ -18,22 +18,10 @@ find_package(Qt5 COMPONENTS
     REQUIRED)
 
 # DBus: DeviceManager
-qt5_generate_dbus_interface(
-    devicemanagerdbus.h
-    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
-    OPTIONS -M -S
-)
-
 qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
     devicemanagerdbus.h DeviceManagerDBus)
 
 # DBus: OperationsStackManager
-qt5_generate_dbus_interface(
-    operationsstackmanagerdbus.h
-    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
-    OPTIONS -M -S
-)
-
 qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
     operationsstackmanagerdbus.h OperationsStackManagerDbus)
 
