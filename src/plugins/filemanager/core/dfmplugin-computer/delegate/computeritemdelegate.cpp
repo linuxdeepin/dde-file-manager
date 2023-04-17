@@ -139,21 +139,24 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
             newLabel.chop(1);
         editor->setText(newLabel);
     });
-    connect(editor, &QLineEdit::destroyed, this, [this, editor] {
-        if (renameEditor == editor)
-            editingIndex = QModelIndex();
+    connect(editor, &QLineEdit::destroyed, this, [this] {
+        view->model()->setData(editingIndex, false, ComputerModel::kItemIsEditingRole);
+        editingIndex = QModelIndex();
     });
 
+    view->model()->setData(editingIndex, true, ComputerModel::kItemIsEditingRole);
+
+    // this if for avoiding trigger edit event infinitely when mouse click out of lineedit but in the area of item.
+    // if item is selected, then press it, the edit event is triggered if `QListView::SelectedClicked` is setted for view.
+    view->clearSelection();
     return editor;
 }
 
 void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     auto currEditor = qobject_cast<QLineEdit *>(editor);
-    if (currEditor) {
+    if (currEditor)
         currEditor->setText(index.data(Qt::DisplayRole).toString());
-        this->view->model()->setData(index, true, ComputerModel::kItemIsEditingRole);
-    }
 }
 
 void ComputerItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -218,7 +221,7 @@ void ComputerItemDelegate::paintCustomWidget(QPainter *painter, const QStyleOpti
 
 void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    prepareColor(painter, option);
+    prepareColor(painter, option, index);
 
     // draw round rect
     painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), 18, 18);
@@ -251,7 +254,7 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
 
 void ComputerItemDelegate::paintLargeItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    prepareColor(painter, option);
+    prepareColor(painter, option, index);
 
     // draw round rect
     painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), 18, 18);
@@ -266,7 +269,7 @@ void ComputerItemDelegate::paintLargeItem(QPainter *painter, const QStyleOptionV
  * \param painter
  * \param option
  */
-void ComputerItemDelegate::prepareColor(QPainter *painter, const QStyleOptionViewItem &option) const
+void ComputerItemDelegate::prepareColor(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     DPalette palette(DPaletteHelper::instance()->palette(option.widget));
     auto baseColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
@@ -275,7 +278,9 @@ void ComputerItemDelegate::prepareColor(QPainter *painter, const QStyleOptionVie
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
 
-    if (option.state & QStyle::StateFlag::State_Selected) {
+    // paint a fake selection when editing.
+    if ((option.state & QStyle::StateFlag::State_Selected)
+        || (index == editingIndex && index.isValid())) {
         baseColor.setAlpha(baseColor.alpha() + 30);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
