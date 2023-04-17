@@ -17,12 +17,6 @@ find_package(Qt5 COMPONENTS
     DBus
     REQUIRED)
 
-qt5_generate_dbus_interface(
-    filemanager1dbus.h
-    ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml
-    OPTIONS -M -S
-)
-
 qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml
     filemanager1dbus.h FileManager1DBus)
 

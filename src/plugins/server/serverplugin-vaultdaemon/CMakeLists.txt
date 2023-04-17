@@ -16,11 +16,6 @@ FILE(GLOB_RECURSE SRC_FILES
     )
 
 # DBus: VaultManager
-qt5_generate_dbus_interface(
-    dbus/vaultmanagerdbus.h
-    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
-    OPTIONS -M -S
-)
 qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
     dbus/vaultmanagerdbus.h VaultManagerDBus)
 
