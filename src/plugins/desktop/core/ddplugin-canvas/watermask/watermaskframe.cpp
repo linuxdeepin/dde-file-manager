@@ -214,6 +214,7 @@ void WaterMaskFrame::loadConfig()
 
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    file.close();
     if (error.error == QJsonParseError::NoError) {
         auto jsonObject = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         configInfos = parseJson(&jsonObject);
