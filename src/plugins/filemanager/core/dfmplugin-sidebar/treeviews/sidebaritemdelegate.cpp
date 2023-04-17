@@ -397,6 +397,7 @@ void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPal
 
 void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const
 {
+    painter->save();
     int iconSize = kExpandIconSize;
     int itemMargin = kItemMargin;
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -409,15 +410,23 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
     QPoint br = r.topRight() + QPoint(0 - itemMargin, 27);
 #endif
 
-    QColor c(Qt::lightGray);
-    painter->setBrush(c);
+    bool isDarkType = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+    QColor c(isDarkType ? qRgb(255, 255, 255) : qRgb(0, 0, 0));
+
     painter->setPen(Qt::NoPen);
+    painter->setBrush(c);
     QRect gRect(tl, br);
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
-    if (gRect.contains(sidebarView->mapFromGlobal(QCursor::pos())))
+    if (gRect.contains(sidebarView->mapFromGlobal(QCursor::pos()))) {
+        painter->setOpacity(0.1);
         painter->drawRoundedRect(gRect, kRadius, kRadius);
-    QPixmap pixmap = QIcon::fromTheme(isExpanded ? "go-up" : "go-down").pixmap(QSize(iconSize, iconSize));
-    painter->drawPixmap(gRect.topLeft() + QPointF(2, 3), pixmap);
+    }
+
+    painter->setOpacity(1);
+    painter->setPen(Qt::gray);
+    QIcon icon = QIcon::fromTheme(isExpanded ? "go-up" : "go-down");
+    icon.paint(painter, QRect(gRect.topLeft() + QPoint(2, 3), QSize(iconSize, iconSize)), Qt::AlignmentFlag::AlignCenter);
+    painter->restore();
 }
 
 int SideBarItemDelegate::textLength(const QString &text, bool useCharCount) const
