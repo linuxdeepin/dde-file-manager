@@ -9,6 +9,7 @@
 #include "tools/upgrade/builtininterface.h"
 
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -292,5 +293,12 @@ int main(int argc, char *argv[])
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+
+    bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
+    if (enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
+        a.closeServer();
+        QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+    }
+
     return ret;
 }

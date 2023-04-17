@@ -155,6 +155,17 @@
             "description":"If the value is set to true, the DDE Desktop will not load any plugins and no desktop window.",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.headless": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Enable dde-file-manger headless",
+            "name[zh_CN]":"启用文件管理器常驻进程。",
+            "description[zh_CN]":"如果值为true，文件管理器将常驻后台，牺牲内存来换取热启动速度。",
+            "description":"If the value is true, the filemanager will be as a daemon, sacrificing memory for hot start speed",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

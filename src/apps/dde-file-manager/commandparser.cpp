@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -41,13 +42,22 @@ QString CommandParser::value(const QString &name) const
 
 void CommandParser::processCommand()
 {
-    // whether to add setQuitOnLastWindowClosed
-    if (isSet("d"))
-        ::exit(0);   // NOTE: daemon process not supported now
+    if (isSet("d")) {
+        bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
+        if (enableHeadless) {
+            qInfo() << "Start headless";
+            // whether to add setQuitOnLastWindowClosed
+            return;
+        }
+        qWarning() << "Cannot start dde-file-manager in no window mode "
+                      "unless you can set the value of `dfm.daemon` in DConfig to `true`!";
+        ::exit(0);
+    }
 
     if (isSet("e")) {
-        // Todo(yanghao): event from json handle, the old filemanager does not seem to be used
-        return;
+        // TODO: event from json handle, the old filemanager does not seem to be used
+        qWarning() << "Cannot supported now";
+        exit(0);
     }
 
     if (isSet("p")) {
