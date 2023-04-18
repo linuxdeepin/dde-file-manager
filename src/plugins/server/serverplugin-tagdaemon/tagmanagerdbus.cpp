@@ -10,26 +10,25 @@ TagManagerDBus::TagManagerDBus(QObject *parent)
 {
 }
 
-QDBusVariant TagManagerDBus::Query(const int &type, const QStringList value)
+QDBusVariant TagManagerDBus::Query(int type, const QStringList value)
 {
-
     QDBusVariant dbusVar {};
     return dbusVar;
 }
 
-bool TagManagerDBus::Insert(const int &type, const QVariantMap value)
+bool TagManagerDBus::Insert(int type, const QVariantMap value)
 {
 
     return false;
 }
 
-bool TagManagerDBus::Delete(const int &type, const QVariantMap value)
+bool TagManagerDBus::Delete(int type, const QVariantMap value)
 {
 
     return false;
 }
 
-bool TagManagerDBus::Update(const int &type, const QVariantMap value)
+bool TagManagerDBus::Update(int type, const QVariantMap value)
 {
 
     return false;
