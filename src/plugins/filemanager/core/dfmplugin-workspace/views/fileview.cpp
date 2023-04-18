@@ -7,6 +7,7 @@
 #include "private/fileview_p.h"
 #include "models/fileselectionmodel.h"
 #include "models/fileviewmodel.h"
+#include "models/rootinfo.h"
 #include "baseitemdelegate.h"
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
@@ -20,6 +21,7 @@
 #include "utils/shortcuthelper.h"
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
+#include "utils/filedatamanager.h"
 #include "events/workspaceeventsequence.h"
 
 #include <dfm-base/mimedata/dfmmimedata.h>
@@ -492,7 +494,7 @@ void FileView::updateModelActiveIndex()
 
     d->visibleIndexRande = rande;
     for (int i = rande.first; i <= rande.second; ++i) {
-        model()->setIndexActive(model()->index(i, 0, rootIndex()));
+        updateVisibleIndex(model()->index(i, 0, rootIndex()));
     }
 }
 
@@ -811,6 +813,23 @@ bool FileView::cdUp()
         WorkspaceEventCaller::sendChangeCurrentUrl(windowId, computerRoot);
     }
     return false;
+}
+
+void FileView::updateVisibleIndex(const QModelIndex &index)
+{
+    const auto info = model()->fileInfo(index);
+    if (!info)
+        return;
+
+    if (!info->exists()) {
+        const auto rootInfo = FileDataManager::instance()->fetchRoot(rootUrl());
+        if (!rootInfo)
+            return;
+
+        rootInfo->doFileDeleted(info->urlOf(FileInfo::FileUrlInfoType::kUrl));
+    } else {
+        model()->setIndexActive(index);
+    }
 }
 
 DirOpenMode FileView::currentDirOpenMode() const

@@ -217,6 +217,7 @@ private:
     QList<SelectionMode> fetchSupportSelectionModes();
 
     bool cdUp();
+    void updateVisibleIndex(const QModelIndex &index);
 };
 
 }
