@@ -157,7 +157,7 @@ void FileViewPrivate::pureResizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
 
     if (currentViewMode == Global::ViewMode::kListMode) {
-        if (adjustFileNameColumn)
+        if (adjustFileNameColumn && headerView)
             headerView->doFileNameColumnResize(q->width());
     }
 }

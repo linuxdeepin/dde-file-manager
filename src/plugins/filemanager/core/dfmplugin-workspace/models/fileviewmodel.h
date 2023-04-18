@@ -55,8 +55,6 @@ public:
     QModelIndex rootIndex() const;
 
     QModelIndex setRootUrl(const QUrl &url);
-
-    void update();
     void refresh();
 
     ModelState currentState() const;

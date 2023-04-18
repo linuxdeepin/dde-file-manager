@@ -275,17 +275,6 @@ QVariant FileViewModel::headerData(int column, Qt::Orientation, int role) const
     return QVariant();
 }
 
-void FileViewModel::update()
-{
-    if (!filterSortWorker)
-        return;
-
-    int childrenCount = filterSortWorker->childrenCount();
-
-    QModelIndex parentIndex = rootIndex();
-    Q_EMIT dataChanged(index(0, 0, parentIndex), index(childrenCount, 0, parentIndex));
-}
-
 void FileViewModel::refresh()
 {
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey, true);
@@ -613,8 +602,15 @@ void FileViewModel::setReadOnly(bool value)
 void FileViewModel::onFileThumbUpdated(const QUrl &url)
 {
     auto updateIndex = getIndexByUrl(url);
-    if (updateIndex.isValid())
+    if (!updateIndex.isValid())
+        return;
+
+    auto view = qobject_cast<FileView *>(QObject::parent());
+    if (view) {
+        view->update(view->visualRect(updateIndex));
+    } else {
         Q_EMIT dataChanged(updateIndex, updateIndex);
+    }
 }
 
 void FileViewModel::onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg)
@@ -628,12 +624,22 @@ void FileViewModel::onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg)
             info->customData(Global::ItemRoles::kItemFileRefreshIcon);
     }
 
-    Q_EMIT dataChanged(updateIndex, updateIndex);
+    auto view = qobject_cast<FileView *>(QObject::parent());
+    if (view) {
+        view->update(view->visualRect(updateIndex));
+    } else {
+        Q_EMIT dataChanged(updateIndex, updateIndex);
+    }
 }
 
 void FileViewModel::onFileUpdated(int show)
 {
-    Q_EMIT dataChanged(index(show, 0, rootIndex()), index(show, 0, rootIndex()));
+    auto view = qobject_cast<FileView *>(QObject::parent());
+    if (view) {
+        view->update(view->visualRect(index(show, 0, rootIndex())));
+    } else {
+        Q_EMIT dataChanged(index(show, 0, rootIndex()), index(show, 0, rootIndex()));
+    }
 }
 
 void FileViewModel::onInsert(int firstIndex, int count)
