@@ -81,7 +81,7 @@ void FileTagCache::loadFileTagsFromDatabase()
 {
     // 加载数据库所有文件标记,和标记属性到缓存
     d->fileTagsCache = TagDbHandle::instance()->getAllFileWithTags();
-    const auto &tagsColor = TagDbHandle::instance()->getAllTags();
+    const auto &tagsColor = TagProxyHandle::instance()->getAllTags();
     auto it = tagsColor.begin();
     for (; it != tagsColor.end(); ++it)
         d->tagProperty.insert(it.key(), QColor(it.value().toString()));

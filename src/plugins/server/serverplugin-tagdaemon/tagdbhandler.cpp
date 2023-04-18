@@ -154,7 +154,7 @@ QVariantMap TagDbHandler::getFilesByTag(const QStringList &tags)
     return allTagFiles;
 }
 
-QHash<QString, QStringList> TagDbHandler::getAllFileWithTags()
+QVariantHash TagDbHandler::getAllFileWithTags()
 {
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
     finally.dismiss();
@@ -162,11 +162,16 @@ QHash<QString, QStringList> TagDbHandler::getAllFileWithTags()
     // query
     const auto &beans = handle->query<FileTagInfo>().toBeans();
 
-    QHash<QString, QStringList> fileTagsMap;
+    QVariantHash fileTagsMap;
     for (auto &bean : beans) {
         const auto &path = bean->getFilePath();
         if (fileTagsMap.contains(path)) {
-            fileTagsMap[path].append(bean->getTagName());
+            QStringList list { fileTagsMap[path].toStringList() };
+            const QString &tagName { bean->getTagName() };
+            if (list.contains(tagName))
+                continue;
+            list.append(bean->getTagName());
+            fileTagsMap[path] = list;
         } else {
             fileTagsMap.insert(path, { bean->getTagName() });
         }

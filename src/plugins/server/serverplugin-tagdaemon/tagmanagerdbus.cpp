@@ -33,6 +33,9 @@ QDBusVariant TagManagerDBus::Query(int opt, const QStringList value)
     case QueryOpts::kTags:
         dbusVar.setVariant(TagDbHandler::instance()->getAllTags());
         break;
+    case QueryOpts::kFilesWithTags:
+        dbusVar.setVariant(TagDbHandler::instance()->getAllFileWithTags());
+        break;
     case QueryOpts::kTagsOfFile:
         dbusVar.setVariant(TagDbHandler::instance()->getTagsByUrls(value));
         break;
