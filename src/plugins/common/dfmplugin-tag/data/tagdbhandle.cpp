@@ -434,12 +434,6 @@ bool TagDbHandle::checkTag(const QString &tag)
     return handle->query<TagProperty>().where(Expression::Field<TagProperty>("tagName") == tag).toBeans().size() > 0;
 }
 
-bool TagDbHandle::checkFile(const QString &file)
-{
-    // Query field 'filePath' of database table file_tags
-    return handle->query<FileTagInfo>().where(Expression::Field<FileTagInfo>("filePath") == file).toBeans().size() > 0;
-}
-
 bool TagDbHandle::insertTagProperty(const QString &name, const QVariant &value)
 {
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });

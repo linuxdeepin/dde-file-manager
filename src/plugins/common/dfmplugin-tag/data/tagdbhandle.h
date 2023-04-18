@@ -58,7 +58,6 @@ public:
 
 private:
     bool checkTag(const QString &tag);
-    bool checkFile(const QString &file);
     bool insertTagProperty(const QString &name, const QVariant &value);
     bool tagFile(const QString &file, const QVariant &tags);
     bool removeSpecifiedTagOfFile(const QString &url, const QVariant &val);
