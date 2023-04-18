@@ -19,11 +19,10 @@ public:
     explicit TagManagerDBus(QObject *parent = nullptr);
 
 public Q_SLOTS:
-    QDBusVariant Query(int type, const QStringList value = {});
-    bool Insert(int type, const QVariantMap value);
-    bool Delete(int type, const QVariantMap value);
-    bool Update(int type, const QVariantMap value);
-    bool CanTagFile(const QString &filePath);
+    QDBusVariant Query(int opt, const QStringList value = {});
+    bool Insert(int opt, const QVariantMap value);
+    bool Delete(int opt, const QVariantMap value);
+    bool Update(int opt, const QVariantMap value);
 
 Q_SIGNALS:
     void NewTagsAdded(const QVariantMap &tags);
@@ -32,6 +31,9 @@ Q_SIGNALS:
     void TagsNameChanged(const QVariantMap &oldAndNew);
     void FilesTagged(const QVariantMap &fileAndTags);
     void FilesUntagged(const QVariantMap &fileAndTags);
+
+private:
+    void initConnect();
 };
 
 #endif   // TAGMANAGERDBUS_H
