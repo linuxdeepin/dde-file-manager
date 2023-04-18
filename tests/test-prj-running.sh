@@ -4,7 +4,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-export DISPLAY=":0"
+Xvfb :1 &
+export DISPLAY=":1"
 export QT_QPA_PLATFORM=
 
 #get --help
@@ -27,7 +28,7 @@ CLEAR_COMMAND="yes"; #是否清场 no 就不清场
 UT_COMMAND="all"; #运行UT类型 no all dde-file-manager
 REBUILD_PTJ="yes";
 CPP_CHECK_COMMAND="no"; #是否运行cppcheck，no就不运行
-CPU_NUMBER=16; #当前使用CPU数目，默认为16
+CPU_NUMBER=$(nproc);
 SHOW_REPORT="no"; #默认为no 不显示报表
 
 while [ $# -ge 2 ] ; do

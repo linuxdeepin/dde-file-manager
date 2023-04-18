@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-export DISPLAY=":0"
+export DISPLAY=":1"
 export QT_QPA_PLATFORM=
 
 # cppcheck检测目录
