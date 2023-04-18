@@ -17,6 +17,7 @@ SERVERTAGDAEMON_BEGIN_NAMESPACE
 
 enum class QueryOpts : int {
     kTags,   // get all tags
+    kFilesWithTags,   // get all files With tags
     kTagsOfFile,   // get tags of a file
     kFilesOfTag,   // get files of a tag
     kColorOfTags,   // get color-tag map

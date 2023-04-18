@@ -44,7 +44,7 @@ public:
     QVariantMap getTagsByUrls(const QStringList &urlList);
     QVariant getSameTagsOfDiffUrls(const QStringList &urlList);
     QVariantMap getFilesByTag(const QStringList &tags);
-    QHash<QString, QStringList> getAllFileWithTags();
+    QVariantHash getAllFileWithTags();
 
     bool addTagProperty(const QVariantMap &data);
     bool addTagsForFiles(const QVariantMap &data);
