@@ -58,9 +58,16 @@ cd $UT_TESTS_FOLDER
 cmake $PROJECT_FOLDER -DCMAKE_BUILD_TYPE=Debug
 make -j$CPU_NUMBER
 
-regTestFolder()
+# run one target and get the ut coverage
+testTargetRun()
 {
   RELATIVEPATH=$1
+  EXTRACT_PATH=$2
+  REMOVE_PATH=$3
+
+  echo "EXTRACT_PATH filter are:$EXTRACT_PATH"
+  echo "REMOVE_PATH filter are:$REMOVE_PATH"
+
   FOLDERNAME=${RELATIVEPATH##*/}
 
   if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$FOLDERNAME" ] ; then
@@ -70,27 +77,30 @@ regTestFolder()
 
     cd $DIR_TEST
 
-    extract_path="*/src/$RELATIVEPATH/*  */include/dfm-extension/*  */include/dfm-framework/*"
-    remove_path="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
     # report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
-    $TESTS_FOLDER/ut-target-running.sh $BUILD_DIR $FOLDERNAME $DIR_TEST test-$FOLDERNAME "$extract_path" "$remove_path" $SHOW_REPORT
+    $TESTS_FOLDER/ut-target-running.sh $BUILD_DIR $FOLDERNAME $DIR_TEST test-$FOLDERNAME "$EXTRACT_PATH" "$REMOVE_PATH" $SHOW_REPORT
     check_ut_result $? $FOLDERNAME
   fi
 }
 
-# 注册列表，测试目录放入该列表
-regList=(
+# 对外暴露框架、接口放入该列表
+interfaceTestList=(
+
+# base、extension、framework
+  dfm-base
+  # dfm-extension
+  dfm-framework
+) 
+
+# App、业务插件，测试目录放入该列表
+businessTestList=(
 # apps
   # apps/dde-file-manager
   # apps/dde-desktop
   # apps/dde-file-manager-daemon
   # apps/dde-file-manager-server
 
-# base、extension、framework
-  dfm-base
-  # dfm-extension
-  dfm-framework
-
+# plugins
   plugins/common/dfmplugin-burn
 
   plugins/filemanager/core/dfmplugin-computer
@@ -105,12 +115,26 @@ regList=(
   # services/dfm-common-service
 ) 
 
-# register test folders.
-for((i=0; i<${#regList[@]}; i++)) 
+# 2. interface test .
+INTERFACE_REMOVE="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
+
+for((i=0; i<${#interfaceTestList[@]}; i++)) 
 do
-FOLDER=${regList[i]}
+FOLDER=${interfaceTestList[i]}
+echo "interface folder:$FOLDER"
+INTERFACE_EXTRACT="*/src/$FOLDER/*  */include/dfm-extension/*  */include/dfm-framework/*"
+testTargetRun $FOLDER "$INTERFACE_EXTRACT" "$INTERFACE_REMOVE"
+done;
+
+# 3. business test .
+BUSINESS_REMOVE="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
+
+for((i=0; i<${#businessTestList[@]}; i++)) 
+do
+FOLDER=${businessTestList[i]}
 echo "register test folder:$FOLDER"
-regTestFolder $FOLDER
+BUSINESS_EXTRACT="*/src/$FOLDER/*"
+testTargetRun $FOLDER "$BUSINESS_EXTRACT" "$BUSINESS_REMOVE"
 done;
 
 echo "end dde-file-manager all UT cases"
