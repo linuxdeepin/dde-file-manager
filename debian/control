@@ -6,7 +6,6 @@ Build-Depends:
  cmake,
  debhelper (>=9),
  pkg-config,
- dh-systemd,
  qtbase5-dev,
  qtbase5-private-dev,
  qtmultimedia5-dev,
