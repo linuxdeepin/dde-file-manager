@@ -747,12 +747,26 @@ void FileSortWorker::sortAllFiles()
     if (orgSortRole == Global::ItemRoles::kItemDisplayRole)
         return;
 
+    if (visibleChildren.count() <= 1)
+        return;
+
     QList<QUrl> sortList;
+    int i = 0;
+    bool sortSame = true;
     for (const auto &url : visibleChildren) {
         if (isCanceled)
             return;
-        sortList.insert(insertSortList(url, sortList, AbstractSortFilter::SortScenarios::kSortScenariosNormal), url);
+        auto sortIndex = insertSortList(url, sortList, AbstractSortFilter::SortScenarios::kSortScenariosNormal);
+        if (sortSame)
+            sortSame = sortIndex == i;
+
+        sortList.insert(sortIndex, url);
+        i++;
     }
+
+    if (sortSame)
+        return;
+
     Q_EMIT insertRows(0, sortList.length());
     {
         QWriteLocker lk(&locker);

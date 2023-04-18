@@ -31,6 +31,7 @@ private:
     QSharedPointer<DFMIO::DEnumerator> dEnumerator = nullptr;
     QUrl currentUrl;
     QMap<QString, QString> fstabMap;
+    FileInfoPointer fileInfo{nullptr};
 };
 
 }

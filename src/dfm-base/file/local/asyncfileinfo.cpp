@@ -568,7 +568,8 @@ void AsyncFileInfo::setNotifyUrl(const QUrl &url)
         return;
     }
     QWriteLocker lk(&d->notifyLock);
-    d->notifyUrls.append(url);
+    if (!d->notifyUrls.contains(url))
+        d->notifyUrls.append(url);
 }
 
 void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)

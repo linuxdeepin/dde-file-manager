@@ -30,6 +30,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -868,7 +869,7 @@ void FileView::setFilterCallback(const QUrl &url, const FileViewFilterCallback c
 void FileView::trashStateChanged()
 {
     if (Q_LIKELY(model()))
-        model()->update();
+        model()->updateFile(FileUtils::trashRootUrl());
 }
 
 void FileView::onHeaderViewSectionChanged(const QUrl &url)

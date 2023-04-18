@@ -395,8 +395,8 @@ QString TrashFileInfoPrivate::symLinkTarget() const
 int TrashFileInfo::countChildFile() const
 {
     if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl))) {
-        if (d->dFileInfo)
-            return d->dFileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTrashItemCount).toInt();
+        DFileInfo trashRootFileInfo(FileUtils::trashRootUrl());
+        return trashRootFileInfo.attribute(DFMIO::DFileInfo::AttributeID::kTrashItemCount).toInt();
     }
 
     if (isAttributes(OptInfoType::kIsDir)) {
