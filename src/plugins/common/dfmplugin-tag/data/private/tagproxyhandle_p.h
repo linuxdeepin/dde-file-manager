@@ -6,10 +6,12 @@
 #define TAGPROXYHANDLE_P_H
 
 #include "dfmplugin_tag_global.h"
+#include "tagmanager_interface.h"
 
 #include <QDBusVariant>
 
-class TagDBusInterface;
+using TagManagerDBusInterface = OrgDeepinFilemanagerServerTagManagerInterface;
+
 class QDBusServiceWatcher;
 namespace dfmplugin_tag {
 
@@ -19,12 +21,6 @@ class TagProxyHandlePrivate : public QObject
     Q_OBJECT
 
 public:
-    enum ConnectType {
-        kNoneConnection = -1,
-        kAPIConnecting,
-        kDBusConnecting
-    };
-
     explicit TagProxyHandlePrivate(TagProxyHandle *qq, QObject *parent = nullptr);
     ~TagProxyHandlePrivate();
 
@@ -32,17 +28,15 @@ public:
     void initConnection();
 
     void connectToDBus();
-    void connectToAPI();
     void disconnCurrentConnections();
 
     QVariant parseDBusVariant(const QDBusVariant &var);
 
 public:
     TagProxyHandle *q { nullptr };
-    QScopedPointer<TagDBusInterface> tagDBusInterface;
+    QScopedPointer<TagManagerDBusInterface> tagDBusInterface;
     QScopedPointer<QDBusServiceWatcher> dbusWatcher;
     QList<QMetaObject::Connection> connections;
-    int currentConnectionType = kNoneConnection;
 };
 }
 

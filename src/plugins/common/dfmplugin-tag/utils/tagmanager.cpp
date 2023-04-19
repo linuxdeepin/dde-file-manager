@@ -110,7 +110,7 @@ bool TagManager::canTagFile(const FileInfoPointer &info) const
 
     bool canTag = localFileCanTagFilter(info);
     if (!canTag) {
-        const QUrl& url = info->urlOf(UrlInfoType::kUrl);
+        const QUrl &url = info->urlOf(UrlInfoType::kUrl);
         if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
             return true;
     }
@@ -413,7 +413,7 @@ bool TagManager::pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const Q
 }
 void TagManager::deleteTags(const QStringList &tags)
 {
-    if (this->deleteTagData(tags, TagActionType::kDeleteTags)) {
+    if (this->deleteTagData(tags, DeleteOpts::kTags)) {
         for (const auto &tag : tags) {
             QUrl url = TagHelper::instance()->makeTagUrlByTagName(tag);
             dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
@@ -428,7 +428,7 @@ void TagManager::deleteFiles(const QList<QUrl> &urls)
     for (const auto &temp : urls)
         paths.append(temp.toString());
 
-    this->deleteTagData(paths, TagActionType::kDeleteFiles);
+    this->deleteTagData(paths, DeleteOpts::kFiles);
 }
 
 bool TagManager::changeTagColor(const QString &tagName, const QString &newTagColor)
@@ -469,7 +469,7 @@ QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) con
     return result;
 }
 
-bool TagManager::deleteTagData(const QStringList &data, const TagActionType &type)
+bool TagManager::deleteTagData(const QStringList &data, const DeleteOpts &type)
 {
     if (data.isEmpty())
         return false;
@@ -481,10 +481,10 @@ bool TagManager::deleteTagData(const QStringList &data, const TagActionType &typ
     bool ret = false;
 
     switch (type) {
-    case TagActionType::kDeleteTags:
+    case DeleteOpts::kTags:
         ret = TagProxyHandleIns->deleteTags(tagDelMap);
         break;
-    case TagActionType::kDeleteFiles:
+    case DeleteOpts::kFiles:
         ret = TagProxyHandleIns->deleteFiles(tagDelMap);
         break;
     default:

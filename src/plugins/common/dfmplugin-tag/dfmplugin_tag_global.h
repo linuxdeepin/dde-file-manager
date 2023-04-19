@@ -15,21 +15,30 @@
 
 DPTAG_BEGIN_NAMESPACE
 
-enum class TagActionType : uint32_t {
-    kGetAllTags = 1,
-    kGetTagsThroughFile,
-    kGetSameTagsOfDiffFiles,
-    kGetFilesThroughTag,
-    kGetTagsColor,
-    kAddTags,
-    kMakeFilesTags,
-    kMakeFilesTagThroughColor,
-    kRemoveTagsOfFiles,
-    kDeleteTags,
-    kDeleteFiles,
-    kChangeTagsColor,
-    kChangeTagsNameWithFiles,
-    kChangeFilesPaths
+enum class QueryOpts : int {
+    kTags,   // get all tags
+    kFilesWithTags,   // get all files With tags
+    kTagsOfFile,   // get tags of a file
+    kFilesOfTag,   // get files of a tag
+    kColorOfTags,   // get color-tag map
+    kTagIntersectionOfFiles   // get tag intersection of files
+};
+
+enum class InsertOpts : int {
+    kTags,
+    kTagOfFiles
+};
+
+enum class DeleteOpts : int {
+    kTags,
+    kFiles,
+    kTagOfFiles
+};
+
+enum class UpdateOpts : int {
+    kColors,
+    kTagsNameWithFiles,
+    kFilesPaths
 };
 
 inline constexpr int kTagDiameter { 10 };

@@ -13,8 +13,6 @@
 #include "widgets/tagwidget.h"
 #include "menu/tagmenuscene.h"
 #include "menu/tagdirmenuscene.h"
-#include "dbus/tagdbus.h"
-#include "dbus/dbus_adaptor/tagdbus_adaptor.h"
 #include "events/tageventreceiver.h"
 #include "data/tagproxyhandle.h"
 
@@ -108,9 +106,8 @@ void Tag::onAllPluginsStarted()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TagManager::scheme(), TagDirMenuCreator::name());
     dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
 
-    if (qApp->applicationName() == "dde-desktop")
-        initDbus();
-    TagProxyHandleIns->connectToService();
+    if (!TagProxyHandleIns->connectToService())
+        qWarning() << "Cannot connect to TagManager!";
     emit FileTagCacheController::instance().initLoadTagInfos();
 }
 
@@ -212,45 +209,4 @@ void Tag::bindWindows()
         onWindowOpened(id);
     });
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
-}
-
-void Tag::initServiceDBusInterfaces(QDBusConnection *connection)
-{
-    static std::once_flag flag;
-    std::call_once(flag, [&connection, this]() {
-        // add our D-Bus interface and connect to D-Bus
-        if (!connection->registerService("org.deepin.filemanager.service")) {
-            qWarning("Cannot register the \"org.deepin.filemanager.service\" service.\n");
-            return;
-        }
-
-        qInfo() << "Init DBus DeviceManager start";
-
-        // register object
-        tagDBus.reset(new TagDBus);
-        Q_UNUSED(new TagDBusAdaptor(tagDBus.data()));
-        if (!connection->registerObject("/org/deepin/filemanager/service/Tag",
-                                        tagDBus.data())) {
-            qWarning("Cannot register the \"/org/deepin/filemanager/service/Tag\" object.\n");
-            tagDBus.reset(nullptr);
-        }
-
-        qInfo() << "Init DBus DeviceManager end";
-    });
-}
-
-void Tag::initDbus()
-{
-    static QDBusConnection connection = QDBusConnection::sessionBus();
-    if (!connection.isConnected()) {
-        qWarning("Cannot connect to the D-Bus session bus.\n"
-                 "Please check your system settings and try again.\n");
-        return;
-    }
-
-    qInfo() << "Start register DBus interfaces";
-
-    QTimer::singleShot(1000, [this]() {
-        initServiceDBusInterfaces(&connection);
-    });
 }

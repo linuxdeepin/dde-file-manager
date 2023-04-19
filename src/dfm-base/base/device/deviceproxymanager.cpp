@@ -10,7 +10,7 @@
 #include <QDBusServiceWatcher>
 
 using namespace dfmbase;
-static constexpr char kDesktopService[] { "org.deepin.filemanager.server" };
+static constexpr char kDeviceService[] { "org.deepin.filemanager.server" };
 static constexpr char kDevMngPath[] { "/org/deepin/filemanager/server/DeviceManager" };
 
 DeviceProxyManager *DeviceProxyManager::instance()
@@ -117,7 +117,7 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 bool DeviceProxyManager::initService()
 {
     qInfo() << "Start initilize dbus: `DeviceManagerInterface`";
-    d->devMngDBus.reset(new DeviceManagerInterface(kDesktopService, kDevMngPath, QDBusConnection::sessionBus(), this));
+    d->devMngDBus.reset(new DeviceManagerInterface(kDeviceService, kDevMngPath, QDBusConnection::sessionBus(), this));
     d->initConnection();
     return d->isDBusRuning();
 }
@@ -209,7 +209,7 @@ bool DeviceProxyManagerPrivate::isDBusRuning()
 
 void DeviceProxyManagerPrivate::initConnection()
 {
-    dbusWatcher.reset(new QDBusServiceWatcher(kDesktopService, QDBusConnection::sessionBus()));
+    dbusWatcher.reset(new QDBusServiceWatcher(kDeviceService, QDBusConnection::sessionBus()));
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
         connectToDBus();
         emit q->devMngDBusRegistered();
