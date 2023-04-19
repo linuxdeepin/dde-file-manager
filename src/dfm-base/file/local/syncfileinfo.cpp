@@ -233,6 +233,8 @@ bool SyncFileInfo::isAttributes(const OptInfoType type) const
 bool SyncFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
+    case FileCanType::kCanRedirectionFileUrl:
+        return d->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
     case FileCanType::kCanDelete:
         return d->canDelete();
     case FileCanType::kCanTrash:
