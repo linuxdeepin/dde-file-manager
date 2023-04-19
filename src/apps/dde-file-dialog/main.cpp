@@ -7,6 +7,7 @@
 #include <DApplication>
 #include <QDir>
 #include <QTextCodec>
+#include <QIcon>
 
 #include <dfm-framework/dpf.h>
 
@@ -140,6 +141,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setQuitOnLastWindowClosed(false);
+    a.setWindowIcon(QIcon::fromTheme("dde-file-manager"));
 
     {
         // load translation
