@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="236"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="237"/>
         <source>File Manager</source>
         <translation>फाइल प्रबन्धक</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="240"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="241"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation type="unfinished"/>
     </message>
@@ -58,7 +58,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="173"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="185"/>
         <source>Desktop</source>
         <translation>डेस्कटप</translation>
     </message>
@@ -156,8 +156,8 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="328"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="42"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="45"/>
         <source>System Disk</source>
         <translation>प्रणाली डिस्क</translation>
     </message>
@@ -291,8 +291,8 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="108"/>
         <source>Recent</source>
         <translation>रिसेन्ट </translation>
     </message>
@@ -330,7 +330,7 @@
         <translation>% 1 वस्तुहरू</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="270"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="276"/>
         <source>Unable to find the original file</source>
         <translation type="unfinished"/>
     </message>
@@ -955,7 +955,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="36"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="533"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="550"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="316"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="133"/>
@@ -969,7 +969,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="537"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="554"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="320"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="137"/>
@@ -982,7 +982,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="46"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="546"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="563"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>नाम बदल्नुहोस्</translation>
@@ -1199,23 +1199,23 @@
         <translation>खोल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="108"/>
-        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="118"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="113"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="123"/>
         <source>Size: %1</source>
         <translation>आकार:% 1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="109"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="114"/>
         <source>Type: %1</source>
         <translation>प्रकार: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="112"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="117"/>
         <source>Size: 0</source>
         <translation>आकार: 0</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="119"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="124"/>
         <source>Items: %1</source>
         <translation>आईटमहरू:% 1</translation>
     </message>
@@ -1260,7 +1260,7 @@
         <translation>खैरो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="550"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="567"/>
         <source>Remove</source>
         <translation>हटाउनुहोस्</translation>
     </message>
@@ -1326,48 +1326,48 @@
         <translation>मेटाउनु</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="204"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="206"/>
         <source>Cannot access</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="250"/>
         <source>User directory</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="252"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="254"/>
         <source>Local disk</source>
         <translation>स्थानीय डिस्क</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="256"/>
         <source>Removable disk</source>
         <translation>हटाउन योग्य डिस्क</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="256"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="258"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="261"/>
         <source>Network shared directory</source>
         <translation>नेटवर्क साझा निर्देशिका</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="261"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="267"/>
         <source>Android mobile device</source>
         <translation>एन्ड्रोइड मोबाइल उपकरण</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="264"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="266"/>
         <source>Apple mobile device</source>
         <translation>एप्पल मोबाइल उपकरण</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="271"/>
         <source>Unknown device</source>
         <translation>अज्ञात उपकरण</translation>
     </message>
@@ -2260,29 +2260,29 @@
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1018"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1026"/>
         <source>Loading wallpapers...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1020"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1028"/>
         <source>Loading screensavers...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1080"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1088"/>
         <source>Custom Screensaver</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1081"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1083"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1089"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1091"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1156"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1164"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation type="unfinished"/>
     </message>
@@ -2317,32 +2317,32 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="549"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="550"/>
         <source>Wallpaper Slideshow</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="590"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="591"/>
         <source>When login</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="592"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="593"/>
         <source>When wakeup</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="630"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="631"/>
         <source>Require a password on wakeup</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="662"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="663"/>
         <source>Never</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="664"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="665"/>
         <source>Wait:</source>
         <translation type="unfinished"/>
     </message>
@@ -2424,10 +2424,10 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="56"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="506"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="559"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="508"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="561"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="54"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2531,15 +2531,15 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="227"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="237"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="496"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="616"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="498"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ठिक छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="234"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="489"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
         <source>Operation failed!</source>
         <translation>सञ्चालन असफल!</translation>
     </message>
@@ -2557,11 +2557,11 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="298"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="603"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="417"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="477"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="581"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="605"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>रद्द गर्नुहोस्</translation>
@@ -2590,7 +2590,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="319"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="604"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="606"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>चलाउनुहोस्</translation>
@@ -2624,106 +2624,116 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="392"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
+        <source>Permanently delete %1 items?</source>
+        <translation>स्थायी रूपमा% 1 आईटमहरू हटाउने हो?</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="393"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="416"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="369"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="418"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="478"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="398"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="435"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
+        <source>Permanently delete %1?</source>
+        <translation>% 1 लाई स्थायी रूपमा हटाउने हो?</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="400"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="437"/>
         <source>This action cannot be undone</source>
         <translation>यो कार्य पूर्ववत गर्न सकिदैन</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="411"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>के तपाईं % 1 आईटम खाली गर्न निश्चित हुनुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="412"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="414"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>के तपाईं% 1 आईटमहरू खाली गर्न निश्चित हुनुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="421"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="423"/>
         <source>Empty</source>
         <translation>खाली</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="459"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="461"/>
         <source>Do you want to delete %1?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="460"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="462"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>% 1 फाईल पुनर्स्थापित गर्न असफल भयो, लक्ष्य फोल्डर पढ्ने मात्र हो</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>% 1 फाईलहरू पुन: भण्डारण गर्न असफल भयो, लक्ष्य फोल्डर पढ्नको लागि मात्र हो</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="504"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="506"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;% 1&quot; पहिले नै अवस्थित छ, कृपया अर्को नाम प्रयोग गर्नुहोस्।</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="518"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
         <source>Device or resource busy</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="531"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="533"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="532"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="534"/>
         <source>Hide</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="533"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="535"/>
         <source>Cancel</source>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="556"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="558"/>
         <source>Unable to access %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>% 1 जुन यो सर्टकटले जनाउँछ परिवर्तन गरिएको छ वा सारियो</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>के तपाइँ यो सर्टकट मेटाउन चाहानुहुन्छ？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="602"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="604"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>यो फाईल कार्यान्वयन योग्य छैन, के तपाईं कार्यान्वयन अनुमति थप्न र चलाउन चाहानुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="616"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>चयनित फाईलहरूले प्रणाली फाइल / निर्देशिका समावेश गर्दछ, र यसलाई मेटाउन सकिदैन</translation>
     </message>
@@ -3590,12 +3600,12 @@
 <context>
     <name>dfmplugin_computer::ComputerItemWatcher</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="315"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="314"/>
         <source>My Directories</source>
         <translation>मेरो निर्देशिका</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="319"/>
         <source>Disks</source>
         <translation>डिस्कहरू</translation>
     </message>
@@ -4791,7 +4801,7 @@
 <context>
     <name>dfmplugin_search::SearchHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="163"/>
         <source>Path</source>
         <translation>पथ</translation>
     </message>
@@ -4987,47 +4997,47 @@
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="57"/>
         <source>Connect to Server</source>
         <translation>सर्भरमा जडान गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="109"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="150"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="316"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="154"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="315"/>
         <source>Clear History</source>
         <translation>ईतिहास खाली गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="186"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="435"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="190"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="438"/>
         <source>Unfavorite</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="216"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="217"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>जडान गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="229"/>
         <source>My Favorites</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="361"/>
         <source>No favorites yet</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="442"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="445"/>
         <source>Favorite</source>
         <translation type="unfinished"/>
     </message>
@@ -6011,22 +6021,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="509"/>
         <source>Name</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="511"/>
         <source>Time modified</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="524"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="513"/>
         <source>Size</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="526"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
         <source>Type</source>
         <translation type="unfinished"/>
     </message>
@@ -6299,22 +6309,22 @@
 <context>
     <name>plugin_filepreview::MusicMessageView</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="43"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="50"/>
         <source>Artist:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="49"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="62"/>
         <source>Album:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="136"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="133"/>
         <source>unknown artist</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="140"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="137"/>
         <source>unknown album</source>
         <translation type="unfinished"/>
     </message>
