@@ -634,6 +634,8 @@ void SideBarView::updateSeparatorVisibleState()
         SideBarItem *item = sidebarModel->itemFromIndex(i);   // top item
         if (item)
             allItemsInvisiable = false;
+        if (item->data(Qt::DisplayRole) == "blank")
+            continue;
         if (item->group() != lastGroupName) {
             SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
             if (groupItem) {   // Separator
