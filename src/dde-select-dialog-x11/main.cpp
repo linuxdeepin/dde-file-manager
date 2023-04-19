@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
     DFMGlobal::installTranslator();
     // 设置该进程不要因为没有窗口了就退出
     a.setQuitOnLastWindowClosed(false);
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     // 初始化日志系统
     DFMLogManager::registerFileAppender();
 
