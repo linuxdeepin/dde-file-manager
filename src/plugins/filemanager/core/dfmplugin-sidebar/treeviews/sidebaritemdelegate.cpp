@@ -77,6 +77,11 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 {
     if (!index.isValid())
         return DStyledItemDelegate::paint(painter, option, index);
+
+    DStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+    if (item->data(Qt::DisplayRole) == "blank")
+        return;
+
     painter->save();
 
     QStyleOptionViewItem opt = option;
@@ -90,10 +95,9 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
 
-    DStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
-
     if (!item)
         return DStyledItemDelegate::paint(painter, option, index);
+
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
     QRect itemRect = opt.rect;
     QPoint dx = QPoint(kItemMargin, 0);

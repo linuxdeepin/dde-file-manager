@@ -324,6 +324,11 @@ void SideBarWidget::initDefaultModel()
         addItem(item);
     }
 
+    SideBarItemSeparator *blank = SideBarHelper::createSeparatorItem("blank");
+    blank->setSizeHint(QSize(10, 10));
+    blank->setData("blank", Qt::DisplayRole);
+    addItem(blank);
+
     // use cache info to create items of groups.
     auto allGroup = SideBarInfoCacheMananger::instance()->groups();
     std::for_each(allGroup.cbegin(), allGroup.cend(), [this](const QString &name) {

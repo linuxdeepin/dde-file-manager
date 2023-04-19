@@ -632,6 +632,8 @@ void SideBarView::updateSeparatorVisibleState()
         return;
     for (int i = 0; i < sidebarModel->rowCount(); i++) {
         SideBarItem *item = sidebarModel->itemFromIndex(i);   // top item
+        if (item->data(Qt::DisplayRole) == "blank")
+            continue;
         if (item)
             allItemsInvisiable = false;
         if (item->group() != lastGroupName) {
