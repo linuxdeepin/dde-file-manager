@@ -5,8 +5,10 @@
 #include "private/filetagcache_p.h"
 
 #include "dfmplugin_tag_global.h"
-#include "data/tagdbhandle.h"
 #include "data/tagproxyhandle.h"
+
+#include <QVariant>
+#include <QColor>
 
 DPTAG_USE_NAMESPACE
 
@@ -80,7 +82,7 @@ FileTagCache &FileTagCache::instance()
 void FileTagCache::loadFileTagsFromDatabase()
 {
     // 加载数据库所有文件标记,和标记属性到缓存
-    d->fileTagsCache = TagDbHandle::instance()->getAllFileWithTags();
+    d->fileTagsCache = TagProxyHandle::instance()->getAllFileWithTags();
     const auto &tagsColor = TagProxyHandle::instance()->getAllTags();
     auto it = tagsColor.begin();
     for (; it != tagsColor.end(); ++it)
@@ -105,7 +107,7 @@ void FileTagCache::deleteTags(const QStringList &tags)
 
         auto iter = d->fileTagsCache.begin();
         while (iter != d->fileTagsCache.end()) {
-            if (iter.value().contains(tag)) {
+            if (iter.value().toStringList().contains(tag)) {
                 QStringList fileTags = map[iter.key()].toStringList();
                 fileTags.append(tag);
                 map[iter.key()] = fileTags;
@@ -144,11 +146,13 @@ void FileTagCache::changeTagName(const QVariantMap &oldAndNew)
 
 void FileTagCache::changeFilesTagName(const QString &oldName, const QString &newName)
 {
-    std::for_each(d->fileTagsCache.begin(), d->fileTagsCache.end(), [oldName, newName](QStringList &tagNames) {
+    std::for_each(d->fileTagsCache.begin(), d->fileTagsCache.end(), [oldName, newName](QVariant &var) {
+        QStringList tagNames { var.toStringList() };
         auto result { std::find(tagNames.begin(), tagNames.end(), oldName) };
         if (result != tagNames.end()) {
             int index { result - tagNames.begin() };
             tagNames.replace(index, newName);
+            var.setValue(tagNames);
         }
     });
 }
@@ -161,7 +165,7 @@ void FileTagCache::taggeFiles(const QVariantMap &fileAndTags)
             d->fileTagsCache.insert(it.key(), it.value().toStringList());
         } else {
             const auto &lst = it.value().toStringList();
-            auto cacheLst = d->fileTagsCache.value(it.key());
+            auto cacheLst = d->fileTagsCache.value(it.key()).toStringList();
             for (const QString &tag : lst)
                 if (!cacheLst.contains(tag))
                     cacheLst.append(tag);
@@ -177,7 +181,7 @@ void FileTagCache::untaggeFiles(const QVariantMap &fileAndTags)
     for (; it != fileAndTags.end(); ++it) {
         if (d->fileTagsCache.contains(it.key())) {
             const auto &lst = it.value().toStringList();
-            auto cacheLst = d->fileTagsCache.value(it.key());
+            auto cacheLst = d->fileTagsCache.value(it.key()).toStringList();
             for (const QString &tag : lst)
                 if (cacheLst.contains(tag))
                     cacheLst.removeOne(tag);
@@ -201,7 +205,7 @@ QStringList FileTagCache::getCacheFileTags(const QString &path)
         return {};
 
     QReadLocker wlk(&d->lock);
-    return d->fileTagsCache.value(path);
+    return d->fileTagsCache.value(path).toStringList();
 }
 
 FileTagCache::TagColorMap FileTagCache::getTagsColor(const QStringList &tags)

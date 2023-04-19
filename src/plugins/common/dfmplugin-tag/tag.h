@@ -8,7 +8,7 @@
 #include "dfmplugin_tag_global.h"
 
 #include <dfm-framework/dpf.h>
-class TagDBus;
+
 class QDBusConnection;
 namespace dfmplugin_tag {
 
@@ -44,12 +44,9 @@ private:
     void onMenuSceneAdded(const QString &scene);
     void bindEvents();
     void bindWindows();
-    void initDbus();
-    void initServiceDBusInterfaces(QDBusConnection *connection);
 
     QSet<QString> menuScenes;
     bool subscribedEvent { false };
-    QScopedPointer<TagDBus> tagDBus;
 };
 
 }

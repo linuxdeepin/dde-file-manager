@@ -4,13 +4,11 @@
 
 #include "tagproxyhandle.h"
 #include "private/tagproxyhandle_p.h"
-#include "dbus/dbus_interface/tagdbus_interface.h"
-#include "data/tagdbhandle.h"
 #include "utils/tagmanager.h"
 
 using namespace dfmplugin_tag;
-static constexpr char kDesktopService[] { "org.deepin.filemanager.service" };
-static constexpr char kTagDBusPath[] { "/org/deepin/filemanager/service/Tag" };
+static constexpr char kTagService[] { "org.deepin.filemanager.server" };
+static constexpr char kTagDBusPath[] { "/org/deepin/filemanager/server/TagManager" };
 
 TagProxyHandlePrivate::TagProxyHandlePrivate(TagProxyHandle *qq, QObject *parent)
     : QObject(parent),
@@ -24,61 +22,33 @@ TagProxyHandlePrivate::~TagProxyHandlePrivate()
 
 bool TagProxyHandlePrivate::isDBusRuning()
 {
-    // TODO(zhangs): refactor it! (bug-189717)
-    static const QStringList kAppWhileList { "dde-file-manager", "dde-desktop" };
-    if (!kAppWhileList.contains(qApp->applicationName()))
-        return false;
     return tagDBusInterface && tagDBusInterface->isValid();
 }
 
 void TagProxyHandlePrivate::initConnection()
 {
-    dbusWatcher.reset(new QDBusServiceWatcher(kDesktopService, QDBusConnection::sessionBus()));
+    dbusWatcher.reset(new QDBusServiceWatcher(kTagService, QDBusConnection::sessionBus()));
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
         connectToDBus();
     });
-    q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [this] {
-        connectToAPI();
+    q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [] {
+        qWarning() << "Lost connection: " << kTagService;
     });
 
-    if (isDBusRuning())
-        connectToDBus();
-    else
-        connectToAPI();
+    connectToDBus();
 }
 
 void TagProxyHandlePrivate::connectToDBus()
 {
-    if (currentConnectionType == kDBusConnecting)
-        return;
     disconnCurrentConnections();
 
     auto ptr = tagDBusInterface.data();
-    connections << q->connect(ptr, &TagDBusInterface::NewTagsAdded, q, &TagProxyHandle::newTagsAdded);
-    connections << q->connect(ptr, &TagDBusInterface::TagsDeleted, q, &TagProxyHandle::tagsDeleted);
-    connections << q->connect(ptr, &TagDBusInterface::TagsColorChanged, q, &TagProxyHandle::tagsColorChanged);
-    connections << q->connect(ptr, &TagDBusInterface::TagsNameChanged, q, &TagProxyHandle::tagsNameChanged);
-    connections << q->connect(ptr, &TagDBusInterface::FilesTagged, q, &TagProxyHandle::filesTagged);
-    connections << q->connect(ptr, &TagDBusInterface::FilesUntagged, q, &TagProxyHandle::filesUntagged);
-
-    currentConnectionType = kDBusConnecting;
-}
-
-void TagProxyHandlePrivate::connectToAPI()
-{
-    if (currentConnectionType == kAPIConnecting)
-        return;
-    disconnCurrentConnections();
-
-    auto ptr = TagDbHandle::instance();
-    connections << q->connect(ptr, &TagDbHandle::newTagsAdded, q, &TagProxyHandle::newTagsAdded);
-    connections << q->connect(ptr, &TagDbHandle::tagsDeleted, q, &TagProxyHandle::tagsDeleted);
-    connections << q->connect(ptr, &TagDbHandle::tagsColorChanged, q, &TagProxyHandle::tagsColorChanged);
-    connections << q->connect(ptr, &TagDbHandle::tagsNameChanged, q, &TagProxyHandle::tagsNameChanged);
-    connections << q->connect(ptr, &TagDbHandle::filesWereTagged, q, &TagProxyHandle::filesTagged);
-    connections << q->connect(ptr, &TagDbHandle::filesUntagged, q, &TagProxyHandle::filesUntagged);
-
-    currentConnectionType = kAPIConnecting;
+    connections << q->connect(ptr, &TagManagerDBusInterface::NewTagsAdded, q, &TagProxyHandle::newTagsAdded);
+    connections << q->connect(ptr, &TagManagerDBusInterface::TagsDeleted, q, &TagProxyHandle::tagsDeleted);
+    connections << q->connect(ptr, &TagManagerDBusInterface::TagsColorChanged, q, &TagProxyHandle::tagsColorChanged);
+    connections << q->connect(ptr, &TagManagerDBusInterface::TagsNameChanged, q, &TagProxyHandle::tagsNameChanged);
+    connections << q->connect(ptr, &TagManagerDBusInterface::FilesTagged, q, &TagProxyHandle::filesTagged);
+    connections << q->connect(ptr, &TagManagerDBusInterface::FilesUntagged, q, &TagProxyHandle::filesUntagged);
 }
 
 void TagProxyHandlePrivate::disconnCurrentConnections()
@@ -86,7 +56,6 @@ void TagProxyHandlePrivate::disconnCurrentConnections()
     for (const auto &connection : connections)
         q->disconnect(connection);
     connections.clear();
-    currentConnectionType = kNoneConnection;
 }
 
 QVariant TagProxyHandlePrivate::parseDBusVariant(const QDBusVariant &var)
@@ -116,129 +85,108 @@ TagProxyHandle *TagProxyHandle::instance()
     return &ins;
 }
 
-bool TagProxyHandle::canTagFile(const QString &filePath)
-{
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->CanTagFile(filePath);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagManager::instance()->canTagFile(QUrl(filePath));
-    }
-}
-
 QVariantMap TagProxyHandle::getAllTags()
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Query(static_cast<std::size_t>(TagActionType::kGetAllTags));
-        reply.waitForFinished();
-        const auto &data = d->parseDBusVariant(reply.value());
-        return data.toMap();
-    } else {
-        return TagDbHandle::instance()->getAllTags();
-    }
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kTags));
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    const auto &data = d->parseDBusVariant(reply.value());
+    return data.toMap();
 }
 
 QVariantMap TagProxyHandle::getTagsThroughFile(const QStringList &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Query(static_cast<std::size_t>(TagActionType::kGetTagsThroughFile), value);
-        reply.waitForFinished();
-        const auto &data = d->parseDBusVariant(reply.value());
-        return data.toMap();
-    } else {
-        return TagDbHandle::instance()->getTagsByUrls(value);
-    }
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kTagsOfFile), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    const auto &data = d->parseDBusVariant(reply.value());
+    return data.toMap();
 }
 
 QVariant TagProxyHandle::getSameTagsOfDiffFiles(const QStringList &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Query(static_cast<std::size_t>(TagActionType::kGetSameTagsOfDiffFiles), value);
-        reply.waitForFinished();
-        return d->parseDBusVariant(reply.value());
-    } else {
-        return TagDbHandle::instance()->getSameTagsOfDiffUrls(value);
-    }
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kTagIntersectionOfFiles), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return d->parseDBusVariant(reply.value());
 }
 
 QVariantMap TagProxyHandle::getFilesThroughTag(const QStringList &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Query(static_cast<std::size_t>(TagActionType::kGetFilesThroughTag), value);
-        reply.waitForFinished();
-        const auto &data = d->parseDBusVariant(reply.value());
-        return data.toMap();
-    } else {
-        return TagDbHandle::instance()->getFilesByTag(value);
-    }
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kFilesOfTag), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    const auto &data = d->parseDBusVariant(reply.value());
+    return data.toMap();
 }
 
 QVariantMap TagProxyHandle::getTagsColor(const QStringList &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Query(static_cast<std::size_t>(TagActionType::kGetTagsColor), value);
-        reply.waitForFinished();
-        const auto &data = d->parseDBusVariant(reply.value());
-        return data.toMap();
-    } else {
-        return TagDbHandle::instance()->getTagsColor(value);
-    }
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kColorOfTags), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    const auto &data = d->parseDBusVariant(reply.value());
+    return data.toMap();
+}
+
+QVariantHash TagProxyHandle::getAllFileWithTags()
+{
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kFilesWithTags));
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    const auto &data = d->parseDBusVariant(reply.value());
+    return data.toHash();
 }
 
 bool TagProxyHandle::addTags(const QVariantMap &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Insert(static_cast<std::size_t>(TagActionType::kAddTags), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->addTagProperty(value);
-    }
+    auto &&reply = d->tagDBusInterface->Insert(int(InsertOpts::kTags), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::addTagsForFiles(const QVariantMap &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Insert(static_cast<std::size_t>(TagActionType::kMakeFilesTags), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->addTagsForFiles(value);
-    }
+    auto &&reply = d->tagDBusInterface->Insert(int(InsertOpts::kTagOfFiles), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::changeTagsColor(const QVariantMap &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagsColor), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->changeTagColors(value);
-    }
+    auto &&reply = d->tagDBusInterface->Update(int(UpdateOpts::kColors), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::changeTagNamesWithFiles(const QVariantMap &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagsNameWithFiles), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->changeTagNamesWithFiles(value);
-    }
+    auto &&reply = d->tagDBusInterface->Update(int(UpdateOpts::kTagsNameWithFiles), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::changeFilePaths(const QVariantMap &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeFilesPaths), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->changeFilePaths(value);
-    }
+    auto &&reply = d->tagDBusInterface->Update(int(UpdateOpts::kFilesPaths), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::deleteTags(const QVariantMap &value)
@@ -246,41 +194,37 @@ bool TagProxyHandle::deleteTags(const QVariantMap &value)
     if (value.isEmpty())
         return false;
 
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Delete(static_cast<std::size_t>(TagActionType::kDeleteTags), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->deleteTags(value.first().toStringList());
-    }
+    auto &&reply = d->tagDBusInterface->Delete(int(DeleteOpts::kTags), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::deleteFiles(const QVariantMap &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Delete(static_cast<std::size_t>(TagActionType::kDeleteFiles), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->deleteFiles(value.keys());
-    }
+    auto &&reply = d->tagDBusInterface->Delete(int(DeleteOpts::kFiles), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::deleteFileTags(const QVariantMap &value)
 {
-    if (d->isDBusRuning()) {
-        auto &&reply = d->tagDBusInterface->Delete(static_cast<std::size_t>(TagActionType::kRemoveTagsOfFiles), value);
-        reply.waitForFinished();
-        return reply.value();
-    } else {
-        return TagDbHandle::instance()->removeTagsOfFiles(value);
-    }
+    auto &&reply = d->tagDBusInterface->Delete(int(DeleteOpts::kTagOfFiles), value);
+    reply.waitForFinished();
+    if (!reply.isValid())
+        return {};
+    return reply.value();
 }
 
 bool TagProxyHandle::connectToService()
 {
-    qInfo() << "Start initilize dbus: `TagDBusInterface`";
-    d->tagDBusInterface.reset(new TagDBusInterface(kDesktopService, kTagDBusPath, QDBusConnection::sessionBus(), this));
+    qInfo() << "Start initilize dbus: `TagManagerDBusInterface`";
+    d->tagDBusInterface.reset(new TagManagerDBusInterface(kTagService, kTagDBusPath,
+                                                          QDBusConnection::sessionBus(), this));
+    d->tagDBusInterface->setTimeout(3000);
     d->initConnection();
     return d->isDBusRuning();
 }

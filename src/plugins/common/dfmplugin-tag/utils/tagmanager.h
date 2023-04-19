@@ -85,7 +85,7 @@ private:
     void initializeConnection();
 
     QMap<QString, QString> getTagsColorName(const QStringList &tags) const;
-    bool deleteTagData(const QStringList &data, const TagActionType &type);
+    bool deleteTagData(const QStringList &data, const DeleteOpts &type);
     bool localFileCanTagFilter(const FileInfoPointer &info) const;
     QVariant transformQueryData(const QDBusVariant &var) const;
 

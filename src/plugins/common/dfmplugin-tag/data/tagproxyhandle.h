@@ -9,8 +9,6 @@
 
 #define TagProxyHandleIns DPTAG_NAMESPACE::TagProxyHandle::instance()
 
-class TagDBusInterface;
-
 namespace dfmplugin_tag {
 
 class TagProxyHandlePrivate;
@@ -27,8 +25,7 @@ public:
     QVariant getSameTagsOfDiffFiles(const QStringList &value);
     QVariantMap getFilesThroughTag(const QStringList &value);
     QVariantMap getTagsColor(const QStringList &value);
-
-    bool canTagFile(const QString &filePath);
+    QVariantHash getAllFileWithTags();
 
     bool addTags(const QVariantMap &value);
     bool addTagsForFiles(const QVariantMap &value);

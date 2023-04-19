@@ -11,6 +11,13 @@ FILE(GLOB_RECURSE TAG_FILES
     )
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS DBus REQUIRED)
+
+# generate dbus interface
+qt5_add_dbus_interface(TAG_FILES
+    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.TagManager.xml
+    tagmanager_interface)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -25,6 +32,8 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
+    Qt5::Core
+    Qt5::DBus
     DFM::base
     DFM::framework
     ${DtkWidget_LIBRARIES}
