@@ -37,8 +37,11 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPoin
 AbstractFileInfo::AbstractFileInfo(const QUrl &url)
     : url(url)
 {
-    if (url.path().endsWith(QDir::separator()) && url.path() != QDir::separator())
-        this->url.setPath(url.path().left(url.path().lastIndexOf(QDir::separator())));
+    if (url.path().endsWith(QDir::separator()) && url.path() != QDir::separator()) {
+        auto path = url.path();
+        path.chop(1);
+        this->url.setPath(path);
+    }
     Q_UNUSED(type_id)
 }
 
@@ -86,10 +89,6 @@ QString dfmbase::AbstractFileInfo::absoluteFilePath() const
 QString dfmbase::AbstractFileInfo::fileName() const
 {
     QString filePath = this->filePath();
-
-    if (filePath.endsWith(QDir::separator())) {
-        filePath.chop(1);
-    }
 
     int index = filePath.lastIndexOf(QDir::separator());
 

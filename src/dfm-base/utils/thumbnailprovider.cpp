@@ -108,6 +108,8 @@ QString ThumbnailProviderPrivate::sizeToFilePath(ThumbnailProvider::Size size) c
 uint64_t ThumbnailProviderPrivate::filePathToInode(QString filePath) const
 {
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
+    if (fileInfo.isNull())
+        return static_cast<uint64_t>(-1);
     return fileInfo->extendAttributes(FileInfo::FileExtendedInfoType::kInode).toULongLong();
 }
 
@@ -251,6 +253,9 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
 
     const QString &dirPath = fileInfo->pathOf(PathInfoType::kPath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kFilePath);
+
+    if (dirPath.isEmpty() || filePath.isEmpty())
+        return QString();
 
     // 判断目录inode值，是否为缓存目录
     // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
