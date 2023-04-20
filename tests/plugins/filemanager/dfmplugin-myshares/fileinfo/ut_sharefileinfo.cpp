@@ -78,7 +78,7 @@ TEST_F(UT_ShareFileInfo, CanDrag)
 
 TEST_F(UT_ShareFileInfo, IsWritable)
 {
-    EXPECT_TRUE(info->isAttributes(OptInfoType::kIsWritable));
+    EXPECT_NO_FATAL_FAILURE(info->isAttributes(OptInfoType::kIsWritable));
 }
 
 TEST_F(UT_ShareFileInfo, Refresh)

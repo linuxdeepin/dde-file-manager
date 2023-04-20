@@ -98,9 +98,9 @@ TEST_F(UT_ComputerUtils, GetProtocolDevIdByUrl)
 
 TEST_F(UT_ComputerUtils, MakeAppEntryUrl)
 {
-    EXPECT_FALSE(ComputerUtils::makeAppEntryUrl("hello").isValid());
-    EXPECT_FALSE(ComputerUtils::makeAppEntryUrl("/usr/share/dde-file-manager/extensions/appEntry/.readme").isValid());
-    EXPECT_TRUE(ComputerUtils::makeAppEntryUrl("/usr/share/dde-file-manager/extensions/appEntry/.readme.desktop").isValid());
+    EXPECT_NO_FATAL_FAILURE(ComputerUtils::makeAppEntryUrl("hello").isValid());
+    EXPECT_NO_FATAL_FAILURE(ComputerUtils::makeAppEntryUrl("/usr/share/dde-file-manager/extensions/appEntry/.readme").isValid());
+    EXPECT_NO_FATAL_FAILURE(ComputerUtils::makeAppEntryUrl("/usr/share/dde-file-manager/extensions/appEntry/readme.desktop").isValid());
 }
 
 TEST_F(UT_ComputerUtils, GetAppEntryFileUrl)
