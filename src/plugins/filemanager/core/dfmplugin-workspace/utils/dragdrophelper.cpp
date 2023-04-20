@@ -93,7 +93,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             return true;
         }
 
-        QList<QUrl> fromUrls = event->mimeData()->urls();
+        QList<QUrl> fromUrls = currentDragUrls;
         Qt::DropAction dropAction = event->dropAction();
         if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
             event->setDropAction(dropAction);

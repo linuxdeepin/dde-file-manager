@@ -106,6 +106,7 @@ Q_SIGNALS:
     void blockDevUnlocked(const QString &id, const QString &cleartextId);
     void blockDevFsAdded(const QString &id);
     void blockDevFsRemoved(const QString &id);
+    void blockDevMountResult(const QString &id, bool result);
 
     // these 3 signals is designed only for dock's opeartion.
     void blockDevUnmountAsyncFailed(const QString &id, DFMMOUNT::DeviceError err);
