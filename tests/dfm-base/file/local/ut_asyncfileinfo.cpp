@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef UT_SYNCFILEINFO
-#define UT_SYNCFILEINFO
+#ifndef UT_AAsyncFileInfo
+#define UT_AAsyncFileInfo
 
 #include <stubext.h>
-#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QDir>
@@ -17,7 +17,7 @@
 
 DFMBASE_USE_NAMESPACE
 
-class UT_SyncFileInfo : public testing::Test
+class UT_AsyncFileInfo : public testing::Test
 {
 public:
     virtual void SetUp() override
@@ -30,63 +30,64 @@ public:
     {
     }
 
-    ~UT_SyncFileInfo() override;
+    ~UT_AsyncFileInfo() override;
 
     FileInfoPointer info{ nullptr };
 };
 
-UT_SyncFileInfo::~UT_SyncFileInfo() {
+UT_AsyncFileInfo::~UT_AsyncFileInfo() {
 
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfo)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfo)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    info.reset(new SyncFileInfo(url));
+    info.reset(new AsyncFileInfo(url));
     QSharedPointer<dfmio::DFileInfo> dfileinfo (new dfmio::DFileInfo(url));
     dfileinfo->initQuerier();
-    info.reset(new SyncFileInfo(url, dfileinfo));
-    SyncFileInfo info1(url, dfileinfo),info2(url, dfileinfo),info3(url);
-    EXPECT_TRUE(info1 == info2);
-    EXPECT_TRUE(info1 != info3);
+    info.reset(new AsyncFileInfo(url, dfileinfo));
+    AsyncFileInfo info3(url);
     EXPECT_TRUE(info3.initQuerier());
+    info->initQuerier();
     EXPECT_TRUE(info->exists());
     info->cacheAttribute(dfmio::DFileInfo::AttributeID::kStandardIsHidden, true);
     EXPECT_TRUE(info->isAttributes(OptInfoType::kIsHidden));
-    info->refresh();
+    info->initQuerier();
     EXPECT_FALSE(info->isAttributes(OptInfoType::kIsHidden));
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoNameOf)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoNameOf)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    QProcess::execute("touch testSyncFileInfo.txt");
-    url.setPath(url.path() + QDir::separator() + "testSyncFileInfo.txt");
-    info.reset(new SyncFileInfo(url));
-    EXPECT_EQ("testSyncFileInfo.txt", info->nameOf(NameInfoType::kFileName));
-    EXPECT_EQ("testSyncFileInfo", info->nameOf(NameInfoType::kBaseName));
-    EXPECT_EQ("testSyncFileInfo", info->nameOf(NameInfoType::kBaseNameOfRename));
-    EXPECT_EQ("testSyncFileInfo", info->nameOf(NameInfoType::kCompleteBaseName));
+    QProcess::execute("touch testAsyncFileInfo.txt");
+    url.setPath(url.path() + QDir::separator() + "testAsyncFileInfo.txt");
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
+    EXPECT_EQ("testAsyncFileInfo.txt", info->nameOf(NameInfoType::kFileName));
+    EXPECT_EQ("testAsyncFileInfo", info->nameOf(NameInfoType::kBaseName));
+    EXPECT_EQ("testAsyncFileInfo", info->nameOf(NameInfoType::kBaseNameOfRename));
+    EXPECT_EQ("testAsyncFileInfo", info->nameOf(NameInfoType::kCompleteBaseName));
     EXPECT_EQ("txt", info->nameOf(NameInfoType::kSuffix));
     EXPECT_EQ("txt", info->nameOf(NameInfoType::kCompleteSuffix));
-    EXPECT_EQ("testSyncFileInfo.txt", info->nameOf(NameInfoType::kFileCopyName));
+    EXPECT_EQ("testAsyncFileInfo.txt", info->nameOf(NameInfoType::kFileCopyName));
     EXPECT_EQ("text-plain", info->nameOf(NameInfoType::kIconName));
     EXPECT_EQ("text-x-generic", info->nameOf(NameInfoType::kGenericIconName));
     EXPECT_EQ("text/plain", info->nameOf(NameInfoType::kMimeTypeName));
-    EXPECT_EQ("testSyncFileInfo.txt", info->nameOf(NameInfoType::kFileNameOfRename));
+    EXPECT_EQ("testAsyncFileInfo.txt", info->nameOf(NameInfoType::kFileNameOfRename));
     EXPECT_EQ("", info->nameOf(NameInfoType::kCustomerStartName));
-    QProcess::execute("rm testSyncFileInfo.txt");
+    QProcess::execute("rm testAsyncFileInfo.txt");
 
 }
 
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoPathOf)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoPathOf)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    QProcess::execute("touch testSyncFileInfo.txt");
+    QProcess::execute("touch testAsyncFileInfo.txt");
     auto parent = url.path();
-    url.setPath(url.path() + QDir::separator() + "testSyncFileInfo.txt");
-    info.reset(new SyncFileInfo(url));
+    url.setPath(url.path() + QDir::separator() + "testAsyncFileInfo.txt");
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
     EXPECT_EQ(url.path(), info->pathOf(PathInfoType::kFilePath));
     EXPECT_EQ(url.path(), info->pathOf(PathInfoType::kAbsoluteFilePath));
     EXPECT_EQ(url.path(), info->pathOf(PathInfoType::kCanonicalPath));
@@ -95,38 +96,43 @@ TEST_F(UT_SyncFileInfo, testSyncFileInfoPathOf)
     EXPECT_EQ(parent + "/", info->pathOf(PathInfoType::kSymLinkTarget));
     EXPECT_EQ("", info->pathOf(PathInfoType::kCustomerStartPath));
 
-    QProcess::execute("ln -s  testSyncFileInfo.txt testInfott");
-    info.reset(new SyncFileInfo(QUrl::fromLocalFile(parent + QDir::separator() + "testInfott")));
+    QProcess::execute("ln -s  testAsyncFileInfo.txt testInfott");
+    info.reset(new AsyncFileInfo(QUrl::fromLocalFile(parent + QDir::separator() + "testInfott")));
+    info->initQuerier();
     EXPECT_EQ(url.path(), info->pathOf(PathInfoType::kSymLinkTarget));
 
-    QProcess::execute("rm testInfott testSyncFileInfo.txt");
+    QProcess::execute("rm testInfott testAsyncFileInfo.txt");
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoUrlOf)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoUrlOf)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    QProcess::execute("touch testSyncFileInfo.txt");
+    QProcess::execute("touch testAsyncFileInfo.txt");
     auto parent = url.path();
-    url.setPath(url.path() + QDir::separator() + "testSyncFileInfo.txt");
-    info.reset(new SyncFileInfo(url));
+    url.setPath(url.path() + QDir::separator() + "testAsyncFileInfo.txt");
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
+    info->initQuerier();
     EXPECT_EQ(url, info->urlOf(UrlInfoType::kRedirectedFileUrl));
     EXPECT_EQ(url, info->urlOf(UrlInfoType::kUrl));
     EXPECT_EQ(url, info->urlOf(UrlInfoType::kOriginalUrl));
     EXPECT_EQ(parent, info->urlOf(UrlInfoType::kParentUrl).path());
-    QProcess::execute("ln -s  testSyncFileInfo.txt testInfott");
-    info.reset(new SyncFileInfo(QUrl::fromLocalFile(parent + QDir::separator() + "testInfott")));
+    QProcess::execute("ln -s  testAsyncFileInfo.txt testInfott");
+    info.reset(new AsyncFileInfo(QUrl::fromLocalFile(parent + QDir::separator() + "testInfott")));
+    info->initQuerier();
     EXPECT_EQ(url, info->urlOf(UrlInfoType::kRedirectedFileUrl));
-    EXPECT_TRUE(info->canAttributes(CanableInfoType::kCanRedirectionFileUrl));
+    EXPECT_FALSE(info->canAttributes(CanableInfoType::kCanRedirectionFileUrl));
     EXPECT_TRUE(0 == info->size());
     EXPECT_TRUE(info->isAttributes(OptInfoType::kIsSymLink));
     EXPECT_EQ(QUrl(), info->urlOf(UrlInfoType::kCustomerStartUrl));
-    QProcess::execute("rm testInfott testSyncFileInfo.txt");
+    QProcess::execute("rm testInfott testAsyncFileInfo.txt");
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoIsAttributes)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoIsAttributes)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    info.reset(new SyncFileInfo(url));
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
     EXPECT_TRUE(info->isAttributes(OptInfoType::kIsDir));
     EXPECT_FALSE(info->isAttributes(OptInfoType::kIsFile));
     EXPECT_TRUE(info->isAttributes(OptInfoType::kIsReadable));
@@ -139,10 +145,11 @@ TEST_F(UT_SyncFileInfo, testSyncFileInfoIsAttributes)
     EXPECT_FALSE(info->isAttributes(OptInfoType::kCustomerFileIs));
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoCanAttributes)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoCanAttributes)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    info.reset(new SyncFileInfo(url));
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
     EXPECT_FALSE(info->canAttributes(CanableInfoType::kCanRedirectionFileUrl));
     EXPECT_TRUE(info->canAttributes(CanableInfoType::kCanDelete));
     EXPECT_TRUE(info->canAttributes(CanableInfoType::kCanTrash));
@@ -155,11 +162,12 @@ TEST_F(UT_SyncFileInfo, testSyncFileInfoCanAttributes)
     EXPECT_FALSE(info->canAttributes(CanableInfoType::kCustomerFileCan));
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoExtendAttributes)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoExtendAttributes)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    info.reset(new SyncFileInfo(url));
-    EXPECT_EQ(false,info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool());
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
+    EXPECT_EQ(true,info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool());
     EXPECT_EQ(false,info->extendAttributes(ExtInfoType::kFileCdRomDevice).toBool());
     EXPECT_EQ("-",info->extendAttributes(ExtInfoType::kSizeFormat).toString());
     EXPECT_TRUE(0 != info->extendAttributes(ExtInfoType::kInode).toUInt());
@@ -173,12 +181,13 @@ TEST_F(UT_SyncFileInfo, testSyncFileInfoExtendAttributes)
     EXPECT_TRUE(info->permission(QFile::ReadUser));
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoTimeOf)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoTimeOf)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    QProcess::execute("touch testSyncFileInfo.txt");
-    url.setPath(url.path() + QDir::separator() + "testSyncFileInfo.txt");
-    info.reset(new SyncFileInfo(url));
+    QProcess::execute("touch testAsyncFileInfo.txt");
+    url.setPath(url.path() + QDir::separator() + "testAsyncFileInfo.txt");
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
     dfmio::DFile file(url);
     if (file.open(dfmio::DFile::OpenFlag::kReadWrite)) {
         QByteArray tt{"------"};
@@ -203,55 +212,69 @@ TEST_F(UT_SyncFileInfo, testSyncFileInfoTimeOf)
     EXPECT_NO_FATAL_FAILURE(info->timeOf(TimeInfoType::kLastModifiedMSecond));
     EXPECT_NO_FATAL_FAILURE(info->timeOf(TimeInfoType::kLastReadMSecond));
 
-    QProcess::execute("rm testSyncFileInfo.txt");
+    QProcess::execute("rm testAsyncFileInfo.txt");
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoFileType)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoFileType)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    info.reset(new SyncFileInfo(url));
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
     EXPECT_TRUE(FileInfo::FileType::kDirectory == info->fileType());
     EXPECT_TRUE(FileInfo::FileType::kDirectory == info->fileType());
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoChildren)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoChildren)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    url.setPath(url.path() + QDir::separator() + "testSyncFileInfo");
-    info.reset(new SyncFileInfo(url));
+    url.setPath(url.path() + QDir::separator() + "testAsyncFileInfo");
+    QProcess::execute("rm -rf testAsyncFileInfo");
+    info.reset(new AsyncFileInfo(url));
+    info->initQuerier();
     EXPECT_EQ(QObject::tr("File has been moved or deleted"), info->viewOfTip(ViewInfoType::kEmptyDir));
     EXPECT_EQ(QObject::tr("Loading..."), info->viewOfTip(ViewInfoType::kLoading));
     EXPECT_EQ("", info->viewOfTip(ViewInfoType::kCustomerStartView));
-    QProcess::execute("mkdir testSyncFileInfo");
-    info->refresh();
+    EXPECT_TRUE(-1 == info->countChildFile());
+    EXPECT_TRUE(-1 == info->countChildFileAsync());
+    QProcess::execute("mkdir testAsyncFileInfo");
+    info->initQuerier();
+    while (-1 == info->countChildFile()) {
+        info->countChildFileAsync();
+    }
     EXPECT_TRUE(0 == info->countChildFile());
     EXPECT_TRUE(0 == info->countChildFileAsync());
-    EXPECT_EQ("testSyncFileInfo", info->displayOf(DisPlayInfoType::kFileDisplayName));
+    EXPECT_EQ("testAsyncFileInfo", info->displayOf(DisPlayInfoType::kFileDisplayName));
     EXPECT_EQ("-", info->displayOf(DisPlayInfoType::kSizeDisplayName));
     EXPECT_EQ(url.path(), info->displayOf(DisPlayInfoType::kFileDisplayPath));
     EXPECT_EQ("Directory (inode/directory)", info->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
     EXPECT_EQ("0", info->displayOf(DisPlayInfoType::kFileTypeDisplayName));
-    EXPECT_EQ("testSyncFileInfo", info->displayOf(DisPlayInfoType::kFileDisplayPinyinName));
+    EXPECT_EQ("testAsyncFileInfo", info->displayOf(DisPlayInfoType::kFileDisplayPinyinName));
 
-    QProcess::execute("touch ./testSyncFileInfo/testSyncFileInfo.txt");
-    while (0 == info->countChildFileAsync()) {
+    QProcess::execute("touch ./testAsyncFileInfo/testAsyncFileInfo.txt");
+    info.reset(new AsyncFileInfo(url));
+    info.dynamicCast<AsyncFileInfo>()->setNotifyUrl(url);
+    info->refresh();
+    while (true != info->isAttributes(OptInfoType::kIsDir)) {
+        QThread::msleep(10);
+    }
+    while (-1 == info->countChildFileAsync()) {
         QThread::msleep(10);
     }
     EXPECT_TRUE(1 == info->countChildFileAsync());
 
-    FileInfoPointer tmp(new SyncFileInfo(QUrl::fromLocalFile(url.path() + "/testSyncFileInfo.txt")));
-    qInfo() << tmp->displayOf(DisPlayInfoType::kSizeDisplayName);
+    FileInfoPointer tmp(new AsyncFileInfo(QUrl::fromLocalFile(url.path() + "/testAsyncFileInfo.txt")));
+    info->initQuerier();
     EXPECT_EQ("0 B", tmp->displayOf(DisPlayInfoType::kSizeDisplayName));
 
-    QProcess::execute("rm -rf testSyncFileInfo");
+    QProcess::execute("rm -rf testAsyncFileInfo");
 }
 
-TEST_F(UT_SyncFileInfo, testSyncFileInfoMimType)
+TEST_F(UT_AsyncFileInfo, testAsyncFileInfoMimType)
 {
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    info.reset(new SyncFileInfo(url));
+    info.reset(new AsyncFileInfo(url));
     EXPECT_TRUE(!info->fileMimeTypeAsync().isValid());
-    info->refresh();
+    info->initQuerier();
     EXPECT_TRUE(info->fileMimeType().isValid());
     EXPECT_TRUE(info->fileMimeType().isValid());
     EXPECT_TRUE(!info->fileIcon().isNull());

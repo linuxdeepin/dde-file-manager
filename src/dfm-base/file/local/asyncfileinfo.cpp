@@ -357,13 +357,7 @@ AsyncFileInfo::FileType AsyncFileInfo::fileType() const
  */
 int AsyncFileInfo::countChildFile() const
 {
-    if (isAttributes(FileIsType::kIsDir)) {
-        QReadLocker locker(&d->lock);
-        if (!d->fileCountFuture)
-            return -1;
-        return d->fileCountFuture->finish ? d->fileCountFuture->data.toInt() : -1;
-    }
-    return -1;
+    return countChildFileAsync();
 }
 
 int AsyncFileInfo::countChildFileAsync() const
