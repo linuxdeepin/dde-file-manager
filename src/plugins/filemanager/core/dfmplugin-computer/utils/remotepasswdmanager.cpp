@@ -24,67 +24,8 @@ RemotePasswdManager::RemotePasswdManager(QObject *parent)
 {
 }
 
-QJsonObject RemotePasswdManager::getLoginInfo(const QString &uri)
-{
-    QMutexLocker locker(&mutex);
-    for (auto key : smbObjs.keys()) {
-        if (key.startsWith(uri) || uri.startsWith(key)) {
-            auto obj = smbObjs.value(key).toObject();
-            obj.insert("key", key);
-            return obj;
-        }
-    }
-    return smbObjs.value(uri).toObject();
-}
-
-QString RemotePasswdManager::parseServer(const QString &uri)
-{
-    // AppController::actionForgetPassword
-    QStringList frags = uri.split("/");
-    if (frags.count() < 3)
-        return "";
-
-    // just trans from old version. there is no example and no annotation...
-    QString authField = frags.at(2);
-    if (authField.contains(";")) {
-        QStringList authFrags = authField.split(";");
-        if (authFrags.count() >= 2) {
-            QString userAuth = authFrags.at(1);
-            if (userAuth.contains("@")) {
-                QStringList userAuthFrags = userAuth.split("@");
-                if (userAuthFrags.count() >= 2)
-                    return userAuthFrags.at(1);
-            }
-        }
-    } else {
-        if (authField.contains("@")) {
-            QStringList authFrags = authField.split("@");
-            if (authFrags.count() >= 2)
-                return authFrags.at(1);
-        } else {
-            return authField;
-        }
-    }
-
-    return "";
-}
-
-QString RemotePasswdManager::configPath()
-{
-    static QString path = QString("%1/deepin/dde-file-manager/samba.json").arg(DFMBASE_NAMESPACE::StandardPaths::location(DFMBASE_NAMESPACE::StandardPaths::kApplicationConfigPath));
-    return path;
-}
-
 void RemotePasswdManager::clearPasswd(const QString &uri)
 {
-    //    auto obj = getLoginInfo(uri);
-
-    //    if (obj.isEmpty())
-    //        return;
-
-    //    QString user = obj.value("username").toString();
-    //    QString domain = obj.value("domain").toString();
-    //    QString key = obj.value("key").toString();
     QUrl url(uri);
     QString server = url.host();
     QString protocol = url.scheme();
@@ -103,10 +44,6 @@ void RemotePasswdManager::clearPasswd(const QString &uri)
                               "protocol", protocol.toStdString().c_str(),
                               nullptr);
     }
-
-    //    QMutexLocker locker(&mutex);
-    //    smbObjs.remove(uri);
-    //    saveConfig();
 }
 
 const SecretSchema *RemotePasswdManager::smbSchema()

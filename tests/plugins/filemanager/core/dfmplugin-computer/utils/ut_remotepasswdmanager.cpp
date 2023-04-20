@@ -18,10 +18,7 @@ class UT_RemotePasswdManager : public testing::Test
 {
 protected:
 protected:
-    virtual void SetUp() override
-    {
-        stub.set_lamda(&RemotePasswdManager::configPath, [] { __DBG_STUB_INVOKE__ return "/tmp/tst_smb.json"; });
-    }
+    virtual void SetUp() override { }
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -35,42 +32,10 @@ static void stubSecretClear(const SecretSchema *, GCancellable *, GAsyncReadyCal
 
 TEST_F(UT_RemotePasswdManager, ClearPasswd)
 {
-    stub.set_lamda(&RemotePasswdManager::parseServer, [] { __DBG_STUB_INVOKE__ return "1.2.3.4"; });
     stub.set(secret_password_clear, stubSecretClear);
     EXPECT_NO_FATAL_FAILURE(ins->clearPasswd("smb://1.2.3.4"));
     EXPECT_NO_FATAL_FAILURE(ins->clearPasswd("ftp://1.2.3.4"));
     EXPECT_NO_FATAL_FAILURE(ins->clearPasswd("helllllll"));
-}
-
-TEST_F(UT_RemotePasswdManager, GetLoginInfo)
-{
-    QFile f(ins->configPath());
-    f.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QTextStream in(&f);
-    in << "{";
-    in << "    \"smb://127.0.0.1/util-dfm/\": {";
-    in << "        \"GAskPasswordFlags\": 31,";
-    in << "        \"anonymous\": false,";
-    in << "        \"domain\": \"WORKGROUP\",";
-    in << "        \"id\": \"smb://127.0.0.1/util-dfm/\",";
-    in << "        \"message\": \"共享 util-dfm 于 127.0.0.1 需要密码\",";
-    in << "        \"passwordSave\": 2,";
-    in << "        \"username\": \"xust\"";
-    in << "    }";
-    in << "}";
-    f.close();
-
-    EXPECT_NO_FATAL_FAILURE(ins->getLoginInfo("smb://127.0.0.1"));
-    EXPECT_FALSE(ins->getLoginInfo("smb://127.0.0.1").isEmpty());
-    EXPECT_TRUE(ins->getLoginInfo("smb://192.168.1.1").isEmpty());
-}
-
-TEST_F(UT_RemotePasswdManager, ParseServer) { }
-
-TEST_F(UT_RemotePasswdManager, ConfigPath)
-{
-    stub.clear();
-    EXPECT_TRUE(ins->configPath().endsWith("samba.json"));
 }
 
 TEST_F(UT_RemotePasswdManager, SmbSchema)

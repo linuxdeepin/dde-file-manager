@@ -31,9 +31,6 @@ public:
 
 private:
     explicit RemotePasswdManager(QObject *parent = nullptr);
-    QJsonObject getLoginInfo(const QString &uri);
-    QString parseServer(const QString &uri);
-    QString configPath();
 
     static const SecretSchema *smbSchema();
     static const SecretSchema *ftpSchema();
