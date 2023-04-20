@@ -8,8 +8,11 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/private/devicehelper.h>
 
 #include <dfm-framework/dpf.h>
+
+#include <dfm-mount/dblockdevice.h>
 
 #include <QApplication>
 
@@ -28,6 +31,8 @@ void ReportLogEventReceiver::bindEvents()
     // connect device manager mount result signal
     connect(DeviceManager::instance(), &DeviceManager::mountNetworkDeviceResult,
             this, &ReportLogEventReceiver::handleMountNetworkResult);
+    connect(DeviceManager::instance(), &DeviceManager::blockDevMountResult,
+            this, &ReportLogEventReceiver::handleBlockMountData);
 
     // connect all the signal events of plugins which need report log.
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
@@ -147,4 +152,33 @@ void ReportLogEventReceiver::handleMenuData(const QString &name, const QList<QUr
     data.insert("type", types);
 
     RLog::instance()->commit("FileMenu", data);
+}
+
+void ReportLogEventReceiver::handleBlockMountData(const QString& id, bool result)
+{
+    if (id.isEmpty()) {
+        qDebug() << "Can't report empty devices' operation";
+        return;
+    }
+
+    QVariantMap rec {};
+    if (result) {
+        BlockDevAutoPtr device = DeviceHelper::createBlockDevice(id);
+
+        if (device.isNull()) {
+            qDebug() << "Can't report unexist devices' operation";
+            return;
+        }
+
+        rec.insert("fileSystem", device->fileSystem());
+        rec.insert("standardSize", device->sizeTotal());
+        rec.insert("mountResult", result);
+    } else {
+        rec.insert("fileSystem", "unknown");
+        rec.insert("standardSize", 0);
+        rec.insert("mountResult", result);
+    }
+
+    qInfo() << "rlog: mount result: " << rec;
+    RLog::instance()->commit("BlockMount", rec);
 }

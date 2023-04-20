@@ -153,18 +153,26 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
         qWarning() << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
+        Q_EMIT blockDevMountResult(id, false);
         return;
     }
 
     if (dev->optical()) {
         if (d->isMountingOptical) {
             qWarning() << "Currently mounting a disc!";
+            Q_EMIT blockDevMountResult(id, false);
             return;
         }
+
+        auto callback = [cb, id, this](bool ok, const OperationErrorInfo &err, const QString &mpt) {
+            Q_EMIT this->blockDevMountResult(id, ok);
+            cb(ok, err, mpt);
+        };
+
         QFutureWatcher<void> *fw { new QFutureWatcher<void>() };
         connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
             d->isMountingOptical = false;
-            dev->mountAsync(opts, cb);
+            dev->mountAsync(opts, callback);
             delete fw;
         });
         d->isMountingOptical = true;
@@ -180,13 +188,15 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
                     qWarning() << "cannot create block device: " << cryptoBackingDev;
                     if (cb)
                         cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
+                    Q_EMIT blockDevMountResult(id, false);
                     return;
                 }
                 removable = backingDev->removable();
             }
 
             bool optical = dev->optical();
-            auto callback = [cb, removable, optical](bool ok, const OperationErrorInfo &err, const QString &mpt) {
+            auto callback = [cb, removable, optical, id, this](bool ok, const OperationErrorInfo &err, const QString &mpt) {
+                this->blockDevMountResult(id, ok);
                 if (!mpt.isEmpty() && removable && !optical)
                     DeviceManagerPrivate::handleDlnfsMount(mpt, true);
                 if (cb)
@@ -197,6 +207,8 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             qWarning() << "device is not mountable: " << errMsg << id;
             if (cb)
                 cb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorNotMountable), "");
+
+            Q_EMIT blockDevMountResult(id, false);
         }
     }
 }
