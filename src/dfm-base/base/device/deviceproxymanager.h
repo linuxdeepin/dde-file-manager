@@ -40,13 +40,9 @@ public:
     QVariantMap queryProtocolInfo(const QString &id, bool reload = false);
 
     // device operation
-    void detachBlockDevice(const QString &id);
-    void detachProtocolDevice(const QString &id);
-    void detachAllDevices();
     void reloadOpticalInfo(const QString &id);
 
     bool initService();
-    bool isMonitorWorking();
     bool isDBusRuning();
 
     bool isFileOfExternalMounts(const QString &filePath);
