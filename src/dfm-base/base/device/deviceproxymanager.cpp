@@ -80,32 +80,6 @@ QVariantMap DeviceProxyManager::queryProtocolInfo(const QString &id, bool reload
     }
 }
 
-void DeviceProxyManager::detachBlockDevice(const QString &id)
-{
-    if (d->isDBusRuning())
-        d->devMngDBus->DetachBlockDevice(id);
-    else
-        DevMngIns->detachBlockDev(id);
-}
-
-void DeviceProxyManager::detachProtocolDevice(const QString &id)
-{
-    if (d->isDBusRuning())
-        d->devMngDBus->DetachProtocolDevice(id);
-    else
-        DevMngIns->detachProtoDev(id);
-}
-
-void DeviceProxyManager::detachAllDevices()
-{
-    if (d->isDBusRuning()) {
-        d->devMngDBus->DetachAllMountedDevices();
-    } else {
-        DevMngIns->detachAllRemovableBlockDevs();
-        DevMngIns->detachAllProtoDevs();
-    }
-}
-
 void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 {
     if (d->isDBusRuning())
@@ -120,13 +94,6 @@ bool DeviceProxyManager::initService()
     d->devMngDBus.reset(new DeviceManagerInterface(kDeviceService, kDevMngPath, QDBusConnection::sessionBus(), this));
     d->initConnection();
     return d->isDBusRuning();
-}
-
-bool DeviceProxyManager::isMonitorWorking()
-{
-    auto &&reply = d->devMngDBus->IsMonotorWorking();
-    reply.waitForFinished();
-    return reply.value();
 }
 
 bool DeviceProxyManager::isDBusRuning()

@@ -65,7 +65,9 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
 
 QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
 {
-    Q_ASSERT(url.isValid());
+    if (!url.isValid())
+        return QUrl();
+
     if (!DeviceUtils::isSamba(url))
         return url;
 
@@ -74,6 +76,8 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
 
     QString host, share;
     QString fullPath = url.path();
+    if (!fullPath.endsWith("/"))
+        fullPath.append("/");
     bool parseReuslt = DeviceUtils::parseSmbInfo(fullPath, host, share);
     if (!parseReuslt)
         return url;
@@ -86,7 +90,7 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     QString fileName = fullPath.remove(prefix);
 
     smbUrl.setHost(host);
-    smbUrl.setPath("/" + share + "/" + fileName);
+    fileName.isEmpty() ? smbUrl.setPath("/" + share) : smbUrl.setPath("/" + share + "/" + fileName);
     return smbUrl;
 }
 
@@ -236,17 +240,12 @@ QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
     QString protocol, share;
     if (isSamba(target)) {
         protocol = "smb";
-        static const QRegularExpression gvfsSmb(R"(,share=([^,/]*))");
-        static const QRegularExpression cifsSmb(R"(^/media/[^/]*/smbmounts/([^/]*) on [^/]*)");
-        auto match = cifsSmb.match(target.path());
-        if (match.hasMatch()) {
+        static const QRegularExpression regxSmb(R"(,share=([^,/]*))");
+        auto match = regxSmb.match(target.path());
+        if (match.hasMatch())
             share = match.captured(1);
-        } else {
-            match = gvfsSmb.match(target.path());
-            if (!match.hasMatch())
-                return {};
-            share = match.captured(1);
-        }
+        else
+            return {};
     } else {
         protocol = isSftp(target) ? "sftp" : "ftp";
     }
@@ -374,7 +373,6 @@ QString DeviceUtils::nameOfOptical(const QVariantMap &datas)
         }
     } else {   // show drive name, medium is not loaded
         auto medias = datas.value(kMediaCompatibility).toStringList();
-        QString maxCompatibility;
         for (auto iter = discVector.crbegin(); iter != discVector.crend(); ++iter) {
             if (medias.contains(iter->first))
                 return QObject::tr("%1 Drive").arg(iter->second);
