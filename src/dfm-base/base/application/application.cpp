@@ -4,15 +4,13 @@
 
 #include "base/application/application.h"
 #include "private/application_p.h"
-#ifdef ENABLE_QUICK_SEARCH
-#    include "dbusservice/dbus_interface/anything_interface.h"
-#endif
 
 #include "base/application/settings.h"
 
 #include <QCoreApplication>
 #include <QMetaEnum>
 #include <QtConcurrent>
+#include <QDBusInterface>
 
 namespace dfmbase {
 
@@ -172,25 +170,22 @@ bool Application::syncAppAttribute()
     return appSetting()->sync();
 }
 
-#ifdef ENABLE_QUICK_SEARCH
-static ComDeepinAnythingInterface *getAnythingInterface()
+static QDBusInterface &anythingInterface()
 {
-    static ComDeepinAnythingInterface *interface = new ComDeepinAnythingInterface("com.deepin.anything", "/com/deepin/anything", QDBusConnection::systemBus());
+    static QDBusInterface interface("com.deepin.anything",
+                                    "/com/deepin/anything",
+                                    "com.deepin.anything",
+                                    QDBusConnection::systemBus());
 
     return interface;
 }
-#endif
 
 QVariant Application::genericAttribute(Application::GenericAttribute ga)
 {
-    if (ga == kIndexInternal) {
-#ifdef ENABLE_QUICK_SEARCH
-        return getAnythingInterface()->autoIndexInternal();
-#endif
-    } else if (ga == kIndexExternal) {
-#ifdef ENABLE_QUICK_SEARCH
-        return getAnythingInterface()->autoIndexExternal();
-#endif
+    if (ga == kIndexInternal && anythingInterface().isValid()) {
+        return anythingInterface().property("autoIndexInternal");
+    } else if (ga == kIndexExternal && anythingInterface().isValid()) {
+        return anythingInterface().property("autoIndexExternal");
     }
 
     const QString group(QT_STRINGIFY(GenericAttribute));
@@ -202,14 +197,12 @@ QVariant Application::genericAttribute(Application::GenericAttribute ga)
 
 void Application::setGenericAttribute(Application::GenericAttribute ga, const QVariant &value)
 {
-    if (ga == kIndexInternal) {
-#ifdef ENABLE_QUICK_SEARCH
-        return getAnythingInterface()->setAutoIndexInternal(value.toBool());
-#endif
-    } else if (ga == kIndexExternal) {
-#ifdef ENABLE_QUICK_SEARCH
-        return getAnythingInterface()->setAutoIndexExternal(value.toBool());
-#endif
+    if (ga == kIndexInternal && anythingInterface().isValid()) {
+        anythingInterface().setProperty("autoIndexInternal", value);
+        return;
+    } else if (ga == kIndexExternal && anythingInterface().isValid()) {
+        anythingInterface().setProperty("autoIndexExternal", value);
+        return;
     }
 
     const QString group(QT_STRINGIFY(GenericAttribute));

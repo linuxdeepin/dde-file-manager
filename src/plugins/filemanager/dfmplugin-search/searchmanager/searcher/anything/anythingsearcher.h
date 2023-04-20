@@ -11,7 +11,7 @@
 #include <QElapsedTimer>
 #include <QMutex>
 
-class ComDeepinAnythingInterface;
+class QDBusInterface;
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -33,7 +33,7 @@ private:
     void tryNotify();
 
 private:
-    ComDeepinAnythingInterface *anythingInterface = nullptr;
+    QDBusInterface *anythingInterface = nullptr;
     QAtomicInt status = kReady;
     QList<QUrl> allResults;
     mutable QMutex mutex;

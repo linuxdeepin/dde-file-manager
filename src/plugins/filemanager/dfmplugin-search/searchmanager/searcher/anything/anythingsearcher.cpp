@@ -7,8 +7,8 @@
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/dbusservice/dbus_interface/anything_interface.h>
 
+#include <QDBusInterface>
 #include <QDBusReply>
 #include <QDebug>
 
@@ -23,10 +23,11 @@ AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, bool
     : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(keyword), parent),
       isBindPath(isBindPath)
 {
-    anythingInterface = new ComDeepinAnythingInterface("com.deepin.anything",
-                                                       "/com/deepin/anything",
-                                                       QDBusConnection::systemBus(),
-                                                       this);
+    anythingInterface = new QDBusInterface("com.deepin.anything",
+                                           "/com/deepin/anything",
+                                           "com.deepin.anything",
+                                           QDBusConnection::systemBus(),
+                                           this);
 }
 
 AnythingSearcher::~AnythingSearcher()
@@ -53,8 +54,8 @@ bool AnythingSearcher::search()
 
     notifyTimer.start();
     // 如果挂载在此路径下的其它目录也支持索引数据, 则一并搜索
-    QStringList dirs = anythingInterface->hasLFTSubdirectories(searchPath);
-    searchDirList << dirs;
+    QDBusPendingReply<QStringList> dirs = anythingInterface->asyncCallWithArgumentList("hasLFTSubdirectories", { searchPath });
+    searchDirList << dirs.value();
     if (searchDirList.isEmpty() || searchDirList.first() != searchPath)
         searchDirList.prepend(searchPath);
 
@@ -66,7 +67,8 @@ bool AnythingSearcher::search()
         if (status.loadAcquire() != kRuning)
             return false;
 
-        const auto &reply = anythingInterface->search(kMaxCount, kMaxTime, startOffset, endOffset, searchDirList.first(), keyword, true);
+        QList<QVariant> argumentList { kMaxCount, kMaxTime, startOffset, endOffset, searchDirList.first(), keyword, true };
+        const QDBusPendingReply<QStringList, uint, uint> &reply = anythingInterface->asyncCallWithArgumentList("search", argumentList);
         auto results = reply.argumentAt<0>();
         if (reply.error().type() != QDBusError::NoError) {
             qWarning() << "deepin-anything search failed:"
@@ -146,23 +148,26 @@ bool AnythingSearcher::isSupported(const QUrl &url, bool &isBindPath)
     if (!url.isValid() || UrlRoute::isVirtual(url))
         return false;
 
-    static ComDeepinAnythingInterface anything("com.deepin.anything",
-                                               "/com/deepin/anything",
-                                               QDBusConnection::systemBus());
+    static QDBusInterface anything("com.deepin.anything",
+                                   "/com/deepin/anything",
+                                   "com.deepin.anything",
+                                   QDBusConnection::systemBus());
     if (!anything.isValid())
         return false;
 
     auto path = UrlRoute::urlToPath(url);
-    if (!anything.hasLFT(path)) {
-        const auto &bindPath = FileUtils::bindPathTransform(path, true);
-        if (bindPath != path) {
-            if (!anything.hasLFT(bindPath))
-                return false;
+    QDBusPendingReply<bool> reply = anything.asyncCallWithArgumentList("hasLFT", { path });
+    if (reply.value())
+        return true;
+
+    const auto &bindPath = FileUtils::bindPathTransform(path, true);
+    if (bindPath != path) {
+        reply = anything.asyncCallWithArgumentList("hasLFT", { bindPath });
+        if (reply.value()) {
             isBindPath = true;
-        } else {
-            return false;
+            return true;
         }
     }
 
-    return true;
+    return false;
 }
