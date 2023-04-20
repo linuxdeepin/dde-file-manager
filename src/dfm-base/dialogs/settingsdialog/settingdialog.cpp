@@ -27,6 +27,7 @@
 #include <QJsonParseError>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDBusConnectionInterface>
 
 using namespace dfmbase;
 
@@ -36,7 +37,6 @@ inline constexpr char kItemKey[] { "key" };
 inline constexpr char kOptionsName[] { "options" };
 }
 
-#ifndef ENABLE_QUICK_SEARCH
 static QByteArray removeQuickSearchIndex(const QByteArray &data)
 {
     auto const &jdoc = QJsonDocument::fromJson(data);
@@ -65,7 +65,6 @@ static QByteArray removeQuickSearchIndex(const QByteArray &data)
     QByteArray arr = QJsonDocument(RootObject).toJson();
     return arr;
 }
-#endif
 
 int indexOfChar(const QByteArray &data, char ch, int from)
 {
@@ -158,9 +157,8 @@ void SettingDialog::loadSettings(const QString &templateFile)
     QByteArray data = file.readAll();
     file.close();
 
-#ifndef ENABLE_QUICK_SEARCH
-    data = removeQuickSearchIndex(data);
-#endif
+    if (!QDBusConnection::systemBus().interface()->isServiceRegistered("com.deepin.anything"))
+        data = removeQuickSearchIndex(data);
 
     settingFilter(data);
     dtkSettings = DSettings::fromJson(data);

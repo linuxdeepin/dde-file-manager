@@ -13,13 +13,6 @@ if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 0)
 endif()
 
-if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" OR
-    ${CMAKE_SYSTEM_PROCESSOR} MATCHES "i386" OR
-    ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
-    message(${CMAKE_SYSTEM_PROCESSOR} ": using deepin-anything.")
-    ADD_DEFINITIONS(-DENABLE_QUICK_SEARCH)
-endif()
-
 # signals and slots keyword is disable, use Q_SIGNALS and Q_SLOTS instead
 add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
 add_compile_definitions(THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}")

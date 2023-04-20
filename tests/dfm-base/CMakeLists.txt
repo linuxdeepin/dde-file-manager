@@ -4,7 +4,6 @@ project(test-dfm-base)
 
 set(HeaderPath ${PROJECT_INCLUDE_PATH}/dfm-base/)
 set(SourcePath ${PROJECT_SOURCE_PATH}/dfm-base/)
-ADD_DEFINITIONS(-DENABLE_QUICK_SEARCH)
 
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE

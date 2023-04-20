@@ -23,4 +23,4 @@ public:
     static Application *self;
 };
 }
-#endif // APPLICATION_P_H
+#endif   // APPLICATION_P_H
