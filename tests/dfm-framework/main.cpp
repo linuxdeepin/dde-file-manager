@@ -6,17 +6,16 @@
 #include <sanitizer/asan_interface.h>
 #include <QCoreApplication>
 
-
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc,argv);
+    QCoreApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
 
     int ret = RUN_ALL_TESTS();
 
 #ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../../asan_dde-file-manager.log");
+    __sanitizer_set_report_path("../../../asan_framework.log");
 #endif
 
     return ret;
