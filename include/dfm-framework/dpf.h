@@ -10,6 +10,5 @@
 #include <dfm-framework/lifecycle/lifecycle.h>
 #include <dfm-framework/listener/listener.h>
 #include <dfm-framework/log/framelogmanager.h>
-#include <dfm-framework/log/codetimecheck.h>
 
 #endif   // DPF_H

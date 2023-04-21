@@ -8,7 +8,6 @@
 #include <dfm-framework/listener/listener.h>
 #include <dfm-framework/lifecycle/plugin.h>
 #include <dfm-framework/lifecycle/plugincreator.h>
-#include <dfm-framework/log/codetimecheck.h>
 
 DPF_BEGIN_NAMESPACE
 
@@ -19,8 +18,6 @@ static QMutex kMutex;
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *qq)
     : q(qq)
 {
-    dpfCheckTimeBegin();
-    dpfCheckTimeEnd();
 }
 
 PluginManagerPrivate::~PluginManagerPrivate()
@@ -36,7 +33,6 @@ PluginManagerPrivate::~PluginManagerPrivate()
 PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
                                                             const QString &version)
 {
-    dpfCheckTimeBegin();
     int size = readQueue.size();
     int idx = 0;
     while (idx < size) {
@@ -52,7 +48,6 @@ PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
         }
         idx++;
     }
-    dpfCheckTimeBegin();
 
     return PluginMetaObjectPointer(nullptr);
 }
@@ -63,11 +58,8 @@ PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
  */
 bool PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
-    dpfCheckTimeBegin();
-
     bool result = doLoadPlugin(pluginMetaObj);
 
-    dpfCheckTimeEnd();
     return result;
 }
 
@@ -77,11 +69,8 @@ bool PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
  */
 bool PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
-    dpfCheckTimeBegin();
-
     bool result = doInitPlugin(pluginMetaObj);
 
-    dpfCheckTimeEnd();
     return result;
 }
 
@@ -91,11 +80,8 @@ bool PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
  */
 bool PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
-    dpfCheckTimeBegin();
-
     bool result = doStartPlugin(pluginMetaObj);
 
-    dpfCheckTimeEnd();
     return result;
 }
 
@@ -105,11 +91,7 @@ bool PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
  */
 void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
-    dpfCheckTimeBegin();
-
     doStopPlugin(pluginMetaObj);
-
-    dpfCheckTimeEnd();
 }
 
 /*!
@@ -118,8 +100,6 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
  */
 bool PluginManagerPrivate::readPlugins()
 {
-    dpfCheckTimeBegin();
-
     scanfAllPlugin(&readQueue, pluginLoadPaths, pluginLoadIIDs, blackPlguinNames);
     qInfo() << "Lazy load plugin names: " << lazyLoadPluginsNames;
     std::for_each(readQueue.begin(), readQueue.end(), [this](PluginMetaObjectPointer obj) {
@@ -136,7 +116,6 @@ bool PluginManagerPrivate::readPlugins()
     }
 #endif
 
-    dpfCheckTimeEnd();
     return readQueue.isEmpty() ? false : true;
 }
 
@@ -152,7 +131,6 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
                                           const QStringList &blackList)
 {
     Q_ASSERT(destQueue);
-    dpfCheckTimeBegin();
 
     if (pluginIIDs.isEmpty())
         return;
@@ -180,8 +158,6 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
                 scanfRealPlugin(destQueue, metaObj, dataJson, blackList);
         }
     }
-
-    dpfCheckTimeEnd();
 }
 
 void PluginManagerPrivate::scanfRealPlugin(QQueue<PluginMetaObjectPointer> *destQueue, PluginMetaObjectPointer metaObj,
@@ -239,8 +215,6 @@ void PluginManagerPrivate::scanfVirtualPlugin(QQueue<PluginMetaObjectPointer> *d
  */
 void PluginManagerPrivate::readJsonToMeta(PluginMetaObjectPointer metaObject)
 {
-    dpfCheckTimeBegin();
-
     metaObject->d->state = PluginMetaObject::kReading;
 
     QJsonObject &&jsonObj = metaObject->d->loader->metaData();
@@ -265,8 +239,6 @@ void PluginManagerPrivate::readJsonToMeta(PluginMetaObjectPointer metaObject)
     } else {
         jsonToMeta(metaObject, metaData);
     }
-
-    dpfCheckTimeEnd();
 }
 
 void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData)
@@ -306,8 +278,6 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
  */
 bool PluginManagerPrivate::loadPlugins()
 {
-    dpfCheckTimeBegin();
-
     dependsSort(&loadQueue, &notLazyLoadQuene);
 
     bool ret = true;
@@ -316,7 +286,6 @@ bool PluginManagerPrivate::loadPlugins()
             ret = false;
     });
 
-    dpfCheckTimeEnd();
     return ret;
 }
 
@@ -325,8 +294,6 @@ bool PluginManagerPrivate::loadPlugins()
  */
 bool PluginManagerPrivate::initPlugins()
 {
-    dpfCheckTimeBegin();
-
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
         if (!PluginManagerPrivate::doInitPlugin(pointer))
@@ -335,7 +302,6 @@ bool PluginManagerPrivate::initPlugins()
 
     emit Listener::instance()->pluginsInitialized();
     allPluginsInitialized = true;
-    dpfCheckTimeEnd();
 
     return ret;
 }
@@ -345,8 +311,6 @@ bool PluginManagerPrivate::initPlugins()
  */
 bool PluginManagerPrivate::startPlugins()
 {
-    dpfCheckTimeBegin();
-
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
         if (!PluginManagerPrivate::doStartPlugin(pointer))
@@ -355,7 +319,6 @@ bool PluginManagerPrivate::startPlugins()
 
     emit Listener::instance()->pluginsStarted();
     allPluginsStarted = true;
-    dpfCheckTimeEnd();
 
     return ret;
 }
@@ -365,13 +328,10 @@ bool PluginManagerPrivate::startPlugins()
  */
 void PluginManagerPrivate::stopPlugins()
 {
-    dpfCheckTimeBegin();
     // reverse queue
     std::for_each(loadQueue.rbegin(), loadQueue.rend(), [this](PluginMetaObjectPointer pointer) {
         PluginManagerPrivate::doStopPlugin(pointer);
     });
-
-    dpfCheckTimeEnd();
 }
 
 /*!
@@ -382,7 +342,6 @@ void PluginManagerPrivate::stopPlugins()
 void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
                                        const QQueue<PluginMetaObjectPointer> *srcQueue)
 {
-    dpfCheckTimeBegin();
     Q_ASSERT(dstQueue);
     Q_ASSERT(srcQueue);
 
@@ -411,11 +370,8 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
     if (!doPluginSort(dependGroup, srcMap, dstQueue)) {
         qCritical() << "Sort depnd group failed";
         *dstQueue = *srcQueue;
-        dpfCheckTimeEnd();
         return;
     }
-
-    dpfCheckTimeEnd();
 }
 
 bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
