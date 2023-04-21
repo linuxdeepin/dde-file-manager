@@ -247,11 +247,13 @@ void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
         searchButton->setHidden(true);
         searchButton->setObjectName("filterButton");
         searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
+        searchButton->setIconSize(QSize(16, 16));
         searchButton->setProperty("showFilterView", false);
         searchButtonSwitchState = true;
     } else {
         searchButton->setHidden(false);
         searchButton->setIcon(QIcon::fromTheme("search"));
+        searchButton->setIconSize(QSize(32, 32));
         searchButton->setDown(false);
         searchButtonSwitchState = false;
         // TODO(zhangs): workspace->toggleAdvanceSearchBar(false);
