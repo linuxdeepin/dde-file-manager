@@ -11,6 +11,7 @@
 #define DPWORKSPACE_NAMESPACE dfmplugin_workspace
 
 #include <dfm-framework/event/eventhelper.h>
+#include "dtkwidget_config.h"
 
 #include <QList>
 #include <QDir>
@@ -39,12 +40,14 @@ enum class ModelState : uint8_t {
     kIdle,
     kBusy
 };
+#ifdef DTKWIDGET_CLASS_DSizeMode
+inline constexpr int kCompactIconViewSpacing { 0 };
+inline constexpr int kCompactIconModeColumnPadding { 5 };
+#endif
 
 inline constexpr int kIconViewSpacing { 5 };
-inline constexpr int kCompactIconViewSpacing { 0 };
 inline constexpr int kListViewSpacing { 0 };
 inline constexpr int kIconModeColumnPadding { 10 };
-inline constexpr int kCompactIconModeColumnPadding { 5 };
 inline constexpr int kDefualtHeaderSectionWidth { 140 };
 inline constexpr int kMinimumHeaderSectionWidth { 120 };
 inline constexpr int kListViewHeaderHeight { 36 };

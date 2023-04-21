@@ -12,7 +12,10 @@
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
-
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DGuiApplicationHelper>
+#    include <DSizeMode>
+#endif
 #include <dfm-framework/dpf.h>
 
 #include <QEvent>
@@ -139,7 +142,11 @@ void ComputerView::initView()
     this->setItemDelegate(new ComputerItemDelegate(this));
     qobject_cast<QListView *>(this)->setWrapping(true);
     qobject_cast<QListView *>(this)->setFlow(QListView::Flow::LeftToRight);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    this->setSpacing(DSizeModeHelper::element(5, 10));
+#else
     this->setSpacing(10);
+#endif
     this->setResizeMode(QListView::ResizeMode::Adjust);
     this->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     this->setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
@@ -197,6 +204,11 @@ void ComputerView::initConnect()
         else
             ComputerEventCaller::sendEnterInNewTab(ComputerUtils::getWinId(this), ComputerUtils::rootUrl());
     });
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        this->setSpacing(DSizeModeHelper::element(5, 10));
+    });
+#endif
 }
 
 void ComputerView::connectShortcut(QKeySequence seq, std::function<void(DFMEntryFileInfoPointer)> slot)
