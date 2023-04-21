@@ -6,7 +6,7 @@
 #define INFOCACHE_H
 
 #include <dfm-base/dfm_base_global.h>
-#include <dfm-base/utils/threadcontainer.hpp>
+#include <dfm-base/utils/threadcontainer.h>
 #include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>

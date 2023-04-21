@@ -6,7 +6,7 @@
 #define WATCHERCACHE_P_H
 
 #include <dfm-base/utils/watchercache.h>
-#include <dfm-base/utils/threadcontainer.hpp>
+#include <dfm-base/utils/threadcontainer.h>
 
 #include <QMutex>
 #include <QMap>
