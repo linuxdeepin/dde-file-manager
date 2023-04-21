@@ -24,6 +24,7 @@ find_package(Qt5 COMPONENTS X11Extras REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(KF5Codecs REQUIRED)
 find_package(X11 REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 pkg_search_module(libmount REQUIRED mount IMPORTED_TARGET)
 pkg_search_module(dfm-burn REQUIRED dfm-burn IMPORTED_TARGET)
@@ -40,8 +41,6 @@ add_executable(${PROJECT_NAME}
     ${UT_CXX_FILE}
     ${CPP_STUB_SRC}
 )
-
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_INCLUDE_PATH}

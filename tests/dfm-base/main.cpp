@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     delete appins;
 
 #ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../../asan_dde-file-manager.log");
+    __sanitizer_set_report_path("../../../asan_base.log");
 #endif
 
     return ret;
