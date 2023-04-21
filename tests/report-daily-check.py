@@ -19,7 +19,7 @@ print("hello world, will scann the dde-file-manager ut build path and mark the d
 #real_project_path = os.path.split(os.path.realpath(__file__))[0]
 real_project_path = os.path.abspath(os.path.join(os.getcwd(), ".."))
 
-daily_report_path = real_project_path + "/build-ut/"
+daily_report_path = real_project_path + "/build-ut"
 build_ut_report_path = real_project_path + "/build-ut/report"
 build_ut_coverage_path = real_project_path + "/build-ut/html"
 
@@ -175,12 +175,12 @@ def produce_report_file(filename):
         file.write(str("totalTests:" + test.totalTests)+splitmark)
         file.write(str("failures:" + test.failures)+splitmark)
         file.write(str("errors:" + test.errors)+splitmark)
-        file.write("buglist:" + str(test.buglist)+splitmark)
+        file.write("buglist:" + "|".join(test.buglist)+splitmark)
         file.write(str(test.file)+'\n')
     for test in total_coverage:
         file.write(str(test.title)+splitmark)
         file.write(str(test.covAreaName)+splitmark)
-        file.write(str(test.covCodeNum +":"+test.totalCodeNum)+splitmark)
+        file.write(str(test.covCodeNum +" : "+test.totalCodeNum)+splitmark)
         file.write(str(test.covValue)+splitmark)
         file.write(str(test.file)+'\n')
     file.close()
