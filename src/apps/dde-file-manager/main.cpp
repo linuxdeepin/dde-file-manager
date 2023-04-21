@@ -98,8 +98,6 @@ static bool isLoadVaultPlugin()
 
 static bool pluginsLoad()
 {
-    dpfCheckTimeBegin();
-
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
@@ -149,8 +147,6 @@ static bool pluginsLoad()
     // load plugins without core
     if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
-
-    dpfCheckTimeEnd();
 
     return true;
 }

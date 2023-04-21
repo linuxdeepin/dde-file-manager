@@ -48,8 +48,6 @@ static const char *const kLibCore = "libddplugin-core.so";
 
 static bool pluginsLoad()
 {
-    dpfCheckTimeBegin();
-
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
@@ -96,8 +94,6 @@ static bool pluginsLoad()
     // load plugins without core
     if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
-
-    dpfCheckTimeEnd();
 
     return true;
 }
@@ -170,10 +166,10 @@ static void checkUpgrade(DApplication *app)
 static bool isDesktopEnable()
 {
     bool enable = !(dfmbase::DConfigManager::instance()->value(
-                   dfmbase::kDefaultCfgPath,
-                   "dd.disabled",
-                   false
-                   ).toBool());
+                                                               dfmbase::kDefaultCfgPath,
+                                                               "dd.disabled",
+                                                               false)
+                            .toBool());
     return enable;
 }
 

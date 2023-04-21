@@ -65,8 +65,6 @@ static bool singlePluginLoad(const QString &pluginName, const QString &libName)
 
 static bool pluginsLoad()
 {
-    dpfCheckTimeBegin();
-
     static const QStringList kBlackNameList {
         "dfmplugin-burn",
         "dfmplugin-dirshare",
@@ -126,8 +124,6 @@ static bool pluginsLoad()
     // load plugins without core
     if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
-
-    dpfCheckTimeEnd();
 
     return true;
 }
