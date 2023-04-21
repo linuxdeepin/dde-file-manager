@@ -14,9 +14,6 @@
 #include <DApplicationHelper>
 #include <DPalette>
 #include <DPaletteHelper>
-#ifdef DTKWIDGET_CLASS_DSizeMode
-#    include <DSizeMode>
-#endif
 
 #include <QPainter>
 #include <QGraphicsScene>
@@ -75,9 +72,6 @@ void ComputerItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
 
     ComputerItemData::ShapeType type = ComputerItemData::ShapeType(index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt());
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    view->setSpacing(DSizeModeHelper::element(5, 10));
-#endif
     switch (type) {
     case ComputerItemData::kSplitterItem:
         paintSplitter(painter, option, index);
