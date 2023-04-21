@@ -7,7 +7,7 @@
 #include "dfmplugin_fileoperations_global.h"
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/interfaces/fileinfo.h>
-#include <dfm-base/utils/threadcontainer.hpp>
+#include <dfm-base/utils/threadcontainer.h>
 
 #include <QSharedPointer>
 #include <QQueue>

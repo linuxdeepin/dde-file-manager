@@ -7,7 +7,7 @@
 
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/interfaces/private/abstractfilewatcher_p.h>
-#include <dfm-base/utils/threadcontainer.hpp>
+#include <dfm-base/utils/threadcontainer.h>
 
 #include <dfm-io/dwatcher.h>
 
