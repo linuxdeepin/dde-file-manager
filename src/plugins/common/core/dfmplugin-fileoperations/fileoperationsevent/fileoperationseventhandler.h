@@ -22,6 +22,10 @@ public:
     static FileOperationsEventHandler *instance();
     void handleJobResult(DFMBASE_NAMESPACE::AbstractJobHandler::JobType jobType, JobHandlePointer ptr);
 
+public Q_SLOTS:
+    void handleErrorNotify(const JobInfoPointer &jobInfo);
+    void handleFinishedNotify(const JobInfoPointer &jobInfo);
+
 private:
     explicit FileOperationsEventHandler(QObject *parent = nullptr);
     void publishJobResultEvent(DFMBASE_NAMESPACE::AbstractJobHandler::JobType jobType,

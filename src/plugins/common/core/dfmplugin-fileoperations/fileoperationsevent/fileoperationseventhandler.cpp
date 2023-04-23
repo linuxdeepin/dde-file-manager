@@ -63,18 +63,30 @@ void FileOperationsEventHandler::handleJobResult(DFMBASE_NAMESPACE::AbstractJobH
 
     QSharedPointer<bool> ok { new bool { true } };
     QSharedPointer<QString> errMsg { new QString };
-    connect(ptr.get(), &AbstractJobHandler::errorNotify, this, [ok, errMsg](const JobInfoPointer &jobInfo) {
-        auto errType { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>() };
-        if (errType != AbstractJobHandler::JobErrorType::kNoError) {
-            *ok = false;
-            *errMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey).toString();
-        }
-    });
+    connect(ptr.get(), &AbstractJobHandler::errorNotify, this, &FileOperationsEventHandler::handleErrorNotify);
+    connect(ptr.get(), &AbstractJobHandler::finishedNotify, this, &FileOperationsEventHandler::handleFinishedNotify);
+}
 
-    connect(ptr.get(), &AbstractJobHandler::finishedNotify, this, [this, jobType, ok, errMsg](const JobInfoPointer &jobInfo) {
-        auto srcUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey).value<QList<QUrl>>() };
-        auto destUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>() };
-        auto customInfos = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey).toList();
-        publishJobResultEvent(jobType, srcUrls, destUrls, customInfos, *ok, *errMsg);
-    });
+void FileOperationsEventHandler::handleErrorNotify(const JobInfoPointer &jobInfo)
+{
+    QSharedPointer<bool> ok { new bool { true } };
+    QSharedPointer<QString> errMsg { new QString };
+    auto errType { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>() };
+    if (errType != AbstractJobHandler::JobErrorType::kNoError) {
+        *ok = false;
+        *errMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey).toString();
+    }
+}
+
+void FileOperationsEventHandler::handleFinishedNotify(const JobInfoPointer &jobInfo)
+{
+    if (!jobInfo->contains(AbstractJobHandler::NotifyInfoKey::kJobtypeKey))
+        return;
+    QSharedPointer<bool> ok { new bool { true } };
+    QSharedPointer<QString> errMsg { new QString };
+    auto srcUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey).value<QList<QUrl>>() };
+    auto destUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>() };
+    auto customInfos = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey).toList();
+    auto jobType = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kJobtypeKey).value<DFMBASE_NAMESPACE::AbstractJobHandler::JobType>();
+    publishJobResultEvent(jobType, srcUrls, destUrls, customInfos, *ok, *errMsg);
 }
