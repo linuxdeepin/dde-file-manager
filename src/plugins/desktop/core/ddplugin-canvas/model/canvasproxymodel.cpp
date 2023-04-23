@@ -723,7 +723,7 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
     }
 
     // set user id
-    mimedt->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
+    SysInfoUtils::setMimeDataUserId(mimedt);
 
     return mimedt;
 }
