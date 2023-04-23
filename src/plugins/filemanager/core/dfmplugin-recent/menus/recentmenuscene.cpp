@@ -102,6 +102,8 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
 
 bool RecentMenuScene::create(QMenu *parent)
 {
+    if (!parent)
+        return false;
     if (!d->isEmptyArea) {
         auto actRemove = parent->addAction(d->predicateName[RecentActionID::kRemove]);
         actRemove->setProperty(ActionPropertyKey::kActionID, RecentActionID::kRemove);

@@ -107,6 +107,7 @@ businessTestList=(
   plugins/filemanager/core/dfmplugin-workspace
   plugins/filemanager/core/dfmplugin-computer
   plugins/filemanager/core/dfmplugin-sidebar
+  plugins/filemanager/core/dfmplugin-recent
   plugins/filemanager/dfmplugin-myshares
   plugins/filemanager/dfmplugin-smbbrowser
   plugins/filemanager/dfmplugin-optical
