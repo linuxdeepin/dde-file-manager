@@ -126,6 +126,9 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
 {
     auto window = FMWindowsIns.findWindowById(winID);
 
+    if (!window)
+        return;
+
     if (window->sideBar())
         addSideBarVaultItem();
     else
