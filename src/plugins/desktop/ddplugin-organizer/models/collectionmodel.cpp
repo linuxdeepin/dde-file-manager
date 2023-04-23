@@ -504,7 +504,7 @@ QMimeData *CollectionModel::mimeData(const QModelIndexList &indexes) const
     mm->setUrls(urls);
 
     // set user id
-    mm->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
+    SysInfoUtils::setMimeDataUserId(mm);
 
     return mm;
 }

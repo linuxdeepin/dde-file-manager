@@ -377,10 +377,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
     QMimeData *data = new QMimeData();
 
     data->setUrls(urls);
-
-    QByteArray userID;
-    userID.append(QString::number(SysInfoUtils::getUserId()));
-    data->setData(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey, userID);
+    SysInfoUtils::setMimeDataUserId(data);
 
     return data;
 }

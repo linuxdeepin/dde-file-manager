@@ -27,6 +27,7 @@ public:
     static bool isDeveloperModeEnabled();
     static bool isProfessional();
     static bool isSameUser(const QMimeData *data);
+    static void setMimeDataUserId(QMimeData *data);
 };
 }
 

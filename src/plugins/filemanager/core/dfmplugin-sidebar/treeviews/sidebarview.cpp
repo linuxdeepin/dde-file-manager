@@ -219,7 +219,9 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
         setCurrentIndex(index);
     }
 
-    const QList<QUrl> &urls = event->mimeData()->urls();
+    const QList<QUrl> &urls = d->urlsForDragEvent.isEmpty()
+            ? event->mimeData()->urls()
+            : d->urlsForDragEvent;
 
     if (item && !urls.isEmpty()) {
         Qt::DropAction action { Qt::CopyAction };
@@ -504,7 +506,7 @@ void SideBarView::setPreviousIndex(const QModelIndex &index)
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
-    Q_UNUSED(data)
+    //    Q_UNUSED(data)
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
     QList<QUrl> urls = d->urlsForDragEvent;
     if (urls.empty()) {
@@ -571,7 +573,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         action = Qt::CopyAction;
     }
 
-    if (!SysInfoUtils::isSameUser(data) && FileUtils::isTrashFile(targetItemUrl))
+    if (FileUtils::isTrashFile(targetItemUrl) && !SysInfoUtils::isSameUser(data))
         action = Qt::IgnoreAction;
 
     return action;

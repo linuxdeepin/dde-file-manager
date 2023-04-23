@@ -93,8 +93,17 @@ bool SysInfoUtils::isProfessional()
 
 bool SysInfoUtils::isSameUser(const QMimeData *data)
 {
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey))
-        return data->data(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey) == QString::number(SysInfoUtils::getUserId());
+    const auto &userKey = QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey) + "_" + QString::number(SysInfoUtils::getUserId());
+    return data->hasFormat(userKey);
+}
 
-    return false;
+void SysInfoUtils::setMimeDataUserId(QMimeData *data)
+{
+    QByteArray userId;
+    QString strUserID = QString::number(getUserId());
+    userId.append(strUserID);
+    data->setData(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey, userId);
+
+    QString strKey = QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey) + "_" + strUserID;
+    data->setData(strKey, userId);
 }
