@@ -166,7 +166,8 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
 
         auto callback = [cb, id, this](bool ok, const OperationErrorInfo &err, const QString &mpt) {
             Q_EMIT this->blockDevMountResult(id, ok);
-            cb(ok, err, mpt);
+            if (cb)
+                cb(ok, err, mpt);
         };
 
         QFutureWatcher<void> *fw { new QFutureWatcher<void>() };
