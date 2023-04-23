@@ -5,8 +5,6 @@ Description=DDE File Manager Daemon
 Type=dbus
 BusName=com.deepin.filemanager.daemon
 ExecStart=/usr/bin/dde-file-manager-daemon
-Restart=always
-RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
