@@ -17,7 +17,6 @@ FileCopyMoveJob::FileCopyMoveJob(QObject *parent)
     : QObject(parent)
 {
     copyMoveTaskMutex.reset(new QMutex);
-    getOperationsAndDialogServiceMutex.reset(new QMutex);
 }
 
 FileCopyMoveJob::~FileCopyMoveJob()

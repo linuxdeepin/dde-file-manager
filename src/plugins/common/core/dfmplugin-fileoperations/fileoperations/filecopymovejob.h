@@ -50,7 +50,6 @@ private slots:
 private:
     QMap<JobHandlePointer, QSharedPointer<QTimer>> copyMoveTask;
     QSharedPointer<QMutex> copyMoveTaskMutex { nullptr };
-    QSharedPointer<QMutex> getOperationsAndDialogServiceMutex { nullptr };
     QSharedPointer<FileOperationsService> operationsService { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
 };
