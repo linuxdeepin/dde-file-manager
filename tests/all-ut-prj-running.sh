@@ -102,6 +102,7 @@ businessTestList=(
 
 # plugins
   plugins/common/dfmplugin-burn
+  plugins/common/core/dfmplugin-fileoperations
 
   plugins/filemanager/core/dfmplugin-computer
   plugins/filemanager/core/dfmplugin-sidebar
