@@ -54,7 +54,7 @@ UT_FileCopyMoveJob::~UT_FileCopyMoveJob(){
 
 }
 
-TEST_F(UT_FileCopyMoveJob, testHandleOperationMoveToTrash)
+TEST_F(UT_FileCopyMoveJob, testFileCopyMoveJob)
 {
     FileCopyMoveJob job;
     EXPECT_TRUE(job.getOperationsAndDialogService());
