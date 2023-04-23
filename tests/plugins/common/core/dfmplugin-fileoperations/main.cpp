@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     int ret = RUN_ALL_TESTS();
 
 #ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../../asan_dde-file-manager.log");
+    __sanitizer_set_report_path("../../../asan_dfmplugin-fileoperations.log");
 #endif
 
     return ret;
