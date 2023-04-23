@@ -110,6 +110,7 @@ businessTestList=(
   plugins/filemanager/dfmplugin-myshares
   plugins/filemanager/dfmplugin-smbbrowser
   plugins/filemanager/dfmplugin-optical
+  plugins/filemanager/dfmplugin-vault
 
 # services
   # services/dfm-business-services/dfm-desktop-service

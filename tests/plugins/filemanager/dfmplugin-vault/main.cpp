@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
 
     auto appins = new dfmbase::Application();
 
+    ::testing::InitGoogleTest(&argc, argv);
+
     int ret = RUN_ALL_TESTS();
     delete appins;
 
