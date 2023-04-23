@@ -36,6 +36,9 @@ DFM_MOUNT_USE_NS
 
 DevAutoPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType type)
 {
+    if (type == DeviceType::kAllDevice)
+        return nullptr;
+
     auto manager = DDeviceManager::instance();
     auto monitor = manager->getRegisteredMonitor(type);
     Q_ASSERT_X(monitor, "DeviceServiceHelper", "dfm-mount return a NULL monitor!");
@@ -270,28 +273,25 @@ void DeviceHelper::openFileManagerToDevice(const QString &blkId, const QString &
 QString DeviceHelper::castFromDFMMountProperty(dfmmount::Property property)
 {
     using namespace GlobalServerDefines;
-#define item(a, b) std::make_pair<Property, QString>(Property::a, DeviceProperty::b)
     // these are only mutable properties
-    static QMap<Property, QString> mapper {
-        item(kBlockSize, kSizeTotal),
-        item(kBlockIDUUID, kUUID),
-        item(kBlockIDType, kFileSystem),
-        item(kBlockIDVersion, kFsVersion),
-        item(kBlockIDLabel, kIdLabel),
-        item(kDriveMedia, kMedia),
-        item(kBlockReadOnly, kReadOnly),
-        item(kDriveMediaRemovable, kMediaRemovable),
-        item(kDriveOptical, kOptical),
-        item(kDriveOpticalBlank, kOpticalBlank),
-        item(kDriveMediaAvailable, kMediaAvailable),
-        item(kDriveCanPowerOff, kCanPowerOff),
-        item(kDriveEjectable, kEjectable),
-        item(kBlockHintIgnore, kHintIgnore),
-        item(kBlockCryptoBackingDevice, kCryptoBackingDevice),
-        item(kFileSystemMountPoint, kMountPoints),
-        item(kDriveMediaCompatibility, kMediaCompatibility),
-        item(kEncryptedCleartextDevice, kCleartextDevice),
-    };
+    static QMap<Property, QString> mapper { { Property::kBlockSize, DeviceProperty::kSizeTotal },
+                                            { Property::kBlockIDUUID, DeviceProperty::kUUID },
+                                            { Property::kBlockIDType, DeviceProperty::kFileSystem },
+                                            { Property::kBlockIDVersion, DeviceProperty::kFsVersion },
+                                            { Property::kBlockIDLabel, DeviceProperty::kIdLabel },
+                                            { Property::kDriveMedia, DeviceProperty::kMedia },
+                                            { Property::kBlockReadOnly, DeviceProperty::kReadOnly },
+                                            { Property::kDriveMediaRemovable, DeviceProperty::kMediaRemovable },
+                                            { Property::kDriveOptical, DeviceProperty::kOptical },
+                                            { Property::kDriveOpticalBlank, DeviceProperty::kOpticalBlank },
+                                            { Property::kDriveMediaAvailable, DeviceProperty::kMediaAvailable },
+                                            { Property::kDriveCanPowerOff, DeviceProperty::kCanPowerOff },
+                                            { Property::kDriveEjectable, DeviceProperty::kEjectable },
+                                            { Property::kBlockHintIgnore, DeviceProperty::kHintIgnore },
+                                            { Property::kBlockCryptoBackingDevice, DeviceProperty::kCryptoBackingDevice },
+                                            { Property::kFileSystemMountPoint, DeviceProperty::kMountPoints },
+                                            { Property::kDriveMediaCompatibility, DeviceProperty::kMediaCompatibility },
+                                            { Property::kEncryptedCleartextDevice, DeviceProperty::kCleartextDevice } };
     return mapper.value(property, "");
 }
 
