@@ -142,8 +142,10 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         targetStorageInfo->refresh();
         qint64 freeBytes = targetStorageInfo->bytesFree();
+        action = AbstractJobHandler::SupportAction::kNoAction;
 
         if (FileOperationsUtils::isFilesSizeOutLimit(fromUrl, freeBytes))
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
@@ -175,6 +177,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (force)
             localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
         ret = localFileHandler->deleteFile(fromUrl);
@@ -436,6 +439,7 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
     AbstractJobHandler::SupportAction actionForlink { AbstractJobHandler::SupportAction::kNoAction };
 
     do {
+        actionForlink = AbstractJobHandler::SupportAction::kNoAction;
         if (localFileHandler->createSystemLink(newFromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl))) {
             return true;
         }
@@ -565,6 +569,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
     QFileDevice::Permissions permissions = fromInfo->permissions();
     if (!toInfo->exists()) {
         do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
             if (localFileHandler->mkdir(toInfo->urlOf(UrlInfoType::kUrl)))
                 break;
 
@@ -758,6 +763,7 @@ bool FileOperateBaseWorker::doCopyLocalBigFile(const FileInfoPointer fromInfo, c
     }
     auto toPoint = doCopyLocalBigFileMap(fromInfo, toInfo, toFd, PROT_WRITE, skip);
     if (!toPoint) {
+        munmap(fromPoint, static_cast<size_t>(fromInfo->size()));
         close(fromFd);
         close(toFd);
         return false;
@@ -778,10 +784,11 @@ bool FileOperateBaseWorker::doCopyLocalBigFileResize(const FileInfoPointer fromI
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
         __off_t length = fromInfo->size();
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (-1 == ftruncate(toFd, length)) {
             auto lastError = strerror(errno);
             qWarning() << "file resize error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << O_RDONLY
+                       << " url to: " << toInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << O_RDONLY
                        << " error code: " << errno << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
@@ -802,6 +809,7 @@ char *FileOperateBaseWorker::doCopyLocalBigFileMap(const FileInfoPointer fromInf
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     void *point = nullptr;
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         point = mmap(nullptr, static_cast<size_t>(fromInfo->size()),
                      per, MAP_SHARED, fd, 0);
         if (!point || point == MAP_FAILED) {
@@ -878,6 +886,7 @@ int FileOperateBaseWorker::doOpenFile(const FileInfoPointer fromInfo, const File
         QUrl url = isTo ? toInfo->urlOf(UrlInfoType::kUrl) : fromInfo->urlOf(UrlInfoType::kUrl);
         std::string path = url.path().toStdString();
         fd = open(path.c_str(), openFlag, 0666);
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (fd < 0) {
             auto lastError = strerror(errno);
             qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)

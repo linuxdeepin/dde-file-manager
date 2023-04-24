@@ -70,6 +70,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         const QUrl &url = *it;
         emitCurrentTaskNotify(url, QUrl());
         do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
             if (!localFileHandler->deleteFile(url)) {
                 action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
                                               localFileHandler->errorString());
@@ -134,6 +135,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (!localFileHandler->deleteFile(url)) {
             action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
                                           localFileHandler->errorString());
@@ -163,6 +165,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     AbstractDirIteratorPointer iterator(nullptr);
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         QString errorMsg;
         iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->urlOf(UrlInfoType::kUrl), &errorMsg);
         if (!iterator) {

@@ -147,6 +147,7 @@ bool DoCopyFromTrashFilesWorker::createParentDir(const FileInfoPointer &trashInf
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     if (!targetFileInfo->exists()) {
         do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
             if (!fileHandler.mkdir(parentUrl))
                 // pause and emit error msg

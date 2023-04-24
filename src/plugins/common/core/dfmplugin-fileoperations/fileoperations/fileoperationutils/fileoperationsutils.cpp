@@ -148,25 +148,3 @@ bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
     }
     return true;
 }
-
-void FileOperationsUtils::getDirFiles(const QUrl &url, QList<QUrl> &files)
-{
-    DIR *dir = nullptr;
-    struct dirent *ptr = nullptr;
-    if ((dir = opendir(url.path().toStdString().data())) == nullptr) {
-        qCritical() << "Open dir error by system c opendir function";
-        return;
-    }
-
-    QString urlPath = url.path();
-    if (!urlPath.endsWith("/"))
-        urlPath.append("/");
-    files.clear();
-    while ((ptr = readdir(dir)) != nullptr) {
-        if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0) {
-            continue;
-        } else if (ptr->d_type == 4 || ptr->d_type == 8 || ptr->d_type == 10) {
-            files.append(QUrl::fromLocalFile(urlPath + ptr->d_name));
-        }
-    }
-}

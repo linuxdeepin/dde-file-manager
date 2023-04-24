@@ -36,7 +36,7 @@ void InfoDataFuture::infoMedia(const QUrl &url, const QMap<DFileInfo::AttributeE
     // 先处理数据缓存下来，再转发信号给infohelper，析构future
     attribute = std::move(map);
     finshed = true;
-    emit infoMediaAttributes(url, map);
+    emit infoMediaAttributes(url, attribute);
     future.reset(nullptr);
 }
 
