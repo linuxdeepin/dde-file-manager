@@ -110,8 +110,8 @@ void DeviceWatcherLite::detachBlockDevice(const QString &id)
     const QString &drv = blkPtr->drive();
     const QStringList &siblings = blksOfDrv.value(drv, QStringList());
 
-    bool *unmountDone = new bool(true);
-    int *unmountCount = new int(siblings.count());
+    QSharedPointer<bool> unmountDone(new bool(true));
+    QSharedPointer<int> unmountCount(new int(siblings.count()));
     for (const auto &dev : siblings) {
         auto devPtr = createBlockDevicePtr(dev);
         if (!devPtr) continue;
@@ -121,11 +121,8 @@ void DeviceWatcherLite::detachBlockDevice(const QString &id)
         devPtr->unmountAsync({}, [=](bool ok, const OperationErrorInfo &) {
             *unmountDone &= ok;
             *unmountCount -= 1;
-            if (*unmountCount == 0) {
+            if (*unmountCount == 0)
                 removeDevice(*unmountDone, blkPtr);
-                delete unmountCount;
-                delete unmountDone;
-            }
         });
     }
 }
