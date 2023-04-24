@@ -123,6 +123,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
         do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
             QString trashTime = fileHandler.trashFile(urlSource);
             if (!trashTime.isEmpty()) {
                 QUrl trashUrl = urlSource;
@@ -166,6 +167,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     }
 
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (!canWriteFile(url))
             // pause and emit error msg
             action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kPermissionError);

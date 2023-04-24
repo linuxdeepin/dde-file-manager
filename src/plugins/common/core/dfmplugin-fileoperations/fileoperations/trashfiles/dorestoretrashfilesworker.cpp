@@ -89,6 +89,7 @@ bool DoRestoreTrashFilesWorker::translateUrls()
         QStringList deleteInfo;
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
         do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
             auto userInfo = url.userInfo();
             deleteInfo = userInfo.split("-");
             // 错误处理
@@ -119,6 +120,7 @@ bool DoRestoreTrashFilesWorker::translateUrls()
     TrashHelper trashHelper;
     trashHelper.setDeleteInfos(targetUrls);
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (!trashHelper.getTrashUrls(&sourceUrls, &errorMsg))
             return false;
         if (sourceUrls.length() <= 0)
@@ -229,6 +231,7 @@ bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     if (!targetFileInfo->exists()) {
         do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
             if (!fileHandler.mkdir(parentUrl))
                 // pause and emit error msg
@@ -250,6 +253,7 @@ bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, FileInfoPointe
     bool result;
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         result = true;
         const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {

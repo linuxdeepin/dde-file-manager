@@ -98,6 +98,7 @@ void DoCopyFileWorker::doMemcpyLocalBigFile(const FileInfoPointer fromInfo, cons
         AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
 
         do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
             if (!memcpy(destStart, sourceStart, everyCopySize)) {
                 auto lastError = strerror(errno);
                 qWarning() << "file memcpy error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
@@ -185,6 +186,7 @@ int DoCopyFileWorker::doOpenFile(const FileInfoPointer fromInfo, const FileInfoP
         QUrl url = isTo ? toInfo->urlOf(UrlInfoType::kUrl) : fromInfo->urlOf(UrlInfoType::kUrl);
         std::string path = url.path().toStdString();
         fd = open(path.c_str(), openFlag, 0777);
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (fd < 0) {
             auto lastError = strerror(errno);
             qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
@@ -226,6 +228,7 @@ BlockFileCopyInfoPointer DoCopyFileWorker::doReadExBlockFile(const FileInfoPoint
         char *buffer = new char[static_cast<uint>(sizeBlock + 1)];
         AbstractJobHandler::SupportAction actionForRead = AbstractJobHandler::SupportAction::kNoAction;
         do {
+            actionForRead = AbstractJobHandler::SupportAction::kNoAction;
             readSize = read(fd, buffer, static_cast<size_t>(sizeBlock));
             auto laststr = strerror(errno);
             if (Q_UNLIKELY(!stateCheck())) {
@@ -488,6 +491,7 @@ bool DoCopyFileWorker::createFileDevice(const FileInfoPointer &fromInfo, const F
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         file.reset(new DFile(url));
         if (!file) {
             qCritical() << "create dfm io dfile failed! url = " << url;
@@ -563,6 +567,7 @@ bool DoCopyFileWorker::openFile(const FileInfoPointer &fromInfo, const FileInfoP
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (!file->open(flags)) {
             auto lastError = file->lastError();
             qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
@@ -587,6 +592,7 @@ bool DoCopyFileWorker::resizeTargetFile(const FileInfoPointer &fromInfo, const F
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
         if (!file->write(QByteArray())) {
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
                                           AbstractJobHandler::JobErrorType::kResizeError, true,
@@ -623,6 +629,7 @@ bool DoCopyFileWorker::doReadFile(const FileInfoPointer &fromInfo, const FileInf
         return false;
     }
     do {
+        actionForRead = AbstractJobHandler::SupportAction::kNoAction;
         readSize = fromDevice->read(data, blockSize);
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
@@ -691,6 +698,7 @@ bool DoCopyFileWorker::doWriteFile(const FileInfoPointer &fromInfo, const FileIn
     do {
         bool writeFinishedOnce = true;
         const char *surplusData = data;
+        actionForWrite = AbstractJobHandler::SupportAction::kNoAction;
         do {
             if (!writeFinishedOnce)
                 qDebug() << "write not finished once, current write size: " << sizeWrite << " remain size: " << surplusSize - sizeWrite << " read size: " << readSize;
@@ -836,6 +844,7 @@ bool DoCopyFileWorker::writeBlockFile(const BlockFileCopyInfoPointer &info, bool
     AbstractJobHandler::SupportAction actionForWrite { AbstractJobHandler::SupportAction::kNoAction };
     qint64 surplusSize = info->size;
     do {
+        actionForWrite = AbstractJobHandler::SupportAction::kNoAction;
         qint64 sizeWrite = 0;
 
         if (Q_UNLIKELY(!stateCheck())) {
