@@ -57,8 +57,8 @@ bool FSearcher::search()
     auto callback = std::bind(FSearcher::receiveResultCallback, std::placeholders::_1, std::placeholders::_2, this);
 
     conditionMtx.lock();
-    searchHandler->search(keyword, callback);
-    waitCondition.wait(&conditionMtx);
+    if (searchHandler->search(keyword, callback))
+        waitCondition.wait(&conditionMtx);
     conditionMtx.unlock();
 
     if (status.testAndSetRelease(kRuning, kCompleted)) {
