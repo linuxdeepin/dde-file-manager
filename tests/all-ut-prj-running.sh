@@ -111,6 +111,7 @@ businessTestList=(
   plugins/filemanager/dfmplugin-smbbrowser
   plugins/filemanager/dfmplugin-optical
   plugins/filemanager/dfmplugin-vault
+  plugins/filemanager/dfmplugin-search
 
 # services
   # services/dfm-business-services/dfm-desktop-service
