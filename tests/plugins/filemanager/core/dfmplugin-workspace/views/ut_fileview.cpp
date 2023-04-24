@@ -9,6 +9,7 @@
 
 #include <gtest/gtest.h>
 
+#include <QStandardPaths>
 #include <QPaintEvent>
 #include <QPainter>
 
@@ -32,7 +33,7 @@ TEST_F(UT_FileView, setViewSelectState)
     stub.set_lamda(&FileView::initializeModel, [](){});
     stub.set_lamda(&FileView::updateModelActiveIndex, [](){});
 
-    FileView view(QUrl("~"));
+    FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
     view.setViewSelectState(true);
     EXPECT_TRUE(view.d->isShowViewSelectBox);
 }
@@ -51,7 +52,7 @@ TEST_F(UT_FileView, paintEvent)
         flag = true;
     });
 
-    FileView view(QUrl("~"));
+    FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
     view.setViewSelectState(true);
     QPaintEvent event(QRect(0, 0, 1, 1));
     EXPECT_NO_FATAL_FAILURE(view.paintEvent(&event));

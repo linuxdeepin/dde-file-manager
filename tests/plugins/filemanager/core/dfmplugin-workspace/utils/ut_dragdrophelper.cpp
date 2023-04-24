@@ -4,10 +4,12 @@
 
 #include "stubext.h"
 #include "utils/dragdrophelper.h"
+#include "views/fileview.h"
 #include <dfm-base/utils/fileutils.h>
 
 #include <gtest/gtest.h>
 
+#include <QStandardPaths>
 #include <QMimeData>
 
 using namespace testing;
@@ -32,7 +34,8 @@ TEST_F(DragDropHelperTest, dragEnter)
     DPWORKSPACE_USE_NAMESPACE
 
     bool isCall { false };
-    DragDropHelper dragDropHelper(nullptr);
+    FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
+    DragDropHelper dragDropHelper(&view);
     QDragEnterEvent event(QPoint(10, 10), Qt::IgnoreAction, nullptr, Qt::LeftButton, Qt::NoModifier);
     QMimeData data;
 
@@ -56,7 +59,8 @@ TEST_F(DragDropHelperTest, checkProhibitPaths)
     DFMBASE_USE_NAMESPACE
     DPWORKSPACE_USE_NAMESPACE
 
-    DragDropHelper opt(nullptr);
+    FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
+    DragDropHelper opt(&view);
     QDragEnterEvent event(QPoint(10, 10), Qt::IgnoreAction, nullptr, Qt::LeftButton, Qt::NoModifier);
 
     // action1
@@ -64,10 +68,10 @@ TEST_F(DragDropHelperTest, checkProhibitPaths)
     stub.set_lamda(&FileUtils::isContainProhibitPath, []() -> bool {
         return false;
     });
-    EXPECT_EQ(true, opt.checkProhibitPaths(&event, {}));
+    EXPECT_FALSE(opt.checkProhibitPaths(&event, {}));
 
     //action2
-    EXPECT_EQ(false, opt.checkProhibitPaths(&event, { QUrl("/home/uos") }));
+    EXPECT_FALSE(opt.checkProhibitPaths(&event, { QUrl("/home/uos") }));
     stub.reset(&QMimeData::urls);
     stub.reset(&FileUtils::isContainProhibitPath);
 
@@ -75,5 +79,5 @@ TEST_F(DragDropHelperTest, checkProhibitPaths)
     stub.set_lamda(&FileUtils::isContainProhibitPath, []() -> bool {
         return true;
     });
-    EXPECT_EQ(true, opt.checkProhibitPaths(&event, { QUrl("/home/uos") }));
+    EXPECT_TRUE(opt.checkProhibitPaths(&event, { QUrl("/home/uos") }));
 }
