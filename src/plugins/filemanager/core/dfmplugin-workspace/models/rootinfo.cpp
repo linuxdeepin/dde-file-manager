@@ -508,6 +508,9 @@ FileInfoPointer RootInfo::fileInfo(const QUrl &url)
         return info;
     }
 
+    if (!watcher)
+        return info;
+
     const QUrl &parentUrl = QUrl::fromPercentEncoding(watcher->url().toString().toUtf8());
     auto path = url.path();
     if (path.isEmpty() || path == QDir::separator() || url.fileName().isEmpty())
