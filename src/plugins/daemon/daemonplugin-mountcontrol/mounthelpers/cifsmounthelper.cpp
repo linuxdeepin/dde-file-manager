@@ -336,11 +336,13 @@ bool CifsMountHelper::mkdirMountRootPath()
         return false;
     }
 
-    if (!opendir(mntRoot.toStdString().c_str())) {
+    auto dir = opendir(mntRoot.toStdString().c_str());
+    if (!dir) {
         int ret = ::mkdir(mntRoot.toStdString().c_str(), 0755);
         qInfo() << "mkdir mntRoot: " << mntRoot << "failed: " << strerror(errno) << errno;
         return ret == 0;
     } else {
+        closedir(dir);
         return true;
     }
 }
