@@ -19,6 +19,7 @@ class MimeTypeDisplayManager : public QObject
 
 public:
     ~MimeTypeDisplayManager();
+    static MimeTypeDisplayManager *instance();
 
     void initData();
     void initConnect();
@@ -32,7 +33,6 @@ public:
     void loadSupportMimeTypes();
     QStringList supportArchiveMimetypes();
     QStringList supportVideoMimeTypes();
-    static MimeTypeDisplayManager *instance();
     QStringList supportAudioMimeTypes();
 
 private:

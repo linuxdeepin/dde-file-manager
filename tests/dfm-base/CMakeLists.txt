@@ -5,6 +5,8 @@ project(test-dfm-base)
 set(HeaderPath ${PROJECT_INCLUDE_PATH}/dfm-base/)
 set(SourcePath ${PROJECT_SOURCE_PATH}/dfm-base/)
 
+add_compile_definitions(APPSHAREDIR="/usr/share/dde-file-manager")
+
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE
     FILES_MATCHING PATTERN "*.cpp" "*.h")
@@ -68,3 +70,4 @@ add_test(
   NAME dfm-base
   COMMAND $<TARGET_FILE:${PROJECT_NAME}>
 )
+
