@@ -50,6 +50,11 @@ TEST(UT_VaultRemoveProgressView, statisticsFiles_NoExist)
 
 TEST(UT_VaultRemoveProgressView, removeFileInDir)
 {
+    stub_ext::StubExt stub;
+    typedef  bool(QFile::*FuncType)();
+    stub.set_lamda(static_cast<FuncType>(&QFile::remove), [] { __DBG_STUB_INVOKE__ return true; });
+    stub.set_lamda(&QDir::rmdir, [] { __DBG_STUB_INVOKE__ return true; });
+
     VaultRemoveProgressView view;
     view.removeFileInDir("/test123");
     QDir dir("/test123");
