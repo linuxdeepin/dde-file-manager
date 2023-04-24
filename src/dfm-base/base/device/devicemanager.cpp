@@ -736,21 +736,16 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
         }
     };
 
-    bool *allUnmounted = new bool;
-    *allUnmounted = true;
-    int *opCount = new int;
-    *opCount = siblings.count();
+    QSharedPointer<bool> allUnmounted(new bool(true));
+    QSharedPointer<int> opCount(new int(siblings.count()));
     for (const auto &dev : siblings) {
         unmountBlockDevAsync(dev, {}, [allUnmounted, func, opCount, dev](bool ok, const OperationErrorInfo &err) {
             *allUnmounted &= ok;
             *opCount -= 1;
             qDebug() << "detach device: " << dev << ", siblings remain: " << *opCount
                      << ", success? " << ok << err.message;
-            if (*opCount == 0) {
+            if (*opCount == 0)
                 func(*allUnmounted, err);
-                delete opCount;
-                delete allUnmounted;
-            }
         });
     }
 
