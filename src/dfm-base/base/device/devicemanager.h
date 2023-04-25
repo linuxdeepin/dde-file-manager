@@ -48,19 +48,22 @@ public:
     QVariantMap getProtocolDevInfo(const QString &id, bool needReload = false);
 
     // device operations
+#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
     QString mountBlockDev(const QString &id, const QVariantMap &opts = {});
+    bool lockBlockDev(const QString &id, const QVariantMap &opts = {});
+    QString unlockBlockDev(const QString &id, const QString &passwd, const QVariantMap &opts = {});
+    bool powerOffBlockDev(const QString &id, const QVariantMap &opts = {});
+    bool renameBlockDev(const QString &id, const QString &newName, const QVariantMap &opts = {});
+    bool ejectBlockDev(const QString &id, const QVariantMap &opts = {});
+#endif
+
     void mountBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType1 cb = nullptr);
     bool unmountBlockDev(const QString &id, const QVariantMap &opts = {});
     void unmountBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
-    bool lockBlockDev(const QString &id, const QVariantMap &opts = {});
     void lockBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
-    QString unlockBlockDev(const QString &id, const QString &passwd, const QVariantMap &opts = {});
     void unlockBlockDevAsync(const QString &id, const QString &passwd, const QVariantMap &opts = {}, CallbackType1 cb = nullptr);
-    bool powerOffBlockDev(const QString &id, const QVariantMap &opts = {});
     void powerOffBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
-    bool ejectBlockDev(const QString &id, const QVariantMap &opts = {});
     void ejectBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
-    bool renameBlockDev(const QString &id, const QString &newName, const QVariantMap &opts = {});
     void renameBlockDevAsync(const QString &id, const QString &newName, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
     bool rescanBlockDev(const QString &id, const QVariantMap &opts = {});
     void rescanBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);

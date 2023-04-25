@@ -108,6 +108,7 @@ QVariantMap DeviceManager::getProtocolDevInfo(const QString &id, bool needReload
     return d->watcher->getDevInfo(id, DeviceType::kProtocolDevice, needReload);
 }
 
+#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
 QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -143,6 +144,7 @@ QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
         return "";
     }
 }
+#endif
 
 void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType1 cb)
 {
@@ -298,6 +300,8 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
     }
 }
 
+#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
+
 bool DeviceManager::lockBlockDev(const QString &id, const QVariantMap &opts)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -320,6 +324,7 @@ bool DeviceManager::lockBlockDev(const QString &id, const QVariantMap &opts)
         return false;
     }
 }
+#endif
 
 void DeviceManager::lockBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType2 cb)
 {
@@ -340,6 +345,8 @@ void DeviceManager::lockBlockDevAsync(const QString &id, const QVariantMap &opts
 
     dev->lockAsync(opts, cb);
 }
+
+#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
 
 QString DeviceManager::unlockBlockDev(const QString &id, const QString &passwd, const QVariantMap &opts)
 {
@@ -366,6 +373,7 @@ QString DeviceManager::unlockBlockDev(const QString &id, const QString &passwd, 
         qWarning() << "unlock device failed: " << id << dev->lastError().message;
     return cleartextId;
 }
+#endif
 
 void DeviceManager::unlockBlockDevAsync(const QString &id, const QString &passwd, const QVariantMap &opts, CallbackType1 cb)
 {
@@ -395,6 +403,7 @@ void DeviceManager::unlockBlockDevAsync(const QString &id, const QString &passwd
     dev->unlockAsync(passwd, opts, cb);
 }
 
+#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
 bool DeviceManager::powerOffBlockDev(const QString &id, const QVariantMap &opts)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -411,6 +420,7 @@ bool DeviceManager::powerOffBlockDev(const QString &id, const QVariantMap &opts)
     }
     return dev->powerOff(opts);
 }
+#endif
 
 void DeviceManager::powerOffBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType2 cb)
 {
@@ -440,6 +450,7 @@ void DeviceManager::powerOffBlockDevAsync(const QString &id, const QVariantMap &
     });
 }
 
+#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
 bool DeviceManager::ejectBlockDev(const QString &id, const QVariantMap &opts)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -457,6 +468,7 @@ bool DeviceManager::ejectBlockDev(const QString &id, const QVariantMap &opts)
     }
     return dev->eject(opts);
 }
+#endif
 
 void DeviceManager::ejectBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType2 cb)
 {
@@ -487,6 +499,7 @@ void DeviceManager::ejectBlockDevAsync(const QString &id, const QVariantMap &opt
     });
 }
 
+#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
 bool DeviceManager::renameBlockDev(const QString &id, const QString &newName, const QVariantMap &opts)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -509,6 +522,7 @@ bool DeviceManager::renameBlockDev(const QString &id, const QString &newName, co
 
     return dev->rename(newName, opts);
 }
+#endif
 
 void DeviceManager::renameBlockDevAsync(const QString &id, const QString &newName, const QVariantMap &opts, CallbackType2 cb)
 {
