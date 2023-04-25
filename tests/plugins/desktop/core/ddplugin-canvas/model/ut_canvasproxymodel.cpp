@@ -535,6 +535,15 @@ TEST(CanvasProxyModel, take)
     }
 }
 
+TEST(CanvasProxyModel, refresh)
+{
+    CanvasProxyModel model;
+    model.refresh(model.rootIndex());
+    ASSERT_NE(model.d->refreshTimer, nullptr);
+    EXPECT_TRUE(model.d->refreshTimer->isActive());
+    EXPECT_TRUE(model.d->refreshTimer->isSingleShot());
+}
+
 TEST(CanvasProxyModelPrivate, createMapping)
 {
     CanvasProxyModel model;
@@ -583,6 +592,37 @@ TEST(CanvasProxyModelPrivate, createMapping)
     EXPECT_EQ(model.d->fileMap.value(in1), info1);
     EXPECT_EQ(model.d->fileMap.value(in3), info3);
     EXPECT_FALSE(model.d->fileMap.contains(in2));
+}
+
+TEST(CanvasProxyModelPrivate, sourceAboutToBeReset)
+{
+    CanvasProxyModel model;
+    bool reset = false;
+    QObject::connect(&model, &CanvasProxyModel::modelAboutToBeReset, &model, [&reset]() {
+        reset = true;
+    });
+
+    model.d->sourceAboutToBeReset();
+    EXPECT_TRUE(reset);
+}
+
+TEST(CanvasProxyModelPrivate, sourceReset)
+{
+    CanvasProxyModel model;
+    bool reset = false;
+    QObject::connect(&model, &CanvasProxyModel::modelReset, &model, [&reset]() {
+        reset = true;
+    });
+
+    stub_ext::StubExt stub;
+    bool map = false;
+    stub.set_lamda(&CanvasProxyModelPrivate::createMapping, [&map]() {
+        map = true;
+    });
+
+    model.d->sourceReset();
+    EXPECT_TRUE(reset);
+    EXPECT_TRUE(map);
 }
 
 TEST(CanvasProxyModelPrivate, sourceRowsInserted)
@@ -957,9 +997,10 @@ public:
         : CanvasModelFilter(nullptr) {}
     bool resetFilter(QList<QUrl> &urls) override
     {
-        urls.clear();
         ct = true;
-        return false;
+        if (rt)
+            urls.clear();
+        return rt;
     }
     bool removeFilter(const QUrl &url) override
     {
@@ -986,12 +1027,14 @@ public:
     bool cc = false;
     bool cr = false;
     bool cu = false;
+    bool rt = false;
     bool rd = false;
     bool rc = false;
     bool rr = false;
     bool ru = false;
 };
 
+namespace {
 class TestCanvasModelFilter : public testing::Test
 {
 public:
@@ -1012,12 +1055,12 @@ public:
     TCanvastModelFilter *f2;
     TCanvastModelFilter *f3;
 };
+}
 
 TEST_F(TestCanvasModelFilter, insertFilter)
 {
     QUrl in = QUrl::fromLocalFile("/home");
     bool ret = true;
-    ;
     {
         ret = model.d->insertFilter(in);
         EXPECT_FALSE(ret);
@@ -1227,5 +1270,68 @@ TEST_F(TestCanvasModelFilter, updateFilter)
         EXPECT_TRUE(f1->cu);
         EXPECT_TRUE(f2->cu);
         EXPECT_TRUE(f3->cu);
+    }
+}
+
+TEST_F(TestCanvasModelFilter, resetFilter)
+{
+    const QList<QUrl> urls {QUrl::fromLocalFile("/home")};
+    bool ret = true;
+
+    {
+        auto in = urls;
+        ret = model.d->resetFilter(in);
+        EXPECT_FALSE(ret);
+        EXPECT_TRUE(f1->ct);
+        EXPECT_TRUE(f2->ct);
+        EXPECT_TRUE(f3->ct);
+        EXPECT_FALSE(in.isEmpty());
+    }
+
+    {
+        auto in = urls;
+        ret = false;
+        f1->ct = false;
+        f2->ct = false;
+        f3->ct = false;
+        f1->rt = true;
+        ret = model.d->resetFilter(in);
+        EXPECT_TRUE(ret);
+        EXPECT_TRUE(f1->ct);
+        EXPECT_FALSE(f2->ct);
+        EXPECT_FALSE(f3->ct);
+        EXPECT_TRUE(in.isEmpty());
+    }
+
+    {
+        auto in = urls;
+        ret = false;
+        f1->ct = false;
+        f2->ct = false;
+        f3->ct = false;
+        f1->rt = false;
+        f2->rt = true;
+        ret = model.d->resetFilter(in);
+        EXPECT_TRUE(ret);
+        EXPECT_TRUE(f1->ct);
+        EXPECT_TRUE(f2->ct);
+        EXPECT_FALSE(f3->ct);
+        EXPECT_TRUE(in.isEmpty());
+    }
+
+    {
+        auto in = urls;
+        ret = false;
+        f1->ct = false;
+        f2->ct = false;
+        f3->ct = false;
+        f2->rt = false;
+        f3->rt = true;
+        ret = model.d->resetFilter(in);
+        EXPECT_TRUE(ret);
+        EXPECT_TRUE(f1->ct);
+        EXPECT_TRUE(f2->ct);
+        EXPECT_TRUE(f3->ct);
+        EXPECT_TRUE(in.isEmpty());
     }
 }

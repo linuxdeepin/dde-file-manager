@@ -47,6 +47,12 @@ TEST_F(DragDropOperTest, testEnter) {
         return;
     });
 
+    bool updateMime = false;
+    stub.set_lamda(&DragDropOper::updateDFMMimeData, [&updateMime](){
+        updateMime = true;
+        return;
+    });
+
     // action1
     stub.set_lamda(&DragDropOper::checkProhibitPaths, []() -> bool{
         return true;
@@ -54,6 +60,7 @@ TEST_F(DragDropOperTest, testEnter) {
 
     EXPECT_TRUE(opt.enter(&event));
     EXPECT_TRUE(updateHover);
+    EXPECT_TRUE(updateMime);
 
     stub.reset(&DragDropOper::checkProhibitPaths);
 

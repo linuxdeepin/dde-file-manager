@@ -517,6 +517,7 @@ QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
+    // the QIcon::pixmap does size * pixelRatio.
     auto px = icon.pixmap(size, mode, state);
     px.setDevicePixelRatio(pixelRatio);
 
