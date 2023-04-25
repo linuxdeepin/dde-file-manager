@@ -85,11 +85,7 @@ public:
     QString iid() const;
     QString name() const;
     QString version() const;
-    QString compatVersion() const;
     QString category() const;
-    QString vendor() const;
-    QString copyright() const;
-    QStringList license() const;
     QString description() const;
     QString urlLink() const;
     QList<PluginDepend> depends() const;

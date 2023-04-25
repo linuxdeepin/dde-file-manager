@@ -45,11 +45,11 @@ public:
     explicit PluginManagerPrivate(PluginManager *qq);
     virtual ~PluginManagerPrivate();
 
-    PluginMetaObjectPointer pluginMetaObj(const QString &name, const QString &version = "");
+    PluginMetaObjectPointer pluginMetaObj(const QString &name);
     bool loadPlugin(PluginMetaObjectPointer &pluginMetaObj);
     bool initPlugin(PluginMetaObjectPointer &pluginMetaObj);
     bool startPlugin(PluginMetaObjectPointer &pluginMetaObj);
-    void stopPlugin(PluginMetaObjectPointer &pluginMetaObj);
+    bool stopPlugin(PluginMetaObjectPointer &pluginMetaObj);
 
     bool readPlugins();
     bool loadPlugins();
@@ -74,7 +74,7 @@ private:
     bool doLoadPlugin(PluginMetaObjectPointer pointer);
     bool doInitPlugin(PluginMetaObjectPointer pointer);
     bool doStartPlugin(PluginMetaObjectPointer pointer);
-    void doStopPlugin(PluginMetaObjectPointer pointer);
+    bool doStopPlugin(PluginMetaObjectPointer pointer);
 
     static bool doPluginSort(const PluginDependGroup group,
                              QMap<QString, PluginMetaObjectPointer> src,

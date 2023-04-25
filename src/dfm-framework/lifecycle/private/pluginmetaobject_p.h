@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef PLUGINMETAOBJECT_P_H
 #define PLUGINMETAOBJECT_P_H
 
@@ -15,23 +19,10 @@ DPF_BEGIN_NAMESPACE
 inline constexpr char kPluginName[] { "Name" };
 /// \brief kPluginVersion 插件版本Key
 inline constexpr char kPluginVersion[] { "Version" };
-/// \brief kPluginCompatversion 插件兼容版本Key
-inline constexpr char kPluginCompatversion[] { "CompatVersion" };
 /// \brief kPluginCategory 插件类型Key
 inline constexpr char kPluginCategory[] { "Category" };
-/// \brief kPluginVendor 插件作者
-inline constexpr char kPluginVendor[] { "Vendor" };
-
-// Copyright 插件所持有的公司
-// SPDX-FileCopyrightText: 2020 - 2023 UnionTech Software Technology Co., Ltd.
-//
-// SPDX-License-Identifier: GPL-3.0-or-later
-
-inline constexpr char kPluginCopyright[] { "Copyright" };
 /// \brief kPluginDescription 插件描述
 inline constexpr char kPluginDescription[] { "Description" };
-/// \brief kPluginLicense 插件开源协议
-inline constexpr char kPluginLicense[] { "License" };
 /// \brief kPluginUrllink 插件主页链接地址
 inline constexpr char kPluginUrlLink[] { "UrlLink" };
 /// \brief kPluginDepends 插件依赖
@@ -56,15 +47,11 @@ public:
     QString iid;
     QString name;
     QString version;
-    QString compatVersion;
-    QString vendor;
-    QString copyright;
-    QStringList license;
     QString description;
     QString urlLink;
     QString category;
     QString error;
-    PluginMetaObject::State state;
+    PluginMetaObject::State state { PluginMetaObject::kInvalid };
     QList<PluginDepend> depends;
     QSharedPointer<Plugin> plugin;
     QSharedPointer<QPluginLoader> loader;
