@@ -58,7 +58,7 @@ bool FSearcher::search()
 
     conditionMtx.lock();
     if (searchHandler->search(keyword, callback))
-        waitCondition.wait(&conditionMtx);
+        waitCondition.wait(&conditionMtx, ULONG_MAX);
     conditionMtx.unlock();
 
     if (status.testAndSetRelease(kRuning, kCompleted)) {

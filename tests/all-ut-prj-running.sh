@@ -122,7 +122,7 @@ businessTestList=(
 ) 
 
 # 2. interface test .
-INTERFACE_REMOVE="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
+INTERFACE_REMOVE="*/3rdparty/* *tests* */build-ut/* *moc_* *qrc_*"
 
 for((i=0; i<${#interfaceTestList[@]}; i++)) 
 do
@@ -133,7 +133,7 @@ testTargetRun $FOLDER "$INTERFACE_EXTRACT" "$INTERFACE_REMOVE"
 done;
 
 # 3. business test .
-BUSINESS_REMOVE="*/third-party/* *tests* */build-ut/* *moc_* *qrc_* */dbus-private/*"
+BUSINESS_REMOVE="*/3rdparty/* *tests* */build-ut/* *moc_* *qrc_* */dbus-private/*"
 
 for((i=0; i<${#businessTestList[@]}; i++)) 
 do
