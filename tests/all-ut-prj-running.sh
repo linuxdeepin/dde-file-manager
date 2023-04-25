@@ -113,6 +113,8 @@ businessTestList=(
   plugins/filemanager/dfmplugin-vault
   plugins/filemanager/dfmplugin-search
 
+  plugins/desktop/core/ddplugin-canvas
+  plugins/desktop/core/ddplugin-core
 # services
   # services/dfm-business-services/dfm-desktop-service
   # services/dfm-business-services/dfm-filemanager-service
@@ -131,7 +133,7 @@ testTargetRun $FOLDER "$INTERFACE_EXTRACT" "$INTERFACE_REMOVE"
 done;
 
 # 3. business test .
-BUSINESS_REMOVE="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
+BUSINESS_REMOVE="*/third-party/* *tests* */build-ut/* *moc_* *qrc_* */dbus-private/*"
 
 for((i=0; i<${#businessTestList[@]}; i++)) 
 do

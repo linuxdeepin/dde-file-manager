@@ -819,6 +819,10 @@ bool CanvasProxyModel::sort()
 
 void CanvasProxyModel::update()
 {
+    qInfo() << "update file info in model." << d->fileMap.size();
+    if (d->fileMap.isEmpty())
+        return;
+
     for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
         itor.value()->refresh();
 
