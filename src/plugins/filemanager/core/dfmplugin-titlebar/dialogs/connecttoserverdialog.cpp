@@ -165,10 +165,6 @@ void ConnectToServerDialog::onCurrentInputChanged(const QString &text)
         serverComboBox->setEditText(temText.remove(schemeWithSlash(scheme)));
         schemeComboBox->setCurrentText(schemeWithSlash(scheme));
     }
-    if (serverComboBox->lineEdit()->text().isEmpty())
-        theAddButton->setDisabled(true);
-    else
-        theAddButton->setDisabled(false);
     upateUiState();
 }
 
@@ -228,6 +224,7 @@ void ConnectToServerDialog::initializeUi()
     theAddButton = new DIconButton(nullptr);
     DLabel *collectionLabel = new DLabel(tr("My Favorites"));
     collectionServerView = new DListView(contentFrame);
+    collectionServerView->setFixedWidth(425);
     delegate = new CollectionDelegate(collectionServerView);
     connect(delegate, &CollectionDelegate::removeItemManually, [this](const QString &text, int row) {
         doDeleteCollection(text, row);
@@ -252,7 +249,10 @@ void ConnectToServerDialog::initializeUi()
     QVBoxLayout *contentLayout = new QVBoxLayout(contentFrame);
     contentLayout->addLayout(comboButtonLayout);
     contentLayout->addSpacing(5);
-    contentLayout->addWidget(collectionLabel, 0, Qt::AlignVCenter);
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->addSpacing(8);
+    layout->addWidget(collectionLabel, 0, Qt::AlignVCenter);
+    contentLayout->addLayout(layout);
     contentLayout->addStretch();
     contentLayout->addSpacing(5);
     contentLayout->addWidget(collectionServerView, 0, Qt::AlignVCenter);
@@ -321,7 +321,6 @@ void ConnectToServerDialog::initializeUi()
     collectionServerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     collectionServerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     collectionServerView->setResizeMode(DListView::Fixed);
-    collectionServerView->setAlternatingRowColors(true);
     collectionServerView->setUniformItemSizes(true);
     collectionServerView->setItemSize({ collectionServerView->width(), 36 });
     collectionServerView->setItemMargins({ 0, 0, 0, 0 });
@@ -450,6 +449,10 @@ void ConnectToServerDialog::upateUiState()
         emptyFrame->setVisible(!hasCollections);
     if (collectionServerView)
         collectionServerView->setVisible(hasCollections);
+    if (serverComboBox->lineEdit()->text().isEmpty())
+        theAddButton->setDisabled(true);
+    else
+        theAddButton->setDisabled(false);
 }
 
 QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
