@@ -768,12 +768,12 @@ bool FileViewModel::passNameFilters(const FileInfoPointer &info) const
     // Check the name regularexpression filters
     if (!(info->isAttributes(FileInfo::FileIsType::kIsDir) && (filterSortWorker->getFilters() & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filterSortWorker->getFilters() & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        const QString &fileDisplayName = info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName);
+        const QString &fileFilterName = FileUtils::isDesktopFile(info->urlOf(FileInfo::FileUrlInfoType::kUrl)) ? info->fileName() : info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName);
         QRegExp re("", caseSensitive, QRegExp::Wildcard);
 
         for (int i = 0; i < filterSortWorker->getNameFilters().size(); ++i) {
             re.setPattern(filterSortWorker->getNameFilters().at(i));
-            if (re.exactMatch(fileDisplayName)) {
+            if (re.exactMatch(fileFilterName)) {
                 nameFiltersMatchResultMap[filePath] = true;
                 return true;
             }
