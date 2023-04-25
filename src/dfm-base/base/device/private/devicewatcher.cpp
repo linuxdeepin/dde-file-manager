@@ -87,6 +87,9 @@ void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, dfmmoun
                      itemData.value(DeviceProperty::kSizeFree).toULongLong(),
                      itemData.value(DeviceProperty::kSizeUsed).toULongLong() };
 
+    if (type == DFMMOUNT::DeviceType::kAllDevice)
+        return;
+
     DevStorage newStorage = (type == dfmmount::DeviceType::kBlockDevice)
             ? queryUsageOfBlock(itemData)
             : queryUsageOfProtocol(itemData);

@@ -175,7 +175,7 @@ void AbstractBurnJob::finishFunc(bool verify, bool verifyRet)
     }
 
     emit burnFinished(firstJobType, jobSuccess);
-    DeviceManager::instance()->ejectBlockDev(curDevId);
+    DeviceManager::instance()->ejectBlockDevAsync(curDevId);
 }
 
 void AbstractBurnJob::run()
