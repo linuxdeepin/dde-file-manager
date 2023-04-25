@@ -103,6 +103,7 @@ businessTestList=(
 # plugins
   plugins/common/dfmplugin-burn
   plugins/common/core/dfmplugin-fileoperations
+  plugins/common/dfmplugin-utils
 
   plugins/filemanager/core/dfmplugin-workspace
   plugins/filemanager/core/dfmplugin-computer

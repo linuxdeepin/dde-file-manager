@@ -10,6 +10,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/utils/private/filestatissticsjob_p.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -28,48 +29,6 @@
 namespace dfmbase {
 
 static constexpr uint16_t kSizeChangeinterval { 200 };
-
-class FileStatisticsJobPrivate : public QObject
-{
-public:
-    explicit FileStatisticsJobPrivate(FileStatisticsJob *qq);
-    ~FileStatisticsJobPrivate();
-
-    void setState(FileStatisticsJob::State s);
-
-    bool jobWait();
-    bool stateCheck();
-
-    void processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue);
-    void processFileByFts(const QUrl &url, const bool followLink);
-    void emitSizeChanged();
-    int countFileCount(const char *name);
-    bool checkFileType(const FileInfo::FileType &fileType);
-    FileInfo::FileType getFileType(const uint mode);
-    void statisticDir(const QUrl &url, FTS *fts, const bool singleDepth, FTSENT *ent);
-    void statisticFile(FTSENT *ent);
-    void statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink);
-
-    FileStatisticsJob *q;
-    QTimer *notifyDataTimer;
-
-    QAtomicInt state = FileStatisticsJob::kStoppedState;
-    FileStatisticsJob::FileHints fileHints;
-
-    QList<QUrl> sourceUrlList;
-    QWaitCondition waitCondition;
-    QElapsedTimer elapsedTimer;
-
-    QAtomicInteger<qint64> totalSize = { 0 };
-    QAtomicInteger<qint64> totalProgressSize { 0 };
-    QAtomicInt filesCount { 0 };
-    QAtomicInt directoryCount { 0 };
-    SizeInfoPointer sizeInfo { nullptr };
-    QList<QUrl> fileStatistics;
-    QList<QString> skipPath;
-    AbstractDirIteratorPointer iterator { nullptr };
-    std::atomic_bool iteratorCanStop { false };
-};
 
 FileStatisticsJobPrivate::FileStatisticsJobPrivate(FileStatisticsJob *qq)
     : QObject(nullptr), q(qq), notifyDataTimer(nullptr)

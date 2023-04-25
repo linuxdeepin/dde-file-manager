@@ -7,6 +7,7 @@ add_subdirectory(dfmplugin-burn)
 add_subdirectory(dfmplugin-preview)
 add_subdirectory(dfmplugin-bookmark)
 add_subdirectory(dfmplugin-tag)
+add_subdirectory(dfmplugin-utils)
 
 add_subdirectory(core/dfmplugin-fileoperations)
 add_subdirectory(core/dfmplugin-propertydialog)
