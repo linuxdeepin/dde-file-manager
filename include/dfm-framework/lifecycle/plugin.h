@@ -12,7 +12,6 @@
 
 DPF_BEGIN_NAMESPACE
 
-class PluginContext;
 class Plugin : public QObject
 {
     Q_OBJECT
@@ -27,9 +26,6 @@ public:
     virtual bool start() = 0;
 
     virtual void stop();
-
-Q_SIGNALS:
-    void asyncStopFinished();
 };
 
 DPF_END_NAMESPACE

@@ -21,46 +21,6 @@ QString PluginMetaObject::version() const
 }
 
 /*!
- * \brief PluginMetaObject::compatVersion
- * 获取插件元数据中兼容版本
- * \return
- */
-QString PluginMetaObject::compatVersion() const
-{
-    return d->compatVersion;
-}
-
-/*!
- * \brief PluginMetaObject::vendor
- * 获取插件元数据中插件所有者
- * \return
- */
-QString PluginMetaObject::vendor() const
-{
-    return d->vendor;
-}
-
-/*!
- * \brief PluginMetaObject::copyright
- * 获取插件元数据中的插件版权
- * \return
- */
-QString PluginMetaObject::copyright() const
-{
-    return d->copyright;
-}
-
-/*!
- * \brief PluginMetaObject::license
- * 获取插件元数据中开源许可协议
- * \return
- */
-QStringList PluginMetaObject::license() const
-{
-    return d->license;
-}
-
-/*!
  * \brief PluginMetaObject::description
  * 获取插件元数据中插件描述
  * \return
@@ -147,9 +107,7 @@ PluginMetaObject::PluginMetaObject(const PluginMetaObject &meta)
     d->iid = meta.iid();
     d->name = meta.name();
     d->version = meta.version();
-    d->compatVersion = meta.compatVersion();
     d->category = meta.category();
-    d->license = meta.license();
     d->description = meta.description();
     d->urlLink = meta.urlLink();
     d->depends = meta.depends();
@@ -166,9 +124,7 @@ PluginMetaObject &PluginMetaObject::operator=(const PluginMetaObject &meta)
     d->iid = meta.iid();
     d->name = meta.name();
     d->version = meta.version();
-    d->compatVersion = meta.compatVersion();
     d->category = meta.category();
-    d->license = meta.license();
     d->description = meta.description();
     d->urlLink = meta.urlLink();
     d->depends = meta.depends();
@@ -278,12 +234,8 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjec
         << ":" << metaObj.iid() << "; ";
     out << kPluginName << ":" << metaObj.name() << "; ";
     out << kPluginVersion << ":" << metaObj.version() << "; ";
-    out << kPluginCompatversion << ":" << metaObj.compatVersion() << "; ";
     out << kPluginCategory << ":" << metaObj.category() << "; ";
-    out << kPluginVendor << ":" << metaObj.vendor() << "; ";
-    out << kPluginCopyright << ":" << metaObj.copyright() << "; ";
     out << kPluginDescription << ":" << metaObj.description() << "; ";
-    out << kPluginLicense << ":" << metaObj.license() << "; ";
     out << kPluginUrlLink << ":" << metaObj.urlLink() << "; ";
     out << kPluginDepends << ":" << metaObj.depends() << ";";
     out << "isVirtual"

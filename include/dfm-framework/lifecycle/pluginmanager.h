@@ -40,8 +40,8 @@ public:
 
     bool readPlugins();
     bool loadPlugins();
-    void initPlugins();
-    void startPlugins();
+    bool initPlugins();
+    bool startPlugins();
     void stopPlugins();
 
     PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
@@ -50,7 +50,7 @@ public:
     bool loadPlugin(PluginMetaObjectPointer &pointer);
     bool initPlugin(PluginMetaObjectPointer &pointer);
     bool startPlugin(PluginMetaObjectPointer &pointer);
-    void stopPlugin(PluginMetaObjectPointer &pointer);
+    bool stopPlugin(PluginMetaObjectPointer &pointer);
     bool isAllPluginsInitialized();
     bool isAllPluginsStarted();
 };

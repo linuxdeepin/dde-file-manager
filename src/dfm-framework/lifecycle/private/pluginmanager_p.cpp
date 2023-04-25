@@ -11,10 +11,6 @@
 
 DPF_BEGIN_NAMESPACE
 
-namespace GlobalPrivate {
-static QMutex kMutex;
-}   // namespace GlobalPrivate
-
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *qq)
     : q(qq)
 {
@@ -25,35 +21,23 @@ PluginManagerPrivate::~PluginManagerPrivate()
 }
 
 /*!
- * \brief 获取插件的元数据，线程安全
+ * \brief 获取插件的元数据
  * \param name
  * \param version
  * \return
  */
-PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
-                                                            const QString &version)
+PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name)
 {
-    int size = readQueue.size();
-    int idx = 0;
-    while (idx < size) {
-        if (!version.isEmpty()) {
-            if (readQueue[idx]->d->version == version
-                && readQueue[idx]->d->name == name) {
-                return readQueue[idx];
-            }
-        } else {
-            if (readQueue[idx]->d->name == name) {
-                return readQueue[idx];
-            }
-        }
-        idx++;
-    }
-
-    return PluginMetaObjectPointer(nullptr);
+    auto result = std::find_if(readQueue.begin(), readQueue.end(), [name](PluginMetaObjectPointer ptr) {
+        return ptr->name() == name;
+    });
+    if (result != readQueue.end())
+        return *result;
+    return {};
 }
 
 /*!
- * \brief 加载一个插件，线程安全，可单独使用
+ * \brief 加载一个插件，可单独使用
  * \param pluginMetaObj
  */
 bool PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
@@ -64,7 +48,7 @@ bool PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
 }
 
 /*!
- * \brief 初始化一个插件，线程安全，可单独使用
+ * \brief 初始化一个插件，可单独使用
  * \param pluginMetaObj
  */
 bool PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
@@ -75,7 +59,7 @@ bool PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
 }
 
 /*!
- * \brief 启动一个插件，线程安全，可单独使用
+ * \brief 启动一个插件，可单独使用
  * \param pluginMetaObj
  */
 bool PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
@@ -86,12 +70,12 @@ bool PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
 }
 
 /*!
- * \brief 停止并卸载一个插件，线程安全，可单独使用
+ * \brief 停止并卸载一个插件，可单独使用
  * \param pluginMetaObj
  */
-void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
+bool PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
-    doStopPlugin(pluginMetaObj);
+    return doStopPlugin(pluginMetaObj);
 }
 
 /*!
@@ -244,16 +228,7 @@ void PluginManagerPrivate::readJsonToMeta(PluginMetaObjectPointer metaObject)
 void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData)
 {
     metaObject->d->version = metaData.value(kPluginVersion).toString();
-    metaObject->d->compatVersion = metaData.value(kPluginCompatversion).toString();
     metaObject->d->category = metaData.value(kPluginCategory).toString();
-
-    QJsonArray &&licenseArray = metaData.value(kPluginLicense).toArray();
-    std::for_each(licenseArray.begin(), licenseArray.end(), [metaObject](const auto &licenItera) {
-        metaObject->d->license.append(licenItera.toString());
-    });
-
-    metaObject->d->copyright = metaData.value(kPluginCopyright).toString();
-    metaObject->d->vendor = metaData.value(kPluginVendor).toString();
     metaObject->d->description = metaData.value(kPluginDescription).toString();
     metaObject->d->urlLink = metaData.value(kPluginUrlLink).toString();
 
@@ -500,15 +475,15 @@ bool PluginManagerPrivate::doStartPlugin(PluginMetaObjectPointer pointer)
         qInfo() << "Started plugin: " << pointer->d->name;
         pointer->d->state = PluginMetaObject::State::kStarted;
         emit Listener::instance()->pluginStarted(pointer->d->iid, pointer->d->name);
-    } else {
-        pointer->d->error = "Failed start plugin in function start() logic";
-        qCritical() << pointer->d->error.toLocal8Bit().data();
+        return true;
     }
 
-    return true;
+    pointer->d->error = "Failed start plugin in function start() logic";
+    qCritical() << pointer->d->error.toLocal8Bit().data();
+    return false;
 }
 
-void PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
+bool PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
 {
     Q_ASSERT(pointer);
 
@@ -516,20 +491,20 @@ void PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
         qDebug() << "Is stoped plugin:"
                  << pointer->d->name
                  << pointer->fileName();
-        return;
+        return true;
     }
 
     if (pointer->d->state != PluginMetaObject::State::kStarted) {
         qCritical() << "Failed stop plugin:"
                     << pointer->d->name
                     << pointer->fileName();
-        return;
+        return false;
     }
 
     if (pointer->d->plugin.isNull()) {
         pointer->d->error = "Failed stop plugin, plugin instance is nullptr";
         qCritical() << pointer->d->name << pointer->d->error;
-        return;
+        return false;
     }
 
     pointer->d->plugin->stop();
@@ -539,11 +514,12 @@ void PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
 
     if (!pointer->d->loader->unload()) {
         qDebug() << pointer->d->loader->errorString();
-        return;
+        return false;
     }
 
     pointer->d->state = PluginMetaObject::State::kShutdown;
     qDebug() << "shutdown" << pointer->d->loader->fileName();
+    return true;
 }
 
 bool PluginManagerPrivate::doPluginSort(const PluginDependGroup group, QMap<QString, PluginMetaObjectPointer> src, QQueue<PluginMetaObjectPointer> *dest)
