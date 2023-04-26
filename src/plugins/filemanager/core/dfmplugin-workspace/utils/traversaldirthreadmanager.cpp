@@ -62,6 +62,11 @@ void TraversalDirThreadManager::start()
 {
     auto local = dirIterator.dynamicCast<LocalDirIterator>();
     if (local && local->oneByOne()) {
+        DFile file(local->url());
+        if (!file.exists()) {
+            emit traversalFinished();
+            return;
+        }
         future = local->asyncIterator();
         if (future) {
             connect(future, &DEnumeratorFuture::asyncIteratorOver, this, &TraversalDirThreadManager::onAsyncIteratorOver);
