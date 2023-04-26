@@ -11,7 +11,6 @@
 #include <dfm-base/utils/chinese2pinyin.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/file/local/localfileiconprovider.h>
-#include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
 
@@ -116,7 +115,7 @@ void SyncFileInfo::refresh()
     d->iconFuture.reset(nullptr);
     d->mediaFuture.reset(nullptr);
     d->loadingThumbnail = false;
-    d->fileType = MimeDatabase::FileType::kUnknown;
+    d->fileType = FileInfo::FileType::kUnknown;
     d->mimeTypeMode = QMimeDatabase::MatchMode::MatchDefault;
     d->enableThumbnail = false;
     d->extraProperties.clear();
@@ -383,7 +382,7 @@ SyncFileInfo::FileType SyncFileInfo::fileType() const
     FileType fileType { FileType::kUnknown };
     {
         QReadLocker locker(&d->lock);
-        if (d->fileType != MimeDatabase::FileType::kUnknown) {
+        if (d->fileType != FileInfo::FileType::kUnknown) {
             fileType = FileType(d->fileType);
             return fileType;
         }
@@ -393,9 +392,9 @@ SyncFileInfo::FileType SyncFileInfo::fileType() const
     if (FileUtils::isTrashFile(fileUrl) && isAttributes(FileIsType::kIsSymLink)) {
         {
             QWriteLocker locker(&d->lock);
-            d->fileType = MimeDatabase::FileType::kRegularFile;
+            d->fileType = FileInfo::FileType::kRegularFile;
         }
-        fileType = FileType(MimeDatabase::FileType::kRegularFile);
+        fileType = FileInfo::FileType::kRegularFile;
         return fileType;
     }
 
@@ -406,20 +405,20 @@ SyncFileInfo::FileType SyncFileInfo::fileType() const
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
         if (S_ISDIR(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kDirectory);
+            fileType = FileInfo::FileType::kDirectory;
         else if (S_ISCHR(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kCharDevice);
+            fileType = FileInfo::FileType::kCharDevice;
         else if (S_ISBLK(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kBlockDevice);
+            fileType = FileInfo::FileType::kBlockDevice;
         else if (S_ISFIFO(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kFIFOFile);
+            fileType = FileInfo::FileType::kFIFOFile;
         else if (S_ISSOCK(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kSocketFile);
+            fileType = FileInfo::FileType::kSocketFile;
         else if (S_ISREG(statBuffer.st_mode))
-            fileType = FileType(MimeDatabase::FileType::kRegularFile);
+            fileType = FileInfo::FileType::kRegularFile;
 
         QWriteLocker locker(&d->lock);
-        d->fileType = MimeDatabase::FileType(fileType);
+        d->fileType = FileInfo::FileType(fileType);
     }
     return fileType;
 }
@@ -1078,10 +1077,10 @@ QMimeType SyncFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
 {
     QUrl url = q->urlOf(UrlInfoType::kUrl);
     if (dfmbase::FileUtils::isLocalFile(url))
-        return MimeDatabase::mimeTypeForUrl(url);
+        return mimeDb.mimeTypeForUrl(url);
     else
-        return MimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),
-                                             mode);
+        return mimeDb.mimeTypeForFile(UrlRoute::urlToPath(url),
+                                      mode);
 }
 
 }

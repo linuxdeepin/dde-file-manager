@@ -12,18 +12,10 @@
 
 using namespace dfmbase;
 
-
-MimeTypeDisplayManager *MimeTypeDisplayManager::self { nullptr };
-
 MimeTypeDisplayManager::MimeTypeDisplayManager(QObject *parent)
     : QObject(parent)
 {
     initData();
-    initConnect();
-}
-
-MimeTypeDisplayManager::~MimeTypeDisplayManager()
-{
 }
 
 void MimeTypeDisplayManager::initData()
@@ -53,10 +45,6 @@ void MimeTypeDisplayManager::initData()
     loadSupportMimeTypes();
 }
 
-void MimeTypeDisplayManager::initConnect()
-{
-}
-
 QString MimeTypeDisplayManager::displayName(const QString &mimeType)
 {
 #ifdef QT_DEBUG
@@ -71,19 +59,19 @@ FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mime
         return FileInfo::FileType::kDesktopApplication;
     } else if (mimeType == "inode/directory") {
         return FileInfo::FileType::kDirectory;
-    } else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)) {
+    } else if (mimeType == "application/x-executable" || executableMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kExecutable;
-    } else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)) {
+    } else if (mimeType.startsWith("video/") || videoMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kVideos;
-    } else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)) {
+    } else if (mimeType.startsWith("audio/") || audioMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kAudios;
-    } else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)) {
+    } else if (mimeType.startsWith("image/") || imageMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kImages;
-    } else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)) {
+    } else if (mimeType.startsWith("text/") || textMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kDocuments;
-    } else if (ArchiveMimeTypes.contains(mimeType)) {
+    } else if (archiveMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kArchives;
-    } else if (BackupMimeTypes.contains(mimeType)) {
+    } else if (backupMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kBackups;
     } else {
         return FileInfo::FileType::kUnknown;
@@ -130,33 +118,32 @@ void MimeTypeDisplayManager::loadSupportMimeTypes()
     QString imagePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "image.mimetype");
     QString executablePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "executable.mimetype");
     QString backupPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "backup.mimetype");
-    TextMimeTypes = readlines(textPath);
-    ArchiveMimeTypes = readlines(archivePath);
-    VideoMimeTypes = readlines(videoPath);
-    AudioMimeTypes = readlines(audioPath);
-    ImageMimeTypes = readlines(imagePath);
-    ExecutableMimeTypes = readlines(executablePath);
-    BackupMimeTypes = readlines(backupPath);
+    textMimeTypes = readlines(textPath);
+    archiveMimeTypes = readlines(archivePath);
+    videoMimeTypes = readlines(videoPath);
+    audioMimeTypes = readlines(audioPath);
+    imageMimeTypes = readlines(imagePath);
+    executableMimeTypes = readlines(executablePath);
+    backupMimeTypes = readlines(backupPath);
 }
 
 QStringList MimeTypeDisplayManager::supportArchiveMimetypes()
 {
-    return ArchiveMimeTypes;
+    return archiveMimeTypes;
 }
 
 QStringList MimeTypeDisplayManager::supportVideoMimeTypes()
 {
-    return VideoMimeTypes;
+    return videoMimeTypes;
 }
 
 MimeTypeDisplayManager *MimeTypeDisplayManager::instance()
 {
-    if (!self)
-        self = new MimeTypeDisplayManager();
-    return self;
+    static MimeTypeDisplayManager ins;
+    return &ins;
 }
 
 QStringList MimeTypeDisplayManager::supportAudioMimeTypes()
 {
-    return AudioMimeTypes;
+    return audioMimeTypes;
 }

@@ -7,7 +7,6 @@
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/file/local/localfilehandler.h>
-#include <dfm-base/mimetype/mimedatabase.h>
 #include <dfm-base/utils/clipboard.h>
 
 #include <dfm-io/dfileinfo.h>

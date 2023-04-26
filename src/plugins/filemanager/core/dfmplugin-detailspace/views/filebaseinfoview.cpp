@@ -9,7 +9,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/fileinfohelper.h>
-#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -224,56 +224,28 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     }
 
     if (fileType && fileType->RightValue().isEmpty() && localinfo) {
-        MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(
-                localinfo->nameOf(NameInfoType::kMimeTypeName));
-        switch (type) {
-        case MimeDatabase::FileType::kDirectory:
-            fileType->setRightValue(tr("Directory"), Qt::ElideNone, Qt::AlignLeft, true);
-            break;
-        case MimeDatabase::FileType::kDocuments: {
-            fileType->setRightValue(tr("Documents"), Qt::ElideNone, Qt::AlignLeft, true);
-        } break;
-        case MimeDatabase::FileType::kVideos: {
-            fileType->setRightValue(tr("Videos"), Qt::ElideNone, Qt::AlignLeft, true);
-            QList<DFileInfo::AttributeExtendID> extenList;
+        const QString &mimeName { localinfo->nameOf(NameInfoType::kMimeTypeName) };
+        const FileInfo::FileType type = MimeTypeDisplayManager::instance()->displayNameToEnum(mimeName);
+        fileType->setRightValue(localinfo->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideNone, Qt::AlignLeft, true);
+        QList<DFileInfo::AttributeExtendID> extenList;
+        if (type == FileInfo::FileType::kVideos) {
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight << DFileInfo::AttributeExtendID::kExtendMediaDuration;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::videoExtenInfo);
             const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
             if (!mediaAttributes.isEmpty())
                 videoExtenInfo(url, mediaAttributes);
-        } break;
-        case MimeDatabase::FileType::kImages: {
-            fileType->setRightValue(tr("Images"), Qt::ElideNone, Qt::AlignLeft, true);
-            QList<DFileInfo::AttributeExtendID> extenList;
+        } else if (type == FileInfo::FileType::kImages) {
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::imageExtenInfo);
             const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
             if (!mediaAttributes.isEmpty())
                 imageExtenInfo(url, mediaAttributes);
-        } break;
-        case MimeDatabase::FileType::kAudios: {
-            fileType->setRightValue(tr("Audio"), Qt::ElideNone, Qt::AlignLeft, true);
-            QList<DFileInfo::AttributeExtendID> extenList;
+        } else if (type == FileInfo::FileType::kAudios) {
             extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::audioExtenInfo);
             const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
             if (!mediaAttributes.isEmpty())
                 audioExtenInfo(url, mediaAttributes);
-        } break;
-        case MimeDatabase::FileType::kExecutable:
-            fileType->setRightValue(tr("Executable"), Qt::ElideNone, Qt::AlignLeft, true);
-            break;
-        case MimeDatabase::FileType::kArchives:
-            fileType->setRightValue(tr("Archives"), Qt::ElideNone, Qt::AlignLeft, true);
-            break;
-        case MimeDatabase::FileType::kUnknown:
-            fileType->setRightValue(tr("Unknown"), Qt::ElideNone, Qt::AlignLeft, true);
-            break;
-        case MimeDatabase::FileType::kDesktopApplication:
-            fileType->setRightValue(tr("Application"), Qt::ElideNone, Qt::AlignLeft, true);
-            break;
-        default:
-            break;
         }
     }
 }

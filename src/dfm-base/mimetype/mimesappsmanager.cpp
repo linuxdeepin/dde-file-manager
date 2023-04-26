@@ -4,7 +4,6 @@
 
 #include "mimesappsmanager.h"
 
-#include <dfm-base/mimetype/mimedatabase.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/standardpaths.h>
@@ -133,19 +132,19 @@ MimesAppsManager::~MimesAppsManager()
 
 QMimeType MimesAppsManager::getMimeType(const QString &fileName)
 {
-    QMimeType mimeType = MimeDatabase::mimeTypeForFile(fileName);
+    const QMimeType &mimeType = DMimeDatabase().mimeTypeForFile(fileName);
     return mimeType;
 }
 
 QString MimesAppsManager::getMimeTypeByFileName(const QString &fileName)
 {
-    QMimeType mimeType = MimeDatabase::mimeTypeForFile(fileName);
+    const QMimeType &mimeType = DMimeDatabase().mimeTypeForFile(fileName);
     return mimeType.name();
 }
 
 QString MimesAppsManager::getDefaultAppByFileName(const QString &fileName)
 {
-    QMimeType mimeType = MimeDatabase::mimeTypeForFile(fileName);
+    const QMimeType &mimeType = DMimeDatabase().mimeTypeForFile(fileName);
     return getDefaultAppByMimeType(mimeType);
 }
 
@@ -427,9 +426,9 @@ QStringList MimesAppsManager::getApplicationsFolders()
                    << QString("/usr/share/gnome/applications");
     // env for XDG_DATA_DIRS
     for (const QString &path : QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation)) {
-      if (desktopFolders.contains(path))
-          continue;
-      desktopFolders.append(path);
+        if (desktopFolders.contains(path))
+            continue;
+        desktopFolders.append(path);
     }
 
     return desktopFolders;

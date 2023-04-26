@@ -10,7 +10,7 @@
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <DWindowCloseButton>
 #include <DGuiApplicationHelper>
@@ -264,7 +264,7 @@ void FilePreviewDialog::switchToPage(int index)
     }
 
     AbstractBasePreview *view = nullptr;
-    const QMimeType &mimeType = MimeDatabase::mimeTypeForUrl(fileList.at(index));
+    const QMimeType &mimeType = DMimeDatabase().mimeTypeForUrl(fileList.at(index));
 
     QStringList keyList(mimeType.name());
 

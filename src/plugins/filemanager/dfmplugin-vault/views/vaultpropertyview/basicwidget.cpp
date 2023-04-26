@@ -7,7 +7,6 @@
 #include "utils/vaulthelper.h"
 
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/mimetype/mimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/settings.h>
 
@@ -22,6 +21,7 @@ BasicWidget::BasicWidget(QWidget *parent)
 {
     initUI();
     fileCalculationUtils = new FileStatisticsJob;
+    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
 }
 
 BasicWidget::~BasicWidget()
@@ -126,19 +126,12 @@ void BasicWidget::selectFileUrl(const QUrl &url)
 
     fileCount->setVisible(false);
 
-    QMimeType mimeType = MimeDatabase::mimeTypeForUrl(QUrl::fromLocalFile(url.path()));
-    MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
-    switch (type) {
-    case MimeDatabase::FileType::kDirectory:
-        fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideNone, Qt::AlignVCenter, true);
+    if (info->isDir()) {
+        fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fileCount->setVisible(true);
         fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
         fileCalculationUtils->start(QList<QUrl>() << realurl);
-        connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
-        break;
-    default:
-        break;
     }
 }
 

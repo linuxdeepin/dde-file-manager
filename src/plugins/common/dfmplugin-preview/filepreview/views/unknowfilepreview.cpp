@@ -4,7 +4,6 @@
 
 #include "unknowfilepreview.h"
 
-#include <dfm-base/mimetype/mimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/elidetextlayout.h>
 #include <dfm-base/base/schemefactory.h>

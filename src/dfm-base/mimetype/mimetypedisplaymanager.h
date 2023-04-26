@@ -15,38 +15,35 @@ namespace dfmbase {
 class MimeTypeDisplayManager : public QObject
 {
     Q_OBJECT
-    explicit MimeTypeDisplayManager(QObject *parent = nullptr);
 
 public:
-    ~MimeTypeDisplayManager();
     static MimeTypeDisplayManager *instance();
-
-    void initData();
-    void initConnect();
 
     QString displayName(const QString &mimeType);
     FileInfo::FileType displayNameToEnum(const QString &mimeType);
     QString defaultIcon(const QString &mimeType);
-
     QMap<FileInfo::FileType, QString> displayNames();
-    QStringList readlines(const QString &path);
     void loadSupportMimeTypes();
     QStringList supportArchiveMimetypes();
     QStringList supportVideoMimeTypes();
     QStringList supportAudioMimeTypes();
 
 private:
-    static MimeTypeDisplayManager *self;
+    explicit MimeTypeDisplayManager(QObject *parent = nullptr);
+    void initData();
+    QStringList readlines(const QString &path);
+
+private:
     QMap<FileInfo::FileType, QString> displayNamesMap;
     QMap<FileInfo::FileType, QString> defaultIconNames;
-    QStringList ArchiveMimeTypes;
-    QStringList AvfsBlackList;
-    QStringList TextMimeTypes;
-    QStringList VideoMimeTypes;
-    QStringList AudioMimeTypes;
-    QStringList ImageMimeTypes;
-    QStringList ExecutableMimeTypes;
-    QStringList BackupMimeTypes;
+    QStringList archiveMimeTypes;
+    QStringList avfsBlackList;
+    QStringList textMimeTypes;
+    QStringList videoMimeTypes;
+    QStringList audioMimeTypes;
+    QStringList imageMimeTypes;
+    QStringList executableMimeTypes;
+    QStringList backupMimeTypes;
 };
 
 }

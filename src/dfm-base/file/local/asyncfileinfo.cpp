@@ -1039,7 +1039,7 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
     const QUrl &fileUrl = q->fileUrl();
     if (FileUtils::isTrashFile(fileUrl)
         && cacheAsyncAttributes.value(AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink).toBool()) {
-        fileType = FileInfo::FileType(MimeDatabase::FileType::kRegularFile);
+        fileType = FileInfo::FileType::kRegularFile;
         return fileType;
     }
 
@@ -1050,17 +1050,17 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
         if (S_ISDIR(statBuffer.st_mode))
-            fileType = FileInfo::FileType(MimeDatabase::FileType::kDirectory);
+            fileType = FileInfo::FileType::kDirectory;
         else if (S_ISCHR(statBuffer.st_mode))
-            fileType = FileInfo::FileType(MimeDatabase::FileType::kCharDevice);
+            fileType = FileInfo::FileType::kCharDevice;
         else if (S_ISBLK(statBuffer.st_mode))
-            fileType = FileInfo::FileType(MimeDatabase::FileType::kBlockDevice);
+            fileType = FileInfo::FileType::kBlockDevice;
         else if (S_ISFIFO(statBuffer.st_mode))
-            fileType = FileInfo::FileType(MimeDatabase::FileType::kFIFOFile);
+            fileType = FileInfo::FileType::kFIFOFile;
         else if (S_ISSOCK(statBuffer.st_mode))
-            fileType = FileInfo::FileType(MimeDatabase::FileType::kSocketFile);
+            fileType = FileInfo::FileType::kSocketFile;
         else if (S_ISREG(statBuffer.st_mode))
-            fileType = FileInfo::FileType(MimeDatabase::FileType::kRegularFile);
+            fileType = FileInfo::FileType::kRegularFile;
     }
     return fileType;
 }
