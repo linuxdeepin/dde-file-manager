@@ -18,6 +18,7 @@ inline constexpr char kPasswd[] { "passwd" };
 inline constexpr char kDomain[] { "domain" };
 inline constexpr char kFsType[] { "fsType" };
 inline constexpr char kPort[] { "port" };
+inline constexpr char kIp[] { "ip" };
 inline constexpr char kMountName[] { "mntName" };
 inline constexpr char kTimeout[] { "timeout" };
 inline constexpr char kUnmountAllStacked[] { "unmountAllStacked" };

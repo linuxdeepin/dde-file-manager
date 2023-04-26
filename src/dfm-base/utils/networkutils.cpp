@@ -41,7 +41,7 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port)
         if (::connect(handle, addr->ai_addr, addr->ai_addrlen) != -1) {
             switch (addr->ai_family) {
             case AF_INET:
-                retval = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in *>(addr->ai_addr)->sin_addr), addressString, INET6_ADDRSTRLEN);
+                retval = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in *>(addr->ai_addr)->sin_addr), addressString, INET_ADDRSTRLEN);
                 break;
             case AF_INET6:
                 retval = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in6 *>(addr->ai_addr)->sin6_addr), addressString, INET6_ADDRSTRLEN);
