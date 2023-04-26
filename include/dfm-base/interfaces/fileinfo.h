@@ -199,6 +199,9 @@ public:
         kCustomerFileCan = 50,   // 其他用户使用
         kUnknowFileCanInfo = 255,
     };
+
+    // TODO(liyigang): This is a bad design,
+    // fileinfo cannot return mime tpye!(image, video ...)
     enum class FileType : uint16_t {
         kDirectory = 0,   // 目录
         kCharDevice = 1,   // 字符设备

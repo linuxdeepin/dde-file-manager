@@ -5,7 +5,7 @@
 #include "taskwidget.h"
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
 
 #include <DWaterProgress>
@@ -215,7 +215,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
     showBtnByAction(action);
 
     if (originInfo && targetInfo) {
-        QMimeType mimeTypeSrc = MimeDatabase::mimeTypeForUrl(target);
+        QMimeType mimeTypeSrc = DMimeDatabase().mimeTypeForUrl(target);
         if (!mimeTypeSrc.isValid()) {
             qWarning() << "get source file mimetype is valid!";
         }
@@ -232,7 +232,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
             lbSrcTitle->setText(tr("Original file"));
             lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->extendAttributes(ExtInfoType::kSizeFormat).toString()));
         }
-        QMimeType mimeTypeDst = MimeDatabase::mimeTypeForUrl(source);
+        QMimeType mimeTypeDst = DMimeDatabase().mimeTypeForUrl(source);
         if (!mimeTypeDst.isValid()) {
             qWarning() << "get source file mimetype is valid!";
         }

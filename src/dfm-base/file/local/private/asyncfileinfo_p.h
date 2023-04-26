@@ -5,13 +5,14 @@
 #ifndef ASYNCFILEINFO_P_H
 #define ASYNCFILEINFO_P_H
 
-#include <dfm-base/file/local/asyncfileinfo.h>
 #include "infodatafuture.h"
+
+#include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/thumbnailprovider.h>
 #include <dfm-base/utils/fileinfohelper.h>
-#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <dfm-io/dfilefuture.h>
 
@@ -29,6 +30,7 @@ class AsyncFileInfoPrivate
 {
 public:
     friend class AsyncFileInfo;
+    DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
     std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
     std::atomic_bool loadingThumbnail = { false };
@@ -187,10 +189,10 @@ QMimeType AsyncFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) cons
 {
     QUrl url = q->urlOf(UrlInfoType::kUrl);
     if (dfmbase::FileUtils::isLocalFile(url))
-        return MimeDatabase::mimeTypeForUrl(url);
+        return mimeDb.mimeTypeForUrl(url);
     else
-        return MimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),
-                                             mode);
+        return mimeDb.mimeTypeForFile(UrlRoute::urlToPath(url),
+                                      mode);
 }
 }
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AsyncFileInfoPrivate *)

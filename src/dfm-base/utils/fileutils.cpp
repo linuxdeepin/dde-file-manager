@@ -2,13 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "utils/fileutils.h"
-#include "desktopfile.h"
-#include "windowutils.h"
-#include "sysinfoutils.h"
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/desktopfile.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/dfm_global_defines.h>
-#include "utils/dialogmanager.h"
-#include "mimetype/mimedatabase.h"
+#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/base/device/deviceutils.h>

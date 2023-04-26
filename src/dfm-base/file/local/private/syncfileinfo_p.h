@@ -5,10 +5,11 @@
 #ifndef SYNCFILEINFO_P_H
 #define SYNCFILEINFO_P_H
 
+#include "infodatafuture.h"
+
 #include <dfm-base/interfaces/private/fileinfo_p.h>
 #include <dfm-base/file/local/syncfileinfo.h>
-#include <dfm-base/mimetype/mimedatabase.h>
-#include "infodatafuture.h"
+#include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/thumbnailprovider.h>
@@ -31,7 +32,8 @@ class SyncFileInfoPrivate
 public:
     SyncFileInfo *const q;
     std::atomic_bool loadingThumbnail = { false };
-    MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };   // 缓存文件的FileType
+    FileInfo::FileType fileType { FileInfo::FileType::kUnknown };   // 缓存文件的FileType
+    DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
     std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息

@@ -9,7 +9,6 @@
 #include <dfm-base/interfaces/abstractdiriterator.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/mimetype/mimedatabase.h>
 #include <dfm-base/utils/private/filestatissticsjob_p.h>
 
 #include <dfm-io/dfmio_utils.h>
@@ -330,17 +329,17 @@ FileInfo::FileType FileStatisticsJobPrivate::getFileType(const uint mode)
 {
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
     if (S_ISDIR(mode))
-        fileType = FileInfo::FileType(MimeDatabase::FileType::kDirectory);
+        fileType = FileInfo::FileType(FileInfo::FileType::kDirectory);
     else if (S_ISCHR(mode))
-        fileType = FileInfo::FileType(MimeDatabase::FileType::kCharDevice);
+        fileType = FileInfo::FileType(FileInfo::FileType::kCharDevice);
     else if (S_ISBLK(mode))
-        fileType = FileInfo::FileType(MimeDatabase::FileType::kBlockDevice);
+        fileType = FileInfo::FileType(FileInfo::FileType::kBlockDevice);
     else if (S_ISFIFO(mode))
-        fileType = FileInfo::FileType(MimeDatabase::FileType::kFIFOFile);
+        fileType = FileInfo::FileType(FileInfo::FileType::kFIFOFile);
     else if (S_ISSOCK(mode))
-        fileType = FileInfo::FileType(MimeDatabase::FileType::kSocketFile);
+        fileType = FileInfo::FileType(FileInfo::FileType::kSocketFile);
     else if (S_ISREG(mode))
-        fileType = FileInfo::FileType(MimeDatabase::FileType::kRegularFile);
+        fileType = FileInfo::FileType(FileInfo::FileType::kRegularFile);
 
     return fileType;
 }

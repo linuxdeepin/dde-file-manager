@@ -9,7 +9,7 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/mimetype/mimedatabase.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <QFileInfo>
 #include <QMimeType>
@@ -118,7 +118,7 @@ bool MusicPreview::canPreview(const QUrl &url) const
 
     if (!info)
         return false;
-    QMimeType mimeType = MimeDatabase::mimeTypeForUrl(url);
+    QMimeType mimeType = DMimeDatabase().mimeTypeForUrl(url);
 
     return QMediaPlayer::hasSupport(mimeType.name()) != QMultimedia::NotSupported;
 }
