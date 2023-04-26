@@ -21,6 +21,9 @@
 #include <dirent.h>
 #include <pwd.h>
 #include <libmount/libmount.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 DAEMONPMOUNTCONTROL_USE_NAMESPACE
 
@@ -75,13 +78,20 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     if (port != -1)
         params.insert(MountOptionsField::kPort, port);
 
+    static const QRegularExpression ipRegx(R"(^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)");
+    auto matchIp = ipRegx.match(host);
+    if (!matchIp.hasMatch()) {
+        const QString &ip = getIpOfHost(host);
+        if (!ip.isEmpty()) {
+            params.insert(MountOptionsField::kIp, ip);
+            qInfo() << "mount: got ip" << ip << "of host" << host;
+        }
+    }
+
     int errNum = 0;
     QString errMsg;
     while (true) {
         auto arg = convertArgs(params);
-        static QRegularExpression regxLocalhost("^//localhost/");
-        if (aPath.contains(regxLocalhost))
-            arg = "ip=127.0.0.1," + arg;
 
         QString args(arg.c_str());
         static QRegularExpression regxCheckPasswd(",pass=.*,dom");
@@ -285,6 +295,9 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
         param += QString("echo_interval=1,wait_reconnect_timeout=%1,")
                          .arg(/*opts.value(kTimeout).toString()*/ 0);
 
+    if (opts.contains(kIp))
+        param += QString("ip=%1,").arg(opts.value(kIp).toString());
+
     auto user = getpwuid(invokerUid());
     if (user) {
         param += QString("uid=%1,").arg(user->pw_uid);
@@ -345,6 +358,39 @@ bool CifsMountHelper::mkdirMountRootPath()
         closedir(dir);
         return true;
     }
+}
+
+QString CifsMountHelper::getIpOfHost(const QString &host)
+{
+    if (host.isEmpty())
+        return "";
+
+    addrinfo *result;
+    addrinfo hints {};
+    hints.ai_family = AF_UNSPEC;   // either IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM;
+    char addressString[INET6_ADDRSTRLEN];
+    QString ipAddr;
+    if (0 != getaddrinfo(host.toUtf8().toStdString().c_str(), nullptr, &hints, &result))
+        return "";
+
+    for (addrinfo *addr = result; addr != nullptr; addr = addr->ai_next) {
+        switch (addr->ai_family) {
+        case AF_INET:
+            ipAddr = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in *>(addr->ai_addr)->sin_addr), addressString, INET_ADDRSTRLEN);
+            break;
+        case AF_INET6:
+            ipAddr = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in6 *>(addr->ai_addr)->sin6_addr), addressString, INET6_ADDRSTRLEN);
+            break;
+        default:
+            break;
+        }
+        if (!ipAddr.isEmpty())
+            break;
+    }
+
+    freeaddrinfo(result);
+    return ipAddr;
 }
 
 void CifsMountHelper::cleanMountPoint()

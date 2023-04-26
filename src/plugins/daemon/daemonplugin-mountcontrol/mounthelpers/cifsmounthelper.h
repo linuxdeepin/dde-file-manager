@@ -39,6 +39,7 @@ private:
     bool mkdir(const QString &path);
     bool rmdir(const QString &path);
     bool mkdirMountRootPath();
+    QString getIpOfHost(const QString &host);
 };
 DAEMONPMOUNTCONTROL_END_NAMESPACE
 
