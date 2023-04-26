@@ -126,7 +126,7 @@ void BasicWidget::selectFileUrl(const QUrl &url)
 
     fileCount->setVisible(false);
 
-    if (info->isDir()) {
+    if (info->isAttributes(FileInfo::FileIsType::kIsDir)) {
         fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fileCount->setVisible(true);
