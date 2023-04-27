@@ -103,7 +103,8 @@ QList<QUrl> DefenderController::getScanningPaths(const QUrl &url)
 
 void DefenderController::start()
 {
-    std::call_once(DefenderController::onceFlag(), [this]() {
+    static std::once_flag flg;
+    std::call_once(flg, [this]() {
         qInfo() << "create dbus interface:" << kDefenderServiceName;
         interface.reset(new QDBusInterface(kDefenderServiceName,
                                            kDefenderServicePath,
@@ -144,10 +145,4 @@ DefenderController::DefenderController(QObject *parent)
 
 DefenderController::~DefenderController()
 {
-}
-
-std::once_flag &DefenderController::onceFlag()
-{
-    static std::once_flag flag;
-    return flag;
 }

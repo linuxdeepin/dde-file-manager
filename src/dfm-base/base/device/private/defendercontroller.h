@@ -38,7 +38,6 @@ private:
 private:
     explicit DefenderController(QObject *parent = nullptr);
     ~DefenderController();
-    static std::once_flag &onceFlag();
 
 private:
     QScopedPointer<QDBusInterface> interface;
