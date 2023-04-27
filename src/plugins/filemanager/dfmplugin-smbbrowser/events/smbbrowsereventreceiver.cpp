@@ -10,6 +10,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QDebug>
+#include <QRegularExpression>
 
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
