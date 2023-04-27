@@ -54,13 +54,9 @@
 #ifdef COMPILE_ON_V23
 #    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
 #    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
-#    define DISPLAY_SERVICE "org.deepin.dde.Display1"
-#    define DISPLAY_PATH "/org/deepin/dde/Display1"
 #else
 #    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
 #    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
-#    define DISPLAY_SERVICE "com.deepin.daemon.Display"
-#    define DISPLAY_PATH "/com/deepin/daemon/Display"
 #endif
 
 namespace dfmbase {
@@ -1146,18 +1142,10 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                                                               APPEARANCE_PATH,
                                                               APPEARANCE_SERVICE,
                                                               "SetMonitorBackground");
-            if (WindowUtils::isWayLand()) {
-                QDBusInterface interface(DISPLAY_SERVICE,
-                                         DISPLAY_PATH,
-                                         DISPLAY_SERVICE);
-                QString screenname = qvariant_cast<QString>(interface.property("Primary"));
-                msg.setArguments({ screenname, pictureFilePath });
-            } else {
-                msg.setArguments({ qApp->primaryScreen()->name(), pictureFilePath });
-            }
-
+            const QString screen = qApp->primaryScreen()->name();
+            msg.setArguments({screen, pictureFilePath });
             QDBusConnection::sessionBus().asyncCall(msg);
-            qDebug() << "FileUtils::setBackground call Appearance SetMonitorBackground";
+            qInfo() << "setBackground calls Appearance SetMonitorBackground" << screen;
             return true;
         }
     }
@@ -1168,7 +1156,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                                                       "Set");
     msg.setArguments({ "Background", pictureFilePath });
     QDBusConnection::sessionBus().asyncCall(msg);
-    qDebug() << "FileUtils::setBackground call Appearance Set";
+    qInfo() << "setBackground calls Appearance Set";
 
     return true;
 }

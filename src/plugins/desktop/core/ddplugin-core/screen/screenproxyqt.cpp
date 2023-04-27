@@ -39,11 +39,12 @@ static bool validPrimaryChanged(const ScreenProxyQt *proxy)
             }
             return false;
         } else {
-            bool isValid = times > 0;
             qInfo() << "Primary screen changed, the screen name obtained by Qt is " << qApp->primaryScreen()->name()
-                    <<".Current times:" << times << isValid;
-            times = 0;
-            return isValid;
+                    <<".Current times:" << times;
+            //! When using dual-screen mode with only one screen, if the screen is switched from Screen 1 to Screen 2
+            //! in the Control Center, Qt does not emit a related screen change signal.
+            //! Therefore, the primary screen changed signal is handled through the dde display service.
+            return true;
         }
     } else {
         // 多屏由其余正常逻辑处理，不在本特殊处理范围内
