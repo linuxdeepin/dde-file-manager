@@ -135,6 +135,7 @@ void SmbBrowser::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelDelete);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
 }
 
 void SmbBrowser::addNeighborToSidebar()
