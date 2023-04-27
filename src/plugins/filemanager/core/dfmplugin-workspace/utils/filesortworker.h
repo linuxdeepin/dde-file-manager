@@ -90,7 +90,7 @@ public slots:
                               const bool isFinished);
     void handleIteratorChild(const QString &key, const SortInfoPointer child, const FileInfoPointer info);
     void handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<FileInfoPointer> infos);
-    //Get data from the data area according to the url, filter and sort the data
+    // Get data from the data area according to the url, filter and sort the data
     void handleModelGetSourceData();
     void setFilters(QDir::Filters filters);
     void setNameFilters(const QStringList &nameFilters);
@@ -128,6 +128,7 @@ private:
     QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
                        AbstractSortFilter::SortScenarios sort);
+    bool isDefaultHiddenFile(const QUrl &fileUrl);
 
 private:
     QUrl current;
