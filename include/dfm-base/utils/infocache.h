@@ -93,6 +93,7 @@ public:
     FileInfoPointer getCacheInfo(const QUrl &url);
 Q_SIGNALS:
     void cacheFileInfo(const QUrl url, const FileInfoPointer info);
+    void removeCacheFileInfo(const QList<QUrl> &urls);
 
 private:
     explicit InfoCacheController(QObject *parent = nullptr);

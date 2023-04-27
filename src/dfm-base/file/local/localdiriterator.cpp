@@ -64,6 +64,7 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo()
     infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
 
     if (infoTrans) {
+        emit InfoCacheController::instance().removeCacheFileInfo({url});
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     } else {
         qWarning() << "info is nullptr url = " << url;

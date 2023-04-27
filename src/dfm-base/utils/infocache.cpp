@@ -409,6 +409,7 @@ void InfoCacheController::init()
     removeTimer->moveToThread(qApp->thread());
     connect(removeTimer.data(), &QTimer::timeout, worker.data(), &CacheWorker::dealRemoveInfo, Qt::QueuedConnection);
     connect(this, &InfoCacheController::cacheFileInfo, worker.data(), &CacheWorker::cacheInfo, Qt::QueuedConnection);
+    connect(this, &InfoCacheController::removeCacheFileInfo, worker.data(), &CacheWorker::removeCaches, Qt::QueuedConnection);
     connect(&InfoCache::instance(), &InfoCache::cacheRemoveCaches, worker.data(), &CacheWorker::removeCaches, Qt::QueuedConnection);
     connect(&InfoCache::instance(), &InfoCache::cacheRemoveInfosTime, worker.data(), &CacheWorker::removeInfosTime, Qt::QueuedConnection);
     connect(&InfoCache::instance(), &InfoCache::cacheDisconnectWatcher, worker.data(), &CacheWorker::disconnectWatcher, Qt::QueuedConnection);
