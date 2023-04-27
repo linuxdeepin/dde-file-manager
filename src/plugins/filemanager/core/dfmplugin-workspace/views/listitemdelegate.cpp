@@ -377,9 +377,10 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
             adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
         } else {
             // alternately background color
+            painter->setOpacity(0);
             if (index.row() % 2 == 1) {
                 adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
-                painter->setOpacity(0);
+                painter->setOpacity(1);
             }
         }
 
@@ -472,7 +473,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
 
-        const FileInfoPointer& info = parent()->parent()->model()->fileInfo(index);
+        const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
         if (WorkspaceEventSequence::instance()->doPaintListItem(rol, info, painter, &columnRect))
             continue;
 
