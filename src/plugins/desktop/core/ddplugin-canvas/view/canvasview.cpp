@@ -697,7 +697,6 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 
 void CanvasView::initUI()
 {
-    setRootIndex(model()->rootIndex());
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_InputMethodEnabled);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
@@ -834,12 +833,9 @@ QMargins CanvasViewPrivate::calcMargins(const QSize &inSize, const QSize &outSiz
 {
     auto horizontal = (outSize.width() - inSize.width());
     auto vertical = (outSize.height() - inSize.height());
-    auto left = horizontal / 2;
-    auto right = horizontal - left;
-    auto top = vertical / 2;
-    auto bottom = vertical - top;
-
-    return QMargins(left, top, right, bottom);
+    horizontal = horizontal > 0 ? horizontal / 2 : 0;
+    vertical = vertical > 0 ? vertical / 2 : 0;
+    return QMargins(horizontal, vertical, horizontal, vertical);
 }
 
 QRect CanvasViewPrivate::visualRect(const QPoint &gridPos) const
