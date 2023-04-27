@@ -76,10 +76,9 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
         QUrl localUrl = file->urlOf(UrlInfoType::kUrl);
-        QList<QUrl> urls {};
-        bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
-        if (ok && !urls.isEmpty())
-            localUrl = urls.first();
+        if (file->canAttributes(CanableInfoType::kCanRedirectionFileUrl))
+            localUrl = file->urlOf(UrlInfoType::kRedirectedFileUrl);
+
         if (ClipBoard::instance()->clipboardFileUrlList().contains(localUrl))
             return true;
 
