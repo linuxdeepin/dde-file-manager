@@ -266,8 +266,17 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
     }
 
     auto mpt = dev->mountPoint();
-    if (!mpt.isEmpty() && !DeviceHelper::askForStopScanning(QUrl::fromLocalFile(mpt)))
+    if (mpt.isEmpty()) {
+        if (cb)
+            cb(true, Utils::genOperateErrorInfo(DeviceError::kNoError));
         return;
+    }
+
+    if (!mpt.isEmpty() && !DeviceHelper::askForStopScanning(QUrl::fromLocalFile(mpt))) {
+        if (cb)
+            cb(false, Utils::genOperateErrorInfo(DeviceError::kUDisksErrorDeviceBusy));
+        return;
+    }
 
     if (dev->isEncrypted()) {
         bool noLock = opts.value(OperateParamField::kUnmountWithoutLock, false).toBool();
