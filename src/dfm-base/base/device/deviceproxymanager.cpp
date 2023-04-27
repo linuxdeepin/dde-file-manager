@@ -203,7 +203,7 @@ void DeviceProxyManagerPrivate::initMounts()
                 auto &&info = query(q, dev, false);
                 auto mpt = info.value(DeviceProperty::kMountPoint).toString();
                 if (!mpt.isEmpty()) {
-                    if (DeviceUtils::isMountPointOfDlnfs(mpt))
+                    if (DeviceUtils::isMountPointOfDlnfs(mpt) && !info.value(DeviceProperty::kId).toString().startsWith(kBlockDeviceIdPrefix))
                         continue;
                     mpt = mpt.endsWith("/") ? mpt : mpt + "/";
                     if (info.value(DeviceProperty::kRemovable).toBool())
