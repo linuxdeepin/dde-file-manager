@@ -7,6 +7,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -647,7 +648,8 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     const bool showHidden = (filters & QDir::Hidden) == QDir::Hidden;
     if (!showHidden) {   // hide files
         bool isHidden = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsHidden) : sortInfo->isHide;
-        if (isHidden)
+        // /mount-point/root, /mount-point/lost+found of LOCAL disk should be treat as hidden file.
+        if (isHidden || isDefaultHiddenFile(fileInfo ? fileInfo->urlOf(UrlInfoType::kUrl) : sortInfo->url))
             return false;
     }
 
@@ -1048,4 +1050,23 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
     }
 
     return row;
+}
+
+bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
+{
+    static QSet<QUrl> defaultHiddenUrls;
+    static std::once_flag flg;
+    std::call_once(flg, [&] {
+        using namespace GlobalServerDefines;
+        auto systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
+        for (const auto &blk : systemBlks) {
+            auto blkInfo = DevProxyMng->queryBlockInfo(blk);
+            QStringList mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
+            for (const auto &mpt : mountPoints) {
+                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
+                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
+            }
+        }
+    });
+    return defaultHiddenUrls.contains(fileUrl);
 }
