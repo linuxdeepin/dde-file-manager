@@ -44,5 +44,25 @@ bool SmbBrowserEventReceiver::cancelDelete(quint64, const QList<QUrl> &urls)
     return true;
 }
 
+bool SmbBrowserEventReceiver::hookSetTabName(const QUrl &url, QString *tabName)
+{
+    if (!tabName)
+        return false;
+
+    if (UniversalUtils::urlEquals(url, QUrl("network:///"))) {
+        *tabName = QObject::tr("Computers in LAN");
+        return true;
+    }
+
+    if (url.scheme() == "smb" && url.path().contains(QRegularExpression(R"([^/]*)"))) {
+        auto path = url.toString();
+        while (path.endsWith("/"))
+            path.chop(1);
+        *tabName = path;
+        return true;
+    }
+    return false;
+}
+
 SmbBrowserEventReceiver::SmbBrowserEventReceiver(QObject *parent)
     : QObject(parent) { }

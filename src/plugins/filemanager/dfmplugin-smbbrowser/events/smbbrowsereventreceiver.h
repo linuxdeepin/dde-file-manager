@@ -23,6 +23,8 @@ public Q_SLOTS:
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool cancelDelete(quint64, const QList<QUrl> &urls);
 
+    bool hookSetTabName(const QUrl &url, QString *tabName);
+
 private:
     explicit SmbBrowserEventReceiver(QObject *parent = nullptr);
 };
