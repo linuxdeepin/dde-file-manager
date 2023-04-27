@@ -20,6 +20,11 @@ QVariantMap CommonMountHelper::mount(const QString &path, const QVariantMap &opt
 
 QVariantMap CommonMountHelper::unmount(const QString &path, const QVariantMap &opts)
 {
+    if (path.isEmpty()) {
+        return { { MountReturnField::kResult, true },
+                 { MountReturnField::kErrorMessage, "no need to unmount empty path" } };
+    }
+
     bool unmountAll = opts.value(MountOptionsField::kUnmountAllStacked, false).toBool();
     // if unmountAll then unmount all paths which start with `path`.
 
@@ -48,6 +53,7 @@ QVariantMap CommonMountHelper::unmount(const QString &path, const QVariantMap &o
             unmountTargets << descPath;
     }
 
+    qInfo() << "unmounting sub mounts of " << path;
     qInfo() << "unmount items: " << unmountTargets;
 
     for (const auto &target : unmountTargets) {
