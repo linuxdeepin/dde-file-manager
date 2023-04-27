@@ -494,8 +494,13 @@ void FileDialogHandle::hide()
 {
     D_D(FileDialogHandle);
 
-    if (d->dialog)
-        d->dialog->hide();
+    // fix dtk issues #66
+    // The local file dialog box is visible before the hide call,
+    // indicating that the user actively calls QWidget::close to close the QFileDilaog.
+    // Then call the native dialog reject to end the loop of platformhelp.
+    if (d->dialog && d->dialog->isVisible()) {
+        d->dialog->reject();
+    }
 }
 
 void FileDialogHandle::accept()
