@@ -130,8 +130,10 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
     }
 
     if (sources.isEmpty()) {
-        future = QtConcurrent::run([&]() {
-            countTrashFile(windowId, deleteNoticeType, handleCallback);
+        future = QtConcurrent::run([windowId, deleteNoticeType, handleCallback]() {
+            if (handleCallback)
+                return instance()->countTrashFile(windowId, deleteNoticeType, handleCallback);
+            return instance()->countTrashFile(windowId, deleteNoticeType, nullptr);
         });
         return nullptr;
     }
