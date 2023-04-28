@@ -374,7 +374,7 @@ bool DragDropHelper::checkTargetEnable(const QUrl &targetUrl) const
         return true;
 
     if (FileUtils::isTrashFile(targetUrl) || FileUtils::isTrashDesktopFile(targetUrl))
-        return dfmmimeData.canTrash();
+        return dfmmimeData.canTrash() || dfmmimeData.canDelete();
 
     return true;
 }
