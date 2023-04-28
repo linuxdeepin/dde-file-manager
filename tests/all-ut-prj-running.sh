@@ -109,6 +109,7 @@ businessTestList=(
   plugins/filemanager/core/dfmplugin-computer
   plugins/filemanager/core/dfmplugin-sidebar
   plugins/filemanager/core/dfmplugin-recent
+  plugins/filemanager/core/dfmplugin-detailspace
   plugins/filemanager/dfmplugin-myshares
   plugins/filemanager/dfmplugin-smbbrowser
   plugins/filemanager/dfmplugin-optical
@@ -117,10 +118,7 @@ businessTestList=(
 
   plugins/desktop/core/ddplugin-canvas
   plugins/desktop/core/ddplugin-core
-# services
-  # services/dfm-business-services/dfm-desktop-service
-  # services/dfm-business-services/dfm-filemanager-service
-  # services/dfm-common-service
+
 ) 
 
 # 2. interface test .
