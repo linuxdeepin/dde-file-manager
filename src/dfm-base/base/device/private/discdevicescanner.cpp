@@ -24,25 +24,20 @@ static const char kDesktopAppName[] { "dde-desktop" };
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
 using namespace dfmbase;
+using namespace DiscDevice;
 
-class Scanner : public QRunnable
+Scanner::Scanner(const QString &dev)
+    : device(dev)
 {
-public:
-    explicit Scanner(const QString &dev)
-        : device(dev)
-    {
-    }
-    void run() override
-    {
-        QByteArray devBytes { device.toLatin1() };
-        int fd { ::open(devBytes.data(), O_RDWR | O_NONBLOCK) };
-        if (fd != -1)
-            ::close(fd);
-    }
+}
 
-private:
-    QString device;
-};
+void Scanner::run()
+{
+    QByteArray devBytes { device.toLatin1() };
+    int fd { ::open(devBytes.data(), O_RDWR | O_NONBLOCK) };
+    if (fd != -1)
+        ::close(fd);
+}
 
 DiscDeviceScanner::DiscDeviceScanner(QObject *parent)
     : QObject(parent)

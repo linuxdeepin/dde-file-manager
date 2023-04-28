@@ -14,6 +14,18 @@
 
 namespace dfmbase {
 
+namespace DiscDevice {
+class Scanner : public QRunnable
+{
+public:
+    explicit Scanner(const QString &dev);
+    void run() override;
+
+private:
+    QString device;
+};
+}   // namespace namespace
+
 class DiscDeviceScanner final : public QObject
 {
     Q_OBJECT
@@ -40,6 +52,6 @@ private:
     QStringList discDevIdGroup;
 };
 
-}
+}   // namespace dfmbase
 
 #endif   // DISCDEVICESCANNER_H
