@@ -120,6 +120,8 @@ businessTestList=(
   plugins/desktop/core/ddplugin-canvas
   plugins/desktop/core/ddplugin-core
 
+  plugins/desktop/ddplugin-background
+  plugins/desktop/ddplugin-wallpapersetting
 ) 
 
 # 2. interface test .

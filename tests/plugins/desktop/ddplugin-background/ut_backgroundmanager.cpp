@@ -79,20 +79,19 @@ TEST(BackgroundManager, init)
 
 TEST_F(UT_backGroundManager, onBackgroundChanged)
 {
+    bool call = false;
+
     stub.set_lamda(&BackgroundBridge::isRunning, []() {
         return true;
     });
-    stub.set_lamda(&BackgroundBridge::setRepeat, [=]() {
-        bgm->d->bridge->repeat = true;
-    });
 
     bgm->onBackgroundChanged();
+    EXPECT_FALSE(call);
     EXPECT_TRUE(bgm->d->bridge->repeat);
 
     stub.set_lamda(&BackgroundBridge::isRunning, []() {
         return false;
     });
-    bool call = false;
     stub.set_lamda(&BackgroundBridge::request, [&call]() {
         call = true;
     });
@@ -122,18 +121,21 @@ TEST_F(UT_backGroundManager, onGeometryChanged)
 
                        return QVariant();
                    });
-    stub.set_lamda(&BackgroundBridge::request, []() {
+    bool call = false;
+    stub.set_lamda(&BackgroundBridge::request, [&call]() {
+        call = true;
         return;
     });
 
     BackgroundWidgetPointer bwp1(new BackgroundDefault("testWidget1"));
-    bwp1->setGeometry(QRect(0, 0, 1920, 1920));
+    bwp1->setGeometry(QRect(0, 0, 1080, 1080));
     bgm->d->backgroundWidgets.insert(QString("testWidget1"), bwp1);
     BackgroundWidgetPointer bwp2(new BackgroundDefault("testWidget2"));
-    bwp2->setGeometry(QRect(1920, 0, 1920, 1920));
+    bwp2->setGeometry(QRect(1920, 0, 1080, 1080));
     bgm->d->backgroundWidgets.insert(QString("testWidget2"), bwp2);
 
     bgm->onGeometryChanged();
+    EXPECT_TRUE(call);
     EXPECT_EQ(bgm->d->backgroundWidgets.value("testWidget2")->geometry(), QRect(0, 0, 1920, 1920));
     delete widget1;
     delete widget2;
@@ -148,18 +150,47 @@ TEST_F(UT_backGroundManager, restBackgroundManager)
     EXPECT_FALSE(bgm->d->backgroundWidgets.isEmpty());
     EXPECT_FALSE(bgm->d->backgroundPaths.isEmpty());
 
-    bool call = false;
+    bool callTerminate = false;
     stub.set_lamda(&BackgroundManagerPrivate::isEnableBackground, []() {
         return false;
     });
-    stub.set_lamda(&BackgroundBridge::terminate, [&call]() {
-        call = true;
+    stub.set_lamda(&BackgroundBridge::terminate, [&callTerminate]() {
+        callTerminate = true;
     });
     bgm->restBackgroundManager();
 
-    EXPECT_TRUE(call);
+    EXPECT_TRUE(callTerminate);
     EXPECT_TRUE(bgm->d->backgroundWidgets.isEmpty());
     EXPECT_TRUE(bgm->d->backgroundPaths.isEmpty());
+
+    bool callrequest = false;
+    auto isEmptyFuncPtr = static_cast<bool (QList<QWidget *>::*)() const>(&QList<QWidget *>::isEmpty);
+    stub.set_lamda(&BackgroundManagerPrivate::isEnableBackground, []() {
+        return true;
+    });
+    stub.set_lamda(isEmptyFuncPtr, []() {
+        return true;
+    });
+    stub.set_lamda(&BackgroundBridge::forceRequest, [&callrequest]() {
+        callrequest = true;
+        return;
+    });
+    bool callBack = false;
+    bgm->restBackgroundManager();
+    EXPECT_FALSE(callBack);
+    EXPECT_TRUE(callrequest);
+
+    callrequest = false;
+    stub.set_lamda(isEmptyFuncPtr, []() {
+        return false;
+    });
+    stub.set_lamda(&BackgroundManager::onBackgroundBuild, [&callBack]() {
+        callBack = true;
+        return;
+    });
+    bgm->restBackgroundManager();
+    EXPECT_TRUE(callBack);
+    EXPECT_FALSE(callrequest);
 }
 
 TEST_F(UT_backGroundManager, createBackgroundWidget)
@@ -214,10 +245,16 @@ TEST_F(UT_backGroundManager, request)
     stub.set_lamda(&QFuture<void>::isRunning, []() {
         return true;
     });
-    stub.set_lamda(&BackgroundBridge::terminate, []() {
+    bool callTerminate = false;
+    stub.set_lamda(&BackgroundBridge::terminate, [&callTerminate]() {
+        callTerminate = true;
         return;
     });
+    bgm->d->bridge->force = true;
+    bgm->d->bridge->request(true);
+    EXPECT_FALSE(callTerminate);
 
+    bgm->d->bridge->force = false;
     QWidget *widget = new QWidget;
     widget->setGeometry(0, 0, 100, 100);
     widget->setProperty(DesktopFrameProperty::kPropScreenName, "test");
@@ -235,23 +272,30 @@ TEST_F(UT_backGroundManager, request)
                    });
 
     BackgroundBridge::Requestion req;
-    stub.set_lamda(&BackgroundBridge::runUpdate, [&req](BackgroundBridge *self, QList<BackgroundBridge::Requestion> reqs) {
+    bool callRun = false;
+    stub.set_lamda(&BackgroundBridge::runUpdate, [&req, &callRun](BackgroundBridge *self, QList<BackgroundBridge::Requestion> reqs) {
+        __DBG_STUB_INVOKE__
         req = reqs.first();
         return;
     });
+    {
+        bgm->d->backgroundPaths.insert("test", ":/test");
 
-    bgm->d->backgroundPaths.insert("test", ":/test");
+        bgm->d->bridge->request(false);
+        usleep(1000);
+        EXPECT_EQ(req.screen, QString("test"));
+        EXPECT_EQ(req.path, QString(":/test"));
 
-    bgm->d->bridge->request(false);
-    usleep(1000);
-    EXPECT_EQ(req.screen, QString("test"));
-    EXPECT_EQ(req.path, QString(":/test"));
-
-    bgm->d->bridge->request(true);
-    usleep(1000);
-    EXPECT_EQ(req.screen, QString("test"));
-    EXPECT_EQ(req.path, QString(""));
-
+        bgm->d->bridge->request(true);
+        usleep(1000);
+        EXPECT_EQ(req.screen, QString("test"));
+        EXPECT_EQ(req.path, QString(""));
+    }
+    {
+        rets.clear();
+        bgm->d->bridge->request(true);
+        EXPECT_FALSE(callRun);
+    }
     delete widget;
 }
 
@@ -286,8 +330,10 @@ TEST_F(UT_backGroundManager, forceRequest)
                        return QVariant();
                    });
     BackgroundBridge::Requestion req;
-    stub.set_lamda(&BackgroundBridge::runUpdate, [&req](BackgroundBridge *self, QList<BackgroundBridge::Requestion> reqs) {
+    bool call = false;
+    stub.set_lamda(&BackgroundBridge::runUpdate, [&req, &call](BackgroundBridge *self, QList<BackgroundBridge::Requestion> reqs) {
         __DBG_STUB_INVOKE__
+        call = true;
         req = reqs.first();
         return;
     });
@@ -296,6 +342,11 @@ TEST_F(UT_backGroundManager, forceRequest)
     usleep(1000);
     EXPECT_EQ(req.screen, QString("test"));
     EXPECT_EQ(req.size, sc1->handleGeometry().size());
+
+    rets.clear();
+    call = false;
+    bgm->d->bridge->forceRequest();
+    EXPECT_FALSE(call);
 }
 
 TEST_F(UT_backGroundManager, terminate)
