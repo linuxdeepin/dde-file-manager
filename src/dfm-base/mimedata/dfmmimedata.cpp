@@ -19,6 +19,7 @@ inline constexpr char kVersionKey[] { "version" };
 
 // attritubes
 inline constexpr char kCanTrashAttr[] { "canTrash" };
+inline constexpr char kCanDeleteAttr[] { "canDelete" };
 
 DFMMimeDataPrivate::DFMMimeDataPrivate()
     : QSharedData(),
@@ -39,12 +40,22 @@ DFMMimeDataPrivate::~DFMMimeDataPrivate()
 void DFMMimeDataPrivate::parseUrls(const QList<QUrl> &urls)
 {
     urlList = urls;
-    bool canTrash = !std::any_of(urlList.begin(), urlList.end(), [](const QUrl &url) {
+    bool canTrash = true;
+    bool canDelete = true;
+
+    for (const auto &url : urls) {
         auto info = InfoFactory::create<FileInfo>(url);
-        return !info->canAttributes(FileInfo::FileCanType::kCanTrash);
-    });
+        if (canTrash && !info->canAttributes(FileInfo::FileCanType::kCanTrash))
+            canTrash = false;
+        if (canDelete && !info->canAttributes(FileInfo::FileCanType::kCanDelete))
+            canDelete = false;
+
+        if (!canTrash && !canDelete)
+            break;
+    }
 
     attributes.insert(kCanTrashAttr, canTrash);
+    attributes.insert(kCanDeleteAttr, canDelete);
 }
 
 DFMMimeData::DFMMimeData()
@@ -74,6 +85,11 @@ QList<QUrl> DFMMimeData::urls() const
 bool DFMMimeData::canTrash() const
 {
     return attritube(kCanTrashAttr, false).toBool();
+}
+
+bool DFMMimeData::canDelete() const
+{
+    return attritube(kCanDeleteAttr, false).toBool();
 }
 
 QString DFMMimeData::version() const

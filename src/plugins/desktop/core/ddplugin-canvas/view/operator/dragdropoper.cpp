@@ -533,7 +533,7 @@ bool DragDropOper::checkTargetEnable(const QUrl &targetUrl)
         return true;
 
     if (FileUtils::isTrashDesktopFile(targetUrl))
-        return dfmmimeData.canTrash();
+        return dfmmimeData.canTrash() || dfmmimeData.canDelete();
 
     return true;
 }

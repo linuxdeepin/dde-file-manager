@@ -52,6 +52,7 @@ bool RecentFileInfo::isAttributes(const OptInfoType type) const
 bool RecentFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
+    case FileCanType::kCanDelete:
     case FileCanType::kCanTrash:
     case FileCanType::kCanRename:
         return false;
