@@ -24,11 +24,7 @@ class UT_wallPaperSettings : public testing::Test
 protected:
     virtual void SetUp() override
     {
-        stub.set_lamda(&WallpaperSettings::init, []() {
-
-        });
         setting = new WallpaperSettings("testSetting");
-        EXPECT_NO_FATAL_FAILURE(setting->d->initUI());
     }
     virtual void TearDown() override
     {
@@ -38,6 +34,78 @@ protected:
     WallpaperSettings *setting = nullptr;
     stub_ext::StubExt stub;
 };
+
+TEST(wallPaperSettings, wallpapersettings)
+{
+    stub_ext::StubExt stub;
+    bool init = false;
+    stub.set_lamda(&WallpaperSettings::init, [&init]() {
+        init = true;
+        return;
+    });
+    WallpaperSettings *setting = new WallpaperSettings("testSetting");
+    EXPECT_TRUE(init);
+    EXPECT_EQ(setting->d->screenName, QString("testSetting"));
+    EXPECT_EQ(setting->d->mode, WallpaperSettings::Mode::WallpaperMode);
+    delete setting;
+
+    setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+    EXPECT_TRUE(init);
+    EXPECT_EQ(setting->d->screenName, QString("testSetting"));
+    EXPECT_EQ(setting->d->mode, WallpaperSettings::Mode::ScreenSaverMode);
+    delete setting;
+}
+
+TEST(wallPaperSettings, Init)
+{
+    WallpaperSettings *setting = new WallpaperSettings("testSetting");
+    stub_ext::StubExt stub;
+    stub.set_lamda(&WallpaperSettingsPrivate::initUI, []() {
+        return;
+    });
+    stub.set_lamda(&WallpaperSettings::adjustGeometry, []() {
+        return;
+    });
+
+    const QStringList allSig = {
+        "signal_ScreenProxy_ScreenChanged",
+        "signal_ScreenProxy_DisplayModeChanged",
+        "signal_ScreenProxy_ScreenGeometryChanged",
+    };
+
+    for (auto sig : allSig) {
+        if (auto ptr = dpfSignalDispatcher->dispatcherMap.value(
+                    EventConverter::convert("ddplugin_core", sig))) {
+            __DBG_STUB_INVOKE__
+            ASSERT_TRUE(ptr->handlerList.isEmpty());
+        }
+    }
+
+    setting->init();
+    WallpaperSettingsPrivate *d = setting->d;
+    EXPECT_EQ(d->wmInter->service(), QString("com.deepin.wm"));
+    EXPECT_TRUE(d->regionMonitor);
+    EXPECT_EQ(d->appearanceIfs->service(), QString("com.deepin.daemon.Appearance"));
+    EXPECT_EQ(d->screenSaverIfs->service(), QString("com.deepin.ScreenSaver"));
+    EXPECT_TRUE(d->sessionIfs);
+    for (auto sig : allSig) {
+        if (auto ptr = dpfSignalDispatcher->dispatcherMap.value(
+                    EventConverter::convert("ddplugin_core", sig))) {
+            __DBG_STUB_INVOKE__
+            EXPECT_FALSE(ptr->handlerList.isEmpty());
+        }
+    }
+
+    delete setting;
+
+    for (auto sig : allSig) {
+        if (auto ptr = dpfSignalDispatcher->dispatcherMap.value(
+                    EventConverter::convert("ddplugin_core", sig))) {
+            __DBG_STUB_INVOKE__
+            EXPECT_TRUE(ptr->handlerList.isEmpty());
+        }
+    }
+}
 
 TEST_F(UT_wallPaperSettings, timeFormat)
 {
@@ -77,9 +145,15 @@ TEST_F(UT_wallPaperSettings, relayout)
 
 TEST_F(UT_wallPaperSettings, handleNeedCloseButton)
 {
-    const QString itemData = "testData";
+    QString itemData = "testData";
     setting->d->handleNeedCloseButton(itemData, QPoint(0, 0));
     EXPECT_EQ(setting->d->closeButton->property("background"), itemData);
+    EXPECT_FALSE(setting->d->closeButton->isHidden());
+
+    itemData = "";
+    setting->d->handleNeedCloseButton(itemData, QPoint(0, 0));
+    EXPECT_EQ(setting->d->closeButton->property("background"), itemData);
+    EXPECT_TRUE(setting->d->closeButton->isHidden());
 }
 
 class TestNullScreen : public AbstractScreen
@@ -199,4 +273,40 @@ TEST_F(UT_wallPaperSettings, wallpaperSlideShow)
 
     setting->wallpaperSlideShow();
     EXPECT_EQ(res, QString("testPeriod"));
+}
+
+TEST_F(UT_wallPaperSettings, refresh)
+{
+    bool showLoading = false;
+    stub.set_lamda(&WallpaperSettings::showLoading, [&showLoading]() {
+        showLoading = true;
+        return;
+    });
+    bool loadWallpaper = false;
+    bool loadScrennSaver = false;
+    stub.set_lamda(&WallpaperSettings::loadWallpaper, [&loadWallpaper]() {
+        loadWallpaper = true;
+        return;
+    });
+    stub.set_lamda(&WallpaperSettings::loadScreenSaver, [&loadScrennSaver]() {
+        loadScrennSaver = true;
+        return;
+    });
+    stub.set_lamda(&WallpaperSettings::isVisible, []() {
+        return true;
+    });
+    {
+        setting->d->mode = WallpaperSettings::Mode::WallpaperMode;
+        setting->refreshList();
+        EXPECT_TRUE(showLoading);
+        EXPECT_TRUE(loadWallpaper);
+        EXPECT_FALSE(loadScrennSaver);
+    }
+    {
+        loadWallpaper = false;
+        setting->d->mode = WallpaperSettings::Mode::ScreenSaverMode;
+        setting->refreshList();
+        EXPECT_FALSE(loadWallpaper);
+        EXPECT_TRUE(loadScrennSaver);
+    }
 }
