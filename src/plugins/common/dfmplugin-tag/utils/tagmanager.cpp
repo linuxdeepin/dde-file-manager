@@ -276,12 +276,11 @@ QVariant TagManager::getTagsByUrls(const QList<QUrl> &filePaths, bool same) cons
 
     QStringList paths;
     for (const auto &temp : filePaths) {
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(temp);
-        if (info) {
-            paths.append(temp.path());
-        } else {
-            paths.append(UrlRoute::urlToLocalPath(temp));
-        }
+        QString path = UrlRoute::urlToPath(temp);
+        if (path.isEmpty())
+            path = UrlRoute::urlToLocalPath(temp);
+
+        paths.append(path);
     }
 
     return same ? TagProxyHandleIns->getSameTagsOfDiffFiles(paths) : TagProxyHandleIns->getTagsThroughFile(paths);
