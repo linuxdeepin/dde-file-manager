@@ -72,6 +72,15 @@ void SideBarViewPrivate::notifyOrderChanged()
     });
 }
 
+void SideBarViewPrivate::updateDFMMimeData(const QDropEvent *event)
+{
+    dfmMimeData.clear();
+    auto data = event->mimeData();
+
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
+        dfmMimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
+}
+
 class SidebarViewStyle : public QProxyStyle
 {
 public:
@@ -186,8 +195,9 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
+    d->updateDFMMimeData(event);
     if (event->source() != this) {
-        d->urlsForDragEvent = event->mimeData()->urls();
+        d->urlsForDragEvent = d->dfmMimeData.isValid() ? d->dfmMimeData.urls() : event->mimeData()->urls();
         // Filter the event that cannot be dragged
         if (d->urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(d->urlsForDragEvent)) {
             event->setDropAction(Qt::IgnoreAction);
@@ -506,7 +516,6 @@ void SideBarView::setPreviousIndex(const QModelIndex &index)
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
-    //    Q_UNUSED(data)
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
     QList<QUrl> urls = d->urlsForDragEvent;
     if (urls.empty()) {
@@ -534,6 +543,9 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     }
 
     for (const QUrl &url : urls) {
+        if (UniversalUtils::urlEquals(targetItemUrl, UrlRoute::urlParent(url)))
+            return Qt::IgnoreAction;
+
         auto fileInfo = InfoFactory::create<FileInfo>(url);
         if (!fileInfo)
             return Qt::IgnoreAction;

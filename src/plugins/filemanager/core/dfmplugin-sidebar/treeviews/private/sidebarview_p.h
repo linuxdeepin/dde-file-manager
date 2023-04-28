@@ -7,10 +7,13 @@
 
 #include "dfmplugin_sidebar_global.h"
 
+#include <dfm-base/mimedata/dfmmimedata.h>
+
 #include <QObject>
 #include <QPoint>
 #include <QModelIndex>
 #include <QUrl>
+#include <QDropEvent>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
@@ -31,11 +34,13 @@ class SideBarViewPrivate : public QObject
     QString draggedGroup;
     QVariantMap groupExpandState;
     QUrl sidebarUrl;
+    DFMBASE_NAMESPACE::DFMMimeData dfmMimeData;
 
     explicit SideBarViewPrivate(SideBarView *qq);
     bool checkOpTime();   //检查当前操作与上次操作的时间间隔
     void currentChanged(const QModelIndex &curIndex);
     void notifyOrderChanged();
+    void updateDFMMimeData(const QDropEvent *event);
 };
 
 DPSIDEBAR_END_NAMESPACE
