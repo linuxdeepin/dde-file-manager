@@ -12,6 +12,9 @@ FILE(GLOB_RECURSE FILEOPERATIONS_FILES CONFIGURE_DEPENDS
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(zlib REQUIRED zlib IMPORTED_TARGET)
 
 # generate dbus interface
 qt5_add_dbus_interface(FILEOPERATIONS_FILES
@@ -36,6 +39,7 @@ target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     ${DtkWidget_LIBRARIES}
+    PkgConfig::zlib
 )
 
 #install library file

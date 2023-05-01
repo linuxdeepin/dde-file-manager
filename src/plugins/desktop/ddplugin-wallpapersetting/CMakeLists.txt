@@ -45,6 +45,7 @@ find_package(Qt5Svg REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
+pkg_check_modules(xcb REQUIRED xcb IMPORTED_TARGET)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${DFrameworkDBus_INCLUDE_DIRS}
@@ -59,6 +60,7 @@ target_link_libraries(${PROJECT_NAME}
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
     Qt5::Svg
+    PkgConfig::xcb
     )
 
 #install library file

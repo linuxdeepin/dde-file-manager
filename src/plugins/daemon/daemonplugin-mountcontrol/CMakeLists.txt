@@ -17,7 +17,7 @@ FILE(GLOB FILEOPERATIONS_FILES
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1)
 pkg_check_modules(PolkitQt5 REQUIRED polkit-qt5-1)
-
+pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -36,6 +36,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::DBus
     ${PolkitAgent_LIBRARIES}
     ${PolkitQt5_LIBRARIES}
+    PkgConfig::mount
 )
 
 #install library file
