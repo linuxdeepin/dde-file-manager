@@ -15,9 +15,8 @@ FILE(GLOB MUSICPREVIEW_FILES
     "${GlobalFiles}"
     )
 find_package(Dtk COMPONENTS Widget REQUIRED)
-
 find_package(Qt5 COMPONENTS Multimedia REQUIRED)
-
+find_package(ICU COMPONENTS i18n io uc REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_search_module(taglib REQUIRED taglib)
@@ -40,6 +39,7 @@ target_link_libraries(${PROJECT_NAME}
     ${DtkWidget_LIBRARIES}
     ${Qt5Multimedia_LIBRARIES}
     ${taglib_LIBRARIES}
+    ICU::i18n
 )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dde-music-preview-plugin.json DESTINATION ../../previews)
