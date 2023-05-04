@@ -228,15 +228,17 @@ public:
 
         QSharedPointer<FileInfo> info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
-            info = instance().SchemeFactory<FileInfo>::create(scheme(url), url, errorString);
-
-            if (info) {
+            auto tarScheme = scheme(url);
+            info = instance().SchemeFactory<FileInfo>::create(tarScheme, url, errorString);
+            if (info && tarScheme == Global::Scheme::kAsyncFile) {
                 info->refresh();
                 emit InfoCacheController::instance().cacheFileInfo(url, info);
-            } else {
-                qWarning() << "info is nullptr url = " << url;
             }
         }
+
+        if (!info)
+            qWarning() << "info is nullptr url = " << url;
+
         return qSharedPointerDynamicCast<T>(info);
     }
 
