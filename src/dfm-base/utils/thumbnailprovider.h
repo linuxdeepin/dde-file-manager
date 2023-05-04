@@ -56,6 +56,7 @@ private:
     void initThumnailTool();
     bool createThumnailByDtkTools(const QMimeType &mime, ThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
     bool createThumnailByTools(const QMimeType &mime, ThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
+    bool isIconCachePath(const QString &dirPath) const;
 
 protected:
     explicit ThumbnailProvider(QObject *parent = nullptr);
