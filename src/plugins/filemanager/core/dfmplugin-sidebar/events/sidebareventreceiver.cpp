@@ -6,6 +6,7 @@
 
 #include "sidebarwidget.h"
 #include "sidebaritem.h"
+#include "sidebarmodel.h"
 #include "utils/sidebarhelper.h"
 #include "utils/sidebarinfocachemananger.h"
 
@@ -124,12 +125,9 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
 
 bool SideBarEventReceiver::handleItemRemove(const QUrl &url)
 {
-    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    if (!allSideBar.isEmpty()) {
-        SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
-        return allSideBar.first()->removeItem(url);
-    }
-
+    SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
+    if (SideBarWidget::kSidebarModelIns)
+        return SideBarWidget::kSidebarModelIns->removeRow(url);
     return false;
 }
 

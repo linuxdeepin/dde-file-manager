@@ -21,7 +21,7 @@ class SideBarHelper
 public:
     static QList<SideBarWidget *> allSideBar();
     static SideBarWidget *findSideBarByWindowId(quint64 windowId);
-    static void addSideBar(quint64 windowId, SideBarWidget *titleBar);
+    static void addSideBar(quint64 windowId, SideBarWidget *sideBar);
     static void removeSideBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
     static SideBarItem *createItemByInfo(const ItemInfo &info);

@@ -53,11 +53,11 @@ SideBarWidget *SideBarHelper::findSideBarByWindowId(quint64 windowId)
     return kSideBarMap[windowId];
 }
 
-void SideBarHelper::addSideBar(quint64 windowId, SideBarWidget *titleBar)
+void SideBarHelper::addSideBar(quint64 windowId, SideBarWidget *sideBar)
 {
     QMutexLocker locker(&SideBarHelper::mutex());
     if (!kSideBarMap.contains(windowId))
-        kSideBarMap.insert(windowId, titleBar);
+        kSideBarMap.insert(windowId, sideBar);
 }
 
 void SideBarHelper::removeSideBar(quint64 windowId)
@@ -100,8 +100,8 @@ SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
 {
     SideBarItemSeparator *item = new SideBarItemSeparator(group);
 
-    //Currently, only bookmark and tag groups support internal drag.
-    //In the next stage, quick access would be instead of bookmark.
+    // Currently, only bookmark and tag groups support internal drag.
+    // In the next stage, quick access would be instead of bookmark.
     if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag || item->group() == DefaultGroup::kCommon) {
         auto flags { Qt::ItemIsEnabled | Qt::ItemIsDropEnabled };
         item->setFlags(flags);
