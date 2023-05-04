@@ -268,6 +268,10 @@ void ConnectToServerDialog::initializeUi()
         QString scheme = text.section("://", 0, 0);
         if (scheme.isEmpty())
             continue;
+
+        if (QUrl(text).host().isEmpty())
+            continue;
+
         if (supportedSchemes.contains(schemeWithSlash(scheme))) {
             historyList.append(text);
         } else {
@@ -428,14 +432,14 @@ void ConnectToServerDialog::upateUiState()
     const QStringList &serverData = Application::genericSetting()->value(kConnectServer, kUrl).toStringList();
     const QString &text = schemeComboBox->currentText() + serverComboBox->currentText();
     if (serverData.contains(text)) {
-        //Current text is already collected, collection button display the cancel icon.
+        // Current text is already collected, collection button display the cancel icon.
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             theAddButton->setIcon(QIcon(":icons/deepin/builtin/light/icons/collect_cancel.svg"));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
             theAddButton->setIcon(QIcon(":icons/deepin/builtin/dark/icons/collect_cancel.svg"));
         isAddState = false;
         theAddButton->setToolTip(tr("Unfavorite"));
-    } else {   //Current text is not collected, collection button display the collection icon.
+    } else {   // Current text is not collected, collection button display the collection icon.
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             theAddButton->setIcon(QIcon(":icons/deepin/builtin/light/icons/collect.svg"));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
