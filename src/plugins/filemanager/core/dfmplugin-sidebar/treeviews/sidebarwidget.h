@@ -21,6 +21,7 @@ class SideBarItem;
 class SideBarWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
+    friend class SideBarEventReceiver;
 
 public:
     explicit SideBarWidget(QFrame *parent = nullptr);
