@@ -80,6 +80,7 @@ void FileViewStatusBar::initScalingSlider()
     scaleSlider->slider()->setTickInterval(1);
     scaleSlider->setPageStep(1);
     scaleSlider->hide();
+    scaleSlider->setMouseWheelEnabled(true);
 }
 
 void FileViewStatusBar::initLoadingIndicator()
