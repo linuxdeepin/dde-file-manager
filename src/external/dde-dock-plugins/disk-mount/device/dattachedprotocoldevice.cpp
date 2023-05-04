@@ -8,8 +8,15 @@
 
 #include <QVariantMap>
 #include <QIcon>
+#include <QDateTime>
+#include <QDebug>
+#include <QRegularExpression>
 
 #include <dfm-mount/dprotocoldevice.h>
+
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 /*!
  * \class DAttachedProtocolDevice
@@ -21,6 +28,9 @@
 DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &id, QObject *parent)
     : QObject(parent), DAttachedDevice(id)
 {
+    isNetworkDev = id.contains(QRegularExpression(R"(^(ftp|sftp|smb))"))
+            || id.contains(QRegularExpression(R"(^file:///media/.*/smbmounts/smb-share)"));
+    qDebug() << id << "isNetwork: " << isNetworkDev;
 }
 
 DAttachedProtocolDevice::~DAttachedProtocolDevice()
@@ -63,9 +73,20 @@ QPair<quint64, quint64> DAttachedProtocolDevice::deviceUsage()
 {
     if (!device)
         return { 0, 0 };
-    qint64 bytesTotal = device->sizeTotal();
-    qint64 bytesFree = device->sizeFree();
-    return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
+
+    if (isNetworkDev && QDateTime::currentSecsSinceEpoch() - lastNetCheck < 180)
+        return { latestFreeSize, latestTotalSize };
+    lastNetCheck = QDateTime::currentSecsSinceEpoch();
+
+    // if network then check net
+    if (isNetworkDev && !checkNetwork()) {
+        qWarning() << "network is disconnecting, use latest usage info of" << deviceId;
+        return { latestFreeSize, latestTotalSize };
+    }
+
+    latestTotalSize = static_cast<quint64>(device->sizeTotal());
+    latestFreeSize = static_cast<quint64>(device->sizeFree());
+    return { latestFreeSize, latestTotalSize };
 }
 
 QString DAttachedProtocolDevice::iconName()
@@ -98,4 +119,81 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 void DAttachedProtocolDevice::query()
 {
     device = DeviceWatcherLite::instance()->createProtocolDevicePtr(deviceId);
+}
+
+bool DAttachedProtocolDevice::checkNetwork()
+{
+    QString host, port;
+    if (!parseHostAndPort(host, port) || host.isEmpty())
+        return false;
+
+    qInfo() << "checking network connection..." << QString("%1:%2").arg(host).arg(port);
+    addrinfo *result;
+    addrinfo hints {};
+    hints.ai_family = AF_UNSPEC;   // either IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM;
+    char addressString[INET6_ADDRSTRLEN];
+    const char *retval = nullptr;
+    if (0 != getaddrinfo(host.toUtf8().toStdString().c_str(), port.toUtf8().toStdString().c_str(), &hints, &result)) {
+        return false;
+    }
+    for (addrinfo *addr = result; addr != nullptr; addr = addr->ai_next) {
+        int handle = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        if (handle == -1) {
+            continue;
+        }
+        if (::connect(handle, addr->ai_addr, addr->ai_addrlen) != -1) {
+            switch (addr->ai_family) {
+            case AF_INET:
+                retval = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in *>(addr->ai_addr)->sin_addr), addressString, INET_ADDRSTRLEN);
+                break;
+            case AF_INET6:
+                retval = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in6 *>(addr->ai_addr)->sin6_addr), addressString, INET6_ADDRSTRLEN);
+                break;
+            default:
+                // unknown family
+                retval = nullptr;
+            }
+            close(handle);
+            break;
+        }
+    }
+    freeaddrinfo(result);
+    return retval != nullptr;
+}
+
+bool DAttachedProtocolDevice::parseHostAndPort(QString &host, QString &port)
+{
+    if (deviceId.contains(QRegularExpression(R"(^(ftp|sftp|smb))"))) {
+        QUrl url(deviceId);
+        host = url.host();
+        int nPort = url.port();
+        if (nPort < 0) {
+            if (deviceId.startsWith("ftp")) {
+                port = "21";
+            } else if (deviceId.startsWith("sftp")) {
+                port = "22";
+            } else {
+                port = "139";
+            }
+        } else {
+            port = QString::number(nPort);
+        }
+        return true;
+    }
+
+    if (deviceId.contains(QRegularExpression(R"(^file:///media/.*/smbmounts/smb-share)"))) {
+        QRegularExpression regx(R"(([:,]port=(?<port>\d*))?[,:]server=(?<host>[^/:,]+)(,share=(?<share>[^/:,]+))?)");
+        auto match = regx.match(deviceId);
+        if (!match.hasMatch())
+            return false;
+
+        host = match.captured("host");
+        port = match.captured("port");
+        if (port.isEmpty())
+            port = "139";
+        return true;
+    }
+
+    return false;
 }
