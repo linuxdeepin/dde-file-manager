@@ -33,9 +33,15 @@ public:
 
 protected:
     void query() override;
+    bool checkNetwork();
+    bool parseHostAndPort(QString &host, QString &port);
 
 private:
     QSharedPointer<dfmmount::DProtocolDevice> device;
+    quint64 lastNetCheck = 0;
+    quint64 latestTotalSize = 0;
+    quint64 latestFreeSize = 0;
+    bool isNetworkDev = false;
 };
 
 #endif   // DATTACHEDPROTOCOLDEVICE_H
