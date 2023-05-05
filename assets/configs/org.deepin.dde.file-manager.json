@@ -157,7 +157,7 @@
             "visibility":"private"
         },
         "dfm.headless": {
-            "value":false,
+            "value":true,
             "serial":0,
             "flags":[],
             "name":"Enable dde-file-manger headless",
