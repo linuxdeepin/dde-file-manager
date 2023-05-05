@@ -681,6 +681,19 @@ void FileOperateBaseWorker::initCopyWay()
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
 
+void FileOperateBaseWorker::removeTrashInfo(const FileInfoPointer &fromInfo)
+{
+    auto parentPath = fromInfo->urlOf(UrlInfoType::kParentUrl).path();
+    if (!parentPath.endsWith("files"))
+        return;
+    auto fileName = fromInfo->nameOf(NameInfoType::kFileName);
+    auto trashInfoUrl = QUrl::fromLocalFile(parentPath.replace("files", "info/") + fileName + ".trashinfo");
+    if (!localFileHandler)
+        return;
+    qDebug() << "delete trash file info. trashInfoUrl = " << trashInfoUrl;
+    localFileHandler->deleteFile(trashInfoUrl);
+}
+
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
 {
     if (skip)
