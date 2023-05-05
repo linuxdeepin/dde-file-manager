@@ -120,7 +120,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
             return false;
 
         cleanTrashFilesCount++;
-        completeTargetFiles.append(fileInfo->urlOf(UrlInfoType::kUrl));
+        completeTargetFiles.append(fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl));
         ++it;
     }
     return true;

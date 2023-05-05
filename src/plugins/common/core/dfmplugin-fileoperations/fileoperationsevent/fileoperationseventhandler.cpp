@@ -5,6 +5,7 @@
 #include "fileoperationseventhandler.h"
 
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/clipboard.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -45,6 +46,24 @@ void FileOperationsEventHandler::publishJobResultEvent(AbstractJobHandler::JobTy
         break;
     default:
         qWarning() << "Invalid Job Type";
+    }
+}
+
+void FileOperationsEventHandler::removeUrlsInClipboard(AbstractJobHandler::JobType jobType, const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok)
+{
+    if (!ok)
+        return;
+
+    switch (jobType) {
+    case AbstractJobHandler::JobType::kDeleteType:
+    case AbstractJobHandler::JobType::kMoveToTrashType:
+        ClipBoard::instance()->removeUrls(srcUrls);
+        break;
+    case AbstractJobHandler::JobType::kCleanTrashType:
+        ClipBoard::instance()->removeUrls(destUrls);
+        break;
+    default:
+        break;
     }
 }
 
@@ -89,4 +108,5 @@ void FileOperationsEventHandler::handleFinishedNotify(const JobInfoPointer &jobI
     auto customInfos = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey).toList();
     auto jobType = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kJobtypeKey).value<DFMBASE_NAMESPACE::AbstractJobHandler::JobType>();
     publishJobResultEvent(jobType, srcUrls, destUrls, customInfos, *ok, *errMsg);
+    removeUrlsInClipboard(jobType, srcUrls, destUrls, *ok);
 }
