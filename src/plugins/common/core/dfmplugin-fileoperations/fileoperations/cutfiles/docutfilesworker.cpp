@@ -164,6 +164,9 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
             if (sizeInfo->totalSize <= 0)
                 workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
         }
+        // 执行trash的清理
+        if (FileUtils::isTrashFile(fromInfo->fileUrl()))
+            removeTrashInfo(fromInfo);
         return true;
     }
 

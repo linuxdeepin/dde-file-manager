@@ -82,6 +82,7 @@ public:
 protected:
     void waitThreadPoolOver();
     void initCopyWay();
+    void removeTrashInfo(const FileInfoPointer &fromInfo);
 
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);

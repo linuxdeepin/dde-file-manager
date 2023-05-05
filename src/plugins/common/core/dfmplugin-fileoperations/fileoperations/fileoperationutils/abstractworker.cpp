@@ -534,6 +534,8 @@ void AbstractWorker::saveOperations()
                 break;
             case AbstractJobHandler::JobType::kCutType:
                 operatorType = GlobalEventType::kCutFile;
+                if (!sourceUrls.isEmpty() && FileUtils::isTrashFile(sourceUrls.first()))
+                    operatorType = GlobalEventType::kMoveToTrash;
                 targetUrl = UrlRoute::urlParent(completeSourceFiles.first());
                 break;
             case AbstractJobHandler::JobType::kMoveToTrashType:
