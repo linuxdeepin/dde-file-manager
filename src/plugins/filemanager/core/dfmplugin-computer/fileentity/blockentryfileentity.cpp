@@ -134,7 +134,7 @@ bool BlockEntryFileEntity::exists() const
     }
 
     quint64 blkSize = { qvariant_cast<quint64>(datas.value(DeviceProperty::kSizeTotal)) };
-    if (blkSize < 1024) {
+    if (blkSize < 1024 && !opticalDrive && !hasFileSystem) {
         qInfo() << "block device is ignored cause tiny size: " << blkSize << id;
         return false;
     }
