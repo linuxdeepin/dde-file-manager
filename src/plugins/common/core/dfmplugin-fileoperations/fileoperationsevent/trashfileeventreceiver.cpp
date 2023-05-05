@@ -150,6 +150,7 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
         urls.push_back(FileUtils::trashRootUrl());
 
     JobHandlePointer handle = copyMoveJob->cleanTrash(urls);
+    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
     if (handleCallback)
         handleCallback(handle);
     return handle;
@@ -203,8 +204,7 @@ void TrashFileEventReceiver::handleOperationRestoreFromTrash(const quint64 windo
 void TrashFileEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
                                                        DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
-    auto handle = doCleanTrash(windowId, sources, deleteNoticeType, handleCallback);
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
+    doCleanTrash(windowId, sources, deleteNoticeType, handleCallback);
 }
 
 void TrashFileEventReceiver::handleOperationMoveToTrash(const quint64 windowId,
