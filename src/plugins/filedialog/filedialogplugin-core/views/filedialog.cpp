@@ -872,7 +872,6 @@ void FileDialog::handleUrlChanged(const QUrl &url)
     static std::once_flag flag;
     std::call_once(flag, [this, &isFirst]() {
         isFirst = true;
-        setAcceptMode(QFileDialog::AcceptOpen);
         updateViewState();
     });
 
@@ -1029,7 +1028,6 @@ void FileDialog::initializeUi()
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->statusBar), AcName::kAcFDStautsBar);
 #endif
-    centralWidget()->layout()->addWidget(d->statusBar);
     statusBar()->lineEdit()->lineEdit()->setMaxLength(NAME_MAX);
 
     // 修复bug-45176
