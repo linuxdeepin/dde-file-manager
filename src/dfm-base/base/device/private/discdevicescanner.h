@@ -44,7 +44,7 @@ private Q_SLOTS:
     void scanOpticalDisc();
     void onDevicePropertyChangedQVar(const QString &id, const QString &propertyName, const QVariant &var);
     void onDevicePropertyChangedQDBusVar(const QString &id, const QString &propertyName, const QDBusVariant &var);
-    void onDiscWoringStateChanged(const QString &id, const QString &dev, bool working);
+    void onDiscWorkingStateChanged(const QString &id, const QString &dev, bool working);
 
 private:
     QScopedPointer<QTimer> discScanTimer { new QTimer };
