@@ -8,6 +8,10 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
+
+#include <dfm-io/dfile.h>
 
 #include <QDebug>
 #include <QProcess>
@@ -165,4 +169,54 @@ void HistoryStack::removeUrl(const QUrl &url)
 int HistoryStack::currentIndex()
 {
     return index;
+}
+
+bool HistoryStack::backIsExist()
+{
+    if (index <= 0)
+        return false;
+
+    const QUrl &backUrl = list.at(index - 1);
+    if (!needCheckExist(backUrl))
+        return true;
+
+    return checkPathIsExist(backUrl);
+}
+
+bool HistoryStack::forwardIsExist()
+{
+    if (index >= list.size() - 1)
+        return false;
+
+    const QUrl &forwardUrl = list.at(index + 1);
+    if (!needCheckExist(forwardUrl))
+        return true;
+
+    return checkPathIsExist(forwardUrl);
+}
+
+bool HistoryStack::needCheckExist(const QUrl &url)
+{
+    using namespace DFMGLOBAL_NAMESPACE::Scheme;
+
+    const auto &scheme = url.scheme();
+    if (scheme == kComputer || scheme == kUserShare)
+        return false;
+
+    if (!UrlRoute::hasScheme(scheme))
+        return false;
+
+    return true;
+}
+
+bool HistoryStack::checkPathIsExist(const QUrl &url)
+{
+    if (FileUtils::isGvfsFile(url)) {
+        return !NetworkUtils::instance()->checkFtpOrSmbBusy(url)
+                ? DFMIO::DFile(url).exists()
+                : false;
+    } else {
+        auto info = InfoFactory::create<FileInfo>(url);
+        return info && info->exists();
+    }
 }
