@@ -6,6 +6,7 @@
 #include <dfm-base/utils/desktopfile.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/urlroute.h>
@@ -202,29 +203,31 @@ QString FileUtils::preprocessingFileName(QString name)
 
 bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 {
-    // prohibit Paths
-    const QStringList kUsrProhibitPaths {
-        QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(),
-        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(), true),
-
-        QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first(),
-        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first(), true),
-
-        QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(),
-        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(), true),
-
-        QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(),
-        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(), true),
-
-        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(), true),
-
-        QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first(),
-        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first(), true)
+    QStringList prohibitPaths;
+    static const QStringList &kKeys { "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
+    auto addPathFunc = [&prohibitPaths](const QString &user = {}) {
+        std::for_each(kKeys.begin(), kKeys.end(), [&prohibitPaths, &user](const QString &key) {
+            const QString &path = user.isEmpty() ? SystemPathUtil::instance()->systemPath(key)
+                                                 : SystemPathUtil::instance()->systemPathOfUser(key, user);
+            const QString &bindPath { FileUtils::bindPathTransform(path, true) };
+            prohibitPaths.append(path);
+            if (!prohibitPaths.contains(bindPath))
+                prohibitPaths.append(bindPath);
+        });
     };
 
-    return std::any_of(urls.begin(), urls.end(), [&kUsrProhibitPaths](const QUrl &url) {
-        return (!url.isEmpty() && kUsrProhibitPaths.contains(url.path()));
+    // root user can access all home dirs
+    if (Q_UNLIKELY(SysInfoUtils::isRootUser())) {
+        const QStringList &userNames { SysInfoUtils::getAllUsersOfHome() };
+        std::for_each(userNames.begin(), userNames.end(), [&addPathFunc](const QString &name) {
+            addPathFunc(name);
+        });
+    }
+    // add self
+    addPathFunc();
+
+    return std::any_of(urls.begin(), urls.end(), [&prohibitPaths](const QUrl &url) {
+        return (!url.isEmpty() && prohibitPaths.contains(url.path()));
     });
 }
 
@@ -1143,7 +1146,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                                                               APPEARANCE_SERVICE,
                                                               "SetMonitorBackground");
             const QString screen = qApp->primaryScreen()->name();
-            msg.setArguments({screen, pictureFilePath });
+            msg.setArguments({ screen, pictureFilePath });
             QDBusConnection::sessionBus().asyncCall(msg);
             qInfo() << "setBackground calls Appearance SetMonitorBackground" << screen;
             return true;

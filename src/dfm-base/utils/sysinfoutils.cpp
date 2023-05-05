@@ -9,6 +9,7 @@
 
 #include <QDBusInterface>
 #include <QDBusReply>
+#include <QDir>
 
 #include <unistd.h>
 
@@ -20,6 +21,13 @@ QString SysInfoUtils::getUser()
     static QString user = QString::fromLocal8Bit(qgetenv("USER"));
 
     return user;
+}
+
+QStringList SysInfoUtils::getAllUsersOfHome()
+{
+    QDir homeDir { "/home" };
+    static QStringList subDirs { homeDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) };
+    return subDirs;
 }
 
 QString SysInfoUtils::getHostName()

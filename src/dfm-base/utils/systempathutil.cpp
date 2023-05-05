@@ -21,7 +21,7 @@ SystemPathUtil *SystemPathUtil::instance()
     return &util;
 }
 
-QString SystemPathUtil::systemPath(QString key)
+QString SystemPathUtil::systemPath(const QString &key)
 {
     if (systemPathsMap.isEmpty())
         initialize();
@@ -34,7 +34,15 @@ QString SystemPathUtil::systemPath(QString key)
     return path;
 }
 
-QString SystemPathUtil::systemPathDisplayName(QString key) const
+QString SystemPathUtil::systemPathOfUser(const QString &key, const QString &user) const
+{
+    if (xdgDirs.contains(key))
+        return "/home/" + user + "/" + key;
+
+    return {};
+}
+
+QString SystemPathUtil::systemPathDisplayName(const QString &key) const
 {
     if (systemPathDisplayNamesMap.contains(key))
         return systemPathDisplayNamesMap.value(key);
@@ -56,7 +64,7 @@ QString SystemPathUtil::systemPathDisplayNameByPath(QString path)
     return QString();
 }
 
-QString SystemPathUtil::systemPathIconName(QString key) const
+QString SystemPathUtil::systemPathIconName(const QString &key) const
 {
     if (systemPathIconNamesMap.contains(key))
         return systemPathIconNamesMap.value(key);
