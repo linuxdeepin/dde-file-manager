@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filedialogstatusbar.h"
+#include "filedialog.h"
 
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
@@ -284,6 +285,10 @@ void FileDialogStatusBar::updateLayout()
     if (curMode == kUnknow)
         return;
 
+    FileDialog *mainWindow = qobject_cast<FileDialog *>(parent());
+    if (!mainWindow)
+        return;
+
     while (contentLayout->count() > 0)
         delete contentLayout->takeAt(0);
 
@@ -330,7 +335,7 @@ void FileDialogStatusBar::updateLayout()
 
             contentLayout->addWidget(curRejectButton);
             contentLayout->addWidget(curAcceptButton);
-
+            mainWindow->centralWidget()->layout()->addWidget(this);
             return;
         }
 
@@ -344,7 +349,7 @@ void FileDialogStatusBar::updateLayout()
 
             fileNameLabel->show();
             fileNameEdit->show();
-
+            mainWindow->centralWidget()->layout()->addWidget(this);
             return;
         }
     }
@@ -387,6 +392,7 @@ void FileDialogStatusBar::updateLayout()
     contentLayout->addLayout(labelLayout);
     contentLayout->addLayout(centerLayout);
     contentLayout->addLayout(buttonLayout);
+    mainWindow->centralWidget()->layout()->addWidget(this);
 }
 
 void FileDialogStatusBar::showEvent(QShowEvent *event)
