@@ -27,7 +27,14 @@ public:
     void removeUrl(const QUrl &url);
     int currentIndex();
 
+    bool backIsExist();
+    bool forwardIsExist();
+
     // TODO(zhangs): check network exists
+
+private:
+    bool needCheckExist(const QUrl &url);
+    bool checkPathIsExist(const QUrl &url);
 
 private:
     QList<QUrl> list;

@@ -25,13 +25,13 @@ void NavWidgetPrivate::updateBackForwardButtonsState()
         navBackButton->setEnabled(false);
         navForwardButton->setEnabled(false);
     } else {
-        if (curNavStack->isFirst()) {
+        if (curNavStack->isFirst() || !curNavStack->backIsExist()) {
             navBackButton->setEnabled(false);
         } else {
             navBackButton->setEnabled(true);
         }
 
-        if (curNavStack->isLast()) {
+        if (curNavStack->isLast() || !curNavStack->forwardIsExist()) {
             navForwardButton->setEnabled(false);
         } else {
             navForwardButton->setEnabled(true);
