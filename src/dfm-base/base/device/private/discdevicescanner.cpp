@@ -147,7 +147,7 @@ void DiscDeviceScanner::onDevicePropertyChangedQDBusVar(const QString &id, const
     }
 }
 
-void DiscDeviceScanner::onDiscWoringStateChanged(const QString &id, const QString &dev, bool working)
+void DiscDeviceScanner::onDiscWorkingStateChanged(const QString &id, const QString &dev, bool working)
 {
     Q_UNUSED(dev)
 
@@ -174,7 +174,7 @@ void DiscDeviceScanner::initialize()
 
         connect(discScanTimer.data(), &QTimer::timeout, this, &DiscDeviceScanner::scanOpticalDisc);
         connect(DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this, &DiscDeviceScanner::onDevicePropertyChangedQVar);
-        connect(DevMngIns, &DeviceManager::opticalDiscWorkStateChanged, this, &DiscDeviceScanner::onDiscWoringStateChanged);
+        connect(DevMngIns, &DeviceManager::opticalDiscWorkStateChanged, this, &DiscDeviceScanner::onDiscWorkingStateChanged);
 
         threadPool->setMaxThreadCount(4);
         this->startScan();
