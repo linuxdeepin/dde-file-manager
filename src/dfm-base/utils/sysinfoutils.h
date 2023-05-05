@@ -17,6 +17,7 @@ class SysInfoUtils
 
 public:
     static QString getUser();
+    static QStringList getAllUsersOfHome();
     static QString getHostName();
     static int getUserId();
 
