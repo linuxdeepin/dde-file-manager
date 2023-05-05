@@ -18,6 +18,8 @@
 
 #include <gtest/gtest.h>
 
+#include <libmount.h>
+
 DFMBASE_USE_NAMESPACE
 
 class UT_DeviceUtils : public testing::Test
@@ -38,6 +40,19 @@ protected:
 private:
     stub_ext::StubExt stub;
 };
+
+TEST_F(UT_DeviceUtils, bug_139803_UseLibmount)
+{
+    bool useLibMountInterfaces { false };
+    stub.set_lamda(&mnt_new_table, [&useLibMountInterfaces] {
+        __DBG_STUB_INVOKE__
+        useLibMountInterfaces = true;
+        libmnt_table *table { NULL };
+        return table;
+    });
+    DeviceUtils::getMountInfo("/dev/sr0");
+    EXPECT_TRUE(useLibMountInterfaces);
+}
 
 TEST_F(UT_DeviceUtils, GetBlockDeviceId)
 {
