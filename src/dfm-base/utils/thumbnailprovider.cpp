@@ -7,12 +7,13 @@
 
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
-#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -240,6 +241,8 @@ bool ThumbnailProvider::thumbnailEnable(const QUrl &url) const
         return DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
     } else if (FileUtils::isGvfsFile(url)) {
         return Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
+    } else if (DevProxyMng->isFileOfExternalBlockMounts(url.path())) {
+        return true;
     }
 
     return false;
