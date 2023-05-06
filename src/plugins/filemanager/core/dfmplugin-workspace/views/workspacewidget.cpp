@@ -85,15 +85,14 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     if (!views.contains(scheme)) {
         QString error;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
-#ifdef ENABLE_TESTING
-        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                             qobject_cast<QWidget *>(fileView->widget()), AcName::kAcFileView);
-#endif
-
         if (!fileView) {
             qWarning() << "Cannot create view for " << url << "Reason: " << error;
             return;
         }
+#ifdef ENABLE_TESTING
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                             qobject_cast<QWidget *>(fileView->widget()), AcName::kAcFileView);
+#endif
 
         views.insert(url.scheme(), fileView);
         viewStackLayout->addWidget(fileView->widget());

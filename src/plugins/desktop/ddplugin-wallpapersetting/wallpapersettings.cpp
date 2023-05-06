@@ -223,9 +223,9 @@ void WallpaperSettingsPrivate::adjustModeSwitcher()
 QString WallpaperSettingsPrivate::timeFormat(int second)
 {
     quint8 s = static_cast<quint8>(second % 60);
-    quint8 m = static_cast<quint8>(second / 60);
-    quint8 h = m / 60;
-    quint8 d = h / 24;
+    int m = static_cast<int>(second / 60);
+    int h = m / 60;
+    int d = h / 24;
 
     m = m % 60;
     h = h % 24;

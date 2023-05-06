@@ -993,7 +993,7 @@ void CollectionViewPrivate::updateDFMMimeData(QDropEvent *event)
     dfmmimeData.clear();
     const QMimeData *data = event->mimeData();
 
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
+    if (data && data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
         dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
 }
 
@@ -1003,7 +1003,7 @@ bool CollectionViewPrivate::checkTargetEnable(const QUrl &targetUrl)
         return true;
 
     if (FileUtils::isTrashDesktopFile(targetUrl))
-        return dfmmimeData.canTrash();
+        return dfmmimeData.canTrash() || dfmmimeData.canDelete();
 
     return true;
 }

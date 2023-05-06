@@ -152,6 +152,7 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
     if (doRenameFile(fromInfo, targetPathInfo, toInfo, &ok) || ok) {
         workData->currentWriteSize += fromInfo->size();
         if (fromInfo->isAttributes(OptInfoType::kIsFile)) {
+            workData->blockRenameWriteSize += fromInfo->size();
             workData->currentWriteSize += (fromInfo->size() > 0 ? fromInfo->size() : FileUtils::getMemoryPageSize());
             if (fromInfo->size() <= 0)
                 workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
@@ -163,6 +164,9 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
             if (sizeInfo->totalSize <= 0)
                 workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
         }
+        // 执行trash的清理
+        if (FileUtils::isTrashFile(fromInfo->fileUrl()))
+            removeTrashInfo(fromInfo);
         return true;
     }
 

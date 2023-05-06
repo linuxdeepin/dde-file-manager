@@ -34,6 +34,7 @@ public:
     QList<QUrl> urls() const;
 
     bool canTrash() const;
+    bool canDelete() const;
 
     void setAttritube(const QString &name, const QVariant &value);
     QVariant attritube(const QString &name, const QVariant &defaultValue = {}) const;

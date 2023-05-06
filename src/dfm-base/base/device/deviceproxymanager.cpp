@@ -307,7 +307,7 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
 void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 {
     QString p = mpt.endsWith("/") ? mpt : mpt + "/";
-    if (DeviceUtils::isMountPointOfDlnfs(p))
+    if (!id.startsWith(kBlockDeviceIdPrefix) && DeviceUtils::isMountPointOfDlnfs(p))
         return;
 
     if (id.startsWith(kBlockDeviceIdPrefix)) {

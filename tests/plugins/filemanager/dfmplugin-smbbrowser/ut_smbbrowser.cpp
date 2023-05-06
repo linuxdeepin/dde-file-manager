@@ -31,7 +31,7 @@ Q_DECLARE_METATYPE(QString *)
 class UT_SmbBrowser : public testing::Test
 {
 protected:
-    virtual void SetUp() override { }
+    virtual void SetUp() override {}
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -142,4 +142,17 @@ TEST_F(UT_SmbBrowser, FollowEvents)
     stub.set_lamda(follow2, [] { __DBG_STUB_INVOKE__ return true; });
 
     EXPECT_NO_FATAL_FAILURE(ins.followEvents());
+}
+
+TEST_F(UT_SmbBrowser, bug_181151_registerNetworkToSearch)
+{
+    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString, QVariantMap &);
+    auto push = static_cast<Push>(&dpf::EventChannelManager::push);
+    stub.set_lamda(push, [](EventChannelManager *&, const QString &, const QString &, QString, QVariantMap &property) {
+        EXPECT_TRUE(property.contains("Property_Key_DisableSearch"));
+        EXPECT_TRUE(property["Property_Key_DisableSearch"].toBool() == true);
+        __DBG_STUB_INVOKE__ return QVariant();
+    });
+
+    ins.registerNetworkToSearch();
 }

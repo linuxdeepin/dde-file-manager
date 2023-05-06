@@ -40,16 +40,9 @@ bool TrashFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources,
     if (sources.isEmpty())
         return true;
 
-    const QUrl &urlSource = sources.first();
-    if (Q_UNLIKELY(!DFMBASE_NAMESPACE::FileUtils::fileCanTrash(urlSource))) {
-        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
-                                     windowId,
-                                     sources, flags, nullptr);
-    } else {
-        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash,
-                                     windowId,
-                                     sources, flags, nullptr);
-    }
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash,
+                                 windowId,
+                                 sources, flags, nullptr);
     return true;
 }
 

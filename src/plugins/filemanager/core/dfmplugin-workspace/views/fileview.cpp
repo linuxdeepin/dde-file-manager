@@ -822,11 +822,9 @@ void FileView::updateVisibleIndex(const QModelIndex &index)
         return;
 
     if (!info->exists()) {
-        const auto rootInfo = FileDataManager::instance()->fetchRoot(rootUrl());
-        if (!rootInfo)
-            return;
-
-        rootInfo->doFileDeleted(info->urlOf(FileInfo::FileUrlInfoType::kUrl));
+        // some time can't receive watcher event when file be deleted.
+        // call updateFile func to filter the file which is no existed.
+        model()->updateFile(info->urlOf(FileInfo::FileUrlInfoType::kUrl));
     } else {
         model()->setIndexActive(index);
     }

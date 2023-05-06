@@ -546,7 +546,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
     actUnmount(info);
 
     // 3. remove device enrty
-    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->urlOf(UrlInfoType::kUrl));
+    ComputerItemWatcherInstance->removeDevice(info->urlOf(UrlInfoType::kUrl));
 }
 
 void ComputerController::actErase(DFMEntryFileInfoPointer info)

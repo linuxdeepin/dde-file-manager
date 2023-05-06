@@ -24,7 +24,7 @@ if (NOT VERSION)
 endif()
 
 if (NOT PROJECT_VERSION_MAJOR)
-    set(PROJECT_VERSION_MAJOR 0)
+    set(PROJECT_VERSION_MAJOR 1)
 endif()
 
 set_target_properties(${BIN_NAME} PROPERTIES

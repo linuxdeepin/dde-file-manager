@@ -21,10 +21,11 @@ class SystemPathUtil final : public QObject
 public:
     static SystemPathUtil *instance();
 
-    QString systemPath(QString key);
-    QString systemPathDisplayName(QString key) const;
+    QString systemPath(const QString &key);
+    QString systemPathOfUser(const QString &key, const QString &user) const;
+    QString systemPathDisplayName(const QString &key) const;
     QString systemPathDisplayNameByPath(QString path);
-    QString systemPathIconName(QString key) const;
+    QString systemPathIconName(const QString &key) const;
     QString systemPathIconNameByPath(QString path);
     bool isSystemPath(QString path) const;
     bool checkContainsSystemPath(const QList<QUrl> &urlList);

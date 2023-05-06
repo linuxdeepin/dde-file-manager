@@ -100,36 +100,42 @@ bool BlockEntryFileEntity::exists() const
     bool isLoopDevice { qvariant_cast<bool>(datas.value(DeviceProperty::kIsLoopDevice)) };
 
     if (isLoopDevice && !hasFileSystem) {
-        qWarning() << "loop device has no filesystem so hide it: " << id;
+        qInfo() << "loop device has no filesystem so hide it: " << id;
         return false;
     }
 
     if (hintIgnore && !isLoopDevice) {
-        qWarning() << "block device is ignored by hintIgnore:" << id;
+        qInfo() << "block device is ignored by hintIgnore:" << id;
         return false;
     }
 
     if (!hasFileSystem && !opticalDrive && !isEncrypted) {
         bool removable { qvariant_cast<bool>(datas.value(DeviceProperty::kRemovable)) };
         if (!removable) {   // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-            qWarning() << "block device is ignored by wrong removeable set for system disk:" << id;
+            qInfo() << "block device is ignored by wrong removeable set for system disk:" << id;
             return false;
         }
     }
 
     if (cryptoBackingDevice.length() > 1) {
-        qWarning() << "block device is ignored by crypted back device:" << id;
+        qInfo() << "block device is ignored by crypted back device:" << id;
         return false;
     }
 
     // 是否是设备根节点，设备根节点无须记录
     if (hasPartitionTable) {   // 替换 FileUtils::deviceShouldBeIgnore
-        qDebug() << "block device is ignored by parent node:" << id;
+        qInfo() << "block device is ignored by parent node:" << id;
         return false;
     }
 
     if (hasPartition && hasExtendedPartition) {
-        qWarning() << "block device is ignored by extended partion type";
+        qInfo() << "block device is ignored by extended partion type" << id;
+        return false;
+    }
+
+    quint64 blkSize = { qvariant_cast<quint64>(datas.value(DeviceProperty::kSizeTotal)) };
+    if (blkSize < 1024 && !opticalDrive && !hasFileSystem) {
+        qInfo() << "block device is ignored cause tiny size: " << blkSize << id;
         return false;
     }
 

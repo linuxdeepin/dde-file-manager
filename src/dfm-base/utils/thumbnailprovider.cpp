@@ -7,12 +7,13 @@
 
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
-#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -240,6 +241,8 @@ bool ThumbnailProvider::thumbnailEnable(const QUrl &url) const
         return DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
     } else if (FileUtils::isGvfsFile(url)) {
         return Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
+    } else if (DevProxyMng->isFileOfExternalBlockMounts(url.path())) {
+        return true;
     }
 
     return false;
@@ -257,15 +260,8 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     if (dirPath.isEmpty() || filePath.isEmpty())
         return QString();
 
-    // 判断目录inode值，是否为缓存目录
-    // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    uint64_t dirInode = d->filePathToInode(dirPath);
-    if (dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kSmall))
-        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kNormal))
-        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kLarge))
-        || dirInode == d->filePathToInode(StandardPaths::location(StandardPaths::kThumbnailFailPath))) {
+    if (isIconCachePath(dirPath))
         return filePath;
-    }
 
     const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded)).toLocal8Bit()) + kFormat;
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
@@ -310,15 +306,8 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
     const QString &dirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
 
-    // 判断目录inode值，是否为缓存目录
-    // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
-    uint64_t dirInode = d->filePathToInode(dirPath);
-    if (dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kSmall))
-        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kNormal))
-        || dirInode == d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kLarge))
-        || dirInode == d->filePathToInode(StandardPaths::location(StandardPaths::kThumbnailFailPath))) {
+    if (isIconCachePath(dirPath))
         return filePath;
-    }
 
     if (!hasThumbnail(url)) {
         d->errorString = QStringLiteral("This file has not support thumbnail: ") + filePath;
@@ -763,6 +752,24 @@ bool ThumbnailProvider::createThumnailByTools(const QMimeType &mime, ThumbnailPr
         } else {
             d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
         }
+    }
+    return false;
+}
+
+bool ThumbnailProvider::isIconCachePath(const QString &dirPath) const
+{
+    // 判断目录inode值，是否为缓存目录
+    // fix: 用户通过数据盘或软链接访问缓存目录时无限生成缩略图的bug
+    uint64_t dirInode = d->filePathToInode(dirPath);
+    uint64_t smallIconPathInode = d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kSmall));
+    uint64_t normalIconPathInode = d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kNormal));
+    uint64_t largeIconPathInode = d->filePathToInode(d->sizeToFilePath(ThumbnailProvider::Size::kLarge));
+    uint64_t failIconPathInode = d->filePathToInode(StandardPaths::location(StandardPaths::kThumbnailFailPath));
+    if ((smallIconPathInode != 0 && dirInode == smallIconPathInode)
+        || (normalIconPathInode != 0 && dirInode == normalIconPathInode)
+        || (largeIconPathInode != 0 && dirInode == largeIconPathInode)
+        || (failIconPathInode != 0 && dirInode == failIconPathInode)) {
+        return true;
     }
     return false;
 }

@@ -104,6 +104,7 @@ businessTestList=(
   plugins/common/dfmplugin-burn
   plugins/common/core/dfmplugin-fileoperations
   plugins/common/dfmplugin-utils
+  plugins/common/dfmplugin-tag
 
   plugins/filemanager/core/dfmplugin-workspace
   plugins/filemanager/core/dfmplugin-computer
@@ -119,6 +120,8 @@ businessTestList=(
   plugins/desktop/core/ddplugin-canvas
   plugins/desktop/core/ddplugin-core
 
+  plugins/desktop/ddplugin-background
+  plugins/desktop/ddplugin-wallpapersetting
 ) 
 
 # 2. interface test .

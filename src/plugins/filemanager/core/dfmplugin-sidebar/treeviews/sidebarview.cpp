@@ -75,9 +75,9 @@ void SideBarViewPrivate::notifyOrderChanged()
 void SideBarViewPrivate::updateDFMMimeData(const QDropEvent *event)
 {
     dfmMimeData.clear();
-    auto data = event->mimeData();
+    const QMimeData *data = event->mimeData();
 
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
+    if (data && data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
         dfmMimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
 }
 
