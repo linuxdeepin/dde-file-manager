@@ -81,6 +81,67 @@ void SideBarViewPrivate::updateDFMMimeData(const QDropEvent *event)
         dfmMimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
 }
 
+bool SideBarViewPrivate::checkTargetEnable(const QUrl &targetUrl)
+{
+    if (!dfmMimeData.isValid())
+        return true;
+
+    if (FileUtils::isTrashFile(targetUrl))
+        return dfmMimeData.canTrash() || dfmMimeData.canDelete();
+
+    return true;
+}
+
+bool SideBarViewPrivate::canEnter(QDragEnterEvent *event)
+{
+    Q_ASSERT(q);
+
+    if (!event)
+        return false;
+
+    if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent))
+        return false;
+
+    SideBarItem *item = q->itemAt(event->pos());
+    if (item) {
+        const QUrl &targetItemUrl { item->targetUrl() };
+        if (!checkTargetEnable(targetItemUrl))
+            return false;
+    }
+
+    return true;
+}
+
+bool SideBarViewPrivate::canMove(QDragMoveEvent *event)
+{
+    Q_ASSERT(q);
+
+    if (!event)
+        return false;
+
+    const QList<QUrl> &urls = urlsForDragEvent.isEmpty()
+            ? event->mimeData()->urls()
+            : urlsForDragEvent;
+
+    if (urls.isEmpty())
+        return false;
+
+    SideBarItem *item = q->itemAt(event->pos());
+    if (item) {
+        const QUrl &targetItemUrl { item->targetUrl() };
+        if (!checkTargetEnable(targetItemUrl))
+            return false;
+
+        Qt::DropAction action { Qt::CopyAction };
+        if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DragMoveData", urls, item->url(), &action)) {
+            if (action == Qt::IgnoreAction)
+                return false;
+        }
+    }
+
+    return true;
+}
+
 class SidebarViewStyle : public QProxyStyle
 {
 public:
@@ -198,12 +259,12 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
     d->updateDFMMimeData(event);
     if (event->source() != this) {
         d->urlsForDragEvent = d->dfmMimeData.isValid() ? d->dfmMimeData.urls() : event->mimeData()->urls();
-        // Filter the event that cannot be dragged
-        if (d->urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(d->urlsForDragEvent)) {
+        if (!d->canEnter(event)) {
             event->setDropAction(Qt::IgnoreAction);
             event->ignore();
             return;
         }
+
     } else {
         d->urlsForDragEvent.clear();
     }
@@ -229,18 +290,11 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
         setCurrentIndex(index);
     }
 
-    const QList<QUrl> &urls = d->urlsForDragEvent.isEmpty()
-            ? event->mimeData()->urls()
-            : d->urlsForDragEvent;
-
-    if (item && !urls.isEmpty()) {
-        Qt::DropAction action { Qt::CopyAction };
-        if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DragMoveData", urls, item->url(), &action)) {
-            if (action == Qt::IgnoreAction) {
-                event->setDropAction(action);
-                event->ignore();
-                return;
-            }
+    if (item) {
+        if (!d->canMove(event)) {
+            event->setDropAction(Qt::IgnoreAction);
+            event->ignore();
+            return;
         }
     }
 
@@ -271,11 +325,7 @@ void SideBarView::dropEvent(QDropEvent *event)
     if (!item)
         return DTreeView::dropEvent(event);
 
-    QUrl targetItemUrl;
-    if (!item->itemInfo().finalUrl.isEmpty())
-        targetItemUrl = item->itemInfo().finalUrl;
-    else
-        targetItemUrl = item->url();
+    const QUrl &targetItemUrl { item->targetUrl() };
 
     qDebug() << "source: " << event->mimeData()->urls();
     qDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();

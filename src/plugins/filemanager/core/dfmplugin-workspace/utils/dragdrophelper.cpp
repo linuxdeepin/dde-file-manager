@@ -33,11 +33,11 @@ DragDropHelper::DragDropHelper(FileView *parent)
 }
 
 bool DragDropHelper::dragEnter(QDragEnterEvent *event)
-{    
+{
     dfmmimeData.clear();
     currentHoverIndexUrl = QUrl();
     const QMimeData *data = event->mimeData();
-    currentDragUrls = data->urls();    
+    currentDragUrls = data->urls();
     if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
         dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
     currentDragSourceUrls = dfmmimeData.isValid() ? dfmmimeData.urls() : currentDragUrls;

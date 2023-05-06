@@ -48,6 +48,16 @@ QUrl SideBarItem::url() const
     return this->data(kItemUrlRole).value<QUrl>();
 }
 
+QUrl SideBarItem::targetUrl() const
+{
+    QUrl targetItemUrl;
+    if (!itemInfo().finalUrl.isEmpty())
+        targetItemUrl = itemInfo().finalUrl;
+    else
+        targetItemUrl = url();
+    return targetItemUrl;
+}
+
 void SideBarItem::setUrl(const QUrl &url)
 {
     this->setData(QVariant::fromValue(url), kItemUrlRole);
