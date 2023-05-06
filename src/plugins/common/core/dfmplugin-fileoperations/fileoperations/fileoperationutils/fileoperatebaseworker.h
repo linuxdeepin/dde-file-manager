@@ -82,7 +82,9 @@ public:
 protected:
     void waitThreadPoolOver();
     void initCopyWay();
-    void removeTrashInfo(const FileInfoPointer &fromInfo);
+    QUrl trashInfo(const FileInfoPointer &fromInfo);
+    QString fileOriginName(const QUrl &trashInfoUrl);
+    void removeTrashInfo(const QUrl &trashInfoUrl);
 
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);

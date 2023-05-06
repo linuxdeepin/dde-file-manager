@@ -11,6 +11,7 @@
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/base/standardpaths.h>
 
 #include <gtest/gtest.h>
 
@@ -140,4 +141,52 @@ TEST_F(UT_FileOperateBaseWorker, testDeleteFile)
     EXPECT_TRUE(worker.stateCheck());
 
     QProcess::execute("rm ./testSyncFileInfo.txt");
+}
+
+TEST_F(UT_FileOperateBaseWorker, testTrashInfo)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath());
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    EXPECT_TRUE(worker.trashInfo(fileInfo).isEmpty());
+    url.setPath(StandardPaths::location(StandardPaths::kHomePath) + "/.local/share/Trash/files/testttt.txt");
+    fileInfo = InfoFactory::create<FileInfo>(url);
+    EXPECT_TRUE(worker.trashInfo(fileInfo).path().endsWith("testttt.txt.trashinfo"));
+}
+
+TEST_F(UT_FileOperateBaseWorker, testFileOriginName)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath());
+    EXPECT_TRUE(worker.fileOriginName(QUrl()).isEmpty());
+
+    url.setPath(StandardPaths::location(StandardPaths::kHomePath) + "/.local/share/Trash/files/testttt.txt");
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    auto trashInfoUrl = worker.trashInfo(fileInfo);
+    EXPECT_TRUE(worker.fileOriginName(trashInfoUrl).isEmpty());
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DFile::open, []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&DFile::readAll, []{ __DBG_STUB_INVOKE__ return QByteArray("fjkejfk");});
+    EXPECT_TRUE(worker.fileOriginName(trashInfoUrl).isEmpty());
+
+    stub.set_lamda(&DFile::readAll, []{ __DBG_STUB_INVOKE__ return QByteArray("fjkejfk ttt ttt ttt");});
+    EXPECT_TRUE(worker.fileOriginName(trashInfoUrl).isEmpty());
+
+    stub.set_lamda(&DFile::readAll, []{ __DBG_STUB_INVOKE__ return QByteArray("fjkejfk ttt ttt98-ooo ttt");});
+    EXPECT_EQ(QString("-ooo"),worker.fileOriginName(trashInfoUrl));
+}
+
+TEST_F(UT_FileOperateBaseWorker, testRemoveTrashInfo)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath());
+    stub_ext::StubExt stub;
+    stub.set_lamda(&LocalFileHandler::deleteFile, []{ __DBG_STUB_INVOKE__ return true; });
+    worker.removeTrashInfo(QUrl());
+
+    worker.removeTrashInfo(url);
+
+    worker.initArgs();
+    worker.removeTrashInfo(url);
 }

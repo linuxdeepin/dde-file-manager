@@ -679,18 +679,44 @@ void FileOperateBaseWorker::initCopyWay()
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
 
-void FileOperateBaseWorker::removeTrashInfo(const FileInfoPointer &fromInfo)
+QUrl FileOperateBaseWorker::trashInfo(const FileInfoPointer &fromInfo)
 {
     auto parentPath = fromInfo->urlOf(UrlInfoType::kParentUrl).path();
     if (!parentPath.endsWith("files"))
-        return;
+        return QUrl();
     auto fileName = fromInfo->nameOf(NameInfoType::kFileName);
     auto trashInfoUrl = QUrl::fromLocalFile(parentPath.replace("files", "info/") + fileName + ".trashinfo");
-    if (!localFileHandler)
+    return trashInfoUrl;
+}
+
+QString FileOperateBaseWorker::fileOriginName(const QUrl &trashInfoUrl)
+{
+    if (!trashInfoUrl.isValid())
+        return QString();
+    DFile file(trashInfoUrl);
+    if (!file.open(dfmio::DFile::OpenFlag::kReadOnly)) {
+        qWarning() << "open trash file info err : " << file.lastError().errorMsg() << " ,trashInfoUrl = " << trashInfoUrl;
+        return QString();
+    }
+    auto data = file.readAll().simplified().split(' ');
+    if (data.size() <= 3) {
+        qWarning() << "reade trash file info err,trashInfoUrl = " << trashInfoUrl;
+        return QString();
+    }
+    QString fileName(data.at(2));
+    fileName.replace(0, 5, "");
+    fileName = QUrl::fromPercentEncoding(QByteArray(fileName.toStdString().c_str()));
+    return fileName;
+}
+
+void FileOperateBaseWorker::removeTrashInfo(const QUrl &trashInfoUrl)
+{
+    if (!localFileHandler || !trashInfoUrl.isValid())
         return;
     qDebug() << "delete trash file info. trashInfoUrl = " << trashInfoUrl;
     localFileHandler->deleteFile(trashInfoUrl);
 }
+
 
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
 {
