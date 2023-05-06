@@ -8,6 +8,7 @@
 #include "utils/propertydialogmanager.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileinfohelper.h>
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>
@@ -37,6 +38,8 @@ FilePropertyDialog::FilePropertyDialog(QWidget *parent)
     setFixedWidth(350);
     initInfoUI();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FilePropertyDialog::onFileInfoUpdated, Qt::QueuedConnection);
 }
 
 FilePropertyDialog::~FilePropertyDialog()
@@ -71,11 +74,11 @@ void FilePropertyDialog::initInfoUI()
 
 void FilePropertyDialog::createHeadUI(const QUrl &url)
 {
-    QLabel *fileIcon = new QLabel(this);
+    fileIcon = new QLabel(this);
     fileIcon->setFixedHeight(128);
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    if (!info.isNull())
-        fileIcon->setPixmap(info->fileIcon().pixmap(128, 128));
+    currentInfo = InfoFactory::create<FileInfo>(url);
+    if (!currentInfo.isNull())
+        fileIcon->setPixmap(currentInfo->fileIcon().pixmap(128, 128));
 
     editStackWidget = new EditStackedWidget(this);
     editStackWidget->selectFile(url);
@@ -204,6 +207,20 @@ void FilePropertyDialog::onSelectUrlRenamed(const QUrl &url)
 
     if (basicWidget)
         basicWidget->updateFileUrl(url);
+}
+
+void FilePropertyDialog::onFileInfoUpdated(const QUrl &url, const bool isLinkOrg)
+{
+    if (url != currentFileUrl || currentInfo.isNull())
+        return;
+
+    if (isLinkOrg)
+        currentInfo->customData(Global::ItemRoles::kItemFileRefreshIcon);
+
+    if (!fileIcon)
+        return;
+
+    fileIcon->setPixmap(currentInfo->fileIcon().pixmap(128, 128));
 }
 
 void FilePropertyDialog::mousePressEvent(QMouseEvent *event)
