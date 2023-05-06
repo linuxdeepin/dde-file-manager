@@ -516,13 +516,48 @@ void FileSortWorker::handleUpdateFile(const QUrl &url)
     if (!url.isValid() || !childrenUrlList.contains(url))
         return;
 
+    SortInfoPointer sortInfo = children.at(childrenUrlList.indexOf(url));
+    if (!sortInfo)
+        return;
+
+    bool childVisible = false;
+    int childIndex = -1;
     {
         QReadLocker lk(&locker);
-        if (!visibleChildren.contains(url))
-            return;
+        childVisible = visibleChildren.contains(url);
+        childIndex = visibleChildren.indexOf(url);
     }
 
-    emit updateRow(visibleChildren.indexOf(url));
+    if (childVisible) {
+        if (!checkFilters(sortInfo, true)) {
+            Q_EMIT removeRows(childIndex, 1);
+            {
+                QWriteLocker lk(&locker);
+                visibleChildren.removeAt(childIndex);
+            }
+            Q_EMIT removeFinish();
+            return;
+        }
+        Q_EMIT updateRow(childIndex);
+        return;
+    }
+
+    if (checkFilters(sortInfo, true)) {
+        int showIndex = visibleChildren.length();
+        // kItemDisplayRole 是不进行排序的
+        if (orgSortRole != Global::ItemRoles::kItemDisplayRole)
+            showIndex = insertSortList(sortInfo->url, visibleChildren, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
+
+        if (isCanceled)
+            return;
+
+        Q_EMIT insertRows(showIndex, 1);
+        {
+            QWriteLocker lk(&locker);
+            visibleChildren.insert(showIndex, sortInfo->url);
+        }
+        Q_EMIT insertFinish();
+    }
 }
 
 void FileSortWorker::handleFilterData(const QVariant &data)
@@ -575,6 +610,7 @@ void FileSortWorker::handleRefresh()
 
     if (!empty)
         Q_EMIT removeFinish();
+
     Q_EMIT requestFetchMore();
 }
 
@@ -591,6 +627,9 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
         return true;
 
     FileInfoPointer fileInfo = byInfo ? InfoFactory::create<FileInfo>(sortInfo->url) : nullptr;
+
+    if (fileInfo && !fileInfo->exists())
+        return false;
 
     const bool isDir = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsDir) : sortInfo->isDir;
 
