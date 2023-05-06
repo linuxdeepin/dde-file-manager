@@ -8,6 +8,8 @@
 #include "dfmplugin_propertydialog_global.h"
 #include "editstackedwidget.h"
 
+#include <dfm-base/interfaces/fileinfo.h>
+
 #include <DDialog>
 #include <DCheckBox>
 #include <DPlatformWindowHandle>
@@ -44,6 +46,7 @@ public slots:
     void addExtendedControl(QWidget *widget);
     void closeDialog();
     void onSelectUrlRenamed(const QUrl &url);
+    void onFileInfoUpdated(const QUrl &url, const bool isLinkOrg);
 
 signals:
     void closed(const QUrl url);
@@ -66,7 +69,7 @@ private:
     QScrollArea *scrollArea { nullptr };
     BasicWidget *basicWidget { nullptr };
     PermissionManagerWidget *permissionManagerWidget { nullptr };
-    DTK_WIDGET_NAMESPACE::DLabel *fileIcon { nullptr };
+    QLabel *fileIcon {nullptr};
     EditStackedWidget *editStackWidget { nullptr };
     QFrame *textShowFrame { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *editButton { nullptr };
@@ -74,6 +77,7 @@ private:
     QUrl currentFileUrl {};
     int extendedHeight { 0 };
     DTK_WIDGET_NAMESPACE::DPlatformWindowHandle *platformWindowHandle { nullptr };
+    FileInfoPointer currentInfo{ nullptr };
 };
 }
 #endif   // FILEPROPERTYVIEW_H
