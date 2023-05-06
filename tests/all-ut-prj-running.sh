@@ -96,7 +96,7 @@ interfaceTestList=(
 businessTestList=(
 # apps
   # apps/dde-file-manager
-  # apps/dde-desktop
+    apps/dde-desktop
   # apps/dde-file-manager-daemon
   # apps/dde-file-manager-server
 
