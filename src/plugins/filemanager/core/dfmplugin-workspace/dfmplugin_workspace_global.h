@@ -49,6 +49,7 @@ inline constexpr int kIconViewSpacing { 5 };
 inline constexpr int kListViewSpacing { 0 };
 inline constexpr int kIconModeColumnPadding { 10 };
 inline constexpr int kDefualtHeaderSectionWidth { 140 };
+inline constexpr int kDefaultItemFileLastModifiedWidth { 145 };
 inline constexpr int kMinimumHeaderSectionWidth { 120 };
 inline constexpr int kListViewHeaderHeight { 36 };
 inline constexpr int kListViewIconSize { 24 };
