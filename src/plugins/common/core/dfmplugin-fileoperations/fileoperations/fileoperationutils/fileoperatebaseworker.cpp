@@ -280,8 +280,6 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
     if (!toInfo)
         return false;
 
-    bool oldExist = toInfo->exists();
-
     if (fromInfo->isAttributes(OptInfoType::kIsSymLink)) {
         ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (ok) {
@@ -305,7 +303,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
         FileUtils::removeCopyingFileUrl(url);
     }
 
-    if (!oldExist && toInfo->exists() && targetInfo == targetPathInfo) {
+    if (ok && toInfo->exists() && targetInfo == targetPathInfo) {
         completeSourceFiles.append(fromInfo->urlOf(UrlInfoType::kUrl));
         completeTargetFiles.append(toInfo->urlOf(UrlInfoType::kUrl));
     }
