@@ -1644,9 +1644,14 @@ void FileView::updateListHeaderView()
         d->columnRoles << model()->getRoleByColumn(i);
 
         if (d->allowedAdjustColumnSize) {
-            int colWidth = state.value(QString::number(d->columnRoles.last()), -1).toInt();
+            ItemRoles curRole = d->columnRoles.last();
+            int colWidth = state.value(QString::number(curRole), -1).toInt();
             if (colWidth > 0) {
-                d->headerView->resizeSection(model()->getColumnByRole(d->columnRoles.last()), colWidth);
+                d->headerView->resizeSection(model()->getColumnByRole(curRole), colWidth);
+            } else {
+                if (curRole == kItemFileLastModifiedRole) {
+                    d->headerView->resizeSection(model()->getColumnByRole(curRole), kDefaultItemFileLastModifiedWidth);
+                }
             }
         } else {
             int columnWidth = model()->getColumnWidth(i);
