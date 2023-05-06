@@ -38,6 +38,7 @@ public:
     virtual ~SideBarItem();
 
     QUrl url() const;
+    QUrl targetUrl() const;
     void setUrl(const QUrl &url);
 
     QString group() const;

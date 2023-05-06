@@ -41,6 +41,9 @@ class SideBarViewPrivate : public QObject
     void currentChanged(const QModelIndex &curIndex);
     void notifyOrderChanged();
     void updateDFMMimeData(const QDropEvent *event);
+    bool checkTargetEnable(const QUrl &targetUrl);
+    bool canEnter(QDragEnterEvent *event);
+    bool canMove(QDragMoveEvent *event);
 };
 
 DPSIDEBAR_END_NAMESPACE
