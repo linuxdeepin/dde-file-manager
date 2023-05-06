@@ -305,7 +305,7 @@ WId CanvasView::winId() const
 void CanvasView::paintEvent(QPaintEvent *event)
 {
     ViewPainter painter(d.get());
-    painter.setRenderHints(QPainter::HighQualityAntialiasing);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
     // debug网格信息展示
     painter.drawGirdInfos();
