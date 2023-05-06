@@ -33,6 +33,10 @@ private:
                                const QList<QUrl> &destUrls,
                                const QVariantList &customInfos,
                                bool ok, const QString &errMsg);
+    void removeUrlsInClipboard(DFMBASE_NAMESPACE::AbstractJobHandler::JobType jobType,
+                               const QList<QUrl> &srcUrls,
+                               const QList<QUrl> &destUrls,
+                               bool ok);
 };
 
 DPFILEOPERATIONS_END_NAMESPACE

@@ -71,7 +71,8 @@ static bool pluginsLoad()
         "dfmplugin-trashcore",
         "dfmplugin-trash",
         "dfmplugin-filepreview",
-        "dfmplugin-vault"
+        "dfmplugin-vault",
+        "dfmplugin-phone"   // TODO(zhangs): use white list
     };
 
     static const QStringList kLazyLoadPluginNames {

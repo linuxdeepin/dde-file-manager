@@ -39,6 +39,7 @@ public:
     QList<QUrl> clipboardFileUrlList() const;
     QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;
+    void removeUrls(const QList<QUrl> &urls);
 
 private:
     explicit ClipBoard(QObject *parent = nullptr);
