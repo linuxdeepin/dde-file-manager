@@ -149,7 +149,15 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
     // try rename
     bool ok = false;
     FileInfoPointer toInfo = nullptr;
-    if (doRenameFile(fromInfo, targetPathInfo, toInfo, &ok) || ok) {
+    // 获取trashinfourl
+    QUrl trashInfoUrl;
+    QString fileName = fromInfo->nameOf(NameInfoType::kFileCopyName);
+    bool isTrashFile = FileUtils::isTrashFile(fromInfo->urlOf(UrlInfoType::kUrl));
+    if (isTrashFile) {
+        trashInfoUrl= trashInfo(fromInfo);
+        fileName = fileOriginName(trashInfoUrl);
+    }
+    if (doRenameFile(fromInfo, targetPathInfo, toInfo, fileName, &ok) || ok) {
         workData->currentWriteSize += fromInfo->size();
         if (fromInfo->isAttributes(OptInfoType::kIsFile)) {
             workData->blockRenameWriteSize += fromInfo->size();
@@ -164,9 +172,8 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
             if (sizeInfo->totalSize <= 0)
                 workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
         }
-        // 执行trash的清理
-        if (FileUtils::isTrashFile(fromInfo->fileUrl()))
-            removeTrashInfo(fromInfo);
+        if (isTrashFile)
+            removeTrashInfo(trashInfoUrl);
         return true;
     }
 
@@ -189,6 +196,8 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
         return result;
 
     workData->currentWriteSize += fromInfo->size();
+    if (isTrashFile)
+        removeTrashInfo(trashInfoUrl);
     return true;
 }
 
@@ -255,7 +264,7 @@ bool DoCutFilesWorker::renameFileByHandler(const FileInfoPointer &sourceInfo, co
     return false;
 }
 
-bool DoCutFilesWorker::doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, bool *ok)
+bool DoCutFilesWorker::doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, const QString fileName, bool *ok)
 {
     QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
     sourceStorageInfo.reset(new QStorageInfo(sourceInfo->urlOf(UrlInfoType::kUrl).path()));
@@ -264,7 +273,7 @@ bool DoCutFilesWorker::doRenameFile(const FileInfoPointer &sourceInfo, const Fil
 
     toInfo.reset();
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
-        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameOf(NameInfoType::kFileCopyName), toInfo, ok))
+        if (!doCheckFile(sourceInfo, targetPathInfo, fileName, toInfo, ok))
             return ok ? *ok : false;
 
         emitCurrentTaskNotify(sourceInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
@@ -280,7 +289,7 @@ bool DoCutFilesWorker::doRenameFile(const FileInfoPointer &sourceInfo, const Fil
         return result;
     }
 
-    if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameOf(NameInfoType::kFileCopyName), toInfo, ok))
+    if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, fileName, toInfo, ok))
         return false;
 
     return false;

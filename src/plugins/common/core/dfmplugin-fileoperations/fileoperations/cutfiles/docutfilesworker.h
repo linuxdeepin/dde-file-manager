@@ -36,7 +36,7 @@ protected:
 
     bool cutFiles();
     bool doCutFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo);
-    bool doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, bool *ok);
+    bool doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, const QString fileName, bool *ok);
     bool renameFileByHandler(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
