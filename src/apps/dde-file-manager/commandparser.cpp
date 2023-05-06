@@ -50,7 +50,7 @@ void CommandParser::processCommand()
             return;
         }
         qWarning() << "Cannot start dde-file-manager in no window mode "
-                      "unless you can set the value of `dfm.daemon` in DConfig to `true`!";
+                      "unless you can set the value of `dfm.headless` in DConfig to `true`!";
         ::exit(0);
     }
 
