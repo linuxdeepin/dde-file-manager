@@ -13,6 +13,7 @@ class QCoreApplication;
 class QCommandLineOption;
 QT_END_NAMESPACE
 
+class CommandParserPrivate;
 class CommandParser : public QObject
 {
     Q_OBJECT
@@ -40,12 +41,15 @@ private:
     void openInHomeDirectory();
     void openInUrls();
     void openWindowWithUrl(const QUrl &url);
+    void processEvent();
 
 private:
     explicit CommandParser(QObject *parent = nullptr);
+    ~CommandParser();
 
 private:
     QCommandLineParser *commandParser;
+    QScopedPointer<CommandParserPrivate> d;
 };
 
 #endif   // COMMANDPARSER_H

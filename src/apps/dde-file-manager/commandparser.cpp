@@ -3,12 +3,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "commandparser.h"
+#include "private/commandparser_p.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/systempathutil.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -18,6 +21,44 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
+
+CommandParserPrivate::CommandParserPrivate()
+{
+}
+
+CommandParserPrivate::~CommandParserPrivate()
+{
+}
+
+CommandParserPrivate::EventArgsInfo CommandParserPrivate::parseEventArgs(const QByteArray &eventArg)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(eventArg);
+    if (doc.isNull())
+        return {};
+
+    EventArgsInfo argsInfo;
+    const auto &obj = doc.object();
+    if (obj.contains("action"))
+        argsInfo.action = obj["action"].toString();
+
+    if (obj.contains("params")) {
+        const auto &paramsObj = obj["params"].toObject();
+        for (auto iter = paramsObj.constBegin(); iter != paramsObj.end(); ++iter) {
+            const auto &key = iter.key();
+            const auto &value = iter.value();
+
+            if (key == "sources") {
+                const auto &srcList = value.toArray().toVariantList();
+                argsInfo.params.insert("sources", srcList);
+            }
+
+            if (key == "target")
+                argsInfo.params.insert("target", value.toString());
+        }
+    }
+
+    return argsInfo;
+}
 
 CommandParser &CommandParser::instance()
 {
@@ -55,9 +96,8 @@ void CommandParser::processCommand()
     }
 
     if (isSet("e")) {
-        // TODO: event from json handle, the old filemanager does not seem to be used
-        qWarning() << "Cannot supported now";
-        exit(0);
+        processEvent();
+        return;
     }
 
     if (isSet("p")) {
@@ -270,9 +310,64 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n"));
 }
 
+void CommandParser::processEvent()
+{
+    const QStringList &argumets = positionalArguments();
+    if (argumets.isEmpty())
+        return;
+
+    const auto &&argsInfo = d->parseEventArgs(argumets.first().toLocal8Bit());
+    static QMap<QString, GlobalEventType> eventMap {
+        { "copy", GlobalEventType::kCopy },
+        { "move", GlobalEventType::kCutFile },
+        { "delete", GlobalEventType::kDeleteFiles },
+        { "trash", GlobalEventType::kMoveToTrash }
+    };
+
+    if (!eventMap.contains(argsInfo.action))
+        return;
+
+    const auto &srcUrls = UrlRoute::fromStringList(argsInfo.params.value("sources").toStringList());
+    switch (eventMap[argsInfo.action]) {
+    case GlobalEventType::kCopy: {
+        const auto &targetUrl = UrlRoute::fromUserInput(argsInfo.params.value("target").toString());
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, srcUrls, targetUrl,
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        break;
+    }
+    case GlobalEventType::kCutFile: {
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+            return;
+        const auto &targetUrl = UrlRoute::fromUserInput(argsInfo.params.value("target").toString());
+        dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, srcUrls, targetUrl,
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        break;
+    }
+    case GlobalEventType::kDeleteFiles: {
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+            return;
+        dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        break;
+    }
+    case GlobalEventType::kMoveToTrash: {
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+            return;
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 CommandParser::CommandParser(QObject *parent)
     : QObject(parent),
-      commandParser(new QCommandLineParser)
+      commandParser(new QCommandLineParser),
+      d(new CommandParserPrivate)
 {
     initialize();
+}
+
+CommandParser::~CommandParser()
+{
 }
