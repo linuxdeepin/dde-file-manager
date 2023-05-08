@@ -111,6 +111,7 @@ public slots:
     void handleFilterData(const QVariant &data);
     void handleFilterCallFunc(FileViewFilterCallback callback);
     void handleRefresh();
+    void handleFileInfoUpdated(const QUrl &url, const bool isLinkOrg);
 
 private:
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
