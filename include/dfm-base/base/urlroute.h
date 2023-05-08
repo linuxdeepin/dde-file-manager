@@ -69,6 +69,7 @@ public:
     static QUrl fromUserInput(const QString &userInput, bool preferredLocalPath = true);
     static QUrl fromUserInput(const QString &userInput, QString workingDirectory,
                               bool preferredLocalPath = true, QUrl::UserInputResolutionOptions options = QUrl::AssumeLocalFile);
+    static QList<QUrl> fromStringList(const QStringList &strList);
     static QByteArray urlsToByteArray(const QList<QUrl> &list);
     static QList<QUrl> byteArrayToUrls(const QByteArray &arr);
 };
