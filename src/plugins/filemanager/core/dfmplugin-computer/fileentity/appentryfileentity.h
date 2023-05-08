@@ -21,6 +21,7 @@ inline constexpr char kExecuteCommand[] { "execute_command" };
 
 class AppEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
+    Q_OBJECT
 public:
     explicit AppEntryFileEntity(const QUrl &url);
 
