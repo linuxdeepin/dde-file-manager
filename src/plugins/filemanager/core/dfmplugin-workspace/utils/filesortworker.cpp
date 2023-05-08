@@ -8,6 +8,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/utils/fileinfohelper.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -22,6 +23,8 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
 {
     sortAndFilter = SortFilterFactory::create<AbstractSortFilter>(url);
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FileSortWorker::handleFileInfoUpdated, Qt::QueuedConnection);
 }
 
 FileSortWorker::~FileSortWorker()
@@ -614,6 +617,21 @@ void FileSortWorker::handleRefresh()
     Q_EMIT requestFetchMore();
 }
 
+void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const bool isLinkOrg)
+{
+    if (!childrenUrlList.contains(url))
+        return;
+
+    auto itemdata = childData(url);
+    if (!itemdata)
+        return;
+
+    if (isLinkOrg && itemdata->fileInfo())
+        itemdata->fileInfo()->customData(Global::ItemRoles::kItemFileRefreshIcon);
+
+    handleUpdateFile(url);
+}
+
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
 {
     // 处理继承
@@ -626,7 +644,12 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     if (!sortInfo || filters == QDir::NoFilter)
         return true;
 
-    FileInfoPointer fileInfo = byInfo ? InfoFactory::create<FileInfo>(sortInfo->url) : nullptr;
+    FileInfoPointer fileInfo { nullptr };
+
+    if (byInfo) {
+        auto itemdata = childData(sortInfo->url);
+        fileInfo = itemdata ? itemdata->fileInfo() : InfoFactory::create<FileInfo>(sortInfo->url);
+    }
 
     if (fileInfo && !fileInfo->exists())
         return false;

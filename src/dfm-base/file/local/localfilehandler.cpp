@@ -178,8 +178,8 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
         const QUrl &fromParentUrl = UrlRoute::urlParent(url);
         const QUrl &toParentUrl = UrlRoute::urlParent(newUrl);
         if (fromParentUrl == toParentUrl) {
-            FileInfoPointer toInfo = InfoFactory::create<FileInfo>(newUrl);
-            const QString &newName = toInfo->nameOf(NameInfoType::kFileName);
+            // if fileinfo or other operation query info in mtp device, file will rename false. mtp device is busy
+            const QString &newName = newUrl.fileName();
             QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
             if (!oper) {
                 qWarning() << "create operator failed, url: " << url;

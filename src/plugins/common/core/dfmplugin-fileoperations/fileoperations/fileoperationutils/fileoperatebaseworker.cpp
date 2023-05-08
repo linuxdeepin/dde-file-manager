@@ -699,6 +699,8 @@ QString FileOperateBaseWorker::fileOriginName(const QUrl &trashInfoUrl)
         return QString();
     }
     auto data = file.readAll().simplified().split(' ');
+    // trash info file readAll() = "[Trash Info] Path=%E6%96%B0%E5%BB%BAWord%E6%96%87%E6%A1%A3.doc DeletionDate=2023-05-05T11:19:06";
+    // has three char " ", so data has 4 item, the 3th is the "Path=%E6%96%B0%E5%BB%BAWord%E6%96%87%E6%A1%A3.doc"
     if (data.size() <= 3) {
         qWarning() << "reade trash file info err,trashInfoUrl = " << trashInfoUrl;
         return QString();

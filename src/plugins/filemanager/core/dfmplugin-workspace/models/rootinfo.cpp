@@ -339,10 +339,9 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
         if (!child)
             continue;
 
-        dfmio::DFile tmpFile(child->fileUrl());
-
-        if (!tmpFile.exists())
-            continue;
+        // 在收到文件创建前，fileinfo的实例已缓存，所以这是异步的fileinfo就不会刷新，判断文件是否存在还是false
+        // 所以再次刷新fileinfo
+        child->refresh();
 
         auto sortInfo = addChild(child);
         if (sortInfo)
@@ -419,6 +418,7 @@ void RootInfo::removeChildren(const QList<QUrl> &urlList)
 {
     QList<SortInfoPointer> removeChildren {};
     int childIndex = -1;
+    QList<QUrl> removeUrls;
     for (QUrl url : urlList) {
         url.setPath(url.path());
         auto child = fileInfo(url);
@@ -426,6 +426,7 @@ void RootInfo::removeChildren(const QList<QUrl> &urlList)
             continue;
 
         auto realUrl = child->urlOf(UrlInfoType::kUrl);
+        removeUrls.append(realUrl);
         QWriteLocker lk(&childrenLock);
         childIndex = childrenUrlList.indexOf(realUrl);
         if (childIndex < 0 || childIndex >= childrenUrlList.length()) {
@@ -435,6 +436,9 @@ void RootInfo::removeChildren(const QList<QUrl> &urlList)
         childrenUrlList.removeAt(childIndex);
         removeChildren.append(sourceDataList.takeAt(childIndex));
     }
+
+    if (removeUrls.count() > 0)
+        emit InfoCacheController::instance().removeCacheFileInfo(removeUrls);
 
     if (removeChildren.count() > 0)
         emit watcherRemoveFiles(removeChildren);

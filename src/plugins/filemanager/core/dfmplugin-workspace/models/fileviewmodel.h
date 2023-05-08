@@ -109,7 +109,6 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void onFileThumbUpdated(const QUrl &url);
-    void onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg);
     void onFileUpdated(int show);
     void onInsert(int firstIndex, int count);
     void onInsertFinish();

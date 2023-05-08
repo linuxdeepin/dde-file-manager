@@ -42,8 +42,6 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
-    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
-            &FileViewModel::onFileLinkOrgUpdated, Qt::QueuedConnection);
 }
 
 FileViewModel::~FileViewModel()
@@ -604,26 +602,7 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url)
 
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
-        view->update(view->visualRect(updateIndex));
-    } else {
-        Q_EMIT dataChanged(updateIndex, updateIndex);
-    }
-}
-
-void FileViewModel::onFileLinkOrgUpdated(const QUrl &url, const bool isLinkOrg)
-{
-    auto updateIndex = getIndexByUrl(url);
-    if (!updateIndex.isValid())
-        return;
-    if (isLinkOrg) {
-        auto info = fileInfo(updateIndex);
-        if (info)
-            info->customData(Global::ItemRoles::kItemFileRefreshIcon);
-    }
-
-    auto view = qobject_cast<FileView *>(QObject::parent());
-    if (view) {
-        view->update(view->visualRect(updateIndex));
+        view->update(updateIndex);
     } else {
         Q_EMIT dataChanged(updateIndex, updateIndex);
     }
@@ -633,7 +612,7 @@ void FileViewModel::onFileUpdated(int show)
 {
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
-        view->update(view->visualRect(index(show, 0, rootIndex())));
+        view->update(index(show, 0, rootIndex()));
     } else {
         Q_EMIT dataChanged(index(show, 0, rootIndex()), index(show, 0, rootIndex()));
     }

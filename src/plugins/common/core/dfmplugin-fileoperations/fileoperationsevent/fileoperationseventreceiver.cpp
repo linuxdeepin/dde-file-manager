@@ -772,7 +772,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         }
     }
 
-    FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl);
+    // async fileinfo need wait file quer over todo:: liyigang
+    FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (toFileInfo && toFileInfo->exists()) {
         dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameOf(NameInfoType::kFileName));
         return false;
