@@ -182,6 +182,7 @@ int main(int argc, char *argv[])
     a.setApplicationVersion(BUILD_VERSION);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setProductIcon(QIcon::fromTheme("deepin-toggle-desktop"));
+    a.setWindowIcon(QIcon::fromTheme("deepin-toggle-desktop"));
     {
         // load translation
         QString appName = a.applicationName();
