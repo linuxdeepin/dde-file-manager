@@ -131,13 +131,13 @@ void BurnJobManager::initDumpJobConnect(DumpISOImageJob *job)
     connect(job, &DumpISOImageJob::requestOpticalDumpISOFailedDialog, this, &BurnJobManager::showOpticalDumpISOFailedDialog);
 }
 
-void BurnJobManager::deleteStagingDir(const QUrl &url)
+bool BurnJobManager::deleteStagingDir(const QUrl &url)
 {
     // we cannot delete image file
     bool isDir { DFMIO::DFileInfo(url).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsDir).toBool() };
     if (!isDir) {
         qInfo() << "Don't delelete img url: " << url;
-        return;
+        return false;
     }
 
     QString path { url.toLocalFile() };
@@ -145,13 +145,16 @@ void BurnJobManager::deleteStagingDir(const QUrl &url)
     QRegularExpressionMatch match;
     if (!path.contains(reg, &match)) {
         qWarning() << "Cannot delete dir (not staging dir)" << path;
-        return;
+        return false;
     }
 
-    if (!LocalFileHandler().deleteFileRecursive(url))
+    if (!LocalFileHandler().deleteFileRecursive(url)) {
         qWarning() << "Delete " << url << "failed!";
-    else
-        qInfo() << "Delete cache folder: " << url << "success";
+        return false;
+    }
+
+    qInfo() << "Delete cache folder: " << url << "success";
+    return true;
 }
 
 void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)

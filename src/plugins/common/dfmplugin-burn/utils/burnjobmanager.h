@@ -43,7 +43,7 @@ public:
 private:
     void initBurnJobConnect(AbstractBurnJob *job);
     void initDumpJobConnect(DumpISOImageJob *job);
-    void deleteStagingDir(const QUrl &url);
+    bool deleteStagingDir(const QUrl &url);
 
 private slots:
     void showOpticalJobCompletionDialog(const QString &msg, const QString &icon);
