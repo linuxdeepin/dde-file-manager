@@ -406,6 +406,28 @@ bool UniversalUtils::urlsTransform(const QList<QUrl> &sourceUrls, QList<QUrl> *t
     return ret;
 }
 
+bool UniversalUtils::originalUrls(const QList<QUrl> &srcUrls, QList<QUrl> *targetUrls)
+{
+    bool ret { false };
+    if (srcUrls.isEmpty())
+        return ret;
+
+    if (srcUrls.first().scheme() == Global::Scheme::kFile)
+        return ret;
+
+    for (const auto &url : srcUrls) {
+        auto info { InfoFactory::create<FileInfo>(url) };
+        if (info) {
+            ret = true;
+            targetUrls->append(info->urlOf(UrlInfoType::kOriginalUrl));
+        } else {
+            targetUrls->append(url);
+        }
+    }
+
+    return ret;
+}
+
 QString UniversalUtils::getCurrentUser()
 {
     QString user;
