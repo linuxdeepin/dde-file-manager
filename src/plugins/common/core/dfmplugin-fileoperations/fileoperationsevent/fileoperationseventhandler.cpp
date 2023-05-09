@@ -62,6 +62,9 @@ void FileOperationsEventHandler::removeUrlsInClipboard(AbstractJobHandler::JobTy
     case AbstractJobHandler::JobType::kCleanTrashType:
         ClipBoard::instance()->removeUrls(destUrls);
         break;
+    case AbstractJobHandler::JobType::kCutType:
+        ClipBoard::instance()->removeUrls(srcUrls);
+        break;
     default:
         break;
     }
