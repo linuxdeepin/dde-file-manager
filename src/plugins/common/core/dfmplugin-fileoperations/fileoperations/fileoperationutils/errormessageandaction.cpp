@@ -152,7 +152,7 @@ QString ErrorMessageAndAction::errorToString(const QUrl &url, const AbstractJobH
     case AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash:
         return tr("Failed to parse the url of trash");
     case AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile:
-        return tr("Failed to obtain the trash original file");
+        return tr("Restore failed: the original file does not exist");
     default:
         break;
     }
