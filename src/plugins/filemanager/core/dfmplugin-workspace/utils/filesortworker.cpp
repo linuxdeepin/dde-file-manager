@@ -465,10 +465,17 @@ void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
     if (!child->url.isValid() || !childrenUrlList.contains(child->url))
         return;
 
-    const auto &info = InfoFactory::create<FileInfo>(child->url);
+    FileInfoPointer info;
+    {
+        QReadLocker lk(&childrenDataLocker);
+        info = childrenDataMap.value(child->url)->fileInfo();
+    }
+
     if (!info)
         return;
+
     info->refresh();
+
     SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
     sortInfo->url = info->urlOf(UrlInfoType::kUrl);
     sortInfo->isDir = info->isAttributes(OptInfoType::kIsDir);
