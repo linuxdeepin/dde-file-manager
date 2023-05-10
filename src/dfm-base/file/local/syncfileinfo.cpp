@@ -793,8 +793,9 @@ QString SyncFileInfoPrivate::iconName() const
 
     if (iconNameValue.isEmpty()) {
         const QStringList &list = this->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();
-        if (!list.isEmpty())
-            iconNameValue = list.first();
+        const auto &iter = std::find_if(list.begin(), list.end(), [](const QString &name) { return QIcon::hasThemeIcon(name); });
+        if (iter != list.end())
+            iconNameValue = *iter;
     }
 
     if (!FileUtils::isGvfsFile(q->fileUrl()) && iconNameValue.isEmpty())
