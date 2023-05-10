@@ -23,12 +23,12 @@ void Vault::initialize()
 {
     VaultVisibleManager::instance()->infoRegister();
     VaultEventReceiver::instance()->connectEvent();
-    VaultVisibleManager::instance()->pluginServiceRegister();
     bindWindows();
 }
 
 bool Vault::start()
 {
+    VaultVisibleManager::instance()->pluginServiceRegister();
     dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_View_Refreshed",
                                    VaultVisibleManager::instance(), &VaultVisibleManager::onComputerRefresh);
     return true;
