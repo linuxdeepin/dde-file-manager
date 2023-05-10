@@ -13,6 +13,7 @@
 
 using namespace dfmplugin_menu;
 using namespace DCustomActionDefines;
+DFMBASE_USE_NAMESPACE
 
 /*!
  * \brief 自定义配置文件读规则
@@ -89,29 +90,17 @@ DCustomActionParser::DCustomActionParser(QObject *parent)
 
     //获取注册的自定义方式
     customFormat = RegisterCustomFormat::instance().customFormat();
-    fileWatcher = new QFileSystemWatcher;
 
-    menuPaths << QStringLiteral("/usr/etc/deepin/context-menus")
-              << QStringLiteral("/etc/deepin/context-menus")
-              << QStringLiteral("/usr/share/applications/context-menus");
-
-    //监听目录
-    QStringList &&failedPaths = fileWatcher->addPaths(menuPaths);
-    for (auto path : failedPaths) {
-        menuPaths.removeAll(path);
-    }
-    connect(fileWatcher, &QFileSystemWatcher::directoryChanged, this, &DCustomActionParser::delayRefresh);
-    connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &DCustomActionParser::delayRefresh);
-
+    initWatcher();
     initHash();
 }
 
 DCustomActionParser::~DCustomActionParser()
 {
-    if (fileWatcher) {
-        fileWatcher->deleteLater();
-        fileWatcher = nullptr;
-    }
+    std::for_each(watcherGroup.begin(), watcherGroup.end(), [](AbstractFileWatcherPointer pointer) {
+        if (pointer)
+            pointer->stopWatcher();
+    });
 }
 
 /*!
@@ -123,7 +112,6 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
     if (dirPaths.isEmpty())
         return false;
 
-    fileWatcher->removePaths(fileWatcher->files());
     actionEntry.clear();
 
     topActionCount = 0;
@@ -135,9 +123,6 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
 
         //以时间先后遍历
         for (const QFileInfo &actionFileInfo : dir.entryInfoList({ "*.conf" }, QDir::Files, QDir::Time)) {
-            //监听每个conf文件的修改
-            fileWatcher->addPath(actionFileInfo.absoluteFilePath());
-
             //解析文件字段
             QSettings actionSetting(actionFileInfo.filePath(), customFormat);
             actionSetting.setIniCodec("UTF-8");
@@ -379,6 +364,27 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         childrenActions.append(actData);
     }
     return true;
+}
+
+void DCustomActionParser::initWatcher()
+{
+    static const QStringList &kPaths { { "/usr/etc/deepin/context-menus" },
+                                       { "/etc/deepin/context-menus" },
+                                       { "/usr/share/applications/context-menus" } };
+    std::for_each(kPaths.begin(), kPaths.end(), [this](const QString &path) {
+        if (QDir(path).exists())
+            menuPaths.append(path);
+    });
+
+    std::for_each(menuPaths.begin(), menuPaths.end(), [this](const QString &path) {
+        AbstractFileWatcherPointer watcher { WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(path)) };
+        watcherGroup.append(watcher);
+        if (watcher) {
+            connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
+                    this, &DCustomActionParser::delayRefresh);
+            watcher->startWatcher();
+        }
+    });
 }
 
 /*!

@@ -15,7 +15,6 @@
 #include <QMimeType>
 #include <QMap>
 #include <QFileInfo>
-#include <QFileSystemWatcher>
 #include <QTimer>
 #include <QIcon>
 #include <QDebug>
@@ -37,15 +36,13 @@ public:
 
 public Q_SLOTS:
     void startWatch();
-    void handleDirectoryChanged(const QString &filePath);
-    void handleFileChanged(const QString &filePath);
     void updateCache();
     void writeData(const QString &path, const QByteArray &content);
     QByteArray readData(const QString &path);
 
 private:
-    QFileSystemWatcher *fileSystemWatcher = nullptr;
     QTimer *updateCacheTimer = nullptr;
+    QList<AbstractFileWatcherPointer> watcherGroup;
 };
 
 class MimesAppsManager : public QObject
@@ -88,7 +85,6 @@ public:
     static QString getMimeInfoCacheFileRootPath();
     static QString getDesktopFilesCacheFile();
     static QString getDesktopIconsCacheFile();
-    static QStringList getDesktopFiles();
     static QString getDDEMimeTypeFile();
     static QMap<QString, DesktopFile> getDesktopObjs();
     static void initMimeTypeApps();

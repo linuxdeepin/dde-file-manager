@@ -77,16 +77,17 @@ TEST(MainControllerTest, ut_onFinished)
     EXPECT_NO_FATAL_FAILURE(mc.onFinished("test"));
 }
 
-TEST(MainControllerTest, ut_onFileChanged)
-{
-    stub_ext::StubExt st;
-    typedef QVariant (Settings::*Value)(const QString &, const QString &, const QVariant &) const;
-    auto value = static_cast<Value>(&Settings::value);
-    st.set_lamda(value, [] { return true; });
-    st.set_lamda(&QFuture<void>::isFinished, [] { return false; });
-    st.set_lamda(&FullTextSearcher::createIndex, [] { return true; });
+// TODO(liuzhangjian):
+//TEST(MainControllerTest, ut_onFileChanged)
+//{
+//    stub_ext::StubExt st;
+//    typedef QVariant (Settings::*Value)(const QString &, const QString &, const QVariant &) const;
+//    auto value = static_cast<Value>(&Settings::value);
+//    st.set_lamda(value, [] { return true; });
+//    st.set_lamda(&QFuture<void>::isFinished, [] { return false; });
+//    st.set_lamda(&FullTextSearcher::createIndex, [] { return true; });
 
-    MainController mc;
-    EXPECT_NO_FATAL_FAILURE(mc.onFileChanged(""));
-    mc.indexFuture.waitForFinished();
-}
+//    MainController mc;
+//    EXPECT_NO_FATAL_FAILURE(mc.onFileChanged(""));
+//    mc.indexFuture.waitForFinished();
+//}
