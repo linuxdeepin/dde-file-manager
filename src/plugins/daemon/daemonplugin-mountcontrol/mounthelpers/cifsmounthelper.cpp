@@ -78,6 +78,9 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     if (port != -1)
         params.insert(MountOptionsField::kPort, port);
 
+    if (params.contains(MountOptionsField::kTimeout))
+        params.insert(MountOptionsField::kTryHandleTimeout, true);
+
     static const QRegularExpression ipRegx(R"(^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)");
     auto matchIp = ipRegx.match(host);
     if (!matchIp.hasMatch()) {
@@ -102,13 +105,20 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
                       arg.c_str());
 
         if (ret == 0) {
+            qInfo() << "mount: mount cifs success, params are: " << args;
             return { { kMountPoint, mntPath }, { kResult, true }, { kErrorCode, 0 } };
         } else {
-            // if params contains 'timeout', remove and retry.
-            // the if branch is for compatibility with cifs which does not support the timeout param
+            // if params contains 'timeout', first try mount with `handletimeout` param,
+            // if failed, try with `wait_reconnect_timeout` again,
+            // if failed, try without any timeout param.
             if (params.contains(MountOptionsField::kTimeout)) {
-                params.remove(MountOptionsField::kTimeout);
-                qInfo() << "mount: remove timeout param and remount...";
+                if (params.contains(MountOptionsField::kTryHandleTimeout)) {
+                    qInfo() << "mount: try with wait_reconnect_timeout";
+                    params.remove(MountOptionsField::kTryHandleTimeout);
+                } else {
+                    qInfo() << "mount: try without timeout param";
+                    params.remove(MountOptionsField::kTimeout);
+                }
                 continue;
             } else {
                 errNum = errno;
@@ -291,9 +301,13 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
         param += QString("port=%1,").arg(opts.value(kPort).toInt());
 
     // this param is supported by cifs only.
-    if (opts.contains(kTimeout) /* && isTimeoutSupported()*/)
-        param += QString("echo_interval=1,wait_reconnect_timeout=%1,")
-                         .arg(/*opts.value(kTimeout).toString()*/ 0);
+    if (opts.contains(kTimeout)) {
+        param += QString("echo_interval=1,");
+        if (opts.contains(kTryHandleTimeout))
+            param += QString("handletimeout=%1,").arg(opts.value(kTimeout).toInt() * 1000);   // handletimeout = ?? ms
+        else
+            param += QString("wait_reconnect_timeout=%1,").arg(/*opts.value(kTimeout).toString()*/ 0);   // w_r_t = ?? s
+    }
 
     if (opts.contains(kIp))
         param += QString("ip=%1,").arg(opts.value(kIp).toString());
