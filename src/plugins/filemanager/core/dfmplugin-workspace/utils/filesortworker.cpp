@@ -567,6 +567,9 @@ void FileSortWorker::handleUpdateFile(const QUrl &url)
             visibleChildren.insert(showIndex, sortInfo->url);
         }
         Q_EMIT insertFinish();
+
+        // async create file will add to view while file info updated.
+        Q_EMIT selectAndEditFile(sortInfo->url);
     }
 }
 
