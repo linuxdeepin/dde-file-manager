@@ -925,7 +925,10 @@ void Settings::setWatchChanges(bool watchChanges)
             }
         }
         d->settingWatcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(d->settingFile));
-        Q_ASSERT(d->settingWatcher);
+        if (!d->settingWatcher) {
+            qWarning() << "Create watcher failed:" << d->settingFile;
+            return;
+        }
 
         d->settingWatcher->moveToThread(thread());
         connect(d->settingWatcher.get(), &AbstractFileWatcher::fileAttributeChanged, this, &Settings::onFileChanged);
