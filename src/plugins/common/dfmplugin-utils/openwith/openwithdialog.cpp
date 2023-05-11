@@ -447,6 +447,7 @@ void OpenWithDialog::useOtherApplication()
         desktop.set("Exec", filePath);
         desktop.set("MimeType", "*/*");
         desktop.set("X-DDE-File-Manager-Custom-Open", mimeType.name());
+        desktop.set("NoDisplay", "true");
 
         if (QFile::exists(targetDesktopFileName))
             QFile(targetDesktopFileName).remove();
