@@ -15,12 +15,20 @@
 <context>
     <name>Application</name>
     <message>
+<<<<<<< HEAD
         <location filename="../src/apps/dde-file-manager/main.cpp" line="259"/>
+=======
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="238"/>
+>>>>>>> chore: update translations
         <source>File Manager</source>
         <translation>Fayl Meneceri</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/apps/dde-file-manager/main.cpp" line="263"/>
+=======
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="242"/>
+>>>>>>> chore: update translations
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Fayl Meneceri, axtarmaq, kopyalamaq, zibil qutusu, sıxmaq/aşmaq, fayl xüsusiyyətləri və digər faydalı funksiyaları ilə hazırlanmış, faylları rahat idarə etmək üçün güclü vasitədir.</translation>
     </message>
@@ -3513,42 +3521,74 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="252"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
+>>>>>>> chore: update translations
         <source>Unlock device failed</source>
         <translation>Cihaz kiliddən çıxarıla bilmədi</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="252"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
+>>>>>>> chore: update translations
         <source>Wrong password</source>
         <translation>Səhv şirə</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="463"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="457"/>
+>>>>>>> chore: update translations
         <source>Rename failed</source>
         <translation>Adını dəyişmək mümkün olmadı</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="463"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="457"/>
+>>>>>>> chore: update translations
         <source>The device is busy and cannot be renamed now</source>
         <translation>Cihaz məşğuldur və hazırda adı dəyiədirilə bilməz</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="491"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="485"/>
+>>>>>>> chore: update translations
         <source>Format failed</source>
         <translation>Formatlamaq mümkün olmadı</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="491"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="485"/>
+>>>>>>> chore: update translations
         <source>The device is busy and cannot be formatted now</source>
         <translation>Cihaz məşğuldur və hazırda formatlana bilməz</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="632"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="626"/>
+>>>>>>> chore: update translations
         <source>Mount error</source>
         <translation>Qoşulma xətası</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="632"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="626"/>
+>>>>>>> chore: update translations
         <source>Cannot access %1</source>
         <translation>%1 girişi mümkün deyil</translation>
     </message>
@@ -4016,7 +4056,11 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="155"/>
         <source>Restore failed: the original file does not exist</source>
+<<<<<<< HEAD
         <translation>Bərpa etmək mümkün olmadı: orijinal fayl mövcud deyil</translation>
+=======
+        <translation type="unfinished"/>
+>>>>>>> chore: update translations
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="176"/>
@@ -4942,30 +4986,50 @@
         <translation>Serverə bağlantı</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="119"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="156"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="154"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="319"/>
+>>>>>>> chore: update translations
         <source>Clear History</source>
         <translation>Tarixçəni təmizləmək</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="186"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="441"/>
+>>>>>>> chore: update translations
         <source>Unfavorite</source>
         <translation>Seçilməmiş</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="343"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="212"/>
+>>>>>>> chore: update translations
         <source>Cancel</source>
         <comment>button</comment>
         <translation>İmtina</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="344"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="213"/>
+>>>>>>> chore: update translations
         <source>Connect</source>
         <comment>button</comment>
         <translation>Bağlantı</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="385"/>
         <source>Charset Encoding</source>
         <translation>Simvol kodlaşması</translation>
@@ -4977,16 +5041,27 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="461"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
+>>>>>>> chore: update translations
         <source>My Favorites</source>
         <translation>Seçilmişlər</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="441"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="364"/>
+>>>>>>> chore: update translations
         <source>No favorites yet</source>
         <translation>Heç bir seçilmiş yoxdur</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="448"/>
+>>>>>>> chore: update translations
         <source>Favorite</source>
         <translation>Seçilmiş</translation>
     </message>
@@ -5965,22 +6040,38 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="504"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="506"/>
+>>>>>>> chore: update translations
         <source>Name</source>
         <translation>Ad</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="506"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="508"/>
+>>>>>>> chore: update translations
         <source>Time modified</source>
         <translation>Dəyişdirilmə vaxtı</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="508"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="510"/>
+>>>>>>> chore: update translations
         <source>Size</source>
         <translation>Ölçüsü</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="510"/>
+=======
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="512"/>
+>>>>>>> chore: update translations
         <source>Type</source>
         <translation>Növ</translation>
     </message>
