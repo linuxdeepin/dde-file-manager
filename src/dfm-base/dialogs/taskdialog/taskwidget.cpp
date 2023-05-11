@@ -307,6 +307,7 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
     QString target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
     lbSrcPath->setText(source);
     lbDstPath->setText(target);
+    auto oldheight = height();
     if (lbErrorMsg->isVisible()) {
         lbErrorMsg->setText("");
         lbErrorMsg->hide();
@@ -317,7 +318,10 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
         widButton->hide();
 
     adjustSize();
-    emit heightChanged();
+    auto newhight = height();
+
+    if (oldheight != newhight)
+        emit heightChanged();
 }
 /*!
  * \brief TaskWidget::showTaskProccess 显示当前任务进度
