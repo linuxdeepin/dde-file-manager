@@ -163,10 +163,10 @@ QString SyncFileInfo::nameOf(const NameInfoType type) const
     }
 }
 /*!
-  * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
-  * 处理或者字符串处理，这都比较快
-  * \param FileNameInfoType
-  */
+ * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
+ * 处理或者字符串处理，这都比较快
+ * \param FileNameInfoType
+ */
 QString SyncFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
@@ -793,8 +793,9 @@ QString SyncFileInfoPrivate::iconName() const
 
     if (iconNameValue.isEmpty()) {
         const QStringList &list = this->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();
-        if (!list.isEmpty())
-            iconNameValue = list.first();
+        const auto &iter = std::find_if(list.begin(), list.end(), [](const QString &name) { return QIcon::hasThemeIcon(name); });
+        if (iter != list.end())
+            iconNameValue = *iter;
     }
 
     if (!FileUtils::isGvfsFile(q->fileUrl()) && iconNameValue.isEmpty())
