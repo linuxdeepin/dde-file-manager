@@ -124,7 +124,7 @@ void WallpaperSettingsPrivate::initUI()
     layout->addLayout(carouselLayout);
 
     // screensaver
-    initSreenSaver();
+    initScreenSaver();
 
     layout->addLayout(toolLayout);
     wallpaperList = new WallpaperList(q);
@@ -620,7 +620,7 @@ void WallpaperSettingsPrivate::initCarousel()
     connect(carouselControl, &DButtonBox::buttonToggled, this, &WallpaperSettingsPrivate::switchCarousel);
 }
 
-void WallpaperSettingsPrivate::initSreenSaver()
+void WallpaperSettingsPrivate::initScreenSaver()
 {
     toolLayout = new QHBoxLayout(q);
 
