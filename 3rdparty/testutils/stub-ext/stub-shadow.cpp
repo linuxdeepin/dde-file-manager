@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: MIT
+
 #include "stub-shadow.h"
 
 namespace stub_ext {
