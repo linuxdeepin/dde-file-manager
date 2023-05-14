@@ -12,6 +12,8 @@
 #include <dfm-framework/dpf.h>
 
 #include <QProcess>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 FileManager1DBus::FileManager1DBus(QObject *parent)
     : QObject(parent)
@@ -70,9 +72,15 @@ void FileManager1DBus::ShowItems(const QStringList &URIs, const QString &Startup
 
 void FileManager1DBus::Trash(const QStringList &URIs)
 {
-    QList<QUrl> urls;
-    for (const QString &path : URIs) {
-        const QUrl &tempUrl { DFMBASE_NAMESPACE::UrlRoute::fromUserInput(path) };
-        qInfo() << "Trash file:" << DFMBASE_NAMESPACE::LocalFileHandler().trashFile(tempUrl);
-    }
+    QJsonArray srcArray = QJsonArray::fromStringList(URIs);
+
+    QJsonObject paramObj;
+    paramObj.insert("sources", srcArray);
+
+    QJsonObject argsObj;
+    argsObj.insert("action", "trash");
+    argsObj.insert("params", paramObj);
+
+    QJsonDocument doc(argsObj);
+    QProcess::startDetached("dde-file-manager", QStringList() << "--event" << doc.toJson());
 }
