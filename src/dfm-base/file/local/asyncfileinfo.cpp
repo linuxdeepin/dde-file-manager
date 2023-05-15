@@ -192,7 +192,7 @@ bool AsyncFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsExecutable:
         [[fallthrough]];
     case FileIsType::kIsSymLink:
-        return d->asyncAttribute(d->getAttributeIDIsVector()[static_cast<int>(type)]).toBool();
+        return d->asyncAttribute(d->getAttributeIDIsVector().at(static_cast<int>(type))).toBool();
     case FileIsType::kIsRoot:
         return d->asyncAttribute(AsyncAttributeID::kStandardFilePath).toString() == "/";
     default:
@@ -238,7 +238,7 @@ QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kOwnerId:
         [[fallthrough]];
     case FileExtendedInfoType::kGroupId:
-        return d->asyncAttribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
+        return d->asyncAttribute(d->getAttributeIDExtendVector().at(static_cast<int>(type)));
     default:
         QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
@@ -303,7 +303,7 @@ QVariant AsyncFileInfo::timeOf(const TimeInfoType type) const
 {
     qint64 data { 0 };
     if (type < FileTimeType::kDeletionTimeMSecond)
-        data = d->asyncAttribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
+        data = d->asyncAttribute(d->getAttributeIDVector().at(static_cast<int>(type))).value<qint64>();
 
     switch (type) {
     case TimeInfoType::kCreateTime:
