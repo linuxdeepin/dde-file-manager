@@ -32,15 +32,6 @@ public:
     explicit CollectionWidget(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionWidget() override;
 
-    void setCanvasModelShell(CanvasModelShell *sh);
-    void setCanvasViewShell(CanvasViewShell *sh);
-    void setCanvasGridShell(CanvasGridShell *sh);
-    void setCanvasManagerShell(CanvasManagerShell *sh);
-
-    void setModel(QAbstractItemModel *model);
-    void setFileShiftable(bool enable);
-    bool fileShiftable() const;
-
     void setTitleName(const QString &name);
     QString titleName() const;
     void setRenamable(const bool renamable = false);
@@ -53,9 +44,6 @@ public:
     CollectionFrameSize collectionSize() const;
 
     CollectionView *view() const;
-
-    void openEditor(const QUrl &url);
-    void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);
 signals:
     void sigRequestClose(const QString &id);
     void sigRequestAdjustSizeMode(const CollectionFrameSize &size);
