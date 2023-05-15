@@ -12,7 +12,18 @@
             "description":"It's used to control whether to enable block devices to display extension emblem icons is enabled",
             "permissions":"readwrite",
             "visibility":"public"
-        }
+        },
+        "dfm.system.emblem.hidden":{
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Hide defualt system icons",
+            "name[zh_CN]":"隐藏系统默认角标",
+            "description[zh_CN]":"该配置项用于配置是否隐藏系统默认角标,true代表隐藏，false代表不隐藏。",
+            "description":"It's used to control whether to hide defualt system icons",
+            "permissions":"readwrite",
+            "visibility":"private"
+	 }
     }
 }
 
