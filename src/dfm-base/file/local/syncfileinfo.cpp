@@ -215,7 +215,7 @@ bool SyncFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsHidden:
         [[fallthrough]];
     case FileIsType::kIsSymLink:
-        return d->attribute(d->getAttributeIDIsVector()[static_cast<int>(type)]).toBool();
+        return d->attribute(d->getAttributeIDIsVector().at(static_cast<int>(type))).toBool();
     case FileIsType::kIsExecutable:
         return d->isExecutable();
     case FileIsType::kIsRoot:
@@ -269,7 +269,7 @@ QVariant SyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kOwnerId:
         [[fallthrough]];
     case FileExtendedInfoType::kGroupId:
-        return d->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
+        return d->attribute(d->getAttributeIDExtendVector().at(static_cast<int>(type)));
     default:
         QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
@@ -334,7 +334,7 @@ QVariant SyncFileInfo::timeOf(const TimeInfoType type) const
 {
     qint64 data { 0 };
     if (type < FileTimeType::kDeletionTimeMSecond)
-        data = d->attribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
+        data = d->attribute(d->getAttributeIDVector().at(static_cast<int>(type))).value<qint64>();
 
     switch (type) {
     case TimeInfoType::kCreateTime:

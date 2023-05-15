@@ -103,9 +103,9 @@ public:
     QString path() const;
     QString filePath() const;
     QString symLinkTarget() const;
-    QVector<DFileInfo::AttributeID> getAttributeIDVector() const
+    QVector<DFileInfo::AttributeID> &getAttributeIDVector() const
     {
-        static QVector<DFileInfo::AttributeID> kTimeInfoToDFile = {
+        static QVector<DFileInfo::AttributeID> kTimeInfoToDFile {
             DFileInfo::AttributeID::kTimeCreated,
             DFileInfo::AttributeID::kTimeCreated,
             DFileInfo::AttributeID::kTimeChanged,
@@ -127,9 +127,9 @@ public:
         return kTimeInfoToDFile;
     }
     QUrl redirectedFileUrl() const;
-    QVector<DFileInfo::AttributeID> getAttributeIDIsVector() const
+    QVector<DFileInfo::AttributeID> &getAttributeIDIsVector() const
     {
-        static QVector<DFileInfo::AttributeID> kIsToDFile = {
+        static QVector<DFileInfo::AttributeID> kIsToDFile {
             DFileInfo::AttributeID::kAccessCanRead,
             DFileInfo::AttributeID::kAccessCanWrite,
             DFileInfo::AttributeID::kAccessCanExecute,
@@ -147,9 +147,9 @@ public:
     bool canTrash() const;
     bool canRename() const;
     bool canFetch() const;
-    QVector<DFileInfo::AttributeID> getAttributeIDExtendVector() const
+    QVector<DFileInfo::AttributeID> &getAttributeIDExtendVector() const
     {
-        static QVector<DFileInfo::AttributeID> kExtendToDFile = {
+        static QVector<DFileInfo::AttributeID> kExtendToDFile {
             DFileInfo::AttributeID::kOwnerUser,
             DFileInfo::AttributeID::kOwnerGroup,
             DFileInfo::AttributeID::kAttributeIDMax,
