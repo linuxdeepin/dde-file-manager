@@ -15,8 +15,6 @@ static constexpr char kCfgAppId[] { "org.deepin.dde.file-manager" };
 using namespace dfmbase;
 DCORE_USE_NAMESPACE
 
-#define DCONFIG_SUPPORTED (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 30, 0))
-
 DConfigManager::DConfigManager(QObject *parent)
     : QObject(parent), d(new DConfigManagerPrivate(this))
 {
@@ -31,7 +29,7 @@ DConfigManager *DConfigManager::instance()
 
 DConfigManager::~DConfigManager()
 {
-#if DCONFIG_SUPPORTED
+#ifdef DTKCORE_CLASS_DConfig
     QWriteLocker locker(&d->lock);
 
     auto configs = d->configs.values();
@@ -42,7 +40,7 @@ DConfigManager::~DConfigManager()
 
 bool DConfigManager::addConfig(const QString &config, QString *err)
 {
-#if DCONFIG_SUPPORTED
+#ifdef DTKCORE_CLASS_DConfig
     QWriteLocker locker(&d->lock);
 
     if (d->configs.contains(config)) {
@@ -74,7 +72,7 @@ bool DConfigManager::addConfig(const QString &config, QString *err)
 
 bool DConfigManager::removeConfig(const QString &config, QString *err)
 {
-#if DCONFIG_SUPPORTED
+#ifdef DTKCORE_CLASS_DConfig
     QWriteLocker locker(&d->lock);
 
     if (d->configs.contains(config)) {
@@ -87,7 +85,7 @@ bool DConfigManager::removeConfig(const QString &config, QString *err)
 
 QStringList DConfigManager::keys(const QString &config) const
 {
-#if DCONFIG_SUPPORTED
+#ifdef DTKCORE_CLASS_DConfig
     QReadLocker locker(&d->lock);
 
     if (!d->configs.contains(config))
@@ -106,7 +104,7 @@ bool DConfigManager::contains(const QString &config, const QString &key) const
 
 QVariant DConfigManager::value(const QString &config, const QString &key, const QVariant &fallback) const
 {
-#if DCONFIG_SUPPORTED
+#ifdef DTKCORE_CLASS_DConfig
     QReadLocker locker(&d->lock);
 
     if (d->configs.contains(config))
@@ -121,7 +119,7 @@ QVariant DConfigManager::value(const QString &config, const QString &key, const 
 
 void DConfigManager::setValue(const QString &config, const QString &key, const QVariant &value)
 {
-#if DCONFIG_SUPPORTED
+#ifdef DTKCORE_CLASS_DConfig
     QReadLocker locker(&d->lock);
 
     if (d->configs.contains(config))
@@ -131,7 +129,7 @@ void DConfigManager::setValue(const QString &config, const QString &key, const Q
 
 bool DConfigManager::validateConfigs(QStringList &invalidConfigs) const
 {
-#if DCONFIG_SUPPORTED
+#ifdef DTKCORE_CLASS_DConfig
     QReadLocker locker(&d->lock);
 
     bool ret = true;
