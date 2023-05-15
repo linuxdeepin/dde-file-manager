@@ -28,6 +28,7 @@
 #include <QVariant>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <QDBusMessage>
 
 using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
@@ -287,13 +288,18 @@ bool CanvasMenuScene::triggered(QAction *action)
 
         // Display Settings
         if (actionId == ActionID::kDisplaySettings) {
+            qDebug() << "call ControlCenter serivce by dbus.";
 #ifdef COMPILE_ON_V23
-            QDBusInterface interface("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1", "org.deepin.dde.ControlCenter1");
-            interface.asyncCall("ShowPage", QVariant::fromValue(QString("display")));
+            QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
+                                           "org.deepin.dde.ControlCenter1", "ShowPage");
 #else
-            QDBusInterface interface("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter", "com.deepin.dde.ControlCenter");
-            interface.asyncCall("ShowModule", QVariant::fromValue(QString("display")));
+            QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
+                                           "com.deepin.dde.ControlCenter", "ShowModule");
+
 #endif
+            msg.setArguments({QVariant::fromValue(QString("display"))});
+            QDBusConnection::sessionBus().asyncCall(msg, 5);
+            qInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
             return true;
         }
 

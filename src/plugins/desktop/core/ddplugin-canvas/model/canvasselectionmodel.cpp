@@ -22,16 +22,16 @@ CanvasProxyModel *CanvasSelectionModel::model() const
 
 QModelIndexList CanvasSelectionModel::selectedIndexesCache() const
 {
-    if (selectedCahe.isEmpty()) {
-        selectedCahe = selectedIndexes();
+    if (selectedCache.isEmpty()) {
+        selectedCache = selectedIndexes();
     }
 
-    return selectedCahe;
+    return selectedCache;
 }
 
 void CanvasSelectionModel::clearSelectedCache()
 {
-    selectedCahe.clear();
+    selectedCache.clear();
 }
 
 QList<QUrl> CanvasSelectionModel::selectedUrls() const

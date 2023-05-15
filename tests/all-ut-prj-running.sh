@@ -125,9 +125,9 @@ businessTestList=(
 
   plugins/desktop/core/ddplugin-canvas
   plugins/desktop/core/ddplugin-core
-
   plugins/desktop/ddplugin-background
   plugins/desktop/ddplugin-wallpapersetting
+  plugins/desktop/ddplugin-organizer
 ) 
 
 # 2. interface test .
