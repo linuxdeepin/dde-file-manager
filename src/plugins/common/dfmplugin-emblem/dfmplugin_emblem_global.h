@@ -26,6 +26,9 @@ enum class SystemEmblemType : uint8_t {
 const double kMinEmblemSize = 12.0;
 const double kMaxEmblemSize = 128.0;
 
+inline constexpr char kConfigPath[] { "org.deepin.dde.file-manager.emblem" };
+inline constexpr char kHideSystemEmblems[] { "dfm.system.emblem.hidden" };
+
 DPEMBLEM_END_NAMESPACE
 
 #endif   // DFMPLUGIN_EMBLEM_GLOBAL_H
