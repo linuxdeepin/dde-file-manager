@@ -144,7 +144,7 @@ static bool pluginsLoad()
 
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
-    if (enableHeadless)
+    if (enableHeadless && CommandParser::instance().isSet("d"))
         DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames);
     else
         DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames, kLazyLoadPluginNames);
