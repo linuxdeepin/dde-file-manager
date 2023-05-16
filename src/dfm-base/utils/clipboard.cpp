@@ -30,7 +30,7 @@ using namespace dfmbase;
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
 static QMutex clipboardFileUrlsMutex;
-static QList<quint64> clipbordFileinode;
+static QMap<QUrl, quint64> clipbordFileinode;
 static QAtomicInt remoteCurrentCount = 0;
 static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
 
@@ -45,7 +45,7 @@ void onClipboardDataChanged()
         QMutexLocker lk(&clipboardFileUrlsMutex);
         clipboardFileUrls.clear();
     }
-
+    auto oldClipbordFileinode = clipbordFileinode;
     clipbordFileinode.clear();
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
     if (!mimeData || mimeData->formats().isEmpty()) {
@@ -73,6 +73,8 @@ void onClipboardDataChanged()
     } else {
         clipboardAction = ClipBoard::kUnknownAction;
     }
+    auto urls = mimeData->urls();
+    bool isLocalDevice = urls.isEmpty() ? false : FileUtils::isLocalDevice(urls.first());
     QString errorStr;
     for (QUrl &url : mimeData->urls()) {
         if (url.scheme().isEmpty())
@@ -82,6 +84,15 @@ void onClipboardDataChanged()
             QMutexLocker lk(&clipboardFileUrlsMutex);
             clipboardFileUrls << url;
         }
+
+        if (clipboardAction != ClipBoard::kCutAction || !isLocalDevice)
+            continue;
+
+        if (oldClipbordFileinode.contains(url)) {
+            clipbordFileinode.insert(url, oldClipbordFileinode.value(url));
+            continue;
+        }
+
         //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errorStr);
 
@@ -95,7 +106,7 @@ void onClipboardDataChanged()
         struct stat statInfo;
         int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
         if (0 == fileStat)
-            clipbordFileinode << statInfo.st_ino;
+            clipbordFileinode.insert(url, statInfo.st_ino);
     }
 }
 }   // namespace GlobalData
@@ -103,7 +114,7 @@ void onClipboardDataChanged()
 ClipBoard::ClipBoard(QObject *parent)
     : QObject(parent)
 {
-    connect(qApp->clipboard(), &QClipboard::dataChanged, this, &ClipBoard::onClipboardDataChanged);
+    connect(qApp->clipboard(), &QClipboard::dataChanged, this, &ClipBoard::onClipboardDataChanged, Qt::QueuedConnection);
     GlobalData::onClipboardDataChanged();
 }
 
@@ -136,11 +147,18 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
 
     int maxIconsNum = 3;
     QString error;
+    bool isLocalDevice = list.isEmpty() ? false : FileUtils::isLocalDevice(list.first());
     for (const QUrl &qurl : list) {
         ba.append("\n");
         ba.append(qurl.toString());
 
         const QString &path = qurl.toLocalFile();
+        if (!path.isEmpty()) {
+            text += path + '\n';
+        }
+
+        if (!isLocalDevice)
+            continue;
 
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(qurl, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
 
@@ -177,14 +195,13 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             stream << iconList << icon;
         }
 
-        if (!path.isEmpty()) {
-            text += path + '\n';
-        }
+
     }
 
     mimeData->setText(text.endsWith('\n') ? text.left(text.length() - 1) : text);
     mimeData->setData("x-special/gnome-copied-files", ba);
-    mimeData->setData("x-dfm-copied/file-icons", iconBa);
+    if (!isLocalDevice)
+        mimeData->setData("x-dfm-copied/file-icons", iconBa);
     mimeData->setUrls(list);
     // fix bug 63441
     // 如果是剪切操作，则禁止跨用户的粘贴操作
@@ -274,7 +291,7 @@ QList<QUrl> ClipBoard::clipboardFileUrlList() const
  */
 QList<quint64> ClipBoard::clipboardFileInodeList() const
 {
-    return GlobalData::clipbordFileinode;
+    return GlobalData::clipbordFileinode.values();
 }
 /*!
  * \brief ClipBoard::clipboardAction Gets the current operation of the clipboard

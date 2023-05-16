@@ -82,6 +82,9 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
         if (ClipBoard::instance()->clipboardFileUrlList().contains(localUrl))
             return true;
 
+        if (!file->extendAttributes(ExtInfoType::kFileLocalDevice).toBool())
+            return false;
+
         // the linked file only judges the URL, not the inode,
         // because the inode of the linked file is consistent with that of the source file
         if (!file->isAttributes(OptInfoType::kIsSymLink)) {

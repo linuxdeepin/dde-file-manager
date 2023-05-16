@@ -253,6 +253,8 @@ QVariant SyncFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kFileLocalDevice:
+        if (d->isLocalDevice.isValid())
+            d->isLocalDevice = FileUtils::isLocalDevice(url);
         return d->isLocalDevice;
     case FileExtendedInfoType::kFileCdRomDevice:
         return d->isCdRomDevice;
