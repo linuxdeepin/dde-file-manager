@@ -5,6 +5,7 @@
 #include "stubext.h"
 #include "plugins/filemanager/core/dfmplugin-workspace/views/fileview.h"
 #include "plugins/filemanager/core/dfmplugin-workspace/views/private/fileview_p.h"
+#include "plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.h"
 #include <dfm-base/base/application/application.h>
 
 #include <gtest/gtest.h>
@@ -58,4 +59,58 @@ TEST_F(UT_FileView, paintEvent)
     EXPECT_NO_FATAL_FAILURE(view.paintEvent(&event));
     EXPECT_FALSE(view.viewport() == nullptr);
     EXPECT_TRUE(flag);
+}
+
+TEST_F(UT_FileView, Bug_200133_updateModelActiveIndex)
+{
+    FileView::RandeIndexList indexList = { QPair<int, int>(0, 10) };
+    stub.set_lamda(ADDR(FileView, visibleIndexes), [&indexList]{
+        return indexList;
+    });
+
+    int setInactiveCount = 0;
+    stub.set_lamda(ADDR(FileViewModel, setIndexActive), [&setInactiveCount](FileViewModel*, const QModelIndex &, bool active){
+        if(!active)
+            ++setInactiveCount;
+    });
+
+    int setActiveCount = 0;
+    stub.set_lamda(ADDR(FileView, updateVisibleIndex), [&setActiveCount]{
+        ++setActiveCount;
+    });
+
+    FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
+
+    view.updateModelActiveIndex();
+    EXPECT_EQ(setActiveCount, 11);
+
+    indexList = { QPair<int, int>(5, 15) };
+    setInactiveCount = 0;
+    view.updateModelActiveIndex();
+    EXPECT_EQ(setInactiveCount, 5);
+
+    indexList = { QPair<int, int>(20, 30) };
+    setInactiveCount = 0;
+    view.updateModelActiveIndex();
+    EXPECT_EQ(setInactiveCount, 11);
+
+    indexList = { QPair<int, int>(15, 35) };
+    setActiveCount = 0;
+    view.updateModelActiveIndex();
+    EXPECT_EQ(setActiveCount, 21);
+
+    indexList = { QPair<int, int>(20, 30) };
+    setInactiveCount = 0;
+    view.updateModelActiveIndex();
+    EXPECT_EQ(setInactiveCount, 10);
+
+    indexList = { QPair<int, int>(15, 25) };
+    setInactiveCount = 0;
+    view.updateModelActiveIndex();
+    EXPECT_EQ(setInactiveCount, 5);
+
+    indexList = { QPair<int, int>(0, 10) };
+    setInactiveCount = 0;
+    view.updateModelActiveIndex();
+    EXPECT_EQ(setInactiveCount, 11);
 }

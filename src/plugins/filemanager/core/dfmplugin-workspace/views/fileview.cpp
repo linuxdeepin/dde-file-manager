@@ -484,11 +484,13 @@ void FileView::updateModelActiveIndex()
 
     const RandeIndex &rande = randeList.first();
 
-    for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
+    int minInactiveIndex = qMin(rande.first - 1, d->visibleIndexRande.second);
+    for (int i = d->visibleIndexRande.first; i <= minInactiveIndex; ++i) {
         model()->setIndexActive(model()->index(i, 0, rootIndex()), false);
     }
 
-    for (int i = rande.second; i < d->visibleIndexRande.second; ++i) {
+    int maxInactiveIndex = qMax(rande.second + 1, d->visibleIndexRande.first);
+    for (int i = maxInactiveIndex; i <= d->visibleIndexRande.second; ++i) {
         model()->setIndexActive(model()->index(i, 0, rootIndex()), false);
     }
 
@@ -914,7 +916,7 @@ void FileView::resizeEvent(QResizeEvent *event)
         doItemsLayout();
 
     if (rootIndex().isValid())
-        updateModelActiveIndex();
+        delayUpdateModelActiveIndex();
 }
 
 void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
@@ -1485,7 +1487,7 @@ void FileView::initializeModel()
     setSelectionModel(selectionModel);
 
     d->updateActiveIndexTimer = new QTimer(this);
-    d->updateActiveIndexTimer->setInterval(100);
+    d->updateActiveIndexTimer->setInterval(500);
     d->updateActiveIndexTimer->setSingleShot(true);
 }
 
