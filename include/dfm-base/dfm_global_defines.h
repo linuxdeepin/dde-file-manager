@@ -91,9 +91,11 @@ enum CreateFileType : uint8_t {
 };
 
 enum CreateFileInfoType : uint8_t {
-    kCreateFileInfoAuto = 0,   // auto can cache file info, other type can't
+    kCreateFileInfoAuto = 0,   // auto can cache file info, virtual schema will synchronize create file info
     kCreateFileInfoSync = 1,
     kCreateFileInfoAsync = 2,
+    kCreateFileInfoSyncAndCache = 3,    // create file info Synchronize and cache file info
+    kCreateFileInfoAsyncAndCache = 4    // create file info Asynchronous and cache file info
 };
 
 namespace Mime {

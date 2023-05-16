@@ -109,3 +109,20 @@ TEST(UT_VaultPluginBugTest, bug_200185_CheckProxyChange)
     info.refresh();
     EXPECT_TRUE(oldprox == info.proxy);
 }
+
+TEST(UT_VaultPluginBugTest, bug_199947_CacheVaultFileInfo)
+{
+    bool isCache { false };
+    stub_ext::StubExt stub;
+    stub.set_lamda(&InfoFactory::create<FileInfo>, [&isCache](const QUrl &url,
+                                                              const Global::CreateFileInfoType type,
+                                                              QString *errorString){
+        if (type == Global::CreateFileInfoType::kCreateFileInfoSyncAndCache)
+            isCache = true;
+        return nullptr;
+    });
+    stub.set_lamda(&ProxyFileInfo::setProxy, []{});
+
+    VaultFileInfo info(QUrl("dfmvault:///"));
+    EXPECT_TRUE(isCache);
+}
