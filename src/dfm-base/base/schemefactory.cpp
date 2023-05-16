@@ -30,6 +30,24 @@ QString InfoFactory::scheme(const QUrl &url)
     return scheme;
 }
 
+QSharedPointer<FileInfo> InfoFactory::getFileInfoFromCache(const QUrl &url, Global::CreateFileInfoType type, QString *errorString)
+{
+    QSharedPointer<FileInfo> info = InfoCacheController::instance().getCacheInfo(url);
+    if (!info) {
+        if (type == Global::CreateFileInfoType::kCreateFileInfoSyncAndCache) {
+            info = instance().SchemeFactory<FileInfo>::create(url, errorString);
+        } else if (type == Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache) {
+            info = instance().SchemeFactory<FileInfo>::create(Global::Scheme::kAsyncFile, url, errorString);
+            if (info) {
+                info->refresh();
+            }
+        }
+        if (info)
+            emit InfoCacheController::instance().cacheFileInfo(url, info);
+    }
+    return info;
+}
+
 WatcherFactory &WatcherFactory::instance()
 {
     static WatcherFactory ins;
