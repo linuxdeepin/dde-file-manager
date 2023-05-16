@@ -304,6 +304,21 @@ void ClipBoard::removeUrls(const QList<QUrl> &urls)
             setUrlsToClipboard(clipboardUrls, action);
     }
 }
+
+void ClipBoard::replaceClipboardUrl(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    QList<QUrl> clipboardUrls = GlobalData::clipboardFileUrls;
+    ClipBoard::ClipboardAction action = GlobalData::clipboardAction;
+    if (clipboardUrls.isEmpty() || action == ClipBoard::kUnknownAction)
+        return;
+
+    int index = clipboardUrls.indexOf(oldUrl);
+    if (-1 == index)
+        return;
+
+    clipboardUrls.replace(index, newUrl);
+    setUrlsToClipboard(clipboardUrls, action);
+}
 /*!
  * \brief ClipBoard::getUrlsByX11 Use X11 to read URLs downloaded
  * remotely from the clipboard
