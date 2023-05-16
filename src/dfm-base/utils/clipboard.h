@@ -40,6 +40,7 @@ public:
     QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;
     void removeUrls(const QList<QUrl> &urls);
+    void replaceClipboardUrl(const QUrl &oldUrl, const QUrl &newUrl);
 
 private:
     explicit ClipBoard(QObject *parent = nullptr);

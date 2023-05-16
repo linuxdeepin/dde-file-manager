@@ -789,6 +789,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                  windowId, renamedFiles, ok, error);
+    if (ok)
+        ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
+
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
     return ok;
