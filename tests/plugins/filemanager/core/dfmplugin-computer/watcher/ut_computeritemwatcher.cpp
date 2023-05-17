@@ -156,8 +156,8 @@ TEST_F(UT_ComputerItemWatcher, OnGenAttributeChanged)
 TEST_F(UT_ComputerItemWatcher, OnDConfigChanged)
 {
     stub.set_lamda(&DConfigManager::value, [] { __DBG_STUB_INVOKE__ return QStringList {}; });
-    stub.set_lamda(ComputerUtils::allSystemUUIDs, [] { __DBG_STUB_INVOKE__ return QStringList {}; });
-    stub.set_lamda(ComputerUtils::systemBlkDevUrlByUUIDs, [] { __DBG_STUB_INVOKE__ return QList<QUrl> {}; });
+    stub.set_lamda(ComputerUtils::allValidBlockUUIDs, [] { __DBG_STUB_INVOKE__ return QStringList {}; });
+    stub.set_lamda(ComputerUtils::blkDevUrlByUUIDs, [] { __DBG_STUB_INVOKE__ return QList<QUrl> {}; });
     EXPECT_NO_FATAL_FAILURE(ins->onDConfigChanged("org.deepin.dde.file-manager", "dfm.disk.hidden"));
 }
 

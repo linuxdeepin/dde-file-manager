@@ -217,14 +217,11 @@ void ComputerUtils::setCursorState(bool busy)
         QApplication::restoreOverrideCursor();
 }
 
-QStringList ComputerUtils::allSystemUUIDs()
+QStringList ComputerUtils::allValidBlockUUIDs()
 {
-    const auto &systemDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kSystem).toSet();
-    const auto &loopDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kLoop).toSet();
-    auto systemDiskNoLoop = systemDisks - loopDisks;
-
+    const auto &allBlocks = DevProxyMng->getAllBlockIds().toSet();
     QSet<QString> uuids;
-    std::for_each(systemDiskNoLoop.cbegin(), systemDiskNoLoop.cend(), [&](const QString &devId) {
+    std::for_each(allBlocks.cbegin(), allBlocks.cend(), [&](const QString &devId) {
         const auto &&data = DevProxyMng->queryBlockInfo(devId);
         const auto &&uuid = data.value(GlobalServerDefines::DeviceProperty::kUUID).toString();
         if (!uuid.isEmpty())
@@ -233,9 +230,9 @@ QStringList ComputerUtils::allSystemUUIDs()
     return uuids.values();
 }
 
-QList<QUrl> ComputerUtils::systemBlkDevUrlByUUIDs(const QStringList &uuids)
+QList<QUrl> ComputerUtils::blkDevUrlByUUIDs(const QStringList &uuids)
 {
-    const auto &&devIds = DevProxyMng->getAllBlockIdsByUUID(uuids, GlobalServerDefines::DeviceQueryOption::kSystem);
+    const auto &&devIds = DevProxyMng->getAllBlockIdsByUUID(uuids);
     QList<QUrl> ret;
     for (const auto &id : devIds)
         ret << makeBlockDevUrl(id);

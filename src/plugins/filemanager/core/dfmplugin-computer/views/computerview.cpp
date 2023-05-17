@@ -181,10 +181,8 @@ void ComputerView::initConnect()
         this->update(computerModel()->index(row, 0));
     });
 
-    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideNativeDisks, this, &ComputerView::handlePartitionsVisiable);
-    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideLoopPartitions, this, &ComputerView::handlePartitionsVisiable);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::updatePartitionsVisiable, this, &ComputerView::handlePartitionsVisiable);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
-    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideDisks, this, &ComputerView::hideSpecificDisks);
 
     connectShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
         if (info)
@@ -257,9 +255,6 @@ void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
 
 void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
 {
-    hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
-    hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
-
     auto model = this->computerModel();
     if (!model) {
         qCritical() << "model is released somewhere! " << __FUNCTION__;
@@ -268,52 +263,8 @@ void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
 
     for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
         auto item = model->items.at(i);
-        if (hiddenDisks.contains(item.url))
-            this->setRowHidden(i, true);
+        this->setRowHidden(i, hiddenDisks.contains(item.url));
     }
-
-    handleDiskSplitterVisiable();
-}
-
-void ComputerView::hideSystemPartitions(bool hide)
-{
-    auto model = this->computerModel();
-    if (!model) {
-        qCritical() << "model is released somewhere! " << __FUNCTION__;
-        return;
-    }
-
-    for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
-        auto item = model->items.at(i);
-        if (!item.url.path().endsWith(SuffixInfo::kBlock))
-            continue;
-
-        bool removable = item.info && item.info->extraProperty(DeviceProperty::kRemovable).toBool();
-        bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
-        if (!removable && !isLoop)
-            this->setRowHidden(i, hide);
-    }
-    handleDiskSplitterVisiable();
-}
-
-void ComputerView::hideLoopPartitions(bool hide)
-{
-    auto model = this->computerModel();
-    if (!model) {
-        qCritical() << "model is released somewhere! " << __FUNCTION__;
-        return;
-    }
-
-    for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
-        auto item = model->items.at(i);
-        if (!item.url.path().endsWith(SuffixInfo::kBlock))
-            continue;
-
-        bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
-        if (isLoop)
-            this->setRowHidden(i, hide);
-    }
-    handleDiskSplitterVisiable();
 }
 
 void ComputerView::handleDiskSplitterVisiable()
@@ -350,11 +301,9 @@ void ComputerView::handleDiskSplitterVisiable()
 
 void ComputerView::handlePartitionsVisiable()
 {
-    hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
-    hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
-
-    // handle items hidden by DConfig.
-    hideSpecificDisks(ComputerItemWatcher::disksHiddenByDConf());
+    const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
+    hideSpecificDisks(hiddenPartitions);
+    handleDiskSplitterVisiable();
 }
 
 void ComputerView::cdTo(const QModelIndex &index)
