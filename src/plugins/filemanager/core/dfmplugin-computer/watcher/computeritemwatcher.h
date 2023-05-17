@@ -45,6 +45,7 @@ public:
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
     void addSidebarItem(DFMEntryFileInfoPointer info);
     void removeSidebarItem(const QUrl &url);
+    void handleSidebarItemsVisiable();
 
     void insertUrlMapper(const QString &devId, const QUrl &mntUrl);
 
