@@ -433,6 +433,12 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
         return false;
     }
 
+    // if the `permissions` is invalid, do not set permissions
+    // eg. bug-199607: Copy MTP folder to local, folder permissions wrong
+    // reason: `dfm-io` uses gio to query the `unix::mode` field to get file permissions, but this field is not available in MTP file
+    if (0 == permissions)
+        return true;
+
     bool success = dfile->setPermissions(DFMIO::DFile::Permissions(uint16_t(permissions)));
     if (!success) {
         qWarning() << "set permissions failed, url: " << url;
