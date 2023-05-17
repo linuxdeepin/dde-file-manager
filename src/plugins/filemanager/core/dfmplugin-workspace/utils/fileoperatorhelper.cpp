@@ -11,6 +11,7 @@
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 
@@ -83,24 +84,35 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
 
     for (const QUrl &url : urls) {
         const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url);
-        if (fileInfoPtr && fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
-            if (mode == DirOpenMode::kOpenNewWindow) {
-                WorkspaceEventCaller::sendOpenWindow({ url });
-            } else {
-                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
-            }
-        } else {
-            const QList<QUrl> &openUrls = { url };
-            dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles,
-                                         windowId,
-                                         openUrls);
-        }
-    }
-}
+        if (fileInfoPtr) {
+            if (!fileInfoPtr->exists()) {
+                // show alert
+                QString fileName = fileInfoPtr->nameOf(NameInfoType::kFileName);
+                QFont f;
+                f.setPixelSize(16);
+                QFontMetrics fm(f);
+                fileName = fm.elidedText(fileName, Qt::ElideMiddle, 200);
 
-void FileOperatorHelper::openFilesByApp(const FileView *view)
-{
-    // Todo(yanghao)
+                UniversalUtils::notifyMessage(QObject::tr("dde-file-manager"),
+                                              tr("Failed to open %1, which may be moved or renamed").arg(fileName));
+                continue;
+            }
+
+            if (fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
+                if (mode == DirOpenMode::kOpenNewWindow) {
+                    WorkspaceEventCaller::sendOpenWindow({ url });
+                } else {
+                    WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
+                }
+                continue;
+            }
+        }
+
+        const QList<QUrl> &openUrls = { url };
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles,
+                                     windowId,
+                                     openUrls);
+    }
 }
 
 void FileOperatorHelper::openFilesByApp(const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps)

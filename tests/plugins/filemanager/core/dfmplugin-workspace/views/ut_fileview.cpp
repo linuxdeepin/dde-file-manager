@@ -31,7 +31,6 @@ TEST_F(UT_FileView, setViewSelectState)
         return QVariant();
     });
     stub.set_lamda(&FileView::initializeModel, [](){});
-    stub.set_lamda(&FileView::updateModelActiveIndex, [](){});
 
     FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
     view.setViewSelectState(true);
@@ -44,7 +43,6 @@ TEST_F(UT_FileView, paintEvent)
         return QVariant();
     });
     stub.set_lamda(&FileView::initializeModel, [](){});
-    stub.set_lamda(&FileView::updateModelActiveIndex, [](){});
 
     bool flag = false;
     auto drawRectFoo = (void(QPainter::*)(const QRectF&))(&QPainter::drawRect);
