@@ -76,8 +76,7 @@ ComputerDataList ComputerItemWatcher::items()
     int diskStartPos = ret.count();
 
     ret.append(getBlockDeviceItems(hasInsertNewDisk));
-    ComputerDataList protocolDevices = getProtocolDeviceItems(hasInsertNewDisk);
-    ret.append(protocolDevices);
+    ret.append(getProtocolDeviceItems(hasInsertNewDisk));
     ret.append(getAppEntryItems(hasInsertNewDisk));
 
     std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
@@ -191,11 +190,14 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
-    devs = DevProxyMng->getAllBlockIds();
 
+    qInfo() << "start obtain the blocks";
+    devs = DevProxyMng->getAllBlockIds();
+    qInfo() << "end obtain the blocks";
+
+    QList<QUrl> hiddenByDConfig { disksHiddenByDConf() };
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
-        //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists())
             continue;
@@ -211,8 +213,10 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         if (info->targetUrl().isValid())
             insertUrlMapper(dev, info->targetUrl());
 
-        addSidebarItem(info);
+        if (!hiddenByDConfig.contains(devUrl))   // do not show item which hidden by dconfig
+            addSidebarItem(info);
     }
+    qInfo() << "end querying block info";
 
     return ret;
 }
@@ -221,7 +225,10 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
+
+    qInfo() << "start obtain the protocol devices";
     devs = DevProxyMng->getAllProtocolIds();
+    qInfo() << "end obtain the  protocol devices";
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
@@ -244,6 +251,8 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 
         addSidebarItem(info);
     }
+
+    qInfo() << "end querying protocol devices info";
 
     return ret;
 }
@@ -515,6 +524,34 @@ void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
 }
 
+void ComputerItemWatcher::handleSidebarItemsVisiable()
+{
+    const auto &&hiddenByDconfig = disksHiddenByDConf();
+
+    QList<DFMEntryFileInfoPointer> visiableItems, invisiableItems;
+
+    qInfo() << "start obtain the blocks when dconfig changed";
+    auto devs = DevProxyMng->getAllBlockIds();
+    qInfo() << "end obtain the blocks when dconfig changed";
+    for (const auto &dev : devs) {
+        auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
+        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
+        if (!info->exists())
+            continue;
+
+        if (hiddenByDconfig.contains(devUrl))
+            invisiableItems.append(info);
+        else
+            visiableItems.append(info);
+    }
+    qInfo() << "end querying if item should be show in sidebar";
+
+    for (const auto &info : invisiableItems)
+        removeSidebarItem(info->urlOf(UrlInfoType::kUrl));
+    for (const auto &info : visiableItems)
+        addSidebarItem(info);
+}
+
 void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
 {
     QUrl devUrl;
@@ -666,8 +703,10 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
 
 void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cfgKey)
 {
-    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath)
+    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath) {
         Q_EMIT updatePartitionsVisiable();
+        handleSidebarItemsVisiable();
+    }
 }
 
 void ComputerItemWatcher::onBlockDeviceAdded(const QString &id)

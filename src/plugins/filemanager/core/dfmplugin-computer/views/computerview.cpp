@@ -301,6 +301,17 @@ void ComputerView::handleDiskSplitterVisiable()
 
 void ComputerView::handlePartitionsVisiable()
 {
+    /* NOTE(xust): disks hidden by dconfig is treat as disks hidden by HintIgnore.
+     * devices should be hidden both in sidebar and computer.
+     * hidden in sidebar is handled in ComputerItemWatcher when dconfig changed.
+     * this part only handle items hidden in computer.
+     *
+     * HintIgnore > DConfig > SettingPanel
+     *
+     * hidden by HintIgnore is handled in BlockEntryFileEntity::exist() function.
+     * if it's true, treat the device as not exists.
+     */
+
     const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
     hideSpecificDisks(hiddenPartitions);
     handleDiskSplitterVisiable();
