@@ -153,8 +153,6 @@ void VaultFileInfo::refresh()
     }
 
     proxy->refresh();
-
-    setProxy(InfoFactory::create<FileInfo>(proxy->urlOf(UrlInfoType::kUrl)));
 }
 
 bool VaultFileInfo::isAttributes(const OptInfoType type) const
