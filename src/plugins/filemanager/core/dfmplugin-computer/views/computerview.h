@@ -66,8 +66,6 @@ private Q_SLOTS:
     void onMenuRequest(const QPoint &pos);
     void onRenameRequest(quint64 winId, const QUrl &url);
     void hideSpecificDisks(const QList<QUrl> &hiddenDisks);
-    void hideSystemPartitions(bool hide);
-    void hideLoopPartitions(bool hide);
     void handleDiskSplitterVisiable();
 
 Q_SIGNALS:

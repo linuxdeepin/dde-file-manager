@@ -332,10 +332,45 @@ int ComputerItemWatcher::getGroupId(const QString &groupName)
 QList<QUrl> ComputerItemWatcher::disksHiddenByDConf()
 {
     const auto &&currHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kKeyHideDisk).toStringList().toSet();
-    const auto &&allSystemUUIDs = ComputerUtils::allSystemUUIDs().toSet();
-    const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allSystemUUIDs);   // setA ∩ setB
-    const auto &&devUrls = ComputerUtils::systemBlkDevUrlByUUIDs(needToBeHidden.toList());
+    const auto &&allBlockUUIDs = ComputerUtils::allValidBlockUUIDs().toSet();
+    const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allBlockUUIDs);   // setA ∩ setB
+    const auto &&devUrls = ComputerUtils::blkDevUrlByUUIDs(needToBeHidden.toList());
     return devUrls;
+}
+
+QList<QUrl> ComputerItemWatcher::disksHiddenBySettingPanel()
+{
+    // hidden by setting panel: no system disk
+    // hidden by setting panel: no loop device
+    auto systemBlocksAndLoop = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kSystem).toSet();
+    auto loopOnly = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kLoop).toSet();
+
+    bool hideSys = ComputerUtils::shouldSystemPartitionHide();
+    bool hideLoop = ComputerUtils::shouldLoopPartitionsHide();
+
+    QSet<QString> hiddenBlocks;
+    if (hideSys && hideLoop)   // both hide system disks and loop devices
+        hiddenBlocks = systemBlocksAndLoop;
+    else if (hideSys && !hideLoop)   // hide system disks only, show loop devices
+        hiddenBlocks = systemBlocksAndLoop - loopOnly;
+    else if (!hideSys && hideLoop)   // show systemdisks and hide loop devices
+        hiddenBlocks = loopOnly;
+    else   // show nothing
+        hiddenBlocks = {};
+
+    QList<QUrl> hiddenItems;
+    for (const auto &blk : hiddenBlocks)
+        hiddenItems << ComputerUtils::makeBlockDevUrl(blk);
+    return hiddenItems;
+}
+
+QList<QUrl> ComputerItemWatcher::hiddenPartitions()
+{
+    QList<QUrl> hiddenUrls;
+    hiddenUrls += disksHiddenByDConf();
+    hiddenUrls += disksHiddenBySettingPanel();
+    hiddenUrls = QList<QUrl>::fromSet(hiddenUrls.toSet());
+    return hiddenUrls;
 }
 
 void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
@@ -623,18 +658,16 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
 {
     if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
         Q_EMIT hideFileSystemTag(!value.toBool());
-    } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
-        Q_EMIT hideNativeDisks(value.toBool());
-    } else if (ga == Application::GenericAttribute::kHideLoopPartitions) {
-        bool hide = value.toBool();
-        Q_EMIT hideLoopPartitions(hide);
+    } else if (ga == Application::GenericAttribute::kHiddenSystemPartition
+               || ga == Application::GenericAttribute::kHideLoopPartitions) {
+        Q_EMIT updatePartitionsVisiable();
     }
 }
 
 void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cfgKey)
 {
     if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath)
-        Q_EMIT hideDisks(disksHiddenByDConf());
+        Q_EMIT updatePartitionsVisiable();
 }
 
 void ComputerItemWatcher::onBlockDeviceAdded(const QString &id)

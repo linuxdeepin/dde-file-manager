@@ -252,7 +252,7 @@ void ComputerModel::initConnect()
         this->beginResetModel();
         items = datas;
         this->endResetModel();
-        QTimer::singleShot(0, this, [this]() { view->handlePartitionsVisiable(); });
+        view->handlePartitionsVisiable();
     });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
