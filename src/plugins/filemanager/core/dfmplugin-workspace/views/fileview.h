@@ -72,8 +72,6 @@ public:
     int horizontalOffset() const override;
     int verticalOffset() const override;
 
-    //    FileViewModel *sourceModel() const;
-
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
     int getColumnWidth(const int &column) const;
     int getHeaderViewWidth() const;
@@ -130,7 +128,6 @@ public slots:
     void onScalingValueChanged(const int value);
     void viewModeChanged(quint64 windowId, int viewMode);
     void onRowCountChanged();
-    void onModelReseted();
     void trashStateChanged();
     void onHeaderViewSectionChanged(const QUrl &url);
 
@@ -201,8 +198,6 @@ private:
 
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
 
-    void delayUpdateModelActiveIndex();
-    void updateModelActiveIndex();
     RandeIndexList visibleIndexes(QRect rect) const;
 
     QSize itemSizeHint() const;
@@ -217,7 +212,6 @@ private:
     QList<SelectionMode> fetchSupportSelectionModes();
 
     bool cdUp();
-    void updateVisibleIndex(const QModelIndex &index);
 };
 
 }
