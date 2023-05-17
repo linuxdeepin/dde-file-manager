@@ -321,7 +321,7 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
     auto newhight = height();
 
     if (oldheight != newhight)
-        emit heightChanged();
+        QTimer::singleShot(100, [this] { emit heightChanged(); });
 }
 /*!
  * \brief TaskWidget::showTaskProccess 显示当前任务进度
@@ -679,19 +679,13 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
         return;
     }
 
-    int h = 110;
-    if (showBtns) {
-        if (!widButton->isHidden())
-            h += widButton->sizeHint().height();
-        if (showConflict && !widConfict->isHidden()) {
-            h += widConfict->sizeHint().height();
-        }
-    } else {
+    if (!showBtns) {
         widButton->hide();
         widConfict->hide();
     }
+
     adjustSize();
-    emit heightChanged();
+    QTimer::singleShot(100, [this] { emit heightChanged(); });
 }
 
 void TaskWidget::onMouseHover(const bool hover)
