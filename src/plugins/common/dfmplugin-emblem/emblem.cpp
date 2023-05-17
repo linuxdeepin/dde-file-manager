@@ -17,11 +17,15 @@ void Emblem::initialize()
 
 bool Emblem::start()
 {
-
     QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.emblem", &err);
-    if (!ret)
+    auto ret = DConfigManager::instance()->addConfig(kConfigPath, &err);
+    if (!ret) {
         qWarning() << "create dconfig failed: " << err;
+    } else {
+        bool hideEmblems = DConfigManager::instance()->value(kConfigPath, kHideSystemEmblems, false).toBool();
+        if (hideEmblems)
+           qWarning() << "The system file emblems be hidden by GroupPolicy!";
+    }
 
     return true;
 }
