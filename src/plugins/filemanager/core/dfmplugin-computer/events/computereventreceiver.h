@@ -9,6 +9,8 @@
 
 #include <QObject>
 
+#include <functional>
+
 #define ComputerEventReceiverIns DPCOMPUTER_NAMESPACE::ComputerEventReceiver::instance()
 
 namespace dfmplugin_computer {
@@ -26,8 +28,11 @@ public Q_SLOTS:
     bool handleSetTabName(const QUrl &url, QString *tabName);
     void setContextMenuEnable(bool enable);
 
+    static void dirAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
+
 protected:
     bool parseCifsMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+    static bool askForConfirmChmod(const QString &devName);
 
 private:
     explicit ComputerEventReceiver(QObject *parent = nullptr);
