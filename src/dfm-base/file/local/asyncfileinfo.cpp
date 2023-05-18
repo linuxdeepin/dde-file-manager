@@ -122,7 +122,9 @@ QString AsyncFileInfo::nameOf(const NameInfoType type) const
     case FileNameInfoType::kSuffix:
         [[fallthrough]];
     case FileNameInfoType::kSuffixOfRename:
-        return d->asyncAttribute(AsyncAttributeID::kStandardSuffix).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardSuffix).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardSuffix).toString();
+        return FileInfo::nameOf(type);
     case FileNameInfoType::kCompleteSuffix:
         return d->asyncAttribute(AsyncAttributeID::kStandardCompleteSuffix).toString();
     case FileNameInfoType::kFileCopyName:
@@ -601,7 +603,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
 
 QMimeType AsyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
 {
-    static DFMBASE_NAMESPACE::DMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
     if (isGvfs) {
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }

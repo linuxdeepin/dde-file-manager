@@ -377,7 +377,7 @@ void OemMenuPrivate::appendParentMineType(const QStringList &parentmimeTypes, QS
     if (parentmimeTypes.isEmpty())
         return;
 
-    const static DFMBASE_NAMESPACE::DMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
     for (const QString &mtName : parentmimeTypes) {
         QMimeType mt = db.mimeTypeForName(mtName);
         mimeTypes.append(mt.name());
