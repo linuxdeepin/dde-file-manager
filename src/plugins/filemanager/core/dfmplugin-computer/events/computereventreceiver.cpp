@@ -12,8 +12,15 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+
+#include <DDialog>
 
 #include <QDebug>
+#include <QDBusInterface>
+
+#include <unistd.h>
+#include <sys/stat.h>
 
 using namespace dfmplugin_computer;
 DFMBASE_USE_NAMESPACE
@@ -80,6 +87,83 @@ void ComputerEventReceiver::setContextMenuEnable(bool enable)
     ComputerUtils::contextMenuEnabled = enable;
 }
 
+void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::function<void()> after)
+{
+    do {
+        const QString &path = url.path();
+        if (url.scheme() != Global::Scheme::kFile) {
+            //            qInfo() << "not file scheme, ignore prehandle" << url;
+            break;
+        }
+
+        // only handle mounts by udisks
+        if (!path.startsWith("/media/")) {
+            //            qInfo() << "not udisks mount path, ignore prehandle" << url;
+            break;
+        }
+
+        qInfo() << "start checking if path should be writable" << url;
+        SyncFileInfo fileInfo(url);
+        if (fileInfo.isAttributes(FileInfo::FileIsType::kIsWritable)) {
+            qInfo() << "file for current user is writable, ignore prehandle" << url;
+            break;
+        }
+
+        QString deviceID;
+        if (!DevProxyMng->isMptOfDevice(path, deviceID)) {
+            qInfo() << "path is not mountpoint of device, ignore prehandle" << url;
+            break;
+        }
+
+        QString devDesc = deviceID.split("/", QString::SkipEmptyParts).last();
+        if (devDesc.isEmpty() || !deviceID.startsWith("/org/freedesktop/UDisks")) {
+            qInfo() << "cannot get the device description, ignore prehandle" << url << deviceID;
+            break;
+        }
+
+        QString ignoreFlagFilePath = QString("/tmp/dfm_%1_%2_ignore_request_permission_in_current_session")
+                                             .arg(getuid())
+                                             .arg(devDesc);
+        QFile ignoreFlagFile(ignoreFlagFilePath);
+        if (ignoreFlagFile.exists()) {
+            qInfo() << "user has ignored prehandle before" << url << deviceID;
+            break;
+        }
+
+        auto info = DevProxyMng->queryBlockInfo(deviceID);
+        if (!info.value(GlobalServerDefines::DeviceProperty::kHintSystem).toBool()) {
+            qInfo() << "not system disk, ignore prehandle" << url << deviceID;
+            break;
+        }
+
+        if (info.value(GlobalServerDefines::DeviceProperty::kFileSystem).toString().toLower() == "vfat") {
+            qInfo() << "chmod for vfat is useless, give up prehandle" << url << deviceID;
+            break;
+        }
+
+        // ask for user whether to chmod.
+        const QString &deviceName = DeviceUtils::convertSuitableDisplayName(info);
+        if (!askForConfirmChmod(deviceName)) {
+            ignoreFlagFile.open(QIODevice::NewOnly);
+            ignoreFlagFile.close();
+            qInfo() << "user dismissed for chmod" << url << deviceID;
+            break;
+        }
+
+        // do chmod
+        qInfo() << "start invoking Chmod" << url << deviceID;
+        QDBusInterface daemonIface("com.deepin.filemanager.daemon",
+                                   "/com/deepin/filemanager/daemon/AccessControlManager",
+                                   "com.deepin.filemanager.daemon.AccessControlManager",
+                                   QDBusConnection::systemBus());
+        auto ret = daemonIface.callWithArgumentList(QDBus::BlockWithGui, "Chmod", { path, static_cast<uint>(ACCESSPERMS) });
+        qInfo() << "Chmod finished for" << url << deviceID << ret;
+    } while (0);
+
+    if (after)
+        after();
+}
+
 bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
 {
     Q_ASSERT(mapGroup);
@@ -126,6 +210,19 @@ bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantM
         mapGroup->push_back(dirNode);
     }
     return true;
+}
+
+bool ComputerEventReceiver::askForConfirmChmod(const QString &devName)
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    using namespace Dtk::Widget;
+    DDialog dlg(tr("%1 is read-only. Do you want to enable read and write permissions for it?").arg(devName),
+                tr("Once enabled, read/write permission will be granted permanently"));
+    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.addButton(tr("Cancel"));
+    int confirmIdx = dlg.addButton(tr("Enable Now"), true, DDialog::ButtonRecommend);
+
+    return dlg.exec() == confirmIdx;
 }
 
 ComputerEventReceiver::ComputerEventReceiver(QObject *parent)
