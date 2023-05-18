@@ -214,15 +214,7 @@ QIcon VaultFileInfo::fileIcon()
 {
     if (d->isRoot()) {
         QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
-        if (isRoot())
-            return QIcon::fromTheme(iconName);
-        else {
-            if (!proxy)
-                return QIcon::fromTheme(fileMimeType(QMimeDatabase::MatchDefault).iconName());
-            else
-                QIcon::fromTheme(proxy->nameOf(NameInfoType::kIconName));
-        }
-        return QIcon::fromTheme("");
+        return QIcon::fromTheme(iconName);
     }
 
     if (!proxy)
