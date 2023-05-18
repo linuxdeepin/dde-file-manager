@@ -52,6 +52,12 @@ static constexpr char kLibCore[] { "libdfmplugin-core.so" };
  * - reuse the existing D-Bus session at login time if there is one.
  * see https://unix.stackexchange.com/questions/44317/reuse-d-bus-sessions-across-login-sessions for that.
  */
+#ifdef ENABLE_SMB_IN_ADMIN
+/*
+ * these environments are setted to make DBus runable in ADMIN mode to solve the
+ * smb mount issue in ADMIN mode. since smb-browser plugin is disabled in ADMIN mode, these
+ * environments are no longer needed.
+ * */
 static void setEnvForRoot()
 {
     QProcess p;
@@ -76,6 +82,7 @@ static void setEnvForRoot()
         }
     }
 }
+#endif
 
 static bool isLoadVaultPlugin()
 {
@@ -122,6 +129,18 @@ static bool pluginsLoad()
     QStringList blackNames;
     if (!isLoadVaultPlugin())
         blackNames << "dfmplugin-vault";
+
+#ifndef ENABLE_SMB_IN_ADMIN
+    /*
+     * NOTE(xust): the secret manager cannot be launched in WAYLAND ADMIN mode,
+     * which cause file-manager freeze when mount samba (dfm-mount using secret-manager
+     * to save/get the password of samba by sync).
+     * and the Admin mode is designed for operate files those normal user cannot write
+     * and should be the smallest dfm, so remove the smb-browser plugin in Admin mode
+     * */
+    if (SysInfoUtils::isOpenAsAdmin())
+        blackNames << "dfmplugin-smbbrowser";
+#endif
 
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
@@ -181,8 +200,10 @@ static void initEnv()
         setenv("QT_IM_MODULE", "fcitx", 1);
     }
 
+#ifdef ENABLE_SMB_IN_ADMIN
     if (SysInfoUtils::isOpenAsAdmin())
         setEnvForRoot();
+#endif
 }
 
 static void initLog()
