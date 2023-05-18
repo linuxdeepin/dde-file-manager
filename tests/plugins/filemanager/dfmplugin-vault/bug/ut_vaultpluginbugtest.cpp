@@ -11,6 +11,7 @@
 #include "utils/encryption/vaultconfig.h"
 #include "utils/fileencrypthandle.h"
 #include "utils/fileencrypthandle_p.h"
+#include "fileutils/vaultfileinfo.h"
 
 #include <gtest/gtest.h>
 
@@ -99,4 +100,12 @@ TEST(UT_VaultPluginBugTest, bug_144787_CheckCryfs)
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     EXPECT_FALSE(cryfsBinary.isEmpty());
 #endif
+}
+
+TEST(UT_VaultPluginBugTest, bug_200185_CheckProxyChange)
+{
+    VaultFileInfo info(QUrl("dfmvault:///"));
+    FileInfoPointer oldprox = info.proxy;
+    info.refresh();
+    EXPECT_TRUE(oldprox == info.proxy);
 }
