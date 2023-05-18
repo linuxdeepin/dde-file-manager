@@ -16,7 +16,10 @@ InfoFactory &InfoFactory::instance()
 QString InfoFactory::scheme(const QUrl &url)
 {
     auto scheme = url.scheme();
-    if (scheme == Global::Scheme::kFile && !FileUtils::isLocalDevice(url))
+    if (scheme != Global::Scheme::kFile)
+        return scheme;
+
+    if (!FileUtils::isLocalDevice(url))
         return Global::Scheme::kAsyncFile;
 
     dfmio::DFileInfo dinfo(url);
