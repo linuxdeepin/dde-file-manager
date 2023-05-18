@@ -446,7 +446,7 @@ bool ThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, Thumb
         DFMIO::DFile dfile(saveImage);
         if (dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
             const QByteArray &output = dfile.readAll();
-            if (!output.isEmpty())
+            if (output.isEmpty())
                 return false;
 
             if (image->loadFromData(output, "png")) {
