@@ -84,7 +84,7 @@ VaultFileInfo::VaultFileInfo(const QUrl &url)
     : ProxyFileInfo(url), d(new VaultFileInfoPrivate(this))
 {
     QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
-    setProxy(InfoFactory::create<FileInfo>(tempUrl));
+    setProxy(InfoFactory::create<FileInfo>(tempUrl,  Global::CreateFileInfoType::kCreateFileInfoSyncAndCache));
 }
 
 VaultFileInfo::~VaultFileInfo()
