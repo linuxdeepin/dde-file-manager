@@ -208,8 +208,16 @@ QRectF WorkspaceWidget::itemRect(const QUrl &url, const Global::ItemRoles role)
 
 void WorkspaceWidget::onCloseCurrentTab()
 {
-    if (tabBar->count() > 1)
-        tabBar->removeTab(tabBar->getCurrentIndex());
+    if (tabBar->count() == 1) {
+        auto winId = WorkspaceHelper::instance()->windowId(this);
+        auto window = FMWindowsIns.findWindowById(winId);
+        if (window)
+            window->close();
+
+        return;
+    }
+
+    tabBar->removeTab(tabBar->getCurrentIndex());
 }
 
 void WorkspaceWidget::onSetCurrentTabIndex(const int index)
