@@ -150,7 +150,12 @@ QString dfmbase::FileInfo::nameOf(const NameInfoType type) const
 QString dfmbase::FileInfo::pathOf(const PathInfoType type) const
 {
     Q_UNUSED(type);
-    return QString();
+    switch (type) {
+    case FilePathInfoType::kFilePath:
+        return url.path();
+    default:
+        return QString();
+    }
 }
 /*!
  * \brief permission 判断文件是否有传入的权限

@@ -33,7 +33,7 @@ void FileInfoAsycWorker::fileMimeType(const QUrl &url,
 {
     if (isStoped())
         return;
-    static DFMBASE_NAMESPACE::DMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
     QMimeType type;
     if (isGvfs) {
         type = db.mimeTypeForFile(url.path(), mode, inod, isGvfs);
