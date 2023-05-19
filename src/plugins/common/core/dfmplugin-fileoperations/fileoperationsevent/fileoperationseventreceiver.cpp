@@ -661,7 +661,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
                 dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             // deal open file with custom dialog
-            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", urls);
+            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", windowId, urls);
             ok = true;
         }
     }
