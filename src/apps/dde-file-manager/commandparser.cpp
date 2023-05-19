@@ -240,7 +240,7 @@ void CommandParser::openWithDialog()
     }
     if (urlList.isEmpty())
         return;
-    dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", urlList);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", 0, urlList);
 }
 
 void CommandParser::openInHomeDirectory()

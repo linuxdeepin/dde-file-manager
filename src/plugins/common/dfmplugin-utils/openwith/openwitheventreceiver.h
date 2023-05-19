@@ -19,7 +19,7 @@ public:
     void initEventConnect();
 
 public:   //! slot event
-    void showOpenWithDialog(const QList<QUrl> &urls);
+    void showOpenWithDialog(quint64 winId, const QList<QUrl> &urls);
 };
 }
 #endif   // OPENWITHEVENTRECEIVER_H
