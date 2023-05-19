@@ -889,7 +889,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
         QModelIndex index = indexAt(event->pos());
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
 
-        itemDelegate()->commitDataAndCloseActiveEditor();
+        if (itemDelegate())
+            itemDelegate()->commitDataAndCloseActiveEditor();
 
         if (isEmptyArea) {
             if (selectionMode() != QAbstractItemView::SingleSelection)
