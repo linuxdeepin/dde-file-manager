@@ -179,7 +179,7 @@ void ConnectToServerDialog::onCollectionViewClicked(const QModelIndex &index)
     const QString &scheme = url.scheme();
     const QString &params = url.query().toLower();
     int port = url.port();
-    QRegularExpression charsetRegx(R"(charset=([^,]*))");
+    QRegularExpression charsetRegx(R"(charset=([^&]*))");
     QString charset;
     auto match = charsetRegx.match(params);
     if (match.hasMatch())
@@ -259,7 +259,7 @@ void ConnectToServerDialog::initServerDatas()
         CharsetOption opt = kDefault;
         const QString &query = url.query();
         if (!query.isEmpty()) {
-            const static QRegularExpression charsetRegx(R"(charset=([^,]*))");
+            const static QRegularExpression charsetRegx(R"(charset=([^&]*))");
             auto match = charsetRegx.match(query);
             if (match.hasMatch()) {
                 QString charset = match.captured(1);
@@ -315,12 +315,12 @@ QString ConnectToServerDialog::getCurrentUrlString()
     if (!url.startsWith("ftp") || charsetComboBox->currentIndex() == kDefault)
         return url;
 
-    if (url.contains(QRegularExpression(R"([?,]charset=)"))) {
+    if (url.contains(QRegularExpression(R"([?&]charset=)"))) {
         qInfo() << "user passed the charset param in url." << url;
         return url;
     }
 
-    url += (url.contains("?")) ? ",charset=" : "?charset=";
+    url += (url.contains("?")) ? "&charset=" : "?charset=";
     switch (charsetComboBox->currentIndex()) {
     case kUtf8:
         url += kUTF8CharSet;
