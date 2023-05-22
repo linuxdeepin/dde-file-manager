@@ -11,10 +11,6 @@
 #include <QPointer>
 #include <QVariantMap>
 
-namespace dfmmount {
-class DBlockDevice;
-}
-
 class DAttachedBlockDevice final : public QObject, public DAttachedDevice
 {
 public:
@@ -32,12 +28,10 @@ public:
 
 protected:
     void query() override;
-    QPair<quint64, quint64> loadOpticalUsage();
-    QPair<quint64, quint64> loadEncryptedUsage();
 
 private:
     const QString ddeI18nSym { QStringLiteral("_dde_") };
-    QSharedPointer<dfmmount::DBlockDevice> device;
+    QVariantMap info;
 };
 
 #endif   // DATTACHEDBLOCKDEVICE_H

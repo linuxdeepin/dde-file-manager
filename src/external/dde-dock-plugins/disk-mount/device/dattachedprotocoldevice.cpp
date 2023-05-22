@@ -11,12 +11,8 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QRegularExpression>
-
-#include <dfm-mount/dprotocoldevice.h>
-
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include <QDBusInterface>
+#include <QDBusReply>
 
 /*!
  * \class DAttachedProtocolDevice
@@ -28,9 +24,6 @@
 DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &id, QObject *parent)
     : QObject(parent), DAttachedDevice(id)
 {
-    isNetworkDev = id.contains(QRegularExpression(R"(^(ftp|sftp|smb))"))
-            || id.contains(QRegularExpression(R"(^file:///media/.*/smbmounts/smb-share)"));
-    qDebug() << id << "isNetwork: " << isNetworkDev;
 }
 
 DAttachedProtocolDevice::~DAttachedProtocolDevice()
@@ -39,7 +32,7 @@ DAttachedProtocolDevice::~DAttachedProtocolDevice()
 
 bool DAttachedProtocolDevice::isValid()
 {
-    return device && !device->mountPoint().isEmpty();
+    return !info.value("MountPoint").toString().isEmpty();
 }
 
 void DAttachedProtocolDevice::detach()
@@ -54,10 +47,7 @@ bool DAttachedProtocolDevice::detachable()
 
 QString DAttachedProtocolDevice::displayName()
 {
-    if (!device)
-        return tr("Unknown");
-
-    QString devName = device->displayName();
+    QString devName = info.value("DisplayName").toString();
     QString host, share;
     if (smb_utils::parseSmbInfo(devName, host, share))
         devName = tr("%1 on %2").arg(share).arg(host);
@@ -71,30 +61,13 @@ bool DAttachedProtocolDevice::deviceUsageValid()
 
 QPair<quint64, quint64> DAttachedProtocolDevice::deviceUsage()
 {
-    if (!device)
-        return { 0, 0 };
-
-    if (isNetworkDev && QDateTime::currentSecsSinceEpoch() - lastNetCheck < 180)
-        return { latestFreeSize, latestTotalSize };
-    lastNetCheck = QDateTime::currentSecsSinceEpoch();
-
-    // if network then check net
-    if (isNetworkDev && !checkNetwork()) {
-        qWarning() << "network is disconnecting, use latest usage info of" << deviceId;
-        return { latestFreeSize, latestTotalSize };
-    }
-
-    latestTotalSize = static_cast<quint64>(device->sizeTotal());
-    latestFreeSize = static_cast<quint64>(device->sizeFree());
-    return { latestFreeSize, latestTotalSize };
+    return { info.value("SizeFree").toULongLong(),
+             info.value("SizeTotal").toULongLong() };
 }
 
 QString DAttachedProtocolDevice::iconName()
 {
-    if (!device)
-        return "drive-network";
-
-    auto iconLst = device->deviceIcons();
+    auto iconLst = info.value("DeviceIcon").toStringList();
     for (auto name : iconLst) {
         auto icon = QIcon::fromTheme(name);
         if (!icon.isNull())
@@ -106,9 +79,10 @@ QString DAttachedProtocolDevice::iconName()
 
 QUrl DAttachedProtocolDevice::mountpointUrl()
 {
-    if (!device)
+    QString mpt = info.value("MountPoint").toString();
+    if (mpt.isEmpty())
         return QUrl("computer:///");
-    return QUrl::fromLocalFile(device->mountPoint());
+    return QUrl::fromLocalFile(mpt);
 }
 
 QUrl DAttachedProtocolDevice::accessPointUrl()
@@ -118,48 +92,16 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 
 void DAttachedProtocolDevice::query()
 {
-    device = DeviceWatcherLite::instance()->createProtocolDevicePtr(deviceId);
-}
-
-bool DAttachedProtocolDevice::checkNetwork()
-{
-    QString host, port;
-    if (!parseHostAndPort(host, port) || host.isEmpty())
-        return false;
-
-    qInfo() << "checking network connection..." << QString("%1:%2").arg(host).arg(port);
-    addrinfo *result;
-    addrinfo hints {};
-    hints.ai_family = AF_UNSPEC;   // either IPv4 or IPv6
-    hints.ai_socktype = SOCK_STREAM;
-    char addressString[INET6_ADDRSTRLEN];
-    const char *retval = nullptr;
-    if (0 != getaddrinfo(host.toUtf8().toStdString().c_str(), port.toUtf8().toStdString().c_str(), &hints, &result)) {
-        return false;
-    }
-    for (addrinfo *addr = result; addr != nullptr; addr = addr->ai_next) {
-        int handle = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-        if (handle == -1) {
-            continue;
-        }
-        if (::connect(handle, addr->ai_addr, addr->ai_addrlen) != -1) {
-            switch (addr->ai_family) {
-            case AF_INET:
-                retval = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in *>(addr->ai_addr)->sin_addr), addressString, INET_ADDRSTRLEN);
-                break;
-            case AF_INET6:
-                retval = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in6 *>(addr->ai_addr)->sin6_addr), addressString, INET6_ADDRSTRLEN);
-                break;
-            default:
-                // unknown family
-                retval = nullptr;
-            }
-            close(handle);
-            break;
-        }
-    }
-    freeaddrinfo(result);
-    return retval != nullptr;
+    QTime t;
+    t.start();
+    QDBusInterface iface("org.deepin.filemanager.server",
+                         "/org/deepin/filemanager/server/DeviceManager",
+                         "org.deepin.filemanager.server.DeviceManager", QDBusConnection::sessionBus());
+    iface.setTimeout(3);
+    QDBusReply<QVariantMap> ret = iface.callWithArgumentList(QDBus::CallMode::AutoDetect, "QueryProtocolDeviceInfo", QList<QVariant> { deviceId, false });
+    qInfo() << "query info of costs" << deviceId << t.elapsed();
+    info = ret.value();
+    qInfo() << "the queried info of protocol device:" << info;
 }
 
 bool DAttachedProtocolDevice::parseHostAndPort(QString &host, QString &port)
