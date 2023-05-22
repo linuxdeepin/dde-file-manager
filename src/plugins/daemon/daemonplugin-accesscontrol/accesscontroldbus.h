@@ -44,6 +44,7 @@ public slots:
     int QueryVaultAccessPolicyVisible();
     QString FileManagerReply(int policystate);
     void ChangeDiskPassword(const QString &oldPwd, const QString &newPwd);
+    bool Chmod(const QString &path, uint mode);
 
 private slots:
     void onBlockDevAdded(const QString &deviceId);

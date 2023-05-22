@@ -19,6 +19,7 @@
 #include <dfm-mount/base/dmountutils.h>
 
 #include <sys/mount.h>
+#include <sys/stat.h>
 
 DFMBASE_USE_NAMESPACE
 DAEMONPAC_USE_NAMESPACE
@@ -253,6 +254,32 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
     emit DiskPasswordChanged(ret);
 }
 
+bool AccessControlDBus::Chmod(const QString &path, uint mode)
+{
+    if (path.isEmpty())
+        return false;
+
+    QFile f(path);
+    if (!f.exists()) {
+        qWarning() << "file not exists" << path;
+        return false;
+    }
+
+    if (!checkAuthentication("com.deepin.filemanager.daemon.AccessControlManager.Chmod")) {
+        qWarning() << "authenticate failed to change permission of" << path;
+        return false;
+    }
+
+    qInfo() << "start changing the access permission of" << path << mode;
+    int ret = ::Utils::setFileMode(path.toStdString().c_str(), mode);
+    if (ret != 0) {
+        qWarning() << "chmod for" << path << "failed due to" << strerror(errno);
+        return false;
+    }
+    qInfo() << "access permission for" << path << "is modified successfully";
+    return true;
+}
+
 void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
 {
     DFM_MOUNT_USE_NS
@@ -291,8 +318,8 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
 {
     DFM_MOUNT_USE_NS
     auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
-    if (!dev) {
-        qWarning() << "cannot craete device handler for " << deviceId;
+    if (!dev || dev->hintSystem()) {
+        qWarning() << "cannot create device or device is system disk" << deviceId;
         return;
     }
 
@@ -327,7 +354,7 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
     QStringList mountOpts = dev->getProperty(Property::kBlockUserspaceMountOptions).toStringList();
     qDebug() << "mount opts: ==>" << mountOpts << deviceId;
     if (mountOpts.contains("uhelper=udisks2"))   // only chmod for those devices mounted by udisks
-        ::Utils::addWriteMode(mountPoint);
+        ::Utils::setFileMode(mountPoint, ACCESSPERMS);   // 777
 }
 
 void AccessControlDBus::initConnect()

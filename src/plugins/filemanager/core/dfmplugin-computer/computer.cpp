@@ -24,6 +24,9 @@ Q_DECLARE_METATYPE(CustomViewExtensionView)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
 Q_DECLARE_METATYPE(QString *)
 
+using DirAccessPrehandlerType = std::function<void(quint64 winId, const QUrl &url, std::function<void()> after)>;
+Q_DECLARE_METATYPE(DirAccessPrehandlerType)
+
 DFMBASE_USE_NAMESPACE
 
 namespace dfmplugin_computer {
@@ -57,6 +60,10 @@ bool Computer::start()
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", ComputerUtils::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", ComputerUtils::scheme(), ComputerMenuCreator::name());
+
+    DirAccessPrehandlerType filePrehandler { ComputerEventReceiver::dirAccessPrehandler };
+    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kFile), filePrehandler).toBool())
+        qWarning() << "file's prehandler has been registered";
 
     return true;
 }
