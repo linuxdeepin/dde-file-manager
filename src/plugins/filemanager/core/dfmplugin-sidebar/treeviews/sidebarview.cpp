@@ -123,11 +123,11 @@ bool SideBarViewPrivate::canMove(QDragMoveEvent *event)
             ? event->mimeData()->urls()
             : urlsForDragEvent;
 
-    if (urls.isEmpty())
-        return false;
+    if (!urls.isEmpty()) {
+        SideBarItem *item = q->itemAt(event->pos());
+        if (!item)
+            return false;
 
-    SideBarItem *item = q->itemAt(event->pos());
-    if (item) {
         const QUrl &targetItemUrl { item->targetUrl() };
         if (!checkTargetEnable(targetItemUrl))
             return false;
