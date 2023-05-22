@@ -227,6 +227,11 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
         errorMsg = fileHandler.errorString();
         DialogManagerInstance->showErrorDialog(tr("Rename file error"), errorMsg);
     }
+
+    for (const auto &scUrl : successUrls.keys()) {
+        ClipBoard::instance()->replaceClipboardUrl(scUrl, successUrls.value(scUrl));
+    }
+
     return ok;
 }
 
