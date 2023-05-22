@@ -68,9 +68,18 @@ QStringList DeviceWatcherLite::allMountedRemovableBlocks()
         QSharedPointer<DBlockDevice> devPtr = monitor->createDeviceById(dev).objectCast<DBlockDevice>();
         if (!devPtr)
             continue;
-
-        if (!devPtr->removable() || devPtr->mountPoint().isEmpty())
+        if (!devPtr->removable())
             continue;
+        if (devPtr->isEncrypted()) {
+            QString clearDevID = devPtr->getProperty(Property::kEncryptedCleartextDevice).toString();
+            if (clearDevID.isEmpty()) {
+                continue;
+            } else {
+                QSharedPointer<DBlockDevice> clearDev = monitor->createDeviceById(clearDevID).objectCast<DBlockDevice>();
+                if (!clearDev || clearDev->mountPoint().isEmpty())
+                    continue;
+            }
+        }
 
         mountedRemovable.append(dev);
         blksOfDrv[devPtr->drive()].append(dev);
@@ -108,7 +117,11 @@ void DeviceWatcherLite::detachBlockDevice(const QString &id)
         return;
 
     const QString &drv = blkPtr->drive();
-    const QStringList &siblings = blksOfDrv.value(drv, QStringList());
+    QStringList siblings = blksOfDrv.value(drv, QStringList());
+
+    QString clearDevID = blkPtr->getProperty(Property::kEncryptedCleartextDevice).toString();
+    if (blkPtr->isEncrypted() && !clearDevID.isEmpty())
+        siblings.append(clearDevID);
 
     QSharedPointer<bool> unmountDone(new bool(true));
     QSharedPointer<int> unmountCount(new int(siblings.count()));
@@ -196,6 +209,14 @@ void DeviceWatcherLite::removeDevice(bool unmountDone, QSharedPointer<dfmmount::
     QThread::msleep(500);
     QPointer<DeviceWatcherLite> that(this);
 
+    auto doPowerOff = [=] {
+        blk->powerOffAsync({}, [=](bool ok, const OperationErrorInfo &err) {
+            if (that && !ok)
+                Q_EMIT this->operationFailed(kPowerOff);
+            qDebug() << "[disk-mount]: poweroff device: " << err.message << err.code;
+        });
+    };
+
     if (blk->optical()) {
         blk->ejectAsync({}, [=](bool ok, const OperationErrorInfo &err) {
             if (that && !ok)
@@ -203,10 +224,15 @@ void DeviceWatcherLite::removeDevice(bool unmountDone, QSharedPointer<dfmmount::
             qDebug() << "[disk-mount]: eject device: " << err.message << err.code;
         });
     } else {
-        blk->powerOffAsync({}, [=](bool ok, const OperationErrorInfo &err) {
-            if (that && !ok)
-                Q_EMIT this->operationFailed(kPowerOff);
-            qDebug() << "[disk-mount]: poweroff device: " << err.message << err.code;
-        });
+        if (blk->isEncrypted()) {
+            blk->lockAsync({}, [=](bool ok, const OperationErrorInfo &) {
+                if (ok)
+                    doPowerOff();
+                else if (that)
+                    Q_EMIT this->operationFailed(kPowerOff);
+            });
+        } else {
+            doPowerOff();
+        }
     }
 }

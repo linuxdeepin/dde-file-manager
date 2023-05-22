@@ -24,6 +24,7 @@ public:
 
     static DeviceWatcherLite *instance();
 
+    // TODO(xust) replace these functions with DeviceManager DBus interface.
     QStringList allMountedRemovableBlocks();
     QStringList allMountedProtocols();
 

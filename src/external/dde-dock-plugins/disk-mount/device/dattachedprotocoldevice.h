@@ -11,10 +11,6 @@
 #include <QPointer>
 #include <QVariantMap>
 
-namespace dfmmount {
-class DProtocolDevice;
-}
-
 class DAttachedProtocolDevice final : public QObject, public DAttachedDevice
 {
     Q_OBJECT
@@ -33,15 +29,10 @@ public:
 
 protected:
     void query() override;
-    bool checkNetwork();
     bool parseHostAndPort(QString &host, QString &port);
 
 private:
-    QSharedPointer<dfmmount::DProtocolDevice> device;
-    quint64 lastNetCheck = 0;
-    quint64 latestTotalSize = 0;
-    quint64 latestFreeSize = 0;
-    bool isNetworkDev = false;
+    QVariantMap info;
 };
 
 #endif   // DATTACHEDPROTOCOLDEVICE_H

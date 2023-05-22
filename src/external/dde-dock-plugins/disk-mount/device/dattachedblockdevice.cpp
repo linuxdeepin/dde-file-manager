@@ -9,12 +9,10 @@
 #include <QCoreApplication>
 #include <QVariantMap>
 #include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonParseError>
 #include <QFile>
-
-#include <dfm-mount/dblockdevice.h>
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QTime>
 
 static const char *const kBurnSegOndisc = "disc_files";
 
@@ -50,14 +48,19 @@ DAttachedBlockDevice::~DAttachedBlockDevice()
 
 bool DAttachedBlockDevice::isValid()
 {
-    if (!device)
+    if (info.isEmpty())
         return false;
 
-    if (!device->hasFileSystem())
+    if (info.value("IsEncrypted").toBool())
+        return true;
+
+    if (!info.value("HasFileSystem").toBool())
         return false;
-    if (device->mountPoint().isEmpty())
+    if (info.value("MountPoints").toStringList().isEmpty())
         return false;
-    if (device->hintSystem() || device->hintIgnore())
+    if (info.value("HintSystem").toBool() && info.value("CryptoBackingDevice").toString() == "/")
+        return false;
+    if (info.value("HintIgnore").toBool())
         return false;
 
     return true;
@@ -65,21 +68,21 @@ bool DAttachedBlockDevice::isValid()
 
 void DAttachedBlockDevice::detach()
 {
-    if (!device)
-        return;
-
     DeviceWatcherLite::instance()->detachBlockDevice(deviceId);
 }
 
 bool DAttachedBlockDevice::detachable()
 {
-    return device && device->removable();
+    return info.value("Removable").toBool();
 }
 
 QString DAttachedBlockDevice::displayName()
 {
-    if (!device)
-        return tr("Unknown");
+    if (info.value("IsEncrypted").toBool()) {
+        DAttachedBlockDevice clearDev(info.value("CleartextDevice").toString());
+        clearDev.query();
+        return clearDev.displayName();
+    }
 
     QString result;
 
@@ -87,11 +90,11 @@ QString DAttachedBlockDevice::displayName()
         { "data", "Data Disk" }
     };
 
-    qint64 totalSize { device->sizeTotal() };
+    quint64 totalSize { info.value("SizeTotal").toULongLong() };
     if (isValid()) {
-        QString devName { device->idLabel() };
+        QString devName { info.value("IdLabel").toString() };
         if (devName.isEmpty()) {
-            QString name { size_format::formatDiskSize(static_cast<quint64>(totalSize)) };
+            QString name { size_format::formatDiskSize(totalSize) };
             devName = qApp->translate("DeepinStorage", "%1 Volume").arg(name);
         }
 
@@ -112,41 +115,31 @@ QString DAttachedBlockDevice::displayName()
 
 bool DAttachedBlockDevice::deviceUsageValid()
 {
-    return device && device->sizeTotal() > 0;
+    return info.value("SizeTotal").toULongLong() > 0;
 }
 
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
-    if (deviceUsageValid()) {
-        if (device->optical())
-            return loadOpticalUsage();
-
-        //        if (device->isEncrypted())
-        //            return loadEncryptedUsage();
-
-        qint64 bytesTotal { device->sizeTotal() };
-        qint64 bytesFree { device->sizeFree() };
-        return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
+    if (info.value("IsEncrypted").toBool()) {
+        DAttachedBlockDevice clearDev(info.value("CleartextDevice").toString());
+        clearDev.query();
+        return clearDev.deviceUsage();
     }
-    return QPair<quint64, quint64>(0, 0);
+    return { info.value("SizeFree").toULongLong(),
+             info.value("SizeTotal").toULongLong() };
 }
 
 QString DAttachedBlockDevice::iconName()
 {
-    if (!device)
-        return "drive-harddisk";
-
-    bool optical { device->optical() };
-    bool removable { device->removable() };
-    bool decryptedDev = device->getProperty(DFMMOUNT::Property::kEncryptedCleartextDevice).toString() != "/";
+    bool optical { info.value("OpticalDrive").toBool() };
+    bool removable { info.value("Removable").toBool() };
+    bool decryptedDev { info.value("IsEncrypted").toBool() };
     QString iconName { QStringLiteral("drive-harddisk") };
 
     if (removable)
         iconName = QStringLiteral("drive-removable-media-usb");
-
     if (optical)
         iconName = QStringLiteral("media-optical");
-
     if (decryptedDev)
         iconName = QStringLiteral("drive-removable-media-encrypted");
 
@@ -155,21 +148,25 @@ QString DAttachedBlockDevice::iconName()
 
 QUrl DAttachedBlockDevice::mountpointUrl()
 {
-    if (!device)
+    if (info.value("IsEncrypted").toBool()) {
+        DAttachedBlockDevice clearDev(info.value("CleartextDevice").toString());
+        clearDev.query();
+        return clearDev.mountpointUrl();
+    }
+
+    QString mpt = info.value("MountPoint").toString();
+    if (mpt.isEmpty())
         return QUrl("computer:///");
-    return QUrl::fromLocalFile(device->mountPoint());
+    return QUrl::fromLocalFile(mpt);
 }
 
 QUrl DAttachedBlockDevice::accessPointUrl()
 {
-    if (!device)
-        return QUrl("computer:///");
-
     QUrl url { mountpointUrl() };
-    bool optical { device->optical() };
+    bool optical { info.value("OpticalDrive").toBool() };
 
     if (optical) {
-        QString devDesc { device->device() };
+        QString devDesc { info.value("Device").toString() };
         url = makeBurnFileUrl(devDesc);
     }
 
@@ -178,57 +175,13 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 
 void DAttachedBlockDevice::query()
 {
-    device = DeviceWatcherLite::instance()->createBlockDevicePtr(deviceId);
-}
-
-QPair<quint64, quint64> DAttachedBlockDevice::loadOpticalUsage()
-{
-    if (!device)
-        return { 0, 0 };
-
-    const QString kTmpPath = "/tmp/.config/deepin/dde-file-manager/dde-file-manager.dp";
-    QFile f(kTmpPath);
-    if (!f.open(QIODevice::ReadOnly))
-        return { 0, 0 };
-    auto jsonArray = f.readAll();
-    f.close();
-
-    QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(jsonArray, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qDebug() << "[disk-mount]: cannot parse optical usage file" << err.errorString();
-        return { 0, 0 };
-    }
-
-    QString devDesc = device->device().mid(5);   // /dev/sr0 ==> sr0
-    QJsonObject rootObj = doc.object();
-    if (!rootObj.contains("BurnAttribute"))
-        return { 0, 0 };
-
-    auto burnAttrObj = rootObj.value("BurnAttribute").toObject();
-    if (burnAttrObj.isEmpty())
-        return { 0, 0 };
-
-    auto devObj = burnAttrObj.value(devDesc).toObject();
-    if (devObj.isEmpty())
-        return { 0, 0 };
-
-    quint64 total = devObj.value("BurnTotalSize").toVariant().toULongLong();
-    quint64 used = devObj.value("BurnUsedSize").toVariant().toULongLong();
-    return { total - used, total };
-}
-
-QPair<quint64, quint64> DAttachedBlockDevice::loadEncryptedUsage()
-{
-    if (!device || !device->isEncrypted())
-        return { 0, 0 };
-
-    QString clearDevId = device->getProperty(dfmmount::Property::kEncryptedCleartextDevice).toString();
-    auto clearDev = DeviceWatcherLite::instance()->createBlockDevicePtr(clearDevId);
-    if (!clearDev)
-        return { 0, 0 };
-
-    qint64 bytesTotal { clearDev->sizeTotal() };
-    qint64 bytesFree { clearDev->sizeFree() };
-    return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
+    QTime t;
+    t.start();
+    QDBusInterface iface("org.deepin.filemanager.server",
+                         "/org/deepin/filemanager/server/DeviceManager",
+                         "org.deepin.filemanager.server.DeviceManager", QDBusConnection::sessionBus());
+    iface.setTimeout(3);
+    QDBusReply<QVariantMap> ret = iface.callWithArgumentList(QDBus::CallMode::AutoDetect, "QueryBlockDeviceInfo", QList<QVariant> { deviceId, false });
+    qInfo() << "query info of costs" << deviceId << t.elapsed();
+    info = ret.value();
 }

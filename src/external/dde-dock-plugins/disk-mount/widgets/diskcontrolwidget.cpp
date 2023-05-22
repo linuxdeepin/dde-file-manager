@@ -80,7 +80,10 @@ void DiskControlWidget::initConnection()
     connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::blockFileSystemRemoved, this, &DiskControlWidget::onDiskListChanged);
     connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::hintIgnoreChanged, this, &DiskControlWidget::onDiskListChanged);
 
-    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::protocolDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
+    // the moment the protocolDeviceMounted signal emitted, query info of device may get an empty object
+    // so delay to query info of protocol device.
+    auto delayChange = [this] { QTimer::singleShot(2000, this, [this] { onDiskListChanged(); }); };
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::protocolDeviceMounted, this, delayChange);
     connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::protocolDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
 
     connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::operationFailed, this, &DiskControlWidget::onDeviceBusy);
