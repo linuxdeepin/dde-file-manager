@@ -42,7 +42,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void moveYCenter();
     void removeTask();
-    void adjustSize();
+    void adjustSize(int hight = 0);
 
 protected:
     void closeEvent(QCloseEvent *event) override;

@@ -154,12 +154,14 @@ void TaskDialog::setTitle(int taskCount)
 /*!
  * \brief TaskDialog::adjustSize 调整整个进度显示的高度，当每个item中的widget发生变化时
  */
-void TaskDialog::adjustSize()
+void TaskDialog::adjustSize(int hight)
 {
+    auto widgit = sender();
     int listHeight = 2;
     for (int i = 0; i < taskListWidget->count(); i++) {
         QListWidgetItem *item = taskListWidget->item(i);
-        int h = taskListWidget->itemWidget(item)->height();
+        auto wg = taskListWidget->itemWidget(item);
+        int h = widgit == wg && hight > 0 ? hight : wg->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
         listHeight += h;
     }

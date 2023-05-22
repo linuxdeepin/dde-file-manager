@@ -165,6 +165,7 @@ void TaskWidget::onShowErrors(const JobInfoPointer jobInfo)
         widConfict = createConflictWidget();
         rVLayout->addWidget(widConfict);
     }
+    adjustSize();
 
     if (widConfict)
         widConfict->hide();
@@ -191,6 +192,8 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         widConfict = createConflictWidget();
         rVLayout->addWidget(widConfict);
     }
+
+    adjustSize();
     QString error;
     const FileInfoPointer &originInfo = InfoFactory::create<FileInfo>(source, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
     if (!originInfo) {
@@ -321,7 +324,7 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
     auto newhight = height();
 
     if (oldheight != newhight)
-        QTimer::singleShot(100, [this] { emit heightChanged(); });
+        emit heightChanged(newhight);
 }
 /*!
  * \brief TaskWidget::showTaskProccess 显示当前任务进度
@@ -675,6 +678,7 @@ void TaskWidget::showBtnByAction(const AbstractJobHandler::SupportActions &actio
  */
 void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
 {
+    Q_UNUSED(showConflict);
     if (!widConfict) {
         return;
     }
@@ -685,7 +689,7 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
     }
 
     adjustSize();
-    QTimer::singleShot(100, [this] { emit heightChanged(); });
+    emit heightChanged(this->height());
 }
 
 void TaskWidget::onMouseHover(const bool hover)
