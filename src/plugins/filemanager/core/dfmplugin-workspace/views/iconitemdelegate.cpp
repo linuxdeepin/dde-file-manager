@@ -135,9 +135,10 @@ bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
 
         const QList<QRect> &geometries = paintGeomertys(option, index);
 
-        if (tooltip.isEmpty() || index == view->rootIndex() || geometries.count() < 3) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
+        if (tooltip.isEmpty() || index == view->rootIndex() || geometries.count() < 3
+                || option.fontMetrics.horizontalAdvance(tooltip) <= geometries[1].width() * 2) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
             ItemDelegateHelper::hideTooltipImmediately();
-        } else if (option.fontMetrics.horizontalAdvance(tooltip) > geometries[1].width() * 2) {
+        } else {
             int tooltipsize = tooltip.size();
             const int nlong = 32;
             int lines = tooltipsize / nlong + 1;
