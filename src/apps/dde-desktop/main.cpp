@@ -178,7 +178,6 @@ int main(int argc, char *argv[])
     QString mainTime = QDateTime::currentDateTime().toString();
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
-    a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
     a.setApplicationVersion(BUILD_VERSION);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setProductIcon(QIcon::fromTheme("deepin-toggle-desktop"));
@@ -189,6 +188,7 @@ int main(int argc, char *argv[])
         a.setApplicationName("dde-file-manager");
         a.loadTranslator();
         a.setApplicationName(appName);
+        a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
         a.setQuitOnLastWindowClosed(false);
     }
 
