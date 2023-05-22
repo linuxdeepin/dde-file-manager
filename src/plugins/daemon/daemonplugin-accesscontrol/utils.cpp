@@ -51,16 +51,11 @@ int Utils::accessMode(const QString &mps)
     return kPolicyDisable;
 }
 
-void Utils::addWriteMode(const QString &mountPoint)
+int Utils::setFileMode(const QString &mountPoint, uint mode)
 {
-    if (!QFileInfo(mountPoint).isDir())
-        return;
-
     QByteArray bytes { mountPoint.toLocal8Bit() };
-    qInfo() << "chmod ==>" << bytes;
-    struct stat fileStat;
-    stat(bytes.data(), &fileStat);
-    chmod(bytes.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH));
+    qInfo() << "chmod ==>" << bytes << "to" << mode;
+    return chmod(bytes.data(), mode);
 }
 
 bool Utils::isValidDevPolicy(const QVariantMap &policy, const QString &realInvoker)
