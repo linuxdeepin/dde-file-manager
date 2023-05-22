@@ -224,6 +224,9 @@ QStringList ComputerUtils::allValidBlockUUIDs()
     std::for_each(allBlocks.cbegin(), allBlocks.cend(), [&](const QString &devId) {
         const auto &&data = DevProxyMng->queryBlockInfo(devId);
         const auto &&uuid = data.value(GlobalServerDefines::DeviceProperty::kUUID).toString();
+        // optical item not hidden by dconfig, its uuid might be empty.
+        if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
+            return;
         if (!uuid.isEmpty())
             uuids << uuid;
     });
