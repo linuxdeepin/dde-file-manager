@@ -143,6 +143,8 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
             errMsg = tr("Wrong password");
         else if (err.code == DeviceError::kUserErrorUserCancelled)
             errMsg.clear();
+        else if (err.code == DeviceError::kDaemonErrorCannotMkdirMountPoint)
+            errMsg = tr("Cannot create the mountpoint: the file name is too long");
         else if (static_cast<int>(err.code) == EACCES)
             errMsg = tr("Permission denied");
         else if (static_cast<int>(err.code) == ENOENT)
