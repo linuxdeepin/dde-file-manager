@@ -38,7 +38,6 @@ public:
 
     static bool urlEquals(const QUrl &url1, const QUrl &url2);
     static bool urlsTransform(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls);
-    static bool originalUrls(const QList<QUrl> &srcUrls, QList<QUrl> *targetUrls);
 
     static QString getCurrentUser();
 

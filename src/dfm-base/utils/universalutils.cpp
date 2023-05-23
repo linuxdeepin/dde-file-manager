@@ -392,34 +392,17 @@ bool UniversalUtils::urlsTransform(const QList<QUrl> &sourceUrls, QList<QUrl> *t
 {
     Q_ASSERT(targetUrls);
     bool ret { false };
-
-    for (const auto &url : sourceUrls) {
-        auto info { InfoFactory::create<FileInfo>(url) };
-        if (info && info->canAttributes(FileInfo::FileCanType::kCanRedirectionFileUrl)) {
-            ret = true;
-            targetUrls->append(info->urlOf(UrlInfoType::kRedirectedFileUrl));
-        } else {
-            targetUrls->append(url);
-        }
-    }
-
-    return ret;
-}
-
-bool UniversalUtils::originalUrls(const QList<QUrl> &srcUrls, QList<QUrl> *targetUrls)
-{
-    bool ret { false };
-    if (srcUrls.isEmpty())
+    if (sourceUrls.isEmpty())
         return ret;
 
-    const auto &srcUrl = srcUrls.first();
+    const auto &srcUrl = sourceUrls.first();
     if (srcUrl.scheme() == Global::Scheme::kFile)
         return ret;
 
     UrlInfoType urlType = (srcUrl.scheme() == Global::Scheme::kTrash)
             ? UrlInfoType::kRedirectedFileUrl
             : UrlInfoType::kOriginalUrl;
-    for (const auto &url : srcUrls) {
+    for (const auto &url : sourceUrls) {
         auto info { InfoFactory::create<FileInfo>(url) };
         if (info) {
             ret = true;
