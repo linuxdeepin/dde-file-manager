@@ -290,7 +290,7 @@ JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId,
     QList<QUrl> sourcesTrans = sources;
 
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform(sourcesTrans, &urls);
+    bool ok = UniversalUtils::originalUrls(sourcesTrans, &urls);
     if (ok && !urls.isEmpty())
         sourcesTrans = urls;
 
@@ -325,7 +325,7 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
 
     QList<QUrl> sourcesTrans = sources;
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform(sourcesTrans, &urls);
+    bool ok = UniversalUtils::originalUrls(sourcesTrans, &urls);
     if (ok && !urls.isEmpty())
         sourcesTrans = urls;
 
