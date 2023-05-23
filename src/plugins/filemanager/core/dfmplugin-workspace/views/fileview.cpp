@@ -93,9 +93,17 @@ void FileView::setViewMode(Global::ViewMode mode)
     if (itemDelegate())
         itemDelegate()->hideAllIIndexWidget();
 
-    setItemDelegate(d->delegates[static_cast<int>(mode)]);
+    int modeValue = static_cast<int>(mode);
+    if (d->delegates.keys().contains(modeValue)) {
+        d->currentViewMode = mode;
+    } else {
+        qWarning() << QString("The view mode %1 is not support in this dir! This view will set default mode.").arg(modeValue);
+        d->currentViewMode = Global::ViewMode::kIconMode;
+    }
 
-    switch (mode) {
+    setItemDelegate(d->delegates[static_cast<int>(d->currentViewMode)]);
+
+    switch (d->currentViewMode) {
     case Global::ViewMode::kIconMode:
         setUniformItemSizes(false);
         setResizeMode(Adjust);
@@ -130,8 +138,6 @@ void FileView::setViewMode(Global::ViewMode mode)
     default:
         break;
     }
-
-    d->currentViewMode = mode;
 }
 
 Global::ViewMode FileView::currentViewMode()
