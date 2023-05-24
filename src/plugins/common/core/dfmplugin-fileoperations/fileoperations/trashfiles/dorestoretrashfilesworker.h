@@ -46,6 +46,7 @@ private:
 
 private:
     QAtomicInteger<qint64> completeFilesCount { 0 };   // move to trash success file count
+    QList<QUrl> handleSourceFiles;   // List of all handled files
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

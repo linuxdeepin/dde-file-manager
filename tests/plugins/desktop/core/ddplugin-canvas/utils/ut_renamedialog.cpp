@@ -10,7 +10,7 @@
 
 DDP_CANVAS_USE_NAMESPACE
 
-TEST(RenameDialog, constuct)
+TEST(RenameDialog, construct)
 {
     RenameDialog rd(998);
     ASSERT_NE(rd.d->titleLabel, nullptr);

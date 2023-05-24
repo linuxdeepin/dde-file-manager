@@ -34,32 +34,6 @@ public:
     stub_ext::StubExt stub;
 };
 
-TEST_F(CollectionWidgetTest, setCanvasManagerShell)
-{
-    QString testUuid("tsetUuid");
-    CollectionWidget widget(testUuid, nullptr);
-
-    CanvasManagerShell *expectSh = nullptr;
-    bool isCall = false;
-    stub.set_lamda(ADDR(CollectionView, setCanvasManagerShell), [&](CollectionView *obj, CanvasManagerShell *sh) {
-        Q_UNUSED(obj)
-
-        if (sh == expectSh)
-            isCall = true;
-    });
-
-    widget.setCanvasManagerShell(expectSh);
-    EXPECT_TRUE(isCall);
-
-    isCall = false;
-    expectSh = new CanvasManagerShell;
-    widget.setCanvasManagerShell(expectSh);
-    EXPECT_TRUE(isCall);
-
-    expectSh->deleteLater();
-    expectSh = nullptr;
-}
-
 TEST_F(CollectionWidgetTest, setCollectionSize)
 {
 

@@ -40,7 +40,7 @@ class TaskWidget : public QWidget
 
 Q_SIGNALS:
     void buttonClicked(AbstractJobHandler::SupportActions actions);
-    void heightChanged();
+    void heightChanged(int height);
 public Q_SLOTS:
     void parentClose();
 private Q_SLOTS:

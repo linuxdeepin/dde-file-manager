@@ -5,6 +5,7 @@
 #include "collectionholder_p.h"
 #include "view/collectionframe.h"
 #include "view/collectionwidget.h"
+#include "view/collectionview.h"
 #include "models/collectionmodel.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
@@ -53,22 +54,22 @@ CollectionHolder::~CollectionHolder()
 
 void CollectionHolder::setCanvasModelShell(CanvasModelShell *sh)
 {
-    d->widget->setCanvasModelShell(sh);
+    d->widget->view()->setCanvasModelShell(sh);
 }
 
 void CollectionHolder::setCanvasViewShell(CanvasViewShell *sh)
 {
-    d->widget->setCanvasViewShell(sh);
+    d->widget->view()->setCanvasViewShell(sh);
 }
 
 void CollectionHolder::setCanvasGridShell(CanvasGridShell *sh)
 {
-    d->widget->setCanvasGridShell(sh);
+    d->widget->view()->setCanvasGridShell(sh);
 }
 
 void CollectionHolder::setCanvasManagerShell(CanvasManagerShell *sh)
 {
-    d->widget->setCanvasManagerShell(sh);
+    d->widget->view()->setCanvasManagerShell(sh);
 }
 
 QString CollectionHolder::id() const
@@ -104,7 +105,7 @@ void CollectionHolder::createFrame(Surface *surface, CollectionModel *model)
 
     d->model = model;
     d->widget = new CollectionWidget(d->id, d->provider, d->frame);
-    d->widget->setModel(d->model);
+    d->widget->view()->setModel(d->model);
     d->widget->setGeometry(QRect(QPoint(0, 0), d->frame->size()));
 
     d->frame->setWidget(d->widget);
@@ -137,12 +138,12 @@ void CollectionHolder::show()
 
 void CollectionHolder::openEditor(const QUrl &url)
 {
-    d->widget->openEditor(url);
+    d->widget->view()->openEditor(url);
 }
 
 void CollectionHolder::selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags)
 {
-    d->widget->selectUrl(url, flags);
+    d->widget->view()->selectUrl(url, flags);
 }
 
 void CollectionHolder::setMovable(const bool movable)
@@ -277,12 +278,12 @@ bool CollectionHolder::renamable() const
 
 void CollectionHolder::setFileShiftable(bool enable)
 {
-    d->widget->setFileShiftable(enable);
+    d->widget->view()->setFileShiftable(enable);
 }
 
 bool CollectionHolder::fileShiftable() const
 {
-    return d->widget->fileShiftable();
+    return d->widget->view()->fileShiftable();
 }
 
 void CollectionHolder::setStyle(const CollectionStyle &style)

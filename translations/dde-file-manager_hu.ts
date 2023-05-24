@@ -2,12 +2,12 @@
 <context>
     <name>AccessControlDBus</name>
     <message>
-        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="39"/>
+        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="40"/>
         <source>Invalid args</source>
         <translation>Érvénytelen argumentum</translation>
     </message>
     <message>
-        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="40"/>
+        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="41"/>
         <source>Invalid invoker</source>
         <translation>Érvénytelen hívó</translation>
     </message>
@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="238"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="259"/>
         <source>File Manager</source>
         <translation>Fájlkezelő</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="242"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="263"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>A Fájlkezelő egy hatékony és könnyen használható fájlkezelő eszköz, amely kereséssel, másolással, kukával, tömörítéssel / kicsomagolással, fájl tulajdonságokkal és egyéb hasznos funkciókkal rendelkezik.</translation>
     </message>
@@ -2383,10 +2383,10 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="56"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="508"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="561"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="510"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="563"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="584"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="54"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2454,245 +2454,250 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="147"/>
+        <source>Cannot create the mountpoint: the file name is too long</source>
+        <translation>Nem lehet létrehozni a csatolási pontot: a fájlnév túl hosszú</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="149"/>
         <source>Permission denied</source>
         <translation>A hozzáférés megtagadva</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="149"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="151"/>
         <source>No such file or directory</source>
         <translation>Nincs ilyen fájl, vagy mappa</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="151"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="153"/>
         <source>Error occured while mounting device</source>
         <translation>Hiba történt az eszköz felcsatolása közben</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="154"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="156"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation>Az eszközt letiltották, és nincs engedélye a hozzáféréshez. Kérjük állítsa be a hozzáférési szabályokat a Biztonsági Központban, vagy forduljon a rendszergazdához.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
         <source>The device is busy, cannot remove now</source>
         <translation>Az eszköz használatban van, jelenleg nem távolítható el</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="181"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="183"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Nincs engedélye a fájl / mappa kezelésére!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="198"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="200"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Sajnáljuk, nincs engedélye a következő %1 fájl / mappa kezelésére!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="227"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="237"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="498"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="229"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="239"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="500"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="620"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="234"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="236"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
         <source>Operation failed!</source>
         <translation>Hibás művelet!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="235"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="237"/>
         <source>Target folder is inside the source folder!</source>
         <translation>A cél mappa a forrás mappán belül található</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="290"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="292"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>A jelszó a titkosított adatok eléréséhez szükséges a(z) %1 helyen.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="298"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="417"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="477"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="581"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="605"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="300"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="370"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="419"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="479"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="583"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="607"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Mégsem</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="299"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="301"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formázás</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="300"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="302"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Az eszköz eléréséhez először meg kell formáznia a lemezt. Biztosan formázni szeretné most?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="314"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="316"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Futtatja a %1 -et, vagy megjeleníti annak tartalmát?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="315"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="317"/>
         <source>It is an executable text file.</source>
         <translation>Ez egy futtatható szöveges fájl.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="319"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="606"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="321"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="351"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="608"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Futtatás</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="348"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="322"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="350"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Futtatás terminálban</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="321"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="323"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Megjelenítés</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="344"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="346"/>
         <source>Do you want to run %1?</source>
         <translation>Futtatni szeretné a %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
         <source>It is an executable file.</source>
         <translation>Ez egy futtatható fájl.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="364"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation>A kijelölt %1 elem nem helyezhető át a kukába. Szeretné véglegesen törölni őket?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="365"/>
         <source>Permanently delete %1 items?</source>
         <translation>Véglegesen törli a %1 elemet?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="393"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="395"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation>A &quot;%1&quot; elem nem helyezhető át a kukába. Szeretné véglegesen törölni?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="369"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="418"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="478"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="371"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="420"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="480"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Törlés</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="396"/>
         <source>Permanently delete %1?</source>
         <translation>Véglegesen törli a %1-et?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="400"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="437"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="402"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="439"/>
         <source>This action cannot be undone</source>
         <translation>Ez a művelet nem vonható vissza</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Biztosan ki akarja üríteni a %1 elemet?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="414"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="416"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Biztosan ki akarja üríteni a %1 elemet?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="423"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="425"/>
         <source>Empty</source>
         <translation>Üres</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="461"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="463"/>
         <source>Do you want to delete %1?</source>
         <translation>Biztosan törölni szeretné a %1 fájlt?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="462"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="464"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Biztosan törölni szeretné a kijelölt %1 elemet?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Nem sikerült visszaállítani a %1 fájlt, a célmappa csak olvasható</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="497"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Nem sikerült visszaállítani a %1 fájlokat, a célmappa csak olvasható</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="506"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="508"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>A &quot;%1&quot; már használatban van, kérjük válasszon egy másik nevet.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
         <source>Device or resource busy</source>
         <translation>Az eszköz vagy az erőforrás foglalt</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="533"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="535"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Ez a fájl el lesz rejtve, ha a fájl neve ponttal &quot;.&quot;  karakterrel kezdődik. El akarja rejteni?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="534"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
         <source>Hide</source>
         <translation>Elrejtés</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="535"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
         <source>Cancel</source>
         <translation>Mégsem</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="558"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="560"/>
         <source>Unable to access %1</source>
         <translation>Nem sikerült elérni a %1 fájlt</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>A %1 -re mutató parancsikon meg lett változtatva vagy át lett helyezve</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="581"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Biztosan törölni szeretné ezt a parancsikont?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="604"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="606"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Ez a fájl nem futtatható, hozzá akarja adni a végrehajtási engedélyt és utána futtni?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="616"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>A kiválasztott fájlok rendszerfájlokat/mappákat tartalmaznak és nem lehet őket törölni</translation>
     </message>
@@ -3499,8 +3504,8 @@
 <context>
     <name>dfmplugin_computer::Computer</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="39"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="113"/>
         <source>Computer</source>
         <translation>Számítógép</translation>
     </message>
@@ -3508,42 +3513,42 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="252"/>
         <source>Unlock device failed</source>
         <translation>Az eszköz feloldása sikertelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="252"/>
         <source>Wrong password</source>
         <translation>Helytelen jelszó</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="457"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="463"/>
         <source>Rename failed</source>
         <translation>Az átnevezés sikertelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="457"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="463"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>Az eszköz használatban van, jelenleg nem nevezhető át</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="485"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="491"/>
         <source>Format failed</source>
         <translation>A formázás sikertelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="485"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="491"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>Az eszköz használatban van, jelenleg nem formázható</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="626"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="632"/>
         <source>Mount error</source>
         <translation>Csatolási hiba</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="626"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="632"/>
         <source>Cannot access %1</source>
         <translation>Nem lehet elérni a %1 fájlt</translation>
     </message>
@@ -3551,20 +3556,40 @@
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="38"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="45"/>
         <source>Computer</source>
         <translation>Számítógép</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="219"/>
+        <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
+        <translation>A %1 csak olvasható. Szeretné engedélyezni az olvasási és írási jogosultságokat? </translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="220"/>
+        <source>Once enabled, read/write permission will be granted permanently</source>
+        <translation>Ha egyszer engedélyezi az olvasási/írási jogosultságokat, akkor azokat  véglegesen megkapja</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="222"/>
+        <source>Cancel</source>
+        <translation>Mégsem</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="223"/>
+        <source>Enable Now</source>
+        <translation>Engedélyezés most</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_computer::ComputerItemWatcher</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="323"/>
         <source>My Directories</source>
         <translation>Saját könyvtáram</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="319"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="328"/>
         <source>Disks</source>
         <translation>Lemezek</translation>
     </message>
@@ -3615,7 +3640,7 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="189"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="45"/>
         <source>%1 on %2</source>
         <translation>%1 itt: %2</translation>
@@ -4073,12 +4098,12 @@
         <translation>A mappa létrehozása sikertelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="922"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="923"/>
         <source>Failed to create the file</source>
         <translation>A fájl létrehozása sikertelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="999"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1000"/>
         <source>link file error</source>
         <translation>Link fájl hiba</translation>
     </message>
@@ -4912,47 +4937,56 @@
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="67"/>
         <source>Connect to Server</source>
         <translation>Csatlakozás kiszolgálóhoz</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="113"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="154"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="319"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="119"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
         <source>Clear History</source>
         <translation>Előzmények törlése</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="186"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="441"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Unfavorite</source>
         <translation>Kedvencek visszavonása</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="343"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Mégsem</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="344"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>Csatlakozás</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="385"/>
+        <source>Charset Encoding</source>
+        <translation>Karakterkészlet kódolás</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="389"/>
+        <source>Default</source>
+        <translation>Alapértelmezett</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="461"/>
         <source>My Favorites</source>
         <translation>Kedvenceim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="364"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="441"/>
         <source>No favorites yet</source>
         <translation>Még nincsenek kedvencek</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="448"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Favorite</source>
         <translation>Kedvencek</translation>
     </message>
@@ -5931,22 +5965,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="506"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="504"/>
         <source>Name</source>
         <translation>Név</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="508"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="506"/>
         <source>Time modified</source>
         <translation>Módosítási idő</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="510"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="508"/>
         <source>Size</source>
         <translation>Méret</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="512"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="510"/>
         <source>Type</source>
         <translation>Típus</translation>
     </message>

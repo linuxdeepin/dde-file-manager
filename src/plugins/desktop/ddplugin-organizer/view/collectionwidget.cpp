@@ -73,41 +73,6 @@ CollectionWidget::~CollectionWidget()
 
 }
 
-void CollectionWidget::setCanvasModelShell(CanvasModelShell *sh)
-{
-    d->view->setCanvasModelShell(sh);
-}
-
-void CollectionWidget::setCanvasViewShell(CanvasViewShell *sh)
-{
-    d->view->setCanvasViewShell(sh);
-}
-
-void CollectionWidget::setCanvasGridShell(CanvasGridShell *sh)
-{
-    d->view->setCanvasGridShell(sh);
-}
-
-void CollectionWidget::setCanvasManagerShell(CanvasManagerShell *sh)
-{
-    d->view->setCanvasManagerShell(sh);
-}
-
-void CollectionWidget::setModel(QAbstractItemModel *model)
-{
-    d->view->setModel(model);
-}
-
-void CollectionWidget::setFileShiftable(bool enable)
-{
-    d->view->setFileShiftable(enable);
-}
-
-bool CollectionWidget::fileShiftable() const
-{
-    return d->view->fileShiftable();
-}
-
 void CollectionWidget::setTitleName(const QString &name)
 {
     d->titleBar->setTitleName(name);
@@ -161,16 +126,6 @@ CollectionFrameSize CollectionWidget::collectionSize() const
 CollectionView *CollectionWidget::view() const
 {
     return d->view;
-}
-
-void CollectionWidget::openEditor(const QUrl &url)
-{
-    d->view->openEditor(url);
-}
-
-void CollectionWidget::selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags)
-{
-    d->view->selectUrl(url, flags);
 }
 
 void CollectionWidget::resizeEvent(QResizeEvent *event)

@@ -789,7 +789,7 @@ TEST(CanvasProxyModelPrivate, sourceDataRenamed)
     fm.d->fileMap.insert(in2, info2);
 
     bool up = false;
-    QObject::connect(&model, &FileInfoModel::dataChanged, &model,
+    QObject::connect(&model, &CanvasProxyModel::dataChanged, &model,
                      [&up, &model](const QModelIndex &topLeft, const QModelIndex &bottomRight) {
                          up = true;
                          EXPECT_EQ(topLeft.row(), bottomRight.row());
