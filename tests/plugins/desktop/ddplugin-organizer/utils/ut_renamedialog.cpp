@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 
-DDP_CANVAS_USE_NAMESPACE
+DDP_ORGANIZER_USE_NAMESPACE
 
 TEST(RenameDialog, construct)
 {
@@ -18,6 +18,3 @@ TEST(RenameDialog, construct)
     ASSERT_GT(texts.size(), 2);
     EXPECT_EQ(texts.at(1), QString::number(998));
 }
-
-
-

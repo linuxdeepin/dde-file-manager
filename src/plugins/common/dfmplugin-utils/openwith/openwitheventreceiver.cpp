@@ -9,6 +9,8 @@
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
+#include <QApplication>
+
 using namespace dfmplugin_utils;
 
 void OpenWithEventReceiver::initEventConnect()

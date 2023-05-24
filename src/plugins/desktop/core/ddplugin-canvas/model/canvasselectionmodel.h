@@ -22,7 +22,7 @@ public:
 public slots:
     void clearSelectedCache();
 protected:
-    mutable QModelIndexList selectedCahe;
+    mutable QModelIndexList selectedCache;
 };
 }
 #endif // CANVASSELECTIONMODEL_H

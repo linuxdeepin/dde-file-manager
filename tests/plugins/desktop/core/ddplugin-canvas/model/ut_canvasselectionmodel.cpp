@@ -51,7 +51,7 @@ TEST(CanvasSelectionModel, clearSelectedCache)
 {
     CanvasProxyModel model;
     CanvasSelectionModel sel(&model, nullptr);
-    sel.selectedCahe.append(QModelIndex());
+    sel.selectedCache.append(QModelIndex());
 
     sel.clearSelectedCache();
     EXPECT_TRUE(sel.selectedIndexesCache().isEmpty());

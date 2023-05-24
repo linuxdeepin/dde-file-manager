@@ -703,11 +703,6 @@ void CanvasView::initUI()
     viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame);
 
-    // using NoSelection to turn off selection of QAbstractItemView
-    // and CanvasView will to do selection by itself.
-    setSelectionMode(QAbstractItemView::NoSelection);
-    setSelectionBehavior(QAbstractItemView::SelectItems);
-
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
     setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
@@ -754,8 +749,13 @@ const QSize CanvasViewPrivate::dockReserveSize = QSize(80, 80);
 CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     : QObject(qq), q(qq)
 {
+    // using NoSelection to turn off selection of QAbstractItemView
+    // and CanvasView will to do selection by its selector.
+    q->setSelectionMode(QAbstractItemView::NoSelection);
+    q->setSelectionBehavior(QAbstractItemView::SelectItems);
     clickSelector = new ClickSelector(q);
     keySelector = new KeySelector(q);
+
     dragDropOper = new DragDropOper(q);
     dodgeOper = new DodgeOper(q);
     shortcutOper = new ShortcutOper(q);
@@ -826,6 +826,7 @@ void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &ge
     // margins around the view，canvas gemotry is view gemotry minus viewMargins.
     viewMargins = geometryMargins + calcMargins(QSize(gridWidth * columnCount, gridHeight * rowCount), canvasSize);
 
+    qInfo() << "grid size change from" << QSize(canvasInfo.columnCount, canvasInfo.rowCount) << "to" << QSize(columnCount, rowCount);
     canvasInfo = CanvasInfo(columnCount, rowCount, gridWidth, gridHeight);
 }
 
