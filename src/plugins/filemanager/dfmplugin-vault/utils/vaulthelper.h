@@ -41,7 +41,8 @@ public:
 
     QUrl pathToVaultVirtualUrl(const QString &path);
 
-    VaultState state(QString lockBaseDir = "");
+    VaultState state(const QString &baseDir = "") const;
+    bool updateState(VaultState curState);
 
     /*!
      * \brief getVaultVersion   获取当前保险箱版本是否是1050及以上版本
@@ -82,7 +83,7 @@ public slots:
 
     void createVault(QString &password);
 
-    int unlockVault(const QString &password);
+    bool unlockVault(const QString &password);
 
     void lockVault(bool isForced);
 
@@ -117,7 +118,6 @@ private:
 
 private:
     QList<quint64> winIDs {};
-
     quint64 currentWinID { 0 };
 };
 
