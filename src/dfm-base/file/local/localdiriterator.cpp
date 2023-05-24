@@ -176,13 +176,8 @@ QUrl LocalDirIterator::url() const
 void LocalDirIterator::cacheBlockIOAttribute()
 {
     const QUrl &rootUrl = this->url();
-    // Only the files in the local directory can go back to read the.
-    // hide file to determine whether it is hidden. Other directories can read
-    if (FileUtils::isLocalDevice(rootUrl)) {
-        const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
-        d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
-    }
-
+    const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
+    d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
     d->isLocalDevice = FileUtils::isLocalDevice(rootUrl);
     d->isCdRomDevice = FileUtils::isCdRomDevice(rootUrl);
 }
