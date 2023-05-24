@@ -105,5 +105,7 @@ void PolicyManager::slotVaultPolicy()
             VaultVisibleManager::instance()->addComputer();
         }
         break;
+    default:
+        break;
     }
 }

@@ -47,6 +47,7 @@ QString VaultFileInfoPrivate::fileDisplayPath() const
 
 QString VaultFileInfoPrivate::absolutePath(const QString &path) const
 {
+
     QUrl virtualUrl = VaultHelper::instance()->pathToVaultVirtualUrl(path);
     return virtualUrl.path();
 }
@@ -83,8 +84,8 @@ bool VaultFileInfoPrivate::isRoot() const
 VaultFileInfo::VaultFileInfo(const QUrl &url)
     : ProxyFileInfo(url), d(new VaultFileInfoPrivate(this))
 {
-    QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
-    setProxy(InfoFactory::create<FileInfo>(tempUrl,  Global::CreateFileInfoType::kCreateFileInfoSyncAndCache));
+    localUrl = VaultHelper::vaultToLocalUrl(url);
+    setProxy(InfoFactory::create<FileInfo>(localUrl,  Global::CreateFileInfoType::kCreateFileInfoSyncAndCache));
 }
 
 VaultFileInfo::~VaultFileInfo()
@@ -129,11 +130,9 @@ QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kUrl:
-        if (!proxy)
-            return QUrl();
-        return d->vaultUrl(proxy->urlOf(type));
+        return url;
     case FileUrlInfoType::kRedirectedFileUrl:
-        return VaultHelper::vaultToLocalUrl(url);
+        return localUrl;
     default:
         return ProxyFileInfo::urlOf(type);
     }
@@ -184,7 +183,6 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
         if (VaultHelper::instance()->state(PathManager::vaultLockPath()) != VaultState::kUnlocked) {
             return false;
         }
-
         return !proxy || proxy->canAttributes(type);
     case FileCanType::kCanRedirectionFileUrl:
         return proxy;
@@ -255,7 +253,6 @@ QVariant VaultFileInfo::extendAttributes(const ExtInfoType type) const
 
 QString VaultFileInfo::nameOf(const NameInfoType type) const
 {
-
     switch (type) {
     case NameInfoType::kFileCopyName:
         return displayOf(DisPlayInfoType::kFileDisplayName);

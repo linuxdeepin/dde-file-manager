@@ -41,6 +41,7 @@ private:
     QModelIndex lastPressedIndex;
     QModelIndex currentPressedIndex;
     QItemSelection currentSelection;
+    QItemSelection lastSelection;
 };
 
 }

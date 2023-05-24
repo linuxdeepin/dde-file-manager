@@ -165,23 +165,8 @@ void VaultRemovePages::onButtonClicked(int index)
     case 0:   //点击取消按钮
         close();
         break;
-    case 1:
-        //! 1050及以上版本无密钥验证
-        if (!VaultHelper::instance()->getVaultVersion()) {
-            {   // 切换验证方式
-                if (stackedWidget->currentIndex() == 0) {
-                    getButton(1)->setText(tr("Use Password"));
-                    stackedWidget->setCurrentIndex(1);
-                } else {
-                    getButton(1)->setText(tr("Use Key"));
-                    stackedWidget->setCurrentIndex(0);
-                }
-            }
-            break;
-        }
-    case 2: {   // 删除
+    case 1: {   // 删除
         if (stackedWidget->currentIndex() == 0) {
-
             VaultConfig config;
             const QString &encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
             if (encryptionMethod != QString(kConfigValueMethodTransparent)) {
@@ -293,12 +278,11 @@ void VaultRemovePages::onVualtRemoveFinish(bool result)
     using namespace dfmplugin_utils;
 
     if (result) {
+        VaultHelper::instance()->updateState(VaultState::kNotExisted);
         // report log
         QVariantMap data;
         data.insert("mode", VaultReportData::kDeleted);
-
         dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
-
         setInfo(tr("Deleted successfully"));
     } else {
         setInfo(tr("Failed to delete"));

@@ -89,14 +89,41 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
         view->selectionModel()->select(lastSelectedIndex, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
         return;
     }
+
     QItemSelection newSelection;
     caculateSelection(rect, &newSelection);
 
     if (view->isIconViewMode()) {
-        view->clearSelection();
-        for (const QModelIndex &index : newSelection.indexes()) {
-            view->selectionModel()->select(index, QItemSelectionModel::Select);
+        QModelIndexList lastIndexes = lastSelection.indexes();
+        QModelIndexList newIndexes = newSelection.indexes();
+        int lastCount = lastIndexes.count();
+        int newCount = newIndexes.count();
+        if (newCount > lastCount) {
+            QModelIndexList increaseIndexs;
+            for (int i = 0; i < newCount; ++i) {
+                if (!lastIndexes.contains(newIndexes.at(i))) {
+                    increaseIndexs.append(newIndexes.at(i));
+                }
+            }
+            for (const QModelIndex &index : increaseIndexs) {
+                view->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::NoUpdate);
+            }
+        } else if (newCount < lastCount) {
+            QModelIndexList reduceIndexs;
+            for (int i = 0; i < lastCount; ++i) {
+                if (!newIndexes.contains(lastIndexes.at(i))) {
+                    reduceIndexs.append(lastIndexes.at(i));
+                }
+            }
+            for (const QModelIndex &index : reduceIndexs) {
+                view->selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::NoUpdate);
+            }
+        } else {
+            if (newCount == 1) {    // click selick one item
+                view->selectionModel()->select(newSelection, flags);
+            }
         }
+        lastSelection = newSelection;
     } else {
         view->selectionModel()->select(newSelection, flags);
     }

@@ -8,6 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <QObject>
+#include <QDBusMessage>
 
 DPVAULT_BEGIN_NAMESPACE
 
@@ -21,10 +22,11 @@ public:
     static FileEncryptHandle *instance();
 
     void createVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type = EncryptType::AES_256_GCM, int blockSize = 32768);
-    int unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
+    bool unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
     void lockVault(QString unlockFileDir, bool isForced);
-    void createDirIfNotExist(QString path);
-    VaultState state(const QString &encryptBaseDir, const QString &decryptFileDir) const;
+    bool createDirIfNotExist(QString path);
+    VaultState state(const QString &encryptBaseDir) const;
+    bool updateState(VaultState curState);
 
     EncryptType encryptAlgoTypeOfGroupPolicy();
 signals:
@@ -37,10 +39,12 @@ signals:
 public slots:
     void slotReadError();
     void slotReadOutput();
+    void responseLockScreenDBus(const QDBusMessage &msg);
 
 private:
     explicit FileEncryptHandle(QObject *parent = nullptr);
     virtual ~FileEncryptHandle() override;
+    void connectLockScreenToUpdateVaultState();
 
 private:
     FileEncryptHandlerPrivate *d = nullptr;
