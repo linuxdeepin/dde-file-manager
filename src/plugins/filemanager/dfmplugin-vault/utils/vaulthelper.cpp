@@ -144,33 +144,14 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
     }
 }
 
-VaultState VaultHelper::state(QString lockBaseDir)
+VaultState VaultHelper::state(const QString &baseDir) const
 {
-    QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
-    if (cryfsBinary.isEmpty()) {
-        // 记录保险箱状态
-        return VaultState::kNotAvailable;
-    }
+    return FileEncryptHandle::instance()->state(baseDir);
+}
 
-    if (lockBaseDir.isEmpty()) {
-        lockBaseDir = PathManager::vaultLockPath() + "cryfs.config";
-    } else {
-        if (lockBaseDir.endsWith("/"))
-            lockBaseDir += "cryfs.config";
-        else
-            lockBaseDir += "/cryfs.config";
-    }
-
-    if (QFile::exists(lockBaseDir)) {
-        QUrl baseDirUrl = QUrl::fromLocalFile(PathManager::vaultUnlockPath());
-        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(baseDirUrl);
-        if (fsType == "fuse.cryfs") {
-            return VaultState::kUnlocked;
-        }
-        return VaultState::kEncrypted;
-    } else {
-        return VaultState::kNotExisted;
-    }
+bool VaultHelper::updateState(VaultState curState)
+{
+    return FileEncryptHandle::instance()->updateState(curState);
 }
 
 void VaultHelper::defaultCdAction(const quint64 windowId, const QUrl &url)
@@ -281,6 +262,7 @@ DMenu *VaultHelper::createMenu()
     case VaultState::kUnderProcess:
     case VaultState::kBroken:
     case VaultState::kNotAvailable:
+    case VaultState::kUnknow:
         break;
     }
 
@@ -312,11 +294,9 @@ QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
         return QUrl();
     if (url.path().contains(instance()->sourceRootUrl().path())) {
         QUrl localUrl = QUrl::fromLocalFile(url.path());
-        QFileInfo info(localUrl.path());
         return localUrl;
     } else {
         QUrl localUrl = QUrl::fromLocalFile(instance()->sourceRootUrl().path() + url.path());
-        QFileInfo info(localUrl.path());
         return localUrl;
     }
 }
@@ -332,7 +312,7 @@ void VaultHelper::createVault(QString &password)
     FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password, type);
 }
 
-int VaultHelper::unlockVault(const QString &password)
+bool VaultHelper::unlockVault(const QString &password)
 {
     static bool flg = true;
     if (flg) {
@@ -367,8 +347,7 @@ void VaultHelper::unlockVaultDialog()
     if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
         const QString &password = OperatorCenter::getInstance()->passwordFromKeyring();
         if (!password.isEmpty()) {
-            int result = unlockVault(password);
-            if (result == static_cast<int>(ErrorCode::kSuccess)) {
+            if (unlockVault(password)) {
                 VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
                                                          VaultHelper::instance()->rootUrl());
                 VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
