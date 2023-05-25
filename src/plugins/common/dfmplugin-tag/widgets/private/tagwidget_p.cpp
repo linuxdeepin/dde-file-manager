@@ -17,6 +17,8 @@
 
 #include <QVBoxLayout>
 
+static constexpr int kTagWidgetHeight { 150 };
+
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE
 
@@ -70,6 +72,7 @@ void TagWidgetPrivate::initializeUI()
     mainLayout->setContentsMargins(10, 10, 10, 10);
     crumbEdit->setMaximumHeight(100);
 #endif
+    q->setFixedHeight(kTagWidgetHeight);
 }
 
 void TagWidgetPrivate::initUiForSizeMode()
