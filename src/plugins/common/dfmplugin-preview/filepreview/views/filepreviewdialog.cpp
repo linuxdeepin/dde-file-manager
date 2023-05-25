@@ -11,6 +11,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
+#include <dfm-framework/dpf.h>
 
 #include <DWindowCloseButton>
 #include <DGuiApplicationHelper>
@@ -77,9 +78,9 @@ void FilePreviewDialog::setEntryUrlList(const QList<QUrl> &urlList)
         return;
     QUrl currentUrl = fileList.at(currentPageIndex);
     if (urlList.contains(currentUrl)) {
-        entryUrlList = urlList;
-        fileList = entryUrlList;
-        currentPageIndex = entryUrlList.indexOf(currentUrl);
+        previewDir = true;
+        fileList = urlList;
+        currentPageIndex = fileList.indexOf(currentUrl);
     }
 }
 
@@ -271,6 +272,15 @@ void FilePreviewDialog::switchToPage(int index)
     keyList.append(mimeType.aliases());
     keyList.append(mimeType.allAncestors());
 
+    if (previewDir) {
+        QList<QUrl> selectUrl { fileList.at(index) };
+        auto eventID { DPF_NAMESPACE::Event::instance()->eventType("dfmplugin_workspace", "slot_View_SelectFiles") };
+        if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectFiles", currentWinID, selectUrl);
+        else
+            dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", selectUrl);
+    }
+
     for (const QString &key : keyList) {
         const QString &gKey = generalKey(key);
 
@@ -284,7 +294,6 @@ void FilePreviewDialog::switchToPage(int index)
                 int newPerviewHeight = preview->contentWidget()->size().height();
                 resize(newPerviewWidth, newPerviewHeight + statusBar->height());
                 playCurrentPreviewFile();
-                moveToCenter();
                 return;
             }
         }
@@ -349,8 +358,6 @@ void FilePreviewDialog::switchToPage(int index)
     int newPerviewHeight = preview->contentWidget()->size().height();
     resize(newPerviewWidth, newPerviewHeight + statusBar->height());
     updateTitle();
-
-    moveToCenter();
 }
 
 void FilePreviewDialog::previousPage()
