@@ -28,7 +28,9 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
-static const int kArrowExpandSpacing = 10;
+static constexpr int kArrowExpandSpacing = { 10 };
+static constexpr int kArrowExpandHeader = { 30 };
+static constexpr int kDialogHeader = { 60 };
 
 FilePropertyDialog::FilePropertyDialog(QWidget *parent)
     : DDialog(parent),
@@ -85,7 +87,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
     connect(editStackWidget, &EditStackedWidget::selectUrlRenamed, this, &FilePropertyDialog::onSelectUrlRenamed);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(10, 10, 10, 10);
+    vlayout->setContentsMargins(10, 0, 10, 0);
     vlayout->addWidget(fileIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout->addWidget(editStackWidget, 1, Qt::AlignHCenter | Qt::AlignTop);
 
@@ -170,8 +172,30 @@ void FilePropertyDialog::setBasicInfoExpand(bool expand)
         basicWidget->setExpand(expand);
 }
 
+int FilePropertyDialog::initalHeightOfView()
+{
+    int expandsHeight = kDialogHeader + fileIcon->height() + editStackWidget->height();
+    for (int i = 0; i < extendedControl.size(); ++i) {
+        DArrowLineDrawer *lineWidget = qobject_cast<DArrowLineDrawer *>(extendedControl.at(i));
+        if (lineWidget) {
+            BasicWidget *baseWidget = qobject_cast<BasicWidget *>(lineWidget);
+            if (baseWidget && baseWidget->expand())
+                expandsHeight += kArrowExpandHeader + baseWidget->expansionHeight() + kArrowExpandSpacing;
+            else
+                expandsHeight += kArrowExpandHeader + kArrowExpandSpacing;
+        } else {
+            QWidget *widget = extendedControl.at(i);
+            if (widget)
+                expandsHeight += widget->height() + kArrowExpandSpacing;
+        }
+    }
+    return expandsHeight;
+}
+
 void FilePropertyDialog::processHeight(int height)
 {
+    Q_UNUSED(height)
+
     QRect rect = geometry();
     rect.setHeight(contentHeight() + kArrowExpandSpacing * 2);
     setGeometry(rect);
@@ -237,11 +261,6 @@ void FilePropertyDialog::resizeEvent(QResizeEvent *event)
 void FilePropertyDialog::showEvent(QShowEvent *event)
 {
     DDialog::showEvent(event);
-
-    //展示时须设置弹窗尺寸，防止最小化后再次展示时窗口大小异常
-    QRect rc = geometry();
-    rc.setHeight(contentHeight() + kArrowExpandSpacing * 2);
-    setGeometry(rc);
 }
 
 void FilePropertyDialog::closeEvent(QCloseEvent *event)

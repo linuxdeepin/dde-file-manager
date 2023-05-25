@@ -22,6 +22,8 @@
 #include <QSet>
 #include <QDBusInterface>
 
+static constexpr int kExpensionWidgetHeight = { 300 };
+
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DWIDGET_USE_NAMESPACE
@@ -38,6 +40,11 @@ BasicWidget::BasicWidget(QWidget *parent)
 BasicWidget::~BasicWidget()
 {
     fileCalculationUtils->deleteLater();
+}
+
+int BasicWidget::expansionHeight()
+{
+    return kExpensionWidgetHeight;
 }
 
 void BasicWidget::initUI()
@@ -58,6 +65,7 @@ void BasicWidget::initUI()
     fileCreated = createValueLabel(frameMain, tr("Time created"));
     fileAccessed = createValueLabel(frameMain, tr("Time accessed"));
     fileModified = createValueLabel(frameMain, tr("Time modified"));
+    frameMain->setFixedHeight(kExpensionWidgetHeight);
 
     hideFile = new DCheckBox(frameMain);
     hideFile->setText(tr("Hide this file"));

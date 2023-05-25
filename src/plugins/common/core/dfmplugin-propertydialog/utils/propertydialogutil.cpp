@@ -17,7 +17,8 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
-const int kMaxPropertyDialogNumber = 16;
+static constexpr int kMaxPropertyDialogNumber = { 16 };
+static constexpr int kBottomReserveHeight = { 40 };
 PropertyDialogUtil::PropertyDialogUtil(QObject *parent)
     : QObject(parent)
 {
@@ -69,7 +70,7 @@ void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls, const Q
                 createControlView(url, option);
                 connect(dialog, &FilePropertyDialog::closed, this, &PropertyDialogUtil::closeFilePropertyDialog);
                 if (1 == count) {
-                    QPoint pos = getPropertyPos(dialog->size().width(), dialog->height());
+                    QPoint pos = getPropertyPos(dialog->size().width(), dialog->initalHeightOfView());
                     dialog->move(pos);
                 } else {
                     QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
@@ -253,11 +254,8 @@ QPoint PropertyDialogUtil::getPropertyPos(int dialogWidth, int dialogHeight)
         cursor_screen = qApp->primaryScreen();
     }
 
-    int desktopWidth = cursor_screen->size().width();
-    int desktopHeight = cursor_screen->size().height();
-    int x = (desktopWidth - dialogWidth) / 2;
-
-    int y = (desktopHeight - dialogHeight) / 2;
+    int x = (cursor_screen->availableSize().width() - dialogWidth) / 2;
+    int y = (cursor_screen->availableSize().height()- kBottomReserveHeight - dialogHeight) / 2;
 
     return QPoint(x, y) + cursor_screen->geometry().topLeft();
 }
