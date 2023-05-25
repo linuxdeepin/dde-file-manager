@@ -75,7 +75,7 @@ public:
     bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
 
 signals:
-    void asyncHandleFileChanged();
+    void asyncHandleFileChanged(const QList<QUrl> &);
 
 private:
     explicit RecentManager(QObject *parent = nullptr);

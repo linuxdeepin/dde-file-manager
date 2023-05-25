@@ -33,7 +33,7 @@ private:
     stub_ext::StubExt stub;
 };
 
-TEST_F(RecentIterateWorkerTest, doWork)
+TEST_F(RecentIterateWorkerTest, onRecentFileChanged)
 {
     stub.set_lamda(&RecentManager::init, []() {});
     stub.set_lamda(&SyncFileInfoPrivate::init, [] {});
@@ -45,7 +45,7 @@ TEST_F(RecentIterateWorkerTest, doWork)
         return true;
     });
 
-    stub.set_lamda(&QStringRef::isEmpty, []() -> bool { return false; });
+    stub.set_lamda(&QString::isEmpty, []() -> bool { return false; });
     QString str("bookmark");
     stub.set_lamda(&QXmlStreamReader::name, [str]() -> QStringRef {
         return QStringRef(&str);
@@ -61,11 +61,7 @@ TEST_F(RecentIterateWorkerTest, doWork)
     stub.set_lamda((bool (*)(QIODevice::OpenMode))((bool (QFile::*)(QIODevice::OpenMode)) & QFile::open), []() {
         return true;
     });
-    stub.set_lamda(&RecentManager::getRecentNodes, []() -> QMap<QUrl, FileInfoPointer> {
-        QMap<QUrl, FileInfoPointer> map;
-        map[QUrl("hello/uos")] = nullptr;
-        return map;
-    });
+
     RecentIterateWorker worker;
     int flag = 0;
     QObject::connect(&worker, &RecentIterateWorker::updateRecentFileInfo, [&flag](const QUrl &url, const QString originPath, qint64 readTime) {
@@ -76,7 +72,7 @@ TEST_F(RecentIterateWorkerTest, doWork)
         EXPECT_FALSE(urls.isEmpty());
         flag++;
     });
-    EXPECT_NO_FATAL_FAILURE(worker.doWork());
+    EXPECT_NO_FATAL_FAILURE(worker.onRecentFileChanged({ QUrl("hello/uos") }));
 
     EXPECT_EQ(flag, 2);
 }
