@@ -6,6 +6,7 @@
 #define THUMBNAILPROVIDER_H
 
 #include <dfm-base/dfm_base_global.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QObject>
 
@@ -40,7 +41,7 @@ public:
 
     QPixmap thumbnailPixmap(const QUrl &fileUrl, Size size) const;
 
-    QString createThumbnail(const QUrl &url, Size size);
+    QString createThumbnail(FileInfoPointer fileInfo, Size size);
 
     QString errorString() const;
     qint64 sizeLimit(const QMimeType &mimeType) const;

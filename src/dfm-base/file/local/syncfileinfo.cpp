@@ -461,41 +461,11 @@ QIcon SyncFileInfo::fileIcon()
     if (FileUtils::containsCopyingFileUrl(fileUrl))
         return LocalFileIconProvider::globalProvider()->icon(this);
 
-#ifdef DFM_MINIMUM
-    d->enableThumbnail = 0;
-#else
-    if (d->enableThumbnail < 0) {
-        bool isLocalDevice = false;
-        bool isCdRomDevice = false;
+    // iconFuture data is false means this file is not support thumb
+    if (d->iconFuture && !d->iconFuture->data.toBool())
+        return d->defaultIcon();
 
-        if (d->isLocalDevice.isValid())
-            isLocalDevice = d->isLocalDevice.toBool();
-        else
-            isLocalDevice = FileUtils::isLocalDevice(fileUrl);
-
-        if (d->isCdRomDevice.isValid())
-            isCdRomDevice = d->isCdRomDevice.toBool();
-        else
-            isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
-
-        d->enableThumbnail = isLocalDevice && !isCdRomDevice;
-    }
-#endif
-    bool thumbEnabled = (d->enableThumbnail > 0);
-    if (thumbEnabled || ThumbnailProvider::instance()->thumbnailEnable(fileUrl))
-        thumbEnabled = true;
-
-    bool hasThumbnail = false;
-    const int checkFast = ThumbnailProvider::instance()->hasThumbnailFast(d->mimeTypeName());
-    if (1 == checkFast)
-        hasThumbnail = true;
-    else if (0 == checkFast)
-        hasThumbnail = false;
-    else
-        hasThumbnail = ThumbnailProvider::instance()->hasThumbnail(fileMimeType());
-
-    thumbEnabled = thumbEnabled && hasThumbnail;
-    return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
+    return d->thumbIcon();
 }
 
 QMimeType SyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
@@ -1061,8 +1031,10 @@ QMap<DFileInfo::AttributeExtendID, QVariant> SyncFileInfoPrivate::mediaInfo(DFil
 
 bool SyncFileInfoPrivate::canThumb() const
 {
+    // if thumb loading do not start or the loading work finished but no data set
+    // can try to loading thumb
     return !loadingThumbnail
-            || (iconFuture && iconFuture->finish && iconFuture->data.toString().isEmpty());
+            || (iconFuture && iconFuture->finish && !iconFuture->data.isValid());
 }
 
 SyncFileInfoPrivate::SyncFileInfoPrivate(SyncFileInfo *qq)

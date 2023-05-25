@@ -418,41 +418,11 @@ QIcon AsyncFileInfo::fileIcon()
         return QIcon::fromTheme("unknown");
     }
 
-#ifdef DFM_MINIMUM
-    d->enableThumbnail = 0;
-#else
-    if (d->enableThumbnail < 0) {
-        bool isLocalDevice = false;
-        bool isCdRomDevice = false;
+    // iconFuture data is false means this file is not support thumb
+    if (d->iconFuture && !d->iconFuture->data.toBool())
+        return d->defaultIcon();
 
-        if (d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsLocalDevice).isValid())
-            isLocalDevice = d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsLocalDevice).toBool();
-        else
-            isLocalDevice = FileUtils::isLocalDevice(fileUrl);
-
-        if (d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsCdRomDevice).isValid())
-            isCdRomDevice = d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsCdRomDevice).toBool();
-        else
-            isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
-
-        d->enableThumbnail = isLocalDevice && !isCdRomDevice;
-    }
-#endif
-    bool thumbEnabled = (d->enableThumbnail > 0);
-    if (thumbEnabled || ThumbnailProvider::instance()->thumbnailEnable(fileUrl))
-        thumbEnabled = true;
-
-    bool hasThumbnail = false;
-    const int checkFast = ThumbnailProvider::instance()->hasThumbnailFast(d->mimeTypeName());
-    if (1 == checkFast)
-        hasThumbnail = true;
-    else if (0 == checkFast)
-        hasThumbnail = false;
-    else
-        hasThumbnail = ThumbnailProvider::instance()->hasThumbnail(fileMimeType());
-
-    thumbEnabled = thumbEnabled && hasThumbnail;
-    return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
+    return d->thumbIcon();
 }
 
 QMimeType AsyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
@@ -1031,7 +1001,7 @@ QMap<DFileInfo::AttributeExtendID, QVariant> AsyncFileInfoPrivate::mediaInfo(DFi
 bool AsyncFileInfoPrivate::canThumb() const
 {
     return !loadingThumbnail
-            || (iconFuture && iconFuture->finish && iconFuture->data.toString().isEmpty());
+            || (iconFuture && iconFuture->finish && !iconFuture->data.isValid());
 }
 
 FileInfo::FileType AsyncFileInfoPrivate::fileType() const
