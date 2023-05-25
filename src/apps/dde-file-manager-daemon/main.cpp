@@ -63,8 +63,13 @@ static bool pluginsLoad()
     pluginsDirs << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
                 << QString(DFM_PLUGIN_DAEMON_EDGE_DIR);
 #endif
+    QStringList kBlackNameList;
+#ifdef DISABLE_ANYTHING
+    kBlackNameList << "daemonplugin-anything";
+#endif
+
     qInfo() << "Using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs);
+    DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs, kBlackNameList);
 
     qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
