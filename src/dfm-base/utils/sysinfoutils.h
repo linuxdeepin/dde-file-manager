@@ -29,6 +29,7 @@ public:
     static bool isProfessional();
     static bool isSameUser(const QMimeData *data);
     static void setMimeDataUserId(QMimeData *data);
+    static float getMemoryUsage(int pid);
 };
 }
 

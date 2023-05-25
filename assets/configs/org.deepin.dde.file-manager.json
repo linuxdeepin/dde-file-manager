@@ -166,6 +166,17 @@
             "description":"If the value is true, File Manager will be as a daemon, sacrificing memory to quicken the warm start.",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.memory.autorelease": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Automatically release memory for desktop and dde-file-manager",
+            "name[zh_CN]":"自动释放桌面和文管的内存",
+            "description[zh_CN]":"如果值为true，文管和桌面在内存达到一定的阈值时，会自动将空闲的内存还给操作系统",
+            "description":"If the value is true, the filemanager and desktop will automatically return free memory to system when the memory reaches a certain threshold",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }
