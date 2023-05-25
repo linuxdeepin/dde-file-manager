@@ -22,7 +22,7 @@ public:
     virtual QSize sizeHint() const override;
     virtual void clearLayoutAndAnchors();
 
-    void itemSelected(const QList<FileInfo *> &infoList);
+    void itemSelected(const QList<QUrl> &urls);
     void itemCounted(const int count);
 
     void updateStatusMessage();

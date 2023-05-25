@@ -1147,7 +1147,7 @@ QModelIndexList FileView::selectedIndexes() const
         QModelIndexList indexes = fileSelectionModel->selectedIndexes();
 
         auto isInvalid = [=](const QModelIndex &index) {
-            return !(index.isValid() && model()->fileInfo(index));
+            return !(index.isValid());
         };
 
         indexes.erase(std::remove_if(indexes.begin(), indexes.end(), isInvalid),
@@ -1489,17 +1489,13 @@ void FileView::updateStatusBar()
         return;
 
     int count = selectedIndexCount();
-
     if (count == 0) {
         d->statusBar->itemCounted(model()->rowCount(rootIndex()));
         return;
     }
 
-    QList<FileInfo *> list;
-    for (const QModelIndex &index : selectedIndexes())
-        list << model()->fileInfo(index).data();
-
-    d->statusBar->itemSelected(list);
+    auto ulrs = selectedUrlList();
+    d->statusBar->itemSelected(ulrs);
 }
 
 void FileView::updateLoadingIndicator()

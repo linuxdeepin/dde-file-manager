@@ -76,6 +76,12 @@ enum ItemRoles {
     kItemFileOriginalPath = Qt::UserRole + 23,
     kItemFileDeletionDate = Qt::UserRole + 24,
     kItemFileRefreshIcon = Qt::UserRole + 25,
+    kItemCreateFileInfo = Qt::UserRole + 26,
+    kItemFileIsDir = Qt::UserRole + 27,
+    kItemFileIsWritable = Qt::UserRole + 28,
+    kItemFileCanRename = Qt::UserRole + 29,
+    kItemFileCanDrop = Qt::UserRole + 30,
+    kItemFileCanDrag = Qt::UserRole + 31,
 
     kItemUnknowRole = Qt::UserRole + 999
 };

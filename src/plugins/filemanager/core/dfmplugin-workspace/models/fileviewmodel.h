@@ -121,7 +121,7 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
-    bool passNameFilters(const FileInfoPointer &info) const;
+    bool passNameFilters(const QModelIndex &index) const;
 
     QUrl dirRootUrl;
 

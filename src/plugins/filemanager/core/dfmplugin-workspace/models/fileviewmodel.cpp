@@ -256,7 +256,7 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
         itemData = filterSortWorker->childData(index.row());
     }
 
-    if (itemData && itemData->fileInfo()) {
+    if (itemData) {
         return itemData->data(role);
     } else {
         return QVariant();
@@ -320,26 +320,22 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
-    const FileInfoPointer &info = fileInfo(index);
-    if (!info)
-        return flags;
-
-    if (!passNameFilters(info)) {
+    if (!passNameFilters(index)) {
         flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         return flags;
     }
 
-    if (info->canAttributes(CanableInfoType::kCanRename))
+    if (index.data(kItemFileCanRename).toBool())
         flags |= Qt::ItemIsEditable;
 
-    if (info->isAttributes(OptInfoType::kIsWritable)) {
-        if (info->canAttributes(CanableInfoType::kCanDrop))
+    if (index.data(kItemFileIsWritable).toBool()) {
+        if (index.data(kItemFileCanDrop).toBool())
             flags |= Qt::ItemIsDropEnabled;
         else
             flags |= Qt::ItemNeverHasChildren;
     }
 
-    if (info->canAttributes(CanableInfoType::kCanDrag))
+    if (index.data(kItemFileCanDrag).toBool())
         flags |= Qt::ItemIsDragEnabled;
 
     if (readOnly)
@@ -732,22 +728,24 @@ void FileViewModel::changeState(ModelState newState)
     Q_EMIT stateChanged();
 }
 
-bool FileViewModel::passNameFilters(const FileInfoPointer &info) const
+bool FileViewModel::passNameFilters(const QModelIndex &index) const
 {
-    if (!info || !filterSortWorker)
+    if (!index.isValid() || !filterSortWorker)
         return true;
 
     if (filterSortWorker->getNameFilters().isEmpty())
         return true;
 
-    const QString &filePath = info->pathOf(FileInfo::FilePathInfoType::kFilePath);
+    const QString &filePath = index.data(kItemFilePathRole).toString();
     if (nameFiltersMatchResultMap.contains(filePath))
         return nameFiltersMatchResultMap.value(filePath, false);
 
     // Check the name regularexpression filters
-    if (!(info->isAttributes(FileInfo::FileIsType::kIsDir) && (filterSortWorker->getFilters() & QDir::Dirs))) {
+    if (!(index.data(kItemFileIsDir).toBool() && (filterSortWorker->getFilters() & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filterSortWorker->getFilters() & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        const QString &fileFilterName = FileUtils::isDesktopFile(info->urlOf(FileInfo::FileUrlInfoType::kUrl)) ? info->fileName() : info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName);
+        const QString &fileFilterName = FileUtils::isDesktopFile(QUrl(index.data(kItemUrlRole).toString()))
+                ? index.data(kItemNameRole).toString()
+                : index.data(kItemNameRole).toString();
         QRegExp re("", caseSensitive, QRegExp::Wildcard);
 
         for (int i = 0; i < filterSortWorker->getNameFilters().size(); ++i) {

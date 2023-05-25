@@ -49,6 +49,6 @@ TEST(UT_WorkspacePluginBugTest, bug_140799_desktopFilter)
     FileSortWorker *work = new FileSortWorker(QUrl("file:///home"), "1234");
     work->nameFilters = QStringList { "*.desktop" };
     model.filterSortWorker.reset(work);
-    model.passNameFilters(info);
+    model.passNameFilters(QModelIndex());
     EXPECT_TRUE(isExcuDesktopFileCheck);
 }

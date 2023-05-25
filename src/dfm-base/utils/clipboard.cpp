@@ -30,7 +30,6 @@ using namespace dfmbase;
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
 static QMutex clipboardFileUrlsMutex;
-static QList<quint64> clipbordFileinode;
 static QAtomicInt remoteCurrentCount = 0;
 static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
 
@@ -46,7 +45,6 @@ void onClipboardDataChanged()
         clipboardFileUrls.clear();
     }
 
-    clipbordFileinode.clear();
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
     if (!mimeData || mimeData->formats().isEmpty()) {
         qWarning() << "get null mimeData from QClipBoard or remote formats is null!";
@@ -73,37 +71,16 @@ void onClipboardDataChanged()
     } else {
         clipboardAction = ClipBoard::kUnknownAction;
     }
-    QString errorStr;
-    for (QUrl &url : mimeData->urls()) {
-        if (url.scheme().isEmpty())
-            url.setScheme(Global::Scheme::kFile);
 
-        {
-            QMutexLocker lk(&clipboardFileUrlsMutex);
-            clipboardFileUrls << url;
-        }
-        //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errorStr);
-
-        if (!info) {
-            qWarning() << QString("create file info error, case : %1").arg(errorStr);
-            continue;
-        }
-        if (info->isAttributes(OptInfoType::kIsSymLink))
-            continue;
-
-        struct stat statInfo;
-        int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
-        if (0 == fileStat)
-            clipbordFileinode << statInfo.st_ino;
-    }
+    QMutexLocker lk(&clipboardFileUrlsMutex);
+    clipboardFileUrls << mimeData->urls();
 }
 }   // namespace GlobalData
 
 ClipBoard::ClipBoard(QObject *parent)
     : QObject(parent)
 {
-    connect(qApp->clipboard(), &QClipboard::dataChanged, this, &ClipBoard::onClipboardDataChanged);
+    connect(qApp->clipboard(), &QClipboard::dataChanged, this, &ClipBoard::onClipboardDataChanged, Qt::QueuedConnection);
     GlobalData::onClipboardDataChanged();
 }
 
@@ -193,7 +170,6 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
         userId.append(QString::number(getuid()));
         mimeData->setData(GlobalData::kUserIdKey, userId);
     }
-
     qApp->clipboard()->setMimeData(mimeData);
 }
 /*!
@@ -267,14 +243,6 @@ QList<QUrl> ClipBoard::getRemoteUrls()
 QList<QUrl> ClipBoard::clipboardFileUrlList() const
 {
     return GlobalData::clipboardFileUrls;
-}
-/*!
- * \brief ClipBoard::clipboardFileInodeList Gets the inode of URLs in the clipboard
- * \return
- */
-QList<quint64> ClipBoard::clipboardFileInodeList() const
-{
-    return GlobalData::clipbordFileinode;
 }
 /*!
  * \brief ClipBoard::clipboardAction Gets the current operation of the clipboard
