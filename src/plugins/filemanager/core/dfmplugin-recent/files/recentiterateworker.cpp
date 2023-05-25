@@ -25,53 +25,45 @@ RecentIterateWorker::RecentIterateWorker()
 {
 }
 
-void RecentIterateWorker::doWork()
+void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
 {
-
     QFile file(RecentHelper::xbelPath());
     QList<QUrl> urlList;
 
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QXmlStreamReader reader(&file);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
 
-        while (!reader.atEnd()) {
+    QXmlStreamReader reader(&file);
+    while (!reader.atEnd()) {
+        if (!reader.readNextStartElement() || reader.name() != "bookmark")
+            continue;
 
-            if (!reader.readNextStartElement() || reader.name() != "bookmark") {
-                continue;
-            }
+        const QString &location = reader.attributes().value("href").toString();
+        const QString &readTime = reader.attributes().value("modified").toString();
 
-            const QStringRef &location = reader.attributes().value("href");
-            const QStringRef &readTime = reader.attributes().value("modified");
+        if (location.isEmpty())
+            continue;
 
-            if (!location.isEmpty()) {
-                QUrl url = QUrl(location.toString());
-                auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-                if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
-                    const auto &bindPath = FileUtils::bindPathTransform(info->pathOf(PathInfoType::kAbsoluteFilePath), false);
-                    QUrl recentUrl = QUrl::fromLocalFile(bindPath);
-                    recentUrl.setScheme(RecentHelper::scheme());
-                    qint64 readTimeSecs = QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch();
-                    urlList.append(recentUrl);
-                    emit updateRecentFileInfo(recentUrl, location.toString(), readTimeSecs);
-                }
-            }
+        const QUrl &url { QUrl(location) };
+        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
+            const auto &bindPath = FileUtils::bindPathTransform(info->pathOf(PathInfoType::kAbsoluteFilePath), false);
+            QUrl recentUrl { QUrl::fromLocalFile(bindPath) };
+            recentUrl.setScheme(RecentHelper::scheme());
+            qint64 readTimeSecs = QDateTime::fromString(readTime, Qt::ISODate).toSecsSinceEpoch();
+            urlList.append(recentUrl);
+            emit updateRecentFileInfo(recentUrl, location, readTimeSecs);
         }
-        file.close();
-
-        QList<QUrl> deleteUrls;
-        const auto &recentNodes = RecentManager::instance()->getRecentNodes();
-        for (const QUrl &url : recentNodes.keys()) {
-            if (!urlList.contains(url)) {
-                deleteUrls << url;
-            } else {
-                auto info = recentNodes[url];
-                if (!info) {
-                    deleteUrls << url;
-                }
-            }
-        }
-        if (!deleteUrls.isEmpty())
-            emit deleteExistRecentUrls(deleteUrls);
     }
+
+    // delete cached recent file when recent file removed
+    QList<QUrl> deletedUrls;
+    for (const QUrl &url : cachedUrls) {
+        if (!urlList.contains(url))
+            deletedUrls << url;
+    }
+    if (!deletedUrls.isEmpty())
+        emit deleteExistRecentUrls(deletedUrls);
 }
-}
+
+}   // namespace dfmplugin_recent
