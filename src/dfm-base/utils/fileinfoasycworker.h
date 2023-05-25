@@ -7,6 +7,7 @@
 
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/schemefactory.h>
 #include "thumbnailprovider.h"
 
 #include <dfm-io/dfileinfo.h>
@@ -39,6 +40,8 @@ private:
     {
         return stoped;
     }
+
+    bool checkThumbEnable(FileInfoPointer fileInfo) const;
 
 Q_SIGNALS:
     void fileConutAsyncFinish(const QUrl &url, int files);

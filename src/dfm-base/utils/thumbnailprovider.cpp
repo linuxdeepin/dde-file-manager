@@ -10,7 +10,6 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/application/application.h>
-#include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
@@ -297,12 +296,14 @@ static QString generalKey(const QString &key)
     return key;
 }
 
-QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::Size size)
+QString ThumbnailProvider::createThumbnail(FileInfoPointer fileInfo, ThumbnailProvider::Size size)
 {
     d->errorString.clear();
 
-    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
+    if (!fileInfo)
+        return QString();
 
+    const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
     const QString &dirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
 
