@@ -35,6 +35,11 @@ private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
     void caculateListViewSelection(const QRect &rect, QItemSelection *selection);
+    // Calculate the different items of the original selection item and the current
+    // selection item, and the selection of these differnt items will be select
+    void caculateAndSelectIndex(const QItemSelection &lastSelection,
+                                const QItemSelection &newSelection,
+                                QItemSelectionModel::SelectionFlags flags);
 
 private:
     FileView *view { nullptr };

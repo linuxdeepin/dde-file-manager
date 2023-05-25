@@ -21,8 +21,9 @@ class FileEncryptHandle : public QObject
 public:
     static FileEncryptHandle *instance();
 
-    void createVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type = EncryptType::AES_256_GCM, int blockSize = 32768);
-    bool unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
+    void createVault(const QString &lockBaseDir, const QString &unlockFileDir, const QString &DSecureString,
+                     EncryptType type = EncryptType::AES_256_GCM, int blockSize = 32768);
+    bool unlockVault(const QString &lockBaseDir, const QString &unlockFileDir, const QString &DSecureString);
     void lockVault(QString unlockFileDir, bool isForced);
     bool createDirIfNotExist(QString path);
     VaultState state(const QString &encryptBaseDir) const;

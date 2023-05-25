@@ -86,7 +86,8 @@ FileEncryptHandle *FileEncryptHandle::instance()
  *  调用runVaultProcess函数进行创建保险箱并返回创建状态标记。
  *  最后使用信号signalCreateVault发送创建状态标记。
  */
-void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, QString passWord, EncryptType type, int blockSize)
+void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &unlockFileDir,
+                                    const QString &passWord, EncryptType type, int blockSize)
 {
     if (!(createDirIfNotExist(lockBaseDir) && createDirIfNotExist(unlockFileDir)))
         return;
@@ -122,7 +123,7 @@ void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, 
  *  调用runVaultProcess函数进行解锁保险箱并返回解锁状态标记。
  *  最后使用信号signalUnlockVault发送解锁状态标记。
  */
-bool FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
+bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &unlockFileDir, const QString &DSecureString)
 {
     if (!createDirIfNotExist(unlockFileDir))
         return false;
