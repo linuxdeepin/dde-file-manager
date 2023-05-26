@@ -98,8 +98,11 @@ bool TagDirMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->selectFiles.isEmpty())
-        d->focusFile = d->selectFiles.first();
+    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
+    if (d->selectFiles.count() > 0) {
+        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
+        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
+    }
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 

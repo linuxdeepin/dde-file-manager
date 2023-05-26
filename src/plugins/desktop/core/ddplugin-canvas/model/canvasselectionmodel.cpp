@@ -43,3 +43,13 @@ QList<QUrl> CanvasSelectionModel::selectedUrls() const
 
     return urls;
 }
+
+QList<FileInfoPointer> CanvasSelectionModel::selectedFileInfos() const
+{
+    auto indexs = selectedIndexesCache();
+    QList<FileInfoPointer> infos;
+    for (auto index : indexs)
+        infos <<  model()->fileInfo(index);
+
+    return infos;
+}

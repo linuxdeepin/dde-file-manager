@@ -57,26 +57,24 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->selectFiles.isEmpty())
-        d->focusFile = d->selectFiles.first();
+    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
+    if (d->selectFiles.count() > 0) {
+        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
+        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
+    }
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFileInfo << d->currentDir;
         return false;
     }
 
     QList<AbstractMenuScene *> currentScene;
     if (!d->isEmptyArea) {
         QString errString;
-        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-        if (d->focusFileInfo.isNull()) {
-            qDebug() << errString;
-            return false;
-        }
         if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
             currentScene.append(workspaceScene);
     } else {

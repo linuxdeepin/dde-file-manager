@@ -94,6 +94,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
 void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
     auto selectUrls = view->selectionModel()->selectedUrls();
+    auto selectInfos = view->selectionModel()->selectedFileInfos();
     auto tgUrl = view->model()->fileUrl(index);
 
     // extend menu
@@ -115,10 +116,20 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     }
 
     // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
+    FileInfoPointer focusFileInfo = view->model()->fileInfo(index);
+    if (!focusFileInfo) {
+        index.data(Global::ItemRoles::kItemCreateFileInfo);
+        focusFileInfo = view->model()->fileInfo(index);
+    }
+
+    if (!focusFileInfo)
+        return;
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl();
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
+    params[MenuParamKey::kSelectFileInfos] = QVariant::fromValue(selectInfos);
+    params[MenuParamKey::kFocusFileInfo] = QVariant::fromValue(focusFileInfo);
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = false;

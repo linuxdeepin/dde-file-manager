@@ -7,6 +7,8 @@
 
 #include "dfmplugin_menu_global.h"
 
+#include <dfm-base/interfaces/fileinfo.h>
+
 #include <QObject>
 #include <QAction>
 #include <QScopedPointer>
@@ -23,7 +25,7 @@ public:
 
     void loadDesktopFile();
     QList<QAction *> emptyActions(const QUrl &currentDir, bool onDesktop = false);
-    QList<QAction *> normalActions(const QList<QUrl> &files, bool onDesktop = false);
+    QList<QAction *> normalActions(const QList<QUrl> &files, const QList<FileInfoPointer> &fileInfos, bool onDesktop = false);
     QPair<QString, QStringList> makeCommand(const QAction *action, const QUrl &dir, const QUrl &foucs, const QList<QUrl> &files);
 
 private:

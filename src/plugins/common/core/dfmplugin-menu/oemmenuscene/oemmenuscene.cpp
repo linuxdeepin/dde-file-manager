@@ -66,8 +66,11 @@ bool OemMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->selectFiles.isEmpty())
-        d->focusFile = d->selectFiles.first();
+    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
+    if (d->selectFiles.count() > 0) {
+        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
+        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
+    }
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
@@ -76,15 +79,6 @@ bool OemMenuScene::initialize(const QVariantHash &params)
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
-    }
-
-    if (!d->isEmptyArea) {
-        QString errString;
-        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-        if (d->focusFileInfo.isNull()) {
-            qDebug() << errString;
-            return false;
-        }
     }
 
     return AbstractMenuScene::initialize(params);
@@ -109,7 +103,7 @@ bool OemMenuScene::create(QMenu *parent)
     if (d->isEmptyArea)
         d->oemActions = d->oemMenu->emptyActions(d->currentDir, d->onDesktop);
     else
-        d->oemActions = d->oemMenu->normalActions(d->selectFiles, d->onDesktop);
+        d->oemActions = d->oemMenu->normalActions(d->selectFiles, d->selectFileInfos, d->onDesktop);
 
     for (auto action : d->oemActions) {
         // reset status

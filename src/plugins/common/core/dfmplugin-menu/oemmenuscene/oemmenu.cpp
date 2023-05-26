@@ -477,7 +477,7 @@ QList<QAction *> OemMenu::emptyActions(const QUrl &currentDir, bool onDesktop)
     return actions;
 }
 
-QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop)
+QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, const QList<FileInfoPointer> &fileInfos, bool onDesktop)
 {
     QString menuType;
 
@@ -500,14 +500,12 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
 
     QStringList filePaths;
     bool bex7z = d->isAllEx7zFile(files);
-    for (const QUrl &file : files) {
-
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-
+    for (const FileInfoPointer &fileInfo : fileInfos) {
         if (!fileInfo) {
-            qWarning() << "createFileInfo failed: " << file;
+            qWarning() << "createFileInfo failed!";
             continue;
         }
+        auto file = fileInfo->urlOf(UrlInfoType::kUrl);
         filePaths << file.path();
 
         QStringList fileMimeTypes, fmts;
