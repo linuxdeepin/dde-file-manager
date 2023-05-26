@@ -142,8 +142,7 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->gridPos = params.value(CanvasMenuParams::kDesktopGridPos).toPoint();
 
-    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
-    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
+    d->isDDEDesktopFileIncluded = params.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     d->view = reinterpret_cast<CanvasView *>(params.value(CanvasMenuParams::kDesktopCanvasView).toLongLong());
     if (d->currentDir.isEmpty())

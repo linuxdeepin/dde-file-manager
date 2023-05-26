@@ -306,8 +306,10 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
                                                       filterSortWorker->getSortOrder());
     }
 
-    if (ret)
+    if (ret) {
         changeState(ModelState::kBusy);
+        startCursorTimer();
+    }
 }
 
 bool FileViewModel::canFetchMore(const QModelIndex &parent) const
@@ -452,6 +454,7 @@ void FileViewModel::stopTraversWork()
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
 
     changeState(ModelState::kIdle);
+    closeCursorTimer();
 }
 
 QList<ItemRoles> FileViewModel::getColumnRoles() const
@@ -634,6 +637,17 @@ void FileViewModel::onRemoveFinish()
     endRemoveRows();
 }
 
+void FileViewModel::onSetCursorWait()
+{
+    if (currentState() != ModelState::kBusy)
+            return;
+
+    while (QApplication::overrideCursor())
+        QApplication::restoreOverrideCursor();
+
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -667,7 +681,8 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() { canFetchFiles = true; fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() { this->changeState(ModelState::kIdle); }, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() { this->changeState(ModelState::kIdle);
+        closeCursorTimer(); }, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeHiddenFilter, filterSortWorker.data(), &FileSortWorker::onToggleHiddenFiles, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::setFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::setNameFilters, Qt::QueuedConnection);
@@ -761,4 +776,19 @@ bool FileViewModel::passNameFilters(const QModelIndex &index) const
 
     nameFiltersMatchResultMap[filePath] = true;
     return true;
+}
+
+void FileViewModel::closeCursorTimer()
+{
+    waitTimer.stop();
+
+    while (QApplication::overrideCursor())
+        QApplication::restoreOverrideCursor();
+}
+
+void FileViewModel::startCursorTimer()
+{
+    waitTimer.start();
+
+    onSetCursorWait();
 }

@@ -13,6 +13,8 @@ namespace MenuParamKey {
 // file menu params for initialize
 inline constexpr char kCurrentDir[] = "currentDir";   // QUrl
 inline constexpr char kSelectFiles[] = "selectFiles";   // QList<QUrl>
+inline constexpr char kSelectFileInfos[] = "selectFileInfos";   // QList<FileInfoPointer>
+inline constexpr char kFocusFileInfo[] = "focusFileInfo";   // FileInfoPointer
 inline constexpr char kOnDesktop[] = "onDesktop";   // bool
 inline constexpr char kWindowId[] = "windowId";   // quint64
 inline constexpr char kIsEmptyArea[] = "isEmptyArea";   // bool

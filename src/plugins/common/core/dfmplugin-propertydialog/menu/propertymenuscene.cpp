@@ -74,8 +74,11 @@ bool PropertyMenuScene::initialize(const QVariantHash &params)
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->selectFiles.isEmpty())
-        d->focusFile = d->selectFiles.first();
+    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
+    if (d->selectFiles.count() > 0) {
+        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
+        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
+    }
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
     if (!d->initializeParamsIsValid()) {
@@ -111,13 +114,7 @@ bool PropertyMenuScene::create(QMenu *parent)
     tempAction->setProperty(ActionPropertyKey::kActionID, PropertyActionId::kProperty);
 
     QList<QUrl> redirectedUrlList;
-    for (const auto &fileUrl : d->selectFiles) {
-        QString errString;
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(fileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-        if (fileInfo.isNull()) {
-            qDebug() << errString;
-            continue;
-        }
+    for (const auto &fileInfo : d->selectFileInfos) {
         redirectedUrlList << fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
     }
 

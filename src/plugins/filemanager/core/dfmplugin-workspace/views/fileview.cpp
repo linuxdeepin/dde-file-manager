@@ -1180,6 +1180,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
     if (FileViewMenuHelper::disableMenu())
         return;
 
+    d->viewMenuHelper->setWaitCursor();
     const QModelIndex &index = indexAt(event->pos());
     if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index)
         setFocus(Qt::FocusReason::OtherFocusReason);
@@ -1197,18 +1198,27 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 
             if (!index.isValid()) {
                 d->viewMenuHelper->showEmptyAreaMenu();
+                d->viewMenuHelper->reloadCursor();
                 return;
             }
 
             selectionModel()->select(index, QItemSelectionModel::Select);
         }
 
-        auto info = model()->fileInfo(index);
-        if (info)
-            info->refresh();
-
-        d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
+        QModelIndex rootIndex = this->rootIndex();
+        QList<QUrl> selectUrls;
+        QList<FileInfoPointer> selectInfos;
+        for (const QModelIndex &tmpIndex : selectedIndexes()) {
+            if (tmpIndex.parent() != rootIndex)
+                continue;
+            selectUrls << model()->data(tmpIndex, ItemRoles::kItemUrlRole).toUrl();
+            auto info = model()->fileInfo(tmpIndex);
+            if (info)
+                selectInfos << info;
+        }
+        d->viewMenuHelper->showNormalMenu(index, model()->flags(index), selectUrls, selectInfos);
     }
+    d->viewMenuHelper->reloadCursor();
 }
 
 QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
