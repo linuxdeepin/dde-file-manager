@@ -41,8 +41,6 @@ Build-Depends:
  libpoppler-cpp-dev,
  libcryptsetup-dev,
  libpcre3-dev,
- deepin-anything-dev[i386 amd64],
- deepin-anything-server-dev[i386 amd64],
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
@@ -66,20 +64,18 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  libdde-file-manager,
- deepin-anything-server,
  libgio-qt,
  libjemalloc2,
  libqt5xdg3,
  socat,
  cryfs,
- deepin-anything-dkms[i386 amd64],
  libblockdev-crypto2,
  dde-device-formatter,
  dde-file-manager-plugins, 
  dde-file-manager-daemon-plugins,
  dde-file-manager-server-plugins
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
-Recommends: dde-qt5integration, avfs, samba
+Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
 
@@ -91,7 +87,6 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
  cryptsetup,
- deepin-anything-libs[i386 amd64],
  libdfm-extension( =${binary:Version}),
  dde-file-manager-common-plugins, 
  dde-file-manager-preview-plugins
