@@ -39,6 +39,7 @@ public:
     qint64 getFileSize();
     int getFileCount();
     void setBasicInfoExpand(bool expand);
+    int initalHeightOfView();
 
 public slots:
     void processHeight(int height);
