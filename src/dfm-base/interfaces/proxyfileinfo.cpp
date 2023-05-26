@@ -21,9 +21,7 @@ ProxyFileInfo::~ProxyFileInfo()
 
 QUrl ProxyFileInfo::fileUrl() const
 {
-    CALL_PROXY(fileUrl());
-
-    return FileInfo::fileUrl();
+    return this->url;
 }
 
 bool ProxyFileInfo::exists() const
