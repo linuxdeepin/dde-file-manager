@@ -196,7 +196,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
 
     QUrl showedUrl = Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow);
     if (!url.isEmpty()) {
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+        const FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (info && info->isAttributes(OptInfoType::kIsFile)) {
             showedUrl = UrlRoute::urlParent(url);
         } else {

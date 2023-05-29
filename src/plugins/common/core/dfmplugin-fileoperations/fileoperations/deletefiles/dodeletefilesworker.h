@@ -34,7 +34,7 @@ protected:
     bool deleteFilesOnCanNotRemoveDevice();
     bool deleteFilesOnOtherDevice();
     bool deleteFileOnOtherDevice(const QUrl &url);
-    bool deleteDirOnOtherDevice(const FileInfoPointer &dir);
+    bool deleteDirOnOtherDevice(const FileInfoPointer dir);
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());

@@ -90,7 +90,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
 
-    const FileInfoPointer &focusFileInfo = view->model()->fileInfo(index);
+    const FileInfoPointer focusFileInfo = view->model()->fileInfo(index);
     if (focusFileInfo) {
         tgUrl = focusFileInfo->urlOf(UrlInfoType::kUrl);
         // first is focus

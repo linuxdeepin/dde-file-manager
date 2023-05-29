@@ -56,7 +56,7 @@ TEST_F(TagManagerTest, paintListTagsHandle)
     QPainter painter;
     QRectF rect;
     //overload func
-    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
+    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer ) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return false; });
     EXPECT_FALSE(ins->paintListTagsHandle(1, info, &painter, &rect));
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
@@ -69,7 +69,7 @@ TEST_F(TagManagerTest, paintIconTagsHandle2)
     FileInfoPointer info(new FileInfo(QUrl("file:///test")));
     QPainter painter;
     QRectF rect;
-    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
+    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer ) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return false; });
     EXPECT_FALSE(ins->paintIconTagsHandle(info, rect, &painter, nullptr));
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
@@ -79,7 +79,7 @@ TEST_F(TagManagerTest, paintIconTagsHandle2)
 TEST_F(TagManagerTest, fileDropHandle)
 {
     EXPECT_TRUE(ins->fileDropHandle(QList<QUrl>() << QUrl("file:///test"), TagManager::rootUrl()));
-    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
+    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer ) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
     stub.set_lamda(&TagManager::setTagsForFiles, []() { __DBG_STUB_INVOKE__ return true; });
     EXPECT_TRUE(ins->fileDropHandle(QList<QUrl>() << QUrl("file:///test"), TagManager::rootUrl()));
@@ -212,7 +212,7 @@ TEST_F(TagManagerTest, pasteHandle)
 {
     EXPECT_FALSE(ins->pasteHandle(1, QList<QUrl>(), QUrl("file:///test")));
     stub.set_lamda(&TagManager::addTagsForFiles, []() { __DBG_STUB_INVOKE__ return true; });
-    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
+    auto func = static_cast<bool (TagManager::*)(const FileInfoPointer ) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
     stub.set_lamda(&ClipBoard::clipboardAction, []() { __DBG_STUB_INVOKE__ return ClipBoard::kCutAction; });
 

@@ -223,7 +223,7 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         if (url.path().isEmpty())
             url.setPath("/");
         qInfo() << "jump :" << inputStr;
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+        const FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
             TitleBarEventCaller::sendOpenFile(sender, url);
         } else {

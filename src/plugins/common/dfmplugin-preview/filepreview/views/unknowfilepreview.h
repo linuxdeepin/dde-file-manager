@@ -27,7 +27,7 @@ public:
     QWidget *contentWidget() const override;
 
 private:
-    void setFileInfo(const FileInfoPointer &info);
+    void setFileInfo(const FileInfoPointer info);
 
 signals:
     void requestStartFolderSize();

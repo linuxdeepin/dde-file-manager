@@ -261,7 +261,7 @@ void RootInfo::doThreadWatcherEvent()
     });
 }
 
-void RootInfo::handleTraversalResult(const FileInfoPointer &child)
+void RootInfo::handleTraversalResult(const FileInfoPointer child)
 {
     auto sortInfo = addChild(child);
     if (sortInfo)
@@ -373,7 +373,7 @@ void RootInfo::addChildren(const QList<SortInfoPointer> &children)
     }
 }
 
-SortInfoPointer RootInfo::addChild(const FileInfoPointer &child)
+SortInfoPointer RootInfo::addChild(const FileInfoPointer child)
 {
     if (!child)
         return nullptr;
@@ -398,7 +398,7 @@ SortInfoPointer RootInfo::addChild(const FileInfoPointer &child)
     return sort;
 }
 
-SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
+SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer info)
 {
     if (!info)
         return nullptr;

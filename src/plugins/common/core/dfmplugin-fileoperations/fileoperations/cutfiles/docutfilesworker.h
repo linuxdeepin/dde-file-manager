@@ -35,15 +35,15 @@ protected:
     void onUpdateProgress() override;
 
     bool cutFiles();
-    bool doCutFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo);
-    bool doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, const QString fileName, bool *ok);
-    bool renameFileByHandler(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetInfo);
+    bool doCutFile(const FileInfoPointer fromInfo, const FileInfoPointer targetPathInfo);
+    bool doRenameFile(const FileInfoPointer sourceInfo, const FileInfoPointer targetPathInfo, FileInfoPointer toInfo, const QString fileName, bool *ok);
+    bool renameFileByHandler(const FileInfoPointer sourceInfo, const FileInfoPointer targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
 
 private:
-    bool checkSymLink(const FileInfoPointer &fromInfo);
-    bool checkSelf(const FileInfoPointer &fromInfo);
+    bool checkSymLink(const FileInfoPointer fromInfo);
+    bool checkSelf(const FileInfoPointer fromInfo);
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

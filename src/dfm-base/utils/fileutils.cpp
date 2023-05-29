@@ -673,7 +673,7 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
 
 QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)
 {
-    const FileInfoPointer &info = InfoFactory::create<FileInfo>(fileUrl);
+    const FileInfoPointer info = InfoFactory::create<FileInfo>(fileUrl);
 
     if (info && DFMIO::DFile(fileUrl).exists()) {
         QString baseName = info->displayOf(DisPlayInfoType::kFileDisplayName) == info->nameOf(NameInfoType::kFileName)

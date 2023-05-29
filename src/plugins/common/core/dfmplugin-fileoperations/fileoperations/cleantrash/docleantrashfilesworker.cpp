@@ -132,7 +132,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
  * \param trashInfo File information in Recycle Bin
  * \return Is the execution successful
  */
-bool DoCleanTrashFilesWorker::clearTrashFile(const FileInfoPointer &trashInfo)
+bool DoCleanTrashFilesWorker::clearTrashFile(const FileInfoPointer trashInfo)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {

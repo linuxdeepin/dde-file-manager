@@ -73,7 +73,7 @@ DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl)
 {
 }
 
-DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl, const FileInfoPointer &info)
+DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl, const FileInfoPointer info)
     : ProxyFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
 {
     setProxy(info);

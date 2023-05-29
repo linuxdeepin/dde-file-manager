@@ -67,30 +67,30 @@ private:   // file copy
                                                            const bool isTo = false,
                                                            const QString &errorMsg = QString());
 
-    void readAheadSourceFile(const FileInfoPointer &fileInfo);
-    bool createFileDevices(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+    void readAheadSourceFile(const FileInfoPointer fileInfo);
+    bool createFileDevices(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                            QSharedPointer<DFMIO::DFile> &fromeFile, QSharedPointer<DFMIO::DFile> &toFile,
                            bool *skip);
-    bool createFileDevice(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
-                          const FileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
+    bool createFileDevice(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+                          const FileInfoPointer needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
                           bool *skip);
-    bool openFiles(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+    bool openFiles(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                    const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
                    bool *skip);
-    bool openFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+    bool openFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                   const QSharedPointer<DFMIO::DFile> &file, const DFMIO::DFile::OpenFlags &flags,
                   bool *skip);
-    bool resizeTargetFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+    bool resizeTargetFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                           const QSharedPointer<DFMIO::DFile> &file, bool *skip);
-    bool doReadFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+    bool doReadFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                     const QSharedPointer<DFMIO::DFile> &fromDevice,
                     char *data, const qint64 &blockSize, qint64 &readSize, bool *skip);
-    bool doWriteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+    bool doWriteFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                      const QSharedPointer<DFMIO::DFile> &toDevice,
                      const char *data, const qint64 readSize, bool *skip);
-    void setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo);
+    void setTargetPermissions(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
     bool verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
-                             const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+                             const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                              QSharedPointer<DFMIO::DFile> &toFile);
     void checkRetry();
     bool isStopped();
