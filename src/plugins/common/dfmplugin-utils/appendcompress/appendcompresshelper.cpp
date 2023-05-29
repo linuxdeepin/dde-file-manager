@@ -39,7 +39,7 @@ bool AppendCompressHelper::setMouseStyle(const QUrl &toUrl, const QList<QUrl> &f
 bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
 {
     QList<QUrl> transformedUrls;
-    UniversalUtils::urlsTransform(fromUrls, &transformedUrls);
+    UniversalUtils::urlsTransformToLocal(fromUrls, &transformedUrls);
     if (!transformedUrls.isEmpty()) {
         if (canAppendCompress(transformedUrls, toUrl)) {
             QString toFilePath = toUrl.toLocalFile();
@@ -85,7 +85,7 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
 
     QUrl localUrl = toUrl;
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal({ localUrl }, &urls);
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 

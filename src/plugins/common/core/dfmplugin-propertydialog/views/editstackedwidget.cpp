@@ -253,7 +253,7 @@ void EditStackedWidget::showTextShowFrame()
     else {
         QUrl oldUrl = fileUrl;
         QList<QUrl> urls {};
-        bool ok = UniversalUtils::urlsTransform(QList<QUrl>() << oldUrl, &urls);
+        bool ok = UniversalUtils::urlsTransformToLocal(QList<QUrl>() << oldUrl, &urls);
         if (ok && !urls.isEmpty())
             oldUrl = urls.first();
 

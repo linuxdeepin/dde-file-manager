@@ -103,7 +103,7 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
         if (url.isValid()) {
             QUrl localUrl = url;
             QList<QUrl> urls {};
-            bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
+            bool ok = UniversalUtils::urlsTransformToLocal({ localUrl }, &urls);
             if (ok && !urls.isEmpty())
                 localUrl = urls.first();
 
@@ -116,7 +116,7 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
     if (toUrl.isValid()) {
         QUrl localUrl = toUrl;
         QList<QUrl> urls {};
-        bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
+        bool ok = UniversalUtils::urlsTransformToLocal({ localUrl }, &urls);
         if (ok && !urls.isEmpty())
             localUrl = urls.first();
 

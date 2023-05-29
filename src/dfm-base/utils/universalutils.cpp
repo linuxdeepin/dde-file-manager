@@ -388,42 +388,21 @@ bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
     return false;
 }
 
-bool UniversalUtils::urlsTransform(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls)
+bool UniversalUtils::urlsTransformToLocal(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls)
 {
     Q_ASSERT(targetUrls);
     bool ret { false };
 
     for (const auto &url : sourceUrls) {
+        if (url.scheme() == Global::Scheme::kFile) {
+            targetUrls->append(url);
+            continue;
+        }
+
         auto info { InfoFactory::create<FileInfo>(url) };
         if (info && info->canAttributes(FileInfo::FileCanType::kCanRedirectionFileUrl)) {
             ret = true;
             targetUrls->append(info->urlOf(UrlInfoType::kRedirectedFileUrl));
-        } else {
-            targetUrls->append(url);
-        }
-    }
-
-    return ret;
-}
-
-bool UniversalUtils::originalUrls(const QList<QUrl> &srcUrls, QList<QUrl> *targetUrls)
-{
-    bool ret { false };
-    if (srcUrls.isEmpty())
-        return ret;
-
-    const auto &srcUrl = srcUrls.first();
-    if (srcUrl.scheme() == Global::Scheme::kFile)
-        return ret;
-
-    UrlInfoType urlType = (srcUrl.scheme() == Global::Scheme::kTrash)
-            ? UrlInfoType::kRedirectedFileUrl
-            : UrlInfoType::kOriginalUrl;
-    for (const auto &url : srcUrls) {
-        auto info { InfoFactory::create<FileInfo>(url) };
-        if (info) {
-            ret = true;
-            targetUrls->append(info->urlOf(urlType));
         } else {
             targetUrls->append(url);
         }

@@ -294,7 +294,7 @@ bool RecentHelper::openFileLocation(const QUrl &url)
 {
     QUrl localUrl = url;
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal({ localUrl }, &urls);
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 

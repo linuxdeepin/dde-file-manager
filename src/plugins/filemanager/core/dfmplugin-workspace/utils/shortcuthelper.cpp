@@ -327,7 +327,7 @@ void ShortcutHelper::previewFiles()
 
     QList<QUrl> selectUrls = urls;
     QList<QUrl> urlsTrans {};
-    bool ok = UniversalUtils::urlsTransform(urls, &urlsTrans);
+    bool ok = UniversalUtils::urlsTransformToLocal(urls, &urlsTrans);
     if (ok && !urlsTrans.isEmpty())
         selectUrls = urlsTrans;
 
@@ -335,7 +335,7 @@ void ShortcutHelper::previewFiles()
 
     urlsTrans.clear();
     QList<QUrl> currentDirUrls = urls;
-    ok = UniversalUtils::urlsTransform(currentDirUrls, &urlsTrans);
+    ok = UniversalUtils::urlsTransformToLocal(currentDirUrls, &urlsTrans);
     if (ok && !urlsTrans.isEmpty())
         currentDirUrls = urlsTrans;
 

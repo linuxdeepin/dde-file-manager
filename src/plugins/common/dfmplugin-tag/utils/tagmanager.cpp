@@ -86,7 +86,7 @@ bool TagManager::canTagFile(const QUrl &url) const
     } else {
         QList<QUrl> transUrls {};
         QList<QUrl> srcUrls { url };
-        bool ok = UniversalUtils::urlsTransform(srcUrls, &transUrls);
+        bool ok = UniversalUtils::urlsTransformToLocal(srcUrls, &transUrls);
         if (ok && !transUrls.isEmpty()) {
             localUrl = transUrls.first();
         }

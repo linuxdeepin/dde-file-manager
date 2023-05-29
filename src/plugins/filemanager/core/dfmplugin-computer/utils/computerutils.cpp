@@ -300,7 +300,7 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
 
     QUrl converted = url;
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform({ converted }, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal({ converted }, &urls);
 
     if (ok && !urls.isEmpty())
         converted = urls.first();

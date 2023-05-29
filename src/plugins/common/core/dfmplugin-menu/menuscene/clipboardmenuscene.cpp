@@ -166,7 +166,7 @@ bool ClipBoardMenuScene::triggered(QAction *action)
     QList<QUrl> selectedUrlsTemp = d->selectFiles;
     QList<QUrl> urls {};
 
-    bool ok = UniversalUtils::urlsTransform(selectedUrlsTemp, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal(selectedUrlsTemp, &urls);
     if (ok && !urls.isEmpty())
         selectedUrlsTemp = urls;
 
