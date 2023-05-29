@@ -8,6 +8,7 @@
 #include "tools/upgrade/builtininterface.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -23,10 +24,12 @@
 #include <QDBusInterface>
 #include <QProcess>
 #include <QDateTime>
+#include <QTimer>
 
 #include <iostream>
 #include <algorithm>
 #include <unistd.h>
+#include <malloc.h>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -45,6 +48,9 @@ static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop";
 static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
 static const char *const kPluginCore = "ddplugin-core";
 static const char *const kLibCore = "libddplugin-core.so";
+
+static constexpr int kMemoryThreshold { 80 * 1024 };   // 80MB
+static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
 
 static bool pluginsLoad()
 {
@@ -173,12 +179,27 @@ static bool isDesktopEnable()
     return enable;
 }
 
+static void autoReleaseMemory()
+{
+    bool autoRelease = dfmbase::DConfigManager::instance()->value(dfmbase::kDefaultCfgPath, "dfm.memory.autorelease", true).toBool();
+    if (!autoRelease)
+        return;
+
+    static QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [] {
+        float memUsage = dfmbase::SysInfoUtils::getMemoryUsage(getpid());
+        if (memUsage > kMemoryThreshold)
+            malloc_trim(0);
+    });
+
+    timer.start(kTimerInterval);
+}
+
 int main(int argc, char *argv[])
 {
     QString mainTime = QDateTime::currentDateTime().toString();
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
-    a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
     a.setApplicationVersion(BUILD_VERSION);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setProductIcon(QIcon::fromTheme("deepin-toggle-desktop"));
@@ -189,11 +210,13 @@ int main(int argc, char *argv[])
         a.setApplicationName("dde-file-manager");
         a.loadTranslator();
         a.setApplicationName(appName);
+        a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
         a.setQuitOnLastWindowClosed(false);
     }
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
+    autoReleaseMemory();
 
     qInfo() << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()
             << "argments" << a.arguments() << mainTime;

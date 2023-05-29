@@ -57,6 +57,7 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
     d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
@@ -211,7 +212,7 @@ bool OpenWithMenuScene::triggered(QAction *action)
 
     if (actProperty == ActionID::kOpenWithCustom) {
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
-        dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", selectUrls);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", d->windowId, selectUrls);
 
         return true;
     }

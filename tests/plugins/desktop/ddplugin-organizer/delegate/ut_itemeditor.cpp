@@ -13,6 +13,7 @@
 #include <QLayout>
 
 #include <DStyle>
+#include <darrowrectangle.h>
 
 #include <gtest/gtest.h>
 
@@ -43,6 +44,61 @@ TEST(ItemEditor, setMaxHeight)
     int h = 1000;
     ie.setMaxHeight(h);
     EXPECT_EQ(ie.maxHeight, h);
+}
+
+TEST(ItemEditor, setMaximumLength)
+{
+    ItemEditor ie;
+    ie.maxTextLength = 1;
+    ie.setMaximumLength(0);
+
+    EXPECT_EQ(ie.maxTextLength, 1);
+
+    ie.setMaximumLength(100);
+    EXPECT_EQ(ie.maxTextLength, 100);
+}
+
+TEST(ItemEditor, maximumLength)
+{
+    ItemEditor ie;
+    ie.maxTextLength = 14;
+    EXPECT_EQ(ie.maximumLength(), 14);
+}
+
+TEST(ItemEditor, textLength)
+{
+    ItemEditor ie;
+    const QString &text= "ni测试";
+    ie.useCharCount = false;
+    EXPECT_EQ(ie.textLength(text), 8);
+
+    ie.setCharCountLimit();
+    EXPECT_TRUE(ie.useCharCount);
+    EXPECT_EQ(ie.textLength(text), 4);
+}
+
+TEST(ItemEditor, setBaseGeometry)
+{
+    ItemEditor ie;
+    stub_ext::StubExt stub;
+    bool ug = false;
+    stub.set_lamda(&ItemEditor::updateGeometry, [&ug](){
+        ug = true;
+    });
+
+    const QRect base(30, 30, 100, 200);
+    const QSize itSize(90, 90);
+    const QMargins margin(2,2,2,2);
+    ie.setBaseGeometry(base, itSize, margin);
+    ASSERT_NE(ie.layout(), nullptr);
+    EXPECT_EQ(ie.layout()->spacing(), 0);
+    EXPECT_EQ(ie.layout()->contentsMargins(), margin);
+    EXPECT_EQ(ie.pos(), base.topLeft());
+    EXPECT_EQ(ie.width(), base.width());
+    EXPECT_EQ(ie.minimumHeight(), base.height());
+    EXPECT_EQ(ie.itemSizeHint, itSize);
+
+    EXPECT_TRUE(ug);
 }
 
 TEST(ItemEditor, updateGeometry)
@@ -83,6 +139,42 @@ TEST(ItemEditor, updateGeometry)
     EXPECT_EQ(it->height(), ie.maxHeight - 50);
 }
 
+TEST(ItemEditor, showAlertMessage)
+{
+    ItemEditor ie;
+    stub_ext::StubExt stub;
+    bool show = false;;
+    stub.set_lamda((void (*)(DArrowRectangle *, int, int))((void (DArrowRectangle::*)(int, int))&DArrowRectangle::show), [&show](){
+        show = true;
+    });
+
+    ie.showAlertMessage("sssssssss");
+
+    EXPECT_NE(ie.tooltip, nullptr);
+    EXPECT_TRUE(show);
+}
+
+TEST(ItemEditor, select)
+{
+    ItemEditor ie;
+    ie.setText("test");
+    ie.select("es");
+
+    auto cur = ie.textEditor->textCursor();
+    EXPECT_EQ(cur.position(), 2);
+}
+
+TEST(ItemEditor, setOpacity)
+{
+    ItemEditor ie;
+    ie.setOpacity(0.5);
+    ASSERT_NE(ie.opacityEffect, nullptr);
+    EXPECT_EQ(ie.opacityEffect->opacity(), 0.5);
+
+    ie.setOpacity(1.2);
+    EXPECT_EQ(ie.opacityEffect, nullptr);
+}
+
 TEST(RenameEdit, adjustStyle)
 {
     RenameEdit re;
@@ -90,6 +182,19 @@ TEST(RenameEdit, adjustStyle)
     EXPECT_EQ(re.document()->documentMargin(), 2);
     const int frameRadius = DStyle::pixelMetric(re.style(), DStyle::PM_FrameRadius, nullptr, &re);
     EXPECT_EQ(frameRadius, 0);
+}
+
+TEST(RenameEdit, redoundo)
+{
+    RenameEdit re;
+    re.pushStatck("t");
+    re.pushStatck("te");
+
+    re.undo();
+    EXPECT_EQ(re.toPlainText(), QString("t"));
+
+    re.redo();
+    EXPECT_EQ(re.toPlainText(), QString("te"));
 }
 
 

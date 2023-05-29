@@ -163,10 +163,10 @@ QString SyncFileInfo::nameOf(const NameInfoType type) const
     }
 }
 /*!
-  * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
-  * 处理或者字符串处理，这都比较快
-  * \param FileNameInfoType
-  */
+ * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
+ * 处理或者字符串处理，这都比较快
+ * \param FileNameInfoType
+ */
 QString SyncFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
@@ -215,7 +215,7 @@ bool SyncFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsHidden:
         [[fallthrough]];
     case FileIsType::kIsSymLink:
-        return d->attribute(d->getAttributeIDIsVector()[static_cast<int>(type)]).toBool();
+        return d->attribute(d->getAttributeIDIsVector().at(static_cast<int>(type))).toBool();
     case FileIsType::kIsExecutable:
         return d->isExecutable();
     case FileIsType::kIsRoot:
@@ -269,7 +269,7 @@ QVariant SyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kOwnerId:
         [[fallthrough]];
     case FileExtendedInfoType::kGroupId:
-        return d->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
+        return d->attribute(d->getAttributeIDExtendVector().at(static_cast<int>(type)));
     default:
         QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
@@ -334,7 +334,7 @@ QVariant SyncFileInfo::timeOf(const TimeInfoType type) const
 {
     qint64 data { 0 };
     if (type < FileTimeType::kDeletionTimeMSecond)
-        data = d->attribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
+        data = d->attribute(d->getAttributeIDVector().at(static_cast<int>(type))).value<qint64>();
 
     switch (type) {
     case TimeInfoType::kCreateTime:
@@ -627,7 +627,7 @@ void SyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo>
 
 QMimeType SyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
 {
-    static DFMBASE_NAMESPACE::DMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
     if (isGvfs) {
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }
@@ -793,8 +793,9 @@ QString SyncFileInfoPrivate::iconName() const
 
     if (iconNameValue.isEmpty()) {
         const QStringList &list = this->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();
-        if (!list.isEmpty())
-            iconNameValue = list.first();
+        const auto &iter = std::find_if(list.begin(), list.end(), [](const QString &name) { return QIcon::hasThemeIcon(name); });
+        if (iter != list.end())
+            iconNameValue = *iter;
     }
 
     if (!FileUtils::isGvfsFile(q->fileUrl()) && iconNameValue.isEmpty())

@@ -212,4 +212,11 @@ TEST_F(UT_wallPaperPreview, buildWidgets)
         EXPECT_EQ(preview->previewWidgets.value("testsc1")->geometry(), QRect(0, 0, 200, 200));
         EXPECT_EQ(preview->previewWidgets.value("testsc2")->geometry(), QRect(0, 0, 200, 200));
     }
+    {
+        rets2.clear();
+        sc1 = nullptr;
+        rets2.append(sc1);
+        preview->buildWidgets();
+        EXPECT_TRUE(preview->previewWidgets.isEmpty());
+    }
 }

@@ -47,7 +47,10 @@ static inline DFMBASE_NAMESPACE::AbstractMenuScene* menuSceneCreateScene(const Q
 
 static inline QVariantHash menuPerfectParams(const QVariantHash &params) {
     const QVariant &ret = MenuScenePush(slot_Menu_PerfectParams, params);
-    return ret.value<QVariantHash>();
+    if (ret.isValid())
+        return ret.value<QVariantHash>();
+    else
+        return params;
 }
 }
 

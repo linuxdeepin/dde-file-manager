@@ -451,8 +451,8 @@ bool DeviceUtils::checkDiskEncrypted()
 #ifdef COMPILE_ON_V23
     // TODO (liuzhangjian) check disk encrypted on v23
 #elif COMPILE_ON_V20
-                QSettings settings("/etc/deepin/deepin-user-experience", QSettings::IniFormat);
-                isEncrypted = settings.value("ExperiencePlan/FullDiskEncrypt", false).toBool();
+        QSettings settings("/etc/deepin/deepin-user-experience", QSettings::IniFormat);
+        isEncrypted = settings.value("ExperiencePlan/FullDiskEncrypt", false).toBool();
 #endif
     });
 
@@ -468,16 +468,16 @@ QStringList DeviceUtils::encryptedDisks()
 #ifdef COMPILE_ON_V23
     // TODO (liuzhangjian) get encrypted disks on v23
 #elif COMPILE_ON_V20
-                QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
-                const QString &value = settings.value("DI_CRYPT_INFO", "").toString();
-                if (!value.isEmpty()) {
-                    QStringList groupList = value.split(';');
-                    for (const auto &group : groupList) {
-                        QStringList device = group.split(':');
-                        if (!device.isEmpty())
-                            deviceList << device.first();
-                    }
-                }
+        QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
+        const QString &value = settings.value("DI_CRYPT_INFO", "").toString();
+        if (!value.isEmpty()) {
+            QStringList groupList = value.split(';');
+            for (const auto &group : groupList) {
+                QStringList device = group.split(':');
+                if (!device.isEmpty())
+                    deviceList << device.first();
+            }
+        }
 #endif
     });
 

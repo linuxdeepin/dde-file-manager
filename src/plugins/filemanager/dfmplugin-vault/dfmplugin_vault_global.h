@@ -14,6 +14,7 @@
 DPVAULT_BEGIN_NAMESPACE
 
 enum VaultState {
+    kUnknow = 0,
     kNotExisted,
     kEncrypted,
     kUnlocked,
@@ -146,7 +147,13 @@ inline constexpr char kAcSidebarVaultMenu[] { "sidebar_vaultitem_menu" };
 }
 
 inline constexpr char kDeamonServiceName[] { "com.deepin.filemanager.daemon" };
-
+#ifdef COMPILE_ON_V23
+inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
+inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
+#else
+inline constexpr char kAppSessionService[] { "com.deepin.SessionManager" };
+inline constexpr char kAppSessionPath[] { "/com/deepin/SessionManager" };
+#endif
 DPVAULT_END_NAMESPACE
 
 #endif   // DFMPLUGIN_VAULT_GLOBAL_H

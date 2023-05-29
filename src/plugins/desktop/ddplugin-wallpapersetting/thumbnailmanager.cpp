@@ -16,8 +16,7 @@
 using namespace ddplugin_wallpapersetting;
 
 ThumbnailManager::ThumbnailManager(qreal _scale, QObject *parent)
-    : QObject(parent), scale(_scale)
-    , cacheDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation))
+    : QObject(parent), scale(_scale), cacheDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation))
 {
 
     // old dir

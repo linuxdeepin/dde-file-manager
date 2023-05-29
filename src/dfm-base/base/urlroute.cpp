@@ -234,6 +234,16 @@ QUrl UrlRoute::fromUserInput(const QString &userInput, QString workingDirectory,
     }
 }
 
+QList<QUrl> UrlRoute::fromStringList(const QStringList &strList)
+{
+    QList<QUrl> urls;
+    urls.reserve(strList.size());
+    for (const auto &str : strList)
+        urls << fromUserInput(str);
+
+    return urls;
+}
+
 QByteArray UrlRoute::urlsToByteArray(const QList<QUrl> &list)
 {
     QByteArray urlByteArray;

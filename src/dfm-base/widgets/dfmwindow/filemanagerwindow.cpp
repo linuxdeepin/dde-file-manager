@@ -25,6 +25,7 @@ FileManagerWindowPrivate::FileManagerWindowPrivate(const QUrl &url, FileManagerW
       q(qq),
       currentUrl(url)
 {
+    q->setWindowTitle(currentUrl.fileName());
 }
 
 bool FileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)

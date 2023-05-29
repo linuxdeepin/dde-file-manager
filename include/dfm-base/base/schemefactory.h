@@ -213,6 +213,13 @@ public:
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                         create(url, errorString));
 
+        if (type == Global::CreateFileInfoType::kCreateFileInfoSyncAndCache)
+            return qSharedPointerDynamicCast<T>(getFileInfoFromCache(url,  Global::CreateFileInfoType::kCreateFileInfoSyncAndCache, errorString));
+
+        if (type == Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache && url.scheme() == Global::Scheme::kFile)
+            return qSharedPointerDynamicCast<T>(getFileInfoFromCache(url,  Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache, errorString));
+
+
         if (url.scheme() == Global::Scheme::kFile) {
             if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
                 return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
@@ -246,6 +253,7 @@ private:
     static InfoFactory &instance();   // 获取全局实例
     explicit InfoFactory() {}
     static QString scheme(const QUrl &url);
+    static QSharedPointer<FileInfo> getFileInfoFromCache(const QUrl &url, Global::CreateFileInfoType type, QString *errorString);
 };
 
 class ViewFactory final : public SchemeFactory<AbstractBaseView>

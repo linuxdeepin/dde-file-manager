@@ -152,12 +152,13 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         if (!stateCheck())
             return false;
         auto fileUrl = FileUtils::bindUrlTransform(url);
-        if (completeSourceFiles.contains(fileUrl))
+        if (handleSourceFiles.contains(fileUrl))
             continue;
 
         FileInfoPointer restoreInfo { nullptr };
         if (!checkRestoreInfo(url, restoreInfo)) {
             completeFilesCount++;
+            handleSourceFiles.append(fileUrl);
             continue;
         }
 
@@ -166,6 +167,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         if (!createParentDir(fileInfo, restoreInfo, targetInfo, &result)) {
             if (result) {
                 completeFilesCount++;
+                handleSourceFiles.append(fileUrl);
                 continue;
             } else {
                 return false;
@@ -178,8 +180,10 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         emitCurrentTaskNotify(url, restoreInfo->urlOf(UrlInfoType::kUrl));
         FileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
-        if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
+        if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok)) {
+            handleSourceFiles.append(fileUrl);
             continue;
+        }
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
         bool trashSucc = fileHandler.moveFile(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
@@ -191,7 +195,6 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             }
             if (!completeTargetFiles.contains(restoreInfo->urlOf(UrlInfoType::kUrl)))
                 completeTargetFiles.append(restoreInfo->urlOf(UrlInfoType::kUrl));
-            continue;
         } else {
             auto errorCode = fileHandler.errorCode();
             switch (errorCode) {
@@ -205,6 +208,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             if (!trashSucc)
                 failUrls.append(url);
         }
+        handleSourceFiles.append(fileUrl);
     }
 
     if (failUrls.count() > 0) {

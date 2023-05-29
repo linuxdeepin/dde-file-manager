@@ -65,7 +65,7 @@ VaultPolicyState VaultDBusUtils::getVaultPolicy()
             vaulthidestate = static_cast<VaultPolicyState>(varVaule.toInt());
         }
     } else {
-        qInfo() << "Vault error: value method called failed!";
+        qWarning() << "Vault Warning: dbus method(QueryVaultAccessPolicyVisible) call failed!";
     }
 
     return vaulthidestate;

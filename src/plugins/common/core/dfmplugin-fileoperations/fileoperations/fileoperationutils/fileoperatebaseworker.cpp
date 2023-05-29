@@ -705,10 +705,10 @@ QString FileOperateBaseWorker::fileOriginName(const QUrl &trashInfoUrl)
         qWarning() << "reade trash file info err,trashInfoUrl = " << trashInfoUrl;
         return QString();
     }
-    QString fileName(data.at(2));
-    fileName.replace(0, 5, "");
-    fileName = QUrl::fromPercentEncoding(QByteArray(fileName.toStdString().c_str()));
-    return fileName;
+    QString filePath(data.at(2));
+    filePath.replace(0, 5, "");
+    const QUrl &url = QUrl::fromLocalFile(QByteArray::fromPercentEncoding(filePath.toLocal8Bit()));
+    return url.fileName();
 }
 
 void FileOperateBaseWorker::removeTrashInfo(const QUrl &trashInfoUrl)

@@ -34,6 +34,9 @@ TEST(CanvasView, initUI)
     model.setSourceModel(&fmodel);
 
     CanvasView view;
+    EXPECT_EQ(view.selectionMode(), QAbstractItemView::NoSelection);
+    EXPECT_EQ(view.selectionBehavior(), QAbstractItemView::SelectItems);
+
     view.setModel(&model);
 
     CanvasSelectionModel sel(&model, nullptr);
@@ -65,7 +68,6 @@ TEST(CanvasView, initUI)
     EXPECT_TRUE(view.viewport()->testAttribute(Qt::WA_TranslucentBackground));
     EXPECT_FALSE(view.viewport()->autoFillBackground());
 
-    EXPECT_EQ(view.selectionMode(), QAbstractItemView::NoSelection);
     EXPECT_TRUE(view.acceptDrops());
 
     ASSERT_NE(view.itemDelegate(), nullptr);
