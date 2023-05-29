@@ -27,7 +27,7 @@
             "name":"Items visiable",
             "name[zh_CN]":"子项可见性",
             "description[zh_CN]":"用于控制侧边栏中各子项是否可见",
-            "description":"It's used to control whether the items are visiable in sidebar",
+            "description":"It's used to control the visibility of items in the sidebar.",
             "permissions":"readwrite",
             "visibility":"public"
         },
@@ -40,10 +40,10 @@
                     },
             "serial":0,
             "flags":[],
-            "name":"Items visiable",
+            "name":"Groups visible",
             "name[zh_CN]":"分组折叠/展开状态",
             "description[zh_CN]":"用于控制侧边栏中各分组的折叠/展开状态",
-            "description":"It's used to control whether the groups are expaned/unexpanded in sidebar",
+            "description":"It's used to control the folding/unfolding state of groups in the sidebar.",
             "permissions":"readwrite",
             "visibility":"public"
         }
