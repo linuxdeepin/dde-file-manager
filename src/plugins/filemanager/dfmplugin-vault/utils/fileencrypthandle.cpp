@@ -191,6 +191,11 @@ bool FileEncryptHandle::createDirIfNotExist(QString path)
 
 VaultState FileEncryptHandle::state(const QString &encryptBaseDir) const
 {
+    if (encryptBaseDir.isEmpty()) {
+        qWarning() << "Vault Warning: not set the base dir!";
+        return kUnknow;
+    }
+
     if (!(d->curState == kUnknow || d->curState == kEncrypted))
         return d->curState;
 
