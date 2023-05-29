@@ -292,7 +292,6 @@ int VaultControl::lockVault(const QString &unlockFileDir, bool isForced)
     CryfsVersionInfo version = versionString();
     QString fusermountBinary;
     QStringList arguments;
-    qInfo() << QString("Vault: cryfs version is %1.%2.%3").arg(version.majorVersion).arg(version.minorVersion).arg(version.hotfixVersion);
     if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
         fusermountBinary = QStandardPaths::findExecutable("cryfs-unmount");
         arguments << unlockFileDir;

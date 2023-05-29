@@ -14,11 +14,12 @@ namespace dfmplugin_recent {
 class RecentIterateWorker : public QObject
 {
     Q_OBJECT
+
 public:
     RecentIterateWorker();
 
 public slots:
-    void doWork();
+    void onRecentFileChanged(const QList<QUrl> &cachedUrls);
 
 signals:
     void updateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime);

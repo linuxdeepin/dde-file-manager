@@ -5,8 +5,11 @@
 #include "fileencrypthandle.h"
 #include "fileencrypthandle_p.h"
 #include "encryption/vaultconfig.h"
+#include "pathmanager.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+#include <dfm-io/dfmio_utils.h>
 
 #include <QDirIterator>
 #include <QStandardPaths>
@@ -17,9 +20,12 @@
 #include <QDir>
 #include <QMutex>
 #include <QDateTime>
-#include <QStorageInfo>
+#include <QUrl>
+#include <QDBusConnectionInterface>
 
 #include <unistd.h>
+
+inline constexpr int kArgumentsNum { 3 };
 
 DPVAULT_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -29,6 +35,8 @@ FileEncryptHandle::FileEncryptHandle(QObject *parent)
 {
     connect(d->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
     connect(d->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
+    connectLockScreenToUpdateVaultState();
+
 }
 
 FileEncryptHandle::~FileEncryptHandle()
@@ -38,6 +46,26 @@ FileEncryptHandle::~FileEncryptHandle()
 
     delete d;
     d = nullptr;
+}
+
+void FileEncryptHandle::connectLockScreenToUpdateVaultState()
+{
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    if (!connection.isConnected()) {
+        qWarning() << "Cannot connect to the D-Bus session bus.\n"
+                      "Please check your system settings and try again.\n";
+        return;
+    }
+
+    if (!connection.interface()->isServiceRegistered(kAppSessionService)) {
+        qCritical("Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
+        return;
+    }
+
+    if (!QDBusConnection::sessionBus().connect(kAppSessionService, kAppSessionPath, "org.freedesktop.DBus.Properties",
+                                               "PropertiesChanged", "sa{sv}as", this, SLOT(responseLockScreenDBus(QDBusMessage)))) {
+        qCritical() << "Vault Server Error: connect lock screen dbus error!";
+    }
 }
 
 FileEncryptHandle *FileEncryptHandle::instance()
@@ -58,12 +86,14 @@ FileEncryptHandle *FileEncryptHandle::instance()
  *  调用runVaultProcess函数进行创建保险箱并返回创建状态标记。
  *  最后使用信号signalCreateVault发送创建状态标记。
  */
-void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, QString passWord, EncryptType type, int blockSize)
+void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &unlockFileDir,
+                                    const QString &passWord, EncryptType type, int blockSize)
 {
+    if (!(createDirIfNotExist(lockBaseDir) && createDirIfNotExist(unlockFileDir)))
+        return;
+
     d->mutex->lock();
     d->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
-    createDirIfNotExist(lockBaseDir);
-    createDirIfNotExist(unlockFileDir);
 
     const QString &algoName = d->encryptTypeMap.value(type);
     DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
@@ -73,10 +103,11 @@ void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, 
     int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
     if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalCreateVault(d->activeState.value(1));
-        qInfo() << "create fail";
+        qWarning() << "Vault Warning: create vault failed!";
     } else {
+        d->curState = kUnlocked;
         emit signalCreateVault(flg);
-        qInfo() << "create success " << flg;
+        qInfo() << "Vault Info: create vault success ";
     }
     d->activeState.clear();
     d->mutex->unlock();
@@ -92,26 +123,31 @@ void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, 
  *  调用runVaultProcess函数进行解锁保险箱并返回解锁状态标记。
  *  最后使用信号signalUnlockVault发送解锁状态标记。
  */
-int FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
+bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &unlockFileDir, const QString &DSecureString)
 {
+    if (!createDirIfNotExist(unlockFileDir))
+        return false;
+
+    bool result { false };
     d->mutex->lock();
     d->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
-
     d->syncGroupPolicyAlgoName();
 
-    createDirIfNotExist(unlockFileDir);
     int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
     if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
+        result = false;
         emit signalUnlockVault(d->activeState.value(3));
-        qInfo() << "Decrypt fail";
+        qWarning() << "Vault Warning: unlock vault failed!";
     } else {
+        result = true;
+        d->curState = kUnlocked;
         emit signalUnlockVault(flg);
-        qInfo() << "Decrypt success " << flg;
+        qInfo() << "Vault Info: unlock vault success!" << flg;
     }
     d->activeState.clear();
     d->mutex->unlock();
 
-    return flg;
+    return result;
 }
 
 /*!
@@ -129,52 +165,68 @@ void FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
     int flg = d->lockVaultProcess(unlockFileDir, isForced);
     if (d->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalLockVault(d->activeState.value(7));
-        qInfo() << "encrypt fial";
+        qWarning() << "Vault Warning: lock vault failed! ";
     } else {
+        d->curState = kEncrypted;
         emit signalLockVault(flg);
-        qInfo() << "encrypt success " << flg;
+        qInfo() << "Vault Info: lock vault success!";
     }
     d->activeState.clear();
     d->mutex->unlock();
 }
 
-void FileEncryptHandle::createDirIfNotExist(QString path)
+bool FileEncryptHandle::createDirIfNotExist(QString path)
 {
     if (!QFile::exists(path)) {
         QDir().mkpath(path);
-    } else {   // 修复bug-52351 创建保险箱前，如果文件夹存在，则清空
+    } else {
         QDir dir(path);
         if (!dir.isEmpty()) {
-            qWarning() << "Vault: Unlock vault failed, mount dir is not empty!";
-            return;
+            qCritical() << "Vault: Create vault dir failed, dir is not empty!";
+            return false;
         }
     }
+    return true;
 }
 
-VaultState FileEncryptHandle::state(const QString &encryptBaseDir, const QString &decryptFileDir) const
+VaultState FileEncryptHandle::state(const QString &encryptBaseDir) const
 {
+    if (!(d->curState == kUnknow || d->curState == kEncrypted))
+        return d->curState;
+
     const QString &cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) {
-        // 记录保险箱状态
-        return kNotAvailable;
-    }
-    QString lockBaseDir = encryptBaseDir;
-
-    if (lockBaseDir.endsWith("/"))
-        lockBaseDir += "cryfs.config";
-    else
-        lockBaseDir += "/cryfs.config";
-
-    if (QFile::exists(lockBaseDir)) {
-        QStorageInfo info(decryptFileDir);
-        const QString &temp = info.fileSystemType();
-        if (info.isValid() && temp == "fuse.cryfs") {
-            return kUnlocked;
-        }
-        return kEncrypted;
+        d->curState = kNotAvailable;
     } else {
-        return kNotExisted;
+        QString lockBaseDir = encryptBaseDir;
+        if (lockBaseDir.endsWith("/"))
+            lockBaseDir += "cryfs.config";
+        else
+            lockBaseDir += "/cryfs.config";
+
+        if (QFile::exists(lockBaseDir)) {
+            QUrl mountDirUrl = QUrl::fromLocalFile(PathManager::vaultUnlockPath());
+            const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(mountDirUrl);
+            if (fsType == "fuse.cryfs")
+                d->curState = kUnlocked;
+            else
+                d->curState = kEncrypted;
+        } else {
+            d->curState = kNotExisted;
+        }
     }
+
+    return d->curState;
+}
+
+bool FileEncryptHandle::updateState(VaultState curState)
+{
+    if (curState == kNotExisted && d->curState != kEncrypted)
+        return false;
+
+    d->curState = curState;
+
+    return true;
 }
 
 EncryptType FileEncryptHandle::encryptAlgoTypeOfGroupPolicy()
@@ -190,7 +242,6 @@ EncryptType FileEncryptHandle::encryptAlgoTypeOfGroupPolicy()
 void FileEncryptHandle::slotReadError()
 {
     QString error = d->process->readAllStandardError().data();
-    qInfo() << error;
     if (d->activeState.contains(1)) {
         if (error.contains("mountpoint is not empty"))
             d->activeState[1] = static_cast<int>(ErrorCode::kMountpointNotEmpty);
@@ -215,6 +266,26 @@ void FileEncryptHandle::slotReadOutput()
 {
     QString msg = d->process->readAllStandardOutput().data();
     emit signalReadOutput(msg);
+}
+
+void FileEncryptHandle::responseLockScreenDBus(const QDBusMessage &msg)
+{
+    const QList<QVariant> &arguments = msg.arguments();
+    if (kArgumentsNum != arguments.count()) {
+        qCritical() << "Vault Server Error: arguments of lock screen dbus error!";
+        return;
+    }
+
+    const QString &interfaceName = msg.arguments().at(0).toString();
+    if (interfaceName != kAppSessionService)
+        return;
+
+    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+    QStringList keys = changedProps.keys();
+    Q_FOREACH (const QString &prop, keys) {
+        if (prop == "Locked")   // screen signal property
+            d->curState = kUnknow;
+    }
 }
 
 FileEncryptHandlerPrivate::FileEncryptHandlerPrivate(FileEncryptHandle *qq)
@@ -299,8 +370,6 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
     }
     arguments << QString("--cipher") << encryptTypeMap.value(type) << QString("--blocksize") << QString::number(blockSize) << lockBaseDir << unlockFileDir;
 
-    qInfo() << arguments;
-
     process->setEnvironment({ "CRYFS_FRONTEND=noninteractive" });
     process->start(cryfsBinary, arguments);
     process->waitForStarted();
@@ -329,7 +398,6 @@ int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir, bool isFo
     CryfsVersionInfo version = versionString();
     QString fusermountBinary;
     QStringList arguments;
-    qInfo() << QString("Vault: cryfs version is %1.%2.%3").arg(version.majorVersion).arg(version.minorVersion).arg(version.hotfixVersion);
     if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
         fusermountBinary = QStandardPaths::findExecutable("cryfs-unmount");
         arguments << unlockFileDir;

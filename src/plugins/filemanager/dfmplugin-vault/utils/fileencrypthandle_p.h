@@ -72,6 +72,7 @@ private:
     QMap<EncryptType, QString> encryptTypeMap;
     FileEncryptHandle *q { nullptr };
     CryfsVersionInfo cryfsVersion { CryfsVersionInfo(-1, -1, -1) };
+    VaultState curState { kUnknow };
 };
 
 DPVAULT_END_NAMESPACE

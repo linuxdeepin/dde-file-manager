@@ -24,8 +24,6 @@ TaskDialog::TaskDialog(QObject *parent)
 {
     moveToThread(qApp->thread());
     initUI();
-    if (!addTaskMutex)
-        addTaskMutex = new QMutex();
 }
 /*!
  * \brief TaskDialog::addTask 添加一个任务显示，立即显示，绑定所有taskHandler的信号，在listview中添加一个taskwidget
@@ -33,8 +31,6 @@ TaskDialog::TaskDialog(QObject *parent)
  */
 void TaskDialog::addTask(const JobHandlePointer taskHandler)
 {
-    QMutexLocker lk(addTaskMutex);
-
     TaskWidget *wid = nullptr;
     if (!taskHandler) {
         qWarning() << "task handler is null";
@@ -138,6 +134,10 @@ void TaskDialog::addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *w
     setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
     setTitle(taskListWidget->count());
     adjustSize();
+
+    if (taskItems.count() == 1)
+        moveToCenter();
+
     setModal(false);
     show();
     activateWindow();
@@ -154,16 +154,14 @@ void TaskDialog::setTitle(int taskCount)
 /*!
  * \brief TaskDialog::adjustSize 调整整个进度显示的高度，当每个item中的widget发生变化时
  */
-void TaskDialog::adjustSize()
+void TaskDialog::adjustSize(int hight)
 {
-    if (!adjustSizeMutex)
-        adjustSizeMutex = new QMutex();
-    QMutexLocker lk(adjustSizeMutex);
-
+    auto widgit = sender();
     int listHeight = 2;
     for (int i = 0; i < taskListWidget->count(); i++) {
         QListWidgetItem *item = taskListWidget->item(i);
-        int h = taskListWidget->itemWidget(item)->height();
+        auto wg = taskListWidget->itemWidget(item);
+        int h = widgit == wg && hight > 0 ? hight : wg->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
         listHeight += h;
     }
@@ -177,7 +175,6 @@ void TaskDialog::adjustSize()
     }
 
     layout()->setSizeConstraint(QLayout::SetNoConstraint);
-    moveYCenter();
 }
 /*!
  * \brief TaskDialog::moveYCenter 任务进度框自动调整到屏幕的中央
@@ -200,7 +197,6 @@ void TaskDialog::moveYCenter()
 void TaskDialog::removeTask()
 {
     auto send = sender();
-    QMutexLocker lk(addTaskMutex);
     JobHandlePointer jobHandler { nullptr };
     for (const auto &handler : taskItems.keys()) {
         if (handler.data() == send) {
@@ -256,15 +252,4 @@ void TaskDialog::keyPressEvent(QKeyEvent *event)
 
 TaskDialog::~TaskDialog()
 {
-    if (addTaskMutex) {
-        addTaskMutex->unlock();
-        delete addTaskMutex;
-        addTaskMutex = nullptr;
-    }
-
-    if (adjustSizeMutex) {
-        adjustSizeMutex->unlock();
-        delete adjustSizeMutex;
-        adjustSizeMutex = nullptr;
-    }
 }

@@ -44,6 +44,8 @@ static constexpr char kEmptyRecentFile[] =
 
 RecentManager *RecentManager::instance()
 {
+    // data race
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     static RecentManager instance;
     return &instance;
 }
@@ -184,7 +186,8 @@ void RecentManager::init()
 {
     iteratorWorker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, iteratorWorker, &QObject::deleteLater);
-    connect(this, &RecentManager::asyncHandleFileChanged, iteratorWorker, &RecentIterateWorker::doWork);
+    connect(this, &RecentManager::asyncHandleFileChanged,
+            iteratorWorker, &RecentIterateWorker::onRecentFileChanged);
 
     connect(iteratorWorker, &RecentIterateWorker::updateRecentFileInfo, this,
             &RecentManager::onUpdateRecentFileInfo);
@@ -193,7 +196,7 @@ void RecentManager::init()
 
     workerThread.start();
 
-    emit asyncHandleFileChanged();
+    emit asyncHandleFileChanged({});
 
     watcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentHelper::xbelPath()));
     connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentManager::updateRecent);
@@ -205,7 +208,7 @@ void RecentManager::init()
 
 void RecentManager::updateRecent()
 {
-    emit asyncHandleFileChanged();
+    emit asyncHandleFileChanged(recentNodes.keys());
 }
 
 void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime)

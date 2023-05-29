@@ -78,7 +78,7 @@ void UniversalUtils::notifyMessage(const QString &msg)
             .method(QString("Notify"))
             .arg(QObject::tr("dde-file-manager"))
             .arg(static_cast<uint>(0))
-            .arg(QString("media-eject"))
+            .arg(QString("dde-file-manager"))
             .arg(msg)
             .arg(QString())
             .arg(QStringList())
@@ -101,7 +101,7 @@ void UniversalUtils::notifyMessage(const QString &title, const QString &msg)
             .method(QString("Notify"))
             .arg(QObject::tr("dde-file-manager"))
             .arg(static_cast<uint>(0))
-            .arg(QString("media-eject"))
+            .arg(QString("dde-file-manager"))
             .arg(title)
             .arg(msg)
             .arg(QStringList())
@@ -412,14 +412,18 @@ bool UniversalUtils::originalUrls(const QList<QUrl> &srcUrls, QList<QUrl> *targe
     if (srcUrls.isEmpty())
         return ret;
 
-    if (srcUrls.first().scheme() == Global::Scheme::kFile)
+    const auto &srcUrl = srcUrls.first();
+    if (srcUrl.scheme() == Global::Scheme::kFile)
         return ret;
 
+    UrlInfoType urlType = (srcUrl.scheme() == Global::Scheme::kTrash)
+            ? UrlInfoType::kRedirectedFileUrl
+            : UrlInfoType::kOriginalUrl;
     for (const auto &url : srcUrls) {
         auto info { InfoFactory::create<FileInfo>(url) };
         if (info) {
             ret = true;
-            targetUrls->append(info->urlOf(UrlInfoType::kOriginalUrl));
+            targetUrls->append(info->urlOf(urlType));
         } else {
             targetUrls->append(url);
         }

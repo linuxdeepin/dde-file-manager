@@ -23,10 +23,13 @@ static QSharedPointer<dfmbase::FileInfo> transFileInfo(QSharedPointer<dfmbase::F
     const QString &suffix = fileInfo->nameOf(NameInfoType::kSuffix);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
         || fileInfo->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)) {
-        const QMimeType &mt = fileInfo->fileMimeType();
+        const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
+        QMimeType mt = fileInfo->fileMimeType();
+        if (!mt.isValid())
+            mt = DMimeDatabase().mimeTypeForFile(url.path(),QMimeDatabase::MatchDefault, QString());
+
         if (mt.name() == "application/x-desktop"
             && mt.suffixes().contains(DFMBASE_NAMESPACE::Global::Scheme::kDesktop, Qt::CaseInsensitive)) {
-            const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
             return FileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url, fileInfo));
         }
     }

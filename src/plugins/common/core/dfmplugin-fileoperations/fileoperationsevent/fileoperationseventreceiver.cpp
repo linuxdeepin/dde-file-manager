@@ -227,6 +227,11 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
         errorMsg = fileHandler.errorString();
         DialogManagerInstance->showErrorDialog(tr("Rename file error"), errorMsg);
     }
+
+    for (const auto &scUrl : successUrls.keys()) {
+        ClipBoard::instance()->replaceClipboardUrl(scUrl, successUrls.value(scUrl));
+    }
+
     return ok;
 }
 
@@ -661,7 +666,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
                 dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             // deal open file with custom dialog
-            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", urls);
+            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", windowId, urls);
             ok = true;
         }
     }
@@ -789,6 +794,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                  windowId, renamedFiles, ok, error);
+    if (ok)
+        ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
+
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
     return ok;

@@ -41,6 +41,9 @@ public:
     virtual QString nameOf(const FileNameInfoType type) const override;
 
     virtual QString displayOf(const DisplayInfoType type) const override;
+
+private:
+    QUrl localUrl {};
 };
 }
 #endif   //! VAULTFILEINFO_H

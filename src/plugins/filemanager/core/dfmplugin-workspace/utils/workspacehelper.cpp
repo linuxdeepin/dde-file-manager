@@ -21,6 +21,7 @@
 
 using namespace dfmplugin_workspace;
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 QMap<quint64, WorkspaceWidget *> WorkspaceHelper::kWorkspaceMap {};
 QMap<QString, FileViewRoutePrehaldler> WorkspaceHelper::kPrehandlers {};
@@ -212,7 +213,16 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
     if (defaultViewMode.contains(scheme))
         return defaultViewMode[scheme];
 
-    return static_cast<Global::ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
+    ViewMode mode = static_cast<ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
+
+    if (mode != ViewMode::kIconMode && mode != ViewMode::kListMode
+            && mode != ViewMode::kExtendMode && mode != ViewMode::kAllViewMode) {
+        qWarning() << "Config view mode is invalid, reset it to icon mode.";
+        mode = Global::ViewMode::kIconMode;
+        Application::instance()->setAppAttribute(Application::kViewMode, static_cast<int>(mode));
+    }
+
+    return mode;
 }
 
 void WorkspaceHelper::selectFiles(quint64 windowId, const QList<QUrl> &files)

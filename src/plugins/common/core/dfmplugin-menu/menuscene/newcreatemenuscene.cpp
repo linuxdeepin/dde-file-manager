@@ -125,7 +125,6 @@ void NewCreateMenuScene::updateState(QMenu *parent)
     auto curDirInfo = InfoFactory::create<FileInfo>(d->currentDir);
     if (!curDirInfo)
         return;
-    curDirInfo->refresh();
     if (!curDirInfo->isAttributes(OptInfoType::kIsWritable)) {
         auto actions = parent->actions();
         for (auto act : actions) {

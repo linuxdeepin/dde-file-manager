@@ -52,7 +52,7 @@ void CollectionDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         painter->setRenderHints(QPainter::Antialiasing
                                 | QPainter::TextAntialiasing
                                 | QPainter::SmoothPixmapTransform);
-        color.setAlphaF(0.05);
+        color.setAlphaF(0.1);
         painter->setBrush(color);
         painter->setPen(Qt::NoPen);
         painter->drawRoundedRect(option.rect, 8, 8);

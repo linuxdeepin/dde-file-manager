@@ -16,7 +16,10 @@ InfoFactory &InfoFactory::instance()
 QString InfoFactory::scheme(const QUrl &url)
 {
     auto scheme = url.scheme();
-    if (scheme == Global::Scheme::kFile && !FileUtils::isLocalDevice(url))
+    if (scheme != Global::Scheme::kFile)
+        return scheme;
+
+    if (!FileUtils::isLocalDevice(url))
         return Global::Scheme::kAsyncFile;
 
     dfmio::DFileInfo dinfo(url);
@@ -28,6 +31,24 @@ QString InfoFactory::scheme(const QUrl &url)
         scheme = Global::Scheme::kAsyncFile;
 
     return scheme;
+}
+
+QSharedPointer<FileInfo> InfoFactory::getFileInfoFromCache(const QUrl &url, Global::CreateFileInfoType type, QString *errorString)
+{
+    QSharedPointer<FileInfo> info = InfoCacheController::instance().getCacheInfo(url);
+    if (!info) {
+        if (type == Global::CreateFileInfoType::kCreateFileInfoSyncAndCache) {
+            info = instance().SchemeFactory<FileInfo>::create(url, errorString);
+        } else if (type == Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache) {
+            info = instance().SchemeFactory<FileInfo>::create(Global::Scheme::kAsyncFile, url, errorString);
+            if (info) {
+                info->refresh();
+            }
+        }
+        if (info)
+            emit InfoCacheController::instance().cacheFileInfo(url, info);
+    }
+    return info;
 }
 
 WatcherFactory &WatcherFactory::instance()

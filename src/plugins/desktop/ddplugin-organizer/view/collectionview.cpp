@@ -237,24 +237,24 @@ QPoint CollectionViewPrivate::pointToPos(const QPoint &point) const
 {
     int column = (point.x() - viewMargins.left()) / cellWidth;
     int row = (point.y() - viewMargins.top()) / cellHeight;
-    return QPoint(row, column);
+    return QPoint(column, row);
 }
 
 QPoint CollectionViewPrivate::posToPoint(const QPoint &pos) const
 {
-    int pointX = pos.y() * cellWidth + viewMargins.left();
-    int pointY = pos.x() * cellHeight + viewMargins.top();
+    int pointX = pos.x() * cellWidth + viewMargins.left();
+    int pointY = pos.y() * cellHeight + viewMargins.top();
     return QPoint(pointX, pointY);
 }
 
 int CollectionViewPrivate::posToNode(const QPoint &pos) const
 {
-    return pos.x() * columnCount + pos.y();
+    return pos.x() + pos.y() * columnCount;
 }
 
 QPoint CollectionViewPrivate::nodeToPos(const int node) const
 {
-    return QPoint(node / columnCount, node % columnCount);
+    return QPoint(node % columnCount, node / columnCount);
 }
 
 void CollectionViewPrivate::checkTouchDarg(QMouseEvent *event)

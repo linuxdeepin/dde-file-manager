@@ -93,9 +93,17 @@ void FileView::setViewMode(Global::ViewMode mode)
     if (itemDelegate())
         itemDelegate()->hideAllIIndexWidget();
 
-    setItemDelegate(d->delegates[static_cast<int>(mode)]);
+    int modeValue = static_cast<int>(mode);
+    if (d->delegates.keys().contains(modeValue)) {
+        d->currentViewMode = mode;
+    } else {
+        qWarning() << QString("The view mode %1 is not support in this dir! This view will set default mode.").arg(modeValue);
+        d->currentViewMode = Global::ViewMode::kIconMode;
+    }
 
-    switch (mode) {
+    setItemDelegate(d->delegates[static_cast<int>(d->currentViewMode)]);
+
+    switch (d->currentViewMode) {
     case Global::ViewMode::kIconMode:
         setUniformItemSizes(false);
         setResizeMode(Adjust);
@@ -130,8 +138,6 @@ void FileView::setViewMode(Global::ViewMode mode)
     default:
         break;
     }
-
-    d->currentViewMode = mode;
 }
 
 Global::ViewMode FileView::currentViewMode()
@@ -474,30 +480,6 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
     saveViewModeState();
 }
 
-void FileView::updateModelActiveIndex()
-{
-    const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
-
-    if (randeList.isEmpty()) {
-        return;
-    }
-
-    const RandeIndex &rande = randeList.first();
-
-    for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
-        model()->setIndexActive(model()->index(i, 0, rootIndex()), false);
-    }
-
-    for (int i = rande.second; i < d->visibleIndexRande.second; ++i) {
-        model()->setIndexActive(model()->index(i, 0, rootIndex()), false);
-    }
-
-    d->visibleIndexRande = rande;
-    for (int i = rande.first; i <= rande.second; ++i) {
-        updateVisibleIndex(model()->index(i, 0, rootIndex()));
-    }
-}
-
 FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
 {
     RandeIndexList list;
@@ -815,21 +797,6 @@ bool FileView::cdUp()
     return false;
 }
 
-void FileView::updateVisibleIndex(const QModelIndex &index)
-{
-    const auto info = model()->fileInfo(index);
-    if (!info)
-        return;
-
-    if (!info->exists()) {
-        // some time can't receive watcher event when file be deleted.
-        // call updateFile func to filter the file which is no existed.
-        model()->updateFile(info->urlOf(FileInfo::FileUrlInfoType::kUrl));
-    } else {
-        model()->setIndexActive(index);
-    }
-}
-
 DirOpenMode FileView::currentDirOpenMode() const
 {
     DirOpenMode mode;
@@ -859,12 +826,6 @@ void FileView::onRowCountChanged()
 
     delayUpdateStatusBar();
     updateContentLabel();
-    delayUpdateModelActiveIndex();
-}
-
-void FileView::onModelReseted()
-{
-    updateModelActiveIndex();
 }
 
 void FileView::setFilterData(const QUrl &url, const QVariant &data)
@@ -912,9 +873,6 @@ void FileView::resizeEvent(QResizeEvent *event)
     // TODO(liuyangming) crash when launch via command with params.
     if (itemDelegate() && itemDelegate()->editingIndex().isValid())
         doItemsLayout();
-
-    if (rootIndex().isValid())
-        updateModelActiveIndex();
 }
 
 void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
@@ -937,7 +895,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
         QModelIndex index = indexAt(event->pos());
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
 
-        itemDelegate()->commitDataAndCloseActiveEditor();
+        if (itemDelegate())
+            itemDelegate()->commitDataAndCloseActiveEditor();
 
         if (isEmptyArea) {
             if (selectionMode() != QAbstractItemView::SingleSelection)
@@ -1461,18 +1420,6 @@ void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int en
         }
     }
 
-    if (start < d->visibleIndexRande.second) {
-        if (end <= d->visibleIndexRande.first) {
-            d->visibleIndexRande.first -= (end - start - 1);
-            d->visibleIndexRande.second -= (end - start + 1);
-        } else if (end <= d->visibleIndexRande.second) {
-            d->visibleIndexRande.first = start;
-            d->visibleIndexRande.second -= (end - start + 1);
-        } else {
-            d->visibleIndexRande.first = d->visibleIndexRande.second = -1;
-        }
-    }
-
     DListView::rowsAboutToBeRemoved(parent, start, end);
 }
 
@@ -1483,10 +1430,6 @@ void FileView::initializeModel()
 
     FileSelectionModel *selectionModel = new FileSelectionModel(viewModel, this);
     setSelectionModel(selectionModel);
-
-    d->updateActiveIndexTimer = new QTimer(this);
-    d->updateActiveIndexTimer->setInterval(100);
-    d->updateActiveIndexTimer->setSingleShot(true);
 }
 
 void FileView::initializeDelegate()
@@ -1511,23 +1454,18 @@ void FileView::initializeStatusBar()
 void FileView::initializeConnect()
 {
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
-    connect(d->updateActiveIndexTimer, &QTimer::timeout, this, &FileView::updateModelActiveIndex);
 
     connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, this, &FileView::onScalingValueChanged);
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::delayUpdateModelActiveIndex);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(model(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(model(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
-    connect(model(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
-    connect(this, &DListView::clicked, this, &FileView::onClicked);
+    connect(this, &DListView::clicked, this, &FileView::onClicked, Qt::UniqueConnection);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
     connect(this, &DListView::iconSizeChanged, this, &FileView::updateHorizontalOffset, Qt::QueuedConnection);
-
-    connect(this, &FileView::clicked, this, &FileView::onClicked, Qt::UniqueConnection);
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
 
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
@@ -1757,12 +1695,6 @@ void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const 
     map[key] = value;
 
     Application::appObtuselySetting()->setValue("FileViewState", url, map);
-}
-
-void FileView::delayUpdateModelActiveIndex()
-{
-    if (d->updateActiveIndexTimer)
-        d->updateActiveIndexTimer->start();
 }
 
 void FileView::saveViewModeState()

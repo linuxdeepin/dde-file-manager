@@ -122,7 +122,9 @@ QString AsyncFileInfo::nameOf(const NameInfoType type) const
     case FileNameInfoType::kSuffix:
         [[fallthrough]];
     case FileNameInfoType::kSuffixOfRename:
-        return d->asyncAttribute(AsyncAttributeID::kStandardSuffix).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardSuffix).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardSuffix).toString();
+        return FileInfo::nameOf(type);
     case FileNameInfoType::kCompleteSuffix:
         return d->asyncAttribute(AsyncAttributeID::kStandardCompleteSuffix).toString();
     case FileNameInfoType::kFileCopyName:
@@ -192,7 +194,7 @@ bool AsyncFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsExecutable:
         [[fallthrough]];
     case FileIsType::kIsSymLink:
-        return d->asyncAttribute(d->getAttributeIDIsVector()[static_cast<int>(type)]).toBool();
+        return d->asyncAttribute(d->getAttributeIDIsVector().at(static_cast<int>(type))).toBool();
     case FileIsType::kIsRoot:
         return d->asyncAttribute(AsyncAttributeID::kStandardFilePath).toString() == "/";
     default:
@@ -238,7 +240,7 @@ QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kOwnerId:
         [[fallthrough]];
     case FileExtendedInfoType::kGroupId:
-        return d->asyncAttribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
+        return d->asyncAttribute(d->getAttributeIDExtendVector().at(static_cast<int>(type)));
     default:
         QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
@@ -303,7 +305,7 @@ QVariant AsyncFileInfo::timeOf(const TimeInfoType type) const
 {
     qint64 data { 0 };
     if (type < FileTimeType::kDeletionTimeMSecond)
-        data = d->asyncAttribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
+        data = d->asyncAttribute(d->getAttributeIDVector().at(static_cast<int>(type))).value<qint64>();
 
     switch (type) {
     case TimeInfoType::kCreateTime:
@@ -601,7 +603,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
 
 QMimeType AsyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
 {
-    static DFMBASE_NAMESPACE::DMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
     if (isGvfs) {
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }

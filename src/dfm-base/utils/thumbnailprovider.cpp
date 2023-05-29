@@ -354,6 +354,10 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
         image.reset(new QImage(1, 1, QImage::Format_Mono));
     }
 
+    if (thumbnail.isEmpty())
+        thumbnail = DFMIO::DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kThumbnailLargePath).toStdString().c_str(),
+                                                                           thumbnailName.toStdString().c_str(), nullptr);
+
     image->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
     const qint64 fileModify = fileInfo->timeOf(TimeInfoType::kLastModifiedSecond).value<qint64>();
     image->setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
@@ -446,7 +450,7 @@ bool ThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, Thumb
         DFMIO::DFile dfile(saveImage);
         if (dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
             const QByteArray &output = dfile.readAll();
-            if (!output.isEmpty())
+            if (output.isEmpty())
                 return false;
 
             if (image->loadFromData(output, "png")) {

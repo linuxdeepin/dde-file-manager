@@ -11,6 +11,7 @@
 #include "utils/encryption/vaultconfig.h"
 #include "utils/fileencrypthandle.h"
 #include "utils/fileencrypthandle_p.h"
+#include "fileutils/vaultfileinfo.h"
 
 #include <gtest/gtest.h>
 
@@ -99,4 +100,29 @@ TEST(UT_VaultPluginBugTest, bug_144787_CheckCryfs)
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     EXPECT_FALSE(cryfsBinary.isEmpty());
 #endif
+}
+
+TEST(UT_VaultPluginBugTest, bug_200185_CheckProxyChange)
+{
+    VaultFileInfo info(QUrl("dfmvault:///"));
+    FileInfoPointer oldprox = info.proxy;
+    info.refresh();
+    EXPECT_TRUE(oldprox == info.proxy);
+}
+
+TEST(UT_VaultPluginBugTest, bug_199947_CacheVaultFileInfo)
+{
+    bool isCache { false };
+    stub_ext::StubExt stub;
+    stub.set_lamda(&InfoFactory::create<FileInfo>, [&isCache](const QUrl &url,
+                                                              const Global::CreateFileInfoType type,
+                                                              QString *errorString){
+        if (type == Global::CreateFileInfoType::kCreateFileInfoSyncAndCache)
+            isCache = true;
+        return nullptr;
+    });
+    stub.set_lamda(&ProxyFileInfo::setProxy, []{});
+
+    VaultFileInfo info(QUrl("dfmvault:///"));
+    EXPECT_TRUE(isCache);
 }

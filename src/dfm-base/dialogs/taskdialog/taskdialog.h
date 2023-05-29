@@ -40,9 +40,9 @@ Q_SIGNALS:
      */
     void closed();
 private Q_SLOTS:
-    void adjustSize();
     void moveYCenter();
     void removeTask();
+    void adjustSize(int hight = 0);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -53,8 +53,6 @@ private:
     QMap<JobHandlePointer, QListWidgetItem *> taskItems;
     DTitlebar *titlebar { nullptr };
     QDBusReply<QDBusUnixFileDescriptor> replyBlokShutDown;
-    QMutex *addTaskMutex { nullptr };
-    QMutex *adjustSizeMutex { nullptr };
     static int kMaxHeight;
 };
 

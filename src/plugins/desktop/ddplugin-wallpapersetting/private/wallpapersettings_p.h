@@ -63,17 +63,20 @@ public slots:
     void onCloseButtonClicked();
     void onMousePressed(const QPoint &pos, int button);
     void onScreenChanged();
+
 protected:
     void initCloseButton();
     void initCarousel();
-    void initSreenSaver();
+    void initScreenSaver();
     void initPreivew();
-    QList<QPair<QString, bool> > processListReply(const QString &reply);
+    QList<QPair<QString, bool>> processListReply(const QString &reply);
     bool eventFilter(QObject *watched, QEvent *event);
+
 public:
     static const int kHeaderSwitcherHeight;
     static const int kFrameHeight;
     static const int kListHeight;
+
 public:
     WallpaperSettings::Mode mode;
     QString screenName;
@@ -85,26 +88,30 @@ public:
     SessionIfs *sessionIfs = nullptr;
     ScreenSaverIfs *screenSaverIfs = nullptr;
     DRegionMonitor *regionMonitor = nullptr;
+
 public:
     DButtonBox *switchModeControl = nullptr;
     LoadingLabel *loadingLabel = nullptr;
     QTimer reloadTimer;
+
 public:
-    DIconButton *closeButton  = nullptr;
+    DIconButton *closeButton = nullptr;
     QHBoxLayout *carouselLayout = nullptr;
     QCheckBox *carouselCheckBox = nullptr;
     DButtonBox *carouselControl = nullptr;
     WallaperPreview *wallpaperPrview = nullptr;
     QStringList needDelWallpaper;
+
 public:
     QHBoxLayout *toolLayout = nullptr;
     DButtonBox *waitControl = nullptr;
     QCheckBox *lockScreenBox = nullptr;
     QLabel *waitControlLabel = nullptr;
+
 public:
     WallpaperSettings *q;
 };
 
 }
 
-#endif // WALLPAPERSETTINGS_P_H
+#endif   // WALLPAPERSETTINGS_P_H
