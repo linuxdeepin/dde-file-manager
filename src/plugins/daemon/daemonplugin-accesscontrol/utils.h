@@ -49,7 +49,7 @@ public:
     static const QString devConfigPath();
     static const QString valultConfigPath();
     static int accessMode(const QString &mps);
-    static void addWriteMode(const QString &mountPoint);
+    static int setFileMode(const QString &mountPoint, uint mode);
 
     static bool isValidDevPolicy(const QVariantMap &policy, const QString &realInvoker);
     static bool isValidVaultPolicy(const QVariantMap &policy);

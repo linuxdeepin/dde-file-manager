@@ -23,6 +23,7 @@ class QCompleter;
 QT_END_NAMESPACE
 
 class CollectionDelegate;
+class CollectionModel;
 
 namespace dfmplugin_titlebar {
 
@@ -41,15 +42,22 @@ public slots:
     void onCollectionViewClicked(const QModelIndex &index);
     void onCompleterActivated(const QString &text);
 
+protected:
+    void initIfWayland();
+    void updateAddButtonState(bool collected);
+    void initServerDatas();
+    QStringList updateCollections(const QString &newUrl, bool insertWhenNoExist);
+    QString getCurrentUrlString();
+
 private slots:
     void initUiForSizeMode();
+    void updateUiState();
 
 private:
     void initializeUi();
     void initConnect();
     void onAddButtonClicked();
     void onDelButtonClicked();
-    void upateUiState();
     QString schemeWithSlash(const QString &scheme) const;
 
     enum DialogButton {
@@ -69,6 +77,10 @@ private:
     DTK_WIDGET_NAMESPACE::DIconButton *theDelButton { nullptr };
     DTK_WIDGET_NAMESPACE::DListView *collectionServerView { nullptr };
     CollectionDelegate *delegate { nullptr };
+    CollectionModel *model { nullptr };
+
+    DTK_WIDGET_NAMESPACE::DLabel *charsetLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DComboBox *charsetComboBox { nullptr };
 };
 
 }

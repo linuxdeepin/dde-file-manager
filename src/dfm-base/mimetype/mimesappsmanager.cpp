@@ -45,7 +45,6 @@ QMap<QString, DesktopFile> MimesAppsManager::DesktopObjs = {};
 MimeAppsWorker::MimeAppsWorker(QObject *parent)
     : QObject(parent)
 {
-    fileSystemWatcher = new QFileSystemWatcher(this);
     updateCacheTimer = new QTimer(this);
     updateCacheTimer->setInterval(2000);
     updateCacheTimer->setSingleShot(true);
@@ -59,27 +58,22 @@ MimeAppsWorker::~MimeAppsWorker()
 
 void MimeAppsWorker::initConnect()
 {
-    connect(fileSystemWatcher, &QFileSystemWatcher::directoryChanged, this, &MimeAppsWorker::handleDirectoryChanged);
-    connect(fileSystemWatcher, &QFileSystemWatcher::fileChanged, this, &MimeAppsWorker::handleFileChanged);
     connect(updateCacheTimer, &QTimer::timeout, this, &MimeAppsWorker::updateCache);
 }
 
 void MimeAppsWorker::startWatch()
 {
-    fileSystemWatcher->addPaths(MimesAppsManager::getDesktopFiles());
-    fileSystemWatcher->addPaths(MimesAppsManager::getApplicationsFolders());
-}
-
-void MimeAppsWorker::handleDirectoryChanged(const QString &filePath)
-{
-    Q_UNUSED(filePath)
-    updateCacheTimer->start();
-}
-
-void MimeAppsWorker::handleFileChanged(const QString &filePath)
-{
-    Q_UNUSED(filePath)
-    updateCacheTimer->start();
+    const QStringList &paths { MimesAppsManager::getApplicationsFolders() };
+    std::for_each(paths.begin(), paths.end(), [this](const QString &path) {
+        AbstractFileWatcherPointer watcher { WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(path)) };
+        watcherGroup.append(watcher);
+        if (watcher) {
+            connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, [this]() {
+                updateCacheTimer->start();
+            });
+            watcher->startWatcher();
+        }
+    });
 }
 
 void MimeAppsWorker::updateCache()
@@ -459,20 +453,6 @@ QString MimesAppsManager::getDesktopIconsCacheFile()
     return QString("%1/%2").arg(StandardPaths::location(StandardPaths::kCachePath), "DesktopIcons.json");
 }
 
-QStringList MimesAppsManager::getDesktopFiles()
-{
-    QStringList desktopFiles;
-
-    for (const QString &desktopFolder : getApplicationsFolders()) {
-        QDirIterator it(desktopFolder, QStringList("*.desktop"), QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-        while (it.hasNext()) {
-            it.next();
-            desktopFiles.append(it.filePath());
-        }
-    }
-    return desktopFiles;
-}
-
 QString MimesAppsManager::getDDEMimeTypeFile()
 {
     return QString("%1/%2/%3").arg(getMimeInfoCacheFileRootPath(), "deepin", "dde-mimetype.list");
@@ -510,7 +490,7 @@ void MimesAppsManager::initMimeTypeApps()
                 mimeTypes.append(DDE_MimeTypes.value(fileName));
             }
 
-            for (const QString mimeType : mimeTypes) {
+            for (const QString &mimeType : mimeTypes) {
                 if (!mimeType.isEmpty()) {
                     QSet<QString> apps;
                     if (mimeAppsSet.contains(mimeType)) {

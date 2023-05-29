@@ -80,3 +80,25 @@ bool CollectionDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
     }
     return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
+
+QVariant CollectionModel::data(const QModelIndex &index, int role) const
+{
+    if (role == Qt::DisplayRole) {
+        QString text = QStringListModel::data(index, role).toString();
+        QUrl url(text);
+        QString displayText = QString("%1://%2").arg(url.scheme()).arg(url.host());
+        int port = url.port();
+        if (port != -1)
+            displayText += QString(":%1").arg(port);
+        return displayText;
+    } else if (role == kUrlRole) {
+        return QStringListModel::data(index, Qt::DisplayRole);
+    }
+    return QStringListModel::data(index, role);
+}
+
+int CollectionModel::findItem(const QString &item)
+{
+    const QStringList &items = QStringListModel::stringList();
+    return items.indexOf(item);
+}

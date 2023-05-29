@@ -440,10 +440,10 @@ void AddressBarPrivate::onReturnPressed()
 
     // add search history list
     if (!dfmbase::FileUtils::isLocalFile(UrlRoute::fromUserInput(text))) {
-        if (!historyList.contains(text)) {
-            historyList.append(text);
-            SearchHistroyManager::instance()->writeIntoSearchHistory(text);
-        }
+        if (!historyList.contains(text))
+            historyList.removeAll(text);
+        historyList.append(text);
+        SearchHistroyManager::instance()->writeIntoSearchHistory(text);
 
         if (protocolIPRegExp.exactMatch(text)) {
             IPHistroyData data(text, QDateTime::currentDateTime());

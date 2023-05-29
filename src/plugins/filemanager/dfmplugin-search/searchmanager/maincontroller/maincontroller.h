@@ -10,10 +10,6 @@
 #include <QHash>
 #include <QFuture>
 
-QT_BEGIN_NAMESPACE
-class QFileSystemWatcher;
-QT_END_NAMESPACE
-
 DPSEARCH_BEGIN_NAMESPACE
 class MainController : public QObject
 {
@@ -31,7 +27,7 @@ private:
 
 private slots:
     void onFinished(QString taskId);
-    void onFileChanged(const QString &path);
+    void onIndexFullTextSearchChanged(bool enable);
 
 signals:
     void matched(QString taskId);
@@ -39,7 +35,6 @@ signals:
 
 private:
     QHash<QString, TaskCommander *> taskManager;
-    QFileSystemWatcher *fileWatcher = nullptr;
     QFuture<void> indexFuture;
 };
 

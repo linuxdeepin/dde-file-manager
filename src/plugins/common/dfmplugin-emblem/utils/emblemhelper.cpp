@@ -203,6 +203,10 @@ EmblemHelper::~EmblemHelper()
 
 QList<QIcon> EmblemHelper::systemEmblems(const FileInfoPointer &info) const
 {
+    static bool hideSystemEmblems = DConfigManager::instance()->value(kConfigPath, kHideSystemEmblems, false).toBool();
+    if (hideSystemEmblems)
+        return {};
+
     if (!info)
         return {};
 

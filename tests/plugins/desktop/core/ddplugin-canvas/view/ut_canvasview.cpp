@@ -86,6 +86,9 @@ TEST(CanvasView, initUI)
 TEST(CanvasView, verticalAndhorizontalOffset)
 {
     CanvasView view;
+    QSignalBlocker hb(view.horizontalScrollBar());
+    QSignalBlocker vb(view.verticalScrollBar());
+
     view.horizontalScrollBar()->setRange(0, 30);
     view.horizontalScrollBar()->setValue(20);
     view.verticalScrollBar()->setRange(0, 30);

@@ -8,6 +8,8 @@
 #include "dfmplugin_menu_global.h"
 #include "dcustomactiondata.h"
 
+#include <dfm-base/base/schemefactory.h>
+
 #include <QObject>
 #include <QHash>
 #include <QTimer>
@@ -15,8 +17,6 @@
 #include <QSettings>
 
 #include <mutex>
-
-class QFileSystemWatcher;
 
 namespace dfmplugin_menu {
 
@@ -44,7 +44,8 @@ public:
 
     QList<DCustomActionEntry> getActionFiles(bool onDesktop);
 
-    inline void refresh() {
+    inline void refresh()
+    {
         actionEntry.clear();
         loadDir(menuPaths);
     }
@@ -53,11 +54,12 @@ protected slots:
 
 signals:
     void customMenuChanged();
+
 private:
     bool loadDir(const QStringList &dirPaths);
     bool parseFile(QSettings &actionSetting);
     bool parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const DCustomActionDefines::FileBasicInfos &basicInfos, bool &isSort, bool isTop = false);
-
+    void initWatcher();
     void initHash();
     QVariant getValue(QSettings &actionSetting, const QString &group, const QString &key);
     bool actionFileInfos(DCustomActionDefines::FileBasicInfos &basicInfo, QSettings &actionSetting);
@@ -70,7 +72,7 @@ private:
 private:
     QTimer *refreshTimer = nullptr;
     QStringList menuPaths;
-    QFileSystemWatcher *fileWatcher = nullptr;
+    QList<AbstractFileWatcherPointer> watcherGroup;
     QList<DCustomActionEntry> actionEntry;
     QSettings::Format customFormat;
     QHash<QString, DCustomActionDefines::ComboType> combos;

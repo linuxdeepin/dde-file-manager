@@ -120,6 +120,12 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
 {
     Q_UNUSED(winId);
 
+    QString newName(name);
+    if (newName.trimmed().isEmpty()) {
+        qInfo() << "empty name is inputed" << name << ", ignore rename action." << url;
+        return;
+    }
+
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
     if (removable && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock) {

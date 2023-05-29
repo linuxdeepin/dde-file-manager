@@ -52,6 +52,15 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
         rootInfoMap.value(rootUrl)->reset();
 }
 
+void FileDataManager::cleanRoot(const QUrl &rootUrl)
+{
+    auto rootInfoKeys = rootInfoMap.keys();
+    for (const auto &rootInfo : rootInfoKeys) {
+        if (rootInfo.path().startsWith(rootUrl.path()))
+            rootInfoMap.remove(rootInfo);
+    }
+}
+
 void FileDataManager::setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active)
 {
     RootInfo *root = rootInfoMap.value(rootUrl);

@@ -213,12 +213,12 @@ TEST_F(UT_ComputerUtils, AllSystemUUIDs)
     };
     stub.set_lamda(&DeviceProxyManager::getAllBlockIds, [&] { __DBG_STUB_INVOKE__ return devs.takeFirst(); });
     stub.set_lamda(&DeviceProxyManager::queryBlockInfo, [] { __DBG_STUB_INVOKE__ return QVariantMap { { GlobalServerDefines::DeviceProperty::kUUID, "ssss" } }; });
-    EXPECT_FALSE(ComputerUtils::allSystemUUIDs().isEmpty());
+    EXPECT_FALSE(ComputerUtils::allValidBlockUUIDs().isEmpty());
 }
 
 TEST_F(UT_ComputerUtils, SystemBlkDevUrlByUUIDs)
 {
     stub.set_lamda(&DeviceProxyManager::getAllBlockIdsByUUID, [] { __DBG_STUB_INVOKE__
                 return QStringList{"/org/freedesktop/UDisks2/block_devices/sda1", "/org/freedesktop/UDisks2/block_devices/sda2"}; });
-    EXPECT_TRUE(ComputerUtils::systemBlkDevUrlByUUIDs({}).count() >= 0);
+    EXPECT_TRUE(ComputerUtils::blkDevUrlByUUIDs({}).count() >= 0);
 }
