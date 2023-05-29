@@ -76,8 +76,7 @@ ComputerDataList ComputerItemWatcher::items()
     int diskStartPos = ret.count();
 
     ret.append(getBlockDeviceItems(hasInsertNewDisk));
-    ComputerDataList protocolDevices = getProtocolDeviceItems(hasInsertNewDisk);
-    ret.append(protocolDevices);
+    ret.append(getProtocolDeviceItems(hasInsertNewDisk));
     ret.append(getAppEntryItems(hasInsertNewDisk));
 
     std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
@@ -191,11 +190,14 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
-    devs = DevProxyMng->getAllBlockIds();
 
+    qInfo() << "start obtain the blocks";
+    devs = DevProxyMng->getAllBlockIds();
+    qInfo() << "end obtain the blocks";
+
+    QList<QUrl> hiddenByDConfig { disksHiddenByDConf() };
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
-        //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists())
             continue;
@@ -211,8 +213,10 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         if (info->targetUrl().isValid())
             insertUrlMapper(dev, info->targetUrl());
 
-        addSidebarItem(info);
+        if (!hiddenByDConfig.contains(devUrl))   // do not show item which hidden by dconfig
+            addSidebarItem(info);
     }
+    qInfo() << "end querying block info";
 
     return ret;
 }
@@ -221,7 +225,10 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
+
+    qInfo() << "start obtain the protocol devices";
     devs = DevProxyMng->getAllProtocolIds();
+    qInfo() << "end obtain the  protocol devices";
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
@@ -244,6 +251,8 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 
         addSidebarItem(info);
     }
+
+    qInfo() << "end querying protocol devices info";
 
     return ret;
 }
@@ -332,10 +341,45 @@ int ComputerItemWatcher::getGroupId(const QString &groupName)
 QList<QUrl> ComputerItemWatcher::disksHiddenByDConf()
 {
     const auto &&currHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kKeyHideDisk).toStringList().toSet();
-    const auto &&allSystemUUIDs = ComputerUtils::allSystemUUIDs().toSet();
-    const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allSystemUUIDs);   // setA ∩ setB
-    const auto &&devUrls = ComputerUtils::systemBlkDevUrlByUUIDs(needToBeHidden.toList());
+    const auto &&allBlockUUIDs = ComputerUtils::allValidBlockUUIDs().toSet();
+    const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allBlockUUIDs);   // setA ∩ setB
+    const auto &&devUrls = ComputerUtils::blkDevUrlByUUIDs(needToBeHidden.toList());
     return devUrls;
+}
+
+QList<QUrl> ComputerItemWatcher::disksHiddenBySettingPanel()
+{
+    // hidden by setting panel: no system disk
+    // hidden by setting panel: no loop device
+    auto systemBlocksAndLoop = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kSystem).toSet();
+    auto loopOnly = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kLoop).toSet();
+
+    bool hideSys = ComputerUtils::shouldSystemPartitionHide();
+    bool hideLoop = ComputerUtils::shouldLoopPartitionsHide();
+
+    QSet<QString> hiddenBlocks;
+    if (hideSys && hideLoop)   // both hide system disks and loop devices
+        hiddenBlocks = systemBlocksAndLoop;
+    else if (hideSys && !hideLoop)   // hide system disks only, show loop devices
+        hiddenBlocks = systemBlocksAndLoop - loopOnly;
+    else if (!hideSys && hideLoop)   // show systemdisks and hide loop devices
+        hiddenBlocks = loopOnly;
+    else   // show nothing
+        hiddenBlocks = {};
+
+    QList<QUrl> hiddenItems;
+    for (const auto &blk : hiddenBlocks)
+        hiddenItems << ComputerUtils::makeBlockDevUrl(blk);
+    return hiddenItems;
+}
+
+QList<QUrl> ComputerItemWatcher::hiddenPartitions()
+{
+    QList<QUrl> hiddenUrls;
+    hiddenUrls += disksHiddenByDConf();
+    hiddenUrls += disksHiddenBySettingPanel();
+    hiddenUrls = QList<QUrl>::fromSet(hiddenUrls.toSet());
+    return hiddenUrls;
 }
 
 void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
@@ -478,6 +522,34 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
+}
+
+void ComputerItemWatcher::handleSidebarItemsVisiable()
+{
+    const auto &&hiddenByDconfig = disksHiddenByDConf();
+
+    QList<DFMEntryFileInfoPointer> visiableItems, invisiableItems;
+
+    qInfo() << "start obtain the blocks when dconfig changed";
+    auto devs = DevProxyMng->getAllBlockIds();
+    qInfo() << "end obtain the blocks when dconfig changed";
+    for (const auto &dev : devs) {
+        auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
+        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
+        if (!info->exists())
+            continue;
+
+        if (hiddenByDconfig.contains(devUrl))
+            invisiableItems.append(info);
+        else
+            visiableItems.append(info);
+    }
+    qInfo() << "end querying if item should be show in sidebar";
+
+    for (const auto &info : invisiableItems)
+        removeSidebarItem(info->urlOf(UrlInfoType::kUrl));
+    for (const auto &info : visiableItems)
+        addSidebarItem(info);
 }
 
 void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
@@ -623,18 +695,18 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
 {
     if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
         Q_EMIT hideFileSystemTag(!value.toBool());
-    } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
-        Q_EMIT hideNativeDisks(value.toBool());
-    } else if (ga == Application::GenericAttribute::kHideLoopPartitions) {
-        bool hide = value.toBool();
-        Q_EMIT hideLoopPartitions(hide);
+    } else if (ga == Application::GenericAttribute::kHiddenSystemPartition
+               || ga == Application::GenericAttribute::kHideLoopPartitions) {
+        Q_EMIT updatePartitionsVisiable();
     }
 }
 
 void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cfgKey)
 {
-    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath)
-        Q_EMIT hideDisks(disksHiddenByDConf());
+    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath) {
+        Q_EMIT updatePartitionsVisiable();
+        handleSidebarItemsVisiable();
+    }
 }
 
 void ComputerItemWatcher::onBlockDeviceAdded(const QString &id)

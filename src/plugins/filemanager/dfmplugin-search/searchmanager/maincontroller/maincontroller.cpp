@@ -6,8 +6,8 @@
 #include "searchmanager/searcher/fulltext/fulltextsearcher.h"
 
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/application/application.h>
 
-#include <QFileSystemWatcher>
 #include <QApplication>
 #include <QtConcurrent>
 #include <QUrl>
@@ -35,10 +35,8 @@ MainController::~MainController()
 
 void MainController::init()
 {
-    fileWatcher = new QFileSystemWatcher(this);
-    auto configPath = QDir::home().absoluteFilePath(".config/deepin/dde-file-manager.json");
-    fileWatcher->addPath(configPath);
-    connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &MainController::onFileChanged);
+    connect(Application::instance(), &Application::indexFullTextSearchChanged,
+            this, &MainController::onIndexFullTextSearchChanged);
 }
 
 void MainController::stop(QString taskId)
@@ -91,13 +89,9 @@ void MainController::onFinished(QString taskId)
     emit searchCompleted(taskId);
 }
 
-void MainController::onFileChanged(const QString &path)
+void MainController::onIndexFullTextSearchChanged(bool enable)
 {
-    Q_UNUSED(path);
-
-    Settings settings("deepin/dde-file-manager", Settings::kGenericConfig);
-    bool value = settings.value("GenericAttribute", "IndexFullTextSearch", false).toBool();
-    if (value && !indexFuture.isRunning()) {
+    if (enable && !indexFuture.isRunning()) {
         indexFuture = QtConcurrent::run([]() {
             FullTextSearcher searcher(QUrl(), "");
             searcher.createIndex("/");

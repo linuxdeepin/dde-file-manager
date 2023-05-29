@@ -30,6 +30,7 @@ public:
                     DFMGLOBAL_NAMESPACE::ItemRoles role = DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole,
                     Qt::SortOrder order = Qt::AscendingOrder);
     void cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh = false);
+    void cleanRoot(const QUrl &rootUrl);
     void setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active);
 
 public Q_SLOTS:

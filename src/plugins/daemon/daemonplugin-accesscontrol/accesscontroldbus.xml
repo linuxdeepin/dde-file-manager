@@ -43,5 +43,10 @@
       <arg name="oldPwd" type="s" direction="in"/>
       <arg name="newPwd" type="s" direction="in"/>
     </method>
+    <method name="Chmod">
+      <arg type="b" direction="out"/>
+      <arg name="path" type="s" direction="in"/>
+      <arg name="mode" type="u" direction="in"/>
+    </method>
   </interface>
 </node>

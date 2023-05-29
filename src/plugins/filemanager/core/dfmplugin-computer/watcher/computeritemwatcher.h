@@ -45,6 +45,7 @@ public:
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
     void addSidebarItem(DFMEntryFileInfoPointer info);
     void removeSidebarItem(const QUrl &url);
+    void handleSidebarItemsVisiable();
 
     void insertUrlMapper(const QString &devId, const QUrl &mntUrl);
 
@@ -53,6 +54,8 @@ public:
     int getGroupId(const QString &groupName);
 
     static QList<QUrl> disksHiddenByDConf();
+    static QList<QUrl> disksHiddenBySettingPanel();
+    static QList<QUrl> hiddenPartitions();
 
 public Q_SLOTS:
     void startQueryItems();
@@ -65,9 +68,7 @@ Q_SIGNALS:
     void itemPropertyChanged(const QUrl &url, const QString &property, const QVariant &var);
     void itemSizeChanged(const QUrl &url, qlonglong, qlonglong);
     void hideFileSystemTag(bool hide);
-    void hideNativeDisks(bool hide);
-    void hideLoopPartitions(bool hide);
-    void hideDisks(const QList<QUrl> &devs);
+    void updatePartitionsVisiable();
 
 protected Q_SLOTS:
     void onDeviceAdded(const QUrl &devUrl, int groupId, ComputerItemData::ShapeType shape = ComputerItemData::kLargeItem, bool needSidebarItem = true);

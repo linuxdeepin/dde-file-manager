@@ -76,8 +76,8 @@ public:
     static bool checkGvfsMountExist(const QUrl &url, int timeout = 2000);
     static void setCursorState(bool busy = false);
 
-    static QStringList allSystemUUIDs();
-    static QList<QUrl> systemBlkDevUrlByUUIDs(const QStringList &uuids);
+    static QStringList allValidBlockUUIDs();
+    static QList<QUrl> blkDevUrlByUUIDs(const QStringList &uuids);
 
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.

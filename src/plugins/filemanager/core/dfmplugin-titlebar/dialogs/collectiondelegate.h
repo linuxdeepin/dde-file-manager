@@ -6,6 +6,7 @@
 #define COLLECTIONDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QStringListModel>
 
 class CollectionDelegate : public QStyledItemDelegate
 {
@@ -20,6 +21,22 @@ signals:
 
 protected:
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+};
+
+class CollectionModel : public QStringListModel
+{
+    Q_OBJECT
+
+    // QAbstractItemModel interface
+public:
+    explicit CollectionModel(QObject *parent)
+        : QStringListModel(parent) { }
+
+    enum {
+        kUrlRole = Qt::UserRole + 1,
+    };
+    virtual QVariant data(const QModelIndex &index, int role) const override;
+    int findItem(const QString &item);
 };
 
 #endif   // COLLECTIONDELEGATE_H

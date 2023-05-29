@@ -70,6 +70,8 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
     }
 
     QStringList list = getSearchHistroy();
+    if (list.contains(keyword))
+        list.removeAll(keyword);
 
     list << keyword;
 
