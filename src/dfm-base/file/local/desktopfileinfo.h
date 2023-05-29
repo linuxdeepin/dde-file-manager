@@ -17,7 +17,7 @@ class DesktopFileInfo : public ProxyFileInfo
 {
 public:
     explicit DesktopFileInfo(const QUrl &fileUrl);
-    explicit DesktopFileInfo(const QUrl &fileUrl, const FileInfoPointer &info);
+    explicit DesktopFileInfo(const QUrl &fileUrl, const FileInfoPointer info);
     bool canTag() const;
 
 public:

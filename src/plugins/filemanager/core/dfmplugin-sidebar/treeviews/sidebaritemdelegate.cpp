@@ -317,7 +317,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
     return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
-void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInfoPointer &info) const
+void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInfoPointer info) const
 {
     QLineEdit *editor = qobject_cast<QLineEdit *>(sender());
     if (!editor)

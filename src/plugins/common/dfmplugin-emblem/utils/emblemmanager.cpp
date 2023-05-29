@@ -27,7 +27,7 @@ EmblemManager *EmblemManager::instance()
     return &ins;
 }
 
-bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter *painter, QRectF *paintArea)
+bool EmblemManager::paintEmblems(int role, const FileInfoPointer info, QPainter *painter, QRectF *paintArea)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     Q_ASSERT(painter);

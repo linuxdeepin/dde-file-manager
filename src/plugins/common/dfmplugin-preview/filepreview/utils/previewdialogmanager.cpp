@@ -33,7 +33,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
 
     bool hasInvalidSymlink = false;
     for (const QUrl &url : selecturls) {
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+        const FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
         if (info && (dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl)) || info->exists())) {
             //判断链接文件的源文件是否存在

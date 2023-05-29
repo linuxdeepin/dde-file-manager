@@ -960,7 +960,7 @@ void FileDialog::showEvent(QShowEvent *event)
         overrideWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
     }
 
-    const FileInfoPointer &info = InfoFactory::create<FileInfo>(currentUrl());
+    const FileInfoPointer info = InfoFactory::create<FileInfo>(currentUrl());
     if (info)
         setWindowTitle(info->displayOf(DisPlayInfoType::kFileDisplayName));
 

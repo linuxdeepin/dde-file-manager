@@ -83,7 +83,7 @@ public Q_SLOTS:
     void doWatcherEvent();
     void doThreadWatcherEvent();
 
-    void handleTraversalResult(const FileInfoPointer &child);
+    void handleTraversalResult(const FileInfoPointer child);
     void handleTraversalResults(QList<FileInfoPointer> children);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
@@ -100,8 +100,8 @@ private:
     void addChildren(const QList<QUrl> &urlList);
     void addChildren(const QList<FileInfoPointer> &children);
     void addChildren(const QList<SortInfoPointer> &children);
-    SortInfoPointer addChild(const FileInfoPointer &child);
-    SortInfoPointer sortFileInfo(const FileInfoPointer &info);
+    SortInfoPointer addChild(const FileInfoPointer child);
+    SortInfoPointer sortFileInfo(const FileInfoPointer info);
     void removeChildren(const QList<QUrl> &urlList);
     bool containsChild(const QUrl &url);
     void updateChild(const QUrl &url);

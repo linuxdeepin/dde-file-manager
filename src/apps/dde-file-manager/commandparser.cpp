@@ -277,7 +277,7 @@ void CommandParser::openInUrls()
         QUrl url = UrlRoute::fromUserInput(path);
 
         if (isSet("show-item")) {
-            const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
+            const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
             if (!fileInfo)
                 continue;
 

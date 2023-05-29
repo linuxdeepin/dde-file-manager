@@ -92,7 +92,7 @@ void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
  * \param fromInfo File information of source file
  * \param toInfo File information of target file
  */
-void FileOperateBaseWorker::setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo)
+void FileOperateBaseWorker::setTargetPermissions(const FileInfoPointer fromInfo, const FileInfoPointer toInfo)
 {
     // 修改文件修改时间
     localFileHandler->setFileTime(toInfo->urlOf(UrlInfoType::kUrl),
@@ -109,7 +109,7 @@ void FileOperateBaseWorker::setTargetPermissions(const FileInfoPointer &fromInfo
  * \brief FileOperateBaseWorker::readAheadSourceFile Pre read source file content
  * \param fileInfo File information of source file
  */
-void FileOperateBaseWorker::readAheadSourceFile(const FileInfoPointer &fileInfo)
+void FileOperateBaseWorker::readAheadSourceFile(const FileInfoPointer fileInfo)
 {
     if (fileInfo->size() <= 0)
         return;
@@ -274,7 +274,7 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
  * \param result Output parameter: whether skip
  * \return Is the copy successful
  */
-bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo, const FileInfoPointer &toInfo, bool *skip)
+bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer fromInfo, const FileInfoPointer targetPathInfo, const FileInfoPointer toInfo, bool *skip)
 {
     bool ok = false;
     if (!toInfo)
@@ -320,8 +320,8 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
  * \param result Output parameter: whether skip
  * \return Is it successful
  */
-bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, const QString &fileName,
-                                        FileInfoPointer &newTargetInfo, bool *skip)
+bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const QString &fileName,
+                                        FileInfoPointer newTargetInfo, bool *skip)
 {
     // 检查源文件的文件信息
     if (!fromInfo) {
@@ -406,7 +406,7 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
  * \param result Output parameter: whether skip
  * \return Was the linked file created successfully
  */
-bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                                              const bool followLink, const bool doCopy, bool *skip)
 {
     // 创建链接文件
@@ -415,7 +415,7 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
         do {
             QUrl newUrl = newFromInfo->urlOf(UrlInfoType::kUrl);
             newUrl.setPath(newFromInfo->pathOf(PathInfoType::kSymLinkTarget));
-            const FileInfoPointer &symlinkTarget = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+            const FileInfoPointer symlinkTarget = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
 
             if (!symlinkTarget || !symlinkTarget->exists()) {
                 break;
@@ -458,8 +458,8 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
  * \param result Output parameter: whether skip
  * \return Is it successful
  */
-bool FileOperateBaseWorker::doCheckNewFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
-                                           FileInfoPointer &newTargetInfo, QString &fileNewName, bool *skip, bool isCountSize)
+bool FileOperateBaseWorker::doCheckNewFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+                                           FileInfoPointer newTargetInfo, QString &fileNewName, bool *skip, bool isCountSize)
 {
     auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
     if (createNewTargetInfo(fromInfo, toInfo, newTargetInfo, newTargetUrl, skip, isCountSize))
@@ -559,7 +559,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const FileInfoPointer fromInfo, con
     return doCopyOtherFile(fromInfo, toInfo, skip);
 }
 
-bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, bool *skip)
+bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip)
 {
     emitCurrentTaskNotify(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
     // 检查文件的一些合法性，源文件是否存在，创建新的目标目录名称，检查新创建目标目录名称是否存在
@@ -612,7 +612,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
         }
 
         const QUrl &url = iterator->next();
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        const FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         bool ok = doCopyFile(info, toInfo, skip);
         if (!ok && !skip) {
             return false;
@@ -679,7 +679,7 @@ void FileOperateBaseWorker::initCopyWay()
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
 
-QUrl FileOperateBaseWorker::trashInfo(const FileInfoPointer &fromInfo)
+QUrl FileOperateBaseWorker::trashInfo(const FileInfoPointer fromInfo)
 {
     auto parentPath = fromInfo->urlOf(UrlInfoType::kParentUrl).path();
     if (!parentPath.endsWith("files"))
@@ -751,7 +751,7 @@ void FileOperateBaseWorker::initSignalCopyWorker()
     }
 }
 
-QUrl FileOperateBaseWorker::createNewTargetUrl(const FileInfoPointer &toInfo, const QString &fileName)
+QUrl FileOperateBaseWorker::createNewTargetUrl(const FileInfoPointer toInfo, const QString &fileName)
 {
     QString fileNewName = formatFileName(fileName);
     // 创建文件的名称
@@ -1007,7 +1007,7 @@ void FileOperateBaseWorker::startBlockFileCopy()
     }
 }
 
-bool FileOperateBaseWorker::createNewTargetInfo(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, FileInfoPointer &newTargetInfo, const QUrl &fileNewUrl, bool *skip, bool isCountSize)
+bool FileOperateBaseWorker::createNewTargetInfo(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, FileInfoPointer newTargetInfo, const QUrl &fileNewUrl, bool *skip, bool isCountSize)
 {
     newTargetInfo.reset();
 
@@ -1052,7 +1052,7 @@ void FileOperateBaseWorker::skipMemcpyBigFile(const QUrl url)
     }
 }
 
-QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize)
+QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const FileInfoPointer fromInfo, const FileInfoPointer newTargetInfo, const bool isCountSize)
 {
     if (newTargetInfo->isAttributes(OptInfoType::kIsSymLink)) {
         LocalFileHandler handler;
@@ -1069,7 +1069,7 @@ QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const FileInfoPointer &fromI
     return QVariant();
 }
 
-QVariant FileOperateBaseWorker::doActionReplace(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize)
+QVariant FileOperateBaseWorker::doActionReplace(const FileInfoPointer fromInfo, const FileInfoPointer newTargetInfo, const bool isCountSize)
 {
     const QVariant &var = checkLinkAndSameUrl(fromInfo, newTargetInfo, isCountSize);
     if (var.isValid())
@@ -1085,7 +1085,7 @@ QVariant FileOperateBaseWorker::doActionReplace(const FileInfoPointer &fromInfo,
     }
 }
 
-QVariant FileOperateBaseWorker::doActionMerge(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize)
+QVariant FileOperateBaseWorker::doActionMerge(const FileInfoPointer fromInfo, const FileInfoPointer newTargetInfo, const bool isCountSize)
 {
     const bool fromIsFile = fromInfo->isAttributes(OptInfoType::kIsFile) || fromInfo->isAttributes(OptInfoType::kIsSymLink);
     const bool newTargetIsFile = newTargetInfo->isAttributes(OptInfoType::kIsFile) || newTargetInfo->isAttributes(OptInfoType::kIsSymLink);
@@ -1100,7 +1100,7 @@ QVariant FileOperateBaseWorker::doActionMerge(const FileInfoPointer &fromInfo, c
     }
 }
 
-bool FileOperateBaseWorker::doCopyFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, bool *skip)
+bool FileOperateBaseWorker::doCopyFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip)
 {
     FileInfoPointer newTargetInfo(nullptr);
     bool result = false;

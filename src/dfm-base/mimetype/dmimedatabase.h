@@ -20,7 +20,7 @@ public:
     DMimeDatabase();
 
     QMimeType mimeTypeForFile(const QUrl &url, MatchMode mode = MatchDefault) const;
-    QMimeType mimeTypeForFile(const FileInfoPointer &fileInfo, MatchMode mode = MatchDefault) const;
+    QMimeType mimeTypeForFile(const FileInfoPointer fileInfo, MatchMode mode = MatchDefault) const;
     QMimeType mimeTypeForFile(const QString &fileName, MatchMode mode, const QString &inod, const bool isGvfs = false) const;
     QMimeType mimeTypeForUrl(const QUrl &url) const;
 

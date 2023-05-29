@@ -186,7 +186,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
     for (auto &singleUrl : selects) {
         //协议、后缀
         QString errString;
-        const FileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(singleUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+        const FileInfoPointer fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(singleUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
             qWarning() << "create selected FileInfo failed: " << singleUrl.toString() << errString;
             continue;
@@ -429,7 +429,7 @@ bool DCustomActionBuilder::isSchemeSupport(const DCustomActionEntry &action, con
 bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, const QUrl &url)
 {
     QString errString;
-    const FileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    const FileInfoPointer fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
 
     auto supportList = action.supportStuffix();
     if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || supportList.isEmpty() || supportList.contains("*")) {
@@ -455,7 +455,7 @@ bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, con
     return match;
 }
 
-void DCustomActionBuilder::appendAllMimeTypes(const FileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes)
+void DCustomActionBuilder::appendAllMimeTypes(const FileInfoPointer fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes)
 {
     noParentmimeTypes.append(fileInfo->fileMimeType().name());
     noParentmimeTypes.append(fileInfo->fileMimeType().aliases());

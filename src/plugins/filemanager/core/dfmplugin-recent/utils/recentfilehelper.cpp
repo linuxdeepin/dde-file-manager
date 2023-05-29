@@ -108,7 +108,7 @@ bool RecentFileHelper::linkFile(const quint64 windowId, const QUrl url, const QU
     Q_UNUSED(windowId)
 
     if (force) {
-        const FileInfoPointer &toInfo = InfoFactory::create<FileInfo>(link);
+        const FileInfoPointer toInfo = InfoFactory::create<FileInfo>(link);
         if (toInfo && toInfo->exists()) {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
             fileHandler.deleteFile(link);

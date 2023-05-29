@@ -404,7 +404,7 @@ void FileView::onClicked(const QModelIndex &index)
     openIndexByClicked(ClickedAction::kClicked, index);
 
     QUrl url { "" };
-    const FileInfoPointer &info = model()->fileInfo(index);
+    const FileInfoPointer info = model()->fileInfo(index);
     if (info)
         url = info->urlOf(UrlInfoType::kUrl);
     QVariantMap data;
@@ -1508,7 +1508,7 @@ void FileView::updateLoadingIndicator()
     if (state == ModelState::kBusy) {
         QString tip;
 
-        const FileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
+        const FileInfoPointer fileInfo = model()->fileInfo(rootIndex());
         if (fileInfo)
             tip = fileInfo->viewOfTip(ViewInfoType::kLoading);
 
@@ -1532,7 +1532,7 @@ void FileView::updateContentLabel()
 
     if (count() <= 0) {
         // set custom empty tips
-        const FileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
+        const FileInfoPointer fileInfo = model()->fileInfo(rootIndex());
         if (fileInfo) {
             d->contentLabel->setText(fileInfo->viewOfTip(ViewInfoType::kEmptyDir));
             d->contentLabel->adjustSize();
@@ -1634,7 +1634,7 @@ QUrl FileView::parseSelectedUrl(const QUrl &url)
         // todo: liuzhangjian
         // checkGvfsMountfileBusy
         QList<QUrl> ancestors;
-        if (const FileInfoPointer &currentFileInfo = InfoFactory::create<FileInfo>(rootUrl())) {
+        if (const FileInfoPointer currentFileInfo = InfoFactory::create<FileInfo>(rootUrl())) {
             if (UrlRoute::isAncestorsUrl(rootUrl(), fileUrl, &ancestors))
                 d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl());
         }
@@ -1676,7 +1676,7 @@ void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex 
 
 void FileView::openIndex(const QModelIndex &index)
 {
-    const FileInfoPointer &info = model()->fileInfo(index);
+    const FileInfoPointer info = model()->fileInfo(index);
 
     if (!info)
         return;

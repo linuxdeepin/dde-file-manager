@@ -120,13 +120,13 @@ private:
     void sortAllFiles();
     // 有序的情况下只是点击升序还是降序特殊处理
     void sortOnlyOrderChange();
-    void addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info);
+    void addChild(const SortInfoPointer &sortInfo, const FileInfoPointer info);
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortFilter::SortScenarios sort);
 
 private:
     bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
-    QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
+    QVariant data(const FileInfoPointer info, Global::ItemRoles role);
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
                        AbstractSortFilter::SortScenarios sort);
     bool isDefaultHiddenFile(const QUrl &fileUrl);

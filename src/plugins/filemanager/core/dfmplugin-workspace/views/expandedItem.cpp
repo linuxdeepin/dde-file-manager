@@ -68,7 +68,7 @@ void ExpandedItem::paintEvent(QPaintEvent *)
                                                                                 pa.fontMetrics().lineSpacing(), Qt::AlignCenter, &pa));
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
 
-    const FileInfoPointer &info = delegate->parent()->parent()->model()->fileInfo(index);
+    const FileInfoPointer info = delegate->parent()->parent()->model()->fileInfo(index);
     if (WorkspaceEventSequence::instance()->doPaintIconItemText(info, labelRect, &pa, layout.data()))
         return;
 

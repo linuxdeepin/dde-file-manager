@@ -359,7 +359,7 @@ TEST_F(UT_RootInfo, HandleTraversalResult)
 
     bool calledAddChild = false;
     stub.set_lamda(ADDR(RootInfo, addChild),
-                   [&calledAddChild](RootInfo *, const FileInfoPointer &) {
+                   [&calledAddChild](RootInfo *, const FileInfoPointer ) {
                        calledAddChild = true;
                        SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
                        return sortInfo;
@@ -384,7 +384,7 @@ TEST_F(UT_RootInfo, HandleTraversalResults)
 
     bool calledAddChild = false;
     stub.set_lamda(ADDR(RootInfo, addChild),
-                   [&calledAddChild](RootInfo *, const FileInfoPointer &) {
+                   [&calledAddChild](RootInfo *, const FileInfoPointer ) {
                        calledAddChild = true;
                        SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
                        return sortInfo;
@@ -487,7 +487,7 @@ TEST_F(UT_RootInfo, AddChildrenWithUrls)
             rootInfoObj, &RootInfo::watcherAddFiles, rootInfoObj,
             [&addedFiles](QList<SortInfoPointer> children) { addedFiles.append(children); });
 
-    stub.set_lamda(ADDR(RootInfo, addChild), [](RootInfo *, const FileInfoPointer &info) {
+    stub.set_lamda(ADDR(RootInfo, addChild), [](RootInfo *, const FileInfoPointer info) {
         SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
         sortInfo->url = info->urlOf(UrlInfoType::kUrl);
         return sortInfo;
@@ -519,7 +519,7 @@ TEST_F(UT_RootInfo, AddChildrenWithFileInfos)
 
     QList<QUrl> addedFiles{};
     stub.set_lamda(ADDR(RootInfo, addChild),
-                   [&addedFiles](RootInfo *, const FileInfoPointer &info) {
+                   [&addedFiles](RootInfo *, const FileInfoPointer info) {
                        addedFiles.append(info->urlOf(UrlInfoType::kUrl));
                        SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
                        return sortInfo;

@@ -892,7 +892,7 @@ void FileSortWorker::sortOnlyOrderChange()
     return;
 }
 
-void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info)
+void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const FileInfoPointer info)
 {
     if (isCanceled)
         return;
@@ -979,10 +979,10 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     const auto &leftItem = childrenDataMap.value(left);
     const auto &rightItem = childrenDataMap.value(right);
 
-    const FileInfoPointer &leftInfo = leftItem && leftItem->fileInfo()
+    const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
             ? leftItem->fileInfo()
             : InfoFactory::create<FileInfo>(left);
-    const FileInfoPointer &rightInfo = rightItem && rightItem->fileInfo()
+    const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
             ? rightItem->fileInfo()
             : InfoFactory::create<FileInfo>(right);
 
@@ -1034,7 +1034,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     }
 }
 
-QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
+QVariant FileSortWorker::data(const FileInfoPointer info, ItemRoles role)
 {
     if (info.isNull())
         return QVariant();

@@ -116,7 +116,7 @@ uint64_t ThumbnailProviderPrivate::filePathToInode(QString filePath) const
 
 bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 {
-    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
+    const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
 
     if (!fileInfo->isAttributes(OptInfoType::kIsReadable) || !fileInfo->isAttributes(OptInfoType::kIsFile))
         return false;
@@ -301,7 +301,7 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 {
     d->errorString.clear();
 
-    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
+    const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
 
     const QString &dirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
