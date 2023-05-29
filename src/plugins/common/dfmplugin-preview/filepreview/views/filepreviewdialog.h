@@ -57,7 +57,6 @@ private:
     QString generalKey(const QString &key);
 
     QList<QUrl> fileList;
-    QList<QUrl> entryUrlList;
 
     DTK_WIDGET_NAMESPACE::DWindowCloseButton *closeButton { nullptr };
     DTK_WIDGET_NAMESPACE::DHorizontalLine *separator { nullptr };
@@ -65,6 +64,7 @@ private:
 
     bool playingVideo { false };
     bool firstEnterSwitchToPage { false };
+    bool previewDir { false };
     int currentPageIndex { -1 };
     quint64 currentWinID { 0 };
     DFMBASE_NAMESPACE::AbstractBasePreview *preview { nullptr };

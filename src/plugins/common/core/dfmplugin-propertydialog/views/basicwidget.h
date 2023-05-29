@@ -20,6 +20,7 @@ class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 public:
     explicit BasicWidget(QWidget *parent = nullptr);
     virtual ~BasicWidget() override;
+    int expansionHeight();
 
 private:
     void initUI();

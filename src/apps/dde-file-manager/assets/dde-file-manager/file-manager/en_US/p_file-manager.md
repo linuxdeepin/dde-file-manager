@@ -2,7 +2,7 @@
 
 ## Overview
 
-File Manager is a powerful, simple and easy-to-use file management tool. It follows the classic function and layout of traditional file manager, and simplifies the user operation and adds many features. The open-and-shut navigation bar, the search box with intelligent identification, a variety of views and sorting let you manage files easily. 
+File Manager is a powerful, simple and easy-to-use file management tool. It follows the classic function and layout of traditional file manager, and simplifies the user operation and adds many features. The open-and-shut navigation bar, the search box with intelligent identification, a variety of views and sorting let you manage files easily. It's beyond classic, just to give you a better experience!
 
 ![1|overview](fig/p_overview.png)
 
@@ -77,8 +77,6 @@ File Manager is featured with the basic functions as a file manager, you can eas
 1. Select the file/folder, right-click to select **Rename**.
 2. Input a new name for the file/folder, and press **Enter**, or click at any blank area.
 
-![0|rename](fig/p_contextmenu.png)
-
 > ![tips](../common/tips.svg) Tips: Check "Hide file extension when rename" in **Settings** to rename file more conveniently.
 
 ### Batch Rename
@@ -114,6 +112,8 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 1. Right-click in the blank area on File Manager, select **Sort by**.
 2. Choose among the sorting options, which include **Name**, **Time modified**, **Size** and **Type**.
 
+You can check **Mix sorting of files and folders** in **Main menu** > **Settings > Basic settings**, and then sort the files and folders by the following steps.
+
 > ![tips](../common/tips.svg) Tips: you can click the head of the columns in the list view to change the sort order.
 
 
@@ -148,11 +148,13 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 
 ### Delete File/Folder
 
-Right-click file/folder to select **Delete**.
-  - You can find the deleted files in Trash. Right-click files in Trash, you can choose **Restore** or **Delete**. 
-  - The shortcut of the deleted files will become invalid.
+1. Right-click the file/folder in the interface of File Manager.
+2. Select **Delete**. 
 
-> ![attention](../common/attention.svg) Attention: File/folder in external device will be permanently deleted and can not be restored when you select **Delete**.
+   - You can find the deleted files in Trash. Right-click files in Trash, you can choose **Restore** or **Delete**. File/folder in external device will be permanently deleted and can not be restored when you select **Delete**.
+   - The shortcut of the deleted files will become invalid.
+
+> ![notes](../common/notes.svg) Notes: You can check **Ask for my confirmation when deleting files** in **Main Menu > Settings > Advanced**, and a prompt box to confirm deletion will pop up each time you delete a file.
 
 ### Undo Operation
 In file manager,  use **Ctrl + Z** to undo the previous steps, including:
@@ -256,11 +258,11 @@ File Manager supports multi-tab view.
 
 To quickly visit a folder from the left panel, you can add bookmarks for frequently used folders.
 
-- Add Bookmarks: On File Manager, right-click the folder, in the pop-up context menu, select **Add to bookmark**.
+- Add Bookmarks: right-click a folder, select **Pin to quick access** to create a bookmark in the navigation bar.
 
 - Move Bookmarks: you can move bookmarks within the bookmark area. Drag and drop the bookmark to the designated location.
 
-- Delete Bookmarks: you can delete bookmarks by right-clicking the bookmark and select **Remove**, or right-clicking the bookmarked folder and select **Remove bookmark**.
+- Delete Bookmarks: right-click the bookmark, select **Remove from quick access** to delete the bookmark.
 
 ### Manage Tags
 
@@ -290,7 +292,7 @@ Right-click a file/folder, select a "color button" to create a color tag directl
 
 ![1|colortag](fig/p_colortag.png)
 
-##### By Information Column on the Right Side
+##### By information column on the right side
 
 Select a file/folder, click ![fileinfo](../common/fileinfo.svg), and add tags in the information column on the right side.
 
@@ -341,37 +343,50 @@ In file/folder properties, click **Permissions** to set **Owner**, **Group** and
 
 ### My Shares
 
-You can share folders in File Manager, if there are some folders shared, the share icon will show on the left panel, if not, the share icon will be removed.
+When you set up a shared file, "My Shares" appears on the left panel. 
 
 #### Share Local Files
 
+Sharing local files is convenient for other users in the LAN to view, edit or download files to improve efficiency.
+
+To share files, you need to start smb service. When you use the file sharing function for the first time, the system will pop up the "Start smb service authentication" window, enter the login password to complete the authentication to start smb service.
+
 1. On File Manager interface, right-click a folder, select **Share folder**.
 2. In the properties window, check **Share this folder**.
+3. Set up **Share name**, **Permission**, and **Anonymous**.
+4. Click **Set password**.
+5. enter the password and click **Confirm** in the "Enter a password to protect shared folders" window .
 
->![notes](../common/notes.svg) Notes: If smb service is not turned on, authentication window pops up. Input password to turn smb on.
+If you have set the share password, the interface will display **Change password**, click it to change password, or click ![icon_menu](../common/icon_menu.svg) > **Set share password**
 
-3. Input **Share name**, and choose **Permission**, and **Anonymous** according to actual needs before closing the window.
-4. To set share password, click ![menu](../common/icon_menu.svg) and select **Set share password**.
-5. Input password and click **Confirm**.
+> ![tips](../common/tips.svg) Tips: Click the copy button ![icon](../common/copy.svg) to the right of the network path and username to copy the access path and username to the clipboard so you can share the information with your visitors.
 
-![0|share](fig/share.png)
+![0|share](fig/share1.png)
 
-> ![tips](../common/tips.svg) Tips: You can cancel sharing by unchecking **Share this folder**, or right-click the folder and select **Cancel sharing**. 
+#### Visit Shared Folders 
 
-#### Visit Sharing Folders 
+Users on the LAN can access the shared files through the network path provided by the sharer.
 
-You can find sharing folders of other users in the same LAN in **Computers in LAN**. You can also visit sharing folders via smb.
+1. Visit shared folders by one of the following methods.
 
-1. On File Manager interface, click ![icon_menu](../common/icon_menu.svg) > **Connect to Server**, input the server address, e.g. smb://xx.x.xx.xxx (usually it should be an IP address), click **Connect**.  Or, input the server's address in the address bar directly and press **Enter**.
-2. Double-click the shared document you need to visit, input the username and password in the pop-up window.
-   - Unencrypted folders can be visited by anonymous access without inputting username and password.
-   - When you visit encrypted folders, a window pops up and you will have to input user name and password before visiting. If you check **Remember password**, you don't have to input password when you visit the folder next time.
-      - Username: i.e. the name used by the sharer when logging in the system.
-      - Password: i.e. the sharing password set when the sharer shares the folder.  
-3. Click **Connect**. 
+   - Input the server address, e.g. smb://10.0.2.15 directly in the address bar and press **Enter**.
+   - Click ![icon_menu](../common/icon_menu.svg) > **Connect to Server** and input the server address, and click **Connect**.
+   
+2. Select the shared folder you need to visit, and the "Password required for share XX on 10.0.2.15" window will pop up.
+
+   - If the folder is set to not allow anonymous access, enter the system user name and share password of the sharer in the "Registered Users" tab.
+   - If the folder is set to allow anonymous access, you can select the "Anonymous" tab and visit the shared folder without entering a username and password.
+
+3. Select to remember password or not and click **Connect**.
 
 ![1|viewshare](fig/visitshare.png)
 
+#### Cancel Sharing
+
+When all shared files are cancelled, "My Shares" is removed from the left panel, and you can cancel local shared files in one of the following ways. 
+
+- Right-click the shared folder and select **Cancel sharing**.
+- Right-click the shared folder and select **Properties**, uncheck **Share this folder** in the "sharing" part of the properties window.
 
 
 ### Open as Admin
@@ -391,7 +406,7 @@ Prerequisite: Please enable **Developer Mode** from Control Center > General Set
 
 ### Burn CD
 
-You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. The ISO9660 file system supports all CD and DVD formats, while the UDF file system only supports some CD formats. 
+You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. Please prepare a CD or DVD disc and a device with recording function in order to perform the following operations. The ISO9660 file system supports all CD and DVD formats, while the UDF file system only supports some CD formats. 
 
 <table class="block1">
 <tr>
@@ -421,29 +436,39 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 </table>
 
 
+#### Duplicate Local Files
 
-
-
-
-1. Insert the disc into the recording drive.
-
-2. Open File Manager and click the CD Icon in the left panel to enter the burning interface.
+1. Open File Manager and click the CD Icon in the left panel to enter the burning interface.
 
 ![cd](fig/cd_interface.png)
 
-3. Right click the file (folder) and select **Add to disc** or drag the file (folder) directly to the burning interface.
+2. Right click the file (folder) and select **Add to disc** or drag the file (folder) directly to the burning interface.
 
-4. In the burning interface, click **Burn** in the upper right corner.
+3. In the burning interface, click **Burn** in the upper right corner.
 
->![notes](../common/notes.svg) Notes: if you want to delete a file/folder from the burning list, right-click it and select **Delete** to remove it from the list.
-
-5. A window pops up. Input the disc name. You can also enter the **Advanced settings** interface, set the file system and write speed, or check "Allow files to be added later", "Verify data" and so on, and click **Burn**.
+4. A window pops up. Input the disc name. You can also enter the **Advanced settings** interface, set the file system and write speed, or check "Allow files to be added later", "Verify data" and so on, and click **Burn**.
 
 ![cd](fig/cd_rename.png)
 
-6. After burning, a prompt box will pop up in the interface, and click **OK**.
+5. After burning, a prompt box will pop up in the interface, and click **OK**.
 
->![notes](../common/notes.svg) Notes: If you need to erase the disc data, you can right-click the disc icon in the left panel and select **Unmount**, right-click the disc icon again and select **Erase**.
+#### Erase
+
+1. Open File Manager and click the CD Icon in the left panel to enter the burning interface.
+2. Select **Unmount**, right-click the disc icon again and select **Erase**.
+3. Click **Erase** in the pop-up prompt box.
+
+#### Save as Image File
+
+1. Open File Manager and click the CD Icon in the left panel to enter the CD interface.
+
+![cd](fig/cd_save_as_iso.png)
+
+2. Click **Save as Image File** in the top right corner.
+
+![cd](fig/cd_create_iso.png)
+
+3. In the pop-up window, select a save path, and click **Create ISO Image** to save files as an ISO image file.
 
 ### Create Link
 
@@ -454,7 +479,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 > ![tips](../common/tips.svg) Tips: By selecting **Send to desktop** for an item, you can create a link on desktop with one click.
 
-### Send to Other Device
+### Send To Other Devices
 
 When there is an external device inserted, you can directly send file/folder to it.
 
@@ -503,9 +528,9 @@ There are three ways to log in UnionTech OS Assistant, including: cell phone qui
 Use the "Discovery Settings" function to set how your phone and computer are discovered. In the UnionTech OS Assistant screen, click **Discovery Settings** in the upper right corner; on the computer system tray, right-click the icon ![icon](../common/found.svg) and select **Discovery Settings**, you can choose:
 
 - **Discoverable for everyone**: Within the LAN, all devices that are on the same network and in the same network segment are allowed to discover this phone or computer.
-- **Discoverable for the same Union ID only**: Within the LAN, only devices logged into the same Union ID are allowed to discover this phone or computer.
+- **Discoverable for the same UOS ID only**: Within the LAN, only devices logged into the same UOS ID are allowed to discover this phone or computer.
 - **Undiscoverable**: All devices are not allowed to discover this phone or computer.
-- **Discoverable for remote devices with the same Union ID** (computer side): Remote devices logged into the same Union ID are allowed to discover this computer.
+- **Discoverable for remote devices with the same UOS ID** (computer side): Remote devices logged into the same UOS ID are allowed to discover this computer.
 
  
 
@@ -525,7 +550,7 @@ After the network connection is successful, then perform the following steps.
 
 #### Search Computer
 
-Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same Union ID; the phone and computer are discoverable.
+Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same UOS ID; the phone and computer are discoverable.
 
 1. In UnionTech OS Assistant interface on your phone, click "Search Computer".
 
@@ -551,20 +576,22 @@ After the connection between the mobile phone and PC is successful, files can be
 
 - **By wireless delivery**
 
-   When the devices are logged into the same Union ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
+   When the devices are logged into the same UOS ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
    1. On the computer, right-click the file you want to deliver and select **Wireless Deliver**. 
 
    2. In the pop-up window, select the phone or computer you want to deliver to.
 
    >![icon](../common/notes.svg) Notes:
    >- You need to install UnionTech OS Assistant on the cell phone and log in to your account to receive the files delivered from the computer.
-   >- After logging in to the same Union ID, you can perform the remote delivery.
+   >- After logging in to the same UOS ID, you can perform the remote delivery.
 
 
 #### View/Edit Files
 
 - View computer files on your phone: In the interface of UnionTech OS Assistant, click **My Computer**, you can open, download or share computer files.
 - View/edit phone files from computer side: In the interface of **File Manager > My Phone**, the folders of photo albums, videos, documents, etc. are categorized and displayed, you can open and edit the files in the folders, and the files will be synced to your phone after being edited and saved.
+
+
 
 ## Add Corner Marker to Files/Folders
 
@@ -573,7 +600,7 @@ You can assign an icon file to a file or folder icon through the command line an
 >- The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
 >- The corner marker could not be added to files in USB disks and CD-ROM disks.
 
-### Add Single Corner Marker
+### Add a Single Corner Marker
 
 1. Open Terminal, input **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path)"**, which means to add a corner marker in the lower right corner of the file/folder icon by default.
 
@@ -600,18 +627,28 @@ Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** 
 
 ## File Vault
 
-File Vault is designed to  create a special safe space for you and protect your privacy. With the advanced encryption technology and convenient operations, it's quite easy to use.
+File Vault is designed to create a secure space for your files and protect your privacy. With the advanced encryption technology and convenient operations, it's quite easy to use.
 
 ### Set Vault Password
 
-You will have to set a password when you use File Vault for the first time as follows:
+You have to encrypt File Vault when you use it for the first time. File Vault provides two encryption methods, namely **key encryption** and **transparent encryption**. The newly added **transparent encryption** allows you to directly access File Vault without setting and entering the password.
 
-1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** in the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
-2. Set the "Method", "Password", "Repeat password" and "Hint", click **Next**. 
+#### Transparent Encryption
 
-![0|password](fig/password.png)
+1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
 
-> ![notes](../common/notes.svg) Notes: the password must contain upper case letters, lower case letters,  Arabic numbers and special symbols at the same time and no less than 8 digits. Otherwise, you are not able to go to the next step.
+2. Set the "Encryption method" to **Transparent encryption**, click **Next** to encrypt the File Vault directly.
+
+   ![0|encrypt](fig/transparent_encryption.png)
+
+#### Key Encryption
+
+1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
+2. The "Encryption method" is set to **key encryption** by default. After setting a password and a password hint, Click **Next**. 
+
+![0|encrypt](fig/key_encryption.png)
+
+> ![notes](../common/notes.svg) Notes: The password must contain uppercase letters, lowercase letters,  Arabic numbers and special symbols at the same time and no less than 8 digits. Otherwise, you are not able to go to the next step.
 
 3. In the pop up window, set the storage location of the key file, which helps you to retrieve password if you forget it. Click **Next**. 
 
@@ -684,10 +721,10 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
 ### Local Disks
 
-#### Hide Local Disks
+#### Hide Built-in Disks
 
 1. Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of File Manager.
-2. Check **Hide system disk** under **Advanced** > **Other**.
+2. In the **Advanced**, check **Hide built-in disks on the Computer page**. Uncheck **Built-in disks** in **Advanced> Items on sidebar pane**.
 
 
 #### Rename Local Disks
@@ -744,56 +781,79 @@ You can create new window, switch themes, connect to server, set share password 
 ### New Window
 
 1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Select **New window** to open a new window.
+2. Select **New window** to open a new window of File Manager.
 
 ### Connect to Server
 
 You can [visit sharing folders](#Visit Sharing Folders) by connecting to server.
 
-1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Select **Connect to Server**, input server's IP address (XX.XX.XX.XX) in the editing box.
-   - Click ![+](../common/+.svg) to add the address into **My Favorites**.
-   - Select an address from **My Favorites** and click ![-](../common/-.svg) to delete in from **My Favorites**.
+1. Click ![icon_menu](../common/icon_menu.svg) > **Connect to Server** on the interface.
+2. "Connect to Server" window pops up. Select a connection protocol from the drop-down box and input server's IP address (XX.XX.XX.XX) in the address bar.
+
+> ![tips](../common/tips.svg) Tips: You can click ![icon](../common/collect.svg) to add frequently used server addresses to "My favorites".
+
 3. Click **Connect**.
 
-![connect](fig/connecttoserver.png)
+![connect](fig/connect_to_server.png)
 
 
 
 ### Settings
 
+Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of File Manager to set up basic and advanced settings.
+
 #### Basic
 
-1. Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of File Manager.
-2. Select **Basic**.
-   - You can check **Always open folder in new window**
-   - You can set whether to open folder by one click or double click.
-   - You can select a directory under **Open from default window** or **Open in new tab**. 
-   - You can set up the icon size.
-   - You can set the **Default View** as icon view or list view.
-   - Check **Show hidden files** to show all hidden files.
-   - Check **Hide file extension when rename**, so the extension would not be displayed when renaming.
-   - Check **Display recent file entry in left panel**, then the recently visited file would be displayed in left panel.
+**Open behavior**
 
+Choose whether to **Always open folder in new window** or not, and whether to open files by one click or double click.
+
+**New window and tab**
+
+You can select a directory under **Open from default window** or **Open in new tab**. 
+
+**View**
+
+You can set up the **Default size**, **Default view** and **Mix sorting of files and folders**.
+
+**Hidden files**
+
+   - Check **Show hidden files** to show all hidden files.
+   - Check **Show file extensions** to display file extensions.
+
+![setting](fig/basic_setting.png)
 
 #### Advanced
 
-1. Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of File Manager.
-2. Select **Advanced**.
+**Index**
+
    - You can check **Auto index internal disk**, when you search files, the files in internal disks would be searched.
    - You can check **Index external storage device after connected to computer**, In **Index**, when you search files, the files in the external disks would be searched as well.
    - You can check **Full-Text search** to search by content.
-   - You can select which types of files can be previewed.
+
+**Preview**
+
+You can select which types of files can be previewed.
+
+**Mount** 
+
    - You can check **Auto mount**, when any external disks connect to the computer, they would be mounted automatically. 
    - You can check **Open after auto mount**, when any external disks connect to the computer, they would be mounted automatically and opened. 
    - Check **Show item counts and sizes in the path of  mounted MTP devices** to display the status bar information at the bottom of the MTP device's path after it is mounted.
    - Check **Keep showing the mounted Samba shares** to show the remote mount link always in the left panel.
+
+**Dialog**
+
    - You can check **Use the file chooser dialog of File Manager**, when selecting files, File Manager window would be opened.
    - You can check **Ask for my confirmation when deleting files**, when deleting files, a hint dialog would pop up.
-   - You can check **Hide system disk**, local disks would not be displayed in left panel and computer interface. 
+
+**Others**
+
+   - Check **Hide built-in disks on the Computer page**, and the computer interface will not display the local disk. 
+   - Check **Hide loop partitions on the Computer page**, and the computer interface will not display the loop device. 
    - You can check **Show file system on disk icon**.
 
-
+![setting](fig/advanced_setting.png)
 
 ### Theme
 
