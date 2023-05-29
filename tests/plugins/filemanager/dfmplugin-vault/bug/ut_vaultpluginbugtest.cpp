@@ -126,3 +126,9 @@ TEST(UT_VaultPluginBugTest, bug_199947_CacheVaultFileInfo)
     VaultFileInfo info(QUrl("dfmvault:///"));
     EXPECT_TRUE(isCache);
 }
+
+TEST(UT_VaultPluginBugTest, bug_202109_VaultStateError)
+{
+   VaultState state =  FileEncryptHandle::instance()->state("");
+    EXPECT_TRUE(state == VaultState::kUnknow);
+}
