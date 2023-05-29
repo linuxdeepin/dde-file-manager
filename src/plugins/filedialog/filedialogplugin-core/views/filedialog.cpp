@@ -95,7 +95,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     QList<QUrl> urls { CoreEventsCaller::sendGetSelectedFiles(q->internalWinId()) };
 
     QList<QUrl> urlsTrans {};
-    bool ok = UniversalUtils::urlsTransform(urls, &urlsTrans);
+    bool ok = UniversalUtils::urlsTransformToLocal(urls, &urlsTrans);
     if (ok && !urlsTrans.isEmpty())
         urls = urlsTrans;
 
@@ -284,7 +284,7 @@ QUrl FileDialog::directoryUrl() const
     QUrl url { currentUrl() };
 
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform({ url }, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal({ url }, &urls);
     if (ok && !urls.empty())
         url = urls.first();
 
@@ -328,7 +328,7 @@ QList<QUrl> FileDialog::selectedUrls() const
     QList<QUrl> list { CoreEventsCaller::sendGetSelectedFiles(internalWinId()) };
 
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform(list, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal(list, &urls);
 
     if (ok && !urls.isEmpty())
         list = urls;

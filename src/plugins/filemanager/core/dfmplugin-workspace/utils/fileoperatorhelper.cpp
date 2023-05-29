@@ -143,7 +143,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
     QList<QUrl> selectedUrls = view->selectedUrlList();
     // trans url to local
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::originalUrls(selectedUrls, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
     if (ok && !urls.isEmpty())
         selectedUrls = urls;
 
@@ -170,7 +170,7 @@ void FileOperatorHelper::cutFiles(const FileView *view)
         return;
     QList<QUrl> selectedUrls = view->selectedUrlList();
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::originalUrls(selectedUrls, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
     if (ok && !urls.isEmpty())
         selectedUrls = urls;
 

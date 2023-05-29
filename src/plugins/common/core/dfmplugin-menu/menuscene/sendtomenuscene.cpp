@@ -170,7 +170,7 @@ bool SendToMenuScene::triggered(QAction *action)
         if (actId == ActionID::kCreateSymlink) {
             QUrl localUrl { d->focusFile };
             QList<QUrl> urls {};
-            bool ok = UniversalUtils::urlsTransform({ d->focusFile }, &urls);
+            bool ok = UniversalUtils::urlsTransformToLocal({ d->focusFile }, &urls);
             if (ok && !urls.isEmpty())
                 localUrl = urls.at(0);
             const QString &linkName = FileUtils::nonExistSymlinkFileName(localUrl, QUrl::fromLocalFile(QDir::currentPath()));
@@ -188,7 +188,7 @@ bool SendToMenuScene::triggered(QAction *action)
             QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
             QList<QUrl> urlsTrans = d->selectFiles;
             QList<QUrl> urls {};
-            bool ok = UniversalUtils::urlsTransform(urlsTrans, &urls);
+            bool ok = UniversalUtils::urlsTransformToLocal(urlsTrans, &urls);
             if (ok && !urls.isEmpty())
                 urlsTrans = urls;
 

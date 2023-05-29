@@ -83,7 +83,7 @@ bool OpticalEventReceiver::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMa
 bool OpticalEventReceiver::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
     QList<QUrl> transformedUrls;
-    UniversalUtils::urlsTransform(fromUrls, &transformedUrls);
+    UniversalUtils::urlsTransformToLocal(fromUrls, &transformedUrls);
     if (toUrl.scheme() == Global::Scheme::kBurn) {
         QString &&path { OpticalHelper::burnFilePath(toUrl) };
         if (path.isEmpty() || path == "/") {

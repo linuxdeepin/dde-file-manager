@@ -33,7 +33,7 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
 
     QUrl titleUrl { url };
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransform({ titleUrl }, &urls);
+    bool ok = UniversalUtils::urlsTransformToLocal({ titleUrl }, &urls);
 
     if (ok && !urls.isEmpty())
         titleUrl = urls.first();

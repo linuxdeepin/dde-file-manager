@@ -143,7 +143,7 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
     QList<QUrl> urlsTemp = urls;
     if (!urlsTemp.isEmpty()) {
         QList<QUrl> urlsTrans {};
-        bool ok = UniversalUtils::urlsTransform(urlsTemp, &urlsTrans);
+        bool ok = UniversalUtils::urlsTransformToLocal(urlsTemp, &urlsTrans);
 
         if (ok && !urlsTrans.isEmpty())
             urlsTemp = urlsTrans;

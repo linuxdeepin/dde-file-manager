@@ -261,7 +261,7 @@ bool VaultFileHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &u
 bool VaultFileHelper::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
     QList<QUrl> transformedUrls;
-    DFMBASE_NAMESPACE::UniversalUtils::urlsTransform(fromUrls, &transformedUrls);
+    DFMBASE_NAMESPACE::UniversalUtils::urlsTransformToLocal(fromUrls, &transformedUrls);
     if (toUrl.scheme() == scheme()) {
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy,
                                      0,

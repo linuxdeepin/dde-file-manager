@@ -1115,7 +1115,7 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         }
 
         QList<QUrl> transformedUrls;
-        UniversalUtils::urlsTransform(data->urls(), &transformedUrls);
+        UniversalUtils::urlsTransformToLocal(data->urls(), &transformedUrls);
         qDebug() << "Drag source urls: " << data->urls();
         qDebug() << "Drag transformed urls: " << transformedUrls;
         DFMMimeData dfmmimeData;
