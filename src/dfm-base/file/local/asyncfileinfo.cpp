@@ -986,7 +986,7 @@ QString AsyncFileInfoPrivate::sizeFormat() const
         return QStringLiteral("-");
     }
 
-    return FileUtils::formatSize(cacheAsyncAttributes.value(AsyncFileInfo::AsyncAttributeID::kStandardSize).toInt());
+    return FileUtils::formatSize(cacheAsyncAttributes.value(AsyncFileInfo::AsyncAttributeID::kStandardSize).toLongLong());
 }
 
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
