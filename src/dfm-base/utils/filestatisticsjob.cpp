@@ -516,6 +516,7 @@ void FileStatisticsJob::run()
     d->totalSize = 0;
     d->filesCount = 0;
     d->directoryCount = 0;
+    d->sizeInfo.reset(new FileUtils::FilesSizeInfo());
     if (d->sourceUrlList.isEmpty())
         return;
     if (!FileUtils::isLocalDevice(d->sourceUrlList.first())) {
@@ -664,6 +665,7 @@ void FileStatisticsJob::statistcsByFts()
 
         d->processFileByFts(url, followLink);
     }
+    d->setState(kStoppedState);
 }
 
 }

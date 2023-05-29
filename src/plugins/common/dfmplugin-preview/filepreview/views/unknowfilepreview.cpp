@@ -95,6 +95,9 @@ QWidget *UnknowFilePreview::contentWidget() const
 
 void UnknowFilePreview::setFileInfo(const FileInfoPointer info)
 {
+    if (fileCalculationUtils)
+        fileCalculationUtils->stop();
+
     const QIcon &icon = info->fileIcon();
 
     iconLabel->setPixmap(icon.pixmap(180));
