@@ -40,6 +40,7 @@ FilePreviewDialog::FilePreviewDialog(const QList<QUrl> &previewUrllist, QWidget 
     }
     firstEnterSwitchToPage = true;
     switchToPage(0);
+    windowHandle()->installEventFilter(this);
 }
 
 FilePreviewDialog::~FilePreviewDialog()
@@ -133,8 +134,6 @@ void FilePreviewDialog::childEvent(QChildEvent *event)
 
 void FilePreviewDialog::showEvent(QShowEvent *event)
 {
-    windowHandle()->installEventFilter(this);
-
     return DAbstractDialog::showEvent(event);
 }
 
