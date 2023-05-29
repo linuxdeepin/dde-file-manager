@@ -274,10 +274,9 @@ QFileDevice::Permissions AsyncFileInfo::permissions() const
 {
     QFileDevice::Permissions ps;
 
-    if (d->dfmFileInfo)
-        ps = static_cast<QFileDevice::Permissions>(
-                static_cast<uint16_t>(
-                        d->asyncAttribute(AsyncAttributeID::kAccessPermissions).value<DFile::Permissions>()));
+    ps = static_cast<QFileDevice::Permissions>(
+            static_cast<uint16_t>(
+                    d->asyncAttribute(AsyncAttributeID::kAccessPermissions).value<DFile::Permissions>()));
 
     return ps;
 }
@@ -563,6 +562,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
         dfmFileInfo = dfileInfo;
         return;
     }
+
     dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
 
     if (!dfmFileInfo) {
@@ -961,8 +961,9 @@ QString AsyncFileInfoPrivate::sizeFormat() const
 
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
-    if (dfmFileInfo) {
-        auto value = dfmFileInfo->attribute(key, ok);
+    auto tmpDfmFileInfo = dfmFileInfo;
+    if (tmpDfmFileInfo) {
+        auto value = tmpDfmFileInfo->attribute(key, ok);
         return value;
     }
     return QVariant();
@@ -976,7 +977,8 @@ QVariant AsyncFileInfoPrivate::asyncAttribute(AsyncFileInfo::AsyncAttributeID ke
 
 QMap<DFileInfo::AttributeExtendID, QVariant> AsyncFileInfoPrivate::mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids)
 {
-    if (dfmFileInfo) {
+    auto tmpDfmFileInfo = dfmFileInfo;
+    if (tmpDfmFileInfo) {
         extendIDs = ids;
 
         auto it = ids.begin();
@@ -988,7 +990,7 @@ QMap<DFileInfo::AttributeExtendID, QVariant> AsyncFileInfoPrivate::mediaInfo(DFi
         }
 
         if (!ids.isEmpty() && !mediaFuture) {
-            mediaFuture.reset(new InfoDataFuture(dfmFileInfo->attributeExtend(type, ids, 0)));
+            mediaFuture.reset(new InfoDataFuture(tmpDfmFileInfo->attributeExtend(type, ids, 0)));
         } else if (mediaFuture && mediaFuture->isFinished()) {
             attributesExtend = mediaFuture->mediaInfo();
             mediaFuture.reset(nullptr);
