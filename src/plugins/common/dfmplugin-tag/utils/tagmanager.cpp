@@ -373,12 +373,7 @@ bool TagManager::removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl>
     QMap<QString, QVariant> fileWithTag;
 
     for (const QUrl &url : files) {
-        const FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (info) {
-            fileWithTag[info->pathOf(FileInfo::FilePathInfoType::kFilePath)] = QVariant(tags);
-        } else {
-            fileWithTag[UrlRoute::urlToLocalPath(url)] = QVariant(tags);
-        }
+        fileWithTag[UrlRoute::urlToPath(url)] = QVariant(tags);
     }
 
     return TagProxyHandleIns->deleteFileTags(fileWithTag);
