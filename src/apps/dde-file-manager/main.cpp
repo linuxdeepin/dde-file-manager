@@ -20,8 +20,10 @@
 #include <QDir>
 #include <QTextCodec>
 #include <QProcess>
+#include <QTimer>
 
 #include <signal.h>
+#include <malloc.h>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -41,6 +43,9 @@ static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
 static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
 static constexpr char kPluginCore[] { "dfmplugin-core" };
 static constexpr char kLibCore[] { "libdfmplugin-core.so" };
+
+static constexpr int kMemoryThreshold { 80 * 1024 };   // 80MB
+static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
 
 /* Within an SSH session, I can use gvfs-mount provided that
  * dbus-daemon is launched first and the environment variable DBUS_SESSION_BUS_ADDRESS is set.
@@ -224,6 +229,22 @@ static void checkUpgrade(SingleApplication *app)
     return;
 }
 
+static void autoReleaseMemory()
+{
+    bool autoRelease = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.memory.autorelease", true).toBool();
+    if (!autoRelease)
+        return;
+
+    static QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [] {
+        float memUsage = SysInfoUtils::getMemoryUsage(getpid());
+        if (memUsage > kMemoryThreshold)
+            malloc_trim(0);
+    });
+
+    timer.start(kTimerInterval);
+}
+
 int main(int argc, char *argv[])
 {
     initEnv();
@@ -250,6 +271,7 @@ int main(int argc, char *argv[])
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
+    autoReleaseMemory();
 
     CommandParser::instance().process();
 
