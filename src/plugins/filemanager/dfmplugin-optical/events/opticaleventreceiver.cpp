@@ -129,6 +129,24 @@ bool OpticalEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
     return false;
 }
 
+bool OpticalEventReceiver::handleTabClosable(const QUrl &currentUrl, const QUrl &rootUrl)
+{
+    const auto &scheme { OpticalHelper::scheme() };
+    if (currentUrl.scheme() != scheme || rootUrl.scheme() != scheme)
+        return false;
+
+    if (OpticalHelper::burnIsOnStaging(currentUrl)) {
+        const QString &rootDev { OpticalHelper::burnDestDevice(rootUrl) };
+        const QString &curDev { OpticalHelper::burnDestDevice(currentUrl) };
+        if (rootDev == curDev) {
+            qInfo() << "Close tab: " << currentUrl;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 OpticalEventReceiver::OpticalEventReceiver(QObject *parent)
     : QObject(parent)
 {
