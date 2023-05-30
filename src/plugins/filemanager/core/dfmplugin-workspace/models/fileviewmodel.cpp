@@ -387,8 +387,11 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (!dropIndex.isValid())
         return false;
 
+    if (!fileInfo(dropIndex))
+        dropIndex.data(Global::ItemRoles::kItemCreateFileInfo);
+
     const FileInfoPointer &targetFileInfo = fileInfo(dropIndex);
-    if (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable)) {
+    if (!targetFileInfo || (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable))) {
         qInfo() << "current dir is not writable!!!!!!!!";
         return false;
     }
@@ -670,7 +673,7 @@ void FileViewModel::initFilterSortWork()
 
     filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, {}, filters));
     beginInsertRows(QModelIndex(), 0, 0);
-    filterSortWorker->setRootData(new FileItemData(dirRootUrl));
+    filterSortWorker->setRootData(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl)));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
     filterSortWorker->moveToThread(filterSortThread.data());
