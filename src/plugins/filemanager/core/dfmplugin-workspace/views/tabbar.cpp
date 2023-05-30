@@ -176,7 +176,11 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
             continue;
 
         QUrl curUrl = tab->getCurrentUrl();
-        if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
+        // Some URLs cannot be compared universally
+        bool closeable { dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Closeable",
+                                              curUrl, url) };
+
+        if (closeable || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
                 if (isMountedDevPath(url) || url.scheme() != Global::Scheme::kFile) {
