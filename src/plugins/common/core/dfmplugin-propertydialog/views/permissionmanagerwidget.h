@@ -42,7 +42,7 @@ private:
 
     void toggleFileExecutable(bool isChecked);
 
-    bool canChmod(const FileInfoPointer info);
+    bool canChmod(const FileInfoPointer &info);
 
     void setExecText();
 

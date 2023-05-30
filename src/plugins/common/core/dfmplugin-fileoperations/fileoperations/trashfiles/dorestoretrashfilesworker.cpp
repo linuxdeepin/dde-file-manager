@@ -219,8 +219,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     return true;
 }
 
-bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer trashInfo, const FileInfoPointer restoreInfo,
-                                                FileInfoPointer targetFileInfo, bool *result)
+bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo,
+                                                FileInfoPointer &targetFileInfo, bool *result)
 {
     const QUrl &fromUrl = trashInfo->urlOf(UrlInfoType::kUrl);
     const QUrl &toUrl = restoreInfo->urlOf(UrlInfoType::kUrl);
@@ -252,7 +252,7 @@ bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer trashInfo,
     return true;
 }
 
-bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, FileInfoPointer restoreInfo)
+bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, FileInfoPointer &restoreInfo)
 {
     bool result;
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;

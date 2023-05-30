@@ -105,7 +105,7 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     d->editingIndex = index;
     d->editor = new ListItemEditor(parent);
 
-    const FileInfoPointer fileInfo = this->parent()->fileInfo(index);
+    const FileInfoPointer &fileInfo = this->parent()->fileInfo(index);
 
     if (fileInfo->urlOf(UrlInfoType::kUrl).scheme() == "search") {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight * 2 - 10);
@@ -473,7 +473,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
 
-        const FileInfoPointer info = parent()->parent()->model()->fileInfo(index);
+        const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
         if (WorkspaceEventSequence::instance()->doPaintListItem(rol, info, painter, &columnRect))
             continue;
 

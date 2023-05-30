@@ -33,7 +33,7 @@ protected:
 
 protected:
     bool cleanAllTrashFiles();
-    bool clearTrashFile(const FileInfoPointer trashInfo);
+    bool clearTrashFile(const FileInfoPointer &trashInfo);
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const bool isTo = false,

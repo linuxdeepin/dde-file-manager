@@ -305,7 +305,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     }
 
     const auto &index = itemDelegate()->editingIndex();
-    const FileInfoPointer fileInfo = parent()->model()->fileInfo(index);
+    const FileInfoPointer &fileInfo = parent()->model()->fileInfo(index);
 
     if (!fileInfo) {
         return;

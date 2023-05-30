@@ -33,7 +33,7 @@ public:
     static void sendTabRemoved(const quint64 windowID, const int index);
     static void sendShowCustomTopWidget(const quint64 windowId, const QString &scheme, bool visible);
 
-    static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const FileInfoPointer info);
+    static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const FileInfoPointer &info);
 
     static void sendViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
 

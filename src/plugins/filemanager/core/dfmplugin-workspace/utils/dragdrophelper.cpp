@@ -209,7 +209,7 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (!hoverIndex.isValid()) {
             hoverIndex = view->rootIndex();
         } else {
-            const FileInfoPointer fileInfo = view->model()->fileInfo(hoverIndex);
+            const FileInfoPointer &fileInfo = view->model()->fileInfo(hoverIndex);
             if (fileInfo) {
                 bool isDrop = dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_IsDrop", fileInfo->urlOf(UrlInfoType::kUrl));
                 // NOTE: if item can not drop, the drag item will drop to root dir.

@@ -93,7 +93,7 @@ QWidget *UnknowFilePreview::contentWidget() const
     return contentView;
 }
 
-void UnknowFilePreview::setFileInfo(const FileInfoPointer info)
+void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
 {
     if (fileCalculationUtils)
         fileCalculationUtils->stop();

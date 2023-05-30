@@ -27,11 +27,11 @@ public:
     AbstractSortFilter();
     virtual ~AbstractSortFilter() {}
     // 左边比右边小返回true
-    virtual int lessThan(const FileInfoPointer left, const FileInfoPointer right,
+    virtual int lessThan(const FileInfoPointer &left, const FileInfoPointer &right,
                          const bool isMixDirAndFile,
                          const Global::ItemRoles role,
                          const SortScenarios ss);
-    virtual int checkFilters(const FileInfoPointer info, const QDir::Filters filter, const QVariant &custum);
+    virtual int checkFilters(const FileInfoPointer &info, const QDir::Filters filter, const QVariant &custum);
 };
 }
 
