@@ -21,7 +21,7 @@ inline constexpr char kPort[] { "port" };
 inline constexpr char kIp[] { "ip" };
 inline constexpr char kMountName[] { "mntName" };
 inline constexpr char kTimeout[] { "timeout" };
-inline constexpr char kTryHandleTimeout[] { "handletimeout" };
+inline constexpr char kTryWaitReconn[] { "waitReconn" };
 inline constexpr char kUnmountAllStacked[] { "unmountAllStacked" };
 }
 

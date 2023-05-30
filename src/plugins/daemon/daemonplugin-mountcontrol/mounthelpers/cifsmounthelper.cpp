@@ -79,7 +79,7 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
         params.insert(MountOptionsField::kPort, port);
 
     if (params.contains(MountOptionsField::kTimeout))
-        params.insert(MountOptionsField::kTryHandleTimeout, true);
+        params.insert(MountOptionsField::kTryWaitReconn, true);
 
     static const QRegularExpression ipRegx(R"(^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)");
     auto matchIp = ipRegx.match(host);
@@ -112,9 +112,9 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
             // if failed, try with `wait_reconnect_timeout` again,
             // if failed, try without any timeout param.
             if (params.contains(MountOptionsField::kTimeout)) {
-                if (params.contains(MountOptionsField::kTryHandleTimeout)) {
-                    qInfo() << "mount: try with wait_reconnect_timeout";
-                    params.remove(MountOptionsField::kTryHandleTimeout);
+                if (params.contains(MountOptionsField::kTryWaitReconn)) {
+                    qInfo() << "mount: try with handletimeout";
+                    params.remove(MountOptionsField::kTryWaitReconn);
                 } else {
                     qInfo() << "mount: try without timeout param";
                     params.remove(MountOptionsField::kTimeout);
@@ -303,10 +303,10 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
     // this param is supported by cifs only.
     if (opts.contains(kTimeout)) {
         param += QString("echo_interval=1,");
-        if (opts.contains(kTryHandleTimeout))
-            param += QString("handletimeout=%1,").arg(opts.value(kTimeout).toInt() * 1000);   // handletimeout = ?? ms
-        else
+        if (opts.contains(kTryWaitReconn))
             param += QString("wait_reconnect_timeout=%1,").arg(/*opts.value(kTimeout).toString()*/ 0);   // w_r_t = ?? s
+        else
+            param += QString("handletimeout=%1,").arg(opts.value(kTimeout).toInt() * 1000);   // handletimeout = ?? ms
     }
 
     if (opts.contains(kIp))
