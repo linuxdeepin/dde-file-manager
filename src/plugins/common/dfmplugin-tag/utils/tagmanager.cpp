@@ -103,7 +103,7 @@ bool TagManager::canTagFile(const QUrl &url) const
     return false;
 }
 
-bool TagManager::canTagFile(const FileInfoPointer info) const
+bool TagManager::canTagFile(const FileInfoPointer &info) const
 {
     if (info.isNull())
         return false;
@@ -118,7 +118,7 @@ bool TagManager::canTagFile(const FileInfoPointer info) const
     return canTag;
 }
 
-bool TagManager::paintListTagsHandle(int role, const FileInfoPointer info, QPainter *painter, QRectF *rect)
+bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect)
 {
     if (!canTagFile(info))
         return false;
@@ -144,7 +144,7 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer info, QPain
     return false;
 }
 
-bool TagManager::paintIconTagsHandle(const FileInfoPointer info, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
+bool TagManager::paintIconTagsHandle(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
 {
     Q_UNUSED(rect)
     Q_UNUSED(painter)
@@ -276,7 +276,7 @@ QVariant TagManager::getTagsByUrls(const QList<QUrl> &filePaths, bool same) cons
 
     QStringList paths;
     for (const auto &temp : filePaths) {
-        const FileInfoPointer info = InfoFactory::create<FileInfo>(temp);
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(temp);
         if (info) {
             paths.append(temp.path());
         } else {
@@ -489,7 +489,7 @@ bool TagManager::deleteTagData(const QStringList &data, const DeleteOpts &type)
     return ret;
 }
 
-bool TagManager::localFileCanTagFilter(const FileInfoPointer info) const
+bool TagManager::localFileCanTagFilter(const FileInfoPointer &info) const
 {
     if (info.isNull())
         return false;

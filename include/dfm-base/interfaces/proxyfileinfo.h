@@ -18,7 +18,7 @@ public:
     virtual void refresh() override;
 
 protected:
-    void setProxy(const FileInfoPointer proxy);
+    void setProxy(const FileInfoPointer &proxy);
     FileInfoPointer proxy { nullptr };
 
     // AbstractFileInfo interface

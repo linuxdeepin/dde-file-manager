@@ -23,17 +23,17 @@ class GioEmblemWorker : public QObject
     Q_OBJECT
 
 public:
-    QList<QIcon> fetchEmblems(const FileInfoPointer info) const;
+    QList<QIcon> fetchEmblems(const FileInfoPointer &info) const;
 
 public Q_SLOTS:
-    void onProduce(const FileInfoPointer info);
+    void onProduce(const FileInfoPointer &info);
     void onClear();
 
 Q_SIGNALS:
     void emblemChanged(const QUrl &url, const Product &product);
 
 private:
-    QMap<int, QIcon> getGioEmblems(const FileInfoPointer info) const;
+    QMap<int, QIcon> getGioEmblems(const FileInfoPointer &info) const;
     bool parseEmblemString(QIcon *emblem, QString &pos, const QString &emblemStr) const;
     bool iconNamesEqual(const QList<QIcon> &first, const QList<QIcon> &second);
     void setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QMap<int, QIcon> *iconMap) const;
@@ -53,14 +53,14 @@ public:
     inline bool hasEmblem(const QUrl &url) const { return productQueue.contains(url); }
     inline void clearEmblem() { productQueue.clear(); }
 
-    QList<QIcon> systemEmblems(const FileInfoPointer info) const;
+    QList<QIcon> systemEmblems(const FileInfoPointer &info) const;
     QList<QRectF> emblemRects(const QRectF &paintArea) const;
     QList<QIcon> gioEmblemIcons(const QUrl &url) const;
-    void pending(const FileInfoPointer info);
+    void pending(const FileInfoPointer &info);
     bool isExtEmblemProhibited(const QUrl &url);
 
 Q_SIGNALS:
-    void requestProduce(const FileInfoPointer info);
+    void requestProduce(const FileInfoPointer &info);
     void requestClear();
 
 private Q_SLOTS:

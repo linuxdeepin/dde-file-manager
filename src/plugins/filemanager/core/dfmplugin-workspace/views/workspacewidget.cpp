@@ -319,7 +319,7 @@ void WorkspaceWidget::handleCtrlT()
     if (view) {
         const QList<QUrl> &urls = view->selectedUrlList();
         if (urls.count() == 1) {
-            const FileInfoPointer fileInfoPtr = InfoFactory::create<FileInfo>(urls.at(0));
+            const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(urls.at(0));
             if (fileInfoPtr && fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
                 openNewTab(urls.at(0));
                 return;

@@ -154,7 +154,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
  * \param dir delete dir
  * \return delete success
  */
-bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer dir)
+bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
 {
     if (!stateCheck())
         return false;

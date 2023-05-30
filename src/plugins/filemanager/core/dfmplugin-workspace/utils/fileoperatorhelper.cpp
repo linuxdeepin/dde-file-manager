@@ -83,7 +83,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     for (const QUrl &url : urls) {
-        const FileInfoPointer fileInfoPtr = InfoFactory::create<FileInfo>(url);
+        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url);
         if (fileInfoPtr) {
             if (!fileInfoPtr->exists()) {
                 // show alert
@@ -148,7 +148,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
         selectedUrls = urls;
 
     if (selectedUrls.size() == 1) {
-        const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(selectedUrls.first());
+        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(selectedUrls.first());
         if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsReadable))
             return;
     }
@@ -165,7 +165,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 void FileOperatorHelper::cutFiles(const FileView *view)
 {
     qInfo() << "cut shortcut key to clipboard";
-    const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(view->rootUrl());
+    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(view->rootUrl());
     if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable))
         return;
     QList<QUrl> selectedUrls = view->selectedUrlList();

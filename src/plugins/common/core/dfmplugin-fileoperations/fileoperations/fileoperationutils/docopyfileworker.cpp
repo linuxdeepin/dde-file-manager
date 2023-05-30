@@ -462,7 +462,7 @@ AbstractJobHandler::SupportAction DoCopyFileWorker::doHandleErrorAndWait(const Q
  * \brief FileOperateBaseWorker::readAheadSourceFile Pre read source file content
  * \param fileInfo File information of source file
  */
-void DoCopyFileWorker::readAheadSourceFile(const FileInfoPointer fileInfo)
+void DoCopyFileWorker::readAheadSourceFile(const FileInfoPointer &fileInfo)
 {
     if (fileInfo->size() <= 0)
         return;
@@ -482,8 +482,8 @@ void DoCopyFileWorker::readAheadSourceFile(const FileInfoPointer fileInfo)
  * \param result result result Output parameter: whether skip
  * \return Is the device of the file created successfully
  */
-bool DoCopyFileWorker::createFileDevice(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
-                                        const FileInfoPointer needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
+bool DoCopyFileWorker::createFileDevice(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+                                        const FileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
                                         bool *skip)
 {
     file.reset();
@@ -517,7 +517,7 @@ bool DoCopyFileWorker::createFileDevice(const FileInfoPointer fromInfo, const Fi
  * \param result result Output parameter: whether skip
  * \return Whether the device of source file and target file is created successfully
  */
-bool DoCopyFileWorker::createFileDevices(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+bool DoCopyFileWorker::createFileDevices(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                                          QSharedPointer<DFMIO::DFile> &fromeFile, QSharedPointer<DFMIO::DFile> &toFile, bool *skip)
 {
     if (!createFileDevice(fromInfo, toInfo, fromInfo, fromeFile, skip))
@@ -536,7 +536,7 @@ bool DoCopyFileWorker::createFileDevices(const FileInfoPointer fromInfo, const F
  * \param result result Output parameter: whether skip
  * \return Open source and target files successfully
  */
-bool DoCopyFileWorker::openFiles(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+bool DoCopyFileWorker::openFiles(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                                  const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
                                  bool *skip)
 {
@@ -561,7 +561,7 @@ bool DoCopyFileWorker::openFiles(const FileInfoPointer fromInfo, const FileInfoP
  * \param result result Output parameter: whether skip
  * \return wether open the file successfully
  */
-bool DoCopyFileWorker::openFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+bool DoCopyFileWorker::openFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                                 const QSharedPointer<DFMIO::DFile> &file, const DFMIO::DFile::OpenFlags &flags,
                                 bool *skip)
 {
@@ -587,7 +587,7 @@ bool DoCopyFileWorker::openFile(const FileInfoPointer fromInfo, const FileInfoPo
     return true;
 }
 
-bool DoCopyFileWorker::resizeTargetFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+bool DoCopyFileWorker::resizeTargetFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                                         const QSharedPointer<DFMIO::DFile> &file, bool *skip)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
@@ -616,7 +616,7 @@ bool DoCopyFileWorker::resizeTargetFile(const FileInfoPointer fromInfo, const Fi
  * \param result result Output parameter: whether skip
  * \return Read successfully
  */
-bool DoCopyFileWorker::doReadFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+bool DoCopyFileWorker::doReadFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                                   const QSharedPointer<DFMIO::DFile> &fromDevice,
                                   char *data, const qint64 &blockSize,
                                   qint64 &readSize, bool *skip)
@@ -686,7 +686,7 @@ bool DoCopyFileWorker::doReadFile(const FileInfoPointer fromInfo, const FileInfo
  * \param result result Output parameter: whether skip
  * \return Write successfully
  */
-bool DoCopyFileWorker::doWriteFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+bool DoCopyFileWorker::doWriteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                                    const QSharedPointer<DFMIO::DFile> &toDevice,
                                    const char *data, const qint64 readSize, bool *skip)
 {
@@ -755,7 +755,7 @@ bool DoCopyFileWorker::doWriteFile(const FileInfoPointer fromInfo, const FileInf
 }
 
 bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
-                                           const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+                                           const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                                            QSharedPointer<DFMIO::DFile> &toDevice)
 {
     if (!workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))
@@ -928,7 +928,7 @@ void DoCopyFileWorker::syncBlockFile(const BlockFileCopyInfoPointer &info, bool 
  * \param fromInfo File information of source file
  * \param toInfo File information of target file
  */
-void DoCopyFileWorker::setTargetPermissions(const FileInfoPointer fromInfo, const FileInfoPointer toInfo)
+void DoCopyFileWorker::setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo)
 {
     // 修改文件修改时间
     localFileHandler->setFileTime(toInfo->urlOf(UrlInfoType::kUrl), fromInfo->timeOf(TimeInfoType::kLastRead).value<QDateTime>(), fromInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>());

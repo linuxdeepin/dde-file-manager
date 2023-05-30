@@ -72,7 +72,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         if (!stateCheck())
             return false;
 
-        const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
@@ -86,7 +86,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         const QUrl &targetFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
                                                                    fileInfo->displayOf(DisPlayInfoType::kFileDisplayName).toStdString().c_str(), nullptr);
 
-        const FileInfoPointer targetFileInfo = InfoFactory::create<FileInfo>(targetFileUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+        const FileInfoPointer &targetFileInfo = InfoFactory::create<FileInfo>(targetFileUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!targetFileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
@@ -131,8 +131,8 @@ bool DoCopyFromTrashFilesWorker::doOperate()
     return true;
 }
 
-bool DoCopyFromTrashFilesWorker::createParentDir(const FileInfoPointer trashInfo, const FileInfoPointer restoreInfo,
-                                                 FileInfoPointer targetFileInfo, bool *result)
+bool DoCopyFromTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo,
+                                                 FileInfoPointer &targetFileInfo, bool *result)
 {
     const QUrl &fromUrl = trashInfo->urlOf(UrlInfoType::kUrl);
     const QUrl &toUrl = restoreInfo->urlOf(UrlInfoType::kUrl);

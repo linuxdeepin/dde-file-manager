@@ -38,7 +38,7 @@ void ProxyFileInfo::refresh()
     return FileInfo::refresh();
 }
 
-void ProxyFileInfo::setProxy(const FileInfoPointer proxy)
+void ProxyFileInfo::setProxy(const FileInfoPointer &proxy)
 {
     this->proxy = proxy;
     auto asyncInfo = this->proxy.dynamicCast<AsyncFileInfo>();

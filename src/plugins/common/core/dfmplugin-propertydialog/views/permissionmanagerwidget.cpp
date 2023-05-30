@@ -236,7 +236,7 @@ void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
     }
 }
 
-bool PermissionManagerWidget::canChmod(const FileInfoPointer info)
+bool PermissionManagerWidget::canChmod(const FileInfoPointer &info)
 {
     if (info.isNull())
         return false;

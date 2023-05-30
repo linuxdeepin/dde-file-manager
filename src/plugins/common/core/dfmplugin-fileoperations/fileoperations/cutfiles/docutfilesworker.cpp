@@ -144,7 +144,7 @@ bool DoCutFilesWorker::cutFiles()
     return true;
 }
 
-bool DoCutFilesWorker::doCutFile(const FileInfoPointer fromInfo, const FileInfoPointer targetPathInfo)
+bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo)
 {
     // try rename
     bool ok = false;
@@ -216,7 +216,7 @@ void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
     emit stateChangedNotify(info);
 }
 
-bool DoCutFilesWorker::checkSymLink(const FileInfoPointer fileInfo)
+bool DoCutFilesWorker::checkSymLink(const FileInfoPointer &fileInfo)
 {
     const QUrl &sourceUrl = fileInfo->urlOf(UrlInfoType::kUrl);
     FileInfoPointer newTargetInfo(nullptr);
@@ -238,7 +238,7 @@ bool DoCutFilesWorker::checkSymLink(const FileInfoPointer fileInfo)
     return true;
 }
 
-bool DoCutFilesWorker::checkSelf(const FileInfoPointer fileInfo)
+bool DoCutFilesWorker::checkSelf(const FileInfoPointer &fileInfo)
 {
     const QString &fileName = fileInfo->nameOf(NameInfoType::kFileName);
     QString newFileUrl = targetInfo->urlOf(UrlInfoType::kUrl).toString();
@@ -254,7 +254,7 @@ bool DoCutFilesWorker::checkSelf(const FileInfoPointer fileInfo)
     return false;
 }
 
-bool DoCutFilesWorker::renameFileByHandler(const FileInfoPointer sourceInfo, const FileInfoPointer targetInfo)
+bool DoCutFilesWorker::renameFileByHandler(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetInfo)
 {
     if (localFileHandler) {
         const QUrl &sourceUrl = sourceInfo->urlOf(UrlInfoType::kUrl);
@@ -264,7 +264,7 @@ bool DoCutFilesWorker::renameFileByHandler(const FileInfoPointer sourceInfo, con
     return false;
 }
 
-bool DoCutFilesWorker::doRenameFile(const FileInfoPointer sourceInfo, const FileInfoPointer targetPathInfo, FileInfoPointer toInfo, const QString fileName, bool *ok)
+bool DoCutFilesWorker::doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, const QString fileName, bool *ok)
 {
     QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
     sourceStorageInfo.reset(new QStorageInfo(sourceInfo->urlOf(UrlInfoType::kUrl).path()));

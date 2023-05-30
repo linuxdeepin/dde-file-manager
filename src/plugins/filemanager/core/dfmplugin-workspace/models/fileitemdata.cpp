@@ -14,7 +14,7 @@ using namespace dfmbase;
 using namespace dfmbase::Global;
 using namespace dfmplugin_workspace;
 
-FileItemData::FileItemData(const QUrl &url, const FileInfoPointer info, FileItemData *parent)
+FileItemData::FileItemData(const QUrl &url, const FileInfoPointer &info, FileItemData *parent)
     : parent(parent),
       url(url),
       info(info)

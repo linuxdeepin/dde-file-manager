@@ -35,7 +35,7 @@ public:
 
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 public Q_SLOTS:
-    void onEditorTextChanged(const QString &text, const FileInfoPointer info) const;
+    void onEditorTextChanged(const QString &text, const FileInfoPointer &info) const;
 
 private:
     void drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const;
