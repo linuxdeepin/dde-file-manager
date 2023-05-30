@@ -87,6 +87,8 @@ public:
     void setHideOnAccept(bool enable);
     bool hideOnAccept() const;
 
+    FileDialogStatusBar *statusBar() const;
+
 Q_SIGNALS:
     void finished(int result);
     void accepted();
@@ -126,7 +128,6 @@ private:
     void initEventsConnect();
     void initEventsFilter();
     void updateViewState();
-    FileDialogStatusBar *statusBar() const;
     void adjustPosition(QWidget *w);
     QString modelCurrentNameFilter() const;
 

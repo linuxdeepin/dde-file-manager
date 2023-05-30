@@ -325,6 +325,7 @@ void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
 void FileDialogHandle::setAcceptMode(QFileDialog::AcceptMode mode)
 {
     D_D(FileDialogHandle);
+    isSetAcceptMode = true;
     CoreHelper::delayInvokeProxy(
             [d, mode]() {
                 d->dialog->setAcceptMode(mode);
@@ -478,6 +479,8 @@ void FileDialogHandle::show()
 {
     D_D(FileDialogHandle);
     if (d->dialog) {
+        if (!isSetAcceptMode && d->dialog->statusBar())
+            d->dialog->statusBar()->setMode(FileDialogStatusBar::Mode::kOpen);
         // why ?
         // Use QFileDialog will call to the current function, but `WindowsService::showWindow` will call
         // to some D-Bus interfaces in desktop.

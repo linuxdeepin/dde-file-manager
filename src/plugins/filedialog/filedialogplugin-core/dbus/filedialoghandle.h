@@ -97,7 +97,7 @@ Q_SIGNALS:
 
 private:
     QScopedPointer<FileDialogHandlePrivate> d_ptr;
-
+    bool isSetAcceptMode { false };
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), FileDialogHandle)
     Q_DISABLE_COPY(FileDialogHandle)
 };
