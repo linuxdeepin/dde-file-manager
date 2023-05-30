@@ -42,6 +42,8 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
+    connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
+    waitTimer.setInterval(30);
 }
 
 FileViewModel::~FileViewModel()
@@ -642,8 +644,8 @@ void FileViewModel::onSetCursorWait()
     if (currentState() != ModelState::kBusy)
             return;
 
-    while (QApplication::overrideCursor())
-        QApplication::restoreOverrideCursor();
+    if (QApplication::overrideCursor() && QApplication::overrideCursor()->shape() == Qt::CursorShape::WaitCursor)
+        return;
 
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
@@ -788,7 +790,8 @@ void FileViewModel::closeCursorTimer()
 
 void FileViewModel::startCursorTimer()
 {
-    waitTimer.start();
+    if (!waitTimer.isActive())
+        waitTimer.start();
 
     onSetCursorWait();
 }

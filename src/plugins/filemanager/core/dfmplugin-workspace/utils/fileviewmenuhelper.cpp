@@ -19,6 +19,8 @@
 
 #include <DMenu>
 
+#include <QApplication>
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -153,7 +155,8 @@ QString FileViewMenuHelper::currentMenuScene() const
 
 void FileViewMenuHelper::setWaitCursor()
 {
-    reloadCursor();
+    if (QApplication::overrideCursor() && QApplication::overrideCursor()->shape() == Qt::CursorShape::WaitCursor)
+        return;
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
