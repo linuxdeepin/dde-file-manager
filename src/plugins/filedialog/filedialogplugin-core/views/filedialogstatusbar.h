@@ -25,6 +25,7 @@ class QHBoxLayout;
 QT_END_NAMESPACE
 
 namespace filedialog_core {
+class FileDialog;
 
 class FileDialogStatusBar : public QFrame
 {
@@ -88,6 +89,7 @@ private:
 
     QList<QPair<DTK_WIDGET_NAMESPACE::DLabel *, DTK_WIDGET_NAMESPACE::DLineEdit *>> customLineEditList;
     QList<QPair<DTK_WIDGET_NAMESPACE::DLabel *, DTK_WIDGET_NAMESPACE::DComboBox *>> customComboBoxList;
+    FileDialog *mainWindow { nullptr };
 };
 
 }

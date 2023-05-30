@@ -261,7 +261,17 @@ QFileDialog::ViewMode FileDialog::currentViewMode() const
 
 void FileDialog::setDirectory(const QString &directory)
 {
-    setDirectoryUrl(UrlRoute::fromLocalFile(directory));
+    QUrl url = UrlRoute::fromLocalFile(directory);
+    QString errorString { "" };
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync, &errorString);
+    if (!info) {
+        qCritical() << "Select Dialog Error: can not create file info, the error is: " << errorString;
+        return;
+    }
+    bool isSymLink = info->isAttributes(dfmbase::FileInfo::FileIsType::kIsSymLink);
+    if (isSymLink)
+        url = info->urlOf(dfmbase::FileInfo::FileUrlInfoType::kRedirectedFileUrl);
+    setDirectoryUrl(url);
 }
 
 void FileDialog::setDirectory(const QDir &directory)

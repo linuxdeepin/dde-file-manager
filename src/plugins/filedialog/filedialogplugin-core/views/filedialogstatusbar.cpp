@@ -32,6 +32,7 @@ DWIDGET_USE_NAMESPACE
 
 FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     : QFrame(parent)
+    , mainWindow(qobject_cast<FileDialog *>(parent))
 {
     initializeUi();
     initializeConnect();
@@ -285,7 +286,6 @@ void FileDialogStatusBar::updateLayout()
     if (curMode == kUnknow)
         return;
 
-    FileDialog *mainWindow = qobject_cast<FileDialog *>(parent());
     if (!mainWindow)
         return;
 
