@@ -128,10 +128,15 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
             return;
 
         auto newLabel = text;
+        if (newLabel.toUtf8().length() <= maxLengthWhenRename)
+            return;
+
         QSignalBlocker blocker(editor);
         while (newLabel.toUtf8().length() > maxLengthWhenRename)
             newLabel.chop(1);
+        int cursorPos = editor->cursorPosition();
         editor->setText(newLabel);
+        editor->setCursorPosition(cursorPos);
     });
     connect(editor, &QLineEdit::destroyed, this, [this] {
         view->model()->setData(editingIndex, false, ComputerModel::kItemIsEditingRole);
