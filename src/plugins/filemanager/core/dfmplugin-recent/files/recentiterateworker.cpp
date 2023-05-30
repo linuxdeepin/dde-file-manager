@@ -35,7 +35,10 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
 
     QXmlStreamReader reader(&file);
     while (!reader.atEnd()) {
-        if (!reader.readNextStartElement() || reader.name() != "bookmark")
+        if (reader.readNext() == QXmlStreamReader::EndDocument)
+            continue;
+
+        if (!reader.isStartElement() || reader.name() != "bookmark")
             continue;
 
         const QString &location = reader.attributes().value("href").toString();
@@ -54,6 +57,11 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
             urlList.append(recentUrl);
             emit updateRecentFileInfo(recentUrl, location, readTimeSecs);
         }
+    }
+
+    if (reader.hasError()) {
+        qWarning() << "Read recent xml file has error! Error: " << reader.errorString();
+        return;
     }
 
     // delete cached recent file when recent file removed
