@@ -4,6 +4,7 @@
 
 #include "filedialoghandle.h"
 #include "views/filedialog.h"
+#include "views/filedialogstatusbar.h"
 #include "events/coreeventscaller.h"
 #include "utils/corehelper.h"
 
@@ -264,7 +265,9 @@ qulonglong FileDialogHandle::winId() const
     if (qApp->property("GTK").toBool())
         waitForWindowShow();
 
-    return d->dialog->winId();
+    if (d->dialog)
+        return d->dialog->internalWinId();
+    return 0;
 }
 
 QDir::Filters FileDialogHandle::filter() const

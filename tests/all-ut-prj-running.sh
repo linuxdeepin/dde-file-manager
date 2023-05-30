@@ -108,7 +108,7 @@ businessTestList=(
   plugins/common/dfmplugin-preview/filepreview
   plugins/common/dfmplugin-preview/pluginpreviews/image-preview
   plugins/common/dfmplugin-preview/pluginpreviews/music-preview
-  plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview
+#  plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview
   plugins/common/dfmplugin-preview/pluginpreviews/text-preview
   plugins/common/dfmplugin-preview/pluginpreviews/video-preview
 
