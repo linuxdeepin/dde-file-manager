@@ -155,7 +155,7 @@ TEST(CollectionItemDelegate, paintEmblems)
     FileInfoPointer inFile;
     stub.set_lamda((QVariant(EventChannelManager::*)(const QString &, const QString &, QPainter *, const QRectF &, const FileInfoPointer &))
                            & EventChannelManager::push,
-                   [&](EventChannelManager *, const QString &space, const QString &topic, QPainter *p, const QRectF &r, const FileInfoPointer file) {
+                   [&](EventChannelManager *, const QString &space, const QString &topic, QPainter *p, const QRectF &r, const FileInfoPointer &file) {
                        inspace = space;
                        intopic = topic;
                        inpainter = p;

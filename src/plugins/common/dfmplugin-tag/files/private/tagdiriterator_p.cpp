@@ -31,7 +31,7 @@ void TagDirIteratorPrivate::loadTagsUrls(const QUrl &url)
             tagUrl.setScheme(TagManager::scheme());
             tagUrl.setPath("/" + it.key());
 
-            const FileInfoPointer info = InfoFactory::create<FileInfo>(tagUrl);
+            const FileInfoPointer &info = InfoFactory::create<FileInfo>(tagUrl);
             tagNodes.insert(tagUrl, info);
             urlList.append(tagUrl);
             ++it;
@@ -50,7 +50,7 @@ void TagDirIteratorPrivate::loadTagsUrls(const QUrl &url)
 
             tagUrl = QUrl::fromLocalFile(path);
 
-            const FileInfoPointer info = InfoFactory::create<FileInfo>(tagUrl);
+            const FileInfoPointer &info = InfoFactory::create<FileInfo>(tagUrl);
             if (!info->exists())
                 continue;
 

@@ -20,7 +20,7 @@ DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
-void GioEmblemWorker::onProduce(const FileInfoPointer info)
+void GioEmblemWorker::onProduce(const FileInfoPointer &info)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
 
@@ -44,7 +44,7 @@ void GioEmblemWorker::onClear()
     cache.clear();
 }
 
-QList<QIcon> GioEmblemWorker::fetchEmblems(const FileInfoPointer info) const
+QList<QIcon> GioEmblemWorker::fetchEmblems(const FileInfoPointer &info) const
 {
     if (!info)
         return {};
@@ -75,7 +75,7 @@ QList<QIcon> GioEmblemWorker::fetchEmblems(const FileInfoPointer info) const
     return emblemList;
 }
 
-QMap<int, QIcon> GioEmblemWorker::getGioEmblems(const FileInfoPointer info) const
+QMap<int, QIcon> GioEmblemWorker::getGioEmblems(const FileInfoPointer &info) const
 {
     QMap<int, QIcon> emblemsMap;
 
@@ -201,7 +201,7 @@ EmblemHelper::~EmblemHelper()
     workerThread.wait();
 }
 
-QList<QIcon> EmblemHelper::systemEmblems(const FileInfoPointer info) const
+QList<QIcon> EmblemHelper::systemEmblems(const FileInfoPointer &info) const
 {
     static bool hideSystemEmblems = DConfigManager::instance()->value(kConfigPath, kHideSystemEmblems, false).toBool();
     if (hideSystemEmblems)
@@ -256,7 +256,7 @@ QList<QIcon> EmblemHelper::gioEmblemIcons(const QUrl &url) const
     return {};
 }
 
-void EmblemHelper::pending(const FileInfoPointer info)
+void EmblemHelper::pending(const FileInfoPointer &info)
 {
     emit requestProduce(info);
 }

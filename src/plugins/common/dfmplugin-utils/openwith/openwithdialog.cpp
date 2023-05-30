@@ -316,7 +316,7 @@ void OpenWithDialog::initData()
 {
     //在选择默认程序时，有多个url，要传多个url
     if (curUrl.isValid() && urlList.isEmpty()) {
-        const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(curUrl);
+        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(curUrl);
 
         if (!fileInfo)
             return;
@@ -328,7 +328,7 @@ void OpenWithDialog::initData()
         QList<QUrl> openlist;
         bool bhide = true;
         for (auto url : urlList) {
-            const FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
+            const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
 
             if (!fileInfo) {
                 continue;

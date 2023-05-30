@@ -240,7 +240,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     CanvasProxyModel *canvasModel = qobject_cast<CanvasProxyModel *>(model);
     Q_ASSERT(canvasModel);
 
-    if (const FileInfoPointer fileInfo = canvasModel->fileInfo(index)) {
+    if (const FileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
         QUrl oldUrl = fileInfo->urlOf(UrlInfoType::kUrl);
         QUrl newUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, newName);
         QMetaObject::invokeMethod(FileOperatorProxyIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId()), Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
@@ -746,7 +746,7 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
     return QRect(qRound(x), qRound(y), w, h);
 }
 
-QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect,  const FileInfoPointer info)
+QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect,  const FileInfoPointer &info)
 {
     // todo(zy) uing extend painter by registering.
     if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {

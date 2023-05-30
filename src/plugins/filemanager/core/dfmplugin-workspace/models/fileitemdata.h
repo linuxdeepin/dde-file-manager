@@ -15,7 +15,7 @@ namespace dfmplugin_workspace {
 class FileItemData
 {
 public:
-    explicit FileItemData(const QUrl &url, const FileInfoPointer info = nullptr, FileItemData *parent = nullptr);
+    explicit FileItemData(const QUrl &url, const FileInfoPointer &info = nullptr, FileItemData *parent = nullptr);
     explicit FileItemData(const SortInfoPointer &info, FileItemData *parent = nullptr);
 
     void setParentData(FileItemData *p);
