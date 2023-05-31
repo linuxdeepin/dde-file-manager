@@ -1,3 +1,9 @@
+dde-file-manager (6.0.19) unstable; urgency=medium
+
+  * update file manager V6.0.19 baseline version
+
+ -- lvwujun <lvwujun@uniontech.com>  Thur, 31 May 2023 15:13:07 +0800
+
 dde-file-manager (6.0.18) unstable; urgency=medium
 
   * support mount cifs with handletimeout param
