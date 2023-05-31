@@ -119,6 +119,7 @@ private Q_SLOTS:
 
 protected:
     void showEvent(QShowEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
 

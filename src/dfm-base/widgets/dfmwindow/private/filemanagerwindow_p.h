@@ -50,8 +50,6 @@ protected:
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
     QHBoxLayout *midLayout { nullptr };
     Splitter *splitter { nullptr };
-    QFrame *leftView { nullptr };   // only splitter use it
-    QFrame *rightView { nullptr };   // only splitter use it
     AbstractFrame *titleBar { nullptr };
     AbstractFrame *sideBar { nullptr };
     AbstractFrame *workspace { nullptr };

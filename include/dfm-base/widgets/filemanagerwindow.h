@@ -40,7 +40,6 @@ public:
     AbstractFrame *detailView() const;
 
 protected:
-    void showEvent(QShowEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
@@ -58,7 +57,6 @@ Q_SIGNALS:
     void selectUrlChanged(const QList<QUrl> &urlList);
 
     // The following signals are used to send shortcut requests
-    // TODO(liuyangming): impl follow
     void reqRefresh();   // F5
     void reqActivateNextTab();   // ctrl + Tab
     void reqActivatePreviousTab();   // ctrl + {shift + } BackTab
@@ -78,6 +76,7 @@ Q_SIGNALS:
 
 private:
     void initializeUi();
+    void updateUi();
     void initConnect();
 
 private:
