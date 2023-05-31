@@ -453,23 +453,20 @@ bool RootInfo::containsChild(const QUrl &url)
 void RootInfo::updateChild(const QUrl &url)
 {
     SortInfoPointer sort { nullptr };
-    auto tmpUrl(url);
-    tmpUrl.setPath(url.path());
-    {
-        auto info = fileInfo(url);
-        if (info.isNull())
-            return;
 
-        auto realUrl = info->urlOf(UrlInfoType::kUrl);
+    auto info = fileInfo(url);
+    if (info.isNull())
+        return;
 
-        QWriteLocker lk(&childrenLock);
-        if (!childrenUrlList.contains(realUrl))
-            return;
-        sort = sortFileInfo(info);
-        if (sort.isNull())
-            return;
-        sourceDataList.replace(childrenUrlList.indexOf(tmpUrl), sort);
-    }
+    auto realUrl = info->urlOf(UrlInfoType::kUrl);
+
+    QWriteLocker lk(&childrenLock);
+    if (!childrenUrlList.contains(realUrl))
+        return;
+    sort = sortFileInfo(info);
+    if (sort.isNull())
+        return;
+    sourceDataList.replace(childrenUrlList.indexOf(realUrl), sort);
 
     if (sort)
         emit watcherUpdateFile(sort);
