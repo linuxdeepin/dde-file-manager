@@ -479,10 +479,10 @@ QString AsyncFileInfo::viewOfTip(const ViewType type) const
 
 QVariant AsyncFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
 {
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        return d->dfmFileInfo->customAttribute(key, type);
-    }
+    auto tmpDfmFileInfo = d->dfmFileInfo;
+    if (tmpDfmFileInfo)
+        return tmpDfmFileInfo->customAttribute(key, type);
+
     return QVariant();
 }
 
@@ -965,9 +965,8 @@ QString AsyncFileInfoPrivate::sizeFormat() const
 
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
-    auto tmpDfmFileInfo = dfmFileInfo;
-    if (tmpDfmFileInfo) {
-        auto value = tmpDfmFileInfo->attribute(key, ok);
+    if (dfmFileInfo) {
+        auto value = dfmFileInfo->attribute(key, ok);
         return value;
     }
     return QVariant();
