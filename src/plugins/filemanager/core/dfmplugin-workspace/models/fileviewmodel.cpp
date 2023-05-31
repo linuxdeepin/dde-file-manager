@@ -55,6 +55,7 @@ FileViewModel::~FileViewModel()
         itemRootData = nullptr;
     }
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
+    closeCursorTimer();
 }
 
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
@@ -107,6 +108,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     // insert root index
     beginResetModel();
     // create root by url
+    closeCursorTimer();
     dirRootUrl = url;
     RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
     endResetModel();
