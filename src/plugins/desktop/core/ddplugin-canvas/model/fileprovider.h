@@ -43,7 +43,7 @@ protected slots:
     void rename(const QUrl &oldUrl, const QUrl &newUrl);
     void update(const QUrl &url);
     void preupdateData(const QUrl &url);
-    void onFileInfoUpdated(const QUrl &url, const bool isLinkOrg);
+    void onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
 
 protected:
     QUrl rootUrl;

@@ -55,7 +55,7 @@ public:
     InfoHelperUeserDataPointer iconFuture { nullptr };
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
     QReadWriteLock notifyLock;
-    QList<QUrl> notifyUrls;
+    QMap<QUrl, QString> notifyUrls;
     AsyncFileInfo *const q;
 
 public:

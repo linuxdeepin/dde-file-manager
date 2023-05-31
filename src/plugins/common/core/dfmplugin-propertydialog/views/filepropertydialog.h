@@ -47,7 +47,7 @@ public slots:
     void addExtendedControl(QWidget *widget);
     void closeDialog();
     void onSelectUrlRenamed(const QUrl &url);
-    void onFileInfoUpdated(const QUrl &url, const bool isLinkOrg);
+    void onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
 
 signals:
     void closed(const QUrl url);

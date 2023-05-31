@@ -53,7 +53,7 @@ Q_SIGNALS:
     void fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileInfoRefresh(const QUrl &url, QSharedPointer<dfmio::DFileInfo> dfileInfo);
     // 第二个参数表示，当前是链接文件的原文件更新完成
-    void fileRefreshFinished(const QUrl url, const bool isLinkOrg);
+    void fileRefreshFinished(const QUrl url, const QString infoPtr, const bool isLinkOrg);
 private Q_SLOTS:
     void aboutToQuit();
 
@@ -62,7 +62,6 @@ private:
     QSharedPointer<FileInfoAsycWorker> worker { nullptr };
     std::atomic_bool stoped { false };
     QThreadPool pool;
-    DThreadList<QUrl> queryingList;
 };
 }
 

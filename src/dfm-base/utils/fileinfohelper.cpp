@@ -43,24 +43,20 @@ void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfil
 {
     auto success = dfileInfo->initQuerier();
     if (!success) {
-        queryingList.removeOneByLock(dfileInfo->fileUrl());
         return;
     }
 
-    emit fileRefreshFinished(dfileInfo->fileUrl(), false);
+    emit fileRefreshFinished(dfileInfo->fileUrl(), QString::number(quintptr(dfileInfo.data()), 16), false);
 
     auto asyncInfo = dfileInfo.dynamicCast<AsyncFileInfo>();
     if (!asyncInfo) {
-        queryingList.removeOneByLock(dfileInfo->fileUrl());
         return;
     }
 
     auto notifyUrls = asyncInfo->notifyUrls();
-    for (const auto &url : notifyUrls) {
-        emit fileRefreshFinished(url, true);
+    for (const auto &url : notifyUrls.keys()) {
+        emit fileRefreshFinished(url, notifyUrls.value(url), true);
     }
-
-    queryingList.removeOneByLock(dfileInfo->fileUrl());
 }
 
 QSharedPointer<FileInfoHelperUeserData> FileInfoHelper::fileCountAsync(QUrl &url)
@@ -101,9 +97,10 @@ void FileInfoHelper::fileRefreshAsync(const QSharedPointer<FileInfo> dfileInfo)
 {
     if (stoped)
         return;
-    if (!dfileInfo || queryingList.containsByLock(dfileInfo->fileUrl()))
+
+    if (!dfileInfo)
         return;
-    queryingList.insertByLock(dfileInfo->fileUrl());
+
     QtConcurrent::run(&pool, [this, dfileInfo]() {
         threadHandleDfmFileInfo(dfileInfo);
     });
