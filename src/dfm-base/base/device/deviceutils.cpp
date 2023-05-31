@@ -14,6 +14,8 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 
+#include <dfm-io/dfile.h>
+
 #include <QVector>
 #include <QDebug>
 #include <QRegularExpressionMatch>
@@ -448,12 +450,8 @@ bool DeviceUtils::checkDiskEncrypted()
     static std::once_flag flag;
 
     std::call_once(flag, [&] {
-#ifdef COMPILE_ON_V23
-    // TODO (liuzhangjian) check disk encrypted on v23
-#elif COMPILE_ON_V20
         QSettings settings("/etc/deepin/deepin-user-experience", QSettings::IniFormat);
         isEncrypted = settings.value("ExperiencePlan/FullDiskEncrypt", false).toBool();
-#endif
     });
 
     return isEncrypted;
@@ -465,10 +463,12 @@ QStringList DeviceUtils::encryptedDisks()
     static std::once_flag flag;
 
     std::call_once(flag, [&] {
-#ifdef COMPILE_ON_V23
-    // TODO (liuzhangjian) get encrypted disks on v23
-#elif COMPILE_ON_V20
-        QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
+        // The `deepin-installer.conf` file is either in the `/etc` directory
+        // or in the `/etc/deepin-installer` directory
+        DFMIO::DFile file("/etc/deepin-installer.conf");
+        QString conf = file.exists() ? "/etc/deepin-installer.conf" : "/etc/deepin-installer/deepin-installer.conf";
+
+        QSettings settings(conf, QSettings::IniFormat);
         const QString &value = settings.value("DI_CRYPT_INFO", "").toString();
         if (!value.isEmpty()) {
             QStringList groupList = value.split(';');
@@ -478,7 +478,6 @@ QStringList DeviceUtils::encryptedDisks()
                     deviceList << device.first();
             }
         }
-#endif
     });
 
     return deviceList;
