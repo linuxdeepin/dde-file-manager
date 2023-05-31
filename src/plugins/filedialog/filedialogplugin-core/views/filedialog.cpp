@@ -972,7 +972,12 @@ void FileDialog::showEvent(QShowEvent *event)
     if (info)
         setWindowTitle(info->displayOf(DisPlayInfoType::kFileDisplayName));
 
-    return FileManagerWindow::showEvent(event);
+    FileManagerWindow::showEvent(event);
+}
+
+void FileDialog::paintEvent(QPaintEvent *event)
+{
+    DMainWindow::paintEvent(event);
 }
 
 void FileDialog::closeEvent(QCloseEvent *event)
@@ -992,7 +997,7 @@ void FileDialog::closeEvent(QCloseEvent *event)
     } else {
         event->accept();
     }
-    return FileManagerWindow::closeEvent(event);
+    FileManagerWindow::closeEvent(event);
 }
 
 bool FileDialog::eventFilter(QObject *watched, QEvent *event)

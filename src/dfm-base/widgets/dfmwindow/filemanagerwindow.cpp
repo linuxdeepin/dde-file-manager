@@ -187,7 +187,8 @@ void FileManagerWindow::installSideBar(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
     std::call_once(d->sideBarFlag, [this, w]() {
         d->sideBar = w;
-        d->splitter->replaceWidget(0, d->sideBar);
+        d->splitter->insertWidget(0, d->sideBar);
+        updateUi();   // setSizes is only valid when the splitter is non-empty
 
         d->sideBar->setContentsMargins(0, 0, 0, 0);
         d->sideBar->setMaximumWidth(d->kMaximumLeftWidth);
@@ -203,7 +204,8 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null Workspace");
     std::call_once(d->workspaceFlag, [this, w]() {
         d->workspace = w;
-        d->splitter->replaceWidget(1, d->workspace);
+        d->splitter->insertWidget(1, d->workspace);
+        updateUi();   // setSizes is only valid when the splitter is non-empty
 
         // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
         //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
@@ -251,15 +253,6 @@ AbstractFrame *FileManagerWindow::workSpace() const
 AbstractFrame *FileManagerWindow::detailView() const
 {
     return d->detailSpace;
-}
-
-void FileManagerWindow::showEvent(QShowEvent *event)
-{
-    DMainWindow::showEvent(event);
-
-    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
-    int splitterPos = state.value("sidebar", d->kMaximumLeftWidth).toInt();
-    d->setSplitterPosition(splitterPos);
 }
 
 void FileManagerWindow::paintEvent(QPaintEvent *event)
@@ -336,20 +329,10 @@ void FileManagerWindow::initializeUi()
     // title bar
     titlebar()->setContentsMargins(0, 0, 0, 0);
 
-    // left view
-    d->leftView = new QFrame;
-    d->leftView->setMaximumWidth(d->kMaximumLeftWidth);
-    d->leftView->setMinimumWidth(d->kMinimumLeftWidth);
-
-    // right view
-    d->rightView = new QFrame;
-
     // splitter
     d->splitter = new Splitter(Qt::Orientation::Horizontal, this);
     d->splitter->setChildrenCollapsible(false);
     d->splitter->setHandleWidth(0);
-    d->splitter->addWidget(d->leftView);
-    d->splitter->addWidget(d->rightView);
 
     // central
     d->centralView = new QFrame(this);
@@ -365,6 +348,15 @@ void FileManagerWindow::initializeUi()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     d->centralView->setLayout(mainLayout);
     setCentralWidget(d->centralView);
+}
+
+void FileManagerWindow::updateUi()
+{
+    if (d->sideBar && d->workspace) {
+        const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+        int splitterPos = state.value("sidebar", d->kMaximumLeftWidth).toInt();
+        d->setSplitterPosition(splitterPos);
+    }
 }
 
 void FileManagerWindow::initConnect()

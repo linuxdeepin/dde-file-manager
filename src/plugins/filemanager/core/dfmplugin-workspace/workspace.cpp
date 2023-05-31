@@ -34,7 +34,7 @@ void Workspace::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
 
     connect(this, &Workspace::readyToInstallWidget,
-            WorkspaceHelper::instance(), &WorkspaceHelper::installWorkspaceWidgetToWindow, Qt::QueuedConnection);
+            WorkspaceHelper::instance(), &WorkspaceHelper::installWorkspaceWidgetToWindow);
 
     WorkspaceEventReceiver::instance()->initConnection();
 }
