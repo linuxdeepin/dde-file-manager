@@ -233,9 +233,9 @@ void FilePropertyDialog::onSelectUrlRenamed(const QUrl &url)
         basicWidget->updateFileUrl(url);
 }
 
-void FilePropertyDialog::onFileInfoUpdated(const QUrl &url, const bool isLinkOrg)
+void FilePropertyDialog::onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
 {
-    if (url != currentFileUrl || currentInfo.isNull())
+    if (url != currentFileUrl || currentInfo.isNull() || QString::number(quintptr(currentInfo.data()), 16) != infoPtr)
         return;
 
     if (isLinkOrg)

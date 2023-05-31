@@ -180,8 +180,8 @@ public:
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
     // cache attribute
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
-    QList<QUrl> notifyUrls() const;
-    void setNotifyUrl(const QUrl &url);
+    QMap<QUrl, QString> notifyUrls() const;
+    void setNotifyUrl(const QUrl &url, const QString &infoPtr);
 };
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::AsyncFileInfo> DFMAsyncFileInfoPointer;

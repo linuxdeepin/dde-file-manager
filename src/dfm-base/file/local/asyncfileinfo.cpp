@@ -92,6 +92,9 @@ bool AsyncFileInfo::exists() const
  */
 void AsyncFileInfo::refresh()
 {
+    if (d->cacheing)
+        return;
+
     {
         FileInfoHelper::instance().fileRefreshAsync(sharedFromThis());
         QWriteLocker locker(&d->lock);
@@ -519,14 +522,15 @@ void AsyncFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const
     }
 }
 
-QList<QUrl> AsyncFileInfo::notifyUrls() const
+QMap<QUrl, QString> AsyncFileInfo::notifyUrls() const
 {
     QReadLocker lk(&const_cast<AsyncFileInfoPrivate *>(d.data())->notifyLock);
     return d->notifyUrls;
 }
 // if url is unvalid, it will clear all notify urls
-void AsyncFileInfo::setNotifyUrl(const QUrl &url)
+void AsyncFileInfo::setNotifyUrl(const QUrl &url, const QString &infoPtr)
 {
+    assert(infoPtr != QString::number(quintptr(this), 16));
     if (!url.isValid()) {
         QWriteLocker lk(&d->notifyLock);
         d->notifyUrls.clear();
@@ -534,7 +538,7 @@ void AsyncFileInfo::setNotifyUrl(const QUrl &url)
     }
     QWriteLocker lk(&d->notifyLock);
     if (!d->notifyUrls.contains(url))
-        d->notifyUrls.append(url);
+        d->notifyUrls.insert(url, infoPtr);
 }
 
 void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
@@ -1060,10 +1064,10 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
         FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(symlink));
         auto asyncInfo = info.dynamicCast<AsyncFileInfo>();
         if (asyncInfo) {
-            asyncInfo->setNotifyUrl(q->fileUrl());
+            asyncInfo->setNotifyUrl(q->fileUrl(), QString::number(quintptr(this), 16));
             auto notifyUrls = q->notifyUrls();
-            for (const auto &url : notifyUrls) {
-                asyncInfo->setNotifyUrl(url);
+            for (const auto &url : notifyUrls.keys()) {
+                asyncInfo->setNotifyUrl(url, notifyUrls.value(url));
             }
             asyncInfo->refresh();
         }

@@ -627,7 +627,7 @@ void FileSortWorker::handleRefresh()
     Q_EMIT requestFetchMore();
 }
 
-void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const bool isLinkOrg)
+void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
 {
     if (!childrenUrlList.contains(url))
         return;
@@ -636,7 +636,14 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const bool isLinkOrg
     if (!itemdata)
         return;
 
-    if (isLinkOrg && itemdata->fileInfo())
+    if (!itemdata->fileInfo())
+        itemdata->data(Global::ItemRoles::kItemCreateFileInfo);
+
+    auto fileInfo = itemdata->fileInfo();
+    if (!fileInfo || QString::number(quintptr(fileInfo.data()), 16) != infoPtr)
+        return;
+
+    if (isLinkOrg && fileInfo)
         itemdata->fileInfo()->customData(Global::ItemRoles::kItemFileRefreshIcon);
 
     handleUpdateFile(url);

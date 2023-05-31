@@ -43,7 +43,7 @@ void ProxyFileInfo::setProxy(const FileInfoPointer &proxy)
     this->proxy = proxy;
     auto asyncInfo = this->proxy.dynamicCast<AsyncFileInfo>();
     if (asyncInfo) {
-        asyncInfo->setNotifyUrl(url);
+        asyncInfo->setNotifyUrl(url, QString::number(quintptr(this), 16));
         asyncInfo->refresh();
     }
 }

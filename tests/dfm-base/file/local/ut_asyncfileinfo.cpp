@@ -252,7 +252,7 @@ TEST_F(UT_AsyncFileInfo, testAsyncFileInfoChildren)
 
     QProcess::execute("touch ./testAsyncFileInfo/testAsyncFileInfo.txt");
     info.reset(new AsyncFileInfo(url));
-    info.dynamicCast<AsyncFileInfo>()->setNotifyUrl(url);
+    info.dynamicCast<AsyncFileInfo>()->setNotifyUrl(url, QString(""));
     info->refresh();
     while (true != info->isAttributes(OptInfoType::kIsDir)) {
         QThread::msleep(10);

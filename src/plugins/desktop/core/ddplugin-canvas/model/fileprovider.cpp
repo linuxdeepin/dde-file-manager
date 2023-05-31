@@ -175,8 +175,9 @@ void FileProvider::preupdateData(const QUrl &url)
     }
 }
 
-void FileProvider::onFileInfoUpdated(const QUrl &url, const bool isLinkOrg)
+void FileProvider::onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
 {
+    Q_UNUSED(infoPtr);
     if (UrlRoute::urlParent(url) != rootUrl)
         return;
     emit fileInfoUpdated(url, isLinkOrg);
