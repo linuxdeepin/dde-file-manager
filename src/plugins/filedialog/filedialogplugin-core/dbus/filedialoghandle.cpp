@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QEventLoop>
 #include <QCoreApplication>
+#include <QScreen>
 
 #include <mutex>
 
@@ -492,6 +493,7 @@ void FileDialogHandle::show()
         QTimer::singleShot(10, this, [d]() {
             FMWindowsIns.showWindow(d->dialog);
             d->dialog->updateAsDefaultSize();
+            d->dialog->moveCenter(WindowUtils::cursorScreen()->availableGeometry().center());
         });
     }
 }

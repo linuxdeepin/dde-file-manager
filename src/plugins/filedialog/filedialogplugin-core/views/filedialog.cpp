@@ -964,8 +964,6 @@ void FileDialog::showEvent(QShowEvent *event)
 
     windowHandle()->installEventFilter(this);
 
-    windowHandle()->installEventFilter(this);
-
     if (windowFlags().testFlag(Qt::WindowSystemMenuHint)) {
         overrideWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
     }
@@ -1039,11 +1037,6 @@ void FileDialog::initializeUi()
                          qobject_cast<QWidget *>(d->statusBar), AcName::kAcFDStautsBar);
 #endif
     statusBar()->lineEdit()->lineEdit()->setMaxLength(NAME_MAX);
-
-    // 修复bug-45176
-    // 如果是wanyland平台，将弹出的文件框居中
-    if (WindowUtils::isWayLand())
-        Dtk::Widget::moveToCenter(this);
 
     CoreEventsCaller::setMenuDisbaled();
 }
