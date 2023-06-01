@@ -115,7 +115,7 @@ void RenameBarPrivate::setUIParameters()
     renameBtn = new DSuggestButton();
     renameBtn->setText(QObject::tr("Rename", "button"));
     renameBtn->setFixedWidth(82);
-    button->setEnabled(false);
+    button->setEnabled(true);
 }
 
 void RenameBarPrivate::layoutItems() noexcept
