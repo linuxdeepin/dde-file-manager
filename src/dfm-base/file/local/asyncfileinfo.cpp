@@ -639,8 +639,8 @@ QIcon AsyncFileInfoPrivate::defaultIcon()
 
     icon = LocalFileIconProvider::globalProvider()->icon(q);
     if (q->isAttributes(OptInfoType::kIsSymLink)) {
-        const auto &&target = symLinkTarget();
-        if (target != filePath()) {
+        const auto &&target = q->pathOf(PathInfoType::kSymLinkTarget);
+        if (!target.isEmpty() && target != q->pathOf(PathInfoType::kFilePath)) {
             FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
             if (info)
                 icon = info->fileIcon();
@@ -965,6 +965,7 @@ QString AsyncFileInfoPrivate::sizeFormat() const
 
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
+    assert(qApp->thread() != QThread::currentThread());
     if (dfmFileInfo) {
         auto value = dfmFileInfo->attribute(key, ok);
         return value;
