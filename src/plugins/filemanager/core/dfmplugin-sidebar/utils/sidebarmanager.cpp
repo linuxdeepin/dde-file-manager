@@ -57,7 +57,7 @@ void SideBarManager::runRename(SideBarItem *item, quint64 windowId, const QStrin
 
     auto url = item->url();
     auto info = item->itemInfo();
-    if (info.contextMenuCb) {
+    if (info.renameCb) {
         info.renameCb(windowId, url, name);
     }
 }
