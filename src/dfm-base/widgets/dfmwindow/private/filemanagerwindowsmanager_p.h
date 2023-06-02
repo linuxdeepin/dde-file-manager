@@ -22,7 +22,6 @@ class FileManagerWindowsManagerPrivate : public QObject
 public:
     explicit FileManagerWindowsManagerPrivate(FileManagerWindowsManager *serv);
     DFMBASE_NAMESPACE::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
-    void moveWindowToScreenCenter(DFMBASE_NAMESPACE::FileManagerWindow *window);
     bool isValidUrl(const QUrl &url, QString *error);
     void loadWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window);
     void saveWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window);
