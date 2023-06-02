@@ -61,24 +61,6 @@ FileManagerWindowsManagerPrivate::FileManagerWindowsManagerPrivate(FileManagerWi
     return nullptr;
 }
 
-void FileManagerWindowsManagerPrivate::moveWindowToScreenCenter(FileManagerWindow *window)
-{
-    QPoint pos = QCursor::pos();
-    QRect currentScreenGeometry;
-
-    for (QScreen *screen : qApp->screens()) {
-        if (screen->geometry().contains(pos)) {
-            currentScreenGeometry = screen->geometry();
-        }
-    }
-
-    if (currentScreenGeometry.isEmpty()) {
-        currentScreenGeometry = qApp->primaryScreen()->geometry();
-    }
-
-    window->moveCenter(currentScreenGeometry.center());
-}
-
 bool FileManagerWindowsManagerPrivate::isValidUrl(const QUrl &url, QString *error)
 {
     Q_ASSERT(error);
@@ -250,7 +232,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     // TODO(zhangs): requestToSelectUrls
 
     if (d->windows.size() == 1)
-        d->moveWindowToScreenCenter(window);
+        window->moveCenter();
     emit windowCreated(window->internalWinId());
     finally.dismiss();
     return window;
