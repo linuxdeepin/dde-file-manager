@@ -4517,6 +4517,11 @@ end:
                 d->setState(RunningState);
             }
         }
+        else if (d->mode == CopyMode || d->mode == CutMode){
+            while (d->state != DFileCopyMoveJob::StoppedState && d->lastProgress < 1) {
+                QThread::msleep(100);
+            }
+        }
     }
 
     d->fileStatistics->stop();
