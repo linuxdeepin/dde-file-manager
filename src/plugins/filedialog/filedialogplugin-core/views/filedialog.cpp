@@ -491,7 +491,7 @@ void FileDialog::setOptions(QFileDialog::Options options)
 
     d->options = options;
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter",
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetReadOnly",
                          internalWinId(), options.testFlag(QFileDialog::ReadOnly));
 
     if (options.testFlag(QFileDialog::ShowDirsOnly)) {

@@ -52,7 +52,6 @@ public:
     int getChildShowIndex(const QUrl &url);
     QList<QUrl> getChildrenUrls();
 
-    QStringList getNameFilters() const;
     QDir::Filters getFilters() const;
 
     DFMGLOBAL_NAMESPACE::ItemRoles getSortRole() const;
@@ -71,6 +70,8 @@ signals:
 
     // notify data
     void getSourceData(const QString &key);
+
+    void requestUpdateView();
 
     // Note that the slot functions here are executed in asynchronous threads,
     // so the link can only be Qt:: QueuedConnection,
@@ -93,9 +94,8 @@ public slots:
     // Get data from the data area according to the url, filter and sort the data
     void handleModelGetSourceData();
     void setFilters(QDir::Filters filters);
-    void setNameFilters(const QStringList &nameFilters);
-    void resetFilters(const QStringList &nameFilters = QStringList(),
-                      const QDir::Filters filters = QDir::NoFilter);
+    void setNameFilters(const QStringList &filters);
+    void resetFilters(const QDir::Filters filters = QDir::NoFilter);
     void onToggleHiddenFiles();
     void onShowHiddenFileChanged(bool isShow);
     void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
@@ -114,6 +114,7 @@ public slots:
     void handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
 
 private:
+    void checkNameFilters(FileItemData *itemData);
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
     void filterAllFiles(const bool byInfo = false);
     void filterAllFilesOrdered();
@@ -133,7 +134,7 @@ private:
 
 private:
     QUrl current;
-    QStringList nameFilters;
+    QStringList nameFilters {};
     QDir::Filters filters { QDir::NoFilter };
     QDirIterator::IteratorFlags flags { QDirIterator::NoIteratorFlags };
     QList<SortInfoPointer> children {};

@@ -926,7 +926,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
                 return;
             }
         } else {
-            d->selectHelper->setSelection(selectionModel()->selection());
+            if (selectionMode() != QAbstractItemView::SingleSelection)
+                d->selectHelper->setSelection(selectionModel()->selection());
         }
 
         d->lastMousePressedIndex = QModelIndex();
