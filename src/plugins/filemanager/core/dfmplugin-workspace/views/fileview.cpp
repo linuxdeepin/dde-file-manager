@@ -665,6 +665,7 @@ void FileView::onSelectAndEdit(const QUrl &url)
 
     selectionModel()->clear();
     selectFiles({ url });
+    model()->data(index, kItemCreateFileInfo);
     edit(index, QAbstractItemView::AllEditTriggers, nullptr);
 }
 
