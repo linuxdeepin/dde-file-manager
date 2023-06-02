@@ -10,6 +10,7 @@
 #include "utils/workspacehelper.h"
 #include "models/fileviewmodel.h"
 #include "utils/fileoperatorhelper.h"
+#include "views/workspacewidget.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -169,6 +170,16 @@ bool WorkspaceMenuScene::create(DMenu *parent)
 
 void WorkspaceMenuScene::updateState(DMenu *parent)
 {
+    auto currentWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(d->windowId);
+    if (currentWidget && !currentWidget->canAddNewTab()) {
+        auto actions = parent->actions();
+        for (auto act : actions) {
+            const auto &actId = act->property(ActionPropertyKey::kActionID);
+            if (dfmplugin_menu::ActionID::kOpenInNewTab == actId)
+                act->setEnabled(false);
+        }
+    }
+
     AbstractMenuScene::updateState(parent);
 }
 
