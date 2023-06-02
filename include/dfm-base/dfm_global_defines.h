@@ -82,6 +82,7 @@ enum ItemRoles {
     kItemFileCanRename = Qt::UserRole + 29,
     kItemFileCanDrop = Qt::UserRole + 30,
     kItemFileCanDrag = Qt::UserRole + 31,
+    kItemFileIsAvailable = Qt::UserRole + 32,   // the item gray display and can not select
 
     kItemUnknowRole = Qt::UserRole + 999
 };

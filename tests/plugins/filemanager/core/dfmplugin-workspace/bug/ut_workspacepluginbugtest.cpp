@@ -42,13 +42,12 @@ TEST(UT_WorkspacePluginBugTest, bug_140799_desktopFilter)
     stub_ext::StubExt stub;
     typedef QVariant(*FuncType)(Application::ApplicationAttribute);
     stub.set_lamda(static_cast<FuncType>(&Application::appAttribute), [] {return QVariant(false); });
-    stub.set_lamda(&FileUtils::isDesktopFile, [ &isExcuDesktopFileCheck ] { isExcuDesktopFileCheck = true; return ""; });
+    stub.set_lamda(&FileSortWorker::checkNameFilters, [ &isExcuDesktopFileCheck ] { isExcuDesktopFileCheck = true; });
 
     FileViewModel model;
     FileInfoPointer info(new FileInfo(QUrl("file:///home")));
     FileSortWorker *work = new FileSortWorker(QUrl("file:///home"), "1234");
-    work->nameFilters = QStringList { "*.desktop" };
+    model.nameFilters = QStringList { "*.desktop" };
     model.filterSortWorker.reset(work);
-    model.passNameFilters(QModelIndex());
     EXPECT_TRUE(isExcuDesktopFileCheck);
 }

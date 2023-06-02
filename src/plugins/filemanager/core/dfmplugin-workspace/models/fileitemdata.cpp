@@ -172,7 +172,14 @@ QVariant FileItemData::data(int role) const
         if (info)
             return info->canAttributes(CanableInfoType::kCanDrag);
         return true;
+    case kItemFileIsAvailable:
+        return isAvailable;
     default:
         return QVariant();
     }
+}
+
+void FileItemData::setAvailableState(bool b)
+{
+    isAvailable = b;
 }

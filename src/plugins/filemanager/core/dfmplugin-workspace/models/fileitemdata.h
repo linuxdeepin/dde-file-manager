@@ -27,11 +27,14 @@ public:
 
     QVariant data(int role) const;
 
+    void setAvailableState(bool b);
+
 private:
     FileItemData *parent { nullptr };
     QUrl url;
     FileInfoPointer info { nullptr };
     SortInfoPointer sortInfo { nullptr };
+    bool isAvailable { true };
 };
 
 }
