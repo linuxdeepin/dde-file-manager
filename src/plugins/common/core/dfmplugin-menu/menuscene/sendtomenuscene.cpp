@@ -50,6 +50,7 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->isEmptyArea) {
         d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
         d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
