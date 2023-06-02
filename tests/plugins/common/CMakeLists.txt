@@ -11,4 +11,5 @@ add_subdirectory(dfmplugin-utils)
 
 add_subdirectory(core/dfmplugin-fileoperations)
 add_subdirectory(core/dfmplugin-propertydialog)
+add_subdirectory(core/dfmplugin-menu)
 
