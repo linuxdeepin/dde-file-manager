@@ -1133,17 +1133,17 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
 
 bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
 {
-    static QSet<QUrl> defaultHiddenUrls;
+    static DThreadList<QUrl> defaultHiddenUrls;
     static std::once_flag flg;
     std::call_once(flg, [&] {
         using namespace GlobalServerDefines;
-        auto systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
+        const auto &systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
         for (const auto &blk : systemBlks) {
             auto blkInfo = DevProxyMng->queryBlockInfo(blk);
-            QStringList mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
+            const QStringList &mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
             for (const auto &mpt : mountPoints) {
-                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
-                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
+                defaultHiddenUrls.push_back(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
+                defaultHiddenUrls.push_back(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
             }
         }
     });
