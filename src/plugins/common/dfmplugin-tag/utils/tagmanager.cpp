@@ -406,6 +406,21 @@ bool TagManager::pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const Q
 
     return false;
 }
+
+void TagManager::hideFiles(const QList<QString> &tags, const QList<QUrl> &files)
+{
+    if (tags.isEmpty() || files.isEmpty())
+        return;
+
+    QMap<QString, QVariant> fileWithTag;
+
+    for (const QUrl &url : files) {
+        fileWithTag[UrlRoute::urlToPath(url)] = QVariant(tags);
+    }
+
+    emit filesHidden(fileWithTag);
+}
+
 void TagManager::deleteTags(const QStringList &tags)
 {
     if (this->deleteTagData(tags, DeleteOpts::kTags)) {

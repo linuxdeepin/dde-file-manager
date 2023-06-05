@@ -64,3 +64,19 @@ void TagFileWatcher::onFilesUntagged(const QVariantMap &fileAndTags)
         ++iter;
     }
 }
+
+void TagFileWatcher::onFilesHidden(const QVariantMap &fileAndTags)
+{
+    QString tagName = TagHelper::instance()->getTagNameFromUrl(dptr->url);
+
+    auto iter = fileAndTags.begin();
+    while (iter != fileAndTags.end()) {
+        if (iter.value().toStringList().contains(tagName)) {
+            QUrl fileUrl = QUrl::fromLocalFile(iter.key());
+
+            emit AbstractFileWatcher::fileAttributeChanged(fileUrl);
+            return;
+        }
+        ++iter;
+    }
+}
