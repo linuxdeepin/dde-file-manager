@@ -5,6 +5,7 @@
 #include "multifilepropertydialog.h"
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <DFontSizeManager>
 
@@ -24,7 +25,9 @@ MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidge
     setFixedSize(300, 360);
     fileCalculationUtils = new FileStatisticsJob;
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &MultiFilePropertyDialog::updateFolderSizeLabel);
-    fileCalculationUtils->start(urlList);
+    QList<QUrl> targets;
+    UniversalUtils::urlsTransformToLocal(urlList, &targets);
+    fileCalculationUtils->start(targets);
     calculateFileCount();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 }
