@@ -170,10 +170,9 @@ bool OemMenuPrivate::isSchemeSupport(const QAction *action, const QUrl &url) con
     return supportList.contains(url.scheme(), Qt::CaseInsensitive);
 }
 
-bool OemMenuPrivate::isSuffixSupport(const QAction *action, const QUrl &url, const bool allEx7z) const
+bool OemMenuPrivate::isSuffixSupport(const QAction *action, FileInfoPointer fileInfo, const bool allEx7z) const
 {
     QString errString;
-    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
 
     // X-DFM-SupportSuffix not exist
     if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || !action || (!action->property(kSupportSuffixKey).isValid() && !action->property(kSupportSuffixAliasKey).isValid())) {
@@ -227,12 +226,12 @@ bool OemMenuPrivate::isAllEx7zFile(const QList<QUrl> &files) const
     return true;
 }
 
-bool OemMenuPrivate::isValid(const QAction *action, const QUrl &url, const bool onDesktop, const bool allEx7z) const
+bool OemMenuPrivate::isValid(const QAction *action, FileInfoPointer fileInfo, const bool onDesktop, const bool allEx7z) const
 {
     if (!action)
         return false;
 
-    return isActionShouldShow(action, onDesktop) && isSchemeSupport(action, url) && isSuffixSupport(action, url, allEx7z);
+    return isActionShouldShow(action, onDesktop) && isSchemeSupport(action, fileInfo->urlOf(UrlInfoType::kUrl)) && isSuffixSupport(action, fileInfo, allEx7z);
 }
 
 void OemMenuPrivate::clearSubMenus()
@@ -462,11 +461,12 @@ void OemMenu::loadDesktopFile()
 QList<QAction *> OemMenu::emptyActions(const QUrl &currentDir, bool onDesktop)
 {
     QList<QAction *> actions = d->actionListByType[kEmptyArea];
+    auto fileInfo = InfoFactory::create<FileInfo>(currentDir);
 
     auto it = actions.begin();
     while (it != actions.end()) {
         QAction *action = *it;
-        if (!d->isValid(action, currentDir, onDesktop)) {
+        if (!d->isValid(action, fileInfo, onDesktop)) {
             it = actions.erase(it);
             continue;
         }
@@ -519,7 +519,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, const QList<Fi
 
         for (auto it = actions.begin(); it != actions.end();) {
             QAction *action = *it;
-            if (!d->isValid(action, file, onDesktop, bex7z)) {
+            if (!d->isValid(action, fileInfo, onDesktop, bex7z)) {
                 it = actions.erase(it);
                 continue;
             }

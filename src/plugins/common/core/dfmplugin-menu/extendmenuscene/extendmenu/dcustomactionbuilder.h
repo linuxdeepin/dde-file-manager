@@ -42,7 +42,7 @@ private:
     static bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
     static bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
     static bool isSchemeSupport(const DCustomActionEntry &action, const QUrl &url);
-    static bool isSuffixSupport(const DCustomActionEntry &action, const QUrl &url);
+    static bool isSuffixSupport(const DCustomActionEntry &action, FileInfoPointer fileInfo);
     static void appendAllMimeTypes(const FileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes);
     static void appendParentMimeType(const QStringList &parentmimeTypes, QStringList &mimeTypes);
 
