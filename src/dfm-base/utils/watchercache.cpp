@@ -98,6 +98,19 @@ void WatcherCache::removeCacheWatcher(const QUrl &url)
     d->watchers.remove(url);
 }
 
+void WatcherCache::removeCacheWatcherByParent(const QUrl &parent)
+{
+    if (parent.path() == "/")
+        return;
+
+    Q_D(WatcherCache);
+    auto keys = d->watchers.keys();
+    for (const auto &url : keys) {
+        if (url.scheme() == parent.scheme() && url.path().startsWith(parent.path()))
+            d->watchers.remove(url);
+    }
+}
+
 bool WatcherCache::cacheDisable(const QString &scheme)
 {
     return d->disableCahceSchemes.contains(scheme);

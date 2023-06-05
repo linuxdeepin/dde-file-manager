@@ -353,6 +353,7 @@ void TabBar::closeTabAndRemoveCachedMnts(const QString &id)
         this->closeTab(WorkspaceHelper::instance()->windowId(this), url);
         FileDataManager::instance()->cleanRoot(url);
         emit InfoCacheController::instance().removeCacheFileInfo({ url });
+        WatcherCache::instance().removeCacheWatcherByParent(url);
     }
     allMntedDevs.remove(id);
 }
