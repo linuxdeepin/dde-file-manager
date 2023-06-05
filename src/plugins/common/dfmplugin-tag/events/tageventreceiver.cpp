@@ -47,6 +47,20 @@ void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QLi
     }
 }
 
+void TagEventReceiver::handleHideFilesResult(const quint64 &winId, const QList<QUrl> &urls, bool ok)
+{
+    Q_UNUSED(winId)
+    if (ok && !urls.isEmpty()) {
+        for (const QUrl &url : urls) {
+            const auto &tags = TagManager::instance()->getTagsByUrls({ url }, true).toStringList();
+            if (tags.isEmpty())
+                continue;
+
+            TagManager::instance()->hideFiles(tags, { url });
+        }
+    }
+}
+
 void TagEventReceiver::handleFileRemoveResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg)
 {
     Q_UNUSED(errMsg)
