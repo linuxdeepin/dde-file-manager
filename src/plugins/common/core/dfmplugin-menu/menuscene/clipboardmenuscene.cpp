@@ -132,7 +132,6 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
         for (const auto &info : d->selectFileInfos) {
             if (!info)
                 continue;
-            info->refresh();
 
             if (auto cut = d->predicateAction.value(ActionID::kCut)) {
                 if (!info->canAttributes(CanableInfoType::kCanRename)) {
