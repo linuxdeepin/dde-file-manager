@@ -32,6 +32,7 @@ public:
 
     void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
     void removeCacheWatcher(const QUrl &url);
+    void removeCacheWatcherByParent(const QUrl &parent);
     bool cacheDisable(const QString &scheme);
     void setCacheDisbale(const QString &scheme, bool disbale = true);
 };
