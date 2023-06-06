@@ -6,7 +6,10 @@
 #include "private/settingbackend_p.h"
 #include "dconfig/dconfigmanager.h"
 
+#include <DSettings>
+
 #include <QDebug>
+#include <QApplication>
 
 DFMBASE_USE_NAMESPACE
 
@@ -70,6 +73,17 @@ SettingBackend *SettingBackend::instance()
 {
     static SettingBackend ins;
     return &ins;
+}
+
+void SettingBackend::setToSettings(DSettings *settings)
+{
+    if (settings) {
+        // NOTE: Must move SettingBackend to main thread before call dtk setBackend().
+        // The setBackend func will move the SettingBackend object to anthor thread,
+        // but the last thread which the SettingBackend object in was destroyed.
+        moveToThread(QApplication::instance()->thread());
+        settings->setBackend(this);
+    }
 }
 
 QStringList SettingBackend::keys() const
