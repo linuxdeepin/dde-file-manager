@@ -165,7 +165,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
-    if (d->selectFiles.count() > 1) {
+    if (d->selectFileInfos.count() > 1) {
         // open
         if (auto open = d->predicateAction.value(ActionID::kOpen)) {
 
@@ -181,9 +181,11 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
             QString errString;
             QList<QUrl> redirectedUrls;
+            auto tempSelectInfos = d->selectFileInfos;
+            if (d->selectFiles.count() > d->selectFileInfos.count())
+                tempSelectInfos << InfoFactory::create<FileInfo>(d->selectFiles.last());
 
-            for (auto url : d->selectFiles) {
-                auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+            for (auto info : tempSelectInfos) {
                 if (Q_UNLIKELY(info.isNull())) {
                     qDebug() << errString;
                     break;
@@ -191,13 +193,8 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
                 // if the suffix is the same, it can be opened with the same application
                 if (info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
-
                     QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
-                    QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
-                    auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-                    if (!info.isNull()) {
-                        mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
-                    }
+                    mimeTypeList << info->fileMimeType().parentMimeTypes();
 
                     bool matched = false;
                     // or,the application suooprt mime type contains the type of the url file mime type
@@ -215,6 +212,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
                     }
                 }
             }
+
         }
     }
 
