@@ -72,6 +72,7 @@ signals:
     void requestErrorMessageDialog(const QString &title, const QString &message);
     void requestFailureDialog(int type, const QString &err, const QStringList &details);
     void requestCompletionDialog(const QString &msg, const QString &icon);
+    void requestCloseTab(const QUrl &url);
     void burnFinished(int type, bool reuslt);
 
 public slots:

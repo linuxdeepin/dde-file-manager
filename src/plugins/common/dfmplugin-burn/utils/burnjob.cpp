@@ -213,7 +213,7 @@ bool AbstractBurnJob::readyToWork()
     if (blank) {
         QString tag = curDevId.mid(curDevId.lastIndexOf("/") + 1);
         QUrl url(QString("burn:///dev/%1/disc_files/").arg(tag));
-        BurnEventCaller::sendCloseTab(url);
+        emit requestCloseTab(url);
     } else {
         QString mpt { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
         if (!mpt.isEmpty()) {
