@@ -150,8 +150,11 @@ void OpenWithMenuScene::updateState(QMenu *parent)
 
         QString errString;
         QList<QUrl> redirectedUrls;
+        auto tempSelectInfos = d->selectFileInfos;
+        if (d->selectFiles.count() > d->selectFileInfos.count())
+            tempSelectInfos << InfoFactory::create<FileInfo>(d->selectFiles.last());
 
-        for (auto info : d->selectFileInfos) {
+        for (auto info : tempSelectInfos) {
             if (Q_UNLIKELY(info.isNull())) {
                 qDebug() << errString;
                 break;

@@ -4,6 +4,7 @@
 
 #include "fileinfohelper.h"
 #include "dfm-base/file/local/asyncfileinfo.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QGuiApplication>
 #include <QTimer>
@@ -37,6 +38,7 @@ void FileInfoHelper::init()
 
     worker->moveToThread(thread.data());
     thread->start();
+    pool.setMaxThreadCount(std::max(FileUtils::getCpuProcessCount(), 10));
 }
 
 void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfileInfo)
