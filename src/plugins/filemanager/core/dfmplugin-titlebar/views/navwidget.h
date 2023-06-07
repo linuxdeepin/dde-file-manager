@@ -33,12 +33,12 @@ public:
     void removeNavStackAt(int index);
     void switchHistoryStack(const int index);
 
-public slots:
+public Q_SLOT:
     void onUrlChanged(const QUrl &url);
     void onNewWindowOpended();
     void back();
     void forward();
-
+    void changeSizeMode();
     void onDevUnmounted(const QString &id, const QString &oldMpt);
 
 private:

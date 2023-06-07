@@ -10,6 +10,12 @@
 
 #include <dfm-framework/event/event.h>
 
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
+
 #include <QAbstractButton>
 
 using namespace dfmplugin_titlebar;
@@ -171,6 +177,8 @@ void NavWidget::initializeUi()
 
     d->hboxLayout->setSpacing(0);
     d->hboxLayout->setContentsMargins(0, 0, 0, 0);
+
+    changeSizeMode();
 }
 
 void NavWidget::initConnect()
@@ -184,4 +192,22 @@ void NavWidget::initConnect()
     connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &NavWidget::onDevUnmounted);
     connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &NavWidget::onDevUnmounted);
     connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &NavWidget::onDevUnmounted);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &NavWidget::changeSizeMode);
+#endif
+}
+
+void NavWidget::changeSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QSize smallSize(24, 24);
+    QSize normalSize(36, 36);
+    d->navBackButton->setFixedSize(DSizeModeHelper::element(smallSize, normalSize));
+    d->navForwardButton->setFixedSize(DSizeModeHelper::element(smallSize, normalSize));
+#else
+    QSize normalSize(36, 36);
+    d->navBackButton->setFixedSize(normalSize);
+    d->navForwardButton->setFixedSize(normalSize);
+#endif
 }
