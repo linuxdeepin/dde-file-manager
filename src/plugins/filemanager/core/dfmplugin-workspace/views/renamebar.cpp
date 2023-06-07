@@ -256,6 +256,9 @@ void RenameBar::eventDispatcher()
 
     setVisible(false);
     reset();
+
+    if (parentWidget())
+        parentWidget()->setFocus();
 }
 
 void RenameBar::hideRenameBar()

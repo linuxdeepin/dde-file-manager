@@ -4,16 +4,21 @@
 
 #include "customtopwidgetinterface.h"
 
+#include <QWidget>
+
 using namespace dfmplugin_workspace;
 CustomTopWidgetInterface::CustomTopWidgetInterface(QObject *parent)
     : QObject(parent)
 {
 }
 
-QWidget *CustomTopWidgetInterface::create()
+QWidget *CustomTopWidgetInterface::create(QWidget *parent)
 {
-    if (createTopWidgetFunc)
-        return createTopWidgetFunc();
+    if (createTopWidgetFunc) {
+        auto widget = createTopWidgetFunc();
+        widget->setParent(parent);
+        return widget;
+    }
     return nullptr;
 }
 

@@ -158,7 +158,7 @@ void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visi
     } else {
         auto interface = WorkspaceHelper::instance()->createTopWidgetByScheme(scheme);
         if (interface) {
-            TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
+            TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create(this));
             if (topWidgetPtr) {
                 widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine) + 1, topWidgetPtr.get());
                 topWidgets.insert(scheme, topWidgetPtr);

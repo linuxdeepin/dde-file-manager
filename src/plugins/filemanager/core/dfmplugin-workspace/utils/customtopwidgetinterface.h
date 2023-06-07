@@ -21,7 +21,7 @@ class CustomTopWidgetInterface : public QObject
 public:
     explicit CustomTopWidgetInterface(QObject *parent = nullptr);
 
-    QWidget *create();
+    QWidget *create(QWidget *parent = nullptr);
     bool isShowFromUrl(QWidget *w, const QUrl &url);
     void setKeepShow(bool keep);
     bool isKeepShow() const;
