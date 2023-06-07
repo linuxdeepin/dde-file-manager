@@ -165,17 +165,18 @@ AbstractMenuScene *TagMenuScene::scene(QAction *action) const
 void TagMenuScene::onHoverChanged(const QColor &color)
 {
     if (!d->selectFiles.isEmpty()) {
-
-        const auto &tagNames = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
-        const auto &colorInfos = TagManager::instance()->getTagsColor(tagNames);
-        if (colorInfos.isEmpty())
-            return;
-
         QList<QColor> sameColors;
-        QMap<QString, QColor>::const_iterator dataIt = colorInfos.begin();
-        for (; dataIt != colorInfos.end(); ++dataIt) {
-            if (Q_LIKELY(dataIt.value().isValid()))
-                sameColors << dataIt.value();
+        //1个以上就不查询原有标记信息，保证在大量文件选中下的流畅性
+        if (d->selectFiles.size() < 1) {
+            const auto &tagNames = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
+            const auto &colorInfos = TagManager::instance()->getTagsColor(tagNames);
+            if (colorInfos.isEmpty())
+                return;
+            QMap<QString, QColor>::const_iterator dataIt = colorInfos.begin();
+            for (; dataIt != colorInfos.end(); ++dataIt) {
+                if (Q_LIKELY(dataIt.value().isValid()))
+                    sameColors << dataIt.value();
+            }
         }
 
         TagColorListWidget *tagWidget = getMenuListWidget();
@@ -240,7 +241,7 @@ QAction *TagMenuScene::createColorListAction() const
 
     action->setDefaultWidget(colorListWidget);
 
-    QStringList tags{};
+    QStringList tags {};
     if (d->selectFiles.length() > 1) {
         tags = TagManager::instance()->getTagsByUrls({}, true).toStringList();
     } else {
