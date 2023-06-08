@@ -152,7 +152,15 @@ QString dfmbase::FileInfo::pathOf(const PathInfoType type) const
     Q_UNUSED(type);
     switch (type) {
     case FilePathInfoType::kFilePath:
+        [[fallthrough]];
+    case FilePathInfoType::kAbsoluteFilePath:
+        [[fallthrough]];
+    case FilePathInfoType::kCanonicalPath:
         return url.path();
+    case FilePathInfoType::kPath:
+        [[fallthrough]];
+    case FilePathInfoType::kAbsolutePath:
+        return UrlRoute::urlParent(url).path();
     default:
         return QString();
     }
