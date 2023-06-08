@@ -38,6 +38,12 @@ enum class FileNotifyType : uint8_t {
     kFileDeleted
 };
 
+enum ThumbnialSize {
+    kSmall = 64,
+    kNormal = 128,
+    kLarge = 256,
+};
+
 enum ItemRoles {
     kItemDisplayRole = Qt::DisplayRole,
     kItemIconRole = Qt::DecorationRole,
@@ -100,8 +106,8 @@ enum CreateFileInfoType : uint8_t {
     kCreateFileInfoAuto = 0,   // auto can cache file info, virtual schema will synchronize create file info
     kCreateFileInfoSync = 1,
     kCreateFileInfoAsync = 2,
-    kCreateFileInfoSyncAndCache = 3,    // create file info Synchronize and cache file info
-    kCreateFileInfoAsyncAndCache = 4    // create file info Asynchronous and cache file info
+    kCreateFileInfoSyncAndCache = 3,   // create file info Synchronize and cache file info
+    kCreateFileInfoAsyncAndCache = 4   // create file info Asynchronous and cache file info
 };
 
 namespace Mime {

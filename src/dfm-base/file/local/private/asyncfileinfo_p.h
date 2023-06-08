@@ -10,7 +10,6 @@
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
-#include <dfm-base/utils/thumbnailprovider.h>
 #include <dfm-base/utils/fileinfohelper.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 
@@ -32,7 +31,6 @@ public:
     friend class AsyncFileInfo;
     DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
-    std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
     std::atomic_bool loadingThumbnail = { false };
     std::atomic_bool notInit { false };
     std::atomic_bool cacheing { false };
@@ -52,7 +50,6 @@ public:
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
-    InfoHelperUeserDataPointer iconFuture { nullptr };
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
     QReadWriteLock notifyLock;
     QMap<QUrl, QString> notifyUrls;
@@ -85,8 +82,6 @@ public:
     {
         icons.clear();
         loadingThumbnail = false;
-        enableThumbnail = -1;
-        iconFuture.reset(nullptr);
     }
 
     QIcon thumbIcon();
@@ -166,7 +161,6 @@ public:
     QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
     QVariant asyncAttribute(AsyncFileInfo::AsyncAttributeID key) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
-    bool canThumb() const;
 
     FileInfo::FileType fileType() const;
     void cacheAllAttributes();
