@@ -39,7 +39,8 @@ static constexpr char kSigPwdChecked[] { "DiskPasswordChecked" };
 }   // namespace DBusInterfaceInfo
 
 namespace DeepinPwdCheck {
-static constexpr char kLibraryName[] { "libdeepin_pw_check.so" };
+// the libdeepin-pw-check-dev is required for libdeepin_pw_check.so -_-
+static constexpr char kLibraryName[] { "libdeepin_pw_check.so.1" };
 static constexpr char kInterfacePwdCheck[] { "deepin_pw_check" };
 static constexpr char kInterfaceGetPwdLevel[] { "get_new_passwd_strength_level" };
 static constexpr char kInterfaceErrToString[] { "err_to_string" };
