@@ -89,13 +89,20 @@ void CollectionViewMenu::emptyAreaMenu()
 void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
     QList<QUrl> selectUrls;
+    QList<FileInfoPointer> selectInfos;
     for (const QModelIndex &idx : view->selectedIndexes()) {
         auto url = view->model()->fileUrl(idx);
         if (url.isValid())
             selectUrls << url;
+        auto info = view->model()->fileInfo(idx);
+        if (info)
+            selectInfos.append(info);
     }
 
     auto tgUrl = view->model()->fileUrl(index);
+    auto focusInfo = view->model()->fileInfo(index);
+    if (!focusInfo)
+        return;
 
     // first is focus
     if (selectUrls.size() > 1) {
@@ -106,6 +113,8 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->fileUrl(view->model()->rootIndex());
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
+    params[MenuParamKey::kFocusFileInfo] = QVariant::fromValue(focusInfo);
+    params[MenuParamKey::kSelectFileInfos] = QVariant::fromValue(selectInfos);
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = false;
