@@ -48,8 +48,11 @@ QList<FileInfoPointer> CanvasSelectionModel::selectedFileInfos() const
 {
     auto indexs = selectedIndexesCache();
     QList<FileInfoPointer> infos;
-    for (auto index : indexs)
-        infos <<  model()->fileInfo(index);
+    for (auto index : indexs) {
+        auto info = model()->fileInfo(index);
+        if (info)
+            infos <<  info;
+    }
 
     return infos;
 }
