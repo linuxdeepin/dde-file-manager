@@ -978,11 +978,6 @@ void FileDialog::showEvent(QShowEvent *event)
     FileManagerWindow::showEvent(event);
 }
 
-void FileDialog::paintEvent(QPaintEvent *event)
-{
-    DMainWindow::paintEvent(event);
-}
-
 void FileDialog::closeEvent(QCloseEvent *event)
 {
 #ifndef QT_NO_WHATSTHIS

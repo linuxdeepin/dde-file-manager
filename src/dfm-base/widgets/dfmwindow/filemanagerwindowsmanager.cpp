@@ -42,7 +42,7 @@ FileManagerWindowsManagerPrivate::FileManagerWindowsManagerPrivate(FileManagerWi
 {
 }
 
- FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(const QUrl &url)
+FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(const QUrl &url)
 {
     int count = windows.count();
 
@@ -239,7 +239,6 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     qInfo() << "New window created: " << window->winId() << showedUrl;
 
     d->windows.insert(window->internalWinId(), window);
-    // TODO(zhangs): requestToSelectUrls
 
     if (d->windows.size() == 1)
         window->moveCenter();
@@ -248,39 +247,9 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     return window;
 }
 
-/*!
- * \brief FileManagerWindowsManager::showWindow
- * \param url
- * \param isNewWindow
- * \param errorString
- * \return
- */
-FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::showWindow(const QUrl &url, bool isNewWindow, QString *errorString)
-{
-    d->previousActivedWindowId = 0;
-    QHashIterator<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> it(d->windows);
-    //Before creating a new window, save the current actived window id to `previousActivedWindowId`,
-    //since many times we need to synchronize some informations from the trigger window to the new window
-    //such as the sidebar expanding states, so `previousActivedWindowId` is help for that.
-    while (it.hasNext()) {
-        it.next();
-        if (it.value()->isActiveWindow()) {
-            d->previousActivedWindowId = it.key();
-            break;
-        }
-    }
-
-    auto window = createWindow(url, isNewWindow, errorString);
-    if (window)
-        showWindow(window);
-
-    return window;
-}
-
 void FileManagerWindowsManager::showWindow(FileManagerWindowsManager::FMWindow *window)
 {
     Q_ASSERT(window);
-
     window->show();
     qApp->setActiveWindow(window);
 }
@@ -344,6 +313,22 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::findWindowById(q
 QList<quint64> FileManagerWindowsManager::windowIdList()
 {
     return d->windows.keys();
+}
+
+void FileManagerWindowsManager::resetPreviousActivedWindowId()
+{
+    d->previousActivedWindowId = 0;
+    QHashIterator<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> it(d->windows);
+    //Before creating a new window, save the current actived window id to `previousActivedWindowId`,
+    //since many times we need to synchronize some informations from the trigger window to the new window
+    //such as the sidebar expanding states, so `previousActivedWindowId` is help for that.
+    while (it.hasNext()) {
+        it.next();
+        if (it.value()->isActiveWindow()) {
+            d->previousActivedWindowId = it.key();
+            break;
+        }
+    }
 }
 
 quint64 FileManagerWindowsManager::previousActivedWindowId()

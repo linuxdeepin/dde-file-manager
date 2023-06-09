@@ -29,11 +29,11 @@ public:
 
     void setCustomWindowCreator(WindowCreator creator);
     FMWindow *createWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
-    FMWindow *showWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
     void showWindow(FMWindow *window);
     quint64 findWindowId(const QWidget *window);
     FMWindow *findWindowById(quint64 winId);
     QList<quint64> windowIdList();
+    void resetPreviousActivedWindowId();
     quint64 previousActivedWindowId();
 
 Q_SIGNALS:
