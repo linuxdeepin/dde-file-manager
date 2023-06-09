@@ -53,7 +53,10 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
     // install all widgets before window showed
     emit d_func()->dialog->aboutToOpen();
     d_func()->dialog->cd(QUrl::fromLocalFile(defaultPath));
-    d_func()->dialog->hide();
+
+    //! no need to hide, if the dialog is showed in creating, it must be bug.
+    //! see bug#22564
+    //d_func()->dialog->hide();
 
     connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
     connect(d_func()->dialog, &FileDialog::rejected, this, &FileDialogHandle::rejected);

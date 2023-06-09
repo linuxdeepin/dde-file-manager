@@ -94,7 +94,10 @@ void FileManagerWindowsManagerPrivate::loadWindowState(FileManagerWindow *window
 
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
     if ((windows.size() == 0) && ((windowState & kNetWmStateMaximizedHorz) != 0 && (windowState & kNetWmStateMaximizedVert) != 0)) {
-        window->showMaximized();
+        // make window to be maximized.
+        // the following calling is copyed from QWidget::showMaximized()
+        window->setWindowState((window->windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen))
+                       | Qt::WindowMaximized);
     } else {
         window->resize(width, height);
     }
@@ -209,7 +212,14 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
                                         : new FMWindow(showedUrl);
     window->winId();
 
-    d->loadWindowState(window);
+    {
+        auto noLoad = window->property("_dfm_Disable_RestoreWindowState_");
+        if (!noLoad.isValid() || !noLoad.toBool())
+            d->loadWindowState(window);
+        else
+            qDebug() << "do not load window state" << window << noLoad;
+    }
+
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());
         d->onWindowClosed(window);
