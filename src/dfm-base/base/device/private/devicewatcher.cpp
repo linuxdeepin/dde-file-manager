@@ -9,6 +9,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/finallyutil.h>
 
 #include <QVariantMap>
 #include <QDebug>
@@ -163,6 +164,9 @@ void DeviceWatcher::initDevDatas()
  */
 void DeviceWatcher::queryOpticalDevUsage(const QString &id)
 {
+    FinallyUtil final([id]{ qInfo() << "query optical usage finished for" << id; });
+    Q_UNUSED(final);
+
     QVariantMap data = DeviceHelper::loadBlockInfo(id);
     if (data.value(DeviceProperty::kId).toString().isEmpty())
         return;
