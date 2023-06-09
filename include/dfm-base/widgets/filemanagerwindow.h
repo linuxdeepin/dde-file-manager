@@ -40,7 +40,6 @@ public:
     AbstractFrame *detailView() const;
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;

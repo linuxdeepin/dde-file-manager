@@ -27,6 +27,7 @@ enum GlobalEventType {
     kOpenAsAdmin,
     kSwitchViewMode,
     kLoadPlugins,
+    kHeadlessStarted,
 
     // request file operations
     kOpenFiles = 200,

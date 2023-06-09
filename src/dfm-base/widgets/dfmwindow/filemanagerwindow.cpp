@@ -259,15 +259,6 @@ AbstractFrame *FileManagerWindow::detailView() const
     return d->detailSpace;
 }
 
-void FileManagerWindow::paintEvent(QPaintEvent *event)
-{
-    DMainWindow::paintEvent(event);
-
-    std::call_once(d->openFlag, [this]() {
-        QMetaObject::invokeMethod(this, "aboutToOpen", Qt::QueuedConnection);
-    });
-}
-
 void FileManagerWindow::closeEvent(QCloseEvent *event)
 {
     // NOTE(zhangs): bug 59239
