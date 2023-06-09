@@ -174,6 +174,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
 
         QFutureWatcher<void> *fw { new QFutureWatcher<void>() };
         connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
+            qInfo() << "query optical item info finished, about to starting mounting it...";
             d->isMountingOptical = false;
             dev->mountAsync(opts, callback);
             delete fw;
