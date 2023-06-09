@@ -48,6 +48,9 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
             continue;
 
         const QUrl &url { QUrl(location) };
+        if (FileUtils::isLowSpeedDevice(url))
+            continue;
+
         auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (stopped)
             return;
