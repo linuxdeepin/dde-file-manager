@@ -52,6 +52,9 @@ FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
     : QObject(nullptr),
       q(qq)
 {
+    //! fix: FileDialog no needs to restore window state on creating.
+    //! see FileManagerWindowsManager::createWindow
+    q->setProperty("_dfm_Disable_RestoreWindowState_", true);
 }
 
 void FileDialogPrivate::handleSaveAcceptBtnClicked()

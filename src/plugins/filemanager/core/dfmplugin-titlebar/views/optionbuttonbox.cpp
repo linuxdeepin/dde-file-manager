@@ -151,7 +151,6 @@ void OptionButtonBox::initializeUi()
     d->detailButton->setCheckable(true);
     d->detailButton->setFocusPolicy(Qt::NoFocus);
     d->detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
-    d->detailButton->show();
 
     initUiForSizeMode();
 }
