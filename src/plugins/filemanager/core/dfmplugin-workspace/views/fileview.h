@@ -112,6 +112,8 @@ public:
 
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
 
+    bool canCreateFileInfo();
+
     using DListView::edit;
     using DListView::updateGeometries;
     using DListView::viewportMargins;

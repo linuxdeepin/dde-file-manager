@@ -95,6 +95,9 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
 const FileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
 {
+    if (parent()->canCreateFileInfo())
+        index.data(kItemCreateFileInfo);
+
     return parent()->model()->fileInfo(index);
 }
 

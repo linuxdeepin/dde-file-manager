@@ -644,6 +644,11 @@ QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
     }
 }
 
+bool FileView::canCreateFileInfo()
+{
+    return !d->sliderPressed;
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     if (!url.isValid())
@@ -1479,6 +1484,13 @@ void FileView::initializeConnect()
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
     connect(this, &DListView::iconSizeChanged, this, &FileView::updateHorizontalOffset, Qt::QueuedConnection);
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
+    connect(verticalScrollBar(), &QScrollBar::sliderPressed, this, [this] {
+        this->d->sliderPressed = true;
+    });
+    connect(verticalScrollBar(), &QScrollBar::sliderReleased, this, [this] {
+        this->d->sliderPressed = false;
+        this->update();
+    });
 
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
