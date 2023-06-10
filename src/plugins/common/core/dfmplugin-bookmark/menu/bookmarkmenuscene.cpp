@@ -50,11 +50,8 @@ bool BookmarkMenuScene::initialize(const QVariantHash &params)
     d->showBookMarkMenu = true;
     d->isSystemPathIncluded = params.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
 
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
@@ -72,7 +69,8 @@ bool BookmarkMenuScene::create(QMenu *parent)
     if (!d->showBookMarkMenu)
         return AbstractMenuScene::create(parent);
 
-    for (const auto &info : d->selectFileInfos) {
+    for (const auto &url : d->selectFiles) {
+        auto info = InfoFactory::create<FileInfo>(url);
         if ((info && !info->isAttributes(OptInfoType::kIsDir)) || d->isSystemPathIncluded)
             return AbstractMenuScene::create(parent);
     }

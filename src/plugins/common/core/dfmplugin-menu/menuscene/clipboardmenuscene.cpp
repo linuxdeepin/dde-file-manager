@@ -51,11 +51,8 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     d->isSystemPathIncluded = params.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
@@ -64,6 +61,15 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
+    }
+
+    if (!d->isEmptyArea) {
+        QString errString;
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+        if (d->focusFileInfo.isNull()) {
+            qDebug() << "create focus fileinfo error, case: " << errString << ". focus file url : " << d->focusFile;
+            return false;
+        }
     }
 
     return AbstractMenuScene::initialize(params);
@@ -129,7 +135,8 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
                 cut->setDisabled(true);
         }
     } else {
-        for (const auto &info : d->selectFileInfos) {
+        for (const auto &file : d->selectFiles) {
+            auto info = InfoFactory::create<FileInfo>(file);
             if (!info)
                 continue;
 

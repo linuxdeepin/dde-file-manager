@@ -224,12 +224,12 @@ public:
             if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
                 return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                             create(url, errorString));
-            } else if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
+            } else if (type == Global::CreateFileInfoType::kCreateFileInfoAsync) {
                 auto info = qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                                  create(Global::Scheme::kAsyncFile, url, errorString));
                 if (info)
                     info->refresh();
-                return info;
+                return qSharedPointerDynamicCast<T>(info);
             }
         }
 
@@ -237,14 +237,17 @@ public:
         if (!info) {
             auto tarScheme = scheme(url);
             info = instance().SchemeFactory<FileInfo>::create(tarScheme, url, errorString);
-            if (info && tarScheme == Global::Scheme::kAsyncFile) {
-                info->refresh();
-                emit InfoCacheController::instance().cacheFileInfo(url, info);
-            }
-        }
 
-        if (!info)
-            qWarning() << "info is nullptr url = " << url;
+            if (!info) {
+                qWarning() << "info is nullptr url = " << url;
+                return qSharedPointerDynamicCast<T>(info);
+            }
+
+            if (tarScheme == Global::Scheme::kAsyncFile)
+                info->refresh();
+
+            emit InfoCacheController::instance().cacheFileInfo(url, info);
+        }
 
         return qSharedPointerDynamicCast<T>(info);
     }

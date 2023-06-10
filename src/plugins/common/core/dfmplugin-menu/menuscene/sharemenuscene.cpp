@@ -45,20 +45,17 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->isFocusOnDDEDesktopFile = params.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
     d->isSystemPathIncluded = params.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
-    auto selectFileInfo = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    for (auto info : selectFileInfo) {
-        if (info->isAttributes(OptInfoType::kIsDir)) {
+    for (auto url : d->selectFiles) {
+        auto f = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url);
+        if (f && f->isAttributes(OptInfoType::kIsDir)) {
             d->folderSelected = true;
             break;
         }

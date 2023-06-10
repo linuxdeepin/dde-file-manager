@@ -31,6 +31,7 @@ class TraversalDirThreadManager : public TraversalDirThread
     int timeCeiling = 1500;
     int countCeiling = 500;
     dfmio::DEnumeratorFuture *future { nullptr };
+    QString traversalToken;
 
 public:
     explicit TraversalDirThreadManager(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -45,14 +46,15 @@ public Q_SLOTS:
     void onAsyncIteratorOver();
 
 Q_SIGNALS:
-    void updateChildrenManager(QList<FileInfoPointer> children);
+    void updateChildrenManager(QList<FileInfoPointer> children, QString traversalToken);
     // Special processing If it is a local file, directly read all the simple sorting lists of the file
     void updateLocalChildren(QList<SortInfoPointer> children,
                              dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                              Qt::SortOrder sortOrder,
-                             bool isMixDirAndFile);
-    void traversalFinished();
-    void traversalRequestSort();
+                             bool isMixDirAndFile,
+                             QString traversalToken);
+    void traversalFinished(QString traversalToken);
+    void traversalRequestSort(QString traversalToken);
 
 protected:
     virtual void run() override;

@@ -1209,16 +1209,12 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 
         QModelIndex rootIndex = this->rootIndex();
         QList<QUrl> selectUrls;
-        QList<FileInfoPointer> selectInfos;
         for (const QModelIndex &tmpIndex : selectedIndexes()) {
             if (tmpIndex.parent() != rootIndex)
                 continue;
             selectUrls << model()->data(tmpIndex, ItemRoles::kItemUrlRole).toUrl();
-            auto info = model()->fileInfo(tmpIndex);
-            if (info)
-                selectInfos << info;
         }
-        d->viewMenuHelper->showNormalMenu(index, model()->flags(index), selectUrls, selectInfos);
+        d->viewMenuHelper->showNormalMenu(index, model()->flags(index), selectUrls);
     }
     d->viewMenuHelper->reloadCursor();
 }

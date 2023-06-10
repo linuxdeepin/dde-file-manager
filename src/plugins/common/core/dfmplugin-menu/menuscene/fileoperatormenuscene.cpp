@@ -57,11 +57,8 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
@@ -73,6 +70,15 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
+    }
+
+    if (!d->isEmptyArea) {
+        QString errString;
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+        if (d->focusFileInfo.isNull()) {
+            qDebug() << "create focus fileinfo error, case: " << errString << ". focus file url : " << d->focusFile;
+            return false;
+        }
     }
 
     return AbstractMenuScene::initialize(params);
@@ -149,7 +155,6 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         }
     }
 
-    d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
         if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanDelete)
@@ -165,7 +170,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
-    if (d->selectFileInfos.count() > 1) {
+    if (d->selectFiles.count() > 1) {
         // open
         if (auto open = d->predicateAction.value(ActionID::kOpen)) {
 
@@ -181,11 +186,9 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
             QString errString;
             QList<QUrl> redirectedUrls;
-            auto tempSelectInfos = d->selectFileInfos;
-            if (d->selectFiles.count() > d->selectFileInfos.count())
-                tempSelectInfos << InfoFactory::create<FileInfo>(d->selectFiles.last());
 
-            for (auto info : tempSelectInfos) {
+            for (auto url : d->selectFiles) {
+                auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
                 if (Q_UNLIKELY(info.isNull())) {
                     qDebug() << errString;
                     break;

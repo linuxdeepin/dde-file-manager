@@ -363,9 +363,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
-            const FileInfoPointer &fileInfo = this->fileInfo(*it);
-            const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
-
+            const QUrl &url = it->data(Global::ItemRoles::kItemUrlRole).value<QUrl>();
             if (urlsSet.contains(url))
                 continue;
 

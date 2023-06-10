@@ -54,11 +54,8 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
@@ -67,6 +64,13 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
 
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        return false;
+    }
+
+    QString errString;
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    if (d->focusFileInfo.isNull()) {
+        qDebug() << "create focus fileinfo error, case: " << errString << ". focus file url : " << d->focusFile;
         return false;
     }
 
@@ -108,7 +112,13 @@ bool OpenWithMenuScene::create(QMenu *parent)
     tempAction->setMenu(subMenu);
 
     QList<QUrl> redirectedUrlList;
-    for (const auto &fileInfo : d->selectFileInfos) {
+    for (const auto &fileUrl : d->selectFiles) {
+        QString errString;
+        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(fileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+        if (fileInfo.isNull()) {
+            qDebug() << errString;
+            continue;
+        }
         redirectedUrlList << fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
     }
 
@@ -150,18 +160,12 @@ void OpenWithMenuScene::updateState(QMenu *parent)
 
         QString errString;
         QList<QUrl> redirectedUrls;
-        auto tempSelectInfos = d->selectFileInfos;
-        if (d->selectFiles.count() > d->selectFileInfos.count())
-            tempSelectInfos << InfoFactory::create<FileInfo>(d->selectFiles.last());
 
-        for (auto info : tempSelectInfos) {
-            if (Q_UNLIKELY(info.isNull())) {
-                qDebug() << errString;
-                break;
-            }
+        for (auto url : d->selectFiles) {
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
 
             // if the suffix is the same, it can be opened with the same application
-            if (info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
+            if (info && info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
 
                 QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
                 QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);

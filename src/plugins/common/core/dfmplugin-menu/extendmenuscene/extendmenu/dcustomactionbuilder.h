@@ -28,11 +28,10 @@ public:
     void setActiveDir(const QUrl &dir);
     void setFocusFile(const QUrl &file);
     QString getCompleteSuffix(const QString &fileName, const QString &suf);
-    static DCustomActionDefines::ComboType checkFileCombo(const QList<QUrl> &files, const QList<FileInfoPointer> &infos);
+    static DCustomActionDefines::ComboType checkFileCombo(const QList<QUrl> &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
                                                     DCustomActionDefines::ComboTypes type);
     static QList<DCustomActionEntry> matchActions(const QList<QUrl> &selects,
-                                                  const QList<FileInfoPointer> &selectInfos,
                                                   QList<DCustomActionEntry> oriActions);
     static QPair<QString, QStringList> makeCommand(const QString &cmd, DCustomActionDefines::ActionArg arg,
                                                    const QUrl &dir, const QUrl &foucs, const QList<QUrl> &files);

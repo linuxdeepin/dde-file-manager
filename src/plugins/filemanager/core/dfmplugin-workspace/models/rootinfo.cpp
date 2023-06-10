@@ -94,7 +94,6 @@ void RootInfo::startWork(const QString &key, const bool getCache)
     if (getCache && !sourceDataList.isEmpty())
         return handleGetSourceData(key);
 
-    currentKey = key;
     traversalThreads.value(key)->traversalThread->start();
 }
 
@@ -261,14 +260,7 @@ void RootInfo::doThreadWatcherEvent()
     });
 }
 
-void RootInfo::handleTraversalResult(const FileInfoPointer &child)
-{
-    auto sortInfo = addChild(child);
-    if (sortInfo)
-        Q_EMIT iteratorAddFile(currentKey, sortInfo, child);
-}
-
-void RootInfo::handleTraversalResults(QList<FileInfoPointer> children)
+void RootInfo::handleTraversalResults(QList<FileInfoPointer> children, const QString &travseToken)
 {
     QList<SortInfoPointer> sortInfos;
     QList<FileInfoPointer> infos;
@@ -279,14 +271,13 @@ void RootInfo::handleTraversalResults(QList<FileInfoPointer> children)
         sortInfos.append(sortInfo);
         infos.append(info);
     }
-
     if (sortInfos.length() > 0)
-        Q_EMIT iteratorAddFiles(currentKey, sortInfos, infos);
+        Q_EMIT iteratorAddFiles(currentKey(travseToken), sortInfos, infos);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
                                           dfmio::DEnumerator::SortRoleCompareFlag sortRole,
-                                          Qt::SortOrder sortOrder, bool isMixDirAndFile)
+                                          Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
 {
     originSortRole = sortRole;
     originSortOrder = sortOrder;
@@ -294,24 +285,26 @@ void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
 
     addChildren(children);
 
-    Q_EMIT iteratorLocalFiles(currentKey, children, originSortRole, originSortOrder, originMixSort);
+    auto key = currentKey(travseToken);
+
+    Q_EMIT iteratorLocalFiles(key, children, originSortRole, originSortOrder, originMixSort);
 }
 
-void RootInfo::handleTraversalFinish()
+void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
-    emit traversalFinished(currentKey);
+    emit traversalFinished(currentKey(travseToken));
     traversalFinish = true;
 }
 
-void RootInfo::handleTraversalSort()
+void RootInfo::handleTraversalSort(const QString &travseToken)
 {
-    emit requestSort(currentKey);
+    emit requestSort(currentKey(travseToken));
 }
 
-void RootInfo::handleGetSourceData(const QString &key)
+void RootInfo::handleGetSourceData(const QString &travseToken)
 {
     QList<SortInfoPointer> newDatas = sourceDataList;
-    emit sourceDatas(key, newDatas, originSortRole, originSortOrder, originMixSort, traversalFinish);
+    emit sourceDatas(travseToken, newDatas, originSortRole, originSortOrder, originMixSort, traversalFinish);
 }
 
 void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)
@@ -529,4 +522,14 @@ FileInfoPointer RootInfo::fileInfo(const QUrl &url)
     currentUrl.setPath(currentUrl.path(QUrl::PrettyDecoded) + QDir::separator() + url.fileName());
     info = InfoFactory::create<FileInfo>(currentUrl);
     return info;
+}
+
+QString RootInfo::currentKey(const QString &travseToken)
+{
+    assert(!travseToken.isEmpty());
+    for (const auto &traversalThread : traversalThreads) {
+        if (travseToken == QString::number(quintptr(traversalThread->traversalThread.data()), 16))
+            return traversalThreads.key(traversalThread);
+    }
+    return QString();
 }

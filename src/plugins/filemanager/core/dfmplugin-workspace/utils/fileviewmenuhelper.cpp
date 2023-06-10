@@ -83,8 +83,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
     delete scene;
 }
 
-void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QList<QUrl> &selectUrls,
-                                        const QList<FileInfoPointer> &selectInfos)
+void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QList<QUrl> &selectUrls)
 {
     setWaitCursor();
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
@@ -107,9 +106,6 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
         focusFileInfo = view->model()->fileInfo(index);
     }
 
-    if (!focusFileInfo)
-        return;
-
     if (focusFileInfo) {
         tgUrl = focusFileInfo->urlOf(UrlInfoType::kUrl);
         // first is focus
@@ -119,9 +115,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
 
 
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(tmpSelectUrls);
-    params[MenuParamKey::kFocusFileInfo] = QVariant::fromValue(focusFileInfo);
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
-    params[MenuParamKey::kSelectFileInfos] = QVariant::fromValue(selectInfos);
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);

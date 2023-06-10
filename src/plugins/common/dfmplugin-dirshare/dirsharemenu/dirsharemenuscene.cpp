@@ -68,9 +68,8 @@ bool DirShareMenuScene::initialize(const QVariantHash &params)
     if (u.scheme() != Global::Scheme::kFile)
         return false;
 
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-    if (!d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
+    d->focusFileInfo = InfoFactory::create<FileInfo>(u);
+    if (d->focusFileInfo && !d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
         return false;
 
     return AbstractMenuScene::initialize(params);
