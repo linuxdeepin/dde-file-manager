@@ -45,14 +45,13 @@ static constexpr char kEmptyRecentFile[] =
 RecentManager *RecentManager::instance()
 {
     // data race
-    Q_ASSERT(qApp->thread() == QThread::currentThread());
     static RecentManager instance;
     return &instance;
 }
 
 QMap<QUrl, FileInfoPointer> RecentManager::getRecentNodes() const
 {
-    return recentNodes;
+    return recentNodes.map();
 }
 
 QMap<QUrl, QString> RecentManager::getRecentOriginPaths() const
@@ -211,10 +210,10 @@ void RecentManager::updateRecent()
     emit asyncHandleFileChanged(recentNodes.keys());
 }
 
-void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime)
+void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString &originPath, qint64 readTime)
 {
     if (!recentNodes.contains(url)) {
-        recentNodes[url] = InfoFactory::create<FileInfo>(url);
+        recentNodes.insert(url, InfoFactory::create<FileInfo>(url));
         recentOriginPaths[url] = originPath;
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
         if (watcher) {

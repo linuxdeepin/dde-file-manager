@@ -14,6 +14,7 @@
 #include <dfm-base/interfaces/abstractfilewatcher.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/threadcontainer.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -85,14 +86,14 @@ private:
 
 private slots:
     void updateRecent();
-    void onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime);
+    void onUpdateRecentFileInfo(const QUrl &url, const QString &originPath, qint64 readTime);
     void onDeleteExistRecentUrls(const QList<QUrl> &urls);
 
 private:
     QThread workerThread;
     RecentIterateWorker *iteratorWorker { new RecentIterateWorker };   // free by QThread::finished
     AbstractFileWatcherPointer watcher;
-    QMap<QUrl, FileInfoPointer> recentNodes;
+    dfmbase::DThreadMap<QUrl, FileInfoPointer> recentNodes;
     QMap<QUrl, QString> recentOriginPaths;
 };
 }
