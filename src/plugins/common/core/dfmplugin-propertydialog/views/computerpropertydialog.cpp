@@ -268,6 +268,12 @@ QString ComputerInfoThread::edition() const
                 int activeInfo = deepinLicenseInfo.property("AuthorizationState").toInt();
                 qInfo() << "End call Dbus com.deepin.license AuthorizationState";
                 if (kActivated == activeInfo) {
+                    qInfo() << "Start call Dbus com.deepin.license ServiceProperty";
+                    QVariant info = deepinLicenseInfo.property("ServiceProperty");
+                    qInfo() << "End call Dbus com.deepin.license serviceProperty";
+                    if (info.isValid() && info.toUInt() == kSecretsSecurity) {
+                        return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Secrets Security")).arg(DSysInfo::minorVersion());
+                    }
                     qInfo() << "Start call Dbus com.deepin.license AuthorizationProperty";
                     uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
                     qInfo() << "End call Dbus com.deepin.license AuthorizationProperty";

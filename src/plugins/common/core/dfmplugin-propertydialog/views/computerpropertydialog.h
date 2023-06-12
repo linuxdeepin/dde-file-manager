@@ -24,6 +24,10 @@ public:
         kInactivated = 0,
         kActivated
     };
+    enum ServiceInfo {
+        kNoService = 0,
+        kSecretsSecurity
+    };
     enum AuthorizedInfo {
         kUnauthorized = 0,
         kGovernment,
