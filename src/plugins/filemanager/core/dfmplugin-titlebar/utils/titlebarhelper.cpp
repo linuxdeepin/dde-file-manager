@@ -303,9 +303,9 @@ void TitleBarHelper::showDiskPasswordChangingDialog(quint64 windowId)
     DiskPasswordChangingDialog *dialog = new DiskPasswordChangingDialog(window);
     dialog->show();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
-    window->setProperty("ChangeDiskPasswordDialog", true);
+    window->setProperty("DiskPwdChangingDialogShown", true);
     QObject::connect(dialog, &DiskPasswordChangingDialog::closed, [=] {
-        window->setProperty("ChangeDiskPasswordDialog", false);
+        window->setProperty("DiskPwdChangingDialogShown", false);
     });
 }
 

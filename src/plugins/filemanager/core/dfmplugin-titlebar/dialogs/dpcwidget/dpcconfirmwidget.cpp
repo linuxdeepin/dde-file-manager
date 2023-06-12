@@ -67,7 +67,6 @@ void DPCConfirmWidget::initUI()
 {
     titleLabel = new DLabel(tr("Change disk password"), this);
     titleLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-    titleLabel->setWordWrap(true);
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     DFontSizeManager *fontManager = DFontSizeManager::instance();
@@ -154,39 +153,12 @@ void DPCConfirmWidget::initLibrary()
     }
 }
 
-void DPCConfirmWidget::showToolTips(const QString &msg, QWidget *w)
+void DPCConfirmWidget::showToolTips(const QString &msg, DPasswordEdit *pwdEdit)
 {
-    w->setFocus();
-    if (!toolTipFrame) {
-        toolTip = new DToolTip(msg);
-        toolTip->setObjectName("AlertToolTip");
-        toolTip->setWordWrap(true);
-        toolTip->setForegroundRole(DPalette::TextWarning);
+    Q_ASSERT(pwdEdit);
 
-        toolTipFrame = new DFloatingWidget(this);
-        toolTipFrame->setFramRadius(DStyle::pixelMetric(style(), DStyle::PM_FrameRadius));
-        toolTipFrame->setWidget(toolTip);
-    }
-
-    toolTip->setText(msg);
-    if (toolTipFrame->parent()) {
-        QFont font = toolTip->font();
-        QFontMetrics fontMetrics(font);
-        int fontWidth = fontMetrics.horizontalAdvance(msg) + 30;
-        int fontHeight = fontMetrics.lineSpacing() + 12;
-        int per = fontWidth / w->width() + 1;
-
-        QPoint p = w->mapTo(this, QPoint(0, 0));
-        toolTipFrame->setGeometry(p.x(), p.y() + w->height(),
-                                  fontWidth < w->width() ? fontWidth : w->width(),
-                                  per * fontHeight);
-        toolTipFrame->show();
-        toolTipFrame->raise();
-    }
-
-    QTimer::singleShot(3000, this, [=]() {
-        toolTipFrame->close();
-    });
+    pwdEdit->setFocus();
+    pwdEdit->showAlertMessage(msg);
 }
 
 bool DPCConfirmWidget::checkRepeatPassword()
