@@ -489,6 +489,7 @@ void FileDialogHandle::show()
             d->dialog->statusBar()->setMode(FileDialogStatusBar::Mode::kOpen);
             d->dialog->updateAsDefaultSize();
             d->dialog->moveCenter();
+            setWindowStayOnTop();
             qDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
             FMWindowsIns.showWindow(d->dialog);
             qDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
@@ -551,4 +552,16 @@ void FileDialogHandle::waitForWindowShow() const
     connect(d_func()->dialog, &FileDialog::windowShowed, &loop, &QEventLoop::quit);
     QTimer::singleShot(500, &loop, &QEventLoop::quit);
     loop.exec();
+}
+
+void FileDialogHandle::setWindowStayOnTop()
+{
+    D_D(FileDialogHandle);
+    QVariant isGtk = qApp->property("GTK");
+    if (WindowUtils::isWayLand() && isGtk.isValid() && isGtk.toBool()) {
+        QFunctionPointer setWindowProperty = qApp->platformFunction("_d_setWindowProperty");
+        // set window stay on top
+        if (setWindowProperty && d->dialog)
+            reinterpret_cast<void(*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
+    }
 }
