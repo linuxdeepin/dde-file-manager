@@ -564,8 +564,10 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
     const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
-    if (WorkspaceEventSequence::instance()->doPaintIconItemText(info, labelRect, painter, layout.data()))
-        return;
+    if (info) {
+        if (WorkspaceEventSequence::instance()->doPaintIconItemText(info->urlOf(UrlInfoType::kUrl), labelRect, painter, layout.data()))
+            return;
+    }
 
     layout->layout(labelRect, opt.textElideMode, painter, background);
 }

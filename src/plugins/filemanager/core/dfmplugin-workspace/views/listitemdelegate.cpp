@@ -475,8 +475,10 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         const QVariant &data = index.data(rol);
 
         const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
-        if (WorkspaceEventSequence::instance()->doPaintListItem(rol, info, painter, &columnRect))
-            continue;
+        if (info) {
+            if (WorkspaceEventSequence::instance()->doPaintListItem(rol, info->urlOf(UrlInfoType::kUrl), painter, &columnRect))
+                continue;
+        }
 
         QPalette::ColorGroup cGroup = QPalette::Inactive;
         Qt::TextElideMode elideMode = Qt::ElideRight;

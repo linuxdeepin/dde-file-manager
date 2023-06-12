@@ -27,7 +27,7 @@ EmblemManager *EmblemManager::instance()
     return &ins;
 }
 
-bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter *painter, QRectF *paintArea)
+bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, QRectF *paintArea)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     Q_ASSERT(painter);
@@ -35,14 +35,17 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
 
     painter->setRenderHints(QPainter::SmoothPixmapTransform);
 
-    if (role != kItemIconRole || info.isNull())
+    if (role != kItemIconRole)
+        return false;
+
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+    if (info.isNull())
         return false;
 
     // add system emblem icons
     QList<QIcon> emblems { helper->systemEmblems(info) };
 
     //  only paitn system emblem icons if url is prohibited
-    const QUrl &url = info->urlOf(UrlInfoType::kUrl);
     if (!helper->isExtEmblemProhibited(url)) {
         // add gio embelm icons
         helper->pending(info);

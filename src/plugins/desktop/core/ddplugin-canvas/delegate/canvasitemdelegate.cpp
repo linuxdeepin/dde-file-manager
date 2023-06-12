@@ -434,8 +434,11 @@ void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionView
         QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, &p));
 
         // extend layout paint
-        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rText, painter, layout.data()))
-            return;
+        auto info = parent()->model()->fileInfo(index);
+        if (info) {
+            if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", info->urlOf(UrlInfoType::kUrl), rText, painter, layout.data()))
+                return;
+        }
 
         // elide and draw
         layout->layout(QRectF(QPoint(0, 0), QSizeF(textImage.size()) / pixelRatio), option.textElideMode, &p);
@@ -479,8 +482,12 @@ void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOption
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
         // extend layout paint
-        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rText, painter, layout.data()))
-            return;
+        auto info = parent()->model()->fileInfo(index);
+        if (info) {
+            if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", info->urlOf(UrlInfoType::kUrl), rText, painter, layout.data()))
+                return;
+        }
+
 
         // elide and draw
         layout->layout(rText, option.textElideMode, painter, background);
@@ -499,8 +506,11 @@ void CanvasItemDelegate::drawExpandText(QPainter *painter, const QStyleOptionVie
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
     // extend layout paint
-    if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rect, painter, layout.data()))
-        return;
+    auto info = parent()->model()->fileInfo(index);
+    if (info) {
+        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", info->urlOf(UrlInfoType::kUrl), rect, painter, layout.data()))
+            return;
+    }
 
     // elide and draw
     layout->layout(rect, option.textElideMode, painter, background);
@@ -748,8 +758,11 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 
 QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect,  const FileInfoPointer &info)
 {
+    if (info.isNull())
+        return rect;
+    auto url = info->urlOf(UrlInfoType::kUrl);
     // todo(zy) uing extend painter by registering.
-    if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {
+    if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, url).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {
             qWarning() << "publish `kPaintEmblems` event failed!";

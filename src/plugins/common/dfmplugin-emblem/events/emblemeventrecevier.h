@@ -20,7 +20,7 @@ class EmblemEventRecevier : public QObject
 public:
     static EmblemEventRecevier *instance();
 
-    bool handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const FileInfoPointer &info);
+    bool handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
 
     void initializeConnections() const;
 

@@ -52,28 +52,30 @@ TEST_F(TagManagerTest, canTagFile)
 TEST_F(TagManagerTest, paintListTagsHandle)
 {
     DFMGLOBAL_USE_NAMESPACE
-    FileInfoPointer info(new FileInfo(QUrl("file:///test")));
+    QUrl url("file:///test");
+    FileInfoPointer info(new FileInfo(url));
     QPainter painter;
     QRectF rect;
     //overload func
     auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return false; });
-    EXPECT_FALSE(ins->paintListTagsHandle(1, info, &painter, &rect));
+    EXPECT_FALSE(ins->paintListTagsHandle(1, url, &painter, &rect));
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
-    EXPECT_FALSE(ins->paintListTagsHandle(1, info, &painter, &rect));
-    EXPECT_FALSE(ins->paintListTagsHandle(kItemFileDisplayNameRole, info, &painter, &rect));
+    EXPECT_FALSE(ins->paintListTagsHandle(1, url, &painter, &rect));
+    EXPECT_FALSE(ins->paintListTagsHandle(kItemFileDisplayNameRole, url, &painter, &rect));
 }
 
 TEST_F(TagManagerTest, paintIconTagsHandle2)
 {
-    FileInfoPointer info(new FileInfo(QUrl("file:///test")));
+    QUrl url("file:///test");
+    FileInfoPointer info(new FileInfo(url));
     QPainter painter;
     QRectF rect;
     auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return false; });
-    EXPECT_FALSE(ins->paintIconTagsHandle(info, rect, &painter, nullptr));
+    EXPECT_FALSE(ins->paintIconTagsHandle(url, rect, &painter, nullptr));
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
-    EXPECT_FALSE(ins->paintIconTagsHandle(info, rect, &painter, nullptr));
+    EXPECT_FALSE(ins->paintIconTagsHandle(url, rect, &painter, nullptr));
 }
 
 TEST_F(TagManagerTest, fileDropHandle)

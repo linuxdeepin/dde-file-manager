@@ -22,7 +22,7 @@ class EmblemManager : public QObject
 public:
     static EmblemManager *instance();
 
-    bool paintEmblems(int role, const FileInfoPointer &info, QPainter *painter, QRectF *paintArea);
+    bool paintEmblems(int role, const QUrl &url, QPainter *painter, QRectF *paintArea);
 
 private:
     explicit EmblemManager(QObject *parent = nullptr);

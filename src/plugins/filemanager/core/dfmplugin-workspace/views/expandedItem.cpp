@@ -69,8 +69,10 @@ void ExpandedItem::paintEvent(QPaintEvent *)
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
 
     const FileInfoPointer &info = delegate->parent()->parent()->model()->fileInfo(index);
-    if (WorkspaceEventSequence::instance()->doPaintIconItemText(info, labelRect, &pa, layout.data()))
-        return;
+    if (info) {
+        if (WorkspaceEventSequence::instance()->doPaintIconItemText(info->urlOf(UrlInfoType::kUrl), labelRect, &pa, layout.data()))
+            return;
+    }
 
     const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight));
 

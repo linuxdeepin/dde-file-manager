@@ -118,12 +118,16 @@ bool TagManager::canTagFile(const FileInfoPointer &info) const
     return canTag;
 }
 
-bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect)
+bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
-    if (!canTagFile(info))
+    if (!canTagFile(url))
         return false;
 
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
+        return false;
+
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+    if (info.isNull())
         return false;
 
     const auto &tags = FileTagCacheController::instance().getCacheFileTags(info->pathOf(PathInfoType::kFilePath));
@@ -144,12 +148,16 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPai
     return false;
 }
 
-bool TagManager::paintIconTagsHandle(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
+bool TagManager::paintIconTagsHandle(const QUrl &url, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
 {
     Q_UNUSED(rect)
     Q_UNUSED(painter)
 
-    if (!canTagFile(info))
+    if (!canTagFile(url))
+        return false;
+
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+    if (info.isNull())
         return false;
 
     const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(info->pathOf(PathInfoType::kFilePath));

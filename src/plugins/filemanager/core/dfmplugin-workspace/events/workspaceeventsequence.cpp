@@ -29,14 +29,14 @@ WorkspaceEventSequence *WorkspaceEventSequence::instance()
     return &ins;
 }
 
-bool WorkspaceEventSequence::doPaintListItem(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect)
+bool WorkspaceEventSequence::doPaintListItem(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintListItem", role, info, painter, rect);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintListItem", role, url, painter, rect);
 }
 
-bool WorkspaceEventSequence::doPaintIconItemText(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout)
+bool WorkspaceEventSequence::doPaintIconItemText(const QUrl &url, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout)
 {
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintIconItem", info, rect, painter, layout);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintIconItem", url, rect, painter, layout);
 }
 
 bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
