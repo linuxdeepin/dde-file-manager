@@ -358,14 +358,21 @@ public:
         return myMap.clear();
     }
 
-    inline QList<DKey> keys() {
+    inline QList<DKey> keys()
+    {
         QMutexLocker lk(&mutex);
-        return  myMap.keys();
+        return myMap.keys();
+    }
+
+    inline QMap<DKey, DValue> map() const
+    {
+        QMutexLocker lk(&mutex);
+        return myMap;
     }
 
 private:
     QMap<DKey, DValue> myMap;   // 当前的QMap
-    QMutex mutex;   // 当前的锁
+    QMutex mutable mutex;   // 当前的锁
 };
 }
 #endif   // THREADCONTAINER_H
