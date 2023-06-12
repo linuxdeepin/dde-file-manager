@@ -41,7 +41,7 @@ private:
     void initUI();
     void initConnect();
     void initLibrary();
-    void showToolTips(const QString &msg, QWidget *w);
+    void showToolTips(const QString &msg, DTK_NAMESPACE::DWIDGET_NAMESPACE::DPasswordEdit *pwdEdit);
     bool checkRepeatPassword();
     bool checkNewPassword();
     bool checkPasswdComplexity(const QString &pwd, QString *msg);
