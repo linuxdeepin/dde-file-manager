@@ -57,7 +57,6 @@ void ListItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
-    index.data(kItemCreateFileInfo);
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
     painter->setFont(opt.font);

@@ -47,7 +47,6 @@ TEST_F(UT_SendToMenuScene, bug_203001_initialize)
     EXPECT_TRUE(scene.initialize(params));
 
     auto focusInfo = InfoFactory::create<FileInfo>(url);
-    params[MenuParamKey::kFocusFileInfo] = QVariant::fromValue(focusInfo);
     params[MenuParamKey::kIsEmptyArea] = false;
     EXPECT_FALSE(scene.initialize(params));
 

@@ -42,8 +42,6 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
-    connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
-    waitTimer.setInterval(30);
 }
 
 FileViewModel::~FileViewModel()
@@ -55,7 +53,6 @@ FileViewModel::~FileViewModel()
         itemRootData = nullptr;
     }
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
-    closeCursorTimer();
 }
 
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
@@ -108,7 +105,6 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     // insert root index
     beginResetModel();
     // create root by url
-    closeCursorTimer();
     dirRootUrl = url;
     RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
     endResetModel();
@@ -260,7 +256,7 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
         itemData = filterSortWorker->childData(index.row());
     }
 
-    if (itemData) {
+    if (itemData && itemData->fileInfo()) {
         return itemData->data(role);
     } else {
         return QVariant();
@@ -323,23 +319,26 @@ bool FileViewModel::canFetchMore(const QModelIndex &parent) const
 Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+    const FileInfoPointer &info = fileInfo(index);
+    if (!info)
+        return flags;
 
     if (!index.data(kItemFileIsAvailable).toBool()) {
         flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         return flags;
     }
 
-    if (index.data(kItemFileCanRename).toBool())
+    if (info->canAttributes(CanableInfoType::kCanRename))
         flags |= Qt::ItemIsEditable;
 
-    if (index.data(kItemFileIsWritable).toBool()) {
-        if (index.data(kItemFileCanDrop).toBool())
+    if (info->isAttributes(OptInfoType::kIsWritable)) {
+        if (info->canAttributes(CanableInfoType::kCanDrop))
             flags |= Qt::ItemIsDropEnabled;
         else
             flags |= Qt::ItemNeverHasChildren;
     }
 
-    if (index.data(kItemFileCanDrag).toBool())
+    if (info->canAttributes(CanableInfoType::kCanDrag))
         flags |= Qt::ItemIsDragEnabled;
 
     if (readOnly)
@@ -386,9 +385,6 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     if (!dropIndex.isValid())
         return false;
-
-    if (!fileInfo(dropIndex))
-        dropIndex.data(Global::ItemRoles::kItemCreateFileInfo);
 
     const FileInfoPointer &targetFileInfo = fileInfo(dropIndex);
     if (!targetFileInfo || (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable))) {
@@ -638,6 +634,13 @@ void FileViewModel::onRemoveFinish()
     endRemoveRows();
 }
 
+void FileViewModel::onUpdateView()
+{
+    FileView *view = qobject_cast<FileView *>(QObject::parent());
+    if (view)
+        view->update();
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -681,6 +684,7 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 
@@ -730,39 +734,4 @@ void FileViewModel::changeState(ModelState newState)
 
     state = newState;
     Q_EMIT stateChanged();
-}
-
-bool FileViewModel::passNameFilters(const QModelIndex &index) const
-{
-    if (!index.isValid() || !filterSortWorker)
-        return true;
-
-    if (filterSortWorker->getNameFilters().isEmpty())
-        return true;
-
-    const QString &filePath = index.data(kItemFilePathRole).toString();
-    if (nameFiltersMatchResultMap.contains(filePath))
-        return nameFiltersMatchResultMap.value(filePath, false);
-
-    // Check the name regularexpression filters
-    if (!(index.data(kItemFileIsDir).toBool() && (filterSortWorker->getFilters() & QDir::Dirs))) {
-        const Qt::CaseSensitivity caseSensitive = (filterSortWorker->getFilters() & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        const QString &fileFilterName = FileUtils::isDesktopFile(QUrl(index.data(kItemUrlRole).toString()))
-                ? index.data(kItemNameRole).toString()
-                : index.data(kItemNameRole).toString();
-        QRegExp re("", caseSensitive, QRegExp::Wildcard);
-
-        for (int i = 0; i < filterSortWorker->getNameFilters().size(); ++i) {
-            re.setPattern(filterSortWorker->getNameFilters().at(i));
-            if (re.exactMatch(fileFilterName)) {
-                nameFiltersMatchResultMap[filePath] = true;
-                return true;
-            }
-        }
-        nameFiltersMatchResultMap[filePath] = false;
-        return false;
-    }
-
-    nameFiltersMatchResultMap[filePath] = true;
-    return true;
 }

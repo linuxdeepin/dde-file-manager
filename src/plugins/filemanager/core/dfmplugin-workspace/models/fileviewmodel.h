@@ -114,6 +114,7 @@ public Q_SLOTS:
     void onInsertFinish();
     void onRemove(int firstIndex, int count);
     void onRemoveFinish();
+    void onUpdateView();
 
 private:
     void initFilterSortWork();
@@ -121,7 +122,6 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
-    bool passNameFilters(const QModelIndex &index) const;
 
     QUrl dirRootUrl;
 

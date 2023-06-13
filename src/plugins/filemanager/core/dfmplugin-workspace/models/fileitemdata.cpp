@@ -58,84 +58,53 @@ FileItemData *FileItemData::parentData() const
 
 QVariant FileItemData::data(int role) const
 {
-    if (info) {
-        auto val = info->customData(role);
-        if (val.isValid())
-            return val;
-    }
+    if (!info)
+        const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
+
+    if (info.isNull())
+        return QVariant();
+
+    auto val = info->customData(role);
+    if (val.isValid())
+        return val;
 
     switch (role) {
-    case kItemCreateFileInfo:
-        if (info.isNull())
-            const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
-        return QVariant();
     case kItemFilePathRole:
-        if (info)
-            return info->displayOf(DisPlayInfoType::kFileDisplayPath);
-        return url.path();
+        return info->displayOf(DisPlayInfoType::kFileDisplayPath);
     case kItemFileLastModifiedRole: {
-        if (info) {
-            auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
-            return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
-        }
-        return "-";
+        auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+        return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemIconRole:
-        if (info)
-            return info->fileIcon();
-        return QIcon::fromTheme("unknown");
+        return info->fileIcon();
     case kItemFileSizeRole:
-        if (info)
-            return info->displayOf(DisPlayInfoType::kSizeDisplayName);
-        return "-";
+        return info->displayOf(DisPlayInfoType::kSizeDisplayName);
     case kItemFileMimeTypeRole:
-        if (info)
-            return info->displayOf(DisPlayInfoType::kMimeTypeDisplayName);
-        return QString();
+        return info->displayOf(DisPlayInfoType::kMimeTypeDisplayName);
     case kItemSizeHintRole:
         return QSize(-1, 26);
     case kItemNameRole:
-        if (info)
-            return info->nameOf(NameInfoType::kFileName);
-        return url.fileName();
+        return info->nameOf(NameInfoType::kFileName);
     case Qt::DisplayRole:
     case kItemEditRole:
     case kItemFileDisplayNameRole:
-        if (info)
-            return info->displayOf(DisPlayInfoType::kFileDisplayName);
-        return QString();
+        return info->displayOf(DisPlayInfoType::kFileDisplayName);
     case kItemFileLastReadRole:
-        if (info)
-            return info->customData(dfmbase::Global::kItemFileLastReadRole);
-        return QString();
+        return info->customData(dfmbase::Global::kItemFileLastReadRole);
     case kItemFilePinyinNameRole:
-        if (info)
-            return info->displayOf(DisPlayInfoType::kFileDisplayPinyinName);
-        return url.fileName();
+        return info->displayOf(DisPlayInfoType::kFileDisplayPinyinName);
     case kItemFileBaseNameRole:
-        if (info)
-            return info->nameOf(NameInfoType::kCompleteBaseName);
-        return url.fileName();
+        return info->nameOf(NameInfoType::kCompleteBaseName);
     case kItemFileSuffixRole:
-        if (info)
-            return info->nameOf(NameInfoType::kSuffix);
-        return url.fileName();
+        return info->nameOf(NameInfoType::kSuffix);
     case kItemFileNameOfRenameRole:
-        if (info)
-            return info->nameOf(NameInfoType::kFileNameOfRename);
-        return url.fileName();
+        return info->nameOf(NameInfoType::kFileNameOfRename);
     case kItemFileBaseNameOfRenameRole:
-        if (info)
-            return info->nameOf(NameInfoType::kBaseNameOfRename);
-        return url.fileName();
+        return info->nameOf(NameInfoType::kBaseNameOfRename);
     case kItemFileSuffixOfRenameRole:
-        if (info)
-            return info->nameOf(NameInfoType::kSuffixOfRename);
-        return url.fileName();
+        return info->nameOf(NameInfoType::kSuffixOfRename);
     case kItemUrlRole:
-        if (info)
-            return info->urlOf(UrlInfoType::kUrl);
-        return url;
+        return info->urlOf(UrlInfoType::kUrl);
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
     case kItemFileIconModelToolTipRole: {
@@ -150,30 +119,6 @@ QVariant FileItemData::data(int role) const
         QString strToolTip = data(kItemFileDisplayNameRole).toString();
         return strToolTip;
     }
-    case kItemFileIsWritable:
-        if (info)
-            return info->isAttributes(OptInfoType::kIsWritable);
-        if (sortInfo)
-            return sortInfo->isWriteable;
-        return true;
-    case kItemFileIsDir:
-        if (info)
-            return info->isAttributes(OptInfoType::kIsDir);
-        if (sortInfo)
-            return sortInfo->isDir;
-        return true;
-    case kItemFileCanRename:
-        if (info)
-            return info->canAttributes(CanableInfoType::kCanRename);
-        return true;
-    case kItemFileCanDrop:
-        if (info)
-            return info->canAttributes(CanableInfoType::kCanDrop);
-        return true;
-    case kItemFileCanDrag:
-        if (info)
-            return info->canAttributes(CanableInfoType::kCanDrag);
-        return true;
     case kItemFileIsAvailable:
         return isAvailable;
     default:

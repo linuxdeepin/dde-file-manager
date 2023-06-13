@@ -113,8 +113,6 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->fileUrl(view->model()->rootIndex());
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
-    params[MenuParamKey::kFocusFileInfo] = QVariant::fromValue(focusInfo);
-    params[MenuParamKey::kSelectFileInfos] = QVariant::fromValue(selectInfos);
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = false;
