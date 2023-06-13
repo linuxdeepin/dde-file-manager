@@ -487,12 +487,17 @@ void FileDialogHandle::show()
     if (d->dialog) {
         if (!isSetAcceptMode && d->dialog->statusBar())
             d->dialog->statusBar()->setMode(FileDialogStatusBar::Mode::kOpen);
+        // When using vscode or Google browser repeatedly show selection box, the app crash!
+        // when show the selection box, add the QTimer to Delay display the selection box, solve the crash problem.
+        // TODO(gongheng):debug the GTK, and analysis why the gtk crash.
+        QTimer::singleShot(10, this, [d, this]() {
             d->dialog->updateAsDefaultSize();
             d->dialog->moveCenter();
             setWindowStayOnTop();
             qDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
             FMWindowsIns.showWindow(d->dialog);
             qDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        });
     }
 }
 
