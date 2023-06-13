@@ -266,11 +266,6 @@ qulonglong FileDialogHandle::winId() const
 {
     D_DC(FileDialogHandle);
 
-    // browser use gtk start filedialog
-    // gtk call the `winId` must be showed in the window after
-    if (qApp->property("GTK").toBool())
-        waitForWindowShow();
-
     if (d->dialog)
         return d->dialog->internalWinId();
     return 0;
@@ -487,12 +482,12 @@ void FileDialogHandle::show()
     if (d->dialog) {
         if (!isSetAcceptMode && d->dialog->statusBar())
             d->dialog->statusBar()->setMode(FileDialogStatusBar::Mode::kOpen);
-            d->dialog->updateAsDefaultSize();
-            d->dialog->moveCenter();
-            setWindowStayOnTop();
-            qDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
-            FMWindowsIns.showWindow(d->dialog);
-            qDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        d->dialog->updateAsDefaultSize();
+        d->dialog->moveCenter();
+        setWindowStayOnTop();
+        qDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        FMWindowsIns.showWindow(d->dialog);
+        qDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
     }
 }
 
@@ -544,14 +539,6 @@ void FileDialogHandle::reject()
 
     if (d->dialog)
         d->dialog->reject();
-}
-
-void FileDialogHandle::waitForWindowShow() const
-{
-    QEventLoop loop;
-    connect(d_func()->dialog, &FileDialog::windowShowed, &loop, &QEventLoop::quit);
-    QTimer::singleShot(500, &loop, &QEventLoop::quit);
-    loop.exec();
 }
 
 void FileDialogHandle::setWindowStayOnTop()

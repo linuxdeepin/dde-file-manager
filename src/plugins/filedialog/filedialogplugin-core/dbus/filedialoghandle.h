@@ -85,7 +85,6 @@ public Q_SLOTS:
     void reject();
 
 private:
-    void waitForWindowShow() const;
     void setWindowStayOnTop();
 
 Q_SIGNALS:
