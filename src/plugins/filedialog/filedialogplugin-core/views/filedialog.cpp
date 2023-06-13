@@ -1017,10 +1017,6 @@ bool FileDialog::eventFilter(QObject *watched, QEvent *event)
         }
     }
 
-    if (watched == windowHandle() && event->type() == QEvent::Show) {
-        emit windowShowed();
-    }
-
     return FileManagerWindow::eventFilter(watched, event);
 }
 

@@ -96,7 +96,6 @@ Q_SIGNALS:
     void selectionFilesChanged();
     void selectedNameFilterChanged();
     void initialized();
-    void windowShowed();
 
 public Q_SLOTS:
     void accept();
