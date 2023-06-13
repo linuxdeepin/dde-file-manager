@@ -54,19 +54,24 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    d->isFocusOnDDEDesktopFile = params.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
-    d->isSystemPathIncluded = params.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        return false;
+    }
+
+    QString errString;
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    if (d->focusFileInfo.isNull()) {
+        qDebug() << errString;
         return false;
     }
 
@@ -108,7 +113,13 @@ bool OpenWithMenuScene::create(QMenu *parent)
     tempAction->setMenu(subMenu);
 
     QList<QUrl> redirectedUrlList;
-    for (const auto &fileInfo : d->selectFileInfos) {
+    for (const auto &fileUrl : d->selectFiles) {
+        QString errString;
+        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(fileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+        if (fileInfo.isNull()) {
+            qDebug() << errString;
+            continue;
+        }
         redirectedUrlList << fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
     }
 
@@ -149,12 +160,8 @@ void OpenWithMenuScene::updateState(QMenu *parent)
         supportedMimeTypes.removeAll("");
 
         QString errString;
-        QList<QUrl> redirectedUrls;
-        auto tempSelectInfos = d->selectFileInfos;
-        if (d->selectFiles.count() > d->selectFileInfos.count())
-            tempSelectInfos << InfoFactory::create<FileInfo>(d->selectFiles.last());
-
-        for (auto info : tempSelectInfos) {
+        for (auto url : d->selectFiles) {
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
             if (Q_UNLIKELY(info.isNull())) {
                 qDebug() << errString;
                 break;
@@ -165,7 +172,7 @@ void OpenWithMenuScene::updateState(QMenu *parent)
 
                 QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
                 QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
-                auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(info->urlOf(UrlInfoType::kUrl), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+                auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
                 if (!info.isNull()) {
                     mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
                 }

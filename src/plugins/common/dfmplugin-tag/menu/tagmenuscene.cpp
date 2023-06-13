@@ -42,19 +42,18 @@ bool TagMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     if (d->onDesktop)
         d->onCollection = params.value("OnColletion", false).toBool();
 
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
-    d->isDDEDesktopFileIncluded = params.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
-    d->isSystemPathIncluded = params.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
+    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
     d->predicateName.insert(TagActionId::kActTagColorListKey, "");
     d->predicateName.insert(TagActionId::kActTagAddKey, tr("Tag information"));
@@ -76,8 +75,8 @@ bool TagMenuScene::create(QMenu *parent)
     if (d->isDDEDesktopFileIncluded || d->isSystemPathIncluded)
         return false;
 
-    for (const FileInfoPointer &info : d->selectFileInfos) {
-        if (!TagManager::instance()->canTagFile(info))
+    for (const QUrl &url : d->selectFiles) {
+        if (!TagManager::instance()->canTagFile(url))
             return false;
     }
 
@@ -85,10 +84,12 @@ bool TagMenuScene::create(QMenu *parent)
     colorListAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagColorListKey));
     parent->addAction(colorListAction);
     d->predicateAction.insert(TagActionId::kActTagColorListKey, colorListAction);
+
     QAction *tagAction = createTagAction();
     tagAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagAddKey));
     parent->addAction(tagAction);
     d->predicateAction.insert(TagActionId::kActTagAddKey, tagAction);
+
     return AbstractMenuScene::create(parent);
 }
 
@@ -113,7 +114,7 @@ bool TagMenuScene::triggered(QAction *action)
         if (d->onCollection) {   // get rect from collection
             const QString id = TagEventCaller::getCollectionViewId(d->focusFile.toString(), &pos);
             if (id.isEmpty()) {
-                qCritical() << "can not find file on collection" << d->focusFileInfo;
+                qCritical() << "can not find file on collection" << d->focusFile;
                 return true;
             }
             const QRect &visualRect = TagEventCaller::getCollectionVisualRect(id, d->focusFile);
@@ -128,7 +129,7 @@ bool TagMenuScene::triggered(QAction *action)
         } else {   // get rect from desktop
             int viewIndex = TagEventCaller::getDesktopViewIndex(d->focusFile.toString(), &pos);
             if (viewIndex < 0) {
-                qCritical() << "can not find file on canvas" << d->focusFileInfo << viewIndex;
+                qCritical() << "can not find file on canvas" << d->focusFile << viewIndex;
                 return true;
             }
             const QRect &visualRect = TagEventCaller::getVisualRect(viewIndex, d->focusFile);
@@ -241,12 +242,7 @@ QAction *TagMenuScene::createColorListAction() const
 
     action->setDefaultWidget(colorListWidget);
 
-    QStringList tags {};
-    if (d->selectFiles.length() > 1) {
-        tags = TagManager::instance()->getTagsByUrls({}, true).toStringList();
-    } else {
-        tags = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
-    }
+    QStringList tags = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
     QList<QColor> colors;
 
     for (const QString &tag : tags) {
