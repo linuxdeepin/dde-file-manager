@@ -37,6 +37,10 @@ public:
     inline uint authorizationProperty() const
     { return qvariant_cast< uint >(property("AuthorizationProperty")); }
 
+    Q_PROPERTY(uint ServiceProperty READ serviceProperty)
+    inline uint serviceProperty() const
+    { return qvariant_cast< uint >(property("ServiceProperty")); }
+
 Q_SIGNALS: // SIGNALS
     void LicenseStateChange();
 

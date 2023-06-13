@@ -90,22 +90,56 @@ void DeepinLicenseHelper::getLicenseState(DeepinLicenseHelper *self)
     Q_ASSERT(self->licenseInterface);
     qInfo() << "get active state from com.deepin.license.Info";
     int state = self->licenseInterface->authorizationState();
-    int prop = -1;
+    LicenseProperty prop = self->getServiceProperty();
+
+    if(prop == LicenseProperty::Noproperty)
     {
-        // 不直接使用AuthorizationProperty接口，需要通过QVariant是否有效判断接口是否存在
-        QVariant varProp = self->licenseInterface->property("AuthorizationProperty");
-        if (!varProp.isValid()) {
-            qInfo() << "no such property: AuthorizationProperty in license.";
-        } else {
-            bool ok = false;
-            prop = varProp.toInt(&ok);
-            if (!ok) {
-                qWarning() << "invalid value of AuthorizationProperty" << varProp;
-                prop = 0;
-            }
-        }
+        qInfo() << "no service property obtained,try to get AuthorizetionProperty";
+        prop = self->getAuthorizationProperty();
     }
 
     qInfo() << "Get AuthorizationState" << state << prop;
     emit self->postLicenseState(state, prop);
+}
+
+DeepinLicenseHelper::LicenseProperty DeepinLicenseHelper::getServiceProperty()
+{
+    // 不直接使用serviceProperty接口，需要通过QVariant是否有效判断接口是否存在
+    LicenseProperty prop = LicenseProperty::Noproperty;
+    QVariant servProp = licenseInterface->property("ServiceProperty");
+    if (!servProp.isValid()) {
+        qInfo() << "no such property: ServiceProperty in license";
+    } else {
+        bool ok = false;
+        prop = servProp.toInt(&ok) ? LicenseProperty::Secretssecurity : LicenseProperty::Noproperty;
+        if (!ok) {
+            qWarning() << "invalid value of serviceProperty" << servProp;
+            prop = LicenseProperty::Noproperty;
+        }
+    }
+    return prop;
+}
+
+DeepinLicenseHelper::LicenseProperty DeepinLicenseHelper::getAuthorizationProperty()
+{
+    // 不直接使用AuthorizationProperty接口，需要通过QVariant是否有效判断接口是否存在
+    LicenseProperty prop = LicenseProperty::Noproperty;
+    QVariant authprop = licenseInterface->property("AuthorizationProperty");
+    if (!authprop.isValid()) {
+        qInfo() << "no such property: AuthorizationProperty in license.";
+    } else {
+        bool ok = false;
+        if (authprop.toInt(&ok) == 2)
+            prop = LicenseProperty::Enterprise;
+        else if (authprop.toInt(&ok) == 1)
+            prop = LicenseProperty::Government;
+        else
+            prop = LicenseProperty::Noproperty;
+
+        if (!ok) {
+            qWarning() << "invalid value of AuthorizationProperty" << authprop;
+            prop = LicenseProperty::Noproperty;
+        }
+    }
+    return prop;
 }
