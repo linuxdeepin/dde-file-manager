@@ -46,6 +46,8 @@ void FileItemData::refreshInfo()
 
 FileInfoPointer FileItemData::fileInfo() const
 {
+    if (!info)
+        const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
     return info;
 }
 

@@ -68,9 +68,8 @@ bool DirShareMenuScene::initialize(const QVariantHash &params)
     if (u.scheme() != Global::Scheme::kFile)
         return false;
 
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-    if (!d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
+    auto info = InfoFactory::create<FileInfo>(u);
+    if (!info->isAttributes(OptInfoType::kIsDir))
         return false;
 
     return AbstractMenuScene::initialize(params);
@@ -84,7 +83,7 @@ bool DirShareMenuScene::create(QMenu *parent)
     if (d->selectFiles.count() != 1)
         return false;
 
-    auto info = d->focusFileInfo;
+    auto info = InfoFactory::create<FileInfo>(d->selectFiles.first());
     if (info->isAttributes(OptInfoType::kIsDir)) {
         bool shared = UserShareHelperInstance->isShared(info->pathOf(PathInfoType::kAbsoluteFilePath));
         if (shared) {

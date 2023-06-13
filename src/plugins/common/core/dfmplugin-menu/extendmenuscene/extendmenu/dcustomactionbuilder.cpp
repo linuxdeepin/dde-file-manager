@@ -117,14 +117,17 @@ QString DCustomActionBuilder::getCompleteSuffix(const QString &fileName, const Q
 /*!
     检查 \a files 文件列表中的文件组合
  */
-DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList<QUrl> &files, const QList<FileInfoPointer> &infos)
+DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList<QUrl> &files)
 {
-    Q_UNUSED(files)
     int fileCount = 0;
     int dirCount = 0;
     QString errString;
 
-    for (const auto &info : infos) {
+    for (const QUrl &file : files) {
+        if (file.isEmpty())
+            continue;
+
+        auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (info.isNull()) {
             qDebug() << errString;
             continue;
@@ -167,7 +170,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
     return ret;
 }
 
-QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &selects, const QList<FileInfoPointer> &selectInfos,
+QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &selects,
                                                              QList<DCustomActionEntry> oriActions)
 {
     //todo：细化功能颗粒度，一个函数尽量专职一件事
@@ -180,14 +183,14 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
     */
 
     //具体配置过滤
-    for (auto &fileInfo : selectInfos) {
+    for (auto &singleUrl : selects) {
         //协议、后缀
+        QString errString;
+        const FileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(singleUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
-            qWarning() << "create selected FileInfo failed ! ";
+            qWarning() << "create selected FileInfo failed: " << singleUrl.toString() << errString;
             continue;
         }
-
-        auto singleUrl = fileInfo->urlOf(UrlInfoType::kUrl);
 
         /*
          * 选中文件类型过滤：

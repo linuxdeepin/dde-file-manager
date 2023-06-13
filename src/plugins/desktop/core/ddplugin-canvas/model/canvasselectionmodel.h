@@ -7,8 +7,6 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <dfm-base/interfaces/fileinfo.h>
-
 #include <QItemSelectionModel>
 
 namespace ddplugin_canvas {
@@ -21,7 +19,6 @@ public:
     CanvasProxyModel *model() const;
     QModelIndexList selectedIndexesCache() const;
     QList<QUrl> selectedUrls() const;
-    QList<FileInfoPointer> selectedFileInfos() const;
 public slots:
     void clearSelectedCache();
 protected:

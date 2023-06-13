@@ -157,16 +157,14 @@ bool SendToDiscMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->predicateName.insert(ActionId::kStageKey, QObject::tr("Add to disc"));
     d->predicateName.insert(ActionId::kMountImageKey, QObject::tr("Mount"));
 
-    d->isDDEDesktopFileIncluded = params.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
+    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->selectFiles.isEmpty())
         return false;
@@ -210,9 +208,10 @@ bool SendToDiscMenuScene::create(QMenu *parent)
     d->addToSendto(parent);
 
     // mount image
-    if (d->focusFileInfo) {
+    auto focusInfo { InfoFactory::create<FileInfo>(d->focusFile) };
+    if (focusInfo) {
         static QSet<QString> mountable { "application/x-cd-image", "application/x-iso9660-image" };
-        if (mountable.contains(d->focusFileInfo->nameOf(NameInfoType::kMimeTypeName))) {
+        if (mountable.contains(focusInfo->nameOf(NameInfoType::kMimeTypeName))) {
             QAction *act { parent->addAction(d->predicateName[ActionId::kMountImageKey]) };
             act->setProperty(ActionPropertyKey::kActionID, ActionId::kMountImageKey);
             d->predicateAction.insert(ActionId::kMountImageKey, act);

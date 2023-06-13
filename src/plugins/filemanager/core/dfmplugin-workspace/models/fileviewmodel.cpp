@@ -310,10 +310,8 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
                                                       filterSortWorker->getSortOrder());
     }
 
-    if (ret) {
+    if (ret)
         changeState(ModelState::kBusy);
-        startCursorTimer();
-    }
 }
 
 bool FileViewModel::canFetchMore(const QModelIndex &parent) const
@@ -461,7 +459,6 @@ void FileViewModel::stopTraversWork()
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
 
     changeState(ModelState::kIdle);
-    closeCursorTimer();
 }
 
 QList<ItemRoles> FileViewModel::getColumnRoles() const
@@ -641,24 +638,6 @@ void FileViewModel::onRemoveFinish()
     endRemoveRows();
 }
 
-void FileViewModel::onSetCursorWait()
-{
-    if (currentState() != ModelState::kBusy)
-            return;
-
-    if (QApplication::overrideCursor() && QApplication::overrideCursor()->shape() == Qt::CursorShape::WaitCursor)
-        return;
-
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-}
-
-void FileViewModel::onUpdateView()
-{
-    FileView *view = qobject_cast<FileView *>(QObject::parent());
-    if (view)
-        view->update();
-}
-
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -692,10 +671,7 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() { canFetchFiles = true; fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() { this->changeState(ModelState::kIdle);
-        closeCursorTimer(); }, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
-
+    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() { this->changeState(ModelState::kIdle); }, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeHiddenFilter, filterSortWorker.data(), &FileSortWorker::onToggleHiddenFiles, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::setFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::setNameFilters, Qt::QueuedConnection);
@@ -756,18 +732,37 @@ void FileViewModel::changeState(ModelState newState)
     Q_EMIT stateChanged();
 }
 
-void FileViewModel::closeCursorTimer()
+bool FileViewModel::passNameFilters(const QModelIndex &index) const
 {
-    waitTimer.stop();
+    if (!index.isValid() || !filterSortWorker)
+        return true;
 
-    while (QApplication::overrideCursor())
-        QApplication::restoreOverrideCursor();
-}
+    if (filterSortWorker->getNameFilters().isEmpty())
+        return true;
 
-void FileViewModel::startCursorTimer()
-{
-    if (!waitTimer.isActive())
-        waitTimer.start();
+    const QString &filePath = index.data(kItemFilePathRole).toString();
+    if (nameFiltersMatchResultMap.contains(filePath))
+        return nameFiltersMatchResultMap.value(filePath, false);
 
-    onSetCursorWait();
+    // Check the name regularexpression filters
+    if (!(index.data(kItemFileIsDir).toBool() && (filterSortWorker->getFilters() & QDir::Dirs))) {
+        const Qt::CaseSensitivity caseSensitive = (filterSortWorker->getFilters() & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+        const QString &fileFilterName = FileUtils::isDesktopFile(QUrl(index.data(kItemUrlRole).toString()))
+                ? index.data(kItemNameRole).toString()
+                : index.data(kItemNameRole).toString();
+        QRegExp re("", caseSensitive, QRegExp::Wildcard);
+
+        for (int i = 0; i < filterSortWorker->getNameFilters().size(); ++i) {
+            re.setPattern(filterSortWorker->getNameFilters().at(i));
+            if (re.exactMatch(fileFilterName)) {
+                nameFiltersMatchResultMap[filePath] = true;
+                return true;
+            }
+        }
+        nameFiltersMatchResultMap[filePath] = false;
+        return false;
+    }
+
+    nameFiltersMatchResultMap[filePath] = true;
+    return true;
 }

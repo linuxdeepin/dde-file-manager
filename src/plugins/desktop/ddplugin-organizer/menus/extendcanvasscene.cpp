@@ -478,7 +478,7 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
                 if (1 == d->selectFiles.count()) {
                     auto index = d->view->model()->index(d->focusFile);
                     if (Q_UNLIKELY(!index.isValid()))
-                        qWarning() << "can not rename: invaild file" << d->focusFileInfo;
+                        qWarning() << "can not rename: invaild file" << d->focusFile;
                     else
                         d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
                 } else {
