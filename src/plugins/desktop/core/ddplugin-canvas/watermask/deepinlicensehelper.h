@@ -28,6 +28,13 @@ public:
         TrialAuthorized,
         TrialExpired
     };
+    enum LicenseProperty{
+        Noproperty = 0,
+        Secretssecurity,
+        Government,
+        Enterprise
+    };
+
     static DeepinLicenseHelper *instance();
     void init();
     void delayGetState();
@@ -45,6 +52,8 @@ private slots:
 private:
     static void createInterface();
     static void getLicenseState(DeepinLicenseHelper *);
+    LicenseProperty getServiceProperty();
+    LicenseProperty getAuthorizationProperty();
 private:
     std::once_flag initFlag;
     QFuture<void> work;
