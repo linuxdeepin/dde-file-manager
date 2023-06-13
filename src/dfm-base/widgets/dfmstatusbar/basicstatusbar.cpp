@@ -40,7 +40,7 @@ void BasicStatusBar::clearLayoutAndAnchors()
     DAnchorsBase::clearAnchors(this);
 }
 
-void BasicStatusBar::itemSelected(const QList<QUrl> &urls)
+void BasicStatusBar::itemSelected(const QList<FileInfo *> &infoList)
 {
     if (!d->tip)
         return;
@@ -49,13 +49,36 @@ void BasicStatusBar::itemSelected(const QList<QUrl> &urls)
     d->fileSize = 0;
     d->folderCount = 0;
     d->folderContains = 0;
-    QString selectItems;
-    if (urls.count() > 0) {// 同时有文件夹和文件时, 统一显示成项
-        selectItems = d->onlyOneItemSelected.arg(QString::number(urls.count()));;
-    } else {
-        selectItems = "";
+
+    QList<QUrl> dirUrlList;
+    for (const FileInfo *info : infoList) {
+        if (info->isAttributes(OptInfoType::kIsDir)) {
+            d->folderCount += 1;
+            dirUrlList << info->urlOf(UrlInfoType::kUrl);
+        } else {
+            d->fileCount += 1;
+            d->fileSize += info->size();
+        }
     }
-    d->tip->setText(QString("%1").arg(selectItems));
+
+    d->showContains = true;
+    const bool dirUrlsEmpty = dirUrlList.isEmpty();
+    if (!dirUrlsEmpty) {
+        // check mtp setting
+        const bool showInfo = Application::instance()->genericAttribute(Application::GenericAttribute::kMTPShowBottomInfo).toBool();
+        if (!showInfo) {
+            bool isMtp = FileUtils::isMtpFile(dirUrlList.first());
+            if (isMtp) {
+                d->showContains = false;
+            } else {
+                d->calcFolderContains(dirUrlList);
+            }
+        } else {
+            d->calcFolderContains(dirUrlList);
+        }
+    }
+
+    updateStatusMessage();
 }
 
 void BasicStatusBar::itemCounted(const int count)

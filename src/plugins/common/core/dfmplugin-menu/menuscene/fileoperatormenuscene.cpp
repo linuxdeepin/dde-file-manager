@@ -172,7 +172,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
-    if (d->selectFileInfos.count() > 1) {
+    if (d->selectFiles.count() > 1) {
         // open
         if (auto open = d->predicateAction.value(ActionID::kOpen)) {
 
@@ -187,12 +187,8 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
             supportedMimeTypes.removeAll("");
 
             QString errString;
-            QList<QUrl> redirectedUrls;
-            auto tempSelectInfos = d->selectFileInfos;
-            if (d->selectFiles.count() > d->selectFileInfos.count())
-                tempSelectInfos << InfoFactory::create<FileInfo>(d->selectFiles.last());
-
-            for (auto info : tempSelectInfos) {
+            for (auto url : d->selectFiles) {
+                auto info = InfoFactory::create<FileInfo>(url);
                 if (Q_UNLIKELY(info.isNull())) {
                     qDebug() << errString;
                     break;

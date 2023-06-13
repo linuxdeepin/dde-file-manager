@@ -665,7 +665,6 @@ void FileView::onSelectAndEdit(const QUrl &url)
 
     selectionModel()->clear();
     selectFiles({ url });
-    model()->data(index, kItemCreateFileInfo);
     edit(index, QAbstractItemView::AllEditTriggers, nullptr);
 }
 
@@ -1149,7 +1148,7 @@ QModelIndexList FileView::selectedIndexes() const
         QModelIndexList indexes = fileSelectionModel->selectedIndexes();
 
         auto isInvalid = [=](const QModelIndex &index) {
-            return !(index.isValid());
+            return !(index.isValid() && model()->fileInfo(index));
         };
 
         indexes.erase(std::remove_if(indexes.begin(), indexes.end(), isInvalid),
@@ -1491,13 +1490,17 @@ void FileView::updateStatusBar()
         return;
 
     int count = selectedIndexCount();
+
     if (count == 0) {
         d->statusBar->itemCounted(model()->rowCount(rootIndex()));
         return;
     }
 
-    auto ulrs = selectedUrlList();
-    d->statusBar->itemSelected(ulrs);
+    QList<FileInfo *> list;
+    for (const QModelIndex &index : selectedIndexes())
+        list << model()->fileInfo(index).data();
+
+    d->statusBar->itemSelected(list);
 }
 
 void FileView::updateLoadingIndicator()

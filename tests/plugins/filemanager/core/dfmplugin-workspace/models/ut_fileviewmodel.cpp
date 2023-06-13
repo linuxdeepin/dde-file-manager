@@ -63,8 +63,6 @@ TEST_F(UT_FileViewModel, SetRootUrl) {
     auto index = model->setRootUrl(QUrl());
     EXPECT_FALSE(index.isValid());
 
-    stub.set_lamda(ADDR(FileViewModel, closeCursorTimer),[]{});
-
     bool beginReset { false };
     bool endReset { false };
     stub.set_lamda(ADDR(FileViewModel, beginResetModel), [&beginReset]{ beginReset = true; });

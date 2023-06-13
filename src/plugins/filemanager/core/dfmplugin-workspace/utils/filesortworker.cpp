@@ -638,9 +638,6 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
     if (!itemdata)
         return;
 
-    if (!itemdata->fileInfo())
-        itemdata->data(Global::ItemRoles::kItemCreateFileInfo);
-
     auto fileInfo = itemdata->fileInfo();
     if (!fileInfo || QString::number(quintptr(fileInfo.data()), 16) != infoPtr)
         return;
@@ -653,7 +650,8 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
 
 void FileSortWorker::checkNameFilters(FileItemData *itemData)
 {
-    if (!itemData || itemData->data(kItemFileIsDir).toBool() || nameFilters.isEmpty())
+    if (!itemData || (itemData->fileInfo() && itemData->fileInfo()->isAttributes(OptInfoType::kIsDir))
+            || nameFilters.isEmpty())
         return;
 
     QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
