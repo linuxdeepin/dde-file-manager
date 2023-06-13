@@ -81,7 +81,7 @@ QVariant FileItemData::data(int role) const
     case kItemIconRole:
         if (info)
             return info->fileIcon();
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("empty");
     case kItemFileSizeRole:
         if (info)
             return info->displayOf(DisPlayInfoType::kSizeDisplayName);
@@ -101,7 +101,7 @@ QVariant FileItemData::data(int role) const
     case kItemFileDisplayNameRole:
         if (info)
             return info->displayOf(DisPlayInfoType::kFileDisplayName);
-        return QString();
+        return url.fileName();
     case kItemFileLastReadRole:
         if (info)
             return info->customData(dfmbase::Global::kItemFileLastReadRole);
