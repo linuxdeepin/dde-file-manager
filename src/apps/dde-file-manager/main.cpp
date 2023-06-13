@@ -57,12 +57,6 @@ static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
  * - reuse the existing D-Bus session at login time if there is one.
  * see https://unix.stackexchange.com/questions/44317/reuse-d-bus-sessions-across-login-sessions for that.
  */
-#ifdef ENABLE_SMB_IN_ADMIN
-/*
- * these environments are setted to make DBus runable in ADMIN mode to solve the
- * smb mount issue in ADMIN mode. since smb-browser plugin is disabled in ADMIN mode, these
- * environments are no longer needed.
- * */
 static void setEnvForRoot()
 {
     QProcess p;
@@ -87,7 +81,6 @@ static void setEnvForRoot()
         }
     }
 }
-#endif
 
 static bool isLoadVaultPlugin()
 {
@@ -205,10 +198,8 @@ static void initEnv()
         setenv("QT_IM_MODULE", "fcitx", 1);
     }
 
-#ifdef ENABLE_SMB_IN_ADMIN
     if (SysInfoUtils::isOpenAsAdmin())
         setEnvForRoot();
-#endif
 }
 
 static void initLog()
