@@ -289,7 +289,7 @@ void CommandParser::openInUrls()
         argumentUrls.append(url);
     }
     if (argumentUrls.isEmpty())
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), false);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), true);
     for (const QUrl &url : argumentUrls)
         openWindowWithUrl(url);
 }

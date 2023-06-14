@@ -7,6 +7,8 @@
 
 #include "dfmplugin_core_global.h"
 
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+
 #include <QObject>
 #include <QVariant>
 
@@ -22,8 +24,13 @@ public:
 
 public:
     void cd(quint64 windowId, const QUrl &url);
-    void openNewWindow(const QUrl &url, const QVariant &opt = QVariant());
+    void openWindow(const QUrl &url, const QVariant &opt = QVariant());
     void cacheDefaultWindow();
+
+private:
+    DFMBASE_NAMESPACE::FileManagerWindow *defaultWindow();
+    DFMBASE_NAMESPACE::FileManagerWindow *createNewWindow(const QUrl &url);
+    DFMBASE_NAMESPACE::FileManagerWindow *findExistsWindow(const QUrl &url);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;

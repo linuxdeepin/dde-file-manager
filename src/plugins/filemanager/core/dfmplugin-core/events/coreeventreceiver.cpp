@@ -44,14 +44,14 @@ void CoreEventReceiver::handleOpenWindow(const QUrl &url)
 {
     Q_ASSERT(qApp->applicationName() == "dde-file-manager");
 
-    CoreHelper::instance().openNewWindow(url);
+    CoreHelper::instance().openWindow(url);
 }
 
 void CoreEventReceiver::handleOpenWindow(const QUrl &url, const QVariant &opt)
 {
     Q_ASSERT(qApp->applicationName() == "dde-file-manager");
 
-    CoreHelper::instance().openNewWindow(url, opt);
+    CoreHelper::instance().openWindow(url, opt);
 }
 
 void CoreEventReceiver::handleLoadPlugins(const QStringList &names)

@@ -28,7 +28,7 @@ public:
     static FileManagerWindowsManager &instance();
 
     void setCustomWindowCreator(WindowCreator creator);
-    FMWindow *createWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
+    FMWindow *createWindow(const QUrl &url, bool isNewWindow = true, QString *errorString = nullptr);
     void showWindow(FMWindow *window);
     quint64 findWindowId(const QWidget *window);
     FMWindow *findWindowById(quint64 winId);

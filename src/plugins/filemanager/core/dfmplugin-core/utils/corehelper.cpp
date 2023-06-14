@@ -5,7 +5,6 @@
 #include "corehelper.h"
 
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/event/event.h>
@@ -55,13 +54,20 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     }
 }
 
-void CoreHelper::openNewWindow(const QUrl &url, const QVariant &opt)
+void CoreHelper::openWindow(const QUrl &url, const QVariant &opt)
 {
-    FMWindowsIns.resetPreviousActivedWindowId();
+    // performance:
+    // if a window is opened that is cached, then just activate it
+    bool openNew { opt.isValid() ? opt.toBool() : true };
+    auto oldWindow { defaultWindow() };
+    if (openNew && oldWindow)
+        openNew = false;
 
-    auto window { FMWindowsIns.createWindow(url, opt.isValid() ? opt.toBool() : true) };
+    FMWindowsIns.resetPreviousActivedWindowId();
+    FileManagerWindow *window { openNew ? createNewWindow(url)
+                                        : findExistsWindow(url) };
     if (!window) {
-        qWarning() << "Create window failed for: " << url;
+        qCritical() << "Create window failed for: " << url;
         return;
     }
 
@@ -78,6 +84,40 @@ void CoreHelper::cacheDefaultWindow()
     window->removeEventFilter(this);
     // cache all UI components
     QMetaObject::invokeMethod(window, "aboutToOpen", Qt::DirectConnection);
+}
+
+FileManagerWindow *CoreHelper::defaultWindow()
+{
+    const auto &idList { FMWindowsIns.windowIdList() };
+    if (idList.size() == 1) {
+        auto window { FMWindowsIns.findWindowById(idList.first()) };
+        if (window && window->isHidden())
+            return window;
+    }
+
+    return {};
+}
+
+FileManagerWindow *CoreHelper::createNewWindow(const QUrl &url)
+{
+    qInfo() << "Create new window for: " << url;
+    return FMWindowsIns.createWindow(url, true);
+}
+
+FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
+{
+    qInfo() << "Find exists window for: " << url;
+    auto window { FMWindowsIns.createWindow(url, false) };
+    if (window)
+        return window;
+
+    qWarning() << "Cannot find exists window for:" << url;
+    auto oldWindow { defaultWindow() };
+    if (oldWindow) {
+        qInfo() << "Close cached default window";
+        oldWindow->close();
+    }
+    return createNewWindow(url);
 }
 
 bool CoreHelper::eventFilter(QObject *watched, QEvent *event)
