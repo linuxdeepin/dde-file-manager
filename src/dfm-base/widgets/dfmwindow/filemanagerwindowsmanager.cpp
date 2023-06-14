@@ -9,6 +9,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/shortcut/shortcut.h>
 
 #include <QDebug>
@@ -49,7 +50,7 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
     for (int i = 0; i != count; ++i) {
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
-        if (window && window->currentUrl() == url) {
+        if (window && UniversalUtils::urlEquals(window->currentUrl(), url)) {
             qInfo() << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
@@ -97,7 +98,7 @@ void FileManagerWindowsManagerPrivate::loadWindowState(FileManagerWindow *window
         // make window to be maximized.
         // the following calling is copyed from QWidget::showMaximized()
         window->setWindowState((window->windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen))
-                       | Qt::WindowMaximized);
+                               | Qt::WindowMaximized);
     } else {
         window->resize(width, height);
     }
@@ -199,10 +200,9 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     // Directly active window if the window exists
     if (!isNewWindow) {
         auto window = d->activeExistsWindowByUrl(showedUrl);
-        if (window)
-            return window;
-        else
+        if (!window)
             qWarning() << "Cannot find a exists window by url: " << showedUrl;
+        return window;
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
