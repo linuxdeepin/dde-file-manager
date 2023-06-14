@@ -16,7 +16,7 @@
 #include <QWindow>
 #include <QTimer>
 #include <QEventLoop>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QScreen>
 
 #include <mutex>
