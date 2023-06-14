@@ -161,6 +161,37 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
     return true;
 }
 
+bool FileOperateBaseWorker::checkFileSize(qint64 size, const QUrl &fromUrl,
+                                          const QUrl &toUrl,
+                                          QSharedPointer<StorageInfo> targetStorageInfo, bool *skip)
+{
+    if (!targetStorageInfo || !targetStorageInfo->isValid()) {
+        return true;
+    }
+
+    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+
+    const QString &fs_type = targetStorageInfo->fileSystemType();
+
+    if (fs_type != "vfat")
+        return true;
+    if (size < 4l * 1024 * 1024 * 1024)
+        return true;
+
+    action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kFileSizeTooBigError);
+
+    if (action == AbstractJobHandler::SupportAction::kEnforceAction)
+        return true;
+
+    if (action != AbstractJobHandler::SupportAction::kNoAction) {
+        setSkipValue(skip, action);
+        workData->skipWriteSize += size;
+        return false;
+    }
+
+    return true;
+}
+
 /*!
  * \brief FileOperateBaseWorker::deleteFile Delete file
  * \param fromUrl URL of the source file
@@ -294,6 +325,10 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
         }
     } else {
         const QUrl &url = toInfo->urlOf(UrlInfoType::kUrl);
+
+        // check file file size bigger than 4 GB
+        if (!checkFileSize(fromInfo->size(), fromInfo->urlOf(UrlInfoType::kUrl), url, targetStorageInfo, skip))
+            return ok;
 
         FileUtils::cacheCopyingFileUrl(url);
         initSignalCopyWorker();
@@ -535,6 +570,11 @@ bool FileOperateBaseWorker::checkAndCopyFile(const FileInfoPointer fromInfo, con
         return false;
     }
     checkRetry();
+    // check file file size bigger than 4 GB
+    if (!checkFileSize(fromInfo->size(), fromInfo->urlOf(UrlInfoType::kUrl),
+                       toInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, skip))
+        return false;
+
     if (jobType == AbstractJobHandler::JobType::kCutType)
         return doCopyOtherFile(fromInfo, toInfo, skip);
 

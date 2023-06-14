@@ -48,6 +48,8 @@ public:
                         bool *skip, bool isCountSize = false);
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl,
                                  QSharedPointer<StorageInfo> targetStorageInfo, bool *skip);
+    bool checkFileSize(qint64 size, const QUrl &fromUrl,
+                       const QUrl &toUrl, QSharedPointer<StorageInfo> targetStorageInfo, bool *skip);
     void setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo);
     void setAllDirPermisson();
     void determineCountProcessType();
