@@ -31,6 +31,7 @@ public slots:
     void removeSideBarVaultItem();
     void removeComputerVaultItem();
     void onComputerRefresh();
+    void addVaultComputerMenu();
 
 public:
     static VaultVisibleManager *instance();
