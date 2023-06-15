@@ -90,21 +90,11 @@ void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, c
     }
 }
 
-void FileOperatorProxyPrivate::delaySelectUrls(const QList<QUrl> &urls, int ms)
+void FileOperatorProxyPrivate::delaySelectUrls(const QList<QUrl> &urls)
 {
-    if (nullptr != selectTimer.get())
-        selectTimer->stop();
-
-    if (ms < 1) {
+    QTimer::singleShot(qMax(urls.count() * (10 + urls.count() / 150), 200), this, [=] {
         doSelectUrls(urls);
-    } else {
-        selectTimer.reset(new QTimer);
-        selectTimer->setSingleShot(true);
-        connect(selectTimer.get(), &QTimer::timeout, this, [&, urls]() {
-            this->doSelectUrls(urls);
-        });
-        selectTimer->start(ms);
-    }
+    });
 }
 
 void FileOperatorProxyPrivate::doSelectUrls(const QList<QUrl> &urls)

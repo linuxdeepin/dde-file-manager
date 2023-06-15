@@ -35,14 +35,13 @@ public:
     void callBackPasteFiles(const JobInfoPointer info);
     void callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets);
 
-    void delaySelectUrls(const QList<QUrl> &urls, int ms = 10);
+    void delaySelectUrls(const QList<QUrl> &urls);
     void doSelectUrls(const QList<QUrl> &urls);
 
     void filterDesktopFile(QList<QUrl> &urls);
 
 public:
     FileOperatorProxy *const q = nullptr;
-    QSharedPointer<QTimer> selectTimer;
     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack;
 
     QPair<QString, QPair<int, QPoint>> touchFileData;
