@@ -24,6 +24,7 @@
 #include <dfm-base/file/entry/entities/abstractentryfileentity.h>
 
 #include <dfm-framework/event/event.h>
+#include <dfm-framework/dpf.h>
 
 #include <DSysInfo>
 
@@ -67,31 +68,49 @@ void VaultVisibleManager::infoRegister()
 
 void VaultVisibleManager::pluginServiceRegister()
 {
-    if (isVaultEnabled()) {
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", VaultHelper::instance()->scheme());
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
+    if (!isVaultEnabled())
+        return;
 
-        CustomViewExtensionView customView { VaultHelper::createVaultPropertyDialog };
-        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
-                             customView, VaultHelper::instance()->scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", VaultHelper::instance()->scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
 
-        BasicViewFieldFunc func { ServiceManager::basicViewFieldFunc };
-        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
-                             func, VaultHelper::instance()->scheme());
-        BasicViewFieldFunc detailViewFunc { ServiceManager::detailViewFieldFunc };
-        dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Register",
-                             detailViewFunc, VaultHelper::instance()->scheme());
-        dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Root_Register",
-                             detailViewFunc, VaultHelper::instance()->scheme());
+    CustomViewExtensionView customView { VaultHelper::createVaultPropertyDialog };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
+                         customView, VaultHelper::instance()->scheme());
 
-        QStringList &&filtes { kFileChangeTimeField, kFileSizeField };
-        dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
-                             VaultHelper::instance()->sourceRootUrlWithSlash().path(), filtes);
+    BasicViewFieldFunc func { ServiceManager::basicViewFieldFunc };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                         func, VaultHelper::instance()->scheme());
+    BasicViewFieldFunc detailViewFunc { ServiceManager::detailViewFieldFunc };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Register",
+                         detailViewFunc, VaultHelper::instance()->scheme());
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Root_Register",
+                         detailViewFunc, VaultHelper::instance()->scheme());
 
-        dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
-        dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");
-        dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
+    QStringList &&filtes { kFileChangeTimeField, kFileSizeField };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                         VaultHelper::instance()->sourceRootUrlWithSlash().path(), filtes);
+    auto computerPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-computer") };
+    if (computerPlugin && computerPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        addVaultComputerMenu();
+    } else {
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-computer")
+                        addVaultComputerMenu();
+                },
+                Qt::DirectConnection);
     }
+}
+
+void VaultVisibleManager::addVaultComputerMenu()
+{
+    dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
+    bool ok = dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");
+    if (!ok)
+        qCritical() << "addVaultComputerMenu failed";
+    dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
 }
 
 void VaultVisibleManager::addSideBarVaultItem()
