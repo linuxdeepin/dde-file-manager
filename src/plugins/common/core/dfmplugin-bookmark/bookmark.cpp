@@ -47,8 +47,12 @@ void BookMark::onWindowOpened(quint64 winId)
 
 void BookMark::onSideBarInstallFinished()
 {
-    DefaultItemManager::instance()->initDefaultItems();
-    BookMarkManager::instance()->addQuickAccessItemsFromConfig();
+    // Workaround: Each process only needs to initialize the bookmark data once
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        DefaultItemManager::instance()->initDefaultItems();
+        BookMarkManager::instance()->addQuickAccessItemsFromConfig();
+    });
 }
 
 void BookMark::bindScene(const QString &parentScene)
