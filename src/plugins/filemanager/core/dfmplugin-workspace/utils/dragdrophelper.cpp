@@ -24,6 +24,7 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMBASE_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
 DragDropHelper::DragDropHelper(FileView *parent)
