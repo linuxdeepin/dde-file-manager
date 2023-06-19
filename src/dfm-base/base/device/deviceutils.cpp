@@ -15,6 +15,7 @@
 #include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-io/dfile.h>
+#include <dfm-io/dfmio_utils.h>
 
 #include <QVector>
 #include <QDebug>
@@ -495,6 +496,16 @@ bool DeviceUtils::isMountPointOfDlnfs(const QString &path)
     return findDlnfsPath(path, [](const QString &target, const QString &compare) {
         return target == compare;
     });
+}
+
+QString DeviceUtils::fileSystemType(const QUrl &url)
+{
+    return DFMIO::DFMUtils::fsTypeFromUrl(url);
+}
+
+qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
+{
+    return DFMIO::DFMUtils::deviceBytesFree(url);
 }
 
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)

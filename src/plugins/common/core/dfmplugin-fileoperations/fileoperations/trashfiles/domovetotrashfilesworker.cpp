@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "domovetotrashfilesworker.h"
-#include "fileoperations/copyfiles/storageinfo.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
@@ -43,9 +42,6 @@ bool DoMoveToTrashFilesWorker::doWork()
 {
     if (!AbstractWorker::doWork())
         return false;
-
-    // check progress notify type
-    determineCountProcessType();
 
     doMoveToTrash();
 

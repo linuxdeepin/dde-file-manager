@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dorestoretrashfilesworker.h"
-#include "fileoperations/copyfiles/storageinfo.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
