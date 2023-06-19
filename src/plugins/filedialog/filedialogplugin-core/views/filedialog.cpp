@@ -396,6 +396,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
         || d->fileMode == QFileDialog::Directory) {
         // 清理只显示目录时对文件名添加的过滤条件
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList());
+        curNameFilters.clear();
     }
 
     d->fileMode = mode;
@@ -409,6 +410,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList("/"));
+        curNameFilters = QStringList("/");
         // fall through
         [[fallthrough]];
     default:
@@ -808,6 +810,7 @@ void FileDialog::selectNameFilterByIndex(int index)
         newNameFilters = QStringList("/");
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), newNameFilters);
+    curNameFilters = newNameFilters;
 }
 
 int FileDialog::selectedNameFilterIndex() const
@@ -900,6 +903,7 @@ void FileDialog::handleUrlChanged(const QUrl &url)
         onCurrentInputNameChanged();
     }
     emit initialized();
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), curNameFilters);
 }
 
 void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)

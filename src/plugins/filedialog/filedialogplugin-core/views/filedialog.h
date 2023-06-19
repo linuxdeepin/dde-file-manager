@@ -132,6 +132,7 @@ private:
 
 private:
     QScopedPointer<FileDialogPrivate> d;
+    QStringList curNameFilters {};
 };
 
 }
