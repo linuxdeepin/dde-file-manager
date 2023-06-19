@@ -12,6 +12,7 @@
 #include <DStyledItemDelegate>
 
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarItemDelegate : public DStyledItemDelegate
