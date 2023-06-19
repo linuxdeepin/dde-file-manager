@@ -213,7 +213,7 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         tmp->isReadable = sortInfo->isReadable;
         tmp->isWriteable = sortInfo->isWriteable;
         tmp->isExecutable = sortInfo->isExecutable;
-        wsortlist.append(wsortlist);
+        wsortlist.append(tmp);
     }
     return wsortlist;
 }
