@@ -68,7 +68,30 @@ void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
 {
     if (info->keys().contains(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey)) {
         QList<QUrl> files = info->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>();
-        delaySelectUrls(files);
+
+        q->clearPasteFileData();
+
+        // clear all selection.
+        auto sel = CanvasIns->selectionModel();
+        if (sel)
+            sel->clear();
+
+        auto model = CanvasIns->model();
+        if (model && sel) {
+            for (const QUrl &url : files) {
+                auto idx = model->index(url);
+                if (idx.isValid()) {
+                    // selecting this file that is existed in model.
+                    sel->select(idx, QItemSelectionModel::Select);
+                } else {
+                    // record the file is not existed and selecting it when it is inserted.
+                    pasteFileData.insert(url);
+                }
+            }
+        } else {
+            qWarning() << "there were no model and selection model.";
+            pasteFileData = files.toSet();
+        }
     }
 }
 
@@ -90,59 +113,6 @@ void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, c
     }
 }
 
-void FileOperatorProxyPrivate::delaySelectUrls(const QList<QUrl> &urls, int ms)
-{
-    if (nullptr != selectTimer.get())
-        selectTimer->stop();
-
-    if (ms < 1) {
-        doSelectUrls(urls);
-    } else {
-        selectTimer.reset(new QTimer);
-        selectTimer->setSingleShot(true);
-        connect(selectTimer.get(), &QTimer::timeout, this, [&, urls]() {
-            this->doSelectUrls(urls);
-        });
-        selectTimer->start(ms);
-    }
-}
-
-void FileOperatorProxyPrivate::doSelectUrls(const QList<QUrl> &urls)
-{
-    auto view = CanvasIns->views().first();
-    if (Q_UNLIKELY(nullptr == view))
-        return;
-
-    if (urls.isEmpty()) {
-        // clear
-        view->selectionModel()->clearSelection();
-        view->selectionModel()->clearCurrentIndex();
-        return;
-    }
-
-    QModelIndexList indexs;
-    for (auto url : urls) {
-        QModelIndex index = view->model()->index(url);
-        indexs << index;
-    }
-
-    if (indexs.isEmpty()) {
-        qWarning() << "select url failed,file does not exist?files:" << urls;
-        return;
-    }
-
-    /*!
-     * File pasting is an asynchronous operation.
-     * The actual order of creating files (index) is inconsistent with the last file in the callback function.
-     * Topleft and bottomright cannot be directly selected from the last file.
-     * Only can empty the original selection and then select new files one by one
-    */
-
-    view->selectionModel()->clearSelection();
-    for (auto index : indexs) {
-        view->selectionModel()->select(index, QItemSelectionModel::Select);
-    }
-}
 
 void FileOperatorProxyPrivate::filterDesktopFile(QList<QUrl> &urls)
 {
@@ -383,6 +353,21 @@ void FileOperatorProxy::removeRenameFileData(const QUrl &oldUrl)
 void FileOperatorProxy::clearRenameFileData()
 {
     d->renameFileData.clear();
+}
+
+QSet<QUrl> FileOperatorProxy::pasteFileData() const
+{
+    return d->pasteFileData;
+}
+
+void FileOperatorProxy::removePasteFileData(const QUrl &oldUrl)
+{
+    d->pasteFileData.remove(oldUrl);
+}
+
+void FileOperatorProxy::clearPasteFileData()
+{
+    d->pasteFileData.clear();
 }
 
 void FileOperatorProxy::callBackFunction(const AbstractJobHandler::CallbackArgus args)

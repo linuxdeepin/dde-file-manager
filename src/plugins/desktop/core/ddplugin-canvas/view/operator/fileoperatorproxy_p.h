@@ -9,6 +9,7 @@
 
 #include <QTimer>
 #include <QUrl>
+#include <QSet>
 
 namespace ddplugin_canvas {
 
@@ -35,9 +36,6 @@ public:
     void callBackPasteFiles(const JobInfoPointer info);
     void callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets);
 
-    void delaySelectUrls(const QList<QUrl> &urls, int ms = 10);
-    void doSelectUrls(const QList<QUrl> &urls);
-
     void filterDesktopFile(QList<QUrl> &urls);
 
 public:
@@ -47,6 +45,7 @@ public:
 
     QPair<QString, QPair<int, QPoint>> touchFileData;
     QHash<QUrl, QUrl> renameFileData;
+    QSet<QUrl> pasteFileData;
 };
 
 }
