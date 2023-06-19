@@ -491,14 +491,9 @@ void CanvasManagerPrivate::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, int last)
 {
-    for (int i = first; i <= last; i++) {
-        QModelIndex index = canvasModel->index(i, 0, parent);
-        if (Q_UNLIKELY(!index.isValid()))
-            continue;
-        QUrl url = canvasModel->fileUrl(index);
-
-        const QString &&path = url.toString();
-        const auto &touchFileData = FileOperatorProxyIns->touchFileData();
+    auto fileInsertByTouch = [this ](const QUrl &url)-> bool {
+        const QString path = url.toString();
+        auto touchFileData = FileOperatorProxyIns->touchFileData();
         if (path == touchFileData.first) {
             if (CanvasGrid::Mode::Custom == GridIns->mode()) {
                 GridIns->tryAppendAfter({ path }, touchFileData.second.first, touchFileData.second.second);
@@ -508,15 +503,48 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
             FileOperatorProxyIns->clearTouchFileData();
 
             // need open editor,only by menu create file
+            qInfo() << "grid touch file " << path;
             q->openEditor(url);
-        } else {
-            QPair<int, QPoint> pos;
-            if (GridIns->point(path, pos)) {
-                // already exists
-                continue;
-            }
-            GridIns->append(path);
+            return true;
         }
+
+        return false;
+    };
+
+    auto fileInsertByPasted = [this ](const QUrl &url, const QModelIndex &index)-> bool {
+        auto pasteFileData = FileOperatorProxyIns->pasteFileData();
+        if (pasteFileData.contains(url)) {
+            FileOperatorProxyIns->removePasteFileData(url);
+            selectionModel->select(index, QItemSelectionModel::Select);
+        }
+
+        return false;
+    };
+
+    auto fileInsertToGrid = [this ](const QUrl &url) {
+        const QString path = url.toString();
+        QPair<int, QPoint> pos;
+
+        // file is not existed, append it.
+        if (!GridIns->point(path, pos))
+            GridIns->append(path);
+    };
+
+    for (int i = first; i <= last; i++) {
+        QModelIndex index = canvasModel->index(i, 0, parent);
+        if (Q_UNLIKELY(!index.isValid()))
+            continue;
+        QUrl url = canvasModel->fileUrl(index);
+
+        // append to grid on specified point and open editor
+        if (fileInsertByTouch(url))
+            continue;
+
+        // to select
+        fileInsertByPasted(url, index);
+
+        // append to grid.
+        fileInsertToGrid(url);
     }
 
     q->update();

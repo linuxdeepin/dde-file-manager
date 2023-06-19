@@ -86,7 +86,3 @@ void OperState::selectionChanged(const QItemSelection &selected, const QItemSele
         updateExpendedItem();
     }
 }
-
-
-
-

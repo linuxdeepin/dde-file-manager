@@ -50,6 +50,10 @@ public:
     void removeRenameFileData(const QUrl &oldUrl);
     void clearRenameFileData();
 
+    QSet<QUrl> pasteFileData() const;
+    void removePasteFileData(const QUrl &oldUrl);
+    void clearPasteFileData();
+
 public:
     void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
 
