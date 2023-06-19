@@ -126,7 +126,9 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPai
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
         return false;
 
-    const auto &tags = FileTagCacheController::instance().getCacheFileTags(info->pathOf(PathInfoType::kFilePath));
+    QString path = info->pathOf(PathInfoType::kFilePath);
+    path = FileUtils::bindPathTransform(path, false);
+    const auto &tags = FileTagCacheController::instance().getCacheFileTags(path);
     if (tags.isEmpty())
         return false;
 
@@ -152,7 +154,9 @@ bool TagManager::paintIconTagsHandle(const FileInfoPointer &info, const QRectF &
     if (!canTagFile(info))
         return false;
 
-    const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(info->pathOf(PathInfoType::kFilePath));
+    QString path = info->pathOf(PathInfoType::kFilePath);
+    path = FileUtils::bindPathTransform(path, false);
+    const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(path);
     if (fileTags.isEmpty())
         return false;
 

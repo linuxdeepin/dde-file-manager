@@ -15,6 +15,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_desktop_defines.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -147,7 +149,7 @@ bool TagMenuScene::triggered(QAction *action)
         iconRect = TagEventCaller::getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
     }
 
-    TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles, (d->currentDir.scheme() == TagManager::scheme()));
+    TagHelper::instance()->showTagEdit(viewRect, iconRect, selectedFiles(), (d->currentDir.scheme() == TagManager::scheme()));
 
     return AbstractMenuScene::triggered(action);
 }
@@ -167,12 +169,11 @@ void TagMenuScene::onHoverChanged(const QColor &color)
 {
     if (!d->selectFiles.isEmpty()) {
         QList<QColor> sameColors;
-        //1个以上就不查询原有标记信息，保证在大量文件选中下的流畅性
-        if (d->selectFiles.size() < 1) {
-            const auto &tagNames = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
-            const auto &colorInfos = TagManager::instance()->getTagsColor(tagNames);
-            if (colorInfos.isEmpty())
-                return;
+
+        const auto &tagNames = TagManager::instance()->getTagsByUrls(selectedFiles(), true).toStringList();
+        const auto &colorInfos = TagManager::instance()->getTagsColor(tagNames);
+
+        if (!colorInfos.isEmpty()) {
             QMap<QString, QColor>::const_iterator dataIt = colorInfos.begin();
             for (; dataIt != colorInfos.end(); ++dataIt) {
                 if (Q_LIKELY(dataIt.value().isValid()))
@@ -204,10 +205,10 @@ void TagMenuScene::onColorClicked(const QColor &color)
         QList<QColor> colors = tagWidget->checkedColorList();
         if (colors.contains(color)) {
             //add checked tag
-            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
+            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, selectedFiles());
         } else {
             // delete checked tag
-            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
+            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, selectedFiles());
         }
     }
 }
@@ -242,7 +243,7 @@ QAction *TagMenuScene::createColorListAction() const
 
     action->setDefaultWidget(colorListWidget);
 
-    QStringList tags = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
+    QStringList tags = TagManager::instance()->getTagsByUrls(selectedFiles(), true).toStringList();
     QList<QColor> colors;
 
     for (const QString &tag : tags) {
@@ -262,6 +263,26 @@ QAction *TagMenuScene::createColorListAction() const
     connect(colorListWidget, &TagColorListWidget::checkedColorChanged, this, &TagMenuScene::onColorClicked);
 
     return action;
+}
+
+/**
+ * @brief 转换被选中文件的url，保证/data/home和/home目录下相同文件url一致,tag菜单不应该直接使用d->selectFiles，需要转换。
+ * @return 返回selectFilesTransform
+ */
+QList<QUrl> TagMenuScene::selectedFiles() const
+{
+    if (d->selectFiles.isEmpty())
+        return QList<QUrl>();
+
+    const QUrl &url = d->selectFiles.at(0);
+    if (UniversalUtils::urlEquals(FileUtils::bindUrlTransform(url), url))
+        return d->selectFiles;
+
+    QList<QUrl> selectFilesTransform;
+    for (const auto &file : d->selectFiles) {
+        selectFilesTransform.append(FileUtils::bindUrlTransform(file));
+    }
+    return selectFilesTransform;
 }
 
 AbstractMenuScene *TagMenuCreator::create()

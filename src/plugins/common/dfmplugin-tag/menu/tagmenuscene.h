@@ -50,6 +50,7 @@ private:
     QAction *createTagAction() const;
     QAction *createColorListAction() const;
     QWidget *findDesktopView(QWidget *root) const;
+    QList<QUrl> selectedFiles() const;
 };
 
 }
