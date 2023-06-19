@@ -152,8 +152,10 @@ void FileOperatorHelper::copyFiles(const FileView *view)
         if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsReadable))
             return;
     }
+
     qInfo() << "Copy shortcut key to clipboard, selected urls: " << selectedUrls
             << ", current dir: " << view->rootUrl();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard,
@@ -175,6 +177,7 @@ void FileOperatorHelper::cutFiles(const FileView *view)
 
     qInfo() << "Cut shortcut key to clipboard, selected urls: " << selectedUrls
             << ", current dir: " << view->rootUrl();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard,
                                  windowId,
