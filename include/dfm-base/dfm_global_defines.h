@@ -90,7 +90,6 @@ enum ItemRoles {
     kItemFileCanDragRole = Qt::UserRole + 31,
     kItemFileSizeIntRole = Qt::UserRole + 32,
     kItemCreateFileInfoRole = Qt::UserRole + 33,
-
     kItemUnknowRole = Qt::UserRole + 999
 };
 

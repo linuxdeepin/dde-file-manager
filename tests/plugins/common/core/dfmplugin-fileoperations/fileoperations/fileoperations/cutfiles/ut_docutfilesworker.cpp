@@ -5,7 +5,6 @@
 #include "stubext.h"
 #include "plugins/common/core/dfmplugin-fileoperations/fileoperations/cutfiles/cutfiles.h"
 #include "plugins/common/core/dfmplugin-fileoperations/fileoperations/cutfiles/docutfilesworker.h"
-#include "plugins/common/core/dfmplugin-fileoperations/fileoperations/copyfiles/storageinfo.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
@@ -15,6 +14,8 @@
 #include <dfm-base/utils/clipboard.h>
 
 #include <dfm-framework/event/event.h>
+
+#include <dfm-io/dfmio_utils.h>
 
 #include <gtest/gtest.h>
 
@@ -135,7 +136,6 @@ TEST_F(UT_DoCutFilesWorker, testCutFiles)
 
 bool checkDiskSpaceAvailableFunc(DoCutFilesWorker *&, const QUrl &fromUrl,
                   const QUrl &toUrl,
-                  QSharedPointer<StorageInfo> targetStorageInfo,
                   bool *skip) {
     __DBG_STUB_INVOKE__
     if (skip)
@@ -241,13 +241,9 @@ TEST_F(UT_DoCutFilesWorker, testRenameFileByHandler)
     FileInfoPointer toInfo(nullptr);
     stub.set_lamda(&DoCutFilesWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return false;});
     bool skip{false};
-    worker.targetStorageInfo.reset(new StorageInfo(QDir::currentPath()));
     EXPECT_FALSE(worker.doRenameFile(sorceInfo, targetInfo, toInfo, "tests_iiii.txt", &skip));
 
-    stub.set_lamda(&StorageInfo::device, []{ __DBG_STUB_INVOKE__
-        return QByteArray("test-device");
-    });
-    stub.set_lamda(&QStorageInfo::device, []{ __DBG_STUB_INVOKE__
+    stub.set_lamda(&DFMUtils::deviceNameFromUrl, []{ __DBG_STUB_INVOKE__
         return QByteArray("test-device");
     });
     EXPECT_FALSE(worker.doRenameFile(sorceInfo, targetInfo, toInfo, "tests_iiii.txt", &skip));
