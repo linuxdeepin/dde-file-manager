@@ -76,18 +76,8 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
         QUrl localUrl = file->urlOf(UrlInfoType::kUrl);
-        if (file->canAttributes(CanableInfoType::kCanRedirectionFileUrl))
-            localUrl = file->urlOf(UrlInfoType::kRedirectedFileUrl);
-
         if (ClipBoard::instance()->clipboardFileUrlList().contains(localUrl))
             return true;
-
-        // the linked file only judges the URL, not the inode,
-        // because the inode of the linked file is consistent with that of the source file
-        if (!file->isAttributes(OptInfoType::kIsSymLink)) {
-            if (ClipBoard::instance()->clipboardFileInodeList().contains(file->extendAttributes(ExtInfoType::kInode).toULongLong()))
-                return true;
-        }
     }
 
     return false;
