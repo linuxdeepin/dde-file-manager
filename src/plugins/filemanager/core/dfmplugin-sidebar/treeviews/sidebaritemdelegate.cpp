@@ -82,6 +82,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QStyleOptionViewItem opt = option;
 
     DStyledItemDelegate::initStyleOption(&opt, index);
+
     painter->setRenderHint(QPainter::Antialiasing);
 
     DPalette palette(DPaletteHelper::instance()->palette(option.widget));
@@ -147,6 +148,8 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 #endif
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
     QIcon::Mode iconMode = (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted)) ? QIcon::Mode::Selected : QIcon::Mode::Normal;
+    if (iconMode != QIcon::Mode::Selected && !opt.widget->isActiveWindow())
+        iconMode = QIcon::Disabled;
     bool isEjectable = false;
     SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
     if (sidebarItem) {
@@ -159,6 +162,8 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     // Draw item text
     QFontMetrics metricsLabel(option.widget->font());
     painter->setPen(separatorItem ? Qt::gray : qApp->palette().color(QPalette::ColorRole::Text));
+    if (iconMode == QIcon::Disabled)
+        painter->setPen(Qt::gray);
     if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
         painter->setPen("#ffffff");
 
