@@ -90,6 +90,9 @@ void IconItemDelegate::paint(QPainter *painter,
 
     Q_D(const IconItemDelegate);
 
+    if (index.isValid())
+        index.data(Global::ItemRoles::kItemCreateFileInfoRole);
+
     if (index == d->expandedIndex && !parent()->isSelected(index))
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
 
