@@ -5,7 +5,6 @@
 #include "stubext.h"
 #include "plugins/common/core/dfmplugin-fileoperations/fileoperations/cleantrash/cleantrashfiles.h"
 #include "plugins/common/core/dfmplugin-fileoperations/fileoperations/cleantrash/docleantrashfilesworker.h"
-#include "plugins/common/core/dfmplugin-fileoperations/fileoperations/copyfiles/storageinfo.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>

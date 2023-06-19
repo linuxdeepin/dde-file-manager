@@ -12,8 +12,9 @@
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/standardpaths.h>
 
-#include <gtest/gtest.h>
+#include <dfm-io/dfmio_utils.h>
 
+#include <gtest/gtest.h>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -450,7 +451,7 @@ TEST_F(UT_FileOperateBaseWorker, testGetSectorsWritten)
     worker.targetUrl = url;
     worker.determineCountProcessType();
 
-    stub.set_lamda(&StorageInfo::fileSystemType,[]{ __DBG_STUB_INVOKE__ return QByteArray();});
+    stub.set_lamda(&DFMUtils::fsTypeFromUrl,[]{ __DBG_STUB_INVOKE__ return QByteArray();});
     worker.determineCountProcessType();
 }
 
