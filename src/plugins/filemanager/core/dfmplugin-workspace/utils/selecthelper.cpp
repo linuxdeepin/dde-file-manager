@@ -202,10 +202,16 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
 
 void SelectHelper::caculateAndSelectIndex(const QItemSelection &lastSelect, const QItemSelection &newSelect, QItemSelectionModel::SelectionFlags flags)
 {
-    const QModelIndexList &lastIndexes = lastSelect.indexes();
     const QModelIndexList &newIndexes = newSelect.indexes();
-    int lastCount = lastIndexes.count();
     int newCount = newIndexes.count();
+    if (newCount ==  1) {   // select one item
+        view->selectionModel()->select(newSelect, flags);
+        return;
+    }
+
+    const QModelIndexList &lastIndexes = lastSelect.indexes();
+    int lastCount = lastIndexes.count();
+
     if (newCount > lastCount) {
         QModelIndexList increaseIndexs;
         for (int i = 0; i < newCount; ++i) {
@@ -227,8 +233,9 @@ void SelectHelper::caculateAndSelectIndex(const QItemSelection &lastSelect, cons
             view->selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::NoUpdate);
         }
     } else {
-        if (newCount == 1) {    // click one item
-            view->selectionModel()->select(newSelect, flags);
+        view->selectionModel()->clearSelection();
+        for (const QModelIndex &index : newIndexes) {
+            view->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::NoUpdate);
         }
     }
 }
