@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "docopyfilesworker.h"
-#include "storageinfo.h"
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
 #include <dfm-base/utils/clipboard.h>
@@ -49,6 +48,12 @@ bool DoCopyFilesWorker::doWork()
 
     // check progress notify type
     determineCountProcessType();
+
+    // 检查磁盘空间
+    if (!checkTotalDiskSpaceAvailable(sourceUrls.isEmpty() ? QUrl() : sourceUrls.first(), targetOrgUrl, nullptr)){
+        endWork();
+        return false;
+    }
 
     // init copy file ways
     initCopyWay();
@@ -108,6 +113,9 @@ bool DoCopyFilesWorker::initArgs()
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;
     }
+
+    if (targetInfo->isAttributes(OptInfoType::kIsSymLink))
+        targetOrgUrl = QUrl::fromLocalFile(targetInfo->pathOf(PathInfoType::kSymLinkTarget));
 
     workData->needSyncEveryRW = FileUtils::isGvfsFile(targetUrl);
     if (!workData->needSyncEveryRW) {

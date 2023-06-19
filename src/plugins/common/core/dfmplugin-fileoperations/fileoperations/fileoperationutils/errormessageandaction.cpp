@@ -153,6 +153,8 @@ QString ErrorMessageAndAction::errorToString(const QUrl &url, const AbstractJobH
         return tr("Failed to parse the url of trash");
     case AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile:
         return tr("Restore failed: the original file does not exist");
+    case AbstractJobHandler::JobErrorType::kDfmIoError:
+        return tr("Copy or Cut File failed!");
     default:
         break;
     }
@@ -204,6 +206,8 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
         return tr("You do not have permission to traverse files in %1").arg(url.path());
     case AbstractJobHandler::JobErrorType::kSymlinkError:
         return tr("Failed to create symlink, cause: %1").arg(errorMsg);
+    case AbstractJobHandler::JobErrorType::kDfmIoError:
+        return tr("Copy or Cut File failed，cause: %1").arg(errorMsg);
     default:
         break;
     }

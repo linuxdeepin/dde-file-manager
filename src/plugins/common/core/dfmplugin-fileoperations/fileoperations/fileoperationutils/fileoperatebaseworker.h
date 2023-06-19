@@ -15,9 +15,7 @@
 class QObject;
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
-class StorageInfo;
 class DoCopyFileWorker;
-using StoragePointer = QSharedPointer<StorageInfo>;
 class FileOperateBaseWorker : public AbstractWorker, public QEnableSharedFromThis<FileInfo>
 {
 
@@ -46,10 +44,10 @@ public:
     bool doCheckNewFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                         FileInfoPointer &newTargetInfo, QString &fileNewName,
                         bool *skip, bool isCountSize = false);
-    bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl,
-                                 QSharedPointer<StorageInfo> targetStorageInfo, bool *skip);
     bool checkFileSize(qint64 size, const QUrl &fromUrl,
-                       const QUrl &toUrl, QSharedPointer<StorageInfo> targetStorageInfo, bool *skip);
+                       const QUrl &toUrl, bool *skip);
+    bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *skip);
+    bool checkTotalDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *skip);
     void setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo);
     void setAllDirPermisson();
     void determineCountProcessType();
@@ -98,7 +96,6 @@ private:
                              bool *skip, bool isCountSize = false);
     QUrl createNewTargetUrl(const FileInfoPointer &toInfo, const QString &fileName);
     bool doCopyLocalFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
-    bool doCopyExBlockFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
     bool doCopyOtherFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip);
     bool doCopyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip);
 
@@ -110,17 +107,6 @@ private:   // do copy local big file
                                  const int toFd, char *fromPoint, char *toPoint);
     int doOpenFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const bool isTo,
                    const int openFlag, bool *skip);
-
-private:   // do copy extra block file
-    void createExBlockFileCopyInfo(const FileInfoPointer fromInfo,
-                                   const FileInfoPointer toInfo,
-                                   const qint64 currentPos,
-                                   const bool closeFlag,
-                                   const qint64 size,
-                                   char *buffer = nullptr,
-                                   const bool isDir = false,
-                                   const QFileDevice::Permissions permission = QFileDevice::Permission::ReadOwner);
-    void startBlockFileCopy();
 
 protected Q_SLOTS:
     void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
@@ -138,14 +124,15 @@ private:
 protected:
     QTime time;   // time eslape
     FileInfoPointer targetInfo { nullptr };   // target file infor pointer
-    StoragePointer targetStorageInfo { nullptr };   // target file's device infor
-    CountWriteSizeType countWriteType { CountWriteSizeType::kTidType };   // get write size type
+    CountWriteSizeType countWriteType { CountWriteSizeType::kCustomizeType };   // get write size type
     long copyTid = { -1 };   // 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     qint64 targetDeviceStartSectorsWritten { 0 };   // 记录任务开始时目标磁盘设备已写入扇区数
     QString targetSysDevPath;   // /sys/dev/block/x:x
     qint16 targetLogSecionSize { 512 };   // 目标设备逻辑扇区大小
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     DirPermissonList dirPermissonList;   // dir set Permisson list
+    QFuture<void> syncResult;
+    QString blocakTargetRootPath;
 
     std::atomic_int threadCopyFileCount { 0 };
 };

@@ -28,7 +28,6 @@
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE
-class StorageInfo;
 class DoCopyFilesWorker : public FileOperateBaseWorker
 {
     friend class CopyFiles;

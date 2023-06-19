@@ -66,6 +66,9 @@ public:
     static bool isSubpathOfDlnfs(const QString &path);
     static bool isMountPointOfDlnfs(const QString &path);
 
+    static QString fileSystemType(const QUrl &url);
+    static qint64 deviceBytesFree(const QUrl &url);
+
 private:
     static bool hasMatch(const QString &txt, const QString &rex);
     using Compare = std::function<bool(const QString &, const QString &)>;
