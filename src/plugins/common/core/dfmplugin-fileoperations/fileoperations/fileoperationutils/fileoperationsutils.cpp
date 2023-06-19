@@ -5,6 +5,7 @@
 #include "fileoperationsutils.h"
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QDirIterator>
 #include <QUrl>
@@ -27,6 +28,7 @@ DPFILEOPERATIONS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QSet<QString> FileOperationsUtils::fileNameUsing = {};
+static constexpr char kFileBigSize[] { "dfm.operate.bigfilesize" };
 QMutex FileOperationsUtils::mutex;
 
 /*!
@@ -147,4 +149,13 @@ bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
         return !g_mount_can_unmount(destDirMount);
     }
     return true;
+}
+
+qint64 FileOperationsUtils::bigFileSize()
+{
+    // 获取当前配置
+    qint64 alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileBigSize).toLongLong();
+    if (alltotrash < 0)
+        return 0;
+    return alltotrash;
 }

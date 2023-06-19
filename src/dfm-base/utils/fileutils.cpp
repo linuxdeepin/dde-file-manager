@@ -66,6 +66,7 @@ static constexpr char kDDETrashId[] { "dde-trash" };
 static constexpr char kDDEComputerId[] { "dde-computer" };
 static constexpr char kDDEHomeId[] { "dde-home" };
 static constexpr char kSharePixmapPath[] { "/usr/share/pixmaps" };
+static constexpr char kFileAllTrash[] { "dfm.trash.allfiletotrash" };
 const static int kDefaultMemoryPageSize = 4096;
 
 QMutex FileUtils::cacheCopyingMutex;
@@ -1257,7 +1258,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     }
 
     // 获取当前配置
-    bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.trash.allfiletotrash").toBool();
+    bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
     if (!alltotrash)
         return isLocalDevice(url);
     if (!url.isValid())

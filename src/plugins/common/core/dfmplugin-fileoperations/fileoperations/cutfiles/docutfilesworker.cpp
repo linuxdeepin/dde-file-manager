@@ -4,10 +4,11 @@
 
 #include "docutfilesworker.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
-#include "fileoperations/copyfiles/storageinfo.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+
+#include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
 #include <QProcess>
@@ -91,7 +92,9 @@ bool DoCutFilesWorker::initArgs()
         return false;
     }
 
-    targetStorageInfo.reset(new StorageInfo(targetUrl.path()));
+    targetOrgUrl = targetUrl;
+    if (targetInfo->isAttributes(OptInfoType::kIsSymLink))
+        targetOrgUrl = QUrl::fromLocalFile(targetInfo->pathOf(PathInfoType::kSymLinkTarget));
 
     return true;
 }
@@ -112,7 +115,6 @@ bool DoCutFilesWorker::cutFiles()
                 continue;
             }
         }
-        fileInfo->refresh();
 
         // check self
         if (checkSelf(fileInfo))
@@ -185,13 +187,6 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
     qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->urlOf(UrlInfoType::kUrl) << " to url: " << targetPathInfo->urlOf(UrlInfoType::kUrl);
 
     bool result = false;
-    // check space
-    if (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, &result)) {
-        if (result)
-            workData->skipWriteSize += fromInfo->size();
-        return result;
-    }
-
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, &result))
         return result;
 
@@ -266,13 +261,10 @@ bool DoCutFilesWorker::renameFileByHandler(const FileInfoPointer &sourceInfo, co
 
 bool DoCutFilesWorker::doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, const QString fileName, bool *ok)
 {
-    QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
-    sourceStorageInfo.reset(new QStorageInfo(sourceInfo->urlOf(UrlInfoType::kUrl).path()));
-
     const QUrl &sourceUrl = sourceInfo->urlOf(UrlInfoType::kUrl);
 
     toInfo.reset();
-    if (sourceStorageInfo->device() == targetStorageInfo->device()) {
+    if (DFMIO::DFMUtils::deviceNameFromUrl(sourceInfo->urlOf(UrlInfoType::kUrl)) == DFMIO::DFMUtils::deviceNameFromUrl(targetOrgUrl)) {
         if (!doCheckFile(sourceInfo, targetPathInfo, fileName, toInfo, ok))
             return ok ? *ok : false;
 
