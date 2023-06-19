@@ -16,6 +16,7 @@
 
 #include <dfm-io/dfile.h>
 #include <dfm-burn/dburn_global.h>
+#include <dfm-io/dfmio_utils.h>
 
 #include <QVector>
 #include <QDebug>
@@ -562,6 +563,15 @@ QString DeviceUtils::getLongestMountRootPath(const QString &filePath)
 
     auto found = std::find_if(mpts.cbegin(), mpts.cend(), [path](const QString &mpt) { return path.startsWith(mpt); });
     return found != mpts.cend() ? *found : "/";
+}
+QString DeviceUtils::fileSystemType(const QUrl &url)
+{
+    return DFMIO::DFMUtils::fsTypeFromUrl(url);
+}
+
+qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
+{
+    return DFMIO::DFMUtils::deviceBytesFree(url);
 }
 
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)

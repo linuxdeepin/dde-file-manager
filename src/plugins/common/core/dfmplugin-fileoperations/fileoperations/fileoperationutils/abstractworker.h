@@ -159,6 +159,7 @@ public:
 
     QList<QUrl> sourceUrls;   // source urls
     QUrl targetUrl;   // target dir url
+    QUrl targetOrgUrl; // target origin url
     QList<QUrl> allFilesList;   // all files(contains children)
     QList<QUrl> completeSourceFiles;   // List of all copied files
     QList<QUrl> completeTargetFiles;   // List of all complete target files
