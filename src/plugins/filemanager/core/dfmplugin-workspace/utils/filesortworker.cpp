@@ -330,12 +330,6 @@ void FileSortWorker::setNameFilters(const QStringList &filters)
     nameFilters = filters;
     QMap<QUrl, FileItemData *>::iterator itr = childrenDataMap.begin();
     for (; itr != childrenDataMap.end(); ++itr) {
-        auto index = childrenUrlList.indexOf(itr.key());
-        if (index < 0)
-            continue;
-        auto sortInfo = children.at(index);
-        if (sortInfo && sortInfo->isDir)
-            continue;
         checkNameFilters(itr.value());
     }
     Q_EMIT requestUpdateView();
@@ -656,8 +650,7 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
 
 void FileSortWorker::checkNameFilters(FileItemData *itemData)
 {
-    if (!itemData
-            || nameFilters.isEmpty())
+    if (!itemData || itemData->data(Global::ItemRoles::kItemFileIsDirRole).toBool() || nameFilters.isEmpty())
         return;
 
     QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
