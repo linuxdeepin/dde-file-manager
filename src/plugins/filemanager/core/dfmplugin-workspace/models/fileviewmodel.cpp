@@ -557,6 +557,9 @@ QDir::Filters FileViewModel::getFilters() const
 
 void FileViewModel::setNameFilters(const QStringList &filters)
 {
+    if (nameFilters == filters)
+        return;
+
     nameFilters = filters;
     Q_EMIT requestChangeNameFilters(filters);
 }
