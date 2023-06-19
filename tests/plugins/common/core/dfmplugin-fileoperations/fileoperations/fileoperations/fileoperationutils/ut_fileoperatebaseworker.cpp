@@ -4,7 +4,6 @@
 
 #include "stubext.h"
 #include "plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.h"
-#include "plugins/common/core/dfmplugin-fileoperations/fileoperations/copyfiles/storageinfo.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
@@ -104,15 +103,14 @@ TEST_F(UT_FileOperateBaseWorker, testCheckDiskSpaceAvailable)
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     FileOperateBaseWorker worker;
     worker.workData.reset(new WorkerData);
-    EXPECT_TRUE(worker.checkDiskSpaceAvailable(url, url, nullptr, nullptr));
+    EXPECT_TRUE(worker.checkDiskSpaceAvailable(url, url, nullptr));
 
-    QSharedPointer<StorageInfo> storeInfo(new StorageInfo(url.path()));
-    EXPECT_TRUE(worker.checkDiskSpaceAvailable(url, url, storeInfo, nullptr));
+    EXPECT_TRUE(worker.checkDiskSpaceAvailable(url, url, nullptr));
 
     stub_ext::StubExt stub;
     stub.set_lamda(&FileOperationsUtils::isFilesSizeOutLimit, []{  __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
-    EXPECT_FALSE(worker.checkDiskSpaceAvailable(url, url, storeInfo, nullptr));
+    EXPECT_FALSE(worker.checkDiskSpaceAvailable(url, url, nullptr));
 }
 
 TEST_F(UT_FileOperateBaseWorker, testDeleteFile)

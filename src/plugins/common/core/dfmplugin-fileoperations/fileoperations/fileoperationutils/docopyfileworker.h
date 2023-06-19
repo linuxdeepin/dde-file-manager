@@ -13,6 +13,7 @@
 #include <dfm-base/file/local/localfilehandler.h>
 
 #include <dfm-io/dfile.h>
+#include <dfm-io/doperator.h>
 
 #include <QObject>
 
@@ -33,6 +34,11 @@ public:
         kStoped,
     };
 
+    struct ProgressData {
+        QUrl copyFile;
+        QSharedPointer<WorkerData> data{ nullptr };
+    };
+
 public:
     explicit DoCopyFileWorker(const QSharedPointer<WorkerData> &data, QObject *parent = nullptr);
     ~DoCopyFileWorker() override;
@@ -42,12 +48,15 @@ public:
     void stop();
     void skipMemcpyBigFile(const QUrl url);
     void operateAction(const AbstractJobHandler::SupportAction action);
+    // normal copy
     bool doCopyFilePractically(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
                                bool *skip);
-    void doFileCopy(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
-    void readExblockFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
-    void writeExblockFile();
+    // small file copy
+    void doFileCopy(FileInfoPointer fromInfo, FileInfoPointer toInfo);
+    // big file copy in system device
     void doMemcpyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, char *dest, char *source, size_t size);
+    // copy file by dfmio
+    bool doDfmioFileCopy(FileInfoPointer fromInfo, FileInfoPointer toInfo, bool *skip);
 signals:
     void ErrorFinished();
     void CompleteSize(const int size);
@@ -94,26 +103,9 @@ private:   // file copy
                              QSharedPointer<DFMIO::DFile> &toFile);
     void checkRetry();
     bool isStopped();
-
-private:   // block file copy
-    //清理当前拷贝信息
-    void releaseCopyInfo(const BlockFileCopyInfoPointer &info);
-    bool writeBlockFile(const BlockFileCopyInfoPointer &info, bool *skip);
-    void syncBlockFile(const BlockFileCopyInfoPointer &info, bool doOnce);
-    bool doWriteBlockFileCopy(const BlockFileCopyInfoPointer blockFileInfo);
-    int doOpenFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const bool isTo,
-                   const int openFlag, bool *skip);
-    BlockFileCopyInfoPointer doReadExBlockFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
-                                               const int fd, bool *skip);
-    void createExBlockFileCopyInfo(const FileInfoPointer fromInfo,
-                                   const FileInfoPointer toInfo,
-                                   const qint64 currentPos,
-                                   const bool closeFlag,
-                                   const qint64 size,
-                                   char *buffer = nullptr,
-                                   const bool isDir = false,
-                                   const QFileDevice::Permissions permission = QFileDevice::Permission::ReadOwner);
     void syncBlockFile(const FileInfoPointer toInfo);
+public:
+    static void progressCallback(int64_t current, int64_t total, void *progressData);
 
 private:
     QSharedPointer<QWaitCondition> waitCondition { nullptr };
@@ -126,6 +118,7 @@ private:
     int blockFileFd { -1 };
     QList<QUrl> skipUrls;
     QUrl memcpySkipUrl;
+    DThreadList<QSharedPointer<dfmio::DOperator>> fileOps;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 #endif   // DOCOPYFILEWORKER_H

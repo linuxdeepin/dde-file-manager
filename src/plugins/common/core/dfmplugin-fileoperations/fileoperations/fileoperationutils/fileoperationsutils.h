@@ -73,6 +73,7 @@ private:
     static void statisticFilesSize(const QUrl &url, SizeInfoPointer &sizeInfo, const bool &isRecordUrl = false);
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
     static bool isFileOnDisk(const QUrl &url);
+    static qint64 bigFileSize();
 
 private:
     static QSet<QString> fileNameUsing;
