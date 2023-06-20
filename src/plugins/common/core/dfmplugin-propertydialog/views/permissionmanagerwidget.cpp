@@ -170,23 +170,31 @@ void PermissionManagerWidget::initUI()
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
+    executableCheckBox->setFixedWidth(196);
 
     layout->setLabelAlignment(Qt::AlignLeft);
 
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
     DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::DemiBold);
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    owner->setFixedWidth(DSizeModeHelper::element(60, 107));
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [owner]() {
-        owner->setFixedWidth(DSizeModeHelper::element(60, 107));
-    });
-#else
-    owner->setFixedWidth(107);
-#endif
     DLabel *group = new DLabel(QObject::tr("Group"), this);
     DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::DemiBold);
     DLabel *other = new DLabel(QObject::tr("Others"), this);
     DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    owner->setFixedWidth(DSizeModeHelper::element(60, 107));
+    group->setFixedWidth(DSizeModeHelper::element(60, 107));
+    other->setFixedWidth(DSizeModeHelper::element(60, 107));
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [owner, group, other]() {
+        owner->setFixedWidth(DSizeModeHelper::element(60, 107));
+        group->setFixedWidth(DSizeModeHelper::element(60, 107));
+        other->setFixedWidth(DSizeModeHelper::element(60, 107));
+    });
+#else
+    owner->setFixedWidth(107);
+    group->setFixedWidth(107);
+    other->setFixedWidth(107);
+#endif
 
     layout->addRow(owner, ownerComboBox);
     layout->addRow(group, groupComboBox);
@@ -261,7 +269,7 @@ void PermissionManagerWidget::setExecText()
     QString text = tr("Allow to execute as program");
     QFontMetrics fontWidth(executableCheckBox->font());
     int fontSize = fontWidth.horizontalAdvance(text);
-    int fontW = executableCheckBox->width() - executableCheckBox->contentsMargins().left() - executableCheckBox->contentsMargins().right() - this->contentsMargins().left() - this->contentsMargins().right();
+    int fontW = executableCheckBox->width() - executableCheckBox->iconSize().width() - this->getContent()->layout()->contentsMargins().right() - contentsMargins().right();
     if (fontSize > fontW) {
         text = fontWidth.elidedText(text, Qt::ElideMiddle, fontW);
     }

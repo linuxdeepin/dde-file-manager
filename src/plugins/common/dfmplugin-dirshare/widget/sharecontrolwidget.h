@@ -37,6 +37,7 @@ public:
 
 protected:
     void setupUi(bool disableState = false);
+    void setupShareSwitcher();
     void setupNetworkPath();
     void setupUserName();
     void setupSharePassword();
