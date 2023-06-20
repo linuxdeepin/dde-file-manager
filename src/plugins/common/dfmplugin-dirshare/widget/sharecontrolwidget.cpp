@@ -126,7 +126,8 @@ void ShareControlWidget::setupUi(bool disableState)
     gridLayout->setVerticalSpacing(0);
     frame->setLayout(gridLayout);
 
-    shareSwitcher = new QCheckBox(tr("Share this folder"), this);
+    setupShareSwitcher();
+
     QWidget *switcherContainer = new QWidget(this);
     QHBoxLayout *lay = new QHBoxLayout(this);
     switcherContainer->setLayout(lay);
@@ -182,6 +183,20 @@ void ShareControlWidget::setupUi(bool disableState)
 
     timer = new QTimer(this);
     timer->setInterval(500);
+}
+
+void ShareControlWidget::setupShareSwitcher()
+{
+    shareSwitcher = new QCheckBox(this);
+    shareSwitcher->setFixedWidth(ConstDef::kWidgetFixedWidth);
+    QString text = tr("Share this folder");
+    QFontMetrics fontWidth(shareSwitcher->font());
+    int fontSize = fontWidth.horizontalAdvance(text);
+    int fontW = shareSwitcher->width() - mainLay->contentsMargins().right() - shareSwitcher->iconSize().width();
+    if (fontSize > fontW) {
+        text = fontWidth.elidedText(text, Qt::ElideMiddle, fontW);
+    }
+    shareSwitcher->setText(text);
 }
 
 void ShareControlWidget::setupNetworkPath()
