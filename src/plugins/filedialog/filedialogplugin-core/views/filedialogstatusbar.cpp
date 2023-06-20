@@ -247,6 +247,7 @@ void FileDialogStatusBar::initializeUi()
 
     fileNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     fileNameEdit->installEventFilter(this);
+    fileNameEdit->setClearButtonEnabled(false);
     filtersComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     curAcceptButton = new DSuggestButton(this);
