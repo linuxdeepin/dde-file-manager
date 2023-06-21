@@ -767,14 +767,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         return doRenameDesktopFile(windowId, oldUrl, newUrl, flags);
 
     if (!dfmbase::FileUtils::isLocalFile(oldUrl)) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags)) {
-            QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                         windowId, renamedFiles, ok, error);
-            if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
-                saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags))
             return true;
-        }
     }
 
     // async fileinfo need wait file quer over todo:: liyigang
@@ -827,15 +821,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     bool ok = false;
     QString error;
     if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles", windowId, urls, pair, replace)) {
-
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                         windowId, successUrls, true, error);
-            if (!successUrls.isEmpty())
-                saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
-
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles", windowId, urls, pair, replace))
             return true;
-        }
     }
 
     RenameTypes type = RenameTypes::kBatchRepalce;
