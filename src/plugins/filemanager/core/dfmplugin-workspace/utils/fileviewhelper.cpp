@@ -85,6 +85,9 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
 const FileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
 {
+    if (!parent()->isVerticalScrollBarSliderDragging())
+            index.data(kItemCreateFileInfoRole);
+
     return parent()->model()->fileInfo(index);
 }
 
