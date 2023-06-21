@@ -82,7 +82,7 @@ QVariant FileItemData::data(int role) const
     case kItemIconRole:
         if (info)
             return info->fileIcon();
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("empty");
     case kItemFileSizeRole:
         if (info)
             return info->displayOf(DisPlayInfoType::kSizeDisplayName);

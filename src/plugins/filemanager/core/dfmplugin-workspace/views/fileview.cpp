@@ -73,6 +73,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeDelegate();
     initializeStatusBar();
     initializeConnect();
+    initializeScrollBarWatcher();
 
     viewport()->installEventFilter(this);
 }
@@ -642,6 +643,14 @@ QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
     default:
         return QRectF();
     }
+}
+
+bool FileView::isVerticalScrollBarSliderDragging() const
+{
+    if (d->scrollBarValueChangedTimer)
+        return d->scrollBarValueChangedTimer->isActive();
+
+    return false;
 }
 
 void FileView::onSelectAndEdit(const QUrl &url)
@@ -1478,6 +1487,22 @@ void FileView::initializeConnect()
 
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
+}
+
+void FileView::initializeScrollBarWatcher()
+{
+    d->scrollBarValueChangedTimer = new QTimer(this);
+    d->scrollBarValueChangedTimer->setInterval(50);
+    d->scrollBarValueChangedTimer->setSingleShot(true);
+
+    connect(d->scrollBarValueChangedTimer, &QTimer::timeout, this, [this] { this->update(); });
+
+    connect(verticalScrollBar(), &QScrollBar::sliderPressed, this, [this] { d->scrollBarSliderPressed = true; });
+    connect(verticalScrollBar(), &QScrollBar::sliderReleased, this, [this] { d->scrollBarSliderPressed = false; });
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, [this] {
+       if (d->scrollBarSliderPressed)
+           d->scrollBarValueChangedTimer->start();
+    });
 }
 
 void FileView::updateStatusBar()

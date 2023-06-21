@@ -112,6 +112,8 @@ public:
 
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
 
+    bool isVerticalScrollBarSliderDragging() const;
+
     using DListView::edit;
     using DListView::updateGeometries;
     using DListView::viewportMargins;
@@ -184,6 +186,7 @@ private:
     void initializeDelegate();
     void initializeStatusBar();
     void initializeConnect();
+    void initializeScrollBarWatcher();
 
     void delayUpdateStatusBar();
     void updateStatusBar();
