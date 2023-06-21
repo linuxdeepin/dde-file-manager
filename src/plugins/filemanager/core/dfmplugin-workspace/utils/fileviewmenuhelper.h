@@ -23,6 +23,8 @@ public:
     void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
 
     void setMenuScene(const QString &scene);
+    void setWaitCursor();
+    void reloadCursor();
 
 private:
     QString currentMenuScene() const;

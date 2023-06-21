@@ -115,6 +115,7 @@ public Q_SLOTS:
     void onRemove(int firstIndex, int count);
     void onRemoveFinish();
     void onUpdateView();
+    void onSetCursorWait();
 
 private:
     void initFilterSortWork();
@@ -122,6 +123,8 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
+    void closeCursorTimer();
+    void startCursorTimer();
 
     QUrl dirRootUrl;
 
@@ -135,6 +138,7 @@ private:
     FileViewFilterCallback filterCallback { nullptr };
     QVariant filterData;
     QString currentKey;
+    QTimer waitTimer;
 
     QList<QSharedPointer<QObject>> discardedObjects {};
     QStringList nameFilters {};

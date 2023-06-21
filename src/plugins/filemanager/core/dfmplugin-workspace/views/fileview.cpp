@@ -1190,6 +1190,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
     if (FileViewMenuHelper::disableMenu())
         return;
 
+    d->viewMenuHelper->setWaitCursor();
     const QModelIndex &index = indexAt(event->pos());
     if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index)
         setFocus(Qt::FocusReason::OtherFocusReason);
@@ -1207,6 +1208,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 
             if (!index.isValid()) {
                 d->viewMenuHelper->showEmptyAreaMenu();
+                d->viewMenuHelper->reloadCursor();
                 return;
             }
 
@@ -1215,6 +1217,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 
         d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
     }
+    d->viewMenuHelper->reloadCursor();
 }
 
 QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
