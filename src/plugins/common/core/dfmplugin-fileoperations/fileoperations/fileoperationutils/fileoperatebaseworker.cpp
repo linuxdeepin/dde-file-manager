@@ -428,6 +428,12 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
 
     // 创建新的目标文件并做检查
     QString fileNewName = fileName;
+    // bug 205732, 回收站文件找到源文件名称
+    bool isTrashFile = FileUtils::isTrashFile(fromInfo->urlOf(UrlInfoType::kUrl));
+    if (isTrashFile) {
+        auto trashInfoUrl= trashInfo(fromInfo);
+        fileNewName = fileOriginName(trashInfoUrl);
+    }
     newTargetInfo.reset();
     if (!doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, skip, true))
         return false;
