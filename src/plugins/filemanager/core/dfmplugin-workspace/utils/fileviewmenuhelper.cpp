@@ -44,12 +44,14 @@ bool FileViewMenuHelper::disableMenu()
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
+    setWaitCursor();
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(scene), AcName::kAcFileviewMenu);
 #endif
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
+        reloadCursor();
         return;
     }
 
@@ -58,15 +60,17 @@ void FileViewMenuHelper::showEmptyAreaMenu()
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = true;
     params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);
-
+    setWaitCursor();
     if (!scene->initialize(params)) {
         delete scene;
+        reloadCursor();
         return;
     }
 
     DMenu menu(this->view);
     scene->create(&menu);
     scene->updateState(&menu);
+    reloadCursor();
 
     QAction *act = menu.exec(QCursor::pos());
     if (act)
@@ -80,9 +84,11 @@ void FileViewMenuHelper::showEmptyAreaMenu()
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
+    setWaitCursor();
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
+        reloadCursor();
         return;
     }
 
@@ -91,6 +97,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
+    setWaitCursor();
 
     const FileInfoPointer &focusFileInfo = view->model()->fileInfo(index);
     if (focusFileInfo) {
@@ -105,15 +112,20 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);
     params = dfmplugin_menu_util::menuPerfectParams(params);
+    setWaitCursor();
 
     if (!scene->initialize(params)) {
+        reloadCursor();
         delete scene;
         return;
     }
 
     DMenu menu(this->view);
+    setWaitCursor();
     scene->create(&menu);
+    setWaitCursor();
     scene->updateState(&menu);
+    reloadCursor();
 
     QAction *act = menu.exec(QCursor::pos());
     if (act) {
@@ -127,4 +139,17 @@ QString FileViewMenuHelper::currentMenuScene() const
 {
     QString scene = WorkspaceHelper::instance()->findMenuScene(view->rootUrl().scheme());
     return scene.isEmpty() ? WorkspaceMenuCreator::name() : scene;
+}
+
+void FileViewMenuHelper::setWaitCursor()
+{
+    if (QApplication::overrideCursor() && QApplication::overrideCursor()->shape() == Qt::CursorShape::WaitCursor)
+        return;
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+}
+
+void FileViewMenuHelper::reloadCursor()
+{
+    while (QApplication::overrideCursor())
+        QApplication::restoreOverrideCursor();
 }
