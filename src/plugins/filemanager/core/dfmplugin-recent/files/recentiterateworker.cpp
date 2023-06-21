@@ -9,6 +9,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <QDir>
 #include <QXmlStreamReader>
@@ -48,7 +49,7 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
             continue;
 
         const QUrl &url { QUrl(location) };
-        if (FileUtils::isLowSpeedDevice(url))
+        if (DeviceUtils::isLowSpeedDevice(url))
             continue;
 
         auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
