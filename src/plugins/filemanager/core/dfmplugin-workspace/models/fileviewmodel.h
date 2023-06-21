@@ -122,6 +122,7 @@ public Q_SLOTS:
     void onUpdateView();
     void onGenericAttributeChanged(DFMBASE_NAMESPACE::Application::GenericAttribute ga, const QVariant &value);
     void onDConfigChanged(const QString &config, const QString &key);
+    void onSetCursorWait();
 
 private:
     void initFilterSortWork();
@@ -129,6 +130,8 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
+    void closeCursorTimer();
+    void startCursorTimer();
 
     QUrl dirRootUrl;
 
@@ -142,6 +145,7 @@ private:
     FileViewFilterCallback filterCallback { nullptr };
     QVariant filterData;
     QString currentKey;
+    QTimer waitTimer;
 
     QList<QSharedPointer<QObject>> discardedObjects {};
     QStringList nameFilters {};

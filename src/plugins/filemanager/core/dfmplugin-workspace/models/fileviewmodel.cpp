@@ -46,10 +46,13 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);
+    connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
+        waitTimer.setInterval(50);
 }
 
 FileViewModel::~FileViewModel()
 {
+    closeCursorTimer();
     quitFilterSortWork();
 
     if (itemRootData) {
@@ -108,6 +111,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
     // insert root index
     beginResetModel();
+    closeCursorTimer();
     // create root by url
     dirRootUrl = url;
     RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
@@ -334,8 +338,10 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
                                                       filterSortWorker->getSortOrder());
     }
 
-    if (ret)
+    if (ret) {
         changeState(ModelState::kBusy);
+        startCursorTimer();
+    }
 }
 
 bool FileViewModel::canFetchMore(const QModelIndex &parent) const
@@ -489,6 +495,7 @@ void FileViewModel::stopTraversWork()
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
 
     changeState(ModelState::kIdle);
+    closeCursorTimer();
 }
 
 QList<ItemRoles> FileViewModel::getColumnRoles() const
@@ -758,6 +765,17 @@ void FileViewModel::onDConfigChanged(const QString &config, const QString &key)
         Q_EMIT requestClearThumbnail();
 }
 
+void FileViewModel::onSetCursorWait()
+{
+    if (currentState() != ModelState::kBusy)
+            return;
+
+    if (QApplication::overrideCursor() && QApplication::overrideCursor()->shape() == Qt::CursorShape::WaitCursor)
+        return;
+
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -791,7 +809,10 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() { canFetchFiles = true; fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() { this->changeState(ModelState::kIdle); }, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() {
+            this->changeState(ModelState::kIdle);
+            closeCursorTimer();
+        }, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeHiddenFilter, filterSortWorker.data(), &FileSortWorker::onToggleHiddenFiles, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::setFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::setNameFilters, Qt::QueuedConnection);
@@ -852,4 +873,20 @@ void FileViewModel::changeState(ModelState newState)
 
     state = newState;
     Q_EMIT stateChanged();
+}
+
+void FileViewModel::closeCursorTimer()
+{
+    waitTimer.stop();
+
+    while (QApplication::overrideCursor())
+        QApplication::restoreOverrideCursor();
+}
+
+void FileViewModel::startCursorTimer()
+{
+    if (!waitTimer.isActive())
+        waitTimer.start();
+
+    onSetCursorWait();
 }
