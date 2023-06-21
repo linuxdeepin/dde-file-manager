@@ -123,7 +123,6 @@ TEST_F(UT_RootInfo, StartWork)
     if (!rootInfoObj->watcher.isNull()) {
         EXPECT_TRUE(calledStartWatcher);
     }
-    EXPECT_EQ(rootInfoObj->currentKey, key);
     EXPECT_TRUE(calledThreadStart);
     EXPECT_FALSE(calledGetSourceData);
 
@@ -138,7 +137,6 @@ TEST_F(UT_RootInfo, StartWork)
     calledGetSourceData = false;
     calledThreadStart = false;
     rootInfoObj->startWork(key, true);
-    EXPECT_NE(rootInfoObj->currentKey, unexistKey);
     EXPECT_FALSE(calledThreadStart);
     // EXPECT_FALSE(calledGetSourceData);
 }
@@ -369,7 +367,7 @@ TEST_F(UT_RootInfo, HandleTraversalResult)
     QObject::connect(rootInfoObj, &RootInfo::iteratorAddFile, rootInfoObj,
                      [&sendIteratorAddFile] { sendIteratorAddFile = true; });
 
-    rootInfoObj->handleTraversalResult(info);
+    rootInfoObj->handleTraversalResult(info, "");
 
     EXPECT_TRUE(calledAddChild);
     EXPECT_TRUE(sendIteratorAddFile);
@@ -394,7 +392,7 @@ TEST_F(UT_RootInfo, HandleTraversalResults)
     QObject::connect(rootInfoObj, &RootInfo::iteratorAddFiles, rootInfoObj,
                      [&sendIteratorAddFiles] { sendIteratorAddFiles = true; });
 
-    rootInfoObj->handleTraversalResults({ info });
+    rootInfoObj->handleTraversalResults({ info }, "");
 
     EXPECT_TRUE(calledAddChild);
     EXPECT_TRUE(sendIteratorAddFiles);
@@ -419,7 +417,7 @@ TEST_F(UT_RootInfo, HandleTraversalLocalResult)
                      [&sendIteratorLocalFiles] { sendIteratorLocalFiles = true; });
 
     SortInfoPointer info(new AbstractDirIterator::SortFileInfo);
-    rootInfoObj->handleTraversalLocalResult({ info }, sortRole, sortOrder, mixDirAndFile);
+    rootInfoObj->handleTraversalLocalResult({ info }, sortRole, sortOrder, mixDirAndFile, "");
 
     EXPECT_FALSE(addedChildren.isEmpty());
     EXPECT_EQ(rootInfoObj->originSortRole, sortRole);
@@ -430,30 +428,25 @@ TEST_F(UT_RootInfo, HandleTraversalLocalResult)
 
 TEST_F(UT_RootInfo, HandleTraversalFinish)
 {
-    rootInfoObj->currentKey = "current key";
     rootInfoObj->traversalFinish = false;
 
     QString currentKey("");
     QObject::connect(rootInfoObj, &RootInfo::traversalFinished, rootInfoObj,
                      [&currentKey](const QString &key) { currentKey.append(key); });
 
-    rootInfoObj->handleTraversalFinish();
+    rootInfoObj->handleTraversalFinish("");
 
-    EXPECT_EQ(currentKey, rootInfoObj->currentKey);
     EXPECT_TRUE(rootInfoObj->traversalFinish);
 }
 
 TEST_F(UT_RootInfo, HandleTraversalSort)
 {
-    rootInfoObj->currentKey = "current key";
 
     QString currentKey("");
     QObject::connect(rootInfoObj, &RootInfo::requestSort, rootInfoObj,
                      [&currentKey](const QString &key) { currentKey.append(key); });
 
-    rootInfoObj->handleTraversalSort();
-
-    EXPECT_EQ(currentKey, rootInfoObj->currentKey);
+    rootInfoObj->handleTraversalSort("");
 }
 
 TEST_F(UT_RootInfo, HandleGetSourceData)

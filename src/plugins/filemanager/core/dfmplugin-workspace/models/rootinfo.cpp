@@ -46,7 +46,7 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
     if (!traversalThread.isNull()) {
         traversalThread->traversalThread->disconnect();
     } else {
-        isGetCache = canCache && traversalFinish;
+        isGetCache = (canCache && traversalFinish) || traversaling;
     }
 
     traversalThread.reset(new DirIteratorThread);
@@ -91,10 +91,11 @@ void RootInfo::startWork(const QString &key, const bool getCache)
 
     if (!traversalThreads.contains(key))
         return;
-    if (getCache && !sourceDataList.isEmpty())
+
+    if (getCache)
         return handleGetSourceData(key);
 
-    currentKey = key;
+    traversaling = true;
     traversalThreads.value(key)->traversalThread->start();
 }
 
@@ -132,7 +133,8 @@ int RootInfo::clearTraversalThread(const QString &key)
         traversalThread->disconnect();
     },
             Qt::QueuedConnection);
-
+    if (thread->traversalThread->isRunning())
+        traversaling = false;
     thread->traversalThread->quit();
 
     return traversalThreads.count();
@@ -146,6 +148,7 @@ void RootInfo::reset()
         sourceDataList.clear();
     }
 
+    traversaling = false;
     traversalFinish = false;
 }
 
@@ -261,14 +264,14 @@ void RootInfo::doThreadWatcherEvent()
     });
 }
 
-void RootInfo::handleTraversalResult(const FileInfoPointer &child)
+void RootInfo::handleTraversalResult(const FileInfoPointer &child, const QString &travseToken)
 {
     auto sortInfo = addChild(child);
     if (sortInfo)
-        Q_EMIT iteratorAddFile(currentKey, sortInfo, child);
+        Q_EMIT iteratorAddFile(currentKey(travseToken), sortInfo, child);
 }
 
-void RootInfo::handleTraversalResults(QList<FileInfoPointer> children)
+void RootInfo::handleTraversalResults(QList<FileInfoPointer> children, const QString &travseToken)
 {
     QList<SortInfoPointer> sortInfos;
     QList<FileInfoPointer> infos;
@@ -281,37 +284,39 @@ void RootInfo::handleTraversalResults(QList<FileInfoPointer> children)
     }
 
     if (sortInfos.length() > 0)
-        Q_EMIT iteratorAddFiles(currentKey, sortInfos, infos);
+        Q_EMIT iteratorAddFiles(currentKey(travseToken), sortInfos, infos);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
                                           dfmio::DEnumerator::SortRoleCompareFlag sortRole,
-                                          Qt::SortOrder sortOrder, bool isMixDirAndFile)
+                                          Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
 {
     originSortRole = sortRole;
     originSortOrder = sortOrder;
     originMixSort = isMixDirAndFile;
 
     addChildren(children);
+    traversaling = false;
 
-    Q_EMIT iteratorLocalFiles(currentKey, children, originSortRole, originSortOrder, originMixSort);
+    Q_EMIT iteratorLocalFiles(currentKey(travseToken), children, originSortRole, originSortOrder, originMixSort);
 }
 
-void RootInfo::handleTraversalFinish()
+void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
-    emit traversalFinished(currentKey);
+    traversaling = false;
+    emit traversalFinished(currentKey(travseToken));
     traversalFinish = true;
 }
 
-void RootInfo::handleTraversalSort()
+void RootInfo::handleTraversalSort(const QString &travseToken)
 {
-    emit requestSort(currentKey);
+    emit requestSort(currentKey(travseToken));
 }
 
-void RootInfo::handleGetSourceData(const QString &key)
+void RootInfo::handleGetSourceData(const QString &currentToken)
 {
     QList<SortInfoPointer> newDatas = sourceDataList;
-    emit sourceDatas(key, newDatas, originSortRole, originSortOrder, originMixSort, traversalFinish);
+    emit sourceDatas(currentToken, newDatas, originSortRole, originSortOrder, originMixSort, !traversaling);
 }
 
 void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)
@@ -529,4 +534,14 @@ FileInfoPointer RootInfo::fileInfo(const QUrl &url)
     currentUrl.setPath(currentUrl.path(QUrl::PrettyDecoded) + QDir::separator() + url.fileName());
     info = InfoFactory::create<FileInfo>(currentUrl);
     return info;
+}
+
+QString RootInfo::currentKey(const QString &travseToken)
+{
+    assert(!travseToken.isEmpty());
+    for (const auto &traversalThread : traversalThreads) {
+        if (travseToken == QString::number(quintptr(traversalThread->traversalThread.data()), 16))
+            return traversalThreads.key(traversalThread);
+    }
+    return QString();
 }

@@ -191,6 +191,17 @@ void FileSortWorker::handleSourceChildren(const QString &key,
 {
     if (currentKey != key)
         return;
+
+    if (this->childrenUrlList.isEmpty()) {
+        handleIteratorLocalChildren(key, children, sortRole, sortOrder, isMixDirAndFile);
+        if (isFinished) {
+            Q_EMIT requestSetIdel();
+        } else {
+            Q_EMIT getSourceData(currentKey);
+        }
+        return;
+    }
+
     // 获取相对于已有的新增加的文件
     QList<QUrl> newChildren;
     for (const auto &sortInfo : children) {
@@ -224,6 +235,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
         }
         return;
     }
+
     bool onebyone = !visibleChildren.isEmpty();
     // 排序
     if (!onebyone)

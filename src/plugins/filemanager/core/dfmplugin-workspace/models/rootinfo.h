@@ -83,16 +83,16 @@ public Q_SLOTS:
     void doWatcherEvent();
     void doThreadWatcherEvent();
 
-    void handleTraversalResult(const FileInfoPointer &child);
-    void handleTraversalResults(QList<FileInfoPointer> children);
+    void handleTraversalResult(const FileInfoPointer &child, const QString &travseToken);
+    void handleTraversalResults(QList<FileInfoPointer> children, const QString &travseToken);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                     Qt::SortOrder sortOrder,
-                                    bool isMixDirAndFile);
-    void handleTraversalFinish();
+                                    bool isMixDirAndFile, const QString &travseToken);
+    void handleTraversalFinish(const QString &travseToken);
 
-    void handleTraversalSort();
-    void handleGetSourceData(const QString &key);
+    void handleTraversalSort(const QString &travseToken);
+    void handleGetSourceData(const QString &currentToken);
 
 private:
     void initConnection(const TraversalThreadManagerPointer &traversalThread);
@@ -111,6 +111,7 @@ private:
     void enqueueEvent(const QPair<QUrl, EventType> &e);
     QPair<QUrl, EventType> dequeueEvent();
     FileInfoPointer fileInfo(const QUrl &url);
+    QString currentKey(const QString &travseToken);
 
 public:
     AbstractFileWatcherPointer watcher;
@@ -120,8 +121,8 @@ private:
     QUrl hiddenFileUrl;
 
     QMap<QString, QSharedPointer<DirIteratorThread>> traversalThreads;
-    QString currentKey;
     std::atomic_bool traversalFinish { false };
+    std::atomic_bool traversaling { false };
 
     QReadWriteLock childrenLock;
     QList<QUrl> childrenUrlList {};

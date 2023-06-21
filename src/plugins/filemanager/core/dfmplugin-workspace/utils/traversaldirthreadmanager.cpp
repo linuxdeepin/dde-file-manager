@@ -24,6 +24,7 @@ TraversalDirThreadManager::TraversalDirThreadManager(const QUrl &url,
     qRegisterMetaType<FileInfoPointer>();
     qRegisterMetaType<QList<SortInfoPointer>>();
     qRegisterMetaType<SortInfoPointer>();
+    traversalToken = QString::number(quintptr(this), 16);
 }
 
 TraversalDirThreadManager::~TraversalDirThreadManager()
@@ -102,7 +103,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     dirIterator->cacheBlockIOAttribute();
     qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timere.elapsed();
     if (stopFlag) {
-        emit traversalFinished();
+        emit traversalFinished(traversalToken);
         return 0;
     }
 
@@ -130,18 +131,18 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         childrenList.append(fileInfo);
 
         if (timer->elapsed() > timeCeiling || childrenList.count() > countCeiling) {
-            emit updateChildrenManager(childrenList);
+            emit updateChildrenManager(childrenList, traversalToken);
             timer->restart();
             childrenList.clear();
         }
     }
 
     if (childrenList.length() > 0)
-        emit updateChildrenManager(childrenList);
+        emit updateChildrenManager(childrenList, traversalToken);
 
-    emit traversalRequestSort();
+    emit traversalRequestSort(traversalToken);
 
-    emit traversalFinished();
+    emit traversalFinished(traversalToken);
 
     return childrenList.count();
 }
@@ -156,8 +157,8 @@ int TraversalDirThreadManager::iteratorAll()
     dirIterator->setArguments(args);
     auto fileList = dirIterator->sortFileInfoList();
 
-    emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile);
-    emit traversalFinished();
+    emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile, traversalToken);
+    emit traversalFinished(traversalToken);
 
     return fileList.count();
 }
