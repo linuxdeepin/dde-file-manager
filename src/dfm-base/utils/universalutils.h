@@ -20,6 +20,7 @@ public:
     static void notifyMessage(const QString &msg);
     static void notifyMessage(const QString &title, const QString &msg);
     static QString userLoginState();
+    static quint32 currentLoginUser();
     static bool isLogined();
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
     static qint64 computerMemory();

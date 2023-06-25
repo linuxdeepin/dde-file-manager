@@ -30,6 +30,7 @@
 
 #include <dfm-mount/dmount.h>
 #include <mutex>
+#include <unistd.h>
 
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
@@ -707,8 +708,15 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
 
 void DeviceManager::doAutoMountAtStart()
 {
-    if (!DeviceUtils::isAutoMountEnable())
+    if (!DeviceUtils::isAutoMountEnable()) {
+        qInfo() << "auto mount is disabled.";
         return;
+    }
+
+    if (UniversalUtils::currentLoginUser() != getuid()) {
+        qInfo() << "give up auto mount cause current user is not logined";
+        return;
+    }
 
     static std::once_flag flg;
     std::call_once(flg, [this] {
@@ -843,15 +851,21 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type)
     }
 
     if (!DeviceUtils::isAutoMountEnable()) {
-        qDebug() << "auto mount is disabled";
+        qInfo() << "auto mount is disabled";
         return;
     }
     if (!UniversalUtils::isLogined()) {
-        qDebug() << "no login no auto mount";
+        qInfo() << "give up auto mount cause no logined user" << id;
         return;
     }
+
+    if (UniversalUtils::currentLoginUser() != getuid()) {
+        qInfo() << "give up auto mount cause current user is not logined" << id;
+        return;
+    }
+
     if (UniversalUtils::isInLiveSys()) {
-        qDebug() << "no auto mount in live system";
+        qInfo() << "auto mount is disabled in live system." << id;
         return;
     }
 
