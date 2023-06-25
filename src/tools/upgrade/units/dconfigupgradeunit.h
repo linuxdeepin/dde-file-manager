@@ -23,6 +23,7 @@ private:
     static const QMap<QString, QString> &mappedActions();
     bool upgradeMenuConfigs();
     bool upgradeSmbConfigs();
+    bool upgradeRecentConfigs();
     void clearDiskHidden();
 };
 }

@@ -17,7 +17,7 @@ class DiskControlItem;
 
 class DiskControlWidget : public QScrollArea
 {
-    friend DiskControlItem;
+    friend class DiskControlItem;
     Q_OBJECT
 public:
     explicit DiskControlWidget(QWidget *parent = nullptr);
