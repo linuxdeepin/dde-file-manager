@@ -60,7 +60,6 @@ void ThumbnailFactory::joinThumbnailJob(const QUrl &url, ThumbnailSize size)
 bool ThumbnailFactory::registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator)
 {
     Q_ASSERT(creator);
-
     return worker->registerCreator(mimeType, creator);
 }
 

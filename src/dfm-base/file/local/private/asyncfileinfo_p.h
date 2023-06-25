@@ -72,7 +72,6 @@ public:
         return size.left(size.count() - 1);
     }
     virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
-
     QIcon defaultIcon();
 
 public:

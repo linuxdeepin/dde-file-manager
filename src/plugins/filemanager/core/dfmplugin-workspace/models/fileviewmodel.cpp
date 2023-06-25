@@ -42,7 +42,6 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
 {
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
-
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);

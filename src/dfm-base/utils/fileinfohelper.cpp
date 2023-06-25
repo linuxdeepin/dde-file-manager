@@ -40,6 +40,9 @@ void FileInfoHelper::init()
 
 void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfileInfo)
 {
+    if (stoped)
+        return;
+
     auto asyncInfo = dfileInfo.dynamicCast<AsyncFileInfo>();
     if (!asyncInfo) {
         return;
@@ -85,6 +88,8 @@ void FileInfoHelper::fileRefreshAsync(const QSharedPointer<FileInfo> dfileInfo)
 
 void FileInfoHelper::cacheFileInfoByThread(const QSharedPointer<FileInfo> dfileInfo)
 {
+    if (stoped)
+        return;
     QtConcurrent::run(&pool, [this, dfileInfo]() {
         threadHandleDfmFileInfo(dfileInfo);
     });
