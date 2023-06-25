@@ -140,14 +140,8 @@ QString SyncFileInfo::nameOf(const NameInfoType type) const
     switch (type) {
     case FileNameInfoType::kFileName:
         return d->fileName();
-    case FileNameInfoType::kBaseName:
-        return d->baseName();
     case FileNameInfoType::kCompleteBaseName:
         return d->completeBaseName();
-    case FileNameInfoType::kSuffix:
-        [[fallthrough]];
-    case FileNameInfoType::kSuffixOfRename:
-        return d->suffix();
     case FileNameInfoType::kCompleteSuffix:
         return d->completeSuffix();
     case FileNameInfoType::kFileCopyName:
@@ -695,21 +689,6 @@ QString SyncFileInfoPrivate::fileName() const
     return fileName;
 }
 /*!
- * \brief baseName 文件的基本名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * baseName = archive
- *
- * \param
- *
- * \return
- */
-QString SyncFileInfoPrivate::baseName() const
-{
-    return this->attribute(DFileInfo::AttributeID::kStandardBaseName).toString();
-}
-/*!
  * \brief completeBaseName 文件的完整基本名称
  *
  * url = file:///tmp/archive.tar.gz
@@ -723,21 +702,6 @@ QString SyncFileInfoPrivate::baseName() const
 QString SyncFileInfoPrivate::completeBaseName() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardCompleteBaseName).toString();
-}
-/*!
- * \brief suffix 文件的suffix
- *
- * url = file:///tmp/archive.tar.gz
- *
- * suffix = gz
- *
- * \param
- *
- * \return
- */
-QString SyncFileInfoPrivate::suffix() const
-{
-    return this->attribute(DFileInfo::AttributeID::kStandardSuffix).toString();
 }
 /*!
  * \brief suffix 文件的完整suffix

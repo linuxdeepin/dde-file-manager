@@ -120,19 +120,9 @@ QString AsyncFileInfo::nameOf(const NameInfoType type) const
         if (d->asyncAttribute(AsyncAttributeID::kStandardName).isValid())
             return d->asyncAttribute(AsyncAttributeID::kStandardName).toString();
         break;
-    case FileNameInfoType::kBaseName:
-        if (d->asyncAttribute(AsyncAttributeID::kStandardBaseName).isValid())
-            return d->asyncAttribute(AsyncAttributeID::kStandardBaseName).toString();
-        break;
     case FileNameInfoType::kCompleteBaseName:
         if (d->asyncAttribute(AsyncAttributeID::kStandardCompleteBaseName).isValid())
             return d->asyncAttribute(AsyncAttributeID::kStandardCompleteBaseName).toString();
-        break;
-    case FileNameInfoType::kSuffix:
-        [[fallthrough]];
-    case FileNameInfoType::kSuffixOfRename:
-        if (d->asyncAttribute(AsyncAttributeID::kStandardSuffix).isValid())
-            return d->asyncAttribute(AsyncAttributeID::kStandardSuffix).toString();
         break;
     case FileNameInfoType::kCompleteSuffix:
         if (d->asyncAttribute(AsyncAttributeID::kStandardCompleteSuffix).isValid())
@@ -689,21 +679,6 @@ QString AsyncFileInfoPrivate::fileName() const
     return fileName;
 }
 /*!
- * \brief baseName 文件的基本名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * baseName = archive
- *
- * \param
- *
- * \return
- */
-QString AsyncFileInfoPrivate::baseName() const
-{
-    return this->attribute(DFileInfo::AttributeID::kStandardBaseName).toString();
-}
-/*!
  * \brief completeBaseName 文件的完整基本名称
  *
  * url = file:///tmp/archive.tar.gz
@@ -717,21 +692,6 @@ QString AsyncFileInfoPrivate::baseName() const
 QString AsyncFileInfoPrivate::completeBaseName() const
 {
     return this->attribute(DFileInfo::AttributeID::kStandardCompleteBaseName).toString();
-}
-/*!
- * \brief suffix 文件的suffix
- *
- * url = file:///tmp/archive.tar.gz
- *
- * suffix = gz
- *
- * \param
- *
- * \return
- */
-QString AsyncFileInfoPrivate::suffix() const
-{
-    return this->attribute(DFileInfo::AttributeID::kStandardSuffix).toString();
 }
 /*!
  * \brief suffix 文件的完整suffix
@@ -1063,9 +1023,7 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
 {
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> tmp;
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardName, fileName());
-    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardBaseName, baseName());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardCompleteBaseName, completeBaseName());
-    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSuffix, suffix());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardCompleteSuffix, completeSuffix());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName, fileDisplayName());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSize, attribute(DFileInfo::AttributeID::kStandardSize));
