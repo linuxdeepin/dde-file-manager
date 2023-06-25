@@ -8,7 +8,6 @@
 #include <dfm-base/dfm_base_global.h>
 #include "fileinfoasycworker.h"
 #include <dfm-base/interfaces/fileinfo.h>
-#include <dfm-base/utils/thumbnailprovider.h>
 #include <dfm-base/utils/threadcontainer.h>
 
 #include <dfm-io/dfileinfo.h>
@@ -35,7 +34,6 @@ public:
     QSharedPointer<FileInfoHelperUeserData> fileCountAsync(QUrl &url);
     QSharedPointer<FileInfoHelperUeserData> fileMimeTypeAsync(const QUrl &url, const QMimeDatabase::MatchMode mode,
                                                               const QString &inod, const bool isGvfs);
-    QSharedPointer<FileInfoHelperUeserData> fileThumbAsync(const QUrl &url, ThumbnailProvider::Size size);
     void fileRefreshAsync(const QSharedPointer<dfmbase::FileInfo> dfileInfo);
     void cacheFileInfoByThread(const QSharedPointer<FileInfo> dfileInfo);
     static void fileRefreshAsyncCallBack(bool success, void *userData);
@@ -57,7 +55,6 @@ Q_SIGNALS:
     void fileCount(const QUrl &url, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileMimeType(const QUrl &url, const QMimeDatabase::MatchMode mode, const QString &inod,
                       const bool isGvfs, const QSharedPointer<FileInfoHelperUeserData> data);
-    void fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileInfoRefresh(const QUrl &url, QSharedPointer<dfmio::DFileInfo> dfileInfo);
     // 第二个参数表示，当前是链接文件的原文件更新完成
     void fileRefreshFinished(const QUrl url, const QString &infoPtr, const bool isLinkOrg);

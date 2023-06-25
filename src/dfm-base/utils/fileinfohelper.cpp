@@ -31,12 +31,6 @@ void FileInfoHelper::init()
     connect(this, &FileInfoHelper::fileMimeType, worker.data(), &FileInfoAsycWorker::fileMimeType, Qt::QueuedConnection);
     connect(this, &FileInfoHelper::fileInfoRefresh, worker.data(), &FileInfoAsycWorker::fileRefresh, Qt::QueuedConnection);
     connect(worker.data(), &FileInfoAsycWorker::fileMimeTypeFinished, this, &FileInfoHelper::fileMimeTypeFinished, Qt::QueuedConnection);
-    connect(this, &FileInfoHelper::fileThumb, worker.data(), &FileInfoAsycWorker::fileThumb, Qt::QueuedConnection);
-    connect(worker.data(), &FileInfoAsycWorker::createThumbnailFinished,
-            this, &FileInfoHelper::createThumbnailFinished, Qt::QueuedConnection);
-    connect(worker.data(), &FileInfoAsycWorker::createThumbnailFailed,
-            this, &FileInfoHelper::createThumbnailFailed, Qt::QueuedConnection);
-    connect(this, &FileInfoHelper::fileRefreshRequest, this, &FileInfoHelper::handleFileRefresh, Qt::QueuedConnection);
 
     worker->moveToThread(thread.data());
     thread->start();
@@ -77,22 +71,6 @@ QSharedPointer<FileInfoHelperUeserData> FileInfoHelper::fileMimeTypeAsync(const 
         return nullptr;
     QSharedPointer<FileInfoHelperUeserData> data(new FileInfoHelperUeserData);
     emit fileMimeType(url, mode, inod, isGvfs, data);
-    return data;
-}
-
-QSharedPointer<FileInfoHelperUeserData> FileInfoHelper::fileThumbAsync(const QUrl &url, ThumbnailProvider::Size size)
-{
-    if (stoped)
-        return nullptr;
-    static constexpr uint16_t kRequestThumbnailDealy { 500 };
-    QSharedPointer<FileInfoHelperUeserData> data(new FileInfoHelperUeserData);
-    QUrl thumbUrl(url);
-    QTimer::singleShot(kRequestThumbnailDealy, [thumbUrl, size, data]() {
-        if (FileInfoHelper::instance().stoped)
-            return;
-        emit FileInfoHelper::instance().fileThumb(thumbUrl, size, data);
-    });
-
     return data;
 }
 

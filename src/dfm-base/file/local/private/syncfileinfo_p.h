@@ -12,7 +12,6 @@
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
-#include <dfm-base/utils/thumbnailprovider.h>
 #include <dfm-base/utils/fileinfohelper.h>
 
 #include <dfm-io/dfilefuture.h>
@@ -35,7 +34,6 @@ public:
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };   // 缓存文件的FileType
     DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
-    std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
     QVariantHash extraProperties;   // 扩展属性列表
     QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
@@ -54,7 +52,6 @@ public:
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
-    InfoHelperUeserDataPointer iconFuture { nullptr };
     QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;
 
 public:
@@ -84,8 +81,6 @@ public:
     {
         icons.clear();
         loadingThumbnail = false;
-        enableThumbnail = -1;
-        iconFuture.reset(nullptr);
     }
 
     QIcon thumbIcon();
@@ -111,7 +106,6 @@ public:
     QString sizeFormat() const;
     QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
-    bool canThumb() const;
     void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
     QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
                         const QString &inod = QString(), const bool isGvfs = false);

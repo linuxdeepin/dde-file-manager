@@ -13,28 +13,6 @@ FileInfoAsycWorker::FileInfoAsycWorker(QObject *parent)
 {
 }
 
-bool FileInfoAsycWorker::checkThumbEnable(FileInfoPointer fileInfo) const
-{
-#ifdef DFM_MINIMUM
-    return false;
-#endif
-    if (!fileInfo)
-        return false;
-
-    const QUrl &fileUrl = fileInfo->urlOf(UrlInfoType::kUrl);
-
-    bool isLocalDevice = FileUtils::isLocalDevice(fileUrl);
-    bool isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
-
-    bool thumbEnabled = isLocalDevice && !isCdRomDevice;
-    if (!thumbEnabled && ThumbnailProvider::instance()->thumbnailEnable(fileUrl))
-        thumbEnabled = true;
-
-    bool hasThumbnail = ThumbnailProvider::instance()->hasThumbnail(fileInfo->fileMimeType());
-
-    return thumbEnabled && hasThumbnail;
-}
-
 void FileInfoAsycWorker::fileConutAsync(const QUrl &url, const QSharedPointer<FileInfoHelperUeserData> data)
 {
     if (isStoped())
@@ -65,31 +43,6 @@ void FileInfoAsycWorker::fileMimeType(const QUrl &url,
     data->finish = true;
     data->data = QVariant::fromValue(type);
     emit fileMimeTypeFinished(url, type);
-}
-
-void FileInfoAsycWorker::fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data)
-{
-    if (isStoped())
-        return;
-
-    const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
-
-    if (!checkThumbEnable(fileInfo)) {
-        data->finish = true;
-        data->data = false;
-        emit createThumbnailFailed(url);
-        return;
-    }
-
-    const QString &thumb = ThumbnailProvider::instance()->createThumbnail(fileInfo, size);
-    data->finish = true;
-
-    if (thumb.isEmpty()) {
-        emit createThumbnailFailed(url);
-    } else {
-        data->data = true;
-        emit createThumbnailFinished(url, thumb);
-    }
 }
 
 void FileInfoAsycWorker::fileRefresh(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo)
