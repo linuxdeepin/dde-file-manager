@@ -96,12 +96,12 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (!item)
         return DStyledItemDelegate::paint(painter, option, index);
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
-    QRect itemRect = opt.rect;
+    // bug-205621
+    QRect itemRect = qApp->devicePixelRatio() > 1.0 ? opt.rect.adjusted(0, 1, 0, -1) : opt.rect;
     QPoint dx = QPoint(kItemMargin, 0);
     QPoint dw = QPoint(-12, 0);
     bool selected = opt.state.testFlag(QStyle::State_Selected);
     QRect r(itemRect.topLeft() + dx, itemRect.bottomRight() + dw);
-
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
 
     SideBarItem *subItem = dynamic_cast<SideBarItem *>(item);
