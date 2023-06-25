@@ -19,7 +19,7 @@
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/application.h>
-#include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -41,7 +41,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
 {
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
-    connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
+    connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
         waitTimer.setInterval(50);
 }
@@ -608,6 +608,10 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url)
     auto updateIndex = getIndexByUrl(url);
     if (!updateIndex.isValid())
         return;
+
+    auto info = fileInfo(updateIndex);
+    if (info)
+        info->refresh();
 
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
