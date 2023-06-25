@@ -8,7 +8,6 @@
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
-#include "thumbnailprovider.h"
 
 #include <dfm-io/dfileinfo.h>
 
@@ -41,17 +40,12 @@ private:
         return stoped;
     }
 
-    bool checkThumbEnable(FileInfoPointer fileInfo) const;
-
 Q_SIGNALS:
     void fileConutAsyncFinish(const QUrl &url, int files);
     void fileMimeTypeFinished(const QUrl &url, const QMimeType &type);
-    void createThumbnailFinished(const QUrl &sourceFile, const QString &thumbnailPath);
-    void createThumbnailFailed(const QUrl &sourceFile);
 private Q_SLOTS:
     void fileConutAsync(const QUrl &url, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileMimeType(const QUrl &url, const QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs, const QSharedPointer<FileInfoHelperUeserData> data);
-    void fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileRefresh(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo);
 
 private:

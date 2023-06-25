@@ -14,6 +14,7 @@
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfileinfo.h>
@@ -415,11 +416,6 @@ QVariantHash AsyncFileInfo::extraProperties() const
 
 QIcon AsyncFileInfo::fileIcon()
 {
-    const QUrl &fileUrl = url;
-
-    if (FileUtils::containsCopyingFileUrl(fileUrl))
-        return LocalFileIconProvider::globalProvider()->icon(this);
-
     if (d->cacheing) {
         QIcon icon, deIcon;
         {   // if already loaded thumb just return it.
@@ -437,7 +433,7 @@ QIcon AsyncFileInfo::fileIcon()
     }
 
     // iconFuture data is false means this file is not support thumb
-    if (d->iconFuture && !d->iconFuture->data.toBool())
+    if (d->loadingThumbnail)
         return d->defaultIcon();
 
     return d->thumbIcon();
@@ -610,9 +606,14 @@ QIcon AsyncFileInfoPrivate::thumbIcon()
     if (!icon.isNull())
         return icon;
 
-    icon = QIcon(ThumbnailProvider::instance()->thumbnailPixmap(q->fileUrl(), ThumbnailProvider::kLarge));
+    QUrl url = q->fileUrl();
+    if (ThumbnailFactory::instance()->contains(url))
+        return defaultIcon();
+
+    const auto &img = ThumbnailFactory::instance()->thumbnailImage(url, Global::kLarge);
+    icon = QIcon(QPixmap::fromImage(img));
     if (!icon.isNull()) {
-        QPixmap pixmap = icon.pixmap(ThumbnailProvider::kLarge, ThumbnailProvider::kLarge);
+        QPixmap pixmap = icon.pixmap(Global::kLarge, Global::kLarge);
         QPainter pa(&pixmap);
         pa.setPen(Qt::gray);
         pa.drawPixmap(0, 0, pixmap);
@@ -626,16 +627,13 @@ QIcon AsyncFileInfoPrivate::thumbIcon()
         return fileIcon;
     }
 
-    // else load thumb from DThumbnailProvider in async.
-    // and before thumb thread finish, return default icon.
+    // if the thumbnail is being created, return default icon.
     {
         QReadLocker rlk(&iconLock);
-        if (canThumb()) {   // create thumbnail failed
+        if (!loadingThumbnail) {
             rlk.unlock();
-            auto future = FileInfoHelper::instance().fileThumbAsync(q->fileUrl(), ThumbnailProvider::kLarge);
             QWriteLocker wlk(&iconLock);
             loadingThumbnail = true;
-            iconFuture = future;
         }
     }
 
@@ -1018,12 +1016,6 @@ QMap<DFileInfo::AttributeExtendID, QVariant> AsyncFileInfoPrivate::mediaInfo(DFi
     }
 
     return attributesExtend;
-}
-
-bool AsyncFileInfoPrivate::canThumb() const
-{
-    return !loadingThumbnail
-            || (iconFuture && iconFuture->finish && !iconFuture->data.isValid());
 }
 
 FileInfo::FileType AsyncFileInfoPrivate::fileType() const
