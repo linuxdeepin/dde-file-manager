@@ -189,6 +189,7 @@ void AddressBarPrivate::setCompleter(QCompleter *c)
     urlCompleter->setCaseSensitivity(Qt::CaseSensitive);
     urlCompleter->setMaxVisibleItems(10);
     completerView->setItemDelegate(&cpItemDelegate);
+    completerView->setAttribute(Qt::WA_InputMethodEnabled);
 
     connect(urlCompleter, QOverload<const QString &>::of(&QCompleter::activated),
             this, &AddressBarPrivate::insertCompletion);
