@@ -127,6 +127,19 @@ QString UniversalUtils::userLoginState()
     return state;
 }
 
+quint32 UniversalUtils::currentLoginUser()
+{
+    quint32 uid = UINT32_MAX;
+    QDBusInterface loginManager("org.freedesktop.login1",
+                                "/org/freedesktop/login1/user/self",
+                                "org.freedesktop.login1.User",
+                                QDBusConnection::systemBus());
+    QVariant replay = loginManager.property(("UID"));
+    if (replay.isValid())
+        uid = replay.toULongLong();
+    return uid;
+}
+
 bool UniversalUtils::isLogined()
 {
     return userLoginState() == "active";
