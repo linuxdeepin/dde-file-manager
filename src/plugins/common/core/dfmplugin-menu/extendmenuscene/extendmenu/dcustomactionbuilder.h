@@ -28,11 +28,10 @@ public:
     void setActiveDir(const QUrl &dir);
     void setFocusFile(const QUrl &file);
     QString getCompleteSuffix(const QString &fileName, const QString &suf);
-    static DCustomActionDefines::ComboType checkFileCombo(const QList<QUrl> &files, const QList<FileInfoPointer> &infos);
+    static DCustomActionDefines::ComboType checkFileCombo(const QList<QUrl> &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
                                                     DCustomActionDefines::ComboTypes type);
     static QList<DCustomActionEntry> matchActions(const QList<QUrl> &selects,
-                                                  const QList<FileInfoPointer> &selectInfos,
                                                   QList<DCustomActionEntry> oriActions);
     static QPair<QString, QStringList> makeCommand(const QString &cmd, DCustomActionDefines::ActionArg arg,
                                                    const QUrl &dir, const QUrl &foucs, const QList<QUrl> &files);
@@ -42,7 +41,7 @@ private:
     static bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
     static bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
     static bool isSchemeSupport(const DCustomActionEntry &action, const QUrl &url);
-    static bool isSuffixSupport(const DCustomActionEntry &action, const QUrl &url);
+    static bool isSuffixSupport(const DCustomActionEntry &action, FileInfoPointer fileInfo);
     static void appendAllMimeTypes(const FileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes);
     static void appendParentMimeType(const QStringList &parentmimeTypes, QStringList &mimeTypes);
 

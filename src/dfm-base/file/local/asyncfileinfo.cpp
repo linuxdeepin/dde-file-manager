@@ -118,21 +118,31 @@ QString AsyncFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case FileNameInfoType::kFileName:
-        return d->asyncAttribute(AsyncAttributeID::kStandardName).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardName).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardName).toString();
+        break;
     case FileNameInfoType::kBaseName:
-        return d->asyncAttribute(AsyncAttributeID::kStandardBaseName).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardBaseName).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardBaseName).toString();
+        break;
     case FileNameInfoType::kCompleteBaseName:
-        return d->asyncAttribute(AsyncAttributeID::kStandardCompleteBaseName).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardCompleteBaseName).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardCompleteBaseName).toString();
+        break;
     case FileNameInfoType::kSuffix:
         [[fallthrough]];
     case FileNameInfoType::kSuffixOfRename:
         if (d->asyncAttribute(AsyncAttributeID::kStandardSuffix).isValid())
             return d->asyncAttribute(AsyncAttributeID::kStandardSuffix).toString();
-        return FileInfo::nameOf(type);
+        break;
     case FileNameInfoType::kCompleteSuffix:
-        return d->asyncAttribute(AsyncAttributeID::kStandardCompleteSuffix).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardCompleteSuffix).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardCompleteSuffix).toString();
+        break;
     case FileNameInfoType::kFileCopyName:
-        return d->asyncAttribute(AsyncAttributeID::kStandardDisplayName).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardDisplayName).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardDisplayName).toString();
+        break;
     case FileNameInfoType::kIconName:
         return d->iconName();
     case FileNameInfoType::kGenericIconName:
@@ -142,6 +152,7 @@ QString AsyncFileInfo::nameOf(const NameInfoType type) const
     default:
         return FileInfo::nameOf(type);
     }
+    return FileInfo::nameOf(type);
 }
 /*!
   * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
@@ -156,16 +167,21 @@ QString AsyncFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kAbsoluteFilePath:
         [[fallthrough]];
     case FilePathInfoType::kCanonicalPath:
-        return d->asyncAttribute(AsyncAttributeID::kStandardFilePath).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardFilePath).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardFilePath).toString();
+        break;
     case FilePathInfoType::kPath:
         [[fallthrough]];
     case FilePathInfoType::kAbsolutePath:
-        return d->asyncAttribute(AsyncAttributeID::kStandardParentPath).toString();
+        if (d->asyncAttribute(AsyncAttributeID::kStandardParentPath).isValid())
+            return d->asyncAttribute(AsyncAttributeID::kStandardParentPath).toString();
+        break;
     case FilePathInfoType::kSymLinkTarget:
         return d->asyncAttribute(AsyncAttributeID::kStandardSymlinkTarget).toString();
     default:
         return FileInfo::pathOf(type);
     }
+    return FileInfo::pathOf(type);
 }
 /*!
  * \brief 获取文件url，默认是文件的url，此接口不会实现异步，全部使用Qurl去
@@ -637,8 +653,8 @@ QIcon AsyncFileInfoPrivate::defaultIcon()
 
     icon = LocalFileIconProvider::globalProvider()->icon(q);
     if (q->isAttributes(OptInfoType::kIsSymLink)) {
-        const auto &&target = symLinkTarget();
-        if (target != filePath()) {
+        const auto &&target = q->pathOf(PathInfoType::kSymLinkTarget);
+        if (!target.isEmpty() && target != q->pathOf(PathInfoType::kFilePath)) {
             FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
             if (info)
                 icon = info->fileIcon();
@@ -963,6 +979,7 @@ QString AsyncFileInfoPrivate::sizeFormat() const
 
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
+    assert(qApp->thread() != QThread::currentThread());
     if (dfmFileInfo) {
         auto value = dfmFileInfo->attribute(key, ok);
         return value;

@@ -19,8 +19,3 @@ void BurnEventCaller::sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, 
     else
         dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
-
-void BurnEventCaller::sendCloseTab(const QUrl &url)
-{
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
-}

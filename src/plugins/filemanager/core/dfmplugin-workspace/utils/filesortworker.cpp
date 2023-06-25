@@ -137,11 +137,6 @@ QList<QUrl> FileSortWorker::getChildrenUrls()
     return visibleChildren;
 }
 
-QStringList FileSortWorker::getNameFilters() const
-{
-    return nameFilters;
-}
-
 QDir::Filters FileSortWorker::getFilters() const
 {
     return filters;
@@ -327,22 +322,26 @@ void FileSortWorker::handleModelGetSourceData()
 
 void FileSortWorker::setFilters(QDir::Filters filters)
 {
-    resetFilters(nameFilters, filters);
+    resetFilters(filters);
 }
 
-void FileSortWorker::setNameFilters(const QStringList &nameFilters)
+void FileSortWorker::setNameFilters(const QStringList &filters)
 {
-    resetFilters(nameFilters, filters);
+    nameFilters = filters;
+    QMap<QUrl, FileItemData *>::iterator itr = childrenDataMap.begin();
+    for (; itr != childrenDataMap.end(); ++itr) {
+        checkNameFilters(itr.value());
+    }
+    Q_EMIT requestUpdateView();
 }
 
-void FileSortWorker::resetFilters(const QStringList &nameFilters, const QDir::Filters filters)
+void FileSortWorker::resetFilters(const QDir::Filters filters)
 {
     if (isCanceled)
         return;
-    if (this->nameFilters == nameFilters && this->filters == filters)
+    if (this->filters == filters)
         return;
 
-    this->nameFilters = nameFilters;
     this->filters = filters;
 
     filterAllFilesOrdered();
@@ -352,7 +351,7 @@ void FileSortWorker::onToggleHiddenFiles()
 {
     auto tmpfilters = filters;
     tmpfilters = ~(tmpfilters ^ QDir::Filter(~QDir::Hidden));
-    resetFilters(nameFilters, tmpfilters);
+    resetFilters(tmpfilters);
 }
 
 void FileSortWorker::onShowHiddenFileChanged(bool isShow)
@@ -444,7 +443,10 @@ void FileSortWorker::handleTraversalFinish(const QString &key)
 {
     if (currentKey != key)
         return;
+
     Q_EMIT requestSetIdel();
+
+    setNameFilters(nameFilters);
 }
 
 void FileSortWorker::handleSortAll(const QString &key)
@@ -636,9 +638,6 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
     if (!itemdata)
         return;
 
-    if (!itemdata->fileInfo())
-        itemdata->data(Global::ItemRoles::kItemCreateFileInfo);
-
     auto fileInfo = itemdata->fileInfo();
     if (!fileInfo || QString::number(quintptr(fileInfo.data()), 16) != infoPtr)
         return;
@@ -647,6 +646,23 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
         itemdata->fileInfo()->customData(Global::ItemRoles::kItemFileRefreshIcon);
 
     handleUpdateFile(url);
+}
+
+void FileSortWorker::checkNameFilters(FileItemData *itemData)
+{
+    if (!itemData || itemData->data(Global::ItemRoles::kItemFileIsDirRole).toBool() || nameFilters.isEmpty())
+        return;
+
+    QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
+    for (int i = 0; i < nameFilters.size(); ++i) {
+        re.setPattern(nameFilters.at(i));
+        if (re.exactMatch(itemData->data(kItemNameRole).toString())) {
+            itemData->setAvailableState(true);
+            return;
+        }
+    }
+
+    itemData->setAvailableState(false);
 }
 
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
@@ -737,19 +753,6 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
         if (isDir)
             return true;
     }
-
-    if (nameFilters.isEmpty()) {
-        if (sortInfo && filterCallback)
-            return filterCallback(InfoFactory::create<FileInfo>(sortInfo->url).data(), filterData);
-        return true;
-    }
-
-    QString path(sortInfo->url.path());
-    const QString &fileInfoName = path.right(path.lastIndexOf("/"));
-    // filter name
-    const bool caseSensitive = (filters & QDir::CaseSensitive) == QDir::CaseSensitive;
-    if (nameFilters.contains(fileInfoName, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive))
-        return false;
 
     if (sortInfo && filterCallback)
         return filterCallback(InfoFactory::create<FileInfo>(sortInfo->url).data(), filterData);
@@ -1133,17 +1136,17 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
 
 bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
 {
-    static QSet<QUrl> defaultHiddenUrls;
+    static DThreadList<QUrl> defaultHiddenUrls;
     static std::once_flag flg;
     std::call_once(flg, [&] {
         using namespace GlobalServerDefines;
-        auto systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
+        const auto &systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
         for (const auto &blk : systemBlks) {
             auto blkInfo = DevProxyMng->queryBlockInfo(blk);
-            QStringList mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
+            const QStringList &mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
             for (const auto &mpt : mountPoints) {
-                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
-                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
+                defaultHiddenUrls.push_back(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
+                defaultHiddenUrls.push_back(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
             }
         }
     });

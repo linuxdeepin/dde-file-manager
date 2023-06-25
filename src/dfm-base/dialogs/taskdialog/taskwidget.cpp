@@ -218,11 +218,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
     showBtnByAction(action);
 
     if (originInfo && targetInfo) {
-        QMimeType mimeTypeSrc = DMimeDatabase().mimeTypeForUrl(target);
-        if (!mimeTypeSrc.isValid()) {
-            qWarning() << "get source file mimetype is valid!";
-        }
-        lbSrcIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
+        lbSrcIcon->setPixmap(originInfo->fileIcon().pixmap(48, 48));
         lbSrcModTime->setText(QString(tr("Time modified: %1"))
                                       .arg(originInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
                                                    ? originInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
@@ -235,11 +231,8 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
             lbSrcTitle->setText(tr("Original file"));
             lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->extendAttributes(ExtInfoType::kSizeFormat).toString()));
         }
-        QMimeType mimeTypeDst = DMimeDatabase().mimeTypeForUrl(source);
-        if (!mimeTypeDst.isValid()) {
-            qWarning() << "get source file mimetype is valid!";
-        }
-        lbDstIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
+
+        lbDstIcon->setPixmap(targetInfo->fileIcon().pixmap(48, 48));
         lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid() ? targetInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
 
         if (targetInfo->isAttributes(OptInfoType::kIsDir)) {

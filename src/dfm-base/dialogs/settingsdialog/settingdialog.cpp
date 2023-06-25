@@ -199,10 +199,9 @@ SettingDialog::SettingDialog(QWidget *parent)
     loadSettings(settingTemplate);
 
     // load conf value
-    auto backen = SettingBackend::instance();
     if (dtkSettings) {
         dtkSettings->setParent(this);
-        dtkSettings->setBackend(backen);
+        SettingBackend::instance()->setToSettings(dtkSettings);
         updateSettings("QObject", dtkSettings);
     }
 }

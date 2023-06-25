@@ -170,6 +170,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
         userId.append(QString::number(getuid()));
         mimeData->setData(GlobalData::kUserIdKey, userId);
     }
+
     qApp->clipboard()->setMimeData(mimeData);
 }
 /*!

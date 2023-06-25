@@ -48,19 +48,18 @@ QString SendToMenuScene::name() const
 bool SendToMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->isEmptyArea) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    d->isFocusOnDDEDesktopFile = params.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
-    d->isSystemPathIncluded = params.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+    const QVariantHash &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFileInfo << d->currentDir;
+        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -179,7 +178,7 @@ bool SendToMenuScene::triggered(QAction *action)
             if (!linkPath.isEmpty()) {
                 dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
                                              d->windowId,
-                                             d->focusFileInfo,
+                                             d->focusFile,
                                              QUrl::fromLocalFile(linkPath),
                                              true,
                                              false);

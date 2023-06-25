@@ -13,6 +13,8 @@
 #include <DListView>
 #include <dtkwidget_global.h>
 
+DGUI_USE_NAMESPACE
+
 CollectionDelegate::CollectionDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {

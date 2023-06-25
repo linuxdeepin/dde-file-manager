@@ -177,6 +177,17 @@
             "description":"If the value is true, the filemanager and desktop will automatically return free memory to system when the memory reaches a certain threshold",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.operate.bigfilesize": {
+            "value":"83886080",
+            "serial":0,
+            "flags":[],
+            "name":"Big File",
+            "name[zh_CN]":"大文件大小",
+            "description[zh_CN]":"用于拷贝时判断文件是否是大文件的size",
+            "description":"Size used to determine whether a file is a large file during copying",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

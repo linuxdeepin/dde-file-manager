@@ -24,6 +24,7 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMBASE_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
 DragDropHelper::DragDropHelper(FileView *parent)
@@ -209,7 +210,11 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (!hoverIndex.isValid()) {
             hoverIndex = view->rootIndex();
         } else {
-            const FileInfoPointer &fileInfo = view->model()->fileInfo(hoverIndex);
+            FileInfoPointer fileInfo = view->model()->fileInfo(hoverIndex);
+            if (fileInfo.isNull())
+                hoverIndex.data(Global::ItemRoles::kItemCreateFileInfoRole);
+            fileInfo = view->model()->fileInfo(hoverIndex);
+
             if (fileInfo) {
                 bool isDrop = dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_IsDrop", fileInfo->urlOf(UrlInfoType::kUrl));
                 // NOTE: if item can not drop, the drag item will drop to root dir.

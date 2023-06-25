@@ -58,6 +58,7 @@ public:
     bool removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl> &files);
     void deleteTags(const QStringList &tags);
     void deleteFiles(const QList<QUrl> &urls);
+    void hideFiles(const QList<QString> &tags, const QList<QUrl> &files);
     bool changeTagColor(const QString &tagName, const QString &newTagColor);
     bool changeTagName(const QString &tagName, const QString &newName);
 
@@ -70,6 +71,7 @@ Q_SIGNALS:
     void tagDeleted(const QString &tagName);
     void filesTagged(const QVariantMap &fileAndTags);
     void filesUntagged(const QVariantMap &fileAndTags);
+    void filesHidden(const QVariantMap &fileAndTags);
 
 public Q_SLOTS:
     void onTagAdded(const QVariantMap &tags);

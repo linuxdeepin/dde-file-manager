@@ -6,6 +6,7 @@
 #define WATERMASKFRAME_H
 
 #include "ddplugin_canvas_global.h"
+#include "deepinlicensehelper.h"
 
 #include <QFrame>
 #include <QMap>
@@ -31,8 +32,8 @@ protected:
     {
         bool valid = false;
         QString maskLogoUri;
-        int maskLogoWidth = 232;
-        int maskLogoHeight = 46;
+        int maskLogoWidth = 208;
+        int maskLogoHeight = 30;
         int maskTextWidth = 100;
         int maskTextHeight = 30;
         int maskWidth = maskLogoWidth + maskTextWidth;
@@ -54,6 +55,7 @@ private:
     ConfigInfo defaultCfg(QJsonObject *);
     ConfigInfo govCfg(QJsonObject *, bool cn);
     ConfigInfo entCfg(QJsonObject *, bool cn);
+    ConfigInfo secCfg(QJsonObject *, bool cn);
 private:
     QString configFile;
     QMap<QString, ConfigInfo> configInfos;
@@ -61,7 +63,7 @@ private:
     QLabel *textLabel = nullptr;
     bool maskAlwaysOn = true;
     int curState = -1;
-    int curProperty = -1;
+    DeepinLicenseHelper::LicenseProperty curProperty = DeepinLicenseHelper::LicenseProperty::Noproperty;
     QSize curMaskSize = QSize(0, 0);
     QPoint curRightBottom = QPoint(0, 0);
 };

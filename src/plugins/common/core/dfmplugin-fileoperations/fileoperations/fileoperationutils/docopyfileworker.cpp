@@ -51,6 +51,10 @@ void DoCopyFileWorker::stop()
 {
     state = kStoped;
     waitCondition->wakeAll();
+    auto fileOpsAll = fileOps.listByLock();
+    for (auto op : fileOpsAll) {
+        op->cancel();
+    }
 }
 
 void DoCopyFileWorker::skipMemcpyBigFile(const QUrl url)
@@ -64,23 +68,10 @@ void DoCopyFileWorker::operateAction(const AbstractJobHandler::SupportAction act
     currentAction = action;
     resume();
 }
-void DoCopyFileWorker::doFileCopy(const FileInfoPointer fromInfo, const FileInfoPointer toInfo)
+void DoCopyFileWorker::doFileCopy(FileInfoPointer fromInfo, FileInfoPointer toInfo)
 {
-    doCopyFilePractically(fromInfo, toInfo, nullptr);
+    doDfmioFileCopy(fromInfo, toInfo, nullptr);
     workData->completeFileCount++;
-}
-
-void DoCopyFileWorker::writeExblockFile()
-{
-    while (true) {
-        if (isStopped())
-            return;
-        if (workData->blockCopyInfoQueue.size() <= 0) {
-            QThread::msleep(10);
-        } else if (!doWriteBlockFileCopy(workData->blockCopyInfoQueue.takeByLock())) {
-            return;
-        }
-    }
 }
 
 void DoCopyFileWorker::doMemcpyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, char *dest, char *source, size_t size)
@@ -130,177 +121,69 @@ void DoCopyFileWorker::doMemcpyLocalBigFile(const FileInfoPointer fromInfo, cons
     }
 }
 
-bool DoCopyFileWorker::doWriteBlockFileCopy(const BlockFileCopyInfoPointer blockFileInfo)
+bool DoCopyFileWorker::doDfmioFileCopy(FileInfoPointer fromInfo, FileInfoPointer toInfo, bool *skip)
 {
-    // write over flags
-    if (!blockFileInfo->frominfo && !blockFileInfo->toinfo)
+    assert(!fromInfo.isNull());
+    assert(!toInfo.isNull());
+    if (isStopped())
         return false;
-    if (skipUrls.contains(blockFileInfo->frominfo->urlOf(UrlInfoType::kUrl)))
-        return true;
+    // read ahead source file
+    readAheadSourceFile(fromInfo);
 
-    if (Q_UNLIKELY(!stateCheck())) {
-        releaseCopyInfo(blockFileInfo);
+    if (!stateCheck())
         return false;
-    }
-    //检查info的有效性
-    if (!blockFileInfo->frominfo || !blockFileInfo->toinfo) {
-        releaseCopyInfo(blockFileInfo);
-        return true;
-    }
-    //对文件夹加权
-    if (blockFileInfo->isdir) {
-        localFileHandler->setPermissions(blockFileInfo->toinfo->urlOf(UrlInfoType::kUrl), blockFileInfo->permission);
-        return true;
-    }
-
-    // open file
-    bool skip = false;
-    bool once = blockFileFd < 0;
-    if (blockFileFd < 0)
-        blockFileFd = doOpenFile(blockFileInfo->frominfo, blockFileInfo->toinfo, true, blockFileInfo->openFlag, &skip);
-    if (blockFileFd < 0) {
-        if (skip)
-            skipUrls.append(blockFileInfo->frominfo->urlOf(UrlInfoType::kUrl));
-        return true;
-    }
-    // write data to block file
-    if (!writeBlockFile(blockFileInfo, &skip)) {
-        if (blockFileFd >= 0)
-            close(blockFileFd);
-        if (skip)
-            skipUrls.append(blockFileInfo->frominfo->urlOf(UrlInfoType::kUrl));
-        return true;
-    }
-    // sync to block file
-    syncBlockFile(blockFileInfo, once);
-
-    return true;
-}
-
-int DoCopyFileWorker::doOpenFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const bool isTo, const int openFlag, bool *skip)
-{
-    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
+    // emit current task url
+    auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+    auto toUrl =  toInfo->urlOf(UrlInfoType::kUrl);
     emit currentTask(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
-    int fd = -1;
+    // 创建doperator类
+    QSharedPointer<dfmio::DOperator> op{new dfmio::DOperator(fromUrl)};
+    fileOps.appendByLock(op);
+    ProgressData *data {new ProgressData()};
+    data->data = workData;
+    data->copyFile = fromUrl;
+    bool ret{ false };
+
+    DFile::CopyFlags flag = DFile::CopyFlag::kNoFollowSymlinks | DFile::CopyFlag::kOverwrite;
+    if (FileUtils::isMtpFile(toUrl))
+        flag |= DFile::CopyFlag::kTargetDefaultPerms;
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
-        QUrl url = isTo ? toInfo->urlOf(UrlInfoType::kUrl) : fromInfo->urlOf(UrlInfoType::kUrl);
-        std::string path = url.path().toStdString();
-        fd = open(path.c_str(), openFlag, 0777);
+        ret = op->copyFile(toUrl, flag, progressCallback, data);
         action = AbstractJobHandler::SupportAction::kNoAction;
-        if (fd < 0) {
-            auto lastError = strerror(errno);
-            qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << openFlag
-                       << " error code: " << errno << " error msg: " << lastError;
+        if (!ret) {
+            auto lastError = op->lastError().errorMsg();
+            qWarning() << "file copy error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                       << " error code: " << op->lastError().code() << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
-                                          AbstractJobHandler::JobErrorType::kOpenError, isTo, lastError);
+                                          AbstractJobHandler::JobErrorType::kDfmIoError, false, lastError);
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     checkRetry();
 
-    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip)) {
-        if (fd >= 0)
-            close(fd);
-        return -1;
-    }
+    fileOps.removeOneByLock(op);
 
-    return fd;
+    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip))
+        workData->currentWriteSize -= workData->everyFileWriteSize.value(fromUrl);
+
+    workData->everyFileWriteSize.remove(fromUrl);
+    delete data;
+    return ret;
 }
 
-BlockFileCopyInfoPointer DoCopyFileWorker::doReadExBlockFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const int fd, bool *skip)
+void DoCopyFileWorker::progressCallback(int64_t current, int64_t total, void *progressData)
 {
-    qint64 sizeBlock = fromInfo->size() > kMaxBufferLength ? kMaxBufferLength : fromInfo->size();
-    BlockFileCopyInfoPointer copyinfo(new WorkerData::BlockFileCopyInfo());
-    copyinfo->frominfo = fromInfo;
-    copyinfo->toinfo = toInfo;
-    lseek(fd, 0, SEEK_SET);
-    qint64 currentPos = 0;
-    qint64 readSize = -1;
-    while (true) {
-        copyinfo->currentpos = currentPos;
-
-        if (Q_UNLIKELY(!stateCheck())) {
-            close(fd);
-            return copyinfo;
-        }
-        char *buffer = new char[static_cast<uint>(sizeBlock + 1)];
-        AbstractJobHandler::SupportAction actionForRead = AbstractJobHandler::SupportAction::kNoAction;
-        do {
-            actionForRead = AbstractJobHandler::SupportAction::kNoAction;
-            readSize = read(fd, buffer, static_cast<size_t>(sizeBlock));
-            auto laststr = strerror(errno);
-            if (Q_UNLIKELY(!stateCheck())) {
-                delete[] buffer;
-                close(fd);
-                return copyinfo;
-            }
-            if (Q_UNLIKELY(readSize <= 0)) {
-                // read over
-                if (readSize == 0 && currentPos == fromInfo->size()) {
-                    copyinfo->buffer = buffer;
-                    copyinfo->size = readSize;
-                    close(fd);
-                    return copyinfo;
-                }
-
-                qWarning() << "read size <=0, size: " << readSize << " from file pos: " << currentPos << " from file info size: " << fromInfo->size();
-
-                const bool fromInfoExist = fromInfo->exists();
-                AbstractJobHandler::JobErrorType errortype = fromInfoExist ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
-                QString errorstr = fromInfoExist ? laststr : QString();
-
-                actionForRead = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
-                                                     errortype, false, errorstr);
-
-                if (actionForRead == AbstractJobHandler::SupportAction::kRetryAction) {
-                    if (!lseek(fd, currentPos, SEEK_SET)) {
-                        // 优先处理
-                        auto laststr = strerror(errno);
-                        AbstractJobHandler::SupportAction actionForReadSeek =
-                                doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
-                                                     toInfo->urlOf(UrlInfoType::kUrl),
-                                                     AbstractJobHandler::JobErrorType::kSeekError,
-                                                     false, laststr);
-                        checkRetry();
-                        actionOperating(actionForReadSeek, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip);
-
-                        close(fd);
-
-                        return copyinfo;
-                    }
-                }
-            }
-        } while (actionForRead == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-        checkRetry();
-
-        if (!actionOperating(actionForRead, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip)) {
-            close(fd);
-            return copyinfo;
-        }
-
-        createExBlockFileCopyInfo(copyinfo->frominfo, copyinfo->toinfo, currentPos, false, readSize, buffer);
-
-        currentPos += readSize;
-    }
-}
-
-void DoCopyFileWorker::createExBlockFileCopyInfo(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const qint64 currentPos, const bool closeFlag, const qint64 size, char *buffer, const bool isDir, const QFileDevice::Permissions permission)
-{
-    BlockFileCopyInfoPointer tmpinfo(new WorkerData::BlockFileCopyInfo());
-    tmpinfo->closeflag = closeFlag;
-    tmpinfo->frominfo = fromInfo;
-    tmpinfo->toinfo = toInfo;
-    tmpinfo->currentpos = currentPos;
-    tmpinfo->buffer = buffer;
-    tmpinfo->size = size;
-    tmpinfo->isdir = isDir;
-    tmpinfo->permission = permission;
-    workData->blockCopyInfoQueue.push_backByLock(tmpinfo);
-    while (workData->blockCopyInfoQueue.count() > 500 && !isStopped())
-        QThread::msleep(10);
+    assert(progressData);
+    auto data = static_cast<ProgressData *>(progressData);
+    assert(data);
+    assert(data->data);
+    if (total <= 0)
+        data->data->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
+    data->data->currentWriteSize += (current - data->data->everyFileWriteSize.value(data->copyFile));
+    data->data->everyFileWriteSize.insert(data->copyFile, current);
 }
 
 // copy thread using
@@ -374,23 +257,6 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->urlOf(UrlInfoType::kUrl));
 
     return true;
-}
-
-void DoCopyFileWorker::readExblockFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo)
-{
-    if (!stateCheck())
-        return;
-    bool skip { false };
-    auto fd = doOpenFile(fromInfo, toInfo, false, O_RDONLY, &skip);
-    if (fd < 0)
-        return;
-
-    auto info = doReadExBlockFile(fromInfo, toInfo, fd, &skip);
-
-    if (!stateCheck())
-        return;
-
-    workData->blockCopyInfoQueue.push_backByLock(info);
 }
 
 bool DoCopyFileWorker::stateCheck()
@@ -821,108 +687,6 @@ bool DoCopyFileWorker::isStopped()
     return state == kStoped;
 }
 
-void DoCopyFileWorker::releaseCopyInfo(const BlockFileCopyInfoPointer &info)
-{
-    if (info->buffer) {
-        delete[] info->buffer;
-        info->buffer = nullptr;
-    }
-}
-
-bool DoCopyFileWorker::writeBlockFile(const BlockFileCopyInfoPointer &info, bool *skip)
-{
-    if (blockFileFd < 0)
-        return false;
-
-    if (Q_UNLIKELY(!stateCheck())) {
-        releaseCopyInfo(info);
-        return false;
-    }
-    if (info->size <= 0)
-        return true;
-    qint64 currentPos = info->currentpos;
-    AbstractJobHandler::SupportAction actionForWrite { AbstractJobHandler::SupportAction::kNoAction };
-    qint64 surplusSize = info->size;
-    do {
-        actionForWrite = AbstractJobHandler::SupportAction::kNoAction;
-        qint64 sizeWrite = 0;
-
-        if (Q_UNLIKELY(!stateCheck())) {
-            releaseCopyInfo(info);
-            return false;
-        }
-        bool writeFinishedOnce = true;
-        const char *surplusData = info->buffer;
-        do {
-            if (!writeFinishedOnce)
-                qDebug() << "write not finished once, current write size: " << sizeWrite << " remain size: " << surplusSize - sizeWrite << " read size: " << info->size;
-            surplusData += sizeWrite;
-            surplusSize -= sizeWrite;
-            sizeWrite = write(blockFileFd, surplusData, static_cast<size_t>(info->size));
-            if (sizeWrite > 0)
-                workData->currentWriteSize += sizeWrite;
-            if (Q_UNLIKELY(!stateCheck()))
-                return false;
-            writeFinishedOnce = false;
-        } while (sizeWrite > 0 && sizeWrite < surplusSize);
-
-        // 表示全部数据写入完成
-        if (sizeWrite >= 0)
-            break;
-        if (sizeWrite == -1 && errno == DFMIOErrorCode::DFM_IO_ERROR_NONE) {
-            qWarning() << "write failed, but no error, maybe write empty";
-            break;
-        }
-        auto lastError = strerror(errno);
-        actionForWrite = doHandleErrorAndWait(info->frominfo->urlOf(UrlInfoType::kUrl),
-                                              info->toinfo->urlOf(UrlInfoType::kUrl),
-                                              AbstractJobHandler::JobErrorType::kWriteError, true, lastError);
-        if (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction) {
-            if (!lseek(blockFileFd, currentPos, SEEK_SET)) {
-                auto lastError = strerror(errno);
-                AbstractJobHandler::SupportAction actionForWriteSeek = doHandleErrorAndWait(info->frominfo->urlOf(UrlInfoType::kUrl),
-                                                                                            info->toinfo->urlOf(UrlInfoType::kUrl),
-                                                                                            AbstractJobHandler::JobErrorType::kSeekError,
-                                                                                            true, lastError);
-                checkRetry();
-                actionOperating(actionForWriteSeek, info->frominfo->size() - (currentPos + info->size - surplusSize), skip);
-                return false;
-            }
-        }
-    } while (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-    checkRetry();
-
-    if (!actionOperating(actionForWrite, info->frominfo->size() - (currentPos + info->size - surplusSize), skip))
-        return false;
-
-    return true;
-}
-
-void DoCopyFileWorker::syncBlockFile(const BlockFileCopyInfoPointer &info, bool doOnce)
-{
-    if (!stateCheck())
-        return;
-
-    if (doOnce)
-        syncfs(blockFileFd);
-
-    //关闭文件并加权
-    if (info->closeflag) {
-        syncfs(blockFileFd);
-        close(blockFileFd);
-        // the file is empty
-        if (info->frominfo->size() <= 0)
-            workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
-
-        blockFileFd = -1;
-        QFileDevice::Permissions permissions = info->frominfo->permissions();
-        QString path = info->frominfo->urlOf(UrlInfoType::kUrl).path();
-        if (permissions != 0000)
-            localFileHandler->setPermissions(info->toinfo->urlOf(UrlInfoType::kUrl), permissions);
-    }
-}
-
 /*!
  * \brief FileOperateBaseWorker::setTargetPermissions Set permissions on the target file
  * \param fromInfo File information of source file
@@ -935,6 +699,6 @@ void DoCopyFileWorker::setTargetPermissions(const FileInfoPointer &fromInfo, con
     QFileDevice::Permissions permissions = fromInfo->permissions();
     QString path = fromInfo->urlOf(UrlInfoType::kUrl).path();
     //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
-    if (permissions != 0000)
+    if (permissions != 0000 && !FileUtils::isMtpFile(toInfo->urlOf(UrlInfoType::kUrl)))
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
 }

@@ -169,11 +169,14 @@ QIcon DesktopFileInfo::fileIcon()
             d->icon = QIcon();
     }
 
-    // 临时代码
-    d->icon = QIcon::fromTheme(iconName);   // todo(lxs) SyncFileInfo::fileIcon() 统一处理
+    // QIcon::fromTheme 不能够转入全路径iconname，产生的icon有效性无法被isnull判断
+    if (d->icon.isNull()) {
+        if (!QDir::isAbsolutePath(iconName))
+            d->icon = QIcon::fromTheme(iconName);
 
-    if (d->icon.name().isEmpty())
-        return ProxyFileInfo::fileIcon();
+        if (d->icon.isNull())
+            return ProxyFileInfo::fileIcon();
+    }
 
     return d->icon;
 }

@@ -47,4 +47,5 @@ void TagFileWatcherPrivate::initConnect()
     connect(TagManager::instance(), &TagManager::tagDeleted, qobject_cast<TagFileWatcher *>(q), &TagFileWatcher::onTagRemoved);
     connect(TagManager::instance(), &TagManager::filesTagged, qobject_cast<TagFileWatcher *>(q), &TagFileWatcher::onFilesTagged);
     connect(TagManager::instance(), &TagManager::filesUntagged, qobject_cast<TagFileWatcher *>(q), &TagFileWatcher::onFilesUntagged);
+    connect(TagManager::instance(), &TagManager::filesHidden, qobject_cast<TagFileWatcher *>(q), &TagFileWatcher::onFilesHidden);
 }

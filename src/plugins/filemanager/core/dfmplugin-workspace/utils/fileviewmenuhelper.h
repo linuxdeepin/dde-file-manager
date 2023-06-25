@@ -7,8 +7,6 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include <dfm-base/interfaces/fileinfo.h>
-
 #include <QObject>
 #include <QString>
 
@@ -22,8 +20,7 @@ public:
     explicit FileViewMenuHelper(FileView *view = nullptr);
     static bool disableMenu();
     void showEmptyAreaMenu();
-    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QList<QUrl> &selectUrls,
-                        const QList<FileInfoPointer> &selectInfos);
+    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
 
     void setMenuScene(const QString &scene);
     void setWaitCursor();

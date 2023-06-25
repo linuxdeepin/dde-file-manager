@@ -43,7 +43,6 @@ void TagFileWatcher::onFilesTagged(const QVariantMap &fileAndTags)
             QUrl fileUrl = QUrl::fromLocalFile(iter.key());
 
             emit AbstractFileWatcher::subfileCreated(fileUrl);
-            return;
         }
         ++iter;
     }
@@ -59,7 +58,21 @@ void TagFileWatcher::onFilesUntagged(const QVariantMap &fileAndTags)
             QUrl fileUrl = QUrl::fromLocalFile(iter.key());
 
             emit AbstractFileWatcher::fileDeleted(fileUrl);
-            return;
+        }
+        ++iter;
+    }
+}
+
+void TagFileWatcher::onFilesHidden(const QVariantMap &fileAndTags)
+{
+    QString tagName = TagHelper::instance()->getTagNameFromUrl(dptr->url);
+
+    auto iter = fileAndTags.begin();
+    while (iter != fileAndTags.end()) {
+        if (iter.value().toStringList().contains(tagName)) {
+            QUrl fileUrl = QUrl::fromLocalFile(iter.key());
+
+            emit AbstractFileWatcher::fileAttributeChanged(fileUrl);
         }
         ++iter;
     }

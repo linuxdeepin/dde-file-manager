@@ -22,7 +22,6 @@ public:
 public:
     QUrl currentDir;
     QList<QUrl> selectFiles;
-    QList<FileInfoPointer> selectFileInfos;
     QUrl focusFile;
     bool onDesktop { false };
     bool isEmptyArea { false };

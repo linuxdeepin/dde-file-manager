@@ -29,7 +29,7 @@ public:
     static QVector<int> availableScreenSaverTime();
     static QStringList availableWallpaperSlide();
     void adjustGeometry();
-    void refreshList();
+    Q_INVOKABLE void refreshList();
     QPair<QString, QString> currentWallpaper() const;
 
 public:

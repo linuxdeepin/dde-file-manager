@@ -57,22 +57,29 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    d->isFocusOnDDEDesktopFile = params.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
-    d->isSystemPathIncluded = params.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
+    }
+
+    if (!d->isEmptyArea) {
+        QString errString;
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+        if (d->focusFileInfo.isNull()) {
+            qDebug() << errString;
+            return false;
+        }
     }
 
     return AbstractMenuScene::initialize(params);
@@ -180,10 +187,8 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
             supportedMimeTypes.removeAll("");
 
             QString errString;
-            QList<QUrl> redirectedUrls;
-
             for (auto url : d->selectFiles) {
-                auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+                auto info = InfoFactory::create<FileInfo>(url);
                 if (Q_UNLIKELY(info.isNull())) {
                     qDebug() << errString;
                     break;
@@ -191,13 +196,8 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
                 // if the suffix is the same, it can be opened with the same application
                 if (info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
-
                     QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
-                    QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
-                    auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-                    if (!info.isNull()) {
-                        mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
-                    }
+                    mimeTypeList << info->fileMimeType().parentMimeTypes();
 
                     bool matched = false;
                     // or,the application suooprt mime type contains the type of the url file mime type
@@ -215,6 +215,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
                     }
                 }
             }
+
         }
     }
 

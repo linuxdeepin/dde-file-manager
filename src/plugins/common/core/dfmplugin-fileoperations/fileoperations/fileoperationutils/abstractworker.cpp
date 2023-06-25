@@ -45,6 +45,7 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer handle, const QList<QUrl
     initHandleConnects(handle);
     this->sourceUrls = sources;
     this->targetUrl = target;
+    targetOrgUrl = targetUrl;
     isConvert = flags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
     workData->jobFlags = flags;
 }

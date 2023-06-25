@@ -46,14 +46,11 @@ bool AvfsMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
 
     d->showOpenWith = d->selectFiles.count() == 1;
     if (d->showOpenWith) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-        d->showOpenWith = d->focusFileInfo && !d->focusFileInfo->isAttributes(OptInfoType::kIsDir)
-                && !AvfsUtils::isSupportedArchives(AvfsUtils::avfsUrlToLocal(d->focusFile));
+        auto info = InfoFactory::create<FileInfo>(d->selectFiles.first());
+        d->showOpenWith = info && !info->isAttributes(OptInfoType::kIsDir) && !AvfsUtils::isSupportedArchives(AvfsUtils::avfsUrlToLocal(d->selectFiles.first()));
     }
 
     return AbstractMenuScene::initialize(params);

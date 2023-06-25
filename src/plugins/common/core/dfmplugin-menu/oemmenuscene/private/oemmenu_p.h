@@ -7,6 +7,8 @@
 
 #include "dfmplugin_menu_global.h"
 
+#include <dfm-base/interfaces/fileinfo.h>
+
 #include <DDesktopEntry>
 
 #include <QObject>
@@ -39,9 +41,9 @@ public:
     bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes) const;
     bool isActionShouldShow(const QAction *action, bool onDesktop) const;
     bool isSchemeSupport(const QAction *action, const QUrl &url) const;
-    bool isSuffixSupport(const QAction *action, const QUrl &url, const bool allEx7z = false) const;
+    bool isSuffixSupport(const QAction *action, FileInfoPointer fileInfo, const bool allEx7z = false) const;
     bool isAllEx7zFile(const QList<QUrl> &files) const;
-    bool isValid(const QAction *action, const QUrl &url, const bool onDesktop, const bool allEx7z = false) const;
+    bool isValid(const QAction *action, FileInfoPointer fileInfo, const bool onDesktop, const bool allEx7z = false) const;
 
     void clearSubMenus();
     void setActionProperty(QAction *const action, const Dtk::Core::DDesktopEntry &entry, const QString &key, const QString &section = "Desktop Entry") const;

@@ -6,12 +6,14 @@
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <QUrl>
 #include <QCloseEvent>
 #include <QKeyEvent>
 #include <QHideEvent>
 #include <QApplication>
+#include <QScreen>
 
 namespace dfmbase {
 
@@ -162,12 +164,14 @@ QUrl FileManagerWindow::currentUrl() const
     return d->currentUrl;
 }
 
-void FileManagerWindow::moveCenter(const QPoint &cp)
+void FileManagerWindow::moveCenter()
 {
-    QRect qr = frameGeometry();
-
-    qr.moveCenter(cp);
-    move(qr.topLeft());
+    QScreen *cursorScreen = WindowUtils::cursorScreen();
+    if (!cursorScreen)
+        return;
+    int x = (cursorScreen->availableGeometry().width() - width()) / 2;
+    int y = (cursorScreen->availableGeometry().height() - height()) / 2;
+    move(QPoint(x, y) + cursorScreen->geometry().topLeft());
 }
 
 void FileManagerWindow::installTitleBar(AbstractFrame *w)
@@ -253,15 +257,6 @@ AbstractFrame *FileManagerWindow::workSpace() const
 AbstractFrame *FileManagerWindow::detailView() const
 {
     return d->detailSpace;
-}
-
-void FileManagerWindow::paintEvent(QPaintEvent *event)
-{
-    DMainWindow::paintEvent(event);
-
-    std::call_once(d->openFlag, [this]() {
-        QMetaObject::invokeMethod(this, "aboutToOpen", Qt::QueuedConnection);
-    });
 }
 
 void FileManagerWindow::closeEvent(QCloseEvent *event)

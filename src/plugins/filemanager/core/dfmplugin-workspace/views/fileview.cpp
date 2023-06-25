@@ -73,6 +73,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeDelegate();
     initializeStatusBar();
     initializeConnect();
+    initializeScrollBarWatcher();
 
     viewport()->installEventFilter(this);
 }
@@ -644,6 +645,14 @@ QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
     }
 }
 
+bool FileView::isVerticalScrollBarSliderDragging() const
+{
+    if (d->scrollBarValueChangedTimer)
+        return d->scrollBarValueChangedTimer->isActive();
+
+    return false;
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     if (!url.isValid())
@@ -925,7 +934,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
                 return;
             }
         } else {
-            d->selectHelper->setSelection(selectionModel()->selection());
+            if (selectionMode() != QAbstractItemView::SingleSelection)
+                d->selectHelper->setSelection(selectionModel()->selection());
         }
 
         d->lastMousePressedIndex = QModelIndex();
@@ -1205,18 +1215,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
             selectionModel()->select(index, QItemSelectionModel::Select);
         }
 
-        QModelIndex rootIndex = this->rootIndex();
-        QList<QUrl> selectUrls;
-        QList<FileInfoPointer> selectInfos;
-        for (const QModelIndex &tmpIndex : selectedIndexes()) {
-            if (tmpIndex.parent() != rootIndex)
-                continue;
-            selectUrls << model()->data(tmpIndex, ItemRoles::kItemUrlRole).toUrl();
-            auto info = model()->fileInfo(tmpIndex);
-            if (info)
-                selectInfos << info;
-        }
-        d->viewMenuHelper->showNormalMenu(index, model()->flags(index), selectUrls, selectInfos);
+        d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
     }
     d->viewMenuHelper->reloadCursor();
 }
@@ -1493,19 +1492,49 @@ void FileView::initializeConnect()
     dpfSignalDispatcher->subscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
 }
 
+void FileView::initializeScrollBarWatcher()
+{
+    d->scrollBarValueChangedTimer = new QTimer(this);
+    d->scrollBarValueChangedTimer->setInterval(50);
+    d->scrollBarValueChangedTimer->setSingleShot(true);
+
+    connect(d->scrollBarValueChangedTimer, &QTimer::timeout, this, [this] { this->update(); });
+
+    connect(verticalScrollBar(), &QScrollBar::sliderPressed, this, [this] { d->scrollBarSliderPressed = true; });
+    connect(verticalScrollBar(), &QScrollBar::sliderReleased, this, [this] { d->scrollBarSliderPressed = false; });
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, [this] {
+       if (d->scrollBarSliderPressed)
+           d->scrollBarValueChangedTimer->start();
+    });
+}
+
 void FileView::updateStatusBar()
 {
     if (model()->currentState() != ModelState::kIdle)
         return;
 
     int count = selectedIndexCount();
+
     if (count == 0) {
         d->statusBar->itemCounted(model()->rowCount(rootIndex()));
         return;
     }
 
-    auto ulrs = selectedUrlList();
-    d->statusBar->itemSelected(ulrs);
+    QList<QUrl> list;
+    int selectFiles = 0;
+    int selectFolders = 0;
+    qint64 filesizes = 0;
+    for (const auto &index : selectedIndexes()) {
+        if (index.data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
+            selectFolders++;
+            list << index.data(Global::ItemRoles::kItemUrlRole).value<QUrl>();
+        } else {
+            selectFiles++;
+            filesizes += index.data(Global::ItemRoles::kItemFileSizeIntRole).toLongLong();
+        }
+    }
+
+    d->statusBar->itemSelected(selectFiles, selectFolders, filesizes, list);
 }
 
 void FileView::updateLoadingIndicator()

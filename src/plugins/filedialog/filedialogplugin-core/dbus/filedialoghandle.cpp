@@ -16,7 +16,7 @@
 #include <QWindow>
 #include <QTimer>
 #include <QEventLoop>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QScreen>
 
 #include <mutex>
@@ -53,7 +53,10 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
     // install all widgets before window showed
     emit d_func()->dialog->aboutToOpen();
     d_func()->dialog->cd(QUrl::fromLocalFile(defaultPath));
-    d_func()->dialog->hide();
+
+    //! no need to hide, if the dialog is showed in creating, it must be bug.
+    //! see bug#22564
+    //d_func()->dialog->hide();
 
     connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
     connect(d_func()->dialog, &FileDialog::rejected, this, &FileDialogHandle::rejected);
@@ -262,11 +265,6 @@ int FileDialogHandle::selectedNameFilterIndex() const
 qulonglong FileDialogHandle::winId() const
 {
     D_DC(FileDialogHandle);
-
-    // browser use gtk start filedialog
-    // gtk call the `winId` must be showed in the window after
-    if (qApp->property("GTK").toBool())
-        waitForWindowShow();
 
     if (d->dialog)
         return d->dialog->internalWinId();
@@ -484,19 +482,12 @@ void FileDialogHandle::show()
     if (d->dialog) {
         if (!isSetAcceptMode && d->dialog->statusBar())
             d->dialog->statusBar()->setMode(FileDialogStatusBar::Mode::kOpen);
-        // why ?
-        // Use QFileDialog will call to the current function, but `WindowsService::showWindow` will call
-        // to some D-Bus interfaces in desktop.
-        // The main thread of the desktop waits for the current function to
-        // finish running if launch filedialog from desktop, this leads to deadlocks as each side waits for
-        // the other to finish.
-        // So this modification makes `WindowsService::showWindow` execute asynchronously,
-        // without blocking the main desktop thread
-        QTimer::singleShot(10, this, [d]() {
-            FMWindowsIns.showWindow(d->dialog);
-            d->dialog->updateAsDefaultSize();
-            d->dialog->moveCenter(WindowUtils::cursorScreen()->availableGeometry().center());
-        });
+        d->dialog->updateAsDefaultSize();
+        d->dialog->moveCenter();
+        setWindowStayOnTop();
+        qDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        FMWindowsIns.showWindow(d->dialog);
+        qDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
     }
 }
 
@@ -550,10 +541,14 @@ void FileDialogHandle::reject()
         d->dialog->reject();
 }
 
-void FileDialogHandle::waitForWindowShow() const
+void FileDialogHandle::setWindowStayOnTop()
 {
-    QEventLoop loop;
-    connect(d_func()->dialog, &FileDialog::windowShowed, &loop, &QEventLoop::quit);
-    QTimer::singleShot(500, &loop, &QEventLoop::quit);
-    loop.exec();
+    D_D(FileDialogHandle);
+    QVariant isGtk = qApp->property("GTK");
+    if (WindowUtils::isWayLand() && isGtk.isValid() && isGtk.toBool()) {
+        QFunctionPointer setWindowProperty = qApp->platformFunction("_d_setWindowProperty");
+        // set window stay on top
+        if (setWindowProperty && d->dialog)
+            reinterpret_cast<void(*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
+    }
 }

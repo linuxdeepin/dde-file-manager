@@ -6,6 +6,7 @@
 #define BASICSTATUSBAR_H
 
 #include <dfm-base/dfm_base_global.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <QFrame>
 
@@ -22,7 +23,7 @@ public:
     virtual QSize sizeHint() const override;
     virtual void clearLayoutAndAnchors();
 
-    void itemSelected(const QList<QUrl> &urls);
+    void itemSelected(const int selectFiles, const int selectFolders, const qint64 filesize, const QList<QUrl> &selectFolderList);
     void itemCounted(const int count);
 
     void updateStatusMessage();

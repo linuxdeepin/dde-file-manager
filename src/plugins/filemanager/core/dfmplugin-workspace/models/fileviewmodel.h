@@ -114,6 +114,7 @@ public Q_SLOTS:
     void onInsertFinish();
     void onRemove(int firstIndex, int count);
     void onRemoveFinish();
+    void onUpdateView();
     void onSetCursorWait();
 
 private:
@@ -122,7 +123,6 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
-    bool passNameFilters(const QModelIndex &index) const;
     void closeCursorTimer();
     void startCursorTimer();
 
@@ -141,7 +141,7 @@ private:
     QTimer waitTimer;
 
     QList<QSharedPointer<QObject>> discardedObjects {};
-    mutable QMap<QString, bool> nameFiltersMatchResultMap;
+    QStringList nameFilters {};
 };
 
 }

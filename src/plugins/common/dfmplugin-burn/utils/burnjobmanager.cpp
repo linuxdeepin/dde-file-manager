@@ -115,6 +115,9 @@ void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)
     connect(job, &AbstractBurnJob::requestCompletionDialog, this, &BurnJobManager::showOpticalJobCompletionDialog);
     connect(job, &AbstractBurnJob::requestFailureDialog, this, &BurnJobManager::showOpticalJobFailureDialog);
     connect(job, &AbstractBurnJob::requestErrorMessageDialog, DialogManagerInstance, &DialogManager::showErrorDialog);
+    connect(job, &AbstractBurnJob::requestCloseTab, this, [](const QUrl &url) {
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
+    });
     connect(job, &AbstractBurnJob::burnFinished, this, [this, job](int type, bool result) {
         startAuditLogForBurnFiles(job->currentDeviceInfo(),
                                   (type == AbstractBurnJob::JobType::kOpticalImageBurn) ? job->property(AbstractBurnJob::PropertyType::kImageUrl).toUrl()

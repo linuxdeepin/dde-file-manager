@@ -57,8 +57,8 @@ void ListItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
-    index.data(kItemCreateFileInfo);
     QStyleOptionViewItem opt = option;
+
     initStyleOption(&opt, index);
     painter->setFont(opt.font);
 
@@ -108,7 +108,7 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
     const FileInfoPointer &fileInfo = this->parent()->fileInfo(index);
 
-    if (fileInfo->urlOf(UrlInfoType::kUrl).scheme() == "search") {
+    if (fileInfo && fileInfo->urlOf(UrlInfoType::kUrl).scheme() == "search") {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight * 2 - 10);
     } else {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight);

@@ -9,6 +9,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/shortcut/shortcut.h>
 
 #include <QDebug>
@@ -42,14 +43,14 @@ FileManagerWindowsManagerPrivate::FileManagerWindowsManagerPrivate(FileManagerWi
 {
 }
 
- FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(const QUrl &url)
+FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(const QUrl &url)
 {
     int count = windows.count();
 
     for (int i = 0; i != count; ++i) {
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
-        if (window && window->currentUrl() == url) {
+        if (window && UniversalUtils::urlEquals(window->currentUrl(), url)) {
             qInfo() << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
@@ -59,24 +60,6 @@ FileManagerWindowsManagerPrivate::FileManagerWindowsManagerPrivate(FileManagerWi
     }
 
     return nullptr;
-}
-
-void FileManagerWindowsManagerPrivate::moveWindowToScreenCenter(FileManagerWindow *window)
-{
-    QPoint pos = QCursor::pos();
-    QRect currentScreenGeometry;
-
-    for (QScreen *screen : qApp->screens()) {
-        if (screen->geometry().contains(pos)) {
-            currentScreenGeometry = screen->geometry();
-        }
-    }
-
-    if (currentScreenGeometry.isEmpty()) {
-        currentScreenGeometry = qApp->primaryScreen()->geometry();
-    }
-
-    window->moveCenter(currentScreenGeometry.center());
 }
 
 bool FileManagerWindowsManagerPrivate::isValidUrl(const QUrl &url, QString *error)
@@ -112,7 +95,10 @@ void FileManagerWindowsManagerPrivate::loadWindowState(FileManagerWindow *window
 
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
     if ((windows.size() == 0) && ((windowState & kNetWmStateMaximizedHorz) != 0 && (windowState & kNetWmStateMaximizedVert) != 0)) {
-        window->showMaximized();
+        // make window to be maximized.
+        // the following calling is copyed from QWidget::showMaximized()
+        window->setWindowState((window->windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen))
+                               | Qt::WindowMaximized);
     } else {
         window->resize(width, height);
     }
@@ -214,10 +200,9 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     // Directly active window if the window exists
     if (!isNewWindow) {
         auto window = d->activeExistsWindowByUrl(showedUrl);
-        if (window)
-            return window;
-        else
+        if (!window)
             qWarning() << "Cannot find a exists window by url: " << showedUrl;
+        return window;
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
@@ -227,7 +212,14 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
                                         : new FMWindow(showedUrl);
     window->winId();
 
-    d->loadWindowState(window);
+    {
+        auto noLoad = window->property("_dfm_Disable_RestoreWindowState_");
+        if (!noLoad.isValid() || !noLoad.toBool())
+            d->loadWindowState(window);
+        else
+            qDebug() << "do not load window state" << window << noLoad;
+    }
+
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());
         d->onWindowClosed(window);
@@ -247,48 +239,17 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     qInfo() << "New window created: " << window->winId() << showedUrl;
 
     d->windows.insert(window->internalWinId(), window);
-    // TODO(zhangs): requestToSelectUrls
 
     if (d->windows.size() == 1)
-        d->moveWindowToScreenCenter(window);
+        window->moveCenter();
     emit windowCreated(window->internalWinId());
     finally.dismiss();
-    return window;
-}
-
-/*!
- * \brief FileManagerWindowsManager::showWindow
- * \param url
- * \param isNewWindow
- * \param errorString
- * \return
- */
-FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::showWindow(const QUrl &url, bool isNewWindow, QString *errorString)
-{
-    d->previousActivedWindowId = 0;
-    QHashIterator<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> it(d->windows);
-    //Before creating a new window, save the current actived window id to `previousActivedWindowId`,
-    //since many times we need to synchronize some informations from the trigger window to the new window
-    //such as the sidebar expanding states, so `previousActivedWindowId` is help for that.
-    while (it.hasNext()) {
-        it.next();
-        if (it.value()->isActiveWindow()) {
-            d->previousActivedWindowId = it.key();
-            break;
-        }
-    }
-
-    auto window = createWindow(url, isNewWindow, errorString);
-    if (window)
-        showWindow(window);
-
     return window;
 }
 
 void FileManagerWindowsManager::showWindow(FileManagerWindowsManager::FMWindow *window)
 {
     Q_ASSERT(window);
-
     window->show();
     qApp->setActiveWindow(window);
 }
@@ -352,6 +313,22 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::findWindowById(q
 QList<quint64> FileManagerWindowsManager::windowIdList()
 {
     return d->windows.keys();
+}
+
+void FileManagerWindowsManager::resetPreviousActivedWindowId()
+{
+    d->previousActivedWindowId = 0;
+    QHashIterator<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> it(d->windows);
+    //Before creating a new window, save the current actived window id to `previousActivedWindowId`,
+    //since many times we need to synchronize some informations from the trigger window to the new window
+    //such as the sidebar expanding states, so `previousActivedWindowId` is help for that.
+    while (it.hasNext()) {
+        it.next();
+        if (it.value()->isActiveWindow()) {
+            d->previousActivedWindowId = it.key();
+            break;
+        }
+    }
 }
 
 quint64 FileManagerWindowsManager::previousActivedWindowId()

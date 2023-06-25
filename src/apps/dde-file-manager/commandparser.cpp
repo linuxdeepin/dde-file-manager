@@ -87,6 +87,7 @@ void CommandParser::processCommand()
         bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
         if (enableHeadless) {
             qInfo() << "Start headless";
+            dpfSignalDispatcher->publish(GlobalEventType::kHeadlessStarted);
             // whether to add setQuitOnLastWindowClosed
             return;
         }
@@ -288,7 +289,7 @@ void CommandParser::openInUrls()
         argumentUrls.append(url);
     }
     if (argumentUrls.isEmpty())
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl());
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), true);
     for (const QUrl &url : argumentUrls)
         openWindowWithUrl(url);
 }

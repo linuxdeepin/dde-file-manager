@@ -52,6 +52,9 @@ FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
     : QObject(nullptr),
       q(qq)
 {
+    //! fix: FileDialog no needs to restore window state on creating.
+    //! see FileManagerWindowsManager::createWindow
+    q->setProperty("_dfm_Disable_RestoreWindowState_", true);
 }
 
 void FileDialogPrivate::handleSaveAcceptBtnClicked()
@@ -491,7 +494,7 @@ void FileDialog::setOptions(QFileDialog::Options options)
 
     d->options = options;
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter",
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetReadOnly",
                          internalWinId(), options.testFlag(QFileDialog::ReadOnly));
 
     if (options.testFlag(QFileDialog::ShowDirsOnly)) {
@@ -975,11 +978,6 @@ void FileDialog::showEvent(QShowEvent *event)
     FileManagerWindow::showEvent(event);
 }
 
-void FileDialog::paintEvent(QPaintEvent *event)
-{
-    DMainWindow::paintEvent(event);
-}
-
 void FileDialog::closeEvent(QCloseEvent *event)
 {
 #ifndef QT_NO_WHATSTHIS
@@ -1017,10 +1015,6 @@ bool FileDialog::eventFilter(QObject *watched, QEvent *event)
                 handleEnterPressed();
             }
         }
-    }
-
-    if (watched == windowHandle() && event->type() == QEvent::Show) {
-        emit windowShowed();
     }
 
     return FileManagerWindow::eventFilter(watched, event);

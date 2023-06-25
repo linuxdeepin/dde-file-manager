@@ -82,12 +82,14 @@ enum ItemRoles {
     kItemFileOriginalPath = Qt::UserRole + 23,
     kItemFileDeletionDate = Qt::UserRole + 24,
     kItemFileRefreshIcon = Qt::UserRole + 25,
-    kItemCreateFileInfo = Qt::UserRole + 26,
-    kItemFileIsDir = Qt::UserRole + 27,
-    kItemFileIsWritable = Qt::UserRole + 28,
-    kItemFileCanRename = Qt::UserRole + 29,
-    kItemFileCanDrop = Qt::UserRole + 30,
-    kItemFileCanDrag = Qt::UserRole + 31,
+    kItemCreateFileInfoRole = Qt::UserRole + 26,
+    kItemFileIsDirRole = Qt::UserRole + 27,
+    kItemFileIsWritableRole = Qt::UserRole + 28,
+    kItemFileCanRenameRole = Qt::UserRole + 29,
+    kItemFileCanDropRole = Qt::UserRole + 30,
+    kItemFileCanDragRole = Qt::UserRole + 31,
+    kItemFileSizeIntRole = Qt::UserRole + 32,
+    kItemFileIsAvailableRole = Qt::UserRole + 33,   // the item gray display and can not select
 
     kItemUnknowRole = Qt::UserRole + 999
 };

@@ -9,7 +9,6 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include <dfm-base/utils/universalutils.h>
-
 #include <QDBusConnection>
 
 using namespace ddplugin_wallpapersetting;
@@ -139,12 +138,13 @@ void EventHandle::show(QString name, int mode)
 
     wallpaperSettings->show();
     wallpaperSettings->activateWindow();
-    wallpaperSettings->refreshList();
 
     // auto focus tool
     auto autoAct = new AutoActivateWindow(wallpaperSettings);
     autoAct->setWatched(wallpaperSettings);
     autoAct->start();
+
+    QMetaObject::invokeMethod(wallpaperSettings,"refreshList",Qt::QueuedConnection);
 }
 
 bool EventHandle::hookCanvasRequest(const QString &screen)

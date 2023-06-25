@@ -56,6 +56,9 @@ void Tag::initialize()
         connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Tag::onAllPluginsStarted, Qt::DirectConnection);
 
     TagManager::instance();
+    if (!TagProxyHandleIns->connectToService())
+        qWarning() << "Cannot connect to TagManager!";
+    emit FileTagCacheController::instance().initLoadTagInfos();
 
     bindEvents();
     followEvents();
@@ -105,10 +108,6 @@ void Tag::onAllPluginsStarted()
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TagManager::scheme(), TagDirMenuCreator::name());
     dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
-
-    if (!TagProxyHandleIns->connectToService())
-        qWarning() << "Cannot connect to TagManager!";
-    emit FileTagCacheController::instance().initLoadTagInfos();
 }
 
 QWidget *Tag::createTagWidget(const QUrl &url)
@@ -191,6 +190,7 @@ void Tag::onMenuSceneAdded(const QString &scene)
 
 void Tag::bindEvents()
 {
+    dpfSignalDispatcher->subscribe(GlobalEventType::kHideFilesResult, TagEventReceiver::instance(), &TagEventReceiver::handleHideFilesResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileCutResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRemoveResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRemoveResult);

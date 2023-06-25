@@ -224,7 +224,7 @@ public:
             if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
                 return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                             create(url, errorString));
-            } else if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
+            } else if (type == Global::CreateFileInfoType::kCreateFileInfoAsync) {
                 auto info = qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                                  create(Global::Scheme::kAsyncFile, url, errorString));
                 if (info)

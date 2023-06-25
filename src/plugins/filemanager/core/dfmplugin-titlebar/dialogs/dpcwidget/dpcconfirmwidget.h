@@ -32,16 +32,19 @@ Q_SIGNALS:
     void sigConfirmed();
 
 public Q_SLOTS:
-    void checkPasswordLength(const QString &pwd);
+    void onPasswdChanged();
+    void onEditingFinished();
     void onSaveBtnClicked();
     void onPasswordChecked(int result);
 
 private:
     void initUI();
     void initConnect();
-    void showToolTips(const QString &msg, QWidget *w);
+    void initLibrary();
+    void showToolTips(const QString &msg, DTK_NAMESPACE::DWIDGET_NAMESPACE::DPasswordEdit *pwdEdit);
     bool checkRepeatPassword();
     bool checkNewPassword();
+    bool checkPasswdComplexity(const QString &pwd, QString *msg);
     void setEnabled(bool enabled);
 
 private:
@@ -55,6 +58,16 @@ private:
     DTK_WIDGET_NAMESPACE::DPushButton *cancelBtn { nullptr };
     QWidget *parentWidget { nullptr };
     QSharedPointer<QDBusInterface> accessControlInter { nullptr };
+
+    // interface of libdeepin_pw_check.so
+    typedef int (*DeepinPwCheckFunc)(const char *, const char *, int, const char *);
+    DeepinPwCheckFunc deepinPwCheck { nullptr };
+
+    typedef int (*GetPasswdLevelFunc)(const char *);
+    GetPasswdLevelFunc getPasswdLevel { nullptr };
+
+    typedef const char *(*ErrToStringFunc)(int);
+    ErrToStringFunc errToString { nullptr };
 };
 
 }

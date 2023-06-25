@@ -68,6 +68,9 @@ class FileViewPrivate
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> columnRoles;
     QMap<QString, bool> columnForRoleHiddenMap;
 
+    QTimer *scrollBarValueChangedTimer { nullptr };
+    bool scrollBarSliderPressed { false };
+
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;

@@ -10,6 +10,7 @@
 #include "utils/workspacehelper.h"
 #include "models/fileviewmodel.h"
 #include "utils/fileoperatorhelper.h"
+#include "views/workspacewidget.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -65,16 +66,15 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    d->selectFileInfos = params.value(MenuParamKey::kSelectFileInfos).value<QList<FileInfoPointer>>();
-    if (d->selectFiles.count() > 0) {
-        d->focusFileInfo = params.value(MenuParamKey::kFocusFileInfo).value<FileInfoPointer>();
-        d->focusFile = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-    }
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
-    d->isDDEDesktopFileIncluded = params.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
+
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
+    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->currentDir.isEmpty())
         return false;
@@ -169,6 +169,16 @@ bool WorkspaceMenuScene::create(DMenu *parent)
 
 void WorkspaceMenuScene::updateState(DMenu *parent)
 {
+    auto currentWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(d->windowId);
+    if (currentWidget && !currentWidget->canAddNewTab()) {
+        auto actions = parent->actions();
+        for (auto act : actions) {
+            const auto &actId = act->property(ActionPropertyKey::kActionID);
+            if (dfmplugin_menu::ActionID::kOpenInNewTab == actId)
+                act->setEnabled(false);
+        }
+    }
+
     AbstractMenuScene::updateState(parent);
 }
 

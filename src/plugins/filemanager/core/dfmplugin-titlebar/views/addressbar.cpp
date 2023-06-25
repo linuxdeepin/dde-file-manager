@@ -577,7 +577,6 @@ void AddressBar::setCurrentUrl(const QUrl &url)
 {
     QString text = dfmbase::FileUtils::isLocalFile(url) ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
     this->setText(text);
-    this->setSelection(0, text.length());
 }
 
 QUrl AddressBar::currentUrl()

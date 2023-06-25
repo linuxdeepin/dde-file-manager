@@ -37,17 +37,21 @@ void CoreEventReceiver::handleChangeUrl(quint64 windowId, const QUrl &url)
         qWarning() << "Invalid Url: " << url;
         return;
     }
-    CoreHelper::cd(windowId, url);
+    CoreHelper::instance().cd(windowId, url);
 }
 
 void CoreEventReceiver::handleOpenWindow(const QUrl &url)
 {
-    CoreHelper::openNewWindow(url);
+    Q_ASSERT(qApp->applicationName() == "dde-file-manager");
+
+    CoreHelper::instance().openWindow(url);
 }
 
 void CoreEventReceiver::handleOpenWindow(const QUrl &url, const QVariant &opt)
 {
-    CoreHelper::openNewWindow(url, opt);
+    Q_ASSERT(qApp->applicationName() == "dde-file-manager");
+
+    CoreHelper::instance().openWindow(url, opt);
 }
 
 void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
@@ -60,4 +64,11 @@ void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
             qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin)
                     << "State: " << plugin->pluginState();
     });
+}
+
+void CoreEventReceiver::handleHeadless()
+{
+    Q_ASSERT(qApp->applicationName() == "dde-file-manager");
+
+    CoreHelper::instance().cacheDefaultWindow();
 }

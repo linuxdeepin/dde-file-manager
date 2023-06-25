@@ -63,7 +63,8 @@ QVariant FileItemData::data(int role) const
     }
 
     switch (role) {
-    case kItemCreateFileInfo:
+    case kItemCreateFileInfoRole:
+        assert(qApp->thread() == QThread::currentThread());
         if (info.isNull())
             const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
         return QVariant();
@@ -81,7 +82,7 @@ QVariant FileItemData::data(int role) const
     case kItemIconRole:
         if (info)
             return info->fileIcon();
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("empty");
     case kItemFileSizeRole:
         if (info)
             return info->displayOf(DisPlayInfoType::kSizeDisplayName);
@@ -101,7 +102,7 @@ QVariant FileItemData::data(int role) const
     case kItemFileDisplayNameRole:
         if (info)
             return info->displayOf(DisPlayInfoType::kFileDisplayName);
-        return QString();
+        return url.fileName();
     case kItemFileLastReadRole:
         if (info)
             return info->customData(dfmbase::Global::kItemFileLastReadRole);
@@ -144,35 +145,47 @@ QVariant FileItemData::data(int role) const
         const QString stdDataDownPath = FileUtils::bindPathTransform(stdDownPath, true);
         if (filePath == stdDocPath || filePath == stdDownPath || filePath == stdDataDocPath || filePath == stdDataDownPath)
             return QString();
-
         QString strToolTip = data(kItemFileDisplayNameRole).toString();
         return strToolTip;
     }
-    case kItemFileIsWritable:
+    case kItemFileIsWritableRole:
         if (info)
             return info->isAttributes(OptInfoType::kIsWritable);
         if (sortInfo)
             return sortInfo->isWriteable;
         return true;
-    case kItemFileIsDir:
+    case kItemFileIsDirRole:
         if (info)
             return info->isAttributes(OptInfoType::kIsDir);
         if (sortInfo)
             return sortInfo->isDir;
         return true;
-    case kItemFileCanRename:
+    case kItemFileCanRenameRole:
         if (info)
             return info->canAttributes(CanableInfoType::kCanRename);
         return true;
-    case kItemFileCanDrop:
+    case kItemFileCanDropRole:
         if (info)
             return info->canAttributes(CanableInfoType::kCanDrop);
         return true;
-    case kItemFileCanDrag:
+    case kItemFileCanDragRole:
         if (info)
             return info->canAttributes(CanableInfoType::kCanDrag);
         return true;
+    case kItemFileSizeIntRole:
+        if (info)
+            return info->size();
+        if (sortInfo)
+            return sortInfo->filesize;
+        return 0;
+    case kItemFileIsAvailableRole:
+        return isAvailable;
     default:
         return QVariant();
     }
+}
+
+void FileItemData::setAvailableState(bool b)
+{
+    isAvailable = b;
 }

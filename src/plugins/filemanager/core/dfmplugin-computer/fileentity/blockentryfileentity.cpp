@@ -210,6 +210,9 @@ bool BlockEntryFileEntity::renamable() const
         && datas.value(DeviceProperty::kCleartextDevice).toString() == "/")
         return false;
 
+    if (datas.value(DeviceProperty::kIsLoopDevice, false).toBool())
+        return false;
+
     return isAccessable();
 }
 

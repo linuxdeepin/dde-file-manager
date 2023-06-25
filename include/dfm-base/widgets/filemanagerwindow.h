@@ -28,7 +28,7 @@ public:
     virtual bool saveClosedSate() const;
 
     QUrl currentUrl() const;
-    void moveCenter(const QPoint &cp);
+    void moveCenter();
     void installTitleBar(AbstractFrame *w);
     void installSideBar(AbstractFrame *w);
     void installWorkSpace(AbstractFrame *w);
@@ -40,7 +40,6 @@ public:
     AbstractFrame *detailView() const;
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;

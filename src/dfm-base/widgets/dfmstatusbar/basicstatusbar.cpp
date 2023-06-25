@@ -40,22 +40,34 @@ void BasicStatusBar::clearLayoutAndAnchors()
     DAnchorsBase::clearAnchors(this);
 }
 
-void BasicStatusBar::itemSelected(const QList<QUrl> &urls)
+void BasicStatusBar::itemSelected(const int selectFiles, const int selectFolders, const qint64 filesize, const QList<QUrl> &selectFolderList)
 {
     if (!d->tip)
         return;
 
-    d->fileCount = 0;
-    d->fileSize = 0;
-    d->folderCount = 0;
+    d->fileCount = selectFiles;
+    d->fileSize = filesize;
+    d->folderCount = selectFolders;
     d->folderContains = 0;
-    QString selectItems;
-    if (urls.count() > 0) {// 同时有文件夹和文件时, 统一显示成项
-        selectItems = d->onlyOneItemSelected.arg(QString::number(urls.count()));;
-    } else {
-        selectItems = "";
+    d->showContains = true;
+
+    const bool dirUrlsEmpty = selectFolderList.isEmpty();
+    if (!dirUrlsEmpty) {
+        // check mtp setting
+        const bool showInfo = Application::instance()->genericAttribute(Application::GenericAttribute::kMTPShowBottomInfo).toBool();
+        if (!showInfo) {
+            bool isMtp = FileUtils::isMtpFile(selectFolderList.first());
+            if (isMtp) {
+                d->showContains = false;
+            } else {
+                d->calcFolderContains(selectFolderList);
+            }
+        } else {
+            d->calcFolderContains(selectFolderList);
+        }
     }
-    d->tip->setText(QString("%1").arg(selectItems));
+
+    updateStatusMessage();
 }
 
 void BasicStatusBar::itemCounted(const int count)

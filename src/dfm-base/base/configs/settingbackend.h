@@ -23,6 +23,8 @@ class SettingBackend : public DSettingsBackend
 public:
     static SettingBackend *instance();
 
+    void setToSettings(DSettings *settings);
+
     QStringList keys() const;
     QVariant getOption(const QString &key) const;
     void doSync();
