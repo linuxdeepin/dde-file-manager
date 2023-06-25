@@ -20,7 +20,7 @@ DFMBASE_BEGIN_NAMESPACE
 class DConfigManager;
 class DConfigManagerPrivate
 {
-    friend DConfigManager;
+    friend class DConfigManager;
     DConfigManager *q { nullptr };
 
     QMap<QString, DTK_NAMESPACE::DCORE_NAMESPACE::DConfig *> configs;

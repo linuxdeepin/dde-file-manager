@@ -16,6 +16,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-base/utils/systempathutil.h>
 
@@ -119,7 +120,7 @@ void Recent::addRecentItem()
         { "Property_Key_IsDefaultItem", true },
         { "Property_Key_PluginItemData", map }
     };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);   //push item data to bookmark plugin as cache
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);   // push item data to bookmark plugin as cache
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentHelper::rootUrl(), map);
 }
 
@@ -165,10 +166,10 @@ void Recent::regRecentCrumbToTitleBar()
 
 void Recent::installToSideBar()
 {
-    bool showRecentEnabled = Application::instance()->genericAttribute(Application::kShowRecentFileEntry).toBool();
-    if (showRecentEnabled) {
+    const auto &theSidebarVisiableList = DConfigManager::instance()->value("org.deepin.dde.file-manager.sidebar", "itemVisiable", QVariantMap()).toMap();
+    bool showRecent = theSidebarVisiableList.value("recent", true).toBool();
+    if (showRecent)
         addRecentItem();
-    }
 }
 
 void Recent::addFileOperations()
