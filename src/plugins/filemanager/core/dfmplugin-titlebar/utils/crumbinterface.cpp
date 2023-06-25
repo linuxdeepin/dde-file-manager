@@ -81,7 +81,12 @@ QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
     for (int count = urls.size() - 1; count >= 0; count--) {
         QUrl curUrl { urls.at(count) };
         QStringList pathList { curUrl.path().split("/") };
-        CrumbData data { curUrl, pathList.isEmpty() ? "" : pathList.last() };
+        QString displayText = pathList.isEmpty() ? "" : pathList.last();
+        if (curUrl.scheme() == Global::Scheme::kTrash) {
+            auto info = InfoFactory::create<FileInfo>(curUrl);
+            displayText = info ? info->displayOf(DisPlayInfoType::kFileDisplayName) : displayText;
+        }
+        CrumbData data { curUrl, displayText};
         if (UrlRoute::isRootUrl(curUrl))
             data.iconName = UrlRoute::icon(curUrl.scheme()).name();
         list.append(data);
