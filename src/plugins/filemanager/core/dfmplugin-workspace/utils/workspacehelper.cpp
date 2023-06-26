@@ -361,6 +361,19 @@ void WorkspaceHelper::updateRootFile(const QList<QUrl> urls)
     //    }
 }
 
+void WorkspaceHelper::registerFileView(const QString &scheme)
+{
+    ViewFactory::regClass<FileView>(scheme);
+
+    if (!registeredFileViewScheme.contains(scheme))
+        registeredFileViewScheme.append(scheme);
+}
+
+bool WorkspaceHelper::registeredFileView(const QString &scheme) const
+{
+    return registeredFileViewScheme.contains(scheme);
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;

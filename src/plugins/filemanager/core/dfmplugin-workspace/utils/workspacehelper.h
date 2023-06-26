@@ -89,6 +89,9 @@ public:
     void fileUpdate(const QUrl &url);
     void updateRootFile(const QList<QUrl> urls);
 
+    void registerFileView(const QString &scheme);
+    bool registeredFileView(const QString &scheme) const;
+
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
@@ -112,6 +115,8 @@ private:
     TopWidgetCreatorMap topWidgetCreators;
     MenuSceneMap menuSceneMap;
     DefaultViewMode defaultViewMode;
+
+    QList<QString> registeredFileViewScheme {};
 
     Q_DISABLE_COPY(WorkspaceHelper)
 };

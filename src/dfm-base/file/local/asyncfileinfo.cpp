@@ -610,20 +610,22 @@ QIcon AsyncFileInfoPrivate::thumbIcon()
     if (!icon.isNull())
         return icon;
 
-    icon = QIcon(ThumbnailProvider::instance()->thumbnailPixmap(q->fileUrl(), ThumbnailProvider::kLarge));
-    if (!icon.isNull()) {
-        QPixmap pixmap = icon.pixmap(ThumbnailProvider::kLarge, ThumbnailProvider::kLarge);
-        QPainter pa(&pixmap);
-        pa.setPen(Qt::gray);
-        pa.drawPixmap(0, 0, pixmap);
+    if (iconFuture && iconFuture->data.toBool()) {
+        icon = QIcon(ThumbnailProvider::instance()->thumbnailPixmap(q->fileUrl(), ThumbnailProvider::kLarge));
+        if (!icon.isNull()) {
+            QPixmap pixmap = icon.pixmap(ThumbnailProvider::kLarge, ThumbnailProvider::kLarge);
+            QPainter pa(&pixmap);
+            pa.setPen(Qt::gray);
+            pa.drawPixmap(0, 0, pixmap);
 
-        QIcon fileIcon;
-        fileIcon.addPixmap(pixmap);
-        {
-            QWriteLocker wlk(&iconLock);
-            icons.insert(IconType::kThumbIcon, fileIcon);
+            QIcon fileIcon;
+            fileIcon.addPixmap(pixmap);
+            {
+                QWriteLocker wlk(&iconLock);
+                icons.insert(IconType::kThumbIcon, fileIcon);
+            }
+            return fileIcon;
         }
-        return fileIcon;
     }
 
     // else load thumb from DThumbnailProvider in async.
