@@ -312,7 +312,7 @@ ViewMode WorkspaceEventReceiver::handleGetCurrentViewMode(const quint64 windowID
 
 void WorkspaceEventReceiver::handleRegisterFileView(const QString &scheme)
 {
-    ViewFactory::regClass<FileView>(scheme);
+    WorkspaceHelper::instance()->registerFileView(scheme);
 }
 
 void WorkspaceEventReceiver::handleRegisterMenuScene(const QString &scheme, const QString &scene)
@@ -354,10 +354,7 @@ bool WorkspaceEventReceiver::handleGetCustomTopWidgetVisible(const quint64 windo
 
 bool WorkspaceEventReceiver::handleCheckSchemeViewIsFileView(const QString &scheme)
 {
-    auto view = ViewFactory::find(scheme);
-    if (!view)
-        return false;
-    return dynamic_cast<FileView *>(view);
+    return WorkspaceHelper::instance()->registeredFileView(scheme);
 }
 
 QList<QUrl> WorkspaceEventReceiver::handleGetSelectedUrls(const quint64 windowID)

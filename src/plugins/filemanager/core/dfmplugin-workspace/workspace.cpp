@@ -28,7 +28,7 @@ void Workspace::initialize()
 {
     DFMBASE_USE_NAMESPACE
 
-    ViewFactory::regClass<FileView>(Global::Scheme::kFile);
+    WorkspaceHelper::instance()->registerFileView(Global::Scheme::kFile);
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
