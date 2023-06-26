@@ -165,7 +165,6 @@ void TaskWidget::onShowErrors(const JobInfoPointer jobInfo)
         widConfict = createConflictWidget();
         rVLayout->addWidget(widConfict);
     }
-    adjustSize();
 
     if (widConfict)
         widConfict->hide();
