@@ -1253,7 +1253,6 @@ void FileOperateBaseWorker::determineCountProcessType()
     // 检查目标文件的有效性
     // 判读目标文件的位置（在可移除设备并且不是ext系列的设备上使用读取写入设备大小，
     // 其他都是读取当前线程写入磁盘的数据，如果采用多线程拷贝就自行统计）
-    qInfo() << "oooooooooooooooooooooo";
     auto rootPath = DFMUtils::mountPathFromUrl(targetOrgUrl);
     auto device = DFMUtils::deviceNameFromUrl(targetOrgUrl);
     if (device.startsWith("/dev/")) {
