@@ -56,24 +56,6 @@ AsyncFileInfo::~AsyncFileInfo()
     d = nullptr;
 }
 
-bool AsyncFileInfo::initQuerier()
-{
-    if (d->cacheing)
-        return false;
-    d->cacheing = true;
-    if (!d->notInit || !d->dfmFileInfo)
-        d->init(url);
-    if (!d->dfmFileInfo) {
-        d->cacheing = false;
-        d->notInit = false;
-        return false;
-    }
-    d->cacheAllAttributes();
-    d->cacheing = false;
-    d->notInit = false;
-    return true;
-}
-
 /*!
  * \brief exists 文件是否存在
  *
@@ -554,6 +536,33 @@ void AsyncFileInfo::setNotifyUrl(const QUrl &url, const QString &infoPtr)
         d->notifyUrls.insert(url, infoPtr);
 }
 
+void AsyncFileInfo::cacheAsyncAttributes()
+{
+    assert(qApp->thread() != QThread::currentThread());
+    if (!d->cacheing)
+        d->cacheing = true;
+    d->cacheAllAttributes();
+    d->cacheing = false;
+}
+
+bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)
+{
+    if (d->cacheing)
+        return false;
+    d->cacheing = true;
+    if (!d->notInit || !d->dfmFileInfo)
+        d->init(url);
+
+    d->notInit = false;
+    if (!d->dfmFileInfo) {
+        d->cacheing = false;
+        return false;
+    }
+
+    d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
+    return true;
+}
+
 void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
 {
     mimeTypeMode = QMimeDatabase::MatchDefault;
@@ -968,8 +977,9 @@ QString AsyncFileInfoPrivate::sizeFormat() const
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
     assert(qApp->thread() != QThread::currentThread());
-    if (dfmFileInfo) {
-        auto value = dfmFileInfo->attribute(key, ok);
+    auto tmpDfmFileInfo = dfmFileInfo;
+    if (tmpDfmFileInfo) {
+        auto value = tmpDfmFileInfo->attribute(key, ok);
         return value;
     }
     return QVariant();
@@ -1041,6 +1051,7 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
 
 void AsyncFileInfoPrivate::cacheAllAttributes()
 {
+    assert(qApp->thread() != QThread::currentThread());
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> tmp;
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardName, fileName());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardBaseName, baseName());
@@ -1051,7 +1062,9 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSize, attribute(DFileInfo::AttributeID::kStandardSize));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFilePath, filePath());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardParentPath, path());
-    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, dfmFileInfo->exists());
+    auto tmpdfmfileinfo = dfmFileInfo;
+    if (tmpdfmfileinfo)
+        tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, tmpdfmfileinfo->exists());
     // redirectedFileUrl
     auto symlink = symLinkTarget();
     if (attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
@@ -1085,7 +1098,8 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixInode, attribute(DFileInfo::AttributeID::kUnixInode));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixUID, attribute(DFileInfo::AttributeID::kUnixUID));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixGID, attribute(DFileInfo::AttributeID::kUnixGID));
-    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(dfmFileInfo->permissions()));
+    if (tmpdfmfileinfo)
+        tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(dfmFileInfo->permissions()));
     for (auto key : getAttributeIDVector()) {
         tmp.insert(key, attribute(static_cast<DFileInfo::AttributeID>(key)));
     }

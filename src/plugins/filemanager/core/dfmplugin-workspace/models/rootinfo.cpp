@@ -503,11 +503,9 @@ QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 // Here, the monitor's url is used to re-complete the current url
 FileInfoPointer RootInfo::fileInfo(const QUrl &url)
 {
-    auto info = InfoFactory::create<FileInfo>(url);
-    if (info) {
-        info->refresh();
+    auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (info)
         return info;
-    }
 
     if (!watcher)
         return info;
