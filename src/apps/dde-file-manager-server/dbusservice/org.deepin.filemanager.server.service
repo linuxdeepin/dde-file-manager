@@ -1,4 +1,3 @@
 [D-BUS Service]
 Name=org.deepin.filemanager.server
-Exec=/usr/bin/dde-file-manager-server
-
+SystemdService=dde-filemanager-server.service
