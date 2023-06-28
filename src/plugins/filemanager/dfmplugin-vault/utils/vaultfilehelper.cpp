@@ -9,12 +9,15 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/desktopfile.h>
 #include <dfm-base/utils/universalutils.h>
-#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/event/event.h>
 #include <QUrl>
+
+#define OperatorFile(type, fromUrls, toUrl) \
+    dpfSignalDispatcher->publish(type, 0, fromUrls, toUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr)
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -245,33 +248,59 @@ bool VaultFileHelper::renameFilesAddText(const quint64 windowId, const QList<QUr
 
 bool VaultFileHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
 {
-    Q_UNUSED(urls);
-
-    if (!urlTo.isValid() || urlTo.scheme() != scheme())
+    if (urls.size() < 1)
         return false;
 
-    if (*action == Qt::MoveAction) {
+    if (!urlTo.isValid() || !urls.first().isValid())
+        return false;
+
+    bool fromVault = VaultHelper::isVaultFile(urls.first());
+    bool toVault = VaultHelper::isVaultFile(urlTo);
+    if (!fromVault && !toVault)
+        return false;
+
+    if (WindowUtils::keyAltIsPressed()) {
+        *action = Qt::MoveAction;
+    } else if (WindowUtils::keyCtrlIsPressed()) {
         *action = Qt::CopyAction;
-        return true;
+    } else {
+        if (fromVault && toVault)
+            *action = Qt::MoveAction;
+        else
+            *action = Qt::CopyAction;
     }
 
-    return false;
+    return true;
 }
 
 bool VaultFileHelper::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
+    if (fromUrls.size() < 1)
+        return false;
+
+    if (!toUrl.isValid() || !fromUrls.first().isValid())
+        return false;
+
+    bool fromVault = VaultHelper::isVaultFile(fromUrls.first());
+    bool toVault = VaultHelper::isVaultFile(toUrl);
+    if (!fromVault && !toVault)
+        return false;
+
     QList<QUrl> transformedUrls;
     DFMBASE_NAMESPACE::UniversalUtils::urlsTransformToLocal(fromUrls, &transformedUrls);
-    if (toUrl.scheme() == scheme()) {
-        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy,
-                                     0,
-                                     transformedUrls,
-                                     toUrl,
-                                     DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr);
-        return true;
+    if (WindowUtils::keyAltIsPressed()) {
+        OperatorFile(DFMBASE_NAMESPACE::GlobalEventType::kCutFile, transformedUrls, toUrl);
+    } else if (WindowUtils::keyCtrlIsPressed()) {
+        OperatorFile(DFMBASE_NAMESPACE::GlobalEventType::kCopy, transformedUrls, toUrl);
+    } else {
+        if (fromVault && toVault) {
+            OperatorFile(DFMBASE_NAMESPACE::GlobalEventType::kCutFile, transformedUrls, toUrl);
+        } else {
+            OperatorFile(DFMBASE_NAMESPACE::GlobalEventType::kCopy, transformedUrls, toUrl);
+        }
     }
 
-    return false;
+    return true;
 }
 
 bool VaultFileHelper::openFileByApp(const quint64 windowId, const QList<QUrl> urls, const QList<QString> apps)
