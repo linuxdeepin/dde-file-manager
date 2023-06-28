@@ -11,6 +11,7 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <QObject>
 #include <QFileDevice>
