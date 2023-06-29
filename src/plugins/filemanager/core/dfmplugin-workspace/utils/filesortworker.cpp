@@ -9,6 +9,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/base/standardpaths.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -173,7 +174,10 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
 
     filterAllFiles();
 
-    if (sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
+    // In the home, it is necessary to sort by display name.
+    // So, using `sortAllFiles` to reorder
+    bool isHome = current.path() == StandardPaths::location(StandardPaths::kHomePath);
+    if (!isHome && sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
         && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile)
         return;
 
@@ -669,7 +673,7 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
 void FileSortWorker::checkNameFilters(FileItemData *itemData)
 {
     if (!itemData
-            || nameFilters.isEmpty())
+        || nameFilters.isEmpty())
         return;
 
     QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
