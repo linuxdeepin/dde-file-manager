@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filedialoghandle.h"
-#include "views/filedialog.h"
 #include "views/filedialogstatusbar.h"
 #include "events/coreeventscaller.h"
 #include "utils/corehelper.h"
@@ -199,6 +198,8 @@ void FileDialogHandle::setNameFilters(const QStringList &filters)
 
     auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d->dialog->internalWinId()));
     Q_ASSERT(window);
+
+    isSetNameFilters = true;
 
     if (window->workSpace()) {
         if (d->dialog)
@@ -480,8 +481,7 @@ void FileDialogHandle::show()
 {
     D_D(FileDialogHandle);
     if (d->dialog) {
-        if (!isSetAcceptMode && d->dialog->statusBar())
-            d->dialog->statusBar()->setMode(FileDialogStatusBar::Mode::kOpen);
+        addDefaultSettingForWindow(d->dialog);
         d->dialog->updateAsDefaultSize();
         d->dialog->moveCenter();
         setWindowStayOnTop();
@@ -539,6 +539,24 @@ void FileDialogHandle::reject()
 
     if (d->dialog)
         d->dialog->reject();
+}
+
+void FileDialogHandle::addDefaultSettingForWindow(QPointer<FileDialog> dialog)
+{
+    if (!dialog)
+        return;
+
+    QVariant isGtk = qApp->property("GTK");
+    if (!isGtk.isValid() || !isGtk.toBool())
+        return;
+
+    if (!isSetAcceptMode && dialog->statusBar())
+        dialog->statusBar()->setMode(FileDialogStatusBar::Mode::kOpen);
+
+    if (!isSetNameFilters && dialog->acceptMode() == QFileDialog::AcceptOpen) {
+        QStringList filters { tr("All Files ") + "(*)" };
+        dialog->setNameFilters(filters);
+    }
 }
 
 void FileDialogHandle::setWindowStayOnTop()
