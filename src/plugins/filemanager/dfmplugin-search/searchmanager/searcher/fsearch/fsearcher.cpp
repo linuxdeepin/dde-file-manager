@@ -99,7 +99,7 @@ void FSearcher::tryNotify()
 
 void FSearcher::receiveResultCallback(const QString &result, bool isFinished, FSearcher *self)
 {
-    if (self->status.loadAcquire() != kRuning) {
+    if (self->status.loadAcquire() != kRuning || isFinished) {
         self->conditionMtx.lock();
         self->waitCondition.wakeAll();
         self->conditionMtx.unlock();
@@ -112,9 +112,4 @@ void FSearcher::receiveResultCallback(const QString &result, bool isFinished, FS
     }
 
     self->tryNotify();
-    if (isFinished) {
-        self->conditionMtx.lock();
-        self->waitCondition.wakeAll();
-        self->conditionMtx.unlock();
-    }
 }

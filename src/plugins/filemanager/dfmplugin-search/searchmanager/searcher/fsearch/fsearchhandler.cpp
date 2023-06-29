@@ -213,6 +213,6 @@ void FSearchHandler::reveiceResultsCallback(void *data, void *sender)
         }
     }
 
-    self->callbackFunc(nullptr, true);
+    self->callbackFunc("", true);
     self->syncMutex.unlock();
 }
