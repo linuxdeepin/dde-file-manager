@@ -7,6 +7,8 @@
 #include "utils/encryption/operatorcenter.h"
 #include "utils/policy/policymanager.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DPalette>
 #include <DFontSizeManager>
 #include <DApplicationHelper>
@@ -149,6 +151,16 @@ void VaultActiveSaveKeyFileView::initUI()
     vlayout1->addWidget(nextBtn);
 
     setLayout(vlayout1);
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultSaveKeyTitle);
+    AddATTag(qobject_cast<QWidget *>(hintMsg), AcName::kAcLabelVaultSaveKeyContent);
+    AddATTag(qobject_cast<QWidget *>(defaultPathRadioBtn), AcName::kAcRadioVaultSaveKeyDefault);
+    AddATTag(qobject_cast<QWidget *>(checkBoxLabel), AcName::kAcLabelVaultSaveKeyDefaultMsg);
+    AddATTag(qobject_cast<QWidget *>(otherPathRadioBtn), AcName::kAcRadioVaultSaveKeyOther);
+    AddATTag(qobject_cast<QWidget *>(selectfileSavePathEdit), AcName::kAcEditVaultSaveKeyPath);
+    AddATTag(qobject_cast<QWidget *>(nextBtn), AcName::kAcBtnVaultSaveKeyNext);
+#endif
 }
 
 void VaultActiveSaveKeyFileView::initConnect()

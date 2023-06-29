@@ -15,6 +15,8 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/application/settings.h>
 
+#include <dfm-framework/event/event.h>
+
 #include <DFontSizeManager>
 #include <DDialog>
 
@@ -98,6 +100,12 @@ void UnlockView::initUI()
 
     tooltipTimer = new QTimer(this);
     connect(tooltipTimer, &QTimer::timeout, this, &UnlockView::slotTooltipTimerTimeout);
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(forgetPassword), AcName::kAcLabelVaultUnlockForget);
+    AddATTag(qobject_cast<QWidget *>(passwordEdit), AcName::kAcEditVaultUnlockPassword);
+    AddATTag(qobject_cast<QWidget *>(tipsButton), AcName::kAcBtnVaultUnlockHint);
+#endif
 }
 
 void UnlockView::buttonClicked(int index, const QString &text)

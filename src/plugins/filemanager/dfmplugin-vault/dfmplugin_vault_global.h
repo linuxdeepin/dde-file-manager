@@ -11,6 +11,9 @@
 #define DPVAULT_END_NAMESPACE }
 #define DPVAULT_USE_NAMESPACE using namespace dfmplugin_vault;
 
+#define AddATTag(widget, name) \
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName", widget, name)
+
 DPVAULT_BEGIN_NAMESPACE
 
 enum VaultState {
@@ -144,6 +147,53 @@ enum class EncryptType : int {
 
 namespace AcName {
 inline constexpr char kAcSidebarVaultMenu[] { "sidebar_vaultitem_menu" };
+
+inline constexpr char kAcLabelVaultStartTitle[] { "label_vault_start_title" };
+inline constexpr char kAcLabelVaultStartContent[] { "lable_vault_start_content" };
+inline constexpr char kAcLabelVaultStartImage[] { "label_vault_start_image" };
+inline constexpr char kAcBtnVaultStartOk[] { "btn_vault_start_ok" };
+
+inline constexpr char kAcLabelVaultSetUnlockTitle[] { "label_vault_setUnlcok_title" };
+inline constexpr char kAcLabelVaultSetUnlcokMethod[] { "label_vault_setUnlock_method" };
+inline constexpr char kAcComboVaultSetUnlockMethod[] { "combo_vault_setUnlock_method" };
+inline constexpr char kAcLabelVaultSetUnlockPassword[] { "label_vault_setUnlock_password" };
+inline constexpr char kAcEditVaultSetUnlockPassword[] { "edit_vault_setUnlock_password" };
+inline constexpr char kAcLabelVaultSetUnlockRepeatPasswrod[] { "label_vault_setUnlcok_repeatPassword" };
+inline constexpr char kAcEditVaultSetUnlockRepeatPassword[] { "edit_vault_setUnlock_repeatPassword" };
+inline constexpr char kAcLabelVaultSetUnlockHint[] { "label_vault_setUnlock_hint" };
+inline constexpr char kAcEditVaultSetUnlockHint[] { "edit_vault_setUnlock_hint" };
+inline constexpr char kAcLabelVaultSetUnlockText[] { "label_vault_setUnlock_text" };
+inline constexpr char kAcBtnVaultSetUnlockNext[] { "btn_vault_setUnlock_next" };
+
+inline constexpr char kAcLabelVaultSaveKeyTitle[] { "label_vault_saveKey_Title" };
+inline constexpr char kAcLabelVaultSaveKeyContent[] { "label_vault_saveKey_Content" };
+inline constexpr char kAcRadioVaultSaveKeyDefault[] { "radio_vault_saveKey_default" };
+inline constexpr char kAcLabelVaultSaveKeyDefaultMsg[] { "label_vault_savekey_defaultMsg" };
+inline constexpr char kAcRadioVaultSaveKeyOther[] { "radio_vault_saveKey_Other" };
+inline constexpr char kAcEditVaultSaveKeyPath[] { "edit_vault_saveKey_path" };
+inline constexpr char kAcBtnVaultSaveKeyNext[] { "btn_vault_saveKey_next" };
+
+inline constexpr char kAcLabelVaultFinishTitle[] { "label_vault_finish_title" };
+inline constexpr char kAcLabelVaultFinishContent[] { "label_vault_finish_content" };
+inline constexpr char kAcLabelVaultFinishVaultImage[] { "label_vault_finish_vaultImage" };
+inline constexpr char kAcProgressVaultFinishProgress[] { "progress_vault_finish_progress" };
+inline constexpr char kAcLabelVaultFinishProgressHint[] { "label_vault_finish_progressHint" };
+inline constexpr char kAcLabelVaultFinishConfirmImage[] { "label_vault_finish_confirmImage" };
+inline constexpr char kAcLabelVaultFinishConfirmHint[] { "label_vault_finish_confirmHint" };
+inline constexpr char kAcBtnVaultFinishNext[] { "btn_vault_finish_next" };
+
+inline constexpr char kAcEditVaultUnlockPassword[] { "edit_vault_unlock_password" };
+inline constexpr char kAcBtnVaultUnlockHint[] { "btn_vault_unlock_hint" };
+inline constexpr char kAcLabelVaultUnlockForget[] { "label_vault_unlock_forget" };
+
+inline constexpr char kAcComboVaultRetrieveMethod[] { "combo_vault_retrieve_method" };
+inline constexpr char kAcEditVaultRetrieveDefaultPath[] { "edit_vault_retrieve_defaultPath" };
+inline constexpr char kAcEditVaultRetrieveOtherPath[] { "edit_vault_retrieve_otherPath" };
+
+inline constexpr char kAcLabelVaultRemoveTitle[] { "label_vault_remove_title" };
+inline constexpr char kAcLabelVaultRemoveContent[] { "label_vault_remove_content" };
+inline constexpr char kAcEditVaultRemovePassword[] { "edit_vault_remove_password" };
+inline constexpr char kAcBtnVaultRemovePasswordHint[] { "btn_vault_remove_passwordHint" };
 }
 
 inline constexpr char kDeamonServiceName[] { "com.deepin.filemanager.daemon" };

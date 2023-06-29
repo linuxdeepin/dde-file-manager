@@ -8,6 +8,8 @@
 #include "utils/policy/policymanager.h"
 #include "utils/encryption/vaultconfig.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DPasswordEdit>
 #include <DLabel>
 #include <DComboBox>
@@ -102,6 +104,20 @@ void VaultActiveSetUnlockMethodView::initUi()
     play->addLayout(gridLayout);
     play->addStretch();
     play->addWidget(nextBtn);
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(pLabel), AcName::kAcLabelVaultSetUnlockTitle);
+    AddATTag(qobject_cast<QWidget *>(pTypeLabel), AcName::kAcLabelVaultSetUnlcokMethod);
+    AddATTag(qobject_cast<QWidget *>(typeCombo), AcName::kAcComboVaultSetUnlockMethod);
+    AddATTag(qobject_cast<QWidget *>(passwordLabel), AcName::kAcLabelVaultSetUnlockPassword);
+    AddATTag(qobject_cast<QWidget *>(passwordEdit), AcName::kAcEditVaultSetUnlockPassword);
+    AddATTag(qobject_cast<QWidget *>(repeatPasswordLabel), AcName::kAcLabelVaultSetUnlockRepeatPasswrod);
+    AddATTag(qobject_cast<QWidget *>(repeatPasswordEdit), AcName::kAcEditVaultSetUnlockRepeatPassword);
+    AddATTag(qobject_cast<QWidget *>(passwordHintLabel), AcName::kAcLabelVaultSetUnlockHint);
+    AddATTag(qobject_cast<QWidget *>(tipsEdit), AcName::kAcEditVaultSetUnlockHint);
+    AddATTag(qobject_cast<QWidget *>(transEncryptionText), AcName::kAcLabelVaultSetUnlockText);
+    AddATTag(qobject_cast<QWidget *>(nextBtn), AcName::kAcBtnVaultSetUnlockNext);
+#endif
 }
 
 void VaultActiveSetUnlockMethodView::initConnect()

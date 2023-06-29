@@ -89,6 +89,11 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
     setOnButtonClickedClose(false);
 
     initConnect();
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(pTitle), AcName::kAcLabelVaultRemoveTitle);
+    AddATTag(qobject_cast<QWidget *>(hintInfo), AcName::kAcLabelVaultRemoveContent);
+#endif
 }
 
 void VaultRemovePages::initConnect()

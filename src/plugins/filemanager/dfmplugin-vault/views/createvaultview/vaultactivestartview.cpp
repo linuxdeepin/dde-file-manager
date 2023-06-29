@@ -4,6 +4,8 @@
 
 #include "vaultactivestartview.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DIconButton>
 #include <DLabel>
 
@@ -50,6 +52,13 @@ void VaultActiveStartView::initUi()
     play->addWidget(pLabel3);
     play->addStretch();
     play->addWidget(startBtn);
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(pLabel1), AcName::kAcLabelVaultStartTitle);
+    AddATTag(qobject_cast<QWidget *>(pLabel2), AcName::kAcLabelVaultStartContent);
+    AddATTag(qobject_cast<QWidget *>(pLabel3), AcName::kAcLabelVaultStartImage);
+    AddATTag(qobject_cast<QWidget *>(startBtn), AcName::kAcBtnVaultStartOk);
+#endif
 }
 
 void VaultActiveStartView::initConnect()
