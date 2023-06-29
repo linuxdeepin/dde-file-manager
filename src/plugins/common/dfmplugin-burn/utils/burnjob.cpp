@@ -180,7 +180,7 @@ void AbstractBurnJob::finishFunc(bool verify, bool verifyRet)
 
 void AbstractBurnJob::run()
 {
-    curDevId = { DeviceUtils::getBlockDeviceId(curDev) };
+    curDevId = DeviceUtils::getBlockDeviceId(curDev);
     JobInfoPointer info { new QMap<quint8, QVariant> };
     BurnHelper::updateBurningStateToPersistence(curDevId, curDev, true);
     FinallyUtil finaly([this]() {
@@ -271,7 +271,7 @@ void AbstractBurnJob::workingInSubProcess()
 
 DOpticalDiscManager *AbstractBurnJob::createManager(int fd)
 {
-    DOpticalDiscManager *manager = new DOpticalDiscManager(curDev, this);
+    DOpticalDiscManager *manager = new DOpticalDiscManager(curDev);
     connect(
             manager, &DOpticalDiscManager::jobStatusChanged, this,
             [=](DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message) {
@@ -370,9 +370,9 @@ void EraseJob::work()
     if (!readyToWork())
         return;
 
-    DOpticalDiscManager *manager = new DOpticalDiscManager(curDev, this);
+    QScopedPointer<DOpticalDiscManager> manager { new DOpticalDiscManager(curDev) };
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
-    connect(manager, &DOpticalDiscManager::jobStatusChanged, this, &AbstractBurnJob::onJobUpdated, Qt::DirectConnection);
+    connect(manager.data(), &DOpticalDiscManager::jobStatusChanged, this, &AbstractBurnJob::onJobUpdated, Qt::DirectConnection);
 
     if (!manager->erase())
         qWarning() << "Erase Failed: " << manager->lastError();
@@ -382,9 +382,7 @@ void EraseJob::work()
     DeviceManager::instance()->rescanBlockDev(curDevId);
 
     // Due to disc don't ejected after erase, we must readlod optical info again
-    DevMngIns->mountBlockDevAsync(curDevId, {}, [this](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
-        DevProxyMng->reloadOpticalInfo(curDevId);
-    });
+    emit requestReloadDisc(curDevId);
 }
 
 BurnISOFilesJob::BurnISOFilesJob(const QString &dev, const JobHandlePointer handler)
@@ -398,13 +396,13 @@ bool BurnISOFilesJob::fileSystemLimitsValid()
     auto opts { qvariant_cast<DFMBURN::BurnOptions>(curProperty[PropertyType::kBurnOpts]) };
 
     // filesystem limits check
-    BurnCheckStrategy *checkStrategy { nullptr };
+    QScopedPointer<BurnCheckStrategy> checkStrategy { nullptr };
     if (opts.testFlag(DFMBURN::BurnOption::kISO9660Only))
-        checkStrategy = new ISO9660CheckStrategy(stagingurl.path(), this);
+        checkStrategy.reset(new ISO9660CheckStrategy(stagingurl.path()));
     else if (opts.testFlag(DFMBURN::BurnOption::kJolietSupport))
-        checkStrategy = new JolietCheckStrategy(stagingurl.path(), this);
+        checkStrategy.reset(new JolietCheckStrategy(stagingurl.path()));
     else
-        checkStrategy = new RockRidgeCheckStrategy(stagingurl.path(), this);
+        checkStrategy.reset(new RockRidgeCheckStrategy(stagingurl.path()));
 
     if (checkStrategy && !checkStrategy->check()) {
         qWarning() << "Check Failed: " << checkStrategy->lastError();
@@ -436,6 +434,7 @@ void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
         manager->checkmedia(&gud, &slo, &bad);
         write(checkFd, &bad, sizeof(bad));
     }
+    delete manager;
 }
 
 void BurnISOFilesJob::work()
@@ -475,6 +474,7 @@ void BurnISOImageJob::writeFunc(int progressFd, int checkFd)
         manager->checkmedia(&gud, &slo, &bad);
         write(checkFd, &bad, sizeof(bad));
     }
+    delete manager;
 }
 
 void BurnISOImageJob::work()
@@ -498,7 +498,7 @@ bool BurnUDFFilesJob::fileSystemLimitsValid()
     auto stagingurl { curProperty[PropertyType::KStagingUrl].toUrl() };
 
     // filesystem limits check
-    BurnCheckStrategy *checkStrategy { new UDFCheckStrategy(stagingurl.path(), this) };
+    QScopedPointer<BurnCheckStrategy> checkStrategy { new UDFCheckStrategy(stagingurl.path()) };
     if (!checkStrategy->check()) {
         qWarning() << "Check Failed: " << checkStrategy->lastError();
         emit requestErrorMessageDialog(tr("The file name or the path is too long. Please shorten the file name or the path and try again."),
@@ -523,6 +523,7 @@ void BurnUDFFilesJob::writeFunc(int progressFd, int checkFd)
     curPhase = kWriteData;
     bool isSuccess { manager->commit(opts, speeds, volName) };
     qInfo() << "Burn UDF ret: " << isSuccess << manager->lastError() << localPath;
+    delete manager;
 }
 
 void BurnUDFFilesJob::work()
@@ -575,6 +576,7 @@ void DumpISOImageJob::writeFunc(int progressFd, int checkFd)
     curPhase = kWriteData;
     bool isSuccess { manager->dumpISO(imagePath) };
     qInfo() << "Dump ISO ret: " << isSuccess << manager->lastError() << imagePath;
+    delete manager;
 }
 
 void DumpISOImageJob::finishFunc(bool verify, bool verifyRet)

@@ -64,7 +64,7 @@ protected:
     void run() override;
     bool readyToWork();
     void workingInSubProcess();
-    DFMBURN::DOpticalDiscManager *createManager(int fd);
+    [[nodiscard]] DFMBURN::DOpticalDiscManager *createManager(int fd);
     QByteArray updatedInSubProcess(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
     void comfort();
 
@@ -73,6 +73,7 @@ signals:
     void requestFailureDialog(int type, const QString &err, const QStringList &details);
     void requestCompletionDialog(const QString &msg, const QString &icon);
     void requestCloseTab(const QUrl &url);
+    void requestReloadDisc(const QString &devId);
     void burnFinished(int type, bool reuslt);
 
 public slots:
