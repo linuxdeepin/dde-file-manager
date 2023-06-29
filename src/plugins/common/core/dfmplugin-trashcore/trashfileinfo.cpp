@@ -102,13 +102,6 @@ QString TrashFileInfoPrivate::fileName() const
     if (!dFileInfo)
         return QString();
 
-    if (targetUrl.isValid()) {
-        if (FileUtils::isDesktopFile(targetUrl)) {
-            DesktopFileInfo dfi(targetUrl);
-            return dfi.displayOf(DisPlayInfoType::kFileDisplayName);
-        }
-    }
-
     return dFileInfo->attribute(DFileInfo::AttributeID::kStandardName).toString();
 }
 
