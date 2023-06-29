@@ -6,6 +6,8 @@
 #include "utils/encryption/operatorcenter.h"
 #include "utils/policy/policymanager.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DFontSizeManager>
 #include <DFileDialog>
 
@@ -75,6 +77,12 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     connect(savePathTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndex(int)));
 
     connect(filePathEdit, &DFileChooserEdit::fileChoosed, this, &RetrievePasswordView::onBtnSelectFilePath);
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(savePathTypeComboBox), AcName::kAcComboVaultRetrieveMethod);
+    AddATTag(qobject_cast<QWidget *>(defaultFilePathEdit), AcName::kAcEditVaultRetrieveDefaultPath);
+    AddATTag(qobject_cast<QWidget *>(filePathEdit), AcName::kAcEditVaultRetrieveOtherPath);
+#endif
 }
 
 void RetrievePasswordView::setVerificationPage()

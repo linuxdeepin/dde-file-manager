@@ -114,6 +114,17 @@ void VaultActiveFinishedView::initUi()
 
     // 初始化定时器
     timer = new QTimer(this);
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(pLabelTitle), AcName::kAcLabelVaultFinishTitle);
+    AddATTag(qobject_cast<QWidget *>(tipsLabel), AcName::kAcLabelVaultFinishContent);
+    AddATTag(qobject_cast<QWidget *>(encryVaultImageLabel), AcName::kAcLabelVaultFinishVaultImage);
+    AddATTag(qobject_cast<QWidget *>(waterProgress), AcName::kAcProgressVaultFinishProgress);
+    AddATTag(qobject_cast<QWidget *>(tipsLabelone), AcName::kAcLabelVaultFinishProgressHint);
+    AddATTag(qobject_cast<QWidget *>(encryptFinishedImageLabel), AcName::kAcLabelVaultFinishConfirmImage);
+    AddATTag(qobject_cast<QWidget *>(tipsThree), AcName::kAcLabelVaultFinishConfirmHint);
+    AddATTag(qobject_cast<QWidget *>(finishedBtn), AcName::kAcBtnVaultFinishNext);
+#endif
 }
 
 void VaultActiveFinishedView::initConnect()

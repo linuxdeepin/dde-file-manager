@@ -6,6 +6,8 @@
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/encryption/vaultconfig.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DToolTip>
 #include <DPasswordEdit>
 #include <DFloatingWidget>
@@ -49,6 +51,11 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
             showToolTip(hint, 3000, EN_ToolTip::kInformation);
         }
     });
+
+#ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(pwdEdit), AcName::kAcEditVaultRemovePassword);
+    AddATTag(qobject_cast<QWidget *>(tipsBtn), AcName::kAcBtnVaultRemovePasswordHint);
+#endif
 }
 
 VaultRemoveByPasswordView::~VaultRemoveByPasswordView()
