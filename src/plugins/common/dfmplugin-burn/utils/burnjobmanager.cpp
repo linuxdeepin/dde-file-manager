@@ -9,6 +9,8 @@
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -117,6 +119,11 @@ void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)
     connect(job, &AbstractBurnJob::requestErrorMessageDialog, DialogManagerInstance, &DialogManager::showErrorDialog);
     connect(job, &AbstractBurnJob::requestCloseTab, this, [](const QUrl &url) {
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
+    });
+    connect(job, &AbstractBurnJob::requestReloadDisc, this, [](const QString &devId) {
+        DevMngIns->mountBlockDevAsync(devId, {}, [devId](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
+            DevProxyMng->reloadOpticalInfo(devId);
+        });
     });
     connect(job, &AbstractBurnJob::burnFinished, this, [this, job](int type, bool result) {
         startAuditLogForBurnFiles(job->currentDeviceInfo(),
