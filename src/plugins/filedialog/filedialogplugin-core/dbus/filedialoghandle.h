@@ -5,6 +5,8 @@
 #ifndef FILEDIALOGHANDLE_H
 #define FILEDIALOGHANDLE_H
 
+#include "views/filedialog.h"
+
 #include <QFileDialog>
 #include <QScopedPointer>
 #include <QDBusVariant>
@@ -85,6 +87,7 @@ public Q_SLOTS:
     void reject();
 
 private:
+    void addDefaultSettingForWindow(QPointer<filedialog_core::FileDialog> dialog);
     void setWindowStayOnTop();
 
 Q_SIGNALS:
@@ -98,6 +101,7 @@ Q_SIGNALS:
 private:
     QScopedPointer<FileDialogHandlePrivate> d_ptr;
     bool isSetAcceptMode { false };
+    bool isSetNameFilters { false };
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), FileDialogHandle)
     Q_DISABLE_COPY(FileDialogHandle)
 };
