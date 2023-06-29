@@ -68,6 +68,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setDefaultDropAction(Qt::CopyAction);
     setDragDropOverwriteMode(true);
     setDragEnabled(true);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     initializeModel();
     initializeDelegate();
