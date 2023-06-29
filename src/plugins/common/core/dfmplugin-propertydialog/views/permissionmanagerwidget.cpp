@@ -171,6 +171,7 @@ void PermissionManagerWidget::initUI()
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
     executableCheckBox->setFixedWidth(196);
+    executableCheckBox->setToolTip(executableCheckBox->text());
 
     layout->setLabelAlignment(Qt::AlignLeft);
 

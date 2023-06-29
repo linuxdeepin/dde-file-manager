@@ -69,6 +69,7 @@ void BasicWidget::initUI()
 
     hideFile = new DCheckBox(frameMain);
     hideFile->setText(tr("Hide this file"));
+    hideFile->setToolTip(hideFile->text());
 }
 
 KeyValueLabel *BasicWidget::createValueLabel(QFrame *frame, QString leftValue)
