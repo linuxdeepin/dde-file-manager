@@ -197,6 +197,7 @@ void ShareControlWidget::setupShareSwitcher()
         text = fontWidth.elidedText(text, Qt::ElideMiddle, fontW);
     }
     shareSwitcher->setText(text);
+    shareSwitcher->setToolTip(shareSwitcher->text());
 }
 
 void ShareControlWidget::setupNetworkPath()
