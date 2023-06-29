@@ -60,7 +60,8 @@ void TitleBarWidget::stopSpinner()
 
 void TitleBarWidget::handleHotkeyCtrlF()
 {
-    onSearchButtonClicked();
+    if (searchButton->isVisible())
+        onSearchButtonClicked();
 }
 
 void TitleBarWidget::handleHotkeyCtrlL()
