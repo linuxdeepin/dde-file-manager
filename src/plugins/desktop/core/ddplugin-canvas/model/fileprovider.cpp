@@ -17,7 +17,9 @@ FileProvider::FileProvider(QObject *parent)
     : QObject(parent)
 {
     qRegisterMetaType<QList<QUrl>>();
-    connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileProvider::update);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, [=](const QUrl &url, const QString &) {
+        this->onFileInfoUpdated(url, "", false);
+    }, Qt::QueuedConnection);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FileProvider::onFileInfoUpdated, Qt::QueuedConnection);
 }
