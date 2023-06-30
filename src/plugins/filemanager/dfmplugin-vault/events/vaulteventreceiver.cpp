@@ -15,6 +15,7 @@
 #include <dfm-base/utils/watchercache.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -158,12 +159,8 @@ bool VaultEventReceiver::handleShortCutPasteFiles(const quint64 &winId, const QL
     if (fromUrls.isEmpty())
         return false;
 
-    if (VaultHelper::isVaultFile(fromUrls.first()) && to.scheme() == "trash") {
-        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
-                                     winId,
-                                     fromUrls, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    if (VaultHelper::isVaultFile(fromUrls.first()) && FileUtils::isTrashFile(to))
         return true;
-    }
     return false;
 }
 
