@@ -279,9 +279,16 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
 void SideBarWidget::initializeUi()
 {
     QVBoxLayout *vlayout = new QVBoxLayout(this);
+
+    QWidget *spacer = new QWidget(this);
+    spacer->setAutoFillBackground(true);
+    spacer->setFixedHeight(10);
+    spacer->setBackgroundRole(QPalette::Base);
+
     vlayout->addWidget(sidebarView);
     vlayout->setMargin(0);
     vlayout->setSpacing(0);
+    vlayout->addWidget(spacer);
 
     sidebarView->setModel(kSidebarModelIns.data());
     sidebarView->setItemDelegate(new SideBarItemDelegate(sidebarView));
