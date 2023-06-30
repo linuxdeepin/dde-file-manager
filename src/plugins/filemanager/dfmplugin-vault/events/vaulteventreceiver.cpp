@@ -70,6 +70,7 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileByApp", VaultFileHelper::instance(), &VaultFileHelper::openFileByApp);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", VaultFileHelper::instance(), &VaultFileHelper::setPermision);
     dpfHookSequence->follow("dfmplugin_propertydialog", "hook_PermissionView_Ash", this, &VaultEventReceiver::handlePermissionViewAsh);
+    dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", this, &VaultEventReceiver::handleFileCanTaged);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -254,4 +255,14 @@ bool VaultEventReceiver::handlePermissionViewAsh(const QUrl &url, bool *isAsh)
     *isAsh = true;
 
     return true;
+}
+
+bool VaultEventReceiver::handleFileCanTaged(const QUrl &url, bool *canTag)
+{
+    if (url.scheme() == VaultHelper::instance()->scheme()) {
+        *canTag = false;
+        return true;
+    }
+
+    return false;
 }

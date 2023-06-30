@@ -33,6 +33,7 @@
 
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(bool *)
 
 DPTAG_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -80,6 +81,11 @@ bool TagManager::canTagFile(const QUrl &url) const
     if (!url.isValid())
         return false;
 
+    bool canTaged { true };
+    if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTaged", url, &canTaged)) {
+        return canTaged;
+    }
+
     QUrl localUrl;
     if (url.scheme() == Global::Scheme::kFile) {
         localUrl = url;
@@ -108,9 +114,14 @@ bool TagManager::canTagFile(const FileInfoPointer &info) const
     if (info.isNull())
         return false;
 
+    const QUrl &url = info->urlOf(UrlInfoType::kUrl);
+    bool canTaged { true };
+    if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTaged", url, &canTaged)) {
+        return canTaged;
+    }
+
     bool canTag = localFileCanTagFilter(info);
     if (!canTag) {
-        const QUrl &url = info->urlOf(UrlInfoType::kUrl);
         if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
             return true;
     }
