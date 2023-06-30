@@ -12,6 +12,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/interfaces/private/fileinfo_p.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/universalutils.h>
 
 DFMBASE_USE_NAMESPACE
 
@@ -28,12 +29,18 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
 
 bool MasteredMediaFileInfo::exists() const
 {
-    if (url.isEmpty()
-        || !d->backerUrl.isValid()
-        || d->backerUrl.isEmpty()) {
+    if (url.isEmpty())
         return false;
-    }
-    if (url.fragment() == "dup") {
+
+    if (url.fragment() == "dup")
+        return false;
+
+    if (!d->backerUrl.isValid() || d->backerUrl.isEmpty()) {
+        const QString &dev { OpticalHelper::burnDestDevice(url) };
+        const QUrl &discRoot { OpticalHelper::discRoot(dev) };
+        const QUrl &stagingRoot { OpticalHelper::localStagingRoot() };
+        if (UniversalUtils::urlEquals(url, discRoot) || UniversalUtils::urlEquals(url, stagingRoot))
+            return true;
         return false;
     }
 
