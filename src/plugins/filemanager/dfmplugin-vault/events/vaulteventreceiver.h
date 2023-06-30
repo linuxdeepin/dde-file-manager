@@ -33,6 +33,7 @@ public slots:
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action);
     bool handlePermissionViewAsh(const QUrl &url, bool *isAsh);
+    bool handleFileCanTaged(const QUrl &url, bool *canTag);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H

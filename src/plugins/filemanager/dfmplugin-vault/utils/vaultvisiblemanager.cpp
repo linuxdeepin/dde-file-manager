@@ -102,6 +102,8 @@ void VaultVisibleManager::pluginServiceRegister()
                 },
                 Qt::DirectConnection);
     }
+    dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_View_Refreshed",
+                                   VaultVisibleManager::instance(), &VaultVisibleManager::onComputerRefresh);
 }
 
 void VaultVisibleManager::addVaultComputerMenu()
