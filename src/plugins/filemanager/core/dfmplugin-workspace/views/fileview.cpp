@@ -82,6 +82,9 @@ FileView::~FileView()
 {
     disconnect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
+
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
 }
 
 QWidget *FileView::widget() const
