@@ -190,6 +190,7 @@ void ShareControlWidget::setupShareSwitcher()
     shareSwitcher = new QCheckBox(this);
     shareSwitcher->setFixedWidth(ConstDef::kWidgetFixedWidth);
     QString text = tr("Share this folder");
+    shareSwitcher->setToolTip(text);
     QFontMetrics fontWidth(shareSwitcher->font());
     int fontSize = fontWidth.horizontalAdvance(text);
     int fontW = shareSwitcher->width() - mainLay->contentsMargins().right() - shareSwitcher->iconSize().width();
@@ -197,7 +198,6 @@ void ShareControlWidget::setupShareSwitcher()
         text = fontWidth.elidedText(text, Qt::ElideMiddle, fontW);
     }
     shareSwitcher->setText(text);
-    shareSwitcher->setToolTip(shareSwitcher->text());
 }
 
 void ShareControlWidget::setupNetworkPath()
