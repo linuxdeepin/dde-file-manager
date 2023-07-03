@@ -40,7 +40,7 @@ public:
     enum GenericAttribute {
         kIndexInternal,
         kIndexExternal,
-        kIndexFullTextSearch,   //full text search
+        kIndexFullTextSearch,   // full text search
         kPreviewCompressFile,   // open the zip as a directory
         kPreviewTextFile,   // generate thumbnails from plain text
         kPreviewDocumentFile,   // document generation thumbnails (pdf)
@@ -58,7 +58,6 @@ public:
         kShowedFileSuffix,   // show suffix
         kDisableNonRemovableDeviceUnmount,   // disable local disk uninstallation
         kHiddenSystemPartition,   // hide system partition
-        kShowRecentFileEntry,   // show "Recent Documents" entry in the sidebar
         kShowCsdCrumbBarClickableArea,   // eave an area in the breadcrumb bar that can be clicked on to go to the edit state of the address bar
         kShowFileSystemTagOnDiskIcon,   // display file system information on the disk icon
         kShowDeleteConfirmDialog,   // display the delete confirmation dialog
@@ -101,7 +100,6 @@ Q_SIGNALS:
     void showedFileSuffixChanged(bool enable);
     void previewAttributeChanged(GenericAttribute ga, bool enable);
     void showedHiddenFilesChanged(bool enable);
-    void recentDisplayChanged(bool enable);
     void csdClickableAreaAttributeChanged(bool enabled);
     void indexFullTextSearchChanged(bool enabled);
 

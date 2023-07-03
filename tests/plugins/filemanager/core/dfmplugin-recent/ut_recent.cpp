@@ -30,7 +30,7 @@ class RecentTest : public testing::Test
 {
 
 protected:
-    virtual void SetUp() override {}
+    virtual void SetUp() override { }
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -44,7 +44,6 @@ TEST_F(RecentTest, Initialize)
     stub.set_lamda(&RecentManager::init, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&Recent::bindWindows, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&Recent::followEvents, [] { __DBG_STUB_INVOKE__ });
-    stub.set_lamda(&Recent::onRecentDisplayChanged, [] { __DBG_STUB_INVOKE__ });
     EXPECT_NO_FATAL_FAILURE(ins.initialize());
 }
 
@@ -70,16 +69,6 @@ TEST_F(RecentTest, Start)
 
     stub.set_lamda(&Recent::addFileOperations, [] {});
     EXPECT_TRUE(ins.start());
-}
-
-TEST_F(RecentTest, onRecentDisplayChanged)
-{
-    stub.set_lamda(&Recent::addRecentItem, [] {});
-    typedef QVariant (EventChannelManager::*Push1)(const QString &, const QString &, const QUrl &);
-    auto push1 = static_cast<Push1>(&EventChannelManager::push);
-    stub.set_lamda(push1, [] { __DBG_STUB_INVOKE__ return QVariant(); });
-    EXPECT_NO_FATAL_FAILURE(ins.onRecentDisplayChanged(true));
-    EXPECT_NO_FATAL_FAILURE(ins.onRecentDisplayChanged(false));
 }
 
 TEST_F(RecentTest, addRecentItem)
@@ -117,10 +106,8 @@ TEST_F(RecentTest, onWindowOpened)
     stub.set_lamda(&Application::genericAttribute, []() -> bool {
         return true;
     });
-    EXPECT_NO_FATAL_FAILURE(ins.installToSideBar());
 
     stub.set_lamda(&Recent::regRecentCrumbToTitleBar, [] { __DBG_STUB_INVOKE__ });
-    stub.set_lamda(&Recent::installToSideBar, [] { __DBG_STUB_INVOKE__ });
 
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(1));
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(2));
