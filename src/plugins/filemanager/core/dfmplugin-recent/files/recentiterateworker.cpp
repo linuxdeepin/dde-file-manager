@@ -49,6 +49,8 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
 
         const QUrl &url { QUrl(location) };
         auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        if (stopped)
+            return;
         if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
             const auto &bindPath = FileUtils::bindPathTransform(info->pathOf(PathInfoType::kAbsoluteFilePath), false);
             QUrl recentUrl { QUrl::fromLocalFile(bindPath) };
@@ -72,6 +74,11 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
     }
     if (!deletedUrls.isEmpty())
         emit deleteExistRecentUrls(deletedUrls);
+}
+
+void RecentIterateWorker::stop()
+{
+    stopped = true;
 }
 
 }   // namespace dfmplugin_recent

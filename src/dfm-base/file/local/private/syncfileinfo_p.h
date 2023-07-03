@@ -101,64 +101,13 @@ public:
     QString path() const;
     QString filePath() const;
     QString symLinkTarget() const;
-    QVector<DFileInfo::AttributeID> &getAttributeIDVector() const
-    {
-        static QVector<DFileInfo::AttributeID> kTimeInfoToDFile {
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeChanged,
-            DFileInfo::AttributeID::kTimeModified,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeCreated,
-            DFileInfo::AttributeID::kTimeChanged,
-            DFileInfo::AttributeID::kTimeModified,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeAccess,
-            DFileInfo::AttributeID::kTimeCreatedUsec,
-            DFileInfo::AttributeID::kTimeCreatedUsec,
-            DFileInfo::AttributeID::kTimeChangedUsec,
-            DFileInfo::AttributeID::kTimeModifiedUsec,
-            DFileInfo::AttributeID::kTimeAccessUsec,
-        };
-        return kTimeInfoToDFile;
-    }
     QUrl redirectedFileUrl() const;
-    QVector<DFileInfo::AttributeID> &getAttributeIDIsVector() const
-    {
-        static QVector<DFileInfo::AttributeID> kIsToDFile {
-            DFileInfo::AttributeID::kAccessCanRead,
-            DFileInfo::AttributeID::kAccessCanWrite,
-            DFileInfo::AttributeID::kAccessCanExecute,
-            DFileInfo::AttributeID::kStandardIsHidden,
-            DFileInfo::AttributeID::kStandardIsFile,
-            DFileInfo::AttributeID::kStandardIsDir,
-            DFileInfo::AttributeID::kStandardIsSymlink,
-        };
-
-        return kIsToDFile;
-    }
     bool isExecutable() const;
     bool isPrivate() const;
     bool canDelete() const;
     bool canTrash() const;
     bool canRename() const;
     bool canFetch() const;
-    QVector<DFileInfo::AttributeID> &getAttributeIDExtendVector() const
-    {
-        static QVector<DFileInfo::AttributeID> kExtendToDFile {
-            DFileInfo::AttributeID::kOwnerUser,
-            DFileInfo::AttributeID::kOwnerGroup,
-            DFileInfo::AttributeID::kAttributeIDMax,
-            DFileInfo::AttributeID::kUnixInode,
-            DFileInfo::AttributeID::kUnixUID,
-            DFileInfo::AttributeID::kUnixGID,
-            DFileInfo::AttributeID::kStandardIsHidden,
-        };
-
-        return kExtendToDFile;
-    }
     QString sizeFormat() const;
     QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);

@@ -199,17 +199,17 @@ bool SyncFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsFile:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool();
     case FileIsType::kIsDir:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool();
     case FileIsType::kIsReadable:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kAccessCanRead).toBool();
     case FileIsType::kIsWritable:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kAccessCanWrite).toBool();
     case FileIsType::kIsHidden:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kStandardIsHidden).toBool();
     case FileIsType::kIsSymLink:
-        return d->attribute(d->getAttributeIDIsVector().at(static_cast<int>(type))).toBool();
+        return d->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
     case FileIsType::kIsExecutable:
         return d->isExecutable();
     case FileIsType::kIsRoot:
@@ -253,17 +253,17 @@ QVariant SyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kSizeFormat:
         return d->sizeFormat();
     case FileExtendedInfoType::kInode:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kUnixInode);
     case FileExtendedInfoType::kOwner:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kOwnerUser);
     case FileExtendedInfoType::kGroup:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kOwnerGroup);
     case FileExtendedInfoType::kFileIsHid:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kStandardIsHidden);
     case FileExtendedInfoType::kOwnerId:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kUnixUID);
     case FileExtendedInfoType::kGroupId:
-        return d->attribute(d->getAttributeIDExtendVector().at(static_cast<int>(type)));
+        return d->attribute(DFileInfo::AttributeID::kUnixGID);
     default:
         QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
@@ -326,41 +326,37 @@ qint64 SyncFileInfo::size() const
  */
 QVariant SyncFileInfo::timeOf(const TimeInfoType type) const
 {
-    qint64 data { 0 };
-    if (type < FileTimeType::kDeletionTimeMSecond)
-        data = d->attribute(d->getAttributeIDVector().at(static_cast<int>(type))).value<qint64>();
-
     switch (type) {
     case TimeInfoType::kCreateTime:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->attribute(DFileInfo::AttributeID::kTimeCreated).value<qint64>());
     case TimeInfoType::kBirthTime:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->attribute(DFileInfo::AttributeID::kTimeCreated).value<qint64>());
     case TimeInfoType::kMetadataChangeTime:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->attribute(DFileInfo::AttributeID::kTimeChanged).value<qint64>());
     case TimeInfoType::kLastModified:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->attribute(DFileInfo::AttributeID::kTimeModified).value<qint64>());
     case TimeInfoType::kLastRead:
-        return QDateTime::fromSecsSinceEpoch(data);
+        return QDateTime::fromSecsSinceEpoch(d->attribute(DFileInfo::AttributeID::kTimeAccess).value<qint64>());
     case TimeInfoType::kCreateTimeSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeCreated).value<qint64>();
     case TimeInfoType::kBirthTimeSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeCreated).value<qint64>();
     case TimeInfoType::kMetadataChangeTimeSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeChanged).value<qint64>();
     case TimeInfoType::kLastModifiedSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeModified).value<qint64>();
     case TimeInfoType::kLastReadSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeAccess).value<qint64>();
     case TimeInfoType::kCreateTimeMSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeCreatedUsec).value<qint64>();
     case TimeInfoType::kBirthTimeMSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeCreatedUsec).value<qint64>();
     case TimeInfoType::kMetadataChangeTimeMSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeChangedUsec).value<qint64>();
     case TimeInfoType::kLastModifiedMSecond:
-        [[fallthrough]];
+        return d->attribute(DFileInfo::AttributeID::kTimeModifiedUsec).value<qint64>();
     case TimeInfoType::kLastReadMSecond:
-        return data;
+        return d->attribute(DFileInfo::AttributeID::kTimeAccessUsec).value<qint64>();
     default:
         return FileInfo::timeOf(type);
     }
