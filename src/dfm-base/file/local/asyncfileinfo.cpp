@@ -191,19 +191,19 @@ bool AsyncFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsFile:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsFile).toBool();
     case FileIsType::kIsDir:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsDir).toBool();
     case FileIsType::kIsReadable:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kAccessCanRead).toBool();
     case FileIsType::kIsWritable:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kAccessCanWrite).toBool();
     case FileIsType::kIsHidden:
-        [[fallthrough]];
-    case FileIsType::kIsExecutable:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsHidden).toBool();
     case FileIsType::kIsSymLink:
-        return d->asyncAttribute(d->getAttributeIDIsVector().at(static_cast<int>(type))).toBool();
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink).toBool();
+    case FileIsType::kIsExecutable:
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kAccessCanExecute).toBool();
     case FileIsType::kIsRoot:
         return d->asyncAttribute(AsyncAttributeID::kStandardFilePath).toString() == "/";
     default:
@@ -239,17 +239,17 @@ QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kSizeFormat:
         return d->sizeFormat();
     case FileExtendedInfoType::kInode:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kUnixInode);
     case FileExtendedInfoType::kOwner:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kOwnerUser);
     case FileExtendedInfoType::kGroup:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kOwnerGroup);
     case FileExtendedInfoType::kFileIsHid:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardIsHidden);
     case FileExtendedInfoType::kOwnerId:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kUnixUID);
     case FileExtendedInfoType::kGroupId:
-        return d->asyncAttribute(d->getAttributeIDExtendVector().at(static_cast<int>(type)));
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kUnixGID);
     default:
         QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
@@ -311,41 +311,37 @@ qint64 AsyncFileInfo::size() const
  */
 QVariant AsyncFileInfo::timeOf(const TimeInfoType type) const
 {
-    qint64 data { 0 };
-    if (type < FileTimeType::kDeletionTimeMSecond)
-        data = d->asyncAttribute(d->getAttributeIDVector().at(static_cast<int>(type))).value<qint64>();
-
     switch (type) {
     case TimeInfoType::kCreateTime:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeCreated).value<qint64>());
     case TimeInfoType::kBirthTime:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeCreated).value<qint64>());
     case TimeInfoType::kMetadataChangeTime:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeChanged).value<qint64>());
     case TimeInfoType::kLastModified:
-        [[fallthrough]];
+        return QDateTime::fromSecsSinceEpoch(d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeModified).value<qint64>());
     case TimeInfoType::kLastRead:
-        return QDateTime::fromSecsSinceEpoch(data);
+        return QDateTime::fromSecsSinceEpoch(d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeAccess).value<qint64>());
     case TimeInfoType::kCreateTimeSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeCreated).value<qint64>();
     case TimeInfoType::kBirthTimeSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeCreated).value<qint64>();
     case TimeInfoType::kMetadataChangeTimeSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeChanged).value<qint64>();
     case TimeInfoType::kLastModifiedSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeModified).value<qint64>();
     case TimeInfoType::kLastReadSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeAccess).value<qint64>();
     case TimeInfoType::kCreateTimeMSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeCreatedUsec).value<qint64>();
     case TimeInfoType::kBirthTimeMSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeCreatedUsec).value<qint64>();
     case TimeInfoType::kMetadataChangeTimeMSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeChangedUsec).value<qint64>();
     case TimeInfoType::kLastModifiedMSecond:
-        [[fallthrough]];
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeModifiedUsec).value<qint64>();
     case TimeInfoType::kLastReadMSecond:
-        return data;
+        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kTimeAccessUsec).value<qint64>();
     default:
         return FileInfo::timeOf(type);
     }
@@ -1066,9 +1062,15 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixUID, attribute(DFileInfo::AttributeID::kUnixUID));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixGID, attribute(DFileInfo::AttributeID::kUnixGID));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(dfmFileInfo->permissions()));
-    for (auto key : getAttributeIDVector()) {
-        tmp.insert(key, attribute(static_cast<DFileInfo::AttributeID>(key)));
-    }
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeCreated, attribute(DFileInfo::AttributeID::kTimeCreated));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeChanged, attribute(DFileInfo::AttributeID::kTimeChanged));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeModified, attribute(DFileInfo::AttributeID::kTimeModified));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeAccess, attribute(DFileInfo::AttributeID::kTimeAccess));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeCreatedUsec, attribute(DFileInfo::AttributeID::kTimeCreatedUsec));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeChangedUsec, attribute(DFileInfo::AttributeID::kTimeChangedUsec));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeModifiedUsec, attribute(DFileInfo::AttributeID::kTimeModifiedUsec));
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeAccessUsec, attribute(DFileInfo::AttributeID::kTimeAccessUsec));
+
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileType, QVariant::fromValue(fileType()));
     // GenericIconName
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardContentType, attribute(DFileInfo::AttributeID::kStandardContentType));

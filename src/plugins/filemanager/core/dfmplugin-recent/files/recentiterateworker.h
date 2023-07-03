@@ -20,10 +20,14 @@ public:
 
 public slots:
     void onRecentFileChanged(const QList<QUrl> &cachedUrls);
+public:
+    void stop();
 
 signals:
     void updateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime);
     void deleteExistRecentUrls(const QList<QUrl> &urls);
+private:
+    std::atomic_bool stopped{ false };
 };
 }
 #endif   // RECENTITERATEWORKER_H

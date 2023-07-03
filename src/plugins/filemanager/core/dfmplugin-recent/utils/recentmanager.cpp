@@ -177,6 +177,7 @@ RecentManager::~RecentManager()
 {
     if (watcher)
         watcher->stopWatcher();
+    iteratorWorker->stop();
     workerThread.quit();
     workerThread.wait(15000);
 }

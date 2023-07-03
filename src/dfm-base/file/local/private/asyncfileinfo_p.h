@@ -102,64 +102,13 @@ public:
     QString path() const;
     QString filePath() const;
     QString symLinkTarget() const;
-    QVector<AsyncFileInfo::AsyncAttributeID> &getAttributeIDVector() const
-    {
-        static QVector<AsyncFileInfo::AsyncAttributeID> kTimeInfoToDFile {
-            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
-            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
-            AsyncFileInfo::AsyncAttributeID::kTimeChanged,
-            AsyncFileInfo::AsyncAttributeID::kTimeModified,
-            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
-            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
-            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
-            AsyncFileInfo::AsyncAttributeID::kTimeCreated,
-            AsyncFileInfo::AsyncAttributeID::kTimeChanged,
-            AsyncFileInfo::AsyncAttributeID::kTimeModified,
-            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
-            AsyncFileInfo::AsyncAttributeID::kTimeAccess,
-            AsyncFileInfo::AsyncAttributeID::kTimeCreatedUsec,
-            AsyncFileInfo::AsyncAttributeID::kTimeCreatedUsec,
-            AsyncFileInfo::AsyncAttributeID::kTimeChangedUsec,
-            AsyncFileInfo::AsyncAttributeID::kTimeModifiedUsec,
-            AsyncFileInfo::AsyncAttributeID::kTimeAccessUsec,
-        };
-        return kTimeInfoToDFile;
-    }
     QUrl redirectedFileUrl() const;
-    QVector<AsyncFileInfo::AsyncAttributeID> &getAttributeIDIsVector() const
-    {
-        static QVector<AsyncFileInfo::AsyncAttributeID> kIsToDFile {
-            AsyncFileInfo::AsyncAttributeID::kAccessCanRead,
-            AsyncFileInfo::AsyncAttributeID::kAccessCanWrite,
-            AsyncFileInfo::AsyncAttributeID::kAccessCanExecute,
-            AsyncFileInfo::AsyncAttributeID::kStandardIsHidden,
-            AsyncFileInfo::AsyncAttributeID::kStandardIsFile,
-            AsyncFileInfo::AsyncAttributeID::kStandardIsDir,
-            AsyncFileInfo::AsyncAttributeID::kStandardIsSymlink,
-        };
-
-        return kIsToDFile;
-    }
     bool isExecutable() const;
     bool isPrivate() const;
     bool canDelete() const;
     bool canTrash() const;
     bool canRename() const;
     bool canFetch() const;
-    QVector<AsyncFileInfo::AsyncAttributeID> &getAttributeIDExtendVector() const
-    {
-        static QVector<AsyncFileInfo::AsyncAttributeID> kExtendToDFile = {
-            AsyncFileInfo::AsyncAttributeID::kOwnerUser,
-            AsyncFileInfo::AsyncAttributeID::kOwnerGroup,
-            AsyncFileInfo::AsyncAttributeID::kAttributeIDMax,
-            AsyncFileInfo::AsyncAttributeID::kUnixInode,
-            AsyncFileInfo::AsyncAttributeID::kUnixUID,
-            AsyncFileInfo::AsyncAttributeID::kUnixGID,
-            AsyncFileInfo::AsyncAttributeID::kStandardIsHidden,
-        };
-
-        return kExtendToDFile;
-    }
     QString sizeFormat() const;
     QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
     QVariant asyncAttribute(AsyncFileInfo::AsyncAttributeID key) const;
