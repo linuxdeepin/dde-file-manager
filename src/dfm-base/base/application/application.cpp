@@ -93,9 +93,6 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
         case Application::kShowedFileSuffix:
             Q_EMIT self->showedFileSuffixChanged(value.toBool());
             break;
-        case Application::kShowRecentFileEntry:
-            Q_EMIT self->recentDisplayChanged(value.toBool());
-            break;
         case Application::kShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
             break;

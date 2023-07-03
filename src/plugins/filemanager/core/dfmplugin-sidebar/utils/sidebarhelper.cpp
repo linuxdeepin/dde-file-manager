@@ -184,6 +184,7 @@ void SideBarHelper::updateSideBarSelection(quint64 winId)
 void SideBarHelper::bindSettings()
 {
     static const std::map<QString, QString> kvs {
+        { "advance.items_in_sidebar.recent", "recent" },
         { "advance.items_in_sidebar.home", "home" },
         { "advance.items_in_sidebar.desktop", "desktop" },
         { "advance.items_in_sidebar.videos", "videos" },
@@ -237,35 +238,6 @@ QVariantMap SideBarHelper::hiddenRules()
 QVariantMap SideBarHelper::groupExpandRules()
 {
     return DConfigManager::instance()->value(ConfigInfos::kConfName, ConfigInfos::kGroupExpandedKey).toMap();
-}
-
-void SideBarHelper::bindRecentConf()
-{
-    SyncPair pair {
-        { SettingType::kGenAttr, Application::kShowRecentFileEntry },
-        { ConfigInfos::kConfName, ConfigInfos::kVisiableKey },
-        saveRecentToConf,
-        syncRecentToAppSet,
-        isRecentConfEqual
-    };
-    ConfigSynchronizer::instance()->watchChange(pair);
-}
-
-void SideBarHelper::saveRecentToConf(const QVariant &var)
-{
-    auto &&rule = hiddenRules();
-    rule["recent"] = var.toBool();
-    DConfigManager::instance()->setValue(ConfigInfos::kConfName, ConfigInfos::kVisiableKey, rule);
-}
-
-void SideBarHelper::syncRecentToAppSet(const QString &, const QString &, const QVariant &)
-{
-    Application::instance()->setGenericAttribute(Application::kShowRecentFileEntry, hiddenRules().value("recent", true).toBool());
-}
-
-bool SideBarHelper::isRecentConfEqual(const QVariant &dcon, const QVariant &dset)
-{
-    return dcon.toMap().value("recent", true).toBool() && dset.toBool();
 }
 
 void SideBarHelper::saveGroupsStateToConfig(const QVariant &var)

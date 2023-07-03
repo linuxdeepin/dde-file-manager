@@ -44,8 +44,6 @@ void Recent::initialize()
     WatcherFactory::regClass<RecentFileWatcher>(RecentHelper::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentHelper::scheme());
 
-    connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
-
     followEvents();
     bindWindows();
     RecentEventReceiver::instance()->initConnect();
@@ -71,15 +69,6 @@ bool Recent::start()
     return true;
 }
 
-void Recent::onRecentDisplayChanged(bool enabled)
-{
-    if (enabled) {
-        addRecentItem();
-    } else {
-        removeRecentItem();
-    }
-}
-
 void Recent::onWindowOpened(quint64 windId)
 {
     auto window = FMWindowsIns.findWindowById(windId);
@@ -89,10 +78,10 @@ void Recent::onWindowOpened(quint64 windId)
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Recent::regRecentCrumbToTitleBar, Qt::DirectConnection);
     if (window->sideBar())
-        installToSideBar();
+        addRecentItem();
     else
         connect(
-                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
+                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addRecentItem(); }, Qt::DirectConnection);
 }
 
 void Recent::addRecentItem()
@@ -107,8 +96,7 @@ void Recent::addRecentItem()
         { "Property_Key_Icon", RecentHelper::icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-        // use old config to hide it for compatibility
-        //{ "Property_Key_VisiableControl", "recent" }
+        { "Property_Key_VisiableControl", "recent" },
         { "Property_Key_ReportName", nameKey }
     };
 
@@ -122,11 +110,6 @@ void Recent::addRecentItem()
     };
     dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);   // push item data to bookmark plugin as cache
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentHelper::rootUrl(), map);
-}
-
-void Recent::removeRecentItem()
-{
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", RecentHelper::rootUrl());
 }
 
 void Recent::followEvents()
@@ -162,14 +145,6 @@ void Recent::bindWindows()
 void Recent::regRecentCrumbToTitleBar()
 {
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentHelper::scheme(), QVariantMap {});
-}
-
-void Recent::installToSideBar()
-{
-    const auto &theSidebarVisiableList = DConfigManager::instance()->value("org.deepin.dde.file-manager.sidebar", "itemVisiable", QVariantMap()).toMap();
-    bool showRecent = theSidebarVisiableList.value("recent", true).toBool();
-    if (showRecent)
-        addRecentItem();
 }
 
 void Recent::addFileOperations()

@@ -25,15 +25,12 @@ public:
     virtual bool start() override;
 
 private slots:
-    void onRecentDisplayChanged(bool enabled);
     void onWindowOpened(quint64 windId);
     void regRecentCrumbToTitleBar();
 
 private:
-    void installToSideBar();
     void addFileOperations();
     void addRecentItem();
-    void removeRecentItem();
 
     void followEvents();
     void bindWindows();

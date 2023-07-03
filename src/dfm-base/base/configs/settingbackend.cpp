@@ -48,7 +48,6 @@ BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::k
     { "advance.other.hide_loop_partitions", Application::kHideLoopPartitions },
     { "advance.other.show_crumbbar_clickable_area", Application::kShowCsdCrumbBarClickableArea },
     { "advance.other.show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
-    { "advance.items_in_sidebar.recent", Application::kShowRecentFileEntry }
 };
 
 SettingBackend::SettingBackend(QObject *parent)

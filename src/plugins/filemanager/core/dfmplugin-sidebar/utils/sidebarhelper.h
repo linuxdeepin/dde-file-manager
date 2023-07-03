@@ -37,11 +37,6 @@ public:
     static QVariantMap hiddenRules();
     static QVariantMap groupExpandRules();
 
-    static void bindRecentConf();
-    static void saveRecentToConf(const QVariant &var);
-    static void syncRecentToAppSet(const QString &, const QString &, const QVariant &);
-    static bool isRecentConfEqual(const QVariant &dcon, const QVariant &dset);
-
     static void saveGroupsStateToConfig(const QVariant &var);
 
 public:
