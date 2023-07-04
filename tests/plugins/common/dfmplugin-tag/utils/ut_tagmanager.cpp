@@ -163,15 +163,14 @@ TEST_F(TagManagerTest, getTagsColor)
 
 TEST_F(TagManagerTest, getTagsByUrls)
 {
-    stub.set_lamda(&TagProxyHandle::getSameTagsOfDiffFiles, []() { __DBG_STUB_INVOKE__ return QVariant("test"); });
-    stub.set_lamda(&TagProxyHandle::getTagsThroughFile, []() {
+    EXPECT_TRUE(ins->getTagsByUrls(QList<QUrl>()).isEmpty());
+    stub.set_lamda(&FileTagCacheController::getTagsByFiles, []() {
         __DBG_STUB_INVOKE__
-        QVariantMap map;
-        map["test"] = QColor("red");
-        return map;
+        QStringList list;
+        list.append("red");
+        return list;
     });
-    EXPECT_TRUE(ins->getTagsByUrls(QList<QUrl>()).isNull());
-    EXPECT_FALSE(ins->getTagsByUrls(QList<QUrl>() << QUrl("file:///test")).isNull());
+    EXPECT_FALSE(ins->getTagsByUrls(QList<QUrl>() << QUrl("file:///test")).isEmpty());
 }
 
 TEST_F(TagManagerTest, getFilesByTag)
@@ -193,7 +192,7 @@ TEST_F(TagManagerTest, getFilesByTag)
 
 TEST_F(TagManagerTest, setTagsForFiles)
 {
-    stub.set_lamda(&TagManager::getTagsByUrls, []() { __DBG_STUB_INVOKE__ return QVariant(); });
+    stub.set_lamda(&TagManager::getTagsByUrls, []() { __DBG_STUB_INVOKE__ return QStringList(); });
     stub.set_lamda(&TagManager::removeTagsOfFiles, []() { __DBG_STUB_INVOKE__ return true; });
     stub.set_lamda(&TagManager::addTagsForFiles, []() { __DBG_STUB_INVOKE__ return true; });
 

@@ -76,12 +76,11 @@ bool TagMenuScene::create(QMenu *parent)
 
     if (d->isDDEDesktopFileIncluded || d->isSystemPathIncluded)
         return false;
-
     for (const QUrl &url : d->selectFiles) {
         if (!TagManager::instance()->canTagFile(url))
             return false;
     }
-
+    d->tagNames = TagManager::instance()->getTagsByUrls(selectedFiles());
     QAction *colorListAction = createColorListAction();
     colorListAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagColorListKey));
     parent->addAction(colorListAction);
@@ -91,7 +90,6 @@ bool TagMenuScene::create(QMenu *parent)
     tagAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagAddKey));
     parent->addAction(tagAction);
     d->predicateAction.insert(TagActionId::kActTagAddKey, tagAction);
-
     return AbstractMenuScene::create(parent);
 }
 
@@ -169,9 +167,7 @@ void TagMenuScene::onHoverChanged(const QColor &color)
 {
     if (!d->selectFiles.isEmpty()) {
         QList<QColor> sameColors;
-
-        const auto &tagNames = TagManager::instance()->getTagsByUrls(selectedFiles(), true).toStringList();
-        const auto &colorInfos = TagManager::instance()->getTagsColor(tagNames);
+        const auto &colorInfos = TagManager::instance()->getTagsColor(d->tagNames);
 
         if (!colorInfos.isEmpty()) {
             QMap<QString, QColor>::const_iterator dataIt = colorInfos.begin();
@@ -242,8 +238,7 @@ QAction *TagMenuScene::createColorListAction() const
     QWidgetAction *action = new QWidgetAction(nullptr);
 
     action->setDefaultWidget(colorListWidget);
-
-    QStringList tags = TagManager::instance()->getTagsByUrls(selectedFiles(), true).toStringList();
+    QStringList tags = TagManager::instance()->getTagsByUrls(selectedFiles());
     QList<QColor> colors;
 
     for (const QString &tag : tags) {
@@ -256,7 +251,6 @@ QAction *TagMenuScene::createColorListAction() const
         if (Q_LIKELY(color.isValid()))
             colors << color;
     }
-
     colorListWidget->setCheckedColorList(colors);
 
     connect(colorListWidget, &TagColorListWidget::hoverColorChanged, this, &TagMenuScene::onHoverChanged);
@@ -266,7 +260,7 @@ QAction *TagMenuScene::createColorListAction() const
 }
 
 /**
- * @brief 转换被选中文件的url，保证/data/home和/home目录下相同文件url一致,tag菜单不应该直接使用d->selectFiles，需要转换。
+ * @brief 转换被选中文件的url，保证挂载目录不同的相同文件url一致,tag菜单不应该直接使用d->selectFiles，需要转换。
  * @return 返回selectFilesTransform
  */
 QList<QUrl> TagMenuScene::selectedFiles() const

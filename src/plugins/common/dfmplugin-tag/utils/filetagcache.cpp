@@ -10,6 +10,7 @@
 #include <QVariant>
 #include <QColor>
 #include <QDebug>
+#include <QSet>
 
 DPTAG_USE_NAMESPACE
 
@@ -203,16 +204,29 @@ FileTagCache::~FileTagCache()
 {
 }
 
-QStringList FileTagCache::getCacheFileTags(const QString &path)
+/**
+ * @brief A single file gets its own tags, and multiple files are their intersection
+ * @param paths is a collection of file paths
+ * @return QStringList intersectionTags
+ */
+QStringList FileTagCache::getTagsByFiles(const QStringList &paths) const
 {
-    if (path.isEmpty())
+    if (paths.isEmpty())
         return {};
 
     QReadLocker wlk(&d->lock);
-    return d->fileTagsCache.value(path).toStringList();
+    QStringList intersectionTags = d->fileTagsCache.value(paths.first()).toStringList();
+
+    for (const QString &path : paths) {
+        QStringList tags = d->fileTagsCache.value(path).toStringList();
+        intersectionTags = intersectionTags.toSet().intersect(tags.toSet()).values();
+        if (intersectionTags.isEmpty())
+            break;
+    }
+    return intersectionTags;
 }
 
-FileTagCache::TagColorMap FileTagCache::getTagsColor(const QStringList &tags)
+FileTagCache::TagColorMap FileTagCache::getTagsColor(const QStringList &tags) const
 {
     if (tags.isEmpty())
         return {};
@@ -233,9 +247,14 @@ FileTagCacheController &FileTagCacheController::instance()
     return cacheController;
 }
 
-QStringList FileTagCacheController::getCacheFileTags(const QString &path)
+QStringList FileTagCacheController::getTagsByFiles(const QStringList &paths)
 {
-    return FileTagCache::instance().getCacheFileTags(path);
+    return FileTagCache::instance().getTagsByFiles(paths);
+}
+
+QStringList FileTagCacheController::getTagsByFile(const QString &path)
+{
+    return FileTagCache::instance().getTagsByFiles({ path });
 }
 
 QMap<QString, QColor> FileTagCacheController::getCacheTagsColor(const QStringList &tags)

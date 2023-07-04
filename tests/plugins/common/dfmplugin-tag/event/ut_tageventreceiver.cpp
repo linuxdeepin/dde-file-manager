@@ -38,7 +38,7 @@ TEST_F(TagEventReceiverTest, handleFileCutResult)
     stub.set_lamda(&TagManager::getTagsByUrls, [&isRun]() {
         __DBG_STUB_INVOKE__
         isRun = true;
-        return QVariant(QStringList() << "red");
+        return QStringList() << "red";
     });
     TagEventReceiver::instance()->handleFileCutResult(QList<QUrl>() << QUrl("/"), QList<QUrl>(), true, QString());
     TagEventReceiver::instance()->handleFileCutResult(QList<QUrl>() << QUrl("/"), QList<QUrl>() << QUrl("/"), true, QString());
@@ -53,7 +53,7 @@ TEST_F(TagEventReceiverTest, handleHideFilesResult)
     stub.set_lamda(&TagManager::getTagsByUrls, [&isRun]() {
         __DBG_STUB_INVOKE__
         isRun = true;
-        return QVariant(QStringList() << "red");
+        return QStringList() << "red";
     });
     TagEventReceiver::instance()->handleHideFilesResult(1, QList<QUrl>() << QUrl("/"), true);
     EXPECT_TRUE(isRun);
@@ -67,7 +67,7 @@ TEST_F(TagEventReceiverTest, handleFileRemoveResult)
     stub.set_lamda(&TagManager::getTagsByUrls, [&isRun]() {
         __DBG_STUB_INVOKE__
         isRun = true;
-        return QVariant(QStringList() << "red");
+        return QStringList() << "red";
     });
     TagEventReceiver::instance()->handleWindowUrlChanged(1, QUrl("tag:/"));
     TagEventReceiver::instance()->handleFileRemoveResult(QList<QUrl>() << QUrl("/"), true, QString());
@@ -83,7 +83,7 @@ TEST_F(TagEventReceiverTest, handleFileRenameResult)
     stub.set_lamda(&TagManager::getTagsByUrls, [&isRun]() {
         __DBG_STUB_INVOKE__
         isRun = true;
-        return QVariant(QStringList() << "red");
+        return QStringList() << "red";
     });
     QMap<QUrl, QUrl> map;
     map.insert(QUrl("/"), QUrl("/"));
@@ -95,7 +95,7 @@ TEST_F(TagEventReceiverTest, handleGetTags)
 {
     stub.set_lamda(&TagManager::getTagsByUrls, []() {
         __DBG_STUB_INVOKE__
-        return QVariant(QStringList() << "red");
+        return QStringList() << "red";
     });
     EXPECT_TRUE(!TagEventReceiver::instance()->handleGetTags(QUrl("/")).isEmpty());
 }

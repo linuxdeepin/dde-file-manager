@@ -20,6 +20,7 @@ class TagMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 public:
     explicit TagMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
     QRect getSurfaceRect(QWidget *);
+    QStringList tagNames {};
     bool onCollection { false };
 };
 
