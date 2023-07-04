@@ -211,40 +211,34 @@ bool TagDbHandler::addTagsForFiles(const QVariantMap &data)
         lastErr = "input parameter is empty!";
         return false;
     }
-
-    const auto &allTags = getTagsByUrls(data.keys());
-    auto it = allTags.begin();
-    QMap<QString, QStringList> allMutualTags;
-
-    for (; it != allTags.end(); ++it)
-        allMutualTags.insert(it.key(), it.value().toStringList());
-
-    // insert file--tags
-    bool ret = true;
-    auto dataIt = data.begin();
-    for (; dataIt != data.end(); ++dataIt) {
-        if (allMutualTags.keys().contains(dataIt.key())) {
-            const auto &tmpList = dataIt.value().toStringList();
-            const auto &tempMutualTags = allMutualTags.value(dataIt.key());
-            for (const auto &tp : tmpList) {
-                if (!tempMutualTags.contains(tp)) {
-                    ret = tagFile(dataIt.key(), dataIt.value());
-                    if (!ret) {
-                        return false;
-                    }
-                }
-            }
-        } else {
-            ret = tagFile(dataIt.key(), dataIt.value());
-            if (!ret) {
-                return false;
-            }
+    //Remove duplicate data from the database
+    const QVariantMap &dbData = getTagsByUrls(data.keys());
+    QVariantMap tmpData = data;
+    for (auto dataIt = data.begin(); dataIt != data.end(); ++dataIt) {
+        if (dbData.contains(dataIt.key())) {
+            //use Qset() to get difference set ,tmpData = data - dbData
+            QStringList tags = dataIt.value()
+                                       .toStringList()
+                                       .toSet()
+                                       .subtract(dbData.value(dataIt.key()).toStringList().toSet())
+                                       .toList();
+            tmpData[dataIt.key()] = tags;
         }
     }
 
+    // insert file--tags
+    bool ret = handle->transaction([tmpData, this]() -> bool {
+        for (auto dataIt = tmpData.begin(); dataIt != tmpData.end(); ++dataIt) {
+            bool ret = tagFile(dataIt.key(), dataIt.value());
+            if (!ret)
+                return ret;
+        }
+        return true;
+    });
+
     emit filesWereTagged(data);
     finally.dismiss();
-    return true;
+    return ret;
 }
 
 bool TagDbHandler::removeTagsOfFiles(const QVariantMap &data)
@@ -257,14 +251,17 @@ bool TagDbHandler::removeTagsOfFiles(const QVariantMap &data)
     }
 
     // remove file--tags
-    auto it = data.begin();
-    for (; it != data.end(); ++it)
-        if (!removeSpecifiedTagOfFile(it.key(), it.value()))
-            return false;
+
+    bool ret = handle->transaction([data, this]() -> bool {
+        for (auto it = data.begin(); it != data.end(); ++it)
+            if (!removeSpecifiedTagOfFile(it.key(), it.value()))
+                return false;
+        return true;
+    });
 
     emit filesUntagged(data);
     finally.dismiss();
-    return true;
+    return ret;
 }
 
 bool TagDbHandler::deleteTags(const QStringList &tags)

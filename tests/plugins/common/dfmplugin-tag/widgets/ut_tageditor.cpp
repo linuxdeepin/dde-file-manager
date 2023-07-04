@@ -27,7 +27,7 @@ protected:
         });
         stub.set_lamda(&TagManager::getTagsByUrls, []() {
             __DBG_STUB_INVOKE__
-            return QVariant();
+            return QStringList();
         });
         ins = new TagEditor();
         ins->setFocusOutSelfClosing(true);

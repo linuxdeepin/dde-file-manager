@@ -144,7 +144,7 @@ TEST_F(TagHelperTest, showTagEdit)
     fptr p = (fptr)(&TagEditor::show);
 
     bool flag = false;
-    stub.set_lamda(&TagManager::getTagsByUrls, []() { __DBG_STUB_INVOKE__ return QVariant(); });
+    stub.set_lamda(&TagManager::getTagsByUrls, []() { __DBG_STUB_INVOKE__ return QStringList(); });
     stub.set_lamda(p, [&flag]() {
         __DBG_STUB_INVOKE__
         flag = true;

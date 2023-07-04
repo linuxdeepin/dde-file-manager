@@ -44,8 +44,10 @@ class FileTagCache : public QObject
 
 public:
     virtual ~FileTagCache() override;
-    QStringList getCacheFileTags(const QString &path);
-    TagColorMap getTagsColor(const QStringList &tags);
+
+    //query
+    QStringList getTagsByFiles(const QStringList &paths) const;
+    TagColorMap getTagsColor(const QStringList &tags) const;
 
 private:
     explicit FileTagCache(QObject *parent = nullptr);
@@ -71,7 +73,10 @@ class FileTagCacheController : public QObject
 public:
     virtual ~FileTagCacheController() override;
     static FileTagCacheController &instance();
-    QStringList getCacheFileTags(const QString &path);
+
+    //query
+    QStringList getTagsByFiles(const QStringList &paths);
+    QStringList getTagsByFile(const QString &path);
     QMap<QString, QColor> getCacheTagsColor(const QStringList &tags);
 
 Q_SIGNALS:
