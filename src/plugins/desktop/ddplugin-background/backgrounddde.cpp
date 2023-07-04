@@ -55,8 +55,8 @@ QString BackgroundDDE::getBackgroundFromDDE(const QString &screen)
 QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
 {
     QString path;
-    QString homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
-    QFile ddeFile(homePath + "/.cache/deepin/dde-appearance/config.json");
+    QString configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+    QFile ddeFile(configPath + "/dde-appearance/config.json");
     if (!ddeFile.open(QFile::ReadOnly | QIODevice::Text)) {
         qWarning() << "config file doesn't exist";
         return path;
