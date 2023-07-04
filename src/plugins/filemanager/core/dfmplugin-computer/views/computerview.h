@@ -67,6 +67,7 @@ private Q_SLOTS:
     void onRenameRequest(quint64 winId, const QUrl &url);
     void hideSpecificDisks(const QList<QUrl> &hiddenDisks);
     void handleDiskSplitterVisiable();
+    void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 Q_SIGNALS:
     void enterPressed(const QModelIndex &index);

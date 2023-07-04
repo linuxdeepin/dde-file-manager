@@ -8,6 +8,7 @@
 #include "views/computerview.h"
 
 namespace dfmplugin_computer {
+class ComputerStatusBar;
 class ComputerModel;
 class ComputerViewPrivate
 {
@@ -15,10 +16,12 @@ class ComputerViewPrivate
 
 public:
     explicit ComputerViewPrivate(ComputerView *qq = nullptr);
+    int visibleItemCount();
 
 private:
     ComputerView *q { nullptr };
     ComputerModel *model { nullptr };
+    ComputerStatusBar *statusBar { nullptr };
 };
 }
 #endif   // COMPUTERVIEW_P_H

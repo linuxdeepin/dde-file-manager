@@ -164,7 +164,7 @@ void DeviceWatcher::initDevDatas()
  */
 void DeviceWatcher::queryOpticalDevUsage(const QString &id)
 {
-    FinallyUtil final([id]{ qInfo() << "query optical usage finished for" << id; });
+    FinallyUtil final([id] { qInfo() << "query optical usage finished for" << id; });
     Q_UNUSED(final);
 
     QVariantMap data = DeviceHelper::loadBlockInfo(id);
@@ -269,6 +269,8 @@ void DeviceWatcher::onBlkDevUnmounted(const QString &id)
 {
     QString oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
     d->allBlockInfos[id][DeviceProperty::kMountPoint] = QString();
+    d->allBlockInfos[id].remove(DeviceProperty::kSizeFree);
+    d->allBlockInfos[id].remove(DeviceProperty::kSizeUsed);
     emit DevMngIns->blockDevUnmounted(id, oldMpt);
 }
 
