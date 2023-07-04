@@ -16,8 +16,8 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/dialogmanager.h>
-#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -25,7 +25,6 @@
 
 #include <QGSettings>
 #include <QStandardPaths>
-#include <QStorageInfo>
 #include <QSettings>
 
 using namespace dfmplugin_titlebar;
@@ -137,18 +136,15 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
         CrumbData data { QUrl::fromLocalFile(kHomePath), getDisplayName("Home"), iconName };
         list.append(data);
     } else {
-        QStorageInfo storageInfo(path);
-        if (storageInfo.isValid()) {
-            prefixPath = storageInfo.rootPath();
-            // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
+        prefixPath = DeviceUtils::getLongestMountRootPath(path);
+        // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
 
-            if (prefixPath == "/") {
-                CrumbData data(UrlRoute::rootUrl(Global::Scheme::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
-                list.append(data);
-            } else {
-                CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
-                list.append(data);
-            }
+        if (prefixPath == "/") {
+            CrumbData data(UrlRoute::rootUrl(Global::Scheme::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
+            list.append(data);
+        } else {
+            CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
+            list.append(data);
         }
     }
 

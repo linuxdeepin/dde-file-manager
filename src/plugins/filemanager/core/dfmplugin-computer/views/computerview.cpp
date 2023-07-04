@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "computerview.h"
+#include "computerstatusbar.h"
 #include "private/computerview_p.h"
 #include "models/computermodel.h"
 #include "delegate/computeritemdelegate.h"
@@ -10,12 +11,9 @@
 #include "events/computereventcaller.h"
 #include "controller/computercontroller.h"
 
+#include <dfm-base/base/schemefactory.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
-#ifdef DTKWIDGET_CLASS_DSizeMode
-#    include <DGuiApplicationHelper>
-#    include <DSizeMode>
-#endif
 #include <dfm-framework/dpf.h>
 
 #include <QEvent>
@@ -24,6 +22,11 @@
 #include <QMenu>
 #include <QtConcurrent>
 #include <QApplication>
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DGuiApplicationHelper>
+#    include <DSizeMode>
+#endif
 
 namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
@@ -67,7 +70,7 @@ bool ComputerView::setRootUrl(const QUrl &url)
 QList<QUrl> ComputerView::selectedUrlList() const
 {
     auto selectionModel = this->selectionModel();
-    if (selectionModel->hasSelection()) {
+    if (selectionModel && selectionModel->hasSelection()) {
         const QModelIndex &idx = selectionModel->currentIndex();
         QUrl url = idx.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
         return { url };
@@ -158,6 +161,9 @@ void ComputerView::initView()
 
     this->installEventFilter(this);
     this->viewport()->installEventFilter(this);
+
+    dp->statusBar = new ComputerStatusBar(this);
+    addFooterWidget(dp->statusBar);
 }
 
 void ComputerView::initConnect()
@@ -170,11 +176,12 @@ void ComputerView::initConnect()
         if (type == mode || type == kEnterByEnter)
             this->cdTo(idx);
     };
-    connect(this, &QAbstractItemView::clicked, this, std::bind(enter, std::placeholders::_1, kEnterBySingleClick));
-    connect(this, &QAbstractItemView::doubleClicked, this, std::bind(enter, std::placeholders::_1, kEnterByDoubleClick));
-    connect(this, &ComputerView::enterPressed, this, &ComputerView::cdTo);
-
+    connect(this, &ComputerView::clicked, this, std::bind(enter, std::placeholders::_1, kEnterBySingleClick));
+    connect(this, &ComputerView::doubleClicked, this, std::bind(enter, std::placeholders::_1, kEnterByDoubleClick));
     connect(this, &ComputerView::customContextMenuRequested, this, &ComputerView::onMenuRequest);
+
+    connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ComputerView::onSelectionChanged);
+
     connect(ComputerControllerInstance, &ComputerController::requestRename, this, &ComputerView::onRenameRequest);
     connect(ComputerControllerInstance, &ComputerController::updateItemAlias, this, [this](const QUrl &url) {
         int row = computerModel()->findItem(url);
@@ -299,6 +306,25 @@ void ComputerView::handleDiskSplitterVisiable()
     setRowHidden(diskSplitterRow, splitterHide);
 }
 
+void ComputerView::onSelectionChanged(const QItemSelection &selected, const QItemSelection &)
+{
+    const auto &selects = selected.indexes();
+    if (selects.isEmpty()) {
+        dp->statusBar->itemCounted(dp->visibleItemCount());
+        return;
+    }
+
+    const QModelIndex &current = selects.first();
+    if (model()->data(current, ComputerModel::kSuffixRole).toString() == SuffixInfo::kUserDir) {
+        const QUrl &url = model()->data(current, ComputerModel::kRealUrlRole).toUrl();
+        auto info = InfoFactory::create<FileInfo>(url);
+        dp->statusBar->itemSelected(QList<FileInfo *> { info.data() });
+        return;
+    }
+
+    dp->statusBar->showSingleSelectionMessage();
+}
+
 void ComputerView::handlePartitionsVisiable()
 {
     /* NOTE(xust): disks hidden by dconfig is treat as disks hidden by HintIgnore.
@@ -315,6 +341,8 @@ void ComputerView::handlePartitionsVisiable()
     const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
     hideSpecificDisks(hiddenPartitions);
     handleDiskSplitterVisiable();
+
+    dp->statusBar->itemCounted(dp->visibleItemCount());
 }
 
 void ComputerView::cdTo(const QModelIndex &index)
@@ -338,9 +366,31 @@ ComputerViewPrivate::ComputerViewPrivate(ComputerView *qq)
 {
 }
 
+int ComputerViewPrivate::visibleItemCount()
+{
+    if (!model)
+        return 0;
+
+    const int &total = model->rowCount();
+    int visibleCount = total;
+
+    for (int i = 0; i < total; i++) {
+        if (q->isRowHidden(i)) {
+            visibleCount--;
+            continue;
+        }
+
+        const int &rowShape = model->data(model->index(i, 0), ComputerModel::kItemShapeTypeRole).toInt();
+        if (rowShape == ComputerItemData::kSplitterItem) {
+            visibleCount--;
+            continue;
+        }
+    }
+
+    return visibleCount;
 }
 
-void dfmplugin_computer::ComputerView::keyPressEvent(QKeyEvent *event)
+void ComputerView::keyPressEvent(QKeyEvent *event)
 {
     switch (event->modifiers()) {
     case Qt::AltModifier:
@@ -357,4 +407,6 @@ void dfmplugin_computer::ComputerView::keyPressEvent(QKeyEvent *event)
         }
     }
     return DListView::keyPressEvent(event);
+}
+
 }

@@ -125,7 +125,12 @@ QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
         clearDev.query();
         return clearDev.deviceUsage();
     }
-    return { info.value("SizeFree").toULongLong(),
+
+    quint64 free = (info.contains("SizeFree"))
+            ? info.value("SizeFree").toULongLong()
+            : info.value("SizeTotal").toULongLong();
+
+    return { free,
              info.value("SizeTotal").toULongLong() };
 }
 

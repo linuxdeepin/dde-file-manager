@@ -37,6 +37,8 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
     case kApplicationConfigPath:
         return QDir::homePath() + "/.config";
 #ifdef APPSHAREDIR
+        // NOTE(xust): the APPSHAREDIR is associated with CMAKE_INSTALL_PREFIX
+        // if the dir not exists in DEBUG mode, change the defination of CMAKE variable in your IDE config.
     case kTranslationPath: {
         QString path = APPSHAREDIR "/translations";
         if (!QDir(path).exists()) {

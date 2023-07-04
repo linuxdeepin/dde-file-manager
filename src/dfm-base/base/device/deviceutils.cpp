@@ -497,6 +497,45 @@ bool DeviceUtils::isMountPointOfDlnfs(const QString &path)
     });
 }
 
+/*!
+ * \brief DeviceUtils::getLongestMountRootPath: get the mount root of a file `filePath`
+ * return `/home/` for `/home/helloworld.txt`, eg.
+ * \param filePath
+ * \return
+ */
+QString DeviceUtils::getLongestMountRootPath(const QString &filePath)
+{
+    libmnt_table *tab { mnt_new_table() };
+    libmnt_iter *iter { mnt_new_iter(MNT_ITER_BACKWARD) };
+
+    FinallyUtil release([&] {
+        if (tab) mnt_free_table(tab);
+        if (iter) mnt_free_iter(iter);
+    });
+
+    int ret = mnt_table_parse_mtab(tab, nullptr);
+    if (ret != 0)
+        return "/";
+
+    QStringList mpts;
+    libmnt_fs *fs = nullptr;
+    while (mnt_table_next_fs(tab, iter, &fs) == 0) {
+        if (!fs)
+            continue;
+
+        const QString &target = mnt_fs_get_target(fs);
+        mpts.append(target == "/" ? "/" : target + "/");
+    }
+    std::sort(mpts.begin(), mpts.end(), [](const QString &a, const QString &b) { return a.length() > b.length(); });
+
+    QString path = filePath;
+    if (!path.endsWith("/"))
+        path.append("/");
+
+    auto found = std::find_if(mpts.cbegin(), mpts.cend(), [path](const QString &mpt) { return path.startsWith(mpt); });
+    return found != mpts.cend() ? *found : "/";
+}
+
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 {
     Q_ASSERT(func);

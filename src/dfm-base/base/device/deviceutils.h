@@ -66,6 +66,8 @@ public:
     static bool isSubpathOfDlnfs(const QString &path);
     static bool isMountPointOfDlnfs(const QString &path);
 
+    static QString getLongestMountRootPath(const QString &filePath);
+
 private:
     static bool hasMatch(const QString &txt, const QString &rex);
     using Compare = std::function<bool(const QString &, const QString &)>;
