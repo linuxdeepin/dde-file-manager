@@ -36,7 +36,7 @@ void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QLi
         return;
 
     for (const QUrl &url : srcUrls) {
-        const auto &tags = TagManager::instance()->getTagsByUrls({ url }, true).toStringList();
+        const auto &tags = TagManager::instance()->getTagsByUrls({ url });
         if (tags.isEmpty())
             continue;
 
@@ -52,7 +52,7 @@ void TagEventReceiver::handleHideFilesResult(const quint64 &winId, const QList<Q
     Q_UNUSED(winId)
     if (ok && !urls.isEmpty()) {
         for (const QUrl &url : urls) {
-            const auto &tags = TagManager::instance()->getTagsByUrls({ url }, true).toStringList();
+            const auto &tags = TagManager::instance()->getTagsByUrls({ url });
             if (tags.isEmpty())
                 continue;
 
@@ -69,7 +69,7 @@ void TagEventReceiver::handleFileRemoveResult(const QList<QUrl> &srcUrls, bool o
         return;
 
     for (const QUrl &url : srcUrls) {
-        const auto &tags = TagManager::instance()->getTagsByUrls({ url }, true).toStringList();
+        const auto &tags = TagManager::instance()->getTagsByUrls({ url });
         if (tags.isEmpty())
             continue;
 
@@ -87,7 +87,7 @@ void TagEventReceiver::handleFileRenameResult(quint64 winId, const QMap<QUrl, QU
 
     auto iter = renamedUrls.constBegin();
     for (; iter != renamedUrls.constEnd(); ++iter) {
-        const auto &tags = TagManager::instance()->getTagsByUrls({ iter.key() }, true).toStringList();
+        const auto &tags = TagManager::instance()->getTagsByUrls({ iter.key() });
         if (tags.isEmpty())
             continue;
 
@@ -121,7 +121,7 @@ void TagEventReceiver::handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, 
 
 QStringList TagEventReceiver::handleGetTags(const QUrl &url)
 {
-    const auto &rec = TagManager::instance()->getTagsByUrls({ url }, true).toStringList();
+    const auto &rec = TagManager::instance()->getTagsByUrls({ url });
     if (rec.isEmpty())
         return {};
 

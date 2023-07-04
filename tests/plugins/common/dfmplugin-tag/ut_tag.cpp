@@ -58,7 +58,7 @@ TEST_F(TagTest, createTagWidget)
     stub.set_lamda(func, []() -> bool { __DBG_STUB_INVOKE__ return true; });
     stub.set_lamda(&TagManager::getTagsByUrls, []() {
         __DBG_STUB_INVOKE__
-        return QVariant();
+        return QStringList();
     });
     EXPECT_TRUE(ins.createTagWidget(QUrl("file://hello/world")));
 }

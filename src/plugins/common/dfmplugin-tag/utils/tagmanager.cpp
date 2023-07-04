@@ -128,7 +128,7 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPai
 
     QString path = info->pathOf(PathInfoType::kFilePath);
     path = FileUtils::bindPathTransform(path, false);
-    const auto &tags = FileTagCacheController::instance().getCacheFileTags(path);
+    const auto &tags = FileTagCacheController::instance().getTagsByFile(path);
     if (tags.isEmpty())
         return false;
 
@@ -156,7 +156,7 @@ bool TagManager::paintIconTagsHandle(const FileInfoPointer &info, const QRectF &
 
     QString path = info->pathOf(PathInfoType::kFilePath);
     path = FileUtils::bindPathTransform(path, false);
-    const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(path);
+    const auto &fileTags = FileTagCacheController::instance().getTagsByFile(path);
     if (fileTags.isEmpty())
         return false;
 
@@ -270,25 +270,20 @@ TagManager::TagColorMap TagManager::getTagsColor(const QStringList &tags) const
     return result;
 }
 
-QVariant TagManager::getTagsByUrls(const QList<QUrl> &filePaths, bool same) const
+QStringList TagManager::getTagsByUrls(const QList<QUrl> &urls) const
 {
     // single path:  get all tags of path
     // mult paths:  get same tags of paths
 
-    if (filePaths.isEmpty())
+    if (urls.isEmpty())
         return {};
 
     QStringList paths;
-    for (const auto &temp : filePaths) {
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(temp);
-        if (info) {
-            paths.append(temp.path());
-        } else {
-            paths.append(UrlRoute::urlToLocalPath(temp));
-        }
+    for (const auto &url : urls) {
+        paths.append(url.path());
     }
 
-    return same ? TagProxyHandleIns->getSameTagsOfDiffFiles(paths) : TagProxyHandleIns->getTagsThroughFile(paths);
+    return FileTagCacheController::instance().getTagsByFiles(paths);
 }
 
 QStringList TagManager::getFilesByTag(const QString &tag)
@@ -311,7 +306,7 @@ bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &fil
         return false;
 
     // set tags for mult files
-    QStringList mutualTagNames = TagManager::instance()->getTagsByUrls(files, true).toStringList();
+    QStringList mutualTagNames = TagManager::instance()->getTagsByUrls(files);
     // for deleting.
     QStringList dirtyTagNames;
     for (const QString &tag : mutualTagNames)
@@ -323,7 +318,7 @@ bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &fil
         result = TagManager::instance()->removeTagsOfFiles(dirtyTagNames, files) || result;
 
     for (const QUrl &url : files) {
-        QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url }, true).toStringList();
+        QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url });
         QStringList newTags;
 
         for (const QString &tag : tags) {
