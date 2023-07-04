@@ -612,10 +612,6 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url)
     if (!updateIndex.isValid())
         return;
 
-    auto info = fileInfo(updateIndex);
-    if (info)
-        info->refresh();
-
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
         view->update(updateIndex);
