@@ -14,6 +14,7 @@
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfileinfo.h>
@@ -114,7 +115,6 @@ void SyncFileInfo::refresh()
     d->fileCountFuture.reset(nullptr);
     d->fileMimeTypeFuture.reset(nullptr);
     d->mediaFuture.reset(nullptr);
-    d->loadingThumbnail = false;
     d->fileType = FileInfo::FileType::kUnknown;
     d->mimeTypeMode = QMimeDatabase::MatchMode::MatchDefault;
     d->extraProperties.clear();
@@ -455,7 +455,7 @@ QVariantHash SyncFileInfo::extraProperties() const
 
 QIcon SyncFileInfo::fileIcon()
 {
-    if (d->loadingThumbnail)
+    if (!ThumbnailHelper::instance()->checkThumbEnable(fileUrl()))
         return d->defaultIcon();
 
     return d->thumbIcon();
@@ -608,9 +608,6 @@ QIcon SyncFileInfoPrivate::thumbIcon()
         return icon;
 
     QUrl url = q->fileUrl();
-    if (ThumbnailFactory::instance()->contains(url))
-        return defaultIcon();
-
     const auto &img = ThumbnailFactory::instance()->thumbnailImage(url, Global::kLarge);
     icon = QIcon(QPixmap::fromImage(img));
     if (!icon.isNull()) {
@@ -626,16 +623,6 @@ QIcon SyncFileInfoPrivate::thumbIcon()
             icons.insert(IconType::kThumbIcon, fileIcon);
         }
         return fileIcon;
-    }
-
-    // if the thumbnail is being created, return default icon.
-    {
-        QReadLocker rlk(&iconLock);
-        if (!loadingThumbnail) {
-            rlk.unlock();
-            QWriteLocker wlk(&iconLock);
-            loadingThumbnail = true;
-        }
     }
 
     return defaultIcon();

@@ -39,8 +39,6 @@ private:
 private:
     // send for other
 Q_SIGNALS:
-    void createThumbnailFinished(const QUrl &sourceFile, const QString &thumbnailPath);
-    void createThumbnailFailed(const QUrl &sourceFile);
     void mediaDataFinished(const QUrl &sourceFile, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties);
     void fileCountFinished(const QUrl &url, const int fileCount);
     void fileMimeTypeFinished(const QUrl &url, const QMimeType &type);

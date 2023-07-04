@@ -21,7 +21,7 @@ public:
     static ThumbnailHelper *instance();
 
     bool canGenerateThumbnail(const QUrl &url);
-    bool canGenerateThumbnail(const QMimeType &mime);
+    bool checkThumbEnable(const QUrl &url);
     QString saveThumbnail(const QUrl &url, const QImage &img, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
     QImage thumbnailImage(const QUrl &fileUrl, DFMGLOBAL_NAMESPACE::ThumbnialSize size) const;
 
@@ -34,7 +34,7 @@ public:
 
 private:
     explicit ThumbnailHelper();
-    bool checkThumbEnable(const QUrl &url);
+    bool checkMimeTypeSupport(const QMimeType &mime);
 
 private:
     DMimeDatabase mimeDatabase;

@@ -31,7 +31,6 @@ public:
     friend class AsyncFileInfo;
     DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
-    std::atomic_bool loadingThumbnail = { false };
     std::atomic_bool notInit { false };
     std::atomic_bool cacheing { false };
     char memrySeat[5];
@@ -81,7 +80,6 @@ public:
     void clearIcon()
     {
         icons.clear();
-        loadingThumbnail = false;
     }
 
     QIcon thumbIcon();
