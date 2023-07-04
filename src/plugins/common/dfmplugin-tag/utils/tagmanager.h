@@ -45,11 +45,12 @@ public:
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool registerTagColor(const QString &tagName, const QString &color);
     QString getTagIconName(const QString &tag) const;
+    void hideFiles(const QList<QString> &tags, const QList<QUrl> &files);
 
     // qurey
     TagColorMap getAllTags();
     TagColorMap getTagsColor(const QStringList &tags) const;
-    QVariant getTagsByUrls(const QList<QUrl> &filePaths, bool same = true) const;
+    QStringList getTagsByUrls(const QList<QUrl> &urls) const;
     QStringList getFilesByTag(const QString &tag);
 
     // modify
@@ -58,7 +59,6 @@ public:
     bool removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl> &files);
     void deleteTags(const QStringList &tags);
     void deleteFiles(const QList<QUrl> &urls);
-    void hideFiles(const QList<QString> &tags, const QList<QUrl> &files);
     bool changeTagColor(const QString &tagName, const QString &newTagColor);
     bool changeTagName(const QString &tagName, const QString &newName);
 

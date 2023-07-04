@@ -109,7 +109,7 @@ TEST_F(TagMenuSceneTest, onHoverChanged)
 {
     scene->d->selectFiles << QUrl::fromLocalFile("/test");
     stub.set_lamda(&TagManager::getTagsByUrls,
-                   []() { __DBG_STUB_INVOKE__ return QVariant(); });
+                   []() { __DBG_STUB_INVOKE__ return QStringList(); });
     bool flag = false;
     TagColorListWidget *tagWidget = new TagColorListWidget();
     stub.set_lamda(&TagMenuScene::getMenuListWidget, [tagWidget]() {
@@ -181,7 +181,7 @@ TEST_F(TagMenuSceneTest, createColorListAction)
     bool isRun = false;
     stub.set_lamda(&TagManager::getTagsByUrls, [&isRun]() {
         isRun = true;
-        return QVariant(QStringList() << "red");
+        return QStringList() << "red";
     });
     stub.set_lamda(&TagHelper::isDefualtTag, []() { return true; });
     stub.set_lamda(&TagHelper::qureyColorByDisplayName, []() { return QColor("red"); });

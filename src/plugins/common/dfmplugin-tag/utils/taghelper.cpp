@@ -230,7 +230,7 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setFocusOutSelfClosing(true);
 
-    const QList<QString> &sameTagsInDiffFiles = TagManager::instance()->getTagsByUrls(fileList, true).toStringList();
+    const QList<QString> &sameTagsInDiffFiles = TagManager::instance()->getTagsByUrls(fileList);
     editor->setDefaultCrumbs(sameTagsInDiffFiles);
 
     int showPosX = static_cast<int>(iconRect.center().x());

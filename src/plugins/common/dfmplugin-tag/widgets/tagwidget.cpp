@@ -45,7 +45,7 @@ void TagWidget::loadTags(const QUrl &url)
     if (!d->crumbEdit || !d->colorListWidget || !shouldShow(url))
         return;
 
-    const QStringList tagNameList = TagManager::instance()->getTagsByUrls({ url.toString() }, true).toStringList();
+    const QStringList tagNameList = TagManager::instance()->getTagsByUrls({ url.toString() });
     QMap<QString, QColor> tagsMap = TagManager::instance()->getTagsColor(tagNameList);
     QList<QColor> selectColors;
     d->crumbEdit->setProperty("LoadFileTags", true);
@@ -95,7 +95,7 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
 {
     Q_UNUSED(color)
 
-    const QStringList &tagNameList = TagManager::instance()->getTagsByUrls({ d->url }, true).toStringList();
+    const QStringList &tagNameList = TagManager::instance()->getTagsByUrls({ d->url });
     QMap<QString, QColor> nameColors = TagManager::instance()->getTagsColor(tagNameList);
     QList<QUrl> urlList { d->url };
     QList<QColor> checkedColors = d->colorListWidget->checkedColorList();

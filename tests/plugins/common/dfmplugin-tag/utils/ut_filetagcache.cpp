@@ -87,7 +87,7 @@ TEST_F(FileTagCacheTest, taggeFiles)
     QVariantMap map;
     map["tag"] = QString("tag1");
     ins->taggeFiles(map);
-    EXPECT_TRUE(ins->getCacheFileTags(QString("tag")).contains(QString("tag1")));
+    EXPECT_TRUE(ins->getTagsByFiles({ QString("tag") }).contains(QString("tag1")));
 }
 
 TEST_F(FileTagCacheTest, untaggeFiles)
@@ -95,7 +95,7 @@ TEST_F(FileTagCacheTest, untaggeFiles)
     QVariantMap map;
     map["tag"] = QString("tag1");
     ins->untaggeFiles(map);
-    EXPECT_TRUE(!ins->getCacheFileTags(QString("tag")).contains(QString("tag1")));
+    EXPECT_TRUE(!ins->getTagsByFiles({ QString("tag") }).contains(QString("tag1")));
 }
 
 TEST_F(FileTagCacheTest, onTagAdded)
