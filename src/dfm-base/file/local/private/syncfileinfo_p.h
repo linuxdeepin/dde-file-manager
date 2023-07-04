@@ -30,7 +30,6 @@ class SyncFileInfoPrivate
 {
 public:
     SyncFileInfo *const q;
-    std::atomic_bool loadingThumbnail = { false };
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };   // 缓存文件的FileType
     DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
@@ -80,7 +79,6 @@ public:
     void clearIcon()
     {
         icons.clear();
-        loadingThumbnail = false;
     }
 
     QIcon thumbIcon();

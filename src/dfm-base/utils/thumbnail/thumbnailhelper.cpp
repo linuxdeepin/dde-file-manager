@@ -64,9 +64,6 @@ ThumbnailHelper *ThumbnailHelper::instance()
 
 bool ThumbnailHelper::canGenerateThumbnail(const QUrl &url)
 {
-    if (!checkThumbEnable(url))
-        return false;
-
     const auto &info = InfoFactory::create<FileInfo>(url);
     if (!info || !info->isAttributes(FileInfo::FileIsType::kIsReadable) || !info->isAttributes(FileInfo::FileIsType::kIsFile))
         return false;
@@ -79,10 +76,10 @@ bool ThumbnailHelper::canGenerateThumbnail(const QUrl &url)
     if (fileSize > sizeLimit(mime) && !mime.name().startsWith("video/"))
         return false;
 
-    return canGenerateThumbnail(mime);
+    return true;
 }
 
-bool ThumbnailHelper::canGenerateThumbnail(const QMimeType &mime)
+bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
 {
     const QString &mimeName = mime.name();
     QStringList mimeList = { mimeName };
@@ -211,16 +208,21 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
 {
     bool isLocalDevice = FileUtils::isLocalDevice(url);
     bool isCdRomDevice = FileUtils::isCdRomDevice(url);
-    if (isLocalDevice && !isCdRomDevice)
-        return true;
+    bool enable = isLocalDevice && !isCdRomDevice;
 
-    if (FileUtils::isMtpFile(url)) {
-        return DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
-    } else if (FileUtils::isGvfsFile(url)) {
-        return Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
-    } else if (DevProxyMng->isFileOfExternalBlockMounts(url.path())) {
-        return true;
+    if (!enable) {
+        if (FileUtils::isMtpFile(url)) {
+            enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
+        } else if (FileUtils::isGvfsFile(url)) {
+            enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
+        } else if (DevProxyMng->isFileOfExternalBlockMounts(url.path())) {
+            enable = true;
+        }
     }
 
-    return false;
+    if (!enable)
+        return false;
+
+    const QMimeType &mime = mimeDatabase.mimeTypeForFile(url);
+    return checkMimeTypeSupport(mime);
 }
