@@ -2,41 +2,44 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef THUMBNAILFACTORY_P_H
-#define THUMBNAILFACTORY_P_H
+#ifndef THUMBNAILWORKER_P_H
+#define THUMBNAILWORKER_P_H
 
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/utils/thumbnail/thumbnailworker.h>
 #include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
+
+#include <QFuture>
 
 namespace dfmbase {
 
 struct ProduceTask
 {
     QUrl srcUrl;
-    DFMGLOBAL_NAMESPACE::ThumbnialSize size;
+    DFMGLOBAL_NAMESPACE::ThumbnailSize size;
 };
 
-class ThumbnailFactoryPrivate
+class ThumbnailWorkerPrivate
 {
 public:
-    explicit ThumbnailFactoryPrivate(ThumbnailFactory *qq);
-    QString createThumbnail(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
+    explicit ThumbnailWorkerPrivate(ThumbnailWorker *qq);
+    QString createThumbnail(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     bool checkFileStable(const QUrl &url);
 
-    ThumbnailFactory *q { nullptr };
+    ThumbnailWorker *q { nullptr };
     DMimeDatabase mimeDb;
     QMutex mutex;
     QWaitCondition waitCon;
 
-    bool running { false };
+    std::atomic_bool isRunning { false };
 
+    QFuture<void> future;
     QQueue<ProduceTask> produceTasks;
-    QMap<QString, ThumbnailFactory::ThumbnailCreator> creators;
+    QMap<QString, ThumbnailWorker::ThumbnailCreator> creators;
 };
 
 }   // namespace dfmbase
 
-#endif   // THUMBNAILFACTORY_P_H
+#endif   // THUMBNAILWORKER_P_H
