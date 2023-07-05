@@ -31,7 +31,7 @@ static constexpr char kFormat[] { ".png" };
 using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
 
-QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     QFileInfo qInf(filePath);
     auto sz = static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size);
@@ -45,7 +45,7 @@ QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, Thumb
     return QImage(thumbPath);
 }
 
-QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     QImage img = videoThumbnailCreatorLib(filePath, size);
     if (img.isNull()) {
@@ -56,7 +56,7 @@ QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, Thumbni
     return img;
 }
 
-QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, ThumbnailSize size)
 {
     QProcess ffmpeg;
     QStringList args { "-nostats", "-loglevel", "0", "-i", filePath,
@@ -82,7 +82,7 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
     return img;
 }
 
-QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, ThumbnailSize size)
 {
     Q_UNUSED(size)
 
@@ -100,7 +100,7 @@ QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, Thum
     return img;
 }
 
-QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     QImage img;
     DFMIO::DFile dfile(filePath);
@@ -134,7 +134,7 @@ QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, Thumbnia
     return img;
 }
 
-QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     QProcess ffmpeg;
     QStringList args { "-nostats", "-loglevel", "0", "-i", filePath,
@@ -156,7 +156,7 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbni
     return img;
 }
 
-QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
     //! QImageReader构造时不传format参数，让其自行判断
@@ -198,7 +198,7 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbni
     return image;
 }
 
-QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     QImage img = defaultThumbnailCreator(filePath, size);
     if (!img.isNull())
@@ -243,7 +243,7 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnia
     return img;
 }
 
-QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, ThumbnialSize size)
+QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     QImage img;
     QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));

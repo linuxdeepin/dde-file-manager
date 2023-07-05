@@ -17,6 +17,8 @@
 
 #include <QImageReader>
 
+#include <sys/stat.h>
+
 static constexpr qint64 kDefaultSizeLimit = 1024 * 1024 * 20;   // 20MB
 static constexpr char kFormat[] { ".png" };
 
@@ -112,7 +114,14 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
     return false;
 }
 
-QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, ThumbnialSize size)
+void ThumbnailHelper::makeDir(const QString &path)
+{
+    struct stat info;
+    if (stat(path.toLocal8Bit().data(), &info) != 0)
+        mkdir(path.toLocal8Bit().data(), 0755);
+}
+
+QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, ThumbnailSize size)
 {
     if (img.isNull())
         return "";
@@ -124,21 +133,23 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
     QImage tmpImg = img;
     const QString &fileUrl = url.toString(QUrl::FullyEncoded);
     const QString &thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
-    const QString &thumbnailPath = DFMIO::DFMUtils::buildFilePath(ThumbnailHelper::sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
+    const QString &thumbnailPath = ThumbnailHelper::sizeToFilePath(size);
+    const QString &thumbnailFilePath = DFMIO::DFMUtils::buildFilePath(thumbnailPath.toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
 
     tmpImg.setText(QT_STRINGIFY(Thumb::URL), fileUrl);
     const qint64 fileModify = info->timeOf(TimeInfoType::kLastModifiedSecond).toLongLong();
     tmpImg.setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
-    if (!tmpImg.save(thumbnailPath, Q_NULLPTR, 50)) {
+    makeDir(thumbnailPath);
+    if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
         qWarning() << "thumbnail: save failed." << fileUrl;
         return "";
     }
 
-    return thumbnailPath;
+    return thumbnailFilePath;
 }
 
-QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnialSize size) const
+QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size) const
 {
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
     if (!fileInfo)
@@ -185,14 +196,14 @@ qint64 ThumbnailHelper::sizeLimit(const QMimeType &mime)
     return sizeLimitHash.value(mime, kDefaultSizeLimit);
 }
 
-QString ThumbnailHelper::sizeToFilePath(ThumbnialSize size)
+QString ThumbnailHelper::sizeToFilePath(ThumbnailSize size)
 {
     switch (size) {
-    case ThumbnialSize::kSmall:
+    case ThumbnailSize::kSmall:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailSmallPath);
-    case ThumbnialSize::kNormal:
+    case ThumbnailSize::kNormal:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailNormalPath);
-    case ThumbnialSize::kLarge:
+    case ThumbnailSize::kLarge:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailLargePath);
     }
 
