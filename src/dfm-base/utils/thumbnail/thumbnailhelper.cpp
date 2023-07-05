@@ -20,6 +20,8 @@
 
 #include <sys/stat.h>
 
+#include <sys/stat.h>
+
 static constexpr qint64 kDefaultSizeLimit = 1024 * 1024 * 20;   // 20MB
 static constexpr char kFormat[] { ".png" };
 

@@ -60,6 +60,7 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
 
     if (img.isNull()) {
         qDebug() << "thumbnail: cannot generate thumbnail for file: " << url;
+        Q_EMIT q->thumbnailCreateFailed(url);
         return "";
     }
 

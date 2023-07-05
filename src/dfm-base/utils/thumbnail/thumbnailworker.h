@@ -22,7 +22,6 @@ public:
 
     using ThumbnailCreator = std::function<QImage(const QString &, DFMGLOBAL_NAMESPACE::ThumbnailSize)>;
     bool registerCreator(const QString &mimeType, ThumbnailCreator creator);
-
     void stop();
 
 public Q_SLOTS:
