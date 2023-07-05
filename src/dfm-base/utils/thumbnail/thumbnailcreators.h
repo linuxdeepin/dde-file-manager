@@ -11,15 +11,15 @@
 
 namespace dfmbase {
 namespace ThumbnailCreators {
-QImage defaultThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage videoThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage videoThumbnailCreatorFfmpeg(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage videoThumbnailCreatorLib(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage textThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage audioThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage imageThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage djvuThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-QImage pdfThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
+QImage defaultThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage videoThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage videoThumbnailCreatorFfmpeg(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage videoThumbnailCreatorLib(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage textThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage audioThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage imageThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage djvuThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage pdfThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 }   // namespace ThumbnailCreators
 }   // namespace dfmbase
 
