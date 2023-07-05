@@ -5,16 +5,15 @@
 #ifndef THUMBNAILFACTORY_H
 #define THUMBNAILFACTORY_H
 
+#include "thumbnailworker.h"
+
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 
-#include <QThread>
-
 namespace dfmbase {
 
-class ThumbnailFactoryPrivate;
-class ThumbnailFactory final : public QThread
+class ThumbnailFactory final : public QObject
 {
     Q_OBJECT
 public:
@@ -24,28 +23,29 @@ public:
         return &ins;
     }
 
-    QImage thumbnailImage(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnialSize size);
-    void removeTasksWithUrl(const QUrl &url);
-    using ThumbnailCreator = std::function<QImage(const QString &, DFMGLOBAL_NAMESPACE::ThumbnialSize)>;
+    QImage thumbnailImage(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+    using ThumbnailCreator = std::function<QImage(const QString &, DFMGLOBAL_NAMESPACE::ThumbnailSize)>;
     bool registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator);
-
-    bool contains(const QUrl &url);
 
 Q_SIGNALS:
     void produceFinished(const QUrl &src, const QString &thumbPath);
     void produceFailed(const QUrl &src);
 
+    void addTask(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+    void removeTask(const QUrl &url);
+
 private Q_SLOTS:
     void onDevUnmounted(const QString &id, const QString &oldMpt);
+    void aboutToQuit();
 
 protected:
     explicit ThumbnailFactory(QObject *parent = nullptr);
     ~ThumbnailFactory() override;
-    void initConnections();
-    virtual void run() override;
+    void init();
 
 private:
-    QScopedPointer<ThumbnailFactoryPrivate> d;
+    QSharedPointer<QThread> thread { nullptr };
+    QSharedPointer<ThumbnailWorker> worker { nullptr };
 };
 }   // namespace dfmbase
 

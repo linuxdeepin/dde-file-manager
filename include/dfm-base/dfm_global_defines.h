@@ -38,7 +38,7 @@ enum class FileNotifyType : uint8_t {
     kFileDeleted
 };
 
-enum ThumbnialSize {
+enum ThumbnailSize {
     kSmall = 64,
     kNormal = 128,
     kLarge = 256,
@@ -183,6 +183,7 @@ inline constexpr char kDfmDBName[] { "dfmruntime.db" };
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ItemRoles);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ThumbnailSize);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::TransparentStatus);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::TransparentStatus *)
 Q_DECLARE_METATYPE(QList<DFMBASE_NAMESPACE::Global::ItemRoles> *)
