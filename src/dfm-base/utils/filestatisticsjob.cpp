@@ -44,6 +44,7 @@ FileStatisticsJobPrivate::~FileStatisticsJobPrivate()
         notifyDataTimer->stop();
         notifyDataTimer->deleteLater();
     }
+    inodelist.clear();
 }
 
 void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
@@ -112,7 +113,8 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
         return;
     }
 
-    qint64 size = 0;
+    if (!checkInode(info))
+        return;
 
     if (info->isAttributes(OptInfoType::kIsFile)) {
         do {
@@ -141,7 +143,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
             if (!checkFileType(type))
                 break;
 
-            size = info->size();
+            auto size = info->size();
             if (size > 0) {
                 totalSize += size;
                 emitSizeChanged();
@@ -233,13 +235,12 @@ void FileStatisticsJobPrivate::processFileByFts(const QUrl &url, const bool foll
         if (!stateCheck())
             break;
 
-        unsigned short flag = ent->fts_info;
+        if (!checkInode(ent, fts))
+            continue;
+
         QUrl currentUrl = QUrl::fromLocalFile(ent->fts_path);
 
-        // 逆序的dir跳过统计了2次
-        if (flag == FTS_DP || sizeInfo->allFiles.contains(currentUrl))
-            continue;
-        if (fileHints.testFlag(FileStatisticsJob::kExcludeSourceFile) && QString(ent->fts_path) == url.path())
+        if (fileHints.testFlag(FileStatisticsJob::kExcludeSourceFile) && currentUrl.path() == url.path())
             continue;
 
         sizeInfo->allFiles.append(currentUrl);
@@ -369,6 +370,15 @@ void FileStatisticsJobPrivate::statisticFile(FTSENT *ent)
 
 void FileStatisticsJobPrivate::statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink)
 {
+    if (!singleDepth) {
+        if (S_ISDIR(ent->fts_statp->st_mode)) {
+            directoryCount++;
+        } else {
+            filesCount++;
+        }
+        totalSize += ent->fts_statp->st_size;
+        return;
+    }
     auto info = InfoFactory::create<FileInfo>(currentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!info) {
         filesCount++;
@@ -404,6 +414,37 @@ void FileStatisticsJobPrivate::statisticSysLink(const QUrl &currentUrl, FTS *fts
         fts_set(fts, ent, FTS_SYMFOLLOW);
 }
 
+bool FileStatisticsJobPrivate::checkInode(const FileInfoPointer info)
+{
+    auto fileInode = info->extendAttributes(ExtInfoType::kInode).toULongLong();
+    if (fileInode > 0) {
+        if (inodelist.contains(fileInode)) {
+            if (info->isAttributes(OptInfoType::kIsFile)) {
+                filesCount++;
+            } else {
+                directoryCount++;
+            }
+            return false;
+        }
+        inodelist.append(fileInode);
+    }
+    return true;
+}
+
+bool FileStatisticsJobPrivate::checkInode(FTSENT *ent, FTS *fts)
+{
+    auto fileInode =  ent->fts_statp->st_ino;
+    if (fileInode > 0) {
+        if (inodelist.contains(fileInode)) {
+            if (S_ISDIR(ent->fts_statp->st_mode))
+                fts_set(fts, ent, FTS_SKIP);
+            return false;
+        }
+        inodelist.append(fileInode);
+    }
+    return true;
+}
+
 FileStatisticsJob::FileStatisticsJob(QObject *parent)
     : QThread(parent), d(new FileStatisticsJobPrivate(this))
 {
@@ -433,7 +474,7 @@ FileStatisticsJob::FileHints FileStatisticsJob::fileHints() const
 
 qint64 FileStatisticsJob::totalSize() const
 {
-    return d->totalSize.load();
+    return d->totalSize;
 }
 // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
 qint64 FileStatisticsJob::totalProgressSize() const
@@ -443,15 +484,15 @@ qint64 FileStatisticsJob::totalProgressSize() const
 
 int FileStatisticsJob::filesCount() const
 {
-    return d->filesCount.load();
+    return d->filesCount;
 }
 
 int FileStatisticsJob::directorysCount(bool includeSelf) const
 {
     if (includeSelf) {
-        return d->directoryCount.load();
+        return d->directoryCount;
     } else {
-        return qMax(d->directoryCount.load() - 1, 0);
+        return qMax(d->directoryCount - 1, 0);
     }
 }
 
@@ -516,6 +557,7 @@ void FileStatisticsJob::run()
     d->totalSize = 0;
     d->filesCount = 0;
     d->directoryCount = 0;
+    d->inodelist.clear();
     d->sizeInfo.reset(new FileUtils::FilesSizeInfo());
     if (d->sourceUrlList.isEmpty())
         return;
@@ -559,6 +601,9 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 qDebug() << "Url not yet supported: " << url;
                 continue;
             }
+
+            if (!d->checkInode(info))
+                continue;
 
             if (info->isAttributes(OptInfoType::kIsDir) && d->fileHints.testFlag(kSingleDepth)) {
                 fileCount += d->countFileCount(info->pathOf(PathInfoType::kAbsoluteFilePath).toStdString().c_str());

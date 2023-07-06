@@ -33,6 +33,8 @@ public:
     void statisticDir(const QUrl &url, FTS *fts, const bool singleDepth, FTSENT *ent);
     void statisticFile(FTSENT *ent);
     void statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink);
+    bool checkInode(const FileInfoPointer info);
+    bool checkInode(FTSENT *ent, FTS *fts);
 
     FileStatisticsJob *q;
     QTimer *notifyDataTimer;
@@ -51,6 +53,7 @@ public:
     SizeInfoPointer sizeInfo { nullptr };
     QList<QUrl> fileStatistics;
     QList<QString> skipPath;
+    QList<quint64> inodelist;
     AbstractDirIteratorPointer iterator { nullptr };
     std::atomic_bool iteratorCanStop { false };
 };
