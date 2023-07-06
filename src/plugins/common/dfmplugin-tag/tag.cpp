@@ -145,6 +145,7 @@ void Tag::installToSideBar()
 
 void Tag::followEvents()
 {
+    // todo 优化接口
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintListItem", TagManager::instance(), &TagManager::paintListTagsHandle);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintIconItem", TagManager::instance(), &TagManager::paintIconTagsHandle);
 
