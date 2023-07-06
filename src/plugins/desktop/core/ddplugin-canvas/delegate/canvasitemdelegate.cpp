@@ -60,9 +60,9 @@ ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &
     QString name = showSuffix ? index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
                               : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
-    layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAnywhere);
+    layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
     layout->setAttribute(ElideTextLayout::kLineHeight, textLineHeight);
-    layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignCenter);
+    layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignHCenter);
 
     if (painter) {
         layout->setAttribute(ElideTextLayout::kFont, painter->font());
@@ -386,6 +386,10 @@ QList<QRectF> CanvasItemDelegate::elideTextRect(const QModelIndex &index, const 
 {
     // create text Layout.
     QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index));
+
+    // extend layout
+    // todo 优化接口
+    dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rect, nullptr, layout.data());
 
     // elide mode
     auto textLines = layout->layout(rect, elideMode);

@@ -147,7 +147,7 @@ void ViewDrawHelper::drawDragText(QPainter *painter, const QModelIndex &index, q
     QString fileName = view->model()->data(index, ItemRoles::kItemFileDisplayNameRole).toString();
     int textLineHeight = view->fontMetrics().height();
     QRectF boundingRect(kDragIconOutline + (dragIconSize - textWidth) / 2, dragIconSize + kDragIconOutline, textWidth, textLineHeight * 2);
-    QTextOption::WrapMode wordWrap(QTextOption::WrapAnywhere);
+    QTextOption::WrapMode wordWrap(QTextOption::WrapAtWordBoundaryOrAnywhere);
     Qt::TextElideMode mode(Qt::ElideLeft);
     int flags = Qt::AlignHCenter;
     QBrush background(view->palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight));

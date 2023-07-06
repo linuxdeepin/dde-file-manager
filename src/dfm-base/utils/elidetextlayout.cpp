@@ -22,7 +22,7 @@ ElideTextLayout::ElideTextLayout(const QString &text)
     attributes.insert(kFont, document->defaultFont());
     attributes.insert(kLineHeight, QFontMetrics(document->defaultFont()).height());
     attributes.insert(kBackgroundRadius, 0);
-    attributes.insert(kAlignment, Qt::AlignCenter);
+    attributes.insert(kAlignment, Qt::AlignHCenter);
     attributes.insert(kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
     attributes.insert(kTextDirection, Qt::LeftToRight);
 }
@@ -48,7 +48,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     QList<QRectF> ret;
     QTextLayout *lay = document->firstBlock().layout();
     if (!lay) {
-        qWarning() << "invaild block" << text();
+        qWarning() << "invaild block" << document->firstBlock().text();
         return ret;
     }
 
@@ -56,14 +56,12 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     int textLineHeight = attribute<int>(kLineHeight);
     QSizeF size = rect.size();
     QPointF offset = rect.topLeft();
-
     qreal curHeight = 0;
 
     // for draw background.
     QRectF lastLineRect;
     QString elideText;
     QString curText = text();
-
     auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines](QTextLine &line) {
         QRectF lRect = line.naturalTextRect();
         lRect.setTop(lRect.top() - (textLineHeight - line.height()));
