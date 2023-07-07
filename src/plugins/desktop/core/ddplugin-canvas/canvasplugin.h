@@ -125,7 +125,7 @@ private:
     // CanvasItemDelegate begin
     DPF_EVENT_REG_SLOT(slot_CanvasItemDelegate_IconRect)
 
-    DPF_EVENT_REG_HOOK(hook_CanvasItemDelegate_PaintText)
+    DPF_EVENT_REG_HOOK(hook_CanvasItemDelegate_LayoutText)
 };
 
 }

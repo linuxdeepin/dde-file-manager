@@ -387,9 +387,7 @@ QList<QRectF> CanvasItemDelegate::elideTextRect(const QModelIndex &index, const 
     // create text Layout.
     QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index));
 
-    // extend layout
-    // todo 优化接口
-    dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rect, nullptr, layout.data());
+    d->extendLayoutText(parent()->model()->fileInfo(index), layout.data());
 
     // elide mode
     auto textLines = layout->layout(rect, elideMode);
@@ -430,9 +428,7 @@ void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionView
         // create text Layout.
         QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, &p));
 
-        // extend layout paint
-        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rText, painter, layout.data()))
-            return;
+        d->extendLayoutText(parent()->model()->fileInfo(index), layout.data());
 
         // elide and draw
         layout->layout(QRectF(QPoint(0, 0), QSizeF(textImage.size()) / pixelRatio), option.textElideMode, &p);
@@ -475,9 +471,7 @@ void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOption
         QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, painter));
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
-        // extend layout paint
-        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rText, painter, layout.data()))
-            return;
+        d->extendLayoutText(parent()->model()->fileInfo(index), layout.data());
 
         // elide and draw
         layout->layout(rText, option.textElideMode, painter, background);
@@ -495,9 +489,7 @@ void CanvasItemDelegate::drawExpandText(QPainter *painter, const QStyleOptionVie
     QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, painter));
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
-    // extend layout paint
-    if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileInfo(index), rect, painter, layout.data()))
-        return;
+    d->extendLayoutText(parent()->model()->fileInfo(index), layout.data());
 
     // elide and draw
     layout->layout(rect, option.textElideMode, painter, background);
@@ -753,6 +745,12 @@ QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect,  
         });
     }
     return rect;
+}
+
+void CanvasItemDelegatePrivate::extendLayoutText(const FileInfoPointer &info, dfmbase::ElideTextLayout *layout)
+{
+    // extend layout
+    dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_LayoutText", info, layout);
 }
 
 void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const

@@ -34,9 +34,9 @@ bool WorkspaceEventSequence::doPaintListItem(int role, const FileInfoPointer &in
     return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintListItem", role, info, painter, rect);
 }
 
-bool WorkspaceEventSequence::doPaintIconItemText(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout)
+bool WorkspaceEventSequence::doIconItemLayoutText(const FileInfoPointer &info, dfmbase::ElideTextLayout *layout)
 {
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintIconItem", info, rect, painter, layout);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_LayoutText", info, layout);
 }
 
 bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)

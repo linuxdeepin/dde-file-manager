@@ -91,7 +91,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_ShortCut_EnterPressed)
 
     DPF_EVENT_REG_HOOK(hook_Delegate_PaintListItem)
-    DPF_EVENT_REG_HOOK(hook_Delegate_PaintIconItem)
+    DPF_EVENT_REG_HOOK(hook_Delegate_LayoutText)
     DPF_EVENT_REG_HOOK(hook_Delegate_CheckTransparent)
 
     DPF_EVENT_REG_HOOK(hook_View_FetchSupportSelectionModes)
