@@ -39,7 +39,7 @@ public:
     bool canTagFile(const FileInfoPointer &info) const;
     bool pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool paintListTagsHandle(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect);
-    bool paintIconTagsHandle(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout);
+    bool addIconTagsHandle(const FileInfoPointer &info, dfmbase::ElideTextLayout *layout);
     bool fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);

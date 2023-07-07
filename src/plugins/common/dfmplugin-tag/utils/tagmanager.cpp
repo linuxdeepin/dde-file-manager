@@ -144,11 +144,8 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPai
     return false;
 }
 
-bool TagManager::paintIconTagsHandle(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
+bool TagManager::addIconTagsHandle(const FileInfoPointer &info, ElideTextLayout *layout)
 {
-    Q_UNUSED(rect)
-    Q_UNUSED(painter)
-
     if (!canTagFile(info))
         return false;
 

@@ -67,13 +67,11 @@ TEST_F(TagManagerTest, paintListTagsHandle)
 TEST_F(TagManagerTest, paintIconTagsHandle2)
 {
     FileInfoPointer info(new FileInfo(QUrl("file:///test")));
-    QPainter painter;
-    QRectF rect;
     auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return false; });
-    EXPECT_FALSE(ins->paintIconTagsHandle(info, rect, &painter, nullptr));
+    EXPECT_FALSE(ins->addIconTagsHandle(info, nullptr));
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
-    EXPECT_FALSE(ins->paintIconTagsHandle(info, rect, &painter, nullptr));
+    EXPECT_FALSE(ins->addIconTagsHandle(info, nullptr));
 }
 
 TEST_F(TagManagerTest, fileDropHandle)
