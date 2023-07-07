@@ -25,7 +25,7 @@ public:
     static WorkspaceEventSequence *instance();
 
     bool doPaintListItem(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect);
-    bool doPaintIconItemText(const FileInfoPointer &info, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout);
+    bool doIconItemLayoutText(const FileInfoPointer &info, dfmbase::ElideTextLayout *layout);
     bool doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes);
     bool doFetchCustomColumnRoles(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
