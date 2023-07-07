@@ -146,10 +146,10 @@ void Tag::installToSideBar()
 void Tag::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintListItem", TagManager::instance(), &TagManager::paintListTagsHandle);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintIconItem", TagManager::instance(), &TagManager::paintIconTagsHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_LayoutText", TagManager::instance(), &TagManager::addIconTagsHandle);
 
     // canvas
-    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", TagManager::instance(), &TagManager::paintIconTagsHandle);
+    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasItemDelegate_LayoutText", TagManager::instance(), &TagManager::addIconTagsHandle);
 
     // paste
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);

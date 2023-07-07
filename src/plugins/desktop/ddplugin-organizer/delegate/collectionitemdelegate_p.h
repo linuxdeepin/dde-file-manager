@@ -35,6 +35,8 @@ public:
 
     bool needExpend(const QStyleOptionViewItem &option,
                     const QModelIndex &index, const QRect &rText, QRect *needText = nullptr) const;
+
+    static void extendLayoutText(const FileInfoPointer &info, dfmbase::ElideTextLayout *layout);
 public:
     // default icon size is 48px.
     int currentIconLevel = -1;
