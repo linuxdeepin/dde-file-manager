@@ -160,8 +160,11 @@ QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size) 
     if (dirPath.isEmpty() || filePath.isEmpty())
         return {};
 
-    if (defaultThumbnailDirs().contains(dirPath))
-        return QImage(filePath);
+    if (defaultThumbnailDirs().contains(dirPath)) {
+        QImage img(filePath);
+        img.setText(QT_STRINGIFY(Thumb::Path), filePath);
+        return img;
+    }
 
     const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded)).toLocal8Bit()) + kFormat;
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
@@ -175,13 +178,14 @@ QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size) 
     }
     ir.setAutoDetectImageFormat(false);
 
-    const QImage image = ir.read();
+    QImage image = ir.read();
     const qint64 fileModify = fileInfo->timeOf(TimeInfoType::kLastModifiedSecond).toLongLong();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         LocalFileHandler().deleteFileRecursive(QUrl::fromLocalFile(thumbnail));
         return {};
     }
 
+    image.setText(QT_STRINGIFY(Thumb::Path), thumbnail);
     return image;
 }
 

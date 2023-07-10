@@ -13,8 +13,6 @@
 #include <dfm-base/file/local/localfileiconprovider.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
-#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
-#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfileinfo.h>
@@ -22,9 +20,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QMap>
-#include <QPainter>
 #include <QApplication>
-#include <QtConcurrent>
 #include <qplatformdefs.h>
 
 #include <sys/stat.h>
@@ -125,7 +121,7 @@ void SyncFileInfo::refresh()
     d->mimeType = QMimeType();
     d->mimeTypeMode = QMimeDatabase::MatchDefault;
     d->cacheAttributes.clear();
-    d->clearIcon();
+    extendOtherCache.clear();
 }
 
 void SyncFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
@@ -445,10 +441,31 @@ QVariantHash SyncFileInfo::extraProperties() const
 
 QIcon SyncFileInfo::fileIcon()
 {
-    if (!ThumbnailHelper::instance()->checkThumbEnable(fileUrl()))
-        return d->defaultIcon();
+    QIcon icon;
+    {
+        QReadLocker rlk(&d->iconLock);
+        icon = d->fileIcon;
+    }
 
-    return d->thumbIcon();
+    if (!icon.isNull())
+        return icon;
+
+    icon = LocalFileIconProvider::globalProvider()->icon(this);
+    if (isAttributes(OptInfoType::kIsSymLink)) {
+        const auto &&target = symLinkTarget();
+        if (target != filePath()) {
+            FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
+            if (info)
+                icon = info->fileIcon();
+        }
+    }
+
+    {
+        QWriteLocker wlk(&d->iconLock);
+        d->fileIcon = icon;
+    }
+
+    return icon;
 }
 
 QMimeType SyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
@@ -587,64 +604,6 @@ QMimeType SyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase:
     return db.mimeTypeForFile(q->sharedFromThis(), mode);
 }
 
-QIcon SyncFileInfoPrivate::thumbIcon()
-{
-    QIcon icon;
-    {   // if already loaded thumb just return it.
-        QReadLocker rlk(&iconLock);
-        icon = icons.value(IconType::kThumbIcon);
-    }
-    if (!icon.isNull())
-        return icon;
-
-    QUrl url = q->fileUrl();
-    const auto &img = ThumbnailFactory::instance()->thumbnailImage(url, Global::kLarge);
-    icon = QIcon(QPixmap::fromImage(img));
-    if (!icon.isNull()) {
-        QPixmap pixmap = icon.pixmap(Global::kLarge, Global::kLarge);
-        QPainter pa(&pixmap);
-        pa.setPen(Qt::gray);
-        pa.drawPixmap(0, 0, pixmap);
-
-        QIcon fileIcon;
-        fileIcon.addPixmap(pixmap);
-        {
-            QWriteLocker wlk(&iconLock);
-            icons.insert(IconType::kThumbIcon, fileIcon);
-        }
-    }
-
-    return defaultIcon();
-}
-
-QIcon SyncFileInfoPrivate::defaultIcon()
-{
-    QIcon icon;
-    {
-        QReadLocker rlk(&iconLock);
-        icon = icons.value(SyncFileInfoPrivate::kDefaultIcon);
-    }
-
-    if (!icon.isNull())
-        return icon;
-
-    icon = LocalFileIconProvider::globalProvider()->icon(q);
-    if (q->isAttributes(OptInfoType::kIsSymLink)) {
-        const auto &&target = symLinkTarget();
-        if (target != filePath()) {
-            FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
-            if (info)
-                icon = info->fileIcon();
-        }
-    }
-
-    {
-        QWriteLocker wlk(&iconLock);
-        icons.insert(SyncFileInfoPrivate::kDefaultIcon, icon);
-    }
-
-    return icon;
-}
 /*!
  * \brief fileName 文件名称，全名称
  *

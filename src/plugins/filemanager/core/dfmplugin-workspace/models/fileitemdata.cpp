@@ -7,6 +7,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 
 #include <QStandardPaths>
 
@@ -54,6 +55,25 @@ FileItemData *FileItemData::parentData() const
     return parent;
 }
 
+QIcon FileItemData::fileIcon() const
+{
+    if (!info)
+        return QIcon::fromTheme("empty");
+
+    const auto &vaule = info->extendAttributes(ExtInfoType::kFileThumbnail);
+    if (!vaule.isValid()) {
+        ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
+        // make sure the thumbnail is generated only once
+        info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QIcon());
+    } else {
+        const auto &thumbIcon = vaule.value<QIcon>();
+        if (!thumbIcon.isNull())
+            return thumbIcon;
+    }
+
+    return info->fileIcon();
+}
+
 QVariant FileItemData::data(int role) const
 {
     if (info) {
@@ -80,9 +100,7 @@ QVariant FileItemData::data(int role) const
         return "-";
     }
     case kItemIconRole:
-        if (info)
-            return info->fileIcon();
-        return QIcon::fromTheme("unknown");
+        return fileIcon();
     case kItemFileSizeRole:
         if (info)
             return info->displayOf(DisPlayInfoType::kSizeDisplayName);

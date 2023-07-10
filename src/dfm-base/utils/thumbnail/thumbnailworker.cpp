@@ -8,8 +8,10 @@
 
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/urlroute.h>
 
 #include <QtConcurrent>
+#include <QPainter>
 #include <QDebug>
 
 using namespace dfmbase;
@@ -57,20 +59,13 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
 
     if (img.isNull()) {
         qDebug() << "thumbnail: cannot generate thumbnail for file: " << url;
-        Q_EMIT q->thumbnailCreateFailed(url);
         return "";
     }
 
     if (img.height() > size || img.width() > size)
         img = img.scaled({ size, size }, Qt::KeepAspectRatio);
 
-    QString thumbnailPath = ThumbnailHelper::instance()->saveThumbnail(url, img, size);
-    if (!thumbnailPath.isEmpty())
-        Q_EMIT q->thumbnailCreateFinished(url, thumbnailPath);
-    else
-        Q_EMIT q->thumbnailCreateFailed(url);
-
-    return thumbnailPath;
+    return ThumbnailHelper::instance()->saveThumbnail(url, img, size);
 }
 
 bool ThumbnailWorkerPrivate::checkFileStable(const QUrl &url)
@@ -86,6 +81,36 @@ bool ThumbnailWorkerPrivate::checkFileStable(const QUrl &url)
         return false;
 
     return true;
+}
+
+void ThumbnailWorkerPrivate::insertUrl(const QUrl &key, const QUrl &value)
+{
+    QMutexLocker lk(&mutex);
+    localAndVirtualHash.insert(key, value);
+}
+
+QUrl ThumbnailWorkerPrivate::takeUrl(const QUrl &key)
+{
+    QMutexLocker lk(&mutex);
+    if (!localAndVirtualHash.contains(key))
+        return key;
+
+    return localAndVirtualHash.take(key);
+}
+
+QIcon ThumbnailWorkerPrivate::createIcon(const QString &iconName)
+{
+    QIcon icon(iconName);
+    if (!icon.isNull()) {
+        QPixmap pixmap = icon.pixmap(Global::kLarge, Global::kLarge);
+        QPainter pa(&pixmap);
+        pa.setPen(Qt::gray);
+        pa.drawPixmap(0, 0, pixmap);
+
+        icon.addPixmap(pixmap);
+    }
+
+    return icon;
 }
 
 ThumbnailWorker::ThumbnailWorker(QObject *parent)
@@ -123,14 +148,33 @@ void ThumbnailWorker::stop()
 
 void ThumbnailWorker::onTaskAdded(const QUrl &url, Global::ThumbnailSize size)
 {
-    if (contains(url))
-        return;
-
-    {
-        QMutexLocker lk(&d->mutex);
-        d->produceTasks.enqueue({ url, size });
+    QUrl fileUrl = url;
+    bool isTransform = false;
+    if (UrlRoute::isVirtual(fileUrl)) {
+        auto info { InfoFactory::create<FileInfo>(url) };
+        fileUrl = info->urlOf(UrlInfoType::kRedirectedFileUrl);
+        if (!fileUrl.isLocalFile())
+            return;
+        isTransform = true;
     }
 
+    if (!ThumbnailHelper::instance()->checkThumbEnable(fileUrl))
+        return;
+
+    const auto &img = ThumbnailHelper::instance()->thumbnailImage(fileUrl, size);
+    if (!img.isNull()) {
+        Q_EMIT thumbnailCreateFinished(url, d->createIcon(img.text(QT_STRINGIFY(Thumb::Path))));
+        return;
+    }
+
+    if (contains(fileUrl)) return;
+    {
+        QMutexLocker lk(&d->mutex);
+        d->produceTasks.enqueue({ fileUrl, size });
+    }
+
+    if (isTransform)
+        d->insertUrl(fileUrl, url);
     if (d->isRunning)
         d->waitCon.wakeAll();
     else
@@ -178,7 +222,11 @@ void ThumbnailWorker::doWork()
         d->mutex.unlock();
 
         // create thumbnail
-        d->createThumbnail(task.srcUrl, task.size);
+        const auto &thumbnailPath = d->createThumbnail(task.srcUrl, task.size);
+        if (!thumbnailPath.isEmpty())
+            Q_EMIT thumbnailCreateFinished(d->takeUrl(task.srcUrl), d->createIcon(thumbnailPath));
+        else
+            Q_EMIT thumbnailCreateFailed(d->takeUrl(task.srcUrl));
     }
 }
 
