@@ -111,6 +111,7 @@ public slots:
     void handleFilterData(const QVariant &data);
     void handleFilterCallFunc(FileViewFilterCallback callback);
     void handleRefresh();
+    void handleUpdateChildrenInfo();
     void handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
 
 private:

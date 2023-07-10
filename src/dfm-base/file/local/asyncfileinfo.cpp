@@ -14,8 +14,6 @@
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
-#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
-#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfileinfo.h>
@@ -23,9 +21,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QMap>
-#include <QPainter>
 #include <QApplication>
-#include <QtConcurrent>
 #include <qplatformdefs.h>
 
 #include <sys/stat.h>
@@ -88,6 +84,7 @@ void AsyncFileInfo::refresh()
         d->extraProperties.clear();
         d->attributesExtend.clear();
         d->extendIDs.clear();
+        extendOtherCache.clear();
     }
 }
 
@@ -400,26 +397,18 @@ QVariantHash AsyncFileInfo::extraProperties() const
 QIcon AsyncFileInfo::fileIcon()
 {
     if (d->cacheing) {
-        QIcon icon, deIcon;
+        QIcon icon;
         {   // if already loaded thumb just return it.
             QReadLocker rlk(&d->iconLock);
-            icon = d->icons.value(AsyncFileInfoPrivate::IconType::kThumbIcon);
-            deIcon = d->icons.value(AsyncFileInfoPrivate::IconType::kDefaultIcon);
+            icon = d->fileIcon;
         }
         if (!icon.isNull())
             return icon;
 
-        if (!deIcon.isNull())
-            return deIcon;
-
         return QIcon::fromTheme("unknown");
     }
 
-    // iconFuture data is false means this file is not support thumb
-    if (!ThumbnailHelper::instance()->checkThumbEnable(fileUrl()))
-        return d->defaultIcon();
-
-    return d->thumbIcon();
+    return d->defaultIcon();
 }
 
 QMimeType AsyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
@@ -447,10 +436,6 @@ QMimeType AsyncFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
         d->fileMimeTypeFuture = future;
     } else if (d->fileMimeTypeFuture->finish) {
         type = d->fileMimeTypeFuture->data.value<QMimeType>();
-        {
-            QWriteLocker wlk(&d->iconLock);
-            d->clearIcon();
-        }
     }
 
     return type;
@@ -479,18 +464,6 @@ QVariant AsyncFileInfo::customAttribute(const char *key, const DFileInfo::DFileA
         return tmpDfmFileInfo->customAttribute(key, type);
 
     return QVariant();
-}
-
-QVariant AsyncFileInfo::customData(int role) const
-{
-    using namespace dfmbase::Global;
-    if (role == kItemFileRefreshIcon) {
-        QWriteLocker locker(&d->iconLock);
-        d->clearIcon();
-        return QVariant();
-    }
-
-    return FileInfo::customData(role);
 }
 
 QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> AsyncFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
@@ -606,43 +579,12 @@ QMimeType AsyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase
     return db.mimeTypeForFile(q->sharedFromThis(), mode);
 }
 
-QIcon AsyncFileInfoPrivate::thumbIcon()
-{
-    QIcon icon;
-    {   // if already loaded thumb just return it.
-        QReadLocker rlk(&iconLock);
-        icon = icons.value(IconType::kThumbIcon);
-    }
-    if (!icon.isNull())
-        return icon;
-
-    QUrl url = q->fileUrl();
-    const auto &img = ThumbnailFactory::instance()->thumbnailImage(url, Global::kLarge);
-    icon = QIcon(QPixmap::fromImage(img));
-    if (!icon.isNull()) {
-        QPixmap pixmap = icon.pixmap(Global::kLarge, Global::kLarge);
-        QPainter pa(&pixmap);
-        pa.setPen(Qt::gray);
-        pa.drawPixmap(0, 0, pixmap);
-
-        QIcon fileIcon;
-        fileIcon.addPixmap(pixmap);
-        {
-            QWriteLocker wlk(&iconLock);
-            icons.insert(IconType::kThumbIcon, fileIcon);
-        }
-        return fileIcon;
-    }
-
-    return defaultIcon();
-}
-
 QIcon AsyncFileInfoPrivate::defaultIcon()
 {
     QIcon icon;
     {
         QReadLocker rlk(&iconLock);
-        icon = icons.value(AsyncFileInfoPrivate::kDefaultIcon);
+        icon = fileIcon;
     }
 
     if (!icon.isNull())
@@ -660,7 +602,7 @@ QIcon AsyncFileInfoPrivate::defaultIcon()
 
     {
         QWriteLocker wlk(&iconLock);
-        icons.insert(AsyncFileInfoPrivate::kDefaultIcon, icon);
+        fileIcon = icon;
     }
 
     return icon;
@@ -1120,27 +1062,16 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
 
     // kMimeTypeName
     fileMimeTypeAsync();
-
-    {
-        QWriteLocker wlk(&iconLock);
-        clearIcon();
-    }
 }
 
 void AsyncFileInfoPrivate::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
 {
     QMimeType type;
-    bool clearIcons = false;
     type = mimeTypes(q->fileUrl().path(), mode);
     {
         QWriteLocker lk(&lock);
-        clearIcons = mimeType != type;
         mimeType = type;
         mimeTypeMode = mode;
-    }
-    if (!icons.value(kThumbIcon).isNull() || clearIcons) {
-        QWriteLocker lk(&iconLock);
-        clearIcon();
     }
 }
 

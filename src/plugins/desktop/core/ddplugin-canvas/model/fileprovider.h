@@ -35,6 +35,7 @@ signals:
     void fileRenamed(const QUrl &oldurl, const QUrl &newurl);
     void fileUpdated(const QUrl &url);
     void fileInfoUpdated(const QUrl &url, const bool isLinkOrg);
+    void fileThumbUpdated(const QUrl &url, const QIcon &thumb);
 protected slots:
     void traversalFinished();
     void reset(QList<QUrl> children);

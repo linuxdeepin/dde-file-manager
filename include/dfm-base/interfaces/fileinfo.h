@@ -113,6 +113,7 @@ public:
         kFileIsHid = 6,   // 是否是隐藏文件
         kFileLocalDevice = 7,   // 文件是本地文件
         kFileCdRomDevice = 8,   // 文件是光驱
+        kFileThumbnail = 9,     // 文件缩略图
         kCustomerStartExtended = 50,   // 其他用户使用
         kUnknowExtendedInfo = 255,
     };

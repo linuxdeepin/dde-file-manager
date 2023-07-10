@@ -28,6 +28,11 @@ public:
     QString createThumbnail(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     bool checkFileStable(const QUrl &url);
 
+    void insertUrl(const QUrl &key, const QUrl &value);
+    QUrl takeUrl(const QUrl &key);
+
+    QIcon createIcon(const QString &iconName);
+
     ThumbnailWorker *q { nullptr };
     DMimeDatabase mimeDb;
     QMutex mutex;
@@ -38,6 +43,7 @@ public:
     QFuture<void> future;
     QQueue<ProduceTask> produceTasks;
     QMap<QString, ThumbnailWorker::ThumbnailCreator> creators;
+    QHash<QUrl, QUrl> localAndVirtualHash;
 };
 
 }   // namespace dfmbase
