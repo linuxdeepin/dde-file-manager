@@ -40,12 +40,8 @@ public:
     QMimeType mimeType;
     QReadWriteLock lock;
     QMutex mutex;
-    enum IconType {
-        kDefaultIcon,
-        kThumbIcon,
-    };
     QReadWriteLock iconLock;
-    QMap<IconType, QIcon> icons;
+    QIcon fileIcon;
     QVariant isLocalDevice;
     QVariant isCdRomDevice;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
@@ -75,14 +71,6 @@ public:
         return size.left(size.count() - 1);
     }
     virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
-
-    void clearIcon()
-    {
-        icons.clear();
-    }
-
-    QIcon thumbIcon();
-    QIcon defaultIcon();
 
 public:
     QString fileName() const;

@@ -40,12 +40,8 @@ public:
     QList<DFileInfo::AttributeExtendID> extendIDs;
     QMimeType mimeType;
     QReadWriteLock lock;
-    enum IconType {
-        kDefaultIcon,
-        kThumbIcon,
-    };
     QReadWriteLock iconLock;
-    QMap<IconType, QIcon> icons;
+    QIcon fileIcon;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
@@ -77,12 +73,6 @@ public:
     }
     virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
 
-    void clearIcon()
-    {
-        icons.clear();
-    }
-
-    QIcon thumbIcon();
     QIcon defaultIcon();
 
 public:

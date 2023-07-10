@@ -23,12 +23,12 @@ public:
         return &ins;
     }
 
-    QImage thumbnailImage(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+    void joinThumbnailJob(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     using ThumbnailCreator = std::function<QImage(const QString &, DFMGLOBAL_NAMESPACE::ThumbnailSize)>;
     bool registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator);
 
 Q_SIGNALS:
-    void produceFinished(const QUrl &src, const QString &thumbPath);
+    void produceFinished(const QUrl &src, const QIcon &thumbIcon);
     void produceFailed(const QUrl &src);
 
     void addTask(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);

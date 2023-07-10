@@ -11,6 +11,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -29,6 +30,23 @@ void FileInfoModelPrivate::doRefresh()
 {
     modelState = FileInfoModelPrivate::RefreshState;
     fileProvider->refresh(filters);
+}
+
+QIcon FileInfoModelPrivate::fileIcon(FileInfoPointer info)
+{
+    using namespace dfmbase::Global;
+    const auto &vaule = info->extendAttributes(ExtInfoType::kFileThumbnail);
+    if (!vaule.isValid()) {
+        ThumbnailFactory::instance()->joinThumbnailJob(info->urlOf(UrlInfoType::kUrl), Global::kLarge);
+        // make sure the thumbnail is generated only once
+        info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QIcon());
+    } else {
+        const auto &thumbIcon = vaule.value<QIcon>();
+        if (!thumbIcon.isNull())
+            return thumbIcon;
+    }
+
+    return info->fileIcon();
 }
 
 void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
@@ -196,6 +214,27 @@ void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
     emit q->dataChanged(index, index);
 }
 
+void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QIcon &thumbIcon)
+{
+    using namespace dfmbase::Global;
+    FileInfoPointer info { nullptr };
+    {
+        QReadLocker lk(&lock);
+        if (Q_UNLIKELY(!fileMap.contains(url)))
+            return;
+
+        if (!(info = fileMap.value(url)))
+            return;
+    }
+
+    info->setExtendedAttributes(ExtInfoType::kFileThumbnail, thumbIcon);
+    const QModelIndex &index = q->index(url);
+    if (Q_UNLIKELY(!index.isValid()))
+        return;
+
+    emit q->dataChanged(index, index);
+}
+
 FileInfoModel::FileInfoModel(QObject *parent)
     : QAbstractItemModel(parent),
       d(new FileInfoModelPrivate(this))
@@ -210,6 +249,7 @@ FileInfoModel::FileInfoModel(QObject *parent)
     connect(d->fileProvider, &FileProvider::fileUpdated, d, &FileInfoModelPrivate::updateData);
     connect(d->fileProvider, &FileProvider::fileRenamed, d, &FileInfoModelPrivate::replaceData);
     connect(d->fileProvider, &FileProvider::fileInfoUpdated, d, &FileInfoModelPrivate::dataUpdated);
+    connect(d->fileProvider, &FileProvider::fileThumbUpdated, d, &FileInfoModelPrivate::thumbUpdated);
 }
 
 FileInfoModel::~FileInfoModel()
@@ -369,7 +409,7 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     }
     switch (itemRole) {
     case Global::ItemRoles::kItemIconRole:
-        return indexFileInfo->fileIcon();
+        return d->fileIcon(indexFileInfo);
     case Global::ItemRoles::kItemNameRole:
         return indexFileInfo->nameOf(NameInfoType::kFileName);
     case Qt::EditRole:

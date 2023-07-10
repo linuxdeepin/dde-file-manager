@@ -16,7 +16,7 @@ using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
 
 ThumbnailFactory::ThumbnailFactory(QObject *parent)
-    : QObject (parent),
+    : QObject(parent),
       thread(new QThread),
       worker(new ThumbnailWorker)
 {
@@ -55,14 +55,9 @@ void ThumbnailFactory::init()
     thread->start();
 }
 
-QImage ThumbnailFactory::thumbnailImage(const QUrl &url, ThumbnailSize size)
+void ThumbnailFactory::joinThumbnailJob(const QUrl &url, ThumbnailSize size)
 {
-    const QImage &img = ThumbnailHelper::instance()->thumbnailImage(url, size);
-    if (!img.isNull())
-        return img;
-
     emit addTask(url, size);
-    return {};
 }
 
 bool ThumbnailFactory::registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator)

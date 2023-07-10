@@ -43,6 +43,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     itemRootData = new FileItemData(dirRootUrl);
 
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
+    connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
 }
 
 FileViewModel::~FileViewModel()
@@ -606,12 +607,32 @@ void FileViewModel::setReadOnly(bool value)
     readOnly = value;
 }
 
-void FileViewModel::onFileThumbUpdated(const QUrl &url)
+void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QIcon &thumbIcon)
+{
+    if (!index.isValid() || index.row() < 0 || filterSortWorker.isNull())
+        return;
+
+    const QModelIndex &parentIndex = index.parent();
+    FileItemData *item = nullptr;
+    if (!parentIndex.isValid()) {
+        item = filterSortWorker->rootData();
+    } else {
+        item = filterSortWorker->childData(index.row());
+    }
+
+    if (!item || !item->fileInfo())
+        return;
+
+    item->fileInfo()->setExtendedAttributes(ExtInfoType::kFileThumbnail, thumbIcon);
+}
+
+void FileViewModel::onFileThumbUpdated(const QUrl &url, const QIcon &thumbIcon)
 {
     auto updateIndex = getIndexByUrl(url);
     if (!updateIndex.isValid())
         return;
 
+    updateThumbnailIcon(updateIndex, thumbIcon);
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
         view->update(updateIndex);
@@ -657,6 +678,23 @@ void FileViewModel::onUpdateView()
         view->update();
 }
 
+void FileViewModel::onGenericAttributeChanged(Application::GenericAttribute ga, const QVariant &value)
+{
+    Q_UNUSED(value)
+
+    static QList<Application::GenericAttribute> genAttributes {
+        Application::kPreviewAudio,
+        Application::kPreviewImage,
+        Application::kPreviewVideo,
+        Application::kPreviewTextFile,
+        Application::kPreviewDocumentFile,
+        Application::kShowThunmbnailInRemote
+    };
+
+    if (genAttributes.contains(ga))
+        Q_EMIT requestUpdateAllChildrenInfo();
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -700,6 +738,7 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestUpdateAllChildrenInfo, filterSortWorker.data(), &FileSortWorker::handleUpdateChildrenInfo, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
