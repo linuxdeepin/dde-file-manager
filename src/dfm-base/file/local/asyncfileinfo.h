@@ -174,7 +174,6 @@ public:
     virtual QString viewOfTip(const ViewType type) const override;
     // emblems
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;
-    QVariant customData(int role) const override;
     // media info
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
     // cache attribute

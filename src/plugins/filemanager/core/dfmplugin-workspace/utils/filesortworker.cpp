@@ -629,6 +629,17 @@ void FileSortWorker::handleRefresh()
     Q_EMIT requestFetchMore();
 }
 
+void FileSortWorker::handleUpdateChildrenInfo()
+{
+    QReadLocker lk(&childrenDataLocker);
+    for (const auto &item : childrenDataMap.values()) {
+        if (Q_LIKELY(item))
+            item->refreshInfo();
+    }
+
+    Q_EMIT requestUpdateView();
+}
+
 void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
 {
     if (!childrenUrlList.contains(url))

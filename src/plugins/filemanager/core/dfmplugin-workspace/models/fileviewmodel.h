@@ -10,6 +10,7 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/application/application.h>
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -88,6 +89,8 @@ public:
     void toggleHiddenFiles();
     void setReadOnly(bool value);
 
+    void updateThumbnailIcon(const QModelIndex &index, const QIcon &thumbIcon);
+
 Q_SIGNALS:
     void stateChanged();
     void selectAndEditFile(const QUrl &url);
@@ -102,13 +105,14 @@ Q_SIGNALS:
     void requestChangeNameFilters(const QStringList &nameFilters);
     void requestUpdateFile(const QUrl &url);
     void requestRefreshAllChildren();
+    void requestUpdateAllChildrenInfo();
 
     void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
     void requestSetFilterData(const QVariant &data);
     void requestSetFilterCallback(FileViewFilterCallback callback);
 
 public Q_SLOTS:
-    void onFileThumbUpdated(const QUrl &url);
+    void onFileThumbUpdated(const QUrl &url, const QIcon &thumbIcon);
     void onFileUpdated(int show);
     void onInsert(int firstIndex, int count);
     void onInsertFinish();
@@ -116,6 +120,7 @@ public Q_SLOTS:
     void onRemoveFinish();
     void onUpdateView();
     void onSetCursorWait();
+    void onGenericAttributeChanged(DFMBASE_NAMESPACE::Application::GenericAttribute ga, const QVariant &value);
 
 private:
     void initFilterSortWork();

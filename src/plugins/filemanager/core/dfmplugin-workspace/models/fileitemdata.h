@@ -24,6 +24,7 @@ public:
     void refreshInfo();
     FileInfoPointer fileInfo() const;
     FileItemData *parentData() const;
+    QIcon fileIcon() const;
 
     QVariant data(int role) const;
 
