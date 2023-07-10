@@ -32,6 +32,7 @@ protected slots:
     void onWorkspaceSwitched(int from, int to);
 
 protected:
+    int getCurrentWorkspaceIndex();
     int currentWorkspaceIndex = 1; // worksapce index is started with 1.
     WMInter *wmInter = nullptr;
 };
