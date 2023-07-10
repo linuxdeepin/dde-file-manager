@@ -22,6 +22,8 @@ public:
     QString createThumbnail(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     bool checkFileStable(const QUrl &url);
 
+    QIcon createIcon(const QString &iconName);
+
     ThumbnailWorker *q { nullptr };
     DMimeDatabase mimeDb;
     QMap<QString, ThumbnailWorker::ThumbnailCreator> creators;

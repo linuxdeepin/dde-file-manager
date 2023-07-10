@@ -13,8 +13,6 @@
 #include <dfm-base/file/local/localfileiconprovider.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
-#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
-#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfileinfo.h>

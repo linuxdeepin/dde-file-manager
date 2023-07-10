@@ -673,7 +673,6 @@ void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QString 
 
     if (!item || !item->fileInfo())
         return;
-
     // Creating thumbnail icon in a thread may cause the program to crash
     QIcon thumbIcon(thumb);
     if (thumbIcon.isNull())
@@ -689,6 +688,7 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)
         return;
 
     updateThumbnailIcon(updateIndex, thumb);
+
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
         view->update(updateIndex);

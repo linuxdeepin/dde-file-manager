@@ -60,7 +60,6 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
 
     if (img.isNull()) {
         qDebug() << "thumbnail: cannot generate thumbnail for file: " << url;
-        Q_EMIT q->thumbnailCreateFailed(url);
         return "";
     }
 
@@ -83,6 +82,21 @@ bool ThumbnailWorkerPrivate::checkFileStable(const QUrl &url)
         return false;
 
     return true;
+}
+
+QIcon ThumbnailWorkerPrivate::createIcon(const QString &iconName)
+{
+    QIcon icon(iconName);
+    if (!icon.isNull()) {
+        QPixmap pixmap = icon.pixmap(Global::kLarge, Global::kLarge);
+        QPainter pa(&pixmap);
+        pa.setPen(Qt::gray);
+        pa.drawPixmap(0, 0, pixmap);
+
+        icon.addPixmap(pixmap);
+    }
+
+    return icon;
 }
 
 ThumbnailWorker::ThumbnailWorker(QObject *parent)
