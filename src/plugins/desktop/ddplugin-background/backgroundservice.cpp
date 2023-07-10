@@ -15,6 +15,7 @@ BackgroundService::BackgroundService(QObject *parent)
     wmInter->setTimeout(200);
     qInfo() << "create com.deepin.wm end";
 
+    currentWorkspaceIndex = getCurrentWorkspaceIndex();
     connect(wmInter, &WMInter::WorkspaceSwitched, this, &BackgroundService::onWorkspaceSwitched);
 }
 
@@ -36,4 +37,21 @@ void BackgroundService::onWorkspaceSwitched(int from, int to)
 QString BackgroundService::getDefaultBackground()
 {
     return QString("/usr/share/backgrounds/default_background.jpg");
+}
+
+int BackgroundService::getCurrentWorkspaceIndex()
+{
+    QString configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/kwinrc";
+    QSettings settings(configPath, QSettings::IniFormat);
+
+    bool ok = false;
+    int currentIdx = settings.value("Workspace/CurrentDesktop", 1).toInt(&ok);
+    qInfo() << "get currentWorkspaceIndex form config : " << currentIdx;
+
+    if (!ok || currentIdx < 1) {
+        currentIdx = 1;
+        qWarning() << "No CurrentWorkspaceIndex obtained, Check if the configuration file has changed";
+    }
+
+    return currentIdx;
 }

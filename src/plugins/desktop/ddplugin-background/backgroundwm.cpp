@@ -57,8 +57,8 @@ QString BackgroundWM::getBackgroundFromWm(const QString &screen)
 QString BackgroundWM::getBackgroundFromConfig(const QString &screen)
 {
     QString path;
-    QString homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
-    QFile wmFile(homePath + "/.config/deepinwmrc");
+    QString configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+    QFile wmFile(configPath + "/deepinwmrc");
     if (wmFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 
         // Find the background path based on the workspace and screen name
