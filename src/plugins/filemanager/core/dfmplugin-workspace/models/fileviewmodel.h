@@ -89,7 +89,6 @@ public:
 
     void toggleHiddenFiles();
     void setReadOnly(bool value);
-
     void updateThumbnailIcon(const QModelIndex &index, const QString &thumb);
 
 Q_SIGNALS:

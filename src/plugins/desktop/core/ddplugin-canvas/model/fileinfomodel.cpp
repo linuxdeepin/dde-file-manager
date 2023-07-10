@@ -235,7 +235,6 @@ void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QString &thumb)
         if (!(info = fileMap.value(url)))
             return;
     }
-
     // Creating thumbnail icon in a thread may cause the program to crash
     QIcon thumbIcon(thumb);
     if (thumbIcon.isNull())
