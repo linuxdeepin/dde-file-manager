@@ -156,7 +156,6 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         }
     }
 
-    d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
         if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanDelete)
@@ -172,54 +171,8 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
-    if (d->selectFiles.count() > 1) {
-        // open
-        if (auto open = d->predicateAction.value(ActionID::kOpen)) {
-
-            // app support mime types
-            QStringList supportedMimeTypes;
-            QMimeType fileMimeType = d->focusFileInfo->fileMimeType();
-            QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
-            QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
-            desktopFile.setIniCodec("UTF-8");
-            Properties mimeTypeProperties(defaultAppDesktopFile, "Desktop Entry");
-            supportedMimeTypes = mimeTypeProperties.value("MimeType").toString().split(';');
-            supportedMimeTypes.removeAll("");
-
-            QString errString;
-            for (auto url : d->selectFiles) {
-                auto info = InfoFactory::create<FileInfo>(url);
-                if (Q_UNLIKELY(info.isNull())) {
-                    qDebug() << errString;
-                    break;
-                }
-
-                // if the suffix is the same, it can be opened with the same application
-                if (info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
-                    QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
-                    mimeTypeList << info->fileMimeType().parentMimeTypes();
-
-                    bool matched = false;
-                    // or,the application suooprt mime type contains the type of the url file mime type
-                    for (const QString &oneMimeType : mimeTypeList) {
-                        if (supportedMimeTypes.contains(oneMimeType)) {
-                            matched = true;
-                            break;
-                        }
-                    }
-
-                    // disable open action when there are different opening methods
-                    if (!matched) {
-                        open->setDisabled(true);
-                        break;
-                    }
-                }
-            }
-
-        }
-    }
-
-    AbstractMenuScene::updateState(parent);
+    // open menu by focus fileinfo, so do not compare other files
+    return AbstractMenuScene::updateState(parent);
 }
 
 bool FileOperatorMenuScene::triggered(QAction *action)
