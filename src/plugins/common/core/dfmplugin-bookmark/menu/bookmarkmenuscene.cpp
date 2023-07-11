@@ -69,11 +69,9 @@ bool BookmarkMenuScene::create(QMenu *parent)
     if (!d->showBookMarkMenu)
         return AbstractMenuScene::create(parent);
 
-    for (const auto &file : d->selectFiles) {
-        auto info = InfoFactory::create<FileInfo>(file);
-        if ((info && !info->isAttributes(OptInfoType::kIsDir)) || d->isSystemPathIncluded)
-            return AbstractMenuScene::create(parent);
-    }
+    d->focusFileInfo = InfoFactory::create<FileInfo>(d->focusFile);
+    if ((d->focusFileInfo && !d->focusFileInfo->isAttributes(OptInfoType::kIsDir)) || d->isSystemPathIncluded)
+        return AbstractMenuScene::create(parent);
 
     auto addAct = [=](const QString &key) {
         auto action = parent->addAction(d->predicateName[key]);

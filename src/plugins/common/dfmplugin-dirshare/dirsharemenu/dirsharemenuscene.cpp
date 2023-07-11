@@ -63,13 +63,12 @@ bool DirShareMenuScene::initialize(const QVariantHash &params)
 
     if (d->selectFiles.count() != 1)
         return false;
-
-    QUrl u(d->selectFiles.first());
-    if (u.scheme() != Global::Scheme::kFile)
+    d->focusFile = d->selectFiles.first();
+    if (d->focusFile.scheme() != Global::Scheme::kFile)
         return false;
 
-    auto info = InfoFactory::create<FileInfo>(u);
-    if (!info->isAttributes(OptInfoType::kIsDir))
+    d->focusFileInfo = InfoFactory::create<FileInfo>(d->focusFile);
+    if (d->focusFileInfo && !d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
         return false;
 
     return AbstractMenuScene::initialize(params);
@@ -83,8 +82,8 @@ bool DirShareMenuScene::create(QMenu *parent)
     if (d->selectFiles.count() != 1)
         return false;
 
-    auto info = InfoFactory::create<FileInfo>(d->selectFiles.first());
-    if (info->isAttributes(OptInfoType::kIsDir)) {
+    auto info = d->focusFileInfo;
+    if (info && info->isAttributes(OptInfoType::kIsDir)) {
         bool shared = UserShareHelperInstance->isShared(info->pathOf(PathInfoType::kAbsoluteFilePath));
         if (shared) {
             auto act = parent->addAction(d->predicateName[ShareActionId::kActRemoveShareKey]);
