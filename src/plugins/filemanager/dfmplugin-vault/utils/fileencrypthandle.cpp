@@ -8,6 +8,7 @@
 #include "pathmanager.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -125,8 +126,11 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
  */
 bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &unlockFileDir, const QString &DSecureString)
 {
-    if (!createDirIfNotExist(unlockFileDir))
+    if (!createDirIfNotExist(unlockFileDir)) {
+        DialogManager::instance()->showErrorDialog(tr("Unlock failed"), tr("The %1 directory is occupied,\n please clear the files in this directory and try to unlock the safe again.").arg(unlockFileDir));
         return false;
+    }
+
 
     bool result { false };
     d->mutex->lock();
