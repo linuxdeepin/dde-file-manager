@@ -55,7 +55,7 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo()
     } else {
         info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, fileinfo));
         info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-        info->initQuerier();
+        info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes();
     }
 
     auto infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);

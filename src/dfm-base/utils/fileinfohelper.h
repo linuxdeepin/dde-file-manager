@@ -25,6 +25,11 @@ class FileInfoHelper : public QObject
 {
     Q_OBJECT
 public:
+    struct FileRefreshCallBackData{
+        FileInfoPointer info{ nullptr };
+    };
+
+public:
     ~FileInfoHelper() override;
     static FileInfoHelper &instance();
     QSharedPointer<FileInfoHelperUeserData> fileCountAsync(QUrl &url);
@@ -32,6 +37,8 @@ public:
                                                               const QString &inod, const bool isGvfs);
     QSharedPointer<FileInfoHelperUeserData> fileThumbAsync(const QUrl &url, ThumbnailProvider::Size size);
     void fileRefreshAsync(const QSharedPointer<dfmbase::FileInfo> dfileInfo);
+    void cacheFileInfoByThread(const QSharedPointer<FileInfo> dfileInfo);
+    static void fileRefreshAsyncCallBack(bool success, void *userData);
 
 private:
     explicit FileInfoHelper(QObject *parent = nullptr);
@@ -53,15 +60,18 @@ Q_SIGNALS:
     void fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileInfoRefresh(const QUrl &url, QSharedPointer<dfmio::DFileInfo> dfileInfo);
     // 第二个参数表示，当前是链接文件的原文件更新完成
-    void fileRefreshFinished(const QUrl url, const QString infoPtr, const bool isLinkOrg);
+    void fileRefreshFinished(const QUrl url, const QString &infoPtr, const bool isLinkOrg);
+    void fileRefreshRequest(QSharedPointer<FileInfo> dfileInfo);
 private Q_SLOTS:
     void aboutToQuit();
+    void handleFileRefresh(QSharedPointer<FileInfo> dfileInfo);
 
 private:
     QSharedPointer<QThread> thread { nullptr };
     QSharedPointer<FileInfoAsycWorker> worker { nullptr };
     std::atomic_bool stoped { false };
     QThreadPool pool;
+    DThreadList<FileInfoPointer> qureingInfo;
 };
 }
 
