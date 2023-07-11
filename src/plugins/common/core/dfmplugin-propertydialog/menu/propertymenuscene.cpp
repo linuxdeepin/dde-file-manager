@@ -110,17 +110,6 @@ bool PropertyMenuScene::create(QMenu *parent)
     d->predicateAction[PropertyActionId::kProperty] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, PropertyActionId::kProperty);
 
-    QList<QUrl> redirectedUrlList;
-    for (const auto &fileUrl : d->selectFiles) {
-        QString errString;
-        auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(fileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-        if (fileInfo.isNull()) {
-            qDebug() << errString;
-            continue;
-        }
-        redirectedUrlList << fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
-    }
-
     return AbstractMenuScene::create(parent);
 }
 

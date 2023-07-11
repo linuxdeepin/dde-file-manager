@@ -88,7 +88,7 @@ AbstractMenuScene *ClipBoardMenuScene::scene(QAction *action) const
 }
 
 bool ClipBoardMenuScene::create(QMenu *parent)
-{
+{   
     if (d->isEmptyArea) {
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kPaste));
         d->predicateAction[ActionID::kPaste] = tempAction;
@@ -124,31 +124,16 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
                     || !curDirInfo->isAttributes(OptInfoType::kIsWritable);
             paste->setDisabled(disabled);
         }
-    } else if (1 == d->selectFiles.count()) {
+    } else {// update menu by focus fileinfo
         if (auto copy = d->predicateAction.value(ActionID::kCopy)) {
             if (!d->focusFileInfo->isAttributes(OptInfoType::kIsReadable) && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink))
                 copy->setDisabled(true);
         }
 
         if (auto cut = d->predicateAction.value(ActionID::kCut)) {
-            d->focusFileInfo->refresh();
             if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
                 cut->setDisabled(true);
         }
-    } else {
-        for (const auto &file : d->selectFiles) {
-            auto info = InfoFactory::create<FileInfo>(file);
-            if (!info)
-                continue;
-
-            if (auto cut = d->predicateAction.value(ActionID::kCut)) {
-                if (!info->canAttributes(CanableInfoType::kCanRename)) {
-                    cut->setDisabled(true);
-                    break;
-                }
-            }
-        }
-        // todo(wangcl) disable action?
     }
 
     AbstractMenuScene::updateState(parent);
