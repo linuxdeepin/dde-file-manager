@@ -150,7 +150,6 @@ public:
     explicit AsyncFileInfo(const QUrl &url);
     AsyncFileInfo(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo);
     virtual ~AsyncFileInfo() override;
-    virtual bool initQuerier() override;
     virtual bool exists() const override;
     virtual void refresh() override;
     virtual void cacheAttribute(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
@@ -182,6 +181,8 @@ public:
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
     QMap<QUrl, QString> notifyUrls() const;
     void setNotifyUrl(const QUrl &url, const QString &infoPtr);
+    void cacheAsyncAttributes();
+    bool asyncQueryDfmFileInfo(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr);
 };
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::AsyncFileInfo> DFMAsyncFileInfoPointer;

@@ -508,14 +508,12 @@ QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 // Here, the monitor's url is used to re-complete the current url
 FileInfoPointer RootInfo::fileInfo(const QUrl &url)
 {
-    auto info = InfoFactory::create<FileInfo>(url);
-    if (info) {
-        info->refresh();
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (!info.isNull())
         return info;
-    }
 
     if (!watcher)
-        return info;
+        return nullptr;
 
     const QUrl &parentUrl = QUrl::fromPercentEncoding(watcher->url().toString().toUtf8());
     auto path = url.path();
