@@ -111,6 +111,40 @@ bool OpenWithMenuScene::create(QMenu *parent)
 
     QMenu *subMenu = new QMenu(parent);
     tempAction->setMenu(subMenu);
+    // create menu using in paint thread,get redirected urls need more time.
+
+    foreach (QString app, d->recommendApps) {
+        DesktopFileInfo desktop(QUrl::fromLocalFile(app));
+        QAction *action = subMenu->addAction(desktop.fileIcon(), desktop.displayOf(DisPlayInfoType::kFileDisplayName));
+
+        // TODO(Lee or others): 此种外部注入的未分配谓词
+        d->predicateAction[app] = action;
+        action->setProperty(kAppName, app);
+        action->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenWithApp);
+    }
+
+    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kOpenWithCustom));
+    d->predicateAction[ActionID::kOpenWithCustom] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenWithCustom);
+
+    return AbstractMenuScene::create(parent);
+}
+
+void OpenWithMenuScene::updateState(QMenu *parent)
+{
+    if (!parent)
+        return;
+
+    // open with by focus fileinfo
+
+    AbstractMenuScene::updateState(parent);
+}
+
+bool OpenWithMenuScene::triggered(QAction *action)
+{
+    auto actProperty = action->property(ActionPropertyKey::kActionID);
+    if (actProperty != ActionID::kOpenWithApp && actProperty != ActionID::kOpenWithCustom)
+        return AbstractMenuScene::triggered(action);
 
     QList<QUrl> redirectedUrlList;
     for (const auto &fileUrl : d->selectFiles) {
@@ -123,97 +157,11 @@ bool OpenWithMenuScene::create(QMenu *parent)
         redirectedUrlList << fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
     }
 
-    foreach (QString app, d->recommendApps) {
-        DesktopFileInfo desktop(QUrl::fromLocalFile(app));
-        QAction *action = subMenu->addAction(desktop.fileIcon(), desktop.displayOf(DisPlayInfoType::kFileDisplayName));
-
-        // TODO(Lee or others): 此种外部注入的未分配谓词
-        d->predicateAction[app] = action;
-        action->setProperty(kAppName, app);
-        action->setProperty(kSelectedUrls, QVariant::fromValue(redirectedUrlList));
-        action->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenWithApp);
-    }
-
-    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kOpenWithCustom));
-    d->predicateAction[ActionID::kOpenWithCustom] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenWithCustom);
-    tempAction->setProperty(kSelectedUrls, QVariant::fromValue(redirectedUrlList));
-
-    return AbstractMenuScene::create(parent);
-}
-
-void OpenWithMenuScene::updateState(QMenu *parent)
-{
-    if (!parent)
-        return;
-
-    // open with
-    if (auto openWith = d->predicateAction.value(ActionID::kOpenWith)) {
-        // app support mime types
-        QStringList supportedMimeTypes;
-        QMimeType fileMimeType = d->focusFileInfo->fileMimeType();
-        QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
-        QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
-        desktopFile.setIniCodec("UTF-8");
-        Properties mimeTypeProperties(defaultAppDesktopFile, "Desktop Entry");
-        supportedMimeTypes = mimeTypeProperties.value("MimeType").toString().split(';');
-        supportedMimeTypes.removeAll("");
-
-        QString errString;
-        for (auto url : d->selectFiles) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-            if (Q_UNLIKELY(info.isNull())) {
-                qDebug() << errString;
-                break;
-            }
-
-            // if the suffix is the same, it can be opened with the same application
-            if (info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
-
-                QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
-                QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
-                auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
-                if (!info.isNull()) {
-                    mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
-                }
-
-                bool matched = false;
-                // or,the application suooprt mime type contains the type of the url file mime type
-                for (const QString &oneMimeType : mimeTypeList) {
-                    if (supportedMimeTypes.contains(oneMimeType)) {
-                        matched = true;
-                        break;
-                    }
-                }
-
-                // disable open action when there are different opening methods
-                if (!matched) {
-                    openWith->setDisabled(true);
-                    break;
-                }
-            }
-        }
-    }
-
-    AbstractMenuScene::updateState(parent);
-}
-
-bool OpenWithMenuScene::triggered(QAction *action)
-{
-    auto actProperty = action->property(ActionPropertyKey::kActionID);
     if (actProperty == ActionID::kOpenWithApp) {
         auto appName = action->property(kAppName).toString();
-        auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
-
-        return dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, selectUrls, QList<QString>() << appName);
-    }
-
-    if (actProperty == ActionID::kOpenWithCustom) {
-        auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
-        dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", d->windowId, selectUrls);
-
+        return dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, redirectedUrlList, QList<QString>() << appName);
+    } else {
+        dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", d->windowId, redirectedUrlList);
         return true;
     }
-
-    return AbstractMenuScene::triggered(action);
 }

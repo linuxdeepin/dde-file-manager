@@ -115,7 +115,7 @@ bool OemMenuScene::create(QMenu *parent)
     if (d->isEmptyArea)
         d->oemActions = d->oemMenu->emptyActions(d->currentDir, d->onDesktop);
     else
-        d->oemActions = d->oemMenu->normalActions(d->selectFiles, d->onDesktop);
+        d->oemActions = d->oemMenu->normalActions({ d->focusFile }, d->onDesktop);
 
     for (auto action : d->oemActions) {
         // reset status

@@ -55,16 +55,13 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
     d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
-    for (auto url : d->selectFiles) {
-        auto f = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url);
-        if (f->isAttributes(OptInfoType::kIsDir)) {
-            d->folderSelected = true;
-            break;
-        }
-    }
-
     if (d->selectFiles.isEmpty())
         return false;
+
+    // create menu by focus fileinfo
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile);
+    if (d->focusFileInfo && d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
+        d->folderSelected = true;
 
     return AbstractMenuScene::initialize(params);
 }

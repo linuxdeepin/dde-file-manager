@@ -128,7 +128,7 @@ bool ExtendMenuScene::create(QMenu *parent)
     //获取文件列表的组合
     DCustomActionDefines::ComboType fileCombo = DCustomActionDefines::kBlankSpace;
     if (!d->isEmptyArea) {
-        fileCombo = builder.checkFileCombo(d->selectFiles);
+        fileCombo = builder.checkFileCombo({d->focusFile});
         if (fileCombo == DCustomActionDefines::kBlankSpace)
             return false;
 
@@ -140,7 +140,7 @@ bool ExtendMenuScene::create(QMenu *parent)
     auto usedEntrys = builder.matchFileCombo(rootEntry, fileCombo);
 
     //匹配类型支持
-    usedEntrys = builder.matchActions(d->selectFiles, usedEntrys);
+    usedEntrys = builder.matchActions({d->focusFile}, usedEntrys);
     qDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
 
     if (usedEntrys.isEmpty())

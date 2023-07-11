@@ -74,13 +74,14 @@ bool TagMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
-    if (d->isDDEDesktopFileIncluded || d->isSystemPathIncluded)
+    if (d->isDDEDesktopFileIncluded || d->isSystemPathIncluded || !d->focusFile.isValid())
         return false;
-    for (const QUrl &url : d->selectFiles) {
-        if (!TagManager::instance()->canTagFile(url))
-            return false;
-    }
-    d->tagNames = TagManager::instance()->getTagsByUrls(selectedFiles());
+    // create by focus fileinfo
+    if (!TagManager::instance()->canTagFile(d->focusFile))
+        return false;
+
+    // create by focus fileinfo
+    d->tagNames = TagManager::instance()->getTagsByUrls({ FileUtils::bindUrlTransform(d->focusFile) });
     QAction *colorListAction = createColorListAction();
     colorListAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagColorListKey));
     parent->addAction(colorListAction);
@@ -238,7 +239,8 @@ QAction *TagMenuScene::createColorListAction() const
     QWidgetAction *action = new QWidgetAction(nullptr);
 
     action->setDefaultWidget(colorListWidget);
-    QStringList tags = TagManager::instance()->getTagsByUrls(selectedFiles());
+    // get tags by focus fileinfo
+    QStringList tags = TagManager::instance()->getTagsByUrls({ FileUtils::bindUrlTransform(d->focusFile) });
     QList<QColor> colors;
 
     for (const QString &tag : tags) {
