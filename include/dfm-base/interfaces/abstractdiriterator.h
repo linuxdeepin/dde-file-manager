@@ -7,6 +7,7 @@
 
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/sortfileinfo.h>
 
 #include <QDir>
 #include <QDirIterator>
@@ -20,32 +21,6 @@ namespace dfmbase {
 class AbstractDirIterator : public QObject
 {
     Q_OBJECT
-public:
-    struct SortFileInfo
-    {
-        QUrl url;
-        bool isFile { false };
-        bool isDir { false };
-        bool isSymLink { false };
-        bool isHide { false };
-        bool isReadable { false };
-        bool isWriteable { false };
-        bool isExecutable { false };
-        SortFileInfo(const QUrl &url, const bool isFile, const bool isDir, const bool isSymLink, const bool isHide,
-                     const bool isReadable, const bool isWriteable, const bool isExecutable)
-            : url(url),
-              isFile(isFile),
-              isDir(isDir),
-              isSymLink(isSymLink),
-              isHide(isHide),
-              isReadable(isReadable),
-              isWriteable(isWriteable),
-              isExecutable(isExecutable)
-        {
-        }
-        SortFileInfo() {}
-    };
-
 public:
     explicit AbstractDirIterator() = delete;
 
@@ -146,10 +121,6 @@ public:
 
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> AbstractDirIteratorPointer;
-typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator::SortFileInfo> SortInfoPointer;
-
 Q_DECLARE_METATYPE(AbstractDirIteratorPointer)
-Q_DECLARE_METATYPE(SortInfoPointer)
-Q_DECLARE_METATYPE(QList<SortInfoPointer>)
 
 #endif   // ABSTRACTDIRITERATOR_H

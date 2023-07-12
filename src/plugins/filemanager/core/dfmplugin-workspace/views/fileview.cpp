@@ -1152,7 +1152,7 @@ QModelIndexList FileView::selectedIndexes() const
         QModelIndexList indexes = fileSelectionModel->selectedIndexes();
 
         auto isInvalid = [=](const QModelIndex &index) {
-            return !(index.isValid() && model()->fileInfo(index));
+            return !(index.isValid());
         };
 
         indexes.erase(std::remove_if(indexes.begin(), indexes.end(), isInvalid),
@@ -1496,11 +1496,21 @@ void FileView::updateStatusBar()
         return;
     }
 
-    QList<FileInfo *> list;
-    for (const QModelIndex &index : selectedIndexes())
-        list << model()->fileInfo(index).data();
+    QList<QUrl> list;
+    int selectFiles = 0;
+    int selectFolders = 0;
+    qint64 filesizes = 0;
+    for (const auto &index : selectedIndexes()) {
+        if (index.data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
+            selectFolders++;
+            list << index.data(Global::ItemRoles::kItemUrlRole).value<QUrl>();
+        } else {
+            selectFiles++;
+            filesizes += index.data(Global::ItemRoles::kItemFileSizeIntRole).toLongLong();
+        }
+    }
 
-    d->statusBar->itemSelected(list);
+    d->statusBar->itemSelected(selectFiles, selectFolders, filesizes, list);
 }
 
 void FileView::updateLoadingIndicator()

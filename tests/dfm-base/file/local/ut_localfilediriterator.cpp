@@ -60,7 +60,7 @@ TEST_F(UT_LocalFileDirIterator, testLocalFileIterator)
     iterator->setArguments(args);
     auto infolist = iterator->sortFileInfoList();
     EXPECT_EQ(1, infolist.count());
-    EXPECT_EQ(fileUrl, infolist.first()->url);
+    EXPECT_EQ(fileUrl, infolist.first()->fileUrl());
     iterator->close();
     iterator->deleteLater();
 

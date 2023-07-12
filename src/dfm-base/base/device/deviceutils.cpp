@@ -497,6 +497,19 @@ bool DeviceUtils::isMountPointOfDlnfs(const QString &path)
     });
 }
 
+bool DeviceUtils::isLowSpeedDevice(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    const QString &path = url.toLocalFile();
+    static const QString lowSpeedMountpoint { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/|^/media/[\\s\\S]*/smbmounts)" };
+    // TODO(xust) /media/$USER/smbmounts might be changed in the future.
+    QRegularExpression re { lowSpeedMountpoint };
+    QRegularExpressionMatch match { re.match(path) };
+    return match.hasMatch();
+}
+
 /*!
  * \brief DeviceUtils::getLongestMountRootPath: get the mount root of a file `filePath`
  * return `/home/` for `/home/helloworld.txt`, eg.
