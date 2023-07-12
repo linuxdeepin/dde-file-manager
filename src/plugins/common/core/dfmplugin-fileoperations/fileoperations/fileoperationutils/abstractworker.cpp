@@ -264,8 +264,13 @@ void AbstractWorker::endWork()
 
     emit finishedNotify(info);
 
-    qInfo() << "\n work end, job: " << jobType << "\n sources: " << sourceUrls << "\n target: " << targetUrl << "\n time elapsed: " << timeElapsed.elapsed() << "\n";
-
+    qInfo() << "\n work end, job: " << jobType
+            << "\n sources parent: " << (sourceUrls.count() <= 0 ? QUrl() : UrlRoute::urlParent(sourceUrls.first()))
+            << "\n sources count: " << sourceUrls.count()
+            << "\n target: " << targetUrl
+            << "\n time elapsed: " << timeElapsed.elapsed()
+            << "\n";
+    qDebug() << "\n sources urls: " << sourceUrls;
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();

@@ -364,7 +364,6 @@ QList<QUrl> ClipBoard::getUrlsByX11()
         XGetWindowProperty(display, window, propid, 0, LONG_MAX / 4, True, AnyPropertyType,
                            &fmtid, &resbits, &ressize, &restail, reinterpret_cast<unsigned char **>(&result));
         if (fmtid != incrid) {
-            qInfo() << QString(result);
             urls += QUrl::fromStringList(QString(result).split("\n"));
         }
         XFree(result);
@@ -446,8 +445,6 @@ QList<QUrl> ClipBoard::getUrlsByX11()
         QUrl temp = QUrl::fromLocalFile(path);
         clipboardFileUrls << temp;
     }
-
-    qInfo() << results << urls << clipboardFileUrls;
 
     if (GlobalData::clipboardAction == kRemoteAction && currentCount == GlobalData::remoteCurrentCount) {
         QMutexLocker lk(&GlobalData::clipboardFileUrlsMutex);
