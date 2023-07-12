@@ -152,22 +152,36 @@ void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selectio
 void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *selection)
 {
     int itemCount = view->model()->rowCount(view->rootIndex());
+    if (itemCount <= 0)
+        return;
+
     QPoint offset(-view->horizontalOffset(), 0);
     QRect actualRect(qMin(rect.left(), rect.right()),
                      qMin(rect.top(), rect.bottom()) + view->verticalOffset(),
                      abs(rect.width()),
                      abs(rect.height()));
 
-    for (int i = 0; i < itemCount; ++i) {
+    const QModelIndex &sampleIndex = view->model()->index(0, 0, view->rootIndex());
+    int itemHeight = view->rectForIndex(sampleIndex).height() + view->spacing() * 2;
+
+    int firstRow = actualRect.top() / itemHeight;
+    int lastRow = actualRect.bottom() / itemHeight + 1;
+
+    int rowItemCount = view->itemCountForRow();
+    int firstIndex = firstRow * rowItemCount;
+    int lastIndex = qMin(lastRow * rowItemCount, itemCount);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QPoint iconOffset = DSizeModeHelper::element(QPoint(kIconModeColumnPadding, kIconModeColumnPadding),
+                                                 QPoint(kCompactIconModeColumnPadding, kCompactIconModeColumnPadding));
+#else
+    QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
+#endif
+
+    for (int i = firstIndex; i < lastIndex; ++i) {
         const QModelIndex &index = view->model()->index(i, 0, view->rootIndex());
         const QRect &itemRect = view->rectForIndex(index);
 
-#ifdef DTKWIDGET_CLASS_DSizeMode
-        QPoint iconOffset = DSizeModeHelper::element(QPoint(kIconModeColumnPadding, kIconModeColumnPadding),
-                                                     QPoint(kCompactIconModeColumnPadding, kCompactIconModeColumnPadding));
-#else
-        QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
-#endif
         QRect realItemRect(itemRect.topLeft() + offset + iconOffset,
                            itemRect.bottomRight() + offset - iconOffset);
 
