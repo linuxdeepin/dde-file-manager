@@ -1044,6 +1044,8 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     }
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     info->refresh();
+    qInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
+          static_cast<int>(permissions));
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
                                  windowId, QList<QUrl>() << url, ok, error);

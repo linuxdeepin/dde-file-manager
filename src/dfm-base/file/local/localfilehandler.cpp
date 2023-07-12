@@ -90,7 +90,8 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
     }
 
     d->loadTemplateInfo(url, tempUrl);
-
+    qInfo("touchFile source file : %s, Template file %s, successed by dfmio function touchFile!",
+          url.path().toStdString().c_str(), tempUrl.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, url);
 
     return true;
@@ -120,6 +121,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(dir);
     fileInfo->refresh();
 
+    qInfo("mkdir source file : %s, successed by dfmio function makeDirectory!", dir.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, dir);
 
     return true;
@@ -146,6 +148,8 @@ bool LocalFileHandler::rmdir(const QUrl &url)
 
         return false;
     }
+
+    qInfo("rmdir source file : %s, successed by dfmio function trashFile!", url.path().toStdString().c_str());
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
 
@@ -187,6 +191,10 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
             }
 
             bool success = oper->renameFile(newName);
+            qInfo("rename source file : %s , target file :%s , successed : %d  in mtp\
+                  by dfmio function rename!", url.path().toStdString().c_str(),
+                  newUrl.path().toStdString().c_str(),
+                  success);
             if (success)
                 return true;
         }
@@ -209,6 +217,9 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
 
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(newUrl);
         fileInfo->refresh();
+        qInfo("rename source file : %s , target file :%s successed by system function rename!",
+              sourceFile.toStdString().c_str(),
+              targetFile.toStdString().c_str());
         return true;
     }
 
@@ -219,6 +230,9 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
     }
 
     bool success = oper->renameFile(newUrl);
+    qInfo("rename source file : %s , target file :%s , successed : %d \
+          by dfmio function rename!", url.path().toStdString().c_str(),
+          newUrl.path().toStdString().c_str(), success);
     if (!success) {
         qWarning() << "rename file failed, url: " << url;
 
@@ -415,6 +429,8 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
         return false;
     }
 
+    qInfo("create system link, source file %s, link file %s successed !",
+          sourcefile.path().toStdString().c_str(), link.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, link);
 
     return true;
@@ -641,6 +657,8 @@ bool LocalFileHandlerPrivate::launchApp(const QString &desktopFilePath, const QS
 
 bool LocalFileHandlerPrivate::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
+    qInfo("launch App By DBus, desktopFile : %s, files count : %d !", desktopFile.toStdString().c_str(), filePaths.count());
+    qDebug() << "launch App By DBus, files : \n" << filePaths;
     if (UniversalUtils::checkLaunchAppInterface())
         return UniversalUtils::launchAppByDBus(desktopFile, filePaths);
     return false;
@@ -1091,6 +1109,11 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
             successUrls[currentName] = expectedName;
         }
     }
+
+    qInfo("rename Files Batch, source files count : %d, success files count : %d .\
+          ",urls.count(), successUrls.count());
+
+    qDebug() << "rename Files Batch, source files : \n %1 " << urls << "\n successed files : \n %2" <<  successUrls;
 
     return successUrls.size() == urls.size();
 }
