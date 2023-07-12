@@ -160,6 +160,12 @@ FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
     if (!item)
         return nullptr;
 
+    if (!item->fileInfo())
+        item->data(Global::ItemRoles::kItemCreateFileInfoRole);
+
+    if (!item->fileInfo())
+        return InfoFactory::create<FileInfo>(item->data(Global::ItemRoles::kItemUrlRole).value<QUrl>());
+
     return item->fileInfo();
 }
 
@@ -256,7 +262,7 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
         itemData = filterSortWorker->childData(index.row());
     }
 
-    if (itemData && itemData->fileInfo()) {
+    if (itemData) {
         return itemData->data(role);
     } else {
         return QVariant();
@@ -319,26 +325,23 @@ bool FileViewModel::canFetchMore(const QModelIndex &parent) const
 Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
-    const FileInfoPointer &info = fileInfo(index);
-    if (!info)
-        return flags;
 
-    if (!index.data(kItemFileIsAvailable).toBool()) {
+    if (!index.data(kItemFileIsAvailableRole).toBool()) {
         flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         return flags;
     }
 
-    if (info->canAttributes(CanableInfoType::kCanRename))
+    if (index.data(kItemFileCanRenameRole).toBool())
         flags |= Qt::ItemIsEditable;
 
-    if (info->isAttributes(OptInfoType::kIsWritable)) {
-        if (info->canAttributes(CanableInfoType::kCanDrop))
+    if (index.data(kItemFileIsWritableRole).toBool()) {
+        if (index.data(kItemFileCanDropRole).toBool())
             flags |= Qt::ItemIsDropEnabled;
         else
             flags |= Qt::ItemNeverHasChildren;
     }
 
-    if (info->canAttributes(CanableInfoType::kCanDrag))
+    if (index.data(kItemFileCanDragRole).toBool())
         flags |= Qt::ItemIsDragEnabled;
 
     if (readOnly)
@@ -360,7 +363,12 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
-            const FileInfoPointer &fileInfo = this->fileInfo(*it);
+            FileInfoPointer fileInfo = this->fileInfo(*it);
+            if (fileInfo.isNull())
+                (*it).data(Global::ItemRoles::kItemCreateFileInfoRole);
+            fileInfo = this->fileInfo(*it);
+            if (fileInfo.isNull())
+                continue;
             const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
 
             if (urlsSet.contains(url))
@@ -386,7 +394,11 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (!dropIndex.isValid())
         return false;
 
-    const FileInfoPointer &targetFileInfo = fileInfo(dropIndex);
+    FileInfoPointer targetFileInfo = fileInfo(dropIndex);
+    if (targetFileInfo.isNull())
+        dropIndex.data(Global::ItemRoles::kItemCreateFileInfoRole);
+
+    targetFileInfo = fileInfo(dropIndex);
     if (!targetFileInfo || (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable))) {
         qInfo() << "current dir is not writable!!!!!!!!";
         return false;

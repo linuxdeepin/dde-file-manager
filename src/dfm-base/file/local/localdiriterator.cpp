@@ -203,15 +203,17 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
     auto sortlist = d->dfmioDirIterator->sortFileInfoList();
     QList<SortInfoPointer> wsortlist;
     for (const auto &sortInfo : sortlist) {
-        wsortlist.append(SortInfoPointer(
-                new AbstractDirIterator::SortFileInfo(sortInfo->url,
-                                                      sortInfo->isFile,
-                                                      sortInfo->isDir,
-                                                      sortInfo->isSymLink,
-                                                      sortInfo->isHide,
-                                                      sortInfo->isReadable,
-                                                      sortInfo->isWriteable,
-                                                      sortInfo->isExecutable)));
+        SortInfoPointer tmp(new SortFileInfo);
+        tmp->setUrl(sortInfo->url);
+        tmp->setSize(sortInfo->filesize);
+        tmp->setFile(sortInfo->isFile);
+        tmp->setDir(sortInfo->isDir);
+        tmp->setHide(sortInfo->isHide);
+        tmp->setSymlink(sortInfo->isSymLink);
+        tmp->setReadable(sortInfo->isReadable);
+        tmp->setWriteable(sortInfo->isWriteable);
+        tmp->setExecutable(sortInfo->isExecutable);
+        wsortlist.append(tmp);
     }
     return wsortlist;
 }

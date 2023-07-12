@@ -304,41 +304,6 @@ bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const Global::Cre
     return false;
 }
 
-bool FileUtils::isLowSpeedDevice(const QUrl &url)
-{
-    const QString &path = url.path();
-
-    static QMutex mutex;
-    QMutexLocker lk(&mutex);
-    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
-                                     QRegularExpression::DotMatchesEverythingOption
-                                             | QRegularExpression::DontCaptureOption
-                                             | QRegularExpression::OptimizeOnFirstUsageOption);
-
-    const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
-                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
-
-    if (match.hasMatch()) {
-        const QString &scheme = match.captured("scheme");
-        static QStringList schemeList = { QString(Global::Scheme::kMtp),
-                                          QString(Global::Scheme::kGPhoto),
-                                          QString(Global::Scheme::kGPhoto2),
-                                          QString(Global::Scheme::kSmb),
-                                          QString(Global::Scheme::kSmbShare),
-                                          QString(Global::Scheme::kFtp),
-                                          QString(Global::Scheme::kSFtp) };
-        return schemeList.contains(scheme);
-    }
-
-    const QString &device = dfmio::DFMUtils::devicePathFromUrl(url);
-
-    return device.startsWith(QString(Global::Scheme::kMtp) + "://")
-            || device.startsWith(QString(Global::Scheme::kGPhoto) + "://")
-            || device.startsWith(QString(Global::Scheme::kGPhoto2) + "://")
-            || device.startsWith(QString(Global::Scheme::kSmbShare) + "://")
-            || device.startsWith(QString(Global::Scheme::kSmb) + "://");
-}
-
 bool FileUtils::isLocalDevice(const QUrl &url)
 {
     //return !DFMIO::DFMUtils::fileIsRemovable(url) && !isGvfsFile(url);

@@ -129,7 +129,7 @@ TEST_F(UT_RootInfo, StartWork)
     rootInfoObj->startWork(key, true);
     EXPECT_FALSE(calledGetSourceData);
 
-    rootInfoObj->sourceDataList.append(SortInfoPointer(new AbstractDirIterator::SortFileInfo()));
+    rootInfoObj->sourceDataList.append(SortInfoPointer(new SortFileInfo()));
     rootInfoObj->startWork(key, true);
     EXPECT_TRUE(calledGetSourceData);
 
@@ -189,7 +189,7 @@ TEST_F(UT_RootInfo, Reset)
     rootInfoObj->traversalFinish = true;
     rootInfoObj->childrenUrlList.append(
             QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
-    rootInfoObj->sourceDataList.append(SortInfoPointer(new AbstractDirIterator::SortFileInfo()));
+    rootInfoObj->sourceDataList.append(SortInfoPointer(new SortFileInfo()));
 
     rootInfoObj->reset();
 
@@ -359,7 +359,7 @@ TEST_F(UT_RootInfo, HandleTraversalResult)
     stub.set_lamda(ADDR(RootInfo, addChild),
                    [&calledAddChild](RootInfo *, const FileInfoPointer &) {
                        calledAddChild = true;
-                       SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
+                       SortInfoPointer sortInfo(new SortFileInfo);
                        return sortInfo;
                    });
 
@@ -384,7 +384,7 @@ TEST_F(UT_RootInfo, HandleTraversalResults)
     stub.set_lamda(ADDR(RootInfo, addChild),
                    [&calledAddChild](RootInfo *, const FileInfoPointer &) {
                        calledAddChild = true;
-                       SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
+                       SortInfoPointer sortInfo(new SortFileInfo);
                        return sortInfo;
                    });
 
@@ -416,7 +416,7 @@ TEST_F(UT_RootInfo, HandleTraversalLocalResult)
     QObject::connect(rootInfoObj, &RootInfo::iteratorLocalFiles, rootInfoObj,
                      [&sendIteratorLocalFiles] { sendIteratorLocalFiles = true; });
 
-    SortInfoPointer info(new AbstractDirIterator::SortFileInfo);
+    SortInfoPointer info(new SortFileInfo);
     rootInfoObj->handleTraversalLocalResult({ info }, sortRole, sortOrder, mixDirAndFile, "");
 
     EXPECT_FALSE(addedChildren.isEmpty());
@@ -481,8 +481,8 @@ TEST_F(UT_RootInfo, AddChildrenWithUrls)
             [&addedFiles](QList<SortInfoPointer> children) { addedFiles.append(children); });
 
     stub.set_lamda(ADDR(RootInfo, addChild), [](RootInfo *, const FileInfoPointer &info) {
-        SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
-        sortInfo->url = info->urlOf(UrlInfoType::kUrl);
+        SortInfoPointer sortInfo(new SortFileInfo);
+        sortInfo->setUrl(info->urlOf(UrlInfoType::kUrl));
         return sortInfo;
     });
 
@@ -490,9 +490,9 @@ TEST_F(UT_RootInfo, AddChildrenWithUrls)
 
     EXPECT_EQ(addedFiles.length(), 3);
     if (addedFiles.length() == 3) {
-        EXPECT_EQ(addedFiles.at(0)->url, url1);
-        EXPECT_EQ(addedFiles.at(1)->url, url2);
-        EXPECT_EQ(addedFiles.at(2)->url, url3);
+        EXPECT_EQ(addedFiles.at(0)->fileUrl(), url1);
+        EXPECT_EQ(addedFiles.at(1)->fileUrl(), url2);
+        EXPECT_EQ(addedFiles.at(2)->fileUrl(), url3);
     }
 }
 
@@ -514,7 +514,7 @@ TEST_F(UT_RootInfo, AddChildrenWithFileInfos)
     stub.set_lamda(ADDR(RootInfo, addChild),
                    [&addedFiles](RootInfo *, const FileInfoPointer &info) {
                        addedFiles.append(info->urlOf(UrlInfoType::kUrl));
-                       SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
+                       SortInfoPointer sortInfo(new SortFileInfo);
                        return sortInfo;
                    });
 
@@ -531,14 +531,14 @@ TEST_F(UT_RootInfo, AddChildrenWithFileInfos)
 TEST_F(UT_RootInfo, AddChildrenWithSortInfos)
 {
     QUrl url1(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first());
-    SortInfoPointer sortInfo1(new AbstractDirIterator::SortFileInfo);
-    sortInfo1->url = url1;
+    SortInfoPointer sortInfo1(new SortFileInfo);
+    sortInfo1->setUrl(url1);
     QUrl url2(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first());
-    SortInfoPointer sortInfo2(new AbstractDirIterator::SortFileInfo);
-    sortInfo2->url = url2;
+    SortInfoPointer sortInfo2(new SortFileInfo);
+    sortInfo2->setUrl(url2);
     QUrl url3(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
-    SortInfoPointer sortInfo3(new AbstractDirIterator::SortFileInfo);
-    sortInfo3->url = url3;
+    SortInfoPointer sortInfo3(new SortFileInfo);
+    sortInfo3->setUrl(url3);
 
     QList<SortInfoPointer> infos{ sortInfo1, sortInfo2, sortInfo3 };
 
@@ -554,9 +554,9 @@ TEST_F(UT_RootInfo, AddChildrenWithSortInfos)
     }
 
     if (rootInfoObj->sourceDataList.length() == 3) {
-        EXPECT_EQ(rootInfoObj->sourceDataList.at(0)->url, url1);
-        EXPECT_EQ(rootInfoObj->sourceDataList.at(1)->url, url2);
-        EXPECT_EQ(rootInfoObj->sourceDataList.at(2)->url, url3);
+        EXPECT_EQ(rootInfoObj->sourceDataList.at(0)->fileUrl(), url1);
+        EXPECT_EQ(rootInfoObj->sourceDataList.at(1)->fileUrl(), url2);
+        EXPECT_EQ(rootInfoObj->sourceDataList.at(2)->fileUrl(), url3);
     }
 }
 

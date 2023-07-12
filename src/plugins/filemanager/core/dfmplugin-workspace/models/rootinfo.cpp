@@ -373,7 +373,7 @@ void RootInfo::addChildren(const QList<SortInfoPointer> &children)
             continue;
 
         QWriteLocker lk(&childrenLock);
-        childrenUrlList.append(file->url);
+        childrenUrlList.append(file->fileUrl());
         sourceDataList.append(file);
     }
 }
@@ -407,15 +407,16 @@ SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
 {
     if (!info)
         return nullptr;
-    SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
-    sortInfo->url = info->urlOf(UrlInfoType::kUrl);
-    sortInfo->isDir = info->isAttributes(OptInfoType::kIsDir);
-    sortInfo->isFile = !info->isAttributes(OptInfoType::kIsDir);
-    sortInfo->isHide = info->isAttributes(OptInfoType::kIsHidden);
-    sortInfo->isSymLink = info->isAttributes(OptInfoType::kIsHidden);
-    sortInfo->isReadable = info->isAttributes(OptInfoType::kIsReadable);
-    sortInfo->isWriteable = info->isAttributes(OptInfoType::kIsWritable);
-    sortInfo->isExecutable = info->isAttributes(OptInfoType::kIsExecutable);
+    SortInfoPointer sortInfo(new SortFileInfo);
+    sortInfo->setUrl(info->urlOf(UrlInfoType::kUrl));
+    sortInfo->setSize(info->size());
+    sortInfo->setFile(info->isAttributes(OptInfoType::kIsDir));
+    sortInfo->setDir(!info->isAttributes(OptInfoType::kIsDir));
+    sortInfo->setHide(info->isAttributes(OptInfoType::kIsHidden));
+    sortInfo->setSymlink(info->isAttributes(OptInfoType::kIsHidden));
+    sortInfo->setReadable(info->isAttributes(OptInfoType::kIsReadable));
+    sortInfo->setWriteable(info->isAttributes(OptInfoType::kIsWritable));
+    sortInfo->setExecutable(info->isAttributes(OptInfoType::kIsExecutable));
     return sortInfo;
 }
 

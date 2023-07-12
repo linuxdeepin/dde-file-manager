@@ -40,6 +40,36 @@ void BasicStatusBar::clearLayoutAndAnchors()
     DAnchorsBase::clearAnchors(this);
 }
 
+void BasicStatusBar::itemSelected(const int selectFiles, const int selectFolders, const qint64 filesize, const QList<QUrl> &selectFolderList)
+{
+    if (!d->tip)
+        return;
+
+    d->fileCount = selectFiles;
+    d->fileSize = filesize;
+    d->folderCount = selectFolders;
+    d->folderContains = 0;
+    d->showContains = true;
+
+    const bool dirUrlsEmpty = selectFolderList.isEmpty();
+    if (!dirUrlsEmpty) {
+        // check mtp setting
+        const bool showInfo = Application::instance()->genericAttribute(Application::GenericAttribute::kMTPShowBottomInfo).toBool();
+        if (!showInfo) {
+            bool isMtp = FileUtils::isMtpFile(selectFolderList.first());
+            if (isMtp) {
+                d->showContains = false;
+            } else {
+                d->calcFolderContains(selectFolderList);
+            }
+        } else {
+            d->calcFolderContains(selectFolderList);
+        }
+    }
+
+    updateStatusMessage();
+}
+
 void BasicStatusBar::itemSelected(const QList<FileInfo *> &infoList)
 {
     if (!d->tip)
@@ -49,32 +79,32 @@ void BasicStatusBar::itemSelected(const QList<FileInfo *> &infoList)
     d->fileSize = 0;
     d->folderCount = 0;
     d->folderContains = 0;
+    d->showContains = true;
 
-    QList<QUrl> dirUrlList;
+    QList<QUrl> selectFolderList;
     for (const FileInfo *info : infoList) {
         if (info->isAttributes(OptInfoType::kIsDir)) {
             d->folderCount += 1;
-            dirUrlList << info->urlOf(UrlInfoType::kUrl);
+            selectFolderList << info->urlOf(UrlInfoType::kUrl);
         } else {
             d->fileCount += 1;
             d->fileSize += info->size();
         }
     }
 
-    d->showContains = true;
-    const bool dirUrlsEmpty = dirUrlList.isEmpty();
+    const bool dirUrlsEmpty = selectFolderList.isEmpty();
     if (!dirUrlsEmpty) {
         // check mtp setting
         const bool showInfo = Application::instance()->genericAttribute(Application::GenericAttribute::kMTPShowBottomInfo).toBool();
         if (!showInfo) {
-            bool isMtp = FileUtils::isMtpFile(dirUrlList.first());
+            bool isMtp = FileUtils::isMtpFile(selectFolderList.first());
             if (isMtp) {
                 d->showContains = false;
             } else {
-                d->calcFolderContains(dirUrlList);
+                d->calcFolderContains(selectFolderList);
             }
         } else {
-            d->calcFolderContains(dirUrlList);
+            d->calcFolderContains(selectFolderList);
         }
     }
 

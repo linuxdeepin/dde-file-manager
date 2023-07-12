@@ -65,6 +65,7 @@ public:
 
     static bool isSubpathOfDlnfs(const QString &path);
     static bool isMountPointOfDlnfs(const QString &path);
+    static bool isLowSpeedDevice(const QUrl &url);
 
     static QString getLongestMountRootPath(const QString &filePath);
 

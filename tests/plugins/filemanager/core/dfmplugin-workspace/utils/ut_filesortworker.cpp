@@ -60,7 +60,12 @@ TEST_F(UT_FileSortWorker, Bug_199473_handleUpdateFile)
     });
 
     worker->childrenUrlList.append(updateFile);
-    SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo(updateFile, false, true, false, false, true, true, true));
+    SortInfoPointer sortInfo(new SortFileInfo());
+    sortInfo->setUrl(updateFile);
+    sortInfo->setDir(true);
+    sortInfo->setReadable(true);
+    sortInfo->setWriteable(true);
+    sortInfo->setExecutable(true);
     worker->children.append(sortInfo);
 
     worker->handleUpdateFile(updateFile);
