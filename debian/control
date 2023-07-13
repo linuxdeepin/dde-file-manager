@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
 Build-Depends:
  cmake,
+ doxygen,
  debhelper (>=9),
  pkg-config,
  qtbase5-dev,

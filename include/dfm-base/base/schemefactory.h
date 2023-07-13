@@ -26,9 +26,6 @@
 
 namespace dfmbase {
 
-template<class CT>
-class GC;
-
 /*!
  * \class SchemeFactory
  * \brief 根据Scheme注册Class的工厂类，
@@ -168,7 +165,6 @@ public:
 class InfoFactory final : public SchemeFactory<FileInfo>
 {
     Q_DISABLE_COPY(InfoFactory)
-    friend class GC<InfoFactory>;
 
 public:
     enum RegOpts : uint32_t {
@@ -214,11 +210,10 @@ public:
                                                         create(url, errorString));
 
         if (type == Global::CreateFileInfoType::kCreateFileInfoSyncAndCache)
-            return qSharedPointerDynamicCast<T>(getFileInfoFromCache(url,  Global::CreateFileInfoType::kCreateFileInfoSyncAndCache, errorString));
+            return qSharedPointerDynamicCast<T>(getFileInfoFromCache(url, Global::CreateFileInfoType::kCreateFileInfoSyncAndCache, errorString));
 
         if (type == Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache && url.scheme() == Global::Scheme::kFile)
-            return qSharedPointerDynamicCast<T>(getFileInfoFromCache(url,  Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache, errorString));
-
+            return qSharedPointerDynamicCast<T>(getFileInfoFromCache(url, Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache, errorString));
 
         if (url.scheme() == Global::Scheme::kFile) {
             if (type == Global::CreateFileInfoType::kCreateFileInfoSync) {
@@ -259,7 +254,6 @@ private:
 class ViewFactory final : public SchemeFactory<AbstractBaseView>
 {
     Q_DISABLE_COPY(ViewFactory)
-    friend class GC<ViewFactory>;
 
 public:
     template<class CT = AbstractBaseView>
@@ -283,7 +277,6 @@ private:
 class WatcherFactory final : public SchemeFactory<AbstractFileWatcher>
 {
     Q_DISABLE_COPY(WatcherFactory)
-    friend class GC<WatcherFactory>;
 
 public:
     enum RegOpts : uint32_t {
@@ -428,7 +421,6 @@ public:
 class DirIteratorFactory final : public DirIteratorFactoryT1<AbstractDirIterator>
 {
     Q_DISABLE_COPY(DirIteratorFactory)
-    friend class GC<DirIteratorFactory>;
 
 public:
     /*!
@@ -484,7 +476,6 @@ private:
 class SortFilterFactory final : public SchemeFactory<AbstractSortFilter>
 {
     Q_DISABLE_COPY(SortFilterFactory)
-    friend class GC<SortFilterFactory>;
 
 public:
     template<class CT = AbstractSortFilter>
