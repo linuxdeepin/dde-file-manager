@@ -28,7 +28,7 @@ enum ComboType {
     kSingleDir = 1 << 2,   //单个文件夹
     kMultiFiles = 1 << 3,   //多个文件
     kMultiDirs = 1 << 4,   //多个文件夹
-    kFileAndDir = 1 << 5,   //文件和文件夹，必须都包含
+    kFileAndDir = 1 << 5,   //文件和文件夹，必须都包含。焦点优化后废弃，当做kMultiDirs|kMultiFiles
     kAllFile = kSingleFile | kMultiFiles,
     kAllDir = kSingleDir | kMultiDirs,
     kAllCombo = kBlankSpace | kAllFile | kAllDir | kFileAndDir

@@ -50,6 +50,20 @@ QList<QAction *> ExtendMenuScenePrivate::childActions(QAction *action)
     return actions;
 }
 
+int ExtendMenuScenePrivate::mayComboPostion(const DCustomActionData &acdata, DCustomActionDefines::ComboType combo)
+{
+    int pos = acdata.position(combo);
+    // if kMultiDirs or kMultiFiles is not set pos, try to use kFileAndDir.
+    if (combo == DCustomActionDefines::kMultiDirs
+            || combo == DCustomActionDefines::kMultiFiles) {
+        if (pos == acdata.position()) {
+            pos = acdata.position(DCustomActionDefines::kFileAndDir);
+        }
+    }
+
+    return pos;
+}
+
 ExtendMenuScene::ExtendMenuScene(DCustomActionParser *parser, QObject *parent)
     : AbstractMenuScene(parent), d(new ExtendMenuScenePrivate(this))
 {
@@ -122,7 +136,11 @@ bool ExtendMenuScene::create(QMenu *parent)
     //获取文件列表的组合
     DCustomActionDefines::ComboType fileCombo = DCustomActionDefines::kBlankSpace;
     if (!d->isEmptyArea) {
-        fileCombo = builder.checkFileCombo({d->focusFile});
+#ifdef MENU_CHECK_FOCUSONLY
+        fileCombo = builder.checkFileComboWithFocus(d->focusFile, d->selectFiles);
+#else
+        fileCombo = builder.checkFileCombo(d->selectFiles);
+#endif
         if (fileCombo == DCustomActionDefines::kBlankSpace)
             return false;
 
@@ -134,7 +152,11 @@ bool ExtendMenuScene::create(QMenu *parent)
     auto usedEntrys = builder.matchFileCombo(rootEntry, fileCombo);
 
     //匹配类型支持
+#ifdef MENU_CHECK_FOCUSONLY
     usedEntrys = builder.matchActions({d->focusFile}, usedEntrys);
+#else
+    usedEntrys = builder.matchActions(d->selectFiles, usedEntrys);
+#endif
     qDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
 
     if (usedEntrys.isEmpty())
@@ -157,7 +179,11 @@ bool ExtendMenuScene::create(QMenu *parent)
             d->cacheActionsSeparator.insert(action, actionData.separator());
 
         //根据组合类型获取插入位置
+#ifdef MENU_CHECK_FOCUSONLY
+        auto pos = d->mayComboPostion(actionData, fileCombo);
+#else
         auto pos = actionData.position(fileCombo);
+#endif
 
         //位置是否有效
         if (pos > 0) {
