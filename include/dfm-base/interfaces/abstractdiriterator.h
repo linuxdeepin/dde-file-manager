@@ -11,12 +11,7 @@
 
 #include <QDir>
 #include <QDirIterator>
-/*!
- * \class AbstractDirIterator 文件迭代器接口类
- *
- * \brief 定义了文件迭代器的通用接口
- *
- */
+
 namespace dfmbase {
 class AbstractDirIterator : public QObject
 {
