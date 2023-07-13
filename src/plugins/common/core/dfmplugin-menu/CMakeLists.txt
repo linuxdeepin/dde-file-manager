@@ -30,6 +30,8 @@ target_link_libraries(${PROJECT_NAME}
     ${DtkWidget_LIBRARIES}
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE MENU_CHECK_FOCUSONLY)
+
 #install library file
 install(TARGETS
     ${PROJECT_NAME}

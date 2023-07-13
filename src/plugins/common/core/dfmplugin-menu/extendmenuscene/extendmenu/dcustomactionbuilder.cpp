@@ -152,6 +152,28 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList
     return DCustomActionDefines::kBlankSpace;
 }
 
+DCustomActionDefines::ComboType DCustomActionBuilder::checkFileComboWithFocus(const QUrl &focus, const QList<QUrl> &files)
+{
+    if (files.isEmpty())
+        return DCustomActionDefines::kBlankSpace;
+
+    QString errString;
+    auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(focus, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    if (!info.isNull()) {
+        bool isDir = info->isAttributes(OptInfoType::kIsDir);
+        if (files.size() == 1) {
+            return isDir ? DCustomActionDefines::kSingleDir : DCustomActionDefines::kSingleFile;
+        } else {
+            // Focusing on a file is considered to be multiple files and focusing on a folder is considered to be multiple folders.
+            return (isDir ? DCustomActionDefines::kMultiDirs : DCustomActionDefines::kMultiFiles);
+        }
+    } else {
+        qDebug() << errString;
+    }
+
+    return DCustomActionDefines::kBlankSpace;
+}
+
 /*!
     筛选 \a rootActions 中支持 \a type 文件组合的菜单项
  */
@@ -162,6 +184,14 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
     //无自定义菜单项
     if (0 == rootActions.size())
         return ret;
+
+#ifdef MENU_CHECK_FOCUSONLY
+    // add kFileAndDir if type is kMultiDirs or kMultiFiles.
+    if (type == DCustomActionDefines::kMultiDirs
+            || type == DCustomActionDefines::kMultiFiles) {
+        type |= DCustomActionDefines::kFileAndDir;
+    }
+#endif
 
     for (auto it = rootActions.begin(); it != rootActions.end(); ++it) {
         if (it->fileCombo() & type)

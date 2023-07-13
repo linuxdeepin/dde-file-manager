@@ -18,7 +18,7 @@ class ExtendMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 public:
     explicit ExtendMenuScenePrivate(ExtendMenuScene *qq);
     QList<QAction *> childActions(QAction *action);
-
+    int mayComboPostion(const DCustomActionData &acdata, DCustomActionDefines::ComboType combo);
 public:
     DCustomActionParser *customParser = nullptr;
     QList<QAction *> extendActions;
