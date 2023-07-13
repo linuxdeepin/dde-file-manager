@@ -29,6 +29,7 @@ public:
     void setFocusFile(const QUrl &file);
     QString getCompleteSuffix(const QString &fileName, const QString &suf);
     static DCustomActionDefines::ComboType checkFileCombo(const QList<QUrl> &files);
+    static DCustomActionDefines::ComboType checkFileComboWithFocus(const QUrl &focus, const QList<QUrl> &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
                                                     DCustomActionDefines::ComboTypes type);
     static QList<DCustomActionEntry> matchActions(const QList<QUrl> &selects,
