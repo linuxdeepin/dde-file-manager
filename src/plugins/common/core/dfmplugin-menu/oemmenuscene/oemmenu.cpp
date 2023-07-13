@@ -172,8 +172,6 @@ bool OemMenuPrivate::isSchemeSupport(const QAction *action, const QUrl &url) con
 
 bool OemMenuPrivate::isSuffixSupport(const QAction *action, FileInfoPointer fileInfo, const bool allEx7z) const
 {
-    QString errString;
-
     // X-DFM-SupportSuffix not exist
     if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || !action || (!action->property(kSupportSuffixKey).isValid() && !action->property(kSupportSuffixAliasKey).isValid())) {
         if (allEx7z) {
@@ -568,6 +566,100 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
 
             ++it;
         }
+    }
+
+    return actions;
+}
+
+QList<QAction *> OemMenu::focusNormalActions(const QUrl &foucs, const QList<QUrl> &files, bool onDesktop)
+{
+    QList<QAction *> actions;
+
+    QString errString;
+    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(foucs, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    if (!fileInfo) {
+        qWarning() << errString;
+        return actions;
+    }
+
+    QString menuType;
+    if (1 == files.count())
+        menuType = fileInfo->isAttributes(OptInfoType::kIsDir) ? kSingleDir : kSingleFile;
+    else
+        menuType = kMultiFileDirs;
+
+    // get actions surported menutype
+    actions = d->actionListByType[menuType];
+    if (actions.isEmpty())
+        return actions;
+
+    // get foucs file mimetype
+    QStringList mimeTypes;
+    QStringList siblingMimeTypes;
+    {
+        // get normal mimetype
+        mimeTypes.append(fileInfo->fileMimeType().name());
+        mimeTypes.append(fileInfo->fileMimeType().aliases());
+        mimeTypes.removeAll(QString(""));
+
+        // get parent mimetype
+        const QMimeType &mt = fileInfo->fileMimeType();
+        siblingMimeTypes = mimeTypes;
+        d->appendParentMineType(mt.parentMimeTypes(), siblingMimeTypes);
+        siblingMimeTypes.removeAll(QString(""));
+    }
+
+    // check each actons
+    for (auto it = actions.begin(); it != actions.end();) {
+        QAction *action = *it;
+        // check Desktop, Scheme, Suffix
+        if (!d->isValid(action, fileInfo, onDesktop, false)) {
+            it = actions.erase(it);
+            continue;
+        }
+
+        // compression is not supported on FTP
+        if (action->text() == QObject::tr("Compress") && DeviceUtils::isFtp(foucs)) {
+            it = actions.erase(it);
+            continue;
+        }
+
+        // match exclude mime types
+        QStringList excludeMimeTypes = action->property(kMimeTypeExcludeKey).toStringList();
+        excludeMimeTypes << action->property(kMimeTypeExcludeAliasKey).toStringList();
+
+        excludeMimeTypes.removeAll({});
+        // e.g. xlsx parentMimeTypes is application/zip
+        bool match = d->isMimeTypeMatch(mimeTypes, excludeMimeTypes);
+        if (match) {
+            it = actions.erase(it);
+            continue;
+        }
+
+        // MimeType not exist == MimeType=*
+        if (!action->property(kMimeType).isValid()) {
+            ++it;
+            continue;
+        }
+
+        // match support mime types
+        QStringList supportMimeTypes = action->property(kMimeType).toStringList();
+        supportMimeTypes.removeAll({});
+        match = d->isMimeTypeMatch(siblingMimeTypes, supportMimeTypes);
+
+        //The file attributes of some MTP mounted device directories do not meet the specifications
+        //(the ordinary directory mimeType is considered octet stream), so special treatment is required
+        if (foucs.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream")
+                && siblingMimeTypes.contains("application/octet-stream")) {
+            match = false;
+        }
+
+        if (!match) {
+            it = actions.erase(it);
+            continue;
+        }
+
+        ++it;
     }
 
     return actions;

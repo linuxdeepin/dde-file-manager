@@ -24,6 +24,7 @@ public:
     void loadDesktopFile();
     QList<QAction *> emptyActions(const QUrl &currentDir, bool onDesktop = false);
     QList<QAction *> normalActions(const QList<QUrl> &files, bool onDesktop = false);
+    QList<QAction *> focusNormalActions(const QUrl &foucs, const QList<QUrl> &files, bool onDesktop = false);
     QPair<QString, QStringList> makeCommand(const QAction *action, const QUrl &dir, const QUrl &foucs, const QList<QUrl> &files);
 
 private:
