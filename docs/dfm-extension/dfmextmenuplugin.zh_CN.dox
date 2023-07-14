@@ -1,0 +1,49 @@
+/*!
+@~chinese
+@ingroup dfm-extension
+@file dfmextmenuplugin.h
+
+
+@class dfmext::DFMExtMenuPlugin dfmextmenuplugin.h
+@brief 第三方开发者应该继承并实现的接口类，并且在元接口 dfm_extension_menu 中返回派生的类对象
+
+@fn DFMExtMenuPlugin::DFMExtMenuPlugin()
+@brief 构造函数
+
+@fn void DFMExtMenuPlugin::initialize(DFMEXT::DFMExtMenuProxy *proxy)
+@brief 插件初始化接口。文管主动调用，在其他所有接口被文管调用前调用，文管将 proxy 传入给扩展插件
+@param[in] proxy 可认为是文管主程序的进程
+
+@fn bool DFMExtMenuPlugin::buildNormalMenu(DFMExtMenu *main,
+                                       const std::string &currentUrl,
+                                       const std::string &focusUrl,
+                                       const std::list<std::string> &urlList,
+                                       bool onDesktop)
+@brief 文管主动调用，右键菜单在文件上触发时调用
+@param[in] main 当前的右键菜单
+@param[in] urlList 选中的所有文件列表的文件路径/
+@param[in] currentUrl 右键点击的文件路径所在目录的路径
+@param[in] focusUrl 当前右键选中文件的路径
+@param[in] onDesktop  true 代表操作是在桌面触发的
+@return 如果没有注册该接口的回调则返回 false，反之则返回回调函数的结果
+
+@fn bool DFMExtMenuPlugin::buildEmptyAreaMenu(DFMExtMenu *main, const std::string &currentUrl, bool onDesktop)
+@brief 文管主动调用，右键菜单在空白区域触发时调用
+@param[in] main 当前的右键菜单
+@param[in] currentUrl 右键点击的文件路径所在目录的路径
+@param[in] onDesktop true 代表操作是在桌面触发的
+@return 如果没有注册该接口的回调则返回 false，反之则返回回调函数的结果 
+
+@fn void DFMExtMenuPlugin::registerInitialize(const DFMExtMenuPlugin::InitializeFunc &func)
+@brief `initialize` 接口的注册函数，第三方开发者主动注册
+@param[in] func 回调函数
+
+@fn void DFMExtMenuPlugin::registerBuildNormalMenu(const DFMExtMenuPlugin::BuildNormalMenuFunc &func)
+@brief `buildNormalMenu` 接口的注册函数，第三方开发者主动注册
+@param[in] func 回调函数
+
+@fn void DFMExtMenuPlugin::registerBuildEmptyAreaMenu(const DFMExtMenuPlugin::BuildEmptyAreaMenuFunc &func)
+@brief `buildEmptyAreaMenu` 接口的注册函数，第三方开发者主动注册
+@param[in] func 回调函数
+
+*/
