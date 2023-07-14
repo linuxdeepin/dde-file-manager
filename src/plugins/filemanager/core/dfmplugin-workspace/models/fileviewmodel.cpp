@@ -402,7 +402,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     targetFileInfo = fileInfo(dropIndex);
     if (!targetFileInfo || (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable))) {
-        qInfo() << "current dir is not writable!!!!!!!!";
+        qWarning() << "Drop target dir is not writable!";
         return false;
     }
     QUrl targetUrl = targetFileInfo->urlOf(UrlInfoType::kUrl);

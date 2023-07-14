@@ -152,8 +152,8 @@ void FileOperatorHelper::copyFiles(const FileView *view)
         if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsReadable))
             return;
     }
-    qInfo() << "copy shortcut key to clipboard, selected urls: " << selectedUrls
-            << " currentUrl: " << view->rootUrl();
+    qInfo() << "Copy shortcut key to clipboard, selected urls: " << selectedUrls
+            << ", current dir: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard,
@@ -164,7 +164,6 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 
 void FileOperatorHelper::cutFiles(const FileView *view)
 {
-    qInfo() << "cut shortcut key to clipboard";
     const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(view->rootUrl());
     if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable))
         return;
@@ -174,8 +173,8 @@ void FileOperatorHelper::cutFiles(const FileView *view)
     if (ok && !urls.isEmpty())
         selectedUrls = urls;
 
-    qInfo() << "selected urls: " << selectedUrls
-            << " currentUrl: " << view->rootUrl();
+    qInfo() << "Cut shortcut key to clipboard, selected urls: " << selectedUrls
+            << ", current dir: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard,
                                  windowId,
@@ -185,7 +184,7 @@ void FileOperatorHelper::cutFiles(const FileView *view)
 
 void FileOperatorHelper::pasteFiles(const FileView *view)
 {
-    qInfo() << " paste file by clipboard and currentUrl: " << view->rootUrl();
+    qInfo() << "Paste file by clipboard and current dir: " << view->rootUrl();
     auto action = ClipBoard::instance()->clipboardAction();
     // trash dir can't paste files for copy
     if (FileUtils::isTrashFile(view->rootUrl()))
@@ -221,13 +220,13 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
                                      nullptr, nullptr,
                                      QVariant(), nullptr);
     } else {
-        qWarning() << "clipboard action:" << action << "    urls:" << sourceUrls;
+        qWarning() << "Unknown clipboard past action:" << action << " urls:" << sourceUrls;
     }
 }
 
 void FileOperatorHelper::undoFiles(const FileView *view)
 {
-    qInfo() << " undoFiles file, currentUrl: " << view->rootUrl();
+    qInfo() << "Undo files in the directory: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     dpfSignalDispatcher->publish(GlobalEventType::kRevocation,
@@ -236,16 +235,29 @@ void FileOperatorHelper::undoFiles(const FileView *view)
 
 void FileOperatorHelper::moveToTrash(const FileView *view)
 {
+    const QList<QUrl> selectedUrls = view->selectedUrlList();
+    if (selectedUrls.isEmpty())
+        return;
+
+    qInfo() << "Move files to trash, selected urls: " << selectedUrls
+            << ", current dir: " << view->rootUrl();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
                                  windowId,
-                                 view->selectedUrlList(),
+                                 selectedUrls,
                                  AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &urls)
 {
+    if (urls.isEmpty())
+        return;
+
+    qInfo() << "Move files to trash, files urls: " << urls
+            << ", current dir: " << view->rootUrl();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
                                  windowId,
@@ -255,10 +267,17 @@ void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &ur
 
 void FileOperatorHelper::deleteFiles(const FileView *view)
 {
+    const QList<QUrl> selectedUrls = view->selectedUrlList();
+    if (selectedUrls.isEmpty())
+        return;
+
+    qInfo() << "Delete files, selected urls: " << selectedUrls
+            << ", current dir: " << view->rootUrl();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
                                  windowId,
-                                 view->selectedUrlList(),
+                                 selectedUrls,
                                  AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
@@ -306,12 +325,16 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
 void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 {
     QList<QUrl> urls = view->selectedUrlList();
-    if (!urls.isEmpty()) {
-        QStringList paths;
-        for (const auto &u : urls)
-            paths << u.path();
-        dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", paths);
-    }
+    if (urls.isEmpty())
+        return;
+
+    qInfo() << "Send to bluetooth, selected urls: " << urls
+            << ", current dir: " << view->rootUrl();
+
+    QStringList paths;
+    for (const auto &u : urls)
+        paths << u.path();
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", paths);
 }
 
 void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
@@ -341,6 +364,9 @@ void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &a
 
 void FileOperatorHelper::renameFilesByReplace(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair)
 {
+    qInfo() << "Rename files with replace string: " << replacePair
+            << ", files urls: " << urlList;
+
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
                                  windowId,
@@ -351,6 +377,9 @@ void FileOperatorHelper::renameFilesByReplace(const QWidget *sender, const QList
 
 void FileOperatorHelper::renameFilesByAdd(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &addPair)
 {
+    qInfo() << "Rename files with add string: " << addPair
+            << ", files urls: " << urlList;
+
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
                                  windowId,
@@ -360,6 +389,9 @@ void FileOperatorHelper::renameFilesByAdd(const QWidget *sender, const QList<QUr
 
 void FileOperatorHelper::renameFilesByCustom(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair)
 {
+    qInfo() << "Rename files with custom string: " << customPair
+            << ", files urls: " << urlList;
+
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
                                  windowId,
