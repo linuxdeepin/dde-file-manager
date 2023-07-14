@@ -113,10 +113,8 @@ bool FileDataManager::checkNeedCache(const QUrl &url)
         return true;
 
     // mounted dir should cache files in FileDataManager
-    if (!FileUtils::isLocalDevice(url)) {
-        qInfo() << "save data " << url;
+    if (!FileUtils::isLocalDevice(url))
         return true;
-    }
 
     return false;
 }
