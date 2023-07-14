@@ -25,6 +25,7 @@ public Q_SLOTS:
     bool Update(int opt, const QVariantMap value);
 
 Q_SIGNALS:
+    void TagsServiceReady();
     void NewTagsAdded(const QVariantMap &tags);
     void TagsDeleted(const QStringList &tags);
     void TagsColorChanged(const QVariantMap &oldAndNew);

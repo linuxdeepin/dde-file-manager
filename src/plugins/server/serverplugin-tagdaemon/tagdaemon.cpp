@@ -22,6 +22,8 @@ void TagDBusWorker::launchService()
                              tagManager.data())) {
         qWarning("Cannot register the \"/org/deepin/filemanager/server/TagManager\" object.\n");
         tagManager.reset(nullptr);
+    } else {
+        tagManager->TagsServiceReady();
     }
     qInfo() << "Init DBus TagManager end";
 }

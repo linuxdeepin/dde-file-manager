@@ -55,10 +55,13 @@ void Tag::initialize()
     else
         connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Tag::onAllPluginsStarted, Qt::DirectConnection);
 
-    TagManager::instance();
-    if (!TagProxyHandleIns->connectToService())
-        qWarning() << "Cannot connect to TagManager!";
-    emit FileTagCacheController::instance().initLoadTagInfos();
+    connect(TagProxyHandleIns, &TagProxyHandle::tagServiceRegistered, [] {
+        emit FileTagCacheController::instance().initLoadTagInfos();
+    });
+
+    if (!TagProxyHandleIns->connectToService()) {
+        qWarning() << "Cannot connect to TagManagerDBus!";
+    }
 
     bindEvents();
     followEvents();
@@ -67,6 +70,8 @@ void Tag::initialize()
 
 bool Tag::start()
 {
+    emit FileTagCacheController::instance().initLoadTagInfos();
+
     CustomViewExtensionView func { Tag::createTagWidget };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "Tag", 0);

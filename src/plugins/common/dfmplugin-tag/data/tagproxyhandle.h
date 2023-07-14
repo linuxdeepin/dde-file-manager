@@ -40,6 +40,7 @@ public:
 
     bool connectToService();
 
+    bool isValid();
 Q_SIGNALS:
     void filesTagged(const QVariantMap &fileAndTags);
     void filesUntagged(const QVariantMap &fileAndTags);
@@ -47,6 +48,7 @@ Q_SIGNALS:
     void tagsColorChanged(const QVariantMap &oldAndNew);
     void tagsDeleted(const QStringList &tags);
     void tagsNameChanged(const QVariantMap &oldAndNew);
+    void tagServiceRegistered();
 
 private:
     explicit TagProxyHandle(QObject *parent = nullptr);
