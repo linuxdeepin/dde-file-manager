@@ -504,7 +504,7 @@ void AddressBarPrivate::onCompletionHighlighted(const QString &highlightedComple
 void AddressBarPrivate::updateIndicatorIcon()
 {
     QIcon indicatorIcon;
-    QString scope = indicatorType == AddressBar::IndicatorType::Search ? "search_action" : "go-right";
+    QString scope = indicatorType == AddressBar::IndicatorType::Search ? "search_indicator" : "go-right";
     indicatorIcon = QIcon::fromTheme(scope);
     indicatorAction.setIcon(indicatorIcon);
 }
