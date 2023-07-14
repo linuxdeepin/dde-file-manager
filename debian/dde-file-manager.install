@@ -19,6 +19,7 @@ usr/share/dbus-1/services/org.deepin.filemanager.server.service
 usr/share/dbus-1/system-services/com.deepin.filemanager.daemon.service
 usr/share/deepin-manual/manual-assets/application
 usr/share/polkit-1/actions/*.policy
+usr/share/qt5/doc
 usr/lib/systemd/system/ lib/systemd/
 usr/lib/systemd/user/
 etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf

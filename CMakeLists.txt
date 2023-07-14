@@ -137,7 +137,6 @@ add_subdirectory(src/external)
 add_subdirectory(src/tools)
 
 # docs
-# docs
 set(BUILD_DOCS ON CACHE BOOL "Generate doxygen-based documentation")
 find_package(Doxygen)
 if (BUILD_DOCS AND DOXYGEN_FOUND)

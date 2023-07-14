@@ -1,7 +1,3 @@
-# SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
-#
-# SPDX-License-Identifier: LGPL-3.0-or-later
-
 set (QCH_INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/qt5/doc CACHE STRING "QCH install location")
 set (DOXYGEN_GENERATE_HTML "YES" CACHE STRING "Doxygen HTML output")
 set (DOXYGEN_GENERATE_XML "NO" CACHE STRING "Doxygen XML output")
