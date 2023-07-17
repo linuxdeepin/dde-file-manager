@@ -174,11 +174,11 @@ public:
     virtual QString viewOfTip(const ViewType type) const override;
     // emblems
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;
+    QVariant customData(int role) const override;
     // media info
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
     // cache attribute
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
-    QVariant customData(int role) const override;
     QMultiMap<QUrl, QString> notifyUrls() const;
     void setNotifyUrl(const QUrl &url, const QString &infoPtr);
     void removeNotifyUrl(const QUrl &url, const QString &infoPtr);

@@ -505,8 +505,9 @@ void AsyncFileInfo::setNotifyUrl(const QUrl &url, const QString &infoPtr)
         return;
     }
     QWriteLocker lk(&d->notifyLock);
-    if (!d->notifyUrls.contains(url, infoPtr))
+    if (!d->notifyUrls.contains(url, infoPtr)) {
         d->notifyUrls.insert(url, infoPtr);
+    }
 }
 
 void AsyncFileInfo::removeNotifyUrl(const QUrl &url, const QString &infoPtr)
