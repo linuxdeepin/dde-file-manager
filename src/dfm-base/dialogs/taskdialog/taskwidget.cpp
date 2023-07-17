@@ -7,6 +7,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <DWaterProgress>
 #include <DIconButton>
@@ -118,6 +119,8 @@ void TaskWidget::onButtonClicked()
         qWarning() << "the button is null or the button is release!";
         return;
     }
+    if (infoTimer.isActive())
+        infoTimer.stop();
     if (btnPause)
         btnPause->setEnabled(true);
     isShowError.store(false);
@@ -217,41 +220,19 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
 
     showBtnByAction(action);
 
-    if (originInfo && targetInfo) {
-        lbSrcIcon->setPixmap(originInfo->fileIcon().pixmap(48, 48));
-        lbSrcModTime->setText(QString(tr("Time modified: %1"))
-                                      .arg(originInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
-                                                   ? originInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
-                                                   : qApp->translate("MimeTypeDisplayManager", "Unknown")));
-        if (originInfo->isAttributes(OptInfoType::kIsDir)) {
-            lbSrcTitle->setText(tr("Original folder"));
-            QString filecount = originInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(originInfo->countChildFile()) : QObject::tr("%1 items").arg(originInfo->countChildFile());
-            lbSrcFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
-        } else {
-            lbSrcTitle->setText(tr("Original file"));
-            lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->extendAttributes(ExtInfoType::kSizeFormat).toString()));
-        }
+    auto needRetry = showFileInfo(originInfo, true);
+    needRetry = showFileInfo(targetInfo, false) || needRetry;
+    if (needRetry)
+        infoTimer.start();
 
-        lbDstIcon->setPixmap(targetInfo->fileIcon().pixmap(48, 48));
-        lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid() ? targetInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
+    widConfict->show();
+    widButton->show();
+    btnCoexist->setHidden(false);
+    showConflictButtons();
 
-        if (targetInfo->isAttributes(OptInfoType::kIsDir)) {
-            lbDstTitle->setText(tr("Target folder"));
-            QString filecount = targetInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(targetInfo->countChildFile()) : QObject::tr("%1 items").arg(targetInfo->countChildFile());
-            lbDstFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
-        } else {
-            lbDstTitle->setText(tr("Target file"));
-            lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->extendAttributes(ExtInfoType::kSizeFormat).toString()));
-        }
+    if (btnPause)
+        btnPause->setEnabled(false);
 
-        widConfict->show();
-        widButton->show();
-        btnCoexist->setHidden(false);
-        showConflictButtons();
-
-        if (btnPause)
-            btnPause->setEnabled(false);
-    }
 }
 /*!
  * \brief TaskWidget::onHandlerTaskStateChange 处理和显示当前拷贝任务的状态变化
@@ -413,6 +394,14 @@ void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
     }
 }
 
+void TaskWidget::onInfoTimer()
+{
+    auto stop = !originInfo || !showFileInfo(originInfo, true);
+    stop = (!targetInfo || !showFileInfo(targetInfo, false)) && stop;
+    if (stop)
+        infoTimer.stop();
+}
+
 /*!
  * \brief TaskWidget::initUI 初始化当前任务的界面
  */
@@ -511,6 +500,8 @@ void TaskWidget::initConnection()
 {
     connect(btnPause, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnStop, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
+    connect(&infoTimer, &QTimer::timeout, this, &TaskWidget::onInfoTimer);
+    infoTimer.setInterval(200);
 }
 /*!
  * \brief TaskWidget::createConflictWidget 创建任务显示错误信息的widget
@@ -742,6 +733,62 @@ QString TaskWidget::formatTime(qint64 second) const
     }
 
     return timeString;
+}
+
+bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
+{
+    if (!info)
+        return false;
+
+    if (isOrg) {
+        originInfo = nullptr;
+    } else {
+        targetInfo = nullptr;
+    }
+
+    bool needRetry = false;
+
+    needRetry = !info->timeOf(TimeInfoType::kLastModifiedSecond).toULongLong();
+    auto thumImage = ThumbnailHelper::instance()->thumbnailImage(info->urlOf(UrlInfoType::kUrl),
+                                                            DFMGLOBAL_NAMESPACE::ThumbnailSize::kLarge);
+
+    if (!needRetry)
+        info->customData(Global::ItemRoles::kItemFileRefreshIcon);
+    auto icon = thumImage.isNull() ? info->fileIcon().pixmap(48, 48) : QPixmap::fromImage(thumImage);
+
+    auto modifyTimeStr = QString(tr("Time modified: %1"))
+            .arg(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
+                         ? info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
+                         : qApp->translate("MimeTypeDisplayManager", "Unknown"));
+    auto sizeStr = tr("In data statistics");
+    auto titleStr = isOrg ? tr("Original folder") : tr("Target folder");
+    if (info->isAttributes(OptInfoType::kIsDir)) {
+        if (info->countChildFile() < 0) {
+            needRetry = true;
+        } else {
+            QString filecount = info->countChildFile() <= 1 ? QObject::tr("%1 item").arg(info->countChildFile())
+                                                            : QObject::tr("%1 items").arg(info->countChildFile());
+            sizeStr = QString(tr("Contains: %1")).arg(filecount);
+        }
+    } else {
+        titleStr = isOrg ? tr("Original file") : tr("Target file");
+        sizeStr = QString(tr("Size: %1")).arg(info->extendAttributes(ExtInfoType::kSizeFormat).toString());
+    }
+    if (isOrg) {
+        lbSrcIcon->setPixmap(icon);
+        lbSrcModTime->setText(modifyTimeStr);
+        lbSrcTitle->setText(titleStr);
+        lbSrcFileSize->setText(sizeStr);
+        originInfo = needRetry ? info : nullptr;
+    } else {
+        lbDstIcon->setPixmap(icon);
+        lbDstModTime->setText(modifyTimeStr);
+        lbDstTitle->setText(titleStr);
+        lbDstFileSize->setText(sizeStr);
+        targetInfo = needRetry ? info : nullptr;
+    }
+
+    return needRetry;
 }
 
 void TaskWidget::enterEvent(QEvent *event)
