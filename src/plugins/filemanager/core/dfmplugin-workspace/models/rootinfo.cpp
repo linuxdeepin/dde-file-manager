@@ -81,14 +81,6 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
 
 void RootInfo::startWork(const QString &key, const bool getCache)
 {
-    // create watcher
-    watcher = WatcherFactory::create<AbstractFileWatcher>(url);
-    if (watcher.isNull()) {
-        qWarning() << "Create watcher failed! url = " << url;
-    } else {
-        startWatcher();
-    }
-
     if (!traversalThreads.contains(key))
         return;
     if (getCache && !sourceDataList.isEmpty())
@@ -100,21 +92,26 @@ void RootInfo::startWork(const QString &key, const bool getCache)
 
 void RootInfo::startWatcher()
 {
-    if (!watcher.isNull()) {
+    if (watcher)
         watcher->disconnect(this);
 
-        connect(watcher.data(), &AbstractFileWatcher::fileDeleted,
-                this, &RootInfo::doFileDeleted);
-        connect(watcher.data(), &AbstractFileWatcher::subfileCreated,
-                this, &RootInfo::dofileCreated);
-        connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
-                this, &RootInfo::doFileUpdated);
-        connect(watcher.data(), &AbstractFileWatcher::fileRename,
-                this, &RootInfo::dofileMoved);
-        watcher->startWatcher();
-    } else {
-        qWarning() << "Can't start watcher beacuse the watcher is nullptr! url = " << url;
+    // create watcher
+    watcher = WatcherFactory::create<AbstractFileWatcher>(url);
+    if (watcher.isNull()) {
+        qWarning() << "Create watcher failed! url = " << url;
+        return;
     }
+
+    connect(watcher.data(), &AbstractFileWatcher::fileDeleted,
+            this, &RootInfo::doFileDeleted);
+    connect(watcher.data(), &AbstractFileWatcher::subfileCreated,
+            this, &RootInfo::dofileCreated);
+    connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
+            this, &RootInfo::doFileUpdated);
+    connect(watcher.data(), &AbstractFileWatcher::fileRename,
+            this, &RootInfo::dofileMoved);
+
+    watcher->startWatcher();
 }
 
 int RootInfo::clearTraversalThread(const QString &key)
@@ -325,6 +322,8 @@ void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThre
     // 主线中执行
     connect(traversalThread.data(), &TraversalDirThreadManager::traversalFinished,
             this, &RootInfo::handleTraversalFinish, Qt::QueuedConnection);
+    connect(traversalThread.data(), &TraversalDirThreadManager::iteratorInitFinished,
+            this, &RootInfo::startWatcher, Qt::QueuedConnection);
 }
 
 void RootInfo::addChildren(const QList<QUrl> &urlList)

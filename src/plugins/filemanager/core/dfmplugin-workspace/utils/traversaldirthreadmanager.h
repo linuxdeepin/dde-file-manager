@@ -53,6 +53,7 @@ Q_SIGNALS:
                              bool isMixDirAndFile);
     void traversalFinished();
     void traversalRequestSort();
+    void iteratorInitFinished();
 
 protected:
     virtual void run() override;
