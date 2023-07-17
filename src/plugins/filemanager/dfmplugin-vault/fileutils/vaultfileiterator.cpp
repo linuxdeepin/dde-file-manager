@@ -5,19 +5,27 @@
 #include "vaultfileiterator.h"
 #include "private/vaultfileiteratorprivate.h"
 #include "utils/vaulthelper.h"
+
 #include <dfm-base/base/schemefactory.h>
 
-#include <QDirIterator>
+#include <dfm-io/denumerator.h>
+#include <dfm-io/dfmio_utils.h>
+
 #include <QSharedPointer>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
+USING_IO_NAMESPACE
 
 VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(VaultHelper::vaultToLocalUrl(url), nameFilters, filters, flags)
 {
     QUrl localUrl = VaultHelper::vaultToLocalUrl(url);
-    discIterator = QSharedPointer<QDirIterator>(new QDirIterator(localUrl.path(), nameFilters, filters, flags));
+    dfmioDirIterator.reset(new DFMIO::DEnumerator(localUrl, nameFilters,
+                                                  static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                                  static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
+    if (!dfmioDirIterator)
+        qCritical("Vault: create DEnumerator failed!");
 }
 
 VaultFileIterator::~VaultFileIterator()
@@ -26,28 +34,25 @@ VaultFileIterator::~VaultFileIterator()
 
 QUrl VaultFileIterator::next()
 {
-    if (discIterator && discIterator->hasNext()) {
-        return VaultHelper::instance()->pathToVaultVirtualUrl(discIterator->next());
-    }
+    if (dfmioDirIterator)
+        currentUrl = VaultHelper::instance()->pathToVaultVirtualUrl(dfmioDirIterator->next().path());
 
-    return QUrl();
+    return currentUrl;
 }
 
 bool VaultFileIterator::hasNext() const
 {
-    return discIterator->hasNext();
+    return (dfmioDirIterator ? dfmioDirIterator->hasNext() : false);
 }
 
 QString VaultFileIterator::fileName() const
 {
-    return discIterator->fileName();
+    return fileUrl().fileName();
 }
 
 QUrl VaultFileIterator::fileUrl() const
 {
-    QString path = discIterator->filePath();
-    QUrl url = VaultHelper::instance()->pathToVaultVirtualUrl(path);
-    return url;
+    return currentUrl;
 }
 
 const FileInfoPointer VaultFileIterator::fileInfo() const
