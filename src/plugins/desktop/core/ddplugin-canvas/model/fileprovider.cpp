@@ -38,6 +38,7 @@ bool FileProvider::setRoot(const QUrl &url)
         return false;
     }
 
+    qInfo() << "set root url" << url;
     rootUrl = url;
     if (watcher)
         watcher->disconnect(this);
@@ -51,7 +52,7 @@ bool FileProvider::setRoot(const QUrl &url)
         connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &FileProvider::rename, Qt::QueuedConnection);
         connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &FileProvider::update, Qt::QueuedConnection);
         watcher->startWatcher();
-        qInfo() << "set root url" << url;
+        qInfo() << "file watcher is started.";
         return true;
     }
 
@@ -86,6 +87,7 @@ void FileProvider::refresh(QDir::Filters filters)
 
     updateing = true;
     traversalThread->start();
+    qDebug() << "start file traversal";
 }
 
 void FileProvider::installFileFilter(QSharedPointer<FileFilter> filter)
@@ -108,7 +110,7 @@ void FileProvider::reset(QList<QUrl> children)
     QList<QUrl> urls { children };
     for (const auto &filter : fileFilters) {
         if (filter->fileTraversalFilter(urls))
-            qWarning() << "TraversalFilter returns true: it is invalid";
+            qDebug() << "TraversalFilter returns true: it is invalid";
     }
 
     emit refreshEnd(urls);

@@ -141,7 +141,7 @@ bool DragDropOper::drop(QDropEvent *event)
 
         ext.insert("dropUrl", QVariant(dropUrl));
         if (view->d->hookIfs->dropData(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
-            qDebug() << "droped by extend";
+            qInfo() << "data droped by extend";
             return true;
         }
     }
@@ -390,6 +390,12 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
             itemPos.insert(item, tmpPos);
         }
     }
+
+    if (itemPos.isEmpty()) {
+        qWarning() << "can not drop invaild items" << sourceUrls;
+        return false;
+    }
+
     auto resetFocus = [this](const QPoint &target) -> QModelIndex {
         auto droped = GridIns->item(view->screenNum(), target);
         auto newFocus = view->model()->index(droped);
@@ -407,9 +413,8 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
         GridIns->tryAppendAfter(itemPos.keys(), view->screenNum(), dropGridPos);
 
         // reset the focus for key move
-        auto newFocus = resetFocus(dropGridPos);
-        qDebug() << "reset focus "
-                 << "to" << newFocus;
+        resetFocus(dropGridPos);
+        qDebug() << "append items " << itemPos.first() << "begin" << view->screenNum() << dropGridPos << itemPos.size();
     } else if (itemfrom.size() == 1) {
         // items are from one view, using move.
         // normally, item should from the view that is event->source().
@@ -418,8 +423,9 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
         if (!focusItem.isEmpty()) {
             if (GridIns->move(view->screenNum(), dropGridPos, focusItem, itemPos.keys())) {
                 // reset the focus for key move
-                auto newFocus = resetFocus(dropGridPos);
-                qDebug() << "reset focus from" << focus << "to" << newFocus;
+                resetFocus(dropGridPos);
+                qDebug() << "move items" << focusItem << itemPos.value(focusItem) << "to"
+                         << view->screenNum() << dropGridPos << "count" << itemPos.size();
             }
         } else {
             qWarning() << "can not find fcous." << focus << fromView->screenNum();

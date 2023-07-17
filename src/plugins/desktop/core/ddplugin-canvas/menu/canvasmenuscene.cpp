@@ -271,6 +271,7 @@ bool CanvasMenuScene::triggered(QAction *action)
                 Qt::SortOrder order = d->view->model()->sortOrder();
                 if (role == d->view->model()->sortRole())
                     order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+                qInfo() << "sort items by" << actionId << "order" << order;
                 d->view->model()->setSortRole(role, order);
                 d->view->model()->sort();
 
@@ -318,6 +319,7 @@ bool CanvasMenuScene::triggered(QAction *action)
         // Auto arrange
         if (actionId == ActionID::kAutoArrange) {
             bool align = action->isChecked();
+            qInfo() << "enable auto arrange" << align;
             CanvasIns->setAutoArrange(align);
             return true;
         }

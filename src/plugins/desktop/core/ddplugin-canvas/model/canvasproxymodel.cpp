@@ -40,7 +40,7 @@ void CanvasProxyModelPrivate::sourceReset()
 {
     createMapping();
     q->endResetModel();
-    qDebug() << "model reseted, file count:" << fileList.count();
+    qInfo() << "canvas model reseted, file count:" << fileList.count();
 }
 
 void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, int start, int end)
@@ -756,7 +756,7 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     }
 
     if (d->hookIfs && d->hookIfs->dropMimeData(data, targetFileUrl, action)) {
-        qDebug() << "droped by extend module.";
+        qInfo() << "dropMimeData by extend module.";
         return true;
     }
 
