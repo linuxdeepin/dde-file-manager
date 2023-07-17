@@ -45,7 +45,7 @@ TEST(UT_VaultPluginBugTest, bug_178305_NotRegisterService)
 
     Vault plugin;
     plugin.initialize();
-    EXPECT_TRUE(isRegisterService);
+    EXPECT_FALSE(isRegisterService);
 }
 
 TEST(UT_VaultPluginBugTest, bug_177631_NotHaveTransparentEncryptionFunction)

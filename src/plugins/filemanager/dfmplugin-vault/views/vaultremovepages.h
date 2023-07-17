@@ -31,7 +31,7 @@ public slots:
 
     void onLockVault(int state);
 
-    void onVualtRemoveFinish(bool result);
+    void onVaultRemoveFinish(bool result);
 
 private slots:
     //! 异步授权时，此函数接收授权完成的结果

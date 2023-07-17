@@ -108,7 +108,8 @@ void VaultUnlockPages::pageSelect(PageType page)
     } break;
     case kPasswordRecoverPage: {
         passwordRecoveryView = new PasswordRecoveryView(this);
-        passwordRecoveryView->setResultsPage(retrievePasswordView->ValidationResults());
+        if (retrievePasswordView)
+            passwordRecoveryView->setResultsPage(retrievePasswordView->ValidationResults());
         if (!getContents().isEmpty()) {
             QWidget *widget = getContent(0);
             widget->hide();
