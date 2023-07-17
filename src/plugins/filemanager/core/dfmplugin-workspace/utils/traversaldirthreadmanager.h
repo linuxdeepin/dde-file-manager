@@ -55,6 +55,8 @@ Q_SIGNALS:
     void traversalFinished(QString traversalToken);
     void traversalRequestSort(QString traversalToken);
 
+    void iteratorInitFinished();
+
 protected:
     virtual void run() override;
 

@@ -94,6 +94,8 @@ public Q_SLOTS:
     void handleTraversalSort(const QString &travseToken);
     void handleGetSourceData(const QString &currentToken);
 
+    void startWatcher();
+
 private:
     void initConnection(const TraversalThreadManagerPointer &traversalThread);
 
@@ -106,7 +108,6 @@ private:
     bool containsChild(const QUrl &url);
     void updateChild(const QUrl &url);
 
-    void startWatcher();
     bool checkFileEventQueue();
     void enqueueEvent(const QPair<QUrl, EventType> &e);
     QPair<QUrl, EventType> dequeueEvent();
