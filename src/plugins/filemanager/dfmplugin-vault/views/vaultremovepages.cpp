@@ -95,7 +95,7 @@ void VaultRemovePages::initConnect()
 {
     connect(this, &VaultRemovePages::buttonClicked, this, &VaultRemovePages::onButtonClicked);
     connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, this, &VaultRemovePages::onLockVault);
-    connect(progressView, &VaultRemoveProgressView::removeFinished, this, &VaultRemovePages::onVualtRemoveFinish);
+    connect(progressView, &VaultRemoveProgressView::removeFinished, this, &VaultRemovePages::onVaultRemoveFinish);
 }
 
 void VaultRemovePages::showVerifyWidget()
@@ -273,7 +273,7 @@ void VaultRemovePages::onLockVault(int state)
     }
 }
 
-void VaultRemovePages::onVualtRemoveFinish(bool result)
+void VaultRemovePages::onVaultRemoveFinish(bool result)
 {
     using namespace dfmplugin_utils;
 
