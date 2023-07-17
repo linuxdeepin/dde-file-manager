@@ -50,7 +50,8 @@ void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfil
 
     auto notifyUrls = asyncInfo->notifyUrls();
     for (const auto &url : notifyUrls.keys()) {
-        emit fileRefreshFinished(url, notifyUrls.value(url), true);
+        for (const auto &strToken : notifyUrls.values(url))
+            emit fileRefreshFinished(url, strToken, true);
     }
 
     qureingInfo.removeOneByLock(asyncInfo);
