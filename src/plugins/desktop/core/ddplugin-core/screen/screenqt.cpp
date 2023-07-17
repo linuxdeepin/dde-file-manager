@@ -73,8 +73,6 @@ QRect ScreenQt::availableGeometry() const
         return ret;
     }
 
-//    qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
-//    qDebug() << "dealRectRatio dockrect " << dockrect;
     qDebug() << "ScreenQt ret " << ret << name();
     switch (DockInfoIns->position()) {
     case 0: //上

@@ -147,6 +147,7 @@ void CanvasManager::openEditor(const QUrl &url)
 
 void CanvasManager::setIconLevel(int level)
 {
+    qInfo() << "change icon level to" << level;
     auto allView = views();
     if (allView.isEmpty()) {
         if (DispalyIns->iconLevel() != level) {
@@ -186,6 +187,7 @@ bool CanvasManager::autoArrange() const
 
 void CanvasManager::setAutoArrange(bool on)
 {
+    qInfo() << "set auto arrange" << on;
     DispalyIns->setAutoAlign(on);
     GridIns->setMode(on ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
     if (on) {
@@ -231,20 +233,23 @@ void CanvasManager::onCanvasBuild()
         // init grid
         GridIns->initSurface(1);
 
-        const QString screeName = getScreenName(primary);
-        if (screeName.isEmpty()) {
+        const QString screenName = getScreenName(primary);
+        if (screenName.isEmpty()) {
             qWarning() << "can not get screen name from root window";
             return;
         }
 
-        CanvasViewPointer view = d->viewMap.value(screeName);
+        CanvasViewPointer view = d->viewMap.value(screenName);
         d->viewMap.clear();
-        if (view.get())
+        if (view.get()) {
             d->updateView(view, primary, 1);
-        else
+            qInfo() << "update primary view" << screenName;
+        } else {
             view = d->createView(primary, 1);
+            qInfo() << "create primary view" << screenName;
+        }
 
-        d->viewMap.insert(screeName, view);
+        d->viewMap.insert(screenName, view);
     } else {
         int screenNum = 0;
         // init grid
@@ -264,8 +269,10 @@ void CanvasManager::onCanvasBuild()
             //新增
             if (view.get()) {
                 d->updateView(view, win, screenNum);
+                qInfo() << "update view" << screenNum << screenName;
             } else {
                 view = d->createView(win, screenNum);
+                qInfo() << "create view" << screenNum << screenName;
                 d->viewMap.insert(screenName, view);
             }
         }
@@ -308,11 +315,11 @@ void CanvasManager::onGeometryChanged()
 
         // no need to update.
         if (view->geometry() == avRect) {
-            qDebug() << "view geometry is equal to rect,and discard changes" << avRect;
+            qInfo() << "view geometry is equal to rect,and discard changes" << avRect;
             continue;
         }
 
-        qDebug() << "view geometry change from" << view->geometry() << "to" << avRect;
+        qInfo() << "view geometry change from" << view->geometry() << "to" << avRect;
         view->setGeometry(avRect);
     }
 }
@@ -343,6 +350,7 @@ void CanvasManager::reloadItem()
         existItems.append(df.toString());
     }
 
+    qInfo() << "add items to grid, count:" << existItems.count() << DispalyIns->autoAlign();
     GridIns->setItems(existItems);
 
     // rearrange
@@ -463,6 +471,7 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, QWidget *ro
 
 void CanvasManagerPrivate::onHiddenFlagsChanged(bool show)
 {
+    qInfo() << "hidden flags changed to" << show;
     if (show != canvasModel->showHiddenFiles()) {
         canvasModel->setShowHiddenFiles(show);
         canvasModel->refresh(canvasModel->rootIndex());
@@ -599,6 +608,7 @@ void CanvasManagerPrivate::onFileSorted()
     for (const QUrl &df : actualList)
         existItems.append(df.toString());
 
+    qInfo() << "layout items to align" << existItems.size();
     GridIns->setItems(existItems);
     GridIns->setMode(oldMode);
     q->update();

@@ -92,8 +92,7 @@ void DeepinLicenseHelper::getLicenseState(DeepinLicenseHelper *self)
     int state = self->licenseInterface->authorizationState();
     LicenseProperty prop = self->getServiceProperty();
 
-    if(prop == LicenseProperty::Noproperty)
-    {
+    if (prop == LicenseProperty::Noproperty) {
         qInfo() << "no service property obtained,try to get AuthorizetionProperty";
         prop = self->getAuthorizationProperty();
     }

@@ -338,7 +338,7 @@ void CanvasGridPrivate::sequence(QStringList sortedItems)
     clean();
 
     for (int idx : surfaceIndex()) {
-        qDebug() << "surface id:" << idx << "left item " << sortedItems.size();
+        qDebug() << "surface id:" << idx << "remaining items " << sortedItems.size();
         QHash<QPoint, QString> allPos;
         QHash<QString, QPoint> allItem;
         if (!sortedItems.isEmpty()) {
@@ -351,7 +351,7 @@ void CanvasGridPrivate::sequence(QStringList sortedItems)
                 allPos.insert(pos, item);
                 allItem.insert(item, pos);
             }
-            qDebug() << "surface" << idx << "drop items count:" << cur << "max" << max;
+            qDebug() << "surface" << idx << "puts items count:" << cur << "max" << max;
         }
 
         itemPos.insert(idx, allItem);
@@ -375,6 +375,7 @@ void CanvasGridPrivate::restore(QStringList currentItems)
 
     // get item pos from record.
     QHash<int, QHash<QString, QPoint> > profile = profiles();
+    qInfo() << "profile keys" << profile.keys();
 
     // the item's pos in record is invalid to current grid.
     QStringList invalidPos;
@@ -382,6 +383,7 @@ void CanvasGridPrivate::restore(QStringList currentItems)
     // restore each surface.
     for (int idx : idxs) {
         const QHash<QString, QPoint> &oldPos = profile.value(idx);
+        qInfo() << "profile" << idx << "has items" << oldPos.size();
         const QSize surfaceSize = surfaces.value(idx);
 
         // restore item always existed to recored pos.

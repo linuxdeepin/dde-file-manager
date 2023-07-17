@@ -283,7 +283,7 @@ void WallpaperList::showEvent(QShowEvent *event)
 QWidget *WallpaperList::itemAt(int idx) const
 {
     if (idx >= contentLayout->count() || idx < 0) {
-        qCritical() << "error index" << idx << "gridsie" << grid << geometry();
+        qCritical() << "error index" << idx << "gridsie" << grid << geometry() << contentLayout->count();
         return nullptr;
     }
 
@@ -300,8 +300,13 @@ void WallpaperList::updateBothEndsItem()
     if (nextItem)
         nextItem->setOpacity(1);
 
-    prevItem = qobject_cast<WallpaperItem *>(itemAt(kItemWidth / 2, kItemHeight / 2));
-    nextItem = qobject_cast<WallpaperItem *>(itemAt(width() - kItemWidth / 2, kItemHeight / 2));
+    if (contentLayout->isEmpty()) {
+        prevItem = nullptr;
+        nextItem = nullptr;
+    } else {
+        prevItem = qobject_cast<WallpaperItem *>(itemAt(kItemWidth / 2, kItemHeight / 2));
+        nextItem = qobject_cast<WallpaperItem *>(itemAt(width() - kItemWidth / 2, kItemHeight / 2));
+    }
 
     if (currentValue == horizontalScrollBar()->minimum())
         prevItem = nullptr;

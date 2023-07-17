@@ -323,11 +323,13 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         QDBusReply<QString> reply = call.reply();
         QString value = reply.value();
         auto wallapers = processListReply(value);
+        qDebug() << "get available wallpapers" << wallapers;
 #ifdef COMPILE_ON_V23
         actualEffectivedWallpaper = appearanceIfs->GetCurrentWorkspaceBackgroundForMonitor(screenName);
 #else
         actualEffectivedWallpaper = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
 #endif
+        qDebug() << "get current wallpaper" << screenName << actualEffectivedWallpaper;
         if (actualEffectivedWallpaper.contains(kDefaultWallpaperPath)) {
             QString errString;
             QUrl currentUrl;
@@ -346,7 +348,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             }
 
             if (!fileInfo) {
-                qDebug() << errString << "get final file info failed:" << currentUrl << actualEffectivedWallpaper;
+                qWarning() << errString << "get file info failed:" << currentUrl << actualEffectivedWallpaper;
             } else {
                 actualEffectivedWallpaper = fileInfo->urlOf(UrlInfoType::kUrl).toString();
             }

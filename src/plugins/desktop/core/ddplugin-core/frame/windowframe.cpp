@@ -156,7 +156,7 @@ void WindowFrame::buildBaseWindow()
         } else {
             winPtr = d->createWindow(primary);
         }
-
+        qInfo() << "primary frame" << primary->name();
         d->updateProperty(winPtr, primary, true);
         d->windows.insert(primary->name(), winPtr);
 
@@ -167,19 +167,21 @@ void WindowFrame::buildBaseWindow()
         for (auto screenName : d->windows.keys()) {
             // 删除实际不存在的数据
             if (!ddplugin_desktop_util::screenProxyScreen(screenName)) {
-                qInfo() << "screen:" << screenName << "  invalid, delete it.";
+                qInfo() << "screen:" << screenName << "is invalid, delete frame.";
                 d->windows.remove(screenName);
             }
         }
         auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
+        qInfo() << "primary screen:" << primary->name();
         for (ScreenPointer s : screens) {
             BaseWindowPointer winPtr = d->windows.value(s->name());
             if (!winPtr.isNull()) {
+                qInfo() << "update frame" << s->name();
                 if (winPtr->geometry() != s->geometry())
                     winPtr->setGeometry(s->geometry());
             } else {
                 // 添加缺少的数据
-                qInfo() << "screen:" << s->name() << "  added, create it.";
+                qInfo() << "screen:" << s->name() << " added, create frame.";
                 winPtr = d->createWindow(s);
                 d->windows.insert(s->name(), winPtr);
             }
