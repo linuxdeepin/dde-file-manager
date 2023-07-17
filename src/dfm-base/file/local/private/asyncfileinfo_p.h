@@ -47,7 +47,7 @@ public:
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
     QReadWriteLock notifyLock;
-    QMap<QUrl, QString> notifyUrls;
+    QMultiMap<QUrl, QString> notifyUrls;
     AsyncFileInfo *const q;
 
 public:
