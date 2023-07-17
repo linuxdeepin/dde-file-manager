@@ -58,7 +58,6 @@ public:
     QRect visualRect(const QPoint &gridPos) const;
     QString visualItem(const QPoint &gridPos) const;
     bool itemGridpos(const QString &item, QPoint &gridPos) const;
-    bool isEmptyArea(const QPoint &pos) const;
     bool isWaterMaskOn();
 public:
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
