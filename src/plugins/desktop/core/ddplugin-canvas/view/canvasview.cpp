@@ -330,11 +330,16 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
     itemDelegate()->revertAndcloseEditor();
 
     const QModelIndex &index = indexAt(event->pos());
+    bool isEmptyArea = !index.isValid();
     Qt::ItemFlags flags;
 
-    if (d->isEmptyArea(event->pos())) {
+    if (isEmptyArea) {
         d->menuProxy->showEmptyAreaMenu(flags, gridPos);
     } else {
+        // menu focus is on the index that is not selected
+        if (!selectionModel()->isSelected(index))
+            selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+
         flags = model()->flags(index);
         d->menuProxy->showNormalMenu(index, flags, gridPos);
     }
@@ -880,18 +885,6 @@ bool CanvasViewPrivate::itemGridpos(const QString &item, QPoint &gridPos) const
     }
 
     return false;
-}
-
-bool CanvasViewPrivate::isEmptyArea(const QPoint &pos) const
-{
-    const QModelIndex &index = q->indexAt(pos);
-    if (index.isValid() && q->selectionModel()->isSelected(index)) {
-        qDebug() << "not empty:" << pos << index.data().toString();
-        return false;
-    }
-    // todo(wangcl) expand item geometry,and so on
-
-    return true;
 }
 
 bool CanvasViewPrivate::isWaterMaskOn()
