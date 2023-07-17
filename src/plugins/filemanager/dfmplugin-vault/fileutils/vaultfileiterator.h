@@ -35,7 +35,8 @@ public:
     virtual QUrl url() const override;
 
 private:
-    QSharedPointer<QDirIterator> discIterator;
+    QSharedPointer<dfmio::DEnumerator> dfmioDirIterator { Q_NULLPTR };
+    QUrl currentUrl;
 };
 }
 #endif   // VAULTFILEDIRITERATOR_H
