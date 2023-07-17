@@ -71,11 +71,13 @@ void TraversalDirThreadManager::start()
         }
     }
 
+    Q_EMIT iteratorInitFinished();
     TraversalDirThread::start();
 }
 
 void TraversalDirThreadManager::onAsyncIteratorOver()
 {
+    Q_EMIT iteratorInitFinished();
     TraversalDirThread::start();
 }
 
