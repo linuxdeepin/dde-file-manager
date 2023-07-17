@@ -7,12 +7,14 @@
 
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/interfaces/fileinfo.h>
 
 #include <DWaterProgress>
 #include <DIconButton>
 
 #include <QWidget>
 #include <QLabel>
+#include <QTimer>
 
 class QPushButton;
 class QCheckBox;
@@ -51,6 +53,7 @@ private Q_SLOTS:
     void onShowTaskInfo(const JobInfoPointer JobInfo);
     void onShowTaskProccess(const JobInfoPointer JobInfo);
     void onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo);
+    void onInfoTimer();
 
 private:
     void initUI();
@@ -61,6 +64,7 @@ private:
     void showConflictButtons(bool showBtns = true, bool showConflict = true);
     void onMouseHover(const bool hover);
     QString formatTime(qint64 second) const;
+    bool showFileInfo(const FileInfoPointer info, const bool isOrg);
 
 protected:
     virtual void enterEvent(QEvent *event);
@@ -98,6 +102,10 @@ private:
     QAtomicInteger<bool> isPauseState { false };   // 是否是暂停状态
     QAtomicInteger<bool> isBtnHidden { false };   // 暂停、停止按钮隐藏
     QAtomicInteger<bool> isShowError { false };   // 处于错误提示状态
+
+    QTimer infoTimer;
+    FileInfoPointer originInfo{ nullptr };
+    FileInfoPointer targetInfo{ nullptr };
 };
 
 }
