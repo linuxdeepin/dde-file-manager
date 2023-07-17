@@ -452,6 +452,19 @@ QVariant AsyncFileInfo::customAttribute(const char *key, const DFileInfo::DFileA
     return QVariant();
 }
 
+QVariant AsyncFileInfo::customData(int role) const
+{
+    using namespace dfmbase::Global;
+    if (role == kItemFileRefreshIcon) {
+        extendOtherCache.remove(ExtInfoType::kFileThumbnail);
+        QWriteLocker locker(&d->iconLock);
+        d->fileIcon = QIcon();
+        return QVariant();
+    }
+
+    return FileInfo::customData(role);
+}
+
 QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> AsyncFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
     return d->mediaInfo(type, ids);
@@ -476,7 +489,7 @@ void AsyncFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const
     }
 }
 
-QMap<QUrl, QString> AsyncFileInfo::notifyUrls() const
+QMultiMap<QUrl, QString> AsyncFileInfo::notifyUrls() const
 {
     QReadLocker lk(&const_cast<AsyncFileInfoPrivate *>(d.data())->notifyLock);
     return d->notifyUrls;
@@ -491,8 +504,11 @@ void AsyncFileInfo::setNotifyUrl(const QUrl &url, const QString &infoPtr)
         return;
     }
     QWriteLocker lk(&d->notifyLock);
-    if (!d->notifyUrls.contains(url))
+    if (!d->notifyUrls.contains(url)) {
         d->notifyUrls.insert(url, infoPtr);
+    } else if (d->notifyUrls.values(url).contains(infoPtr)){
+        d->notifyUrls.insert(url, infoPtr);
+    }
 }
 
 void AsyncFileInfo::cacheAsyncAttributes()
@@ -969,7 +985,7 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
         FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(symlink));
         auto asyncInfo = info.dynamicCast<AsyncFileInfo>();
         if (asyncInfo) {
-            asyncInfo->setNotifyUrl(q->fileUrl(), QString::number(quintptr(this), 16));
+            asyncInfo->setNotifyUrl(q->fileUrl(), QString::number(quintptr(q), 16));
             auto notifyUrls = q->notifyUrls();
             for (const auto &url : notifyUrls.keys()) {
                 asyncInfo->setNotifyUrl(url, notifyUrls.value(url));
