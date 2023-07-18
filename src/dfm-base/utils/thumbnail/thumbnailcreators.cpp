@@ -73,9 +73,17 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
     }
 
     const auto &data = ffmpeg.readAllStandardOutput();
+    if (data.isEmpty())
+        return img;
+
     QString outputs(data);
-    if (!img.loadFromData(data))   // filter the outputs outputed by video tool.
-        outputs = outputs.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
+    if (!img.loadFromData(data)) {   // filter the outputs outputed by video tool.
+        QStringList data = outputs.split(QRegExp("[\n]"), QString::SkipEmptyParts);
+        if (data.isEmpty())
+            return img;
+
+        outputs = data.last();
+    }
 
     if (!img.loadFromData(outputs.toLocal8Bit().data(), "png"))
         qWarning() << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
