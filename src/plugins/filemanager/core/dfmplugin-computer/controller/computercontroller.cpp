@@ -308,7 +308,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
                 ComputerUtils::setCursorState();
                 return;
             }
-            qDebug() << "mount device failed: " << id << err.message << err.code;
+            qInfo() << "mount device failed: " << id << err.message << err.code;
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         }
         ComputerUtils::setCursorState();
@@ -328,7 +328,7 @@ void ComputerController::actEject(const QUrl &url)
         id = ComputerUtils::getProtocolDevIdByUrl(url);
         DevMngIns->unmountProtocolDevAsync(id, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             if (!ok) {
-                qWarning() << "unmount protocol device failed: " << id << err.message << err.code;
+                qInfo() << "unmount protocol device failed: " << id << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
         });
@@ -379,8 +379,6 @@ void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, b
     if (sfx == SuffixInfo::kBlock) {
         mountDevice(0, info, kNone);
         return;
-    } else if (sfx == SuffixInfo::kProtocol) {
-        return;
     }
 }
 
@@ -418,7 +416,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         devId = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
         DevMngIns->unmountProtocolDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             if (!ok) {
-                qWarning() << "unmount protocol device failed: " << devId << err.message << err.code;
+                qInfo() << "unmount protocol device failed: " << devId << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
         });
@@ -620,7 +618,7 @@ void ComputerController::handleNetworkCdCall(quint64 winId, DFMEntryFileInfoPoin
     auto target = info->targetUrl();
     QString ip, port;
     if (!NetworkUtils::instance()->parseIp(target.path(), ip, port)) {
-        qDebug() << "parse ip address failed: " << target;
+        qWarning() << "parse ip address failed: " << target;
         ComputerEventCaller::cdTo(winId, target);
     } else {
         ComputerUtils::setCursorState(true);

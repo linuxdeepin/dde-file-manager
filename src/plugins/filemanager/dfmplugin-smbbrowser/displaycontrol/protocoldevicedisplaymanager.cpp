@@ -178,7 +178,7 @@ void ProtocolDeviceDisplayManager::onMenuSceneAdded(const QString &scene)
     if (scene != plugin_events::kComputerMenu)
         return;
     bool ok = dfmplugin_menu_util::menuSceneBind(VirtualEntryMenuCreator::name(), scene);
-    pddmDbg << "bind virtual entry menu to computer: " << ok;
+    qInfo() << "bind virtual entry menu to computer: " << ok;
 }
 
 void ProtocolDeviceDisplayManagerPrivate::init()

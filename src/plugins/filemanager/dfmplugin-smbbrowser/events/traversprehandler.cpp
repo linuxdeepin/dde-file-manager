@@ -44,6 +44,7 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     }
 
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
+        qInfo() << "mount done: " << url << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
             doChangeCurrentUrl(winId, mpt, subPath, url);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {

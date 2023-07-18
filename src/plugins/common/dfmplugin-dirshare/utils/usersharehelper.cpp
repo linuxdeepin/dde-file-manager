@@ -141,7 +141,7 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
 {
     QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, userName, passwd);
     bool result = reply.isValid() && reply.error().message().isEmpty();
-    qDebug() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
+    qInfo() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
 
     Q_EMIT sambaPasswordSet(result);
 }
@@ -374,7 +374,7 @@ void UserShareHelper::onShareChanged(const QString &path)
         return;
 
     pollingSharesTimer->start();
-    QTimer::singleShot(1000, this, [=] { /*TODO(xust) TODO(liuyangming) request to refresh file view*/ });
+    //    QTimer::singleShot(1000, this, [=] { /*TODO(xust) TODO(liuyangming) request to refresh file view*/ });
 }
 
 void UserShareHelper::onShareFileDeleted(const QString &path)

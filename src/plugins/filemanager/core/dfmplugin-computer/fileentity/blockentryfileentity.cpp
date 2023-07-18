@@ -99,43 +99,45 @@ bool BlockEntryFileEntity::exists() const
     bool hasExtendedPartition { qvariant_cast<bool>(datas.value(DeviceProperty::kHasExtendedPatition)) };
     bool isLoopDevice { qvariant_cast<bool>(datas.value(DeviceProperty::kIsLoopDevice)) };
 
+    QString msg { "blockdevice is ignored: " };
+
     if (isLoopDevice && !hasFileSystem) {
-        qInfo() << "loop device has no filesystem so hide it: " << id;
+        qInfo() << msg << "loop device without filesystem." << id;
         return false;
     }
 
     if (hintIgnore && !isLoopDevice) {
-        qInfo() << "block device is ignored by hintIgnore:" << id;
+        qInfo() << msg << "hintIgnore is TRUE:" << id;
         return false;
     }
 
     if (!hasFileSystem && !opticalDrive && !isEncrypted) {
         bool removable { qvariant_cast<bool>(datas.value(DeviceProperty::kRemovable)) };
         if (!removable) {   // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-            qInfo() << "block device is ignored by wrong removeable set for system disk:" << id;
+            qInfo() << msg << "system disk without filesystem." << id;
             return false;
         }
     }
 
     if (cryptoBackingDevice.length() > 1) {
-        qInfo() << "block device is ignored by crypted back device:" << id;
+        qInfo() << msg << "decrypted cleartext device." << id;
         return false;
     }
 
     // 是否是设备根节点，设备根节点无须记录
     if (hasPartitionTable) {   // 替换 FileUtils::deviceShouldBeIgnore
-        qInfo() << "block device is ignored by parent node:" << id;
+        qInfo() << msg << "device with a partition table." << id;
         return false;
     }
 
     if (hasPartition && hasExtendedPartition) {
-        qInfo() << "block device is ignored by extended partion type" << id;
+        qInfo() << msg << "device with extended partition." << id;
         return false;
     }
 
     quint64 blkSize = { qvariant_cast<quint64>(datas.value(DeviceProperty::kSizeTotal)) };
     if (blkSize < 1024 && !opticalDrive && !hasFileSystem) {
-        qInfo() << "block device is ignored cause tiny size: " << blkSize << id;
+        qInfo() << msg << "tiny size." << blkSize << id;
         return false;
     }
 

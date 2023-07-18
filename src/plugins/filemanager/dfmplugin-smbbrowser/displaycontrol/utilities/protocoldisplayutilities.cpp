@@ -107,7 +107,7 @@ void computer_sidebar_event_calls::sidebarMenuCall(quint64 winId, const QUrl &ur
 
     QScopedPointer<AbstractMenuScene> scene(menuSceneCreateScene(kComputerMenu));
     if (!scene) {
-        pddmWar << "Craete scene for computer failed: " << kComputerMenu;
+        pddmWar << "Create scene for computer failed: " << kComputerMenu;
         return;
     }
 
