@@ -58,6 +58,7 @@ private:
     void createBasicWidget(const QUrl &url);
     void createPermissionManagerWidget(const QUrl &url);
     int contentHeight();
+    void setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo);
 
 protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
