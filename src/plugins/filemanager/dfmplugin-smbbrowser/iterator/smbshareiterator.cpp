@@ -88,3 +88,10 @@ QUrl SmbShareIterator::url() const
 {
     return {};
 }
+
+bool SmbShareIterator::initIterator()
+{
+    if (d->enumerator)
+        return d->enumerator->initEnumerator(oneByOne());
+    return false;
+}

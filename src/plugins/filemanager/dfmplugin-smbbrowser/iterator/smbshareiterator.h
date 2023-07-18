@@ -30,6 +30,7 @@ public:
     virtual QUrl fileUrl() const override;
     virtual const FileInfoPointer fileInfo() const override;
     virtual QUrl url() const override;
+    bool initIterator() override;
 
 private:
     QScopedPointer<SmbShareIteratorPrivate> d;
