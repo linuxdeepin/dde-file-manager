@@ -17,6 +17,9 @@ ProxyFileInfo::ProxyFileInfo(const QUrl &url)
 
 ProxyFileInfo::~ProxyFileInfo()
 {
+    auto asyncInfo = this->proxy.dynamicCast<AsyncFileInfo>();
+    if (asyncInfo)
+        asyncInfo->removeNotifyUrl(url, QString::number(quintptr(this), 16));
 }
 
 QUrl ProxyFileInfo::fileUrl() const
@@ -42,10 +45,8 @@ void ProxyFileInfo::setProxy(const FileInfoPointer &proxy)
 {
     this->proxy = proxy;
     auto asyncInfo = this->proxy.dynamicCast<AsyncFileInfo>();
-    if (asyncInfo) {
+    if (asyncInfo)
         asyncInfo->setNotifyUrl(url, QString::number(quintptr(this), 16));
-        asyncInfo->refresh();
-    }
 }
 
 QString dfmbase::ProxyFileInfo::filePath() const
