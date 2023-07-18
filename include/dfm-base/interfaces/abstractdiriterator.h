@@ -112,6 +112,10 @@ public:
     {
         return true;
     }
+    virtual bool initIterator()
+    {
+        return true;
+    }
 };
 
 }

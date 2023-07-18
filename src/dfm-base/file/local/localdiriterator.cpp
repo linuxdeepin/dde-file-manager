@@ -226,6 +226,13 @@ bool LocalDirIterator::oneByOne()
     return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
 }
 
+bool LocalDirIterator::initIterator()
+{
+    if (d->dfmioDirIterator)
+        return d->dfmioDirIterator->initEnumerator(oneByOne());
+    return false;
+}
+
 DEnumeratorFuture *LocalDirIterator::asyncIterator()
 {
     if (d->dfmioDirIterator)

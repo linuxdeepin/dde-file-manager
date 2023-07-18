@@ -60,6 +60,13 @@ const FileInfoPointer VaultFileIterator::fileInfo() const
     return InfoFactory::create<FileInfo>(fileUrl());
 }
 
+bool VaultFileIterator::initIterator()
+{
+    if (dfmioDirIterator)
+        return dfmioDirIterator->initEnumerator(oneByOne());
+    return false;
+}
+
 QUrl VaultFileIterator::url() const
 {
     return VaultHelper::instance()->rootUrl();

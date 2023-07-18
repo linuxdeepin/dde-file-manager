@@ -34,6 +34,8 @@ public:
 
     virtual QUrl url() const override;
 
+    bool initIterator() override;
+
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator { Q_NULLPTR };
     QUrl currentUrl;
