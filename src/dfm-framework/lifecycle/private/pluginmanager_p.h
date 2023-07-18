@@ -36,7 +36,7 @@ class PluginManagerPrivate : public QSharedData
     QStringList loadedVirtualPlugins;
     QStringList unloadedVirtualPlugins;
     QQueue<PluginMetaObjectPointer> readQueue;
-    QQueue<PluginMetaObjectPointer> notLazyLoadQuene;
+    QQueue<PluginMetaObjectPointer> pluginsToLoad;
     QQueue<PluginMetaObjectPointer> loadQueue;
     bool allPluginsInitialized { false };
     bool allPluginsStarted { false };

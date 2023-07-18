@@ -9,12 +9,15 @@
 #include <QTextCodec>
 #include <QIcon>
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <signal.h>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 #ifdef DFM_ORGANIZATION_NAME
 #    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
@@ -67,17 +70,10 @@ static bool singlePluginLoad(const QString &pluginName, const QString &libName)
 
 static bool pluginsLoad()
 {
-    static const QStringList kBlackNameList {
-        "dfmplugin-burn",
-        "dfmplugin-dirshare",
-        "dfmplugin-myshares",
-        "dfmplugin-propertydialog",
-        "dfmplugin-trashcore",
-        "dfmplugin-trash",
-        "dfmplugin-filepreview",
-        "dfmplugin-vault",
-        "dfmplugin-phone"   // TODO(zhangs): use white list
-    };
+    QString msg;
+    if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
+        qWarning() << "Load plugins but dconfig failed: " << msg;
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filedialog.blackList").toStringList() };
 
     static const QStringList kLazyLoadPluginNames {
         "dfmplugin-emblem",
@@ -105,7 +101,7 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::initialize({ kDialogPluginInterface,
                                            kFmPluginInterface,
                                            kCommonPluginInterface },
-                                         pluginsDirs, kBlackNameList, kLazyLoadPluginNames);
+                                         pluginsDirs, blackNames, kLazyLoadPluginNames);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
