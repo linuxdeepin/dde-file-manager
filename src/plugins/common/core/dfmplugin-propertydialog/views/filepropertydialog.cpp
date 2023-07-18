@@ -9,6 +9,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>
@@ -27,6 +28,7 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
+DFMGLOBAL_USE_NAMESPACE
 
 static constexpr int kArrowExpandSpacing { 10 };
 static constexpr int kArrowExpandHeader { 30 };
@@ -79,8 +81,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
     fileIcon = new QLabel(this);
     fileIcon->setFixedHeight(128);
     currentInfo = InfoFactory::create<FileInfo>(url);
-    if (!currentInfo.isNull())
-        fileIcon->setPixmap(currentInfo->fileIcon().pixmap(128, 128));
+    setFileIcon(fileIcon, currentInfo);
 
     editStackWidget = new EditStackedWidget(this);
     editStackWidget->selectFile(url);
@@ -145,6 +146,21 @@ int FilePropertyDialog::contentHeight()
             + contentsMargins().top()
             + contentsMargins().bottom()
             + 40);
+}
+
+void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
+{
+    if (!fileInfo.isNull()) {
+        QUrl localUrl = fileInfo->urlOf(FileInfo::FileUrlInfoType::kRedirectedFileUrl);
+        if (ThumbnailHelper::instance()->checkThumbEnable(localUrl)) {
+            QImage img = ThumbnailHelper::instance()->thumbnailImage(localUrl, ThumbnailSize::kLarge);
+            if (!img.isNull()) {
+                fileIcon->setPixmap(QPixmap::fromImage(img).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                return;
+            }
+        }
+        fileIcon->setPixmap(fileInfo->fileIcon().pixmap(128, 128));
+    }
 }
 
 void FilePropertyDialog::selectFileUrl(const QUrl &url)
@@ -244,7 +260,7 @@ void FilePropertyDialog::onFileInfoUpdated(const QUrl &url, const QString &infoP
     if (!fileIcon)
         return;
 
-    fileIcon->setPixmap(currentInfo->fileIcon().pixmap(128, 128));
+    setFileIcon(fileIcon, currentInfo);
 }
 
 void FilePropertyDialog::mousePressEvent(QMouseEvent *event)
