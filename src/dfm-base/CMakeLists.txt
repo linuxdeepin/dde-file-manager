@@ -187,3 +187,4 @@ install(FILES ${AssetsPath}/.readme DESTINATION ${ContexMenuDir})
 
 include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
+INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")

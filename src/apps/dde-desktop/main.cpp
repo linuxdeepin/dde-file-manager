@@ -9,6 +9,7 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -52,8 +53,14 @@ static const char *const kLibCore = "libddplugin-core.so";
 static constexpr int kMemoryThreshold { 80 * 1024 };   // 80MB
 static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
 
+DFMBASE_USE_NAMESPACE
+
 static bool pluginsLoad()
 {
+    QString msg;
+    if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
+        qWarning() << "Load plugins but dconfig failed: " << msg;
+
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
@@ -77,7 +84,8 @@ static bool pluginsLoad()
                                                     "dfmplugin-tag", "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem",
                                                     "dfmplugin-filepreview" };
 
-    DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, {}, kLazyLoadPluginNames);
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
+    DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames, kLazyLoadPluginNames);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

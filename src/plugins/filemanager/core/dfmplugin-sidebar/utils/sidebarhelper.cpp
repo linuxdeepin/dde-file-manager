@@ -223,11 +223,6 @@ void SideBarHelper::bindSettings()
         SettingBackend::instance()->addToSerialDataKey(pair.first);
         bindConf(pair.first, pair.second);
     });
-
-    if (DSysInfo::isCommunityEdition()) {
-        SettingDialog::setItemVisiable("advance.items_in_sidebar.vault", false);
-        qDebug() << "hide vault config in community edition.";
-    }
 }
 
 QVariantMap SideBarHelper::hiddenRules()

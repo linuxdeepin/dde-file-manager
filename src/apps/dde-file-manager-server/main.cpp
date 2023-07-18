@@ -4,19 +4,23 @@
 
 #include "config.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+#include <dfm-framework/dpf.h>
+
 #include <DApplication>
 #include <DSysInfo>
 
 #include <QDebug>
 #include <QDir>
 
-#include <dfm-framework/dpf.h>
-
 #include <signal.h>
 
 static constexpr char kServerInterface[] { "org.deepin.plugin.server" };
 static constexpr char kPluginCore[] { "serverplugin-core" };
 static constexpr char kLibCore[] { "libserverplugin-core.so" };
+
+DFMBASE_USE_NAMESPACE
 
 #ifdef DFM_ORGANIZATION_NAME
 #    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
@@ -33,28 +37,12 @@ static void initLog()
     dpfLogManager->registerFileAppender();
 }
 
-static bool isLoadVaultPlugin()
-{
-    DSysInfo::UosType uosType = DSysInfo::uosType();
-    DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
-    if (DSysInfo::UosServer == uosType) {
-        if (DSysInfo::UosEnterprise == uosEdition
-            || DSysInfo::UosEnterpriseC == uosEdition
-            || DSysInfo::UosEuler == uosEdition) {
-            return true;
-        }
-    } else if (DSysInfo::UosDesktop == uosType) {
-        if (DSysInfo::UosProfessional == uosEdition
-            || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)
-            || DSysInfo::UosEducation == uosEdition) {
-            return true;
-        }
-    }
-    return false;
-}
-
 static bool pluginsLoad()
 {
+    QString msg;
+    if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
+        qWarning() << "Load plugins but dconfig failed: " << msg;
+
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
@@ -66,11 +54,7 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_SERVER_EDGE_DIR);
 #endif
     qInfo() << "Using plugins dir:" << pluginsDirs;
-
-    QStringList blackNames;
-    if (!isLoadVaultPlugin())
-        blackNames << "serverplugin-vaultdaemon";
-
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "server.blackList").toStringList() };
     DPF_NAMESPACE::LifeCycle::initialize({ kServerInterface }, pluginsDirs, blackNames);
 
     qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
