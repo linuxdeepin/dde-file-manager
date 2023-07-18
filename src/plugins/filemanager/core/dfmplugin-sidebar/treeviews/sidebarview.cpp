@@ -408,6 +408,13 @@ void SideBarView::dropEvent(QDropEvent *event)
     }
 }
 
+void SideBarView::startDrag(Qt::DropActions supportedActions)
+{
+    if (!d->draggedUrl.isValid())
+        return;
+    DTreeView::startDrag(supportedActions);
+}
+
 QModelIndex SideBarView::indexAt(const QPoint &p) const
 {
     return QTreeView::indexAt(p);
