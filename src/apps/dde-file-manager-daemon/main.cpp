@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QDir>
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <unistd.h>
@@ -20,6 +22,8 @@
 static constexpr char kDaemonInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemonplugin-core" };
 static constexpr char kLibCore[] { "libdaemonplugin-core.so" };
+
+DFMBASE_USE_NAMESPACE
 
 static void handleSIGTERM(int sig)
 {
@@ -63,6 +67,10 @@ static void initLog()
 
 static bool pluginsLoad()
 {
+    QString msg;
+    if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
+        qWarning() << "Load plugins but dconfig failed: " << msg;
+
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
@@ -73,13 +81,14 @@ static bool pluginsLoad()
     pluginsDirs << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
                 << QString(DFM_PLUGIN_DAEMON_EDGE_DIR);
 #endif
-    QStringList kBlackNameList;
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "daemon.blackList").toStringList() };
 #ifdef DISABLE_ANYTHING
-    kBlackNameList << "daemonplugin-anything";
+    if (!blackNames.contains("daemonplugin-anything"))
+        blackNames << "daemonplugin-anything";
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs, kBlackNameList);
+    DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs, blackNames);
 
     qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

@@ -89,7 +89,7 @@ bool PluginManagerPrivate::readPlugins()
     std::for_each(readQueue.begin(), readQueue.end(), [this](PluginMetaObjectPointer obj) {
         readJsonToMeta(obj);
         if (!lazyLoadPluginsNames.contains(obj->name()))
-            notLazyLoadQuene.append(obj);
+            pluginsToLoad.append(obj);
         else
             qInfo() << "Skip load(lazy load): " << obj->name();
     });
@@ -256,7 +256,7 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
 bool PluginManagerPrivate::loadPlugins()
 {
     qInfo() << "Start loading all plugins: ";
-    dependsSort(&loadQueue, &notLazyLoadQuene);
+    dependsSort(&loadQueue, &pluginsToLoad);
 
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {

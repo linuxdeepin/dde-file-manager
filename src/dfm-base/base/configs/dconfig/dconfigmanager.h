@@ -13,6 +13,7 @@
 DFMBASE_BEGIN_NAMESPACE
 
 inline constexpr char kDefaultCfgPath[] { "org.deepin.dde.file-manager" };
+inline constexpr char kPluginsDConfName[] { "org.deepin.dde.file-manager.plugins" };
 inline constexpr char kKeyHideDisk[] { "dfm.disk.hidden" };
 
 class DConfigManagerPrivate;
