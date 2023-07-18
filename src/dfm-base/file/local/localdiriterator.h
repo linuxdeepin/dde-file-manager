@@ -44,6 +44,7 @@ public:
     void setArguments(const QVariantMap &args) override;
     QList<SortInfoPointer> sortFileInfoList() override;
     bool oneByOne() override;
+    bool initIterator() override;
     DFMIO::DEnumeratorFuture *asyncIterator();
 };
 }
