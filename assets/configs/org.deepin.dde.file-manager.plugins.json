@@ -1,0 +1,69 @@
+{
+    "magic": "dsg.config.meta",
+    "version": "1.0",
+    "contents": {
+        "filemanager.blackList": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "dde-file-manager plugin blacklist",
+            "name[zh_CN]": "文件管理器插件黑名单列表",
+            "description[zh_CN]": "文件管理器插件黑名单列表，黑名单中的插件将无法被启用",
+            "description": "List of plugins disabled by the dde-file-manager, blacklisted plugins will not be enabled",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
+        "desktop.blackList": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "dde-desktop plugins blacklist",
+            "name[zh_CN]": "桌面插件黑名单列表",
+            "description[zh_CN]": "桌面插件黑名单列表，黑名单中的插件将无法被启用",
+            "description": "List of plugins disabled by the dde-desktop, plugins in the blacklist will not be able to be enabled",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
+        "server.blackList": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "dde-file-manager-server plugins blacklist",
+            "name[zh_CN]": "文件管理器用户服务插件黑名单列表",
+            "description[zh_CN]": "文件管理器用户服务插件黑名单列表，黑名单中的插件将无法被启用",
+            "description": "List of plugins disabled by the dde-file-manager-server, plugins in the blacklist will not be able to be enabled",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
+        "daemon.blackList": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "dde-file-manager-daemon plugins blacklist",
+            "name[zh_CN]": "文件管理器守护进程插件黑名单列表",
+            "description[zh_CN]": "文件管理器守护进程插件黑名单列表，黑名单中的插件将无法被启用",
+            "description": "List of plugins disabled by the dde-file-manager-daemon, plugins in the blacklist will not be able to be enabled",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
+        "filedialog.blackList": {
+            "value": ["dfmplugin-burn",
+                      "dfmplugin-dirshare",
+                      "dfmplugin-myshares",
+                      "dfmplugin-propertydialog",
+                      "dfmplugin-trashcore",
+                      "dfmplugin-trash",
+                      "dfmplugin-filepreview",
+                      "dfmplugin-vault",
+                      "dfmplugin-phone" ],
+            "serial": 0,
+            "flags": [],
+            "name": "dde-file-dialog plugins blacklist",
+            "name[zh_CN]": "文件管理器文件选择对话框插件黑名单列表",
+            "description[zh_CN]": "文件管理器文件选择对话框插件黑名单列表，黑名单中的插件将无法被启用",
+            "description": "List of plugins disabled by the dde-file-dialog, plugins in the blacklist will not be able to be enabled",
+            "permissions": "readwrite",
+            "visibility": "public"
+        }
+    }
+}

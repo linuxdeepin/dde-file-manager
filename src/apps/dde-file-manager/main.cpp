@@ -82,28 +82,12 @@ static void setEnvForRoot()
     }
 }
 
-static bool isLoadVaultPlugin()
-{
-    DSysInfo::UosType uosType = DSysInfo::uosType();
-    DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
-    if (DSysInfo::UosServer == uosType) {
-        if (DSysInfo::UosEnterprise == uosEdition
-            || DSysInfo::UosEnterpriseC == uosEdition
-            || DSysInfo::UosEuler == uosEdition) {
-            return true;
-        }
-    } else if (DSysInfo::UosDesktop == uosType) {
-        if (DSysInfo::UosProfessional == uosEdition
-            || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)
-            || DSysInfo::UosEducation == uosEdition) {
-            return true;
-        }
-    }
-    return false;
-}
-
 static bool pluginsLoad()
 {
+    QString msg;
+    if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
+        qWarning() << "Load plugins but dconfig failed: " << msg;
+
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
@@ -119,15 +103,25 @@ static bool pluginsLoad()
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
-    // TODO(zhangs): use config
+
     static const QStringList kLazyLoadPluginNames { "dfmplugin-emblem", "dfmplugin-burn", "dfmplugin-dirshare",
                                                     "dfmplugin-tag", "dfmplugin-avfsbrowser", "dfmplugin-myshares",
                                                     /*"dfmplugin-smbbrowser",*/ "dfmplugin-recent", "dfmplugin-search",
                                                     "dfmplugin-vault", "dfmplugin-filepreview", "dfmplugin-trash", "dfmplugin-phone" };
 
-    QStringList blackNames;
-    if (!isLoadVaultPlugin())
-        blackNames << "dfmplugin-vault";
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.blackList").toStringList() };
+
+#ifndef ENABLE_SMB_IN_ADMIN
+    /*
+     * NOTE(xust): the secret manager cannot be launched in WAYLAND ADMIN mode,
+     * which cause file-manager freeze when mount samba (dfm-mount using secret-manager
+     * to save/get the password of samba by sync).
+     * and the Admin mode is designed for operate files those normal user cannot write
+     * and should be the smallest dfm, so remove the smb-browser plugin in Admin mode
+     * */
+    if (SysInfoUtils::isOpenAsAdmin() && !blackNames.contains("dfmplugin-smbbrowser"))
+        blackNames << "dfmplugin-smbbrowser";
+#endif
 
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
