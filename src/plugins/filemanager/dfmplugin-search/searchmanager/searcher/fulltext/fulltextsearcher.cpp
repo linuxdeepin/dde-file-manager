@@ -11,6 +11,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/schemefactory.h>
 
 // Lucune++ headers
 #include <FileUtils.h>
@@ -20,7 +21,6 @@
 
 #include <QRegExp>
 #include <QDebug>
-#include <QFileInfo>
 #include <QDateTime>
 #include <QMetaEnum>
 #include <QDir>
@@ -112,8 +112,10 @@ void FullTextSearcherPrivate::doIndexTask(const IndexReaderPtr &reader, const In
         if (is_dir) {
             doIndexTask(reader, writer, fn, type);
         } else {
-            QFileInfo info(fn);
-            QString suffix = info.suffix();
+            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(fn));
+            if (!info) continue;
+
+            QString suffix = info->nameOf(NameInfoType::kSuffix);
             static QRegExp suffixRegExp(kSupportFiles);
             if (suffixRegExp.exactMatch(suffix)) {
                 switch (type) {
@@ -172,7 +174,7 @@ void FullTextSearcherPrivate::indexDocs(const IndexWriterPtr &writer, const QStr
         QMetaEnum enumType = QMetaEnum::fromType<FullTextSearcherPrivate::IndexType>();
         qWarning() << QString(e.what()) << " type: " << enumType.valueToKey(type);
     } catch (...) {
-        qWarning() << "Error: " << __FUNCTION__ << file;
+        qWarning() << "Index document failed! " << file;
     }
 }
 
@@ -192,8 +194,11 @@ bool FullTextSearcherPrivate::checkUpdate(const IndexReaderPtr &reader, const QS
             return true;
         } else {
             DocumentPtr doc = searcher->doc(topDocs->scoreDocs[0]->doc);
-            QFileInfo info(file);
-            QString modifyTime = info.lastModified().toString("yyyyMMddHHmmss");
+            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file));
+            if (!info)
+                return false;
+
+            QString modifyTime = QString::number(info->timeOf(TimeInfoType::kLastModified).toLongLong());
             String storeTime = doc->get(L"modified");
 
             if (modifyTime.toStdWString() != storeTime) {
@@ -202,11 +207,11 @@ bool FullTextSearcherPrivate::checkUpdate(const IndexReaderPtr &reader, const QS
             }
         }
     } catch (const LuceneException &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString::fromStdWString(e.getError()) << " file: " << file;
+        qWarning() << QString::fromStdWString(e.getError()) << " file: " << file;
     } catch (const std::exception &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString(e.what()) << " file: " << file;
+        qWarning() << QString(e.what()) << " file: " << file;
     } catch (...) {
-        qWarning() << "Error: " << __FUNCTION__ << " file: " << file;
+         qWarning() << "The file checked failed!" << file;
     }
 
     return false;
@@ -229,8 +234,8 @@ DocumentPtr FullTextSearcherPrivate::fileDocument(const QString &file)
     doc->add(newLucene<Field>(L"path", file.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file last modified time
-    QFileInfo info(file);
-    QString modifyTime = info.lastModified().toString("yyyyMMddHHmmss");
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file));
+    QString modifyTime = QString::number(info->timeOf(TimeInfoType::kLastModified).toLongLong());
     doc->add(newLucene<Field>(L"modified", modifyTime.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file contents
@@ -266,7 +271,8 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
         QTime timer;
         timer.start();
         IndexWriterPtr writer = newIndexWriter(true);
-        qDebug() << "Indexing to directory: " << indexStorePath();
+        qInfo() << "Indexing to directory: " << indexStorePath();
+
         writer->deleteAll();
         doIndexTask(nullptr, writer, path, kCreate);
         writer->optimize();
@@ -276,11 +282,11 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
         status.storeRelease(AbstractSearcher::kCompleted);
         return true;
     } catch (const LuceneException &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString::fromStdWString(e.getError());
+        qWarning() << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString(e.what());
+        qWarning() << QString(e.what());
     } catch (...) {
-        qWarning() << "Error: " << __FUNCTION__;
+        qWarning() << "The file index created failed!";
     }
 
     status.storeRelease(AbstractSearcher::kCompleted);
@@ -302,11 +308,11 @@ bool FullTextSearcherPrivate::updateIndex(const QString &path)
 
         return true;
     } catch (const LuceneException &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString::fromStdWString(e.getError());
+        qWarning() << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString(e.what());
+        qWarning() << QString(e.what());
     } catch (...) {
-        qWarning() << "Error: " << __FUNCTION__;
+        qWarning() << "The file index updated failed!";
     }
 
     return false;
@@ -350,14 +356,15 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
             String resultPath = doc->get(L"path");
 
             if (!resultPath.empty()) {
-                QFileInfo info(QString::fromStdWString(resultPath));
+                const QUrl &url = QUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str());
+                auto info = InfoFactory::create<FileInfo>(url);
                 // delete invalid index
-                if (!info.exists()) {
-                    indexDocs(writer, info.absoluteFilePath(), kDeleteIndex);
+                if (!info || !info->exists()) {
+                    indexDocs(writer, url.path(), kDeleteIndex);
                     continue;
                 }
 
-                QString modifyTime = info.lastModified().toString("yyyyMMddHHmmss");
+                QString modifyTime = QString::number(info->timeOf(TimeInfoType::kLastModified).toLongLong());
                 String storeTime = doc->get(L"modified");
                 if (modifyTime.toStdWString() != storeTime) {
                     continue;
@@ -378,11 +385,11 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
         reader->close();
         writer->close();
     } catch (const LuceneException &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString::fromStdWString(e.getError());
+        qWarning() << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
-        qWarning() << "Error: " << __FUNCTION__ << QString(e.what());
+        qWarning() << QString(e.what());
     } catch (...) {
-        qWarning() << "Error: " << __FUNCTION__;
+        qWarning() << "Search failed!";
     }
 
     return true;

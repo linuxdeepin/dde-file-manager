@@ -56,8 +56,8 @@ bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString
         stop(taskId);
 
     auto task = new TaskCommander(taskId, url, keyword);
-    qInfo() << "new task: " << task << task->taskID();
     Q_ASSERT(task);
+    qInfo() << "new task: " << task << task->taskID();
 
     //直连，防止1被事件循环打乱时序
     connect(task, &TaskCommander::matched, this, &MainController::matched, Qt::DirectConnection);
@@ -94,7 +94,9 @@ void MainController::onIndexFullTextSearchChanged(bool enable)
     if (enable && !indexFuture.isRunning()) {
         indexFuture = QtConcurrent::run([]() {
             FullTextSearcher searcher(QUrl(), "");
+            qInfo() << "create index for full-text search";
             searcher.createIndex("/");
+            qInfo() << "create index for full-text search done";
         });
     }
 }
