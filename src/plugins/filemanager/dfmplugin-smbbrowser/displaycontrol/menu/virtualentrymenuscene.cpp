@@ -217,7 +217,7 @@ void VirtualEntryMenuScenePrivate::hookCptActions(QAction *triggered)
 
 void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
 {
-    pddmDbg << "unmount all of" << stdSmb;
+    qInfo() << "unmount all shares of" << stdSmb;
     const QStringList &devIds = protocol_display_utilities::getMountedSmb();
     const QString &stdSmbRoot = stdSmb;
 
@@ -227,7 +227,7 @@ void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
             continue;
 
         DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-            pddmDbg << "unmount device:" << devId << "which represents" << toStdSmb << "result:" << ok << err.code << err.message;
+            qInfo() << "unmount device:" << devId << "which represents" << toStdSmb << "result:" << ok << err.code << err.message;
             if (!ok)
                 return DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             if (removeEntry)
@@ -240,14 +240,14 @@ void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
 
 void VirtualEntryMenuScenePrivate::actForgetAggregatedItem()
 {
-    pddmDbg << "forget all of" << stdSmb;
+    qInfo() << "forget saved pasword of" << stdSmb;
     computer_sidebar_event_calls::callForgetPasswd(stdSmb);
     actUnmountAggregatedItem(true);
 }
 
 void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
 {
-    pddmDbg << "do mount for" << stdSmb;
+    qInfo() << "do mount for" << stdSmb;
     QString path = stdSmb;
     while (path.endsWith("/"))
         path.chop(1);
@@ -260,7 +260,7 @@ void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
 
 void VirtualEntryMenuScenePrivate::actRemoveVirtualEntry()
 {
-    pddmDbg << "remove entry of" << stdSmb;
+    qInfo() << "remove offline entry of" << stdSmb;
     Q_ASSERT(selectFiles.count() > 0);
 
     VirtualEntryDbHandler::instance()->removeData(stdSmb);

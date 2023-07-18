@@ -49,7 +49,7 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     if ((suid != 0 && suid != info.ownerId())   //对比文件属主与调用总线进程属主;
         || info.isSymLink()   //禁止使用符合链接
         || !info.absoluteFilePath().startsWith(sharePath)) {   //禁止使用../等
-        qDebug() << "invoker doesn't own the file: " << info.path();
+        qInfo() << "invoker doesn't own the file: " << info.path();
         return false;
     }
 
@@ -60,14 +60,14 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     p.start(cmd);
     bool ret = p.waitForFinished();
 
-    qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
+    qDebug() << "close smb share" << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     return ret;
 }
 
 bool ShareControlDBus::SetUserSharePassword(const QString &name, const QString &passwd)
 {
     if (!checkAuthentication()) {
-        qDebug() << "setUserSharePassword failed" << name;
+        qInfo() << "cannot authenticate for user" << name << ", give up set password";
         return false;
     }
 

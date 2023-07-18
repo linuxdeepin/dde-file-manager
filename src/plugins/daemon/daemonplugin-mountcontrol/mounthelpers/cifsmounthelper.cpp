@@ -151,7 +151,7 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
                  { kErrorMessage, path + " is not mounted" } };
     }
     if (ret == kNotOwner && !checkAuth()) {
-        qDebug() << "check auth failed: " << path;
+        qInfo() << "check auth failed: " << path;
         return { { kResult, false },
                  { kErrorCode, -kNotOwnerOfMount },
                  { kErrorMessage, "invoker is not the owner of mount" } };

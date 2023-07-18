@@ -48,8 +48,10 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
 
 void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 {
-    if (!ComputerUtils::checkGvfsMountExist(url))
+    if (!ComputerUtils::checkGvfsMountExist(url)) {
+        qInfo() << "gvfs url not exists" << url;
         return;
+    }
 
     DFMBASE_USE_NAMESPACE
     if (Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
@@ -67,16 +69,20 @@ void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
 
 void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url)
 {
-    if (!ComputerUtils::checkGvfsMountExist(url))
+    if (!ComputerUtils::checkGvfsMountExist(url)) {
+        qInfo() << "gvfs url not exists" << url;
         return;
+    }
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
 }
 
 void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
 {
-    if (!ComputerUtils::checkGvfsMountExist(url))
+    if (!ComputerUtils::checkGvfsMountExist(url)) {
+        qInfo() << "gvfs url not exists" << url;
         return;
+    }
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, winId, url);
 }
@@ -90,13 +96,13 @@ void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
 void ComputerEventCaller::sendCtrlNOnItem(quint64 winId, const QUrl &url)
 {
     dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlN", winId, url);
-    qDebug() << "send ctrl n at item: " << url;
+    qDebug() << "send ctrl N at item: " << url;
 }
 
 void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
 {
     dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlT", winId, url);
-    qDebug() << "send ctrl t at item: " << url;
+    qDebug() << "send ctrl T at item: " << url;
 }
 
 void ComputerEventCaller::sendShowPropertyDialog(const QList<QUrl> &urls)

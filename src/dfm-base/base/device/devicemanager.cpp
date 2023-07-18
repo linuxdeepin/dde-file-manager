@@ -294,6 +294,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
         }
 
         unmountBlockDevAsync(cleartextId, options, [=](bool ok, const OperationErrorInfo &err) {
+            qInfo() << "unmount device finished: " << id << cleartextId << ok << err.code << err.message;
             if (ok && !noLock)
                 dev->lockAsync({});
             else
@@ -304,6 +305,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
     } else {
         DeviceManagerPrivate::unmountStackedMount(mpt);
         dev->unmountAsync(opts, [cb, this, id](bool ok, const OperationErrorInfo &err) {
+            qInfo() << "unmount device finished: " << id << ok << err.code << err.message;
             if (cb)
                 cb(ok, err);
             if (!ok)
@@ -455,6 +457,7 @@ void DeviceManager::powerOffBlockDevAsync(const QString &id, const QVariantMap &
     }
 
     dev->powerOffAsync(opts, [this, cb, id](bool ok, const OperationErrorInfo &err) {
+        qInfo() << "power off device finished: " << ok << err.code << err.message;
         if (cb)
             cb(ok, err);
         if (!ok)
@@ -504,6 +507,7 @@ void DeviceManager::ejectBlockDevAsync(const QString &id, const QVariantMap &opt
         return;
     }
     dev->ejectAsync(opts, [this, id, cb](bool ok, const OperationErrorInfo &err) {
+        qInfo() << "eject device finished: " << ok << err.code << err.message;
         if (cb)
             cb(ok, err);
         if (!ok)
@@ -702,7 +706,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
                                                 wrappedCb, timeout);
         } else {
             wrappedCb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorTimedOut), "");
-            qDebug() << "cannot access network " << host << ":" << port;
+            qWarning() << "cannot access network " << host << ":" << port;
         }
     });
 }
@@ -758,7 +762,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, const OperationErrorInfo &err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                    // 'device busy' error.
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -775,8 +779,8 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
         unmountBlockDevAsync(dev, {}, [allUnmounted, func, opCount, dev](bool ok, const OperationErrorInfo &err) {
             *allUnmounted &= ok;
             *opCount -= 1;
-            qDebug() << "detach device: " << dev << ", siblings remain: " << *opCount
-                     << ", success? " << ok << err.message;
+            qInfo() << "detach device: " << dev << ", siblings remain: " << *opCount
+                    << ", success? " << ok << err.message;
             if (*opCount == 0)
                 func(*allUnmounted, err);
         });
@@ -795,10 +799,8 @@ void DeviceManager::detachAllProtoDevs()
 void DeviceManager::detachProtoDev(const QString &id)
 {
     unmountProtocolDevAsync(id, {}, [id](bool ok, const OperationErrorInfo &err) {
-        if (!ok) {
-            qWarning() << "unmount protocol device: " << id;
-            qWarning() << "unmount protocol device failed: " << err.message;
-        }
+        if (!ok)
+            qWarning() << "unmount protocol device failed: " << id << err.message << err.code;
     });
 }
 
@@ -842,7 +844,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() {}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -899,7 +901,7 @@ void DeviceManagerPrivate::mountAllBlockDev()
 {
     const QStringList &devs { q->getAllBlockDevID(DeviceQueryOption::kMountable | DeviceQueryOption::kNotIgnored
                                                   | DeviceQueryOption::kNotMounted) };
-    qDebug() << "start to mount block devs: " << devs;
+    qInfo() << "start to mount block devs: " << devs;
     for (const auto &dev : devs)
         q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
 }
@@ -946,7 +948,7 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
 
     QString method = mount ? "Mount" : "Unmount";
 
-    qDebug() << QString("dlnfs: start %1ing dlnfs on %2").arg(method).arg(mpt);
+    qInfo() << QString("dlnfs: start %1ing dlnfs on %2").arg(method).arg(mpt);
 
     QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
     QDBusReply<QVariantMap> reply = iface.call(method, mpt, QVariantMap { { "fsType", "dlnfs" } });

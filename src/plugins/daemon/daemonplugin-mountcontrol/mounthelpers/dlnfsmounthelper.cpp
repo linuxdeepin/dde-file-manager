@@ -42,7 +42,7 @@ QVariantMap DlnfsMountHelper::mount(const QString &path, const QVariantMap &opts
     p.start(kDlnfs, args);
     p.waitForFinished();
     auto rets = p.readAllStandardError();
-    qDebug() << "dlnfs: mount: " << rets;
+    qInfo() << "dlnfs: mount result: " << rets;
     return { { kResult, rets.isEmpty() },
              { kErrorMessage, QString(rets) },
              { kErrorCode, parseErrorCodeByMsg(rets) } };
@@ -76,7 +76,7 @@ QVariantMap DlnfsMountHelper::unmount(const QString &path, const QVariantMap &op
     p.start(kFusermount, args);
     p.waitForFinished();
     auto rets = p.readAllStandardError();
-    qDebug() << "dlnfs: unmount: " << rets;
+    qInfo() << "dlnfs: unmount result: " << rets;
     return { { kResult, rets.isEmpty() },
              { kErrorMessage, QString(rets) },
              { kErrorCode, parseErrorCodeByMsg(rets) } };
