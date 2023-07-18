@@ -70,7 +70,6 @@ void TraversalDirThreadManager::start()
         }
     }
 
-    Q_EMIT iteratorInitFinished();
     TraversalDirThread::start();
 }
 
@@ -107,6 +106,14 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         emit traversalFinished();
         return 0;
     }
+
+    if (!dirIterator->initIterator()) {
+        qWarning() << "dir iterator init failed !! url : " << dirUrl;
+        emit traversalFinished();
+        return 0;
+    }
+
+    Q_EMIT iteratorInitFinished();
 
     if (!timer)
         timer = new QElapsedTimer();
@@ -156,6 +163,12 @@ int TraversalDirThreadManager::iteratorAll()
     args.insert("mixFileAndDir", isMixDirAndFile);
     args.insert("sortOrder", sortOrder);
     dirIterator->setArguments(args);
+    if (!dirIterator->initIterator()) {
+        qWarning() << "dir iterator init failed !! url : " << dirUrl;
+        emit traversalFinished();
+        return 0;
+    }
+    Q_EMIT iteratorInitFinished();
     auto fileList = dirIterator->sortFileInfoList();
 
     emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile);
