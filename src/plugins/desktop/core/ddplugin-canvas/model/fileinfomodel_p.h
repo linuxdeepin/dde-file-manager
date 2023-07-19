@@ -32,7 +32,7 @@ public slots:
     void replaceData(const QUrl &oldUrl, const QUrl &newUrl);
     void updateData(const QUrl &url);
     void dataUpdated(const QUrl &url, const bool isLinkOrg);
-    void thumbUpdated(const QUrl &url, const QIcon &thumbIcon);
+    void thumbUpdated(const QUrl &url, const QString &thumb);
 
 public:
     QDir::Filters filters = QDir::NoFilter;

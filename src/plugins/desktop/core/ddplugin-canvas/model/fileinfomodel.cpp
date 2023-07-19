@@ -214,7 +214,7 @@ void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
     emit q->dataChanged(index, index);
 }
 
-void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QIcon &thumbIcon)
+void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QString &thumb)
 {
     using namespace dfmbase::Global;
     FileInfoPointer info { nullptr };
@@ -226,6 +226,11 @@ void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QIcon &thumbIcon)
         if (!(info = fileMap.value(url)))
             return;
     }
+
+    // Creating thumbnail icon in a thread may cause the program to crash
+    QIcon thumbIcon(thumb);
+    if (thumbIcon.isNull())
+        return;
 
     info->setExtendedAttributes(ExtInfoType::kFileThumbnail, thumbIcon);
     const QModelIndex &index = q->index(url);

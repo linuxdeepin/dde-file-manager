@@ -31,8 +31,6 @@ public:
     void insertUrl(const QUrl &key, const QUrl &value);
     QUrl takeUrl(const QUrl &key);
 
-    QIcon createIcon(const QString &iconName);
-
     ThumbnailWorker *q { nullptr };
     DMimeDatabase mimeDb;
     QMutex mutex;
