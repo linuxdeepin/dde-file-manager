@@ -98,21 +98,6 @@ QUrl ThumbnailWorkerPrivate::takeUrl(const QUrl &key)
     return localAndVirtualHash.take(key);
 }
 
-QIcon ThumbnailWorkerPrivate::createIcon(const QString &iconName)
-{
-    QIcon icon(iconName);
-    if (!icon.isNull()) {
-        QPixmap pixmap = icon.pixmap(Global::kLarge, Global::kLarge);
-        QPainter pa(&pixmap);
-        pa.setPen(Qt::gray);
-        pa.drawPixmap(0, 0, pixmap);
-
-        icon.addPixmap(pixmap);
-    }
-
-    return icon;
-}
-
 ThumbnailWorker::ThumbnailWorker(QObject *parent)
     : QObject(parent),
       d(new ThumbnailWorkerPrivate(this))
@@ -163,7 +148,7 @@ void ThumbnailWorker::onTaskAdded(const QUrl &url, Global::ThumbnailSize size)
 
     const auto &img = ThumbnailHelper::instance()->thumbnailImage(fileUrl, size);
     if (!img.isNull()) {
-        Q_EMIT thumbnailCreateFinished(url, d->createIcon(img.text(QT_STRINGIFY(Thumb::Path))));
+        Q_EMIT thumbnailCreateFinished(url, img.text(QT_STRINGIFY(Thumb::Path)));
         return;
     }
 
@@ -224,7 +209,7 @@ void ThumbnailWorker::doWork()
         // create thumbnail
         const auto &thumbnailPath = d->createThumbnail(task.srcUrl, task.size);
         if (!thumbnailPath.isEmpty())
-            Q_EMIT thumbnailCreateFinished(d->takeUrl(task.srcUrl), d->createIcon(thumbnailPath));
+            Q_EMIT thumbnailCreateFinished(d->takeUrl(task.srcUrl), thumbnailPath);
         else
             Q_EMIT thumbnailCreateFailed(d->takeUrl(task.srcUrl));
     }

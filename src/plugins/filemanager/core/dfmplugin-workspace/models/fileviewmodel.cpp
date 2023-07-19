@@ -600,7 +600,7 @@ void FileViewModel::setReadOnly(bool value)
     readOnly = value;
 }
 
-void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QIcon &thumbIcon)
+void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QString &thumb)
 {
     if (!index.isValid() || index.row() < 0 || filterSortWorker.isNull())
         return;
@@ -616,16 +616,21 @@ void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QIcon &t
     if (!item || !item->fileInfo())
         return;
 
+    // Creating thumbnail icon in a thread may cause the program to crash
+    QIcon thumbIcon(thumb);
+    if (thumbIcon.isNull())
+        return;
+
     item->fileInfo()->setExtendedAttributes(ExtInfoType::kFileThumbnail, thumbIcon);
 }
 
-void FileViewModel::onFileThumbUpdated(const QUrl &url, const QIcon &thumbIcon)
+void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)
 {
     auto updateIndex = getIndexByUrl(url);
     if (!updateIndex.isValid())
         return;
 
-    updateThumbnailIcon(updateIndex, thumbIcon);
+    updateThumbnailIcon(updateIndex, thumb);
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
         view->update(updateIndex);
