@@ -50,6 +50,8 @@ TEST_F(RecentIterateWorkerTest, onRecentFileChanged)
     stub.set_lamda(&QXmlStreamReader::name, [str]() -> QStringRef {
         return QStringRef(&str);
     });
+    stub.set_lamda(&QXmlStreamReader::isStartElement, []() -> bool { return true; });
+    stub.set_lamda(&QXmlStreamReader::hasError, []() -> bool { return false; });
     stub.set_lamda(&InfoFactory::create<FileInfo>, [] {
         return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl::fromLocalFile("/home")));
     });

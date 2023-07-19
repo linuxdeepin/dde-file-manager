@@ -46,6 +46,7 @@ private:
 
 TEST_F(RecentFileWatcherTest, urlToWatcherHash)
 {
+    watcher->dptr->initConnect();
     watcher->addWatcher(QUrl());
     EXPECT_TRUE(watcher->dptr->urlToWatcherMap.isEmpty());
 
