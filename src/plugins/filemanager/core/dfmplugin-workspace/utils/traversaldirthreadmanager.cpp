@@ -110,7 +110,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
 
     if (!dirIterator->initIterator()) {
         qWarning() << "dir iterator init failed !! url : " << dirUrl;
-        emit traversalFinished();
+        emit traversalFinished(traversalToken);
         return 0;
     }
 
@@ -166,7 +166,7 @@ int TraversalDirThreadManager::iteratorAll()
     dirIterator->setArguments(args);
     if (!dirIterator->initIterator()) {
         qWarning() << "dir iterator init failed !! url : " << dirUrl;
-        emit traversalFinished();
+        emit traversalFinished(traversalToken);
         return 0;
     }
     Q_EMIT iteratorInitFinished();

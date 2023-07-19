@@ -21,7 +21,6 @@ public:
     explicit ThumbnailWorkerPrivate(ThumbnailWorker *qq);
     QString createThumbnail(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     bool checkFileStable(const QUrl &url);
-
     QIcon createIcon(const QString &iconName);
 
     ThumbnailWorker *q { nullptr };
