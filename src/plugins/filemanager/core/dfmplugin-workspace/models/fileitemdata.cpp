@@ -20,6 +20,8 @@ FileItemData::FileItemData(const QUrl &url, const FileInfoPointer &info, FileIte
       url(url),
       info(info)
 {
+    if (info)
+        info->customData(kItemFileRefreshIcon);
 }
 
 FileItemData::FileItemData(const SortInfoPointer &info, FileItemData *parent)
@@ -85,8 +87,11 @@ QVariant FileItemData::data(int role) const
     switch (role) {
     case kItemCreateFileInfoRole:
         assert(qApp->thread() == QThread::currentThread());
-        if (info.isNull())
+        if (info.isNull()) {
             const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
+            if (info)
+                info->customData(kItemFileRefreshIcon);
+        }
         return QVariant();
     case kItemFilePathRole:
         if (info)
