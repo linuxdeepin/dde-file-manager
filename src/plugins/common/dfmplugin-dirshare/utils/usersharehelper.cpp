@@ -480,7 +480,6 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
     // 共享文件的共享名太长，会报上面这个错误信息，最后居然还是中文
     // another fix: 有多种问题会报上面的错误信息，该错误信息最后的错误描述是系统翻译后的文本，所以这里改成直接显示命令返回的错误描述。
     if (err.contains("net usershare add: failed to add share") && err.contains("Error was ")) {
-        DDialog dialog;
         QString errorDisc = err.split("Error was ").last();
         errorDisc = errorDisc.remove("\n");
         DialogManagerInstance->showErrorDialog(errorDisc, "");
