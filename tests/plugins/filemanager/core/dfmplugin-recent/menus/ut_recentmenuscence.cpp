@@ -119,9 +119,10 @@ TEST_F(RecentMenuSceneTest, updateMenu)
     menu.addSeparator();
     auto act = menu.addAction("Select all");
     act->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kCut);
-
     RecentMenuScene scene;
     scene.d->isEmptyArea = true;
+    EXPECT_NO_FATAL_FAILURE(scene.d->updateMenu(&menu));
+    scene.d->isEmptyArea = false;
     EXPECT_NO_FATAL_FAILURE(scene.d->updateMenu(&menu));
 }
 
