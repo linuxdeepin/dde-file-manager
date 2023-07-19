@@ -105,6 +105,7 @@ businessTestList=(
   plugins/common/core/dfmplugin-fileoperations
   plugins/common/dfmplugin-utils
   plugins/common/dfmplugin-tag
+  plugins/common/dfmplugin-dirshare
   plugins/common/dfmplugin-preview/filepreview
   plugins/common/dfmplugin-preview/pluginpreviews/image-preview
   plugins/common/dfmplugin-preview/pluginpreviews/music-preview
