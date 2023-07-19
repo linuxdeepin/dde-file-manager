@@ -684,7 +684,6 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)
         return;
 
     updateThumbnailIcon(updateIndex, thumb);
-
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
         view->update(updateIndex);
