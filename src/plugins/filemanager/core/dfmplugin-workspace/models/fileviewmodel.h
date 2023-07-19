@@ -89,7 +89,7 @@ public:
     void toggleHiddenFiles();
     void setReadOnly(bool value);
 
-    void updateThumbnailIcon(const QModelIndex &index, const QIcon &thumbIcon);
+    void updateThumbnailIcon(const QModelIndex &index, const QString &thumb);
 
 Q_SIGNALS:
     void stateChanged();
@@ -112,7 +112,7 @@ Q_SIGNALS:
     void requestSetFilterCallback(FileViewFilterCallback callback);
 
 public Q_SLOTS:
-    void onFileThumbUpdated(const QUrl &url, const QIcon &thumbIcon);
+    void onFileThumbUpdated(const QUrl &url, const QString &thumb);
     void onFileUpdated(int show);
     void onInsert(int firstIndex, int count);
     void onInsertFinish();

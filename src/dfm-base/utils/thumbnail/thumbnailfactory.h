@@ -28,7 +28,7 @@ public:
     bool registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator);
 
 Q_SIGNALS:
-    void produceFinished(const QUrl &src, const QIcon &thumbIcon);
+    void produceFinished(const QUrl &src, const QString &thumb);
     void produceFailed(const QUrl &src);
 
     void addTask(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);

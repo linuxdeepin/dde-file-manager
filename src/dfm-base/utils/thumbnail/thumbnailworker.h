@@ -29,7 +29,7 @@ public Q_SLOTS:
     void onTaskRemoved(const QUrl &url);
 
 Q_SIGNALS:
-    void thumbnailCreateFinished(const QUrl &url, const QIcon &thumbnail);
+    void thumbnailCreateFinished(const QUrl &url, const QString &thumbnail);
     void thumbnailCreateFailed(const QUrl &url);
 
 private:
