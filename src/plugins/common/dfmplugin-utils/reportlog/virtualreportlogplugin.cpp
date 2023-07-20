@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "virtualreportlogplugin.h"
-#include "rlog/rlog.h"
+#include "reportlogmanager.h"
 
 #include <QTimer>
 
@@ -11,6 +11,8 @@ using namespace dfmplugin_utils;
 
 void VirtualReportLogPlugin::initialize()
 {
+    ReportLogManager::instance()->init();
+
     eventReceiver->bindEvents();
 }
 
@@ -20,7 +22,7 @@ bool VirtualReportLogPlugin::start()
         QVariantMap data;
         data.insert("type", true);
 
-        RLog::instance()->commit("AppStartup", data);
+        ReportLogManager::instance()->commit("AppStartup", data);
     });
     return true;
 }
