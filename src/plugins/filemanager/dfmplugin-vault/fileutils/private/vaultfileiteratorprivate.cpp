@@ -12,7 +12,8 @@
 
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
+
 VaultFileIteratorPrivate::VaultFileIteratorPrivate(const QUrl &url,
                                                    const QStringList &nameFilters,
                                                    QDir::Filters filters,

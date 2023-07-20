@@ -35,7 +35,8 @@
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
+
 VaultUnlockPages::VaultUnlockPages(QWidget *parent)
     : VaultPageBase(parent)
 {

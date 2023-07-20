@@ -17,7 +17,7 @@ class VaultFileInfoPrivate
     friend class VaultFileInfo;
 
 public:
-    explicit VaultFileInfoPrivate(VaultFileInfo *qq);
+    explicit VaultFileInfoPrivate(const QUrl &url, VaultFileInfo *qq);
     virtual ~VaultFileInfoPrivate();
 
 private:
@@ -25,9 +25,10 @@ private:
     QString absolutePath(const QString &path) const;
     QUrl vaultUrl(const QUrl &url) const;
     QUrl getUrlByNewFileName(const QString &fileName) const;
-    bool isRoot() const;
 
     VaultFileInfo *const q;
+    QUrl localUrl;
+    bool isRoot { false };
 };
 
 }

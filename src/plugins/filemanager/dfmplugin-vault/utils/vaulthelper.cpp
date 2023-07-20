@@ -40,7 +40,7 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
 
 QUrl VaultHelper::rootUrl()
 {
@@ -124,7 +124,7 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
 
     switch (instance()->state(PathManager::vaultLockPath())) {
     case VaultState::kNotExisted: {
-        VaultHelper::instance()->creatVaultDialog();
+        VaultHelper::instance()->createVaultDialog();
     } break;
     case VaultState::kEncrypted: {
         VaultHelper::instance()->unlockVaultDialog();
@@ -203,7 +203,7 @@ DMenu *VaultHelper::createMenu()
     DMenu *timeMenu = new DMenu;
     switch (instance()->state(PathManager::vaultLockPath())) {
     case VaultState::kNotExisted:
-        menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::creatVaultDialog);
+        menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::createVaultDialog);
         break;
     case VaultState::kEncrypted:
         menu->addAction(QObject::tr("Unlock"), VaultHelper::instance(), &VaultHelper::unlockVaultDialog);
@@ -332,7 +332,7 @@ void VaultHelper::lockVault(bool isForced)
     FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath(), isForced);
 }
 
-void VaultHelper::creatVaultDialog()
+void VaultHelper::createVaultDialog()
 {
     VaultPageBase *page = new VaultActiveView();
     page->exec();

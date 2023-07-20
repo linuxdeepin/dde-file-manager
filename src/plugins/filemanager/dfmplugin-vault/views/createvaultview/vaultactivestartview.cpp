@@ -11,7 +11,8 @@
 #include <QSpacerItem>
 
 DWIDGET_USE_NAMESPACE
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
+
 VaultActiveStartView::VaultActiveStartView(QWidget *parent)
     : QWidget(parent)
 {

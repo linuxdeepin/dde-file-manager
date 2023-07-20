@@ -19,7 +19,7 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)

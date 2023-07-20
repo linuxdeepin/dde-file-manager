@@ -9,7 +9,7 @@
 #include <dfm-framework/event/event.h>
 
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
 
 void VaultEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
 {

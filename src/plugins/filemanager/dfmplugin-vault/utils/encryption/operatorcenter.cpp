@@ -27,7 +27,8 @@ extern "C" {
 }
 #define signals public
 
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
+
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent), strCryfsPassword(""), strUserKey(""), standOutput("")
 {
