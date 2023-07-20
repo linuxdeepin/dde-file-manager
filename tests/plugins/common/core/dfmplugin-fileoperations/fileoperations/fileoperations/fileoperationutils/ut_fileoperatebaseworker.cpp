@@ -265,6 +265,7 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyLocalBigFile)
 int openTest(int fd, __off_t offset) {
     Q_UNUSED(fd);
     Q_UNUSED(offset);
+    __DBG_STUB_INVOKE__
     return -1;
 };
 
@@ -278,7 +279,7 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyLocalBigFileCallFunc)
     stub_ext::StubExt stub;
     worker.workData.reset(new WorkerData);
 
-    stub.set(&ftruncate, openTest);
+    stub.set(&::ftruncate, openTest);
     bool skip{false};
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
     EXPECT_FALSE(worker.doCopyLocalBigFileResize(sorceInfo, targetInfo, -1, &skip));
@@ -353,5 +354,126 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyFile)
     stub.set_lamda(&FileOperateBaseWorker::createSystemLink,[]{ __DBG_STUB_INVOKE__ return true;});
     EXPECT_TRUE(worker.doCopyFile(sorceInfo, targetInfo, &skip));
 
+    stub.set_lamda(VADDR(SyncFileInfo,isAttributes), [](SyncFileInfo *,OptInfoType type){ __DBG_STUB_INVOKE__
+        if (type == OptInfoType::kIsDir) {
+            return true;
+        }
+        return false;});
+    stub.set_lamda(&FileOperateBaseWorker::checkAndCopyDir,[]{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&FileOperateBaseWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return true;});
+    worker.targetInfo = targetInfo;
+    EXPECT_TRUE(worker.doCopyFile(sorceInfo, targetInfo, &skip));
+
+    stub.set_lamda(VADDR(SyncFileInfo,isAttributes), [](SyncFileInfo *,OptInfoType type){ __DBG_STUB_INVOKE__
+        return false;});
+    stub.set_lamda(&FileOperateBaseWorker::checkAndCopyFile,[]{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&FileOperateBaseWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return true;});
+    worker.targetInfo = targetInfo;
+    EXPECT_TRUE(worker.doCopyFile(sorceInfo, targetInfo, &skip));
+
     QProcess::execute("rm sourceUrl.txt");
+}
+
+int getuidTest (void){
+    __DBG_STUB_INVOKE__
+    return 0;
+}
+
+TEST_F(UT_FileOperateBaseWorker, testCanWriteFile)
+{
+    FileOperateBaseWorker worker;
+    stub_ext::StubExt stub;
+    auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
+    stub.set(::getuid,getuidTest);
+    EXPECT_TRUE(worker.canWriteFile(sorceUrl));
+
+    stub.clear();
+    EXPECT_FALSE(worker.canWriteFile(QUrl()));
+
+    EXPECT_TRUE(worker.canWriteFile(sorceUrl));
+}
+
+TEST_F(UT_FileOperateBaseWorker, testSetAllDirPermisson)
+{
+    FileOperateBaseWorker worker;
+    stub_ext::StubExt stub;
+    if (!worker.localFileHandler)
+        worker.localFileHandler.reset(new LocalFileHandler);
+    QSharedPointer<FileOperateBaseWorker::DirSetPermissonInfo> info(new FileOperateBaseWorker::DirSetPermissonInfo);
+    worker.dirPermissonList.push_backByLock(info);
+    stub.set_lamda(&LocalFileHandler::setPermissions, []{ __DBG_STUB_INVOKE__ return false;});
+    worker.setAllDirPermisson();
+}
+
+TEST_F(UT_FileOperateBaseWorker, testGetWriteDataSize)
+{
+    FileOperateBaseWorker worker;
+    stub_ext::StubExt stub;
+    worker.workData.reset(new WorkerData);
+    worker.countWriteType = AbstractWorker::CountWriteSizeType::kTidType;
+    EXPECT_TRUE(0 == worker.getWriteDataSize());
+
+    worker.countWriteType = AbstractWorker::CountWriteSizeType::kCustomizeType;
+    EXPECT_TRUE(0 == worker.getWriteDataSize());
+
+    worker.countWriteType = AbstractWorker::CountWriteSizeType::kWriteBlockType;
+    stub.set_lamda(&FileOperateBaseWorker::getSectorsWritten,[]{ __DBG_STUB_INVOKE__ return 10;});
+    EXPECT_TRUE(10 * 512 == worker.getWriteDataSize());
+}
+
+TEST_F(UT_FileOperateBaseWorker, testGetTidWriteSize)
+{
+    FileOperateBaseWorker worker;
+    stub_ext::StubExt stub;
+    typedef bool (*openfile)(QFile *,QFile::OpenMode);
+    stub.set_lamda((openfile)((bool (QFile::*)(QFile::OpenMode))(&QFile::open)),[](){return true;});
+    stub.set_lamda(VADDR(QFile, close), []{ __DBG_STUB_INVOKE__ });
+    stub.set_lamda(VADDR(QFile, readAll), []{ __DBG_STUB_INVOKE__ return QByteArray("write_bytes: 1000"); });
+    EXPECT_TRUE(1000 == worker.getTidWriteSize());
+
+    stub.set_lamda(VADDR(QFile, readAll), []{ __DBG_STUB_INVOKE__ return QByteArray(); });
+    EXPECT_TRUE(0 == worker.getTidWriteSize());
+}
+
+TEST_F(UT_FileOperateBaseWorker, testGetSectorsWritten)
+{
+    FileOperateBaseWorker worker;
+    stub_ext::StubExt stub;
+
+    EXPECT_TRUE(0 == worker.getSectorsWritten());
+
+    typedef bool (*openfile)(QFile *,QFile::OpenMode);
+    stub.set_lamda((openfile)((bool (QFile::*)(QFile::OpenMode))(&QFile::open)),[](){return true;});
+    stub.set_lamda(VADDR(QFile, close), []{ __DBG_STUB_INVOKE__ });
+    stub.set_lamda(VADDR(QFile, readAll), []{ __DBG_STUB_INVOKE__ return QByteArray("sdf dd dd dd ff oo 99 00"); });
+    EXPECT_TRUE(99 == worker.getSectorsWritten());
+
+    auto url = QUrl::fromLocalFile(QDir::currentPath());
+    worker.targetUrl = url;
+    worker.determineCountProcessType();
+
+    stub.set_lamda(&StorageInfo::fileSystemType,[]{ __DBG_STUB_INVOKE__ return QByteArray();});
+    worker.determineCountProcessType();
+}
+
+TEST_F(UT_FileOperateBaseWorker, testSyncFilesToDevice)
+{
+    FileOperateBaseWorker worker;
+    stub_ext::StubExt stub;
+
+    worker.countWriteType = AbstractWorker::CountWriteSizeType::kCustomizeType;
+    worker.syncFilesToDevice();
+
+    int index = 0;
+    stub.set_lamda(&FileOperateBaseWorker::isStopped,[&index]{
+        __DBG_STUB_INVOKE__
+        index++;
+        if (index % 2)
+            return false;
+        return true;
+    });
+    worker.sourceFilesTotalSize = 1;
+    worker.countWriteType = AbstractWorker::CountWriteSizeType::kWriteBlockType;
+    stub.set_lamda(&FileOperateBaseWorker::getWriteDataSize,[]{ __DBG_STUB_INVOKE__ return 0;});
+    worker.syncFilesToDevice();
 }
