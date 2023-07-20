@@ -101,6 +101,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
                 return false;
             } else {
+                ++it;
                 continue;
             }
         }
@@ -112,6 +113,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
                 return false;
             } else {
+                ++it;
                 continue;
             }
         }

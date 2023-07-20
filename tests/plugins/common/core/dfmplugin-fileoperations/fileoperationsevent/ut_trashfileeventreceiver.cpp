@@ -171,8 +171,6 @@ TEST_F(UT_TrashFileEventReceiver, testHandleOperationCopyFromTrash)
     QProcess::execute("touch ./testSyncFileInfo.txt");
     LocalFileHandler hand;
     url.setPath(url.path() + QDir::separator() + "testSyncFileInfo.txt");
-    auto result = hand.trashFile(url);
-    if (result.isEmpty())
-        return;
+    QProcess::execute("rm testSyncFileInfo.txt");
     op->countTrashFile(0, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, handle);
 }
