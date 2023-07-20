@@ -7,7 +7,7 @@
 #include "utils/searchhelper.h"
 
 #include <dfm-base/base/urlroute.h>
-#include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/searchreportdata.h"
+#include "plugins/common/dfmplugin-utils/reportlog/datas/searchreportdata.h"
 
 #include <dfm-framework/dpf.h>
 
