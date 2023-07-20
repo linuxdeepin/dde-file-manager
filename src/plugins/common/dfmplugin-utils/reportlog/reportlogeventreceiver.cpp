@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "reportlogeventreceiver.h"
-#include "rlog/rlog.h"
-#include "rlog/datas/smbreportdata.h"
+#include "reportlogmanager.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/devicemanager.h>
@@ -25,7 +24,7 @@ void ReportLogEventReceiver::bindEvents()
         // report quit
         QVariantMap data;
         data.insert("type", false);
-        RLog::instance()->commit("AppStartup", data);
+        ReportLogManager::instance()->commit("AppStartup", data);
     });
 
     // connect device manager mount result signal
@@ -50,38 +49,6 @@ void ReportLogEventReceiver::bindEvents()
     lazyBindMenuDataEvent("dfmplugin-vault", "dfmplugin_vault");
     lazyBindMenuDataEvent("dfmplugin-trash", "dfmplugin_trash");
     lazyBindMenuDataEvent("dfmplugin-recent", "dfmplugin_recent");
-}
-
-void ReportLogEventReceiver::handleMountNetworkResult(bool ret, dfmmount::DeviceError err, const QString &msg)
-{
-    using namespace dfmmount;
-
-    QVariantMap data;
-    data.insert("result", ret);
-
-    if (!ret) {
-        switch (err) {
-        case DeviceError::kUserErrorUserCancelled:
-            data.insert("errorId", SmbReportData::kUserCancelError);
-            data.insert("errorSysMsg", msg);
-            data.insert("errorUiMsg", "User cancel mount dialog.");
-            break;
-        case DeviceError::kUDisksErrorNotMounted:
-        case DeviceError::kGIOErrorNotMounted:
-        case DeviceError::kUserErrorNotMounted:
-            data.insert("errorId", SmbReportData::kNotMount);
-            data.insert("errorSysMsg", msg);
-            data.insert("errorUiMsg", msg);
-            break;
-        default:
-            data.insert("errorId", SmbReportData::kMountError);
-            data.insert("errorSysMsg", msg);
-            data.insert("errorUiMsg", msg);
-            break;
-        }
-    }
-
-    RLog::instance()->commit("Smb", data);
 }
 
 void ReportLogEventReceiver::lazyBindCommitEvent(const QString &plugin, const QString &space)
@@ -121,64 +88,20 @@ ReportLogEventReceiver::ReportLogEventReceiver(QObject *parent)
 
 void ReportLogEventReceiver::commit(const QString &type, const QVariantMap &args)
 {
-    RLog::instance()->commit(type, args);
+    ReportLogManager::instance()->commit(type, args);
 }
 
 void ReportLogEventReceiver::handleMenuData(const QString &name, const QList<QUrl> &urlList)
 {
-    QVariantMap data {};
-    data.insert("item_name", name);
-
-    QString location("");
-    QStringList types {};
-
-    if (urlList.count() > 0) {
-        location = "File";
-
-        for (auto url : urlList) {
-            auto info = InfoFactory::create<FileInfo>(url);
-            if (info) {
-                QString type = info->nameOf(NameInfoType::kMimeTypeName);
-                if (!types.contains(type))
-                    types << type;
-            }
-        }
-
-    } else {
-        location = "Workspace";
-    }
-
-    data.insert("location", location);
-    data.insert("type", types);
-
-    RLog::instance()->commit("FileMenu", data);
+    ReportLogManager::instance()->reportMenuData(name, urlList);
 }
 
 void ReportLogEventReceiver::handleBlockMountData(const QString& id, bool result)
 {
-    if (id.isEmpty()) {
-        qDebug() << "Can't report empty devices' operation";
-        return;
-    }
+    ReportLogManager::instance()->reportBlockMountData(id, result);
+}
 
-    QVariantMap rec {};
-    if (result) {
-        BlockDevAutoPtr device = DeviceHelper::createBlockDevice(id);
-
-        if (device.isNull()) {
-            qDebug() << "Can't report unexist devices' operation";
-            return;
-        }
-
-        rec.insert("fileSystem", device->fileSystem());
-        rec.insert("standardSize", device->sizeTotal());
-        rec.insert("mountResult", result);
-    } else {
-        rec.insert("fileSystem", "unknown");
-        rec.insert("standardSize", 0);
-        rec.insert("mountResult", result);
-    }
-
-    qInfo() << "rlog: mount result: " << rec;
-    RLog::instance()->commit("BlockMount", rec);
+void ReportLogEventReceiver::handleMountNetworkResult(bool ret, dfmmount::DeviceError err, const QString &msg)
+{
+    ReportLogManager::instance()->reportNetworkMountData(ret, err, msg);
 }

@@ -5,7 +5,7 @@
 #include "smbbrowserutils.h"
 #include "displaycontrol/utilities/protocoldisplayutilities.h"
 
-#include <plugins/common/dfmplugin-utils/reportlog/rlog/datas/smbreportdata.h>
+#include <plugins/common/dfmplugin-utils/reportlog/datas/smbreportdata.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/configs/settingbackend.h>
