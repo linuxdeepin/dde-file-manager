@@ -121,6 +121,7 @@ void SyncFileInfo::refresh()
     d->mimeType = QMimeType();
     d->mimeTypeMode = QMimeDatabase::MatchDefault;
     d->cacheAttributes.clear();
+    d->fileIcon = QIcon();
     extendOtherCache.clear();
 }
 
