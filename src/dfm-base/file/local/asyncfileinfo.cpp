@@ -504,11 +504,14 @@ void AsyncFileInfo::setNotifyUrl(const QUrl &url, const QString &infoPtr)
         return;
     }
     QWriteLocker lk(&d->notifyLock);
-    if (!d->notifyUrls.contains(url)) {
+    if (!d->notifyUrls.contains(url, infoPtr))
         d->notifyUrls.insert(url, infoPtr);
-    } else if (d->notifyUrls.values(url).contains(infoPtr)){
-        d->notifyUrls.insert(url, infoPtr);
-    }
+}
+
+void AsyncFileInfo::removeNotifyUrl(const QUrl &url, const QString &infoPtr)
+{
+    QWriteLocker lk(&d->notifyLock);
+    d->notifyUrls.remove(url, infoPtr);
 }
 
 void AsyncFileInfo::cacheAsyncAttributes()
@@ -988,7 +991,8 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
             asyncInfo->setNotifyUrl(q->fileUrl(), QString::number(quintptr(q), 16));
             auto notifyUrls = q->notifyUrls();
             for (const auto &url : notifyUrls.keys()) {
-                asyncInfo->setNotifyUrl(url, notifyUrls.value(url));
+                for (const auto &infoptr : notifyUrls.values(url))
+                    asyncInfo->setNotifyUrl(url, infoptr);
             }
             asyncInfo->refresh();
         }
