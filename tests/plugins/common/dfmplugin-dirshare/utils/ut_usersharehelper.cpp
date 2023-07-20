@@ -9,7 +9,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/utils/dialogmanager.h>
-#include <dfm-framework/event/dispatcher/eventdispatcher.h>
+#include <dfm-framework/event/event.h>
 
 #include "stubext.h"
 
@@ -21,6 +21,24 @@
 #include <QDBusMessage>
 #include <QSettings>
 #include <QProcess>
+
+#define DeclareDBusCallFunc_Full()                                         \
+    typedef QDBusMessage (QDBusAbstractInterface::*Call)(const QString &,  \
+                                                         const QVariant &, \
+                                                         const QVariant &, \
+                                                         const QVariant &, \
+                                                         const QVariant &, \
+                                                         const QVariant &, \
+                                                         const QVariant &, \
+                                                         const QVariant &, \
+                                                         const QVariant &)
+
+#define DeclareDBusCallFunc_Custom(params...) \
+    typedef QDBusMessage (QDBusAbstractInterface::*Call)(params)
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#    define UseDBusCallFunc_Full
+#endif
 
 using namespace dfmplugin_dirshare;
 DFMBASE_USE_NAMESPACE
@@ -120,7 +138,11 @@ TEST_F(UT_UserShareHelper, Share)
 
 TEST_F(UT_UserShareHelper, IsUserSharepasswordSet)
 {
-    typedef QDBusMessage (QDBusAbstractInterface::*Call)(const QString &, const QString &);
+#ifdef UseDBusCallFunc_Full
+    DeclareDBusCallFunc_Full();
+#else
+    DeclareDBusCallFunc_Custom(const QString &, const QString &);
+#endif
     auto call = static_cast<Call>(&QDBusAbstractInterface::call);
     stub.set_lamda(call, [] { __DBG_STUB_INVOKE__ return QDBusMessage(); });
     EXPECT_NO_FATAL_FAILURE(UserShareHelperInstance->isUserSharePasswordSet("test"));
@@ -128,7 +150,11 @@ TEST_F(UT_UserShareHelper, IsUserSharepasswordSet)
 
 TEST_F(UT_UserShareHelper, SetSambaPasswd)
 {
-    typedef QDBusMessage (QDBusAbstractInterface::*Call)(const QString &, const QString &, const QString &);
+#ifdef UseDBusCallFunc_Full
+    DeclareDBusCallFunc_Full();
+#else
+    DeclareDBusCallFunc_Custom(const QString &, const QString &, const QString &);
+#endif
     auto call = static_cast<Call>(&QDBusAbstractInterface::call);
     stub.set_lamda(call, [] { __DBG_STUB_INVOKE__ return QDBusMessage(); });
     EXPECT_NO_FATAL_FAILURE(UserShareHelperInstance->setSambaPasswd("test", "test"));
@@ -344,7 +370,11 @@ TEST_F(UT_UserShareHelper, StartSmbService) { }
 
 TEST_F(UT_UserShareHelper, SetSmbdAutoStart)
 {
-    typedef QDBusMessage (QDBusAbstractInterface::*Call)(const QString &);
+#ifdef UseDBusCallFunc_Full
+    DeclareDBusCallFunc_Full();
+#else
+    DeclareDBusCallFunc_Custom(const QString &);
+#endif
     auto call = static_cast<Call>(&QDBusAbstractInterface::call);
     stub.set_lamda(call, [] { __DBG_STUB_INVOKE__ return QDBusMessage(); });
     EXPECT_NO_FATAL_FAILURE(UserShareHelperInstance->setSmbdAutoStart());
