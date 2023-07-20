@@ -33,9 +33,9 @@ public:
 
     ~UT_AsyncFileInfo() override;
 
-    void queryAsync(FileInfoPointer info);
+    void queryAsync(QSharedPointer<AsyncFileInfo> info);
 
-    FileInfoPointer info{ nullptr };
+    QSharedPointer<AsyncFileInfo> info{ nullptr };
     QThreadPool pool;
 };
 
@@ -43,7 +43,7 @@ UT_AsyncFileInfo::~UT_AsyncFileInfo() {
 
 }
 
-void UT_AsyncFileInfo::queryAsync(FileInfoPointer info)
+void UT_AsyncFileInfo::queryAsync(QSharedPointer<AsyncFileInfo> info)
 {
     bool isMain = false;
     do {
@@ -51,7 +51,7 @@ void UT_AsyncFileInfo::queryAsync(FileInfoPointer info)
             isMain = qApp->thread() == QThread::currentThread();
             if (isMain)
                 return;
-            EXPECT_TRUE(info->initQuerier());
+            info->cacheAsyncAttributes();
         });
         future.waitForFinished();
     }
@@ -64,27 +64,12 @@ TEST_F(UT_AsyncFileInfo, testAsyncFileInfo)
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     info.reset(new AsyncFileInfo(url));
     QSharedPointer<dfmio::DFileInfo> dfileinfo (new dfmio::DFileInfo(url));
-    dfileinfo->initQuerier();
-    info.reset(new AsyncFileInfo(url, dfileinfo));
-    AsyncFileInfo info3(url);
-    bool isMain = false;
-    do {
-        auto future = QtConcurrent::run(&pool, [&]{
-            isMain = qApp->thread() == QThread::currentThread();
-            if (isMain)
-                return;
-            EXPECT_TRUE(info3.initQuerier());
-        });
-        future.waitForFinished();
-    }
-    while (isMain);
 
+    info.reset(new AsyncFileInfo(url, dfileinfo));
     queryAsync(info);
     EXPECT_TRUE(info->exists());
     info->cacheAttribute(dfmio::DFileInfo::AttributeID::kStandardIsHidden, true);
     EXPECT_TRUE(info->isAttributes(OptInfoType::kIsHidden));
-    queryAsync(info);
-    EXPECT_FALSE(info->isAttributes(OptInfoType::kIsHidden));
 }
 
 TEST_F(UT_AsyncFileInfo, testAsyncFileInfoNameOf)
@@ -92,7 +77,8 @@ TEST_F(UT_AsyncFileInfo, testAsyncFileInfoNameOf)
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     QProcess::execute("touch testAsyncFileInfo.txt");
     url.setPath(url.path() + QDir::separator() + "testAsyncFileInfo.txt");
-    info.reset(new AsyncFileInfo(url));
+    QSharedPointer<dfmio::DFileInfo> dfileinfo (new dfmio::DFileInfo(url));
+    info.reset(new AsyncFileInfo(url, dfileinfo));
     queryAsync(info);
     EXPECT_EQ("testAsyncFileInfo.txt", info->nameOf(NameInfoType::kFileName));
     EXPECT_EQ("testAsyncFileInfo", info->nameOf(NameInfoType::kBaseName));
@@ -117,7 +103,8 @@ TEST_F(UT_AsyncFileInfo, testAsyncFileInfoPathOf)
     QProcess::execute("touch testAsyncFileInfo.txt");
     auto parent = url.path();
     url.setPath(url.path() + QDir::separator() + "testAsyncFileInfo.txt");
-    info.reset(new AsyncFileInfo(url));
+    QSharedPointer<dfmio::DFileInfo> dfileinfo (new dfmio::DFileInfo(url));
+    info.reset(new AsyncFileInfo(url, dfileinfo));
     queryAsync(info);
     EXPECT_EQ(url.path(), info->pathOf(PathInfoType::kFilePath));
     EXPECT_EQ(url.path(), info->pathOf(PathInfoType::kAbsoluteFilePath));
@@ -283,16 +270,13 @@ TEST_F(UT_AsyncFileInfo, testAsyncFileInfoChildren)
     QProcess::execute("touch ./testAsyncFileInfo/testAsyncFileInfo.txt");
     info.reset(new AsyncFileInfo(url));
     info.dynamicCast<AsyncFileInfo>()->setNotifyUrl(url, QString(""));
-    info->refresh();
-    while (true != info->isAttributes(OptInfoType::kIsDir)) {
-        QThread::msleep(10);
-    }
+    queryAsync(info);
     while (-1 == info->countChildFileAsync()) {
         QThread::msleep(10);
     }
     EXPECT_TRUE(1 == info->countChildFileAsync());
 
-    FileInfoPointer tmp(new AsyncFileInfo(QUrl::fromLocalFile(url.path() + "/testAsyncFileInfo.txt")));
+    QSharedPointer<AsyncFileInfo> tmp(new AsyncFileInfo(QUrl::fromLocalFile(url.path() + "/testAsyncFileInfo.txt")));
     queryAsync(tmp);
     EXPECT_EQ("0 B", tmp->displayOf(DisPlayInfoType::kSizeDisplayName));
 

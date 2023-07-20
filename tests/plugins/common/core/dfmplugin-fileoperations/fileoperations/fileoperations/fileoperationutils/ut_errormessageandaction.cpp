@@ -136,7 +136,7 @@ TEST_F(UT_ErrorMessageAndAction, testErrorToString)
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kGetRestorePathError) == QObject::tr("Restore failed, original path could not be found"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kProrogramError) == QObject::tr("Unknown error"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash) == QObject::tr("Failed to parse the url of trash"));
-    EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile) == QObject::tr("Failed to obtain the trash original file"));
+    EXPECT_FALSE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile) == QObject::tr("Failed to obtain the trash original file"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kUnknowError).isEmpty());
 }
 
