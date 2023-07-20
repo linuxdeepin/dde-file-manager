@@ -14,7 +14,7 @@
 #include "removevaultview/vaultremovebypasswordview.h"
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
 
-#include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/vaultreportdata.h"
+#include "plugins/common/dfmplugin-utils/reportlog/datas/vaultreportdata.h"
 
 #include <dfm-framework/event/event.h>
 

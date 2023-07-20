@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "blockmountreportdata.h"
-#include "reportlog/rlog/rlog.h"
 
 #include <QVariantMap>
 #include <QDebug>
