@@ -91,7 +91,7 @@ public slots:
 
     void openNewWindow(const QUrl &url);
 
-    void creatVaultDialog();
+    void createVaultDialog();
 
     void unlockVaultDialog();
 

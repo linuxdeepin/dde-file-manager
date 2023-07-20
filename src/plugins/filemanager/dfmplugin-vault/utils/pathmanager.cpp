@@ -7,7 +7,8 @@
 
 #include <dfm-io/dfmio_utils.h>
 
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
+
 PathManager::PathManager(QObject *parent)
     : QObject(parent)
 {

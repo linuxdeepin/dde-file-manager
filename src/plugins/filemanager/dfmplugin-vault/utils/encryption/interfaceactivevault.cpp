@@ -7,7 +7,8 @@
 #include "utils/vaulthelper.h"
 #include "utils/pathmanager.h"
 
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
+
 InterfaceActiveVault::InterfaceActiveVault(QObject *parent)
     : QObject(parent)
 {

@@ -8,10 +8,12 @@
 
 #include <denhancedwidget.h>
 
+static const int kArrowExpandSpacing = 10;
+
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_vault;
-static const int kArrowExpandSpacing = 10;
+DPVAULT_USE_NAMESPACE
+
 VaultPropertyDialog::VaultPropertyDialog(QWidget *parent)
     : DDialog(parent),
       platformWindowHandle(new DPlatformWindowHandle(this, this))

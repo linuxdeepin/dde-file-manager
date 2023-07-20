@@ -32,12 +32,13 @@
 
 Q_DECLARE_METATYPE(const char *)
 
-using namespace PolkitQt1;
-
-DWIDGET_USE_NAMESPACE
-using namespace dfmplugin_vault;
 constexpr int kKeyVerifyDeleteBtn = 1;
 constexpr int kPassWordDeleteBtn = 2;
+
+using namespace PolkitQt1;
+DWIDGET_USE_NAMESPACE
+DPVAULT_USE_NAMESPACE
+
 VaultRemovePages::VaultRemovePages(QWidget *parent)
     : VaultPageBase(parent),
       passwordView(new VaultRemoveByPasswordView(this)),

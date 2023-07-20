@@ -11,8 +11,9 @@
 #include <mutex>
 #include <QUrl>
 
-using namespace dfmbase;
-using namespace dfmplugin_vault;
+DFMBASE_USE_NAMESPACE
+DPVAULT_USE_NAMESPACE
+
 ServiceManager::ServiceManager(QObject *parent)
     : QObject(parent)
 {

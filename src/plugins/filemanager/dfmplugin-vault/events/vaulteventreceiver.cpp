@@ -29,7 +29,7 @@ Q_DECLARE_METATYPE(bool *)
 
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
 
 VaultEventReceiver::VaultEventReceiver(QObject *parent)
     : QObject(parent)
@@ -87,7 +87,7 @@ void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
             VaultHelper::instance()->unlockVaultDialog();
         } break;
         case VaultState::kNotExisted: {
-            VaultHelper::instance()->creatVaultDialog();
+            VaultHelper::instance()->createVaultDialog();
         } break;
         default:
             break;
@@ -190,7 +190,7 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
         VaultHelper::instance()->appendWinID(windowId);
         const VaultState &state = VaultHelper::instance()->state(PathManager::vaultLockPath());
         if (VaultState::kNotExisted == state) {
-            VaultHelper::instance()->creatVaultDialog();
+            VaultHelper::instance()->createVaultDialog();
             return true;
         } else if (VaultState::kEncrypted == state) {
             VaultHelper::instance()->unlockVaultDialog();

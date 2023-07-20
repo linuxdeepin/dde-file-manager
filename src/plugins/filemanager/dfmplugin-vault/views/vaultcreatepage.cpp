@@ -21,7 +21,8 @@
 #include <QMouseEvent>
 #include <QWindow>
 
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
+
 VaultActiveView::VaultActiveView(QWidget *parent)
     : VaultPageBase(parent)
 {

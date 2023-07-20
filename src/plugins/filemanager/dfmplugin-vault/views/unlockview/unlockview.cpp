@@ -23,10 +23,12 @@
 #include <QDateTime>
 #include <QStandardPaths>
 
+constexpr int kToolTipShowDuration = 3000;
+
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-using namespace dfmplugin_vault;
-constexpr int kToolTipShowDuration = 3000;
+DPVAULT_USE_NAMESPACE
+
 UnlockView::UnlockView(QWidget *parent)
     : QFrame(parent)
 {

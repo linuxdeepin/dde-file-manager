@@ -32,7 +32,7 @@ Q_DECLARE_METATYPE(const char *)
 using namespace PolkitQt1;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-using namespace dfmplugin_vault;
+DPVAULT_USE_NAMESPACE
 
 VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     : QWidget(parent)
