@@ -15,10 +15,20 @@
 #include <stdlib.h>
 #include <pwd.h>
 #include <sys/types.h>
+#include <signal.h>
 
 static constexpr char kDaemonInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemonplugin-core" };
 static constexpr char kLibCore[] { "libdaemonplugin-core.so" };
+
+static void handleSIGTERM(int sig)
+{
+    qCritical() << "daemon break with !SIGTERM! " << sig;
+
+    if (qApp) {
+        qApp->quit();
+    }
+}
 
 static void initEnv()
 {
@@ -109,6 +119,7 @@ int main(int argc, char *argv[])
         qCritical() << "Load pugin failed!";
         abort();
     }
+    signal(SIGTERM, handleSIGTERM);
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();

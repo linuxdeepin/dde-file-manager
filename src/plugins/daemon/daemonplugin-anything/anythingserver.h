@@ -22,6 +22,7 @@ public:
     virtual void stop() override;
 
 private:
+    QLibrary *backendLib;
 };
 
 DAEMONPANYTHING_END_NAMESPACE
