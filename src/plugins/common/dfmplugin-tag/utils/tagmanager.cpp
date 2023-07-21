@@ -103,9 +103,6 @@ bool TagManager::canTagFile(const QUrl &url) const
         return localFileCanTagFilter(info);
     }
 
-    if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
-        return true;
-
     return false;
 }
 
@@ -121,10 +118,6 @@ bool TagManager::canTagFile(const FileInfoPointer &info) const
     }
 
     bool canTag = localFileCanTagFilter(info);
-    if (!canTag) {
-        if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
-            return true;
-    }
 
     return canTag;
 }

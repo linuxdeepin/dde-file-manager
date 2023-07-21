@@ -50,7 +50,7 @@ void RecentFileWatcherPrivate::initConnect()
 
     auto onParentDeleted = [=](const QString &, const QString &deletedPath) {
         if (path.startsWith(deletedPath) && !deletedPath.isEmpty()) {
-            qDebug() << "recent: watched: " << path << ", deleted: " << deletedPath;
+            qInfo() << "recent: watched: " << path << ", deleted: " << deletedPath;
             Q_EMIT q->fileDeleted(QUrl::fromLocalFile(path));
         }
     };

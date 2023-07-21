@@ -7,19 +7,23 @@
 #include "utils/tagmanager.h"
 #include "utils/taghelper.h"
 #include "data/tagproxyhandle.h"
+#include "utils/filetagcache.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/base/schemefactory.h>
 #include "utils/anythingmonitorfilter.h"
+#include "files/tagfileinfo.h"
 
 #include <gtest/gtest.h>
 
 #include <QPaintEvent>
 #include <QPainter>
+#include "qdbusabstractinterface.h"
+#include <QDBusPendingCall>
 
-DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_tag;
+DFMBASE_USE_NAMESPACE using namespace dfmplugin_tag;
 
 class TagManagerTest : public testing::Test
 {
@@ -28,6 +32,9 @@ protected:
     virtual void SetUp() override
     {
         ins = TagManager::instance();
+        stub.set_lamda(&QDBusAbstractInterface::asyncCallWithArgumentList, []() {
+            return QDBusPendingCall::fromError(QDBusError());
+        });
     }
     virtual void TearDown() override
     {
@@ -41,11 +48,14 @@ private:
 
 TEST_F(TagManagerTest, canTagFile)
 {
+    FileInfoPointer info(new FileInfo(QUrl("file:///test")));
+    stub.set_lamda(&InfoFactory::create<FileInfo>, [info](const QUrl &url, const Global::CreateFileInfoType type, QString *errorString) {
+        return info;
+    });
     stub.set_lamda(&TagManager::localFileCanTagFilter, []() { __DBG_STUB_INVOKE__ return true; });
     EXPECT_FALSE(ins->canTagFile(QUrl()));
     EXPECT_TRUE(ins->canTagFile(QUrl("file:/hello/world")));
     EXPECT_FALSE(ins->canTagFile(FileInfoPointer()));
-    FileInfoPointer info(new FileInfo(QUrl("file:///test")));
     EXPECT_TRUE(ins->canTagFile(info));
 }
 
@@ -78,6 +88,9 @@ TEST_F(TagManagerTest, paintIconTagsHandle2)
 
 TEST_F(TagManagerTest, fileDropHandle)
 {
+    stub.set_lamda(&InfoFactory::create<TagFileInfo>, []() {
+        return nullptr;
+    });
     EXPECT_TRUE(ins->fileDropHandle(QList<QUrl>() << QUrl("file:///test"), TagManager::rootUrl()));
     auto func = static_cast<bool (TagManager::*)(const FileInfoPointer &) const>(&TagManager::canTagFile);
     stub.set_lamda(func, []() { __DBG_STUB_INVOKE__ return true; });
