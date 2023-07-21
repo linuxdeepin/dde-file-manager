@@ -84,6 +84,7 @@ void AsyncFileInfo::refresh()
         d->extraProperties.clear();
         d->attributesExtend.clear();
         d->extendIDs.clear();
+        d->fileIcon = QIcon();
         extendOtherCache.clear();
     }
 }

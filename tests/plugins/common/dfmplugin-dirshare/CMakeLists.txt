@@ -15,6 +15,7 @@ file(GLOB_RECURSE SRC_FILES
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
 find_package(Qt5 COMPONENTS Svg REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
 
 add_executable(${PROJECT_NAME}
     ${SRC_FILES}
@@ -34,6 +35,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     DFM::base
     DFM::extension
     Qt5::Svg
+    Qt5::Network
     ${DtkWidget_LIBRARIES}
 )
 

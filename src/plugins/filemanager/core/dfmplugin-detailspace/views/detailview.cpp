@@ -5,6 +5,7 @@
 #include "detailview.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -149,11 +150,22 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         };
 
         // get icon from plugin
+        QIcon icon;
         const QString &iconName = findPluginIcon(info->urlOf(UrlInfoType::kUrl));
-        if (!iconName.isEmpty())
-            iconLabel->setPixmap(QIcon::fromTheme(iconName).pixmap(targetSize));
-        else
-            iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
+        if (!iconName.isEmpty()) {
+            icon = QIcon::fromTheme(iconName);
+        } else if (ThumbnailHelper::instance()->checkThumbEnable(url)) {
+            icon = info->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
+            if (icon.isNull()) {
+                const auto &img = ThumbnailHelper::instance()->thumbnailImage(url, Global::kLarge);
+                icon = QPixmap::fromImage(img);
+            }
+        }
+
+        if (icon.isNull())
+            icon = info->fileIcon();
+
+        iconLabel->setPixmap(icon.pixmap(targetSize));
         iconLabel->setAlignment(Qt::AlignCenter);
         iconLabel->setContentsMargins(0, 0, 0, 15);
         vLayout->insertWidget(0, iconLabel, 0, Qt::AlignHCenter);
