@@ -127,6 +127,9 @@ bool VirtualEntryMenuScene::create(QMenu *parent)
 
 void VirtualEntryMenuScene::updateState(QMenu *parent)
 {
+    if (!parent)
+        return;
+
     using namespace menu_action_id;
     QStringList visibleActions;
     if (d->aggregatedEntrySelected)
@@ -141,6 +144,9 @@ void VirtualEntryMenuScene::updateState(QMenu *parent)
 
 bool VirtualEntryMenuScene::triggered(QAction *action)
 {
+    if (!action)
+        return false;
+
     using namespace menu_action_id;
     auto key = action->property(ActionPropertyKey::kActionID).toString();
     bool handled = false;
@@ -208,6 +214,9 @@ void VirtualEntryMenuScenePrivate::insertActionBefore(const QString &inserted, c
 
 void VirtualEntryMenuScenePrivate::hookCptActions(QAction *triggered)
 {
+    if (!triggered)
+        return;
+
     const QString &triggeredId = triggered->property(ActionPropertyKey::kActionID).toString();
     if (triggeredId == menu_action_id::kCptActLogoutAndForget)
         actCptForget();
