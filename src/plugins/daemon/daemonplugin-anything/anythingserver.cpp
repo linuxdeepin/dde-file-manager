@@ -9,16 +9,15 @@ DAEMONPANYTHING_USE_NAMESPACE
 
 void AnythingPlugin::initialize()
 {
+    // define the deepin anything backend share library.
+    backendLib = new QLibrary("deepin-anything-server-lib");
 }
 
 bool AnythingPlugin::start()
 {
-    // define the deepin anything backend share library.
-    QLibrary backendLib("deepin-anything-server-lib");
-
     // load share library and check status.
-    backendLib.load();
-    if (!backendLib.isLoaded()) {
+    backendLib->load();
+    if (!backendLib->isLoaded()) {
         qInfo() << "load deepin-anything-server-lib.so failed!!, maybe the deepin-anything-server has not been installed.";
         return false;
     }
@@ -42,7 +41,7 @@ bool AnythingPlugin::start()
     typedef void (*AnythingObj)();
 
     //resolve the anything backend instance fire function.
-    AnythingObj ins = (AnythingObj)backendLib.resolve("fireAnything");
+    AnythingObj ins = (AnythingObj)backendLib->resolve("fireAnything");
     if (ins) {
         ins();
         qInfo() << "found export func 'fireAnything' and load anything backend OK!!";
@@ -50,8 +49,6 @@ bool AnythingPlugin::start()
         qInfo() << "Did not find export func 'fireAnything', please check deepin-anything-server lib version(>=6.0.1)";
     }
 
-    // unload this share library, but donot unload at here.
-    //backendLib.unload();
     return true;
 }
 
@@ -65,4 +62,21 @@ void AnythingPlugin::stop()
     } else {
         qInfo() << "unload kernel module vfs_monitor timed out.";
     }
+
+    // define the anything backend instance fucntion.
+    typedef void (*AnythingObj)();
+
+    //resolve the anything backend instance down function.
+    AnythingObj down = (AnythingObj)backendLib->resolve("downAnything");
+    if (down) {
+        down();
+        qInfo() << "found export func 'downAnything'";
+    }
+
+    // unload this share library,
+    if (backendLib->isLoaded()) {
+        backendLib->unload();
+        qInfo() << "unloaded deepin-anything-server-lib";
+    }
+    delete backendLib;
 }
