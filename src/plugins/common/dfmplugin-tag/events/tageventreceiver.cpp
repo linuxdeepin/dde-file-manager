@@ -32,7 +32,7 @@ void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QLi
 {
     Q_UNUSED(errMsg)
 
-    if (!ok)
+    if (!ok || destUrls.isEmpty())
         return;
 
     for (const QUrl &url : srcUrls) {

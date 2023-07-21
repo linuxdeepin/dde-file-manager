@@ -25,7 +25,6 @@ class Tag : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
 
     // hook events
-    DPF_EVENT_REG_HOOK(hook_CanTag) // Warning: The event is abandoned, please do not use it.
     DPF_EVENT_REG_HOOK(hook_CanTaged)
 
 public:

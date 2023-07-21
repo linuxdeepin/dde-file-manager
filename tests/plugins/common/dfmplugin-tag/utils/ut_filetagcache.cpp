@@ -51,6 +51,7 @@ TEST_F(FileTagCacheTest, loadFileTagsFromDatabase)
         hash["test"] = QColor("red");
         return hash;
     });
+    stub.set_lamda(&TagProxyHandle::isValid, []() { __DBG_STUB_INVOKE__ return true; });
     ins->loadFileTagsFromDatabase();
     EXPECT_TRUE(ins->getTagsColor(QStringList() << QString("test")).value("test") == QColor("red"));
 }

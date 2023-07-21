@@ -7,6 +7,7 @@
 #include "utils/taghelper.h"
 #include "utils/tagmanager.h"
 #include "widgets/tageditor.h"
+#include "utils/filetagcache.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/application/application.h>

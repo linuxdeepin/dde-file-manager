@@ -214,7 +214,7 @@ void AnythingMonitorFilter::reserveDir(QStringList *list)
     for (const QString &path : *list) {
         auto fileInfo { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path)) };
 
-        if (!fileInfo->isAttributes(OptInfoType::kIsDir))
+        if (fileInfo && !fileInfo->isAttributes(OptInfoType::kIsDir))
             pathInvalid.push_back(path);
     }
 
