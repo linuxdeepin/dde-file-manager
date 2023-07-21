@@ -156,7 +156,7 @@ bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString
 {
     QFile localPubKeyfile(keypath);
     if (!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qDebug() << "cant't open local public key file!";
+        qCritical() << "Vault: cant't open local public key file!";
         return false;
     }
 
@@ -167,7 +167,7 @@ bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString
     QString strRSACipherFilePath = makeVaultLocalPath(kRSACiphertextFileName);
     QFile rsaCipherfile(strRSACipherFilePath);
     if (!rsaCipherfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qDebug() << "cant't open rsa cipher file!";
+        qCritical() << "Vault: cant't open rsa cipher file!";
         return false;
     }
 
@@ -179,7 +179,7 @@ bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
     QString temp = "";
     if (!checkPassword(password, temp)) {
-        qDebug() << "user key error!";
+        qCritical() << "Vault: user key error!";
         return false;
     }
 

@@ -30,7 +30,6 @@ VaultFileWatcher::VaultFileWatcher(const QUrl &url, QObject *parent)
 
 VaultFileWatcher::~VaultFileWatcher()
 {
-    qInfo() << "VaultFileWatcher :" << dptr->proxyStaging->url();
 }
 
 void VaultFileWatcher::onFileDeleted(const QUrl &url)
