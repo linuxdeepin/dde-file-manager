@@ -15,6 +15,7 @@
 #include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-io/dfile.h>
+#include <dfm-burn/dburn_global.h>
 
 #include <QVector>
 #include <QDebug>
@@ -28,6 +29,7 @@
 
 using namespace dfmbase;
 using namespace GlobalServerDefines::DeviceProperty;
+DFM_BURN_USE_NS
 
 QString DeviceUtils::getBlockDeviceId(const QString &deviceDesc)
 {
@@ -202,6 +204,19 @@ bool DeviceUtils::isWorkingOpticalDiscId(const QString &id)
     }
 
     return false;
+}
+
+bool DeviceUtils::isBlankOpticalDisc(const QString &id)
+{
+    // for dvd+rw/dvd-rw disc, erase operation only overwrite some blocks which used to present filesystem,
+    // so the blank field is still false even if it can be write datas from the beginning,
+    auto &&map = DevProxyMng->queryBlockInfo(id);
+    bool isBlank { map[kOpticalBlank].toBool() };
+    auto mediaType { static_cast<MediaType>(map[kOpticalMediaType].toUInt()) };
+    if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW)
+        isBlank |= map[kSizeTotal].toULongLong() == map[kSizeFree].toULongLong();
+
+    return isBlank;
 }
 
 bool DeviceUtils::isSamba(const QUrl &url)

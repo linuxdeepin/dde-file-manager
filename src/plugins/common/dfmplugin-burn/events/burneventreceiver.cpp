@@ -25,8 +25,8 @@
 #include <QDir>
 
 using namespace dfmplugin_burn;
-DFMBASE_USE_NAMESPACE
 using namespace GlobalServerDefines;
+DFMBASE_USE_NAMESPACE
 
 BurnEventReceiver::BurnEventReceiver(QObject *parent)
     : QObject(parent)
@@ -83,7 +83,8 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
         destDir.setFilter(QDir::Filter::AllEntries | QDir::Filter::NoDotAndDotDot);
         QString devId { DeviceUtils::getBlockDeviceId(dev) };
         auto &&map = DevProxyMng->queryBlockInfo(devId);
-        bool isBlank { map[DeviceProperty::kOpticalBlank].toBool() };
+        bool isBlank { DeviceUtils::isBlankOpticalDisc(devId) };
+
         auto fi { InfoFactory::create<FileInfo>(urls.front()) };
         static const QSet<QString> imageTypes { Global::Mime::kTypeCdImage, Global::Mime::kTypeISO9660Image };
 

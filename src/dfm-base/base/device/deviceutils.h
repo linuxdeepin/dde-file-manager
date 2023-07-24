@@ -43,6 +43,7 @@ public:
     static bool isAutoMountAndOpenEnable();
     static bool isWorkingOpticalDiscDev(const QString &dev);
     static bool isWorkingOpticalDiscId(const QString &id);
+    static bool isBlankOpticalDisc(const QString &id);
 
     static bool isSamba(const QUrl &url);
     static bool isFtp(const QUrl &url);
