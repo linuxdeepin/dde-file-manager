@@ -236,11 +236,19 @@ QModelIndex FileViewModel::parent(const QModelIndex &child) const
 
 int FileViewModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
-        return 1;
-
-    if (!filterSortWorker.isNull())
+    Q_UNUSED(parent)
+    /*  notes:
+        It's no need to return 1 when parent is invalid, because there is no such scenario.
+        AT tool(sniff) will use this return value to make AT-tag and show each item.
+        If the return value is greater than 0, the AT-tags are shown normally and item
+        count is equal to the return value;
+        For AT-tool, if `parent` is invalid and return 1, then only 1 item would
+        be shown in AT-tool, because at that time `filterSortWorker` has not get correct children count,
+        but the AT-tool need a correct children count, not 1.
+    */
+    if (!filterSortWorker.isNull()) {
         return filterSortWorker->childrenCount();
+    }
 
     return 0;
 }
@@ -259,15 +267,25 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     FileItemData *itemData = nullptr;
-
+    int columnRole = role;
     if (!parentIndex.isValid()) {
         itemData = filterSortWorker->rootData();
     } else {
+        switch (role) {
+        case Qt::DisplayRole:
+        case Qt::EditRole: {
+            ItemRoles temRole = columnToRole(index.column());
+            if (temRole != ItemRoles::kItemUnknowRole)
+                columnRole = temRole;
+        } break;
+        default:
+            break;
+        }
         itemData = filterSortWorker->childData(index.row());
     }
 
     if (itemData) {
-        return itemData->data(role);
+        return itemData->data(columnRole);
     } else {
         return QVariant();
     }
@@ -505,6 +523,31 @@ QList<ItemRoles> FileViewModel::getColumnRoles() const
     }
 
     return roles;
+}
+
+ItemRoles FileViewModel::columnToRole(int column) const
+{
+    QList<ItemRoles> roles;
+    bool customOnly = WorkspaceEventSequence::instance()->doFetchCustomColumnRoles(dirRootUrl, &roles);
+
+    const QVariantMap &map = DFMBASE_NAMESPACE::Application::appObtuselySetting()->value("FileViewState", dirRootUrl).toMap();
+    if (map.contains("headerList")) {
+        QVariantList headerList = map.value("headerList").toList();
+        if (headerList.length() > column)
+            return ItemRoles(headerList.at(column).toInt());
+
+    } else if (!customOnly) {
+        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
+                                                                           << kItemFileLastModifiedRole
+                                                                           << kItemFileSizeRole
+                                                                           << kItemFileMimeTypeRole;
+
+        if (defualtColumnRoleList.length() > column) {
+            return defualtColumnRoleList.at(column);
+        }
+    }
+
+    return kItemUnknowRole;
 }
 
 QString FileViewModel::roleDisplayString(int role) const
