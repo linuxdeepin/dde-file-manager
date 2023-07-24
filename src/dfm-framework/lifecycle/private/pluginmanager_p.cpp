@@ -91,13 +91,15 @@ bool PluginManagerPrivate::readPlugins()
         if (!lazyLoadPluginsNames.contains(obj->name()))
             notLazyLoadQuene.append(obj);
         else
-            qInfo() << "Skip load: " << obj->name();
+            qInfo() << "Skip load(lazy load): " << obj->name();
     });
 
 #ifdef QT_DEBUG
+    qDebug() << "Start traversing the meta information of all plugins: ";
     for (auto read : readQueue) {
         qDebug() << read;
     }
+    qDebug() << "End traversal of meta information for all plugins!";
 #endif
 
     return readQueue.isEmpty() ? false : true;
@@ -253,6 +255,7 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
  */
 bool PluginManagerPrivate::loadPlugins()
 {
+    qInfo() << "Start loading all plugins: ";
     dependsSort(&loadQueue, &notLazyLoadQuene);
 
     bool ret = true;
@@ -260,6 +263,7 @@ bool PluginManagerPrivate::loadPlugins()
         if (!PluginManagerPrivate::doLoadPlugin(pointer))
             ret = false;
     });
+    qInfo() << "End loading all plugins.";
 
     return ret;
 }
@@ -269,11 +273,13 @@ bool PluginManagerPrivate::loadPlugins()
  */
 bool PluginManagerPrivate::initPlugins()
 {
+    qInfo() << "Start initializing all plugins: ";
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
         if (!PluginManagerPrivate::doInitPlugin(pointer))
             ret = false;
     });
+    qInfo() << "End initialization of all plugins.";
 
     emit Listener::instance()->pluginsInitialized();
     allPluginsInitialized = true;
@@ -286,11 +292,13 @@ bool PluginManagerPrivate::initPlugins()
  */
 bool PluginManagerPrivate::startPlugins()
 {
+    qInfo() << "Start start all plugins: ";
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
         if (!PluginManagerPrivate::doStartPlugin(pointer))
             ret = false;
     });
+    qInfo() << "End start of all plugins.";
 
     emit Listener::instance()->pluginsStarted();
     allPluginsStarted = true;
@@ -332,7 +340,7 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
         for (const PluginDepend &depend : ptr->depends()) {
             QString &&name { depend.name() };
             if (srcMap.contains(name)) {
-                qInfo() << name << "->" << ptr->name();
+                qInfo("Dependency `%s` <- `%s`", qUtf8Printable(name), qUtf8Printable(ptr->name()));
                 dependGroup.append({ srcMap.value(name), ptr });
             } else {
                 qWarning("Plugin `%s` cannot depend a unkonw plugin: `%s`", qUtf8Printable(ptr->name()), qUtf8Printable(name));
@@ -343,7 +351,7 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
     // sort
     dstQueue->clear();
     if (!doPluginSort(dependGroup, srcMap, dstQueue)) {
-        qCritical() << "Sort depnd group failed";
+        qWarning() << "Sort depnd group failed!";
         *dstQueue = *srcQueue;
         return;
     }
@@ -355,9 +363,9 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
 
     // 流程互斥
     if (pointer->d->state >= PluginMetaObject::State::kLoaded) {
-        qDebug() << "Is Loaded plugin: "
-                 << pointer->d->name
-                 << pointer->fileName();
+        qInfo() << "Is Loaded plugin: "
+                << pointer->d->name
+                << pointer->fileName();
         return true;
     }
 
@@ -420,9 +428,9 @@ bool PluginManagerPrivate::doInitPlugin(PluginMetaObjectPointer pointer)
     Q_ASSERT(pointer);
 
     if (pointer->d->state >= PluginMetaObject::State::kInitialized) {
-        qDebug() << "Is initialized plugin: "
-                 << pointer->d->name
-                 << pointer->fileName();
+        qInfo() << "Is initialized plugin: "
+                << pointer->d->name
+                << pointer->fileName();
         return true;
     }
 
@@ -452,9 +460,9 @@ bool PluginManagerPrivate::doStartPlugin(PluginMetaObjectPointer pointer)
     Q_ASSERT(pointer);
 
     if (pointer->d->state >= PluginMetaObject::State::kStarted) {
-        qDebug() << "Is started plugin:"
-                 << pointer->d->name
-                 << pointer->fileName();
+        qInfo() << "Is started plugin:"
+                << pointer->d->name
+                << pointer->fileName();
         return true;
     }
 
@@ -488,9 +496,9 @@ bool PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
     Q_ASSERT(pointer);
 
     if (pointer->d->state >= PluginMetaObject::State::kStoped) {
-        qDebug() << "Is stoped plugin:"
-                 << pointer->d->name
-                 << pointer->fileName();
+        qInfo() << "Is stoped plugin:"
+                << pointer->d->name
+                << pointer->fileName();
         return true;
     }
 
@@ -513,7 +521,7 @@ bool PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
     qInfo() << "stop" << pointer->d->loader->fileName();
 
     if (!pointer->d->loader->unload()) {
-        qDebug() << pointer->d->loader->errorString();
+        qWarning() << "Unload plugin failed: " << pointer->d->loader->errorString();
         return false;
     }
 

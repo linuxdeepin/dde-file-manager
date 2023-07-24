@@ -62,7 +62,6 @@ void Core::initialize()
 
 bool Core::start()
 {
-    qDebug() << __PRETTY_FUNCTION__;
     GlobalPrivate::kDFMApp = new Application;   // must create it
 
     connectToServer();

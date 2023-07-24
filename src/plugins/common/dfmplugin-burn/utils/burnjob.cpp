@@ -109,11 +109,11 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
     while (true) {
         char buf[kPipeBufferSize] { 0 };
         if (read(progressFd, buf, kPipeBufferSize) <= 0) {
-            qDebug() << "progressFd break";
+            qWarning() << "progressFd break";
             break;
         } else {
             QByteArray bufByes(buf);
-            qDebug() << "burn files, read bytes json:" << bufByes;
+            qInfo() << "burn files, read bytes json:" << bufByes;
             QJsonParseError jsonError;
             QJsonObject obj { QJsonDocument::fromJson(bufByes, &jsonError).object() };
             if (jsonError.error == QJsonParseError::NoError) {
@@ -218,6 +218,7 @@ bool AbstractBurnJob::readyToWork()
         QString mpt { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
         if (!mpt.isEmpty()) {
             if (!DeviceManager::instance()->unmountBlockDev(curDevId)) {
+                qWarning() << "The device was not safely unmounted: " << curDevId;
                 emit requestErrorMessageDialog(tr("The device was not safely unmounted"), tr("Disk is busy, cannot unmount now"));
                 return false;
             }
@@ -429,6 +430,7 @@ void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
     qInfo() << "Burn ret: " << isSuccess << manager->lastError() << localPath;
     auto check { opts.testFlag(BurnOption::kVerifyDatas) };
     if (check && isSuccess) {
+        qInfo() << "Enable check media";
         double gud, slo, bad;
         curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);
@@ -469,6 +471,7 @@ void BurnISOImageJob::writeFunc(int progressFd, int checkFd)
 
     auto check { opts.testFlag(BurnOption::kVerifyDatas) };
     if (check && isSuccess) {
+        qInfo() << "Enable check media";
         double gud, slo, bad;
         curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);

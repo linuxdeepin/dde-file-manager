@@ -56,6 +56,7 @@ void CoreEventReceiver::handleOpenWindow(const QUrl &url, const QVariant &opt)
 
 void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
 {
+    qInfo("Start load plugins at runtime: ");
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
         qInfo() << "About to load plugin:" << name;
@@ -64,6 +65,7 @@ void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
             qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin)
                     << "State: " << plugin->pluginState();
     });
+    qInfo() << "End load plugins at runtime.";
 }
 
 void CoreEventReceiver::handleHeadless()
