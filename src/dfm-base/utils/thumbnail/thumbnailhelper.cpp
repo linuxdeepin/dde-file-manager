@@ -96,7 +96,7 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
 
     if (mimeName.startsWith("audio")
         || MimeTypeDisplayManager::instance()->supportAudioMimeTypes().contains(mimeName))
-        return checkStatus(Application::kPreviewVideo);
+        return checkStatus(Application::kPreviewAudio);
 
     if (mimeName.startsWith("video")
         || MimeTypeDisplayManager::instance()->supportVideoMimeTypes().contains(mimeName))
