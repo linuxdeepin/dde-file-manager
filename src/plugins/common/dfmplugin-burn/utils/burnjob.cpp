@@ -203,13 +203,7 @@ bool AbstractBurnJob::readyToWork()
         return false;
     }
 
-    bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
-    // for dvd+rw/dvd-rw disc, erase operation only overwrite some blocks which used to present filesystem,
-    // so the blank field is still false even if it can be write datas from the beginning,
-    auto mediaType { static_cast<MediaType>(map[DeviceProperty::kOpticalMediaType].toUInt()) };
-    if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW)
-        blank |= map[DeviceProperty::kSizeTotal].toULongLong() == map[DeviceProperty::kSizeFree].toULongLong();
-
+    bool blank { DeviceUtils::isBlankOpticalDisc(curDevId) };
     if (blank) {
         QString tag = curDevId.mid(curDevId.lastIndexOf("/") + 1);
         QUrl url(QString("burn:///dev/%1/disc_files/").arg(tag));
