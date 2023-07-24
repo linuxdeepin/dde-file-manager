@@ -17,8 +17,8 @@ DPUTILS_BEGIN_NAMESPACE
 void ExtensionPluginInitWorker::doWork(const QStringList &paths)
 {
     // do scan plugins
+    qInfo() << "Start scan extension lib paths: " << paths;
     std::for_each(paths.cbegin(), paths.cend(), [this](const QString &path) {
-        qInfo() << "Start scan: " << path;
         QDirIterator itera(path, { "*.so" }, QDir::Files | QDir::NoSymLinks);
         if (!itera.hasNext())
             qWarning() << "Cannot find extension lib at: " << path;
@@ -26,31 +26,31 @@ void ExtensionPluginInitWorker::doWork(const QStringList &paths)
             itera.next();
             ExtPluginLoaderPointer ptr { new ExtensionPluginLoader(itera.filePath()) };
             allLoaders.insert({ itera.filePath(), ptr });
-            qInfo() << "Scaned ext plugin: " << itera.filePath();
+            qInfo() << "Scaned extension plugin: " << itera.filePath();
         }
     });
     emit scanPluginsFinished();
 
     // do load plugins
-    qInfo() << "Start load plugins";
+    qInfo() << "Start load extension plugins";
     for (const auto &[k, v] : allLoaders) {
         if (!v->loadPlugin()) {
             qWarning() << "Load failed: " << v->fileName() << v->lastError();
             continue;
         }
-        qInfo() << "Loaded ext plugin:" << v->fileName();
+        qInfo() << "Loaded extension plugin:" << v->fileName();
         loadedLoaders.insert({ k, v });
     }
     emit loadPluginsFinished();
 
     // do init plugins
-    qInfo() << "Start init plugins";
+    qInfo() << "Start init extension plugins";
     for (const auto &[k, v] : loadedLoaders) {
         if (!v->initialize()) {
             qWarning() << "init failed: " << v->fileName() << v->lastError();
             continue;
         }
-        qInfo() << "Inited ext plugin:" << v->fileName();
+        qInfo() << "Inited extension plugin:" << v->fileName();
         doAppendExt(v->fileName(), v);
     }
     // TODO(zhangs): record plugin state

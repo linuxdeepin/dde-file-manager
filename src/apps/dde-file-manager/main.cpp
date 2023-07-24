@@ -279,8 +279,6 @@ int main(int argc, char *argv[])
                                                            "and other useful functions."));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    DApplicationSettings setting;
-
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
     autoReleaseMemory();

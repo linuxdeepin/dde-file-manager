@@ -53,7 +53,6 @@ CopyFromDiscAuditLog::CopyFromDiscAuditLog(const QList<QUrl> &srcList, const QLi
 
 void CopyFromDiscAuditLog::doLog(QDBusInterface &interface)
 {
-    qInfo() << __PRETTY_FUNCTION__;
     for (int i = 0; i != urlsOfDisc.size(); ++i) {
         const QString &srcPath { urlsOfDisc.at(i).toLocalFile() };
         const QString &destPath { urlsOfDest.at(i).toLocalFile() };
@@ -101,13 +100,14 @@ BurnFilesAuditLogJob::BurnFilesAuditLogJob(const QVariantMap &info, const QUrl &
 
 void BurnFilesAuditLogJob::doLog(QDBusInterface &interface)
 {
-    qInfo() << __PRETTY_FUNCTION__;
     QString device { discDeviceInfo.value(DeviceProperty::kDevice).toString() };
     const auto &pathMap { Application::dataPersistence()->value("StagingMap", device).toMap() };
 
     for (const QFileInfo &info : burnedFileInfoList()) {
-        if (!info.exists())
+        if (!info.exists()) {
+            qWarning() << "File doesn't exitsts: " << info.absoluteFilePath();
             continue;
+        }
 
         const QString &discPath { info.absoluteFilePath() };
         QString nativePath { pathMap.contains(discPath) ? pathMap.value(discPath).toString() : discPath };
