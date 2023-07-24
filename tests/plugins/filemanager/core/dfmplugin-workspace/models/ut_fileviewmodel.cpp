@@ -7,12 +7,15 @@
 #include "plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.h"
 #include "plugins/filemanager/core/dfmplugin-workspace/utils/workspacehelper.h"
 #include "plugins/filemanager/core/dfmplugin-workspace/utils/filesortworker.h"
+#include "plugins/filemanager/core/dfmplugin-workspace/utils/filedatamanager.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <gtest/gtest.h>
 
@@ -124,4 +127,121 @@ TEST_F(UT_FileViewModel, InitFilterSortWork) {
         EXPECT_EQ(model->filterSortWorker->current, url);
         EXPECT_EQ(model->filterSortWorker->currentKey, key);
     }
+}
+
+TEST_F(UT_FileViewModel, RootIndex) {
+    QModelIndex index = model->rootIndex();
+    EXPECT_FALSE(index.isValid());
+
+    model->initFilterSortWork();
+    index = model->rootIndex();
+    EXPECT_TRUE(index.isValid());
+}
+
+TEST_F(UT_FileViewModel, RootUrl) {
+    QUrl url(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first());
+    url.setScheme(Scheme::kFile);
+
+    model->dirRootUrl = url;
+    EXPECT_EQ(url, model->rootUrl());
+}
+
+TEST_F(UT_FileViewModel, Refresh) {
+    bool cleanRootCalled = false;
+    stub.set_lamda((void(FileDataManager::*)(const QUrl &, const QString &, const bool))ADDR(FileDataManager, cleanRoot), [&cleanRootCalled]{ cleanRootCalled = true;});
+
+    model->refresh();
+    EXPECT_TRUE(cleanRootCalled);
+}
+
+TEST_F(UT_FileViewModel, CurrentState) {
+    ModelState testState = ModelState::kIdle;
+    model->state = testState;
+
+    EXPECT_EQ(testState, model->currentState());
+}
+
+TEST_F(UT_FileViewModel, FileInfo) {
+    QModelIndex index;
+    auto infoPtr = model->fileInfo(index);
+    EXPECT_TRUE(infoPtr.isNull());
+
+    QUrl url(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first());
+    url.setScheme(Scheme::kFile);
+
+    index = model->setRootUrl(url);
+    model->initFilterSortWork();
+
+    infoPtr = model->fileInfo(index);
+    EXPECT_FALSE(infoPtr.isNull());
+}
+
+TEST_F(UT_FileViewModel, GetChildrenUrls) {
+    bool getChildrenUrlsCalled { false };
+    stub.set_lamda(ADDR(FileSortWorker, getChildrenUrls), [&getChildrenUrlsCalled]{
+        getChildrenUrlsCalled = true;
+        return QList<QUrl>();
+    });
+
+    auto urls = model->getChildrenUrls();
+    EXPECT_TRUE(urls.isEmpty());
+    EXPECT_FALSE(getChildrenUrlsCalled);
+
+    model->initFilterSortWork();
+    model->getChildrenUrls();
+    EXPECT_TRUE(getChildrenUrlsCalled);
+}
+
+TEST_F(UT_FileViewModel, GetIndexByUrl) {
+    QUrl url(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first());
+    url.setScheme(Scheme::kFile);
+
+    QModelIndex index = model->getIndexByUrl(url);
+    EXPECT_FALSE(index.isValid());
+
+    model->initFilterSortWork();
+
+    stub.set_lamda(ADDR(FileSortWorker, getChildShowIndex), [&url](FileSortWorker *, const QUrl &itemUrl){
+        if (url == itemUrl)
+            return 0;
+        return -1;
+    });
+
+    index = model->getIndexByUrl(url);
+    EXPECT_EQ(index, model->index(0, 0, model->rootIndex()));
+
+    index = model->getIndexByUrl(QUrl());
+    EXPECT_FALSE(index.isValid());
+}
+
+TEST_F(UT_FileViewModel, GetColumnWidth) {
+    stub.set_lamda(ADDR(FileViewModel, getRoleByColumn), []{ return ItemRoles::kItemUnknowRole; });
+    int width = model->getColumnWidth(0);
+    EXPECT_EQ(width, 120);
+
+    stub.clear();
+    stub.set_lamda(ADDR(FileViewModel, getRoleByColumn), []{ return ItemRoles::kItemFileDisplayNameRole; });
+    width = model->getColumnWidth(0);
+
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+    int colWidth = state.value(QString::number(ItemRoles::kItemFileDisplayNameRole), -1).toInt();
+    if (colWidth > 0) {
+        EXPECT_EQ(width, colWidth);
+    } else {
+        EXPECT_EQ(width, 120);
+    }
+}
+
+TEST_F(UT_FileViewModel, GetRoleByColumn) {
+    QList<ItemRoles> roleList = QList<ItemRoles>() << kItemFileDisplayNameRole
+                                                   << kItemFileLastModifiedRole
+                                                   << kItemFileSizeRole
+                                                   << kItemFileMimeTypeRole;
+    stub.set_lamda(ADDR(FileViewModel, getColumnRoles), [&roleList]{ return roleList; });
+
+    ItemRoles role = model->getRoleByColumn(1);
+    EXPECT_EQ(role, kItemFileLastModifiedRole);
+
+    role = model->getRoleByColumn(roleList.length());
+    EXPECT_EQ(role, kItemFileDisplayNameRole);
 }

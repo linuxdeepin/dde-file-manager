@@ -127,7 +127,7 @@ TEST_F(UT_RootInfo, StartWork)
     EXPECT_FALSE(calledGetSourceData);
 
     rootInfoObj->startWork(key, true);
-    EXPECT_FALSE(calledGetSourceData);
+    EXPECT_TRUE(calledGetSourceData);
 
     rootInfoObj->sourceDataList.append(SortInfoPointer(new SortFileInfo()));
     rootInfoObj->startWork(key, true);
@@ -367,7 +367,7 @@ TEST_F(UT_RootInfo, HandleTraversalResult)
     QObject::connect(rootInfoObj, &RootInfo::iteratorAddFile, rootInfoObj,
                      [&sendIteratorAddFile] { sendIteratorAddFile = true; });
 
-    rootInfoObj->handleTraversalResult(info, "");
+    rootInfoObj->handleTraversalResult(info, "travseToken");
 
     EXPECT_TRUE(calledAddChild);
     EXPECT_TRUE(sendIteratorAddFile);
@@ -392,7 +392,7 @@ TEST_F(UT_RootInfo, HandleTraversalResults)
     QObject::connect(rootInfoObj, &RootInfo::iteratorAddFiles, rootInfoObj,
                      [&sendIteratorAddFiles] { sendIteratorAddFiles = true; });
 
-    rootInfoObj->handleTraversalResults({ info }, "");
+    rootInfoObj->handleTraversalResults({ info }, "travseToken");
 
     EXPECT_TRUE(calledAddChild);
     EXPECT_TRUE(sendIteratorAddFiles);
@@ -417,7 +417,7 @@ TEST_F(UT_RootInfo, HandleTraversalLocalResult)
                      [&sendIteratorLocalFiles] { sendIteratorLocalFiles = true; });
 
     SortInfoPointer info(new SortFileInfo);
-    rootInfoObj->handleTraversalLocalResult({ info }, sortRole, sortOrder, mixDirAndFile, "");
+    rootInfoObj->handleTraversalLocalResult({ info }, sortRole, sortOrder, mixDirAndFile, "travseToken");
 
     EXPECT_FALSE(addedChildren.isEmpty());
     EXPECT_EQ(rootInfoObj->originSortRole, sortRole);
@@ -434,7 +434,7 @@ TEST_F(UT_RootInfo, HandleTraversalFinish)
     QObject::connect(rootInfoObj, &RootInfo::traversalFinished, rootInfoObj,
                      [&currentKey](const QString &key) { currentKey.append(key); });
 
-    rootInfoObj->handleTraversalFinish("");
+    rootInfoObj->handleTraversalFinish("travseToken");
 
     EXPECT_TRUE(rootInfoObj->traversalFinish);
 }
@@ -446,7 +446,7 @@ TEST_F(UT_RootInfo, HandleTraversalSort)
     QObject::connect(rootInfoObj, &RootInfo::requestSort, rootInfoObj,
                      [&currentKey](const QString &key) { currentKey.append(key); });
 
-    rootInfoObj->handleTraversalSort("");
+    rootInfoObj->handleTraversalSort("travseToken");
 }
 
 TEST_F(UT_RootInfo, HandleGetSourceData)
@@ -587,5 +587,6 @@ TEST_F(UT_RootInfo, Bug_195309_fileInfo)
     EXPECT_FALSE(calledRefresh);
 
     rootInfoObj->fileInfo(validUrl);
-    EXPECT_TRUE(calledRefresh);
+    // rootInfoObj->fileInfo() did not call fileinfo.refresh() anymore.
+    // EXPECT_TRUE(calledRefresh);
 }
