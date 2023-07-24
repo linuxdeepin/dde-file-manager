@@ -67,6 +67,7 @@ public:
     DFMGLOBAL_NAMESPACE::ItemRoles getRoleByColumn(int column) const;
     int getColumnByRole(DFMGLOBAL_NAMESPACE::ItemRoles role) const;
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
+    DFMGLOBAL_NAMESPACE::ItemRoles columnToRole(int column) const;
     QString roleDisplayString(int role) const;
 
     void stopTraversWork();
