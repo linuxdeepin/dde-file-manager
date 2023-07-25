@@ -81,19 +81,19 @@ bool ExtensionLibMenuScene::create(QMenu *parent)
     }
 
     DFMExtMenuImpl *extMenuImpl { new DFMExtMenuImpl(parent) };
-    const std::string &newCurrentUrl { d->transformedCurrentDir.toString().toStdString() };
-    const std::string &newFocusUrl { d->transformedFocusFile.toString().toStdString() };
+    const std::string &newCurrentPath { d->transformedCurrentDir.toLocalFile().toStdString() };
+    const std::string &newFocusPath { d->transformedFocusFile.toLocalFile().toStdString() };
 
     for (auto menu : ExtensionPluginManager::instance().menuPlugins()) {
         menu->initialize(ExtensionPluginManager::instance().pluginMenuProxy());
         if (d->isEmptyArea) {
-            menu->buildEmptyAreaMenu(extMenuImpl, newCurrentUrl, d->onDesktop);
+            menu->buildEmptyAreaMenu(extMenuImpl, newCurrentPath, d->onDesktop);
         } else {
-            std::list<std::string> newSelectedFiles;
-            std::for_each(d->transformedSelectFiles.cbegin(), d->transformedSelectFiles.cend(), [&newSelectedFiles](const QUrl &url) {
-                newSelectedFiles.push_back(url.toString().toStdString());
+            std::list<std::string> newSelectedPaths;
+            std::for_each(d->transformedSelectFiles.cbegin(), d->transformedSelectFiles.cend(), [&newSelectedPaths](const QUrl &url) {
+                newSelectedPaths.push_back(url.toLocalFile().toStdString());
             });
-            menu->buildNormalMenu(extMenuImpl, newCurrentUrl, newFocusUrl, newSelectedFiles, d->onDesktop);
+            menu->buildNormalMenu(extMenuImpl, newCurrentPath, newFocusPath, newSelectedPaths, d->onDesktop);
         }
     }
 

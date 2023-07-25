@@ -38,13 +38,13 @@ void DFMExtMenuPlugin::registerInitialize(const DFMExtMenuPlugin::InitializeFunc
 }
 
 bool DFMExtMenuPlugin::buildNormalMenu(DFMExtMenu *main,
-                                       const std::string &currentUrl,
-                                       const std::string &focusUrl,
-                                       const std::list<std::string> &urlList,
+                                       const std::string &currentPath,
+                                       const std::string &focusPath,
+                                       const std::list<std::string> &pathList,
                                        bool onDesktop)
 {
     if (d->buildNormalMeunFunc)
-        return d->buildNormalMeunFunc(main, currentUrl, focusUrl, urlList, onDesktop);
+        return d->buildNormalMeunFunc(main, currentPath, focusPath, pathList, onDesktop);
 
     return false;
 }
@@ -54,10 +54,10 @@ void DFMExtMenuPlugin::registerBuildNormalMenu(const DFMExtMenuPlugin::BuildNorm
     d->buildNormalMeunFunc = func;
 }
 
-bool DFMExtMenuPlugin::buildEmptyAreaMenu(DFMExtMenu *main, const std::string &currentUrl, bool onDesktop)
+bool DFMExtMenuPlugin::buildEmptyAreaMenu(DFMExtMenu *main, const std::string &currentPath, bool onDesktop)
 {
     if (d->buildEmptyAreaMenuFunc)
-        return d->buildEmptyAreaMenuFunc(main, currentUrl, onDesktop);
+        return d->buildEmptyAreaMenuFunc(main, currentPath, onDesktop);
 
     return false;
 }

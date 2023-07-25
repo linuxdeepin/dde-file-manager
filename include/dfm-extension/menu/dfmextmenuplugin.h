@@ -32,11 +32,11 @@ public:
 
     DFM_FAKE_VIRTUAL void initialize(DFMEXT::DFMExtMenuProxy *proxy);
     DFM_FAKE_VIRTUAL bool buildNormalMenu(DFMEXT::DFMExtMenu *main,
-                                          const std::string &currentUrl,
-                                          const std::string &focusUrl,
-                                          const std::list<std::string> &urlList,
+                                          const std::string &currentPath,
+                                          const std::string &focusPath,
+                                          const std::list<std::string> &pathList,
                                           bool onDesktop);
-    DFM_FAKE_VIRTUAL bool buildEmptyAreaMenu(DFMEXT::DFMExtMenu *main, const std::string &currentUrl, bool onDesktop);
+    DFM_FAKE_VIRTUAL bool buildEmptyAreaMenu(DFMEXT::DFMExtMenu *main, const std::string &currentPath, bool onDesktop);
 
 public:
     void registerInitialize(const InitializeFunc &func);
