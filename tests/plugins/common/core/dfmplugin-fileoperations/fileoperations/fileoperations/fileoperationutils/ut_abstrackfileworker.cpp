@@ -212,8 +212,34 @@ TEST_F(UT_AbstractWorker, testSaveOperations)
 
     worker.doOperateWork(AbstractJobHandler::SupportAction::kStopAction);
     EXPECT_EQ(AbstractJobHandler::JobState::kStopState, worker.currentState);
+    worker.copyOtherFileWorker.reset(new DoCopyFileWorker(worker.workData));
+    stub.set_lamda(&DoCopyFileWorker::operateAction, []{ __DBG_STUB_INVOKE__ });
     worker.doOperateWork(AbstractJobHandler::SupportAction::kRememberAction, AbstractJobHandler::JobErrorType::kOpenError, quintptr(&worker));
     EXPECT_EQ(worker.workData->errorOfAction.keys().first(), AbstractJobHandler::JobErrorType::kOpenError);
 
+    worker.workData->signalThread = false;
+    worker.doOperateWork(AbstractJobHandler::SupportAction::kRememberAction, AbstractJobHandler::JobErrorType::kOpenError,
+                         quintptr(&worker));
+    EXPECT_EQ(worker.workData->errorOfAction.keys().first(), AbstractJobHandler::JobErrorType::kOpenError);
+
+    worker.threadCopyWorker.append(worker.copyOtherFileWorker);
+    worker.doOperateWork(AbstractJobHandler::SupportAction::kRememberAction, AbstractJobHandler::JobErrorType::kOpenError, quintptr(worker.copyOtherFileWorker.data()));
+    EXPECT_EQ(worker.workData->errorOfAction.keys().first(), AbstractJobHandler::JobErrorType::kOpenError);
+
+    stub.set_lamda(&AbstractWorker::pauseAllThread, []{ __DBG_STUB_INVOKE__ });
+    worker.doOperateWork(AbstractJobHandler::SupportAction::kPauseAction);
+    stub.set_lamda(&AbstractWorker::resumeAllThread, []{ __DBG_STUB_INVOKE__ });
+    worker.doOperateWork(AbstractJobHandler::SupportAction::kResumAction);
+
+
     worker.emitErrorNotify(url, url, AbstractJobHandler::JobErrorType::kOpenError);
+    worker.statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
+    stub.set_lamda(&DFMBASE_NAMESPACE::FileStatisticsJob::stop, []{ __DBG_STUB_INVOKE__ });
+    worker.updateProgressThread.reset(new QThread);
+    stub.set_lamda(&QThread::quit, []{ __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&QThread::wait, []{ __DBG_STUB_INVOKE__ return true;});
+    worker.stop();
+
+    worker.onUpdateProgress();
+
 }

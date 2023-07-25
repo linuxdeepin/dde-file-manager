@@ -45,3 +45,22 @@ TEST_F(UT_FileOperationsUtils, testFileOperationsUtils)
     EXPECT_TRUE(!FileOperationsUtils::isFileOnDisk(QUrl()));
     EXPECT_TRUE(FileOperationsUtils::isFileOnDisk(url));
 }
+
+TEST_F(UT_FileOperationsUtils, testUpdateProgressTimer)
+{
+    UpdateProgressTimer update;
+    update.stopTimer();
+    EXPECT_TRUE(update.isStop);
+
+    stub_ext::StubExt stub;
+    typedef  void (QTimer::*StratFuc)(int);
+    stub.set_lamda(static_cast<StratFuc>(&QTimer::start), []{ __DBG_STUB_INVOKE__ });
+    update.doStartTime();
+    EXPECT_FALSE(update.timer.isNull());
+
+    stub.set_lamda(&QTimer::stop, []{ __DBG_STUB_INVOKE__ });
+    update.handleTimeOut();
+
+    update.isStop = false;
+    update.handleTimeOut();
+}

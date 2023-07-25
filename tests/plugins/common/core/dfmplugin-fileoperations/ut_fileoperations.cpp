@@ -24,4 +24,6 @@ TEST_F(UT_Fileoperations, testFileoperations)
     FileOperations op;
     EXPECT_NO_FATAL_FAILURE(op.start());
     EXPECT_TRUE(op.start());
+
+    op.initialize();
 }
