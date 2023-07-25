@@ -108,8 +108,7 @@ void ListItemEditor::onEditorTextChanged(const QString &text)
     int currPos = this->cursorPosition();
     currPos += dstText.length() - text.length();
 
-    processLength(dstText, currPos);
-
+    FileUtils::processLength(dstText, currPos, theMaxCharSize, useCharCount, dstText, currPos);
     if (srcText != dstText) {
         QSignalBlocker blocker(this);
         this->setText(dstText);
@@ -125,29 +124,4 @@ void ListItemEditor::init()
     setAttribute(Qt::WA_TranslucentBackground);
     setContentsMargins(0, 0, 0, 0);
     connect(this, &ListItemEditor::textChanged, this, &ListItemEditor::onEditorTextChanged, Qt::UniqueConnection);
-}
-
-bool ListItemEditor::processLength(QString &text, int &pos)
-{
-    QString srcText = text;
-    int srcPos = pos;
-    int editTextCurrLen = textLength(srcText);
-    int editTextRangeOutLen = editTextCurrLen - theMaxCharSize;
-    if (editTextRangeOutLen > 0 && theMaxCharSize != INT_MAX) {
-        QVector<uint> list = srcText.toUcs4();
-        QString tmp = srcText;
-        while (textLength(tmp) > theMaxCharSize && srcPos > 0) {
-            list.removeAt(--srcPos);
-            tmp = QString::fromUcs4(list.data(), list.size());
-        }
-        text = tmp;
-        pos = srcPos;
-        return srcText.size() != text.size();
-    }
-    return false;
-}
-
-int ListItemEditor::textLength(const QString &text)
-{
-    return useCharCount ? text.size() : text.toLocal8Bit().size();
 }

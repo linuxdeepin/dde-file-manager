@@ -74,8 +74,6 @@ private:
     QString editTextStackAdvance();
     void pushItemToEditTextStack(const QString &item);
     static DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
-    bool processLength(QString &text, int &pos);
-    int textLength(const QString &text);
 
     friend class IconItemDelegate;
     friend class FileView;

@@ -213,27 +213,6 @@ RenameEdit *ItemEditor::createEditor()
     return edit;
 }
 
-bool ItemEditor::processLength(const QString &srcText, int srcPos, QString &dstText, int &dstPos)
-{
-    int editTextCurrLen = textLength(srcText);
-    int editTextRangeOutLen = editTextCurrLen - maximumLength();
-    if (editTextRangeOutLen > 0 && maximumLength() != INT_MAX) {
-        QVector<uint> list = srcText.toUcs4();
-        QString tmp = srcText;
-        while (textLength(tmp) > maximumLength() && srcPos > 0) {
-            list.removeAt(--srcPos);
-            tmp = QString::fromUcs4(list.data(), list.size());
-        }
-        dstText = tmp;
-        dstPos = srcPos;
-        return srcText.size() != dstText.size();
-    } else {
-        dstText = srcText;
-        dstPos = srcPos;
-        return false;
-    }
-}
-
 void ItemEditor::textChanged()
 {
     if (sender() != textEditor)
@@ -257,7 +236,7 @@ void ItemEditor::textChanged()
     bool hasInvalidChar = dstText.size() != curText.size();
     int endPos = textEditor->textCursor().position() + (dstText.length() - curText.length());
 
-    processLength(dstText, endPos, dstText, endPos);
+    DFMBASE_NAMESPACE::FileUtils::processLength(dstText, endPos, maximumLength(), useCharCount, dstText, endPos);
     if (curText != dstText) {
         textEditor->setPlainText(dstText);
         QTextCursor cursor = textEditor->textCursor();

@@ -52,8 +52,6 @@ private slots:
 
 private:
     void init();
-    bool processLength(QString &text, int &pos);
-    int textLength(const QString &text);
 
 private:
     int theMaxCharSize { INT_MAX };

@@ -88,11 +88,6 @@ signals:
 protected:
     static RenameEdit *createEditor();
     static DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
-    bool processLength(const QString &srcText, int srcPos, QString &dstText, int &dstPos);
-    inline int textLength(const QString &text)
-    {
-        return useCharCount ? text.length() : text.toLocal8Bit().length();
-    }
 private slots:
     void textChanged();
 
