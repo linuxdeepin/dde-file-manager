@@ -65,9 +65,15 @@ QString OemMenuScene::name() const
 bool OemMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    UniversalUtils::urlTransformToLocal(d->currentDir, &d->transformedCurrentDir);
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    UniversalUtils::urlsTransformToLocal(d->selectFiles, &d->transformedSelectFiles);
+    Q_ASSERT(d->selectFiles.size() == d->transformedSelectFiles.size());
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
+    if (!d->transformedSelectFiles.isEmpty())
+        d->transformedFocusFile = d->transformedSelectFiles.first();
+
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
@@ -135,7 +141,8 @@ bool OemMenuScene::triggered(QAction *action)
     if (!d->oemActions.contains(action) && !d->oemChildActions.contains(action))
         return AbstractMenuScene::triggered(action);
 
-    QPair<QString, QStringList> runable = d->oemMenu->makeCommand(action, d->currentDir, d->focusFile, d->selectFiles);
+    QPair<QString, QStringList> runable = d->oemMenu->makeCommand(
+            action, d->transformedCurrentDir, d->transformedFocusFile, d->transformedSelectFiles);
     if (!runable.first.isEmpty())
         return UniversalUtils::runCommand(runable.first, runable.second);
 

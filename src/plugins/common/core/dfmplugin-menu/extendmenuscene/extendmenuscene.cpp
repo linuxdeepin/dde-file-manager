@@ -65,9 +65,15 @@ QString ExtendMenuScene::name() const
 bool ExtendMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    UniversalUtils::urlTransformToLocal(d->currentDir, &d->transformedCurrentDir);
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    UniversalUtils::urlsTransformToLocal(d->selectFiles, &d->transformedSelectFiles);
+    Q_ASSERT(d->selectFiles.size() == d->transformedSelectFiles.size());
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
+    if (!d->transformedSelectFiles.isEmpty())
+        d->transformedFocusFile = d->transformedSelectFiles.first();
+
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
@@ -257,7 +263,8 @@ bool ExtendMenuScene::triggered(QAction *action)
         qDebug() << "argflag" << argFlag << "dir" << d->currentDir << "foucs" << d->focusFile << "selected" << d->selectFiles;
         qInfo() << "extend" << action->text() << cmd;
 
-        QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(cmd, argFlag, d->currentDir, d->focusFile, d->selectFiles);
+        QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(
+                cmd, argFlag, d->transformedCurrentDir, d->transformedFocusFile, d->transformedSelectFiles);
         qInfo() << "exec:" << runable.first << runable.second;
 
         if (!runable.first.isEmpty())

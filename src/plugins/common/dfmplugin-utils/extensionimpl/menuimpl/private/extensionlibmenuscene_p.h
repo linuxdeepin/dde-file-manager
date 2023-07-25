@@ -22,6 +22,11 @@ public:
 
 private:
     ExtensionLibMenuScene *q { nullptr };
+
+    // External extensions may not know the meaning of the url inside the DFM
+    QUrl transformedCurrentDir;
+    QList<QUrl> transformedSelectFiles;
+    QUrl transformedFocusFile;
 };
 
 }   // namespace dfmplugin_utils

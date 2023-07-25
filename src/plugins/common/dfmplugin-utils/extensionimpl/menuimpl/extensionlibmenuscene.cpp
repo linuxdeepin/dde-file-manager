@@ -10,6 +10,7 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QMenu>
 
@@ -49,9 +50,15 @@ bool ExtensionLibMenuScene::initialize(const QVariantHash &params)
 
     // init default info
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    UniversalUtils::urlTransformToLocal(d->currentDir, &d->transformedCurrentDir);
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    UniversalUtils::urlsTransformToLocal(d->selectFiles, &d->transformedSelectFiles);
+    Q_ASSERT(d->selectFiles.size() == d->transformedSelectFiles.size());
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
+    if (!d->transformedSelectFiles.isEmpty())
+        d->transformedFocusFile = d->transformedSelectFiles.first();
+
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
@@ -74,8 +81,8 @@ bool ExtensionLibMenuScene::create(QMenu *parent)
     }
 
     DFMExtMenuImpl *extMenuImpl { new DFMExtMenuImpl(parent) };
-    const std::string &newCurrentUrl { d->currentDir.toString().toStdString() };
-    const std::string &newFocusUrl { d->focusFile.toString().toStdString() };
+    const std::string &newCurrentUrl { d->transformedCurrentDir.toString().toStdString() };
+    const std::string &newFocusUrl { d->transformedFocusFile.toString().toStdString() };
 
     for (auto menu : ExtensionPluginManager::instance().menuPlugins()) {
         menu->initialize(ExtensionPluginManager::instance().pluginMenuProxy());
@@ -83,7 +90,7 @@ bool ExtensionLibMenuScene::create(QMenu *parent)
             menu->buildEmptyAreaMenu(extMenuImpl, newCurrentUrl, d->onDesktop);
         } else {
             std::list<std::string> newSelectedFiles;
-            std::for_each(d->selectFiles.cbegin(), d->selectFiles.cend(), [&newSelectedFiles](const QUrl &url) {
+            std::for_each(d->transformedSelectFiles.cbegin(), d->transformedSelectFiles.cend(), [&newSelectedFiles](const QUrl &url) {
                 newSelectedFiles.push_back(url.toString().toStdString());
             });
             menu->buildNormalMenu(extMenuImpl, newCurrentUrl, newFocusUrl, newSelectedFiles, d->onDesktop);

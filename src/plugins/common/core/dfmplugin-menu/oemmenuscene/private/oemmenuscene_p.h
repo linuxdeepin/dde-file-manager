@@ -24,6 +24,11 @@ public:
 
     QList<QAction *> oemActions;
     QList<QAction *> oemChildActions;
+
+    // External extensions may not know the meaning of the url inside the DFM
+    QUrl transformedCurrentDir;
+    QList<QUrl> transformedSelectFiles;
+    QUrl transformedFocusFile;
 };
 
 }
