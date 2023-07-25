@@ -57,7 +57,7 @@ TEST_F(UT_DoCopyFileWorker, testOperateAction)
     EXPECT_EQ(AbstractJobHandler::SupportAction::kSkipAction, worker.currentAction);
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&DoCopyFileWorker::doCopyFilePractically, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoCopyFileWorker::doDfmioFileCopy, []{ __DBG_STUB_INVOKE__ return false;});
     worker.doFileCopy(nullptr,nullptr);
     EXPECT_EQ(1 , data->completeFileCount);
 }
@@ -390,4 +390,33 @@ TEST_F(UT_DoCopyFileWorker, testVerifyFileIntegrity)
     EXPECT_FALSE(worker.verifyFileIntegrity(blocksize, blocksize, sorceInfo, targetInfo, file));
 
     EXPECT_TRUE(worker.verifyFileIntegrity(blocksize, 12517567, sorceInfo, targetInfo, file));
+}
+
+int OpenFunc(const char *__file, int __oflag, ...){
+    Q_UNUSED(__file);
+    Q_UNUSED(__oflag);
+    __DBG_STUB_INVOKE__
+    return 0;
+}
+
+int SyncFFunc(int) {
+    __DBG_STUB_INVOKE__
+    return 0;
+}
+
+TEST_F(UT_DoCopyFileWorker, testSyncBlockFile)
+{
+    QSharedPointer<WorkerData> data(new WorkerData);
+    DoCopyFileWorker worker(data);
+
+    worker.syncBlockFile(nullptr);
+
+    auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
+    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+
+    stub_ext::StubExt stub;
+    stub.set(&::open, OpenFunc);
+    stub.set(&::syncfs, SyncFFunc);
+    stub.set(&::close, SyncFFunc);
+    worker.syncBlockFile(sorceInfo);
 }

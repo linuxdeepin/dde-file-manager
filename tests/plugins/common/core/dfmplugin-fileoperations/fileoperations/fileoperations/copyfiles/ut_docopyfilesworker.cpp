@@ -54,6 +54,9 @@ TEST_F(UT_DoCopyFilesWorker, testDoWork)
     worker.workData->jobFlags &= AbstractJobHandler::JobFlag::kNoHint;
     stub.clear();
     stub.set_lamda(VADDR(AbstractWorker, doWork), []{__DBG_STUB_INVOKE__ return true;});
+    EXPECT_FALSE(worker.doWork());
+
+    stub.set_lamda(&DoCopyFilesWorker::checkTotalDiskSpaceAvailable, []{ __DBG_STUB_INVOKE__ return true;});
     EXPECT_TRUE(worker.doWork());
 
     stub.set_lamda(&DoCopyFilesWorker::copyFiles, []{__DBG_STUB_INVOKE__ return false;});

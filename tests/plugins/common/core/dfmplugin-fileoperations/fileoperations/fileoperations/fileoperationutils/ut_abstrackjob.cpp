@@ -41,13 +41,16 @@ TEST_F(UT_AbstractJob, testAbstractJob)
     JobHandlePointer handle(new AbstractJobHandler);
     job.setJobArgs(handle, {});
 
-    job.operateWork(AbstractJobHandler::SupportAction::kStartAction);
+    job.operateAation(AbstractJobHandler::SupportAction::kStartAction);
+    job.operateAation(AbstractJobHandler::SupportAction::kCancelAction);
 
     JobInfoPointer info(new QMap<quint8, QVariant>);
     job.errorQueue.enqueue(info);
 
-    job.operateWork(AbstractJobHandler::SupportAction::kSkipAction);
+    job.operateAation(AbstractJobHandler::SupportAction::kSkipAction);
     info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, quintptr(job.doWorker.data()));
+
+    job.errorQueue.enqueue(info);
     job.errorQueue.enqueue(info);
     job.handleError(info);
     EXPECT_EQ(job.errorQueue.size(), 2);
