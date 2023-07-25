@@ -26,6 +26,11 @@ public:
 
     QMap<int, QList<QAction *>> cacheLocateActions;
     QMap<QAction *, DCustomActionDefines::Separator> cacheActionsSeparator;
+
+    // External extensions may not know the meaning of the url inside the DFM
+    QUrl transformedCurrentDir;
+    QList<QUrl> transformedSelectFiles;
+    QUrl transformedFocusFile;
 };
 
 }

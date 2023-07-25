@@ -424,6 +424,28 @@ bool UniversalUtils::urlsTransformToLocal(const QList<QUrl> &sourceUrls, QList<Q
     return ret;
 }
 
+bool UniversalUtils::urlTransformToLocal(const QUrl &sourceUrl, QUrl *targetUrls)
+{
+    Q_ASSERT(sourceUrl.isValid());
+    Q_ASSERT(targetUrls);
+    bool ret { false };
+
+    if (sourceUrl.scheme() == Global::Scheme::kFile) {
+        *targetUrls = sourceUrl;
+        return ret;
+    }
+
+    auto info { InfoFactory::create<FileInfo>(sourceUrl) };
+    if (info && info->canAttributes(FileInfo::FileCanType::kCanRedirectionFileUrl)) {
+        ret = true;
+        *targetUrls = info->urlOf(UrlInfoType::kRedirectedFileUrl);
+    } else {
+        *targetUrls = sourceUrl;
+    }
+
+    return ret;
+}
+
 QString UniversalUtils::getCurrentUser()
 {
     QString user;
