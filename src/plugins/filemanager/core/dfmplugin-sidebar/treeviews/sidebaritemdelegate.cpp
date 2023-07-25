@@ -329,7 +329,6 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInf
         return;
 
     int maxLen = INT_MAX;
-    int textLen = 0;
     bool useCharCount = false;
     const QString &fs = info->extraProperties()[GlobalServerDefines::DeviceProperty::kFileSystem].toString();
     if (fs.isEmpty()) {
@@ -337,17 +336,15 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInf
         if (FileUtils::isLocalFile(url)) {
             maxLen = NAME_MAX;
             const auto &path = url.path();
-            useCharCount = DeviceUtils::isSubpathOfDlnfs(path);
-            textLen = textLength(text, path.isEmpty() ? false : useCharCount);
+            useCharCount = path.isEmpty() ? false : DeviceUtils::isSubpathOfDlnfs(path);
         }
     } else {
         maxLen = FileUtils::supportedMaxLength(fs);
-        textLen = textLength(text, false);
     }
 
     QString dstText = text;
     int currPos = editor->cursorPosition();
-    processLength(maxLen, textLen, useCharCount, dstText, currPos);
+    FileUtils::processLength(dstText, currPos, maxLen, useCharCount, dstText, currPos);
 
     if (text != dstText) {
         QSignalBlocker blocker(editor);
@@ -432,27 +429,4 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
     QIcon icon = QIcon::fromTheme(isExpanded ? "go-up" : "go-down");
     icon.paint(painter, QRect(gRect.topLeft() + QPoint(2, 3), QSize(iconSize, iconSize)), Qt::AlignmentFlag::AlignCenter);
     painter->restore();
-}
-
-int SideBarItemDelegate::textLength(const QString &text, bool useCharCount) const
-{
-    return useCharCount ? text.size() : text.toLocal8Bit().size();
-}
-
-void SideBarItemDelegate::processLength(int maxLen, int textLen, bool useCharCount, QString &text, int &pos) const
-{
-    QString srcText = text;
-    int srcPos = pos;
-    int editTextRangeOutLen = textLen - maxLen;
-    if (editTextRangeOutLen > 0 && maxLen != INT_MAX) {
-        QVector<uint> list = srcText.toUcs4();
-        QString tmp = srcText;
-        while (textLength(tmp, useCharCount) > maxLen && srcPos > 0) {
-            list.removeAt(--srcPos);
-            tmp = QString::fromUcs4(list.data(), list.size());
-        }
-
-        text = tmp;
-        pos = srcPos;
-    }
 }

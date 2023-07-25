@@ -42,8 +42,6 @@ private:
     void drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const;
     void drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const;
     void drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const;
-    int textLength(const QString &text, bool useCharCount) const;
-    void processLength(int maxLen, int textLen, bool useCharCount, QString &text, int &pos) const;
 
 Q_SIGNALS:
     void rename(const QModelIndex &index, QString newName) const;

@@ -62,18 +62,6 @@ TEST(ItemEditor, maximumLength)
     EXPECT_EQ(ie.maximumLength(), 14);
 }
 
-TEST(ItemEditor, textLength)
-{
-    ItemEditor ie;
-    const QString &text= "ni测试";
-    ie.useCharCount = false;
-    EXPECT_EQ(ie.textLength(text), 8);
-
-    ie.setCharCountLimit();
-    EXPECT_TRUE(ie.useCharCount);
-    EXPECT_EQ(ie.textLength(text), 4);
-}
-
 TEST(ItemEditor, setBaseGeometry)
 {
     ItemEditor ie;

@@ -31,6 +31,7 @@ public:
     static bool isMtpFile(const QUrl &url);
     static bool isGphotoFile(const QUrl &url);
     static QString preprocessingFileName(QString name);
+    static bool processLength(const QString &srcText, int srcPos, int maxLen, bool useCharCount, QString &dstText, int &dstPos);
     static bool isContainProhibitPath(const QList<QUrl> &urls);
 
     // check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer

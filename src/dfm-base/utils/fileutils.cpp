@@ -201,6 +201,34 @@ QString FileUtils::preprocessingFileName(QString name)
     return name.remove(QRegularExpression(value));
 }
 
+bool FileUtils::processLength(const QString &srcText, int srcPos, int maxLen, bool useCharCount, QString &dstText, int &dstPos)
+{
+    auto textLength = [&](const QString &text) {
+        return useCharCount ? text.length() : text.toLocal8Bit().length();
+    };
+
+    int editTextCurrLen = textLength(srcText);
+    int editTextRangeOutLen = editTextCurrLen - maxLen;
+    if (editTextRangeOutLen > 0 && maxLen != INT_MAX) {
+        QString leftText = srcText.left(srcPos);
+        QString rightText = srcText.mid(srcPos);
+
+        while (textLength(leftText + rightText) > maxLen) {
+            auto list = leftText.toUcs4();
+            list.removeLast();
+            leftText = QString::fromUcs4(list.data(), list.size());
+        }
+
+        dstPos = leftText.size();
+        dstText = leftText + rightText;
+        return srcText.size() != dstText.size();
+    } else {
+        dstText = srcText;
+        dstPos = srcPos;
+        return false;
+    }
+}
+
 bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 {
     QStringList prohibitPaths;

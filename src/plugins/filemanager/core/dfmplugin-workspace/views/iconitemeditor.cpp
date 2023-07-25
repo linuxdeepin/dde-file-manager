@@ -236,8 +236,7 @@ void IconItemEditor::onEditTextChanged()
 
     int endPos = getTextEdit()->textCursor().position() + (dstText.length() - currentText.length());
 
-    processLength(dstText, endPos);
-
+    FileUtils::processLength(dstText, endPos, maxCharSize(), d->useCharCountLimit, dstText, endPos);
     if (currentText != dstText) {
         d->edit->setPlainText(dstText);
         QTextCursor cursor = d->edit->textCursor();
@@ -435,28 +434,3 @@ DArrowRectangle *IconItemEditor::createTooltip()
     return tooltip;
 }
 
-bool IconItemEditor::processLength(QString &text, int &pos)
-{
-    const QString srcText = text;
-    int srcPos = pos;
-    int editTextCurrLen = textLength(srcText);
-    int editTextRangeOutLen = editTextCurrLen - maxCharSize();
-    if (editTextRangeOutLen > 0 && maxCharSize() != INT_MAX) {
-        QVector<uint> list = srcText.toUcs4();
-        QString tmp = srcText;
-        while (textLength(tmp) > maxCharSize() && srcPos > 0) {
-            list.removeAt(--srcPos);
-            tmp = QString::fromUcs4(list.data(), list.size());
-        }
-        text = tmp;
-        pos = srcPos;
-        return srcText.size() != text.size();
-    }
-    return false;
-}
-
-int IconItemEditor::textLength(const QString &text)
-{
-    Q_D(IconItemEditor);
-    return d->useCharCountLimit ? text.size() : text.toLocal8Bit().size();
-}
