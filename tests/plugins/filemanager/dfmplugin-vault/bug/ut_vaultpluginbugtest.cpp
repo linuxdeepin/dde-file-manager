@@ -23,6 +23,7 @@
 
 #include <QStandardPaths>
 #include <QProcess>
+#include <QDBusConnection>
 
 DPVAULT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -42,6 +43,14 @@ TEST(UT_VaultPluginBugTest, bug_178305_NotRegisterService)
     bool isRegisterService { false };
     stub_ext::StubExt stub;
     stub.set_lamda(&VaultVisibleManager::pluginServiceRegister, [ &isRegisterService ] { __DBG_STUB_INVOKE__ isRegisterService = true; });
+    typedef bool(QDBusConnection::*FuncType)(const QString &, const QString &, const QString &, const QString &, QObject *, const char *);
+    stub.set_lamda(static_cast<FuncType>(&QDBusConnection::connect), []{
+        return true;
+    });
+    typedef bool(QDBusConnection::*FuncType2)(const QString &, const QString &, const QString &, const QString &, const QString &, QObject *, const char *);
+    stub.set_lamda(static_cast<FuncType2>(&QDBusConnection::connect), []{
+        return true;
+    });
 
     Vault plugin;
     plugin.initialize();

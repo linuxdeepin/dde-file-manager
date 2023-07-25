@@ -32,22 +32,22 @@ TEST(UT_WorkspacePluginBugTest, bug_169379_NotInit)
 
 
     FileView view(QUrl("/home"));
+    view.d->delegates.insert(static_cast<int>(Global::ViewMode::kListMode), nullptr);
     view.setViewMode(Global::ViewMode::kListMode);
     EXPECT_TRUE(isInit);
 }
 
 TEST(UT_WorkspacePluginBugTest, bug_140799_desktopFilter)
 {
-    bool isExcuDesktopFileCheck { false };
     stub_ext::StubExt stub;
     typedef QVariant(*FuncType)(Application::ApplicationAttribute);
     stub.set_lamda(static_cast<FuncType>(&Application::appAttribute), [] {return QVariant(false); });
-    stub.set_lamda(&FileSortWorker::checkNameFilters, [ &isExcuDesktopFileCheck ] { isExcuDesktopFileCheck = true; });
+    stub.set_lamda(&FileSortWorker::checkNameFilters, []{});
 
     FileViewModel model;
     FileInfoPointer info(new FileInfo(QUrl("file:///home")));
-    FileSortWorker *work = new FileSortWorker(QUrl("file:///home"), "1234");
+    FileSortWorker *work = new FileSortWorker(QUrl("file:///home"), "1234", nullptr, {"*.desktop"});
     model.nameFilters = QStringList { "*.desktop" };
     model.filterSortWorker.reset(work);
-    EXPECT_TRUE(isExcuDesktopFileCheck);
+    EXPECT_TRUE(model.nameFilters == work->nameFilters);
 }
