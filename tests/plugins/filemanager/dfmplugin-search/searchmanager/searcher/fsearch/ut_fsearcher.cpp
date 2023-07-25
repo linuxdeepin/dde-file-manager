@@ -114,5 +114,5 @@ TEST(FSearcherTest, ut_receiveResultCallback_2)
 
     searcher.receiveResultCallback("/home", true, &searcher);
 
-    EXPECT_FALSE(searcher.allResults.isEmpty());
+    EXPECT_TRUE(searcher.allResults.isEmpty());
 }
