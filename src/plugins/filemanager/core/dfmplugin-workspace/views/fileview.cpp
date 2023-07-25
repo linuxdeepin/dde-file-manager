@@ -1405,6 +1405,21 @@ void FileView::paintEvent(QPaintEvent *event)
     }
 }
 
+void FileView::focusInEvent(QFocusEvent *event)
+{
+    DListView::focusInEvent(event);
+    if (itemDelegate())
+        itemDelegate()->commitDataAndCloseActiveEditor();
+
+    setAttribute(Qt::WA_InputMethodEnabled, false);
+}
+
+void FileView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    DListView::currentChanged(current, previous);
+    setAttribute(Qt::WA_InputMethodEnabled, false);
+}
+
 void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
     QModelIndex currentIdx = currentIndex();
