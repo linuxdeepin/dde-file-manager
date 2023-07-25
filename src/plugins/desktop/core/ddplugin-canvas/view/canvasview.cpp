@@ -654,6 +654,9 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 
 void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::RightButton)
+        return;
+
     auto pos = event->pos();
     const QModelIndex &index = indexAt(pos);
     if (!index.isValid())

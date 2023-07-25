@@ -1752,6 +1752,9 @@ void CollectionView::mouseMoveEvent(QMouseEvent *event)
 
 void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::RightButton)
+        return;
+
     auto pos = event->pos();
     const QModelIndex &index = indexAt(pos);
     if (!index.isValid())
