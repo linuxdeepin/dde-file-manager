@@ -18,7 +18,7 @@ bool rsam::createPublicAndPrivateKey(QString &publicKey, QString &privateKey)
     BN_set_word(pNum, RSA_F4);
     int nRet = RSA_generate_key_ex(pRsa, kKeyLength, pNum, nullptr);
     if (nRet != 1) {
-        qDebug() << "RSA_generate_key_ex 失败！";
+        qCritical() << "Vault: the function of RSA_generate_key_ex run failed!";
         return false;
     }
 
@@ -66,7 +66,7 @@ QString rsam::privateKeyEncrypt(const QString &password, const QString &privateK
     uchar *pPrivateKey = reinterpret_cast<uchar *>(privateKeyArry.data());
     BIO *pPrivateKeyBio = BIO_new_mem_buf(pPrivateKey, privateKey.length());
     if (pPrivateKeyBio == nullptr) {
-        qDebug() << "BIO_new_mem_buf 失败！";
+        qCritical() << "Vault: the function of BIO_new_mem_buf run failed!";
         return "";
     }
 
@@ -74,7 +74,7 @@ QString rsam::privateKeyEncrypt(const QString &password, const QString &privateK
     pRsa = PEM_read_bio_RSAPrivateKey(pPrivateKeyBio, &pRsa, nullptr, nullptr);
     if (pRsa == nullptr) {
         BIO_free_all(pPrivateKeyBio);
-        qDebug() << "PEM_read_bio_RSAPrivateKey 失败！";
+        qCritical() << "Vault: the function of PEM_read_bio_RSAPrivateKey run failed!";
         return "";
     }
 
@@ -111,7 +111,7 @@ QString rsam::publicKeyDecrypt(const QString &ciphertext, const QString &publicK
     uchar *pPublicKey = reinterpret_cast<uchar *>(publickKeyArry.data());
     BIO *pPublicKeyBio = BIO_new_mem_buf(pPublicKey, publicKey.length());
     if (pPublicKeyBio == nullptr) {
-        qDebug() << "BIO_new_mem_buf 失败！";
+        qCritical() << "Vault: the function of BIO_new_mem_buf run failed!";
         return "";
     }
 
@@ -123,7 +123,7 @@ QString rsam::publicKeyDecrypt(const QString &ciphertext, const QString &publicK
     }
 
     if (!pRsa) {
-        qDebug() << "PEM_read_bio_RSAPublicKey 失败！";
+        qCritical() << "Vault: the function of PEM_read_bio_RSAPublicKey run failed!";
         return "";
     }
 

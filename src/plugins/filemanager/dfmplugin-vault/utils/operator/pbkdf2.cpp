@@ -56,7 +56,7 @@ QString pbkdf2::createRandomSalt(int byte)
 QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &randSalt, int iteration, int cipherByteNum)
 {
     if (cipherByteNum < 0 || cipherByteNum % 2 != 0) {
-        qDebug() << "cipherByteNum can't less than zero and must be even!";
+        qCritical() << "Vault: cipherByteNum can't less than zero and must be even!";
         return "";
     }
     // 字节长度
@@ -90,7 +90,7 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
         if (pstr)
             free(pstr);
     } else {
-        qDebug() << "PKCS5_PBKDF2_HMAC_SHA1 failed";
+        qCritical() << "Vault: the function of PKCS5_PBKDF2_HMAC_SHA1 failed";
     }
     free(out);
     return strCipherText;
