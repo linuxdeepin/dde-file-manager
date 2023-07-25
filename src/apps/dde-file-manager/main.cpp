@@ -88,13 +88,14 @@ static bool isLoadVaultPlugin()
     DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
     if (DSysInfo::UosServer == uosType) {
         if (DSysInfo::UosEnterprise == uosEdition
-            || DSysInfo::UosEnterpriseC == uosEdition
-            || DSysInfo::UosEuler == uosEdition) {
+                || DSysInfo::UosEnterpriseC == uosEdition
+                || DSysInfo::UosEuler == uosEdition) {
             return true;
         }
     } else if (DSysInfo::UosDesktop == uosType) {
         if (DSysInfo::UosProfessional == uosEdition
-            || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)) {
+                || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)
+                || DSysInfo::UosEducation == uosEdition) {
             return true;
         }
     }
