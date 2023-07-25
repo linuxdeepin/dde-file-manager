@@ -161,6 +161,8 @@ protected:
     bool event(QEvent *e) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 
     void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
 
