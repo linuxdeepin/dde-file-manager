@@ -101,7 +101,7 @@
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="557"/>
         <source>All Files </source>
-        <translation type="unfinished"/>
+        <translation>Összes Fájl</translation>
     </message>
 </context>
 <context>
@@ -109,13 +109,14 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>A feloldás sikertelen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>A % 1 könyvtár foglalt, 
+törölje a fájlokat ebben a könyvtárban, és próbálja meg újra feloldani a széf zárolását. </translation>
     </message>
 </context>
 <context>
@@ -3114,7 +3115,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="762"/>
         <source>In data statistics</source>
-        <translation type="unfinished"/>
+        <translation>Adatstatisztika</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="763"/>
