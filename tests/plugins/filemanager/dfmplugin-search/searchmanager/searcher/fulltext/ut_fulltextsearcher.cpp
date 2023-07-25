@@ -12,6 +12,8 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/syncfileinfo.h>
 
 #include <gtest/gtest.h>
 #include <docparser.h>
@@ -24,6 +26,19 @@
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 using namespace Lucene;
+
+class FullTextSearcherPrivateTest : public testing::Test
+{
+protected:
+    virtual void SetUp() override
+    {
+        UrlRoute::regScheme(Global::Scheme::kFile, "/");
+        InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+    }
+    virtual void TearDown() override
+    {
+    }
+};
 
 // class FullTextSearcher
 TEST(FullTextSearcherTest, ut_createIndex_1)
@@ -123,7 +138,7 @@ TEST(FullTextSearcherTest, ut_takeAll)
 }
 
 // class FullTextSearcherPrivate
-TEST(FullTextSearcherPrivateTest, ut_newIndexWriter)
+TEST_F(FullTextSearcherPrivateTest, ut_newIndexWriter)
 {
     stub_ext::StubExt st;
     st.set_lamda(&FullTextSearcherPrivate::indexStorePath, [] { __DBG_STUB_INVOKE__ return "/index"; });
@@ -135,7 +150,7 @@ TEST(FullTextSearcherPrivateTest, ut_newIndexWriter)
     EXPECT_TRUE(writer);
 }
 
-//TEST(FullTextSearcherPrivateTest, ut_newIndexReader)
+//TEST_F(FullTextSearcherPrivateTest, ut_newIndexReader)
 //{
 //    stub_ext::StubExt st;
 //    st.set_lamda(&FullTextSearcherPrivate::indexStorePath, [] { __DBG_STUB_INVOKE__ return "/index"; });
@@ -153,7 +168,7 @@ TEST(FullTextSearcherPrivateTest, ut_newIndexWriter)
 //    EXPECT_TRUE(reader);
 //}
 
-TEST(FullTextSearcherPrivateTest, ut_doIndexTask_1)
+TEST_F(FullTextSearcherPrivateTest, ut_doIndexTask_1)
 {
     FullTextSearcher searcher(QUrl::fromLocalFile("/home"), "test");
 
@@ -161,7 +176,7 @@ TEST(FullTextSearcherPrivateTest, ut_doIndexTask_1)
     EXPECT_NE(searcher.d->status.loadAcquire(), AbstractSearcher::kRuning);
 }
 
-TEST(FullTextSearcherPrivateTest, ut_doIndexTask_2)
+TEST_F(FullTextSearcherPrivateTest, ut_doIndexTask_2)
 {
     stub_ext::StubExt st;
     st.set_lamda(&DeviceUtils::fstabBindInfo, [] {
@@ -177,7 +192,7 @@ TEST(FullTextSearcherPrivateTest, ut_doIndexTask_2)
     EXPECT_TRUE(searcher.d->bindPathTable.contains("/data/home"));
 }
 
-TEST(FullTextSearcherPrivateTest, ut_doIndexTask_3)
+TEST_F(FullTextSearcherPrivateTest, ut_doIndexTask_3)
 {
     stub_ext::StubExt st;
     st.set_lamda(&DeviceUtils::fstabBindInfo, [] {
@@ -219,7 +234,7 @@ TEST(FullTextSearcherPrivateTest, ut_doIndexTask_3)
     EXPECT_STREQ(dent.d_name, "test.txt");
 }
 
-TEST(FullTextSearcherPrivateTest, ut_doIndexTask_4)
+TEST_F(FullTextSearcherPrivateTest, ut_doIndexTask_4)
 {
     stub_ext::StubExt st;
     st.set_lamda(&DeviceUtils::fstabBindInfo, [] {
@@ -254,6 +269,7 @@ TEST(FullTextSearcherPrivateTest, ut_doIndexTask_4)
 
     st.set_lamda(&FullTextSearcherPrivate::checkUpdate, [] { __DBG_STUB_INVOKE__ return true; });
     st.set_lamda(&FullTextSearcherPrivate::indexDocs, [] { __DBG_STUB_INVOKE__ });
+    st.set_lamda(VADDR(SyncFileInfo, nameOf), [] { __DBG_STUB_INVOKE__ return "txt"; });
 
     FullTextSearcher searcher(QUrl::fromLocalFile("/home"), "test");
     searcher.d->status.storeRelease(AbstractSearcher::kRuning);
@@ -262,7 +278,7 @@ TEST(FullTextSearcherPrivateTest, ut_doIndexTask_4)
     EXPECT_TRUE(searcher.d->isUpdated);
 }
 
-TEST(FullTextSearcherPrivateTest, ut_indexDocs_1)
+TEST_F(FullTextSearcherPrivateTest, ut_indexDocs_1)
 {
     stub_ext::StubExt st;
     st.set_lamda(&FullTextSearcherPrivate::indexStorePath, [] { __DBG_STUB_INVOKE__ return "/index"; });
@@ -286,7 +302,7 @@ TEST(FullTextSearcherPrivateTest, ut_indexDocs_1)
     EXPECT_TRUE(success);
 }
 
-TEST(FullTextSearcherPrivateTest, ut_indexDocs_2)
+TEST_F(FullTextSearcherPrivateTest, ut_indexDocs_2)
 {
     stub_ext::StubExt st;
     st.set_lamda(&FullTextSearcherPrivate::indexStorePath, [] { __DBG_STUB_INVOKE__ return "/index"; });
@@ -310,7 +326,7 @@ TEST(FullTextSearcherPrivateTest, ut_indexDocs_2)
     EXPECT_TRUE(success);
 }
 
-TEST(FullTextSearcherPrivateTest, ut_indexDocs_3)
+TEST_F(FullTextSearcherPrivateTest, ut_indexDocs_3)
 {
     stub_ext::StubExt st;
     st.set_lamda(&FullTextSearcherPrivate::indexStorePath, [] { __DBG_STUB_INVOKE__ return "/index"; });
@@ -329,7 +345,7 @@ TEST(FullTextSearcherPrivateTest, ut_indexDocs_3)
     EXPECT_TRUE(success);
 }
 
-//TEST(FullTextSearcherPrivateTest, ut_checkUpdate_1)
+//TEST_F(FullTextSearcherPrivateTest, ut_checkUpdate_1)
 //{
 //    stub_ext::StubExt st;
 //    st.set_lamda(&FullTextSearcherPrivate::indexStorePath, [] { __DBG_STUB_INVOKE__ return "/index"; });
@@ -353,7 +369,7 @@ TEST(FullTextSearcherPrivateTest, ut_indexDocs_3)
 //    EXPECT_EQ(type, FullTextSearcherPrivate::kAddIndex);
 //}
 
-//TEST(FullTextSearcherPrivateTest, ut_checkUpdate_2)
+//TEST_F(FullTextSearcherPrivateTest, ut_checkUpdate_2)
 //{
 //    stub_ext::StubExt st;
 //    st.set_lamda(&FullTextSearcherPrivate::indexStorePath, [] { __DBG_STUB_INVOKE__ return "/index"; });
@@ -392,7 +408,7 @@ TEST(FullTextSearcherPrivateTest, ut_indexDocs_3)
 //    EXPECT_EQ(type, FullTextSearcherPrivate::kUpdateIndex);
 //}
 
-TEST(FullTextSearcherPrivateTest, ut_tryNotify)
+TEST_F(FullTextSearcherPrivateTest, ut_tryNotify)
 {
     stub_ext::StubExt st;
     st.set_lamda(&QTime::elapsed, [] { __DBG_STUB_INVOKE__ return 100; });
@@ -404,7 +420,7 @@ TEST(FullTextSearcherPrivateTest, ut_tryNotify)
     EXPECT_EQ(searcher.d->lastEmit, 100);
 }
 
-TEST(FullTextSearcherPrivateTest, ut_fileDocument)
+TEST_F(FullTextSearcherPrivateTest, ut_fileDocument)
 {
     stub_ext::StubExt st;
     st.set_lamda(DocParser::convertFile, [] { __DBG_STUB_INVOKE__ return std::string("test"); });
@@ -417,7 +433,7 @@ TEST(FullTextSearcherPrivateTest, ut_fileDocument)
     EXPECT_EQ(value, L"test");
 }
 
-TEST(FullTextSearcherPrivateTest, ut_createIndex_1)
+TEST_F(FullTextSearcherPrivateTest, ut_createIndex_1)
 {
     stub_ext::StubExt st;
     typedef bool (QDir::*Exists)(const QString &) const;
@@ -429,7 +445,7 @@ TEST(FullTextSearcherPrivateTest, ut_createIndex_1)
     EXPECT_EQ(searcher.d->status.loadAcquire(), AbstractSearcher::kCompleted);
 }
 
-TEST(FullTextSearcherPrivateTest, ut_createIndex_2)
+TEST_F(FullTextSearcherPrivateTest, ut_createIndex_2)
 {
     stub_ext::StubExt st;
     typedef bool (QDir::*Exists)(const QString &) const;
@@ -442,7 +458,7 @@ TEST(FullTextSearcherPrivateTest, ut_createIndex_2)
     EXPECT_EQ(searcher.d->status.loadAcquire(), AbstractSearcher::kCompleted);
 }
 
-TEST(FullTextSearcherPrivateTest, ut_createIndex_3)
+TEST_F(FullTextSearcherPrivateTest, ut_createIndex_3)
 {
     stub_ext::StubExt st;
     typedef bool (QDir::*Exists)(const QString &) const;
@@ -467,7 +483,7 @@ TEST(FullTextSearcherPrivateTest, ut_createIndex_3)
     EXPECT_EQ(searcher.d->status.loadAcquire(), AbstractSearcher::kCompleted);
 }
 
-//TEST(FullTextSearcherPrivateTest, ut_updateIndex)
+//TEST_F(FullTextSearcherPrivateTest, ut_updateIndex)
 //{
 //    stub_ext::StubExt st;
 //    st.set_lamda(&FullTextSearcherPrivate::doIndexTask, [] { __DBG_STUB_INVOKE__ });
@@ -491,7 +507,7 @@ TEST(FullTextSearcherPrivateTest, ut_createIndex_3)
 //    EXPECT_TRUE(searcher.d->updateIndex("/tst"));
 //}
 
-//TEST(FullTextSearcherPrivateTest, ut_doSearch)
+//TEST_F(FullTextSearcherPrivateTest, ut_doSearch)
 //{
 //    stub_ext::StubExt st;
 //    st.set_lamda(FileUtils::bindPathTransform, [] { __DBG_STUB_INVOKE__ return "/tst"; });
