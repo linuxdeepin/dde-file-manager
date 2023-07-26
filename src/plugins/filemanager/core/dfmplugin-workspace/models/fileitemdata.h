@@ -22,6 +22,7 @@ public:
     void setSortFileInfo(SortInfoPointer info);
 
     void refreshInfo();
+    void clearThumbnail();
     FileInfoPointer fileInfo() const;
     FileItemData *parentData() const;
     QIcon fileIcon() const;

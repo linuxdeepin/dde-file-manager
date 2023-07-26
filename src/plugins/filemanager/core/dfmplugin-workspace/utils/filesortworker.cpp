@@ -646,12 +646,12 @@ void FileSortWorker::handleRefresh()
     Q_EMIT requestFetchMore();
 }
 
-void FileSortWorker::handleUpdateChildrenInfo()
+void FileSortWorker::handleClearThumbnail()
 {
     QReadLocker lk(&childrenDataLocker);
     for (const auto &item : childrenDataMap.values()) {
         if (Q_LIKELY(item))
-            item->refreshInfo();
+            item->clearThumbnail();
     }
 
     Q_EMIT requestUpdateView();

@@ -103,6 +103,11 @@ inline constexpr char kAcViewTabBarTopLine[] { "top_line" };
 inline constexpr char kAcViewTabBarBottomLine[] { "bottom_line" };
 }
 
+namespace DConfigInfo {
+inline constexpr char kConfName[] { "org.deepin.dde.file-manager.preview" };
+inline constexpr char kMtpThumbnailKey[] { "mtpThumbnailEnable" };
+}
+
 DPWORKSPACE_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::CreateTopWidgetCallback);
