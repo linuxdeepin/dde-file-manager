@@ -35,7 +35,7 @@ public:
 private:
     explicit ThumbnailHelper();
     bool checkMimeTypeSupport(const QMimeType &mime);
-    void makeDir(const QString &path);
+    void makePath(const QString &path);
 
 private:
     DMimeDatabase mimeDatabase;
