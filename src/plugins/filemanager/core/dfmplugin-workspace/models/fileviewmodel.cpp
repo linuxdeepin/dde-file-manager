@@ -21,6 +21,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -44,6 +45,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
 
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);
 }
 
 FileViewModel::~FileViewModel()
@@ -687,17 +689,30 @@ void FileViewModel::onGenericAttributeChanged(Application::GenericAttribute ga, 
 {
     Q_UNUSED(value)
 
-    static QList<Application::GenericAttribute> genAttributes {
-        Application::kPreviewAudio,
-        Application::kPreviewImage,
-        Application::kPreviewVideo,
-        Application::kPreviewTextFile,
-        Application::kPreviewDocumentFile,
-        Application::kShowThunmbnailInRemote
-    };
+    switch (ga) {
+    case Application::kPreviewAudio:
+    case Application::kPreviewImage:
+    case Application::kPreviewVideo:
+    case Application::kPreviewTextFile:
+    case Application::kPreviewDocumentFile:
+        Q_EMIT requestClearThumbnail();
+        break;
+    case Application::kShowThunmbnailInRemote:
+        if (FileUtils::isGvfsFile(rootUrl()))
+            Q_EMIT requestClearThumbnail();
+        break;
+    default:
+        break;
+    }
+}
 
-    if (genAttributes.contains(ga))
-        Q_EMIT requestUpdateAllChildrenInfo();
+void FileViewModel::onDConfigChanged(const QString &config, const QString &key)
+{
+    if (config != DConfigInfo::kConfName)
+        return;
+
+    if (DConfigInfo::kMtpThumbnailKey == key && FileUtils::isMtpFile(rootUrl()))
+        Q_EMIT requestClearThumbnail();
 }
 
 void FileViewModel::initFilterSortWork()
@@ -743,7 +758,7 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
-    connect(this, &FileViewModel::requestUpdateAllChildrenInfo, filterSortWorker.data(), &FileSortWorker::handleUpdateChildrenInfo, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestClearThumbnail, filterSortWorker.data(), &FileSortWorker::handleClearThumbnail, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);

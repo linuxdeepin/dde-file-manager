@@ -47,6 +47,12 @@ void FileItemData::refreshInfo()
         info->refresh();
 }
 
+void FileItemData::clearThumbnail()
+{
+    if (!info.isNull())
+        info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QVariant());
+}
+
 FileInfoPointer FileItemData::fileInfo() const
 {
     return info;
