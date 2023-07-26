@@ -16,6 +16,7 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QImageReader>
+#include <QDir>
 
 #include <sys/stat.h>
 
@@ -114,11 +115,11 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
     return false;
 }
 
-void ThumbnailHelper::makeDir(const QString &path)
+void ThumbnailHelper::makePath(const QString &path)
 {
-    struct stat info;
-    if (stat(path.toLocal8Bit().data(), &info) != 0)
-        mkdir(path.toLocal8Bit().data(), 0755);
+    QDir dir(path);
+    if (!dir.exists())
+        dir.mkpath(".");
 }
 
 QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, ThumbnailSize size)
@@ -140,7 +141,7 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
     const qint64 fileModify = info->timeOf(TimeInfoType::kLastModifiedSecond).toLongLong();
     tmpImg.setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
-    makeDir(thumbnailPath);
+    makePath(thumbnailPath);
     if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
         qWarning() << "thumbnail: save failed." << fileUrl;
         return "";
