@@ -21,6 +21,7 @@
 
 #include <dfm-io/dfmio_utils.h>
 
+#include <QDir>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
@@ -87,7 +88,18 @@ void Core::connectToServer()
         qCritical() << "device manager cannot connect to server!";
         DevMngIns->startMonitor();
     }
-    auto refreshDesktop = [](const QString &msg) {
+
+    auto hasLinkFileOfRemovableDevice = [] {
+        QDir desktopDir(StandardPaths::location(StandardPaths::kDesktopPath));
+        const auto &&infos = desktopDir.entryInfoList();
+        return std::any_of(infos.cbegin(), infos.cend(), [](const QFileInfo &info) {
+            return info.isSymLink() && info.symLinkTarget().startsWith("/media/");
+        });
+    };
+
+    auto refreshDesktopAsNeed = [hasLinkFileOfRemovableDevice](const QString &msg) {
+        if (!hasLinkFileOfRemovableDevice())
+            return;
         qDebug() << "refresh desktop start..." << msg;
         QDBusInterface ifs("com.deepin.dde.desktop",
                            "/com/deepin/dde/desktop",
@@ -95,16 +107,16 @@ void Core::connectToServer()
         ifs.asyncCall("Refresh");
         qDebug() << "refresh desktop async finished..." << msg;
     };
-    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevMounted");
+    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, [refreshDesktopAsNeed](const QString &, const QString &) {
+        refreshDesktopAsNeed("onBlockDevMounted");
     });
 
-    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevUnmounted");
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, [refreshDesktopAsNeed](const QString &, const QString &) {
+        refreshDesktopAsNeed("onBlockDevUnmounted");
     });
 
-    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevRemoved");
+    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, [refreshDesktopAsNeed](const QString &, const QString &) {
+        refreshDesktopAsNeed("onBlockDevRemoved");
     });
 
     qInfo() << "connectToServer finished";
@@ -199,7 +211,7 @@ bool EventHandle::init()
     connect(screenProxy, &AbstractScreenProxy::screenAvailableGeometryChanged, this, &EventHandle::publishScreenAvailableGeometryChanged, Qt::DirectConnection);
 
     // screen slot event
-    //CanvasCoreSlot(slot_ScreenProxy_Instance, &EventHandle::screenProxyInstance);
+    // CanvasCoreSlot(slot_ScreenProxy_Instance, &EventHandle::screenProxyInstance);
     CanvasCoreSlot(slot_ScreenProxy_PrimaryScreen, &EventHandle::primaryScreen);
     CanvasCoreSlot(slot_ScreenProxy_Screens, &EventHandle::screens);
     CanvasCoreSlot(slot_ScreenProxy_LogicScreens, &EventHandle::logicScreens);
@@ -220,7 +232,7 @@ bool EventHandle::init()
     connect(frame, &AbstractDesktopFrame::geometryChanged, this, &EventHandle::publishGeometryChanged, Qt::DirectConnection);
     connect(frame, &AbstractDesktopFrame::availableGeometryChanged, this, &EventHandle::publishAvailableGeometryChanged, Qt::DirectConnection);
 
-    //CanvasCoreSlot(slot_DesktopFrame_Instance, &EventHandle::desktopFrame);
+    // CanvasCoreSlot(slot_DesktopFrame_Instance, &EventHandle::desktopFrame);
     CanvasCoreSlot(slot_DesktopFrame_RootWindows, &EventHandle::rootWindows);
     CanvasCoreSlot(slot_DesktopFrame_LayoutWidget, &EventHandle::layoutWidget);
 
