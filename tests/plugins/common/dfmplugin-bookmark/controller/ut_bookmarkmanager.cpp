@@ -13,6 +13,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -21,6 +22,7 @@
 
 #include <QDebug>
 #include <QIcon>
+#include <DDialog>
 
 DFMBASE_USE_NAMESPACE
 DPBOOKMARK_USE_NAMESPACE
@@ -33,6 +35,33 @@ class UT_BookmarkManager : public testing::Test
 protected:
     virtual void SetUp() override
     {
+        ins = BookMarkManager::instance();
+        ins->initData();
+        const QString &nameKey = "Recent";
+        const QString &displayName = QObject::tr("Recent");
+
+        map = {
+            { "Property_Key_NameKey", nameKey },
+            { "Property_Key_DisplayName", displayName },
+            { "Property_Key_Url", QUrl("recent:/") },
+            { "Property_Key_Index", 0 },
+            { "Property_Key_IsDefaultItem", true },
+            { "Property_Key_PluginItemData", true }
+        };
+        bookmarkData.resetData(map);
+        typedef QVariant (Settings::*ValueFunc)(const QString &, const QString &, const QVariant &) const;
+        auto valueFunc = static_cast<ValueFunc>(&Settings::value);
+        stub.set_lamda(valueFunc, [&] {
+            __DBG_STUB_INVOKE__
+            QVariantList temList;
+            QVariantMap temData;
+            temData.insert("url", testUrl);
+            temList.append(temData);
+            return QVariant::fromValue(temList);
+        });
+        typedef void (Settings::*SetValue)(const QString &, const QString &, const QVariant &);
+        auto setValueFunc = static_cast<SetValue>(&Settings::setValue);
+        stub.set_lamda(setValueFunc, [] {});
     }
     virtual void TearDown() override
     {
@@ -44,9 +73,12 @@ protected:
         UrlRoute::regScheme(Global::Scheme::kFile, "/");
     }
 
-private:
+protected:
     stub_ext::StubExt stub;
-    QUrl testUrl = QUrl("file:///home/bookmark_test_dir");//测试URL，只做字符串使用，没有实际操作文件
+    BookMarkManager *ins;
+    QVariantMap map;
+    BookmarkData bookmarkData;
+    QUrl testUrl = QUrl("file:///home/bookmark_test_dir");   //测试URL，只做字符串使用，没有实际操作文件
 };
 
 TEST_F(UT_BookmarkManager, initDefaultItems)
@@ -54,24 +86,21 @@ TEST_F(UT_BookmarkManager, initDefaultItems)
     DefaultItemManager::instance()->initDefaultItems();
     QList<BookmarkData> list = DefaultItemManager::instance()->defaultItemInitOrder();
 
-    EXPECT_TRUE(list.count() == 7); //默认项数据初始化完成后，应该有7个默认项。
+    EXPECT_TRUE(list.count() == 7);   //默认项数据初始化完成后，应该有7个默认项。
 }
 
+TEST_F(UT_BookmarkManager, pluginItemDataToBookmark)
+{
+    BookmarkData data = DefaultItemManager::instance()->pluginItemDataToBookmark(map);
+    EXPECT_TRUE(data.name == "Recent");
+};
 TEST_F(UT_BookmarkManager, addPluginItem)
 {
-    const QString &nameKey = "Recent";
-    const QString &displayName = QObject::tr("Recent");
-
-    QVariantMap map {
-        { "Property_Key_NameKey", nameKey },
-        { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Url", QUrl("recent:/") },
-        { "Property_Key_Index", 0 },
-        { "Property_Key_IsDefaultItem", true }
-    };
     DefaultItemManager::instance()->addPluginItem(map);
-    EXPECT_TRUE(DefaultItemManager::instance()->pluginItemData().count() > 0);
-    EXPECT_TRUE(DefaultItemManager::instance()->pluginItemData().keys().first() == nameKey);
+    bool ret = DefaultItemManager::instance()->pluginItemData().count() > 0;
+    EXPECT_TRUE(ret);
+    if (ret)
+        EXPECT_TRUE(DefaultItemManager::instance()->pluginItemData().keys().first() == "Recent");
 };
 
 TEST_F(UT_BookmarkManager, addQuickAccess)
@@ -98,7 +127,7 @@ TEST_F(UT_BookmarkManager, addQuickAccess)
     QList<QUrl> testUrls;
     testUrls << testUrl;
 
-    EXPECT_TRUE(BookMarkManager::instance()->addBookMark(testUrls));
+    EXPECT_TRUE(ins->addBookMark(testUrls));
 };
 
 TEST_F(UT_BookmarkManager, removeQuickAccess)
@@ -118,5 +147,97 @@ TEST_F(UT_BookmarkManager, removeQuickAccess)
         temList.append(temData);
         return QVariant::fromValue(temList);
     });
-    EXPECT_TRUE(BookMarkManager::instance()->removeBookMark(testUrl));
+    EXPECT_TRUE(ins->removeBookMark(testUrl));
+};
+
+TEST_F(UT_BookmarkManager, fileRenamed)
+{
+    typedef QVariant (Settings::*ValueFunc)(const QString &, const QString &, const QVariant &) const;
+    auto valueFunc = static_cast<ValueFunc>(&Settings::value);
+    stub.set_lamda(valueFunc, [&] {
+        __DBG_STUB_INVOKE__
+        QVariantList temList;
+        QVariantMap temData;
+        temData.insert("url", testUrl);
+        temList.append(temData);
+        return QVariant::fromValue(temList);
+    });
+    ins->quickAccessDataMap.insert(testUrl, BookmarkData());
+    ins->fileRenamed(testUrl, testUrl);
+};
+TEST_F(UT_BookmarkManager, addQuickAccessItemsFromConfig)
+{
+    bool isRun = false;
+    QUrl url = testUrl;
+    typedef QVariant (Settings::*ValueFunc)(const QString &, const QString &, const QVariant &) const;
+    auto valueFunc = static_cast<ValueFunc>(&Settings::value);
+    stub.set_lamda(valueFunc, [&isRun, url] {
+        __DBG_STUB_INVOKE__
+        QVariantList temList;
+        QVariantMap temData;
+        temData.insert("name", "testUrl");
+        temData.insert("url", url);
+        isRun = true;
+        temList.append(temData);
+        return QVariant::fromValue(temList);
+    });
+    ins->addQuickAccessItemsFromConfig();
+    EXPECT_TRUE(isRun);
+};
+TEST_F(UT_BookmarkManager, bookMarkRename)
+{
+    typedef QVariant (Settings::*ValueFunc)(const QString &, const QString &, const QVariant &) const;
+    auto valueFunc = static_cast<ValueFunc>(&Settings::value);
+    stub.set_lamda(valueFunc, [&] {
+        __DBG_STUB_INVOKE__
+        QVariantList temList;
+        QVariantMap temData;
+        temData.insert("name", "testUrl");
+        temData.insert("url", testUrl);
+        temList.append(temData);
+        return QVariant::fromValue(temList);
+    });
+    EXPECT_TRUE(ins->bookMarkRename(testUrl, "666"));
+    EXPECT_FALSE(ins->bookMarkRename(testUrl, ""));
+};
+TEST_F(UT_BookmarkManager, showRemoveBookMarkDialog)
+{
+    bool isRun = false;
+    FileManagerWindowsManager::FMWindow *window = new FileManagerWindowsManager::FMWindow(QUrl());
+    stub.set_lamda(&FileManagerWindowsManager::findWindowById, [&window] {
+        return window;
+    });
+    stub.set_lamda(VADDR(DDialog, exec), [&isRun] {
+        isRun = true;
+        return 0;
+    });
+
+    ins->showRemoveBookMarkDialog(1);
+    EXPECT_TRUE(isRun);
+};
+TEST_F(UT_BookmarkManager, getBookMarkDataMap)
+{
+    EXPECT_TRUE(!ins->getBookMarkDataMap().isEmpty());
+};
+TEST_F(UT_BookmarkManager, sortItemsByOrder)
+{
+    bool isRun = false;
+    typedef void (Settings::*SetValue)(const QString &, const QString &, const QVariant &);
+    auto setValueFunc = static_cast<SetValue>(&Settings::setValue);
+    stub.set_lamda(setValueFunc, [&isRun] {
+        isRun = true;
+    });
+    ins->sortItemsByOrder(QList<QUrl>() << testUrl);
+    EXPECT_TRUE(isRun);
+};
+TEST_F(UT_BookmarkManager, addSchemeOfBookMarkDisabled)
+{
+    ins->addSchemeOfBookMarkDisabled("666");
+    EXPECT_TRUE(!ins->getBookmarkDisabledSchemes().isEmpty());
+};
+TEST_F(UT_BookmarkManager, handleItemSort)
+{
+    QUrl url("file://test");
+    ins->quickAccessDataMap.insert(url, BookmarkData());
+    EXPECT_TRUE(ins->handleItemSort(url, testUrl));
 };

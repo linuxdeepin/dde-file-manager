@@ -11,13 +11,12 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/dfm_global_defines.h>
-
+#include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-framework/event/event.h>
 #include <DMenu>
 
 #include <QApplication>
 #include <QUrl>
-#include <QFileInfo>
 #include <QDebug>
 
 DPBOOKMARK_USE_NAMESPACE
@@ -87,13 +86,13 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         return;
     }
 
-    QFileInfo info(url.path());
-    if (info.exists() && info.isDir()) {
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    if (info && info->exists() && info->isDir()) {
         BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         return;
     } else if (DeviceUtils::isSamba(url) || DeviceUtils::isFtp(url)) {
         auto srcUrl = DeviceUtils::parseNetSourceUrl(url);
-        qDebug() << "bookmark of net file:" << url << "got souce url:" << srcUrl;
+        qInfo() << "bookmark of net file:" << url << "got souce url:" << srcUrl;
         if (srcUrl.isValid()) {
             BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, srcUrl);
             return;
@@ -105,24 +104,5 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
 
 void BookmarkCallBack::cdDefaultItemUrlCallBack(quint64 windowId, const QUrl &url)
 {
-    BookMarkEventCaller::sendDefaultItemActived(windowId, url);
-}
-
-void bookMarkActionClickedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)
-{
-    Q_UNUSED(isNormal);
-    Q_UNUSED(currentUrl);
-    Q_UNUSED(focusFile);
-
-    if (selected.size() != 1)
-        return;
-
-    QUrl url = selected.at(0);
-    if (!QFileInfo(url.path()).isDir())
-        return;
-
-    if (BookMarkManager::instance()->getBookMarkDataMap().contains(url))
-        BookMarkManager::instance()->removeBookMark(url);
-    else
-        BookMarkManager::instance()->addBookMark(selected);
+    BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
 }

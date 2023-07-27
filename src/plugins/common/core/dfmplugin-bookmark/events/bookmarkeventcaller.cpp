@@ -39,8 +39,3 @@ bool BookMarkEventCaller::sendCheckTabAddable(quint64 windowId)
 {
     return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
 }
-
-void BookMarkEventCaller::sendDefaultItemActived(quint64 windowId, const QUrl &url)
-{
-    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
-}
