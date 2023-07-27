@@ -101,8 +101,9 @@ businessTestList=(
   # apps/dde-file-manager-server
 
 # plugins
-  plugins/common/dfmplugin-burn
+  plugins/common/core/dfmplugin-bookmark
   plugins/common/core/dfmplugin-fileoperations
+  plugins/common/dfmplugin-burn
   plugins/common/dfmplugin-utils
   plugins/common/dfmplugin-tag
   plugins/common/dfmplugin-dirshare
