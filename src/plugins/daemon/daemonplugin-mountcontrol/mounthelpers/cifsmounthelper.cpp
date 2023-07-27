@@ -318,6 +318,7 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
         param += QString("gid=%1,").arg(user->pw_gid);
     }
     param += "iocharset=utf8,vers=default";
+    param += ",actimeo=5";   // bug 211337
     return param.toStdString();
 }
 
