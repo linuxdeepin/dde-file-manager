@@ -81,6 +81,7 @@ void CoreHelper::cacheDefaultWindow()
         qWarning() << "cache window failed";
         return;
     }
+    window->setProperty("_dfm_isDefaultWindow", true);
     window->removeEventFilter(this);
     // cache all UI components
     QMetaObject::invokeMethod(window, "aboutToOpen", Qt::DirectConnection);

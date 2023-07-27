@@ -132,7 +132,8 @@ void FileManagerWindowsManagerPrivate::onWindowClosed(FileManagerWindow *window)
         return;
 
     if (count == 1) {   // last window
-        if (window->saveClosedSate())
+        auto isDefaultWindow = window->property("_dfm_isDefaultWindow");
+        if (window->saveClosedSate() && (!isDefaultWindow.isValid() || !isDefaultWindow.toBool()))
             saveWindowState(window);
         qInfo() << "Last window deletelater" << window->internalWinId();
         emit manager->lastWindowClosed();
