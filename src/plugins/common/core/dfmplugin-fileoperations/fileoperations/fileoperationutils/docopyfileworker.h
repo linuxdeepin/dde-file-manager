@@ -113,6 +113,7 @@ private:   // block file copy
                                    char *buffer = nullptr,
                                    const bool isDir = false,
                                    const QFileDevice::Permissions permission = QFileDevice::Permission::ReadOwner);
+    void syncBlockFile(const FileInfoPointer toInfo);
 
 private:
     QSharedPointer<QWaitCondition> waitCondition { nullptr };

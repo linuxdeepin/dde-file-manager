@@ -53,6 +53,7 @@ public:
     QMap<AbstractJobHandler::JobErrorType, AbstractJobHandler::SupportAction> errorOfAction;
     std::atomic_bool needSyncEveryRW { false };
     std::atomic_bool isFsTypeVfat { false };
+    std::atomic_bool isBlockDevice { false };
     std::atomic_int64_t currentWriteSize { 0 };
     QAtomicInteger<qint64> zeroOrlinkOrDirWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory
     QAtomicInteger<qint64> blockRenameWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory
