@@ -11,6 +11,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <signal.h>
+
 static constexpr char kServerInterface[] { "org.deepin.plugin.server" };
 static constexpr char kPluginCore[] { "serverplugin-core" };
 static constexpr char kLibCore[] { "libserverplugin-core.so" };
@@ -20,6 +22,8 @@ static constexpr char kLibCore[] { "libserverplugin-core.so" };
 #else
 #    define ORGANIZATION_NAME "deepin"
 #endif
+
+DWIDGET_USE_NAMESPACE
 
 static void initLog()
 {
@@ -67,6 +71,15 @@ static bool pluginsLoad()
     return true;
 }
 
+static void handleSIGTERM(int sig)
+{
+    qCritical() << "break with !SIGTERM! " << sig;
+
+    if (qApp) {
+        qApp->quit();
+    }
+}
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
@@ -80,6 +93,8 @@ int main(int argc, char *argv[])
         a.loadTranslator();
         a.setApplicationName(appName);
     }
+
+    signal(SIGTERM, handleSIGTERM);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
