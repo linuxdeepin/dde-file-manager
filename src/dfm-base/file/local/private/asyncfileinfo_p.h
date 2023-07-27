@@ -77,9 +77,7 @@ public:
 
 public:
     QString fileName() const;
-    QString baseName() const;
     QString completeBaseName() const;
-    QString suffix() const;
     QString completeSuffix() const;
     QString iconName() const;
     QString mimeTypeName() const;

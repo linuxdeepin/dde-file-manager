@@ -132,6 +132,8 @@ QString dfmbase::FileInfo::nameOf(const NameInfoType type) const
         [[fallthrough]];
     case FileNameInfoType::kBaseNameOfRename:
         return dptr->baseName();
+    case FileNameInfoType::kSuffixOfRename:
+        [[fallthrough]];
     case FileNameInfoType::kSuffix:
         return dptr->suffix();
     case FileNameInfoType::kIconName:
