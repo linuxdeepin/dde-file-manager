@@ -28,8 +28,8 @@
 
 inline constexpr int kArgumentsNum { 3 };
 
-DPVAULT_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 FileEncryptHandle::FileEncryptHandle(QObject *parent)
     : QObject(parent), d(new FileEncryptHandlerPrivate(this))

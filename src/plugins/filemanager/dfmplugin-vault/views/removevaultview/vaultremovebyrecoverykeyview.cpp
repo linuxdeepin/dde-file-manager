@@ -15,7 +15,7 @@
 #define MAX_KEY_LENGTH (32)   //!凭证最大值，4的倍数
 
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultRemoveByRecoverykeyView::VaultRemoveByRecoverykeyView(QWidget *parent)
     : QWidget(parent)

@@ -16,7 +16,7 @@ Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 void Vault::initialize()
 {

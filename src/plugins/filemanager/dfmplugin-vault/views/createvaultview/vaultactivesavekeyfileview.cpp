@@ -22,7 +22,7 @@
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultActiveSaveKeyFileView::VaultActiveSaveKeyFileView(QWidget *parent)
     : QWidget(parent)

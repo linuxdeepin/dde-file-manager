@@ -12,7 +12,7 @@ static const int kArrowExpandSpacing = 10;
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultPropertyDialog::VaultPropertyDialog(QWidget *parent)
     : DDialog(parent),

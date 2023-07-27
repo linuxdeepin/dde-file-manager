@@ -6,7 +6,7 @@
 #include "fileutils/vaultfilewatcher.h"
 
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultFileWatcherPrivate::VaultFileWatcherPrivate(const QUrl &fileUrl, VaultFileWatcher *qq)
     : AbstractFileWatcherPrivate(fileUrl, qq)

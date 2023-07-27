@@ -10,7 +10,7 @@
 #include <dfm-base/base/schemefactory.h>
 
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultFileWatcher::VaultFileWatcher(const QUrl &url, QObject *parent)
     : AbstractFileWatcher(new VaultFileWatcherPrivate(VaultHelper::vaultToLocalUrl(url), this), parent)

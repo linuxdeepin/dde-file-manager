@@ -5,7 +5,7 @@
 #include "vaultpagebase.h"
 #include "utils/vaulthelper.h"
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultPageBase::VaultPageBase(QWidget *parent)
     : DDialog(parent)

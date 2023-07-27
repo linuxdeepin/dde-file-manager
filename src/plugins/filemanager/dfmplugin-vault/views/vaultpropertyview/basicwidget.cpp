@@ -15,7 +15,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 BasicWidget::BasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
