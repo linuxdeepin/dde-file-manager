@@ -22,7 +22,7 @@
 #define MAX_KEY_LENGTH (32)
 
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 RecoveryKeyView::RecoveryKeyView(QWidget *parent)
     : QFrame(parent)

@@ -10,8 +10,7 @@
 #include <QObject>
 #include <QDBusMessage>
 
-DPVAULT_BEGIN_NAMESPACE
-
+namespace dfmplugin_vault {
 class FileEncryptHandlerPrivate;
 class FileEncryptHandle : public QObject
 {
@@ -50,7 +49,6 @@ private:
 private:
     FileEncryptHandlerPrivate *d = nullptr;
 };
-
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULTHANDLE_H

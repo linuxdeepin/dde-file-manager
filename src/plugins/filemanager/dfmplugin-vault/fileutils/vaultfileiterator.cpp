@@ -11,7 +11,7 @@
 #include <QSharedPointer>
 
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(VaultHelper::vaultToLocalUrl(url), nameFilters, filters, flags)

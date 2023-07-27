@@ -13,8 +13,7 @@ class QMutex;
 class QProcess;
 class QThread;
 
-DPVAULT_BEGIN_NAMESPACE
-
+namespace dfmplugin_vault {
 class FileEncryptHandle;
 class FileEncryptHandlerPrivate
 {
@@ -74,7 +73,6 @@ private:
     CryfsVersionInfo cryfsVersion { CryfsVersionInfo(-1, -1, -1) };
     VaultState curState { kUnknow };
 };
-
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULTHANDLE_P_H

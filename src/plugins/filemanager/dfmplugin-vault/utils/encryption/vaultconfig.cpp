@@ -10,7 +10,7 @@
 #include <QDir>
 #include <QSettings>
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultConfig::VaultConfig(const QString &filePath)
     : currentFilePath(filePath)

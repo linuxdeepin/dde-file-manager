@@ -16,8 +16,8 @@
 #include <QObject>
 #include <QFileDevice>
 
-DPVAULT_BEGIN_NAMESPACE
 
+namespace dfmplugin_vault {
 class VaultFileHelper : public QObject
 {
     Q_OBJECT
@@ -70,6 +70,6 @@ private:
 private:
     explicit VaultFileHelper(QObject *parent = nullptr);
 };
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULTFILEHELPER_H

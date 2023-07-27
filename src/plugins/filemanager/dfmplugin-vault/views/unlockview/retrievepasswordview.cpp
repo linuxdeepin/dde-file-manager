@@ -27,7 +27,7 @@
 using namespace PolkitQt1;
 
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 constexpr char kVaultTRoot[] = "dfmvault:///";
 

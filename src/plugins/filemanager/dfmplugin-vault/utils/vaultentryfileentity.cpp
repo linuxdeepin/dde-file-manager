@@ -9,7 +9,7 @@
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultEntryFileEntity::VaultEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)

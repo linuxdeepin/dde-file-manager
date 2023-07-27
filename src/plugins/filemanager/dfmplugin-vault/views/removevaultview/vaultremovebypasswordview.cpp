@@ -15,7 +15,7 @@
 #include <QTimer>
 
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     : QWidget(parent)

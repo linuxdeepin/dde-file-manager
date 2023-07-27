@@ -11,8 +11,7 @@
 #define DPVAULT_END_NAMESPACE }
 #define DPVAULT_USE_NAMESPACE using namespace dfmplugin_vault;
 
-DPVAULT_BEGIN_NAMESPACE
-
+namespace dfmplugin_vault {
 enum VaultState {
     kUnknow = 0,
     kNotExisted,
@@ -154,6 +153,6 @@ inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
 inline constexpr char kAppSessionService[] { "com.deepin.SessionManager" };
 inline constexpr char kAppSessionPath[] { "/com/deepin/SessionManager" };
 #endif
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // DFMPLUGIN_VAULT_GLOBAL_H

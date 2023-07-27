@@ -37,7 +37,7 @@ constexpr int kPassWordDeleteBtn = 2;
 
 using namespace PolkitQt1;
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultRemovePages::VaultRemovePages(QWidget *parent)
     : VaultPageBase(parent),

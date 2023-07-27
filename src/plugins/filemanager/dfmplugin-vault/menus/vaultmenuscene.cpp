@@ -14,7 +14,7 @@
 #include <QList>
 
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 static const char *const kWorkSpaceScene = "WorkspaceMenu";
 
