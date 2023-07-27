@@ -5,6 +5,7 @@
 #include "appexitcontroller.h"
 
 #include <QDebug>
+#include <QApplication>
 
 using namespace filedialog_core;
 
@@ -23,9 +24,9 @@ void AppExitController::onExit()
     }
     qWarning() << "App exit!";
     if (!confirmFunc)
-        exit(0);
-    if (confirmFunc && confirmFunc())
-        exit(0);
+        qApp->exit(0);
+    if (confirmFunc())
+        qApp->exit(0);
     qWarning() << "App exit failed";
 }
 
