@@ -1336,6 +1336,7 @@ void FileOperateBaseWorker::determineCountProcessType()
 
                         if (targetIsRemovable) {
                             countWriteType = CountWriteSizeType::kWriteBlockType;
+                            workData->isBlockDevice = true;
                             targetDeviceStartSectorsWritten = getSectorsWritten();
                         }
 

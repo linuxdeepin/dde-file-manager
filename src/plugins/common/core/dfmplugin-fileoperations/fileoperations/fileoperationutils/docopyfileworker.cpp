@@ -303,6 +303,18 @@ void DoCopyFileWorker::createExBlockFileCopyInfo(const FileInfoPointer fromInfo,
         QThread::msleep(10);
 }
 
+void DoCopyFileWorker::syncBlockFile(const FileInfoPointer toInfo)
+{
+    if (!workData->isBlockDevice)
+        return;
+    std::string stdStr = toInfo->urlOf(UrlInfoType::kUrl).path().toUtf8().toStdString();
+    int tofd = open(stdStr.data(), O_RDONLY);
+    if (-1 != tofd) {
+        syncfs(tofd);
+        close(tofd);
+    }
+}
+
 // copy thread using
 bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip)
 {
@@ -359,6 +371,8 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
 
     delete[] data;
     data = nullptr;
+
+    syncBlockFile(toInfo);
 
     // 对文件加权
     setTargetPermissions(fromInfo, toInfo);
@@ -751,6 +765,7 @@ bool DoCopyFileWorker::doWriteFile(const FileInfoPointer &fromInfo, const FileIn
             toDevice->flush();
         }
     }
+
     return true;
 }
 
