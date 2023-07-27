@@ -118,14 +118,17 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
         ba.append(qurl.toString());
 
         const QString &path = qurl.toLocalFile();
-
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(qurl, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
-
-        if (!info) {
-            qWarning() << QString("create file info error, case : %1").arg(error);
-            continue;
+        if (!path.isEmpty()) {
+            text += path + '\n';
         }
+
         if (maxIconsNum-- > 0) {
+            const FileInfoPointer &info = InfoFactory::create<FileInfo>(qurl, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
+
+            if (!info) {
+                qWarning() << QString("create file info error, case : %1").arg(error);
+                continue;
+            }
             QStringList iconList;
             if (info->isAttributes(OptInfoType::kIsSymLink)) {
                 iconList << "emblem-symbolic-link";
@@ -152,10 +155,6 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
                 }
             }
             stream << iconList << icon;
-        }
-
-        if (!path.isEmpty()) {
-            text += path + '\n';
         }
     }
 
