@@ -11,6 +11,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <signal.h>
+
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -127,6 +129,15 @@ static bool pluginsLoad()
     return true;
 }
 
+static void handleSIGTERM(int sig)
+{
+    qCritical() << "break with !SIGTERM! " << sig;
+
+    if (qApp) {
+        qApp->quit();
+    }
+}
+
 int main(int argc, char *argv[])
 {
     initEnv();
@@ -147,6 +158,8 @@ int main(int argc, char *argv[])
         a.loadTranslator();
         a.setApplicationName(appName);
     }
+
+    signal(SIGTERM, handleSIGTERM);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
