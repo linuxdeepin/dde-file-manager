@@ -146,6 +146,8 @@ protected:
     qint16 targetLogSecionSize { 512 };   // 目标设备逻辑扇区大小
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     DirPermissonList dirPermissonList;   // dir set Permisson list
+    QFuture<void> syncResult;
+    QString blocakTargetRootPath;
 
     std::atomic_int threadCopyFileCount { 0 };
 };
