@@ -255,6 +255,9 @@ void DeviceProxyManagerPrivate::connectToDBus()
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceProxyManagerPrivate::addMounts);
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
 
+    // redundant signal. this signal is emitted before the mount callback invoked, to make sure the cache is updated before use.
+    connections << q->connect(DevMngIns, &DeviceManager::blockDevMountedManually, this, &DeviceProxyManagerPrivate::addMounts);
+
     currentConnectionType = kDBusConnecting;
 }
 
@@ -290,6 +293,9 @@ void DeviceProxyManagerPrivate::connectToAPI()
     connections << q->connect(ptr, &DeviceManager::protocolDevRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
     connections << q->connect(ptr, &DeviceManager::protocolDevMounted, this, &DeviceProxyManagerPrivate::addMounts);
     connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
+
+    // redundant signal. this signal is emitted before the mount callback invoked, to make sure the cache is updated before use.
+    connections << q->connect(ptr, &DeviceManager::blockDevMountedManually, this, &DeviceProxyManagerPrivate::addMounts);
 
     currentConnectionType = kAPIConnecting;
 

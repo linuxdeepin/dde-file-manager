@@ -125,6 +125,8 @@ Q_SIGNALS:
 
     void mountNetworkDeviceResult(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
 
+    void blockDevMountedManually(const QString &id, const QString &mpt);
+
 private:
     explicit DeviceManager(QObject *parent = nullptr);
     virtual ~DeviceManager() override;
