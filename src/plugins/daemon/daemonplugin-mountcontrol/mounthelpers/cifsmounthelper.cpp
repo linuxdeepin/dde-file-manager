@@ -24,10 +24,31 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <functional>
 
 DAEMONPMOUNTCONTROL_USE_NAMESPACE
 
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
+
+struct FlexibleParam
+{
+    QString key;
+    int weight;
+
+    FlexibleParam(const QString &k, int w = -1)
+        : key(k), weight(w) { }
+
+    QString toString(const QVariant &val = QVariant()) const
+    {
+        if (key.isEmpty() || !val.isValid())
+            return key;
+        if (val.type() == QVariant::Int)
+            return QString("%1=%2").arg(key).arg(val.toInt() * weight);
+        if (val.type() == QVariant::String)
+            return QString("%1=%2").arg(key).arg(val.toString());
+        return "";
+    }
+};
 
 QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
 {
@@ -78,9 +99,6 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     if (port != -1)
         params.insert(MountOptionsField::kPort, port);
 
-    if (params.contains(MountOptionsField::kTimeout))
-        params.insert(MountOptionsField::kTryWaitReconn, true);
-
     static const QRegularExpression ipRegx(R"(^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)");
     auto matchIp = ipRegx.match(host);
     if (!matchIp.hasMatch()) {
@@ -93,41 +111,26 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
 
     int errNum = 0;
     QString errMsg;
-    while (true) {
-        auto arg = convertArgs(params);
 
-        QString args(arg.c_str());
+    const QStringList &flexiParams = generateFlexiableParamTable(params);
+    const QString &fixableParam = convertFixableArgs(params);
+    for (const auto &flexiParam : flexiParams) {
+        QString currMountParams = fixableParam + "," + flexiParam;
+
+        QString outputParams = currMountParams;
         static QRegularExpression regxCheckPasswd(",pass=.*,dom");
-        args.replace(regxCheckPasswd, ",pass=******,dom");
-        qInfo() << "mount: trying mount" << aPath << "on" << mntPath << "with opts:" << args;
+        outputParams.replace(regxCheckPasswd, ",pass=******,dom");
+        qInfo() << "mount: trying mount" << aPath << "on" << mntPath << "with opts: " << outputParams;
 
         ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", 0,
-                      arg.c_str());
-
+                      currMountParams.toStdString().c_str());
         if (ret == 0) {
-            qInfo() << "mount: mount cifs success, params are: " << args;
+            qInfo() << "mount: mount cifs success, params are: " << outputParams;
             return { { kMountPoint, mntPath }, { kResult, true }, { kErrorCode, 0 } };
         } else {
-            // if params contains 'timeout', first try mount with `handletimeout` param,
-            // if failed, try with `wait_reconnect_timeout` again,
-            // if failed, try without any timeout param.
-            if (params.contains(MountOptionsField::kTimeout)) {
-                if (params.contains(MountOptionsField::kTryWaitReconn)) {
-                    qInfo() << "mount: try with handletimeout";
-                    params.remove(MountOptionsField::kTryWaitReconn);
-                } else {
-                    qInfo() << "mount: try without timeout param";
-                    params.remove(MountOptionsField::kTimeout);
-                }
-                continue;
-            } else {
-                errNum = errno;
-                errMsg = strerror(errNum);
-                qWarning() << "mount: failed: " << path << errNum << errMsg;
-                qInfo() << "mount: clean dir" << mntPath;
-                rmdir(mntPath);
-                break;
-            }
+            errNum = errno;
+            errMsg = strerror(errNum);
+            qWarning() << "mount: failed with" << outputParams << "\nmessage:" << errMsg << errNum;
         }
     }
 
@@ -280,7 +283,7 @@ uint CifsMountHelper::invokerUid()
     return uid;
 }
 
-std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
+QString CifsMountHelper::convertFixableArgs(const QVariantMap &opts)
 {
     QString param;
     using namespace MountOptionsField;
@@ -300,15 +303,6 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
     if (opts.value(kPort, -1).toInt() != -1)
         param += QString("port=%1,").arg(opts.value(kPort).toInt());
 
-    // this param is supported by cifs only.
-    if (opts.contains(kTimeout)) {
-        param += QString("echo_interval=1,");
-        if (opts.contains(kTryWaitReconn))
-            param += QString("wait_reconnect_timeout=%1,").arg(/*opts.value(kTimeout).toString()*/ 0);   // w_r_t = ?? s
-        else
-            param += QString("handletimeout=%1,").arg(opts.value(kTimeout).toInt() * 1000);   // handletimeout = ?? ms
-    }
-
     if (opts.contains(kIp))
         param += QString("ip=%1,").arg(opts.value(kIp).toString());
 
@@ -317,9 +311,47 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
         param += QString("uid=%1,").arg(user->pw_uid);
         param += QString("gid=%1,").arg(user->pw_gid);
     }
-    param += "iocharset=utf8,vers=default";
-    param += ",actimeo=5";   // bug 211337
-    return param.toStdString();
+    param += "iocharset=utf8,";
+    param += "actimeo=5";   // bug 211337
+    return param;
+}
+
+QStringList CifsMountHelper::generateFlexiableParamTable(const QVariantMap &opts)
+{
+    std::function<void(const QMap<QString, QList<FlexibleParam>> &, QStringList &,
+                       QMapIterator<QString, QList<FlexibleParam>> &, QStringList &)>
+            backtrack;
+
+    backtrack = [&](const QMap<QString, QList<FlexibleParam>> &orig, QStringList &currSeq,
+                    QMapIterator<QString, QList<FlexibleParam>> &iter, QStringList &allCombinations) {
+        if (currSeq.count() == orig.count()) {
+            QStringList removeEmpty;
+            std::for_each(currSeq.cbegin(), currSeq.cend(), [&](const QString &str) { if (!str.isEmpty()) removeEmpty.append(str); });
+            allCombinations.append(removeEmpty.join(','));
+            return;
+        }
+
+        iter.hasNext() ? iter.next() : iter.previous();
+
+        QString key = iter.key();
+        QList<FlexibleParam> mainParams = iter.value();
+        const QVariant &var = opts.value(key);
+        for (int i = 0; i < mainParams.count(); i++) {
+            currSeq.push_back(mainParams.at(i).toString(var));
+            backtrack(orig, currSeq, iter, allCombinations);
+            currSeq.pop_back();
+        }
+    };
+
+    // these are params which could be combinated
+    static QMap<QString, QList<FlexibleParam>> flexibleParams {
+        { MountOptionsField::kVersion, { { "vers=default" }, { "vers=2.0" }, { "vers=1.0" } } },
+        { MountOptionsField::kTimeout, { { "echo_interval=1,handletimeout", 1000 }, { "echo_interval=1,wait_reconnect_timeout", /*1*/ 0 }, { "" } } }
+    };
+    QStringList allSeq, currSeq;
+    QMapIterator<QString, QList<FlexibleParam>> iter(flexibleParams);
+    backtrack(flexibleParams, currSeq, iter, allSeq);
+    return allSeq;
 }
 
 bool CifsMountHelper::checkAuth()
