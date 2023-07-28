@@ -227,14 +227,14 @@ bool CanvasProxyModelPrivate::resetFilter(QList<QUrl> &urls)
     return ret;
 }
 
-bool CanvasProxyModelPrivate::updateFilter(const QUrl &url)
+bool CanvasProxyModelPrivate::updateFilter(const QUrl &url, const QVector<int> &roles)
 {
     // these filters is like Notifier.
     // so it will don't interrupt when some one return true.
     bool ret = false;
     auto unused = std::all_of(modelFilters.begin(), modelFilters.end(),
-                              [&ret, &url](const QSharedPointer<CanvasModelFilter> &filter) {
-                                  ret |= filter->updateFilter(url);
+                              [&ret, &url, &roles](const QSharedPointer<CanvasModelFilter> &filter) {
+                                  ret |= filter->updateFilter(url, roles);
                                   return true;
                               });
     Q_UNUSED(unused);
@@ -406,13 +406,13 @@ bool CanvasProxyModelPrivate::doSort(QList<QUrl> &files) const
     return true;
 }
 
-void CanvasProxyModelPrivate::doRefresh(bool global)
+void CanvasProxyModelPrivate::doRefresh(bool global, bool refreshFile)
 {
     if (global) {
         srcModel->refresh(srcModel->rootIndex());
     } else {
         // refresh all file info
-        {
+        if (refreshFile) {
             // do not emit data changed signal, just refresh file info.
             QSignalBlocker blocker(srcModel);
             srcModel->update();
@@ -436,12 +436,12 @@ void CanvasProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft
     // find items in this model
     for (int i = begin; i <= end; ++i) {
         auto url = srcModel->fileUrl(srcModel->index(i));
-        if (hookIfs && hookIfs->dataChanged(url)) {
+        if (hookIfs && hookIfs->dataChanged(url, roles)) {
             qWarning() << "invalid module: dataChanged returns true.";
         }
 
         // canvas filter
-        updateFilter(url);
+        updateFilter(url, roles);
 
         auto cur = q->index(url);
         if (cur.isValid())
@@ -829,7 +829,7 @@ void CanvasProxyModel::update()
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
 
-void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms)
+void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms, bool refreshFile)
 {
     d->isNotMixDirAndFile = !Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
 
@@ -840,12 +840,12 @@ void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms)
         d->refreshTimer->stop();
 
     if (ms < 1) {
-        d->doRefresh(global);
+        d->doRefresh(global, refreshFile);
     } else {
         d->refreshTimer.reset(new QTimer);
         d->refreshTimer->setSingleShot(true);
-        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global]() {
-            d->doRefresh(global);
+        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global, refreshFile]() {
+            d->doRefresh(global, refreshFile);
         });
 
         d->refreshTimer->start(ms);

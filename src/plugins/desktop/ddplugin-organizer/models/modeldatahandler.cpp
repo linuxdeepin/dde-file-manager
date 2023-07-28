@@ -29,7 +29,7 @@ bool ModelDataHandler::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
     return true;
 }
 
-bool ModelDataHandler::acceptUpdate(const QUrl &url)
+bool ModelDataHandler::acceptUpdate(const QUrl &url, const QVector<int> &roles)
 {
     Q_UNUSED(url)
     return true;

@@ -58,13 +58,13 @@ bool GeneralModelFilter::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
     return ModelDataHandler::acceptRename(oldUrl, newUrl) && ret;
 }
 
-bool GeneralModelFilter::acceptUpdate(const QUrl &url)
+bool GeneralModelFilter::acceptUpdate(const QUrl &url, const QVector<int> &roles)
 {
     // these filters is like Notifier.
     // so it will don't interrupt when some one return true.
     bool ret = true;
     for (const auto &filter : modelFilters)
-        ret = ret && filter->acceptUpdate(url);
+        ret = ret && filter->acceptUpdate(url, roles);
 
-    return ModelDataHandler::acceptUpdate(url) && ret;
+    return ModelDataHandler::acceptUpdate(url, roles) && ret;
 }

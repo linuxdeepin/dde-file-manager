@@ -77,8 +77,12 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
     int row = -1;
     {
         QReadLocker lk(&lock);
-        if (Q_UNLIKELY(fileMap.contains(url))) {
-            qWarning() << "file exists:" << url;
+        if (auto cur = fileMap.value(url)) {
+            lk.unlock();
+            qInfo() << "the file to insert is existed" << url;
+            cur->refresh(); // refresh fileinfo.
+            const QModelIndex &index = q->index(url);
+            emit q->dataChanged(index, index);
             return;
         }
         row = fileList.count();
@@ -157,7 +161,12 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
                 removeData(oldUrl);
                 lk.relock();
                 position = fileList.indexOf(newUrl);
+                auto cur = fileMap.value(newUrl);
                 lk.unlock();
+
+                // refresh file
+                cur->refresh();
+                qInfo() << "move file" << oldUrl << "to overwritte" << newUrl;
             } else {
                 fileList.replace(position, newUrl);
                 fileMap.remove(oldUrl);
@@ -190,7 +199,7 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
     if (Q_UNLIKELY(!index.isValid()))
         return;
 
-    emit q->dataChanged(index, index);
+    emit q->dataChanged(index, index, {Global::kItemCreateFileInfoRole});
 }
 
 void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
@@ -237,7 +246,7 @@ void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QString &thumb)
     if (Q_UNLIKELY(!index.isValid()))
         return;
 
-    emit q->dataChanged(index, index);
+    emit q->dataChanged(index, index, {kItemIconRole});
 }
 
 FileInfoModel::FileInfoModel(QObject *parent)

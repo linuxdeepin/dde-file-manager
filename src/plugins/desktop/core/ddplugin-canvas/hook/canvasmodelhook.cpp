@@ -57,9 +57,9 @@ bool CanvasModelHook::dataRested(QList<QUrl> *urls, void *extData) const
     return CanvasModelRunHook(hook_CanvasModel_DataRested, urls, extData);
 }
 
-bool CanvasModelHook::dataChanged(const QUrl &url, void *extData) const
+bool CanvasModelHook::dataChanged(const QUrl &url, const QVector<int> &roles, void *extData) const
 {
-    return CanvasModelRunHook(hook_CanvasModel_DataChanged, url, extData);
+    return CanvasModelRunHook(hook_CanvasModel_DataChanged, url, roles, extData);
 }
 
 bool CanvasModelHook::dropMimeData(const QMimeData *data, const QUrl &dir, Qt::DropAction action, void *extData) const

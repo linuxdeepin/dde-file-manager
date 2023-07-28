@@ -657,7 +657,7 @@ TEST(CanvasManagerPrivate, onHiddenFlagsChanged)
     });
 
     QModelIndex ridx;
-    stub.set_lamda(&CanvasProxyModel::refresh, [&ridx](CanvasProxyModel *, const QModelIndex &parent, bool global, int ms){
+    stub.set_lamda(&CanvasProxyModel::refresh, [&ridx](CanvasProxyModel *, const QModelIndex &parent, bool global, int ms, bool file){
         ridx = parent;
         EXPECT_FALSE(global);
         EXPECT_GT(ms, 0);

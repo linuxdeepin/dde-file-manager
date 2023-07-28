@@ -19,10 +19,10 @@ NormalizedModeBroker::NormalizedModeBroker(NormalizedMode *parent)
     Q_ASSERT(mode);
 }
 
-void NormalizedModeBroker::refreshModel(bool global, int ms)
+void NormalizedModeBroker::refreshModel(bool global, int ms, bool file)
 {
     if (auto m = mode->getModel())
-        m->refresh(m->rootIndex(), global, ms);
+        m->refresh(m->rootIndex(), global, ms, file);
 }
 
 QString NormalizedModeBroker::gridPoint(const QUrl &item, QPoint *point)

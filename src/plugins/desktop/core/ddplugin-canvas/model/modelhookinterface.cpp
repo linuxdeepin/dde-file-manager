@@ -41,7 +41,7 @@ bool ModelHookInterface::dataRested(QList<QUrl> *urls, void *extData) const
     return false;
 }
 
-bool ModelHookInterface::dataChanged(const QUrl &url, void *extData) const
+bool ModelHookInterface::dataChanged(const QUrl &url, const QVector<int> &roles, void *extData) const
 {
     return false;
 }

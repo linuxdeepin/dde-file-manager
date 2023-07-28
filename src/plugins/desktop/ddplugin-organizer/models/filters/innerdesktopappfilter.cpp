@@ -45,7 +45,7 @@ void ddplugin_organizer::InnerDesktopAppFilter::update()
 
 void InnerDesktopAppFilter::refreshModel()
 {
-    dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionModel_Refresh", false, 50);
+    dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionModel_Refresh", false, 50, false);
 }
 
 bool InnerDesktopAppFilter::acceptInsert(const QUrl &url)
