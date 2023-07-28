@@ -22,19 +22,18 @@ public:
 
     using ThumbnailCreator = std::function<QImage(const QString &, DFMGLOBAL_NAMESPACE::ThumbnailSize)>;
     bool registerCreator(const QString &mimeType, ThumbnailCreator creator);
+
     void stop();
 
 public Q_SLOTS:
     void onTaskAdded(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
-    void onTaskRemoved(const QUrl &url);
 
 Q_SIGNALS:
     void thumbnailCreateFinished(const QUrl &url, const QString &thumbnail);
     void thumbnailCreateFailed(const QUrl &url);
 
 private:
-    void doWork();
-    bool contains(const QUrl &url);
+    void createThumbnail(const QUrl &url, Global::ThumbnailSize size);
 
 private:
     QScopedPointer<ThumbnailWorkerPrivate> d;

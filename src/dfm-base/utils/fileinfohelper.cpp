@@ -119,7 +119,7 @@ void FileInfoHelper::aboutToQuit()
     stoped = true;
     thread->quit();
     worker->stopWorker();
-    thread->wait();
+    thread->wait(3000);
     pool.waitForDone();
 }
 

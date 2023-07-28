@@ -15,12 +15,6 @@
 
 namespace dfmbase {
 
-struct ProduceTask
-{
-    QUrl srcUrl;
-    DFMGLOBAL_NAMESPACE::ThumbnailSize size;
-};
-
 class ThumbnailWorkerPrivate
 {
 public:
@@ -28,20 +22,12 @@ public:
     QString createThumbnail(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     bool checkFileStable(const QUrl &url);
 
-    void insertUrl(const QUrl &key, const QUrl &value);
-    QUrl takeUrl(const QUrl &key);
-
     ThumbnailWorker *q { nullptr };
     DMimeDatabase mimeDb;
-    QMutex mutex;
-    QWaitCondition waitCon;
-
-    std::atomic_bool isRunning { false };
-
-    QFuture<void> future;
-    QQueue<ProduceTask> produceTasks;
     QMap<QString, ThumbnailWorker::ThumbnailCreator> creators;
-    QHash<QUrl, QUrl> localAndVirtualHash;
+    QUrl originalUrl;
+    ThumbnailHelper thumbHelper;
+    std::atomic_bool isStoped = false;
 };
 
 }   // namespace dfmbase

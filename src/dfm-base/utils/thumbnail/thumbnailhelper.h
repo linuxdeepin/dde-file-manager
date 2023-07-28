@@ -18,22 +18,23 @@ namespace dfmbase {
 class ThumbnailHelper
 {
 public:
-    static ThumbnailHelper *instance();
+    explicit ThumbnailHelper();
+    void initSizeLimit();
 
     bool canGenerateThumbnail(const QUrl &url);
     bool checkThumbEnable(const QUrl &url);
-    QString saveThumbnail(const QUrl &url, const QImage &img, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
-    QImage thumbnailImage(const QUrl &fileUrl, DFMGLOBAL_NAMESPACE::ThumbnailSize size) const;
 
     void setSizeLimit(const QMimeType &mime, qint64 size);
     qint64 sizeLimit(const QMimeType &mime);
+
+    QString saveThumbnail(const QUrl &url, const QImage &img, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+    static QImage thumbnailImage(const QUrl &fileUrl, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 
     static const QStringList &defaultThumbnailDirs();
     static QString sizeToFilePath(DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     static QByteArray dataToMd5Hex(const QByteArray &data);
 
 private:
-    explicit ThumbnailHelper();
     bool checkMimeTypeSupport(const QMimeType &mime);
     void makePath(const QString &path);
 

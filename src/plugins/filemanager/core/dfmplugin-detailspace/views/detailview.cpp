@@ -151,13 +151,14 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
 
         // get icon from plugin
         QIcon icon;
+        ThumbnailHelper helper;
         const QString &iconName = findPluginIcon(info->urlOf(UrlInfoType::kUrl));
         if (!iconName.isEmpty()) {
             icon = QIcon::fromTheme(iconName);
-        } else if (ThumbnailHelper::instance()->checkThumbEnable(url)) {
+        } else if (helper.checkThumbEnable(url)) {
             icon = info->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
             if (icon.isNull()) {
-                const auto &img = ThumbnailHelper::instance()->thumbnailImage(url, Global::kLarge);
+                const auto &img = helper.thumbnailImage(url, Global::kLarge);
                 icon = QPixmap::fromImage(img);
             }
         }

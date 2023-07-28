@@ -151,9 +151,10 @@ int FilePropertyDialog::contentHeight()
 void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
 {
     if (!fileInfo.isNull()) {
+        ThumbnailHelper helper;
         QUrl localUrl = fileInfo->urlOf(FileInfo::FileUrlInfoType::kRedirectedFileUrl);
-        if (ThumbnailHelper::instance()->checkThumbEnable(localUrl)) {
-            QImage img = ThumbnailHelper::instance()->thumbnailImage(localUrl, ThumbnailSize::kLarge);
+        if (helper.checkThumbEnable(localUrl)) {
+            QImage img = helper.thumbnailImage(localUrl, ThumbnailSize::kLarge);
             if (!img.isNull()) {
                 fileIcon->setPixmap(QPixmap::fromImage(img).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 return;

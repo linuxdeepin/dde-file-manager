@@ -32,11 +32,9 @@ Q_SIGNALS:
     void produceFailed(const QUrl &src);
 
     void addTask(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
-    void removeTask(const QUrl &url);
 
-private Q_SLOTS:
-    void onDevUnmounted(const QString &id, const QString &oldMpt);
-    void aboutToQuit();
+public Q_SLOTS:
+    void onAboutToQuit();
 
 protected:
     explicit ThumbnailFactory(QObject *parent = nullptr);
