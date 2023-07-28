@@ -551,7 +551,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
                 d->lastAndExpandedIndex = index;
             }
 
-            parent()->updateGeometries();
+            updateEditorGeometry(d->expandedItem, opt, index);
 
             return;
         }
@@ -654,6 +654,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
     if (editor == d->expandedItem) {
         //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
+        d->expandedItem->show();
         d->expandedItem->setTextBounding(QRect());
         editor->setFixedWidth(option.rect.width());
         d->expandedItem->setIconHeight(iconSize.height());
