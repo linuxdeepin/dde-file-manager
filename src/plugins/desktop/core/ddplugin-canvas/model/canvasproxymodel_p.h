@@ -28,7 +28,7 @@ public:
     bool doSort(QList<QUrl> &files) const;
     bool lessThan(const QUrl &left, const QUrl &right) const;
 public slots:
-    void doRefresh(bool global);
+    void doRefresh(bool global, bool refreshFile);
     void sourceDataChanged(const QModelIndex &sourceTopleft,
                            const QModelIndex &sourceBottomright,
                            const QVector<int> &roles);
@@ -44,7 +44,7 @@ public slots:
 public:
     bool insertFilter(const QUrl &url);
     bool resetFilter(QList<QUrl> &urls);
-    bool updateFilter(const QUrl &url);
+    bool updateFilter(const QUrl &url , const QVector<int> &roles);
     bool removeFilter(const QUrl &url);
     bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl);
 

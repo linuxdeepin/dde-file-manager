@@ -16,7 +16,7 @@ class NormalizedModeBroker : public OrganizerBroker
 public:
     explicit NormalizedModeBroker(NormalizedMode *parent = nullptr);
 public slots:
-    void refreshModel(bool global, int ms) override;
+    void refreshModel(bool global, int ms, bool file) override;
     QString gridPoint(const QUrl &item, QPoint *point) override;
     QRect visualRect(const QString &id, const QUrl &item) override;
     QAbstractItemView *view(const QString &id) override;

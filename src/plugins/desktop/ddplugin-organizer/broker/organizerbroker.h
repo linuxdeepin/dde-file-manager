@@ -23,7 +23,7 @@ public:
 signals:
 
 public slots:
-    virtual void refreshModel(bool global, int ms) = 0;
+    virtual void refreshModel(bool global, int ms, bool file) = 0;
     virtual QString gridPoint(const QUrl &item, QPoint *point) = 0;
     virtual QRect visualRect(const QString &id, const QUrl &item) = 0;
     virtual QAbstractItemView * view(const QString &id) = 0;

@@ -41,7 +41,7 @@ HiddenFileFilter::~HiddenFileFilter()
 
 void HiddenFileFilter::refreshModel()
 {
-    dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionModel_Refresh", false, 50);
+    dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionModel_Refresh", false, 100, false);
 }
 
 bool HiddenFileFilter::acceptInsert(const QUrl &url)
@@ -49,11 +49,8 @@ bool HiddenFileFilter::acceptInsert(const QUrl &url)
     if (showHiddenFiles())
         return true;
 
-    if (auto info = createFileInfo(url)) {
-        //! fouce refresh
-        info->refresh();
+    if (auto info = createFileInfo(url))
         return !info->isAttributes(OptInfoType::kIsHidden);
-    }
 
     return true;
 }
@@ -67,10 +64,6 @@ QList<QUrl> HiddenFileFilter::acceptReset(const QList<QUrl> &urls)
     for (auto itor = allUrl.begin(); itor != allUrl.end();) {
         auto info = createFileInfo(*itor);
         if (info) {
-            //! file cached will not change hidden propety when .hidden file changed.
-            //! need to fouce refresh
-            //! maybe it need be fixed in dfm-io
-            info->refresh();
             if (info->isAttributes(OptInfoType::kIsHidden)) {
                 itor = allUrl.erase(itor);
                 continue;
@@ -87,16 +80,17 @@ bool HiddenFileFilter::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
     return acceptInsert(newUrl);
 }
 
-bool HiddenFileFilter::acceptUpdate(const QUrl &url)
+bool HiddenFileFilter::acceptUpdate(const QUrl &url, const QVector<int> &roles)
 {
     // the filemanager hidden attr changed.
-    // get file that removed form .hidden if do not show hidden file.
-    if (!showHiddenFiles() && url.fileName() == ".hidden") {
-        qDebug() << "refresh by hidden changed.";
-        refreshModel();
-        return false;
+    if (roles.contains(Global::kItemCreateFileInfoRole)) {
+        // get file that removed form .hidden if do not show hidden file.
+        if (!showHiddenFiles() && url.fileName() == ".hidden") {
+            qDebug() << "refresh by hidden changed.";
+            refreshModel();
+            return false;
+        }
     }
-
     return true;
 }
 

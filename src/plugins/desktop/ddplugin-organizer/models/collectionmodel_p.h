@@ -22,7 +22,7 @@ public:
     void reset();
     void clearMapping();
     void createMapping();
-    void doRefresh(bool global);
+    void doRefresh(bool global, bool file);
 public slots:
     void sourceDataChanged(const QModelIndex &sourceTopleft,
                            const QModelIndex &sourceBottomright,

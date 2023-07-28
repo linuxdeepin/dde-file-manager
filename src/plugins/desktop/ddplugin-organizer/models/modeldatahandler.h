@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QVector>
 
 namespace ddplugin_organizer {
 
@@ -21,7 +22,7 @@ public:
     virtual bool acceptInsert(const QUrl &url);
     virtual QList<QUrl> acceptReset(const QList<QUrl> &urls);
     virtual bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl);
-    virtual bool acceptUpdate(const QUrl &url);
+    virtual bool acceptUpdate(const QUrl &url, const QVector<int> &roles = {});
 };
 }
 

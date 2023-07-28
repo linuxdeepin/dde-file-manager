@@ -25,7 +25,7 @@ public:
     virtual bool dataRemoved(const QUrl &url, void *extData = nullptr) const;    // must return false
     virtual bool dataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData = nullptr) const;
     virtual bool dataRested(QList<QUrl> *urls, void *extData = nullptr) const;   // must return false
-    virtual bool dataChanged(const QUrl &url, void *extData = nullptr) const;   // must return false
+    virtual bool dataChanged(const QUrl &url, const QVector<int> &roles, void *extData = nullptr) const;   // must return false
     virtual bool dropMimeData(const QMimeData *data, const QUrl &dir, Qt::DropAction action, void *extData = nullptr) const;
     virtual bool mimeData(const QList<QUrl> &urls, QMimeData *out, void *extData = nullptr) const;
     virtual bool mimeTypes (QStringList *types, void *extData = nullptr) const;

@@ -111,7 +111,7 @@ void CollectionModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft,
         auto cur = q->index(url);
 
         if (handler)
-            handler->acceptUpdate(url);
+            handler->acceptUpdate(url, roles);
 
         if (cur.isValid())
             idxs << cur;
@@ -262,14 +262,19 @@ void CollectionModelPrivate::clearRenameReuired()
     waitForRenameFile.clear();
 }
 
-void CollectionModelPrivate::doRefresh(bool global)
+void CollectionModelPrivate::doRefresh(bool global, bool file)
 {
     if (global) {
         shell->refresh(shell->rootIndex());
     } else {
+        if (file) {
+            // do not emit data changed signal, just refresh file info.
+           QSignalBlocker blocker(q);
+           q->update();
+        }
+
         sourceAboutToBeReset();
         sourceReset();
-        q->update();
     }
 }
 
@@ -369,7 +374,7 @@ QUrl CollectionModel::fileUrl(const QModelIndex &index) const
     return d->fileList.at(index.row());
 }
 
-void CollectionModel::refresh(const QModelIndex &parent, bool global, int ms)
+void CollectionModel::refresh(const QModelIndex &parent, bool global, int ms, bool file)
 {
     if (parent != rootIndex())
         return;
@@ -378,12 +383,12 @@ void CollectionModel::refresh(const QModelIndex &parent, bool global, int ms)
         d->refreshTimer->stop();
 
     if (ms < 1) {
-        d->doRefresh(global);
+        d->doRefresh(global, file);
     } else {
         d->refreshTimer.reset(new QTimer);
         d->refreshTimer->setSingleShot(true);
-        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global]() {
-            d->doRefresh(global);
+        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global, file]() {
+            d->doRefresh(global, file);
         });
 
         d->refreshTimer->start(ms);

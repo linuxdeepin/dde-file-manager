@@ -20,7 +20,7 @@ public:
     bool acceptInsert(const QUrl &url) override;
     QList<QUrl> acceptReset(const QList<QUrl> &urls) override;
     bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
-    bool acceptUpdate(const QUrl &url) override;
+    bool acceptUpdate(const QUrl &url, const QVector<int> &roles = {}) override;
 protected slots:
     void updateFlag();
     void hiddenFlagChanged(bool showHidden);

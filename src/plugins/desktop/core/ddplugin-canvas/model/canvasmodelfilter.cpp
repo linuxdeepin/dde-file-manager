@@ -28,7 +28,7 @@ bool CanvasModelFilter::resetFilter(QList<QUrl> &urls)
     return false;
 }
 
-bool CanvasModelFilter::updateFilter(const QUrl &url)
+bool CanvasModelFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
 {
     return false;
 }
@@ -48,11 +48,8 @@ bool HiddenFileFilter::insertFilter(const QUrl &url)
     if (model->showHiddenFiles())
         return false;
 
-    if (auto info = FileCreator->createFileInfo(url)) {
-        //! fouce refresh
-        info->refresh();
+    if (auto info = FileCreator->createFileInfo(url))
         return info->isAttributes(OptInfoType::kIsHidden);
-    }
 
     return false;
 }
@@ -74,13 +71,17 @@ bool HiddenFileFilter::resetFilter(QList<QUrl> &urls)
     return false;
 }
 
-bool HiddenFileFilter::updateFilter(const QUrl &url)
+bool HiddenFileFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
 {
     // the filemanager hidden attr changed.
-    // get file that removed form .hidden if do not show hidden file.
-    if (!model->showHiddenFiles() && url.fileName() == ".hidden") {
-        qDebug() << "refresh by hidden changed.";
-        model->refresh(model->rootIndex());
+    // just refresh model if file content changed.
+    if (roles.contains(Global::kItemCreateFileInfoRole)) {
+        // get file that removed form .hidden if do not show hidden file.
+        if (!model->showHiddenFiles() && url.fileName() == ".hidden") {
+            qDebug() << "refresh by hidden changed.";
+            // do not refresh file info and wait 100ms to let the file atrr changed signal to refresh file
+            model->refresh(model->rootIndex(), false, 100, false);
+        }
     }
 
     return false;

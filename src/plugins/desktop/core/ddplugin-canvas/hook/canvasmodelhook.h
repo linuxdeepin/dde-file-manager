@@ -22,7 +22,7 @@ public:
     bool dataRemoved(const QUrl &url, void *extData = nullptr) const override;    // must return false
     bool dataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData = nullptr) const override;
     bool dataRested(QList<QUrl> *urls, void *extData = nullptr) const override;   // must return false
-    bool dataChanged(const QUrl &url, void *extData = nullptr) const override;   // must return false
+    bool dataChanged(const QUrl &url, const QVector<int> &roles, void *extData = nullptr) const override;   // must return false
     bool dropMimeData(const QMimeData *data, const QUrl &dir, Qt::DropAction action, void *extData = nullptr) const override;
     bool mimeData(const QList<QUrl> &urls, QMimeData *out, void *extData = nullptr) const override;
     bool mimeTypes (QStringList *types, void *extData = nullptr) const override;

@@ -1017,7 +1017,7 @@ public:
         cr = true;
         return rr;
     }
-    bool updateFilter(const QUrl &url) override
+    bool updateFilter(const QUrl &url, const QVector<int> &roles) override
     {
         cu = true;
         return ru;
@@ -1224,7 +1224,7 @@ TEST_F(TestCanvasModelFilter, updateFilter)
     bool ret = true;
 
     {
-        ret = model.d->updateFilter(in);
+        ret = model.d->updateFilter(in, {});
         EXPECT_FALSE(ret);
         EXPECT_TRUE(f1->cu);
         EXPECT_TRUE(f2->cu);
@@ -1237,7 +1237,7 @@ TEST_F(TestCanvasModelFilter, updateFilter)
         f2->cu = false;
         f3->cu = false;
         f1->ru = true;
-        ret = model.d->updateFilter(in);
+        ret = model.d->updateFilter(in, {});
         EXPECT_TRUE(ret);
         EXPECT_TRUE(f1->cu);
         EXPECT_TRUE(f2->cu);
@@ -1251,7 +1251,7 @@ TEST_F(TestCanvasModelFilter, updateFilter)
         f3->cu = false;
         f1->ru = false;
         f2->ru = true;
-        ret = model.d->updateFilter(in);
+        ret = model.d->updateFilter(in, {});
         EXPECT_TRUE(ret);
         EXPECT_TRUE(f1->cu);
         EXPECT_TRUE(f2->cu);
@@ -1265,7 +1265,7 @@ TEST_F(TestCanvasModelFilter, updateFilter)
         f3->cu = false;
         f2->ru = false;
         f3->ru = true;
-        ret = model.d->updateFilter(in);
+        ret = model.d->updateFilter(in, {});
         EXPECT_TRUE(ret);
         EXPECT_TRUE(f1->cu);
         EXPECT_TRUE(f2->cu);

@@ -34,7 +34,7 @@ public:
     FileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> files() const;
     QUrl fileUrl(const QModelIndex &index) const;
-    void refresh(const QModelIndex &parent, bool global = false, int ms = 50);
+    void refresh(const QModelIndex &parent, bool global = false, int ms = 50, bool file = true);
     void update();
     bool fetch(const QList<QUrl> &urls);
     bool take(const QList<QUrl> &urls);

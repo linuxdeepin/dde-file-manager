@@ -52,7 +52,7 @@ public:
     bool acceptInsert(const QUrl &url) override{instert = true; return false;}
     QList<QUrl> acceptReset(const QList<QUrl> &urls) override {reset = true; return {};}
     bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override {rename = true; return false;}
-    bool acceptUpdate(const QUrl &url) override {update = true; return false;}
+    bool acceptUpdate(const QUrl &url, const QVector<int> &roles = {}) override {update = true; return false;}
 public:
     bool instert = false;
     bool reset = false;

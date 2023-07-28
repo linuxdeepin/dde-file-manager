@@ -19,7 +19,7 @@ public:
     explicit CanvasModelFilter(CanvasProxyModel *m);
     virtual bool insertFilter(const QUrl &url);
     virtual bool resetFilter(QList<QUrl> &urls);
-    virtual bool updateFilter(const QUrl &url);
+    virtual bool updateFilter(const QUrl &url, const QVector<int> &roles = {});
     virtual bool removeFilter(const QUrl &url);
     virtual bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl);
 protected:
@@ -32,7 +32,7 @@ public:
     using CanvasModelFilter::CanvasModelFilter;
     bool insertFilter(const QUrl &url) override;
     bool resetFilter(QList<QUrl> &urls) override;
-    bool updateFilter(const QUrl &url) override;
+    bool updateFilter(const QUrl &url, const QVector<int> &roles = {}) override;
     bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl) override;
 };
 
