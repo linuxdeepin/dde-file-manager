@@ -28,6 +28,10 @@ DFMGLOBAL_USE_NAMESPACE
 
 ThumbnailHelper::ThumbnailHelper()
 {
+}
+
+void ThumbnailHelper::initSizeLimit()
+{
     sizeLimitHash.reserve(28);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain), 1024 * 1024);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf), INT64_MAX);
@@ -57,12 +61,6 @@ const QStringList &ThumbnailHelper::defaultThumbnailDirs()
         StandardPaths::location(StandardPaths::kThumbnailFailPath)
     };
     return dirs;
-}
-
-ThumbnailHelper *ThumbnailHelper::instance()
-{
-    static ThumbnailHelper ins;
-    return &ins;
 }
 
 bool ThumbnailHelper::canGenerateThumbnail(const QUrl &url)
@@ -150,7 +148,7 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
     return thumbnailFilePath;
 }
 
-QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size) const
+QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size)
 {
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
     if (!fileInfo)

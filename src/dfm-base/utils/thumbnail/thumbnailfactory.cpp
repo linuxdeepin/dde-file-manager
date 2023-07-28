@@ -34,20 +34,17 @@ ThumbnailFactory::ThumbnailFactory(QObject *parent)
 
 ThumbnailFactory::~ThumbnailFactory()
 {
-    aboutToQuit();
+    if (thread->isRunning())
+        onAboutToQuit();
 }
 
 void ThumbnailFactory::init()
 {
-    connect(qApp, &QGuiApplication::aboutToQuit, this, &ThumbnailFactory::aboutToQuit);
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
 
-    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &ThumbnailFactory::onDevUnmounted);
-    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &ThumbnailFactory::onDevUnmounted);
-    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &ThumbnailFactory::onDevUnmounted);
-    connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &ThumbnailFactory::onDevUnmounted);
+    connect(qApp, &QGuiApplication::aboutToQuit, this, &ThumbnailFactory::onAboutToQuit);
 
     connect(this, &ThumbnailFactory::addTask, worker.data(), &ThumbnailWorker::onTaskAdded, Qt::QueuedConnection);
-    connect(this, &ThumbnailFactory::removeTask, worker.data(), &ThumbnailWorker::onTaskRemoved, Qt::QueuedConnection);
     connect(worker.data(), &ThumbnailWorker::thumbnailCreateFinished, this, &ThumbnailFactory::produceFinished, Qt::QueuedConnection);
     connect(worker.data(), &ThumbnailWorker::thumbnailCreateFailed, this, &ThumbnailFactory::produceFailed, Qt::QueuedConnection);
 
@@ -67,17 +64,9 @@ bool ThumbnailFactory::registerThumbnailCreator(const QString &mimeType, Thumbna
     return worker->registerCreator(mimeType, creator);
 }
 
-void ThumbnailFactory::onDevUnmounted(const QString &id, const QString &oldMpt)
+void ThumbnailFactory::onAboutToQuit()
 {
-    Q_UNUSED(id)
-
-    const auto &&mpt = QUrl::fromLocalFile(oldMpt);
-    emit removeTask(mpt);
-}
-
-void ThumbnailFactory::aboutToQuit()
-{
-    thread->quit();
     worker->stop();
-    thread->wait();
+    thread->quit();
+    thread->wait(3000);
 }
