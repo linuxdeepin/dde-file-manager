@@ -171,6 +171,9 @@ bool DoCopyFileWorker::doDfmioFileCopy(FileInfoPointer fromInfo, FileInfoPointer
 
     workData->everyFileWriteSize.remove(fromUrl);
     delete data;
+
+    syncBlockFile(toInfo);
+
     return ret;
 }
 
