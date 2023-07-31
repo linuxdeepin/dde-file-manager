@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "trashfileinfo.h"
+#include "private/trashfileinfo_p.h"
 #include "utils/trashcorehelper.h"
 
 #include <dfm-base/interfaces/private/fileinfo_p.h>
@@ -19,31 +19,6 @@
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_trashcore {
-class TrashFileInfoPrivate
-{
-public:
-    explicit TrashFileInfoPrivate(TrashFileInfo *qq)
-        : q(qq)
-    {
-    }
-
-    virtual ~TrashFileInfoPrivate();
-
-    QUrl initTarget();
-    QString fileName() const;
-    QString copyName() const;
-    QString mimeTypeName();
-    QDateTime lastRead() const;
-    QDateTime lastModified() const;
-    QDateTime deletionTime() const;
-    QString symLinkTarget() const;
-
-    QSharedPointer<DFileInfo> dFileInfo { nullptr };
-    QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
-    QUrl targetUrl;
-    QUrl originalUrl;
-    TrashFileInfo *const q;
-};
 
 TrashFileInfoPrivate::~TrashFileInfoPrivate()
 {

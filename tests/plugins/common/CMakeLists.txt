@@ -13,4 +13,5 @@ add_subdirectory(dfmplugin-dirshare)
 add_subdirectory(core/dfmplugin-fileoperations)
 add_subdirectory(core/dfmplugin-propertydialog)
 add_subdirectory(core/dfmplugin-menu)
+add_subdirectory(core/dfmplugin-trashcore)
 
