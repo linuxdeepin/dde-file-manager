@@ -155,7 +155,7 @@ qint64 FileOperationsUtils::bigFileSize()
 {
     // 获取当前配置
     qint64 alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileBigSize).toLongLong();
-    if (alltotrash < 0)
-        return 0;
+    if (alltotrash <= 0)
+        return 80 * 1024 * 1024;
     return alltotrash;
 }
