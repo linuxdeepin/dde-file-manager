@@ -5418,7 +5418,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>يېشەلمىدى</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>

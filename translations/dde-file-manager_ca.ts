@@ -5418,13 +5418,14 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>Ha fallat el desblocatge.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>El directori %1 està ocupat.
+Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a desblocar la caixa forta.</translation>
     </message>
 </context>
 <context>

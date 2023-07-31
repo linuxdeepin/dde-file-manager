@@ -5418,13 +5418,14 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się odblokować</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>Katalog %1 jest w użyciu, 
+ wyczyść pliki w nim zawarte i spróbuj odblokować sejf ponownie.</translation>
     </message>
 </context>
 <context>
