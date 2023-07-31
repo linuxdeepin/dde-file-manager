@@ -334,7 +334,10 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     preRectForDevName.setTop(option.rect.top() + 10);
     preRectForDevName.setHeight(fm.height());
     painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
-    painter->drawText(preRectForDevName, Qt::TextWrapAnywhere, devName, &realPaintedRectForDevName);
+
+    int realHeight = fm.boundingRect(devName).height();
+    preRectForDevName.adjust(0, fm.height() - realHeight, 0, 0);   // make sure the text will not be clipped.
+    painter->drawText(preRectForDevName, Qt::AlignVCenter, devName, &realPaintedRectForDevName);
 
     // draw filesystem tag behind label
     if (showFsTag) {
