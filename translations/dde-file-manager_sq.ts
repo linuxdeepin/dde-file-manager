@@ -101,7 +101,7 @@
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="557"/>
         <source>All Files </source>
-        <translation type="unfinished"/>
+        <translation>Krejt Kartelat</translation>
     </message>
 </context>
 <context>
@@ -3100,7 +3100,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="762"/>
         <source>In data statistics</source>
-        <translation type="unfinished"/>
+        <translation>Në statistika të dhënash</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="763"/>
@@ -4421,7 +4421,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="275"/>
         <source>For Secrets Security</source>
-        <translation type="unfinished"/>
+        <translation>Për Siguri të Fshehtash</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="282"/>
@@ -5418,13 +5418,14 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>Shkyçja dështoi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>Drejtoria %1 është e zënë,
+ ju lutemi, spastroni kartelat në këtë drejtori dhe riprovoni të shkyçni kasafortën.</translation>
     </message>
 </context>
 <context>

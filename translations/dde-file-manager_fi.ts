@@ -101,7 +101,7 @@
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="557"/>
         <source>All Files </source>
-        <translation type="unfinished"/>
+        <translation>Kaikki tiedostot</translation>
     </message>
 </context>
 <context>
@@ -3100,7 +3100,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="762"/>
         <source>In data statistics</source>
-        <translation type="unfinished"/>
+        <translation>Datan tilastoissa</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="763"/>
@@ -5418,13 +5418,14 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>Lukituksen avaus epäonnistui</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>Kansio %1 on varattu,
+tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     </message>
 </context>
 <context>

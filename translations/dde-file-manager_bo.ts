@@ -5418,13 +5418,13 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>སྒོ་ལྕགས་ཕྱེ་མ་ཐུབ།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation> %1 དཀར་ཆག་བཟུང་ཟིན་པས། དཀར་ཆག་དེའི་འོག་གི་ཡིག་ཆ་གཙང་སེལ་བྱས་རྗེས་ཉེན་འགོག་སྒམ་གྱི་སྒོ་ལྕགས་ཕྱེ་དང་།</translation>
     </message>
 </context>
 <context>

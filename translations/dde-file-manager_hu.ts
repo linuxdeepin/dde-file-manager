@@ -5418,13 +5418,14 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>A feloldás sikertelen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="130"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>A % 1 könyvtár foglalt, 
+kérjük törölje a fájlokat ebben a könyvtárban, és próbálja meg újra feloldani a széf zárolását. </translation>
     </message>
 </context>
 <context>
