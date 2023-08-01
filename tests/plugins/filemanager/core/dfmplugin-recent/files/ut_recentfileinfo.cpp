@@ -25,18 +25,22 @@ protected:
     virtual void SetUp() override
     {
         info = new RecentFileInfo(RecentHelper::rootUrl());
+        info2 = new RecentFileInfo(QUrl("test"));
     }
     virtual void TearDown() override
     {
         stub.clear();
         delete info;
         info = nullptr;
+        delete info2;
+        info2 = nullptr;
     }
 
-private:
+protected:
     stub_ext::StubExt stub;
 
     RecentFileInfo *info { nullptr };
+    RecentFileInfo *info2 { nullptr };
 };
 
 TEST_F(RecentFileInfoTest, exists)
@@ -55,6 +59,7 @@ TEST_F(RecentFileInfoTest, permissions)
 TEST_F(RecentFileInfoTest, nameOf)
 {
     EXPECT_EQ(info->nameOf(dfmbase::NameInfoType::kFileName), "Recent");
+    EXPECT_EQ(info2->nameOf(dfmbase::NameInfoType::kFileName), "Recent");
 }
 
 TEST_F(RecentFileInfoTest, displayOf)
@@ -71,6 +76,7 @@ TEST_F(RecentFileInfoTest, isAttributes)
 {
     EXPECT_FALSE(info->isAttributes(dfmbase::OptInfoType::kIsReadable));
     EXPECT_FALSE(info->isAttributes(dfmbase::OptInfoType::kIsWritable));
+    EXPECT_FALSE(info->isAttributes(dfmbase::OptInfoType::kIsHidden));
 }
 
 TEST_F(RecentFileInfoTest, canAttributes)
@@ -78,4 +84,20 @@ TEST_F(RecentFileInfoTest, canAttributes)
     EXPECT_FALSE(info->canAttributes(dfmbase::CanableInfoType::kCanTrash));
     EXPECT_FALSE(info->canAttributes(dfmbase::CanableInfoType::kCanRename));
     EXPECT_FALSE(info->canAttributes(dfmbase::CanableInfoType::kCanRedirectionFileUrl));
+    EXPECT_FALSE(info->canAttributes(dfmbase::CanableInfoType::kCanTrash));
+    EXPECT_FALSE(info->canAttributes(dfmbase::CanableInfoType::kUnknowFileCanInfo));
+}
+
+TEST_F(RecentFileInfoTest, customData)
+{
+    using namespace dfmbase::Global;
+    stub.set_lamda(VADDR(RecentFileInfo, urlOf), [] {
+        return QUrl("test");
+    });
+    stub.set_lamda(VADDR(RecentFileInfo, timeOf), [] {
+        return QVariant(QDateTime::currentDateTime());
+    });
+    EXPECT_FALSE(info->customData(kItemFilePathRole).toString().isEmpty());
+    EXPECT_FALSE(info->customData(kItemFileLastReadRole).toString().isEmpty());
+    EXPECT_FALSE(!info->customData(1).toString().isEmpty());
 }

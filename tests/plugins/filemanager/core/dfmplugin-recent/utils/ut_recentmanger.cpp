@@ -8,12 +8,16 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/watchercache.h>
 #include <dfm-base/dfm_global_defines.h>
-
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/file/local/private/localfilewatcher_p.h>
 #include <dfm-framework/dpf.h>
 #include <gtest/gtest.h>
 #include <dfm-framework/event/eventdispatcher.h>
 #include <QMimeData>
 #include <QMenu>
+#include <DRecentManager>
+#include <DDialog>
+
 using namespace testing;
 using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE
@@ -46,6 +50,18 @@ TEST_F(RecentManagerTest, icon)
 TEST_F(RecentManagerTest, xbelPath)
 {
     EXPECT_TRUE(RecentHelper::xbelPath() == QDir::homePath() + "/.local/share/recently-used.xbel");
+}
+
+TEST_F(RecentManagerTest, init)
+{
+    QSharedPointer<LocalFileWatcher> w(new LocalFileWatcher(QUrl::fromLocalFile("/home")));
+    bool isCall = false;
+    stub.set_lamda(&WatcherFactory::create<AbstractFileWatcher>, [&w, &isCall] {
+        isCall = true;
+        return w;
+    });
+    RecentManager::instance()->init();
+    EXPECT_TRUE(isCall);
 }
 
 TEST_F(RecentManagerTest, rootUrl)
@@ -169,4 +185,30 @@ TEST_F(RecentManagerTest, propetyExtensionFunc)
 {
     stub.set_lamda(&RecentManager::init, []() {});
     EXPECT_TRUE(RecentHelper::propetyExtensionFunc(RecentHelper::rootUrl()).size() > 0);
+}
+
+TEST_F(RecentManagerTest, contenxtMenuHandle)
+{
+    stub.set_lamda(&RecentManager::init, []() {});
+    QPoint q;
+    bool isCall = false;
+    stub.set_lamda((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), [&]() {
+        isCall = true;
+        return nullptr;
+    });
+    RecentHelper::contenxtMenuHandle(1, QUrl(), q);
+    EXPECT_TRUE(isCall);
+}
+
+TEST_F(RecentManagerTest, removeRecent)
+{
+    bool isCall = false;
+    stub.set_lamda(&RecentManager::init, []() {});
+    stub.set_lamda(VADDR(DDialog, exec), [&isCall] {
+        isCall = true;
+        return 1;
+    });
+    stub.set_lamda(&DTK_CORE_NAMESPACE::DRecentManager::removeItems, [] {});
+    RecentHelper::removeRecent(QList<QUrl>());
+    EXPECT_TRUE(isCall);
 }

@@ -39,7 +39,7 @@ protected:
         watcher = nullptr;
     }
 
-private:
+protected:
     RecentFileWatcher *watcher = { nullptr };
     stub_ext::StubExt stub;
 };
@@ -90,4 +90,51 @@ TEST_F(RecentFileWatcherTest, onFileRename)
         EXPECT_EQ(url, newOldUrl);
     });
     EXPECT_NO_FATAL_FAILURE(watcher->onFileRename(fromUrl, toUrl));
+}
+
+TEST_F(RecentFileWatcherTest, start)
+{
+    QSharedPointer<LocalFileWatcher> w(new LocalFileWatcher(QUrl::fromLocalFile("/home")));
+    watcher->dptr->proxy = w;
+    stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), []() { return true; });
+    EXPECT_TRUE(watcher->dptr->start());
+}
+
+TEST_F(RecentFileWatcherTest, stop)
+{
+    QSharedPointer<LocalFileWatcher> w(new LocalFileWatcher(QUrl::fromLocalFile("/home")));
+    watcher->dptr->proxy = w;
+    stub.set_lamda(VADDR(AbstractFileWatcher, stopWatcher), []() { return true; });
+    EXPECT_TRUE(watcher->dptr->stop());
+}
+
+TEST_F(RecentFileWatcherTest, initFileWatcher)
+{
+    QSharedPointer<LocalFileWatcher> w(new LocalFileWatcher(QUrl::fromLocalFile("/home")));
+    stub.set_lamda(&WatcherFactory::create<AbstractFileWatcher>, [&w] {
+        return w;
+    });
+    watcher->dptr->initFileWatcher();
+}
+
+TEST_F(RecentFileWatcherTest, setEnabledSubfileWatcher)
+{
+    int flag = 0;
+    watcher->setEnabledSubfileWatcher(QUrl(), true);
+    stub.set_lamda(&RecentFileWatcher::addWatcher, [&flag] { flag++; });
+    stub.set_lamda(&RecentFileWatcher::removeWatcher, [&flag] { flag++; });
+    watcher->setEnabledSubfileWatcher(RecentHelper::rootUrl(), true);
+    watcher->setEnabledSubfileWatcher(RecentHelper::rootUrl(), false);
+    EXPECT_TRUE(flag == 2);
+}
+
+TEST_F(RecentFileWatcherTest, getRealUrl)
+{
+    EXPECT_TRUE(watcher->getRealUrl(QUrl()).isEmpty());
+    QUrl url;
+    url.setScheme(Global::Scheme::kFtp);
+    url.setPath("test");
+    QSharedPointer<LocalFileWatcher> w(new LocalFileWatcher(QUrl::fromLocalFile("/home")));
+    watcher->dptr->urlToWatcherMap.insert(url, w);
+    EXPECT_TRUE(!watcher->getRealUrl(url).isEmpty());
 }
