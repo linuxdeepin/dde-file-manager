@@ -85,6 +85,18 @@ TEST_F(TagDirMenuSceneTest, updateMenu)
 
     d->isEmptyArea = false;
     EXPECT_NO_FATAL_FAILURE(d->updateMenu(&menu));
+
+    d->isEmptyArea = true;
+    EXPECT_NO_FATAL_FAILURE(d->updateMenu(&menu));
+}
+
+TEST_F(TagDirMenuSceneTest, updateState)
+{
+    QMenu menu;
+    bool isRun = false;
+    stub.set_lamda(&TagDirMenuScenePrivate::updateMenu, [&isRun] { isRun = true; });
+    scene->updateState(&menu);
+    EXPECT_TRUE(isRun);
 }
 
 TEST_F(TagDirMenuSceneTest, scene)

@@ -19,6 +19,7 @@
 
 #include <QMenu>
 #include <QPaintEvent>
+#include <QWidgetAction>
 #include <QPainter>
 
 DFMBASE_USE_NAMESPACE
@@ -160,4 +161,39 @@ TEST_F(TagMenuSceneTest, getSurfaceRect)
     w2.setProperty("WidgetName", QString("organizersurface"));
     w->setParent(&w2);
     EXPECT_TRUE(d->getSurfaceRect(w) == w2.rect());
+}
+
+TEST_F(TagMenuSceneTest, getMenuListWidget)
+{
+    bool isRun = false;
+    d->predicateAction.insert(TagActionId::kActTagColorListKey, new QWidgetAction(scene));
+    stub.set_lamda(&QWidgetAction::defaultWidget, [&isRun]() {
+        __DBG_STUB_INVOKE__
+        isRun = true;
+        return nullptr;
+    });
+    scene->getMenuListWidget();
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(TagMenuSceneTest, createColorListAction)
+{
+    bool isRun = false;
+    stub.set_lamda(&TagManager::getTagsByUrls, [&isRun]() {
+        isRun = true;
+        return QVariant(QStringList() << "red");
+    });
+    stub.set_lamda(&TagHelper::isDefualtTag, []() { return true; });
+    stub.set_lamda(&TagHelper::qureyColorByDisplayName, []() { return QColor("red"); });
+    scene->createColorListAction();
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(TagMenuSceneTest, updateState)
+{
+    QMenu m;
+    bool isRun = false;
+    stub.set_lamda(&QMenu::removeAction, [&isRun]() { isRun = true; });
+    scene->updateState(&m);
+    EXPECT_TRUE(isRun);
 }

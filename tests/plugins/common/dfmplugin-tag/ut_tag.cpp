@@ -6,6 +6,7 @@
 
 #include "tag.h"
 #include "utils/tagmanager.h"
+#include "utils/taghelper.h"
 #include "utils/filetagcache.h"
 #include "widgets/tagwidget.h"
 #include "widgets/private/tagwidget_p.h"
@@ -46,7 +47,7 @@ protected:
     }
     virtual void TearDown() override { stub.clear(); }
 
-private:
+protected:
     stub_ext::StubExt stub;
     Tag ins;
 };
@@ -125,8 +126,38 @@ TEST_F(TagTest, installToSideBar)
     stub.set_lamda(&TagManager::getAllTags, [&isRun]() {
         __DBG_STUB_INVOKE__
         isRun = true;
-        return QMap<QString, QColor>();
+        QMap<QString, QColor> map;
+        map.insert("red", QColor("red"));
+        return map;
     });
+
+    stub.set_lamda(&TagHelper::createSidebarItemInfo, []() { return QVariantMap(); });
     ins.installToSideBar();
     EXPECT_TRUE(isRun);
+}
+
+TEST_F(TagTest, onMenuSceneAdded)
+{
+    stub.set_lamda(&TagManager::getAllTags, []() {
+        __DBG_STUB_INVOKE__
+        return QMap<QString, QColor>();
+    });
+    ins.menuScenes.insert("TagMenu");
+    ins.onMenuSceneAdded("TagMenu");
+    EXPECT_TRUE(!ins.subscribedEvent);
+}
+
+TEST_F(TagTest, regTagCrumbToTitleBar)
+{
+    bool isCall { false };
+
+    typedef QVariant (EventChannelManager::*FuncType)(const QString &, const QString &, QString, QVariantMap &&);
+    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [&isCall] {
+        isCall = true;
+        return true;
+    });
+
+    ins.regTagCrumbToTitleBar();
+
+    EXPECT_TRUE(isCall);
 }

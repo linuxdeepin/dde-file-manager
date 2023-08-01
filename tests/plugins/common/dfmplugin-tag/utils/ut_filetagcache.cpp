@@ -32,7 +32,7 @@ protected:
         stub.clear();
     }
 
-private:
+protected:
     stub_ext::StubExt stub;
     FileTagCache *ins;
 };
@@ -96,4 +96,67 @@ TEST_F(FileTagCacheTest, untaggeFiles)
     map["tag"] = QString("tag1");
     ins->untaggeFiles(map);
     EXPECT_TRUE(!ins->getCacheFileTags(QString("tag")).contains(QString("tag1")));
+}
+
+TEST_F(FileTagCacheTest, onTagAdded)
+{
+    bool isRun = false;
+    stub.set_lamda(&FileTagCache::addTags, [&isRun]() {
+        isRun = true;
+    });
+    FileTagCacheController::instance().cacheWorker->onTagAdded(QVariantMap());
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(FileTagCacheTest, onTagsNameChanged)
+{
+    bool isRun = false;
+    stub.set_lamda(&FileTagCache::changeTagName, []() {});
+    stub.set_lamda(&FileTagCache::changeFilesTagName, [&isRun]() {
+        isRun = true;
+    });
+    QVariantMap map;
+    map["tag"] = QString("tag1");
+    FileTagCacheController::instance().cacheWorker->onTagsNameChanged(map);
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(FileTagCacheTest, onTagDeleted)
+{
+    bool isRun = false;
+    stub.set_lamda(&FileTagCache::deleteTags, [&isRun]() {
+        isRun = true;
+    });
+    FileTagCacheController::instance().cacheWorker->onTagDeleted(QVariant());
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(FileTagCacheTest, onTagsColorChanged)
+{
+    bool isRun = false;
+    stub.set_lamda(&FileTagCache::changeTagColor, [&isRun]() {
+        isRun = true;
+    });
+    FileTagCacheController::instance().cacheWorker->onTagsColorChanged(QVariantMap());
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(FileTagCacheTest, onFilesTagged)
+{
+    bool isRun = false;
+    stub.set_lamda(&FileTagCache::taggeFiles, [&isRun]() {
+        isRun = true;
+    });
+    FileTagCacheController::instance().cacheWorker->onFilesTagged(QVariantMap());
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(FileTagCacheTest, onFilesUntagged)
+{
+    bool isRun = false;
+    stub.set_lamda(&FileTagCache::untaggeFiles, [&isRun]() {
+        isRun = true;
+    });
+    FileTagCacheController::instance().cacheWorker->onFilesUntagged(QVariantMap());
+    EXPECT_TRUE(isRun);
 }

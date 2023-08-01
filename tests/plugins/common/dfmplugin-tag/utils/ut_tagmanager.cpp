@@ -20,6 +20,7 @@
 
 #include <QPaintEvent>
 #include <QPainter>
+#include <QMenu>
 #include "qdbusabstractinterface.h"
 #include <QDBusPendingCall>
 
@@ -41,7 +42,7 @@ protected:
         stub.clear();
     }
 
-private:
+protected:
     stub_ext::StubExt stub;
     TagManager *ins;
 };
@@ -382,4 +383,55 @@ TEST_F(TagManagerTest, onFilesUntagged)
         EXPECT_TRUE(fileAndTags == map);
     });
     ins->onFilesUntagged(map);
+}
+
+TEST_F(TagManagerTest, onTagNameChanged)
+{
+    QVariantMap map;
+    map["test"] = QString("red");
+    bool isRun = false;
+    stub.set_lamda(&TagHelper::makeTagUrlByTagName, []() {
+        __DBG_STUB_INVOKE__
+        return QUrl();
+    });
+    stub.set_lamda(&TagHelper::createSidebarItemInfo, [&isRun]() {
+        __DBG_STUB_INVOKE__
+        isRun = true;
+        return QVariantMap();
+    });
+    ins->onTagNameChanged(map);
+    EXPECT_TRUE(isRun);
+}
+
+TEST_F(TagManagerTest, contenxtMenuHandle)
+{
+    QPoint q;
+    bool isCall = false;
+    stub.set_lamda((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), [&]() {
+        isCall = true;
+        return nullptr;
+    });
+    TagManager::contenxtMenuHandle(1, QUrl(), q);
+    EXPECT_TRUE(isCall);
+}
+
+TEST_F(TagManagerTest, renameHandle)
+{
+    bool isCall = false;
+    stub.set_lamda(&TagManager::changeTagName, [&isCall]() {
+        isCall = true;
+        return true;
+    });
+    TagManager::renameHandle(1, QUrl(), "111");
+    EXPECT_TRUE(isCall);
+}
+
+TEST_F(TagManagerTest, hideFiles)
+{
+    bool isCall = false;
+    QObject::connect(ins, &TagManager::filesHidden, [&isCall]() {
+        isCall = true;
+    });
+    ins->hideFiles(QList<QString>() << "red", QList<QUrl>() << QUrl("/test"));
+    EXPECT_TRUE(isCall);
 }
