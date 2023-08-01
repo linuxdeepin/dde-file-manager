@@ -81,7 +81,6 @@ void CoreHelper::cacheDefaultWindow()
         qWarning() << "cache window failed";
         return;
     }
-    window->setProperty("_dfm_isDefaultWindow", true);
     window->removeEventFilter(this);
     // cache all UI components
     QMetaObject::invokeMethod(window, "aboutToOpen", Qt::DirectConnection);
@@ -116,6 +115,7 @@ FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
     auto oldWindow { defaultWindow() };
     if (oldWindow) {
         qInfo() << "Close cached default window";
+        oldWindow->setProperty("_dfm_isDefaultWindow", true);
         oldWindow->close();
     }
     return createNewWindow(url);
