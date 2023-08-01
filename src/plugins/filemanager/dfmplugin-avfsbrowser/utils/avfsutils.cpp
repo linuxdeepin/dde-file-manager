@@ -125,53 +125,50 @@ QUrl AvfsUtils::makeAvfsUrl(const QString &path)
 
 QList<QVariantMap> AvfsUtils::seperateUrl(const QUrl &url)
 {
-    QString longestLocalParent;
-    QList<QVariantMap> ret;
+    qDebug() << "### split current url:" << url;
+    QString localPath = url.path();
+    if (url.scheme() == scheme())
+        localPath = avfsUrlToLocal(url).path();
+
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
-    QStringList frags { url.path().split("/", QString::SkipEmptyParts) };
+    QStringList frags { localPath.split("/", QString::SkipEmptyParts) };
 #else
-    QStringList frags { url.path().split("/", Qt::SkipEmptyParts) };
+    QStringList frags { localPath.split("/", Qt::SkipEmptyParts) };
 #endif
+
+    QList<QVariantMap> ret;
     while (!frags.isEmpty()) {
-        auto path = frags.join("/").prepend("/");
-        auto icon = parseDirIcon(path);
-        if (!icon.isEmpty()) {
-            longestLocalParent = longestLocalParent.length() < path ? path : longestLocalParent;
-            ret.append({ { "CrumbData_Key_Url", QUrl::fromLocalFile(path) },
-                         { "CrumbData_Key_IconName", icon } });
-            break;
-        } else {
-            if (longestLocalParent.isEmpty()) {
-                auto tmpFrags { frags };
-                // if every dir in tmpFrags exists, means no archive in parents,
-                // a path ends with '#' may not exist cause it's supported in avfs.
-                while (!tmpFrags.isEmpty()) {
-                    auto path = tmpFrags.join("/").prepend("/");
-                    if (access(path.toStdString().c_str(), F_OK) == 0) {
-                        longestLocalParent = path;
-                        break;
-                    }
-                    tmpFrags.removeLast();
-                    if (tmpFrags.count() == 0 && longestLocalParent.length() == 0)
-                        longestLocalParent = "/";
-                }
-            }
-            auto url = longestLocalParent.length() < path.length() ? makeAvfsUrl(path) : QUrl::fromLocalFile(path);
-            ret.append({ { "CrumbData_Key_Url", url },
+        auto path = frags.join("/").prepend("/").append("/");
+        if (path.contains("#")) {
+            ret.append({ { "CrumbData_Key_Url", localUrlToAvfsUrl(QUrl::fromLocalFile(path)) },
+                         { "CrumbData_Key_IconName", "" },
                          { "CrumbData_Key_DisplayText", frags.last() } });
+
+            qDebug() << "# " << localUrlToAvfsUrl(QUrl::fromLocalFile(path));
+        } else {
+            path.replace(avfsMountPoint() + "/", "/");
+            QString icon = parseDirIcon(path);
+            ret.append({ { "CrumbData_Key_Url", QUrl::fromLocalFile(path) },
+                         { "CrumbData_Key_IconName", icon },
+                         { "CrumbData_Key_DisplayText", qApp->translate("QObject", frags.last().toStdString().c_str()) } });
+
+            qDebug() << "# " << QUrl::fromLocalFile(path);
+
+            if (!icon.isEmpty())   // root node is found.
+                break;
         }
         frags.removeLast();
-
-        if (frags.isEmpty())
-            ret.append({ { "CrumbData_Key_Url", QUrl::fromLocalFile("/") },
-                         { "CrumbData_Key_IconName", "drive-harddisk-root-symbolic" } });
     }
     std::reverse(ret.begin(), ret.end());
+
     return ret;
 }
 
-QString AvfsUtils::parseDirIcon(const QString &path)
+QString AvfsUtils::parseDirIcon(QString path)
 {
+    while (path.endsWith("/") && path != "/")
+        path.chop(1);
+
     if (path == QStandardPaths::writableLocation(QStandardPaths::HomeLocation))
         return "user-home";
 

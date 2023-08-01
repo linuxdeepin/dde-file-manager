@@ -117,7 +117,7 @@ bool AvfsMenuScene::triggered(QAction *action)
         else if (id == kOpen)
             AvfsEventHandler::instance()->hookOpenFiles(d->windowId, d->selectFiles);
         else if (id == kProperty)
-            AvfsEventHandler::instance()->showProperty(d->selectFiles);
+            AvfsEventHandler::instance()->showProperty(d->selectFiles.isEmpty() ? QList<QUrl> { d->currentDir } : d->selectFiles);
 
         return true;
     }

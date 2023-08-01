@@ -52,7 +52,7 @@ public:
     static QUrl makeAvfsUrl(const QString &path);
 
     static QList<QVariantMap> seperateUrl(const QUrl &url);
-    static QString parseDirIcon(const QString &path);
+    static QString parseDirIcon(QString path);
 
 private:
     explicit AvfsUtils(QObject *parent = nullptr);

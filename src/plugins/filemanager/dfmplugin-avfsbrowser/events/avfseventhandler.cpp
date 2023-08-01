@@ -72,7 +72,7 @@ bool AvfsEventHandler::hookEnterPressed(quint64 winId, const QList<QUrl> &urls)
 bool AvfsEventHandler::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
 {
     Q_ASSERT(mapGroup);
-    if (url.scheme() == AvfsUtils::scheme()) {
+    if (url.scheme() == AvfsUtils::scheme() || url.path().startsWith(AvfsUtils::avfsMountPoint() + "/")) {
         *mapGroup = AvfsUtils::seperateUrl(url);
         return true;
     }

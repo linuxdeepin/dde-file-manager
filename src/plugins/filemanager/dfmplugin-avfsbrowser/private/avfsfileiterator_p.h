@@ -7,6 +7,8 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
+#include <dfm-base/file/local/localdiriterator.h>
+
 #include <QUrl>
 
 namespace dfmplugin_avfsbrowser {
@@ -18,10 +20,12 @@ class AvfsFileIteratorPrivate
 
 public:
     explicit AvfsFileIteratorPrivate(const QUrl &root, AvfsFileIterator *qq);
+    ~AvfsFileIteratorPrivate();
 
 private:
     AvfsFileIterator *q { nullptr };
     QUrl root;
+    dfmbase::LocalDirIterator *proxy { nullptr };
 };
 
 }

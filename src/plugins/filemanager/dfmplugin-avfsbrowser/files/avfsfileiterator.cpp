@@ -12,8 +12,9 @@ using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 AvfsFileIterator::AvfsFileIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
-    : LocalDirIterator(AvfsUtils::avfsUrlToLocal(url), nameFilters, filters, flags), d(new AvfsFileIteratorPrivate(url, this))
+    : AbstractDirIterator(AvfsUtils::avfsUrlToLocal(url), nameFilters, filters, flags), d(new AvfsFileIteratorPrivate(url, this))
 {
+    d->proxy = new LocalDirIterator(AvfsUtils::avfsUrlToLocal(url), nameFilters, filters, flags);
 }
 
 AvfsFileIterator::~AvfsFileIterator()
@@ -25,24 +26,30 @@ AvfsFileIteratorPrivate::AvfsFileIteratorPrivate(const QUrl &root, AvfsFileItera
 {
 }
 
+AvfsFileIteratorPrivate::~AvfsFileIteratorPrivate()
+{
+    if (proxy)
+        delete proxy;
+}
+
 QUrl AvfsFileIterator::next()
 {
-    return AvfsUtils::localUrlToAvfsUrl(LocalDirIterator::next());
+    return AvfsUtils::localUrlToAvfsUrl(d->proxy->next());
 }
 
 bool AvfsFileIterator::hasNext() const
 {
-    return LocalDirIterator::hasNext();
+    return d->proxy->hasNext();
 }
 
 QString AvfsFileIterator::fileName() const
 {
-    return LocalDirIterator::fileName();
+    return d->proxy->fileName();
 }
 
 QUrl AvfsFileIterator::fileUrl() const
 {
-    return AvfsUtils::localUrlToAvfsUrl(LocalDirIterator::fileUrl());
+    return AvfsUtils::localUrlToAvfsUrl(d->proxy->fileUrl());
 }
 
 const FileInfoPointer AvfsFileIterator::fileInfo() const

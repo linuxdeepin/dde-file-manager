@@ -12,7 +12,7 @@
 namespace dfmplugin_avfsbrowser {
 
 class AvfsFileIteratorPrivate;
-class AvfsFileIterator : public DFMBASE_NAMESPACE::LocalDirIterator
+class AvfsFileIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 {
     Q_OBJECT
 
