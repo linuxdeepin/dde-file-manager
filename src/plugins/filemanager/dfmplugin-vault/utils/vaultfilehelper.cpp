@@ -49,8 +49,10 @@ bool VaultFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources,
             actualUrls << url;
         }
     }
+    auto tmpFlags = flags;
+    tmpFlags |= AbstractJobHandler::JobFlag::kCountProgressCustomize;
     const QUrl url = transUrlsToLocal({ target }).first();
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCutFile, windowId, actualUrls, url, flags, nullptr);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCutFile, windowId, actualUrls, url, tmpFlags, nullptr);
 
     return true;
 }
@@ -70,8 +72,10 @@ bool VaultFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources
     }
 
     // if use &, transUrlsToLocal return value will free, and url is invalid, app crash, the same below
+    auto tmpFlags = flags;
+    tmpFlags |= AbstractJobHandler::JobFlag::kCountProgressCustomize;
     const QUrl url = transUrlsToLocal({ target }).first();
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy, windowId, actualUrls, url, flags, nullptr);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy, windowId, actualUrls, url, tmpFlags, nullptr);
     return true;
 }
 
