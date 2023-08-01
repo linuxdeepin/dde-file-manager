@@ -715,7 +715,9 @@ void FileOperateBaseWorker::initCopyWay()
         workData->signalThread = false;
     }
 
-    if (DeviceUtils::isSamba(targetUrl) || DeviceUtils::isFtp(targetUrl))
+    if (DeviceUtils::isSamba(targetUrl)
+            || DeviceUtils::isFtp(targetUrl)
+            || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
         countWriteType = CountWriteSizeType::kCustomizeType;
 
     if (!workData->signalThread) {
