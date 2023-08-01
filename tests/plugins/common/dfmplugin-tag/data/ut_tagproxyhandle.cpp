@@ -4,6 +4,7 @@
 
 #include "stubext.h"
 #include "data/tagproxyhandle.h"
+#include "data/private/tagproxyhandle_p.h"
 #include "tagmanager_interface.h"
 
 #include <dfm-base/dfm_event_defines.h>
@@ -15,6 +16,14 @@ DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
+TEST(UT_TagProxyHandle, connectToService)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&TagProxyHandlePrivate::isDBusRuning, []() { return true; });
+
+    EXPECT_TRUE(TagProxyHandle::instance()->connectToService());
+}
+
 TEST(UT_TagProxyHandle, deleteFileTags)
 {
     bool isRun { false };
@@ -25,7 +34,9 @@ TEST(UT_TagProxyHandle, deleteFileTags)
     });
     QMap<QString, QVariant> fileWithTag;
     fileWithTag["1"] = QVariant(QStringList() << "red");
-
+    stub.set_lamda(&QDBusPendingCall::isValid, []() {
+        return true;
+    });
     TagProxyHandle::instance()->deleteFileTags(fileWithTag);
 
     EXPECT_TRUE(isRun);
@@ -41,7 +52,9 @@ TEST(UT_TagProxyHandle, deleteFiles)
     });
     QMap<QString, QVariant> fileWithTag;
     fileWithTag["1"] = QVariant(QStringList() << "red");
-
+    stub.set_lamda(&QDBusPendingCall::isValid, []() {
+        return true;
+    });
     TagProxyHandle::instance()->deleteFiles(fileWithTag);
 
     EXPECT_TRUE(isRun);
@@ -57,7 +70,9 @@ TEST(UT_TagProxyHandle, deleteTags)
     });
     QMap<QString, QVariant> fileWithTag;
     fileWithTag["1"] = QVariant(QStringList() << "red");
-
+    stub.set_lamda(&QDBusPendingCall::isValid, []() {
+        return true;
+    });
     TagProxyHandle::instance()->deleteTags(fileWithTag);
 
     EXPECT_TRUE(isRun);
@@ -73,7 +88,9 @@ TEST(UT_TagProxyHandle, update)
     });
     QMap<QString, QVariant> fileWithTag;
     fileWithTag["1"] = QVariant(QStringList() << "red");
-
+    stub.set_lamda(&QDBusPendingCall::isValid, []() {
+        return true;
+    });
     TagProxyHandle::instance()->changeFilePaths(fileWithTag);
     TagProxyHandle::instance()->changeTagNamesWithFiles(fileWithTag);
     TagProxyHandle::instance()->changeTagsColor(fileWithTag);
@@ -87,6 +104,9 @@ TEST(UT_TagProxyHandle, Insert)
     stub.set_lamda(&OrgDeepinFilemanagerServerTagManagerInterface::Insert, [&isRun]() {
         isRun++;
         return QDBusPendingReply<bool>();
+    });
+    stub.set_lamda(&QDBusPendingCall::isValid, []() {
+        return true;
     });
     QMap<QString, QVariant> fileWithTag;
     fileWithTag["1"] = QVariant(QStringList() << "red");
@@ -105,7 +125,9 @@ TEST(UT_TagProxyHandle, Query)
         isRun++;
         return QDBusPendingReply<QDBusVariant>();
     });
-
+    stub.set_lamda(&QDBusPendingCall::isValid, []() {
+        return true;
+    });
     TagProxyHandle::instance()->getTagsColor(QStringList());
     TagProxyHandle::instance()->getFilesThroughTag(QStringList());
     TagProxyHandle::instance()->getSameTagsOfDiffFiles(QStringList());
@@ -122,7 +144,14 @@ TEST(UT_TagProxyHandle, Query2)
         isRun++;
         return QDBusPendingReply<QDBusVariant>();
     });
+    stub.set_lamda(&QDBusArgument::currentType, []() {
+        return QDBusArgument::ElementType::MapType;
+    });
+    stub.set_lamda(&QDBusPendingCall::isValid, []() {
+        return true;
+    });
 
     TagProxyHandle::instance()->getAllFileWithTags();
-    EXPECT_TRUE(isRun == 1);
+    TagProxyHandle::instance()->getAllTags();
+    EXPECT_TRUE(isRun == 2);
 }

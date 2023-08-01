@@ -47,7 +47,7 @@ void TagDirMenuScenePrivate::updateMenu(QMenu *menu)
             if ((*itAction)->isSeparator())
                 continue;
 
-            const QString sceneName = q->scene(*itAction)->name();
+            const QString sceneName = q->scene(*itAction) ? q->scene(*itAction)->name() : QString();
             if (sceneName == "ExtendMenu" || sceneName == "OemMenu") {
                 menu->removeAction(*itAction);
             }
