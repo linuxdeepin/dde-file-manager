@@ -5,6 +5,7 @@
 #include "config.h"
 
 #include <DApplication>
+#include <DSysInfo>
 
 #include <QDebug>
 #include <QDir>
@@ -24,11 +25,32 @@ static constexpr char kLibCore[] { "libserverplugin-core.so" };
 #endif
 
 DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 static void initLog()
 {
     dpfLogManager->registerConsoleAppender();
     dpfLogManager->registerFileAppender();
+}
+
+static bool isLoadVaultPlugin()
+{
+    DSysInfo::UosType uosType = DSysInfo::uosType();
+    DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
+    if (DSysInfo::UosServer == uosType) {
+        if (DSysInfo::UosEnterprise == uosEdition
+            || DSysInfo::UosEnterpriseC == uosEdition
+            || DSysInfo::UosEuler == uosEdition) {
+            return true;
+        }
+    } else if (DSysInfo::UosDesktop == uosType) {
+        if (DSysInfo::UosProfessional == uosEdition
+            || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)
+            || DSysInfo::UosEducation == uosEdition) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool pluginsLoad()
@@ -44,7 +66,12 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_SERVER_EDGE_DIR);
 #endif
     qInfo() << "Using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::initialize({ kServerInterface }, pluginsDirs);
+
+    QStringList blackNames;
+    if (!isLoadVaultPlugin())
+        blackNames << "serverplugin-vaultdaemon";
+
+    DPF_NAMESPACE::LifeCycle::initialize({ kServerInterface }, pluginsDirs, blackNames);
 
     qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
