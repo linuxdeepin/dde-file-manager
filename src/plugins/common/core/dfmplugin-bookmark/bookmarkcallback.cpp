@@ -87,7 +87,7 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     }
 
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    if (info && info->exists() && info->isDir()) {
+    if (info && info->exists() && info->isAttributes(OptInfoType::kIsDir)) {
         BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         return;
     } else if (DeviceUtils::isSamba(url) || DeviceUtils::isFtp(url)) {
