@@ -670,7 +670,7 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
     if (!fileInfo || QString::number(quintptr(fileInfo.data()), 16) != infoPtr)
         return;
 
-    if (isLinkOrg && fileInfo)
+    if (fileInfo)
         itemdata->fileInfo()->customData(Global::ItemRoles::kItemFileRefreshIcon);
 
     handleUpdateFile(url);

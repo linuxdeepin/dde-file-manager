@@ -66,7 +66,6 @@ private:
     QSharedPointer<FileInfoAsycWorker> worker { nullptr };
     std::atomic_bool stoped { false };
     QThreadPool pool;
-    DThreadList<FileInfoPointer> qureingInfo;
 };
 }
 

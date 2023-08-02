@@ -540,6 +540,7 @@ bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierA
     }
 
     d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
+    d->cacheing = false;
     return true;
 }
 
