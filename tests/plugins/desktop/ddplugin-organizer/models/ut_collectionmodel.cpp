@@ -5,7 +5,7 @@
 #include "models/collectionmodel_p.h"
 #include "interface/fileinfomodelshell.h"
 #include "models/modeldatahandler.h"
-
+#include "utils/fileoperator.h"
 #include "stubext.h"
 
 #include <gtest/gtest.h>
@@ -527,6 +527,7 @@ TEST_F(TestCollectionModel, sourceRowsAboutToBeRemoved)
     fileMap.insert(in1, info1);
     fileMap.insert(in2, info2);
     fileMap.insert(in3, info3);
+
     model.d->fileMap.insert(in1, info1);
     model.d->fileMap.insert(in2, info2);
     model.d->fileMap.insert(in3, info3);
@@ -576,4 +577,188 @@ TEST_F(TestCollectionModel, sourceRowsAboutToBeRemoved)
         EXPECT_EQ(er2, 1);
         ASSERT_EQ(model.d->fileList.size(), 1);
     }
+}
+
+TEST_F(TestCollectionModel, sourceDataChanged)
+{
+    CollectionModel model;
+    model.setHandler(&handler);
+    model.QAbstractProxyModel::setSourceModel(&srcModel);
+    model.d->shell = &shell;
+
+    QModelIndex index1 = QModelIndex(0, 0, nullptr, &model);
+    QModelIndex index2 = QModelIndex(0, 0, nullptr, &model);
+    auto in1 = QUrl::fromLocalFile("/home/test1");
+    auto in2 = QUrl::fromLocalFile("/home/test2");
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
+    QVector<int> list ={1,1};
+
+    model.d->fileMap.insert(in1,info1);
+    model.d->fileMap.insert(in2,info2);
+    model.d->fileList.append(in1);
+    model.d->fileList.append(in2);
+
+    stub_ext::StubExt stub;
+
+    auto fun_type = static_cast<QUrl(FileInfoModelShell::*)(const QModelIndex&)const>(&FileInfoModelShell::fileUrl);
+    stub.set_lamda(fun_type,[&in1](){
+        __DBG_STUB_INVOKE__
+        return in1;
+    });
+
+    bool conn = false;
+    QObject::connect(&model,&QAbstractItemModel::dataChanged,&model,[&conn](){
+        __DBG_STUB_INVOKE__
+        conn = true;
+    });
+
+    model.d->sourceDataChanged(index1,index2,list);
+
+    EXPECT_TRUE(conn);
+}
+
+TEST_F(TestCollectionModel, sourceRowsInserted)
+{
+    CollectionModel model;
+    model.setHandler(&handler);
+    model.QAbstractProxyModel::setSourceModel(&srcModel);
+    model.d->shell = &shell;
+
+    QModelIndex index1 = QModelIndex(0, 0, nullptr, &model);
+    QModelIndex index2 = QModelIndex(0, 0, nullptr, &model);
+    auto in1 = QUrl::fromLocalFile("/home/test1");
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+
+    model.d->waitForRenameFile = in1;
+
+    stub_ext::StubExt stub;
+    auto fun_type = static_cast<QUrl(FileInfoModelShell::*)(const QModelIndex&)const>(&FileInfoModelShell::fileUrl);
+    stub.set_lamda(fun_type,[&in1](){
+        __DBG_STUB_INVOKE__
+        return in1;
+    });
+
+    auto fun_type1 = static_cast<FileInfoPointer(FileInfoModelShell::*)(const QModelIndex&)const>(&FileInfoModelShell::fileInfo);
+    stub.set_lamda(fun_type1,[&info1](){
+        __DBG_STUB_INVOKE__
+        return info1;
+    });
+
+    bool conn = false;
+    QObject::connect(&model,&CollectionModel::openEditor,&model,[&conn](){
+        conn = true;
+    });
+    model.d->sourceRowsInserted(QModelIndex(),1,1);
+
+    EXPECT_EQ(model.d->fileMap[in1],info1);
+    EXPECT_TRUE(model.d->waitForRenameFile.isEmpty());
+    EXPECT_TRUE(conn);
+}
+
+TEST_F(TestCollectionModel, update)
+{
+    CollectionModel model;
+    model.setHandler(&handler);
+    model.QAbstractProxyModel::setSourceModel(&srcModel);
+    auto in1 = QUrl::fromLocalFile("/home/test");
+    auto in2 = QUrl::fromLocalFile("/home/test2");
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
+    model.d->fileMap.insert(in1, info1);
+    model.d->fileMap.insert(in2, info2);
+
+    bool conn = false;
+    QObject::connect(&model,&QAbstractItemModel::dataChanged,&model,[&conn](){
+        conn = true;
+    });
+
+    bool refresh = false;
+    stub_ext::StubExt stub;
+    typedef void(*fun_type)();
+    stub.set_lamda((fun_type)(&DFMBASE_NAMESPACE::SyncFileInfo::refresh),[&refresh](){
+        __DBG_STUB_INVOKE__
+        refresh = true;
+    });
+
+    model.update();
+
+    EXPECT_TRUE(conn);
+    EXPECT_TRUE(refresh);
+}
+
+TEST_F(TestCollectionModel, fetch)
+{
+    CollectionModel model;
+    model.setHandler(&handler);
+    model.QAbstractProxyModel::setSourceModel(&srcModel);
+    model.d->shell = &shell;
+    auto in1 = QUrl::fromLocalFile("/home/test");
+    auto in2 = QUrl::fromLocalFile("/home/test2");
+    QList<QUrl> urls{in1,in2};
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FileInfoModelShell::fileInfo,[&info1](){
+        __DBG_STUB_INVOKE__
+        return info1;
+    });
+
+    bool call = false;
+    stub.set_lamda(&QAbstractItemModel::endInsertRows,[&call](){
+        __DBG_STUB_INVOKE__
+        call = true;
+    });
+    model.fetch(urls);
+
+    EXPECT_TRUE(call);
+    EXPECT_EQ(model.d->fileMap[in1],info1);
+}
+
+TEST_F(TestCollectionModel, take)
+{
+    CollectionModel model;
+    model.setHandler(&handler);
+    model.QAbstractProxyModel::setSourceModel(&srcModel);
+    auto in1 = QUrl::fromLocalFile("/home/test");
+    auto in2 = QUrl::fromLocalFile("/home/test2");
+    model.d->fileList.push_back(in1);
+    model.d->fileList.push_back(in2);
+    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
+    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
+    model.d->fileMap.insert(in1, info1);
+    model.d->fileMap.insert(in2, info2);
+
+    QList<QUrl> urls{in1,in2};
+
+    model.take(urls);
+
+    EXPECT_TRUE(model.d->fileList.isEmpty());
+    EXPECT_TRUE(model.d->fileMap.isEmpty());
+}
+
+TEST_F(TestCollectionModel, dropMimeData)
+{
+    CollectionModel model;
+    model.setHandler(&handler);
+    model.QAbstractProxyModel::setSourceModel(&srcModel);
+    auto in1 = QUrl::fromLocalFile("/home/test1");
+    auto in2 = QUrl::fromLocalFile("/home/test2");
+    QList<QUrl> urls{in1,in2};
+    QMimeData *data = new QMimeData;
+    Qt::DropAction action = Qt::MoveAction;
+    QModelIndex parent = QModelIndex(0, 0, nullptr, &model);
+    data->setUrls(urls);
+    model.d->fileList.push_back(in1);
+
+    bool call = false;
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FileOperator::dropFilesToCanvas,[&call](){
+        __DBG_STUB_INVOKE__
+        call = true;
+    });
+    EXPECT_TRUE(model.dropMimeData(data,action,1,1,parent));
+    EXPECT_TRUE(call);
+
+    delete data;
 }

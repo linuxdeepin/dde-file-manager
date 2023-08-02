@@ -21,7 +21,8 @@
 #include <QScrollBar>
 #include <QWindow>
 #include <QApplication>
-
+#include <QDrag>
+#include <QEvent>
 DFMBASE_USE_NAMESPACE
 using namespace testing;
 using namespace ddplugin_canvas;
@@ -78,9 +79,7 @@ TEST(CanvasView, initUI)
     ASSERT_NE(view.d->waterMask, nullptr);
     EXPECT_TRUE(initlicense);
     EXPECT_TRUE(refreshMask);
-    EXPECT_EQ(view.d->waterMask->configFile,
-              QString("/usr/share/deepin/dde-desktop-watermask.json"));
-
+    EXPECT_EQ(view.d->waterMask->configFile,QString("/usr/share/deepin/dde-desktop-watermask.json"));
 }
 
 TEST(CanvasView, verticalAndhorizontalOffset)
@@ -105,7 +104,6 @@ TEST(CanvasView, winId)
         view.createWinId();
         EXPECT_EQ(view.winId(), view.windowHandle()->winId());
     }
-
     {
         QWidget wid;
         wid.createWinId();
@@ -379,6 +377,7 @@ public:
         delete sel;
         delete model;
         delete fmodel;
+
     }
     CanvasProxyModel *model;
     FileInfoModel *fmodel;
@@ -1052,4 +1051,240 @@ TEST_F(TestCanvasView, moveCursor)
         EXPECT_EQ(view->moveCursor(QAbstractItemView::CursorAction::MoveDown, Qt::NoModifier)
                   , model->index(6));
     }
+}
+
+TEST_F(TestCanvasView, contextMenuEvent)
+{
+    stub_ext::StubExt stub;
+    typedef QModelIndex(*fun_type)(const QPoint&);
+    QModelIndex resIndex(0, 0, (void *)nullptr, nullptr);
+    stub.set_lamda((fun_type)(&CanvasView::indexAt),[&resIndex](const QPoint&){
+        __DBG_STUB_INVOKE__
+        return resIndex;
+    });
+     bool callshowEmptyAreaMenu =false;
+     stub.set_lamda(&CanvasViewMenuProxy::showEmptyAreaMenu,[&callshowEmptyAreaMenu](CanvasViewMenuProxy*,const Qt::ItemFlags &indexFlags, const QPoint gridPos){
+         __DBG_STUB_INVOKE__
+                 callshowEmptyAreaMenu = true;
+     });
+    QContextMenuEvent event = QContextMenuEvent(QContextMenuEvent::Reason::Mouse,QPoint(10,10),QPoint(20,20),Qt::NoModifier);
+    view->contextMenuEvent(&event);
+    EXPECT_TRUE(callshowEmptyAreaMenu);
+    typedef bool(*fun_type1)();
+    stub.set_lamda((fun_type1)&QModelIndex::isValid,[](){
+        __DBG_STUB_INVOKE__
+                return true;
+    });
+
+    event = QContextMenuEvent(QContextMenuEvent::Reason::Mouse,QPoint(10,10),QPoint(20,20),Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(view->contextMenuEvent(&event));
+
+}
+TEST_F(TestCanvasView, startDrag)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&ViewPainter::polymerize,[](QModelIndexList indexs, CanvasViewPrivate *d){
+        __DBG_STUB_INVOKE__
+                return QPixmap(QSize(1,1));
+    });
+    auto fun_type = static_cast< Qt::DropAction(QDrag::*)(Qt::DropActions supportedActions, Qt::DropAction defaultAction)>(&QDrag::exec);
+    stub.set_lamda(fun_type,[](QDrag*, Qt::DropActions supportedActions, Qt::DropAction defaultAction){
+        __DBG_STUB_INVOKE__
+                EXPECT_EQ(defaultAction,Qt::CopyAction);
+          return Qt::CopyAction;
+    });
+    QModelIndex index1 ;
+    QModelIndex index2 ;
+    view->selectionModel()->selectedCache.push_back(index1);
+    view->selectionModel()->selectedCache.push_back(index2);
+    EXPECT_NO_FATAL_FAILURE(view->startDrag(Qt::CopyAction));
+}
+
+TEST_F(TestCanvasView, Event)
+{
+    stub_ext::StubExt stub;
+    {
+        bool calldragEnterEvent = false;
+        typedef void (*fun_type)(QDragEnterEvent*);
+        stub.set_lamda((fun_type)(void(QAbstractItemView::*)(QDragEnterEvent*))(&QAbstractItemView::dragEnterEvent),
+                       [&calldragEnterEvent]( QDragEnterEvent*){
+            __DBG_STUB_INVOKE__
+                    calldragEnterEvent = true;
+        });
+        stub.set_lamda(&DragDropOper::enter,[](DragDropOper*, QDragEnterEvent *)->bool{
+            __DBG_STUB_INVOKE__
+                    return false;
+        });
+        QDragEnterEvent enterEvent(QPoint(10, 10), Qt::IgnoreAction, nullptr, Qt::LeftButton, Qt::NoModifier);
+        view->dragEnterEvent(&enterEvent);
+        EXPECT_TRUE(calldragEnterEvent);
+    }
+    {
+        DragDropOper dropoper(view);
+        view->d->dragDropOper = &dropoper;
+        bool calldragMoveEvent = false;
+        typedef void (*fun_type)(QDragMoveEvent*);
+        stub.set_lamda((fun_type)(void(QAbstractItemView::*)(QDragMoveEvent*))(&QAbstractItemView::dragMoveEvent),
+                       [&calldragMoveEvent]( QDragMoveEvent*){
+            __DBG_STUB_INVOKE__
+                    calldragMoveEvent = true;
+        });
+        stub.set_lamda(&DragDropOper::move,[](DragDropOper*, QDragMoveEvent *)->bool{
+            __DBG_STUB_INVOKE__
+                    return false;
+        });
+        QDragMoveEvent moveEvent(QPoint(1,1),Qt::CopyAction,nullptr,Qt::LeftButton,Qt::ShiftModifier);
+        view->dragMoveEvent(&moveEvent);
+        EXPECT_TRUE(calldragMoveEvent);
+    }
+    {
+        DragDropOper dropoper(view);
+        view->d->dragDropOper = &dropoper;
+        bool calldragLeaveEvent = false;
+        typedef void (*fun_type)(QDragLeaveEvent*);
+        stub.set_lamda((fun_type)(void(QAbstractItemView::*)(QDragLeaveEvent*))(&QAbstractItemView::dragLeaveEvent),
+                       [&calldragLeaveEvent]( QDragLeaveEvent*){
+            __DBG_STUB_INVOKE__
+                    calldragLeaveEvent = true;
+        });
+        QDragLeaveEvent leaveEvent;
+        view->dragLeaveEvent(&leaveEvent);
+        EXPECT_TRUE(calldragLeaveEvent);
+    }
+
+}
+
+TEST_F(TestCanvasView, edit)
+{
+    stub_ext::StubExt stub;
+    QEvent event(QEvent::Type::None);
+    QModelIndex index;
+    EXPECT_FALSE(view->edit(index,QAbstractItemView::EditTrigger::NoEditTriggers,&event));
+    stub.set_lamda(&QItemSelectionModel::selectedRows,[](QItemSelectionModel*,int){
+        __DBG_STUB_INVOKE__
+                return QModelIndexList{QModelIndex()};
+    });
+    typedef bool (*fun_type)(const QModelIndex &,QAbstractItemView::EditTrigger , QEvent *);
+
+    stub.set_lamda((fun_type)(bool(QAbstractItemView::*)(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event))(&QAbstractItemView::edit),
+                   []( const QModelIndex &indexs, QAbstractItemView::EditTrigger trigger, QEvent *events)->bool{
+        __DBG_STUB_INVOKE__
+                return true;
+    });
+    EXPECT_NO_FATAL_FAILURE(view->edit(index,QAbstractItemView::EditTrigger::SelectedClicked,&event));
+}
+TEST_F(TestCanvasView, keyPressEvent)
+{
+    stub_ext::StubExt stub;
+    bool callkeyPressEvent = false;
+    typedef void (*fun_type)(QKeyEvent*);
+    stub.set_lamda((fun_type)(void(QAbstractItemView::*)(QKeyEvent*))(&QAbstractItemView::keyPressEvent),
+                   [&callkeyPressEvent]( QKeyEvent*){
+        __DBG_STUB_INVOKE__
+                callkeyPressEvent = true;
+    });
+    bool callkeyPressed = false;
+    stub.set_lamda(&KeySelector::keyPressed,[&callkeyPressed](KeySelector*, QKeyEvent*){
+        __DBG_STUB_INVOKE__
+                callkeyPressed = true;
+    });
+    QKeyEvent event(QEvent::Type::KeyPress, 0, Qt::KeyboardModifier::AltModifier);
+    ViewHookInterface interface;
+    view->d->hookIfs = &interface;
+    KeySelector selector(view);
+    view->d->keySelector = &selector;
+    view->keyPressEvent(&event);
+    EXPECT_TRUE(callkeyPressEvent);
+    event.k = Qt::Key_Down;
+    view->keyPressEvent(&event);
+    EXPECT_TRUE(callkeyPressed);
+}
+
+TEST_F(TestCanvasView, mousePressEvent)
+{
+    stub_ext::StubExt stub;
+    typedef QModelIndex(*fun_type)(const QPoint&);
+    QModelIndex resIndex(0, 0, (void *)nullptr, nullptr);
+    stub.set_lamda((fun_type)(&CanvasView::indexAt),[&resIndex](const QPoint&){
+        __DBG_STUB_INVOKE__
+        return resIndex;
+    });
+    bool callmousePressEvent = false;
+    typedef void (*fun_type1)(QMouseEvent*);
+    stub.set_lamda((fun_type1)(void(QAbstractItemView::*)(QMouseEvent*))(&QAbstractItemView::mousePressEvent),
+                   [&callmousePressEvent]( QMouseEvent*){
+        __DBG_STUB_INVOKE__
+                callmousePressEvent = true;
+    });
+    stub.set_lamda(&ClickSelector::click,[](ClickSelector*, const QModelIndex &){__DBG_STUB_INVOKE__});
+    QMouseEvent mouseEvent(QEvent::Type::MouseButtonRelease, { 10, 10 }, Qt::MouseButton::LeftButton,
+                                              Qt::MouseButton::LeftButton, Qt::KeyboardModifier::AltModifier);
+    ViewSettingUtil settingUtil;
+    view->d->viewSetting = &settingUtil;
+    mouseEvent.b =  Qt::MouseButton::LeftButton;
+    view->mousePressEvent(&mouseEvent);
+    EXPECT_TRUE(callmousePressEvent);
+    EXPECT_EQ(view->state(),QAbstractItemView::State::DragSelectingState);
+}
+
+TEST_F(TestCanvasView, mouseMoveEvent)
+{
+    stub_ext::StubExt stub;
+    bool callmousePressEvent = false;
+    typedef void (*fun_type)(QMouseEvent*);
+    stub.set_lamda((fun_type)(void(QAbstractItemView::*)(QMouseEvent*))(&QAbstractItemView::mouseMoveEvent),
+                   [&callmousePressEvent]( QMouseEvent*){
+        __DBG_STUB_INVOKE__
+                callmousePressEvent = true;
+    });
+    QMouseEvent mouseEvent(QEvent::Type::MouseButtonRelease, { 10, 10 }, Qt::MouseButton::LeftButton,
+                                              Qt::MouseButton::LeftButton, Qt::KeyboardModifier::AltModifier);
+    view->mouseMoveEvent(&mouseEvent);
+    EXPECT_TRUE(callmousePressEvent);
+}
+
+TEST_F(TestCanvasView, mouseReleaseEvent)
+{
+    stub_ext::StubExt stub;
+    bool callmouseReleaseEvent = false;
+    typedef void (*fun_type)(QMouseEvent*);
+    stub.set_lamda((fun_type)(void(QAbstractItemView::*)(QMouseEvent*))(&QAbstractItemView::mouseReleaseEvent),
+                   [&callmouseReleaseEvent]( QMouseEvent*){
+        __DBG_STUB_INVOKE__
+                callmouseReleaseEvent = true;
+    });
+    QMouseEvent mouseEvent(QEvent::Type::MouseButtonRelease, { 10, 10 }, Qt::MouseButton::LeftButton,
+                                              Qt::MouseButton::LeftButton, Qt::KeyboardModifier::AltModifier);
+    view->mouseReleaseEvent(&mouseEvent);
+    EXPECT_TRUE(callmouseReleaseEvent);
+}
+TEST_F(TestCanvasView, mouseDoubleClickEvent)
+{
+    stub_ext::StubExt stub;
+    typedef QModelIndex(*fun_type)(const QPoint&);
+    QModelIndex resIndex(0, 0, (void *)nullptr, nullptr);
+
+    stub.set_lamda((fun_type)(&CanvasView::indexAt),[&resIndex](const QPoint&){
+        __DBG_STUB_INVOKE__
+        return resIndex;
+    });
+    typedef bool(*fun_type1)();
+    stub.set_lamda((fun_type1)&QModelIndex::isValid,[](){
+        __DBG_STUB_INVOKE__
+                return true;
+    });
+    QMouseEvent mouseEvent(QEvent::Type::MouseButtonRelease, { 10, 10 }, Qt::MouseButton::LeftButton,
+                                              Qt::MouseButton::LeftButton, Qt::KeyboardModifier::AltModifier);
+
+    view->openPersistentEditor(resIndex);
+    EXPECT_NO_FATAL_FAILURE(view->mouseDoubleClickEvent(&mouseEvent));
+
+    bool call = false;
+    QObject::connect(view,&QAbstractItemView::activated,[&call](){
+        call = true;
+    });
+    view->closePersistentEditor(resIndex);
+    EXPECT_NO_FATAL_FAILURE(view->mouseDoubleClickEvent(&mouseEvent));
+    EXPECT_TRUE(call);
+    EXPECT_TRUE(mouseEvent.m_accept);
 }

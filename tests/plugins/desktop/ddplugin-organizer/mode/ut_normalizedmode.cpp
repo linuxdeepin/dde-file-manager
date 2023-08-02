@@ -12,7 +12,8 @@
 #include "config/configpresenter.h"
 #include "interface/canvasviewshell.h"
 #include "private/surface.h"
-
+#include "utils/fileoperator.h"
+#include "utils/fileoperator_p.h".h"
 #include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dpf.h>
@@ -298,3 +299,183 @@ TEST_F(TestNormalizedMode, initialize)
     EXPECT_EQ(iType, type);
     EXPECT_TRUE(rebuild);
 }
+
+TEST_F(TestNormalizedMode, layout)
+{
+    auto type_fun = static_cast<CollectionStyle(ConfigPresenter::*)(const QString&)const>(&ConfigPresenter::normalStyle);
+    stub.set_lamda(type_fun,[](ConfigPresenter *self, const QString&){
+        __DBG_STUB_INVOKE__
+        return CollectionStyle();
+    });
+
+    bool call = false;
+    stub.set_lamda(&ConfigPresenter::writeNormalStyle,[&call](ConfigPresenter *self,const QList<CollectionStyle> &){
+        __DBG_STUB_INVOKE__
+        call = true;
+    });
+
+    auto type_fun1 = static_cast<QPoint(NormalizedModePrivate::*)(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height)>(&NormalizedModePrivate::findValidPos);
+    stub.set_lamda(type_fun1,[](NormalizedModePrivate *, QPoint &nextPos,int &currentIndex, CollectionStyle &style, const int width, const int height){
+        __DBG_STUB_INVOKE__
+        QPoint res = QPoint();
+        return res;
+    });
+    stub.set_lamda(&CollectionHolder::setStyle,[](CollectionHolder*,const CollectionStyle &style){
+        __DBG_STUB_INVOKE__
+    });
+    stub.set_lamda(&CollectionHolder::show,[](CollectionHolder*){
+        __DBG_STUB_INVOKE__
+    });
+
+    CollectionHolderPointer holder_ptr1(new CollectionHolder("uuid",nullptr));
+    CollectionHolderPointer holder_ptr2(new CollectionHolder("uuid",nullptr));
+    nmode.d->holders["temp_key1"] = holder_ptr1;
+    nmode.d->holders["temp_key2"] = holder_ptr2;
+    SurfacePointer ptr2 = SurfacePointer(new Surface);
+    nmode.surfaces.push_back(ptr2);
+
+    nmode.layout();
+
+    EXPECT_TRUE(call);
+}
+
+TEST_F(TestNormalizedMode, rebuild)
+{
+    auto fun_type = static_cast<QList<CollectionBaseDataPtr>(ConfigPresenter::*)()const>(&ConfigPresenter::normalProfile);
+    stub.set_lamda(fun_type,[](ConfigPresenter *self){
+        __DBG_STUB_INVOKE__
+        CollectionBaseDataPtr ptr = CollectionBaseDataPtr(new CollectionBaseData());
+        return QList{ptr};
+    });
+
+    stub.set_lamda(&ConfigPresenter::saveNormalProfile,[](ConfigPresenter *self, const QList<CollectionBaseDataPtr> &){
+        __DBG_STUB_INVOKE__
+    });
+    stub.set_lamda(&ConfigPresenter::writeNormalStyle,[](ConfigPresenter *self,const QList<CollectionStyle> &){
+        __DBG_STUB_INVOKE__
+    });
+    bool call = false;
+    QObject::connect(&nmode,&CanvasOrganizer::collectionChanged,&nmode,[&call](){
+        __DBG_STUB_INVOKE__
+        call = true;
+    });
+
+    typedef void(*fun_type1)(const QList<QUrl>&);
+    stub.set_lamda((fun_type1)&TestNormalizedMode::reset,[](const QList<QUrl>&){
+        __DBG_STUB_INVOKE__
+    });
+
+    typedef void(*fun_type2)();
+    stub.set_lamda((fun_type2)&NormalizedMode::layout,[](){
+        __DBG_STUB_INVOKE__
+    });
+
+
+    QList<QUrl> list{QUrl("temp")};
+    nmode.model->d->fileList = list;
+
+    CollectionHolderPointer holder_ptr(new CollectionHolder("uuid",nullptr));
+    nmode.d->holders["1"] = holder_ptr;
+
+    CollectionBaseDataPtr base1(new CollectionBaseData);
+    base1->key = "1";
+    base1->name = "one";
+    nmode.d->classifier->collections.insert("1", base1);
+    QUrl one = QUrl::fromLocalFile("/tmp/1");
+    base1->items.append(one);
+    QString s = nmode.d->classifier->collections.value("1")->key;
+    QUrl t = nmode.d->classifier->collections.value("1")->items.at(0);
+    nmode.rebuild();
+
+    EXPECT_TRUE(call);
+}
+
+TEST_F(TestNormalizedMode, onFileInserted)
+{
+    bool call = false;
+    stub.set_lamda(&NormalizedModePrivate::switchCollection,[&call](){
+        __DBG_STUB_INVOKE__
+        call = true;
+    });
+
+    TestSourceModel source ;
+    QModelIndex parent(1,1,nullptr,&source);
+    int first = 1;
+    int last = 1;
+
+    nmode.onFileInserted(parent, first, last);
+    EXPECT_TRUE(call);
+}
+
+TEST_F(TestNormalizedMode,onFileAboutToBeRemoved)
+{
+    bool call = false;
+    stub.set_lamda(&NormalizedModePrivate::switchCollection,[&call](){
+        __DBG_STUB_INVOKE__
+        call = true;
+    });
+    QModelIndex parent;
+    int first = 1;
+    int last = 1;
+
+    nmode.onFileAboutToBeRemoved(parent,first,last);
+    EXPECT_TRUE(call);
+}
+
+TEST_F(TestNormalizedMode,onFileRenamed)
+{
+    QUrl oldUrl("url1");
+    QUrl newUrl("url2");
+    typedef QString(*fun_type)(const QUrl &oldUrl, const QUrl &newUrl);
+    stub.set_lamda((fun_type)(&FileClassifier::replace),[](const QUrl &oldUrl, const QUrl &newUrl){
+        __DBG_STUB_INVOKE__
+                return "";
+    });
+    stub.set_lamda(&NormalizedModePrivate::createCollection,[](NormalizedModePrivate*,const QString &id){
+        return  CollectionHolderPointer(new CollectionHolder("uuid",nullptr));;
+    });
+    stub.set_lamda(&NormalizedModePrivate::switchCollection,[](NormalizedModePrivate*){
+    });
+    FileOperatorIns->d->renameFileData.insert(oldUrl,newUrl);
+    EXPECT_NO_FATAL_FAILURE(nmode.onFileRenamed(oldUrl,newUrl));
+    CollectionBaseDataPtr ptr(new CollectionBaseData);
+    ptr->items.push_back(newUrl);
+    nmode.d->classifier->collections.insert("url2",ptr);
+    EXPECT_NO_FATAL_FAILURE(nmode.onFileRenamed(oldUrl,newUrl));
+    CollectionHolderPointer ptr1(new CollectionHolder("uuid",nullptr));
+    nmode.d->holders.insert("url2", ptr1);
+    EXPECT_NO_FATAL_FAILURE(nmode.onFileRenamed(oldUrl,newUrl));
+}
+
+TEST_F(TestNormalizedMode,filterDataRested)
+{
+    QUrl url1("url1");
+    QUrl url2("url2");
+    QList<QUrl> urls{url1,url2};
+    EXPECT_TRUE(nmode.filterDataRested(&urls));
+}
+
+TEST_F(TestNormalizedMode,filterDataInserted)
+{
+    QUrl url1("url1");
+    EXPECT_TRUE(nmode.filterDataInserted(url1));
+    nmode.d->classifier = nullptr;
+    EXPECT_FALSE(nmode.filterDataInserted(url1));
+}
+
+TEST_F(TestNormalizedMode,filterDataRenamed)
+{
+    QUrl url1("url1");
+    QUrl url2("url2");
+    EXPECT_TRUE(nmode.filterDataRenamed(url1,url2));
+    nmode.d->classifier = nullptr;
+    EXPECT_FALSE(nmode.filterDataRenamed(url1,url2));
+}
+
+TEST_F(TestNormalizedMode,setClassifier)
+{
+    Classifier id = kName;
+    EXPECT_TRUE(nmode.setClassifier(id));
+}
+
+

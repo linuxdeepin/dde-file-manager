@@ -11,7 +11,8 @@
 
 #include <DStyle>
 #include <darrowrectangle.h>
-
+#include <QAction>
+#include <QMenu>
 #include <gtest/gtest.h>
 
 DWIDGET_USE_NAMESPACE
@@ -180,4 +181,47 @@ TEST(RenameEdit, redoundo)
 
     re.redo();
     EXPECT_EQ(re.toPlainText(), QString("te"));
+}
+TEST(RenameEdit, keyPressEvent)
+{
+    stub_ext::StubExt stub;
+    bool callKeyPressEvent = false;
+    typedef void(*fun_type)(QKeyEvent*);
+    stub.set_lamda((fun_type)(&DTextEdit::keyPressEvent),[&callKeyPressEvent](QKeyEvent*){
+        __DBG_STUB_INVOKE__
+                callKeyPressEvent = true;
+    });
+    RenameEdit re;
+    QKeyEvent event (QEvent::Type::KeyPress, 0, Qt::KeyboardModifier::AltModifier);
+    event.k = Qt::Key_Backtab;
+    re.keyPressEvent(&event);
+    EXPECT_TRUE(event.m_accept);
+    event.k = Qt::Key_Escape;
+    re.keyPressEvent(&event);
+    EXPECT_TRUE(callKeyPressEvent);
+}
+TEST(RenameEdit, contextMenuEvent)
+{
+   stub_ext::StubExt stub;
+
+   auto fun_type = static_cast<QAction *(QMenu::*)(const QPoint &pos, QAction *at)>(&QMenu::exec);
+   QAction action;
+   stub.set_lamda(fun_type,[&action](QMenu*,const QPoint &pos, QAction *at){return &action;});
+   QContextMenuEvent event(QContextMenuEvent::Reason::Mouse,QPoint(10,10),QPoint(20,20),Qt::NoModifier);
+   RenameEdit re;
+   EXPECT_NO_FATAL_FAILURE(re.contextMenuEvent(&event));
+}
+TEST(RenameEdit, focusOutEvent)
+{
+    stub_ext::StubExt stub;
+    bool callfocusOutEvent = false;
+    typedef void(*fun_type)(QFocusEvent*);
+    stub.set_lamda((fun_type)&DTextEdit::focusOutEvent,[&callfocusOutEvent](QFocusEvent*){
+        __DBG_STUB_INVOKE__
+                callfocusOutEvent = true;
+    });
+    QFocusEvent event(QEvent::FocusIn);
+    RenameEdit re;
+    re.focusOutEvent(&event);
+    EXPECT_TRUE(callfocusOutEvent);
 }

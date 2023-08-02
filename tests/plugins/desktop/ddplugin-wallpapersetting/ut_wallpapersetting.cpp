@@ -16,7 +16,7 @@
 
 #include "stubext.h"
 #include <gtest/gtest.h>
-
+#include <QDBusPendingCall>
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DDP_WALLPAERSETTING_USE_NAMESPACE
@@ -29,17 +29,16 @@ TEST(wallPaperSettings, wallpapersettings)
         init = true;
         return;
     });
-    WallpaperSettings *setting = new WallpaperSettings("testSetting");
+    WallpaperSettings setting("testSetting");
     EXPECT_TRUE(init);
-    EXPECT_EQ(setting->d->screenName, QString("testSetting"));
-    EXPECT_EQ(setting->d->mode, WallpaperSettings::Mode::WallpaperMode);
-    delete setting;
+    EXPECT_EQ(setting.d->screenName, QString("testSetting"));
+    EXPECT_EQ(setting.d->mode, WallpaperSettings::Mode::WallpaperMode);
 
-    setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+    WallpaperSettings setting1("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
     EXPECT_TRUE(init);
-    EXPECT_EQ(setting->d->screenName, QString("testSetting"));
-    EXPECT_EQ(setting->d->mode, WallpaperSettings::Mode::ScreenSaverMode);
-    delete setting;
+    EXPECT_EQ(setting1.d->screenName, QString("testSetting"));
+    EXPECT_EQ(setting1.d->mode, WallpaperSettings::Mode::ScreenSaverMode);
+
 }
 
 TEST(wallPaperSettings, Init)
@@ -66,8 +65,8 @@ TEST(wallPaperSettings, Init)
         }
     }
 
-    WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
-    WallpaperSettingsPrivate *d = setting->d;
+    WallpaperSettings setting("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+    WallpaperSettingsPrivate *d = setting.d;
     EXPECT_EQ(d->wmInter->service(), QString("com.deepin.wm"));
     EXPECT_TRUE(d->regionMonitor);
     EXPECT_EQ(d->appearanceIfs->service(), QString("com.deepin.daemon.Appearance"));
@@ -80,9 +79,6 @@ TEST(wallPaperSettings, Init)
             EXPECT_FALSE(ptr->handlerList.isEmpty());
         }
     }
-
-    delete setting;
-
     for (auto sig : allSig) {
         if (auto ptr = dpfSignalDispatcher->dispatcherMap.value(
                     EventConverter::convert("ddplugin_core", sig))) {
@@ -193,6 +189,30 @@ TEST(WallpaperSettingsPrivate, initCloseButton)
     delete setting;
 }
 
+
+TEST(WallpaperSettingsPrivate, onItemTab)
+{
+     stub_ext::StubExt stub;
+     WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+
+     setting->d->mode =  WallpaperSettings::Mode::WallpaperMode;
+     WallpaperItem *item = new WallpaperItem;
+
+     bool call = false;
+
+     auto fun_type = static_cast<void(QWidget::*)()>(&QWidget::setFocus);
+     stub.set_lamda(fun_type,[&call](QWidget* self){
+         __DBG_STUB_INVOKE__
+         call = true;
+     });
+
+     setting->d->onItemTab(item);
+     setting->d->mode =  WallpaperSettings::Mode::ScreenSaverMode;
+     setting->d->onItemTab(item);
+     EXPECT_TRUE(call);
+}
+
+
 TEST(WallpaperSettingsPrivate, initCarousel)
 {
     stub_ext::StubExt stub;
@@ -272,6 +292,128 @@ TEST(WallpaperSettingsPrivate, initpreview)
     delete setting;
 }
 
+TEST(WallpaperSettingsPrivate, propertyForWayland)
+{
+    bool call = true;
+    WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+    setting->d->propertyForWayland();
+    EXPECT_TRUE(call);
+}
+
+TEST(WallpaperSettingsPrivate, carouselTurn)
+{
+    stub_ext::StubExt stub;
+    WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+
+    bool call = false;
+    stub.set_lamda(&WallpaperSettings::setWallpaperSlideShow,[&call](WallpaperSettings*, QString){
+        __DBG_STUB_INVOKE__
+        call = true;
+        return ;
+    });
+
+    setting->d->carouselTurn(false);
+    EXPECT_TRUE(call);
+
+}
+
+TEST(WallpaperSettingsPrivate, onListBackgroundReply)
+{
+    stub_ext::StubExt stub;
+    WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+
+    auto fun_type = static_cast<bool(QDBusPendingCall::*)()const >(&QDBusPendingCall::isError);
+    stub.set_lamda(fun_type,[](QDBusPendingCall *self){
+        return false;
+    });
+
+    setting->d->screenName="file::/usr/share/backgrounds/default_background.jpg";
+    QDBusPendingCallWatcher *watcher2 = new QDBusPendingCallWatcher(QDBusPendingCall::fromCompletedCall(QDBusMessage()));
+
+    auto fun_type1 = static_cast<bool(QString::*)(const QString&,Qt::CaseSensitivity)const>(&QString::contains);
+    stub.set_lamda(fun_type1,[](QString*,const QString&,Qt::CaseSensitivity){
+        return true;
+    });
+
+    auto fun_type2 = static_cast<QList<QPair<QString,bool>>(WallpaperSettingsPrivate::*)(const QString&)>(&WallpaperSettingsPrivate::processListReply);
+    stub.set_lamda(fun_type2,[](WallpaperSettingsPrivate* self,const QString&){
+        __DBG_STUB_INVOKE__
+        QList<QPair<QString,bool>> result;
+        result.push_back(QPair<QString,int>("temp",true));
+        return result;
+    });
+    setting->d->onListBackgroundReply(watcher2);
+}
+
+TEST(WallpaperSettingsPrivate, onItemPressed){
+    stub_ext::StubExt stub;
+    WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+
+    bool call  = false;
+    stub.set_lamda(&QWidget::isVisible,[&call](){
+        call = true;
+        return true;
+    });
+    setting->d->mode = WallpaperSettings::Mode::WallpaperMode;
+    setting->d->closeButton = new DIconButton;
+    setting->d->onItemPressed(QString("temp"));
+
+    setting->d->mode =  WallpaperSettings::Mode::ScreenSaverMode;
+
+    auto fun_type = static_cast<bool(ddplugin_wallpapersetting::WallaperPreview::*)()const>(&ddplugin_wallpapersetting::WallaperPreview::isVisible);
+    stub.set_lamda(fun_type,[](){
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    setting->d->onItemPressed(QString("temp"));
+    EXPECT_TRUE(call);
+}
+
+TEST(WallpaperSettingsPrivate, onItemButtonClicked)
+{
+    stub_ext::StubExt stub;
+    WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+
+    QString str1 = "desktop";
+    QString str2 = "lock-screen";
+    QString str3 = "desktop-lockscreen";
+    QString str4 = "screensaver";
+    QString str5 = "custom-screensaver";
+
+    WallpaperItem * item = new WallpaperItem;
+
+    stub.set_lamda(&WallpaperSettings::isWallpaperLocked,[](){
+       return false;
+    });
+    setting->d->onItemButtonClicked(item,str1);
+    setting->d->onItemButtonClicked(item,str2);
+    setting->d->onItemButtonClicked(item,str3);
+    setting->d->onItemButtonClicked(item,str4);
+    setting->d->onItemButtonClicked(item,str5);
+    EXPECT_FALSE(setting->isVisible());
+}
+
+TEST(WallpaperSettingsPrivate, onMousePressed)
+{
+    stub_ext::StubExt stub;
+    WallpaperSettings *setting = new WallpaperSettings("testSetting", WallpaperSettings::Mode::ScreenSaverMode);
+
+    int button1 = 4;
+    int button2 = 5;
+    int button3 = 1;
+    QPoint *p = new QPoint;
+    setting->d->onMousePressed(*p,button1);
+    setting->d->onMousePressed(*p,button2);
+    ScreenPointer *screen = new ScreenPointer;
+    stub.set_lamda(&ddplugin_desktop_util::screenProxyScreen,[&screen](const QString&){
+       __DBG_STUB_INVOKE__
+       return *screen;
+    });
+    setting->d->onMousePressed(*p,button3);
+    EXPECT_FALSE(setting->isVisible());
+    delete p;
+    delete screen;
+}
 class UT_wallPaperSettings : public testing::Test
 {
 protected:
@@ -310,6 +452,8 @@ TEST_F(UT_wallPaperSettings, privateEventFilter)
     event->k = Qt::Key_9;
     setting->d->eventFilter(setting->d->carouselCheckBox, event);
     EXPECT_FALSE(emit1);
+
+    delete event;
 }
 
 TEST_F(UT_wallPaperSettings, timeFormat)
@@ -360,6 +504,7 @@ TEST_F(UT_wallPaperSettings, handleNeedCloseButton)
     EXPECT_EQ(setting->d->closeButton->property("background"), itemData);
     EXPECT_TRUE(setting->d->closeButton->isHidden());
 }
+
 
 class TestNullScreen : public AbstractScreen
 {
@@ -703,3 +848,46 @@ TEST_F(UT_wallPaperSettings, applyToGreeter)
         EXPECT_FALSE(call);
     }
 }
+
+TEST_F(UT_wallPaperSettings, keyPressEvent)
+{
+    QKeyEvent *event = new QKeyEvent(QEvent::Type::KeyPress, 0, Qt::KeyboardModifier::AltModifier);
+    setting->d->mode= WallpaperSettings::Mode:: ScreenSaverMode;
+
+    bool call = false;
+    event->k = Qt::Key_Escape;
+    setting->keyPressEvent(event);
+    EXPECT_FALSE(setting->isVisible());
+
+    event->k = Qt::Key_Right;
+    auto fun_type = static_cast<int(QList<QWidget*>::*)( QWidget* const&,int)const>(&QList<QWidget*>::indexOf);
+    stub.set_lamda(fun_type,[&call](QWidgetList* self,QWidget* const&selfs,int x){
+        __DBG_STUB_INVOKE__
+        call = true;
+       return  0;
+    });
+    setting->keyPressEvent(event);
+    EXPECT_TRUE(call);
+
+    event->k = Qt::Key_Left;
+    call = false;
+    setting->keyPressEvent(event);
+    EXPECT_TRUE(call);
+
+    event->k = Qt::Key_0;
+    setting->keyPressEvent(event);
+    EXPECT_TRUE(call);
+
+    setting->d->mode= WallpaperSettings::Mode::WallpaperMode;
+    stub.set_lamda(&QWidget::isVisible,[](){
+        return true;
+    });
+    setting->keyPressEvent(event);
+    EXPECT_TRUE(setting->d->carouselControl->isVisible());
+    delete event;
+}
+
+
+
+
+

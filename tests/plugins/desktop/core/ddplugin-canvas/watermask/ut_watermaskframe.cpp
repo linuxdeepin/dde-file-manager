@@ -204,15 +204,15 @@ TEST_F(WaterMaskFrameTest, stateChanged)
     {
         WaterMaskFrame::ConfigInfo c;
         c.valid = true;
-        c.maskLogoUri = "gov-cn";
-        p->configInfos.insert("gov-cn", c);
+        c.maskLogoUri = "sec-cn";
+        p->configInfos.insert("sec-cn", c);
     }
 
     p->stateChanged(1, 1);
     EXPECT_EQ(p->curState, 1);
     EXPECT_EQ(p->curProperty, 1);
     EXPECT_FALSE(normal);
-    EXPECT_EQ(cfg.maskLogoUri, "gov-cn");
+    EXPECT_EQ(cfg.maskLogoUri, "sec-cn");
 
     p->stateChanged(1, 2);
     EXPECT_EQ(p->curState, 1);
@@ -223,15 +223,15 @@ TEST_F(WaterMaskFrameTest, stateChanged)
     {
         WaterMaskFrame::ConfigInfo c;
         c.valid = true;
-        c.maskLogoUri = "ent-cn";
-        p->configInfos.insert("ent-cn", c);
+        c.maskLogoUri = "gov-cn";
+        p->configInfos.insert("gov-cn", c);
     }
 
     p->stateChanged(1, 2);
     EXPECT_EQ(p->curState, 1);
     EXPECT_EQ(p->curProperty, 2);
     EXPECT_FALSE(normal);
-    EXPECT_EQ(cfg.maskLogoUri, "ent-cn");
+    EXPECT_EQ(cfg.maskLogoUri, "gov-cn");
 
     // en
     cn = false;
@@ -245,15 +245,15 @@ TEST_F(WaterMaskFrameTest, stateChanged)
     {
         WaterMaskFrame::ConfigInfo c;
         c.valid = true;
-        c.maskLogoUri = "gov-en";
-        p->configInfos.insert("gov-en", c);
+        c.maskLogoUri = "sec-en";
+        p->configInfos.insert("sec-en", c);
     }
 
     p->stateChanged(1, 1);
     EXPECT_EQ(p->curState, 1);
     EXPECT_EQ(p->curProperty, 1);
     EXPECT_FALSE(normal);
-    EXPECT_EQ(cfg.maskLogoUri, "gov-en");
+    EXPECT_EQ(cfg.maskLogoUri, "sec-en");
 
     p->stateChanged(1, 2);
     EXPECT_EQ(p->curState, 1);
@@ -264,15 +264,15 @@ TEST_F(WaterMaskFrameTest, stateChanged)
     {
         WaterMaskFrame::ConfigInfo c;
         c.valid = true;
-        c.maskLogoUri = "ent-en";
-        p->configInfos.insert("ent-en", c);
+        c.maskLogoUri = "gov-en";
+        p->configInfos.insert("gov-en", c);
     }
 
     p->stateChanged(1, 2);
     EXPECT_EQ(p->curState, 1);
     EXPECT_EQ(p->curProperty, 2);
     EXPECT_FALSE(normal);
-    EXPECT_EQ(cfg.maskLogoUri, "ent-en");
+    EXPECT_EQ(cfg.maskLogoUri, "gov-en");
 
     //
     show = false;
