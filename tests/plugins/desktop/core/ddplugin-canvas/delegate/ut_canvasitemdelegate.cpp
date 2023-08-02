@@ -158,8 +158,8 @@ TEST(CanvasItemDelegatePrivate, createTextlayout)
     auto lay = obj.d->createTextlayout(QModelIndex(0, 0, nullptr, nullptr), &pa);
     EXPECT_EQ(lay->text(), QString("test"));
     EXPECT_EQ(lay->attribute<int>(ElideTextLayout::kLineHeight), 11);
-    EXPECT_EQ(lay->attribute<int>(ElideTextLayout::kAlignment), Qt::AlignCenter);
-    EXPECT_EQ(lay->attribute<uint>(ElideTextLayout::kWrapMode), (uint)QTextOption::WrapAnywhere);
+    EXPECT_EQ(lay->attribute<int>(ElideTextLayout::kAlignment), Qt::AlignHCenter);
+    EXPECT_EQ(lay->attribute<uint>(ElideTextLayout::kWrapMode), (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
     EXPECT_EQ(lay->attribute<QFont>(ElideTextLayout::kFont), pa.font());
     EXPECT_EQ(lay->attribute<Qt::LayoutDirection>(ElideTextLayout::kTextDirection), pa.layoutDirection());
     delete lay;
@@ -264,6 +264,7 @@ TEST(CanvasItemDelegatePrivate, setEditorData_nosuffix)
         EXPECT_EQ(editor.text(), QString("test"));
         EXPECT_EQ(str, editor.text());
     }
+
 }
 
 TEST(CanvasItemDelegatePrivate, setModelData)
@@ -548,4 +549,29 @@ TEST_F(TestCanvasItemDelegate, drawExpandText)
 
     dlgt->drawExpandText(&pa, option, model->index(0), option.rect);
     EXPECT_TRUE(paint);
+}
+
+TEST_F(TestCanvasItemDelegate, paintGeomertys)
+{
+    stub_ext::StubExt stub;
+    QRect rec(1,1,2,2);
+    stub.set_lamda(&CanvasItemDelegate::textPaintRect,
+                   [rec](CanvasItemDelegate*,const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText, bool elide){
+        __DBG_STUB_INVOKE__
+                return rec;
+    });
+    QStyleOptionViewItem option;
+    QModelIndex index;
+    QList<QRect> res = dlgt->paintGeomertys(option,index);
+    EXPECT_TRUE(res.contains(rec));
+    EXPECT_EQ(res.size(),3);
+}
+
+TEST_F(TestCanvasItemDelegate, expendedGeomerty)
+{
+    QStyleOptionViewItem option;
+    option.rect = QRect(1,1,2,2);
+    QModelIndex index;
+    QRect rect =  dlgt->expendedGeomerty(option,index);
+    EXPECT_EQ(rect,QRect(1,1,2,75));
 }

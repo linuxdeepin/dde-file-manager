@@ -31,6 +31,20 @@ protected:
     stub_ext::StubExt stub;
 };
 
+TEST_F(UT_wallpaperItem, paintEvent)
+{
+
+    stub.set_lamda(&QPixmap::isNull,[](){
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+    QPaintEvent *event = new QPaintEvent(QRect(0,0,1,1));
+    item->wrapper->paintEvent(event);
+    item->wrapper->setPixmap(QPixmap());
+
+    delete event;
+}
+
 TEST_F(UT_wallpaperItem, setOpacity)
 {
     item->setOpacity(0.5);
@@ -97,6 +111,8 @@ TEST_F(UT_wallpaperItem, addButton)
     QPushButton *btn = item->addButton("1", "test", 0, 0, 0, 0, 0);
     btn->clicked();
     EXPECT_TRUE(connect);
+
+    delete btn;
 }
 
 TEST_F(UT_wallpaperItem, mousePressEvent)
@@ -245,4 +261,28 @@ TEST_F(UT_wallpaperItem, eventFilter)
     }
     delete watched;
     delete keyEvent;
+}
+
+TEST_F(UT_wallpaperItem, renderPixmap)
+{
+    bool call = false;
+    auto fun_type = static_cast<void(QWidget::*)()>(&QWidget::update);
+    stub.set_lamda(fun_type,[&call](QWidget* self){
+        __DBG_STUB_INVOKE__
+        call = true;
+    });
+    item->enablethumbnail = false; 
+    item->setEntranceIconOfSettings("temp");
+    item->renderPixmap();
+    EXPECT_TRUE(call);
+}
+
+TEST_F(UT_wallpaperItem, resizeEvent)
+{
+    QResizeEvent *event = new QResizeEvent(QSize(1,1),QSize(2,2));
+    item->resizeEvent(event);
+
+    EXPECT_EQ(item->wrapper->width(),item->width());
+
+    delete event;
 }

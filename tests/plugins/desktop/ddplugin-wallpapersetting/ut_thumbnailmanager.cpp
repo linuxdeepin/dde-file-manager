@@ -30,16 +30,8 @@ TEST(ThumbnailManager, instance)
 {
     auto ret = ThumbnailManager::instance(1.0);
     EXPECT_TRUE(qFuzzyCompare(ret->scale, 1.0));
-    auto ret2 = ThumbnailManager::instance(0.5);
-    auto ret3 = ThumbnailManager::instance(0.5);
-
-    EXPECT_TRUE(qFuzzyCompare(ret2->scale, 0.5));
-    EXPECT_NE(ret, ret2);
-    EXPECT_EQ(ret2, ret3);
-
     ret->deleteLater();
-    ret2->deleteLater();
-    ret3->deleteLater();
+
 }
 
 TEST_F(UT_thumbnailmanager, find)

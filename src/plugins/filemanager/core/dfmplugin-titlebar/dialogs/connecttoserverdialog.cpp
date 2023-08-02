@@ -15,6 +15,9 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/fileutils.h>
 
+#include <dfm-framework/event/event.h>
+#include <dfm-base/base/schemefactory.h>
+
 #include <DIconButton>
 #include <DListView>
 #include <DGuiApplicationHelper>
@@ -478,6 +481,14 @@ void ConnectToServerDialog::initializeUi()
         contentFrame->setLayout(contentLayout);
         addContent(contentFrame);
     }
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(theAddButton), AcName::kAcComputerTitleBarAddBtn);
+
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                          qobject_cast<QWidget *>(collectionServerView), AcName::kAcComputerTitleBarCollectionServerView);
+
+#endif
 
     initServerDatas();
     initIfWayland();

@@ -7,6 +7,8 @@
 
 #include "stubext.h"
 
+#include <QApplication>
+#include <QUrl>
 #include <gtest/gtest.h>
 
 DDP_CANVAS_USE_NAMESPACE
@@ -292,6 +294,68 @@ TEST_F(TestCanvasGrid, sequence)
     EXPECT_EQ(grid.d->overload.first(), QString("4"));
 }
 
+TEST_F(TestCanvasGrid, remove)
+{
+    QString str = QString("temp_str");
+    QHash<QString,QPoint> hash;
+    hash.insert(str,QPoint(1,1));
+    grid.d->itemPos.insert(1,hash);
+    EXPECT_TRUE(grid.remove(1,str));
+    EXPECT_FALSE(grid.d->itemPos.value(1).contains(str));
+
+    grid.d->overload.push_back(str);
+    EXPECT_TRUE(grid.remove(1,str));
+    EXPECT_FALSE(grid.d->overload.contains(str));
+
+    EXPECT_FALSE(grid.remove(1,str));
+}
+
+TEST_F(TestCanvasGrid, replace)
+{
+    QString oldItem = QString("temp_str1");
+    QString newItem = QString("temp_str2");
+
+    QHash<QString,QPoint> hash;
+    hash.insert(oldItem,QPoint(1,1));
+    grid.d->itemPos.insert(1,hash);
+
+    EXPECT_TRUE(grid.replace(oldItem,newItem));
+    EXPECT_TRUE(grid.d->itemPos[1].contains(newItem));
+    EXPECT_TRUE(grid.d->itemPos[1].contains(oldItem));
+    grid.d->overload.push_back(oldItem);
+    EXPECT_TRUE(grid.replace(oldItem,newItem));
+    EXPECT_TRUE(grid.d->overload.contains(oldItem));
+    EXPECT_FALSE(grid.d->overload.contains(newItem));
+}
+
+TEST_F(TestCanvasGrid, append)
+{
+    QString str = QString("temp_str");
+    grid.append(str);
+    EXPECT_TRUE(grid.d->overload.contains(str));
+    typedef bool(*fun_type)(GridPos&);
+    stub.set_lamda((fun_type)(&GridCore::findVoidPos),[](GridPos& pos)-> bool{
+        __DBG_STUB_INVOKE__
+                return true;
+    });
+    grid.append(str);
+    EXPECT_TRUE(grid.d->posItem[0].contains(QPoint(0,0)));
+    EXPECT_TRUE(grid.d->itemPos[0].contains(str));
+
+    QString str1 = QString("temp_str1");
+    QStringList items{str1};
+    EXPECT_NO_FATAL_FAILURE(grid.append(items));
+}
+
+TEST_F(TestCanvasGrid, tryAppendAfter)
+{
+    QString str = QString("temp_str");
+    QString str1 = QString("temp_str1");
+    QStringList items{str,str1};
+
+    EXPECT_NO_FATAL_FAILURE(grid.tryAppendAfter(items,1,QPoint(1,1)));
+}
+
 TEST(CanvasGridSpecialist, profileIndex)
 {
     EXPECT_EQ(CanvasGridSpecialist::profileIndex("SingleScreen"), 1);
@@ -303,4 +367,45 @@ TEST(CanvasGridSpecialist, profileKey)
 {
     EXPECT_EQ(CanvasGridSpecialist::profileKey(1), QString("Screen_1"));
     EXPECT_EQ(CanvasGridSpecialist::profileKey(2), QString("Screen_2"));
+}
+
+TEST(CanvasGridSpecialist, restore)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&GridCore::surfaceIndex,[](){
+        return QList<int>{1,2};
+    });
+    QString str = QString("temp_str");
+    QString str1 = QString("temp_str1");
+    stub.set_lamda(&CanvasGridPrivate::profiles,[str,str1](){
+        QHash<int, QHash<QString, QPoint>> res;
+        QHash<QString,QPoint> hash;
+        hash.insert(str,QPoint(1,1));
+        hash.insert(str1,QPoint(1,1));
+        res.insert(1,hash);
+        return res;
+    });
+
+    QStringList items{str,str1};
+    CanvasGrid grid;
+
+    EXPECT_NO_FATAL_FAILURE(grid.d->restore(items));
+    EXPECT_FALSE(items.isEmpty());
+}
+
+TEST(CanvasGridSpecialist, sync)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&GridCore::surfaceIndex,[](){
+        return QList<int>{1,2};
+    });
+    stub.set_lamda(&CanvasGrid::items,[](){
+        QStringList list;
+        list.push_back("temp");
+        return list;
+    });
+    CanvasGrid grid;
+    grid.d->surfaces.insert(1,QSize(1,1));
+    grid.d->surfaces.insert(2,QSize(2,2));
+    EXPECT_NO_FATAL_FAILURE(grid.d->sync());
 }

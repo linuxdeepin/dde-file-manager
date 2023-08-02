@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "model/canvasproxymodel_p.h"
 #include "model/fileinfomodel_p.h"
+#include "view/operator/fileoperatorproxy.h"
 
 #include "stubext.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/fileutils.h>
-
+#include <utils/fileutil.h>
 #include <gtest/gtest.h>
 
 #include <QStandardPaths>
@@ -18,7 +19,7 @@
 
 DDP_CANVAS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-
+using namespace ddplugin_canvas;
 TEST(CanvasProxyModel, construct)
 {
     CanvasProxyModel model;
@@ -1334,4 +1335,73 @@ TEST_F(TestCanvasModelFilter, resetFilter)
         EXPECT_TRUE(f3->ct);
         EXPECT_TRUE(in.isEmpty());
     }
+}
+
+TEST_F(TestCanvasModelFilter, doRefresh)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FileInfoModel::refresh,[](FileInfoModel*,const QModelIndex &parent){});
+    FileInfoModel temp;
+    model.d->srcModel = &temp;
+
+    EXPECT_NO_FATAL_FAILURE(model.d->doRefresh(true,true));
+    EXPECT_NO_FATAL_FAILURE(model.d->doRefresh(false,true));
+    model.d->srcModel = nullptr;
+}
+
+TEST_F(TestCanvasModelFilter, sourceDataChanged)
+{
+    QUrl url1 =QUrl::fromLocalFile("temp_url1");
+    QUrl url2 =QUrl::fromLocalFile("temp_url2");
+    QModelIndex sourceTopleft(1, 0, nullptr, &model);
+    QModelIndex sourceBottomright(1, 0, nullptr, &model);
+    stub_ext::StubExt stub;
+
+    auto fun_type = static_cast<QUrl(FileInfoModel::*)(const QModelIndex&)const>(&FileInfoModel::fileUrl);
+    stub.set_lamda(fun_type,[url1](FileInfoModel*,const QModelIndex &){
+        __DBG_STUB_INVOKE__
+                return url1;
+    });
+
+    QVector<int>roles{1,1};
+    model.d->srcModel = new FileInfoModel;
+    model.d->fileMap.insert(url1,FileInfoPointer(new FileInfo(url1)));
+    model.d->fileMap.insert(url2,FileInfoPointer(new FileInfo(url2)));
+    model.d->fileList.push_back(url1);
+    model.d->fileList.push_back(url2);
+    bool connect = false;
+    QObject::connect(model.d->q,&QAbstractItemModel::dataChanged,
+                     [&connect](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles){
+        connect = true;
+    });
+    model.d->sourceDataChanged(sourceTopleft,sourceBottomright,roles);
+    EXPECT_TRUE(connect);
+
+    delete  model.d->srcModel;
+}
+
+TEST_F(TestCanvasModelFilter, dropMimeData)
+{
+    QUrl url1 =QUrl::fromLocalFile("temp_url1");
+    QUrl url2 =QUrl::fromLocalFile("temp_url2");
+    QModelIndex parent(1, 0, nullptr, &model);
+    QMimeData data ;
+    data.setUrls(QList{url1,url2});
+    EXPECT_FALSE(model.dropMimeData(&data,Qt::DropAction::CopyAction ,1,1,parent));
+
+    FileInfo *file = new FileInfo(url1);
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DesktopFileCreator::createFileInfo,
+                   [&file](DesktopFileCreator*, const QUrl &url,dfmbase::Global::CreateFileInfoType cache){
+        __DBG_STUB_INVOKE__
+                return FileInfoPointer(file);
+    });
+
+    bool call = false;
+    stub.set_lamda(&FileOperatorProxy::dropFiles,[&call](FileOperatorProxy*,const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls){
+        __DBG_STUB_INVOKE__
+                call = true;
+    });
+    model.dropMimeData(&data,Qt::DropAction::CopyAction ,1,1,parent);
+    EXPECT_TRUE(call);
 }

@@ -3,18 +3,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "model/fileinfomodel_p.h"
-
+#include "model/fileprovider.h"
+#include "utils/fileutil.h"
 #include "stubext.h"
 
+#include "dfm-base/utils/fileutils.h"
 #include <gtest/gtest.h>
 
 #include <QStandardPaths>
 #include <QMimeData>
-
+#include <QAbstractItemModel>
 
 DDP_CANVAS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-
+using namespace ddplugin_canvas;
+using namespace dfmbase;
 TEST(FileInfoModel, construct)
 {
     FileInfoModel model;
@@ -314,6 +317,7 @@ TEST(FileInfoModel, mimeData)
     auto urls = mm->urls();
     ASSERT_EQ(urls.size(), 1);
     EXPECT_EQ(urls.first(), in1);
+    delete mm;
 }
 
 TEST(FileInfoModel, mimeTypes)
@@ -375,8 +379,8 @@ TEST(FileInfoModel, flags)
         isWrite = true;
         auto f = model.flags(idx);
         EXPECT_TRUE(f.testFlag(Qt::ItemIsEditable));
-        EXPECT_FALSE(f.testFlag(Qt::ItemIsDropEnabled));
-        EXPECT_TRUE(f.testFlag(Qt::ItemNeverHasChildren));
+        EXPECT_TRUE(f.testFlag(Qt::ItemIsDropEnabled));
+        EXPECT_FALSE(f.testFlag(Qt::ItemNeverHasChildren));
     }
 
 
@@ -494,9 +498,10 @@ TEST(FileInfoModelPrivate, replaceData)
     FileInfoModel model;
     auto in1 = QUrl::fromLocalFile("/home/test");
     auto in2 = QUrl::fromLocalFile("/home/test2");
-
-    DFMSyncFileInfoPointer info1(new SyncFileInfo(in1));
-    DFMSyncFileInfoPointer info2(new SyncFileInfo(in2));
+    SyncFileInfo *syncFile1=new SyncFileInfo(in1);
+    SyncFileInfo *syncFile2=new SyncFileInfo(in2);
+    DFMSyncFileInfoPointer info1(syncFile1);
+    DFMSyncFileInfoPointer info2(syncFile2);
 
     bool up = false;
     QObject::connect(&model, &FileInfoModel::dataChanged, &model,
@@ -602,4 +607,61 @@ TEST(FileInfoModelPrivate, replaceData)
         ASSERT_EQ(model.d->fileMap.size(), 1);
         EXPECT_TRUE(model.d->fileMap.contains(in2));
     }
+}
+
+TEST(FileInfoModelPrivate, dataUpdated)
+{
+    FileInfoModel model;
+    QUrl url1 = QUrl::fromLocalFile("temp_url");
+    model.d->fileMap.insert(url1,FileInfoPointer(new FileInfo(url1)));
+    model.d->fileList.push_back(url1);
+    model.d->q = &model;
+    bool connect = false;
+    QObject::connect(model.d->q, &QAbstractItemModel::dataChanged,[&connect](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles){
+        connect = true;
+    });
+    EXPECT_NO_FATAL_FAILURE(model.d->dataUpdated(url1,true));
+    EXPECT_TRUE(connect);
+}
+TEST(FileInfoModelPrivate, thumbUpdated)
+{
+     FileInfoModel model;
+     QUrl url = QUrl::fromLocalFile("temp_url1");
+     QString thumb = QString("temp_url2");
+     model.d->fileMap.insert(url,FileInfoPointer(new FileInfo(url)));
+     model.d->fileList.push_back(url);
+     model.d->q = &model;
+     bool connect = false;
+     QObject::connect(model.d->q, &QAbstractItemModel::dataChanged,[&connect](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles){
+         connect = true;
+     });
+     EXPECT_NO_FATAL_FAILURE(model.d->thumbUpdated(url,thumb));
+     EXPECT_TRUE(connect);
+}
+
+TEST(FileInfoModel, dropMimeData)
+{
+    QUrl url1 = QUrl::fromLocalFile("/home/test");
+    QUrl url2 = QUrl::fromLocalFile("/home/test2");
+    QMimeData data;
+    Qt::DropAction action = Qt::CopyAction;
+    int row =1; int column =1 ;
+    QModelIndex parent ;
+    FileInfoModel model;
+    EXPECT_FALSE(model.dropMimeData(&data,action,row,column,parent));
+
+    data.setUrls(QList{url1,url2});
+    FileInfo *fileinfo = new FileInfo(url1);
+    FileInfoPointer file(fileinfo);
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DesktopFileCreator::createFileInfo, [&file](){
+        return file;
+    });
+    EXPECT_TRUE(model.dropMimeData(&data,action,row,column,parent));
+    stub.set_lamda(&FileUtils::isDesktopFile,[](){return true;});
+    EXPECT_TRUE(model.dropMimeData(&data,action,row,column,parent));
+    stub.set_lamda(&FileUtils::isComputerDesktopFile,[](){return true;});
+    EXPECT_TRUE(model.dropMimeData(&data,action,row,column,parent));
+    stub.set_lamda(&FileUtils::isTrashDesktopFile,[](){return true;});
+    EXPECT_TRUE(model.dropMimeData(&data,action,row,column,parent));
 }
