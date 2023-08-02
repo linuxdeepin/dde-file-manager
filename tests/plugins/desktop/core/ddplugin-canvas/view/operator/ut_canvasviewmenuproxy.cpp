@@ -196,15 +196,6 @@ TEST(CanvasViewMenuProxy, showNormalMenu)
         return QVariant::fromValue(scene);
     });
 
-//    stub.set_lamda((QVariant (EventChannelManager::*)(const QString &, const QString &, QVariantHash))
-//                   &EventChannelManager::push, [scene](EventChannelManager *, const QString &space,
-//                   const QString &topic, QVariantHash param){
-
-//        EXPECT_EQ(space, QString("dfmplugin_menu"));
-//        EXPECT_EQ(topic, QString("slot_Menu_PerfectParams"));
-//        return QVariant::fromValue(param);
-//    });
-
     CanvasViewMenuProxy proxy(&view);
     proxy.showNormalMenu(model.index(0), Qt::NoItemFlags, QPoint(1,1));
     EXPECT_TRUE(TestEmptyScene::init);

@@ -19,7 +19,7 @@
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 TEST(TestCore, initialize)
 {
     Core core;
@@ -293,4 +293,56 @@ TEST(TestEventHandle, signal_events)
     handle->publishAvailableGeometryChanged();
     EXPECT_EQ(QString("ddplugin_core"), space);
     EXPECT_EQ(QString("signal_DesktopFrame_AvailableGeometryChanged"), topic);
+
+    delete handle;
+}
+
+
+
+TEST(TestCore, handleLoadPlugins)
+{
+    Core core;
+    EventHandle han;
+    core.handle = &han;
+    core.handle->frame = new WindowFrame();
+
+    QStringList names{"name1","name2"};
+
+    bool flag = false;
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DPF_NAMESPACE::LifeCycle::pluginMetaObj,
+                   [&flag](const QString &pluginName,
+                   const QString version){
+        __DBG_STUB_INVOKE__
+        flag = true;
+        return PluginMetaObjectPointer();
+    });
+    core.handleLoadPlugins(names);
+    EXPECT_TRUE(flag);
+
+}
+
+TEST(TestCore, eventFilter)
+{
+    QEvent::Type type = QEvent::Type::Paint;
+    QEvent event(type);
+    Core core;
+    QObject watched ;
+
+    stub_ext::StubExt stub;
+    bool flag = false;
+
+    stub.set_lamda(&QObject::removeEventFilter,[&flag](){
+        __DBG_STUB_INVOKE__
+        flag = true;
+    });
+    core.eventFilter(&watched, &event);
+    EXPECT_TRUE(flag);
+}
+
+TEST(TestCore, loadLazyPlugins)
+{
+    Core core;
+    core.loadLazyPlugins();
+    EXPECT_NE(core.lazyFlag._M_once,__GTHREAD_ONCE_INIT);
 }
