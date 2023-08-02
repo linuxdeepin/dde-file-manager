@@ -19,7 +19,8 @@ class CrumbModel : public QStandardItemModel
     Q_OBJECT
 public:
     enum Roles {
-        FileUrlRole = Dtk::UserRole + 1
+        FileUrlRole = Dtk::UserRole + 1,
+        FullUrlRole
     };
     Q_ENUM(Roles)
 
