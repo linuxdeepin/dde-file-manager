@@ -115,11 +115,18 @@ inline constexpr char kAcComputerTitleBarForwardBtn[] { "forword_button" };
 inline constexpr char kAcComputerTitleBarBtnBox[] { "button_box" };
 inline constexpr char kAcComputerTitleBarSearchBtn[] { "search_button" };
 inline constexpr char kAcComputerTitleBarDetailBtn[] { "detail_button" };
+inline constexpr char kAcComputerTitleBarListViewBtn[] { "listView_button" };
+inline constexpr char kAcComputerTitleBarIconViewBtn[] { "iconView_button" };
 inline constexpr char kAcComputerTitleBarOptionBtnBox[] { "ContollerToolBar" };
+
+inline constexpr char kAcComputerTitleBarTheAddBtn[] { "theAdd_button" };
+inline constexpr char kAcComputerTitleBarCollectionServerView[] { "collectionServer_view" };
 
 inline constexpr char kAcComputerCrumbBarLeftArrow[] { "left_arrow" };
 inline constexpr char kAcComputerCrumbBarRightArrow[] { "right_arrow" };
 inline constexpr char kAcComputerCrumbBarListView[] { "crumb_list_view" };
+
+
 }
 
 DPTITLEBAR_END_NAMESPACE

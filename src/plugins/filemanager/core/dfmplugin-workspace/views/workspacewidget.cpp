@@ -84,6 +84,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     if (!views.contains(scheme)) {
         QString error;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
+
         if (!fileView) {
             qWarning() << "Cannot create view for " << url << "Reason: " << error;
             return;

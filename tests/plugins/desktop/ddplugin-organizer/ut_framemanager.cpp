@@ -4,10 +4,15 @@
 
 #include "private/framemanager_p.h"
 #include "config/configpresenter.h"
-
+#include "interface/canvasmodelshell.h"
+#include "interface/canvasviewshell.h"
+#include "interface/canvasinterface.h"
+#include "interface/canvasmanagershell.h"
+#include "interface/canvasinterface_p.h"
 #include <dfm-base/dfm_desktop_defines.h>
-
+#include "mode/custommode.h"
 #include "dfm-framework/dpf.h"
+
 
 #include "stubext.h"
 
@@ -177,4 +182,117 @@ TEST(FrameManagerPrivate, surfaces)
     ASSERT_EQ(rets.size(), 1);
     EXPECT_EQ(rets.first(), sur);
     EXPECT_TRUE(call);
+}
+
+class test_CanvasOrganizer :public CanvasOrganizer
+{
+public:
+    virtual OrganizerMode mode() const { return OrganizerMode::kCustom;}
+    virtual bool initialize(CollectionModel *) { return true;}
+};
+
+class test_CanvasOrganizer1 :public CanvasOrganizer
+{
+public:
+    virtual OrganizerMode mode() const { return OrganizerMode::kNormalized;}
+    virtual bool initialize(CollectionModel *) { return true;}
+};
+
+TEST(FrameManagerPrivate, switchToCustom)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FrameManagerPrivate::buildOrganizer,[](){});
+    FrameManagerPrivate obj(nullptr);
+
+    obj.organizer = new test_CanvasOrganizer();
+    EXPECT_NO_FATAL_FAILURE(obj.switchToCustom());
+    delete obj.organizer;
+    obj.organizer = new test_CanvasOrganizer1();
+    EXPECT_NO_FATAL_FAILURE(obj.switchToCustom());
+}
+
+TEST(FrameManagerPrivate, switchToNormalized)
+{
+     stub_ext::StubExt stub;
+     bool call = false;
+     stub.set_lamda(&FrameManagerPrivate::buildOrganizer,[&call](){call = true;});
+     FrameManagerPrivate obj(nullptr);
+     obj.organizer = new test_CanvasOrganizer1();
+     EXPECT_NO_FATAL_FAILURE(obj.switchToNormalized(1));
+     EXPECT_FALSE(call);
+     obj.organizer = new test_CanvasOrganizer();
+     EXPECT_NO_FATAL_FAILURE(obj.switchToNormalized(1));
+     EXPECT_TRUE(call);
+}
+
+TEST(FrameManagerPrivate, displaySizeChanged)
+{
+     stub_ext::StubExt stub;
+     bool call = false;
+     stub.set_lamda(&FrameManager::layout,[&call](){call = true;});
+
+     FrameManagerPrivate obj(nullptr);
+     obj.q = new FrameManager();
+     EXPECT_NO_FATAL_FAILURE(obj.displaySizeChanged(0));
+     EXPECT_FALSE(call);
+     obj.canvas = new CanvasInterface();
+     EXPECT_NO_FATAL_FAILURE(obj.displaySizeChanged(1));
+     EXPECT_TRUE(call);
+}
+
+TEST(FrameManagerPrivate, filterShortcutkeyPress)
+{
+    FrameManagerPrivate obj(nullptr);
+    EXPECT_TRUE(obj.filterShortcutkeyPress(1,Qt::Key_Equal ,Qt::ControlModifier));
+    EXPECT_TRUE(obj.filterShortcutkeyPress(1,Qt::Key_Minus  ,Qt::ControlModifier));
+    EXPECT_FALSE(obj.filterShortcutkeyPress(1,Qt::Key_Minus  ,Qt::NoModifier));
+}
+
+TEST(FrameManagerPrivate, findView)
+{
+    FrameManagerPrivate obj(nullptr);
+    QWidget *root = new QWidget();
+    QObjectList children;
+    EXPECT_EQ(obj.findView(root),nullptr);
+    QWidget *widget =  new QWidget();
+    widget->setProperty(DesktopFrameProperty::kPropWidgetName,"canvas");
+    children.push_back(widget);
+    root->d_ptr->children = children;
+    EXPECT_EQ(obj.findView(root),widget);
+}
+
+TEST(FrameManager, switchMode)
+{
+    stub_ext::StubExt stub;
+    bool call = false;
+    typedef bool(*fun_type)(CollectionModel*);
+    stub.set_lamda((fun_type)&CustomMode::initialize,[&call](CollectionModel *){call = true; return true;});
+
+    FrameManager obj(nullptr);
+    obj.d->organizer = new test_CanvasOrganizer();
+    CanvasInterface *canvas = new CanvasInterface();
+    obj.d->canvas = canvas;
+    canvas->d->canvaModel = new CanvasModelShell();
+    canvas->d->canvasView = new CanvasViewShell();
+    canvas->d->canvasGrid = new CanvasGridShell();
+    canvas->d->canvasManager = new CanvasManagerShell();
+    obj.switchMode(OrganizerMode::kCustom);
+    EXPECT_TRUE(call);
+}
+
+TEST(FrameManagerPrivate, enableChanged)
+{
+    stub_ext::StubExt stub;
+    bool callon = false;
+    stub.set_lamda(&FrameManager::turnOn,[&callon](){callon = true;});
+    bool calloff = false;
+    stub.set_lamda(&FrameManager::turnOff,[&calloff](){calloff = true;});
+    FrameManagerPrivate obj(nullptr);
+    obj.q = new FrameManager();
+    obj.enableChanged(true);
+    EXPECT_TRUE(callon);
+
+    CfgPresenter->enable = true;
+    obj.enableChanged(false);
+    EXPECT_TRUE(calloff);
 }

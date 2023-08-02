@@ -142,6 +142,7 @@ void FileOperatorProxy::touchFile(const CanvasView *view, const QPoint pos, cons
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackTouchFile, data);
     QVariant custom = QVariant::fromValue(funcData);
 
+
     dpfSignalDispatcher->publish(GlobalEventType::kTouchFile, view->winId(), view->model()->rootUrl(), type, suffix, custom, d->callBack);
 }
 

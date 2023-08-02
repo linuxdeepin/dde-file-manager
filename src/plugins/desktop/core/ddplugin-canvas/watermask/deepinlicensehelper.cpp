@@ -107,7 +107,7 @@ DeepinLicenseHelper::LicenseProperty DeepinLicenseHelper::getServiceProperty()
     LicenseProperty prop = LicenseProperty::Noproperty;
     QVariant servProp = licenseInterface->property("ServiceProperty");
     if (!servProp.isValid()) {
-        qInfo() << "no such property: ServiceProperty in license";
+        qInfo() << "no  such property: ServiceProperty in license";
     } else {
         bool ok = false;
         prop = servProp.toInt(&ok) ? LicenseProperty::Secretssecurity : LicenseProperty::Noproperty;

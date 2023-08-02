@@ -114,7 +114,7 @@ businessTestList=(
 #  plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview
   plugins/common/dfmplugin-preview/pluginpreviews/text-preview
   plugins/common/dfmplugin-preview/pluginpreviews/video-preview
-
+ 
   plugins/filemanager/core/dfmplugin-workspace
   plugins/filemanager/core/dfmplugin-computer
   plugins/filemanager/core/dfmplugin-sidebar
