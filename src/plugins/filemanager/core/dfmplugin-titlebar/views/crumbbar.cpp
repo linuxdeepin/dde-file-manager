@@ -331,7 +331,7 @@ void CrumbBar::resizeEvent(QResizeEvent *event)
 
 void CrumbBar::showEvent(QShowEvent *event)
 {
-    //d->crumbListScrollArea.horizontalScrollBar()->setPageStep(d->crumbListHolder->width());
+    // d->crumbListScrollArea.horizontalScrollBar()->setPageStep(d->crumbListHolder->width());
     d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 
     d->checkArrowVisiable();
@@ -409,8 +409,9 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
 
     menu->addSeparator();
 
-    menu->addAction(editIcon, QObject::tr("Edit address"), this, [this, url]() {
-        emit this->editUrl(url);
+    QUrl fullUrl { index.data(CrumbModel::FullUrlRole).toUrl() };
+    menu->addAction(editIcon, QObject::tr("Edit address"), this, [this, fullUrl]() {
+        emit this->editUrl(fullUrl);
     });
 
     menu->exec(QCursor::pos());
@@ -461,6 +462,7 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
             listitem->setCheckable(false);
             Q_ASSERT(c.url.isValid());
             listitem->setData(c.url, CrumbModel::Roles::FileUrlRole);
+            listitem->setData(url, CrumbModel::Roles::FullUrlRole);
             d->crumbModel->appendRow(listitem);
         }
     }
