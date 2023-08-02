@@ -561,7 +561,7 @@ QUrl DFMBASE_NAMESPACE::FileInfoPrivate::getUrlByNewFileName(const QString &file
  */
 QString FileInfoPrivate::fileName() const
 {
-    QString filePath = q->pathOf(PathInfoType::kFilePath);
+    QString filePath = q->fileUrl().path();
 
     if (filePath.endsWith(QDir::separator())) {
         filePath.chop(1);
