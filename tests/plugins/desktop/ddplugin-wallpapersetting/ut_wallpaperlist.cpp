@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
+#include <QScrollBar>
+#include <QToolButton>
 #include <QHBoxLayout>
 #include "wallpaperlist.h"
 #include "private/wallpapersettings_p.h"
@@ -136,6 +138,11 @@ TEST_F(UT_wallpaperList, keypressEvent)
     mouseEvent->k = Qt::Key_Left;
     list->keyPressEvent(mouseEvent);
     EXPECT_EQ(now, ret + 1);
+
+    ret = now;
+    mouseEvent->k = Qt::Key_1;
+    list->keyPressEvent(mouseEvent);
+    EXPECT_EQ(now, ret);
     delete mouseEvent;
 }
 
@@ -148,12 +155,12 @@ TEST_F(UT_wallpaperList, gridSize)
         return;
     });
     list->setGridSize(QSize(20, 20));
-    EXPECT_EQ(list->grid, QSize(20, 20));
+    EXPECT_EQ(list->gridSize(), QSize(20, 20));
     EXPECT_TRUE(call);
     call = false;
 
     list->setGridSize(QSize(20, 20));
-    EXPECT_EQ(list->grid, QSize(20, 20));
+    EXPECT_EQ(list->gridSize(), QSize(20, 20));
     EXPECT_FALSE(call);
 }
 
@@ -248,3 +255,65 @@ TEST_F(UT_wallpaperList, itemAt)
     delete item1;
     delete item2;
 }
+
+TEST_F(UT_wallpaperList, scrollList)
+{
+    bool emited = false;
+    stub.set_lamda(&WallpaperList::mouseOverItemChanged, [&emited]() {
+        __DBG_STUB_INVOKE__
+        emited = true;
+    });
+
+    list->prevItem = new WallpaperItem();
+    list->nextItem = new WallpaperItem();
+    list->scrollList(0,0);
+    EXPECT_TRUE(emited);
+    EXPECT_EQ(list->prevItem->wrapper->opacityValue,1);
+    EXPECT_EQ(list->nextItem->wrapper->opacityValue,1);
+}
+
+
+TEST_F(UT_wallpaperList, Page)
+{
+    bool call = false;
+    auto fun_type =static_cast<int(QSize::*)()const>(&QSize::width);
+    stub.set_lamda(fun_type,[&call](){
+        __DBG_STUB_INVOKE__
+        call = true;
+        return 1;
+    });
+    list->nextPage();
+    list->prevPage();
+    EXPECT_TRUE(call);
+}
+
+TEST_F(UT_wallpaperList, updateBothEndsItem)
+{
+    bool call = false;
+    WallpaperItem *item1 = new WallpaperItem;
+    WallpaperItem *item2 = new WallpaperItem;
+    WallpaperItem *item3 = new WallpaperItem;
+    list->items.append(item1);
+    list->items.append(item2);
+    list->items.append(item3);
+    list->contentLayout->addWidget(item3);
+    list->contentLayout->addWidget(item1);
+    list->contentLayout->addWidget(item2);
+
+    stub.set_lamda(&QAbstractSlider::value,[](){
+       __DBG_STUB_INVOKE__
+       return 1;
+    });
+    auto fun_type = static_cast<QWidget*(WallpaperList::*)(int ,int)const>(&WallpaperList::itemAt);
+    stub.set_lamda(fun_type,[](WallpaperList* self, int x, int y){
+       __DBG_STUB_INVOKE__
+       return self->itemAt(0);
+    });
+    list->prevItem = new WallpaperItem;
+    list->nextItem = new WallpaperItem;
+    list->updateBothEndsItem();
+    EXPECT_FALSE(call);
+    EXPECT_EQ(list->prevItem->wrapper->opacityValue,0.4);
+    EXPECT_EQ(list->nextItem->wrapper->opacityValue,0.4);
+}
+
