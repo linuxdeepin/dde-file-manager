@@ -146,6 +146,10 @@ void OptionButtonBox::initializeUi()
     d->detailButton = new DToolButton;
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(d->listViewButton), AcName::kAcComputerTitleBarListViewBtn);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(d->iconViewButton), AcName::kAcComputerTitleBarIconViewBtn);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->detailButton), AcName::kAcComputerTitleBarDetailBtn);
 #endif
     d->detailButton->setCheckable(true);

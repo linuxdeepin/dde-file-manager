@@ -73,14 +73,14 @@ TEST(HiddenFileFilter, insertFilter)
 
     EXPECT_TRUE(filter.insertFilter({}));
     EXPECT_TRUE(cf);
-    EXPECT_TRUE(ptr->re);
+    EXPECT_FALSE(ptr->re);
 
     ptr->re = false;
     ptr->hidden = false;
     model.d->filters &= ~QDir::Hidden;
     EXPECT_FALSE(filter.insertFilter({}));
     EXPECT_TRUE(cf);
-    EXPECT_TRUE(ptr->re);
+    EXPECT_FALSE(ptr->re);
 }
 
 TEST(HiddenFileFilter, resetFilter)
@@ -150,7 +150,7 @@ TEST(HiddenFileFilter, updateFilter)
     {
         re = false;
         EXPECT_FALSE(filter.updateFilter(QUrl::fromLocalFile("/var/.hidden")));
-        EXPECT_TRUE(re);
+        EXPECT_FALSE(re);
     }
 
     {

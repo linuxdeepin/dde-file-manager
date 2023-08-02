@@ -4,9 +4,10 @@
 
 #include "view/operator/boxselector.h"
 #include "view/canvasview_p.h"
-
+#include "canvasmanager.h"
+#include "private/canvasmanager_p.h"
 #include "stubext.h"
-
+#include "utils/keyutil.h"
 #include <gtest/gtest.h>
 
 #include <QPaintEvent>
@@ -213,3 +214,149 @@ TEST(BoxSelector, eventFilter)
         EXPECT_EQ(bs.end, QPoint(100, 100));
     }
 }
+
+
+class UT_BoxSelector : public testing::Test
+{
+protected:
+    virtual void SetUp() override
+    {
+        view = new CanvasView;
+        proxModel = new CanvasProxyModel();
+        manager = new CanvasManager();
+        CanvasIns->d->selectionModel = new CanvasSelectionModel(proxModel,nullptr);
+        bs = new BoxSelector();
+        QUrl url1 = QUrl::fromLocalFile("file:/temp_url1");
+        QUrl url2 = QUrl::fromLocalFile("file:/temp_url2");
+        view->d->operState().setView(view);
+        stub.set_lamda(&CanvasManager::views,[](){
+            __DBG_STUB_INVOKE__
+                    CanvasView *v = new CanvasView();
+            v->d->operState().setView(v);
+                QSharedPointer<CanvasView> ptr(v);
+                   QList<QSharedPointer<CanvasView>> res{ptr};
+                   return res;
+        });
+        stub.set_lamda(&CanvasView::selectionModel,[](){
+            __DBG_STUB_INVOKE__
+             CanvasProxyModel *proxyModel = new CanvasProxyModel();
+
+            return new CanvasSelectionModel(proxyModel,nullptr);
+        });
+
+    }
+    virtual void TearDown() override
+    {
+        delete view;
+        delete manager;
+        delete bs;
+        stub.clear();
+    }
+     CanvasView *view;
+    CanvasProxyModel *proxModel = nullptr;
+    CanvasManager *manager  = nullptr;
+    BoxSelector *bs = nullptr;
+    stub_ext::StubExt stub ;
+};
+class  TestItemModel : public QAbstractItemModel
+{
+public:
+    Q_INVOKABLE virtual QModelIndex index(int row, int column,
+                                         const QModelIndex &parent = QModelIndex()) const {
+        return QModelIndex();
+    }
+    Q_INVOKABLE virtual QModelIndex parent(const QModelIndex &child) const {
+        return QModelIndex();
+    }
+    Q_INVOKABLE virtual int rowCount(const QModelIndex &parent = QModelIndex()) const {
+        return 1;
+    }
+    Q_INVOKABLE virtual int columnCount(const QModelIndex &parent = QModelIndex()) const {
+        return 1;
+    }
+    Q_INVOKABLE virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const {
+        return QVariant::fromValue(1);
+    }
+
+};
+TEST_F(UT_BoxSelector, delayUpdate)
+{
+    BoxSelector bs;
+    bs.updateTimer.id = -1;
+    stub_ext::StubExt stub;
+    EXPECT_NO_FATAL_FAILURE(bs.delayUpdate());
+}
+
+TEST_F(UT_BoxSelector, updateRubberBand)
+{
+     bs->updateRubberBand();
+     EXPECT_FALSE(bs->rubberBand.isVisible());
+}
+TEST_F(UT_BoxSelector, updateSelection)
+{
+    bool isCtrl = false;
+    bool isShift = false;
+    stub.set_lamda(&ddplugin_canvas::isCtrlPressed,[&isCtrl](){
+        return isCtrl;
+    });
+    stub.set_lamda(&ddplugin_canvas::isShiftPressed,[&isShift](){
+        return isShift;
+    });
+
+    auto fun_type = static_cast<void(BoxSelector::*)(QItemSelection*)>(&BoxSelector::selection);
+    stub.set_lamda(fun_type,[](BoxSelector*,QItemSelection *){
+        __DBG_STUB_INVOKE__
+    });
+    EXPECT_NO_FATAL_FAILURE(bs->updateSelection());
+    isCtrl = true;
+    isShift = false;
+    EXPECT_NO_FATAL_FAILURE(bs->updateSelection());
+    isCtrl = false;
+    isShift = true;
+    EXPECT_NO_FATAL_FAILURE(bs->updateSelection());
+
+}
+
+TEST_F(UT_BoxSelector, updateCurrentIndex)
+{
+    typedef QModelIndex(*fun_type)(const QPoint&);
+    TestItemModel testi ;
+    QModelIndex resIndex(0, 0, (void *)nullptr,&testi);
+    stub.set_lamda((fun_type)(&CanvasView::indexAt),[&resIndex](const QPoint&){
+        __DBG_STUB_INVOKE__
+        return resIndex;
+    });
+    stub.set_lamda(&QItemSelectionModel::isSelected,[](){
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    bs->updateCurrentIndex();
+    QModelIndex list_index;
+    stub.set_lamda(&CanvasSelectionModel::selectedIndexesCache,[list_index](){
+        __DBG_STUB_INVOKE__
+                QModelIndexList list{list_index};
+       return list;
+    });
+
+
+    resIndex = QModelIndex(0, 0, (void *)nullptr, nullptr);
+    bs->updateCurrentIndex();
+    EXPECT_EQ(view->d->state.view->currentIndex(),list_index);
+    EXPECT_EQ(view->d->state.contBegin,list_index);
+}
+
+TEST_F(UT_BoxSelector, selection)
+{
+    QModelIndex leftIndex;
+    QModelIndex bottomIndex;
+    QItemSelection newSelection(leftIndex,bottomIndex);
+    EXPECT_NO_FATAL_FAILURE(bs->selection(&newSelection));
+
+    CanvasProxyModel md;
+    stub.set_lamda(&CanvasView::model, [&md]() -> CanvasProxyModel* {
+        __DBG_STUB_INVOKE__
+        return &md;
+    });
+    EXPECT_NO_FATAL_FAILURE(bs->selection(view,QRect(1,1,2,2),&newSelection));
+}
+

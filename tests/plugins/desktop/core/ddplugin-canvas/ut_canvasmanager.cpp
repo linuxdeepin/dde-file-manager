@@ -14,9 +14,9 @@
 #include <dfm-base/dfm_desktop_defines.h>
 
 #include "dfm-framework/dpf.h"
-
+#include "menu/canvasmenuscene.h"
 #include "stubext.h"
-
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 #include <gtest/gtest.h>
 
 DDP_CANVAS_USE_NAMESPACE
@@ -31,6 +31,15 @@ TEST(CanvasManager, init)
     stub.set_lamda(&FileInfoModel::setRootUrl, [&setModel](){
         setModel = true;
         return QModelIndex();
+    });
+    typedef QVariant (EventChannelManager::*PushFunc)(const QString &, const QString &,
+                                                      const QString , AbstractSceneCreator *&creator);
+    auto pushFunc = static_cast<PushFunc>(&EventChannelManager::push);
+    stub.set_lamda(pushFunc,
+        [](EventChannelManager *,const QString &, const QString &,
+                   const QString , AbstractSceneCreator *&creator) {
+        delete creator;
+        return false;
     });
 
     obj.init();
@@ -57,8 +66,9 @@ TEST(CanvasManager, init)
 TEST(CanvasManager, update)
 {
     CanvasManager obj;
-    obj.d->viewMap.insert("1", CanvasViewPointer(new CanvasView));
-    obj.d->viewMap.insert("2", CanvasViewPointer(new CanvasView));
+    CanvasViewPointer ptr(new CanvasView());
+    obj.d->viewMap.insert("1", ptr);
+    obj.d->viewMap.insert("2", ptr);
 
     stub_ext::StubExt stub;
     QList<CanvasView *> upd;
@@ -84,8 +94,8 @@ TEST(CanvasManager, iconLevel)
     EXPECT_TRUE(call);
 
     CanvasViewPointer v1(new CanvasView());
-    auto delegate1 = new CanvasItemDelegate(v1.get());
-    v1->setItemDelegate(delegate1);
+    CanvasItemDelegate delegate1(v1.get());
+    v1->setItemDelegate(&delegate1);
     obj.d->viewMap.insert("1", v1);
     stub.set_lamda(&CanvasItemDelegate::iconLevel, [](){
        return 9;
@@ -238,6 +248,9 @@ TEST(CanvasManager, setIconLevel_withview)
         EXPECT_EQ(updateGrid, 2);
         EXPECT_EQ(dellv, 8);
     }
+
+    delete delegate1;
+    delete delegate2;
 }
 
 TEST(CanvasManager, autoArrange)
@@ -544,6 +557,7 @@ TEST(CanvasManager, onChangeIconLevel)
     lv = -1;
     obj.onChangeIconLevel(false);
     EXPECT_EQ(lv, 1);
+    delete delegate2;
 }
 
 TEST(CanvasManagerPrivate, createView)
@@ -711,6 +725,7 @@ public:
         v2->setSelectionModel(obj.d->selectionModel);
 
         obj.d->viewMap.insert("1", v2);
+        delete  delegate2 ;
     }
 
     CanvasManager obj;

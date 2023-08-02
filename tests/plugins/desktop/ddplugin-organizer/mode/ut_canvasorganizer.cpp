@@ -4,9 +4,14 @@
 
 #include "stubext.h"
 #include "mode/canvasorganizer.h"
+#include "interface/canvasmodelshell.h"
+#include "interface/canvasviewshell.h"
+#include "interface/canvasgridshell.h"
 #include "interface/canvasmanagershell.h"
-
+#include "mode/custommode.h"
 #include <gtest/gtest.h>
+
+#include <QMimeData>
 
 using namespace testing;
 using namespace ddplugin_organizer;
@@ -38,5 +43,55 @@ TEST_F(CanvasOrganizerTest, setCanvasManagerShell) {
 
     delete sh;
     sh = nullptr;
+    delete organizer;
 }
 
+TEST_F(CanvasOrganizerTest, setCanvasModelShell) {
+    CanvasModelShell sh ;
+    CanvasOrganizer *organizer = OrganizerCreator::createOrganizer(OrganizerMode::kNormalized);
+    organizer->canvasModelShell = &sh;
+    EXPECT_NO_FATAL_FAILURE(organizer->setCanvasModelShell(&sh));
+    CanvasModelShell sh1 ;
+    organizer->canvasModelShell = &sh1;
+    EXPECT_NO_FATAL_FAILURE(organizer->setCanvasModelShell(&sh1));
+    delete organizer;
+}
+TEST_F(CanvasOrganizerTest, setCanvasViewShell) {
+    bool connect = false;
+    typedef bool (*fun_type1)(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
+    stub.set_lamda((fun_type1)(&CanvasOrganizer::filterDropData),
+                   [&connect]( ){connect = true;return false;});
+    CanvasViewShell sh ;
+    CanvasOrganizer *organizer = OrganizerCreator::createOrganizer(OrganizerMode::kNormalized);
+    organizer->canvasViewShell = &sh;
+    organizer->setCanvasViewShell(&sh);
+    CanvasViewShell sh1 ;
+    organizer->canvasViewShell = &sh1;
+    organizer->setCanvasViewShell(&sh);
+    organizer->canvasViewShell->filterDropData(1,nullptr,QPoint());
+    EXPECT_TRUE(connect);
+    delete organizer;
+}
+
+TEST_F(CanvasOrganizerTest, setCanvasGridShell) {
+    CanvasGridShell sh;
+    CanvasOrganizer *organizer = OrganizerCreator::createOrganizer(OrganizerMode::kNormalized);
+    EXPECT_NO_FATAL_FAILURE(organizer->setCanvasGridShell(&sh));
+    CanvasGridShell sh1;
+    EXPECT_NO_FATAL_FAILURE(organizer->setCanvasGridShell(&sh1));
+    delete organizer;
+}
+
+
+TEST_F(CanvasOrganizerTest, test) {
+    CanvasOrganizer *organizer = OrganizerCreator::createOrganizer(OrganizerMode::kNormalized);
+    EXPECT_NO_FATAL_FAILURE(organizer->setSurfaces(QList<SurfacePointer>()));
+    QList<QUrl> lists;
+    EXPECT_FALSE(organizer->filterDataRested(&lists));
+    EXPECT_FALSE(organizer->filterDataInserted(QUrl()));
+    QUrl url1("temp");
+    QUrl url2("temp");
+    EXPECT_FALSE(organizer->CanvasOrganizer::filterDataRenamed(url1,url2));
+    EXPECT_FALSE(organizer->filterDropData(1, nullptr, QPoint()));
+    delete organizer;
+}
