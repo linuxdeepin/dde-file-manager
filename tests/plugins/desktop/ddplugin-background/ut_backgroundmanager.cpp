@@ -229,15 +229,28 @@ TEST_F(UT_backGroundManager, onBackgroundBuild)
 
                        return QVariant();
                    });
+
     bgm->onBackgroundBuild();
     EXPECT_FALSE(bgm->d->backgroundWidgets.value("test").isNull());
 
+
+    bgm->d->backgroundWidgets["test"] =  BackgroundWidgetPointer(new BackgroundDefault("window"));
+    bgm->onBackgroundBuild();
+
+
+
     QWidget *widget2 = new QWidget;
     widget2->setProperty(DesktopFrameProperty::kPropScreenName, "test2");
+    rets.append(widget);
     rets.append(widget2);
     bgm->onBackgroundBuild();
     EXPECT_EQ(bgm->d->backgroundWidgets.size(), 2);
     EXPECT_FALSE(bgm->d->backgroundWidgets.value("test2").isNull());
+
+    rets.clear();
+    rets.append(nullptr);
+    bgm->onBackgroundBuild();
+    EXPECT_TRUE(bgm->d->backgroundWidgets.isEmpty());
 }
 
 TEST_F(UT_backGroundManager, request)
@@ -354,4 +367,38 @@ TEST_F(UT_backGroundManager, terminate)
     bgm->d->bridge->terminate(false);
     EXPECT_FALSE(bgm->d->bridge->getting);
     EXPECT_FALSE(bgm->d->bridge->force);
+}
+
+TEST_F(UT_backGroundManager, runUpdate)
+{
+   stub_ext::StubExt stub;
+
+   BackgroundBridge::Requestion req;
+   req.path = "file:/temp";
+   req.screen = "window";
+   req.size = QSize(1,1);
+   req.pixmap = QPixmap();
+
+   QList<BackgroundBridge::Requestion> reqs;
+   reqs.push_back(req);
+
+   BackgroundBridge *self = new BackgroundBridge(nullptr);
+   self->getting = true;
+
+   stub.set_lamda(&QPixmap::width,[](){
+       __DBG_STUB_INVOKE__ ;
+       return 2;
+   });
+   stub.set_lamda(&QPixmap::height,[](){
+       __DBG_STUB_INVOKE__
+       return 2;
+   });
+   stub.set_lamda(&BackgroundBridge::getPixmap,[](){
+       __DBG_STUB_INVOKE__
+       return QPixmap(2,2);}
+   );
+
+   self->runUpdate(self,reqs);
+
+   EXPECT_EQ(self->getting,false);
 }
