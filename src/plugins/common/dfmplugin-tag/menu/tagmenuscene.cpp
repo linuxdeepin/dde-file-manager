@@ -148,7 +148,7 @@ bool TagMenuScene::triggered(QAction *action)
         iconRect = TagEventCaller::getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
     }
 
-    TagHelper::instance()->showTagEdit(viewRect, iconRect, selectedFiles(), (d->currentDir.scheme() == TagManager::scheme()));
+    TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles, (d->currentDir.scheme() == TagManager::scheme()));
 
     return AbstractMenuScene::triggered(action);
 }
@@ -202,10 +202,10 @@ void TagMenuScene::onColorClicked(const QColor &color)
         QList<QColor> colors = tagWidget->checkedColorList();
         if (colors.contains(color)) {
             //add checked tag
-            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, selectedFiles());
+            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
         } else {
             // delete checked tag
-            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, selectedFiles());
+            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
         }
     }
 }
@@ -259,26 +259,6 @@ QAction *TagMenuScene::createColorListAction() const
     connect(colorListWidget, &TagColorListWidget::checkedColorChanged, this, &TagMenuScene::onColorClicked);
 
     return action;
-}
-
-/**
- * @brief 转换被选中文件的url，保证挂载目录不同的相同文件url一致,tag菜单不应该直接使用d->selectFiles，需要转换。
- * @return 返回selectFilesTransform
- */
-QList<QUrl> TagMenuScene::selectedFiles() const
-{
-    if (d->selectFiles.isEmpty())
-        return QList<QUrl>();
-
-    const QUrl &url = d->selectFiles.at(0);
-    if (UniversalUtils::urlEquals(FileUtils::bindUrlTransform(url), url))
-        return d->selectFiles;
-
-    QList<QUrl> selectFilesTransform;
-    for (const auto &file : d->selectFiles) {
-        selectFilesTransform.append(FileUtils::bindUrlTransform(file));
-    }
-    return selectFilesTransform;
 }
 
 AbstractMenuScene *TagMenuCreator::create()
