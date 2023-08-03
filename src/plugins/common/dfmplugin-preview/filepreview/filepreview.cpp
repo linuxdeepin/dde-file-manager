@@ -35,7 +35,7 @@ bool FilePreview::start()
     QString err;
     auto ret = DConfigManager::instance()->addConfig(ConfigInfos::kConfName, &err);
     if (!ret)
-        qWarning() << "create dconfig failed: " << err;
+        qWarning() << "File Preview: create dconfig failed: " << err;
 
     PreviewHelper::instance()->bindConfig();
 

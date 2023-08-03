@@ -43,7 +43,7 @@ QDBusObjectPath FileDialogManagerDBus::createDialog(QString key)
     }
 
     if (!QDBusConnection::sessionBus().registerObject(path.path(), handle)) {
-        qWarning("Cannot register to the D-Bus object.\n");
+        qCritical("File Dialog: Cannot register to the D-Bus object.\n");
         handle->deleteLater();
 
         return QDBusObjectPath();

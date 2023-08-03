@@ -19,15 +19,15 @@ void AppExitController::onExit()
 {
     ++curSeconds;
     if (curSeconds < totalSeconds) {
-        qInfo() << "Ready to exit: " << (totalSeconds - curSeconds);
+        qInfo() << "File Dialog: Ready to exit: " << (totalSeconds - curSeconds);
         return;
     }
-    qWarning() << "App exit!";
+    qWarning() << "File Dialog: App exit!";
     if (!confirmFunc)
         qApp->exit(0);
     if (confirmFunc())
         qApp->exit(0);
-    qWarning() << "App exit failed";
+    qWarning() << "File Dialog: App exit failed!";
 }
 
 AppExitController &AppExitController::instance()
@@ -42,11 +42,11 @@ void AppExitController::readyToExit(int seconds, ExitConfirmFunc confirm)
     Q_ASSERT(seconds <= 600);
 
     if (exitTimer->isActive()) {
-        qWarning() << "Timer is active, cannot start again";
+        qWarning() << "File Dialog: Timer is active, cannot start again.";
         return;
     }
 
-    qInfo() << "Ready to exit: " << seconds;
+    qInfo() << "File Dialog: Ready to exit: " << seconds;
     curSeconds = 0;
     totalSeconds = seconds;
     confirmFunc = confirm;
@@ -56,11 +56,11 @@ void AppExitController::readyToExit(int seconds, ExitConfirmFunc confirm)
 void AppExitController::dismiss()
 {
     if (!exitTimer->isActive()) {
-        qWarning() << "Timer is active, canot stop";
+        qWarning() << "File Dialog: Timer is active, canot stop.";
         return;
     }
 
-    qInfo() << "Dismiss exit";
+    qInfo() << "File Dialog: Dismiss exit.";
     curSeconds = 0;
     totalSeconds = 0;
     exitTimer->stop();

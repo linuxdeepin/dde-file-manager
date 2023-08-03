@@ -32,8 +32,7 @@ bool Core::start()
 bool Core::registerDialogDBus()
 {
     if (!QDBusConnection::sessionBus().isConnected()) {
-        qWarning("Cannot connect to the D-Bus session bus.\n"
-                 "Please check your system settings and try again.\n");
+        qWarning("File Dialog: Cannot connect to the D-Bus session bus.");
         return false;
     }
 
@@ -52,7 +51,7 @@ bool Core::registerDialogDBus()
     }
 
     if (!QDBusConnection::sessionBus().registerService(serviceName)) {
-        qWarning("Cannot register the \"com.deepin.filemanager.filedialog\" service.\n");
+        qWarning("File Dialog: Cannot register the \"com.deepin.filemanager.filedialog\" service.\n");
         return false;
     }
 
@@ -60,7 +59,7 @@ bool Core::registerDialogDBus()
     Q_UNUSED(new FiledialogmanagerAdaptor(manager));
 
     if (!QDBusConnection::sessionBus().registerObject(pathName, manager)) {
-        qWarning("Cannot register to the D-Bus object: \"/com/deepin/filemanager/filedialogmanager\"\n");
+        qWarning("File Dialog: Cannot register to the D-Bus object: \"/com/deepin/filemanager/filedialogmanager\"\n");
         manager->deleteLater();
         return false;
     }

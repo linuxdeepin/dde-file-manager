@@ -124,7 +124,7 @@ bool VaultMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        qWarning() << "Vault: menu scene:" << name() << " init failed.";
         return false;
     }
 
