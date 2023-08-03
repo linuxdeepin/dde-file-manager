@@ -264,6 +264,7 @@ public:
 
 protected:
     explicit FileInfo(const QUrl &url);
+    mutable QReadWriteLock extendOtherCacheLock;
     mutable QMap<FileInfo::FileExtendedInfoType, QVariant> extendOtherCache;
     QString pinyinName;
 

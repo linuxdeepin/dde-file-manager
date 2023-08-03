@@ -421,6 +421,7 @@ QVariant dfmbase::FileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kGroupId:
         return static_cast<uint>(-1);
     default:
+        QReadLocker locker(&extendOtherCacheLock);
         return extendOtherCache.value(type);
     }
 }
@@ -462,6 +463,7 @@ QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::FileInfo:
   */
 void DFMBASE_NAMESPACE::FileInfo::setExtendedAttributes(const ExtInfoType &key, const QVariant &value)
 {
+    QWriteLocker locker(&extendOtherCacheLock);
     extendOtherCache.insert(key, value);
 }
 /*!
