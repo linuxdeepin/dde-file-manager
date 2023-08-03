@@ -42,6 +42,8 @@ public:
 
     static QUrl rootUrl();
 
+    static QList<QUrl> commonUrls(const QList<QUrl> &urls);
+
     QList<QColor> defualtColors() const;
 
     QColor qureyColorByColorName(const QString &name) const;

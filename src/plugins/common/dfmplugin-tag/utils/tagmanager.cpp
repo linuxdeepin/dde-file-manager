@@ -280,7 +280,7 @@ QStringList TagManager::getTagsByUrls(const QList<QUrl> &urls) const
         return {};
 
     QStringList paths;
-    for (const auto &url : urls) {
+    for (const auto &url : TagHelper::commonUrls(urls)) {
         paths.append(url.path());
     }
 
@@ -318,7 +318,7 @@ bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &fil
     if (!dirtyTagNames.isEmpty())
         result = TagManager::instance()->removeTagsOfFiles(dirtyTagNames, files) || result;
 
-    for (const QUrl &url : files) {
+    for (const QUrl &url : TagHelper::commonUrls(files)) {
         QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url });
         QStringList newTags;
 
@@ -352,7 +352,7 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
     QVariant checkTagResult { TagProxyHandleIns->addTags(tagWithColor) };
     if (checkTagResult.toBool()) {
         QVariantMap infos;
-        for (const auto &f : files)
+        for (const auto &f : TagHelper::commonUrls(files))
             infos[f.path()] = QVariant(tags);
 
         if (TagProxyHandleIns->addTagsForFiles(infos))
@@ -372,7 +372,7 @@ bool TagManager::removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl>
 
     QMap<QString, QVariant> fileWithTag;
 
-    for (const QUrl &url : files) {
+    for (const QUrl &url : TagHelper::commonUrls(files)) {
         fileWithTag[UrlRoute::urlToPath(url)] = QVariant(tags);
     }
 
@@ -435,7 +435,7 @@ void TagManager::deleteTags(const QStringList &tags)
 void TagManager::deleteFiles(const QList<QUrl> &urls)
 {
     QStringList paths;
-    for (const auto &temp : urls)
+    for (const auto &temp : TagHelper::commonUrls(urls))
         paths.append(temp.toString());
 
     this->deleteTagData(paths, DeleteOpts::kFiles);

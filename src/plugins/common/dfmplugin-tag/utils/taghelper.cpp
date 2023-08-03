@@ -6,6 +6,8 @@
 #include "tagmanager.h"
 #include "widgets/tageditor.h"
 
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QMap>
@@ -23,7 +25,7 @@ Q_DECLARE_METATYPE(ContextMenuCallback);
 Q_DECLARE_METATYPE(RenameCallback);
 
 using namespace dfmplugin_tag;
-
+DFMBASE_USE_NAMESPACE
 TagHelper *TagHelper::instance()
 {
     static TagHelper ins;
@@ -36,6 +38,26 @@ QUrl TagHelper::rootUrl()
     rootUrl.setScheme(scheme());
     rootUrl.setPath("/");
     return rootUrl;
+}
+
+/**
+ * @brief 转换被选中文件的url，保证挂载目录不同的相同文件url一致,tag菜单不应该直接使用原生urls，需要转换。
+ * @return 返回commonUrls
+ */
+QList<QUrl> TagHelper::commonUrls(const QList<QUrl> &urls)
+{
+    if (urls.isEmpty())
+        return QList<QUrl>();
+
+    const QUrl &url = urls.first();
+    if (UniversalUtils::urlEquals(FileUtils::bindUrlTransform(url), url))
+        return urls;
+
+    QList<QUrl> commonUrls;
+    for (const auto &file : urls) {
+        commonUrls.append(FileUtils::bindUrlTransform(file));
+    }
+    return commonUrls;
 }
 
 QList<QColor> TagHelper::defualtColors() const
