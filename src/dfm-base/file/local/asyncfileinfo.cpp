@@ -85,6 +85,10 @@ void AsyncFileInfo::refresh()
         d->attributesExtend.clear();
         d->extendIDs.clear();
         d->fileIcon = QIcon();
+
+    }
+    {
+        QWriteLocker locker(&extendOtherCacheLock);
         extendOtherCache.clear();
     }
 }
@@ -457,7 +461,10 @@ QVariant AsyncFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
     if (role == kItemFileRefreshIcon) {
-        extendOtherCache.remove(ExtInfoType::kFileThumbnail);
+        {
+            QWriteLocker lk(&extendOtherCacheLock);
+            extendOtherCache.remove(ExtInfoType::kFileThumbnail);
+        }
         QWriteLocker locker(&d->iconLock);
         d->fileIcon = QIcon();
         return QVariant();

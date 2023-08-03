@@ -106,6 +106,10 @@ bool SyncFileInfo::exists() const
  */
 void SyncFileInfo::refresh()
 {
+    {
+        QWriteLocker locker(&extendOtherCacheLock);
+        extendOtherCache.clear();
+    }
     QWriteLocker locker(&d->lock);
     d->dfmFileInfo->refresh();
     d->fileCountFuture.reset(nullptr);

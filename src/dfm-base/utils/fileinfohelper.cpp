@@ -114,7 +114,6 @@ FileInfoHelper::~FileInfoHelper()
 FileInfoHelper &FileInfoHelper::instance()
 {
     static FileInfoHelper helper;
-    helper.moveToThread(qApp->thread());
     return helper;
 }
 
