@@ -149,7 +149,7 @@ void PreviewPluginLoader::update()
 {
 
 #ifdef QT_SHARED
-    qInfo() << "checking directory path";
+    qInfo() << "File Preview: checking directory path";
     const QStringList &paths = dptr->pluginPaths;
     for (int i = 0; i < paths.count(); ++i) {
         const QString &pluginDir = paths.at(i);
@@ -159,7 +159,7 @@ void PreviewPluginLoader::update()
 
         QString path = pluginDir;
 
-        qInfo() << "checking directory path" << path << "...";
+        qInfo() << "File Preview: checking directory path" << path << "...";
 
         if (!QDir(path).exists(QLatin1String(".")))
             continue;
@@ -192,7 +192,7 @@ void PreviewPluginLoader::update()
             }
 #    endif
             if (dfm_debug_component()) {
-                qInfo() << "looking at" << fileName;
+                qInfo() << "File Preview: looking at" << fileName;
             }
             loader = new QPluginLoader(fileName, this);
             if (!loader->load()) {
@@ -216,7 +216,7 @@ void PreviewPluginLoader::update()
                     keys += dptr->cs ? k.at(m).toString() : k.at(m).toString().toLower();
             }
             if (dfm_debug_component())
-                qInfo() << "Got keys from plugin meta data" << keys;
+                qInfo() << "File Preview: Got keys from plugin meta data" << keys;
 
             if (!metaDataOk) {
                 loader->deleteLater();

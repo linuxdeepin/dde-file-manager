@@ -268,7 +268,7 @@ void FileDialog::setDirectory(const QString &directory)
     QString errorString { "" };
     const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync, &errorString);
     if (!info) {
-        qCritical() << "Select Dialog Error: can not create file info, the error is: " << errorString;
+        qCritical() << "File Dialog: can not create file info, the error is: " << errorString;
         return;
     }
     bool isSymLink = info->isAttributes(dfmbase::FileInfo::FileIsType::kIsSymLink);
@@ -680,7 +680,7 @@ void FileDialog::done(int r)
 int FileDialog::exec()
 {
     if (d->eventLoop) {
-        qWarning("DFileDialog::exec: Recursive call detected");
+        qWarning("File Dialog: DFileDialog::exec: Recursive call detected");
         return -1;
     }
 

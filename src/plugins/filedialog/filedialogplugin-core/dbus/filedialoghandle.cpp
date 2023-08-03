@@ -45,7 +45,7 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
 {
     d_func()->dialog = qobject_cast<FileDialog *>(FMWindowsIns.createWindow({}, true));
     if (!d_func()->dialog) {
-        qCritical() << "Create window failed";
+        qCritical() << "File Dialog: Create window failed";
         abort();
     }
     auto &&defaultPath { DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath) };

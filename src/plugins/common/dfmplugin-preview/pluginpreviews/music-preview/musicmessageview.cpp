@@ -222,11 +222,11 @@ MediaMeta MusicMessageView::tagOpenMusicFile(const QString &path)
     TagLib::Tag *tag = f.tag();
 
     if (!f.file()) {
-        qCritical() << "TagLib: open file failed:" << path << f.file();
+        qCritical() << "Music Preview: open file failed:" << path << f.file();
     }
 
     if (!tag) {
-        qWarning() << "TagLib: no tag for media file" << path;
+        qWarning() << "Music Preview: no tag for media file" << path;
         return MediaMeta();
     }
 

@@ -50,7 +50,6 @@ QString VaultHelper::buildVaultLocalPath(const QString &path, const QString &bas
 QUrl VaultHelper::vaultUrlToLocalUrl(const QUrl &url)
 {
     if (url.scheme() != scheme()) {
-        qWarning() << "No vault url, can't change to local url!";
         return url;
     }
 

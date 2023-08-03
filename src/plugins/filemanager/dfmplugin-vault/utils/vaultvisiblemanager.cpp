@@ -112,7 +112,7 @@ void VaultVisibleManager::addVaultComputerMenu()
     dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
     bool ok = dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");
     if (!ok)
-        qCritical() << "addVaultComputerMenu failed";
+        qCritical() << "Vault: add vault computer menu failed";
     dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
 }
 

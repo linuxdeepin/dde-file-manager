@@ -54,15 +54,12 @@ bool OperatorCenter::runCmd(const QString &cmd)
     standOutput = process.readAllStandardOutput();
     int exitCode = process.exitCode();
     if (cmd.startsWith(kRootProxy) && (exitCode == 127 || exitCode == 126)) {
-        QString strOut = "Run \'" + cmd + "\' fauled: Password Error! " + QString::number(exitCode) + "\n";
-        qDebug() << strOut;
+        qWarning() << "Vault: Run \'" << cmd << "\' fauled: Password Error! " << QString::number(exitCode);
         return false;
     }
 
-    if (res == false) {
-        QString strOut = "Run \'" + cmd + "\' failed\n";
-        qDebug() << strOut;
-    }
+    if (res == false)
+        qWarning() << "Vault: Run \'" + cmd + "\' failed!";
 
     return res;
 }
@@ -112,7 +109,7 @@ bool OperatorCenter::createKeyNew(const QString &password)
 
     // 验证公钥长度
     if (strPubKey.length() < 2 * kUserKeyInterceptIndex + 32) {
-        qDebug() << "USER_KEY_LENGTH is to long!";
+        qCritical("Vault: USER_KEY_LENGTH is to long!");
         strPubKey.clear();
         return false;
     }
@@ -121,7 +118,7 @@ bool OperatorCenter::createKeyNew(const QString &password)
     QString strCipherFilePath = makeVaultLocalPath(kRSACiphertextFileName);
     QFile cipherFile(strCipherFilePath);
     if (!cipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qDebug() << "open rsa cipher file failure!";
+        qCritical("Vault: open rsa cipher file failed!");
         return false;
     }
     QTextStream out2(&cipherFile);
@@ -137,7 +134,7 @@ bool OperatorCenter::saveKey(QString key, QString path)
     QString publicFilePath = path;
     QFile publicFile(publicFilePath);
     if (!publicFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qDebug() << "open public key file failure!";
+        qCritical() << "Vault: open public key file failure!";
         return false;
     }
     publicFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
@@ -218,7 +215,7 @@ bool OperatorCenter::createDirAndFile()
             configFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
             configFile.close();
         } else {
-            qCritical() << "Vault：create config file failed!";
+            qCritical() << "Vault: create config file failed!";
         }
     }
 
@@ -358,7 +355,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
         QString strNewCipher2 = pbkdf2::pbkdf2EncrypyPassword(strNewSaltAndCipher, strSalt, kIterationTwo, kPasswordCipherLength);
 
         if (strCipher != strNewCipher2) {
-            qCritical() << "Vault: password error!";
+            qWarning() << "Vault: password error!";
             return false;
         }
 
@@ -393,7 +390,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
 
         // 保存第二次加密后的密文,并更新保险箱版本信息
         if (!secondSaveSaltAndCiphertext(strNewSaltAndCipher, strSalt, kConfigVaultVersion)) {
-            qCritical() << "Vault: the second encrypt failed!";
+            qCritical() << "Vault Error: the second encrypt failed!";
             return false;
         }
 
@@ -453,7 +450,7 @@ bool OperatorCenter::getPasswordHint(QString &passwordHint)
     QString strPasswordHintFilePath = makeVaultLocalPath(kPasswordHintFileName);
     QFile passwordHintFile(strPasswordHintFilePath);
     if (!passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qCritical() << "open password hint file failure";
+        qCritical() << "Vault: open password hint file failed!";
         return false;
     }
     passwordHint = QString(passwordHintFile.readAll());
@@ -548,7 +545,7 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
 
     if ((fp = popen(cmd, "r")) == nullptr) {
         perror("popen");
-        qCritical() << QString("Vault: popen error: %s").arg(strerror(errno));
+        qCritical() << QString("Vault Error: popen error: %s").arg(strerror(errno));
         return -1;
     } else {
         char buf[kBuffterMaxLine] = { '\0' };
@@ -588,7 +585,7 @@ bool OperatorCenter::savePasswordToKeyring(const QString &password)
         GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
         // Get the currently logged in user information
         char *userName = getlogin();
-        qInfo() << "Get user name : " << QString(userName);
+        qInfo() << "Vault: Get user name : " << QString(userName);
         g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
         g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
         secret_service_store_sync(service, Q_NULLPTR, attributes, Q_NULLPTR, "uos cryfs password", value, Q_NULLPTR, &error);
@@ -597,7 +594,7 @@ bool OperatorCenter::savePasswordToKeyring(const QString &password)
     g_object_unref(value);
 
     if (error != Q_NULLPTR) {
-        qWarning() << "Vault: Store password failed! error :" << QString(error->message);
+        qCritical() << "Vault: Store password failed! error :" << QString(error->message);
         return false;
     }
 
@@ -634,7 +631,7 @@ QString OperatorCenter::passwordFromKeyring()
     g_hash_table_unref(attributes);
     g_object_unref(service);
 
-    qWarning() << "Vault: Read password end!";
+    qInfo() << "Vault: Read password end!";
 
     return result;
 }

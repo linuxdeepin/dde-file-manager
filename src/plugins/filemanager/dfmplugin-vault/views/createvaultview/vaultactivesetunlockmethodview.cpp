@@ -31,7 +31,7 @@ VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
     initConnect();
 
     if (!OperatorCenter::getInstance()->createDirAndFile())
-        qInfo() << "Vault error: create dir and file failed!";
+        qCritical() << "Vault: create dir and file failed!";
 }
 
 void VaultActiveSetUnlockMethodView::initUi()
@@ -255,7 +255,7 @@ void VaultActiveSetUnlockMethodView::slotNextBtnClicked()
     } else {   // transparent encryption
         const QString &password = OperatorCenter::getInstance()->autoGeneratePassword(kPasswordLength);
         if (password.isEmpty()) {
-            qWarning() << "Vault: auto Generate password failed!";
+            qCritical() << "Vault: auto Generate password failed!";
             return;
         }
 
@@ -265,7 +265,7 @@ void VaultActiveSetUnlockMethodView::slotNextBtnClicked()
             config.set(kConfigNodeName, kConfigKeyVersion, QVariant(kConfigVaultVersion1050));
             emit sigAccepted();
         } else {
-            qWarning() << "Vault: save password to keyring failed!";
+            qCritical() << "Vault: save password to keyring failed!";
         }
     }
 }

@@ -39,19 +39,18 @@ void VaultControl::connectLockScreenDBus()
 {
     QDBusConnection connection = QDBusConnection::sessionBus();
     if (!connection.isConnected()) {
-        qWarning() << "Cannot connect to the D-Bus session bus.\n"
-                      "Please check your system settings and try again.\n";
+        qWarning() << "Vault Daemon: Cannot connect to the D-Bus session bus.";
         return;
     }
 
     if (!connection.interface()->isServiceRegistered(kAppSessionService)) {
-        qCritical("Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
+        qCritical("Vault Daemon: Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
         return;
     }
 
     if (!QDBusConnection::sessionBus().connect(kAppSessionService, kAppSessionPath, "org.freedesktop.DBus.Properties",
                                                "PropertiesChanged", "sa{sv}as", this, SLOT(responseLockScreenDBus(QDBusMessage)))) {
-        qCritical() << "Vault Server Error: connect lock screen dbus error!";
+        qCritical() << "Vault Daemon: Vault Server Error: connect lock screen dbus error!";
     }
 }
 
@@ -59,7 +58,7 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
 {
     const QList<QVariant> &arguments = msg.arguments();
     if (kArgumentsNum != arguments.count()) {
-        qCritical() << "Vault Server Error: arguments of lock screen dbus error!";
+        qCritical() << "Vault Daemon: Vault Server Error: arguments of lock screen dbus error!";
         return;
     }
 
@@ -88,7 +87,7 @@ bool VaultControl::transparentUnlockVault()
 {
     VaultState st = state(VaultHelper::instance()->vaultBaseDirLocalPath());
     if (st != kEncrypted) {
-        qWarning() << "Vault: Unlock vault failed, current state is " << st;
+        qWarning() << "Vault Daemon: Unlock vault failed, current state is " << st;
         return false;
     }
 
@@ -97,7 +96,7 @@ bool VaultControl::transparentUnlockVault()
     if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
         const QString &passwd = passwordFromKeyring();
         if (passwd.isEmpty()) {
-            qWarning() << "Vault: Get password is empty, can not unlock vault!";
+            qWarning() << "Vault Daemon: Get password is empty, can not unlock vault!";
             return false;
         }
 
@@ -107,19 +106,19 @@ bool VaultControl::transparentUnlockVault()
         }
         int result = unlockVault(VaultHelper::instance()->vaultBaseDirLocalPath(), mountdirPath, passwd);
         if (!result) {
-            qInfo() << "Vault: Unlock vault success!";
+            qInfo() << "Vault Daemon: Unlock vault success!";
             syncGroupPolicyAlgoName();
             return true;
         } else {
             if (result == 1) {
                 int re = lockVault(mountdirPath, true);
                 if (!re) {
-                    qInfo() << "Vault: fusermount success!";
+                    qInfo() << "Vault Daemon: fusermount success!";
                 } else {
-                    qWarning() << "Vault: fusemount failed!";
+                    qWarning() << "Vault Daemon: fusemount failed!";
                 }
             }
-            qWarning() << "Vault: Unlock vault failed, error code: " << result;
+            qWarning() << "Vault Daemon: Unlock vault failed, error code: " << result;
         }
     }
     return false;
@@ -171,7 +170,7 @@ void VaultControl::runVaultProcessAndGetOutput(const QStringList &arguments, QSt
 {
     const QString &cryfsProgram = QStandardPaths::findExecutable("cryfs");
     if (cryfsProgram.isEmpty()) {
-        qWarning() << "cryfs is not exist!";
+        qWarning() << "Vault Daemon: cryfs is not exist!";
         return;
     }
 
@@ -228,7 +227,7 @@ void VaultControl::syncGroupPolicyAlgoName()
 
 QString VaultControl::passwordFromKeyring()
 {
-    qInfo() << "Vault: Read password start!";
+    qInfo() << "Vault Daemon: Read password start!";
 
     QString result { "" };
 
@@ -246,7 +245,7 @@ QString VaultControl::passwordFromKeyring()
     gsize length;
     const gchar *passwd = secret_value_get(value_read, &length);
     if (length > 0) {
-        qInfo() << "Vault: Read password not empty!";
+        qInfo() << "Vault Daemon: Read password not empty!";
         result = QString(passwd);
     }
 
@@ -254,7 +253,7 @@ QString VaultControl::passwordFromKeyring()
     g_hash_table_unref(attributes);
     g_object_unref(service);
 
-    qWarning() << "Vault: Read password end!";
+    qWarning() << "Vault Daemon: Read password end!";
 
     return result;
 }

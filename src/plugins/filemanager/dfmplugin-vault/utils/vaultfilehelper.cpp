@@ -346,7 +346,7 @@ bool VaultFileHelper::openFileByApp(const quint64 windowId, const QList<QUrl> ur
         if (VaultHelper::instance()->urlsToLocal(urls, &localUrls)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByApp, 0, localUrls, apps);
         } else {
-            qCritical() << "the list has no vault url!";
+            qCritical() << "Vault: the list has no vault url!";
         }
     }
 

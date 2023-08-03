@@ -392,7 +392,6 @@ void FilePreviewDialog::updateTitle()
     if (!statusBar->preButton()->isVisible()) {
         /*smb 中一直按着空格预览，preview 已经析构了，但是定时器的timeout事件已经执行，这里使用智能指针进行判断*/
         if (!preview) {
-            qDebug() << "preview is null,so exit";
             return;
         }
         elidedText = fm.elidedText(preview->title(), Qt::ElideMiddle, width() / 2 - statusBar->contentsMargins().left() - statusBar->layout()->spacing() - 30);

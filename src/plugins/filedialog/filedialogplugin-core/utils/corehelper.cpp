@@ -142,7 +142,7 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
         newNameFilterExtension = db->suffixForFileName(filter);   //在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
         if (newNameFilterExtension.isEmpty()) {   //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
             QRegExp regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-            qInfo() << " Cannot find extesion name by QMimeDataBase::suffixForFileName，try regexp: " << filter;
+            qInfo() << "File Dialog: Cannot find extesion name by QMimeDataBase::suffixForFileName，try regexp: " << filter;
             for (QMimeType m : db->allMimeTypes()) {
                 for (QString suffixe : m.suffixes()) {
                     if (regExp.exactMatch(suffixe)) {
