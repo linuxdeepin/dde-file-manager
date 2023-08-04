@@ -63,6 +63,7 @@ AbstractJobHandler::SupportActions ErrorMessageAndAction::supportActions(const A
     case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
     case AbstractJobHandler::JobErrorType::kNonexistenceError:
     case AbstractJobHandler::JobErrorType::kDeleteFileError:
+    case AbstractJobHandler::JobErrorType::kFileMoveToTrashError:
     case AbstractJobHandler::JobErrorType::kDeleteTrashFileError:
     case AbstractJobHandler::JobErrorType::kNoSourceError:
     case AbstractJobHandler::JobErrorType::kCancelError:
@@ -127,6 +128,8 @@ QString ErrorMessageAndAction::errorToString(const QUrl &url, const AbstractJobH
     case AbstractJobHandler::JobErrorType::kRemoveError:
     case AbstractJobHandler::JobErrorType::kDeleteFileError:
         return tr("Failed to delete the file %1").arg(url.path());
+    case AbstractJobHandler::JobErrorType::kFileMoveToTrashError:
+        return tr("Failed to move the file %1 to trash").arg(url.path());
     case AbstractJobHandler::JobErrorType::kRenameError:
         return tr("Failed to move the file %1").arg(url.path());
     case AbstractJobHandler::JobErrorType::kNonexistenceError:
@@ -186,6 +189,8 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
     case AbstractJobHandler::JobErrorType::kRemoveError:
     case AbstractJobHandler::JobErrorType::kDeleteFileError:
         return tr("Failed to delete the file %1, cause: %2").arg(url.path(), errorMsg);
+    case AbstractJobHandler::JobErrorType::kFileMoveToTrashError:
+        return tr("Failed to move the file %1 to trash, cause: %2").arg(url.path(), errorMsg);
     case AbstractJobHandler::JobErrorType::kRenameError:
         return tr("Failed to move the file %1, cause: %2").arg(url.path(), errorMsg);
     case AbstractJobHandler::JobErrorType::kNonexistenceError:
