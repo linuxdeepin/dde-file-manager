@@ -131,9 +131,16 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 continue;
             } else {
                 // pause and emit error msg
+                auto errmsg = QString("Unknown error");
+                if (fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NOT_SUPPORTED) {
+                    errmsg = QString("The file can't be put into trash, you can use \"Shift+Del\" to delete the file completely.");
+                } else if (fileHandler.errorCode() != DFMIOErrorCode::DFM_IO_ERROR_NONE) {
+                    errmsg = fileHandler.errorString();
+                }
                 action = doHandleErrorAndWait(url, QUrl(),
-                                              AbstractJobHandler::JobErrorType::kDeleteFileError, false,
-                                              fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ? "Unknown error" : fileHandler.errorString());
+                                              AbstractJobHandler::JobErrorType::kFileMoveToTrashError, false,
+                                              fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ? "Unknown error"
+                                                                                                           : fileHandler.errorString());
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
