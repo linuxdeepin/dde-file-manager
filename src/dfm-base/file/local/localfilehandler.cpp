@@ -275,10 +275,17 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
 
     for (QUrl &fileUrl : urls) {
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
-
+        QStringList targetList;
+        targetList.append(fileUrl.path());
         FileInfoPointer fileInfoLink = fileInfo;
         while (fileInfoLink->isAttributes(OptInfoType::kIsSymLink)) {
-            const QString &targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
+            QString targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
+            targetLink = targetLink.endsWith(QDir::separator()) && targetLink != QDir::separator() ?
+                        QString(targetLink).left(targetLink.length() -1)
+                      : targetLink;
+            if (targetList.contains(targetLink))
+                break;
+            targetList.append(targetLink);
             // 网络文件检查
             if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(targetLink))) {
                 DialogManager::instance()->showUnableToVistDir(targetLink);
@@ -764,14 +771,24 @@ QString LocalFileHandlerPrivate::getFileMimetype(const QUrl &url)
 
 bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
 {
-    QString pathValue = path;
+    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ?
+                QString(path).left(path.length() -1)
+              : path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
         return false;
     bool isSymLink { info->isAttributes(OptInfoType::kIsSymLink) };
+    QStringList targetList;
+    targetList.append(path);
     while (isSymLink) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
+        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ?
+                    QString(pathValue).left(pathValue.length() -1)
+                  : pathValue;
+        if (targetList.contains(pathValue))
+            break;
+        targetList.append(pathValue);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
         info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue));
     }
@@ -852,14 +869,23 @@ bool LocalFileHandlerPrivate::openExcutableFile(const QString &path, int flag)
 
 bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
 {
-    QString pathValue = path;
+    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ?
+                QString(path).left(path.length() -1)
+              : path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
         return false;
-
+    QStringList targetList;
+    targetList.append(pathValue);
     while (info->isAttributes(OptInfoType::kIsSymLink)) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
+        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ?
+                    QString(pathValue).left(pathValue.length() -1)
+                  : pathValue;
+        if (targetList.contains(pathValue))
+            break;
+        targetList.append(pathValue);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
         info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue));
     }
@@ -879,14 +905,24 @@ bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
 
 bool LocalFileHandlerPrivate::shouldAskUserToAddExecutableFlag(const QString &path)
 {
-    QString pathValue = path;
+    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ?
+                QString(path).left(path.length() -1)
+              : path;;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
         return false;
 
+    QStringList targetList;
+    targetList.append(pathValue);
     while (info->isAttributes(OptInfoType::kIsSymLink)) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
+        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ?
+                    QString(pathValue).left(pathValue.length() -1)
+                  : pathValue;
+        if (targetList.contains(pathValue))
+            break;
+        targetList.append(pathValue);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
         info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue));
     }
