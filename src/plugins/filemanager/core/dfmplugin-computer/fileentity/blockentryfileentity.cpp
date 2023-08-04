@@ -69,21 +69,31 @@ QString BlockEntryFileEntity::displayName() const
 
 QIcon BlockEntryFileEntity::icon() const
 {
-    bool isRootDisk = datas.value(DeviceProperty::kMountPoint).toString() == "/";
-    if (isRootDisk)
-        return QIcon::fromTheme(IconName::kRootBlock);
-
-    bool isOptical = datas.value(DeviceProperty::kOptical).toBool() || datas.value(DeviceProperty::kOpticalDrive).toBool();
-    bool isRemovable = datas.value(DeviceProperty::kRemovable).toBool();
-    if (isOptical)
-        return isRemovable ? QIcon::fromTheme(IconName::kOpticalBlockExternal) : QIcon::fromTheme(IconName::kOpticalBlock);
-
-    bool isSysDisk = datas.value(DeviceProperty::kHintSystem).toBool();
+    // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
+    // CanPowerOff can be used to determind whether a device is builtin device.
+    bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
     bool isEncrypted = datas.value(DeviceProperty::kIsEncrypted).toBool();
-    if (isSysDisk)
-        return isEncrypted ? QIcon::fromTheme(IconName::kEncryptedInnerBlock) : QIcon::fromTheme(IconName::kInnerBlock);
-
-    return isEncrypted ? QIcon::fromTheme(IconName::kEncryptedRemovableBlock) : QIcon::fromTheme(IconName::kRemovableBlock);
+    switch (order()) {
+    case EntryFileInfo::EntryOrder::kOrderSysDiskRoot:
+        return QIcon::fromTheme(IconName::kRootBlock);
+    case EntryFileInfo::EntryOrder::kOrderSysDiskData:
+        return QIcon::fromTheme(IconName::kInnerBlock);
+    case EntryFileInfo::EntryOrder::kOrderSysDisks:
+        return isEncrypted
+                ? QIcon::fromTheme(IconName::kEncryptedInnerBlock)
+                : QIcon::fromTheme(IconName::kInnerBlock);
+    case EntryFileInfo::EntryOrder::kOrderOptical:
+        return canPowerOff
+                ? QIcon::fromTheme(IconName::kOpticalBlockExternal)
+                : QIcon::fromTheme(IconName::kOpticalBlock);
+    case EntryFileInfo::EntryOrder::kOrderRemovableDisks:
+        return isEncrypted
+                ? QIcon::fromTheme(IconName::kEncryptedRemovableBlock)
+                : QIcon::fromTheme(IconName::kRemovableBlock);
+    default:
+        break;
+    }
+    return QIcon::fromTheme(IconName::kRemovableBlock);
 }
 
 bool BlockEntryFileEntity::exists() const
@@ -161,19 +171,21 @@ bool BlockEntryFileEntity::showUsageSize() const
 
 EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
 {
-    if (datas.value(DeviceProperty::kHintSystem).toBool()) {
-        if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
-            return EntryFileInfo::EntryOrder::kOrderSysDiskRoot;
-        if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_"))
-            return EntryFileInfo::EntryOrder::kOrderSysDiskData;
-        return EntryFileInfo::EntryOrder::kOrderSysDisks;
-    }
+    // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
+    if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
+        return EntryFileInfo::EntryOrder::kOrderSysDiskRoot;
+    if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_"))
+        return EntryFileInfo::EntryOrder::kOrderSysDiskData;
 
-    if (datas.value(DeviceProperty::kOptical).toBool() || datas.value(DeviceProperty::kOpticalDrive).toBool()) {
+    if (datas.value(DeviceProperty::kOptical).toBool()
+            || datas.value(DeviceProperty::kOpticalDrive).toBool())
         return EntryFileInfo::EntryOrder::kOrderOptical;
-    }
 
-    return EntryFileInfo::EntryOrder::kOrderRemovableDisks;
+    if (datas.value(DeviceProperty::kEjectable).toBool()
+            && datas.value(DeviceProperty::kCanPowerOff).toBool())
+        return EntryFileInfo::EntryOrder::kOrderRemovableDisks;
+
+    return EntryFileInfo::EntryOrder::kOrderSysDisks;
 }
 
 quint64 BlockEntryFileEntity::sizeTotal() const

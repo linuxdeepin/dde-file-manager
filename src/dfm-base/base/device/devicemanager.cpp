@@ -728,17 +728,24 @@ void DeviceManager::doAutoMountAtStart()
     }
 
     static std::once_flag flg;
-    std::call_once(flg, [this] {
-        d->mountAllBlockDev();
-    });
+    std::call_once(flg, [this] { d->mountAllBlockDev(); });
 }
 
 void DeviceManager::detachAllRemovableBlockDevs()
 {
-    const QStringList &&devs =
-            getAllBlockDevID(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+    const QStringList &&devs = getAllBlockDevID(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+    // NOTE(xust): since the `Removable` is not always correct in some certain hardwares,
+    // we should ignore those devices which cannot be poweroffed, and is not optical item.
+    QStringList filteredDevs = devs;
+    for (const QString &id : devs) {
+        auto info = DeviceHelper::loadBlockInfo(id);
+        if (!info.value(DeviceProperty::kCanPowerOff).toBool()
+            && !info.value(DeviceProperty::kOptical).toBool())
+            filteredDevs.removeAll(id);
+    }
+
     QStringList operated;
-    for (const auto &id : devs) {
+    for (const auto &id : filteredDevs) {
         if (operated.contains(id))
             continue;
         operated << detachBlockDev(id);
@@ -762,15 +769,18 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
         siblings << id;
     const auto &&me = DeviceHelper::loadBlockInfo(id);
     bool isOptical = me.value(DeviceProperty::kOpticalDrive).toBool();
+    bool canPowerOff = me.value(DeviceProperty::kCanPowerOff).toBool();
 
-    auto func = [this, id, isOptical, cb](bool allUnmounted, const OperationErrorInfo &err) {
+    auto func = [this, id, isOptical, canPowerOff, cb](bool allUnmounted, const OperationErrorInfo &err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
                                     // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
-            else
+            else if (canPowerOff)
                 powerOffBlockDevAsync(id, {}, cb);
+            else if (cb)
+                cb(true, err);
         } else {
             if (cb)
                 cb(false, err);
