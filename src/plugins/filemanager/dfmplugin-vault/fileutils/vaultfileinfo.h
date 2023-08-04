@@ -41,7 +41,6 @@ public:
     virtual QString nameOf(const FileNameInfoType type) const override;
 
     virtual QString displayOf(const DisplayInfoType type) const override;
-    virtual QString viewOfTip(const ViewType type) const override;
 };
 }
 #endif   //! VAULTFILEINFO_H
