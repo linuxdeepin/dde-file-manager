@@ -12,6 +12,7 @@
 #include <dfm-base/base/schemefactory.h>
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/dfile.h>
 
 #include <DFileIconProvider>
 
@@ -135,6 +136,11 @@ bool VaultFileInfo::exists() const
     if (urlOf(UrlInfoType::kUrl).isEmpty())
         return false;
 
+    if (url == VaultHelper::instance()->rootUrl()) {
+        DFile info(d->localUrl);
+        return info.exists();
+    }
+
     return proxy && proxy->exists();
 }
 
@@ -153,13 +159,17 @@ bool VaultFileInfo::isAttributes(const OptInfoType type) const
     case FileIsType::kIsFile:
         [[fallthrough]];
     case FileIsType::kIsDir:
-        [[fallthrough]];
-    case FileIsType::kIsReadable:
-        [[fallthrough]];
+        return !proxy || proxy->isAttributes(type);
+    case FileIsType::kIsReadable: {
+        DFile file(d->localUrl);
+        return file.permissions().testFlag(DFile::Permission::kReadUser);
+    }
     case FileIsType::kIsWritable:
-        [[fallthrough]];
-    case FileIsType::kIsExecutable:
-        [[fallthrough]];
+        return !proxy || proxy->isAttributes(type);
+    case FileIsType::kIsExecutable:{
+        DFile file(d->localUrl);
+        return file.permissions().testFlag(DFile::Permission::kExeUser);
+    }
     case FileIsType::kIsSymLink:
         [[fallthrough]];
     case FileIsType::kIsHidden:
@@ -211,6 +221,22 @@ QIcon VaultFileInfo::fileIcon()
     if (!proxy)
         return ProxyFileInfo::fileIcon();
     return proxy->fileIcon();
+}
+
+QString VaultFileInfo::viewOfTip(const FileInfo::ViewType type) const
+{
+    if (type == ViewType::kEmptyDir) {
+        if (!exists()) {
+            return QObject::tr("File has been moved or deleted");
+        } else if (!isAttributes(FileIsType::kIsReadable)) {
+            return QObject::tr("You do not have permission to access this folder");
+        } else if (isAttributes(FileIsType::kIsDir)) {
+            if (!isAttributes(FileIsType::kIsExecutable))
+                return QObject::tr("You do not have permission to traverse files in it");
+        }
+    }
+
+    return FileInfo::viewOfTip(type);
 }
 
 qint64 VaultFileInfo::size() const
