@@ -895,6 +895,13 @@ void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
 
 void FileView::mousePressEvent(QMouseEvent *event)
 {
+    if (event->buttons().testFlag(Qt::LeftButton)) {
+        d->mouseLeftPressed = true;
+        d->mouseLastPos = event->globalPos();
+    } else {
+        d->mouseLeftPressed = false;
+    }
+
     switch (event->button()) {
     case Qt::LeftButton: {
         if (dragDropMode() != NoDragDrop) {
@@ -966,11 +973,19 @@ void FileView::mousePressEvent(QMouseEvent *event)
 
 void FileView::mouseMoveEvent(QMouseEvent *event)
 {
+    if (event->buttons() & Qt::LeftButton)
+        d->mouseMoveRect = QRect(event->globalPos(), d->mouseLastPos);
+
     DListView::mouseMoveEvent(event);
 }
 
 void FileView::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (event->buttons() & Qt::LeftButton) {
+        d->mouseMoveRect = QRect(-1, -1, 1, 1);
+        d->mouseLastPos = QPoint(0, 0);
+    }
+
     d->selectHelper->release();
 
     if (WindowUtils::keyCtrlIsPressed()
@@ -1186,6 +1201,11 @@ void FileView::keyboardSearch(const QString &search)
 
 void FileView::contextMenuEvent(QContextMenuEvent *event)
 {
+    // if the left btn is pressed and the rect large enough, means the view state is draggingSelectState.
+    // and don‘t show menu in the draggingSelectState.
+    if (d->mouseLeftPressed && (abs(d->mouseMoveRect.width()) > kMinMoveLenght || abs(d->mouseMoveRect.height()) > kMinMoveLenght))
+        return;
+
     if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
         DialogManager::instance()->showUnableToVistDir(rootUrl().path());
         return;
