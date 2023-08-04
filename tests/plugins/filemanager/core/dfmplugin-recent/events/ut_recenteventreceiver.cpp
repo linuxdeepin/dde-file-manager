@@ -13,6 +13,7 @@
 #include <QPainter>
 DPF_USE_NAMESPACE
 using namespace dfmplugin_recent;
+Q_DECLARE_METATYPE(QString *)
 
 class RecentEventReceiverTest : public testing::Test
 {
@@ -42,4 +43,19 @@ TEST_F(RecentEventReceiverTest, handleWindowUrlChanged)
     auto push = static_cast<Push>(&EventChannelManager::push);
     st.set_lamda(push, [] { return QVariant(); });
     EXPECT_NO_FATAL_FAILURE(RecentEventReceiver::instance()->handleWindowUrlChanged(123, QUrl("recent:/hello/world")););
+}
+
+TEST_F(RecentEventReceiverTest, initConnect)
+{
+    bool isRun = false;
+    typedef bool (EventDispatcherManager::*Subscribe1)(const QString &, const QString &,
+                                                       RecentEventReceiver *,
+                                                       void (RecentEventReceiver::*)(quint64, QString *));
+    stub.set_lamda(static_cast<Subscribe1>(&EventDispatcherManager::subscribe), [&isRun] {
+        __DBG_STUB_INVOKE__
+        isRun = true;
+        return true;
+    });
+    RecentEventReceiver::instance()->initConnect();
+    EXPECT_TRUE(isRun);
 }
