@@ -213,6 +213,17 @@ QIcon VaultFileInfo::fileIcon()
     return proxy->fileIcon();
 }
 
+QString VaultFileInfo::viewOfTip(const FileInfo::ViewType type) const
+{
+    if (type == ViewType::kEmptyDir) {
+        if (url == VaultHelper::instance()->rootUrl()) {
+            return FileInfo::viewOfTip(type);
+        }
+    }
+
+    return ProxyFileInfo::viewOfTip(type);
+}
+
 qint64 VaultFileInfo::size() const
 {
     if (!proxy)
