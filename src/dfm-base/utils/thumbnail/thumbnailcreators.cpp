@@ -94,12 +94,12 @@ QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, Thum
 {
     Q_UNUSED(size)
 
-    static QLibrary *lib = new QLibrary("libimageviewer.so", qApp);
+    static QLibrary lib("libimageviewer.so");
     QImage img;
 
-    if (lib && (lib->isLoaded() || lib->load())) {
+    if (lib.isLoaded() || lib.load()) {
         typedef void (*GetMovieCover)(const QUrl &, const QString &, QImage *);
-        GetMovieCover func = reinterpret_cast<GetMovieCover>(lib->resolve("getMovieCover"));
+        GetMovieCover func = reinterpret_cast<GetMovieCover>(lib.resolve("getMovieCover"));
 
         if (func)
             func(QUrl::fromLocalFile(filePath), filePath, &img);

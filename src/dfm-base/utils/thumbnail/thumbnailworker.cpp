@@ -76,27 +76,12 @@ bool ThumbnailWorkerPrivate::checkFileStable(const QUrl &url)
         return true;
 
     // 修改时间稳定
-    qint64 mtime = info->timeOf(TimeInfoType::kLastModifiedSecond).toLongLong();
+    qint64 mtime = info->timeOf(TimeInfoType::kMetadataChangeTimeSecond).toLongLong();
     qint64 curTime = QDateTime::currentDateTime().toTime_t();
     if (curTime - mtime < 2)
         return false;
 
     return true;
-}
-
-QIcon ThumbnailWorkerPrivate::createIcon(const QString &iconName)
-{
-    QIcon icon(iconName);
-    if (!icon.isNull()) {
-        QPixmap pixmap = icon.pixmap(Global::kLarge, Global::kLarge);
-        QPainter pa(&pixmap);
-        pa.setPen(Qt::gray);
-        pa.drawPixmap(0, 0, pixmap);
-
-        icon.addPixmap(pixmap);
-    }
-
-    return icon;
 }
 
 ThumbnailWorker::ThumbnailWorker(QObject *parent)
@@ -161,8 +146,8 @@ void ThumbnailWorker::createThumbnail(const QUrl &url, Global::ThumbnailSize siz
     // if not, rejoin the event queue and create thumbnail later
     if (!d->checkFileStable(url)) {
         QMetaObject::invokeMethod(this, "onTaskAdded", Qt::QueuedConnection,
-                                    Q_ARG(QUrl, d->originalUrl),
-                                    Q_ARG(Global::ThumbnailSize, size));
+                                  Q_ARG(QUrl, d->originalUrl),
+                                  Q_ARG(dfmbase::Global::ThumbnailSize, size));
         return;
     }
 
