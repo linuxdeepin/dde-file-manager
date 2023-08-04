@@ -113,7 +113,9 @@ QString DeviceUtils::errMessage(dfmmount::DeviceError err)
  */
 QString DeviceUtils::convertSuitableDisplayName(const QVariantMap &devInfo)
 {
-    if (devInfo.value(kHintSystem).toBool()) {
+    // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
+    if (devInfo.value(kMountPoint).toString() == "/"
+            || devInfo.value(kIdLabel).toString() == "_dde_data") {
         return nameOfSystemDisk(devInfo);
     } else if (devInfo.value(kIsEncrypted).toBool()) {
         return nameOfEncrypted(devInfo);
@@ -343,7 +345,7 @@ QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
     // get system disk name if there is no alias
     if (datas.value(kMountPoint).toString() == "/")
         return QObject::tr("System Disk");
-    if (datas.value(kIdLabel).toString().startsWith("_dde_"))
+    if (datas.value(kIdLabel).toString().startsWith("_dde_data"))
         return QObject::tr("Data Disk");
     return nameOfDefault(label, size);
 }

@@ -81,6 +81,12 @@ QStringList DeviceWatcherLite::allMountedRemovableBlocks()
             }
         }
 
+        // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
+        if (!devPtr->ejectable())
+            continue;
+        if (!devPtr->canPowerOff() && !devPtr->optical())
+            continue;
+
         mountedRemovable.append(dev);
         blksOfDrv[devPtr->drive()].append(dev);
     }

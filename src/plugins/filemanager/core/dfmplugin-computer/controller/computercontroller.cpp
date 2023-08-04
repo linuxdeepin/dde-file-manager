@@ -127,8 +127,11 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     }
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-    bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
-    if (removable && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock) {
+
+    // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
+    bool canRealRename = info->extraProperty(DeviceProperty::kEjectable).toBool()
+            && info->extraProperty(DeviceProperty::kCanPowerOff).toBool();
+    if (canRealRename && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock) {
         if (info->displayName() == name)
             return;
         ComputerUtils::setCursorState(true);
@@ -142,7 +145,7 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
         return;
     }
 
-    if (!removable) {
+    if (!canRealRename) {
         doSetAlias(info, name);
     }
 }
@@ -448,7 +451,10 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
             QTimer::singleShot(200, [=] { dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, devUrl); });
     };
 
-    if (info->extraProperty(DeviceProperty::kRemovable).toBool() && info->targetUrl().isValid()) {
+    // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
+    bool canRealRename = info->extraProperty(DeviceProperty::kEjectable).toBool()
+            && info->extraProperty(DeviceProperty::kCanPowerOff).toBool();
+    if (canRealRename && info->targetUrl().isValid()) {
         // renaming a mounted device, do unmount first.
         qDebug() << "rename: do unmount device before rename:" << devUrl;
         DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(devUrl),

@@ -206,6 +206,7 @@ void DeviceProxyManagerPrivate::initMounts()
                     if (DeviceUtils::isMountPointOfDlnfs(mpt) && !info.value(DeviceProperty::kId).toString().startsWith(kBlockDeviceIdPrefix))
                         continue;
                     mpt = mpt.endsWith("/") ? mpt : mpt + "/";
+                    // FIXME(xust): fix later, the kRemovable is not always correct.
                     if (info.value(DeviceProperty::kRemovable).toBool())
                         externalMounts.insert(dev, mpt);
                     allMounts.insert(dev, mpt);

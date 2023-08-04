@@ -180,7 +180,8 @@ QString AvfsUtils::parseDirIcon(QString path)
 
         auto id = kBlockDeviceIdPrefix + dev.mid(5);
         auto info = DevProxyMng->queryBlockInfo(id);
-        if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool())
+        if (info.value(GlobalServerDefines::DeviceProperty::kEjectable).toBool()
+                && info.value(GlobalServerDefines::DeviceProperty::kCanPowerOff).toBool())
             return "drive-removable-media-symbolic";
         else
             return "drive-harddisk-symbolic";

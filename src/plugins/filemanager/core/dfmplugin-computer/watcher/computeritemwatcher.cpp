@@ -453,10 +453,6 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     if (!info)
         return;
 
-    // additem to sidebar
-    bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool()
-            || info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kProtocol;
-
     ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
     RenameCallback renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
@@ -500,6 +496,15 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     else
         iconName += "-symbolic";
 
+    static const QList<EntryFileInfo::EntryOrder> ejectableOrders {
+        EntryFileInfo::kOrderRemovableDisks,
+        EntryFileInfo::kOrderOptical,
+        EntryFileInfo::kOrderSmb,
+        EntryFileInfo::kOrderFtp,
+        EntryFileInfo::kOrderGPhoto2,
+        EntryFileInfo::kOrderMTP
+    };
+
     QVariantMap map {
         { "Property_Key_Group", key == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
         { "Property_Key_SubGroup", subGroup },
@@ -507,7 +512,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
         { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_Ejectable", removable },
+        { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
