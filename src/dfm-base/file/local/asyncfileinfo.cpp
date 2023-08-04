@@ -84,8 +84,6 @@ void AsyncFileInfo::refresh()
         d->extraProperties.clear();
         d->attributesExtend.clear();
         d->extendIDs.clear();
-        d->fileIcon = QIcon();
-
     }
     {
         QWriteLocker locker(&extendOtherCacheLock);
