@@ -69,6 +69,13 @@ TEST_F(TagMenuSceneTest, create)
     EXPECT_FALSE(scene->create(nullptr));
 
     QMenu menu;
+    d->focusFile = QUrl("test");
+    stub.set_lamda(&TagManager::getTagsByUrls, [] {
+        __DBG_STUB_INVOKE__
+        return QList<QString>() << "red";
+    });
+    auto func = static_cast<bool (TagManager::*)(const QUrl &) const>(&TagManager::canTagFile);
+    stub.set_lamda(func, []() -> bool { __DBG_STUB_INVOKE__ return true; });
     EXPECT_TRUE(scene->create(&menu));
 }
 
