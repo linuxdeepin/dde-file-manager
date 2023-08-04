@@ -111,7 +111,6 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
                  || mimeName == Mime::kTypeAppMxf))
         return checkStatus(Application::kPreviewDocumentFile);
 
-    qDebug() << "thumbnail: not supported mimetype: " << mime;
     return false;
 }
 
