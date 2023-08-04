@@ -58,6 +58,7 @@ inline constexpr int kRightPadding { 10 };
 inline constexpr int kListModeLeftMargin { 10 };
 inline constexpr int kListModeRightMargin { 10 };
 inline constexpr int kColumnPadding { 10 };
+inline constexpr int kMinMoveLenght { 3 };
 
 // tab defines
 inline constexpr int kMaxTabCount { 8 };
