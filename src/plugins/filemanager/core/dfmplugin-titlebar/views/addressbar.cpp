@@ -705,8 +705,12 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
             return;
         case Qt::Key_Enter:
         case Qt::Key_Return:
-            emit returnPressed();
-            e->accept();
+            if (e->isAutoRepeat()) {
+                e->ignore();
+            } else {
+                emit returnPressed();
+                e->accept();
+            }
             return;
         default:
             break;
