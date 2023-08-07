@@ -147,6 +147,7 @@ private:
     QTimer waitTimer;
 
     QList<QSharedPointer<QObject>> discardedObjects {};
+    QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
 };
 
