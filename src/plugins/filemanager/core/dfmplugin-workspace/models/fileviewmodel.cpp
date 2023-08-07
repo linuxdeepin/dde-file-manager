@@ -46,7 +46,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);
     connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
-        waitTimer.setInterval(50);
+    waitTimer.setInterval(50);
 }
 
 FileViewModel::~FileViewModel()
@@ -605,15 +605,13 @@ ItemRoles FileViewModel::sortRole() const
 
 void FileViewModel::setFilters(QDir::Filters filters)
 {
+    currentFilters = filters;
     Q_EMIT requestChangeFilters(filters);
 }
 
 QDir::Filters FileViewModel::getFilters() const
 {
-    if (filterSortWorker.isNull())
-        return QDir::NoFilter;
-
-    return filterSortWorker->getFilters();
+    return currentFilters;
 }
 
 void FileViewModel::setNameFilters(const QStringList &filters)
@@ -762,7 +760,7 @@ void FileViewModel::onDConfigChanged(const QString &config, const QString &key)
 void FileViewModel::onSetCursorWait()
 {
     if (currentState() != ModelState::kBusy)
-            return;
+        return;
 
     if (QApplication::overrideCursor() && QApplication::overrideCursor()->shape() == Qt::CursorShape::WaitCursor)
         return;
@@ -774,13 +772,16 @@ void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
     filterSortThread.reset(new QThread);
+
     // make filters
-    QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
-    bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
-    if (isShowedHiddenFiles) {
-        filters |= QDir::Hidden;
-    } else {
-        filters &= ~QDir::Hidden;
+    if (currentFilters == QDir::NoFilter) {
+        currentFilters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+        bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+        if (isShowedHiddenFiles) {
+            currentFilters |= QDir::Hidden;
+        } else {
+            currentFilters &= ~QDir::Hidden;
+        }
     }
 
     // get sort config
@@ -788,7 +789,7 @@ void FileViewModel::initFilterSortWork()
     Qt::SortOrder order = static_cast<Qt::SortOrder>(valueMap.value("sortOrder", Qt::SortOrder::AscendingOrder).toInt());
     ItemRoles role = static_cast<ItemRoles>(valueMap.value("sortRole", kItemFileDisplayNameRole).toInt());
 
-    filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, nameFilters, filters));
+    filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, nameFilters, currentFilters));
     beginInsertRows(QModelIndex(), 0, 0);
     filterSortWorker->setRootData(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl)));
     endInsertRows();
@@ -804,9 +805,10 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() {
-            this->changeState(ModelState::kIdle);
-            closeCursorTimer();
-        }, Qt::QueuedConnection);
+        this->changeState(ModelState::kIdle);
+        closeCursorTimer();
+    },
+            Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeHiddenFilter, filterSortWorker.data(), &FileSortWorker::onToggleHiddenFiles, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::setFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::setNameFilters, Qt::QueuedConnection);
