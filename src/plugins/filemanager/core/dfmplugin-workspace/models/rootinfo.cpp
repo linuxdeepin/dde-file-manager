@@ -409,10 +409,10 @@ SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
     SortInfoPointer sortInfo(new SortFileInfo);
     sortInfo->setUrl(info->urlOf(UrlInfoType::kUrl));
     sortInfo->setSize(info->size());
-    sortInfo->setFile(info->isAttributes(OptInfoType::kIsDir));
-    sortInfo->setDir(!info->isAttributes(OptInfoType::kIsDir));
+    sortInfo->setFile(!info->isAttributes(OptInfoType::kIsDir));
+    sortInfo->setDir(info->isAttributes(OptInfoType::kIsDir));
     sortInfo->setHide(info->isAttributes(OptInfoType::kIsHidden));
-    sortInfo->setSymlink(info->isAttributes(OptInfoType::kIsHidden));
+    sortInfo->setSymlink(info->isAttributes(OptInfoType::kIsSymLink));
     sortInfo->setReadable(info->isAttributes(OptInfoType::kIsReadable));
     sortInfo->setWriteable(info->isAttributes(OptInfoType::kIsWritable));
     sortInfo->setExecutable(info->isAttributes(OptInfoType::kIsExecutable));
