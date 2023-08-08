@@ -986,8 +986,7 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFilePath, filePath());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardParentPath, path());
     auto tmpdfmfileinfo = dfmFileInfo;
-    if (tmpdfmfileinfo)
-        tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, tmpdfmfileinfo->exists());
+    tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, DFile(q->fileUrl()).exists());
     // redirectedFileUrl
     auto symlink = symLinkTarget();
     if (attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
