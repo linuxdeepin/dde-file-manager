@@ -476,14 +476,25 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
     // 创建链接文件
     FileInfoPointer newFromInfo = fromInfo;
     if (followLink) {
+        QStringList pathList;
+        QString pathValue = newFromInfo->urlOf(UrlInfoType::kUrl).path();
+        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator()
+                ? QString(pathValue).left(pathValue.length() -1)
+                : pathValue;
+        pathList.append(pathValue);
         do {
             QUrl newUrl = newFromInfo->urlOf(UrlInfoType::kUrl);
-            newUrl.setPath(newFromInfo->pathOf(PathInfoType::kSymLinkTarget));
-            const FileInfoPointer &symlinkTarget = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+            pathValue = newFromInfo->pathOf(PathInfoType::kSymLinkTarget);
+            pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator()
+                    ? QString(pathValue).left(pathValue.length() -1)
+                    : pathValue;
+            newUrl.setPath(pathValue);
+            FileInfoPointer symlinkTarget = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
 
-            if (!symlinkTarget || !symlinkTarget->exists()) {
+            if (!symlinkTarget || !symlinkTarget->exists() || pathList.contains(pathValue)) {
                 break;
             }
+            pathList.append(pathValue);
 
             newFromInfo = symlinkTarget;
         } while (newFromInfo->isAttributes(OptInfoType::kIsSymLink));
