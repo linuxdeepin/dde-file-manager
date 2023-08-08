@@ -4,11 +4,11 @@
 
 #include <gtest/gtest.h>
 #include <sanitizer/asan_interface.h>
-#include <QCoreApplication>
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
 
