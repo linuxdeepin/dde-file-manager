@@ -12,6 +12,7 @@ set(SRCS
     main.cpp
 )
 
+find_package(PkgConfig REQUIRED)
 find_package(Qt5 COMPONENTS
     Core
     DBus
@@ -36,6 +37,16 @@ target_link_libraries(
     ${DtkWidget_LIBRARIES}
 )
 
+if (NOT DEFINED SYSTEMD_USER_UNIT_DIR)
+    pkg_get_variable(SYSTEMD_USER_UNIT_DIR systemd systemduserunitdir)
+endif()
+
+macro(install_symlink filepath wantsdir)
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/link/${wantsdir}/)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${SYSTEMD_USER_UNIT_DIR}/${filepath} ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath})
+    install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION ${SYSTEMD_USER_UNIT_DIR}/${wantsdir}/)
+endmacro(install_symlink)
+
 # binary
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
@@ -47,6 +58,4 @@ install(FILES dbusservice/org.deepin.filemanager.server.service
 install(FILES dbusservice/dde-filemanager-server.service
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
 
-# xdg-autostart
-install(FILES dbusservice/dde-filemanager-server.desktop
-    DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/xdg/autostart)
+install_symlink(dde-filemanager-server.service dde-session-initialized.target.wants)
