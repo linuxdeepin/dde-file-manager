@@ -1,8 +1,0 @@
-[Desktop Entry]
-Comment=DDE File Manager Server
-Exec=systemctl --user enable dde-filemanager-server.service --now --runtime
-Name=DDE File Manager Server
-NoDisplay=true
-OnlyShowIn=Deepin;DDE
-Type=Application
-X-Deepin-Vendor=user-custom
