@@ -123,6 +123,13 @@ TEST_F(UT_AbstractWorker, testStatisticsFilesSize)
 
     stub.set_lamda(&FileOperationsUtils::isFileOnDisk, []{ __DBG_STUB_INVOKE__ return false;});
     EXPECT_TRUE(worker.statisticsFilesSize());
+    worker.onStatisticsFilesSizeFinish();
+    worker.currentState = AbstractJobHandler::JobState::kStartState;
+    EXPECT_TRUE(worker.stateCheck());
+
+    worker.workData->signalThread = false;
+    worker.retry = true;
+    worker.checkRetry();
 }
 
 TEST_F(UT_AbstractWorker, testsCurrentTaskNotifyAndStop)
@@ -146,9 +153,10 @@ TEST_F(UT_AbstractWorker, testsCurrentTaskNotifyAndStop)
         worker.threadCopyWorker.append(copy);
     }
     stub.set_lamda(&DoCopyFileWorker::pause, []{ __DBG_STUB_INVOKE__ });
+    worker.copyOtherFileWorker.reset(new DoCopyFileWorker(worker.workData));
     worker.pauseAllThread();
 
-    worker.copyOtherFileWorker.reset(new DoCopyFileWorker(worker.workData));
+
     worker.resumeAllThread();
     worker.resumeThread({quintptr(&worker)});
     worker.checkRetry();
@@ -158,7 +166,11 @@ TEST_F(UT_AbstractWorker, testsCurrentTaskNotifyAndStop)
     worker.stopAllThread();
     EXPECT_FALSE(worker.stateCheck());
     worker.onStatisticsFilesSizeUpdate(100);
-
+    stub.set_lamda(VADDR(AbstractWorker, initArgs), []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(worker.doWork());
+    stub.set_lamda(VADDR(AbstractWorker, initArgs), []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(VADDR(AbstractWorker,statisticsFilesSize), []{ __DBG_STUB_INVOKE__ return true;});
+    EXPECT_TRUE(worker.doWork());
 }
 
 TEST_F(UT_AbstractWorker, testsformatFileName)
@@ -201,6 +213,8 @@ TEST_F(UT_AbstractWorker, testSaveOperations)
     worker.completeSourceFiles.append(url);
     worker.jobType = AbstractJobHandler::JobType::kCopyType;
     worker.saveOperations();
+    worker.sourceUrls.append(QUrl());
+    stub.set_lamda(&FileUtils::isTrashFile, []{ __DBG_STUB_INVOKE__ return true;});
     worker.jobType = AbstractJobHandler::JobType::kCutType;
     worker.saveOperations();
     worker.jobType = AbstractJobHandler::JobType::kMoveToTrashType;
@@ -209,6 +223,9 @@ TEST_F(UT_AbstractWorker, testSaveOperations)
     worker.saveOperations();
     worker.jobType = AbstractJobHandler::JobType::kDeleteType;
     worker.saveOperations();
+    worker.jobType = AbstractJobHandler::JobType::kUnknow;
+    worker.saveOperations();
+    worker.jobType = AbstractJobHandler::JobType::kDeleteType;
 
     worker.doOperateWork(AbstractJobHandler::SupportAction::kStopAction);
     EXPECT_EQ(AbstractJobHandler::JobState::kStopState, worker.currentState);
@@ -237,9 +254,8 @@ TEST_F(UT_AbstractWorker, testSaveOperations)
     stub.set_lamda(&DFMBASE_NAMESPACE::FileStatisticsJob::stop, []{ __DBG_STUB_INVOKE__ });
     worker.updateProgressThread.reset(new QThread);
     stub.set_lamda(&QThread::quit, []{ __DBG_STUB_INVOKE__ });
-    stub.set_lamda(&QThread::wait, []{ __DBG_STUB_INVOKE__ return true;});
+    worker.updateProgressTimer.reset(new UpdateProgressTimer);
     worker.stop();
 
     worker.onUpdateProgress();
-
 }

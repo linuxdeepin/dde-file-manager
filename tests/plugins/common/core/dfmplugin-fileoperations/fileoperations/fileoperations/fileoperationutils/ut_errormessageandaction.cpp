@@ -91,23 +91,24 @@ TEST_F(UT_ErrorMessageAndAction, testSupportActions)
 TEST_F(UT_ErrorMessageAndAction, testErrorSrcAndDestString)
 {
     QString sorceMsg, toMsg;
-    EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl(), QUrl(), nullptr, nullptr));
-    EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl(), QUrl(), nullptr, nullptr, AbstractJobHandler::JobErrorType::kOpenError));
     EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl(), QUrl(), &sorceMsg, nullptr, AbstractJobHandler::JobErrorType::kOpenError));
-    EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl(), QUrl(), &sorceMsg, nullptr, AbstractJobHandler::JobErrorType::kOpenError));
+    EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl(), QUrl(), &sorceMsg, &toMsg, AbstractJobHandler::JobErrorType::kDirectoryExistsError));
+    EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl(), QUrl(), &sorceMsg, &toMsg, AbstractJobHandler::JobErrorType::kDirectoryExistsError));
 
     EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl(), QUrl(), &sorceMsg, &toMsg, AbstractJobHandler::JobErrorType::kOpenError));
-    EXPECT_TRUE(sorceMsg.isEmpty());
-    EXPECT_TRUE(toMsg.isEmpty());
+    EXPECT_FALSE(sorceMsg.isEmpty());
+    EXPECT_FALSE(toMsg.isEmpty());
+    QString srcmsg;
+    ErrorMessageAndAction::srcAndDestString(QUrl(), QUrl(), &srcmsg, nullptr, AbstractJobHandler::JobType::kCopyType, AbstractJobHandler::JobErrorType::kDirectoryExistsError);
 
     EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl("file:///home/kjfsdakjdfjkashdjkfhasjkdfhajksdfjaksdfhjksdhnfkjsdfhjksadjfhaksjdfhkjs"),
-                                                                         QUrl(), &sorceMsg, &toMsg, AbstractJobHandler::JobErrorType::kOpenError));
+                                                                         QUrl(), &sorceMsg, &toMsg, AbstractJobHandler::JobErrorType::kDirectoryExistsError));
     EXPECT_NO_FATAL_FAILURE(ErrorMessageAndAction::errorSrcAndDestString(QUrl("file:///home/kjfsdakjdfjkashdjkfhasjkdfhajksdfjaksdfhjksdhnfkjsdfhjksadjfhaksjdfhkjs"),
-                                                                         QUrl("file:///home/kjfsdakjdfjkashdjkfhasjkdfhajksdfjaksdfhjksdhnfkjsdfhjksadjfhaksjdfhkjs"),
-                                                                         &sorceMsg, &toMsg, AbstractJobHandler::JobErrorType::kOpenError));
+                                                                         QUrl("file:///home/kjfsdakjdfjkashdjkfhasjkdfhajksdfjaksdfhjksdhnfkjsdfhjksadjfhaksjdfhkjs/tees"),
+                                                                         &sorceMsg, &toMsg, AbstractJobHandler::JobErrorType::kDirectoryExistsError));
 
-    EXPECT_TRUE(sorceMsg.isEmpty());
-    EXPECT_TRUE(toMsg.isEmpty());
+    EXPECT_FALSE(sorceMsg.isEmpty());
+    EXPECT_FALSE(toMsg.isEmpty());
 }
 
 TEST_F(UT_ErrorMessageAndAction, testErrorToString)
@@ -124,6 +125,7 @@ TEST_F(UT_ErrorMessageAndAction, testErrorToString)
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kCreateParentDirError).endsWith(url.path()));
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kRemoveError).endsWith(url.path()));
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kDeleteFileError).endsWith(url.path()));
+    EXPECT_TRUE(!ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kFileMoveToTrashError).isEmpty());
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kRenameError).endsWith(url.path()));
     EXPECT_TRUE(!ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kNonexistenceError).isEmpty());
     EXPECT_TRUE(!ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kFileSizeTooBigError).isEmpty());
@@ -138,6 +140,7 @@ TEST_F(UT_ErrorMessageAndAction, testErrorToString)
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash) == QObject::tr("Failed to parse the url of trash"));
     EXPECT_FALSE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile) == QObject::tr("Failed to obtain the trash original file"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kUnknowError).isEmpty());
+    EXPECT_TRUE(ErrorMessageAndAction::errorToString(url, AbstractJobHandler::JobErrorType::kDfmIoError) == QObject::tr("Copy or Cut File failed!"));
 }
 
 TEST_F(UT_ErrorMessageAndAction, testErrorToStringByCause)
@@ -154,6 +157,7 @@ TEST_F(UT_ErrorMessageAndAction, testErrorToStringByCause)
     EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kCreateParentDirError, "testerror").endsWith("testerror"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kRemoveError, "testerror").endsWith("testerror"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kDeleteFileError, "testerror").endsWith("testerror"));
+    EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kFileMoveToTrashError, "testerror").endsWith("testerror"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kRenameError, "testerror").endsWith("testerror"));
     EXPECT_TRUE(!ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kNonexistenceError, "testerror").isEmpty());
     EXPECT_TRUE(!ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kFileSizeTooBigError, "testerror").isEmpty());
@@ -165,4 +169,6 @@ TEST_F(UT_ErrorMessageAndAction, testErrorToStringByCause)
     EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kNotSupportedError, "testerror") == QObject::tr("The action is not supported"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kSymlinkError, "testerror").endsWith("testerror"));
     EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kUnknowError, "testerror").isEmpty());
+    EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kDfmIoError, "testerror").endsWith("testerror"));
+    EXPECT_TRUE(ErrorMessageAndAction::errorToStringByCause(url, AbstractJobHandler::JobErrorType::kDirectoryExistsError, "testerror").endsWith("already exists"));
 }

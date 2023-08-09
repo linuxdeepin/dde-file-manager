@@ -10,6 +10,7 @@
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <gtest/gtest.h>
 
@@ -134,6 +135,43 @@ TEST_F(UT_DoCopyFileWorker, testDoCopyFilePractically)
     QProcess::execute("rm sourceUrl.txt targetUrl.txt");
 }
 
+TEST_F(UT_DoCopyFileWorker, testDoDfmioFileCopy)
+{
+    QSharedPointer<WorkerData> data(new WorkerData);
+    DoCopyFileWorker worker(data);
+
+    worker.stop();
+    auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
+    auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
+    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
+    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    EXPECT_FALSE(worker.doDfmioFileCopy(sorceInfo, targetInfo, nullptr));
+
+    bool skip{false};
+    worker.resume();
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DoCopyFileWorker::readAheadSourceFile, []{ __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&DoCopyFileWorker::stateCheck, []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(worker.doDfmioFileCopy(sorceInfo, targetInfo, &skip));
+
+    stub.set_lamda(&DoCopyFileWorker::stateCheck, []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&FileUtils::isMtpFile, []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&DOperator::copyFile, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[]{
+        __DBG_STUB_INVOKE__
+        return AbstractJobHandler::SupportAction::kSkipAction;
+    });
+    stub.set_lamda(&DoCopyFileWorker::actionOperating, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoCopyFileWorker::syncBlockFile, []{ __DBG_STUB_INVOKE__ });
+    EXPECT_FALSE(worker.doDfmioFileCopy(sorceInfo, targetInfo, &skip));
+
+    DoCopyFileWorker::ProgressData *datatt {new DoCopyFileWorker::ProgressData()};
+    datatt->data = worker.workData;
+    datatt->copyFile = sorceUrl;
+    DoCopyFileWorker::progressCallback(0, 0, datatt);
+    delete datatt;
+}
+
 TEST_F(UT_DoCopyFileWorker, testActionOperating)
 {
     QSharedPointer<WorkerData> data(new WorkerData);
@@ -166,10 +204,11 @@ TEST_F(UT_DoCopyFileWorker, testDoHandleErrorAndWait)
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
     worker.stop();
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FileUtils::isSameFile, []{__DBG_STUB_INVOKE__ return false;});
     EXPECT_EQ(worker.doHandleErrorAndWait(sorceUrl, targetUrl, AbstractJobHandler::JobErrorType::kNoSourceError),
               AbstractJobHandler::SupportAction::kCancelAction);
 
-    stub_ext::StubExt stub;
     stub.set_lamda(static_cast<bool(QWaitCondition::*)(QMutex *, unsigned long )>(&QWaitCondition::wait), []{ __DBG_STUB_INVOKE__ return false;});
     EXPECT_FALSE(worker.stateCheck());
 

@@ -136,6 +136,7 @@ TEST_F(UT_FileOperateBaseWorker, testCheckFileSize)
     worker.workData.reset(new WorkerData);
     WorkerData::BlockFileCopyInfo info;
     WorkerData::BlockFileCopyInfo info2(info);
+    info.buffer = new char[10];
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
     EXPECT_FALSE(worker.checkFileSize(5l * 1024 * 1024 * 1024, url, url, &skip));
 
@@ -297,6 +298,223 @@ TEST_F(UT_FileOperateBaseWorker, testCopyAndDeleteFile)
     stub.set_lamda(&DoCopyFileWorker::doDfmioFileCopy, []{ __DBG_STUB_INVOKE__ return true;});
     EXPECT_TRUE(worker.copyAndDeleteFile(fromInfo, fromInfo, fromInfo, &skip));
 
+}
+
+TEST_F(UT_FileOperateBaseWorker, testDoCheckFile)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath() + QDir::separator() + "testDoCheckFile.txt");
+    auto fromInfo = InfoFactory::create<FileInfo>(url);
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
+    FileInfoPointer newInfo;
+    EXPECT_FALSE(worker.doCheckFile(nullptr, nullptr, QString(), newInfo, nullptr));
+
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, nullptr, QString(), newInfo, nullptr));
+
+    stub.set_lamda(VADDR(SyncFileInfo, exists), []{ __DBG_STUB_INVOKE__ return true;});
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, nullptr, QString(), newInfo, nullptr));
+
+    int index = 0;
+    stub.set_lamda(VADDR(SyncFileInfo, exists), [&index]{ __DBG_STUB_INVOKE__ index++; return index > 1;});
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), newInfo, nullptr));
+
+    stub.set_lamda(VADDR(SyncFileInfo, exists), []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(VADDR(SyncFileInfo, fileType), []{ __DBG_STUB_INVOKE__ return FileInfo::FileType::kSocketFile;});
+    bool skip(false);
+    worker.workData.reset(new WorkerData);
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), newInfo, &skip));
+
+    stub.set_lamda(VADDR(SyncFileInfo, fileType), []{ __DBG_STUB_INVOKE__ return FileInfo::FileType::kDocuments;});
+    index = 0;
+    stub.set_lamda(VADDR(SyncFileInfo, exists), [&index]{ __DBG_STUB_INVOKE__ index++; return index < 3;});
+    stub.set_lamda(&FileUtils::isTrashFile, []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&FileOperateBaseWorker::doCheckNewFile, []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), newInfo, &skip));
+}
+
+TEST_F(UT_FileOperateBaseWorker, testCreateSystemLink)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath() + QDir::separator());
+    worker.workData.reset(new WorkerData);
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    bool skip(false);
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FileOperateBaseWorker::checkAndCopyFile, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&FileOperateBaseWorker::checkAndCopyDir, []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(worker.createSystemLink(fileInfo, nullptr, true, true, &skip));
+
+    stub.set_lamda(VADDR(SyncFileInfo,isAttributes), [](SyncFileInfo *,OptInfoType type){ __DBG_STUB_INVOKE__
+        if (type == OptInfoType::kIsFile) {
+            return true;
+        }
+        return false;});
+    EXPECT_FALSE(worker.createSystemLink(fileInfo, nullptr, true, true, &skip));
+
+    stub.set_lamda(&LocalFileHandler::createSystemLink, []{ __DBG_STUB_INVOKE__ return true;});
+    EXPECT_TRUE(worker.createSystemLink(fileInfo, fileInfo, true, false, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
+    stub.set_lamda(&LocalFileHandler::createSystemLink, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&LocalFileHandler::errorString, []{ __DBG_STUB_INVOKE__ return QString();});
+    EXPECT_FALSE(worker.createSystemLink(fileInfo, fileInfo, true, false, &skip));
+}
+bool createNewTargetInfoFunc(FileOperateBaseWorker *&, const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+                         FileInfoPointer &newTargetInfo, const QUrl &fileNewUrl,
+                         bool *skip, bool isCountSize = false){
+    newTargetInfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(QDir::currentPath()));
+    return false;
+}
+
+TEST_F(UT_FileOperateBaseWorker, testDoCheckNewFile)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath());
+    worker.workData.reset(new WorkerData);
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    bool skip(false);
+    stub_ext::StubExt stub;
+    FileInfoPointer newInfo(nullptr);
+    QString fileBaseName;
+    stub.set_lamda(&FileOperateBaseWorker::createNewTargetUrl, []{ __DBG_STUB_INVOKE__ return QUrl();});
+    stub.set_lamda(&FileOperateBaseWorker::createNewTargetInfo, []{ __DBG_STUB_INVOKE__ return true;});
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::createNewTargetInfo, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&FileOperationsUtils::isAncestorUrl, []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kNoAction;});
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set(ADDR(FileOperateBaseWorker, createNewTargetInfo), createNewTargetInfoFunc);
+    stub.set_lamda(&FileOperationsUtils::isAncestorUrl, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kReplaceAction;});
+    stub.set_lamda(&FileOperateBaseWorker::doActionReplace, []{ __DBG_STUB_INVOKE__ return QVariant();});
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doActionReplace, []{ __DBG_STUB_INVOKE__ return QVariant(true);});
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kCoexistAction;});
+    stub.set_lamda(&FileUtils::nonExistFileName, []{ __DBG_STUB_INVOKE__ return QString();});
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileUtils::nonExistFileName, []{ __DBG_STUB_INVOKE__ return QString("pp");});
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kMergeAction;});
+    stub.set_lamda(&FileOperateBaseWorker::doActionMerge, []{ __DBG_STUB_INVOKE__ return QVariant();});
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doActionMerge, []{ __DBG_STUB_INVOKE__ return QVariant(true);});
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kCancelAction;});
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kNoAction;});
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+}
+
+TEST_F(UT_FileOperateBaseWorker, testCheckAndCopyFile)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath());
+    worker.workData.reset(new WorkerData);
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    bool skip(false);
+    stub_ext::StubExt stub;
+    stub.set_lamda(&FileOperateBaseWorker::checkFileSize, []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(worker.checkAndCopyFile(fileInfo, fileInfo, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::checkFileSize, []{ __DBG_STUB_INVOKE__ return true;});
+    worker.jobType = AbstractJobHandler::JobType::kCutType;
+    stub.set_lamda(&FileOperateBaseWorker::doCopyOtherFile, []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(worker.checkAndCopyFile(fileInfo, fileInfo, &skip));
+
+    worker.jobType = AbstractJobHandler::JobType::kCopyType;
+    worker.isSourceFileLocal = true;
+    worker.isTargetFileLocal = true;
+    worker.workData->signalThread = false;
+    stub.set_lamda(VADDR(SyncFileInfo, size), []{ __DBG_STUB_INVOKE__ return 100 * 1024 *1024;});
+    stub.set_lamda(&FileOperateBaseWorker::doCopyLocalBigFile, []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(worker.checkAndCopyFile(fileInfo, fileInfo, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doCopyLocalFile, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(VADDR(SyncFileInfo, size), []{ __DBG_STUB_INVOKE__ return 1 * 1024 *1024;});
+    EXPECT_FALSE(worker.checkAndCopyFile(fileInfo, fileInfo, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doCopyOtherFile, []{ __DBG_STUB_INVOKE__ return false;});
+    worker.workData->signalThread = true;
+    EXPECT_FALSE(worker.checkAndCopyFile(fileInfo, fileInfo, &skip));
+}
+
+TEST_F(UT_FileOperateBaseWorker, testCheckAndCopyDir)
+{
+    FileOperateBaseWorker worker;
+    QUrl url = QUrl::fromLocalFile(QDir::currentPath());
+    worker.workData.reset(new WorkerData);
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    bool skip(false);
+    stub_ext::StubExt stub;
+    auto toUrl = QUrl::fromLocalFile(QDir::currentPath() + QDir::separator() + "testCheckAndCopyDir");
+    auto toInfo = InfoFactory::create<FileInfo>(toUrl);
+    stub.set_lamda(&LocalFileHandler::mkdir, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&LocalFileHandler::errorString, []{ __DBG_STUB_INVOKE__ return QString();});
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
+    worker.localFileHandler.reset(new LocalFileHandler);
+    EXPECT_FALSE(worker.checkAndCopyDir(fileInfo, toInfo, &skip));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kNoAction;});
+    worker.workData->jobFlags |= AbstractJobHandler::JobFlag::kCopyToSelf;
+    EXPECT_TRUE(worker.checkAndCopyDir(fileInfo, toInfo, &skip));
+
+    stub.set_lamda(&LocalFileHandler::mkdir, []{ __DBG_STUB_INVOKE__ return true;});
+    DirIteratorFactory::instance().constructList.clear();
+    DirIteratorFactory::instance().constructAguList.clear();
+    EXPECT_FALSE(worker.checkAndCopyDir(fileInfo, fileInfo, &skip));
+
+    DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
+    stub.set_lamda(VADDR(LocalDirIterator, hasNext), []{ __DBG_STUB_INVOKE__ return true;});
+    worker.stop();
+    EXPECT_FALSE(worker.checkAndCopyDir(fileInfo, fileInfo, &skip));
+
+    worker.resume();
+    stub.set_lamda(&FileOperateBaseWorker::doCopyFile, []{ __DBG_STUB_INVOKE__ return false; });
+    skip = false;
+    EXPECT_FALSE(worker.checkAndCopyDir(fileInfo, fileInfo, &skip));
+
+    int index = 0;
+    stub.set_lamda(VADDR(LocalDirIterator, hasNext), [&index]{ __DBG_STUB_INVOKE__ index++; return index < 2;});
+    skip = true;
+    stub.set_lamda(&FileUtils::isMtpFile, []{ __DBG_STUB_INVOKE__ return false; });
+    EXPECT_TRUE(worker.checkAndCopyDir(fileInfo, fileInfo, &skip));
+
+    index = 0;
+    worker.isTargetFileLocal = true;
+    worker.isSourceFileLocal = true;
+    EXPECT_TRUE(worker.checkAndCopyDir(fileInfo, fileInfo, &skip));
+
+    worker.workData->jobFlags |= AbstractJobHandler::JobFlag::kCountProgressCustomize;
+    worker.initCopyWay();
 }
 
 TEST_F(UT_FileOperateBaseWorker, testTrashInfo)

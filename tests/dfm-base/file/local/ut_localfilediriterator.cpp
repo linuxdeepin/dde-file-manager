@@ -2,10 +2,17 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef UT_ABSTRACTFILEWATCHER
-#define UT_ABSTRACTFILEWATCHER
+#ifndef UT_LOCALFILEWATCHER
+#define UT_LOCALFILEWATCHER
 
+#include <stubext.h>
 #include <dfm-base/file/local/localdiriterator.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
+#include <dfm-base/file/local/private/localdiriterator_p.h>
+
+#include <dfm-io/dfileinfo.h>
 
 #include <QDir>
 
@@ -44,6 +51,14 @@ TEST_F(UT_LocalFileDirIterator, testLocalFileIterator)
     auto fileUrl = QUrl::fromLocalFile(url.path() + QDir::separator() + "testAsyncFileInfo.txt");
     EXPECT_EQ(fileUrl, iterator->next());
     EXPECT_TRUE(!iterator->fileInfo().isNull());
+    stub_ext::StubExt stub;
+    stub.set_lamda(&dfmio::DFileInfo::attribute, []{ __DBG_STUB_INVOKE__ return ".testOOOOOO.txt";});
+    stub.set_lamda(&FileUtils::isLocalDevice, []{ __DBG_STUB_INVOKE__ return false;});
+    typedef FileInfoPointer (*TransfromInfo)(const QString &, FileInfoPointer);
+    stub.set_lamda(static_cast<TransfromInfo>(&dfmbase::InfoFactory::transfromInfo), []{ __DBG_STUB_INVOKE__ return nullptr;});
+    stub.set_lamda(&AsyncFileInfo::cacheAsyncAttributes, []{ __DBG_STUB_INVOKE__ });
+    EXPECT_TRUE(iterator->fileInfo().isNull());
+
     EXPECT_EQ(fileUrl, iterator->fileUrl());
     EXPECT_EQ("testAsyncFileInfo.txt", iterator->fileName());
     EXPECT_EQ(url, iterator->url());
@@ -72,6 +87,30 @@ TEST_F(UT_LocalFileDirIterator, testLocalFileIterator)
     future->deleteLater();
 
     QProcess::execute("fm -rf ./testAsyncFileInfo");
+}
+
+TEST_F(UT_LocalFileDirIterator, testLocalFileIteratorOther)
+{
+    LocalDirIterator iterator(QUrl("recent:///ddd.txt"));
+
+    EXPECT_FALSE(iterator.initIterator());
+
+    iterator.d->dfmioDirIterator = nullptr;
+    EXPECT_FALSE(iterator.hasNext());
+    EXPECT_FALSE(iterator.url().isValid());
+    QVariantMap args;
+    iterator.setArguments(args);
+    EXPECT_TRUE(iterator.sortFileInfoList().isEmpty());
+    EXPECT_TRUE(iterator.oneByOne());
+    EXPECT_FALSE(iterator.initIterator());
+    EXPECT_TRUE(iterator.asyncIterator() == nullptr);
+    stub_ext::StubExt stub;
+    stub.set_lamda(VADDR(LocalDirIterator, fileUrl), []{ __DBG_STUB_INVOKE__ return QUrl();});
+    EXPECT_TRUE(iterator.fileName().isEmpty());
+    stub.set_lamda(VADDR(LocalDirIterator, fileUrl), []{ __DBG_STUB_INVOKE__ return QUrl("file:////");});
+    EXPECT_TRUE(iterator.fileName().isEmpty());
+    stub.set_lamda(VADDR(LocalDirIterator, fileUrl), []{ __DBG_STUB_INVOKE__ return QUrl("file:///tttt/");});
+    EXPECT_TRUE(iterator.fileName() == QString("tttt"));
 }
 
 #endif
