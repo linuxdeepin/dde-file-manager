@@ -679,7 +679,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
         return;
     }
 
-    static QMap<QString, QString> defaultPort { { "smb", "139" },
+    static QMap<QString, QString> defaultPort { { "smb", "445" },
                                                 { "ftp", "21" },
                                                 { "sftp", "22" } };
     QString host = u.host();

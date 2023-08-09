@@ -116,7 +116,7 @@ bool DAttachedProtocolDevice::parseHostAndPort(QString &host, QString &port)
             } else if (deviceId.startsWith("sftp")) {
                 port = "22";
             } else {
-                port = "139";
+                port = "445";
             }
         } else {
             port = QString::number(nPort);
@@ -133,7 +133,7 @@ bool DAttachedProtocolDevice::parseHostAndPort(QString &host, QString &port)
         host = match.captured("host");
         port = match.captured("port");
         if (port.isEmpty())
-            port = "139";
+            port = "445";
         return true;
     }
 
