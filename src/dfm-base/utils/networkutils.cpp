@@ -71,7 +71,7 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QString &port, std
 
 bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
 {
-    static constexpr char kSmbPort[] { "139" };
+    static constexpr char kSmbPort[] { "445" };
     static constexpr char kFtpPort[] { "21" };
     static constexpr char kSftpPort[] { "22" };
 
