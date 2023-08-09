@@ -72,7 +72,6 @@ public:
 
     void stopTraversWork();
 
-    void setIndexActive(const QModelIndex &index, bool enable = true);
     void updateFile(const QUrl &url);
 
     Qt::SortOrder sortOrder() const;
