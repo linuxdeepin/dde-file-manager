@@ -575,15 +575,6 @@ QString FileViewModel::roleDisplayString(int role) const
     }
 }
 
-void FileViewModel::setIndexActive(const QModelIndex &index, bool enable)
-{
-    if (filterSortWorker.isNull())
-        return;
-
-    auto url = filterSortWorker->mapToIndex(index.row());
-    FileDataManager::instance()->setFileActive(dirRootUrl, url, enable);
-}
-
 void FileViewModel::updateFile(const QUrl &url)
 {
     Q_EMIT requestUpdateFile(url);
