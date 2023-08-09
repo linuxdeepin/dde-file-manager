@@ -268,6 +268,7 @@ void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
         return;
     }
 
+    qInfo() << "ignored/hidden disks:" << hiddenDisks;
     for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
         auto item = model->items.at(i);
         this->setRowHidden(i, hiddenDisks.contains(item.url));
