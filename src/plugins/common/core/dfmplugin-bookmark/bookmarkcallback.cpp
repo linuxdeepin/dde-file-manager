@@ -13,6 +13,9 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-framework/event/event.h>
+
+#include <dfm-io/dfile.h>
+
 #include <DMenu>
 
 #include <QApplication>
@@ -87,7 +90,7 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     }
 
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    if (info && info->exists() && info->isAttributes(OptInfoType::kIsDir)) {
+    if (info && dfmio::DFile(url).exists() && info->isAttributes(OptInfoType::kIsDir)) {
         BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         return;
     } else if (DeviceUtils::isSamba(url) || DeviceUtils::isFtp(url)) {
