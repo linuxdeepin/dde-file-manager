@@ -291,8 +291,9 @@ void FilePreviewDialog::switchToPage(int index)
                 preview->contentWidget()->adjustSize();
                 int newPerviewWidth = preview->contentWidget()->size().width();
                 int newPerviewHeight = preview->contentWidget()->size().height();
-                resize(newPerviewWidth, newPerviewHeight + statusBar->height());
+                setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
                 playCurrentPreviewFile();
+                moveToCenter();
                 return;
             }
         }
@@ -355,8 +356,9 @@ void FilePreviewDialog::switchToPage(int index)
     preview->contentWidget()->adjustSize();
     int newPerviewWidth = preview->contentWidget()->size().width();
     int newPerviewHeight = preview->contentWidget()->size().height();
-    resize(newPerviewWidth, newPerviewHeight + statusBar->height());
+    setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
     updateTitle();
+    moveToCenter();
 }
 
 void FilePreviewDialog::previousPage()
