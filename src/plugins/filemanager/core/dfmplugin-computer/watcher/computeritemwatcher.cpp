@@ -655,7 +655,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
 
     cacheItem(data);
 
-    if (needSidebarItem)
+    if (!disksHiddenByDConf().contains(devUrl) && needSidebarItem)
         addSidebarItem(info);
 }
 
