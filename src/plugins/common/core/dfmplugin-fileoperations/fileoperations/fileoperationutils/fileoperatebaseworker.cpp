@@ -553,7 +553,6 @@ bool FileOperateBaseWorker::doCheckNewFile(const FileInfoPointer &fromInfo, cons
         if (action != AbstractJobHandler::SupportAction::kEnforceAction) {
             setSkipValue(skip, action);
             if (skip && *skip)
-
                 workData->skipWriteSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? workData->dirSize : fromInfo->size();
             return false;
         }
@@ -684,7 +683,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
         const QUrl &url = iterator->next();
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         bool ok = doCopyFile(info, toInfo, skip);
-        if (!ok && !skip) {
+        if (!ok && (!skip || !*skip)) {
             return false;
         }
     }

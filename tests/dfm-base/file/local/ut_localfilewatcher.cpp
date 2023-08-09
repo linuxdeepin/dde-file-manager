@@ -2,10 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef UT_ABSTRACTFILEWATCHER
-#define UT_ABSTRACTFILEWATCHER
+#ifndef UT_LOCALFILEWATCHER
+#define UT_LOCALFILEWATCHER
 
+#include <stubext.h>
 #include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/file/local/private/localfilewatcher_p.h>
+
+#include <dfm-io/dwatcher.h>
 
 #include <QDir>
 
@@ -52,6 +56,14 @@ TEST_F(UT_LocalFileWatcher, testLocalFileWatcher)
     EXPECT_TRUE(watcher->stopWatcher());
     EXPECT_FALSE(watcher->stopWatcher());
 
+    LocalFileWatcherPrivate * watherDptr = static_cast<LocalFileWatcherPrivate *>(watcher->d.data());
+    stub_ext::StubExt stub;
+    stub.set_lamda(&dfmio::DWatcher::start, []{ __DBG_STUB_INVOKE__ return false;});
+    EXPECT_FALSE(watherDptr->start());
+    watherDptr->watcher = nullptr;
+
+    EXPECT_FALSE(watherDptr->start());
+    EXPECT_FALSE(watherDptr->stop());
 }
 
 #endif

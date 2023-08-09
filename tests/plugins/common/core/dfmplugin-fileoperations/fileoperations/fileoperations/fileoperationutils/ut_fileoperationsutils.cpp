@@ -13,6 +13,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fts.h>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -44,6 +45,11 @@ TEST_F(UT_FileOperationsUtils, testFileOperationsUtils)
     EXPECT_TRUE(FileOperationsUtils::isAncestorUrl(url, fileUrl));
     EXPECT_TRUE(!FileOperationsUtils::isFileOnDisk(QUrl()));
     EXPECT_TRUE(FileOperationsUtils::isFileOnDisk(url));
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(fts_open, []{ __DBG_STUB_INVOKE__ return nullptr;});
+    EXPECT_FALSE(FileOperationsUtils::isFilesSizeOutLimit(fileUrl, 1024));
+    EXPECT_TRUE(FileOperationsUtils::statisticsFilesSize({url}, true)->allFiles.isEmpty());
 }
 
 TEST_F(UT_FileOperationsUtils, testUpdateProgressTimer)

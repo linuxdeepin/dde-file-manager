@@ -27,10 +27,6 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringL
     dfmioDirIterator.reset(new DFMIO::DEnumerator(urlReally, nameFilters,
                                                   static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
                                                   static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
-    if (!dfmioDirIterator) {
-        qWarning("Failed dfm-io use factory create enumerator");
-        abort();
-    }
 }
 
 LocalDirIteratorPrivate::~LocalDirIteratorPrivate()
@@ -59,11 +55,11 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo()
     }
 
     auto infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
-    infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-    infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
-    infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
 
     if (infoTrans) {
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
         emit InfoCacheController::instance().removeCacheFileInfo({url});
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     } else {

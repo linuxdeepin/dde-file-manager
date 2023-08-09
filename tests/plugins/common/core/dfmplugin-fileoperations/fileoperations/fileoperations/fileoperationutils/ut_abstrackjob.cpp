@@ -42,17 +42,40 @@ TEST_F(UT_AbstractJob, testAbstractJob)
     job.setJobArgs(handle, {});
 
     job.operateAation(AbstractJobHandler::SupportAction::kStartAction);
+    job.operateAation(AbstractJobHandler::SupportAction::kResumAction);
     job.operateAation(AbstractJobHandler::SupportAction::kCancelAction);
 
     JobInfoPointer info(new QMap<quint8, QVariant>);
     job.errorQueue.enqueue(info);
+    job.errorQueue.enqueue(info);
 
     job.operateAation(AbstractJobHandler::SupportAction::kSkipAction);
-    info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, quintptr(job.doWorker.data()));
 
     job.errorQueue.enqueue(info);
     job.errorQueue.enqueue(info);
+
+    job.operateAation(AbstractJobHandler::SupportAction::kRetryAction);
+    info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, quintptr(job.doWorker.data()));
+
     job.handleError(info);
+    job.errorQueue.enqueue(info);
+    JobInfoPointer info1(new QMap<quint8, QVariant>);
+    info1->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, quintptr(job.doWorker.data()));
+    info1->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(AbstractJobHandler::JobErrorType::kReadError));
+    job.handleError(info);
+    job.handleError(info1);
+
+    JobInfoPointer info2(new QMap<quint8, QVariant>);
+    info2->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, quintptr(job.doWorker.data() - 1));
+    info2->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(AbstractJobHandler::JobErrorType::kReadError));
+    job.handleError(info2);
+
+    job.errorQueue.clear();
+    job.handleError(info2);
+    job.errorQueue.clear();
+    job.errorQueue.enqueue(info);
+    job.errorQueue.enqueue(info);
+
     EXPECT_EQ(job.errorQueue.size(), 2);
 
     job.handleRetryErrorSuccess(quintptr(job.doWorker.data()));
