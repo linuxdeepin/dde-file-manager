@@ -39,7 +39,9 @@ public Q_SLOTS:
     void onEditorTextChanged(const QString &text, const FileInfoPointer &info) const;
 
 private:
-    void drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const;
+    void drawIcon(const QStyleOptionViewItem &option, QPainter *painter,
+                  const QRect &itemRect, bool isEjectable, QSize iconSize, QIcon::Mode iconMode, QPalette::ColorGroup cg) const;
+
     void drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const;
     void drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const;
 

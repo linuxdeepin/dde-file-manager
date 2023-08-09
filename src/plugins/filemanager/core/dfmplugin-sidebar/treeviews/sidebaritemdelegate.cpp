@@ -140,32 +140,41 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
             drawMouseHoverExpandButton(painter, r, separatorItem->isExpanded());
     }
 
-    // Draw item icon
+    QPalette::ColorGroup cg = (opt.state & QStyle::State_Enabled)
+            ? QPalette::Normal
+            : QPalette::Disabled;
+
+    if (cg == QPalette::Normal && !(opt.state & QStyle::State_Active))
+        cg = QPalette::Inactive;
+
+        // Draw item icon
 #ifdef DTKWIDGET_CLASS_DSizeMode
     QSize iconSize(DSizeModeHelper::element(QSize(kCompactModeIcon, kCompactModeIcon), QSize(kItemIconSize, kItemIconSize)));
 #else
     QSize iconSize(kItemIconSize, kItemIconSize);
 #endif
-    QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
-    QIcon::Mode iconMode = (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted)) ? QIcon::Mode::Selected : QIcon::Mode::Normal;
-    if (iconMode != QIcon::Mode::Selected && !opt.widget->isActiveWindow())
-        iconMode = QIcon::Disabled;
-    bool isEjectable = false;
-    SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
+
+    SideBarItem *sidebarItem { static_cast<SideBarItem *>(item) };
+    bool isEjectable { false };
     if (sidebarItem) {
-        ItemInfo info = sidebarItem->itemInfo();
+        ItemInfo info { sidebarItem->itemInfo() };
         isEjectable = info.isEjectable;
-        QIcon icon = item->icon();
-        drawIcon(opt, painter, icon, itemRect, iconMode, isEjectable);
     }
+    QIcon::Mode iconMode = QIcon::Normal;
+    if (!(option.state.testFlag(QStyle::State_Enabled)))
+        iconMode = QIcon::Disabled;
+    if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
+        iconMode = QIcon::Selected;
+    drawIcon(opt, painter, itemRect, isEjectable, iconSize, iconMode, cg);
 
     // Draw item text
+    QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
     QFontMetrics metricsLabel(option.widget->font());
     painter->setPen(separatorItem ? Qt::gray : qApp->palette().color(QPalette::ColorRole::Text));
-    if (iconMode == QIcon::Disabled)
-        painter->setPen(Qt::gray);
-    if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
-        painter->setPen("#ffffff");
+    if (iconMode == QIcon::Selected)
+        painter->setPen(opt.widget->isActiveWindow() ? Qt::white : opt.palette.color(cg, QPalette::HighlightedText));
+    if (iconMode != QIcon::Selected && !opt.widget->isActiveWindow())
+        painter->setPen(opt.palette.color(cg, QPalette::Text));
 
     QString text = index.data().toString();
     qreal baseValue = itemRect.width() - iconSize.width() - 2 * kItemMargin;
@@ -354,32 +363,41 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInf
     }
 }
 
-void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const
+void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QRect &itemRect, bool isEjectable, QSize iconSize, QIcon::Mode iconMode, QPalette::ColorGroup cg) const
 {
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    QSize iconSize(DSizeModeHelper::element(QSize(kCompactModeIcon, kCompactModeIcon), QSize(kItemIconSize, kItemIconSize)));
-#else
-    QSize iconSize(kItemIconSize, kItemIconSize);
-#endif
-    QIcon::State state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
-    QStyle *style = option.widget ? option.widget->style() : QApplication::style();
+
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
+    } else {
+        painter->setPen(option.palette.color(cg, QPalette::Text));
+    }
 
     qreal iconDx = 2 * kItemMargin;
     qreal iconDy = (itemRect.height() - iconSize.height()) / 2;
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
+    QRect iconRect(iconTopLeft.toPoint(), iconBottomRight.toPoint());
 
-    auto px = icon.pixmap(iconSize, iconMode, state);
-    style->drawItemPixmap(painter, QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), Qt::AlignCenter, px);
+    QIcon::State state = (option.state & QStyle::State_Open) ? QIcon::On : QIcon::Off;
+    option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
 
+    // draw ejectable device icon
     if (isEjectable) {
-        QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
+        QIcon::Mode pixmapMode { (iconMode == QIcon::Selected) ? QIcon::Selected : QIcon::Normal };
+        if (!option.widget->isActiveWindow()) {
+            auto appTheme = DGuiApplicationHelper::toColorType(option.palette);
+            if (appTheme == DGuiApplicationHelper::DarkType && pixmapMode == QIcon::Selected)
+                pixmapMode = QIcon::Disabled;
+            if (pixmapMode != QIcon::Selected)
+                pixmapMode = QIcon::Disabled;
+        }
 
+        QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
         QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
         QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
         QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
-
-        auto px = ejectIcon.pixmap(iconSize, iconMode, state);
+        auto px { ejectIcon.pixmap(iconSize, pixmapMode, state) };
+        QStyle *style { option.widget ? option.widget->style() : QApplication::style() };
         style->drawItemPixmap(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignCenter, px);
     }
 }
