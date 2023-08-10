@@ -17,6 +17,8 @@
 #include <QPointer>
 #include <QRegularExpression>
 
+#include <libmount.h>
+
 DFM_MOUNT_USE_NS
 
 DeviceWatcherLite::DeviceWatcherLite(QObject *parent)
@@ -86,6 +88,9 @@ QStringList DeviceWatcherLite::allMountedRemovableBlocks()
             continue;
         // ignore blocks not mounted under /media/
         if (!devPtr->mountPoint().startsWith("/media/"))
+            continue;
+
+        if (isSiblingOfRoot(devPtr))
             continue;
 
         mountedRemovable.append(dev);
@@ -242,4 +247,46 @@ void DeviceWatcherLite::removeDevice(bool unmountDone, QSharedPointer<dfmmount::
             doPowerOff();
         }
     }
+}
+
+bool DeviceWatcherLite::isSiblingOfRoot(QSharedPointer<DBlockDevice> blkDev)
+{
+    static QString rootDrive;
+    static std::once_flag flg;
+    std::call_once(flg, [&rootDrive, this] {
+        const QString &rootDev = getMountInfo("/", kSearchByDevice);
+        const QString &rootDevId = "/org/freedesktop/UDisks2/block_devices/" + rootDev.mid(5);
+        QSharedPointer<DBlockDevice> rootBlk = createBlockDevicePtr(rootDevId);
+        rootDrive = rootBlk ? rootBlk->drive() : "";
+        qInfo() << "got root drive:" << rootDrive << rootDev;
+    });
+
+    return rootDrive == blkDev->drive();
+}
+
+QString DeviceWatcherLite::getMountInfo(const QString &in, SearchBy what)
+{
+    libmnt_table *tab { mnt_new_table() };
+    if (!tab)
+        return {};
+
+    if (mnt_table_parse_mtab(tab, nullptr) != 0) {
+        qWarning() << "Invalid mnt_table_parse_mtab call";
+        if (tab) mnt_free_table(tab);
+        return {};
+    }
+
+    auto query = (what == kSearchByMountPoint) ? mnt_table_find_source : mnt_table_find_target;
+    auto get = (what == kSearchByMountPoint) ? mnt_fs_get_target : mnt_fs_get_source;
+    std::string stdPath { in.toStdString() };
+    auto fs = query(tab, stdPath.c_str(), MNT_ITER_BACKWARD);
+    if (fs) {
+        QString out = get(fs);
+        if (tab) mnt_free_table(tab);
+        return out;
+    }
+
+    qWarning() << "Invalid libmnt_fs*";
+    if (tab) mnt_free_table(tab);
+    return {};
 }

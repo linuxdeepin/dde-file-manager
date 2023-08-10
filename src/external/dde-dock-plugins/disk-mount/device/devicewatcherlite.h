@@ -51,6 +51,12 @@ Q_SIGNALS:
 private:
     void unmountStacked(const QString &mpt);
     void removeDevice(bool unmountDone, QSharedPointer<dfmmount::DBlockDevice> blk);
+    bool isSiblingOfRoot(QSharedPointer<dfmmount::DBlockDevice> blkDev);
+    enum SearchBy {
+        kSearchByMountPoint,
+        kSearchByDevice,
+    };
+    static QString getMountInfo(const QString &in, SearchBy what);
 
 private:
     explicit DeviceWatcherLite(QObject *parent = nullptr);
