@@ -46,6 +46,7 @@ private:
     void loadDiskInfo();
     void loadWindowsVoltag();
     void resetWindowsVolTag();
+    bool isSiblingOfRoot() const;
 };
 
 }

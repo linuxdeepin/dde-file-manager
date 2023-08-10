@@ -183,7 +183,7 @@ EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
         || datas.value(DeviceProperty::kOpticalDrive).toBool())
         return EntryFileInfo::EntryOrder::kOrderOptical;
 
-    if (canPowerOff)
+    if (canPowerOff && !isSiblingOfRoot())
         return EntryFileInfo::EntryOrder::kOrderRemovableDisks;
 
     return EntryFileInfo::EntryOrder::kOrderSysDisks;
@@ -339,4 +339,19 @@ void BlockEntryFileEntity::resetWindowsVolTag()
     datas.remove(WinVolTagKeys::kWinUUID);
     datas.remove(WinVolTagKeys::kWinDrive);
     datas.remove(WinVolTagKeys::kWinLabel);
+}
+
+bool BlockEntryFileEntity::isSiblingOfRoot() const
+{
+    static QString rootDrive;
+    static std::once_flag flg;
+    std::call_once(flg, [&rootDrive] {
+        const QString &rootDev = DeviceUtils::getMountInfo("/", false);
+        const QString &rootDevId = DeviceUtils::getBlockDeviceId(rootDev);
+        const auto &data = DevProxyMng->queryBlockInfo(rootDevId);
+        rootDrive = data.value(DeviceProperty::kDrive).toString();
+        qInfo() << "got root drive:" << rootDrive << rootDev;
+    });
+
+    return rootDrive == this->datas.value(DeviceProperty::kDrive);
 }
