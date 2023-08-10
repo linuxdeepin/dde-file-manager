@@ -113,9 +113,13 @@ QString DeviceUtils::errMessage(dfmmount::DeviceError err)
  */
 QString DeviceUtils::convertSuitableDisplayName(const QVariantMap &devInfo)
 {
+    QString alias = nameOfAlias(devInfo.value(kUUID).toString());
+    if (!alias.isEmpty())
+        return alias;
+
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
     if (devInfo.value(kMountPoint).toString() == "/"
-            || devInfo.value(kIdLabel).toString() == "_dde_data") {
+        || devInfo.value(kIdLabel).toString().startsWith("_dde_")) {
         return nameOfSystemDisk(devInfo);
     } else if (devInfo.value(kIsEncrypted).toBool()) {
         return nameOfEncrypted(devInfo);
@@ -330,15 +334,6 @@ QMap<QString, QString> DeviceUtils::fstabBindInfo()
 
 QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
 {
-    const auto &lst = Application::genericSetting()->value(BlockAdditionalProperty::kAliasGroupName, BlockAdditionalProperty::kAliasItemName).toList();
-
-    for (const QVariant &v : lst) {
-        const QVariantMap &map = v.toMap();
-        if (map.value(BlockAdditionalProperty::kAliasItemUUID).toString() == datas.value(kUUID).toString()) {
-            return map.value(BlockAdditionalProperty::kAliasItemAlias).toString();
-        }
-    }
-
     QString label = datas.value(kIdLabel).toString();
     qlonglong size = datas.value(kSizeTotal).toLongLong();
 
@@ -347,6 +342,8 @@ QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
         return QObject::tr("System Disk");
     if (datas.value(kIdLabel).toString().startsWith("_dde_data"))
         return QObject::tr("Data Disk");
+    if (datas.value(kIdLabel).toString().startsWith("_dde_"))
+        return datas.value(kIdLabel).toString().mid(5);
     return nameOfDefault(label, size);
 }
 
@@ -460,6 +457,18 @@ QString DeviceUtils::nameOfSize(const quint64 &size)
         index++;
     }
     return QString("%1 %2").arg(QString::number(fileSize, 'f', 1)).arg(unit);
+}
+
+QString DeviceUtils::nameOfAlias(const QString &uuid)
+{
+    const auto &lst = Application::genericSetting()->value(BlockAdditionalProperty::kAliasGroupName, BlockAdditionalProperty::kAliasItemName).toList();
+    for (const QVariant &v : lst) {
+        const QVariantMap &map = v.toMap();
+        if (map.value(BlockAdditionalProperty::kAliasItemUUID).toString() == uuid) {
+            return map.value(BlockAdditionalProperty::kAliasItemAlias).toString();
+        }
+    }
+    return "";
 }
 
 bool DeviceUtils::checkDiskEncrypted()

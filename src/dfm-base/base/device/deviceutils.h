@@ -60,6 +60,7 @@ public:
     static QString nameOfEncrypted(const QVariantMap &datas);
     static QString nameOfDefault(const QString &label, const quint64 &size);
     static QString nameOfSize(const quint64 &size);
+    static QString nameOfAlias(const QString &uuid);
 
     static bool checkDiskEncrypted();
     static QStringList encryptedDisks();

@@ -127,11 +127,16 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     }
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+    if (!info)
+        return;
 
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-    bool canRealRename = info->extraProperty(DeviceProperty::kEjectable).toBool()
-            && info->extraProperty(DeviceProperty::kCanPowerOff).toBool();
-    if (canRealRename && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock) {
+    QList<EntryFileInfo::EntryOrder> typesCanSetAlias { EntryFileInfo::kOrderSysDiskData,
+                                                        EntryFileInfo::kOrderSysDiskRoot,
+                                                        EntryFileInfo::kOrderSysDisks };
+    bool shouldSetAlias = typesCanSetAlias.contains(info->order());
+
+    if (!shouldSetAlias && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock) {
         if (info->displayName() == name)
             return;
         ComputerUtils::setCursorState(true);
@@ -145,9 +150,8 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
         return;
     }
 
-    if (!canRealRename) {
+    if (shouldSetAlias)
         doSetAlias(info, name);
-    }
 }
 
 void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString &alias)
@@ -452,8 +456,10 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
     };
 
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-    bool canRealRename = info->extraProperty(DeviceProperty::kEjectable).toBool()
-            && info->extraProperty(DeviceProperty::kCanPowerOff).toBool();
+    QList<EntryFileInfo::EntryOrder> typesCanSetAlias { EntryFileInfo::kOrderSysDiskData,
+                                                        EntryFileInfo::kOrderSysDiskRoot,
+                                                        EntryFileInfo::kOrderSysDisks };
+    bool canRealRename = !typesCanSetAlias.contains(info->order());
     if (canRealRename && info->targetUrl().isValid()) {
         // renaming a mounted device, do unmount first.
         qDebug() << "rename: do unmount device before rename:" << devUrl;
