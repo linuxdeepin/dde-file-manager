@@ -563,7 +563,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
-    const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
+    const FileInfoPointer &info = parent()->fileInfo(index);
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
 
     layout->layout(labelRect, opt.textElideMode, painter, background);

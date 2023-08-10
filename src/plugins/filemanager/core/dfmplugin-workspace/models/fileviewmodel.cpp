@@ -167,11 +167,13 @@ FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
     if (!item)
         return nullptr;
 
-    if (!item->fileInfo())
-        item->data(Global::ItemRoles::kItemCreateFileInfoRole);
+    if (item == filterSortWorker->rootData()) {
+        if (!item->fileInfo())
+            item->data(Global::ItemRoles::kItemCreateFileInfoRole);
 
-    if (!item->fileInfo())
-        return InfoFactory::create<FileInfo>(item->data(Global::ItemRoles::kItemUrlRole).value<QUrl>());
+        if (!item->fileInfo())
+            return InfoFactory::create<FileInfo>(item->data(Global::ItemRoles::kItemUrlRole).value<QUrl>());
+    }
 
     return item->fileInfo();
 }

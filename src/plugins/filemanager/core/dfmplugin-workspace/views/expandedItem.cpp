@@ -69,8 +69,10 @@ void ExpandedItem::paintEvent(QPaintEvent *)
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
 
     const FileInfoPointer &info = delegate->parent()->parent()->model()->fileInfo(index);
-    WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
+    if (!info)
+        return;
 
+    WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
     const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight));
 
     textBounding = GlobalPrivate::boundingRect(lines).toRect();
