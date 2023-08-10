@@ -82,9 +82,10 @@ QStringList DeviceWatcherLite::allMountedRemovableBlocks()
         }
 
         // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-        if (!devPtr->ejectable())
-            continue;
         if (!devPtr->canPowerOff() && !devPtr->optical())
+            continue;
+        // ignore blocks not mounted under /media/
+        if (!devPtr->mountPoint().startsWith("/media/"))
             continue;
 
         mountedRemovable.append(dev);
