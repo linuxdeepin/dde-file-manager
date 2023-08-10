@@ -458,7 +458,7 @@ QIcon SyncFileInfo::fileIcon()
     icon = LocalFileIconProvider::globalProvider()->icon(this);
     if (isAttributes(OptInfoType::kIsSymLink)) {
         const auto &&target = symLinkTarget();
-        if (target != filePath()) {
+        if (!target.isEmpty() && target != filePath()) {
             FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
             if (info)
                 icon = info->fileIcon();

@@ -80,92 +80,91 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 bool DragDropHelper::dragMove(QDragMoveEvent *event)
 {
     FileInfoPointer hoverFileInfo = fileInfoAtPos(event->pos());
-    if (hoverFileInfo) {
-        bool fall = true;
-        handleDropEvent(event, &fall);
+    if (!hoverFileInfo)
+        return false;
 
-        if (!fall)
-            return true;
+    bool fall = true;
+    handleDropEvent(event, &fall);
 
-        QUrl toUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
-        if (!checkTargetEnable(toUrl)) {
+    if (!fall)
+        return true;
+
+    QUrl toUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
+    if (!checkTargetEnable(toUrl)) {
+        event->ignore();
+        currentHoverIndexUrl = toUrl;
+        return true;
+    }
+
+    QList<QUrl> fromUrls = currentDragUrls;
+    Qt::DropAction dropAction = event->dropAction();
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
+        event->setDropAction(dropAction);
+        view->setViewSelectState(false);
+        if (dropAction != Qt::IgnoreAction)
+            event->accept();
+        else
             event->ignore();
-            currentHoverIndexUrl = toUrl;
-            return true;
-        }
+        currentHoverIndexUrl = toUrl;
+        return true;
+    }
 
-        QList<QUrl> fromUrls = currentDragUrls;
-        Qt::DropAction dropAction = event->dropAction();
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
-            event->setDropAction(dropAction);
+    for (const QUrl &url : fromUrls) {
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+        if (event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(CanableInfoType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
             view->setViewSelectState(false);
-            if (dropAction != Qt::IgnoreAction)
-                event->accept();
-            else
-                event->ignore();
-            currentHoverIndexUrl = toUrl;
+            event->ignore();
             return true;
         }
 
-        for (const QUrl &url : fromUrls) {
-            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-            if (event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(CanableInfoType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
+        // target is not local device, origin is dir and can not write, prohibit drop
+        const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
+        if (!FileUtils::isLocalDevice(targetUrl)) {
+            if (!info->isAttributes(OptInfoType::kIsWritable)) {
                 view->setViewSelectState(false);
                 event->ignore();
                 return true;
             }
-
-            // target is not local device, origin is dir and can not write, prohibit drop
-            const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
-            if (!FileUtils::isLocalDevice(targetUrl)) {
-                if (!info->isAttributes(OptInfoType::kIsWritable)) {
-                    view->setViewSelectState(false);
-                    event->ignore();
-                    return true;
-                }
-            }
         }
+    }
 
-        if (!hoverFileInfo->canAttributes(CanableInfoType::kCanDrop)
-            || !hoverFileInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction())
-            || (hoverFileInfo->isAttributes(OptInfoType::kIsDir) && !hoverFileInfo->isAttributes(OptInfoType::kIsWritable))) {
-            // NOTE: if item can not drop, the drag item will drop to root dir.
-            currentHoverIndexUrl = view->rootUrl();
-            if (event->source() == view) {
-                view->setViewSelectState(false);
-                event->ignore();
-            } else {
-                view->setViewSelectState(true);
-                event->accept();
-            }
-            return true;
-        }
-
-        if (!handleDFileDrag(event->mimeData(), hoverFileInfo->urlOf(UrlInfoType::kUrl))) {
-            currentHoverIndexUrl = toUrl;
-            bool b = (event->source() == view);
-            if (b && !WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
-                view->setViewSelectState(false);
-                event->ignore();
-            } else if (!b && !WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
-                view->setViewSelectState(true);
-                event->accept();
-            } else if (WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
-                view->setViewSelectState(true);
-                event->accept();
-            } else if (hoverFileInfo->isAttributes(OptInfoType::kIsDir) || FileUtils::isDesktopFile(hoverFileInfo->urlOf(UrlInfoType::kUrl))) {
-                view->setViewSelectState(false);
-                event->accept();
-            }
-        } else {
+    if (!hoverFileInfo->canAttributes(CanableInfoType::kCanDrop)
+        || !hoverFileInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction())
+        || (hoverFileInfo->isAttributes(OptInfoType::kIsDir) && !hoverFileInfo->isAttributes(OptInfoType::kIsWritable))) {
+        // NOTE: if item can not drop, the drag item will drop to root dir.
+        currentHoverIndexUrl = view->rootUrl();
+        if (event->source() == view) {
             view->setViewSelectState(false);
-            event->acceptProposedAction();
+            event->ignore();
+        } else {
+            view->setViewSelectState(true);
+            event->accept();
         }
-
         return true;
     }
 
-    return false;
+    if (!handleDFileDrag(event->mimeData(), hoverFileInfo->urlOf(UrlInfoType::kUrl))) {
+        currentHoverIndexUrl = toUrl;
+        bool b = (event->source() == view);
+        if (b && !WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
+            view->setViewSelectState(false);
+            event->ignore();
+        } else if (!b && !WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
+            view->setViewSelectState(true);
+            event->accept();
+        } else if (WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
+            view->setViewSelectState(true);
+            event->accept();
+        } else if (hoverFileInfo->isAttributes(OptInfoType::kIsDir) || FileUtils::isDesktopFile(hoverFileInfo->urlOf(UrlInfoType::kUrl))) {
+            view->setViewSelectState(false);
+            event->accept();
+        }
+    } else {
+        view->setViewSelectState(false);
+        event->acceptProposedAction();
+    }
+
+    return true;
 }
 
 bool DragDropHelper::dragLeave(QDragLeaveEvent *event)

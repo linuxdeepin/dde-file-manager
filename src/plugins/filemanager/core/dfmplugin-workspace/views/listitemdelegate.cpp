@@ -474,7 +474,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
 
-        const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
+        const FileInfoPointer &info = parent()->fileInfo(index);
         if (WorkspaceEventSequence::instance()->doPaintListItem(rol, info, painter, &columnRect))
             continue;
 
