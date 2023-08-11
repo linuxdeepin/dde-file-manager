@@ -130,28 +130,42 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     if (!info)
         return;
 
-    // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
     QList<EntryFileInfo::EntryOrder> typesCanSetAlias { EntryFileInfo::kOrderSysDiskData,
                                                         EntryFileInfo::kOrderSysDiskRoot,
                                                         EntryFileInfo::kOrderSysDisks };
     bool shouldSetAlias = typesCanSetAlias.contains(info->order());
-
-    if (!shouldSetAlias && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock) {
-        if (info->displayName() == name)
+    auto rename = [info, url, name]() {
+        if (info->nameOf(NameInfoType::kSuffix) != SuffixInfo::kBlock || info->displayName() == name)
             return;
         ComputerUtils::setCursorState(true);
         QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
         DevMngIns->renameBlockDevAsync(devId, name, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             ComputerUtils::setCursorState();
-            if (!ok) {
-                qInfo() << "rename block device failed: " << devId << err.message << err.code;
-            }
+            if (!ok)
+                qWarning() << "rename block device failed: " << devId << err.message << err.code;
         });
+    };
+
+    if (!shouldSetAlias && info->targetUrl().isValid()) {
+        // renaming a mounted device, do unmount first.
+        qDebug() << "rename: do unmount device before rename:" << url;
+        DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(url),
+                                        { { OperateParamField::kUnmountWithoutLock, true } },
+                                        [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
+                                            if (ok) {
+                                                rename();
+                                            } else {
+                                                qInfo() << "rename: cannot unmount device before rename: " << err.message << err.code;
+                                                DialogManager::instance()->showErrorDialog(tr("Rename failed"), tr("The device is busy and cannot be renamed now"));
+                                            }
+                                        });
         return;
     }
 
     if (shouldSetAlias)
         doSetAlias(info, name);
+    else
+        rename();
 }
 
 void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString &alias)
@@ -446,37 +460,11 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
 
     auto devUrl = info->urlOf(UrlInfoType::kUrl);
     QPointer<ComputerController> controller(this);
-    auto triggerRename = [controller](quint64 winId, const QUrl &devUrl, bool fromSidebar) {
-        if (!controller)
-            return;
-        if (!fromSidebar)
-            Q_EMIT controller->requestRename(winId, devUrl);
-        else
-            QTimer::singleShot(200, [=] { dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, devUrl); });
-    };
 
-    // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-    QList<EntryFileInfo::EntryOrder> typesCanSetAlias { EntryFileInfo::kOrderSysDiskData,
-                                                        EntryFileInfo::kOrderSysDiskRoot,
-                                                        EntryFileInfo::kOrderSysDisks };
-    bool canRealRename = !typesCanSetAlias.contains(info->order());
-    if (canRealRename && info->targetUrl().isValid()) {
-        // renaming a mounted device, do unmount first.
-        qDebug() << "rename: do unmount device before rename:" << devUrl;
-        DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(devUrl),
-                                        { { OperateParamField::kUnmountWithoutLock, true } },
-                                        [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-                                            if (ok) {
-                                                triggerRename(winId, devUrl, triggerFromSidebar);
-                                            } else {
-                                                qInfo() << "rename: cannot unmount device before rename: " << err.message << err.code;
-                                                DialogManager::instance()->showErrorDialog(tr("Rename failed"), tr("The device is busy and cannot be renamed now"));
-                                            }
-                                        });
-        return;
-    }
-
-    triggerRename(winId, devUrl, triggerFromSidebar);
+    if (!triggerFromSidebar)
+        Q_EMIT controller->requestRename(winId, devUrl);
+    else
+        QTimer::singleShot(200, [=] { dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, devUrl); });
 }
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
