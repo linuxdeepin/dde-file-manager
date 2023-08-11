@@ -11,6 +11,8 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 
+#include <QTimer>
+
 namespace dfmbase {
 
 class ThumbnailFactory final : public QObject
@@ -31,10 +33,11 @@ Q_SIGNALS:
     void produceFinished(const QUrl &src, const QString &thumb);
     void produceFailed(const QUrl &src);
 
-    void addTask(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+    void addTask(const ThumbnailWorker::ThumbnailTaskMap &taskMap);
 
-public Q_SLOTS:
+private Q_SLOTS:
     void onAboutToQuit();
+    void pushTask();
 
 protected:
     explicit ThumbnailFactory(QObject *parent = nullptr);
@@ -42,8 +45,10 @@ protected:
     void init();
 
 private:
+    ThumbnailWorker::ThumbnailTaskMap taskMap;
     QSharedPointer<QThread> thread { nullptr };
     QSharedPointer<ThumbnailWorker> worker { nullptr };
+    QTimer taskPushTimer;
 };
 }   // namespace dfmbase
 

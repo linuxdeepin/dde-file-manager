@@ -88,6 +88,7 @@ ThumbnailWorker::ThumbnailWorker(QObject *parent)
     : QObject(parent),
       d(new ThumbnailWorkerPrivate(this))
 {
+    qRegisterMetaType<ThumbnailTaskMap>("ThumbnailTaskMap");
 }
 
 ThumbnailWorker::~ThumbnailWorker()
@@ -112,32 +113,36 @@ void ThumbnailWorker::stop()
     d->isStoped = true;
 }
 
-void ThumbnailWorker::onTaskAdded(const QUrl &url, Global::ThumbnailSize size)
+void ThumbnailWorker::onTaskAdded(const ThumbnailTaskMap &taskMap)
 {
     if (d->isStoped)
         return;
 
-    QUrl fileUrl = d->originalUrl = url;
-    if (UrlRoute::isVirtual(url)) {
-        auto info { InfoFactory::create<FileInfo>(url) };
-        if (!info || !info->exists())
-            return;
+    QMapIterator<QUrl, Global::ThumbnailSize> iter(taskMap);
+    while (iter.hasNext()) {
+        iter.next();
+        QUrl fileUrl = d->originalUrl = iter.key();
+        if (UrlRoute::isVirtual(fileUrl)) {
+            auto info { InfoFactory::create<FileInfo>(fileUrl) };
+            if (!info || !info->exists())
+                continue;
 
-        fileUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kAbsoluteFilePath));
-        if (!fileUrl.isLocalFile())
-            return;
+            fileUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kAbsoluteFilePath));
+            if (!fileUrl.isLocalFile())
+                continue;
+        }
+
+        if (!d->thumbHelper.checkThumbEnable(fileUrl))
+            continue;
+
+        const auto &img = d->thumbHelper.thumbnailImage(fileUrl, iter.value());
+        if (!img.isNull()) {
+            Q_EMIT thumbnailCreateFinished(iter.key(), img.text(QT_STRINGIFY(Thumb::Path)));
+            continue;
+        }
+
+        createThumbnail(fileUrl, iter.value());
     }
-
-    if (!d->thumbHelper.checkThumbEnable(fileUrl))
-        return;
-
-    const auto &img = d->thumbHelper.thumbnailImage(fileUrl, size);
-    if (!img.isNull()) {
-        Q_EMIT thumbnailCreateFinished(url, img.text(QT_STRINGIFY(Thumb::Path)));
-        return;
-    }
-
-    createThumbnail(fileUrl, size);
 }
 
 void ThumbnailWorker::createThumbnail(const QUrl &url, Global::ThumbnailSize size)
@@ -145,9 +150,9 @@ void ThumbnailWorker::createThumbnail(const QUrl &url, Global::ThumbnailSize siz
     // check whether the file is stable
     // if not, rejoin the event queue and create thumbnail later
     if (!d->checkFileStable(url)) {
+        ThumbnailTaskMap taskMap { { url, size } };
         QMetaObject::invokeMethod(this, "onTaskAdded", Qt::QueuedConnection,
-                                  Q_ARG(QUrl, d->originalUrl),
-                                  Q_ARG(dfmbase::Global::ThumbnailSize, size));
+                                  Q_ARG(ThumbnailTaskMap, taskMap));
         return;
     }
 

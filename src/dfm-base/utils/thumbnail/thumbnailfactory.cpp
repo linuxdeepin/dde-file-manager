@@ -15,6 +15,9 @@
 using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
 
+static constexpr int kMaxCountLimit { 50 };
+static constexpr int kPushInterval { 100 };   // ms
+
 ThumbnailFactory::ThumbnailFactory(QObject *parent)
     : QObject(parent),
       thread(new QThread),
@@ -42,6 +45,10 @@ void ThumbnailFactory::init()
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
 
+    taskPushTimer.setSingleShot(true);
+    taskPushTimer.setInterval(kPushInterval);
+    connect(&taskPushTimer, &QTimer::timeout, this, &ThumbnailFactory::pushTask);
+
     connect(qApp, &QGuiApplication::aboutToQuit, this, &ThumbnailFactory::onAboutToQuit);
 
     connect(this, &ThumbnailFactory::addTask, worker.data(), &ThumbnailWorker::onTaskAdded, Qt::QueuedConnection);
@@ -54,7 +61,14 @@ void ThumbnailFactory::init()
 
 void ThumbnailFactory::joinThumbnailJob(const QUrl &url, ThumbnailSize size)
 {
-    emit addTask(url, size);
+    if (taskMap.isEmpty())
+        taskPushTimer.start();
+
+    taskMap.insert(url, size);
+    if (taskMap.size() < kMaxCountLimit)
+        return;
+
+    pushTask();
 }
 
 bool ThumbnailFactory::registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator)
@@ -68,4 +82,10 @@ void ThumbnailFactory::onAboutToQuit()
     worker->stop();
     thread->quit();
     thread->wait(3000);
+}
+
+void ThumbnailFactory::pushTask()
+{
+    auto map = std::move(taskMap);
+    emit addTask(map);
 }

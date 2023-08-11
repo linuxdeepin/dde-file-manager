@@ -8,6 +8,8 @@
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/dfm_global_defines.h>
 
+#include <QUrl>
+
 #include <functional>
 
 namespace dfmbase {
@@ -17,6 +19,8 @@ class ThumbnailWorker : public QObject
 {
     Q_OBJECT
 public:
+    using ThumbnailTaskMap = QMap<QUrl, DFMGLOBAL_NAMESPACE::ThumbnailSize>;
+
     explicit ThumbnailWorker(QObject *parent = nullptr);
     ~ThumbnailWorker();
 
@@ -25,7 +29,7 @@ public:
     void stop();
 
 public Q_SLOTS:
-    void onTaskAdded(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+    void onTaskAdded(const ThumbnailTaskMap &taskMap);
 
 Q_SIGNALS:
     void thumbnailCreateFinished(const QUrl &url, const QString &thumbnail);
