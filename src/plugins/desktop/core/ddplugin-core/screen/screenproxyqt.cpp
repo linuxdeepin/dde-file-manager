@@ -7,9 +7,14 @@
 
 #include "dbus-private/dbushelper.h"
 
+#include "dfm-framework/dpf.h"
+
 #include <QDebug>
 #include <QScreen>
 #include <QApplication>
+#include <QStringList>
+
+Q_DECLARE_METATYPE(QStringList*)
 
 DFMBASE_USE_NAMESPACE
 
@@ -234,6 +239,15 @@ void ScreenProxyQt::processEvent()
         events.insert(AbstractScreenProxy::kMode, 0);
     }
 
+    // check whether primary screen changed by fake screen
+    // then object point to a fake screen(:0.0) that is resotred to a real screen(like hdmi) will change its name and rect.
+    // then it just emits geometry changed signal and using name of the screen(hdmi) changed from :0.0 to find window relate to :0.0
+    // is invalid.
+    if (!events.contains(AbstractScreenProxy::kMode) && !events.contains(AbstractScreenProxy::kScreen)) {
+        if (!checkUsedScreens())
+           events.insert(AbstractScreenProxy::kScreen, 0);
+    }
+
     //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
     if (events.contains(AbstractScreenProxy::kMode)) {
         emit displayModeChanged();
@@ -244,6 +258,29 @@ void ScreenProxyQt::processEvent()
     } else if (events.contains(AbstractScreenProxy::kAvailableGeometry)) {
         emit screenAvailableGeometryChanged();
     }
+}
+
+bool ScreenProxyQt::checkUsedScreens()
+{
+    QSet<QString> cur;
+    for (auto sc : screenMap.keys())
+        cur << sc->name();
+
+    QStringList scs;
+    dpfHookSequence->run("ddplugin_core", "hook_ScreenProxy_ScreensInUse", &scs);
+    auto inuse = scs.toSet();
+    qInfo() << "current screens" << cur << "used" << inuse;
+
+    bool invaild = false;
+    for (const QString &sc : inuse) {
+        if (cur.contains(sc))
+            continue;
+        invaild = true;
+        qWarning() << "screen" << sc << "was losted";
+        break;
+    }
+
+    return !invaild;
 }
 
 void ScreenProxyQt::connectScreen(ScreenPointer sp)
