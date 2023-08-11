@@ -4,6 +4,8 @@
 
 #include "screen/screenproxyqt.h"
 
+#include "dfm-framework/dpf.h"
+
 #include "stubext.h"
 
 #include <gtest/gtest.h>
@@ -17,6 +19,9 @@
 
 DDPCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DPF_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QStringList*)
 
 class ProxyNullScreen : public AbstractScreen
 {
@@ -154,6 +159,10 @@ TEST(ScreenProxyQt, processEvent)
         return kDuplicate;
     });
 
+    stub.set_lamda(&ScreenProxyQt::checkUsedScreens, [](){
+        return true;
+    });
+
     ScreenProxyQt sp;
     sp.lastMode = kDuplicate;
 
@@ -270,4 +279,145 @@ TEST(ScreenProxyQt, displayMode)
     scs.removeAt(1);
     scs.append(ScreenPointer(new ProxyNullScreen2()));
     EXPECT_EQ(sp.displayMode(), kExtend);
+}
+
+
+TEST(ScreenProxyQt, checkUsedScreens)
+{
+    ScreenProxyQt sp;
+    stub_ext::StubExt stub;
+    QStringList inuse;
+    stub.set_lamda(((bool (EventSequenceManager::*)(const QString &, const QString &, QStringList *out))
+                   &EventSequenceManager::run), [&inuse]
+                   (EventSequenceManager *, const QString &t1, const QString &t2, QStringList *out) {
+        if (t1 == "ddplugin_core") {
+            if (t2 == "hook_ScreenProxy_ScreensInUse") {
+                *out = inuse;
+                return false;
+            }
+        }
+        return false;
+    });
+
+    auto pri = qApp->primaryScreen();
+    if (pri) {
+        sp.screenMap.insert(pri, nullptr);
+    }
+
+    inuse << "fake" << pri->name();
+    EXPECT_FALSE(sp.checkUsedScreens());
+
+    inuse.clear();
+    inuse << "fake";
+    EXPECT_FALSE(sp.checkUsedScreens());
+
+    inuse.clear();
+    inuse << pri->name();
+    EXPECT_TRUE(sp.checkUsedScreens());
+
+    inuse.clear();
+    EXPECT_TRUE(sp.checkUsedScreens());
+}
+
+
+TEST(ScreenProxyQt, bug_214195_fakescreen)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(VADDR(ScreenProxyQt, displayMode),
+                   [](){
+        return kDuplicate;
+    });
+
+    bool cc = false;
+    bool valid = false;
+    stub.set_lamda(&ScreenProxyQt::checkUsedScreens, [&cc, &valid](){
+        cc = true;
+        return valid;
+    });
+
+    ScreenProxyQt sp;
+    sp.lastMode = kDuplicate;
+
+    int sig = -1;
+    QObject::connect(&sp, &ScreenProxyQt::displayModeChanged, &sp, [&sig](){
+        sig = 0;
+    });
+    QObject::connect(&sp, &ScreenProxyQt::screenChanged, &sp, [&sig](){
+        sig = 1;
+    });
+    QObject::connect(&sp, &ScreenProxyQt::screenGeometryChanged, &sp, [&sig](){
+        sig = 2;
+    });    QObject::connect(&sp, &ScreenProxyQt::screenAvailableGeometryChanged, &sp, [&sig](){
+        sig = 3;
+    });
+
+    // display mode
+    {
+        sig = -1;
+        cc = false;
+        sp.events.insert(AbstractScreenProxy::kMode, 0);
+        sp.processEvent();
+        EXPECT_FALSE(cc);
+        EXPECT_EQ(sig, 0);
+        sp.events.clear();
+    }
+
+    // screen
+    {
+        sig = -1;
+        cc = false;
+        sp.events.insert(AbstractScreenProxy::kScreen, 0);
+        sp.processEvent();
+        EXPECT_FALSE(cc);
+        EXPECT_EQ(sig, 1);
+        sp.events.clear();
+    }
+
+    // geometry and valid
+    {
+        sig = -1;
+        cc = false;
+        valid = true;
+        sp.events.insert(AbstractScreenProxy::kGeometry, 0);
+        sp.processEvent();
+        EXPECT_TRUE(cc);
+        EXPECT_EQ(sig, 2);
+        sp.events.clear();
+    }
+
+    // geometry and invalid
+    {
+        sig = -1;
+        cc = false;
+        valid = false;
+        sp.events.insert(AbstractScreenProxy::kGeometry, 0);
+        sp.processEvent();
+        EXPECT_TRUE(cc);
+        EXPECT_EQ(sig, 1);
+        sp.events.clear();
+    }
+
+    // available geometry and valid
+    {
+        sig = -1;
+        cc = false;
+        valid = true;
+        sp.events.insert(AbstractScreenProxy::kAvailableGeometry, 0);
+        sp.processEvent();
+        EXPECT_TRUE(cc);
+        EXPECT_EQ(sig, 3);
+        sp.events.clear();
+    }
+
+    // available geometry and invalid
+    {
+        sig = -1;
+        cc = false;
+        valid = false;
+        sp.events.insert(AbstractScreenProxy::kAvailableGeometry, 0);
+        sp.processEvent();
+        EXPECT_TRUE(cc);
+        EXPECT_EQ(sig, 1);
+        sp.events.clear();
+    }
 }

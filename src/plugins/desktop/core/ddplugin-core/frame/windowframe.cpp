@@ -124,6 +124,11 @@ void WindowFrame::layoutChildren()
     }
 }
 
+QStringList WindowFrame::bindedScreens()
+{
+    return d->windows.keys();
+}
+
 void WindowFrame::buildBaseWindow()
 {
     // tell other module that the base windows will be rebuild.
@@ -156,7 +161,7 @@ void WindowFrame::buildBaseWindow()
         } else {
             winPtr = d->createWindow(primary);
         }
-        qInfo() << "primary frame" << primary->name();
+        qInfo() << "primary frame" << primary->name() << primary->geometry();
         d->updateProperty(winPtr, primary, true);
         d->windows.insert(primary->name(), winPtr);
 
@@ -176,14 +181,14 @@ void WindowFrame::buildBaseWindow()
         for (ScreenPointer s : screens) {
             BaseWindowPointer winPtr = d->windows.value(s->name());
             if (!winPtr.isNull()) {
-                qInfo() << "update frame" << s->name();
                 if (winPtr->geometry() != s->geometry())
                     winPtr->setGeometry(s->geometry());
+                qInfo() << "update frame" << s->name() << "win" << winPtr->geometry() << "screen" << s->geometry();
             } else {
                 // 添加缺少的数据
-                qInfo() << "screen:" << s->name() << " added, create frame.";
                 winPtr = d->createWindow(s);
                 d->windows.insert(s->name(), winPtr);
+                qInfo() << "screen:" << s->name()  << s->geometry() << " added, create frame." << winPtr->geometry();
             }
 
             d->updateProperty(winPtr, s, (s == primary));
@@ -223,6 +228,8 @@ void WindowFrame::onGeometryChanged()
             win->setGeometry(sp->geometry());
             d->updateProperty(win, sp, (sp == primary));
             changed = true;
+        } else {
+            qWarning() << "no window for" << sp->name();
         }
     }
 
@@ -242,6 +249,8 @@ void WindowFrame::onAvailableGeometryChanged()
                 continue;
             d->updateProperty(win, sp, (sp == primary));
             changed = true;
+        } else {
+            qWarning() << "no window for" << sp->name();
         }
     }
 

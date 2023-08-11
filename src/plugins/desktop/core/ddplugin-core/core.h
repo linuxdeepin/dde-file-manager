@@ -37,6 +37,8 @@ public slots:
     DFMBASE_NAMESPACE::AbstractDesktopFrame *desktopFrame();
     QList<QWidget *> rootWindows();
     void layoutWidget();
+
+    bool screensInUse(QStringList *out);
 private slots:
     void publishScreenChanged();
     void publishDisplayModeChanged();
@@ -97,6 +99,8 @@ private:
     DPF_EVENT_REG_SLOT(slot_ScreenProxy_DisplayMode)
     DPF_EVENT_REG_SLOT(slot_ScreenProxy_LastChangedMode)
     DPF_EVENT_REG_SLOT(slot_ScreenProxy_Reset)
+
+    DPF_EVENT_REG_HOOK(hook_ScreenProxy_ScreensInUse)
 
     // WindowFrame begin
     DPF_EVENT_REG_SIGNAL(signal_DesktopFrame_WindowAboutToBeBuilded)

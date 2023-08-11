@@ -36,6 +36,7 @@ private slots:
 
 protected:
     void processEvent() override;
+    bool checkUsedScreens();
 
 private:
     void connectScreen(DFMBASE_NAMESPACE::ScreenPointer);

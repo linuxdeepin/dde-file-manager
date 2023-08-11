@@ -24,6 +24,8 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
+Q_DECLARE_METATYPE(QStringList*)
+
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
 
@@ -35,6 +37,12 @@ DDPCORE_USE_NAMESPACE
 
 #define CanvasCoreDisconnect(topic) \
     dpfSlotChannel->disconnect(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic))
+
+#define CanvasCorelFollow(topic, args...) \
+        dpfHookSequence->follow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+
+#define CanvasCorelUnfollow(topic, args...) \
+        dpfHookSequence->unfollow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 static void registerFileSystem()
 {
@@ -180,6 +188,8 @@ EventHandle::~EventHandle()
     CanvasCoreDisconnect(slot_DesktopFrame_RootWindows);
     CanvasCoreDisconnect(slot_DesktopFrame_LayoutWidget);
 
+    CanvasCorelUnfollow(hook_ScreenProxy_ScreensInUse, &EventHandle::screensInUse);
+
     delete frame;
     frame = nullptr;
 
@@ -208,6 +218,9 @@ bool EventHandle::init()
     CanvasCoreSlot(slot_ScreenProxy_DisplayMode, &EventHandle::displayMode);
     CanvasCoreSlot(slot_ScreenProxy_LastChangedMode, &EventHandle::lastChangedMode);
     CanvasCoreSlot(slot_ScreenProxy_Reset, &EventHandle::reset);
+
+    // return screens in use.
+    CanvasCorelFollow(hook_ScreenProxy_ScreensInUse, &EventHandle::screensInUse);
 
     frame = new WindowFrame();
     frame->init();
@@ -285,6 +298,14 @@ QList<QWidget *> EventHandle::rootWindows()
 void EventHandle::layoutWidget()
 {
     frame->layoutChildren();
+}
+
+bool EventHandle::screensInUse(QStringList *out)
+{
+    if (out)
+        *out = frame->bindedScreens();
+
+    return false;
 }
 
 void EventHandle::publishScreenChanged()

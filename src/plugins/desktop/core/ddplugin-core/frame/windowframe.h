@@ -22,6 +22,7 @@ public:
     bool init();
     QList<QWidget *> rootWindows() const override;
     void layoutChildren() override;
+    QStringList bindedScreens();
 public slots:
     void buildBaseWindow();
     void onGeometryChanged();
