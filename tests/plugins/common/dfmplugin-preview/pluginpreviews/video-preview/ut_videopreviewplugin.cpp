@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "stubext.h"
+#include "videopreviewplugin.h"
+
+#include <gtest/gtest.h>
+
+PREVIEW_USE_NAMESPACE
+
+TEST(UT_VideoPreviewPlugin, create)
+{
+    VideoPreviewPlugin plugin;
+    EXPECT_NO_FATAL_FAILURE(plugin.create("UT_KEY"));
+
+}
