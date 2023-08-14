@@ -25,7 +25,7 @@ void FrameLogManagerPrivate::initFilterAppender()
                 "%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [%{file:-20} %{function:-35} %{line}] %{message}\n");
         curFilterAppender->setLogFilesLimit(5);
         curFilterAppender->setDatePattern(FilterAppender::kDailyRollover);
-        logger->registerAppender(curFilterAppender);
+        loggerInstance()->registerAppender(curFilterAppender);
     });
 }
 
