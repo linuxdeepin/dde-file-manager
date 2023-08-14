@@ -739,11 +739,8 @@ void FileViewModel::onGenericAttributeChanged(Application::GenericAttribute ga, 
     case Application::kPreviewVideo:
     case Application::kPreviewTextFile:
     case Application::kPreviewDocumentFile:
-        Q_EMIT requestClearThumbnail();
-        break;
     case Application::kShowThunmbnailInRemote:
-        if (FileUtils::isGvfsFile(rootUrl()))
-            Q_EMIT requestClearThumbnail();
+        Q_EMIT requestClearThumbnail();
         break;
     default:
         break;
