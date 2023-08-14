@@ -737,7 +737,7 @@ QString SyncFileInfoPrivate::path() const
  */
 QString SyncFileInfoPrivate::filePath() const
 {
-    return this->attribute(DFileInfo::AttributeID::kStandardFilePath).toString();
+    return q->fileUrl().path();
 }
 
 /*!

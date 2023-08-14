@@ -746,7 +746,7 @@ QString AsyncFileInfoPrivate::path() const
  */
 QString AsyncFileInfoPrivate::filePath() const
 {
-    return this->attribute(DFileInfo::AttributeID::kStandardFilePath).toString();
+    return q->fileUrl().path();
 }
 
 /*!
