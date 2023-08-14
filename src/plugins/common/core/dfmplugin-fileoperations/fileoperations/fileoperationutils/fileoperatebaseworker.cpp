@@ -615,7 +615,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const FileInfoPointer fromInfo, con
         while (bigFileCopy && !isStopped()) {
             QThread::msleep(10);
         }
-        if (fromInfo->size() > FileOperationsUtils::bigFileSize()) {
+        if (fromInfo->size() > bigFileSize) {
             bigFileCopy = true;
             auto result = doCopyLocalBigFile(fromInfo, toInfo, skip);
             bigFileCopy = false;
@@ -998,7 +998,7 @@ bool FileOperateBaseWorker::doCopyOtherFile(const FileInfoPointer fromInfo, cons
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     bool ok{ false };
-    if (fromInfo->size() > FileOperationsUtils::bigFileSize() && !FileUtils::isMtpFile(this->targetUrl)) {
+    if (fromInfo->size() > bigFileSize || !supportGioCopy) {
         ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
     } else {
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
@@ -1184,7 +1184,7 @@ bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
 void FileOperateBaseWorker::setAllDirPermisson()
 {
     for (auto info : dirPermissonList.list()) {
-        if (info->permission && !FileUtils::isMtpFile(info->target))
+        if (info->permission && supportSetPermission)
             localFileHandler->setPermissions(info->target, info->permission);
     }
 }
