@@ -246,6 +246,34 @@ bool DeviceUtils::isSftp(const QUrl &url)
     return hasMatch(url.path(), smbMatch);
 }
 
+bool DeviceUtils::isMtpFile(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    const QString &path = url.toLocalFile();
+    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
+    QRegularExpression re { gvfsMatch };
+    QRegularExpressionMatch match { re.match(path) };
+    return match.hasMatch();
+}
+
+bool DeviceUtils::supportDfmioCopyDevice(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    return !isMtpFile(url);
+}
+
+bool DeviceUtils::supportSetPermissionsDevice(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    return !isMtpFile(url);
+}
+
 bool DeviceUtils::isExternalBlock(const QUrl &url)
 {
     return DeviceProxyManager::instance()->isFileOfExternalBlockMounts(url.path());

@@ -167,6 +167,8 @@ public:
     QList<FileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
+    bool supportSetPermission { true };    // source file on mtp
+    bool supportGioCopy { true };    // source file on mtp
     bool isTargetFileExBlock { false };   // target file on extra block device
     bool isConvert { false };   // is convert operation
     QSharedPointer<WorkerData> workData { nullptr };
@@ -181,6 +183,7 @@ public:
     std::atomic_bool retry { false };
     QSharedPointer<QThreadPool> threadPool { nullptr };
     static std::atomic_bool bigFileCopy;
+    QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
