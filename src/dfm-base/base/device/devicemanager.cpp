@@ -273,7 +273,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
     }
 
     auto mpt = dev->mountPoint();
-    if (mpt.isEmpty()) {
+    if (mpt.isEmpty() && !dev->isEncrypted()) {
         if (cb)
             cb(true, Utils::genOperateErrorInfo(DeviceError::kNoError));
         return;
