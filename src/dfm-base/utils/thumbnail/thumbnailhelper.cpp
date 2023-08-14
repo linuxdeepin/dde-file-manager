@@ -228,10 +228,10 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
     if (!enable) {
         if (FileUtils::isMtpFile(url)) {
             enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
-        } else if (FileUtils::isGvfsFile(url)) {
-            enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
         } else if (DevProxyMng->isFileOfExternalBlockMounts(url.path())) {
             enable = true;
+        } else {
+            enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
         }
     }
 
