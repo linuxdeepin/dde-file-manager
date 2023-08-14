@@ -585,6 +585,14 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
     return DFMIO::DFMUtils::deviceBytesFree(url);
 }
 
+bool DeviceUtils::isUnmountSamba(const QUrl &url)
+{
+    if (!isSamba(url))
+        return false;
+
+    return !DevProxyMng->isFileOfProtocolMounts(url.path());
+}
+
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 {
     Q_ASSERT(func);
