@@ -55,7 +55,7 @@ void AccessControl::initConnect()
     }
 
     connect(watcher.data(), &DFMIO::DWatcher::fileAdded, this, [this](const QUrl &url) {
-        qInfo() << "File: " << url << " has been created";
+        qInfo() << "/home/userpath has been created";
         onFileCreatedInHomePath();
     });
     watcher->start();
@@ -71,9 +71,8 @@ void AccessControl::onFileCreatedInHomePath()
         QString mountBaseName = QString("/media/%1").arg(dirName);
         QDir mountDir(mountBaseName);
         if (!mountDir.exists()) {
-            qInfo() << mountBaseName << "not exists";
             if (QDir().mkpath(mountBaseName)) {
-                qInfo() << "create" << mountBaseName << "success";
+                qInfo() << "done to create /media/anyuser folder";
                 struct stat fileStat;
                 QByteArray nameBytes(mountBaseName.toUtf8());
                 stat(nameBytes.data(), &fileStat);
@@ -83,6 +82,6 @@ void AccessControl::onFileCreatedInHomePath()
         // ACL
         QString aclCmd = QString("setfacl -m o:rx %1").arg(mountBaseName);
         QProcess::execute(aclCmd);
-        qInfo() << "acl:" << aclCmd;
+        qInfo() << "acl the /media/anyuser folder";
     }
 }
