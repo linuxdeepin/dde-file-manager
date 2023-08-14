@@ -11,6 +11,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -178,6 +179,11 @@ bool AbstractWorker::statisticsFilesSize()
 
     const QUrl &firstUrl = sourceUrls.first();
 
+    if (this->targetUrl.isValid()) {
+        supportGioCopy = DeviceUtils::supportDfmioCopyDevice(this->targetUrl)
+                || DeviceUtils::supportDfmioCopyDevice(firstUrl);
+        supportSetPermission = DeviceUtils::supportSetPermissionsDevice(this->targetUrl);
+    }
     // 判读源文件所在设备位置，执行异步或者同统计源文件大小
     isSourceFileLocal = FileOperationsUtils::isFileOnDisk(firstUrl);
 
@@ -241,6 +247,7 @@ bool AbstractWorker::initArgs()
     completeSourceFiles.clear();
     completeTargetFiles.clear();
     completeCustomInfos.clear();
+    bigFileSize = FileOperationsUtils::bigFileSize();
 
     return true;
 }

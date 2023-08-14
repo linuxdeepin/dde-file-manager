@@ -5,6 +5,7 @@
 #include "docopyfileworker.h"
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -145,7 +146,7 @@ bool DoCopyFileWorker::doDfmioFileCopy(FileInfoPointer fromInfo, FileInfoPointer
     bool ret{ false };
 
     DFile::CopyFlags flag = DFile::CopyFlag::kNoFollowSymlinks | DFile::CopyFlag::kOverwrite;
-    if (FileUtils::isMtpFile(toUrl))
+    if (!DeviceUtils::supportSetPermissionsDevice(toUrl))
         flag |= DFile::CopyFlag::kTargetDefaultPerms;
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
@@ -712,11 +713,13 @@ bool DoCopyFileWorker::isStopped()
  */
 void DoCopyFileWorker::setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo)
 {
+    if (!DeviceUtils::supportSetPermissionsDevice(toInfo->urlOf(UrlInfoType::kUrl)))
+        return;
     // 修改文件修改时间
     localFileHandler->setFileTime(toInfo->urlOf(UrlInfoType::kUrl), fromInfo->timeOf(TimeInfoType::kLastRead).value<QDateTime>(), fromInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>());
     QFileDevice::Permissions permissions = fromInfo->permissions();
     QString path = fromInfo->urlOf(UrlInfoType::kUrl).path();
     //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
-    if (permissions != 0000 && !FileUtils::isMtpFile(toInfo->urlOf(UrlInfoType::kUrl)))
+    if (permissions != 0000)
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
 }

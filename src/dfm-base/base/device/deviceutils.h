@@ -48,6 +48,9 @@ public:
     static bool isSamba(const QUrl &url);
     static bool isFtp(const QUrl &url);
     static bool isSftp(const QUrl &url);
+    static bool isMtpFile(const QUrl &url);
+    static bool supportDfmioCopyDevice(const QUrl &url);
+    static bool supportSetPermissionsDevice(const QUrl &url);
     static bool isExternalBlock(const QUrl &url);
     static QUrl parseNetSourceUrl(const QUrl &target);
 
