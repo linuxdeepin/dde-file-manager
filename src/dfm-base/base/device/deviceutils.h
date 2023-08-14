@@ -73,6 +73,7 @@ public:
 
     static QString fileSystemType(const QUrl &url);
     static qint64 deviceBytesFree(const QUrl &url);
+    static bool isUnmountSamba(const QUrl &url);
 
 private:
     static bool hasMatch(const QString &txt, const QString &rex);
