@@ -88,14 +88,14 @@ static bool isLoadVaultPlugin()
     DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
     if (DSysInfo::UosServer == uosType) {
         if (DSysInfo::UosEnterprise == uosEdition
-                || DSysInfo::UosEnterpriseC == uosEdition
-                || DSysInfo::UosEuler == uosEdition) {
+            || DSysInfo::UosEnterpriseC == uosEdition
+            || DSysInfo::UosEuler == uosEdition) {
             return true;
         }
     } else if (DSysInfo::UosDesktop == uosType) {
         if (DSysInfo::UosProfessional == uosEdition
-                || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)
-                || DSysInfo::UosEducation == uosEdition) {
+            || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)
+            || DSysInfo::UosEducation == uosEdition) {
             return true;
         }
     }
@@ -128,18 +128,6 @@ static bool pluginsLoad()
     QStringList blackNames;
     if (!isLoadVaultPlugin())
         blackNames << "dfmplugin-vault";
-
-#ifndef ENABLE_SMB_IN_ADMIN
-    /*
-     * NOTE(xust): the secret manager cannot be launched in WAYLAND ADMIN mode,
-     * which cause file-manager freeze when mount samba (dfm-mount using secret-manager
-     * to save/get the password of samba by sync).
-     * and the Admin mode is designed for operate files those normal user cannot write
-     * and should be the smallest dfm, so remove the smb-browser plugin in Admin mode
-     * */
-    if (SysInfoUtils::isOpenAsAdmin())
-        blackNames << "dfmplugin-smbbrowser";
-#endif
 
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
