@@ -278,7 +278,7 @@ void AddressBarPrivate::appendToCompleterModel(const QStringList &stringList)
 void AddressBarPrivate::onTravelCompletionListFinished()
 {
     if (urlCompleter->completionCount() > 0) {
-        if (urlCompleter->popup()->isHidden())
+        if (urlCompleter->popup()->isHidden() && q->isVisible())
             doComplete();
     } else {
         completerView->hide();
@@ -517,7 +517,8 @@ void AddressBarPrivate::onCompletionModelCountChanged()
         return;
     }
 
-    doComplete();
+    if (q->isVisible())
+        doComplete();
 }
 
 bool AddressBarPrivate::eventFilterResize(AddressBar *addressbar, QResizeEvent *event)
