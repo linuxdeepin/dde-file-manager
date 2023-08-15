@@ -13,10 +13,6 @@
             "permissions":"readwrite",
             "visibility":"public"
         },
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 7e79ece2c7f90f4136ebba1f90e01a4ee309ef1d
         "maskLogoUri":{
             "value":"/home/dong/search/svgviewer-output.svg",
             "serial":0,
@@ -69,29 +65,8 @@
             "name[zh_CN]":"高度",
             "description[zh_CN]":"水印图片高度",
             "description":"Watermask height",
-<<<<<<< HEAD
-=======
-=======
-	 "maskSize":{
-            "value":"10",
-            "serial":0,
-            "flags":[],
-            "name":"WaterMask Size",
-            "name[zh_CN]":"水印尺寸",
-            "description[zh_CN]":"水印尺寸和位置",
-            "description":"Change waterMask size and position.",
->>>>>>> afafe226b3716a276fe924edab9bfb3541b5c05e
->>>>>>> 7e79ece2c7f90f4136ebba1f90e01a4ee309ef1d
             "permissions":"readwrite",
             "visibility":"public"
         }
     }
-<<<<<<< HEAD
 }
-=======
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> afafe226b3716a276fe924edab9bfb3541b5c05e
->>>>>>> 7e79ece2c7f90f4136ebba1f90e01a4ee309ef1d
