@@ -47,7 +47,6 @@ protected:
     QMap<QString, ConfigInfo> parseJson(QJsonObject *);
     static QPixmap maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio);
 protected:
-    //void paintEvent(QPaintEvent *) override;
     static bool showLicenseState();
     static void addWidget(QHBoxLayout *layout, QWidget *wid, const QString &align);
     static bool usingCn();
