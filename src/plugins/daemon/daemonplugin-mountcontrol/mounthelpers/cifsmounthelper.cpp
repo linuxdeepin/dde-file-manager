@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cifsmounthelper.h"
+#include "cifsmounthelper_p.h"
 #include "daemonplugin_mountcontrol_global.h"
 
 #include <QDebug>
@@ -28,6 +29,9 @@
 DAEMONPMOUNTCONTROL_USE_NAMESPACE
 
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
+
+CifsMountHelper::CifsMountHelper(QDBusContext *context)
+    : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
 
 QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
 {
@@ -84,12 +88,15 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     static const QRegularExpression ipRegx(R"(^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)");
     auto matchIp = ipRegx.match(host);
     if (!matchIp.hasMatch()) {
-        const QString &ip = getIpOfHost(host);
+        const QString &ip = d->parseIP(host, port == -1 ? 0 : port);
         if (!ip.isEmpty()) {
             params.insert(MountOptionsField::kIp, ip);
             qInfo() << "mount: got ip" << ip << "of host" << host;
         }
     }
+
+    const QString &version = d->probeVersion(host, port == -1 ? 0 : port);
+    params.insert(MountOptionsField::kVersion, version);
 
     int errNum = 0;
     QString errMsg;
@@ -317,8 +324,14 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
         param += QString("uid=%1,").arg(user->pw_uid);
         param += QString("gid=%1,").arg(user->pw_gid);
     }
-    param += "iocharset=utf8,vers=default";
+    param += "iocharset=utf8";
     param += ",actimeo=5";   // bug 211337
+
+    if (opts.contains(MountOptionsField::kVersion))
+        param += QString(",vers=%1").arg(opts.value(MountOptionsField::kVersion).toString());
+    else
+        param += ",vers=default";
+
     return param.toStdString();
 }
 
@@ -375,39 +388,6 @@ bool CifsMountHelper::mkdirMountRootPath()
     }
 }
 
-QString CifsMountHelper::getIpOfHost(const QString &host)
-{
-    if (host.isEmpty())
-        return "";
-
-    addrinfo *result;
-    addrinfo hints {};
-    hints.ai_family = AF_UNSPEC;   // either IPv4 or IPv6
-    hints.ai_socktype = SOCK_STREAM;
-    char addressString[INET6_ADDRSTRLEN];
-    QString ipAddr;
-    if (0 != getaddrinfo(host.toUtf8().toStdString().c_str(), nullptr, &hints, &result))
-        return "";
-
-    for (addrinfo *addr = result; addr != nullptr; addr = addr->ai_next) {
-        switch (addr->ai_family) {
-        case AF_INET:
-            ipAddr = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in *>(addr->ai_addr)->sin_addr), addressString, INET_ADDRSTRLEN);
-            break;
-        case AF_INET6:
-            ipAddr = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in6 *>(addr->ai_addr)->sin6_addr), addressString, INET6_ADDRSTRLEN);
-            break;
-        default:
-            break;
-        }
-        if (!ipAddr.isEmpty())
-            break;
-    }
-
-    freeaddrinfo(result);
-    return ipAddr;
-}
-
 void CifsMountHelper::cleanMountPoint()
 {
     QDir d("/media/");
@@ -427,4 +407,110 @@ void CifsMountHelper::cleanMountPoint()
             }
         }
     }
+}
+
+SmbcAPI::SmbcAPI()
+{
+    init();
+}
+
+SmbcAPI::~SmbcAPI()
+{
+    if (smbcCtx && smbcFreeContext) {
+        int ret = smbcFreeContext(smbcCtx, true);
+        qInfo() << "free smbc client: " << ret;
+    }
+
+    if (libSmbc) {
+        if (!libSmbc->unload())
+            qCritical() << "cannot unload smbc";
+        delete libSmbc;
+    }
+    initialized = false;
+}
+
+bool SmbcAPI::isInitialized() const
+{
+    return initialized;
+}
+
+void SmbcAPI::init()
+{
+    if (initialized)
+        return;
+    libSmbc = new QLibrary("libsmbclient.so");
+    if (!libSmbc->load()) {
+        qCritical() << "cannot load smbc";
+        delete libSmbc;
+        libSmbc = nullptr;
+        return;
+    }
+
+    smbcNewContext = (FnSmbcNewContext)libSmbc->resolve("smbc_new_context");
+    smbcFreeContext = (FnSmbcFreeContext)libSmbc->resolve("smbc_free_context");
+    smbcNegprot = (FnSmbcNegprot)libSmbc->resolve("smbc_negprot");
+    smbcResolveHost = (FnSmbcResolveHost)libSmbc->resolve("smbc_resolve_host");
+
+    smbcCtx = smbcNewContext ? smbcNewContext() : nullptr;
+
+    initialized = (smbcNewContext && smbcFreeContext && smbcNegprot && smbcResolveHost
+                   && smbcCtx);
+
+    qInfo() << "smbc initialized: " << initialized;
+}
+
+FnSmbcNegprot SmbcAPI::getSmbcNegprot() const
+{
+    return smbcNegprot;
+}
+
+FnSmbcResolveHost SmbcAPI::getSmbcResolveHost() const
+{
+    return smbcResolveHost;
+}
+
+QMap<QString, QString> SmbcAPI::versionMapper()
+{
+    static QMap<QString, QString> mapper {
+        { "SMB3_11", "3.11" },
+        { "SMB3_10", "3.02" },
+        { "SMB3_02", "3.02" },
+        { "SMB3_00", "3.0" },
+        { "SMB2_24", "2.1" },
+        { "SMB2_22", "2.1" },
+        { "SMB2_10", "2.1" },
+        { "SMB2_02", "2.0" },
+        { "NT1", "1.0" },
+        { "DEFAULT", "default" },
+    };
+    return mapper;
+}
+
+QString CifsMountHelperPrivate::probeVersion(const QString &host, ushort port)
+{
+    Q_ASSERT(smbcAPI.isInitialized());
+    Q_ASSERT(smbcAPI.getSmbcNegprot());
+
+    QString verName = smbcAPI.getSmbcNegprot()(host.toStdString().c_str(),
+                                               port,
+                                               3000,
+                                               "NT1",
+                                               "SMB3_11");
+    return SmbcAPI::versionMapper().value(verName, "default");
+}
+
+QString CifsMountHelperPrivate::parseIP(const QString &host, uint16_t port)
+{
+    Q_ASSERT(smbcAPI.isInitialized());
+    Q_ASSERT(smbcAPI.getSmbcResolveHost());
+
+    char ip[INET6_ADDRSTRLEN];
+    int ret = smbcAPI.getSmbcResolveHost()(host.toStdString().c_str(),
+                                           port,
+                                           3000,
+                                           ip,
+                                           sizeof(ip));
+    if (ret != 0)
+        qWarning() << "cannot resolve ip address for" << host;
+    return QString(ip);
 }
