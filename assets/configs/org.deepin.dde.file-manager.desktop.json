@@ -1,0 +1,28 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "isMaskOpen":{
+            "value": true,
+            "serial":0,
+            "flags":[],
+            "name":"Enable WaterMask",
+            "name[zh_CN]":"启用水印",
+            "description[zh_CN]":"用于开启/隐藏水印",
+            "description":"It's used to control whether to enable the WaterMask.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+	 "maskSize":{
+            "value":"10",
+            "serial":0,
+            "flags":[],
+            "name":"WaterMask Size",
+            "name[zh_CN]":"水印尺寸",
+            "description[zh_CN]":"水印尺寸和位置",
+            "description":"Change waterMask size and position.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}

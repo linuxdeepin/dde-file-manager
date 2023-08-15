@@ -22,11 +22,15 @@ class WaterMaskFrame : public QFrame
 public:
     explicit WaterMaskFrame(const QString& fileName, QWidget *parent = nullptr);
     ~WaterMaskFrame();
+
+    static WaterMaskFrame *instance();
 public slots:
     void refresh();
     void updatePosition();
 protected slots:
     void stateChanged(int state, int prop);
+signals:
+    void showMask(bool showEnable, QPoint pos, int height);
 protected:
     struct ConfigInfo
     {
@@ -45,6 +49,7 @@ protected:
     QMap<QString, ConfigInfo> parseJson(QJsonObject *);
     static QPixmap maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio);
 protected:
+    //void paintEvent(QPaintEvent *) override;
     static bool showLicenseState();
     static void addWidget(QHBoxLayout *layout, QWidget *wid, const QString &align);
     static bool usingCn();

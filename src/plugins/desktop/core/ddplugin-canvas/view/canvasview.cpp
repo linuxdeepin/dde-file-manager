@@ -471,6 +471,8 @@ void CanvasView::setGeometry(const QRect &rect)
 
         if (d->waterMask)
             d->waterMask->refresh();
+        if (d->customWaterMask)
+            d->customWaterMask->refresh();
     }
 }
 
@@ -735,6 +737,11 @@ void CanvasView::initUI()
         d->waterMask = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
         d->waterMask->lower();
         d->waterMask->refresh();
+
+        d->customWaterMask = new CWaterMaskFrame(this);
+        d->customWaterMask->refresh();
+
+        connect(d->waterMask, &WaterMaskFrame::showMask, d->customWaterMask, &CWaterMaskFrame::onSystemMaskShow);
     }
 }
 
