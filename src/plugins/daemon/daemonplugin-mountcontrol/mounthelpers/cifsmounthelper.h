@@ -8,6 +8,7 @@
 #include "abstractmounthelper.h"
 
 DAEMONPMOUNTCONTROL_BEGIN_NAMESPACE
+class CifsMountHelperPrivate;
 class CifsMountHelper : public AbstractMountHelper
 {
     enum MountStatus {
@@ -20,8 +21,7 @@ class CifsMountHelper : public AbstractMountHelper
     };
 
 public:
-    explicit CifsMountHelper(QDBusContext *context)
-        : AbstractMountHelper(context) { }
+    explicit CifsMountHelper(QDBusContext *context);
 
     virtual QVariantMap mount(const QString &path, const QVariantMap &opts) override;
     virtual QVariantMap unmount(const QString &path, const QVariantMap &opts) override;
@@ -39,7 +39,8 @@ private:
     bool mkdir(const QString &path);
     bool rmdir(const QString &path);
     bool mkdirMountRootPath();
-    QString getIpOfHost(const QString &host);
+
+    QScopedPointer<CifsMountHelperPrivate> d;
 };
 DAEMONPMOUNTCONTROL_END_NAMESPACE
 
