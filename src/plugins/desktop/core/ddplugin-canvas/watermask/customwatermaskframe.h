@@ -34,22 +34,18 @@ protected slots:
 
 protected:
     QPixmap maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio);
-    //void getSystemMaskPosision();
-    //void paintEvent(QPaintEvent *) override;
 
 private:
-    bool maskOpen = false;
-    bool systemMaskEnable = false;
-    int systemMaskHeight;
-
     QLabel *logoLabel = nullptr;
 
+    bool maskOpen = false;
     QString maskLogoUri;
-
     QSize maskSize = QSize(0, 0);
     QPoint maskOffset = QPoint(0, 0);
+
+    bool systemMaskEnable = false;
+    int systemMaskHeight;
     QPoint systemMaskPosition = QPoint(0, 0);
-    //QSize systemMaskSize = QSize(0, 0);
 };
 }
 

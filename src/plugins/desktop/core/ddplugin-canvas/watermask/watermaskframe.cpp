@@ -148,8 +148,10 @@ void WaterMaskFrame::stateChanged(int state, int prop)
 QMap<QString, WaterMaskFrame::ConfigInfo> WaterMaskFrame::parseJson(QJsonObject *configs)
 {
     QMap<QString, WaterMaskFrame::ConfigInfo> ret;
-    if (configs->contains("isMaskAlwaysOn"))        
+
+    if (configs->contains("isMaskAlwaysOn"))
         maskAlwaysOn = configs->value("isMaskAlwaysOn").toBool(true);
+
     {
         ConfigInfo cfg = defaultCfg(configs);
         ret.insert(CfgDefault, cfg);

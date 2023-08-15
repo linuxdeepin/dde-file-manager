@@ -33,7 +33,6 @@ CustomWaterMaskFrame::CustomWaterMaskFrame(QWidget *parent)
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     logoLabel = new QLabel(this);
-    //getSystemMaskPosision();
 
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &CustomWaterMaskFrame::onConfigChanged, Qt::DirectConnection);
 }
@@ -45,8 +44,6 @@ CustomWaterMaskFrame::~CustomWaterMaskFrame()
 
 void CustomWaterMaskFrame::loadConfig()
 {
-   //QStringList keys = DConfigManager::instance()->keys(kConfName);
-
    maskOpen = DConfigManager::instance()->value(kConfName, kIsMaskOpen).toBool();
    maskLogoUri = DConfigManager::instance()->value(kConfName, kMaskLogoUri).toString();
 
@@ -65,7 +62,6 @@ void CustomWaterMaskFrame::loadConfig()
 void CustomWaterMaskFrame::refresh()
 {
     loadConfig();
-
     update();
 
     return;
@@ -111,7 +107,6 @@ void CustomWaterMaskFrame::onSystemMaskShow(bool showEnable, QPoint pos, int hei
 {
     systemMaskEnable = showEnable;
     systemMaskPosition = pos;
-
     systemMaskHeight = height;
 
     update();
