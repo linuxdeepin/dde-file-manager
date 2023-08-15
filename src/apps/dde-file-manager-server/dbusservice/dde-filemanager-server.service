@@ -5,6 +5,7 @@ Description=DDE File Manager Server
 Type=dbus
 BusName=org.deepin.filemanager.server
 ExecStart=/usr/bin/dde-file-manager-server
+ExecStop=/usr/bin/kill -9 $MAINPID
 
 [Install]
 WantedBy=graphical-session.target
