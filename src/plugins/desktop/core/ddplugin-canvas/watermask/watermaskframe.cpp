@@ -28,7 +28,6 @@ static const char *CfgEntCn = "ent-cn";
 static const char *CfgSecEn = "sec-en";
 static const char *CfgSecCn = "sec-cn";
 
-
 WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent)
     : QFrame(parent)
     , configFile(fileName)
@@ -39,7 +38,6 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent)
     // 授权状态改变
     connect(DeepinLicenseHelper::instance(), &DeepinLicenseHelper::postLicenseState,
             this, &WaterMaskFrame::stateChanged);
-
     logoLabel = new QLabel(this);
     textLabel = new QLabel(this);
 }
@@ -62,6 +60,11 @@ void WaterMaskFrame::updatePosition()
     if (auto wid = parentWidget()) {
         int x = wid->width() - curRightBottom.x() - curMaskSize.width();
         int y = wid->height() - curRightBottom.y() - curMaskSize.height();
+
+//        int a = logoLabel->pixmap()->height();
+//        this->rect().topLeft()
+
+        emit showMask(maskAlwaysOn, QPoint(x, y), curMaskSize.height());
         move(x, y);
     }
 }
@@ -148,7 +151,7 @@ QMap<QString, WaterMaskFrame::ConfigInfo> WaterMaskFrame::parseJson(QJsonObject 
     QMap<QString, WaterMaskFrame::ConfigInfo> ret;
 
     if (configs->contains("isMaskAlwaysOn"))
-        maskAlwaysOn = configs->value("isMaskAlwaysOn").toBool(true);
+        maskAlwaysOn = configs->value("isMaskAlwaysOn").toBool(true);    
 
     {
         ConfigInfo cfg = defaultCfg(configs);
@@ -293,8 +296,9 @@ void WaterMaskFrame::update(const ConfigInfo &configs, bool normal)
     curRightBottom = QPoint(configs.xRightBottom, configs.yRightBottom);
     updatePosition();
 
-    if (maskAlwaysOn)
+    if (maskAlwaysOn) {
         show();
+    }
 }
 
 void WaterMaskFrame::setTextAlign(const QString &maskTextAlign)
@@ -504,3 +508,9 @@ QPixmap WaterMaskFrame::maskPixmap(const QString &uri, const QSize &size, qreal 
     maskPixmap.setDevicePixelRatio(pixelRatio);
     return maskPixmap;
 }
+//#include <QPainter>
+//void WaterMaskFrame::paintEvent(QPaintEvent *)
+//{
+//    QPainter pa(this);
+//    pa.fillRect(0,0,width(),height(), Qt::red);
+//}
