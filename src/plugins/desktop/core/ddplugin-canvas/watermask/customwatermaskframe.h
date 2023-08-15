@@ -27,7 +27,7 @@ public:
     void setPosition();
 
 public slots:
-    void onSystemMaskShow(bool showEnable, QPoint pos, int height);
+    void onSystemMaskShow(bool showEnable, QPoint pos);
 protected slots:
     void onConfigChanged(const QString &cfg, const QString &key);
     void update();
@@ -44,7 +44,6 @@ private:
     QPoint maskOffset = QPoint(0, 0);
 
     bool systemMaskEnable = false;
-    int systemMaskHeight;
     QPoint systemMaskPosition = QPoint(0, 0);
 };
 }

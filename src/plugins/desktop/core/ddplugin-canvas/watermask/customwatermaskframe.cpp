@@ -70,9 +70,10 @@ void CustomWaterMaskFrame::refresh()
 void CustomWaterMaskFrame::setPosition()
 {
     int x = systemMaskPosition.x() + maskOffset.x();
-    int y = systemMaskPosition.y() + maskOffset.y() + systemMaskHeight;
+    int y = systemMaskPosition.y() - maskOffset.y() - maskSize.height();
 
     move(x, y);
+    return;
 }
 
 void CustomWaterMaskFrame::onConfigChanged(const QString &cfg, const QString &key)
@@ -86,30 +87,40 @@ void CustomWaterMaskFrame::onConfigChanged(const QString &cfg, const QString &ke
 
 void CustomWaterMaskFrame::update()
 {
-    if (!systemMaskEnable) {
+    if (!maskOpen || !systemMaskEnable) {
         hide();
         return;
     }
 
-    if (!maskOpen) {
-        hide();
-        return;
+    // remove old layout
+    {
+        auto mainLayout = this->layout();
+        if (mainLayout) {
+            delete mainLayout;
+            mainLayout = nullptr;
+        }
     }
+
+    auto mainLayout = new QHBoxLayout();
+    mainLayout->addWidget(logoLabel);
 
     logoLabel->setPixmap(maskPixmap(maskLogoUri, maskSize, logoLabel->devicePixelRatioF()));
     logoLabel->setFixedSize(maskSize.width(), maskSize.height());
 
+    setLayout(mainLayout);
     setPosition();
     show();
+
+    return;
 }
 
-void CustomWaterMaskFrame::onSystemMaskShow(bool showEnable, QPoint pos, int height)
+void CustomWaterMaskFrame::onSystemMaskShow(bool showEnable, QPoint pos)
 {
     systemMaskEnable = showEnable;
     systemMaskPosition = pos;
-    systemMaskHeight = height;
 
     update();
+    return;
 }
 
 QPixmap CustomWaterMaskFrame::maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio)
