@@ -9,7 +9,6 @@
 #include "canvasview.h"
 #include "watermask/watermaskframe.h"
 #include "watermask/customwatermaskframe.h"
-#include "watermask/cwatermaskframe.h"
 #include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
 #include "operator/clickselector.h"
@@ -120,8 +119,7 @@ public:
 
     CanvasViewMenuProxy *menuProxy = nullptr;
     WaterMaskFrame *waterMask = nullptr;
-    //CustomWaterMaskFrame *customWaterMask = nullptr;
-    CWaterMaskFrame *customWaterMask = nullptr;
+    CustomWaterMaskFrame *customWaterMask = nullptr;
 
     ViewHookInterface *hookIfs = nullptr;
     CanvasView *q;

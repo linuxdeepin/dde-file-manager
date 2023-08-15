@@ -738,10 +738,10 @@ void CanvasView::initUI()
         d->waterMask->lower();
         d->waterMask->refresh();
 
-        d->customWaterMask = new CWaterMaskFrame(this);
+        d->customWaterMask = new CustomWaterMaskFrame(this);
         d->customWaterMask->refresh();
 
-        connect(d->waterMask, &WaterMaskFrame::showMask, d->customWaterMask, &CWaterMaskFrame::onSystemMaskShow);
+        connect(d->waterMask, &WaterMaskFrame::showMask, d->customWaterMask, &CustomWaterMaskFrame::onSystemMaskShow);
     }
 }
 

@@ -28,7 +28,7 @@ bool CanvasPlugin::start()
     ClipBoard::instance();
 
     QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop", &err);
+    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.customwatermask", &err);
     if (!ret)
         qWarning() << "create dconfig failed: " << err;
 

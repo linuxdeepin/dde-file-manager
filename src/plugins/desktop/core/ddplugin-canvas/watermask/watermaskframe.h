@@ -22,8 +22,6 @@ class WaterMaskFrame : public QFrame
 public:
     explicit WaterMaskFrame(const QString& fileName, QWidget *parent = nullptr);
     ~WaterMaskFrame();
-
-    static WaterMaskFrame *instance();
 public slots:
     void refresh();
     void updatePosition();
