@@ -197,7 +197,7 @@ int FilePropertyDialog::initalHeightOfView()
         if (lineWidget) {
             BasicWidget *baseWidget = qobject_cast<BasicWidget *>(lineWidget);
             if (baseWidget && baseWidget->expand())
-                expandsHeight += kArrowExpandHeader + baseWidget->expansionHeight() + kArrowExpandSpacing;
+                expandsHeight += kArrowExpandHeader + baseWidget->expansionPreditHeight() + kArrowExpandSpacing;
             else
                 expandsHeight += kArrowExpandHeader + kArrowExpandSpacing;
         } else {

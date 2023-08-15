@@ -20,7 +20,7 @@ class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 public:
     explicit BasicWidget(QWidget *parent = nullptr);
     virtual ~BasicWidget() override;
-    int expansionHeight();
+    int expansionPreditHeight();
 
 private:
     void initUI();
@@ -59,11 +59,13 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileModified { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
     QCheckBox *hideFile { nullptr };
+    bool hideCheckBox { false };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
     qint64 fSize { 0 };
     int fCount { 0 };
     QMultiMap<BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
     QFrame *frameMain { nullptr };
+    QGridLayout *layoutMain { nullptr };
     QUrl currentUrl;
 };
 }

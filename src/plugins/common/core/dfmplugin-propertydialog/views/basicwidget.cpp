@@ -22,7 +22,9 @@
 #include <QSet>
 #include <QDBusInterface>
 
-static constexpr int kExpensionWidgetHeight { 300 };
+static constexpr int kSpacingHeight { 16 };
+static constexpr int kLeftContentsMargins { 15 };
+static constexpr int kRightContentsMargins { 5 };
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -42,9 +44,21 @@ BasicWidget::~BasicWidget()
     fileCalculationUtils->deleteLater();
 }
 
-int BasicWidget::expansionHeight()
+int BasicWidget::expansionPreditHeight()
 {
-    return kExpensionWidgetHeight;
+    int itemCount = fieldMap.size() + (hideCheckBox ? 0 : 1);
+    int allSpaceHeight = (itemCount - 1) * kSpacingHeight;
+
+    int allItemHeight { 0 };
+    QMultiMap<BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *>::const_iterator itr = fieldMap.begin();
+    for (; itr != fieldMap.end(); ++itr) {
+        if (itr.value())
+            allItemHeight += itr.value()->height();
+    }
+    if (hideFile)
+        allItemHeight += (hideCheckBox ? 0 : hideFile->height());
+
+    return allSpaceHeight + allItemHeight;
 }
 
 void BasicWidget::initUI()
@@ -65,7 +79,6 @@ void BasicWidget::initUI()
     fileCreated = createValueLabel(frameMain, tr("Time created"));
     fileAccessed = createValueLabel(frameMain, tr("Time accessed"));
     fileModified = createValueLabel(frameMain, tr("Time modified"));
-    frameMain->setFixedHeight(kExpensionWidgetHeight);
 
     hideFile = new DCheckBox(frameMain);
     hideFile->setText(tr("Hide this file"));
@@ -131,9 +144,9 @@ void BasicWidget::basicExpand(const QUrl &url)
     QFrame *tempFrame = new QFrame(frameMain);
     tempFrame->setLayout(gl);
 
-    QGridLayout *glayout = new QGridLayout;
-    glayout->setContentsMargins(15, 15, 5, 10);
-    glayout->setSpacing(16);
+    layoutMain = new QGridLayout;
+    layoutMain->setContentsMargins(kLeftContentsMargins, 0, 0, kRightContentsMargins);
+    layoutMain->setSpacing(kSpacingHeight);
     int row = 0;
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
     QSet<BasicFieldExpandEnum> fieldset = QSet<BasicFieldExpandEnum>::fromList(fields);
@@ -143,7 +156,7 @@ void BasicWidget::basicExpand(const QUrl &url)
         QList<KeyValueLabel *> kvls = fieldMap.values(key);
         for (int i = kvls.count() - 1; i >= 0; --i) {
             KeyValueLabel *kvl = kvls[i];
-            glayout->addWidget(kvl, row, 0, 1, 6);
+            layoutMain->addWidget(kvl, row, 0, 1, 6);
             row++;
         }
     }
@@ -152,13 +165,16 @@ void BasicWidget::basicExpand(const QUrl &url)
 #else
     QStringList &&list = url.path().split("/", Qt::SkipEmptyParts);
 #endif
-    if (!list.isEmpty() && url.isValid() && list.last().startsWith("."))
+    if (!list.isEmpty() && url.isValid() && list.last().startsWith(".")) {
         tempFrame->hide();
-    else
-        glayout->addWidget(tempFrame, row, 0, 1, 6);
-    glayout->setColumnStretch(0, 1);
+        hideCheckBox = true;
+    } else {
+        layoutMain->addWidget(tempFrame, row, 0, 1, 6);
+        hideCheckBox = false;
+    }
+    layoutMain->setColumnStretch(0, 1);
 
-    frameMain->setLayout(glayout);
+    frameMain->setLayout(layoutMain);
     setContent(frameMain);
 }
 
@@ -258,22 +274,23 @@ void BasicWidget::basicFill(const QUrl &url)
         fCount = 1;
         fileSize->setRightValue(FileUtils::formatSize(fSize), Qt::ElideNone, Qt::AlignVCenter, true);
     }
-    if (fileCount && fileCount->RightValue().isEmpty())
-        fileCount->setVisible(false);
 
     if (fileType && fileType->RightValue().isEmpty()) {
         const FileInfo::FileType type = info->fileType();
         fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideMiddle, Qt::AlignVCenter, true);
         if (type == FileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
-            fileCount->setVisible(true);
             fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
             if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
                 fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kRedirectedFileUrl));
             } else {
                 fileCalculationUtils->start(QList<QUrl>() << url);
             }
-
             connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
+        } else {
+            layoutMain->removeWidget(fileCount);
+            fieldMap.remove(BasicFieldExpandEnum::kFileCount);
+            delete fileCount;
+            fileCount = nullptr;
         }
     }
 }
