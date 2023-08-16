@@ -197,7 +197,13 @@ DLabel *KeyValueLabel::leftWidget()
     return leftValueLabel;
 }
 
+void KeyValueLabel::setLeftVauleLabelFixedWidth(int width)
+{
+    leftValueLabel->setFixedWidth(width);
+}
+
 RightValueWidget *KeyValueLabel::rightWidget()
+
 {
     return rightValueEdit;
 }
@@ -244,7 +250,7 @@ void RightValueWidget::customContextMenuEvent(const QPoint &pos)
     QMenu *menu = createStandardContextMenu(curPos);
     if (!menu)
         return;
-    QList<QAction*> acts = menu->actions();
+    QList<QAction *> acts = menu->actions();
     for (int i = 0; i < acts.size(); ++i) {
         const QString &objectName = acts.at(i)->objectName();
         if (objectName == QString(kSelectAllName)) {
