@@ -26,6 +26,7 @@ struct DeviceInfo
     QString fileSystem;
     qint64 totalCapacity;
     qint64 availableSpace;
+    QString deviceDesc;
 };
 
 DPCOMPUTER_END_NAMESPACE

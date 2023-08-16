@@ -289,6 +289,7 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
     devInfo.fileSystem = info->extraProperty(GlobalServerDefines::DeviceProperty::kFileSystem).toString();
     devInfo.totalCapacity = info->sizeTotal();
     devInfo.availableSpace = info->sizeFree();
+    devInfo.deviceDesc = info->extraProperty(GlobalServerDefines::DeviceProperty::kDevice).toString().mid(5);
     dialog->setSelectDeviceInfo(devInfo);
     return dialog;
 }
