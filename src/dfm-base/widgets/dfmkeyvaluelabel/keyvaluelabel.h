@@ -89,6 +89,7 @@ public:
     QString LeftValue();
 
     QString RightValue();
+    void setLeftVauleLabelFixedWidth(int width);
 
     DLabel *leftWidget();
 
