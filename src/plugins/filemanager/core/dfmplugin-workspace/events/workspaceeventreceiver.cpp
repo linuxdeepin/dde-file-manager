@@ -116,6 +116,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetNameFilter);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_CurrentSortRole",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentSortRole);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_ColumnRoles",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleColumnRoles);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetSort",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSort);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterDataCache",
@@ -277,6 +279,11 @@ void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)
 ItemRoles WorkspaceEventReceiver::handleCurrentSortRole(quint64 windowId)
 {
     return WorkspaceHelper::instance()->sortRole(windowId);
+}
+
+QList<ItemRoles> WorkspaceEventReceiver::handleColumnRoles(quint64 windowId)
+{
+    return WorkspaceHelper::instance()->columnRoles(windowId);
 }
 
 QRectF WorkspaceEventReceiver::handleGetVisualGeometry(const quint64 windowID)
