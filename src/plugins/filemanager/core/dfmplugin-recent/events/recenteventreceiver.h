@@ -22,6 +22,9 @@ public:
 public slots:
     void handleAddressInputStr(quint64 winId, QString *str);
     void handleWindowUrlChanged(quint64 winId, const QUrl &url);
+    void handleUpdateRecent(const QList<QUrl> &urls, bool ok, const QString &errMsg);
+    void handleFileRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
+    void handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
 
 private:
     explicit RecentEventReceiver(QObject *parent = nullptr);

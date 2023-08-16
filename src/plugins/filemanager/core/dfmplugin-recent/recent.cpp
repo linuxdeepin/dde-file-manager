@@ -17,6 +17,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-base/utils/systempathutil.h>
 
@@ -135,6 +136,10 @@ void Recent::followEvents()
 
 void Recent::bindWindows()
 {
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleFileCutResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleUpdateRecent);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleUpdateRecent);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleFileRenameResult);
     const auto &winIdList { FMWindowsIns.windowIdList() };
     std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
         onWindowOpened(id);
