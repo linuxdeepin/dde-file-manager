@@ -32,6 +32,9 @@ public:
     inline bool isRunning() const {
         return future.isRunning();
     }
+    inline bool isForce() const {
+        return force;
+    }
     inline void setRepeat() {
         repeat = true;
     }

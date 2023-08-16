@@ -252,7 +252,7 @@ TEST_F(UT_backGroundManager, request)
     });
     bgm->d->bridge->force = true;
     bgm->d->bridge->request(true);
-    EXPECT_FALSE(callTerminate);
+    EXPECT_TRUE(callTerminate);
 
     bgm->d->bridge->force = false;
     QWidget *widget = new QWidget;
