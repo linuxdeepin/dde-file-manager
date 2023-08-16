@@ -43,6 +43,7 @@ void DevicePropertyDialog::iniUI()
 
     basicInfo = new KeyValueLabel(this);
     basicInfo->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    basicInfo->setLeftVauleLabelFixedWidth(150);
 
     devicesProgressBar = new DColoredProgressBar();
     devicesProgressBar->addThreshold(0, QColor(0xFF0080FF));
@@ -124,7 +125,8 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DeviceInfo &info)
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));
     setFileName(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
-    basicInfo->setLeftValue(info.deviceName, Qt::ElideMiddle, Qt::AlignLeft, true);
+    QString deviceShowName = info.deviceDesc.isEmpty() ? info.deviceName : QString("%1(%2)").arg(info.deviceName).arg(info.deviceDesc);
+    basicInfo->setLeftValue(deviceShowName, Qt::ElideMiddle, Qt::AlignLeft, true);
     setProgressBar(info.totalCapacity, info.availableSpace, !info.mountPoint.isEmpty());
     addExtendedControl(deviceBasicWidget);
 }
