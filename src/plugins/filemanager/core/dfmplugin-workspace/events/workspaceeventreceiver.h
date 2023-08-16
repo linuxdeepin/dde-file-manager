@@ -56,6 +56,7 @@ public slots:
     void handleRenameFileResult(const quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
     void handleFileUpdate(const QUrl &url);
     DFMBASE_NAMESPACE::Global::ItemRoles handleCurrentSortRole(quint64 windowId);
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> handleColumnRoles(quint64 windowId);
 
     QRectF handleGetVisualGeometry(const quint64 windowID);
     QRectF handleGetViewItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);

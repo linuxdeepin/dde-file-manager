@@ -257,6 +257,15 @@ Global::ItemRoles WorkspaceHelper::sortRole(quint64 windowId)
     return Global::ItemRoles::kItemUnknowRole;
 }
 
+QList<ItemRoles> WorkspaceHelper::columnRoles(quint64 windowId)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        return view->model()->getColumnRoles();
+
+    return {};
+}
+
 bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const FileViewRoutePrehaldler prehandler)
 {
     if (kPrehandlers.contains(scheme))
