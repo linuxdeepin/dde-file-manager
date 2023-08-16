@@ -18,9 +18,6 @@ DPSEARCH_BEGIN_NAMESPACE
 namespace SearchActionId {
 inline constexpr char kOpenFileLocation[] { "open-file-location" };
 inline constexpr char kSrtPath[] { "sort-by-path" };
-inline constexpr char kSourcePath[] { "sort-by-source-path" };
-inline constexpr char kTimeDeleted[] { "sort-by-time-deleted" };
-inline constexpr char kSortByLastRead[] { "sort-by-lastRead" };
 }
 
 namespace CustomKey {
