@@ -122,7 +122,10 @@ QString BackgroundManager::backgroundPath(const QString &screen)
 void BackgroundManager::onBackgroundBuild()
 {
     // get wallpapers
-    d->bridge->request(d->backgroundPaths.isEmpty());
+    if (d->bridge->isForce() && d->bridge->isRunning())
+        qWarning() << "a force requestion is running. skip to get wallpaper.";
+    else
+        d->bridge->request(d->backgroundPaths.isEmpty());
 
     QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
     if (root.size() == 1) {
@@ -288,11 +291,6 @@ BackgroundBridge::~BackgroundBridge()
 
 void BackgroundBridge::request(bool refresh)
 {
-    if (force && future.isRunning()) {
-        qWarning() << "a force requestion is running.";
-        return;
-    }
-
     terminate(true);
 
     QList<Requestion> requestion;
@@ -347,7 +345,7 @@ void BackgroundBridge::forceRequest()
 
 void BackgroundBridge::terminate(bool wait)
 {
-    qInfo() << "terminate last requestion, wait:" << wait << "running:" << getting << future.isRunning();
+    qInfo() << "terminate last requestion, wait:" << wait << "running:" << getting << future.isRunning() << "force" << force;
     if (!getting)
         return;
 
@@ -401,8 +399,8 @@ void BackgroundBridge::onFinished(void *pData)
 
     if (repeat) {
         qInfo() << "need to request again.";
-        request(true);
         repeat = false;
+        request(true);
     }
 }
 
