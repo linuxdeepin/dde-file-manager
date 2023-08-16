@@ -94,7 +94,7 @@ void WaterMaskFrame::stateChanged(int state, int prop)
             } else {
                 qWarning() << "invalid config info sec" << cn;
             }
-        } else if (prop == DeepinLicenseHelper::LicenseProperty::Enterprise) {   //gov
+        } else if (prop == DeepinLicenseHelper::LicenseProperty::Government) {   //gov
             //prop == DeepinLicenseHelper::LicenseProperty::Enterprise
             auto cfg = configInfos.value(cn ? CfgGovCn : CfgGovEn);
             if (cfg.valid) {
