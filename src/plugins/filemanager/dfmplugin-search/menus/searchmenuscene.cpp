@@ -27,6 +27,9 @@ static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 static constexpr char kDConfigFilterSceneName[] = "DConfigMenuFilter";
 
+static constexpr char kSortByActId[] = "sort-by";
+static constexpr char kDisplayAsActId[] = "display-as";
+
 AbstractMenuScene *SearchMenuCreator::create()
 {
     return new SearchMenuScene();
@@ -36,13 +39,33 @@ SearchMenuScenePrivate::SearchMenuScenePrivate(SearchMenuScene *qq)
     : AbstractMenuScenePrivate(qq),
       q(qq)
 {
+    emptyWhitelist << kSortByActId
+                   << kDisplayAsActId
+                   << SearchActionId::kSrtPath
+                   << dfmplugin_menu::ActionID::kSelectAll;
+}
+
+void SearchMenuScenePrivate::createAction(QMenu *menu, const QString &actName, bool isSubAct, bool checkable)
+{
+    auto actionList = menu->actions();
+    auto iter = std::find_if(actionList.begin(), actionList.end(), [&](const QAction *action) {
+        const auto &p = action->property(ActionPropertyKey::kActionID);
+        return p == actName;
+    });
+
+    if (iter == actionList.end()) {
+        QAction *tempAction = isSubAct ? new QAction(predicateName.value(actName), menu)
+                                       : menu->addAction(predicateName.value(actName));
+        predicateAction[actName] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, actName);
+        tempAction->setCheckable(checkable);
+    }
 }
 
 void SearchMenuScenePrivate::updateMenu(QMenu *menu)
 {
     auto actions = menu->actions();
     if (isEmptyArea) {
-        QAction *selAllAct = nullptr;
         for (auto act : actions) {
             if (act->isSeparator())
                 continue;
@@ -53,27 +76,14 @@ void SearchMenuScenePrivate::updateMenu(QMenu *menu)
 
             auto sceneName = actionScene->name();
             auto actId = act->property(ActionPropertyKey::kActionID).toString();
-
-            if (sceneName == "SortAndDisplayMenu" && actId == "sort-by") {
-                auto subMenu = act->menu();
-                updateSubMenu(subMenu);
+            if (!emptyWhitelist.contains(actId)) {
+                act->setVisible(false);
                 continue;
             }
 
-            const auto &p = act->property(ActionPropertyKey::kActionID);
-            if (p == dfmplugin_menu::ActionID::kSelectAll) {
-                selAllAct = act;
-                break;
-            }
+            if (sceneName == kSortAndDisplayMenuSceneName && actId == kSortByActId)
+                updateSortMenu(act->menu());
         }
-
-        if (selAllAct) {
-            actions.removeOne(selAllAct);
-            actions.append(selAllAct);
-            menu->addActions(actions);
-            menu->insertSeparator(selAllAct);
-        }
-
     } else {
         QAction *openLocalAct = nullptr;
         for (auto act : actions) {
@@ -89,11 +99,34 @@ void SearchMenuScenePrivate::updateMenu(QMenu *menu)
 
         // insert 'OpenFileLocation' action
         if (openLocalAct) {
+            openLocalAct->setVisible(true);
             actions.removeOne(openLocalAct);
             actions.insert(1, openLocalAct);
             menu->addActions(actions);
         }
     }
+}
+
+void SearchMenuScenePrivate::updateSortMenu(QMenu *menu)
+{
+    if (!predicateAction.contains(SearchActionId::kSrtPath))
+        return;
+
+    auto actions = menu->actions();
+    bool contians = std::any_of(actions.begin(), actions.end(), [](QAction *act) {
+        auto actId = act->property(ActionPropertyKey::kActionID).toString();
+        return actId == SearchActionId::kSrtPath;
+    });
+    if (contians)
+        return;
+
+    actions.size() > 1 ? actions.insert(1, predicateAction[SearchActionId::kSrtPath])
+                       : actions.append(predicateAction[SearchActionId::kSrtPath]);
+
+    menu->addActions(actions);
+    auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
+    if (role == Global::ItemRoles::kItemFilePathRole)
+        predicateAction[SearchActionId::kSrtPath]->setChecked(true);
 }
 
 bool SearchMenuScenePrivate::openFileLocation(const QString &path)
@@ -121,97 +154,12 @@ void SearchMenuScenePrivate::disableSubScene(AbstractMenuScene *scene, const QSt
     }
 }
 
-void SearchMenuScenePrivate::updateSubMenu(QMenu *menu)
-{
-    const auto &targetUrl = SearchHelper::searchTargetUrl(currentDir);
-    if (targetUrl.scheme() == Global::Scheme::kTrash)
-        return updateSubMenuTrash(menu);
-
-    if (targetUrl.scheme() == Global::Scheme::kRecent)
-        return updateSubMenuRecent(menu);
-
-    return updateSubMenuNormal(menu);
-}
-
-void SearchMenuScenePrivate::updateSubMenuNormal(QMenu *menu)
-{
-    auto actions = menu->actions();
-    auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
-        auto actId = act->property(ActionPropertyKey::kActionID).toString();
-        return actId == "sort-by-name";
-    });
-
-    if (iter != actions.end()) {
-        menu->insertAction(*iter, predicateAction[SearchActionId::kSrtPath]);
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
-        if (role == Global::ItemRoles::kItemFilePathRole)
-            predicateAction[SearchActionId::kSrtPath]->setChecked(true);
-    }
-}
-
-void SearchMenuScenePrivate::updateSubMenuTrash(QMenu *menu)
-{
-    auto actions = menu->actions();
-    auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
-        auto actId = act->property(ActionPropertyKey::kActionID).toString();
-        return actId == "sort-by-time-modified";
-    });
-
-    if (iter != actions.end()) {
-        menu->insertAction(*iter, predicateAction[SearchActionId::kTimeDeleted]);
-        menu->insertAction(predicateAction[SearchActionId::kTimeDeleted], predicateAction[SearchActionId::kSourcePath]);
-        menu->removeAction(*iter);
-
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
-        switch (role) {
-        case Global::ItemRoles::kItemFileOriginalPath:
-            predicateAction[SearchActionId::kSourcePath]->setChecked(true);
-            break;
-        case Global::ItemRoles::kItemFileDeletionDate:
-            predicateAction[SearchActionId::kTimeDeleted]->setChecked(true);
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-void SearchMenuScenePrivate::updateSubMenuRecent(QMenu *menu)
-{
-    auto actions = menu->actions();
-    auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
-        auto actId = act->property(ActionPropertyKey::kActionID).toString();
-        return actId == "sort-by-time-modified";
-    });
-
-    if (iter != actions.end()) {
-        menu->insertAction(*iter, predicateAction[SearchActionId::kSortByLastRead]);
-        menu->insertAction(predicateAction[SearchActionId::kSortByLastRead], predicateAction[SearchActionId::kSrtPath]);
-        menu->removeAction(*iter);
-
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
-        switch (role) {
-        case Global::ItemRoles::kItemFilePathRole:
-            predicateAction[SearchActionId::kSrtPath]->setChecked(true);
-            break;
-        case Global::ItemRoles::kItemFileLastReadRole:
-            predicateAction[SearchActionId::kSortByLastRead]->setChecked(true);
-            break;
-        default:
-            break;
-        }
-    }
-}
-
 SearchMenuScene::SearchMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new SearchMenuScenePrivate(this))
 {
     d->predicateName[SearchActionId::kOpenFileLocation] = tr("Open file location");
     d->predicateName[dfmplugin_menu::ActionID::kSelectAll] = tr("Select all");
-    d->predicateName[SearchActionId::kSourcePath] = tr("Source path");
-    d->predicateName[SearchActionId::kTimeDeleted] = tr("Time deleted");
-    d->predicateName[SearchActionId::kSortByLastRead] = tr("Time read");
     d->predicateName[SearchActionId::kSrtPath] = tr("Path");
 }
 
@@ -238,21 +186,13 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
 
     QVariantHash tmpParams = params;
     QList<AbstractMenuScene *> currentScene;
-    if (d->isEmptyArea) {
-        if (auto sortAndDisplayScene = dfmplugin_menu_util::menuSceneCreateScene(kSortAndDisplayMenuSceneName))
-            currentScene.append(sortAndDisplayScene);
-    } else {
-        const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
-        if (targetUrl.scheme() == Global::Scheme::kTrash || targetUrl.scheme() == Global::Scheme::kRecent) {
-            auto parentSceneName = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", targetUrl.scheme()).toString();
-            if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(parentSceneName))
-                currentScene.append(scene);
-
-            tmpParams[MenuParamKey::kCurrentDir] = targetUrl;
-        } else {
-            if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
-                currentScene.append(workspaceScene);
-        }
+    const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
+    auto menuScene = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", targetUrl.scheme()).toString();
+    if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(menuScene)) {
+        currentScene.append(scene);
+        tmpParams[MenuParamKey::kCurrentDir] = targetUrl;
+    } else if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName)) {
+        currentScene.append(workspaceScene);
     }
 
     if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigFilterSceneName))
@@ -288,50 +228,13 @@ bool SearchMenuScene::create(QMenu *parent)
     AbstractMenuScene::create(parent);
 
     if (d->isEmptyArea) {
-        QAction *tempAction = parent->addAction(d->predicateName.value(dfmplugin_menu::ActionID::kSelectAll));
-        d->predicateAction[dfmplugin_menu::ActionID::kSelectAll] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, QString(dfmplugin_menu::ActionID::kSelectAll));
+        d->createAction(parent, dfmplugin_menu::ActionID::kSelectAll);
 
-        const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
-        if (targetUrl.scheme() == Global::Scheme::kTrash) {
-            // sort by
-            QAction *actSortByPath = new QAction(d->predicateName[SearchActionId::kSourcePath], parent);
-            actSortByPath->setCheckable(true);
-            actSortByPath->setProperty(ActionPropertyKey::kActionID, SearchActionId::kSourcePath);
-            d->predicateAction[SearchActionId::kSourcePath] = actSortByPath;
-
-            QAction *actSortByDeleted = new QAction(d->predicateName[SearchActionId::kTimeDeleted], parent);
-            actSortByDeleted->setCheckable(true);
-            actSortByDeleted->setProperty(ActionPropertyKey::kActionID, SearchActionId::kTimeDeleted);
-            d->predicateAction[SearchActionId::kTimeDeleted] = actSortByDeleted;
-        } else if (targetUrl.scheme() == Global::Scheme::kRecent) {
-            QAction *actSortByPath = new QAction(d->predicateName[SearchActionId::kSrtPath], parent);
-            actSortByPath->setCheckable(true);
-            actSortByPath->setProperty(ActionPropertyKey::kActionID, SearchActionId::kSrtPath);
-            d->predicateAction[SearchActionId::kSrtPath] = actSortByPath;
-
-            QAction *actSortByLastRead = new QAction(d->predicateName[SearchActionId::kSortByLastRead], parent);
-            actSortByLastRead->setCheckable(true);
-            actSortByLastRead->setProperty(ActionPropertyKey::kActionID, SearchActionId::kSortByLastRead);
-            d->predicateAction[SearchActionId::kSortByLastRead] = actSortByLastRead;
-        } else {
-            QAction *actSortByPath = new QAction(d->predicateName[SearchActionId::kSrtPath], parent);
-            actSortByPath->setCheckable(true);
-            actSortByPath->setProperty(ActionPropertyKey::kActionID, SearchActionId::kSrtPath);
-            d->predicateAction[SearchActionId::kSrtPath] = actSortByPath;
-        }
+        auto roles = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_ColumnRoles", d->windowId).value<QList<Global::ItemRoles>>();
+        if (roles.contains(Global::ItemRoles::kItemFilePathRole))
+            d->createAction(parent, SearchActionId::kSrtPath, true, true);
     } else {
-        auto actionList = parent->actions();
-        auto iter = std::find_if(actionList.begin(), actionList.end(), [](const QAction *action) {
-            const auto &p = action->property(ActionPropertyKey::kActionID);
-            return (p == SearchActionId::kOpenFileLocation);
-        });
-
-        if (iter == actionList.end()) {
-            QAction *tempAction = parent->addAction(d->predicateName.value(SearchActionId::kOpenFileLocation));
-            d->predicateAction[SearchActionId::kOpenFileLocation] = tempAction;
-            tempAction->setProperty(ActionPropertyKey::kActionID, QString(SearchActionId::kOpenFileLocation));
-        }
+        d->createAction(parent, SearchActionId::kOpenFileLocation);
     }
 
     return true;
@@ -362,24 +265,10 @@ bool SearchMenuScene::triggered(QAction *action)
             dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectAll", d->windowId);
             return true;
         }
-        // sort by source path
-        if (actionId == SearchActionId::kSourcePath) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileOriginalPath);
-            return true;
-        }
-        // sort by deleted time
-        if (actionId == SearchActionId::kTimeDeleted) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileDeletionDate);
-            return true;
-        }
+
         // sort by path
         if (actionId == SearchActionId::kSrtPath) {
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);
-            return true;
-        }
-        // sort by lastread
-        if (actionId == SearchActionId::kSortByLastRead) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
             return true;
         }
     }
