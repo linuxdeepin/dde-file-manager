@@ -5,8 +5,10 @@
 #include "vaultfileiterator.h"
 #include "private/vaultfileiteratorprivate.h"
 #include "utils/vaulthelper.h"
+#include "vaultfileinfo.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
 
 #include <dfm-io/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
@@ -57,7 +59,35 @@ QUrl VaultFileIterator::fileUrl() const
 
 const FileInfoPointer VaultFileIterator::fileInfo() const
 {
-    return InfoFactory::create<FileInfo>(fileUrl());
+    assert(QThread::currentThread() != qApp->thread());
+
+    QUrl url = VaultHelper::instance()->vaultToLocalUrl(fileUrl());
+    QSharedPointer<DFileInfo> fileinfo = dfmioDirIterator->fileInfo();
+
+    const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
+    bool isHidden = false;
+    if (fileName.startsWith(".")) {
+        isHidden = true;
+    }
+
+    QSharedPointer<FileInfo> info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, fileinfo));
+    info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+    info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes();
+
+    QSharedPointer<FileInfo> infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
+    if (infoTrans) {
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, false);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, false);
+        emit InfoCacheController::instance().removeCacheFileInfo({url});
+        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+    } else {
+        qWarning() << "Vault: info is nullptr, url = " << url;
+        return  InfoFactory::create<FileInfo>(fileUrl());
+    }
+
+    FileInfoPointer vaultInfo(new VaultFileInfo(fileUrl(), infoTrans));
+    return vaultInfo;
 }
 
 bool VaultFileIterator::initIterator()
