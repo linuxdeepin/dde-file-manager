@@ -84,8 +84,9 @@ private:
 
     void init();
 
-private slots:
+public slots:
     void updateRecent();
+private slots:
     void onUpdateRecentFileInfo(const QUrl &url, const QString &originPath, qint64 readTime);
     void onDeleteExistRecentUrls(const QList<QUrl> &urls);
 
