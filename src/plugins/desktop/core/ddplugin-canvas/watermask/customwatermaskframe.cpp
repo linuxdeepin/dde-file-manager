@@ -92,22 +92,9 @@ void CustomWaterMaskFrame::update()
         return;
     }
 
-    // remove old layout
-    {
-        auto mainLayout = this->layout();
-        if (mainLayout) {
-            delete mainLayout;
-            mainLayout = nullptr;
-        }
-    }
-
-    auto mainLayout = new QHBoxLayout();
-    mainLayout->addWidget(logoLabel);
-
     logoLabel->setPixmap(maskPixmap(maskLogoUri, maskSize, logoLabel->devicePixelRatioF()));
     logoLabel->setFixedSize(maskSize.width(), maskSize.height());
 
-    setLayout(mainLayout);
     setPosition();
     show();
 

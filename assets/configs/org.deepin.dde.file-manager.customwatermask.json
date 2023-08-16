@@ -47,7 +47,7 @@
             "visibility":"public"
         },
         "maskWidth":{
-            "value":208,
+            "value":114,
             "serial":0,
             "flags":[],
             "name":"Width",
@@ -58,7 +58,7 @@
             "visibility":"public"
         },
         "maskHeight":{
-            "value":30,
+            "value":14,
             "serial":0,
             "flags":[],
             "name":"Height",
