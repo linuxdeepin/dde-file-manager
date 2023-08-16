@@ -17,6 +17,7 @@ class VaultFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 
 public:
     explicit VaultFileInfo(const QUrl &url);
+    explicit VaultFileInfo(const QUrl &url, const FileInfoPointer &proxy);
     virtual ~VaultFileInfo() override;
 
     virtual VaultFileInfo &operator=(const VaultFileInfo &fileinfo);
