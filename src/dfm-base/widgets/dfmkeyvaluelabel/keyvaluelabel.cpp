@@ -205,6 +205,11 @@ QString KeyValueLabel::RightValue()
     return rightValueLabel->text();
 }
 
+void KeyValueLabel::setLeftVauleLabelFixedWidth(int width)
+{
+    leftValueLabel->setFixedWidth(width);
+}
+
 void KeyValueLabel::paintEvent(QPaintEvent *evt)
 {
     Qt::TextElideMode fontWeight = propertyMap.value(kLeftElideMode).value<Qt::TextElideMode>();
