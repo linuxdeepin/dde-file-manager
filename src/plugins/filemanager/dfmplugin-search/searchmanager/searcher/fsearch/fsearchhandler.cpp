@@ -59,7 +59,6 @@ void FSearchHandler::reset()
 
 bool FSearchHandler::loadDatabase(const QString &path, const QString &dbLocation)
 {
-    isStop = false;
     app->config->locations = g_list_append(app->config->locations, path.toLocal8Bit().data());
     return load_database(app->db, path.toLocal8Bit().data(),
                          dbLocation.isEmpty() ? nullptr : dbLocation.toLocal8Bit().data(),
@@ -86,9 +85,10 @@ bool FSearchHandler::saveDatabase(const QString &savePath)
 
 bool FSearchHandler::search(const QString &keyword, FSearchHandler::FSearchCallbackFunc callback)
 {
-    isStop = false;
-    callbackFunc = callback;
+    if (isStop)
+        return false;
 
+    callbackFunc = callback;
     db_search_results_clear(app->search);
     Database *db = app->db;
     if (!db_try_lock(db))
@@ -177,6 +177,7 @@ void FSearchHandler::reveiceResultsCallback(void *data, void *sender)
     Q_ASSERT(results && self);
 
     if (self->isStop) {
+        self->callbackFunc("", true);
         self->syncMutex.unlock();
         return;
     }
@@ -185,6 +186,7 @@ void FSearchHandler::reveiceResultsCallback(void *data, void *sender)
         uint32_t num_results = results->results->len;
         for (uint32_t i = 0; i < num_results; ++i) {
             if (self->isStop) {
+                self->callbackFunc("", true);
                 self->syncMutex.unlock();
                 return;
             }
@@ -195,6 +197,7 @@ void FSearchHandler::reveiceResultsCallback(void *data, void *sender)
                 auto *node = entry->node;
                 while (node != nullptr) {
                     if (self->isStop) {
+                        self->callbackFunc("", true);
                         self->syncMutex.unlock();
                         return;
                     }
