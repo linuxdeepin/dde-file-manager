@@ -63,6 +63,8 @@ void WaterMaskFrame::updatePosition()
         int x = wid->width() - curRightBottom.x() - curMaskSize.width();
         int y = wid->height() - curRightBottom.y() - curMaskSize.height();
         move(x, y);
+
+        emit showMask(maskAlwaysOn, QPoint(x, y));
     }
 }
 
