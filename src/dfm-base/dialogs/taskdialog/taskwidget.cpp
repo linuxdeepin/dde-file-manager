@@ -279,6 +279,7 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
 {
     if (isShowError)
         return;
+
     QString source = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
     QString target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
     lbSrcPath->setText(source);
@@ -424,6 +425,7 @@ void TaskWidget::initUI()
     lbDstPath = new ElidedLable;
     lbRmTime = new QLabel;
     lbSrcPath->setFixedWidth(kMsgLabelWidth);
+    lbSrcPath->setText("In data statistics ...");
     lbDstPath->setFixedWidth(kMsgLabelWidth);
     lbSpeed->setFixedWidth(kSpeedLabelWidth);
     lbRmTime->setFixedWidth(kSpeedLabelWidth);
@@ -759,7 +761,7 @@ bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
             .arg(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
                          ? info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
                          : qApp->translate("MimeTypeDisplayManager", "Unknown"));
-    auto sizeStr = tr("In data statistics");
+    auto sizeStr = tr("In data statistics ...");
     auto titleStr = isOrg ? tr("Original folder") : tr("Target folder");
     if (info->isAttributes(OptInfoType::kIsDir)) {
         if (info->countChildFile() < 0) {
