@@ -8,6 +8,7 @@
 #include "ddplugin_canvas_global.h"
 #include "canvasview.h"
 #include "watermask/watermaskframe.h"
+#include "watermask/customwatermasklabel.h"
 #include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
 #include "operator/clickselector.h"
@@ -118,6 +119,7 @@ public:
 
     CanvasViewMenuProxy *menuProxy = nullptr;
     WaterMaskFrame *waterMask = nullptr;
+    CustomWaterMaskLabel *customWaterMask = nullptr;
 
     ViewHookInterface *hookIfs = nullptr;
     CanvasView *q;
