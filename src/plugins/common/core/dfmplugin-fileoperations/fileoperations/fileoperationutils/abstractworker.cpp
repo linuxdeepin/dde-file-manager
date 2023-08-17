@@ -180,7 +180,7 @@ bool AbstractWorker::statisticsFilesSize()
     const QUrl &firstUrl = sourceUrls.first();
 
     if (this->targetUrl.isValid()) {
-        supportGioCopy = DeviceUtils::supportDfmioCopyDevice(this->targetUrl)
+        supportDfmioCopy = DeviceUtils::supportDfmioCopyDevice(this->targetUrl)
                 || DeviceUtils::supportDfmioCopyDevice(firstUrl);
         supportSetPermission = DeviceUtils::supportSetPermissionsDevice(this->targetUrl);
     }
