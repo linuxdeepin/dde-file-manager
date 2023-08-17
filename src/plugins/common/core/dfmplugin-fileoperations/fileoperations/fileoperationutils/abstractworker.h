@@ -168,7 +168,7 @@ public:
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
     bool supportSetPermission { true };    // source file on mtp
-    bool supportGioCopy { true };    // source file on mtp
+    bool supportDfmioCopy { true };    // source file on mtp
     bool isTargetFileExBlock { false };   // target file on extra block device
     bool isConvert { false };   // is convert operation
     QSharedPointer<WorkerData> workData { nullptr };
