@@ -16,7 +16,7 @@ DPSEARCH_USE_NAMESPACE
 static constexpr int kEmitInterval = 50;   // 推送时间间隔（ms）
 
 FSearcher::FSearcher(const QUrl &url, const QString &key, QObject *parent)
-    : AbstractSearcher(url, key, parent),
+    : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(key), parent),
       searchHandler(new FSearchHandler)
 {
     searchHandler->init();
