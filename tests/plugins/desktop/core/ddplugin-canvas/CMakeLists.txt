@@ -4,8 +4,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 project(test-ddplugin-canvas)
 
-find_package(Qt5Svg REQUIRED)
-
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE
     "${CMAKE_CURRENT_SOURCE_DIR}/*")
@@ -34,7 +32,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt5::Svg
 )
 
 add_test(

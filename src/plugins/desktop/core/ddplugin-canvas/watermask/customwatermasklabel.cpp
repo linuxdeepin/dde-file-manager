@@ -107,7 +107,7 @@ void CustomWaterMaskLabel::update()
     }
 
     QPixmap waterMaskPixmap = maskPixmap(maskLogoUri, maskSize, devicePixelRatioF());
-    if (!waterMaskPixmap) {
+    if (waterMaskPixmap.isNull()) {
         qWarning() << "watermask pixmap NULL";
         hide();
         return;
