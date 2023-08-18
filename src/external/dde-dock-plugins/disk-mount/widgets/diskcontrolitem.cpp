@@ -58,6 +58,8 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
     QUrl &&mountPoint = QUrl(attachedDev->mountpointUrl());
     QUrl &&url = QUrl(attachedDev->accessPointUrl());
 
+    qInfo() << "Open " << url;
+
     // 光盘文件系统剥离 RockRidge 后，udisks 的默认挂载权限为 500，为遵从 linux 权限限制，在这里添加访问目录的权限校验
     QFile f(mountPoint.path());
     if (url.scheme() == "burn" && f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
