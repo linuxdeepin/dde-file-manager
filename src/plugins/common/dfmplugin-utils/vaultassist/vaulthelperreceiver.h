@@ -19,10 +19,12 @@ class VaultHelperReceiver : public QObject
 public:
     explicit VaultHelperReceiver(QObject *parent = Q_NULLPTR);
     void initEventConnect();
+    void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
 
 public slots:
     bool handlemoveToTrash(const quint64 windowId, const QList<QUrl> &sources,
                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    void handleFinishedNotify(const JobInfoPointer &jobInfo);
 };
 
 }
