@@ -8,7 +8,6 @@
 #include "canvasdbusinterface.h"
 
 #include <dfm-base/utils/clipboard.h>
-#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QDBusConnection>
 
@@ -26,11 +25,6 @@ bool CanvasPlugin::start()
 
     //! slow call: GlobalData::onClipboardDataChanged()
     ClipBoard::instance();
-
-    QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop", &err);
-    if (!ret)
-        qWarning() << "create dconfig failed: " << err;
 
     proxy = new CanvasManager();
     proxy->init();
