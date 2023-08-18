@@ -5,6 +5,7 @@
 #include "globaleventreceiver.h"
 
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -40,6 +41,14 @@ void GlobalEventReceiver::handleOpenAsAdmin(const QUrl &url)
     if (!QDir(localPath).exists()) {
         qWarning() << "Url path not exists: " << localPath;
         return;
+    }
+
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    if (fileInfo) {
+        if (fileInfo->isAttributes(FileInfo::FileIsType::kIsDir)
+                && fileInfo->isAttributes(FileInfo::FileIsType::kIsSymLink)) {
+            localPath = fileInfo->urlOf(FileInfo::FileUrlInfoType::kRedirectedFileUrl).toLocalFile();
+        }
     }
 
     QProcess::startDetached("dde-file-manager-pkexec", { localPath });
