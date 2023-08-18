@@ -72,6 +72,8 @@ QStringList DeviceWatcherLite::allMountedRemovableBlocks()
             continue;
         if (!devPtr->removable())
             continue;
+
+        QString encryptedMpt;
         if (devPtr->isEncrypted()) {
             QString clearDevID = devPtr->getProperty(Property::kEncryptedCleartextDevice).toString();
             if (clearDevID.isEmpty()) {
@@ -80,6 +82,7 @@ QStringList DeviceWatcherLite::allMountedRemovableBlocks()
                 QSharedPointer<DBlockDevice> clearDev = monitor->createDeviceById(clearDevID).objectCast<DBlockDevice>();
                 if (!clearDev || clearDev->mountPoint().isEmpty())
                     continue;
+                encryptedMpt = clearDev->mountPoint();
             }
         }
 
@@ -87,7 +90,8 @@ QStringList DeviceWatcherLite::allMountedRemovableBlocks()
         if (!devPtr->canPowerOff() && !devPtr->optical())
             continue;
         // ignore blocks not mounted under /media/
-        if (!devPtr->mountPoint().startsWith("/media/"))
+        if (!devPtr->mountPoint().startsWith("/media/")
+            && !encryptedMpt.startsWith("/media"))
             continue;
 
         if (isSiblingOfRoot(devPtr))
