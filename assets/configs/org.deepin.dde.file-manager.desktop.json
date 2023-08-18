@@ -2,7 +2,7 @@
     "magic":"dsg.config.meta",
     "version":"1.0",
     "contents":{
-        "EnableMask":{
+        "enableMask":{
             "value": false,
             "serial":0,
             "flags":[],
