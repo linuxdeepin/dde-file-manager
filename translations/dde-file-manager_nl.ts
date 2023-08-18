@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="256"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="260"/>
         <source>File Manager</source>
         <translation>Bestandsbeheerder</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="260"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="264"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Bestandsbeheer is een programma voor het beheren van bestanden en beschikt over vele mogelijkheden, zoals zoeken, kopiëren, verwijderen, (de)compressie en andere handige functies.</translation>
     </message>
@@ -148,24 +148,24 @@
         <translation>Als je wilt bevestigen dat het veilig is om door te gaan, neem dan contact op met de systeembeheerder.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="371"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="370"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="44"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="45"/>
         <source>System Disk</source>
         <translation>Systeemschijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="375"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="372"/>
         <source>Data Disk</source>
         <translation>Gegevensschijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
         <source>Blank %1 Disc</source>
         <translation>Lege %1-schijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="372"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="378"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
@@ -173,17 +173,17 @@
         <translation>Onbekend</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="427"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
         <source>%1 Drive</source>
         <translation>%1-schijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="443"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="439"/>
         <source>%1 Encrypted</source>
         <translation>%1 versleuteld</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="450"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="446"/>
         <source>%1 Volume</source>
         <translation>Volume %1</translation>
     </message>
@@ -334,20 +334,20 @@
         <translation>Het oorspronkelijke bestand is niet aangetroffen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="440"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="437"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="523"/>
         <source>File has been moved or deleted</source>
         <translation>Bestand is verplaatst of verwijderd</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="439"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="525"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="66"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <source>You do not have permission to access this folder</source>
         <translation>Je bent niet bevoegd om deze map te openen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="445"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="528"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Je bent niet bevoegd om deze map te gebruiken</translation>
@@ -1524,7 +1524,7 @@
         <translation>Bezig met zoeken…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="291"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="284"/>
         <source>My Vault</source>
         <translation>Mijn kluis</translation>
     </message>
@@ -4280,7 +4280,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
         <source>Failed to move the file %1 to trash</source>
-        <translation>Verwĳderen van bestand ‘%1’ mislukt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
@@ -4357,7 +4357,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Copy or Cut File failed!</source>
-        <translation>Kopiëren of knippen mislukt!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="181"/>
@@ -4387,7 +4387,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
-        <translation>Verwĳderen van bestand ‘%1’ mislukt. Oorzaak: %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="195"/>
@@ -4406,8 +4406,8 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
-        <source>Copy or Cut File failed, cause: %1</source>
-        <translation>Kopiëren of knippen mislukt. Oorzaak: %1</translation>
+        <source>Copy or Cut File failed，cause: %1</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="232"/>
@@ -4459,10 +4459,10 @@
         <translation>Snelkoppelingsfout</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1032"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1041"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1034"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1043"/>
         <source>Failed to modify file permissions</source>
-        <translation>Wĳzigen van bestandsrechten mislukt</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6331,22 +6331,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="567"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="566"/>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="569"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="568"/>
         <source>Time modified</source>
         <translation>Gewijzigd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="571"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="570"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="573"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="572"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>

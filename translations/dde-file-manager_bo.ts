@@ -17,12 +17,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="256"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="260"/>
         <source>File Manager</source>
         <translation>ཡིག་ཆ་དོ་དམ་བྱེད་ཆས།</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="260"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="264"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>ཡིག་ཆ་དོ་དམ་བྱེད་ཆས་ནི་རྩོལ་ནུས་སྟོབས་ཆེན་ཡོད་པའི་དོ་དམ་ཡོ་བྱད་ཅིག་ཡིན། དེར་བཤེར་འཚོལ་དང་། པར་སློག སྙིགས་སྣོད། སྡུད་སྒྲིལ། བསྡུས་འགྲོལ། ཡིག་ཆའི་ངོ་བོ་སོགས་ཚུད་པའི་དོ་དམ་རྩོལ་ནུས་ལྡན་ཡོད།</translation>
     </message>
@@ -125,67 +125,67 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1012"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1007"/>
         <source>need authorization to access</source>
         <translation>དབང་ཚད་སྤྲད་ནས་ལྟ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1078"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1073"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>%1ཡི་ཐོབ་ཐང་ངོས་འཛིན་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1079"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1074"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>ཁྱོད་རང་ཐེངས་དང་པོར་ཐོ་འཇུག་བྱེད་སྐབས་དྲན་སྐུལ་འདི་མཐོང་སྲིད། </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1080"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1075"/>
         <source>The identity sent by the remote computer is</source>
         <translation>རྒྱང་སྟོན་གློག་ཀླད་ཀྱིས་བསྐུར་བའི་ཐོབ་ཐང་གི་ཆ་འཕྲིན་ནི།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1082"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1077"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>མུ་མཐུད་བཀོལ་སྤྱོད་བྱས་ཚེ་བདེ་འཇགས་ཡིན་མིན་གཏན་འཁེལ་བྱེད་དགོས་ན། རྒྱུད་ཁོངས་ཀྱི་དོ་དམ་པར་འབྲེལ་བ་བྱོས། </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="371"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="370"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="44"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="45"/>
         <source>System Disk</source>
         <translation>རྒྱུད་ཁོངས་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="375"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="372"/>
         <source>Data Disk</source>
         <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
         <source>Blank %1 Disc</source>
         <translation>འོད་སྡེར་སྟོང་པ་%1&#xa0;</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="384"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="390"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="378"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
         <source>Unknown</source>
         <translation>མི་ཤེས་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="427"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
         <source>%1 Drive</source>
         <translation>སྐུལ་ཆས་%1&#xa0;</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="443"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="439"/>
         <source>%1 Encrypted</source>
         <translation>གསང་སྡོམ་%1&#xa0;</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="450"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="446"/>
         <source>%1 Volume</source>
         <translation>བམ་པོ་%1&#xa0;</translation>
     </message>
@@ -336,27 +336,27 @@
         <translation>དམིགས་འབེན་ཡིག་ཆའི་འབྲེལ་མཐུད་རྙེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="430"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="478"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="437"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="523"/>
         <source>File has been moved or deleted</source>
         <translation>ཡིག་ཆ་སྤོས་ཟིན་པའམ་བསུབས་ཟིན།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="432"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="480"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="66"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="439"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="525"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <source>You do not have permission to access this folder</source>
         <translation>ཁྱོད་ལ་ཡིག་ཁུག་འདི་ཀློག་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="435"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="483"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="528"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>ཁྱོད་ལ་ཡན་ལག་ཡིག་ཆར་ལྟ་སྤྱོད་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="437"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="167"/>
         <source>Folder is empty</source>
         <translation>ཡིག་ཁུག་སྟོང་པ་རེད་འདུག</translation>
     </message>
@@ -1526,7 +1526,7 @@
         <translation>བཤེར་འཚོལ་བྱེད་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="291"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="284"/>
         <source>My Vault</source>
         <translation>ངའི་ཉེན་འགོག་སྒམ་ཆུང་།</translation>
     </message>
@@ -3857,22 +3857,22 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="273"/>
         <source>Unlock device failed</source>
         <translation>སྒྲིག་ཆས་སྒོ་ལྕགས་ཕྱེ་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="273"/>
         <source>Wrong password</source>
         <translation>གསང་ཨང་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="158"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="159"/>
         <source>Rename failed</source>
         <translation>མིང་བསྐྱར་དུ་འདོགས་མི་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="158"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="159"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>སྒྲིག་ཆས་བྲེལ་བཞིན་ཡོད་པས། མིང་བསྐྱར་དུ་འདོགས་ཐབས་བྲལ།</translation>
     </message>
@@ -4293,7 +4293,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
         <source>Failed to move the file %1 to trash</source>
-        <translation>ཡིག་ཆ་%1 སྙིགས་སྣོད་དུ་སྤོ་མ་ཐུབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
@@ -4370,7 +4370,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Copy or Cut File failed!</source>
-        <translation>ཡིག་ཆ་མཁོ་ཕབ་བམ་དྲས་སྦྱར་བྱེད་མ་ཐུབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="181"/>
@@ -4400,7 +4400,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
-        <translation>ཡིག་ཆ་%1 སྙིགས་སྣོད་དུ་སྤོ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="195"/>
@@ -4419,8 +4419,8 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
-        <source>Copy or Cut File failed, cause: %1</source>
-        <translation>ཡིག་ཆ་མཁོ་ཕབ་བམ་དྲས་སྦྱར་བྱེད་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
+        <source>Copy or Cut File failed，cause: %1</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="232"/>
@@ -4472,10 +4472,10 @@
         <translation>སྦྲེལ་མཐུད་ཡིག་ཆ་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1032"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1041"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1034"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1043"/>
         <source>Failed to modify file permissions</source>
-        <translation>ཡིག་ཆའི་དབང་ཚད་བཅོས་ཐུབ་མ་སོང་།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6343,22 +6343,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="572"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="566"/>
         <source>Name</source>
         <translation>མིང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="574"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="568"/>
         <source>Time modified</source>
         <translation>བཟོ་བཅོས་དུས་ཚོད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="576"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="570"/>
         <source>Size</source>
         <translation>ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="578"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="572"/>
         <source>Type</source>
         <translation>རིགས་གྲས།</translation>
     </message>
