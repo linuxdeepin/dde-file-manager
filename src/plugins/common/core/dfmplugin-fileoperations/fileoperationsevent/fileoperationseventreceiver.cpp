@@ -1031,7 +1031,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
         bool hookOk = false;
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &hookOk, &error)) {
             if (!hookOk)
-                dialogManager->showErrorDialog("set file permissions error", error);
+                dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, hookOk, error);
             return hookOk;
         }
@@ -1040,7 +1040,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     ok = fileHandler.setPermissions(url, permissions);
     if (!ok) {
         error = fileHandler.errorString();
-        dialogManager->showErrorDialog("set file permissions error", error);
+        dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
     }
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     info->refresh();
