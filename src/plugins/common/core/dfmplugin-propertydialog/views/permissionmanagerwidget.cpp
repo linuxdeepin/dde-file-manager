@@ -226,7 +226,8 @@ void PermissionManagerWidget::setComboBoxByPermission(QComboBox *cb, int permiss
     } else if (index == readOnlyFlag || index == readOnlyWithXFlag) {
         cb->setCurrentIndex(1);
     } else {
-        cb->addItem(getPermissionString(index), QVariant(permission));
+        if (cb->count() < 3)
+            cb->addItem(getPermissionString(index), QVariant(permission));
         cb->setCurrentIndex(2);
     }
 }
@@ -308,8 +309,14 @@ void PermissionManagerWidget::onComboBoxChanged()
     stat(infoBytes.data(), &fileStat);
     auto afterMode = fileStat.st_mode;
     // 修改权限失败
-    // todo 回滚权限
     if (preMode == afterMode) {
         qDebug() << "chmod failed";
+        QSignalBlocker b1(ownerComboBox), b2(groupComboBox), b3(otherComboBox);
+        Q_UNUSED(b1);
+        Q_UNUSED(b2);
+        Q_UNUSED(b3);
+        setComboBoxByPermission(ownerComboBox, static_cast<int>(info->permissions() & kOwerAll), 12);
+        setComboBoxByPermission(groupComboBox, static_cast<int>(info->permissions() & kGroupAll), 4);
+        setComboBoxByPermission(otherComboBox, static_cast<int>(info->permissions() & kOtherAll), 0);
     }
 }
