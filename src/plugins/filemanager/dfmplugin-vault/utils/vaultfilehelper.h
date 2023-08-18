@@ -63,12 +63,12 @@ public:
                       const QFileDevice::Permissions permissions,
                       bool *ok,
                       QString *error);
-
-private:
-    QList<QUrl> transUrlsToLocal(const QList<QUrl> &urls);
+    void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
+    void handleFinishedNotify(const JobInfoPointer &jobInfo);
 
 private:
     explicit VaultFileHelper(QObject *parent = nullptr);
+    QList<QUrl> transUrlsToLocal(const QList<QUrl> &urls);
 };
 }
 
