@@ -16,7 +16,6 @@ FILE(GLOB_RECURSE CANVAS_FILES
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Svg REQUIRED)
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
 
@@ -40,7 +39,6 @@ target_link_libraries(${PROJECT_NAME}
     DFM::framework
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
-    Qt5::Svg
 )
 
 #install library file
@@ -50,6 +48,3 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_DESKTOP_CORE_DIR}
 )
-# install dconfig files.
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
-INSTALL_DCONFIG("org.deepin.dde.file-manager.desktop.json")
