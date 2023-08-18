@@ -14,7 +14,9 @@
 #include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/event/event.h>
+
 #include <QUrl>
+#include <QApplication>
 
 #define OperatorFile(type, fromUrls, toUrl) \
     dpfSignalDispatcher->publish(type, 0, fromUrls, toUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr)
@@ -90,6 +92,7 @@ bool VaultFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sour
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
                                  windowId,
                                  redirectedFileUrls, flags, nullptr);
+
     return true;
 }
 
@@ -100,11 +103,11 @@ bool VaultFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sourc
     if (sources.first().scheme() != scheme())
         return false;
 
+    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback = std::bind(&VaultFileHelper::callBackFunction, this, std::placeholders::_1);
     QList<QUrl> redirectedFileUrls = transUrlsToLocal(sources);
-
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
                                  windowId,
-                                 redirectedFileUrls, flags, nullptr);
+                                 redirectedFileUrls, flags, Q_NULLPTR, QVariant(), callback);
     return true;
 }
 
@@ -375,6 +378,23 @@ bool VaultFileHelper::setPermision(const quint64 windowId,
         *ok = succ;
 
     return true;
+}
+
+void VaultFileHelper::callBackFunction(const AbstractJobHandler::CallbackArgus args)
+{
+    JobHandlePointer jobHandle = args->value(AbstractJobHandler::CallbackKey::kJobHandle).value<JobHandlePointer>();
+    if (jobHandle) {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, this, &VaultFileHelper::handleFinishedNotify);
+    }
+}
+
+void VaultFileHelper::handleFinishedNotify(const JobInfoPointer &jobInfo)
+{
+    Q_UNUSED(jobInfo)
+
+    disconnect(qobject_cast<AbstractJobHandler*>(sender()), &AbstractJobHandler::finishedNotify, this, &VaultFileHelper::handleFinishedNotify);
+    QApplication::restoreOverrideCursor();
 }
 
 QList<QUrl> VaultFileHelper::transUrlsToLocal(const QList<QUrl> &urls)
