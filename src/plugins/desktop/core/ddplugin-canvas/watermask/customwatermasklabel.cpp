@@ -23,7 +23,7 @@ using namespace dfmbase;
 DCORE_USE_NAMESPACE
 
 static constexpr char kConfName[] { "org.deepin.dde.file-manager.desktop" };
-static constexpr char kIsMaskEnable[] { "EnableMask" };
+static constexpr char kIsMaskEnable[] { "enableMask" };
 static constexpr char kMaskLogoUri[] { "maskLogoUri" };
 static constexpr char kMaskOffsetX[] { "maskOffsetX" };
 static constexpr char kMaskOffsetY[] { "maskOffsetY" };
