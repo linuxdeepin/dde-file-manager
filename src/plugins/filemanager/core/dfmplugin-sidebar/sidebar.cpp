@@ -36,7 +36,10 @@ bool SideBar::start()
         qDebug() << "register dconfig failed: " << err;
         return false;
     }
+
+    SideBarHelper::initSettingPane();
     SideBarHelper::bindSettings();
+    SideBarHelper::registCustomSettingItem();
 
     return true;
 }

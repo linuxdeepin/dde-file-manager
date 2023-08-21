@@ -48,6 +48,8 @@ void SmbBrowser::initialize()
 
     dfmplugin_menu_util::menuSceneRegisterScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
     bindWindows();
+
+    smb_browser_utils::initSettingPane();
     smb_browser_utils::bindSetting();
 
     followEvents();
