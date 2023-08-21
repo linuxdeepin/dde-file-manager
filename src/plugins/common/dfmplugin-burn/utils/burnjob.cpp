@@ -13,9 +13,12 @@
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/private/devicehelper.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/dialogmanager.h>
+
+#include <dfm-mount/dblockdevice.h>
 
 #include <QDebug>
 #include <QThread>
@@ -42,11 +45,6 @@ static constexpr char kMapKeyPhase[] { "phase" };
 AbstractBurnJob::AbstractBurnJob(const QString &dev, const JobHandlePointer handler)
     : curDev(dev), jobHandlePtr(handler)
 {
-    connect(DevMngIns, &DeviceManager::blockDevPropertyChanged,
-            this, [](const QString &deviceId, const QString &property, const QVariant &val) {
-                // TODO(zhangs): mediaChangeDetected
-            });
-
     connect(BurnSignalManager::instance(), &BurnSignalManager::activeTaskDialog, this, &AbstractBurnJob::addTask);
 }
 
@@ -305,6 +303,15 @@ void AbstractBurnJob::comfort()
     lastStatus = tmp;
 }
 
+bool AbstractBurnJob::mediaChangDected()
+{
+    auto blockDev { DeviceHelper::createBlockDevice(curDevId) };
+    if (!blockDev)
+        return false;
+
+    return blockDev->getProperty(DFMMOUNT::Property::kDriveMediaChangeDetected).toBool();
+}
+
 void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString &speed, const QStringList &message)
 {
     lastStatus = status;
@@ -369,11 +376,21 @@ void EraseJob::work()
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     connect(manager.data(), &DOpticalDiscManager::jobStatusChanged, this, &AbstractBurnJob::onJobUpdated, Qt::DirectConnection);
 
-    if (!manager->erase())
+    bool ret { true };
+    if (!manager->erase()) {
+        ret = false;
         qWarning() << "Erase Failed: " << manager->lastError();
+    }
     qInfo() << "End erase device: " << curDev;
 
+    if (!mediaChangDected()) {
+        ret = false;
+        qWarning() << "Device disconnected:" << curDevId;
+        emit requestFailureDialog(static_cast<int>(curJobType), QObject::tr("Device disconnected"), {});
+    }
+
     comfort();
+    emit eraseFinished(ret);
     DeviceManager::instance()->rescanBlockDev(curDevId);
 
     // Due to disc don't ejected after erase, we must readlod optical info again

@@ -20,8 +20,10 @@
 #include <QTextEdit>
 #include <QLabel>
 
-using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
+
+using namespace dfmplugin_burn;
+using namespace GlobalServerDefines;
 
 BurnJobManager *BurnJobManager::instance()
 {
@@ -36,6 +38,9 @@ void BurnJobManager::startEraseDisc(const QString &dev)
 
     AbstractBurnJob *job = new EraseJob(dev, jobHandler);
     initBurnJobConnect(job);
+    connect(qobject_cast<EraseJob *>(job), &EraseJob::eraseFinished, this, [job, this](bool result) {
+        startAuditLogForEraseDisc(job->currentDeviceInfo(), result);
+    });
     job->start();
 }
 
@@ -101,12 +106,24 @@ void BurnJobManager::startAuditLogForCopyFromDisc(const QList<QUrl> &srcList, co
 
 void BurnJobManager::startAuditLogForBurnFiles(const QVariantMap &info, const QUrl &stagingUrl, bool result)
 {
-    AbstractAuditLogJob *job = new BurnFilesAuditLogJob(info, stagingUrl, result);
+    AbstractAuditLogJob *job = new BurnFilesAuditLogJob(stagingUrl, result);
+    job->setProperty(DeviceProperty::kDevice, info.value(DeviceProperty::kDevice));
+    job->setProperty(DeviceProperty::kDrive, info.value(DeviceProperty::kDrive));
+    job->setProperty(DeviceProperty::kMedia, info.value(DeviceProperty::kMedia));
     connect(job, &AbstractAuditLogJob::finished, this, [this, job, stagingUrl, result]() {
         if (result)
             this->deleteStagingDir(stagingUrl);
         job->deleteLater();
     });
+    job->start();
+}
+
+void BurnJobManager::startAuditLogForEraseDisc(const QVariantMap &info, bool result)
+{
+    EraseDiscAuditLogJob *job = new EraseDiscAuditLogJob(result);
+    job->setProperty(DeviceProperty::kDrive, info.value(DeviceProperty::kDrive));
+    job->setProperty(DeviceProperty::kMedia, info.value(DeviceProperty::kMedia));
+    connect(job, &AbstractAuditLogJob::finished, job, &QObject::deleteLater);
     job->start();
 }
 
