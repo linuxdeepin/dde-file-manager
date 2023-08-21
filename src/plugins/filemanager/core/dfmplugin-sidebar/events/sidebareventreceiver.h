@@ -30,6 +30,7 @@ public slots:
     void handleItemHidden(const QUrl &url, bool visible);   // TODO(zhangs): remove
     void handleItemTriggerEdit(quint64 winId, const QUrl &url);
     void handleSidebarUpdateSelection(quint64 winId);
+    QString handleAddSidebarVisiableControl(const QString &keyName, const QString &displayName);
 
 private:
     explicit SideBarEventReceiver(QObject *parent = nullptr);

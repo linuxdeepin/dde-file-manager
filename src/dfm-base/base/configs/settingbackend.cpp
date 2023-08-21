@@ -5,6 +5,7 @@
 #include "settingbackend.h"
 #include "private/settingbackend_p.h"
 #include "dconfig/dconfigmanager.h"
+#include "dfm-base/settingdialog/settingjsongenerator.h"
 
 #include <DSettings>
 
@@ -14,40 +15,40 @@
 DFMBASE_USE_NAMESPACE
 
 BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivate::keyToAA {
-    { "base.open_action.allways_open_on_new_window", Application::kAllwayOpenOnNewWindow },
-    { "base.open_action.open_file_action", Application::kOpenFileMode },
-    { "base.new_tab_windows.default_window_path", Application::kUrlOfNewWindow },
-    { "base.new_tab_windows.new_tab_path", Application::kUrlOfNewTab },
-    { "base.default_view.icon_size", Application::kIconSizeLevel },
-    { "base.default_view.view_mode", Application::kViewMode },
-    { "base.default_view.view_size_adjustable", Application::kViewSizeAdjustable },
-    { "base.default_view.mixed_sort", Application::kFileAndDirMixedSort },
+    { "00_base.00_open_action.00_allways_open_on_new_window", Application::kAllwayOpenOnNewWindow },
+    { "00_base.00_open_action.01_open_file_action", Application::kOpenFileMode },
+    { "00_base.01_new_tab_windows.00_default_window_path", Application::kUrlOfNewWindow },
+    { "00_base.01_new_tab_windows.01_new_tab_path", Application::kUrlOfNewTab },
+    { "00_base.02_default_view.00_icon_size", Application::kIconSizeLevel },
+    { "00_base.02_default_view.01_view_mode", Application::kViewMode },
+    { "00_base.02_default_view.02_mixed_sort", Application::kFileAndDirMixedSort },
+    //    { "00_base.02_default_view.view_size_adjustable", Application::kViewSizeAdjustable },
 };
 
 BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::keyToGA {
-    { "base.hidden_files.show_hidden", Application::kShowedHiddenFiles },
-    { "base.hidden_files.show_suffix", Application::kShowedFileSuffix },
-    { "advance.index.index_internal", Application::kIndexInternal },
-    { "advance.index.index_external", Application::kIndexExternal },
-    { "advance.index.index_search", Application::kIndexFullTextSearch },
-    { "advance.search.show_hidden", Application::kShowedHiddenOnSearch },
-    { "advance.preview.compress_file_preview", Application::kPreviewCompressFile },
-    { "advance.preview.text_file_preview", Application::kPreviewTextFile },
-    { "advance.preview.document_file_preview", Application::kPreviewDocumentFile },
-    { "advance.preview.image_file_preview", Application::kPreviewImage },
-    { "advance.preview.video_file_preview", Application::kPreviewVideo },
-    { "advance.preview.audio_file_preview", Application::kPreviewAudio },
-    { "advance.preview.remote_env_file_preview", Application::kShowThunmbnailInRemote },
-    { "advance.mount.auto_mount", Application::kAutoMount },
-    { "advance.mount.auto_mount_and_open", Application::kAutoMountAndOpen },
-    { "advance.mount.mtp_show_bottom_info", Application::kMTPShowBottomInfo },
-    { "advance.mount.merge_the_entries_of_samba_shared_folders", Application::kMergeTheEntriesOfSambaSharedFolders },
-    { "advance.dialog.default_chooser_dialog", Application::kOverrideFileChooserDialog },
-    { "advance.dialog.delete_confirmation_dialog", Application::kShowDeleteConfirmDialog },
-    { "advance.other.hide_builtin_partition", Application::kHiddenSystemPartition },
-    { "advance.other.hide_loop_partitions", Application::kHideLoopPartitions },
-    { "advance.other.show_crumbbar_clickable_area", Application::kShowCsdCrumbBarClickableArea },
-    { "advance.other.show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
+    { "00_base.03_hidden_files.00_show_hidden", Application::kShowedHiddenFiles },
+    { "00_base.03_hidden_files.01_show_suffix", Application::kShowedFileSuffix },
+    { "01_advance.00_index.00_index_internal", Application::kIndexInternal },
+    { "01_advance.00_index.01_index_external", Application::kIndexExternal },
+    { "01_advance.00_index.02_index_search", Application::kIndexFullTextSearch },
+    //    { "01_advance.search.show_hidden", Application::kShowedHiddenOnSearch },
+    { "01_advance.01_preview.00_compress_file_preview", Application::kPreviewCompressFile },
+    { "01_advance.01_preview.01_text_file_preview", Application::kPreviewTextFile },
+    { "01_advance.01_preview.02_document_file_preview", Application::kPreviewDocumentFile },
+    { "01_advance.01_preview.03_image_file_preview", Application::kPreviewImage },
+    { "01_advance.01_preview.04_video_file_preview", Application::kPreviewVideo },
+    { "01_advance.01_preview.05_audio_file_preview", Application::kPreviewAudio },
+    { "01_advance.01_preview.06_remote_env_file_preview", Application::kShowThunmbnailInRemote },
+    { "01_advance.02_mount.00_auto_mount", Application::kAutoMount },
+    { "01_advance.02_mount.01_auto_mount_and_open", Application::kAutoMountAndOpen },
+    { "01_advance.02_mount.02_mtp_show_bottom_info", Application::kMTPShowBottomInfo },
+    { "01_advance.02_mount.04_merge_the_entries_of_samba_shared_folders", Application::kMergeTheEntriesOfSambaSharedFolders },
+    { "01_advance.03_dialog.00_default_chooser_dialog", Application::kOverrideFileChooserDialog },
+    { "01_advance.03_dialog.01_delete_confirmation_dialog", Application::kShowDeleteConfirmDialog },
+    { "01_advance.05_other.00_hide_builtin_partition", Application::kHiddenSystemPartition },
+    { "01_advance.05_other.02_hide_loop_partitions", Application::kHideLoopPartitions },
+    //    { "01_advance.05_other.show_crumbbar_clickable_area", Application::kShowCsdCrumbBarClickableArea },
+    { "01_advance.05_other.03_show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
 };
 
 SettingBackend::SettingBackend(QObject *parent)
@@ -58,10 +59,13 @@ SettingBackend::SettingBackend(QObject *parent)
     connect(Application::instance(), &Application::appAttributeEdited, this, &SettingBackend::onValueChanged);
     connect(Application::instance(), &Application::genericAttributeEdited, this, &SettingBackend::onValueChanged);
 
-    addSettingAccessor(
-            "advance.other.extend_file_name",
-            [] { return DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs"); },
-            [](const QVariant &var) { DConfigManager::instance()->setValue(kDefaultCfgPath, "dfm.mount.dlnfs", var); });
+    initPresetSettingConfig();
+
+    // NOTE(xust): this item is hidden in *template*.js file.
+    //    addSettingAccessor(
+    //            "01_advance.05_other.extend_file_name",
+    //            [] { return DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs"); },
+    //            [](const QVariant &var) { DConfigManager::instance()->setValue(kDefaultCfgPath, "dfm.mount.dlnfs", var); });
 }
 
 SettingBackend::~SettingBackend()
@@ -171,6 +175,165 @@ void SettingBackend::onValueChanged(int attribute, const QVariant &value)
         return;
 
     emit optionChanged(key, value);
+}
+
+void SettingBackend::initPresetSettingConfig()
+{
+    auto ins = SettingJsonGenerator::instance();
+
+    // TODO(xust): these configs should be split into plugins.
+    ins->addGroup("00_base", "Basic");
+    ins->addGroup("00_base.00_open_action", "Open behavior");
+    ins->addCheckBoxConfig("00_base.00_open_action.00_allways_open_on_new_window",
+                           "Always open folder in new window",
+                           false);
+    ins->addComboboxConfig("00_base.00_open_action.01_open_file_action",
+                           "Open file:",
+                           QStringList { "Click",
+                                         "Double click" },
+                           1);
+
+    ins->addGroup("00_base.01_new_tab_windows", "New window and tab");
+    ins->addComboboxConfig("00_base.01_new_tab_windows.00_default_window_path",
+                           "Open from default window:",
+                           { { "values",
+                               QStringList { "Computer",
+                                             "Home",
+                                             "Desktop",
+                                             "Videos",
+                                             "Music",
+                                             "Pictures",
+                                             "Documents",
+                                             "Downloads" } },
+                             { "keys",
+                               QStringList { "computer:///",
+                                             "standard://home",
+                                             "standard://desktop",
+                                             "standard://videos",
+                                             "standard://music",
+                                             "standard://pictures",
+                                             "standard://documents",
+                                             "standard://downloads" } } },
+                           "computer:///");
+    ins->addComboboxConfig("00_base.01_new_tab_windows.01_new_tab_path",
+                           "Open in new tab:",
+                           { { "values",
+                               QStringList { "Current Directory",
+                                             "Computer",
+                                             "Home",
+                                             "Desktop",
+                                             "Videos",
+                                             "Music",
+                                             "Pictures",
+                                             "Documents",
+                                             "Downloads" } },
+                             { "keys",
+                               QStringList { "",
+                                             "computer:///",
+                                             "standard://home",
+                                             "standard://desktop",
+                                             "standard://videos",
+                                             "standard://music",
+                                             "standard://pictures",
+                                             "standard://documents",
+                                             "standard://downloads" } } });
+
+    ins->addGroup("00_base.02_default_view", "View");
+    ins->addComboboxConfig("00_base.02_default_view.00_icon_size",
+                           "Default size:",
+                           QStringList { "Extra small",
+                                         "Small",
+                                         "Medium",
+                                         "Large",
+                                         "Extra large" },
+                           1);
+    ins->addComboboxConfig("00_base.02_default_view.01_view_mode",
+                           "Default view:",
+                           { { "values", QStringList { "Icon", "List" } },
+                             { "keys", QVariantList { 1, 2 } } },
+                           1);
+    ins->addCheckBoxConfig("00_base.02_default_view.02_mixed_sort",
+                           "Mix sorting of files and folders",
+                           false);
+
+    ins->addGroup("00_base.03_hidden_files", "Hidden files");
+    ins->addCheckBoxConfig("00_base.03_hidden_files.00_show_hidden",
+                           "Show hidden files",
+                           false);
+    ins->addCheckBoxConfig("00_base.03_hidden_files.01_show_suffix",
+                           "Show file extensions");
+
+    ins->addGroup("01_advance", "Advanced");
+    ins->addGroup("01_advance.00_index", "Index");
+    ins->addCheckBoxConfig("01_advance.00_index.00_index_internal",
+                           "Auto index internal disk");
+    ins->addCheckBoxConfig("01_advance.00_index.01_index_external",
+                           "Index external storage device after connected to computer",
+                           false);
+    ins->addCheckBoxConfig("01_advance.00_index.02_index_search",
+                           "Full-Text search",
+                           false);
+
+    ins->addGroup("01_advance.01_preview", "Preview");
+    ins->addCheckBoxConfig("01_advance.01_preview.00_compress_file_preview",
+                           "Compressed file preview",
+                           false);
+    ins->addCheckBoxConfig("01_advance.01_preview.01_text_file_preview",
+                           "Text preview");
+    ins->addCheckBoxConfig("01_advance.01_preview.02_document_file_preview",
+                           "Document preview");
+    ins->addCheckBoxConfig("01_advance.01_preview.03_image_file_preview",
+                           "Image preview");
+    ins->addCheckBoxConfig("01_advance.01_preview.04_video_file_preview",
+                           "Video preview");
+    ins->addCheckBoxConfig("01_advance.01_preview.05_audio_file_preview",
+                           "Music preview");
+    ins->addConfig("01_advance.01_preview.06_remote_env_file_preview",
+                   { { "key", "06_remote_env_file_preview" },
+                     { "text", "The remote environment shows thumbnail previews" },
+                     { "message", "Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze" },
+                     { "type", "checkBoxWithMessage" },
+                     { "default", false } });
+
+    ins->addGroup("01_advance.02_mount", "Mount");
+    ins->addConfig("01_advance.02_mount.00_auto_mount",
+                   { { "key", "00_auto_mount" },
+                     { "text", "Auto mount" },
+                     { "type", "mountCheckBox" },
+                     { "default", true } });
+    ins->addConfig("01_advance.02_mount.01_auto_mount_and_open",
+                   { { "key", "01_auto_mount_and_open" },
+                     { "text", "Open after auto mount" },
+                     { "type", "openCheckBox" },
+                     { "default", false } });
+    ins->addCheckBoxConfig("01_advance.02_mount.02_mtp_show_bottom_info",
+                           "Show item counts and sizes in the path of mounted MTP devices",
+                           false);
+    ins->addConfig("01_advance.02_mount.04_merge_the_entries_of_samba_shared_folders",
+                   { { "key", "04_merge_the_entries_of_samba_shared_folders" },
+                     { "text", "Merge the entries of Samba shared folders" },
+                     { "type", "checkBoxWithMessage" },
+                     { "message", "Switching the entry display may lead to failed mounting" },
+                     { "default", true } });
+
+    ins->addGroup("01_advance.03_dialog", "Dialog");
+    ins->addCheckBoxConfig("01_advance.03_dialog.00_default_chooser_dialog",
+                           "Use the file chooser dialog of File Manager");
+    ins->addCheckBoxConfig("01_advance.03_dialog.01_delete_confirmation_dialog",
+                           "Ask for my confirmation when deleting files",
+                           false);
+
+    ins->addGroup("01_advance.05_other", "Other");
+    ins->addCheckBoxConfig("01_advance.05_other.00_hide_builtin_partition",
+                           "Hide built-in disks on the Computer page");
+    //    ins->addCheckBoxConfig("01_advance.05_other.01_show_crumbbar_clickable_area",
+    //                           "Show crumb bar clickable area");
+    ins->addCheckBoxConfig("01_advance.05_other.02_hide_loop_partitions",
+                           "Hide loop partitions on the Computer page");
+    ins->addCheckBoxConfig("01_advance.05_other.03_show_filesystemtag_on_diskicon",
+                           "Show file system on disk icon");
+    //    ins->addCheckBoxConfig("01_advance.05_other.04_extend_file_name",
+    //                           "");
 }
 
 void SettingBackendPrivate::saveAsAppAttr(const QString &key, const QVariant &val)
