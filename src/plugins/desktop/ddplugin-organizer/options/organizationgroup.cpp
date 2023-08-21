@@ -52,6 +52,8 @@ void OrganizationGroup::reset()
             methodCombox->initCheckBox();
             methodCombox->setFixedSize(kContentWidght, kContentHeight);
             contentLayout->insertWidget(1, methodCombox, 0, Qt::AlignTop);
+            // requiring widget to be visible when layout calculates sizehint.
+            methodCombox->setVisible(true);
             connect(methodCombox, &MethodComBox::methodChanged, this, &OrganizationGroup::reset);
         }
 
@@ -72,6 +74,8 @@ void OrganizationGroup::reset()
             for (QWidget *wid : currentClass->subWidgets()) {
                 wid->setFixedSize(kCheckEntryWidget, kCheckEntryHeight);
                 contentLayout->insertWidget(pos++, wid, 0, Qt::AlignTop);
+                // requiring widget to be visible when layout calculates sizehint.
+                wid->setVisible(true);
                 last = wid;
             }
 
@@ -103,10 +107,12 @@ void OrganizationGroup::reset()
 
     if (first)
         contentLayout->addStretch(1);
+
+    // adjust size when widgets were added or removed.
+    adjustSize();
 }
 
 void OrganizationGroup::checkedChanged(bool enable)
 {
-    Q_ASSERT(enable != CfgPresenter->isEnable());
     emit CfgPresenter->changeEnableState(enable);
 }
