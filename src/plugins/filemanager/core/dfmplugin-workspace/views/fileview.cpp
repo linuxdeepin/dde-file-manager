@@ -1282,7 +1282,6 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 
         d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
     }
-    d->viewMenuHelper->reloadCursor();
 }
 
 QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
