@@ -40,6 +40,8 @@ protected:
     void doSetOption(const QString &key, const QVariant &value);
     void onValueChanged(int attribute, const QVariant &value);
 
+    void initPresetSettingConfig();
+
 private:
     explicit SettingBackend(QObject *parent = nullptr);
     ~SettingBackend();

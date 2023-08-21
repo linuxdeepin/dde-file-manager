@@ -29,6 +29,7 @@ bool startService(const QString &service);
 void enableServiceAsync();
 bool checkAndEnableService(const QString &service);
 
+void initSettingPane();
 // bind dconfig
 void bindSetting();
 
