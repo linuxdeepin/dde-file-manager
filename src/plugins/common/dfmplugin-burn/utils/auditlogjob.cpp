@@ -20,6 +20,29 @@ namespace dfmplugin_burn {
 DFMBASE_USE_NAMESPACE
 using namespace GlobalServerDefines;
 
+namespace AuditHelper {
+QString bunner(const QVariant &value)
+{
+    const QStringList &splitedDrive { value.toString().split("/") };
+    return splitedDrive.isEmpty() ? QString() : splitedDrive.last();
+}
+
+QString opticalMedia(const QVariant &value)
+{
+    const QString &media { value.toString() };
+    return DeviceUtils::formatOpticalMediaType(media);
+}
+
+qint64 idGenerator()
+{
+    static qint64 index { 0 };
+    static qint64 baseID { QDateTime::currentSecsSinceEpoch() };
+
+    qint64 id { baseID + (index++) };
+    return id;
+}
+}   // namespace AuditHelper
+
 AbstractAuditLogJob::AbstractAuditLogJob(QObject *parent)
     : QThread(parent)
 {
@@ -90,9 +113,8 @@ void CopyFromDiscAuditLog::writeLog(QDBusInterface &interface, const QString &sr
     interface.call("WriteLog", kLogKey, curLog);
 }
 
-BurnFilesAuditLogJob::BurnFilesAuditLogJob(const QVariantMap &info, const QUrl &stagingUrl, bool result, QObject *parent)
+BurnFilesAuditLogJob::BurnFilesAuditLogJob(const QUrl &stagingUrl, bool result, QObject *parent)
     : AbstractAuditLogJob(parent),
-      discDeviceInfo(info),
       localStagingUrl(stagingUrl),
       burnedSuccess(result)
 {
@@ -100,7 +122,7 @@ BurnFilesAuditLogJob::BurnFilesAuditLogJob(const QVariantMap &info, const QUrl &
 
 void BurnFilesAuditLogJob::doLog(QDBusInterface &interface)
 {
-    QString device { discDeviceInfo.value(DeviceProperty::kDevice).toString() };
+    QString device { property(DeviceProperty::kDevice).toString() };
     const auto &pathMap { Application::dataPersistence()->value("StagingMap", device).toMap() };
 
     for (const QFileInfo &info : burnedFileInfoList()) {
@@ -127,24 +149,21 @@ void BurnFilesAuditLogJob::doLog(QDBusInterface &interface)
 void BurnFilesAuditLogJob::writeLog(QDBusInterface &interface, const QString &discPath, const QString &nativePath, qint64 size)
 {
     static const QString kLogKey { "cdrecord" };
-    static const QString kLogTemplate { tr("ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9") };
+    static const QString kLogTemplate { "ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9" };
     static const QString &kUserName { SysInfoUtils::getUser() };
 
-    const QString &result { burnedSuccess ? tr("Success") : tr("Failed") };
+    const QString &result { burnedSuccess ? "Success" : "Failed" };
     const QString &dateTime { QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") };
-    const QString &burner { bunner() };
-    const QString &discType { opticalMedia() };
-    static qint64 index { 0 };
-    static qint64 baseID { QDateTime::currentSecsSinceEpoch() };
+    const QString &burner { AuditHelper::bunner(property(DeviceProperty::kDrive)) };
+    const QString &discType { AuditHelper::opticalMedia(property(DeviceProperty::kMedia)) };
 
-    qint64 id { baseID + (index++) };
     auto fmInfo { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(discPath), Global::CreateFileInfoType::kCreateFileInfoSync) };
     const QString &fileType { fmInfo ? fmInfo->displayOf(DisPlayInfoType::kMimeTypeDisplayName) : "" };
-    QString curLog { kLogTemplate.arg(id).arg(dateTime).arg(burner).arg(discType).arg(result).arg(kUserName).arg(nativePath).arg(FileUtils::formatSize(size)).arg(fileType) };
+    QString curLog { kLogTemplate.arg(AuditHelper::idGenerator()).arg(dateTime).arg(burner).arg(discType).arg(result).arg(kUserName).arg(nativePath).arg(FileUtils::formatSize(size)).arg(fileType) };
     interface.call("WriteLog", kLogKey, curLog);
 
     if (burnedSuccess) {
-        QString device { discDeviceInfo.value(DeviceProperty::kDevice).toString() };
+        QString device { property(DeviceProperty::kDevice).toString() };
         Application::dataPersistence()->remove("StagingMap", device);
         Application::dataPersistence()->sync();
     }
@@ -163,16 +182,32 @@ QFileInfoList BurnFilesAuditLogJob::burnedFileInfoList() const
     return burnedFileInfoGroup;
 }
 
-QString BurnFilesAuditLogJob::bunner() const
+EraseDiscAuditLogJob::EraseDiscAuditLogJob(bool result, QObject *parent)
+    : AbstractAuditLogJob(parent),
+      eraseSuccess(result)
 {
-    const QStringList &splitedDrive { discDeviceInfo[DeviceProperty::kDrive].toString().split("/") };
-    return splitedDrive.isEmpty() ? QString() : splitedDrive.last();
 }
 
-QString BurnFilesAuditLogJob::opticalMedia() const
+void EraseDiscAuditLogJob::doLog(QDBusInterface &interface)
 {
-    const QString &media { discDeviceInfo[DeviceProperty::kMedia].toString() };
-    return DeviceUtils::formatOpticalMediaType(media);
+    static const QString kLogKey { "cdrecord" };
+    static const QString kLogTemplate { "ID=%1, Type=%2, Burner=%3, DiscType=%4, User=%5, DateTime=%6, Result=%7" };
+    static const QString &kUserName { SysInfoUtils::getUser() };
+
+    const QString &result { eraseSuccess ? "Success" : "Failed" };
+    const QString &dateTime { QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") };
+    const QString &burner { AuditHelper::bunner(property(DeviceProperty::kDrive)) };
+    const QString &discType { AuditHelper::opticalMedia(property(DeviceProperty::kMedia)) };
+
+    QString curLog { kLogTemplate
+                             .arg(AuditHelper::idGenerator())
+                             .arg("Erase")
+                             .arg(burner)
+                             .arg(discType)
+                             .arg(kUserName)
+                             .arg(dateTime)
+                             .arg(result) };
+    interface.call("WriteLog", kLogKey, curLog);
 }
 
 }   // namespace dfmplugin_burn
