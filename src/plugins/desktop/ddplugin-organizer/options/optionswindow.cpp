@@ -51,9 +51,12 @@ void OptionsWindowPrivate::autoArrangeChanged(bool on)
 void OptionsWindowPrivate::enableChanged(bool enable)
 {
     if (organization) {
-        autoArrange->setVisible(!CfgPresenter->isEnable());
+        autoArrange->setVisible(!enable);
         organization->reset();
         sizeSlider->switchMode(enable ? SizeSlider::View : SizeSlider::Icon);
+
+        // adjust size when subwidgets size changed.
+        contentWidget->adjustSize();
         q->adjustSize();
     }
 }

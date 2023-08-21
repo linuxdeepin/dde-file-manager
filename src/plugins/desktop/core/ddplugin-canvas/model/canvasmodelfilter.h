@@ -53,6 +53,18 @@ protected:
     QMap<QString, QUrl> keys;
     QMap<QString, bool> hidden;
 };
+
+class ModelHookInterface;
+class HookFilter : public CanvasModelFilter
+{
+public:
+    using CanvasModelFilter::CanvasModelFilter;
+    bool insertFilter(const QUrl &url) override;
+    bool resetFilter(QList<QUrl> &urls) override;
+    bool updateFilter(const QUrl &url, const QVector<int> &roles = {}) override;
+    bool removeFilter(const QUrl &url) override;
+    bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl) override;
+};
 }
 
 #endif // CANVASMODELFILTER_H
