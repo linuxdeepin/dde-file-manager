@@ -19,6 +19,7 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/file/entry/entities/abstractentryfileentity.h>
@@ -116,6 +117,12 @@ void VaultVisibleManager::addVaultComputerMenu()
     dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
 }
 
+void VaultVisibleManager::addSettingPaneItem()
+{
+    SettingJsonGenerator::instance()->addCheckBoxConfig("01_advance.04_items_in_sidebar.12_vault",
+                                                        "Vault");
+}
+
 void VaultVisibleManager::addSideBarVaultItem()
 {
     if (isVaultEnabled()) {
@@ -130,6 +137,7 @@ void VaultVisibleManager::addSideBarVaultItem()
             { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
             { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
             { "Property_Key_VisiableControl", "vault" },
+            { "Property_Key_VisiableSettingItem", "01_advance.04_items_in_sidebar.12_vault" },
             { "Property_Key_ReportName", "Vault" }
         };
 

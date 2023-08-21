@@ -28,7 +28,6 @@ public:
 private:
     [[nodiscard]] static QPair<QWidget *, QWidget *> createAutoMountCheckBox(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createAutoMountOpenCheckBox(QObject *opt);
-    [[nodiscard]] static QPair<QWidget *, QWidget *> createSplitter(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createCheckBoxWithMessage(QObject *opt);
 
     static void mountCheckBoxStateChangedHandle(DSettingsOption *option, int state);
