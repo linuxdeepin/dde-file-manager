@@ -43,6 +43,7 @@ inline constexpr char kQtItemFlags[] { "Property_Key_QtItemFlags" };   // value 
 inline constexpr char kIsEjectable[] { "Property_Key_Ejectable" };   // value is bool, tem will set actionList(right edge)
 inline constexpr char kIsEditable[] { "Property_Key_Editable" };   // value is bool
 inline constexpr char kIsHidden[] { "Property_Key_Hidden" };   // value is bool, item will be hidden
+inline constexpr char kVisiableSettingKey[] { "Property_Key_VisiableSettingItem" };
 inline constexpr char kVisiableControlKey[] { "Property_Key_VisiableControl" };   // a string, used to identify the item when visiable state changed in dconfig;
 inline constexpr char kReportName[] { "Property_Key_ReportName" };   // a string, used to report log
 // calllbacks

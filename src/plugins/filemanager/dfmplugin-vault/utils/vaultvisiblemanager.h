@@ -17,9 +17,9 @@ public:
 
 public:
     /*!
-    * \brief isVaultEnabled
-    * \return true vault is available, vice versa.
-    */
+     * \brief isVaultEnabled
+     * \return true vault is available, vice versa.
+     */
     bool isVaultEnabled();
     void infoRegister();
     void pluginServiceRegister();
@@ -32,6 +32,7 @@ public slots:
     void removeComputerVaultItem();
     void onComputerRefresh();
     void addVaultComputerMenu();
+    void addSettingPaneItem();
 
 public:
     static VaultVisibleManager *instance();
