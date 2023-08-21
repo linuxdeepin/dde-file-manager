@@ -34,6 +34,9 @@ public:
     static void updateSideBarSelection(quint64 winId);
 
     static void bindSettings();
+    static void bindSetting(const QString &itemVisiableSettingKey, const QString &itemVisiableControlKey);
+    static void initSettingPane();
+    static void registCustomSettingItem();
     static QVariantMap hiddenRules();
     static QVariantMap groupExpandRules();
 
