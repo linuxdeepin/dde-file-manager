@@ -129,8 +129,9 @@ QList<SurfacePointer> FrameManagerPrivate::surfaces() const
 
 void FrameManagerPrivate::refeshCanvas()
 {
+    // refresh immediately to prevent show the files which is move to collection view.
     if (canvas)
-        canvas->canvasModel()->refresh(1);
+        canvas->canvasModel()->refresh(0);
 }
 
 void FrameManagerPrivate::enableChanged(bool e)

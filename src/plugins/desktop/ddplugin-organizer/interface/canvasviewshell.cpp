@@ -44,7 +44,7 @@ CanvasViewShell::~CanvasViewShell()
     CanvasViewUnfollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
     CanvasViewUnfollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
     CanvasViewUnfollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
-    CanvasViewUnfollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
+    //CanvasViewUnfollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 }
 
 bool CanvasViewShell::initialize()
@@ -52,7 +52,7 @@ bool CanvasViewShell::initialize()
     CanvasViewFollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
     CanvasViewFollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
     CanvasViewFollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
-    CanvasViewFollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
+    //CanvasViewFollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 
     return true;
 }

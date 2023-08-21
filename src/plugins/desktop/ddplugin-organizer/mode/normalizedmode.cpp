@@ -282,16 +282,18 @@ void NormalizedMode::detachLayout()
 void NormalizedMode::rebuild()
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
+    QTime time;
+    time.start();
     {
-        QTime time;
-        time.start();
         auto files = model->files();
         d->classifier->reset(files);
 
         // order item as config
         d->restore(CfgPresenter->normalProfile());
 
-        qInfo() << QString("Classifying %0 files takes %1ms").arg(files.size()).arg(time.elapsed());
+        qInfo() << QString("Classifying %0 files takes %1 ms").arg(files.size()).arg(time.elapsed());
+        time.restart();
+
         if (!files.isEmpty())
             CfgPresenter->saveNormalProfile(d->classifier->baseData());
     }
@@ -323,6 +325,8 @@ void NormalizedMode::rebuild()
     }
 
     layout();
+
+    qInfo() << QString("create groups %0 takes %1 ms").arg(d->holders.size()).arg(time.elapsed());
 
     emit collectionChanged();
 }

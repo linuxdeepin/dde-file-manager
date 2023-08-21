@@ -10,8 +10,6 @@
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/application/application.h>
 
-#include <dfm-framework/dpf.h>
-
 #include <QMimeData>
 #include <QDateTime>
 #include <QDebug>
@@ -20,12 +18,13 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
-#define CanvasModelPublish(topic, args...) \
-    dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
 
 CanvasProxyModelPrivate::CanvasProxyModelPrivate(CanvasProxyModel *qq)
     : QObject(qq), q(qq)
 {
+    // the hook filter must be first filter.
+    modelFilters << QSharedPointer<CanvasModelFilter>(new HookFilter(qq));
+
     modelFilters << QSharedPointer<CanvasModelFilter>(new HiddenFileFilter(qq));
     modelFilters << QSharedPointer<CanvasModelFilter>(new InnerDesktopAppFilter(qq));
     isNotMixDirAndFile = !Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
@@ -53,15 +52,6 @@ void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
         auto url = srcModel->fileUrl(srcModel->index(i));
-        if (hookIfs && hookIfs->dataInserted(url)) {
-            qDebug() << "filter by extend module:" << url;
-            if (FileOperatorProxyIns->touchFileData().first == url.toString()) {
-                FileOperatorProxyIns->clearTouchFileData();
-                // need open editor,only by menu create file
-                CanvasModelPublish(signal_CanvasModel_OpenEditor, url);
-            }
-            continue;
-        }
 
         // canvas filter
         if (insertFilter(url))
@@ -93,10 +83,6 @@ void CanvasProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sour
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
         auto url = srcModel->fileUrl(srcModel->index(i));
-        if (hookIfs && hookIfs->dataRemoved(url)) {
-            qWarning() << "invalid module: dataRemoved returns true.";
-        }
-
         // canvas filter
         removeFilter(url);
 
@@ -122,15 +108,8 @@ void CanvasProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sour
 
 void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    bool ignore = false;
-    if (hookIfs) {
-        ignore = hookIfs->dataRenamed(oldUrl, newUrl);
-        if (ignore)
-            qDebug() << "dataRenamed: ignore target" << newUrl << "old:" << oldUrl;
-    }
-
     // canvas filter
-    ignore = ignore || renameFilter(oldUrl, newUrl);
+    bool ignore = renameFilter(oldUrl, newUrl);
 
     int row = fileList.indexOf(oldUrl);
     if (ignore) {
@@ -358,9 +337,6 @@ void CanvasProxyModelPrivate::createMapping()
         return;
 
     auto urls = srcModel->files();
-    if (hookIfs && hookIfs->dataRested(&urls)) {
-        qWarning() << "invalid module: dataRested returns true.";
-    }
 
     // canvas filter
     resetFilter(urls);
@@ -438,6 +414,13 @@ void CanvasProxyModelPrivate::doRefresh(bool global, bool refreshFile)
         // reset model
         sourceAboutToBeReset();
         sourceReset();
+
+        // refresh file info in canvas model
+        {
+            // do not emit data changed signal, just refresh file info.
+            QSignalBlocker blocker(q);
+            q->update();
+        }
     }
 }
 
@@ -891,11 +874,6 @@ bool CanvasProxyModel::fetch(const QUrl &url)
 
     auto info = d->srcModel->fileInfo(idx);
     if (info) {
-        if (d->hookIfs && d->hookIfs->dataInserted(url)) {
-            qDebug() << "filter by extend module. can not add" << url;
-            return false;
-        }
-
         // canvas filter
         if (d->insertFilter(url)) {
             qDebug() << "filter it, don't add" << url;
@@ -920,10 +898,6 @@ bool CanvasProxyModel::take(const QUrl &url)
 {
     if (!d->fileMap.contains(url))
         return true;
-
-    if (d->hookIfs && d->hookIfs->dataRemoved(url)) {
-        qWarning() << "invalid module: dataRemoved returns true.";
-    }
 
     // canvas filter
     d->removeFilter(url);
