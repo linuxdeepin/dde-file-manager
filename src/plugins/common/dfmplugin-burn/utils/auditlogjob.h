@@ -14,6 +14,12 @@
 
 namespace dfmplugin_burn {
 
+namespace AuditHelper {
+QString bunner(const QVariant &value);
+QString opticalMedia(const QVariant &value);
+qint64 idGenerator();
+}   // namespace AuditHelper
+
 class AbstractAuditLogJob : public QThread
 {
     Q_OBJECT
@@ -43,7 +49,7 @@ private:
 class BurnFilesAuditLogJob : public AbstractAuditLogJob
 {
 public:
-    BurnFilesAuditLogJob(const QVariantMap &info, const QUrl &stagingUrl, bool result, QObject *parent = nullptr);
+    BurnFilesAuditLogJob(const QUrl &stagingUrl, bool result, QObject *parent = nullptr);
 
 protected:
     void doLog(QDBusInterface &interface) override;
@@ -51,13 +57,22 @@ protected:
 
 private:
     QFileInfoList burnedFileInfoList() const;
-    QString bunner() const;
-    QString opticalMedia() const;
 
 private:
-    QVariantMap discDeviceInfo;
     QUrl localStagingUrl;
     bool burnedSuccess;
+};
+
+class EraseDiscAuditLogJob : public AbstractAuditLogJob
+{
+public:
+    explicit EraseDiscAuditLogJob(bool result, QObject *parent = nullptr);
+
+protected:
+    void doLog(QDBusInterface &interface) override;
+
+private:
+    bool eraseSuccess;
 };
 
 }   // namespace dfmplugin_burn

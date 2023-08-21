@@ -39,6 +39,7 @@ public:
 
     void startAuditLogForCopyFromDisc(const QList<QUrl> &srcList, const QList<QUrl> &destList);
     void startAuditLogForBurnFiles(const QVariantMap &info, const QUrl &stagingUrl, bool result);
+    void startAuditLogForEraseDisc(const QVariantMap &info, bool result);
 
 private:
     void initBurnJobConnect(AbstractBurnJob *job);
