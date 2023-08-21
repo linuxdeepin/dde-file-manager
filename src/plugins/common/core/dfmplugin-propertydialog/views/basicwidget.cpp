@@ -145,7 +145,7 @@ void BasicWidget::basicExpand(const QUrl &url)
     tempFrame->setLayout(gl);
 
     layoutMain = new QGridLayout;
-    layoutMain->setContentsMargins(kLeftContentsMargins, 0, 0, kRightContentsMargins);
+    layoutMain->setContentsMargins(kLeftContentsMargins, 15, 0, kRightContentsMargins);
     layoutMain->setSpacing(kSpacingHeight);
     int row = 0;
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
