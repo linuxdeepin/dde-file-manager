@@ -67,6 +67,7 @@ protected:
     [[nodiscard]] DFMBURN::DOpticalDiscManager *createManager(int fd);
     QByteArray updatedInSubProcess(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
     void comfort();
+    bool mediaChangDected();
 
 signals:
     void requestErrorMessageDialog(const QString &title, const QString &message);
@@ -102,6 +103,9 @@ class EraseJob : public AbstractBurnJob
 public:
     explicit EraseJob(const QString &dev, const JobHandlePointer handler);
     virtual ~EraseJob() override {}
+
+signals:
+    void eraseFinished(bool result);
 
 protected:
     virtual void updateMessage(JobInfoPointer ptr) override;
