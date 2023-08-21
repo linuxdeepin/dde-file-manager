@@ -47,24 +47,22 @@ target_link_libraries(${PROJECT_NAME}
     ${DtkGui_LIBRARIES}
     )
 
-if(NOT DEFINED INSTALL_DESKTOP_ORGANIZER)
-    if (COMPLIE_ON_V23)
-    set(INSTALL_DESKTOP_ORGANIZER ON)
-    else()
-    set(INSTALL_DESKTOP_ORGANIZER OFF)
-    endif()
-endif()
+#if(NOT DEFINED INSTALL_DESKTOP_ORGANIZER)
+#    if (COMPLIE_ON_V23)
+#    set(INSTALL_DESKTOP_ORGANIZER ON)
+#    else()
+#    set(INSTALL_DESKTOP_ORGANIZER OFF)
+#    endif()
+#endif()
 
-message(STATUS "INSTALL_DESKTOP_ORGANIZER: ${INSTALL_DESKTOP_ORGANIZER}")
+#message(STATUS "INSTALL_DESKTOP_ORGANIZER: ${INSTALL_DESKTOP_ORGANIZER}")
 
-if (INSTALL_DESKTOP_ORGANIZER)
-    #install library file
-    install(TARGETS
-        ${PROJECT_NAME}
-        LIBRARY
-        DESTINATION
-        ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
-    )
-endif()
+#install library file
+install(TARGETS
+    ${PROJECT_NAME}
+    LIBRARY
+    DESTINATION
+    ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
+)
 
 

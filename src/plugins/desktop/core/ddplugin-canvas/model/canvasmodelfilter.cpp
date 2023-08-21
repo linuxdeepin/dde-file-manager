@@ -4,8 +4,13 @@
 
 #include "canvasmodelfilter.h"
 #include "utils/fileutil.h"
+#include "modelhookinterface.h"
+
+#include "view/operator/fileoperatorproxy.h"
 
 #include <dfm-base/utils/fileutils.h>
+
+#include <dfm-framework/dpf.h>
 
 #include <QGSettings>
 #include <QDebug>
@@ -172,4 +177,59 @@ void InnerDesktopAppFilter::changed(const QString &key)
         if (old != hidden.value(key))
             refreshModel();
     }
+}
+
+bool HookFilter::insertFilter(const QUrl &url)
+{
+    ModelHookInterface *hookIfs = model->modelHook();
+    if (hookIfs && hookIfs->dataInserted(url)) {
+        qDebug() << "filter by extend module:" << url;
+        if (FileOperatorProxyIns->touchFileData().first == url.toString()) {
+            FileOperatorProxyIns->clearTouchFileData();
+            // need open editor,only by menu create file
+            dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE),
+                                         "signal_CanvasModel_OpenEditor", url);
+        }
+        return true;
+    }
+
+    return false;
+}
+
+bool HookFilter::resetFilter(QList<QUrl> &urls)
+{
+    ModelHookInterface *hookIfs = model->modelHook();
+    if (hookIfs && hookIfs->dataRested(&urls))
+        qWarning() << "invalid module: dataRested returns true.";
+
+    return false;
+}
+
+bool HookFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
+{
+    ModelHookInterface *hookIfs = model->modelHook();
+    if (hookIfs && hookIfs->dataChanged(url, roles))
+        qWarning() << "invalid module: dataChanged returns true.";
+
+    return false;
+}
+
+bool HookFilter::removeFilter(const QUrl &url)
+{
+    ModelHookInterface *hookIfs = model->modelHook();
+    if (hookIfs && hookIfs->dataRemoved(url))
+        qWarning() << "invalid module: dataRemoved returns true.";
+
+    return false;
+}
+
+bool HookFilter::renameFilter(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    ModelHookInterface *hookIfs = model->modelHook();
+    if (hookIfs && hookIfs->dataRenamed(oldUrl, newUrl)) {
+        qDebug() << "dataRenamed: ignore target" << newUrl << "old:" << oldUrl;
+        return true;
+    }
+
+    return false;
 }
