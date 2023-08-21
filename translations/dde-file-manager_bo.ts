@@ -4127,7 +4127,7 @@
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1034"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1043"/>
         <source>Failed to modify file permissions</source>
-        <translation type="unfinished"/>
+        <translation>ཡིག་ཆའི་དབང་ཚད་བཅོས་ཐུབ་མ་སོང་།</translation>
     </message>
 </context>
 <context>
