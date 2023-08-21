@@ -5,6 +5,8 @@
 #include "settingdialog.h"
 #include "controls/checkboxwithmessage.h"
 
+#include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/settingdialog/customsettingitemregister.h>
 #include <dfm-base/base/configs/settingbackend.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -149,19 +151,21 @@ void SettingDialog::settingFilter(QByteArray &data)
     }
 }
 
-void SettingDialog::loadSettings(const QString &templateFile)
+void SettingDialog::loadSettings(const QString & /*templateFile*/)
 {
-    QFile file(templateFile);
-    if (!file.open(QFile::ReadOnly))
-        return;
-    QByteArray data = file.readAll();
-    file.close();
+    //    QFile file(templateFile);
+    //    if (!file.open(QFile::ReadOnly))
+    //        return;
+    //    QByteArray data = file.readAll();
+    //    file.close();
+
+    QByteArray configJson = SettingJsonGenerator::instance()->genSettingJson();
 
     if (!QDBusConnection::systemBus().interface()->isServiceRegistered("com.deepin.anything"))
-        data = removeQuickSearchIndex(data);
+        configJson = removeQuickSearchIndex(configJson);
 
-    settingFilter(data);
-    dtkSettings = DSettings::fromJson(data);
+    settingFilter(configJson);
+    dtkSettings = DSettings::fromJson(configJson);
 }
 
 QPointer<QCheckBox> SettingDialog::kAutoMountCheckBox = nullptr;
@@ -171,10 +175,18 @@ QSet<QString> SettingDialog::kHiddenSettingItems {};
 SettingDialog::SettingDialog(QWidget *parent)
     : DSettingsDialog(parent)
 {
+    // TODO(xust): move to server plugin.
     widgetFactory()->registerWidget("mountCheckBox", &SettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);
-    widgetFactory()->registerWidget("splitter", &SettingDialog::createSplitter);
+
     widgetFactory()->registerWidget("checkBoxWithMessage", &SettingDialog::createCheckBoxWithMessage);
+
+    auto creators = CustomSettingItemRegister::instance()->getCreators();
+    auto iter = creators.cbegin();
+    while (iter != creators.cend()) {
+        widgetFactory()->registerWidget(iter.key(), iter.value());
+        iter++;
+    }
 
     if (WindowUtils::isWayLand()) {
         setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
@@ -185,6 +197,7 @@ SettingDialog::SettingDialog(QWidget *parent)
         setFixedSize(QSize(700, 700));
     }
 
+    // TODO(xust): no need these files anymore.
     QString settingTemplate =
 #ifdef DISABLE_COMPRESS_PREIVEW
             ":/configure/global-setting-template-pro.js";
@@ -272,13 +285,6 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
     });
 
     return qMakePair(openCheckBox, nullptr);
-}
-
-QPair<QWidget *, QWidget *> SettingDialog::createSplitter(QObject *opt)
-{
-    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
-    auto lab = new QLabel(qApp->translate("QObject", option->name().toStdString().c_str()));
-    return qMakePair(lab, nullptr);
 }
 
 QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *opt)

@@ -6,6 +6,7 @@
 #include "displaycontrol/utilities/protocoldisplayutilities.h"
 
 #include <plugins/common/dfmplugin-utils/reportlog/datas/smbreportdata.h>
+#include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/configs/settingbackend.h>
@@ -142,7 +143,7 @@ void bindSetting()
     static constexpr char kShowOfflineKey[] { "dfm.samba.permanent" };
     DFMBASE_USE_NAMESPACE
     SettingBackend::instance()->addSettingAccessor(
-            "advance.mount.always_show_offline_remote_connection",
+            "01_advance.02_mount.03_always_show_offline_remote_connection",
             [] { return DConfigManager::instance()->value(kDefaultCfgPath, kShowOfflineKey); },
             [](const QVariant &var) { DConfigManager::instance()->setValue(kDefaultCfgPath, kShowOfflineKey, var); });
 }
@@ -157,6 +158,12 @@ QMap<QUrl, SmbShareNode> &shareNodes()
 {
     static QMap<QUrl, SmbShareNode> nodes;
     return nodes;
+}
+
+void initSettingPane()
+{
+    dfmbase::SettingJsonGenerator::instance()->addCheckBoxConfig("01_advance.02_mount.03_always_show_offline_remote_connection",
+                                                                 "Keep showing the mounted Samba shares");
 }
 
 }
