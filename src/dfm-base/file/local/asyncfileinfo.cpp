@@ -368,8 +368,11 @@ int AsyncFileInfo::countChildFileAsync() const
 
 QString AsyncFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (type == DisPlayInfoType::kFileDisplayName)
-        return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName).toString();
+    if (type == DisPlayInfoType::kFileDisplayName) {
+        if (d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName).isValid())
+            return d->asyncAttribute(AsyncFileInfo::AsyncAttributeID::kStandardDisplayName).toString();
+        return url.fileName();
+    }
     return FileInfo::displayOf(type);
 }
 
