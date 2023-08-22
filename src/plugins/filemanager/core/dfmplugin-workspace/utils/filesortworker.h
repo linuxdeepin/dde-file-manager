@@ -125,6 +125,7 @@ private:
     void addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info);
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortFilter::SortScenarios sort);
+    bool sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo);
 
 private:
     bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
