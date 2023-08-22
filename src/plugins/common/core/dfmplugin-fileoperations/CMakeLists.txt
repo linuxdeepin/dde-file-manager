@@ -49,3 +49,4 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_COMMON_CORE_DIR}
 )
+INSTALL_DCONFIG("org.deepin.dde.file-manager.operations.json")
