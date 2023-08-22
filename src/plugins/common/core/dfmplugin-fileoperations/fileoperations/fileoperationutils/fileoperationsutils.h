@@ -74,6 +74,7 @@ private:
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
     static bool isFileOnDisk(const QUrl &url);
     static qint64 bigFileSize();
+    static bool blockSync();
 
 private:
     static QSet<QString> fileNameUsing;
