@@ -52,6 +52,7 @@ public:
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // job flag
     QMap<AbstractJobHandler::JobErrorType, AbstractJobHandler::SupportAction> errorOfAction;
     std::atomic_bool needSyncEveryRW { false };
+    std::atomic_bool exBlockSyncEveryWrite { false };
     std::atomic_bool isFsTypeVfat { false };
     std::atomic_bool isBlockDevice { false };
     std::atomic_int64_t currentWriteSize { 0 };

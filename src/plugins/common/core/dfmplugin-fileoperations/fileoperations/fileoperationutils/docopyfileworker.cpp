@@ -173,8 +173,6 @@ bool DoCopyFileWorker::doDfmioFileCopy(FileInfoPointer fromInfo, FileInfoPointer
     workData->everyFileWriteSize.remove(fromUrl);
     delete data;
 
-    syncBlockFile(toInfo);
-
     return ret;
 }
 
@@ -230,6 +228,9 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
     if (workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyResizeDestinationFile) && !resizeTargetFile(fromInfo, toInfo, toDevice, skip))
         return false;
     // 循环读取和写入文件，拷贝
+    int toFd = -1;
+    if (workData->exBlockSyncEveryWrite)
+        toFd = open(toInfo->urlOf(UrlInfoType::kUrl).path().toUtf8().toStdString().data(), O_RDONLY);
     qint64 blockSize = fromInfo->size() > kMaxBufferLength ? kMaxBufferLength : fromInfo->size();
     char *data = new char[static_cast<uint>(blockSize + 1)];
     uLong sourceCheckSum = adler32(0L, nullptr, 0);
@@ -252,6 +253,10 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
 
+        // 执行同步策略
+        if (workData->exBlockSyncEveryWrite && toFd > 0)
+            syncfs(toFd);
+
         toInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kStandardSize, toDevice->size());
 
     } while (fromDevice->pos() != fromInfo->size());
@@ -259,7 +264,8 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
     delete[] data;
     data = nullptr;
 
-    syncBlockFile(toInfo);
+    if (toFd > 0)
+        close(toFd);
 
     // 对文件加权
     setTargetPermissions(fromInfo, toInfo);
