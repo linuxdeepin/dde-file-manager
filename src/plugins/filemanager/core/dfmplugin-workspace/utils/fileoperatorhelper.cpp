@@ -101,7 +101,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
             if (fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
                 QUrl dirUrl = url;
                 if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink))
-                    dirUrl = fileInfoPtr->urlOf(UrlInfoType::kRedirectedFileUrl);
+                    dirUrl = QUrl::fromLocalFile(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
                 if (mode == DirOpenMode::kOpenNewWindow) {
                     WorkspaceEventCaller::sendOpenWindow({ dirUrl });
