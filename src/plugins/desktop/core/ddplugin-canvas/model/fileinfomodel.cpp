@@ -214,11 +214,9 @@ void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
     if (Q_UNLIKELY(!index.isValid()))
         return;
 
-    if (isLinkOrg) {
-        auto info = q->fileInfo(index);
-        if (info)
-            info->customData(Global::ItemRoles::kItemFileRefreshIcon);
-    }
+    auto info = q->fileInfo(index);
+    if (info)
+        info->customData(Global::ItemRoles::kItemFileRefreshIcon);
 
     emit q->dataChanged(index, index);
 }
