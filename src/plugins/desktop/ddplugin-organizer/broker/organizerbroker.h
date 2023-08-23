@@ -28,6 +28,7 @@ public slots:
     virtual QRect visualRect(const QString &id, const QUrl &item) = 0;
     virtual QAbstractItemView * view(const QString &id) = 0;
     virtual QRect iconRect(const QString &id, QRect vrect) = 0;
+    virtual bool selectAllItems() = 0;
 };
 }
 

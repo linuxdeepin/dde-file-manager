@@ -40,5 +40,7 @@ bool OrganizerBroker::init()
     OrganizerBrokerSlot(slot_CollectionView_View, &OrganizerBroker::view);
     OrganizerBrokerSlot(slot_CollectionItemDelegate_IconRect, &OrganizerBroker::iconRect);
     OrganizerBrokerSlot(slot_CollectionModel_Refresh, &OrganizerBroker::refreshModel);
+
+
     return true;
 }

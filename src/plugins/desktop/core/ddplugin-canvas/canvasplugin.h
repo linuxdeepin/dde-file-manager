@@ -40,6 +40,7 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasManager_AutoArrange)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_SetAutoArrange)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_View)
+    DPF_EVENT_REG_SLOT(slot_CanvasManager_SelectionModel)
 
     DPF_EVENT_REG_HOOK(hook_CanvasManager_RequestWallpaperSetting)
 
@@ -126,6 +127,9 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasItemDelegate_IconRect)
 
     DPF_EVENT_REG_HOOK(hook_CanvasItemDelegate_LayoutText)
+
+    // CanvasSelectionModel begin
+    DPF_EVENT_REG_SIGNAL(signal_CanvasSelectionModel_Clear)
 };
 
 }

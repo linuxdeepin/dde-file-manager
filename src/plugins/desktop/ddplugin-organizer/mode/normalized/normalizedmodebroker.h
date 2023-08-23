@@ -21,6 +21,7 @@ public slots:
     QRect visualRect(const QString &id, const QUrl &item) override;
     QAbstractItemView *view(const QString &id) override;
     QRect iconRect(const QString &id, QRect vrect) override;
+    bool selectAllItems() override;
 private:
     NormalizedMode *mode;
 };

@@ -52,26 +52,6 @@ CollectionHolder::~CollectionHolder()
 
 }
 
-void CollectionHolder::setCanvasModelShell(CanvasModelShell *sh)
-{
-    d->widget->view()->setCanvasModelShell(sh);
-}
-
-void CollectionHolder::setCanvasViewShell(CanvasViewShell *sh)
-{
-    d->widget->view()->setCanvasViewShell(sh);
-}
-
-void CollectionHolder::setCanvasGridShell(CanvasGridShell *sh)
-{
-    d->widget->view()->setCanvasGridShell(sh);
-}
-
-void CollectionHolder::setCanvasManagerShell(CanvasManagerShell *sh)
-{
-    d->widget->view()->setCanvasManagerShell(sh);
-}
-
 QString CollectionHolder::id() const
 {
     return d->id;
@@ -95,6 +75,11 @@ DFrame *CollectionHolder::frame() const
 CollectionWidget *CollectionHolder::widget() const
 {
     return d->widget;
+}
+
+CollectionView *CollectionHolder::itemView() const
+{
+    return d->widget ? d->widget->view() : nullptr;
 }
 
 void CollectionHolder::createFrame(Surface *surface, CollectionModel *model)

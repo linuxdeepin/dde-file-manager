@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "canvasinterface_p.h"
-#include "fileinfomodelshell.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -57,6 +56,9 @@ bool CanvasInterface::initialize()
     d->canvasManager = new CanvasManagerShell(this);
     d->canvasManager->initialize();
 
+    d->canvasSelectionShell = new CanvasSelectionShell(this);
+    d->canvasSelectionShell->initialize();
+
     return true;
 }
 
@@ -93,6 +95,11 @@ CanvasGridShell *CanvasInterface::canvasGrid()
 CanvasManagerShell *CanvasInterface::canvasManager()
 {
     return d->canvasManager;
+}
+
+CanvasSelectionShell *CanvasInterface::canvasSelectionShell()
+{
+    return d->canvasSelectionShell;
 }
 
 

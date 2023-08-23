@@ -9,6 +9,7 @@
 #include "interface/canvasviewshell.h"
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmanagershell.h"
+#include "interface/canvasselectionshell.h"
 
 #include <QMimeData>
 
@@ -82,6 +83,12 @@ void CanvasOrganizer::setCanvasViewShell(CanvasViewShell *sh)
 
     // hook canvas view, must be DirectConnection
     connect(canvasViewShell, &CanvasViewShell::filterDropData, this, &CanvasOrganizer::filterDropData, Qt::DirectConnection);
+
+    // disable zoomin and zoomout by hook canvas's event.
+    connect(canvasViewShell, &CanvasViewShell::filterShortcutkeyPress, this, &CanvasOrganizer::filterShortcutkeyPress, Qt::DirectConnection);
+    connect(canvasViewShell, &CanvasViewShell::filterWheel, this, &CanvasOrganizer::filterWheel, Qt::DirectConnection);
+
+    //connect(canvasViewShell, &CanvasViewShell::filterMousePress, this, &CanvasOrganizer::filterMousePress, Qt::DirectConnection);
 }
 
 void CanvasOrganizer::setCanvasGridShell(CanvasGridShell *sh)
@@ -108,8 +115,17 @@ void CanvasOrganizer::setCanvasManagerShell(CanvasManagerShell *sh)
         disconnect(canvasManagerShell, nullptr, this, nullptr);
 
     canvasManagerShell = sh;
-    if (!canvasManagerShell)
+}
+
+void CanvasOrganizer::setCanvasSelectionShell(CanvasSelectionShell *sh)
+{
+    if (sh == canvasSelectionShell)
         return;
+
+    if (canvasSelectionShell)
+        disconnect(canvasSelectionShell, nullptr, this, nullptr);
+
+    canvasSelectionShell = sh;
 }
 
 void CanvasOrganizer::setSurfaces(const QList<SurfacePointer> &surface)
@@ -141,4 +157,29 @@ bool CanvasOrganizer::filterDropData(int viewIndex, const QMimeData *mimeData, c
 {
     return false;
 }
+
+bool CanvasOrganizer::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
+{
+    Q_UNUSED(viewIndex)
+
+    if (Qt::ControlModifier == modifiers) {
+        static const QList<int> filterKeys {
+                                            Qt::Key_Equal       // disbale ctrl + = to zooom out
+                                            , Qt::Key_Minus     // disbale ctrl + - to zooom in
+                                            };
+        return filterKeys.contains(key);
+    }
+    return false;
+}
+
+bool CanvasOrganizer::filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const
+{
+    // disbale zooom in or zoom out by mouse wheel if organizer turns on.
+    return ctrl;
+}
+
+//bool CanvasOrganizer::filterMousePress(int viewIndex, int button, const QPoint &viewPos) const
+//{
+//    return false;
+//}
 

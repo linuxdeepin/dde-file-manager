@@ -393,6 +393,9 @@ void CanvasManagerPrivate::initModel()
     }
 
     selectionModel = new CanvasSelectionModel(canvasModel, q);
+    selectionHook = new CanvasSelectionHook(q);
+    selectionModel->setHook(selectionHook);
+
     // using DirectConnection to keep signals are sequential.
     connect(canvasModel, &CanvasProxyModel::rowsInserted, this, &CanvasManagerPrivate::onFileInserted, Qt::DirectConnection);
     connect(canvasModel, &CanvasProxyModel::rowsAboutToBeRemoved, this, &CanvasManagerPrivate::onFileAboutToBeRemoved, Qt::DirectConnection);

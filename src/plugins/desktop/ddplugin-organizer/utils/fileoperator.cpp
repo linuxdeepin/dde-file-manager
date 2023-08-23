@@ -68,8 +68,7 @@ void FileOperatorPrivate::callBackRenameFiles(const QList<QUrl> &sources, const 
     q->clearRenameFileData();
 
     // clear selected and current
-    view->selectionModel()->clearSelection();
-    view->selectionModel()->clearCurrentIndex();
+    view->selectionModel()->clear();
 
     Q_ASSERT(sources.count() == targets.count());
 
@@ -80,7 +79,7 @@ void FileOperatorPrivate::callBackRenameFiles(const QList<QUrl> &sources, const 
 
 QList<QUrl> FileOperatorPrivate::getSelectedUrls(const CollectionView *view) const
 {
-    auto indexs = view->selectedIndexes();
+    auto indexs = view->selectionModel()->selectedIndexes();
     QList<QUrl> urls;
     for (auto index : indexs) {
         urls << view->model()->fileUrl(index);
