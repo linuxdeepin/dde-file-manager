@@ -566,14 +566,7 @@ void CanvasView::selectAll()
     }
 
 #else
-    QItemSelection selection;
-    auto m = model();
-    for (int row = 0; row < m->rowCount(rootIndex()); ++row) {
-        auto index = m->index(row, 0);
-        if (index.isValid())
-            selection.append(QItemSelectionRange(index));
-    }
-    selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    selectionModel()->selectAll();
 #endif
 }
 
@@ -623,6 +616,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
+    if (d->hookIfs->mousePress(screenNum(), event->button(), event->pos()))
+        return;
+
     // must get index on pos before QAbstractItemView::mousePressEvent
     auto index = indexAt(event->pos());
     d->viewSetting->checkTouchDrag(event);

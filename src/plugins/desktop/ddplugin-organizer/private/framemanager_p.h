@@ -38,9 +38,6 @@ public slots:
     void switchToNormalized(int cf);
     void displaySizeChanged(int size);
     void showOptionWindow();
-public slots:
-    bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
-    bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
 protected:
     QWidget *findView(QWidget *root) const;
 public:

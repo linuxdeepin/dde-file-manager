@@ -20,10 +20,7 @@ class CollectionModel;
 class CollectionFrame;
 class CollectionWidget;
 class CollectionDataProvider;
-class CanvasModelShell;
-class CanvasViewShell;
-class CanvasGridShell;
-class CanvasManagerShell;
+class CollectionView;
 class Surface;
 class CollectionHolderPrivate;
 class CollectionHolder : public QObject
@@ -33,15 +30,12 @@ class CollectionHolder : public QObject
 public:
     explicit CollectionHolder(const QString &uuid, CollectionDataProvider *dataProvider, QObject *parent = nullptr);
     ~CollectionHolder() override;
-    void setCanvasModelShell(CanvasModelShell *sh);
-    void setCanvasViewShell(CanvasViewShell *sh);
-    void setCanvasGridShell(CanvasGridShell *sh);
-    void setCanvasManagerShell(CanvasManagerShell *sh);
     QString id() const;
     QString name();
     void setName(const QString &);
     Dtk::Widget::DFrame *frame() const;
     CollectionWidget *widget() const;
+    CollectionView *itemView() const;
     void createFrame(Surface *surface, CollectionModel *model);
     void setSurface(Surface *surface);
     Surface *surface() const;

@@ -200,7 +200,7 @@ bool HookFilter::resetFilter(QList<QUrl> &urls)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataRested(&urls))
-        qWarning() << "invalid module: dataRested returns true.";
+        qDebug() << "invalid module: dataRested returns true.";
 
     return false;
 }
@@ -209,7 +209,7 @@ bool HookFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataChanged(url, roles))
-        qWarning() << "invalid module: dataChanged returns true.";
+        qDebug() << "invalid module: dataChanged returns true.";
 
     return false;
 }
@@ -218,7 +218,7 @@ bool HookFilter::removeFilter(const QUrl &url)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataRemoved(url))
-        qWarning() << "invalid module: dataRemoved returns true.";
+        qDebug() << "invalid module: dataRemoved returns true.";
 
     return false;
 }

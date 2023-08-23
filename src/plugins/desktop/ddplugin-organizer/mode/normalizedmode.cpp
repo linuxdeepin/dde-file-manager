@@ -6,7 +6,11 @@
 #include "models/collectionmodel.h"
 #include "config/configpresenter.h"
 #include "interface/canvasviewshell.h"
+#include "interface/canvasmanagershell.h"
 #include "utils/fileoperator.h"
+#include "view/collectionview.h"
+
+#include <dfm-base/utils/windowutils.h>
 
 #include <QDebug>
 #include <QTime>
@@ -24,6 +28,9 @@ NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
 {
     broker = new NormalizedModeBroker(qq);
     broker->init();
+
+    selectionModel = new ItemSelectionModel(nullptr, qq);
+    selectionHelper = new SelectionSyncHelper(qq);
 }
 
 NormalizedModePrivate::~NormalizedModePrivate()
@@ -94,12 +101,18 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
     CollectionHolderPointer holder;
     holder.reset(new CollectionHolder(id, classifier));
     holder->createFrame(q->surfaces.first().data(), q->model);
-    holder->setCanvasModelShell(q->canvasModelShell);
-    holder->setCanvasViewShell(q->canvasViewShell);
-    holder->setCanvasGridShell(q->canvasGridShell);
-    holder->setCanvasManagerShell(q->canvasManagerShell);
-    holder->setName(name);
+    // set view
+    {
+        auto view = holder->itemView();
+        Q_ASSERT(view);
+        view->setCanvasModelShell(q->canvasModelShell);
+        view->setCanvasViewShell(q->canvasViewShell);
+        view->setCanvasGridShell(q->canvasGridShell);
+        view->setCanvasManagerShell(q->canvasManagerShell);
+        view->setSelectionModel(selectionModel);
+    }
 
+    holder->setName(name);
     // disable rename,move,file shift,close,stretch
     holder->setRenamable(false);
     holder->setMovable(false);
@@ -183,6 +196,13 @@ bool NormalizedMode::initialize(CollectionModel *m)
 {
     Q_ASSERT(m);
     model = m;
+    d->selectionModel->setModel(m);
+
+    // sync selection
+    d->selectionHelper->setInnerModel(d->selectionModel);
+    //d->selectionHelper->setExternalModel(canvasSelectionShell->selectionModel());
+    d->selectionHelper->setShell(canvasSelectionShell);
+    d->selectionHelper->setEnabled(true);
 
     // 根据配置创建分类器, 默认按类型
     auto type = CfgPresenter->classification();
@@ -421,6 +441,14 @@ bool NormalizedMode::filterDataInserted(const QUrl &url)
 bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     return d->classifier;
+}
+
+bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
+{
+    if (modifiers == Qt::ControlModifier && key == Qt::Key_A) // select all
+        return d->broker->selectAllItems();
+
+    return CanvasOrganizer::filterShortcutkeyPress(viewIndex, key, modifiers);
 }
 
 bool NormalizedMode::setClassifier(Classifier id)

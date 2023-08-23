@@ -9,6 +9,7 @@
 
 #include <QObject>
 
+class QItemSelectionModel;
 namespace ddplugin_organizer {
 
 class CanvasManagerShell : public QObject
@@ -17,12 +18,10 @@ class CanvasManagerShell : public QObject
 public:
     explicit CanvasManagerShell(QObject *parent = nullptr);
     ~CanvasManagerShell();
-
     bool initialize();
 public:
     int iconLevel() const;
     void setIconLevel(const int level);
-
 signals:
     void iconSizeChanged(const int level);
 };

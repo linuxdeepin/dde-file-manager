@@ -12,6 +12,7 @@
 #include "interface/canvasmanagershell.h"
 #include "utils/fileoperator.h"
 #include "broker/collectionhookinterface.h"
+#include "models/itemselectionmodel.h"
 
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/schemefactory.h>
@@ -45,9 +46,6 @@ CollectionViewPrivate::CollectionViewPrivate(const QString &uuid, CollectionData
 {
     touchDragTimer.setSingleShot(true);
     touchDragTimer.setTimerType(Qt::PreciseTimer);
-
-    initUI();
-    initConnect();
 }
 
 CollectionViewPrivate::~CollectionViewPrivate()
@@ -209,13 +207,8 @@ void CollectionViewPrivate::selectItems(const QList<QUrl> &fileUrl) const
         }
     }
 
-    if (!seleted.isEmpty()) {
+    if (!seleted.isEmpty())
         q->selectionModel()->select(seleted, QItemSelectionModel::ClearAndSelect);
-
-        // update new focus index.
-        auto lastIndex = q->selectedIndexes().last();
-        q->setCurrentIndex(lastIndex);
-    }
 }
 
 void CollectionViewPrivate::selectRect(const QRect &rect) const
@@ -231,6 +224,35 @@ void CollectionViewPrivate::selectRect(const QRect &rect) const
         selectModel->select(rectSelection, QItemSelectionModel::SelectCurrent);
     else
         selectModel->select(rectSelection, QItemSelectionModel::ClearAndSelect);
+}
+
+void CollectionViewPrivate::toggleSelect() const
+{
+    auto sel = q->selectionModel();
+    auto model = q->model();
+    if (!sel || !model)
+        return;
+
+    auto currentSelected = sel->selectedIndexes();
+    if (currentSelected.isEmpty())
+        return;
+
+    QItemSelection selections;
+    bool contain = false;
+    for (int node = 0; node < provider->items(id).count(); ++node) {
+        auto &&fileUrl = provider->items(id).at(node);
+        auto &&index = q->model()->index(fileUrl);
+        if (currentSelected.contains(index)) {
+            contain = true;
+        } else {
+            selections.push_back(QItemSelectionRange(index));
+        }
+    }
+
+    if (!contain)
+        return;
+
+    sel->select(selections, QItemSelectionModel::ClearAndSelect);
 }
 
 QPoint CollectionViewPrivate::pointToPos(const QPoint &point) const
@@ -571,7 +593,7 @@ void CollectionViewPrivate::showMenu()
     if (CollectionViewMenu::disableMenu())
         return;
 
-    QModelIndexList indexList = q->selectedIndexes();
+    QModelIndexList indexList = q->selectionModel()->selectedIndexes();
     bool isEmptyArea = indexList.isEmpty();
     Qt::ItemFlags flags;
     QModelIndex index;
@@ -599,7 +621,7 @@ void CollectionViewPrivate::showMenu()
 
     q->itemDelegate()->revertAndcloseEditor();
     if (isEmptyArea) {
-        q->selectionModel()->clearSelection();
+        q->selectionModel()->clear();
         menuProxy->emptyAreaMenu();
     } else {
         auto gridPos = pointToPos(q->visualRect(index).center());
@@ -628,7 +650,7 @@ void CollectionViewPrivate::clearClipBoard()
     }
 }
 
-void CollectionViewPrivate::selectAll()
+void CollectionViewPrivate::selectCollection()
 {
     QItemSelection selections;
     for (int node = 0; node < provider->items(id).count(); ++node) {
@@ -762,9 +784,8 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
     if (WindowUtils::keyCtrlIsPressed() || urls.isEmpty())
         return false;
 
-    auto firstUrl = urls.first();
-    auto firstIndex = q->model()->index(firstUrl);
-    if (!firstIndex.isValid()) {
+    CollectionView *fromView = qobject_cast<CollectionView *>(event->source());
+    if (!fromView) {
         // source file does not belong to collection
         return false;
     }
@@ -772,7 +793,7 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
     QPoint viewPoint(event->pos().x() + q->horizontalOffset(), event->pos().y() + q->verticalOffset());
     auto dropPos = pointToPos(viewPoint);
     auto targetIndex = q->indexAt(event->pos());
-    bool dropOnSelf = targetIndex.isValid() ? q->selectedIndexes().contains(targetIndex) : false;
+    bool dropOnSelf = targetIndex.isValid() ? q->selectionModel()->selectedIndexes().contains(targetIndex) : false;
 
     if (dropOnSelf) {
         qInfo() << "drop on self, skip. drop:" << dropPos.x() << dropPos.y();
@@ -786,10 +807,12 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
 
     if (!fileShiftable) {
         // disbale shift file from other collection
-        auto key = provider->key(firstUrl);
-        if (id != key) {
-            qDebug() << "disbale shift file from other collection.";
-            return true;
+        for (const QUrl &url : urls) {
+            auto key = provider->key(url);
+            if (id != key) {
+                qDebug() << "disbale shift file from other collection.";
+                return true;
+            }
         }
     }
 
@@ -1135,6 +1158,9 @@ CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *data
 #ifdef QT_DEBUG
     d->showGrid = true;
 #endif
+
+    d->initUI();
+    d->initConnect();
 }
 
 CollectionView::~CollectionView()
@@ -1252,13 +1278,21 @@ void CollectionView::setModel(QAbstractItemModel *model)
     QAbstractItemView::setModel(model);
     // must update root index for view
     setRootIndex(this->model()->rootIndex());
+}
+
+void CollectionView::setSelectionModel(QItemSelectionModel *selectionModel)
+{
+    QItemSelectionModel *oldSelectionModel = QAbstractItemView::selectionModel();
+    QAbstractItemView::setSelectionModel(selectionModel);
+    if (oldSelectionModel)
+        oldSelectionModel->deleteLater();
 
     // the default selection model is setted after QAbstractItemView::setModel.
-    Q_ASSERT(selectionModel());
+    Q_ASSERT(selectionModel);
 
     //! when selection changed, we need to update all view.
     //! otherwise the expanded text will partly remain.
-    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, (void (QWidget::*)()) & QWidget::update);
+    connect(selectionModel, &QItemSelectionModel::selectionChanged, this, (void (QWidget::*)()) & QWidget::update);
 }
 
 void CollectionView::reset()
@@ -1272,7 +1306,7 @@ void CollectionView::reset()
 
 void CollectionView::selectAll()
 {
-    d->selectAll();
+    d->selectCollection();
 }
 
 QRect CollectionView::visualRect(const QModelIndex &index) const
@@ -1903,7 +1937,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier: {
         switch (event->key()) {
         case Qt::Key_A:
-            d->selectAll();
+            dynamic_cast<ItemSelectionModel *>(selectionModel())->selectAll();
             return;
         case Qt::Key_C:
             d->copyFiles();
@@ -1922,6 +1956,12 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             return;
         default:
             break;
+        }
+    } break;
+    case (Qt::ControlModifier | Qt::ShiftModifier): {
+        if (event->key() == Qt::Key_I) {
+            d->toggleSelect();
+            return;
         }
     } break;
     default:
@@ -1964,12 +2004,13 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
     if (isPersistentEditorOpen(currentIndex()))
         closePersistentEditor(currentIndex());
 
-    if (CollectionHookInterface ::startDrag(id(), supportedActions)) {
+    if (CollectionHookInterface::startDrag(id(), supportedActions)) {
         qDebug() << "start drag by extend.";
         return;
     }
 
-    QModelIndexList validIndexes = selectedIndexes();
+    // Drag all selected items instead of just the selected items in the current view
+    QModelIndexList validIndexes = selectionModel()->selectedIndexes();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
         if (!data)

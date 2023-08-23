@@ -11,6 +11,7 @@
 #include "canvasviewshell.h"
 #include "canvasgridshell.h"
 #include "canvasmanagershell.h"
+#include "canvasselectionshell.h"
 
 namespace ddplugin_organizer {
 
@@ -25,6 +26,7 @@ public:
    CanvasViewShell *canvasView = nullptr;
    CanvasGridShell *canvasGrid = nullptr;
    CanvasManagerShell *canvasManager = nullptr;
+   CanvasSelectionShell *canvasSelectionShell = nullptr;
 private:
     CanvasInterface *q;
 };

@@ -27,6 +27,7 @@ public:
     class CanvasViewShell *canvasView();
     class CanvasGridShell *canvasGrid();
     class CanvasManagerShell *canvasManager();
+    class CanvasSelectionShell *canvasSelectionShell();
 signals:
 
 public slots:
