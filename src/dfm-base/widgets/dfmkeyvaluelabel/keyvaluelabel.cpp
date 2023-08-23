@@ -203,7 +203,6 @@ void KeyValueLabel::setLeftVauleLabelFixedWidth(int width)
 }
 
 RightValueWidget *KeyValueLabel::rightWidget()
-
 {
     return rightValueEdit;
 }
