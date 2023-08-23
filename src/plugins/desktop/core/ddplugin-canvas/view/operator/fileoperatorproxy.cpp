@@ -103,8 +103,7 @@ void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, c
     auto view = CanvasIns->views().first();
     if (Q_UNLIKELY(nullptr == view))
         return;
-    view->selectionModel()->clearSelection();
-    view->selectionModel()->clearCurrentIndex();
+    view->selectionModel()->clear();
 
     Q_ASSERT(sources.count() == targets.count());
 
@@ -112,7 +111,6 @@ void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, c
         renameFileData.insert(sources.at(i), targets.at(i));
     }
 }
-
 
 void FileOperatorProxyPrivate::filterDesktopFile(QList<QUrl> &urls)
 {

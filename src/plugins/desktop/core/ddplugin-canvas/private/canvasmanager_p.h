@@ -12,6 +12,7 @@
 #include "hook/canvasmanagerhook.h"
 #include "hook/canvasmodelhook.h"
 #include "hook/canvasviewhook.h"
+#include "hook/canvasselectionhook.h"
 #include "broker/canvasmanagerbroker.h"
 #include "broker/fileinfomodelbroker.h"
 #include "broker/canvasmodelbroker.h"
@@ -56,7 +57,8 @@ public:
     FileInfoModel *sourceModel = nullptr;
     CanvasProxyModel *canvasModel = nullptr;
     CanvasModelHook *modelHook = nullptr;
-    CanvasSelectionModel *selectionModel = nullptr ;
+    CanvasSelectionModel *selectionModel = nullptr;
+    CanvasSelectionHook *selectionHook = nullptr;
     CanvasViewHook *viewHook = nullptr;
     QMap<QString, CanvasViewPointer> viewMap;
 public:

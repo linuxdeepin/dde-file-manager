@@ -272,6 +272,7 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 
 bool CollectionItemDelegate::mayExpand(QModelIndex *who) const
 {
+    // just check the index that selected in current view.
     QModelIndexList list = parent()->selectedIndexes();
     bool expend = list.size() == 1;
     if (expend && who)

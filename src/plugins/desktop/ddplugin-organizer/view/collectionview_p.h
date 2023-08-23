@@ -39,6 +39,7 @@ public:
     QItemSelection selection(const QRect &rect) const;
     void selectItems(const QList<QUrl> &fileUrl) const;
     void selectRect(const QRect &rect) const;
+    void toggleSelect() const;
 
     QPoint pointToPos(const QPoint &point) const;
     QPoint posToPoint(const QPoint &pos) const;
@@ -62,7 +63,7 @@ public:
     void showMenu();
     void deleteFiles();
     void clearClipBoard();
-    void selectAll();
+    void selectCollection();
     void copyFiles();
     void cutFiles();
     void pasteFiles();

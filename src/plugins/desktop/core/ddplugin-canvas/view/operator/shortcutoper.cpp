@@ -219,7 +219,7 @@ void ShortcutOper::showMenu()
 
     view->itemDelegate()->revertAndcloseEditor();
     if (isEmptyArea) {
-        view->selectionModel()->clearSelection();
+        view->selectionModel()->clear();
         view->d->menuProxy->showEmptyAreaMenu(flags, QPoint(0, 0));
     } else {
         auto gridPos = view->d->gridAt(view->visualRect(index).center());

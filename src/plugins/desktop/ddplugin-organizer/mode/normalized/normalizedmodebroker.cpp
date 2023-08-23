@@ -74,3 +74,18 @@ QRect NormalizedModeBroker::iconRect(const QString &id, QRect vrect)
             ret = delegage->iconRect(vrect);
     return ret;
 }
+
+bool NormalizedModeBroker::selectAllItems()
+{
+    // select all colletions
+    auto model = mode->getModel();
+    auto selModel = mode->d->selectionModel;
+    if (!model || !selModel)
+        return false;
+
+    selModel->selectAll();
+
+    // and there is no item on canvas with normal mode,
+    // so nothing to select on canvas.
+    return true;
+}

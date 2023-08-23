@@ -8,6 +8,7 @@
 #include "mode/custommode.h"
 #include "customdatahandler.h"
 #include "collection/collectionholder.h"
+#include "mode/selectionsynchelper.h"
 
 #include <QTimer>
 
@@ -21,6 +22,8 @@ public:
     CustomDataHandler *dataHandler = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
     QTimer dataSyncTimer;
+    ItemSelectionModel *selectionModel = nullptr;
+    SelectionSyncHelper *selectionHelper = nullptr;
 private:
     CustomMode *q;
 };

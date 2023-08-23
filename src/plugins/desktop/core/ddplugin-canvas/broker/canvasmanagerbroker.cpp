@@ -5,6 +5,7 @@
 #include "canvasmanagerbroker.h"
 #include "canvasmanager.h"
 #include "model/fileinfomodel.h"
+#include "model/canvasselectionmodel.h"
 #include "view/canvasview.h"
 
 #include <dfm-framework/dpf.h>
@@ -36,6 +37,7 @@ CanvasManagerBroker::~CanvasManagerBroker()
     CanvasManagerDisconnect(slot_CanvasManager_AutoArrange);
     CanvasManagerDisconnect(slot_CanvasManager_SetAutoArrange);
     CanvasManagerDisconnect(slot_CanvasManager_View);
+    CanvasManagerDisconnect(slot_CanvasManager_SelectionModel);
 }
 
 bool CanvasManagerBroker::init()
@@ -48,6 +50,7 @@ bool CanvasManagerBroker::init()
     CanvasManagerSlot(slot_CanvasManager_AutoArrange, &CanvasManagerBroker::autoArrange);
     CanvasManagerSlot(slot_CanvasManager_SetAutoArrange, &CanvasManagerBroker::setAutoArrange);
     CanvasManagerSlot(slot_CanvasManager_View, &CanvasManagerBroker::view);
+    CanvasManagerSlot(slot_CanvasManager_SelectionModel, &CanvasManagerBroker::selectionModel);
     return true;
 }
 
@@ -95,4 +98,7 @@ QAbstractItemView *CanvasManagerBroker::view(int viewIdx)
     return nullptr;
 }
 
-
+QItemSelectionModel *CanvasManagerBroker::selectionModel()
+{
+    return canvas->selectionModel();
+}

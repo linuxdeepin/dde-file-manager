@@ -20,6 +20,7 @@ class CanvasModelShell;
 class CanvasViewShell;
 class CanvasGridShell;
 class CanvasManagerShell;
+class CanvasSelectionShell;
 class OrganizerCreator
 {
 public:
@@ -41,6 +42,7 @@ public:
     virtual void setCanvasViewShell(CanvasViewShell *sh);
     virtual void setCanvasGridShell(CanvasGridShell *sh);
     virtual void setCanvasManagerShell(CanvasManagerShell *sh);
+    virtual void setCanvasSelectionShell(CanvasSelectionShell *sh);
     virtual void setSurfaces(const QList<SurfacePointer> &surfaces);
     virtual void reset();
 
@@ -52,12 +54,16 @@ protected slots:
     virtual bool filterDataInserted(const QUrl &url);
     virtual bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
     virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
+    virtual bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
+    virtual bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
+    //virtual bool filterMousePress(int viewIndex, int button, const QPoint &viewPos) const;
 protected:
     CollectionModel *model = nullptr;
     CanvasModelShell *canvasModelShell = nullptr;
     CanvasViewShell *canvasViewShell = nullptr;
     CanvasGridShell *canvasGridShell = nullptr;
     CanvasManagerShell *canvasManagerShell = nullptr;
+    CanvasSelectionShell *canvasSelectionShell = nullptr;
     QList<SurfacePointer> surfaces;
 };
 
