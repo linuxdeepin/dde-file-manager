@@ -7,6 +7,7 @@
 #include "propertydialogmanager.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <DArrowLineDrawer>
 
@@ -238,21 +239,7 @@ QWidget *PropertyDialogUtil::createCustomizeView(const QUrl &url)
 
 QPoint PropertyDialogUtil::getPropertyPos(int dialogWidth, int dialogHeight)
 {
-    const QScreen *cursor_screen = Q_NULLPTR;
-    const QPoint &cursor_pos = QCursor::pos();
-
-    auto screens = qApp->screens();
-    auto iter = std::find_if(screens.begin(), screens.end(), [cursor_pos](const QScreen *screen) {
-        return screen->geometry().contains(cursor_pos);
-    });
-
-    if (iter != screens.end()) {
-        cursor_screen = *iter;
-    }
-
-    if (!cursor_screen) {
-        cursor_screen = qApp->primaryScreen();
-    }
+    const QScreen *cursor_screen = WindowUtils::cursorScreen();
 
     int x = (cursor_screen->availableSize().width() - dialogWidth) / 2;
     int y = (cursor_screen->availableSize().height()- kBottomReserveHeight - dialogHeight) / 2;
@@ -263,21 +250,7 @@ QPoint PropertyDialogUtil::getPropertyPos(int dialogWidth, int dialogHeight)
 QPoint PropertyDialogUtil::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
 {
     Q_UNUSED(dialogHeight)
-    const QScreen *cursor_screen = Q_NULLPTR;
-    const QPoint &cursor_pos = QCursor::pos();
-
-    auto screens = qApp->screens();
-    auto iter = std::find_if(screens.begin(), screens.end(), [cursor_pos](const QScreen *screen) {
-        return screen->geometry().contains(cursor_pos);
-    });
-
-    if (iter != screens.end()) {
-        cursor_screen = *iter;
-    }
-
-    if (!cursor_screen) {
-        cursor_screen = qApp->primaryScreen();
-    }
+    const QScreen *cursor_screen = WindowUtils::cursorScreen();
 
     int desktopWidth = cursor_screen->size().width();
     //    int desktopHeight = cursor_screen->size().height();//后面未用，注释掉
