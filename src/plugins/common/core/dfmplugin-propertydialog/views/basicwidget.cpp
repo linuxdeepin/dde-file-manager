@@ -25,6 +25,10 @@
 static constexpr int kSpacingHeight { 16 };
 static constexpr int kLeftContentsMargins { 15 };
 static constexpr int kRightContentsMargins { 5 };
+static constexpr int kFrameWidth { 360 };
+static constexpr int kItemWidth { 340 };
+static constexpr int kLeftWidgetWidth { 70 };
+static constexpr int kRightWidgetWidth { 255 };
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -71,14 +75,29 @@ void BasicWidget::initUI()
     setExpand(true);
 
     frameMain = new QFrame(this);
+    frameMain->setFixedWidth(kFrameWidth);
 
     fileSize = createValueLabel(frameMain, tr("Size"));
+    fileSize->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    fileSize->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileCount = createValueLabel(frameMain, tr("Contains"));
+    fileCount->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    fileCount->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileType = createValueLabel(frameMain, tr("Type"));
+    fileType->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    fileType->rightWidget()->setFixedWidth(kRightWidgetWidth);
     filePosition = createValueLabel(frameMain, tr("Location"));
+    filePosition->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    filePosition->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileCreated = createValueLabel(frameMain, tr("Time created"));
+    fileCreated->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    fileCreated->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileAccessed = createValueLabel(frameMain, tr("Time accessed"));
+    fileAccessed->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    fileAccessed->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileModified = createValueLabel(frameMain, tr("Time modified"));
+    fileModified->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    fileModified->rightWidget()->setFixedWidth(kRightWidgetWidth);
 
     hideFile = new DCheckBox(frameMain);
     hideFile->setText(tr("Hide this file"));
@@ -110,8 +129,10 @@ void BasicWidget::basicExpand(const QUrl &url)
                     KeyValueLabel *expandLabel = new KeyValueLabel(this);
                     expandLabel->setLeftValue(field.first, Qt::ElideMiddle, Qt::AlignLeft, true);
                     expandLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
-                    expandLabel->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
                     expandLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
+                    expandLabel->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+                    expandLabel->rightWidget()->setFixedWidth(kRightWidgetWidth);
+                    expandLabel->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
                     fieldMap.insert(k, expandLabel);
                 }
             }
@@ -143,6 +164,7 @@ void BasicWidget::basicExpand(const QUrl &url)
     gl->setColumnStretch(1, 3);
     QFrame *tempFrame = new QFrame(frameMain);
     tempFrame->setLayout(gl);
+    tempFrame->setFixedWidth(kItemWidth);
 
     layoutMain = new QGridLayout;
     layoutMain->setContentsMargins(kLeftContentsMargins, 15, 0, kRightContentsMargins);

@@ -12,12 +12,12 @@
 
 DFMBASE_USE_NAMESPACE
 
-class UT_ClickableLabel : public testing::Test
+class UT_RightValueWidget : public testing::Test
 {
 protected:
     virtual void SetUp() override
     {
-        lab = new ClickableLabel;
+        lab = new RightValueWidget;
     }
     virtual void TearDown() override
     {
@@ -27,10 +27,10 @@ protected:
 
 private:
     stub_ext::StubExt stub;
-    ClickableLabel *lab { nullptr };
+    RightValueWidget *lab { nullptr };
 };
 
-TEST_F(UT_ClickableLabel, MouseReleaseEvent)
+TEST_F(UT_RightValueWidget, MouseReleaseEvent)
 {
     stub.set_lamda(VADDR(DLabel, mouseReleaseEvent), [] { __DBG_STUB_INVOKE__ });
     EXPECT_NO_FATAL_FAILURE(lab->mouseReleaseEvent(nullptr));
