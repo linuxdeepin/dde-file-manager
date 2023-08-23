@@ -11,6 +11,7 @@
 
 class QAbstractItemModel;
 class QAbstractItemView;
+class QItemSelectionModel;
 
 namespace ddplugin_canvas {
 class CanvasManager;
@@ -30,6 +31,7 @@ public slots:
     void setAutoArrange(bool on);
     QAbstractItemModel *fileInfoModel();
     QAbstractItemView *view(int viewIdx);
+    QItemSelectionModel *selectionModel();
 private:
     CanvasManager *canvas = nullptr;
 };

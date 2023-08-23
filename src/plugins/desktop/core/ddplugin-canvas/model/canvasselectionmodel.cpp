@@ -4,6 +4,7 @@
 
 #include "canvasselectionmodel.h"
 #include "canvasproxymodel.h"
+#include "selectionhookinterface.h"
 
 #include <QDebug>
 
@@ -34,6 +35,14 @@ void CanvasSelectionModel::clearSelectedCache()
     selectedCache.clear();
 }
 
+void CanvasSelectionModel::clear()
+{
+    if (hook)
+        hook->clear();
+
+    QItemSelectionModel::clear();
+}
+
 QList<QUrl> CanvasSelectionModel::selectedUrls() const
 {
     auto indexs = selectedIndexesCache();
@@ -42,4 +51,15 @@ QList<QUrl> CanvasSelectionModel::selectedUrls() const
         urls <<  model()->fileUrl(index);
 
     return urls;
+}
+
+void CanvasSelectionModel::selectAll()
+{
+    auto m = model();
+    const int row = m->rowCount(m->rootIndex());
+    if (row < 1)
+        return;
+
+    QItemSelection allIndex(m->index(0, 0), m->index(row - 1, 0));
+    select(allIndex, QItemSelectionModel::ClearAndSelect);
 }

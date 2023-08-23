@@ -9,6 +9,8 @@
 #include "fileclassifier.h"
 #include "collection/collectionholder.h"
 #include "normalizedmodebroker.h"
+#include "models/itemselectionmodel.h"
+#include "mode/selectionsynchelper.h"
 
 namespace ddplugin_organizer {
 
@@ -29,6 +31,8 @@ public:
     FileClassifier *classifier = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
     NormalizedModeBroker *broker = nullptr;
+    ItemSelectionModel *selectionModel = nullptr;
+    SelectionSyncHelper *selectionHelper = nullptr;
 private:
     NormalizedMode *q;
 };

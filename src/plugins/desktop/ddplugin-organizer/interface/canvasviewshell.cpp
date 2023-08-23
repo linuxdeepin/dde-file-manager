@@ -44,6 +44,7 @@ CanvasViewShell::~CanvasViewShell()
     CanvasViewUnfollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
     CanvasViewUnfollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
     CanvasViewUnfollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
+    //CanvasViewUnfollow(hook_CanvasView_MousePress, &CanvasViewShell::eventMousePress);
     //CanvasViewUnfollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 }
 
@@ -52,6 +53,7 @@ bool CanvasViewShell::initialize()
     CanvasViewFollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
     CanvasViewFollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
     CanvasViewFollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
+    //CanvasViewFollow(hook_CanvasView_MousePress, &CanvasViewShell::eventMousePress);
     //CanvasViewFollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 
     return true;
@@ -108,5 +110,11 @@ bool CanvasViewShell::eventContextMenu(int viewIndex, const QUrl &dir, const QLi
     CheckFilterConnected(CanvasViewShell::filterContextMenu)
     return filterContextMenu(viewIndex, dir, files, viewPos);
 }
+
+//bool CanvasViewShell::eventMousePress(int viewIndex, int button, const QPoint &viewPos, void *extData)
+//{
+//    CheckFilterConnected(CanvasViewShell::filterMousePress)
+//    return filterMousePress(viewIndex, button, viewPos);
+//}
 
 

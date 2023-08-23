@@ -10,8 +10,11 @@
 #include "interface/fileinfomodelshell.h"
 #include "config/configpresenter.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
-#include <dfm-base/dfm_desktop_defines.h>
 #include "utils/fileoperator.h"
+#include "view/collectionview.h"
+#include "interface/canvasmanagershell.h"
+
+#include <dfm-base/dfm_desktop_defines.h>
 
 #include <QDebug>
 #include <QUuid>
@@ -23,6 +26,8 @@ using namespace dfmbase;
 CustomModePrivate::CustomModePrivate(CustomMode *qq) : q(qq)
 {
 
+    selectionModel = new ItemSelectionModel(nullptr, qq);
+    selectionHelper = new SelectionSyncHelper(qq);
 }
 
 CustomModePrivate::~CustomModePrivate()
@@ -61,6 +66,11 @@ bool CustomMode::initialize(CollectionModel *m)
     Q_ASSERT(!d->dataHandler);
     Q_ASSERT(!model);
     model = m;
+    d->selectionModel->setModel(m);
+
+    // sync selection
+    //d->selectionHelper->setInnerModel(d->selectionModel);
+    //d->selectionHelper->setExternalModel(canvasManagerShell->selectionModel());
 
     connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection, Qt::QueuedConnection);
 
@@ -180,10 +190,17 @@ void CustomMode::rebuild()
         if (collectionHolder.isNull()) {
             collectionHolder.reset(new CollectionHolder(key, d->dataHandler));
             collectionHolder->createFrame(surfaces.first().data(), model);
-            collectionHolder->setCanvasModelShell(canvasModelShell);
-            collectionHolder->setCanvasViewShell(canvasViewShell);
-            collectionHolder->setCanvasGridShell(canvasGridShell);
-            collectionHolder->setCanvasManagerShell(canvasManagerShell);
+            // set view
+            {
+                auto view = collectionHolder->itemView();
+                Q_ASSERT(view);
+                view->setCanvasModelShell(canvasModelShell);
+                view->setCanvasViewShell(canvasViewShell);
+                view->setCanvasGridShell(canvasGridShell);
+                view->setCanvasManagerShell(canvasManagerShell);
+                view->setSelectionModel(d->selectionModel);
+            }
+
             collectionHolder->setName(name);
 
             connect(collectionHolder.data(), &CollectionHolder::sigRequestClose, this, &CustomMode::onDeleteCollection);

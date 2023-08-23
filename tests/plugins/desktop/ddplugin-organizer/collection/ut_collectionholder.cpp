@@ -75,28 +75,28 @@ TEST(CollectionHolder, setShell)
     holder.d->widget = &w;
     CollectionView view("", nullptr);
     w.d->view = &view;
-
+    ASSERT_EQ(holder.itemView(), &view);
     {
         CanvasManagerShell shell;
-        holder.setCanvasManagerShell(&shell);
+        view.setCanvasManagerShell(&shell);
         EXPECT_EQ(view.d->canvasManagerShell, &shell);
     }
 
     {
         CanvasViewShell shell;
-        holder.setCanvasViewShell(&shell);
+        view.setCanvasViewShell(&shell);
         EXPECT_EQ(view.d->canvasViewShell, &shell);
     }
 
     {
         CanvasGridShell shell;
-        holder.setCanvasGridShell(&shell);
+        view.setCanvasGridShell(&shell);
         EXPECT_EQ(view.d->canvasGridShell, &shell);
     }
 
     {
         CanvasModelShell shell;
-        holder.setCanvasModelShell(&shell);
+        view.setCanvasModelShell(&shell);
         EXPECT_EQ(view.d->canvasModelShell, &shell);
     }
 }
