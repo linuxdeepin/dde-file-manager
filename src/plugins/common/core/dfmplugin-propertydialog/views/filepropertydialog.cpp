@@ -33,13 +33,15 @@ DFMGLOBAL_USE_NAMESPACE
 static constexpr int kArrowExpandSpacing { 10 };
 static constexpr int kArrowExpandHeader { 30 };
 static constexpr int kDialogHeader { 80 };
+static constexpr int kDialogWidth { 380 };
+static constexpr int kExtendedWidgetWidth { 360 };
 
 FilePropertyDialog::FilePropertyDialog(QWidget *parent)
     : DDialog(parent),
       platformWindowHandle(new DPlatformWindowHandle(this, this))
 {
     platformWindowHandle->setEnableSystemResize(true);
-    setFixedWidth(350);
+    setFixedWidth(kDialogWidth);
     initInfoUI();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
@@ -222,9 +224,7 @@ void FilePropertyDialog::insertExtendedControl(int index, QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
-    QMargins cm = vlayout->contentsMargins();
-    QRect rc = contentsRect();
-    widget->setFixedWidth(rc.width() - cm.left() - cm.right());
+    widget->setFixedWidth(kExtendedWidgetWidth);
     extendedControl.append(widget);
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(widget, widget);
     connect(hanceedWidget, &DEnhancedWidget::heightChanged, this, &FilePropertyDialog::processHeight);

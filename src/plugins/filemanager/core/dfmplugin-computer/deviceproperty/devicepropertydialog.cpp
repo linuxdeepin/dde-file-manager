@@ -14,7 +14,8 @@
 #include <QKeyEvent>
 #include <QPainterPath>
 
-const static int kArrowExpandSpacing = 10;
+const static int kArrowExpandSpacing { 10 };
+const static int kForecastDisplayHeight { 610 };
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -43,6 +44,7 @@ void DevicePropertyDialog::iniUI()
 
     basicInfo = new KeyValueLabel(this);
     basicInfo->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    basicInfo->leftWidget()->setFixedWidth(150);
 
     devicesProgressBar = new DColoredProgressBar();
     devicesProgressBar->addThreshold(0, QColor(0xFF0080FF));
@@ -97,6 +99,8 @@ void DevicePropertyDialog::iniUI()
     deviceBasicWidget = new DeviceBasicWidget(this);
 
     setFixedWidth(350);
+
+    setProperty("ForecastDisplayHeight", QVariant::fromValue(kForecastDisplayHeight));
 }
 
 int DevicePropertyDialog::contentHeight() const
