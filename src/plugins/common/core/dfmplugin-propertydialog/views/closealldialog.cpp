@@ -5,6 +5,7 @@
 #include "closealldialog.h"
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <DLabel>
 #include <DCommandLinkButton>
@@ -14,6 +15,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QFontMetrics>
+#include <QScreen>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -93,12 +95,12 @@ void CloseAllDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
-    QRect screenGeometry = qApp->desktop()->availableGeometry();
-
+    QScreen *cursor_screen = WindowUtils::cursorScreen();
+    QRect screenGeometry = cursor_screen->availableGeometry();
     int geometryHeight = screenGeometry.height() - UniversalUtils::dockHeight();
     int geometryWidth = screenGeometry.width();
 
-    move((geometryWidth - width()) / 2, geometryHeight - height());
+    move(QPoint((geometryWidth - width()) / 2, geometryHeight - height()) + cursor_screen->geometry().topLeft());
 
     setTotalMessage(0, 0);
     return DAbstractDialog::showEvent(event);
