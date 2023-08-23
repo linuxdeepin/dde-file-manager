@@ -40,6 +40,7 @@ void TrashPropertyDialog::initUI()
     fileCountAndFileSize = new KeyValueLabel(this);
     updateLeftInfo(info->countChildFile());
     fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignRight);
+    fileCountAndFileSize->leftWidget()->setFixedWidth(150);
 
     QFrame *infoFrame = new QFrame;
     infoFrame->setMaximumHeight(48);

@@ -116,8 +116,14 @@ bool PropertyDialogUtil::showCustomDialog(const QUrl &url)
             QRect qr = qApp->primaryScreen()->geometry();
             QPoint pt = qr.center();
             pt.setX(pt.x() - widget->width() / 2);
-            pt.setY(pt.y() - widget->height() / 2);
+            int height = widget->height();
+            QVariant var = widget->property("ForecastDisplayHeight");
+            if (var.isValid()) {
+                height = var.toInt();
+            }
+            pt.setY(pt.y() - height / 2);
             widget->move(pt);
+
             return true;
         }
     }

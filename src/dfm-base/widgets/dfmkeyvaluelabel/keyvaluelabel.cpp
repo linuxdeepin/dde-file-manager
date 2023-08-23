@@ -5,10 +5,15 @@
 #include "keyvaluelabel.h"
 
 #include <QFontMetrics>
+#include <QMenu>
+
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
+
+static constexpr int kMaxShowRowNum { 4 };
+static constexpr char kSelectAllName[] { "select-all" };
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmbase;
@@ -32,14 +37,14 @@ KeyValueLabel::~KeyValueLabel()
 void KeyValueLabel::initUI()
 {
     leftValueLabel = new DLabel(this);
-    rightValueLabel = new ClickableLabel(this);
-    connect(rightValueLabel, &ClickableLabel::clicked, this, &KeyValueLabel::valueAreaClicked);
-    rightValueLabel->setMinimumWidth(130);
+    rightValueEdit = new RightValueWidget(this);
+    connect(rightValueEdit, &RightValueWidget::clicked, this, &KeyValueLabel::valueAreaClicked);
+    rightValueEdit->setMinimumWidth(130);
     glayout = new QGridLayout;
     glayout->setMargin(0);
-    glayout->addWidget(leftValueLabel);
-    glayout->addWidget(rightValueLabel, 0, Qt::AlignLeft);
-    glayout->setColumnStretch(0, 2);
+    glayout->addWidget(leftValueLabel, 0, 0, Qt::AlignLeft | Qt::AlignVCenter);
+    glayout->addWidget(rightValueEdit, 0, 1, Qt::AlignLeft);
+    glayout->setColumnStretch(0, 1);
     glayout->setColumnStretch(1, 3);
     setLayout(glayout);
 }
@@ -64,7 +69,7 @@ void KeyValueLabel::initPropertyMap()
     propertyMap.insert(kRightElideMode, -1);
     propertyMap.insert(kRightTipVisible, false);
     propertyMap.insert(kRightAlignment, -1);
-    propertyMap.insert(kRightWordWrap, -1);
+    propertyMap.insert(kRightWordWrap, true);
 }
 
 void KeyValueLabel::initFont()
@@ -108,16 +113,15 @@ void KeyValueLabel::setLeftValue(QString value, Qt::TextElideMode elideMode, Qt:
  */
 void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt::Alignment aligment, bool toolTipVisibility, int fontMinWidth)
 {
-    QString elideNote = value;
-    rightValueLabel->setAlignment(aligment);
-    QFontMetrics fontWidth(rightValueLabel->font());
-    int fontW = rightValueLabel->width();
+    rightValueEdit->setAlignment(aligment);
+    QFontMetrics fontM(rightValueEdit->font());
+    int fontW = rightValueEdit->width() * kMaxShowRowNum - fontM.averageCharWidth() * kMaxShowRowNum;
     if (fontW < fontMinWidth)
         fontW = fontMinWidth;
-    elideNote = fontWidth.elidedText(value, elideMode, fontW);
-    rightValueLabel->setText(elideNote);
+    QString elideNote = fontM.elidedText(value, elideMode, fontW);
+    rightValueEdit->setText(elideNote);
     if (toolTipVisibility)
-        rightValueLabel->setToolTip(value);
+        rightValueEdit->setToolTip(value);
 
     propertyMap[kRightValue] = QVariant::fromValue(value);
     propertyMap[kRightElideMode] = QVariant::fromValue(elideMode);
@@ -140,15 +144,9 @@ void KeyValueLabel::setLeftRightValue(QString leftValue, QString rightValue, Qt:
     setRightValue(rightValue, elideMode, aligment, toolTipVisibility);
 }
 
-/*!
- * \brief           设置行显示的最小高度
- * \param height    高度
- */
 void KeyValueLabel::adjustHeight()
 {
-    auto maxHeight = qMax(leftValueLabel->sizeHint().height(), rightValueLabel->sizeHint().height());
-    leftValueLabel->setMinimumHeight(maxHeight);
-    rightValueLabel->setMinimumHeight(maxHeight);
+    rightValueEdit->setFixedHeight(static_cast<int>(rightValueEdit->document()->size().height()) + 2);
 }
 
 /*!
@@ -159,16 +157,6 @@ void KeyValueLabel::setLeftWordWrap(bool wordWrap)
 {
     leftValueLabel->setWordWrap(wordWrap);
     propertyMap[kLeftWordWrap] = QVariant::fromValue(wordWrap);
-}
-
-/*!
- * \brief           设置右值是否可换行显示
- * \param wordWrap  true为可换行，反之亦然
- */
-void KeyValueLabel::setRightWordWrap(bool wordWrap)
-{
-    rightValueLabel->setWordWrap(wordWrap);
-    propertyMap[kRightWordWrap] = QVariant::fromValue(wordWrap);
 }
 
 /*!
@@ -191,8 +179,7 @@ void KeyValueLabel::setLeftFontSizeWeight(DFontSizeManager::SizeType sizeType, Q
  */
 void KeyValueLabel::setRightFontSizeWeight(DFontSizeManager::SizeType sizeType, QFont::Weight fontWeight, DPalette::ColorType foregroundRole)
 {
-    DFontSizeManager::instance()->bind(rightValueLabel, sizeType, fontWeight);
-    rightValueLabel->setForegroundRole(foregroundRole);
+    DFontSizeManager::instance()->bind(rightValueEdit, sizeType, fontWeight);
 }
 
 QString KeyValueLabel::LeftValue()
@@ -202,7 +189,12 @@ QString KeyValueLabel::LeftValue()
 
 QString KeyValueLabel::RightValue()
 {
-    return rightValueLabel->text();
+    return rightValueEdit->toPlainText();
+}
+
+DLabel *KeyValueLabel::leftWidget()
+{
+    return leftValueLabel;
 }
 
 void KeyValueLabel::setLeftVauleLabelFixedWidth(int width)
@@ -210,22 +202,64 @@ void KeyValueLabel::setLeftVauleLabelFixedWidth(int width)
     leftValueLabel->setFixedWidth(width);
 }
 
-void KeyValueLabel::paintEvent(QPaintEvent *evt)
+RightValueWidget *KeyValueLabel::rightWidget()
 {
-    Qt::TextElideMode fontWeight = propertyMap.value(kLeftElideMode).value<Qt::TextElideMode>();
-    Qt::Alignment alignment = propertyMap.value(kLeftAlignment).value<Qt::Alignment>();
-    int fontW = propertyMap.value(kLeftFontWidth).toInt();
-    setLeftValue(propertyMap.value(kLeftValue).toString(), fontWeight, alignment, propertyMap.value(kLeftTipVisible).toBool(), fontW);
-    fontW = propertyMap.value(kRightFontWidth).toInt();
-    fontWeight = static_cast<Qt::TextElideMode>(propertyMap.value(kRightElideMode).toInt());
-    alignment = propertyMap.value(kRightAlignment).value<Qt::Alignment>();
-    setRightValue(propertyMap.value(kRightValue).toString(), fontWeight, alignment, propertyMap.value(kRightTipVisible).toBool(), fontW);
-
-    QFrame::paintEvent(evt);
+    return rightValueEdit;
 }
 
-void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
+RightValueWidget::RightValueWidget(QWidget *parent)
+    : QTextEdit(parent)
 {
-    DLabel::mouseReleaseEvent(event);
+    setReadOnly(true);
+    setFrameShape(QFrame::NoFrame);
+    setWordWrapMode(QTextOption::WrapAnywhere);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(this, &RightValueWidget::customContextMenuRequested, this, &RightValueWidget::customContextMenuEvent);
+}
+
+void RightValueWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    QTextEdit::mouseReleaseEvent(event);
     Q_EMIT clicked();
+}
+
+void RightValueWidget::showEvent(QShowEvent *event)
+{
+    if (!document()->toPlainText().isEmpty())
+        this->setFixedHeight(static_cast<int>(document()->size().height()) + 2);
+
+    QTextEdit::showEvent(event);
+}
+
+void RightValueWidget::focusOutEvent(QFocusEvent *e)
+{
+    if (!isContextMenuShow)
+        moveCursor(QTextCursor::Start);
+    isContextMenuShow = false;
+
+    QTextEdit::focusOutEvent(e);
+}
+
+void RightValueWidget::customContextMenuEvent(const QPoint &pos)
+{
+    isContextMenuShow = true;
+
+    const QPoint &curPos = mapToGlobal(pos);
+    QMenu *menu = createStandardContextMenu(curPos);
+    if (!menu)
+        return;
+    QList<QAction *> acts = menu->actions();
+    for (int i = 0; i < acts.size(); ++i) {
+        const QString &objectName = acts.at(i)->objectName();
+        if (objectName == QString(kSelectAllName)) {
+            if (textCursor().selectedText() == document()->toPlainText())
+                acts.at(i)->setEnabled(false);
+            else
+                acts.at(i)->setEnabled(true);
+            break;
+        }
+    }
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->popup(curPos);
 }

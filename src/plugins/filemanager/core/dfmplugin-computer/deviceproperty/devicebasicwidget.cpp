@@ -6,6 +6,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
 
+static constexpr int kMaximumHeight { 31 };
+
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_computer;
@@ -46,6 +48,7 @@ void DeviceBasicWidget::initUI()
     fileCount = new KeyValueLabel(this);
     fileCount->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileCount->setLeftValue(tr("Contains"));
+    fileCount->rightWidget()->setMaximumHeight(kMaximumHeight);
     freeSize = new KeyValueLabel(this);
     freeSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     freeSize->setLeftValue(tr("Free space"));
