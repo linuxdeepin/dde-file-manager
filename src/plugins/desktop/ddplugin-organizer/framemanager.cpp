@@ -207,27 +207,6 @@ void FrameManagerPrivate::showOptionWindow()
 
 }
 
-bool FrameManagerPrivate::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
-{
-    Q_UNUSED(viewIndex)
-
-    if (Qt::ControlModifier == modifiers) {
-        static const QList<int> filterKeys {
-                                            Qt::Key_Equal       // disbale ctrl + = to zooom out
-                                            , Qt::Key_Minus     // disbale ctrl + - to zooom in
-                                            };
-        return filterKeys.contains(key);
-    }
-    return false;
-}
-
-
-bool FrameManagerPrivate::filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const
-{
-    // disbale zooom in or zoom out by mouse wheel if organizer turns on.
-    return ctrl;
-}
-
 QWidget *FrameManagerPrivate::findView(QWidget *root) const
 {
     if (Q_UNLIKELY(!root))
@@ -311,6 +290,7 @@ void FrameManager::switchMode(OrganizerMode mode)
     d->organizer->setCanvasViewShell(d->canvas->canvasView());
     d->organizer->setCanvasGridShell(d->canvas->canvasGrid());
     d->organizer->setCanvasManagerShell(d->canvas->canvasManager());
+    d->organizer->setCanvasSelectionShell(d->canvas->canvasSelectionShell());
     d->organizer->initialize(d->model);
 }
 
@@ -328,13 +308,6 @@ void FrameManager::turnOn(bool build)
 
     d->canvas = new CanvasInterface(this);
     d->canvas->initialize();
-
-    // disable zoomin and zoomout by hook canvas's event.
-    {
-        CanvasViewShell *canvasViewShell = d->canvas->canvasView();
-        connect(canvasViewShell, &CanvasViewShell::filterShortcutkeyPress, d, &FrameManagerPrivate::filterShortcutkeyPress, Qt::DirectConnection);
-        connect(canvasViewShell, &CanvasViewShell::filterWheel, d, &FrameManagerPrivate::filterWheel, Qt::DirectConnection);
-    }
 
     d->model = new CollectionModel(this);
     d->model->setModelShell(d->canvas->fileInfoModel());

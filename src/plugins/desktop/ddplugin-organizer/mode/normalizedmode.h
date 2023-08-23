@@ -35,6 +35,7 @@ protected slots:
     bool filterDataRested(QList<QUrl> *urls) override;
     bool filterDataInserted(const QUrl &url) override;
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;
+    bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const override;
 protected:
     bool setClassifier(Classifier id);
     void removeClassifier();

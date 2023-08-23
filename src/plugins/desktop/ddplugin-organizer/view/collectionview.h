@@ -46,6 +46,7 @@ public:
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);
 
     void setModel(QAbstractItemModel *model) override;
+    void setSelectionModel(QItemSelectionModel *sel) override;
     void reset() override;
     void selectAll() override;
     QRect visualRect(const QModelIndex &index) const override;

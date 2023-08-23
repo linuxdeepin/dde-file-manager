@@ -6,6 +6,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <QItemSelectionModel>
+
 using namespace ddplugin_organizer;
 
 #define CanvasManagerSubscribe(topic, func) \
