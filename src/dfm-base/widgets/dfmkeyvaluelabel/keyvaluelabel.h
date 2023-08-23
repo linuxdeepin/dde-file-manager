@@ -13,22 +13,30 @@
 
 #include <QFrame>
 #include <QGridLayout>
+#include <QTextEdit>
 
 DWIDGET_USE_NAMESPACE
 namespace dfmbase {
 
-class ClickableLabel : public DLabel
+class RightValueWidget : public QTextEdit
 {
     Q_OBJECT
 public:
-    explicit ClickableLabel(QWidget *parent = nullptr)
-        : DLabel(parent) {}
+    explicit RightValueWidget(QWidget *parent = nullptr);
 
 protected:
-    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    void focusOutEvent(QFocusEvent *e) override;
+
+private Q_SLOTS:
+    void customContextMenuEvent(const QPoint &pos);
 
 Q_SIGNALS:
     void clicked();
+
+private:
+    bool isContextMenuShow { false };
 };
 
 class KeyValueLabel : public QFrame
@@ -72,8 +80,6 @@ public:
 
     void setLeftWordWrap(bool wordWrap = false);
 
-    void setRightWordWrap(bool wordWrap = false);
-
     void setLeftFontSizeWeight(DFontSizeManager::SizeType sizeType, QFont::Weight fontWeight = QFont::Normal, DPalette::ColorType foregroundRole = DPalette::NoType);
 
     void setRightFontSizeWeight(DFontSizeManager::SizeType sizeType, QFont::Weight fontWeight = QFont::Normal, DPalette::ColorType foregroundRole = DPalette::NoType);
@@ -81,17 +87,19 @@ public:
     QString LeftValue();
 
     QString RightValue();
+
     void setLeftVauleLabelFixedWidth(int width);
+
+    DLabel *leftWidget();
+
+    RightValueWidget *rightWidget();
 
 Q_SIGNALS:
     void valueAreaClicked();
 
-protected:
-    void paintEvent(QPaintEvent *evt) override;
-
 private:
     DLabel *leftValueLabel = nullptr;
-    ClickableLabel *rightValueLabel = nullptr;
+    RightValueWidget *rightValueEdit = nullptr;
     QGridLayout *glayout = nullptr;
     QMap<KeyType, QVariant> propertyMap {};
 };
