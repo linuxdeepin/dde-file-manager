@@ -8,7 +8,9 @@
 
 #include <denhancedwidget.h>
 
-static const int kArrowExpandSpacing = 10;
+static constexpr int kArrowExpandSpacing { 10 };
+static constexpr int kDialogWidth { 350 };
+static constexpr int kForecastDisplayHeight { 680 };
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -19,7 +21,7 @@ VaultPropertyDialog::VaultPropertyDialog(QWidget *parent)
       platformWindowHandle(new DPlatformWindowHandle(this, this))
 {
     platformWindowHandle->setEnableSystemResize(true);
-    setFixedWidth(350);
+    setFixedWidth(kDialogWidth);
     initInfoUI();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 }
@@ -52,6 +54,8 @@ void VaultPropertyDialog::initInfoUI()
     vlayout1->addWidget(scrollArea);
     QVBoxLayout *widgetlayout = qobject_cast<QVBoxLayout *>(this->layout());
     widgetlayout->addLayout(vlayout1, 1);
+
+    setProperty("ForecastDisplayHeight", QVariant::fromValue(kForecastDisplayHeight));
 }
 
 void VaultPropertyDialog::createHeadUI(const QUrl &url)
@@ -117,6 +121,8 @@ void VaultPropertyDialog::addExtendedControl(QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     insertExtendedControl(vlayout->count() - 1, widget);
+    DEnhancedWidget *hanceedWidget = new DEnhancedWidget(widget, widget);
+    connect(hanceedWidget, &DEnhancedWidget::heightChanged, this, &VaultPropertyDialog::processHeight);
 }
 
 void VaultPropertyDialog::processHeight(int height)

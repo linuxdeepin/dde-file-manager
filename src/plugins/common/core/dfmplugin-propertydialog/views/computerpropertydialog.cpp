@@ -23,6 +23,9 @@
 #    define SYSTEM_INFO_PATH "/org/deepin/daemon/SystemInfo1"
 #endif
 
+static constexpr int kMaximumHeightOfTwoRow { 52 };
+static constexpr int kMaximumHeightOfOneRow { 31 };
+
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -67,24 +70,31 @@ void ComputerPropertyDialog::iniUI()
     computerName = new KeyValueLabel(this);
     computerName->setLeftValue(tr("Computer name"));
     computerName->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerName->rightWidget()->setMaximumHeight(kMaximumHeightOfOneRow);
     computerVersionNum = new KeyValueLabel(this);
     computerVersionNum->setLeftValue(tr("Version"));
     computerVersionNum->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerVersionNum->rightWidget()->setMaximumHeight(kMaximumHeightOfOneRow);
     computerEdition = new KeyValueLabel(this);
     computerEdition->setLeftValue(tr("Edition"), Qt::ElideNone, Qt::AlignLeft | Qt::AlignVCenter);
     computerEdition->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerEdition->rightWidget()->setMaximumHeight(kMaximumHeightOfOneRow);
     computerOSBuild = new KeyValueLabel(this);
     computerOSBuild->setLeftValue(tr("OS build"));
     computerOSBuild->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerOSBuild->rightWidget()->setMaximumHeight(kMaximumHeightOfOneRow);
     computerType = new KeyValueLabel(this);
     computerType->setLeftValue(tr("Type"));
     computerType->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerType->rightWidget()->setMaximumHeight(kMaximumHeightOfOneRow);
     computerCpu = new KeyValueLabel(this);
     computerCpu->setLeftValue(tr("Processor"), Qt::ElideNone, Qt::AlignLeft | Qt::AlignVCenter);
     computerCpu->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerCpu->rightWidget()->setMaximumHeight(kMaximumHeightOfTwoRow);
     computerMemory = new KeyValueLabel(this);
     computerMemory->setLeftValue(tr("Memory"));
     computerMemory->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerMemory->rightWidget()->setMaximumHeight(kMaximumHeightOfOneRow);
 
     DFrame *basicInfoFrame = new DFrame(this);
     QVBoxLayout *vlayout = new QVBoxLayout;
@@ -128,26 +138,34 @@ void ComputerPropertyDialog::iniThread()
  */
 void ComputerPropertyDialog::computerProcess(QMap<ComputerInfoItem, QString> computerInfo)
 {
-    if (computerInfo.contains(ComputerInfoItem::kName))
+    if (computerInfo.contains(ComputerInfoItem::kName)) {
         computerName->setRightValue(computerInfo[ComputerInfoItem::kName]);
-    if (computerInfo.contains(ComputerInfoItem::kVersion))
+        computerName->adjustHeight();
+    }
+    if (computerInfo.contains(ComputerInfoItem::kVersion)) {
         computerVersionNum->setRightValue(computerInfo[ComputerInfoItem::kVersion]);
+        computerVersionNum->adjustHeight();
+    }
     if (computerInfo.contains(ComputerInfoItem::kEdition)) {
         computerEdition->setRightValue(computerInfo[ComputerInfoItem::kEdition]);
-        computerEdition->setRightWordWrap(true);
         computerEdition->adjustHeight();
     }
-    if (computerInfo.contains(ComputerInfoItem::kOSBuild))
+    if (computerInfo.contains(ComputerInfoItem::kOSBuild)) {
         computerOSBuild->setRightValue(computerInfo[ComputerInfoItem::kOSBuild]);
-    if (computerInfo.contains(ComputerInfoItem::kType))
+        computerOSBuild->adjustHeight();
+    }
+    if (computerInfo.contains(ComputerInfoItem::kType)) {
         computerType->setRightValue(computerInfo[ComputerInfoItem::kType]);
+        computerType->adjustHeight();
+    }
     if (computerInfo.contains(ComputerInfoItem::kCpu)) {
         computerCpu->setRightValue(computerInfo[ComputerInfoItem::kCpu]);
-        computerCpu->setRightWordWrap(true);
         computerCpu->adjustHeight();
     }
-    if (computerInfo.contains(ComputerInfoItem::kMemory))
+    if (computerInfo.contains(ComputerInfoItem::kMemory)) {
         computerMemory->setRightValue(computerInfo[ComputerInfoItem::kMemory]);
+        computerMemory->adjustHeight();
+    }
 }
 
 void ComputerPropertyDialog::showEvent(QShowEvent *event)

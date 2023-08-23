@@ -151,9 +151,12 @@ bool VaultFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsFile:
-        [[fallthrough]];
-    case FileIsType::kIsDir:
-        [[fallthrough]];
+        return !proxy || proxy->isAttributes(type);
+    case FileIsType::kIsDir: {
+        if (d->isRoot)
+            return true;
+        return !proxy || proxy->isAttributes(type);
+    }
     case FileIsType::kIsReadable:
         [[fallthrough]];
     case FileIsType::kIsWritable:
