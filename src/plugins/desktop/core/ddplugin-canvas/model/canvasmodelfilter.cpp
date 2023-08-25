@@ -184,12 +184,6 @@ bool HookFilter::insertFilter(const QUrl &url)
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataInserted(url)) {
         qDebug() << "filter by extend module:" << url;
-        if (FileOperatorProxyIns->touchFileData().first == url.toString()) {
-            FileOperatorProxyIns->clearTouchFileData();
-            // need open editor,only by menu create file
-            dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE),
-                                         "signal_CanvasModel_OpenEditor", url);
-        }
         return true;
     }
 

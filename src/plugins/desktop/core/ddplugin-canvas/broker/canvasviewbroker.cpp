@@ -6,6 +6,7 @@
 #include "canvasmanager.h"
 #include "view/canvasview.h"
 #include "view/canvasview_p.h"
+#include "view/operator/fileoperatorproxy.h"
 #include "delegate/canvasitemdelegate_p.h"
 
 #include <dfm-framework/dpf.h>
@@ -38,6 +39,7 @@ CanvasViewBroker::~CanvasViewBroker()
     CanvasViewDisconnect(slot_CanvasView_SelectedUrls);
     CanvasViewDisconnect(slot_CanvasView_GridSize);
     CanvasViewDisconnect(slot_CanvasView_GridVisualRect);
+    CanvasViewDisconnect(slot_CanvasViewPrivate_FileOperator);
 
     CanvasViewDisconnect(slot_CanvasItemDelegate_IconRect);
 }
@@ -52,6 +54,8 @@ bool CanvasViewBroker::init()
     CanvasViewSlot(slot_CanvasView_SelectedUrls, &CanvasViewBroker::selectedUrls);
     CanvasViewSlot(slot_CanvasView_GridSize, &CanvasViewBroker::gridSize);
     CanvasViewSlot(slot_CanvasView_GridVisualRect, &CanvasViewBroker::gridVisualRect);
+
+    CanvasViewSlot(slot_CanvasViewPrivate_FileOperator, &CanvasViewBroker::fileOperator);
 
     CanvasViewSlot(slot_CanvasItemDelegate_IconRect, &CanvasViewBroker::iconRect);
     return true;
@@ -155,6 +159,11 @@ QList<QUrl> CanvasViewBroker::selectedUrls(int idx)
         urls = viewOn;
     }
     return urls;
+}
+
+QObject *CanvasViewBroker::fileOperator()
+{
+    return FileOperatorProxyIns;
 }
 
 QRect CanvasViewBroker::iconRect(int idx, QRect visualRect)

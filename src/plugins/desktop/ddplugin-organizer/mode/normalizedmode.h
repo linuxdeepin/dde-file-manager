@@ -30,7 +30,6 @@ public slots:
    void onFileInserted(const QModelIndex &parent, int first, int last);
    void onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last);
    void onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles );
-   void onOpenEditor(const QUrl &url);
 protected slots:
     bool filterDataRested(QList<QUrl> *urls) override;
     bool filterDataInserted(const QUrl &url) override;
