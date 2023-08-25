@@ -8,13 +8,13 @@
             "flags":[],
             "name":"Big File",
             "name[zh_CN]":"大文件大小",
-            "description[zh_CN]":"用于拷贝时判断文件是否是大文件的size，默认是80MB",
-            "description":"Size used to determine whether a file is a large file during copying，the default is 80MB",
+            "description[zh_CN]":"用于拷贝时判断文件是否是大文件的size，默认是80MB，value的单位是byte",
+            "description":"Size used to determine whether a file is a large file during copying，the default is 80MB,The unit of value is byte",
             "permissions":"readwrite",
             "visibility":"private"
         },
         "file.operation.blockeverysync": {
-            "value":"true",
+            "value":true,
             "serial":0,
             "flags":[],
             "name":"Safe synchronization mode",
