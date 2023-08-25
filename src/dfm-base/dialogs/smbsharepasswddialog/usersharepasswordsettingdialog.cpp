@@ -37,17 +37,25 @@ void UserSharePasswordSettingDialog::initializeUi()
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     setDefaultButton(1);
+
+    QFrame *editArea = new QFrame(this);
+//    editArea->setStyleSheet("QFrame {border: 1px solid red;}");
+    QVBoxLayout *editAreaLay = new QVBoxLayout(editArea);
+    editArea->setLayout(editAreaLay);
+    // 20px between title and password edit, 20px betweent hint and buttons
+    // but there are 10px or more? around buttons.
+    editAreaLay->setContentsMargins(0, 20, 0, 6);
+
     passwordEdit = new Dtk::Widget::DPasswordEdit(this);
-    addContent(passwordEdit);
+    editAreaLay->addWidget(passwordEdit);
+    DLabel *notice = new DLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
+//    notice->setStyleSheet("border: 1px solid black");
+    DFontSizeManager::instance()->bind(notice, DFontSizeManager::SizeType::T8);
+    editAreaLay->addWidget(notice);
+
+    addContent(editArea);
     setContentsMargins(0, 0, 0, 0);
     getButton(1)->setEnabled(false);
-    DLabel *notice = new DLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
-    QPalette pe;
-    pe.setColor(QPalette::WindowText, QColor("#526A7F"));
-    notice->setMargin(5);
-    notice->setPalette(pe);
-    DFontSizeManager::instance()->bind(notice, DFontSizeManager::SizeType::T8);
-    insertContent(1, notice);
 
     connect(passwordEdit, &Dtk::Widget::DPasswordEdit::textChanged, this, [this] {
         getButton(1)->setEnabled(!passwordEdit->text().isEmpty());
