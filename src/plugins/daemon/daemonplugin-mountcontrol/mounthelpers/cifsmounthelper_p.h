@@ -59,6 +59,7 @@ class CifsMountHelperPrivate
 public:
     QString probeVersion(const QString &host, ushort port);
     QString parseIP(const QString &host, uint16_t port);
+    QString parseIP_old(const QString &host);
 };
 
 DAEMONPMOUNTCONTROL_END_NAMESPACE
