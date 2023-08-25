@@ -45,7 +45,7 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
 
     // befor call back,recive file created signal
     QPair<int, QPoint> oriPoint;
-    if (Q_UNLIKELY(GridIns->point(path, oriPoint))) {
+    if (GridIns->point(path, oriPoint)) {
         qInfo() << "note:file existed!must check code!" << path << oriPoint << pos;
         if (CanvasGrid::Mode::Align == GridIns->mode())
             return;
@@ -62,6 +62,8 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
         // record the location and move the file after the real file is created
         touchFileData = qMakePair(path, qMakePair(screenNum, pos));
     }
+
+    emit q->fileTouchedCallback();
 }
 
 void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
@@ -92,6 +94,7 @@ void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
             qWarning() << "there were no model and selection model.";
             pasteFileData = files.toSet();
         }
+        emit q->filePastedCallback();
     }
 }
 
@@ -110,6 +113,7 @@ void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, c
     for (int i = 0; i < targets.count(); ++i) {
         renameFileData.insert(sources.at(i), targets.at(i));
     }
+    emit q->fileRenamedCallback();
 }
 
 void FileOperatorProxyPrivate::filterDesktopFile(QList<QUrl> &urls)

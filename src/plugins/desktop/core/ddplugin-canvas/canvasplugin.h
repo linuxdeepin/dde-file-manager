@@ -53,6 +53,8 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasView_GridSize)
     DPF_EVENT_REG_SLOT(slot_CanvasView_GridPos)
     DPF_EVENT_REG_SLOT(slot_CanvasView_GridVisualRect)
+    //private slot
+    DPF_EVENT_REG_SLOT(slot_CanvasViewPrivate_FileOperator)
 
     DPF_EVENT_REG_HOOK(hook_CanvasView_ContextMenu)
     DPF_EVENT_REG_HOOK(hook_CanvasView_DropData)
@@ -78,7 +80,6 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_TryAppendAfter)
 
     // CanvasModel begin
-    DPF_EVENT_REG_SIGNAL(signal_CanvasModel_OpenEditor)
     DPF_EVENT_REG_SIGNAL(signal_CanvasModel_HiddenFlagChanged)
 
     DPF_EVENT_REG_SLOT(slot_CanvasModel_RootUrl)

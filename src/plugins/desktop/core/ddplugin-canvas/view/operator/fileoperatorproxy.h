@@ -43,17 +43,20 @@ public:
     void dropToTrash(const QList<QUrl> &urls);
     void dropToApp(const QList<QUrl> &urls, const QString &app);
 
-    QPair<QString, QPair<int, QPoint>> touchFileData() const;
-    void clearTouchFileData();
+    Q_INVOKABLE QPair<QString, QPair<int, QPoint>> touchFileData() const;
+    Q_INVOKABLE void clearTouchFileData();
 
-    QHash<QUrl, QUrl> renameFileData() const;
-    void removeRenameFileData(const QUrl &oldUrl);
-    void clearRenameFileData();
+    Q_INVOKABLE QHash<QUrl, QUrl> renameFileData() const;
+    Q_INVOKABLE void removeRenameFileData(const QUrl &oldUrl);
+    Q_INVOKABLE void clearRenameFileData();
 
-    QSet<QUrl> pasteFileData() const;
-    void removePasteFileData(const QUrl &oldUrl);
-    void clearPasteFileData();
-
+    Q_INVOKABLE QSet<QUrl> pasteFileData() const;
+    Q_INVOKABLE void removePasteFileData(const QUrl &oldUrl);
+    Q_INVOKABLE void clearPasteFileData();
+signals:
+    void filePastedCallback();
+    void fileTouchedCallback();
+    void fileRenamedCallback();
 public:
     void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
 

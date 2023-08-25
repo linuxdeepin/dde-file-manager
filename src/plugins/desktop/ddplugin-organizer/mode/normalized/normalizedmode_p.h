@@ -26,6 +26,13 @@ public:
     void collectionStyleChanged(const QString &id);
     CollectionHolderPointer createCollection(const QString &id);
     void switchCollection();
+    void openEditor(const QUrl &url);
+    void checkTouchFile(const QUrl &url);
+    void checkPastedFiles(const QList<QUrl> &urls);
+public slots:
+    void onSelectFile(QList<QUrl> &urls, int flag);
+    void onClearSelection();
+    void onDropFile(const QString &collection, QList<QUrl> &urls);
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);
     FileClassifier *classifier = nullptr;

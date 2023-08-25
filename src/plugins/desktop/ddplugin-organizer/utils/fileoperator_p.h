@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QSet>
 
 namespace ddplugin_organizer {
 
@@ -30,10 +31,8 @@ public:
     };
 
     explicit FileOperatorPrivate(FileOperator *qq);
-
-    void callBackTouchFile(const QUrl &target, const QVariantMap &customData);
-    void callBackPasteFiles(const JobInfoPointer info);
-    void callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets, const CollectionView *view);
+    void callBackPasteFiles(const JobInfoPointer info, const QVariant &custom);
+    void callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets);
 
     QList<QUrl> getSelectedUrls(const CollectionView *view) const;
     static void filterDesktopFile(QList<QUrl> &urls);
@@ -43,9 +42,11 @@ public:
     QPointer<CollectionDataProvider> provider = nullptr;
 
     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack;
-
-    QPair<QString, QPair<int, QPoint>> touchFileData;
     QHash<QUrl, QUrl> renameFileData;
+    QSet<QUrl> pasteFileData;
+    QHash<QUrl, QString> dropFileData;
+
+    QObject *canvasOperator = nullptr;
 };
 
 }

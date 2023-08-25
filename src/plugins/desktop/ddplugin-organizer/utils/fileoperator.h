@@ -30,8 +30,7 @@ public:
 
     void copyFiles(const CollectionView *view);
     void cutFiles(const CollectionView *view);
-    void pasteFiles(const CollectionView *view);
-    void pasteFiles(const CollectionView *view, const QPoint pos);
+    void pasteFiles(const CollectionView *view, const QString &targetColletion);
     void openFiles(const CollectionView *view);
     void openFiles(const CollectionView *view, const QList<QUrl> &urls);
     Q_INVOKABLE void renameFile(int wid, const QUrl &oldUrl, const QUrl &newUrl);
@@ -51,6 +50,22 @@ public:
     void removeRenameFileData(const QUrl &oldUrl);
     void clearRenameFileData();
 
+    Q_INVOKABLE QUrl touchFileData() const;
+    Q_INVOKABLE void clearTouchFileData();
+
+    Q_INVOKABLE QSet<QUrl> pasteFileData() const;
+    Q_INVOKABLE void removePasteFileData(const QUrl &oldUrl);
+    Q_INVOKABLE void clearPasteFileData();
+
+    Q_INVOKABLE QHash<QUrl, QString> dropFileData() const;
+    Q_INVOKABLE void removeDropFileData(const QUrl &oldUrl);
+    Q_INVOKABLE void clearDropFileData();
+signals:
+    void requestSelectFile(QList<QUrl> &urls, int flag);
+    void requestClearSelection();
+    void requestDropFile(const QString &collection, QList<QUrl> &urls);
+protected slots:
+    void onCanvasPastedFiles();
 public:
     void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
 
