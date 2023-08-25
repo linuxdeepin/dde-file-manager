@@ -77,7 +77,7 @@ TEST_F(TestFileOperator, callBackRenameFiles)
 
     fo.d->renameFileData.insert(QUrl(), QUrl());
 
-    fo.d->callBackRenameFiles({}, {}, view);
+    fo.d->callBackRenameFiles({}, {});
     EXPECT_TRUE(clear);
     EXPECT_TRUE(clearidx);
     EXPECT_TRUE(fo.d->renameFileData.isEmpty());
@@ -90,7 +90,7 @@ TEST_F(TestFileOperator, callBackRenameFiles)
     QUrl one1 = QUrl::fromLocalFile("/tmp/11");
     QUrl two1= QUrl::fromLocalFile("/tmp/22");
 
-    fo.d->callBackRenameFiles({one,two}, {one1,two1}, view);
+    fo.d->callBackRenameFiles({one,two}, {one1,two1});
     EXPECT_TRUE(clear);
     EXPECT_TRUE(clearidx);
     ASSERT_EQ(fo.d->renameFileData.size(), 2);

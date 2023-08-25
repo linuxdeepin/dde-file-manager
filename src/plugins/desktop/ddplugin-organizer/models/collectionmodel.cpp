@@ -22,21 +22,13 @@
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
-#define CanvasModelSubscribe(topic, func) \
-    dpfSignalDispatcher->subscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
-
-#define CanvasModelUnsubscribe(topic, func) \
-    dpfSignalDispatcher->unsubscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
-
 CollectionModelPrivate::CollectionModelPrivate(CollectionModel *qq)
     : QObject(qq), q(qq)
 {
-    CanvasModelSubscribe(signal_CanvasModel_OpenEditor, &CollectionModelPrivate::renameRequired);
 }
 
 CollectionModelPrivate::~CollectionModelPrivate()
 {
-    CanvasModelUnsubscribe(signal_CanvasModel_OpenEditor, &CollectionModelPrivate::renameRequired);
 }
 
 void CollectionModelPrivate::reset()
@@ -168,11 +160,6 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
         fileMap.insert(url, shell->fileInfo(shell->index(url)));
 
     q->endInsertRows();
-
-    if (files.contains(waitForRenameFile)) {
-        emit q->openEditor(waitForRenameFile);
-        clearRenameReuired();
-    }
 }
 
 void CollectionModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent, int start, int end)
@@ -250,16 +237,6 @@ void CollectionModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &n
             q->endRemoveRows();
         }
     }
-}
-
-void CollectionModelPrivate::renameRequired(const QUrl &url)
-{
-    waitForRenameFile = url;
-}
-
-void CollectionModelPrivate::clearRenameReuired()
-{
-    waitForRenameFile.clear();
 }
 
 void CollectionModelPrivate::doRefresh(bool global, bool file)

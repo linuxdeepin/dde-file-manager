@@ -23,7 +23,6 @@ using namespace Global;
 
 static constexpr char const kCollectionKey[] = "CollectionKey";
 static constexpr char const kDropFilesIndex[] = "DropFilesIndex";
-static constexpr char const kViewObject[] = "ViewObject";
 
 class FileOperatorGlobal : public FileOperator
 {
@@ -33,42 +32,51 @@ Q_GLOBAL_STATIC(FileOperatorGlobal, fileOperatorGlobal)
 FileOperatorPrivate::FileOperatorPrivate(FileOperator *qq)
     : q(qq)
 {
+     canvasOperator = dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasViewPrivate_FileOperator").value<QObject *>();
+     if (!canvasOperator)
+         qWarning() << "fail to get canvas file operator";
+
+     // the callback of pasting file on canvas.
+     QObject::connect(canvasOperator, SIGNAL(filePastedCallback()), q, SLOT(onCanvasPastedFiles()));
 }
 
-void FileOperatorPrivate::callBackTouchFile(const QUrl &target, const QVariantMap &customData)
+void FileOperatorPrivate::callBackPasteFiles(const JobInfoPointer info, const QVariant &custom)
 {
-    /*
-     * 1.在自动集合模式下，无需关注该流程。即菜单响应不会被拦截，直接由canvas插件响应，
-     *   被新建的文件根据需求，将直接被分类器分配到对应的集合中，并置顶显示。
-     *
-     * 2.在自定义集合模式下，需要拦截新建菜单的响应，调用FileOperator::touchFile和
-     *   FileOperator::touchFolder（待添加的函数，具体实现参考canvas插件中的FileOperatorProxy类）
-     *   ，以在本回调函数中记录底层返回的即将新建的文件名称。记录之后，在真正的文件被创建时，
-     *   集合才能第一时间从canvas中过滤出该文件，防止该文件被首先显示到canvas中。
-     *   另外，此场景新建文件的位置，是置顶显示还是鼠标最近的可用位置需要与产品确认。
-     *
-    */
-}
-
-void FileOperatorPrivate::callBackPasteFiles(const JobInfoPointer info)
-{
-    // todo(wangcl) 文件粘贴、拖拽释放的回调响应流程。流程无法满足需求，待商榷方案。
     if (info->keys().contains(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey)) {
-        //QList<QUrl> files = info->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>();
+        QList<QUrl> files = info->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>();
 
-        // todo(wangcl)
-        // 如 dropFilesToCollection 的备注，此时文件是否全部创建，状态未知。
-        // 即使通过延迟，让文件全部创建，依然存在文件先显示在桌面，再显示到集合的问题。
-        // 另外，如果桌面本身存在同名文件，用户从文管拖拽文件到集合时选择了替换，此时文件显示到集合中？还是保持在桌面的原有位置？
+        // last data
+        q->clearPasteFileData();
+        q->clearDropFileData();
+
+        emit q->requestClearSelection();
+
+        //  move file to collection if on custom mode
+        QVariantMap datas = custom.toMap();
+        QString key = datas.value(kCollectionKey).toString();
+        if (!key.isEmpty()) {
+            auto toDrop = files;
+            emit q->requestDropFile(key, toDrop);
+
+            // if file is not existed, record it and move in inserting event.
+            for (const QUrl &url : toDrop)
+                dropFileData.insert(url, key);
+        }
+
+        // then try to select file that is existed
+        emit q->requestSelectFile(files, QItemSelectionModel::Select);
+
+        // record the file is not existed and selecting it when it is inserted.
+        pasteFileData = files.toSet();
     }
 }
 
-void FileOperatorPrivate::callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets, const CollectionView *view)
+void FileOperatorPrivate::callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets)
 {
     q->clearRenameFileData();
 
     // clear selected and current
-    view->selectionModel()->clear();
+    emit q->requestClearSelection();
 
     Q_ASSERT(sources.count() == targets.count());
 
@@ -137,7 +145,7 @@ void FileOperator::cutFiles(const CollectionView *view)
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
 
-void FileOperator::pasteFiles(const CollectionView *view)
+void FileOperator::pasteFiles(const CollectionView *view, const QString &targetColletion)
 {
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
@@ -157,27 +165,23 @@ void FileOperator::pasteFiles(const CollectionView *view)
     if (urls.isEmpty())
         return;
 
+    QVariantMap data;
+    // the taget collection that pasted file will be move to.
+    data.insert(kCollectionKey, targetColletion);
+    QPair<FileOperatorPrivate::CallBackFunc, QVariant> funcData(FileOperatorPrivate::kCallBackPasteFiles, data);
+    QVariant custom = QVariant::fromValue(funcData);
+
     if (ClipBoard::kCopyAction == action) {
-        dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     } else if (ClipBoard::kCutAction == action) {
-        dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(),
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
         // clear clipboard after cutting files from clipboard
         ClipBoard::instance()->clearClipboard();
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << urls;
     }
-}
-
-void FileOperator::pasteFiles(const CollectionView *view, const QPoint pos)
-{
-    /*
-     * 1.文件粘贴与通过右键菜单新建文件存在相似的逻辑，即自动整理模式下，
-     *   直接由canvas插件响应，真实文件创建时，由分类器直接分配到对应的集合中即可，
-     *   该功能由FileOperator::pasteFiles(const CollectionView *view)函数完成。
-     *
-     * 2.在自定义整理模式下，参考FileOperator::dropFilesToCollection中的备注信息。
-     *
-    */
 }
 
 void FileOperator::openFiles(const CollectionView *view)
@@ -200,7 +204,7 @@ void FileOperator::renameFile(int wid, const QUrl &oldUrl, const QUrl &newUrl)
 void FileOperator::renameFiles(const CollectionView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace)
 {
     QVariantMap data;
-    data.insert(kViewObject, reinterpret_cast<qlonglong>(view));
+    data.insert(kCollectionKey, view->id());
 
     QPair<FileOperatorPrivate::CallBackFunc, QVariant> funcData(FileOperatorPrivate::kCallBackRenameFiles, data);
     QVariant custom = QVariant::fromValue(funcData);
@@ -211,7 +215,7 @@ void FileOperator::renameFiles(const CollectionView *view, const QList<QUrl> &ur
 void FileOperator::renameFiles(const CollectionView *view, const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
     QVariantMap data;
-    data.insert(kViewObject, reinterpret_cast<qlonglong>(view));
+    data.insert(kCollectionKey, view->id());
 
     QPair<FileOperatorPrivate::CallBackFunc, QVariant> funcData(FileOperatorPrivate::kCallBackRenameFiles, data);
     QVariant custom = QVariant::fromValue(funcData);
@@ -264,7 +268,6 @@ void FileOperator::showFilesProperty(const CollectionView *view)
 
 void FileOperator::dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index)
 {
-    // todo(wangcl) 逻辑流程无法满足需求，现有方案会导致文件先出现在桌面，再移动动到集合中
     /*!
       * 从文管drop文件到集合，只能是追加（效果与从文管拖拽到桌面一致，而原因，也与桌面一样)
       * 1.底层执行粘贴（拖拽释放也是粘贴）是异步执行，只有所有粘贴执行完成后，才会调用回调函数和发送事件，
@@ -327,6 +330,100 @@ void FileOperator::clearRenameFileData()
     d->renameFileData.clear();
 }
 
+QUrl FileOperator::touchFileData() const
+{
+    // special calling
+    QUrl ret;
+    if (d->canvasOperator) {
+        QPair<QString, QPair<int, QPoint>> touch;
+        QMetaObject::invokeMethod(d->canvasOperator, "touchFileData", Qt::DirectConnection,
+                                  QReturnArgument<QPair<QString, QPair<int, QPoint>>>("QPair<QString, QPair<int, QPoint>>", touch));
+        ret = QUrl(touch.first);
+    }
+    return ret;
+}
+
+void FileOperator::clearTouchFileData()
+{
+    // special calling
+    if (d->canvasOperator) {
+        QMetaObject::invokeMethod(d->canvasOperator,
+                                  "clearTouchFileData", Qt::DirectConnection);
+    }
+}
+
+QSet<QUrl> FileOperator::pasteFileData() const
+{
+    return d->pasteFileData;
+}
+
+void FileOperator::removePasteFileData(const QUrl &oldUrl)
+{
+    if (d->canvasOperator) {
+        QMetaObject::invokeMethod(d->canvasOperator,
+                                  "removePasteFileData", Qt::DirectConnection
+                                , Q_ARG(QUrl, oldUrl));
+    }
+    d->pasteFileData.remove(oldUrl);
+}
+
+void FileOperator::clearPasteFileData()
+{
+    // special calling
+    if (d->canvasOperator) {
+        QMetaObject::invokeMethod(d->canvasOperator,
+                                  "clearPasteFileData", Qt::DirectConnection);
+    }
+
+    d->pasteFileData.clear();
+}
+
+QHash<QUrl, QString> FileOperator::dropFileData() const
+{
+    return d->dropFileData;
+}
+
+void FileOperator::removeDropFileData(const QUrl &oldUrl)
+{
+    d->dropFileData.remove(oldUrl);
+}
+
+void FileOperator::clearDropFileData()
+{
+    d->dropFileData.clear();
+}
+
+void FileOperator::onCanvasPastedFiles()
+{
+    QSet<QUrl> ret;
+    // special calling
+    if (d->canvasOperator) {
+        QMetaObject::invokeMethod(d->canvasOperator,
+                                  "pasteFileData", Qt::DirectConnection
+                                  , QReturnArgument<QSet<QUrl>>("QSet<QUrl>", ret)
+                                  );
+    }
+
+    // just clear self
+    d->pasteFileData.clear();
+
+    // clear drop
+    clearDropFileData();
+
+    // no need to clear selecion since the canvas(FileOperatorProxyPrivate) has done it.
+    auto list = ret.toList();
+    emit requestSelectFile(list, QItemSelectionModel::Select);
+
+    // clear canvas
+    for (const QUrl &url : ret) {
+        if (!list.contains(url))
+            removePasteFileData(url);
+    }
+
+    // record the file is not existed and selecting it when it is inserted.
+    d->pasteFileData = list.toSet();
+}
+
 void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args)
 {
     const QVariant &customValue = args->value(AbstractJobHandler::CallbackKey::kCustom);
@@ -334,6 +431,7 @@ void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args
     const FileOperatorPrivate::CallBackFunc funcKey = custom.first;
 
     switch (funcKey) {
+#if 0 // touch file is processed by canvas. edit it at inserting by calling touchFileData with FileOperatorProxy
     case FileOperatorPrivate::CallBackFunc::kCallBackTouchFile:
     case FileOperatorPrivate::CallBackFunc::kCallBackTouchFolder: {
         // Folder also belong to files
@@ -346,27 +444,24 @@ void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args
 
         d->callBackTouchFile(targets.first(), custom.second.toMap());
     } break;
+#endif
     case FileOperatorPrivate::CallBackFunc::kCallBackPasteFiles: {
         // paste files is async operation
         JobHandlePointer jobHandle = args->value(AbstractJobHandler::CallbackKey::kJobHandle).value<JobHandlePointer>();
 
         if (jobHandle->currentState() != AbstractJobHandler::JobState::kStopState) {
-            connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), &FileOperatorPrivate::callBackPasteFiles);
+            connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), [this, custom](const JobInfoPointer &infoPointer){
+                d->callBackPasteFiles(infoPointer, custom.second);
+            });
         } else {
             JobInfoPointer infoPointer = jobHandle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyFinishedKey);
-            d->callBackPasteFiles(infoPointer);
+            d->callBackPasteFiles(infoPointer, custom.second);
         }
     } break;
     case FileOperatorPrivate::CallBackFunc::kCallBackRenameFiles: {
         auto sources = args->value(AbstractJobHandler::CallbackKey::kSourceUrls).value<QList<QUrl>>();
         auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
-        auto viewData = custom.second.toMap();
-        CollectionView *view = reinterpret_cast<CollectionView *>(viewData.value(kViewObject).toLongLong());
-        if (Q_UNLIKELY(!view)) {
-            qWarning() << "warning:can not get collection view.";
-            break;
-        }
-        d->callBackRenameFiles(sources, targets, view);
+        d->callBackRenameFiles(sources, targets);
     } break;
     default:
         break;
