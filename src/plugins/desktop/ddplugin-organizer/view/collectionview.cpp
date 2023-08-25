@@ -675,7 +675,7 @@ void CollectionViewPrivate::cutFiles()
 
 void CollectionViewPrivate::pasteFiles()
 {
-    FileOperatorIns->pasteFiles(q);
+    FileOperatorIns->pasteFiles(q, "");
 }
 
 void CollectionViewPrivate::undoFiles()
@@ -1949,7 +1949,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             d->cutFiles();
             return;
         case Qt::Key_V:
-            d->pasteFiles();
+            d->pasteFiles(); // paste files to canvas not collection
             return;
         case Qt::Key_Z:
             d->undoFiles();

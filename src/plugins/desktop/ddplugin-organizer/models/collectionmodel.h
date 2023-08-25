@@ -52,7 +52,6 @@ public:
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 signals:
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
-    void openEditor(const QUrl &url);
 
 private:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
