@@ -212,7 +212,7 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
     case AbstractJobHandler::JobErrorType::kSymlinkError:
         return tr("Failed to create symlink, cause: %1").arg(errorMsg);
     case AbstractJobHandler::JobErrorType::kDfmIoError:
-        return tr("Copy or Cut File failed，cause: %1").arg(errorMsg);
+        return tr("Copy or Cut File failed, cause: %1").arg(errorMsg);
     default:
         break;
     }
