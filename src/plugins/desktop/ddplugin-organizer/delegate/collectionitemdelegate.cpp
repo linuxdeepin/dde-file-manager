@@ -121,6 +121,7 @@ CollectionItemDelegate::CollectionItemDelegate(QAbstractItemView *parentPtr)
 
 CollectionItemDelegate::~CollectionItemDelegate()
 {
+    delete d;
 }
 
 QSize CollectionItemDelegate::sizeHint(const QStyleOptionViewItem &opt, const QModelIndex &index) const

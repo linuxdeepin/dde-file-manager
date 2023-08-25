@@ -156,10 +156,10 @@ bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
 qint64 FileOperationsUtils::bigFileSize()
 {
     // 获取当前配置
-    qint64 alltotrash = DConfigManager::instance()->value(kFileOperations, kFileBigSize).toLongLong();
-    if (alltotrash <= 0)
+    qint64 bigSize = DConfigManager::instance()->value(kFileOperations, kFileBigSize).toLongLong();
+    if (bigSize <= 0)
         return 80 * 1024 * 1024;
-    return alltotrash;
+    return bigSize;
 }
 
 bool FileOperationsUtils::blockSync()
