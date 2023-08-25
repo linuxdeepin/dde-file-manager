@@ -11,6 +11,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 Q_DECLARE_METATYPE(bool *)
 
@@ -25,6 +26,11 @@ void FileOperations::initialize()
 
 bool FileOperations::start()
 {
+    QString err;
+    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.operations", &err);
+    if (!ret)
+        qWarning() << "create dconfig failed: " << err;
+
     return true;
 }
 
