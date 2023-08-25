@@ -153,6 +153,74 @@ void NormalizedModePrivate::switchCollection()
         q->layout();
 }
 
+void NormalizedModePrivate::openEditor(const QUrl &url)
+{
+    auto key = classifier->key(url);
+    if (key.isEmpty())
+        return;
+
+    auto holder = holders.value(key);
+    if (Q_UNLIKELY(!holder))
+        return;
+
+    holder->openEditor(url);
+}
+
+void NormalizedModePrivate::checkTouchFile(const QUrl &url)
+{
+    // get the touched file from canvas
+    if (url == FileOperatorIns->touchFileData()) {
+        FileOperatorIns->clearTouchFileData();
+        openEditor(url);
+    }
+}
+
+void NormalizedModePrivate::checkPastedFiles(const QList<QUrl> &urls)
+{
+    auto pasteFileData = FileOperatorIns->pasteFileData();
+    for (const QUrl &url : urls) {
+        if (pasteFileData.contains(url)) {
+            FileOperatorIns->removePasteFileData(url);
+            auto idx = q->model->index(url);
+            if (idx.isValid())
+                selectionModel->select(idx, QItemSelectionModel::Select);
+        }
+    }
+}
+
+void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
+{
+    QItemSelection sel;
+    for (auto it = urls.begin(); it != urls.end();) {
+        auto idx = q->model->index(*it);
+        if (idx.isValid()) {
+            sel.append(QItemSelectionRange(idx));
+            it = urls.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    if (!sel.isEmpty())
+        selectionModel->select(sel, static_cast<QItemSelectionModel::SelectionFlags>(flag));
+}
+
+void NormalizedModePrivate::onClearSelection()
+{
+    Q_ASSERT(q->canvasSelectionShell);
+    // the clear canvas seletion will also clear collection
+    if (auto cs = q->canvasSelectionShell->selectionModel())
+        cs->clear();
+    else
+        selectionModel->clear();
+}
+
+void NormalizedModePrivate::onDropFile(const QString &collection, QList<QUrl> &urls)
+{
+    // files will be automatically classified to collection.
+    urls.clear();
+}
+
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
 {
     // order by config
@@ -210,6 +278,11 @@ bool NormalizedMode::initialize(CollectionModel *m)
 
     setClassifier(type);
     Q_ASSERT(d->classifier);
+    FileOperatorIns->setDataProvider(d->classifier);
+    // select the file pasted.
+    connect(FileOperatorIns, &FileOperator::requestSelectFile, d, &NormalizedModePrivate::onSelectFile, Qt::DirectConnection);
+    connect(FileOperatorIns, &FileOperator::requestClearSelection, d, &NormalizedModePrivate::onClearSelection, Qt::DirectConnection);
+    connect(FileOperatorIns, &FileOperator::requestDropFile, d, &NormalizedModePrivate::onDropFile, Qt::DirectConnection);
 
     // must be DirectConnection to keep sequential
     connect(model, &CollectionModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);
@@ -218,8 +291,6 @@ bool NormalizedMode::initialize(CollectionModel *m)
 
     connect(model, &CollectionModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
     connect(model, &CollectionModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
-
-    connect(model, &CollectionModel::openEditor, this, &NormalizedMode::onOpenEditor, Qt::QueuedConnection);
 
     // creating if there already are files.
     if (!model->files().isEmpty())
@@ -266,7 +337,8 @@ void NormalizedMode::layout()
     for (const CollectionHolderPointer &holder : holders) {
         auto style = CfgPresenter->normalStyle(holder->id());
         if (Q_UNLIKELY(style.key != holder->id())) {
-            qWarning() << "unknow err:style key is error:" << style.key << ",and fix to :" << holder->id();
+            if (!style.key.isEmpty())
+                qWarning() << "unknow err:style key is error:" << style.key << ",and fix to :" << holder->id();
             style.key = holder->id();
         }
 
@@ -376,15 +448,22 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)
 {
+    QList<QUrl> urls;
     for (int i = first; i <= last; i++) {
         QModelIndex index = model->index(i, 0, parent);
         if (Q_UNLIKELY(!index.isValid()))
             continue;
-        QUrl url = model->fileUrl(index);
+        auto url = model->fileUrl(index);
         d->classifier->prepend(url);
+        urls.append(url);
    }
 
     d->switchCollection();
+
+    if (urls.size() == 1)
+        d->checkTouchFile(urls.first());
+
+    d->checkPastedFiles(urls);
 }
 
 void NormalizedMode::onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last)
@@ -408,19 +487,6 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
         QModelIndex index = model->index(i, 0);
         d->classifier->change(model->fileUrl(index));
     }
-}
-
-void NormalizedMode::onOpenEditor(const QUrl &url)
-{
-    auto key = d->classifier->key(url);
-    if (key.isEmpty())
-        return;
-
-    auto holder = d->holders.value(key);
-    if (Q_UNLIKELY(!holder))
-        return;
-
-    holder->openEditor(url);
 }
 
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)

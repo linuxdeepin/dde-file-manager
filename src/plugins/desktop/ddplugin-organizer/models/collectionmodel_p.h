@@ -35,17 +35,12 @@ public slots:
     void sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent,
                                     int start, int end);
     void sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-
-    void renameRequired(const QUrl &url);
-    void clearRenameReuired();
-
 public:
     FileInfoModelShell *shell = nullptr;
     ModelDataHandler *handler = nullptr;
     QList<QUrl> fileList;
     QMap<QUrl, FileInfoPointer> fileMap;
     QSharedPointer<QTimer> refreshTimer;
-    QUrl waitForRenameFile;
 
 private:
     CollectionModel *q;

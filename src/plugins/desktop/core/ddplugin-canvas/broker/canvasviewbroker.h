@@ -30,6 +30,7 @@ public slots:
     void update(int idx);
     void select(const QList<QUrl> &urls);
     QList<QUrl> selectedUrls(int idx);
+    QObject *fileOperator();
 public:
     QRect iconRect(int idx, QRect visualRect);
 private:
