@@ -12,7 +12,6 @@ namespace ddplugin_organizer {
 class OrganizerUtils
 {
 public:
-    static int covertIconLevel(int lv, bool toDisplay);
     static bool isAllItemCategory(const ItemCategories &flags);
 private:
     OrganizerUtils();

@@ -33,6 +33,7 @@ public slots:
     void onSelectFile(QList<QUrl> &urls, int flag);
     void onClearSelection();
     void onDropFile(const QString &collection, QList<QUrl> &urls);
+    void onIconSizeChanged();
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);
     FileClassifier *classifier = nullptr;

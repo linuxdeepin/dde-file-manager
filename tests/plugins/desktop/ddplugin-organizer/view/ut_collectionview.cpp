@@ -56,25 +56,6 @@ TEST(CollectionViewPrivate, helpAction) {
     EXPECT_TRUE(isCall);
 }
 
-TEST(CollectionViewPrivate, onIconSizeChanged) {
-
-    stub_ext::StubExt stub;
-    QString testUuid("testUuid");
-    CollectionView view(testUuid, nullptr);
-
-    int setLevel = -1;
-    stub.set_lamda(ADDR(CollectionItemDelegate, setIconLevel), [&] (CollectionItemDelegate *obj, int lv) {
-        Q_UNUSED(obj)
-
-        setLevel = lv;
-        return lv;
-    });
-
-    view.d->onIconSizeChanged(1);
-
-    EXPECT_EQ(setLevel, 1);
-}
-
 TEST(CollectionView, setCanvasManagerShell) {
 
     stub_ext::StubExt stub;
