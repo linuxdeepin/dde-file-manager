@@ -25,9 +25,6 @@ public:
     inline OrganizerMode mode() const {return curMode;}
     void setMode(OrganizerMode m);
 
-    inline DisplaySize displaySize() const {return curDisplaySize;}
-    inline void setDisplaySize(DisplaySize size) {curDisplaySize = size;}
-
     inline Classifier classification() const {return curClassifier;}
     void setClassification(Classifier cf);
 
@@ -63,7 +60,6 @@ private:
     OrganizerConfig *conf = nullptr;
     bool enable = false;
     OrganizerMode curMode = OrganizerMode::kNormalized;
-    DisplaySize curDisplaySize = DisplaySize::kSmaller;
     Classifier curClassifier = Classifier::kType;
 };
 

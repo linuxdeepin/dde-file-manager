@@ -9,6 +9,7 @@
 #include "interface/canvasmanagershell.h"
 #include "utils/fileoperator.h"
 #include "view/collectionview.h"
+#include "delegate/collectionitemdelegate.h"
 
 #include <dfm-base/utils/windowutils.h>
 
@@ -221,6 +222,23 @@ void NormalizedModePrivate::onDropFile(const QString &collection, QList<QUrl> &u
     urls.clear();
 }
 
+void NormalizedModePrivate::onIconSizeChanged()
+{
+    bool lay = false;
+    auto lv = q->canvasManagerShell->iconLevel();
+    for (const CollectionHolderPointer &holder : holders.values()) {
+        auto view = holder->itemView();
+        auto del = view->itemDelegate();
+        if (del->iconLevel() != lv) {
+            int ret = del->setIconLevel(lv);
+            lay |= ret > -1;
+        }
+    }
+
+    if (lay)
+        q->layout();
+}
+
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
 {
     // order by config
@@ -283,6 +301,8 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(FileOperatorIns, &FileOperator::requestSelectFile, d, &NormalizedModePrivate::onSelectFile, Qt::DirectConnection);
     connect(FileOperatorIns, &FileOperator::requestClearSelection, d, &NormalizedModePrivate::onClearSelection, Qt::DirectConnection);
     connect(FileOperatorIns, &FileOperator::requestDropFile, d, &NormalizedModePrivate::onDropFile, Qt::DirectConnection);
+
+    connect(canvasManagerShell, &CanvasManagerShell::iconSizeChanged, d, &NormalizedModePrivate::onIconSizeChanged);
 
     // must be DirectConnection to keep sequential
     connect(model, &CollectionModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);

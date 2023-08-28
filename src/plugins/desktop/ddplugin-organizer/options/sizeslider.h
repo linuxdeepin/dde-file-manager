@@ -16,28 +16,22 @@ namespace ddplugin_organizer {
 class SizeSlider : public ContentBackgroundWidget
 {
     Q_OBJECT
-
-public:
-    enum Mode {View, Icon };
 public:
     explicit SizeSlider(QWidget *parent = nullptr);
     ~SizeSlider();
-    void switchMode(Mode mode);
-    inline Mode mode() const { return curMode;}
+    void init();
 protected slots:
     void setIconLevel(int);
     void syncIconLevel(int);
     void iconClicked(DTK_WIDGET_NAMESPACE::DSlider::SliderIcons icon, bool checked);
 protected:
     void setValue(int);
-    void resetToView();
     void resetToIcon();
     int iconLevel();
     static QStringList ticks(int count);
 private:
     DTK_WIDGET_NAMESPACE::DSlider *slider = nullptr;
     QLabel *label = nullptr;
-    Mode curMode = View;
 };
 
 }

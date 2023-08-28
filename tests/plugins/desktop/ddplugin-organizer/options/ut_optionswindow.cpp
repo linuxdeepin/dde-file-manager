@@ -19,11 +19,6 @@ TEST(OptionsWindow, initialize_on)
         reset = true;
     });
 
-    SizeSlider::Mode mode = SizeSlider::Mode::Icon;
-    stub.set_lamda(&SizeSlider::switchMode, [&mode](SizeSlider *, SizeSlider::Mode m){
-        mode = m;
-    });
-
     stub.set_lamda(&ConfigPresenter::isEnable, [](){
         return true;
     });
@@ -40,7 +35,6 @@ TEST(OptionsWindow, initialize_on)
     EXPECT_NE(win.d->organization, nullptr);
     EXPECT_NE(win.d->sizeSlider, nullptr);
     EXPECT_TRUE(reset);
-    EXPECT_EQ(mode, SizeSlider::Mode::View);
 
     ASSERT_NE(win.d->autoArrange, nullptr);
     EXPECT_FALSE(win.d->autoArrange->checked());
@@ -57,11 +51,6 @@ TEST(OptionsWindow, initialize_off)
         reset = true;
     });
 
-    SizeSlider::Mode mode = SizeSlider::Mode::View;
-    stub.set_lamda(&SizeSlider::switchMode, [&mode](SizeSlider *, SizeSlider::Mode m){
-        mode = m;
-    });
-
     stub.set_lamda(&ConfigPresenter::isEnable, [](){
         return false;
     });
@@ -78,7 +67,6 @@ TEST(OptionsWindow, initialize_off)
     EXPECT_NE(win.d->organization, nullptr);
     EXPECT_NE(win.d->sizeSlider, nullptr);
     EXPECT_TRUE(reset);
-    EXPECT_EQ(mode, SizeSlider::Mode::Icon);
 
     ASSERT_NE(win.d->autoArrange, nullptr);
     EXPECT_TRUE(win.d->autoArrange->checked());
