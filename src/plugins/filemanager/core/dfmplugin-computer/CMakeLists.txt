@@ -45,3 +45,7 @@ install(TARGETS
 
 set(AppEntryInstallDir "${CMAKE_INSTALL_PREFIX}/share/dde-file-manager/extensions/appEntry")
 install(FILES .readme DESTINATION ${AppEntryInstallDir})
+
+# install dconfig files.
+include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+INSTALL_DCONFIG("org.deepin.dde.file-manager.computer.json")
