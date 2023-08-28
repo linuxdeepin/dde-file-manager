@@ -1,0 +1,28 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "hideMyDirectories":{
+            "value": false,
+            "serial":0,
+            "flags":[],
+            "name":"Hide My Directories on the Computer page",
+            "name[zh_CN]":"计算机工作区隐藏我的目录",
+            "description[zh_CN]":"计算机工作区隐藏我的目录",
+            "description":"Hide My Directories on the Computer page",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "hide3rdEntries":{
+            "value": false,
+            "serial":0,
+            "flags":[],
+            "name":"Hide 3rd party entries on the Computer page",
+            "name[zh_CN]":"计算机工作区隐藏第三方插件",
+            "description[zh_CN]":"计算机工作区隐藏第三方插件",
+            "description":"Hide 3rd party entries on the Computer page",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}
