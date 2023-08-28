@@ -119,7 +119,7 @@ void VaultVisibleManager::addVaultComputerMenu()
 
 void VaultVisibleManager::addSettingPaneItem()
 {
-    SettingJsonGenerator::instance()->addCheckBoxConfig("01_advance.04_items_in_sidebar.12_vault",
+    SettingJsonGenerator::instance()->addCheckBoxConfig("01_sidebar.00_items_in_sidebar.12_vault",
                                                         "Vault");
 }
 
@@ -137,7 +137,7 @@ void VaultVisibleManager::addSideBarVaultItem()
             { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
             { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
             { "Property_Key_VisiableControl", "vault" },
-            { "Property_Key_VisiableSettingItem", "01_advance.04_items_in_sidebar.12_vault" },
+            { "Property_Key_VisiableSettingItem", "01_sidebar.00_items_in_sidebar.12_vault" },
             { "Property_Key_ReportName", "Vault" }
         };
 
