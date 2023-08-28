@@ -29,11 +29,6 @@ public:
     QMenu *organizeBySubActions(QMenu *menu);
     static QString classifierToActionID(Classifier cf);
 
-#ifdef EnableDisplaySizeMenu
-    QMenu *displaySizeSubActions(QMenu *menu);
-    static QString displaySizeToActionID(DisplaySize size);
-#endif
-
     bool triggerSortby(const QString &actionId);
 
 public:

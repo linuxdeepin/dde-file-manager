@@ -10,21 +10,6 @@
 
 DDP_ORGANIZER_USE_NAMESPACE
 
-TEST(OrganizerUtils, covertIconLevel)
-{
-    EXPECT_EQ(OrganizerUtils::covertIconLevel(0, true), (int)DisplaySize::kSmaller);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel(1, true), (int)DisplaySize::kSmaller);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel(2, true), (int)DisplaySize::kNormal);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel(3, true), (int)DisplaySize::kLarger);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel(4, true), (int)DisplaySize::kLarger);
-
-    EXPECT_EQ(OrganizerUtils::covertIconLevel((int)DisplaySize::kSmaller, false), 1);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel((int)DisplaySize::kNormal, false), 2);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel((int)DisplaySize::kLarger, false), 3);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel(0, false), 1);
-    EXPECT_EQ(OrganizerUtils::covertIconLevel(3, false), 1);
-}
-
 TEST(OrganizerUtils, isAllItemCategory)
 {
     for (int i = kCatApplication; i <= kCatEnd; i = i << 1) {

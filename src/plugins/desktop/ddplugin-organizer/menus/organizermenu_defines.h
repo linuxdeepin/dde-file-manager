@@ -19,14 +19,6 @@ inline constexpr char kOrganizeByTimeModified[] = "organize-by-time-modified";
 inline constexpr char kOrganizeByTimeCreated[] = "organize-by-time-created";
 inline constexpr char kOrganizeByCustom[] = "custom-collection";
 inline constexpr char kCreateACollection[] = "create-a-collection";
-
-#ifdef EnableDisplaySizeMenu
-inline constexpr char kDisplaySize[] = "display-size";
-inline constexpr char kDisplaySizeSmaller[] = "display-size-smaller";
-inline constexpr char kDisplaySizeNormal[] = "display-size-normal";
-inline constexpr char kDisplaySizeLarger[] = "display-size-larger";
-#endif
-
 } // namespace ActionID
 
 namespace CollectionMenuParams {
