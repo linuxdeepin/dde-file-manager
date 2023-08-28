@@ -38,6 +38,10 @@ Q_DECLARE_METATYPE(RenameCallback);
 Q_DECLARE_METATYPE(FindMeCallback);
 Q_DECLARE_METATYPE(QList<QUrl> *);
 
+inline constexpr char kComputerCfgPath[] { "org.deepin.dde.file-manager.computer" };
+inline constexpr char kKeyHideUserDir[] { "hideMyDirectories" };
+inline constexpr char kKeyHide3rdEntries[] { "hide3rdEntries" };
+
 DFMBASE_USE_NAMESPACE
 
 namespace dfmplugin_computer {
@@ -336,6 +340,22 @@ int ComputerItemWatcher::getGroupId(const QString &groupName)
     int id = ComputerUtils::getUniqueInteger();
     groupIds.insert(groupName, id);
     return id;
+}
+
+bool ComputerItemWatcher::hideUserDir()
+{
+    return DConfigManager::instance()->value("org.deepin.dde.file-manager.computer",
+                                             "hideMyDirectories",
+                                             false)
+            .toBool();
+}
+
+bool ComputerItemWatcher::hide3rdEntries()
+{
+    return DConfigManager::instance()->value("org.deepin.dde.file-manager.computer",
+                                             "hide3rdEntries",
+                                             false)
+            .toBool();
 }
 
 QList<QUrl> ComputerItemWatcher::disksHiddenByDConf()
@@ -715,6 +735,12 @@ void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cf
     if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath) {
         Q_EMIT updatePartitionsVisiable();
         handleSidebarItemsVisiable();
+    }
+
+    // hide userdirs
+    static QStringList computerVisiableControlList { kKeyHideUserDir, kKeyHide3rdEntries };
+    if (cfg == kComputerCfgPath && computerVisiableControlList.contains(cfgKey)) {
+        Q_EMIT updatePartitionsVisiable();
     }
 }
 

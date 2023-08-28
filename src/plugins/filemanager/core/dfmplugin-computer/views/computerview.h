@@ -45,7 +45,7 @@ public:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
 public Q_SLOTS:
-    void handlePartitionsVisiable();
+    void handleComputerItemVisible();
 
 protected:
     // QWidget interface
@@ -65,8 +65,10 @@ private Q_SLOTS:
     void cdTo(const QModelIndex &index);
     void onMenuRequest(const QPoint &pos);
     void onRenameRequest(quint64 winId, const QUrl &url);
-    void hideSpecificDisks(const QList<QUrl> &hiddenDisks);
-    void handleDiskSplitterVisiable();
+    void handleDisksVisible();
+    void handleUserDirVisible();
+    void handle3rdEntriesVisible();
+    void handleDiskSplitterVisible();
     void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 Q_SIGNALS:
