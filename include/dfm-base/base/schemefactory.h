@@ -205,6 +205,11 @@ public:
                                     const Global::CreateFileInfoType type = Global::CreateFileInfoType::kCreateFileInfoAuto,
                                     QString *errorString = nullptr)
     {
+        if (!url.isValid()) {
+            qWarning() << "url is unvalid !!! url = " << url;
+            return nullptr;
+        }
+
         if (InfoCacheController::instance().cacheDisable(url.scheme()))
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                         create(url, errorString));
