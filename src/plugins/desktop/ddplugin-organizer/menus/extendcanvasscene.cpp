@@ -46,14 +46,6 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
         predicateAction[ActionID::kOrganizeBy] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeBy));
 #endif
-
-#ifdef EnableDisplaySizeMenu
-        // display size
-        tempAction = parent->addAction(predicateName.value(ActionID::kDisplaySize));
-        tempAction->setMenu(displaySizeSubActions(parent));
-        predicateAction[ActionID::kDisplaySize] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySize));
-#endif
     }
 
     tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeOptions));
@@ -176,23 +168,6 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
             }
         }
     }
-
-    // icon size
-    {
-        auto iconSizeIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
-            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kIconSize;
-        });
-
-        if (iconSizeIter != actions.end() && turnOn) {
-            (*iconSizeIter)->setVisible(false);
-            (*iconSizeIter)->setEnabled(false);
-#ifdef EnableDisplaySizeMenu
-            if (auto ac = predicateAction.value(displaySizeToActionID(CfgPresenter->displaySize())))
-                ac->setChecked(true);
-            parent->insertAction((*iconSizeIter), predicateAction[ActionID::kDisplaySize]);
-#endif
-        }
-    }
 }
 
 void ExtendCanvasScenePrivate::updateNormalMenu(QMenu *parent)
@@ -239,31 +214,6 @@ QMenu *ExtendCanvasScenePrivate::organizeBySubActions(QMenu *menu)
 
     return subMenu;
 }
-
-#ifdef EnableDisplaySizeMenu
-
-QMenu *ExtendCanvasScenePrivate::displaySizeSubActions(QMenu *menu)
-{
-    QMenu *subMenu = new QMenu(menu);
-
-    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplaySizeSmaller));
-    predicateAction[ActionID::kDisplaySizeSmaller] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySizeSmaller));
-    tempAction->setCheckable(true);
-
-    tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplaySizeNormal));
-    predicateAction[ActionID::kDisplaySizeNormal] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySizeNormal));
-    tempAction->setCheckable(true);
-
-    tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplaySizeLarger));
-    predicateAction[ActionID::kDisplaySizeLarger] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySizeLarger));
-    tempAction->setCheckable(true);
-
-    return subMenu;
-}
-#endif
 
 QString ExtendCanvasScenePrivate::classifierToActionID(Classifier cf)
 {
@@ -314,27 +264,6 @@ bool ExtendCanvasScenePrivate::triggerSortby(const QString &actionId)
     return false;
 }
 
-#ifdef EnableDisplaySizeMenu
-QString ExtendCanvasScenePrivate::displaySizeToActionID(DisplaySize size)
-{
-    QString ret;
-    switch (size) {
-    case kSmaller:
-        ret = ActionID::kDisplaySizeSmaller;
-        break;
-    case kNormal:
-        ret = ActionID::kDisplaySizeNormal;
-        break;
-    case kLarger:
-        ret = ActionID::kDisplaySizeLarger;
-        break;
-    default:
-        break;
-    }
-    return ret;
-}
-#endif
-
 ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
     : AbstractMenuScene(parent), d(new ExtendCanvasScenePrivate(this))
 {
@@ -350,14 +279,6 @@ ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
     d->predicateName[ActionID::kOrganizeByTimeCreated] = tr("Time created");
 
     d->predicateName[ActionID::kCreateACollection] = tr("Create a collection");
-
-#ifdef EnableDisplaySizeMenu
-    // display size and sub actions
-    d->predicateName[ActionID::kDisplaySize] = tr("Display Size");
-    d->predicateName[ActionID::kDisplaySizeSmaller] = tr("Smaller");
-    d->predicateName[ActionID::kDisplaySizeNormal] = tr("Normal");
-    d->predicateName[ActionID::kDisplaySizeLarger] = tr("Larger");
-#endif
 }
 
 QString ExtendCanvasScene::name() const
@@ -437,17 +358,7 @@ bool ExtendCanvasScene::triggered(QAction *action)
             emit CfgPresenter->switchToNormalized(Classifier::kTimeCreated);
         } else if (actionId == ActionID::kCreateACollection) {
             emit CfgPresenter->newCollection(d->selectFiles);
-        }
-#ifdef EnableDisplaySizeMenu
-        else if (actionId == ActionID::kDisplaySizeSmaller) {
-            emit CfgPresenter->changeDisplaySize(DisplaySize::kSmaller);
-        } else if (actionId == ActionID::kDisplaySizeNormal) {
-            emit CfgPresenter->changeDisplaySize(DisplaySize::kNormal);
-        } else if (actionId == ActionID::kDisplaySizeLarger) {
-            emit CfgPresenter->changeDisplaySize(DisplaySize::kLarger);
-        }
-#endif
-        else if (actionId == ActionID::kOrganizeOptions) {
+        } else if (actionId == ActionID::kOrganizeOptions) {
             emit CfgPresenter->showOptionWindow();
         }
         return true;

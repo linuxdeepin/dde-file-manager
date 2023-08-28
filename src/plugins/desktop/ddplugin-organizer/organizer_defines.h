@@ -43,12 +43,6 @@ enum ItemCategory {
 };
 Q_DECLARE_FLAGS(ItemCategories, ItemCategory)
 
-enum DisplaySize {
-    kSmaller = 0,
-    kNormal,
-    kLarger
-};
-
 enum CollectionFrameSize {
     kSmall = 0,
     kLarge

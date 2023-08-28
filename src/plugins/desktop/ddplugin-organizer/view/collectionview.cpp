@@ -1145,13 +1145,6 @@ void CollectionViewPrivate::onItemsChanged(const QString &key)
     q->update();
 }
 
-void CollectionViewPrivate::onIconSizeChanged(const int level)
-{
-    qDebug() << "icon size changed to " << level;
-    delegate->setIconLevel(level);
-    q->update();
-}
-
 CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent)
     : QAbstractItemView(parent), d(new CollectionViewPrivate(uuid, dataProvider, this))
 {
@@ -1198,9 +1191,6 @@ void CollectionView::setCanvasManagerShell(CanvasManagerShell *sh)
     d->canvasManagerShell = sh;
     if (!d->canvasManagerShell)
         return;
-
-    // must be DirectConnection,for update icon size immediately
-    connect(d->canvasManagerShell, &CanvasManagerShell::iconSizeChanged, d.data(), &CollectionViewPrivate::onIconSizeChanged, Qt::DirectConnection);
 
     const int level = d->canvasManagerShell->iconLevel();
     d->delegate->setIconLevel(level);

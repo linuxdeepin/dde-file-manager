@@ -36,7 +36,6 @@ public slots:
     void enableChanged(bool e);
     void switchToCustom();
     void switchToNormalized(int cf);
-    void displaySizeChanged(int size);
     void showOptionWindow();
 protected:
     QWidget *findView(QWidget *root) const;
