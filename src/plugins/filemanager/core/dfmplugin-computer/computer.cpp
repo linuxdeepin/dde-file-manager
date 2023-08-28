@@ -18,6 +18,9 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
@@ -26,6 +29,13 @@ Q_DECLARE_METATYPE(QString *)
 
 using DirAccessPrehandlerType = std::function<void(quint64 winId, const QUrl &url, std::function<void()> after)>;
 Q_DECLARE_METATYPE(DirAccessPrehandlerType)
+
+inline constexpr char kComputerDConfigName[] { "org.deepin.dde.file-manager.computer" };
+inline constexpr char kComputerDConfHideMyDirs[] { "hideMyDirectories" };
+inline constexpr char kComputerDConfHide3rdEntries[] { "hide3rdEntries" };
+
+inline constexpr char kComputerSettingHideMyDirs[] { "01_advance.05_other.04_hide_my_directories" };
+inline constexpr char kComputerSettingHide3rdEntries[] { "01_advance.05_other.05_hide_3rd_entryies" };
 
 DFMBASE_USE_NAMESPACE
 
@@ -65,6 +75,7 @@ bool Computer::start()
     if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kFile), filePrehandler).toBool())
         qWarning() << "file's prehandler has been registered";
 
+    addComputerSettingItem();
     return true;
 }
 
@@ -134,6 +145,46 @@ void Computer::regComputerToSearch()
     QVariantMap property;
     property["Property_Key_RedirectedPath"] = "/";
     dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", ComputerUtils::scheme(), property);
+}
+
+void Computer::addComputerSettingItem()
+{
+    QString err;
+    auto ret = DConfigManager::instance()->addConfig(kComputerDConfigName, &err);
+    if (!ret)
+        qWarning() << "cannot regist dconfig of computer plugin:" << err;
+
+    SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideMyDirs,
+                                                        tr("Hide My Directories on the Computer page"),
+                                                        false);
+    SettingBackend::instance()->addSettingAccessor(
+            kComputerSettingHideMyDirs,
+            []() {
+                return DConfigManager::instance()->value(kComputerDConfigName,
+                                                         kComputerDConfHideMyDirs,
+                                                         false);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(kComputerDConfigName,
+                                                     kComputerDConfHideMyDirs,
+                                                     val);
+            });
+
+    SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHide3rdEntries,
+                                                        tr("Hide 3rd party entries on the Computer page"),
+                                                        false);
+    SettingBackend::instance()->addSettingAccessor(
+            kComputerSettingHide3rdEntries,
+            []() {
+                return DConfigManager::instance()->value(kComputerDConfigName,
+                                                         kComputerDConfHide3rdEntries,
+                                                         false);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(kComputerDConfigName,
+                                                     kComputerDConfHide3rdEntries,
+                                                     val);
+            });
 }
 
 void Computer::bindEvents()

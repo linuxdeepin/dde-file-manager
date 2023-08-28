@@ -47,6 +47,7 @@ private:
     void addComputerToSidebar();
     void regComputerCrumbToTitleBar();
     void regComputerToSearch();
+    void addComputerSettingItem();
     void bindEvents();
     void followEvents();
     void bindWindows();
