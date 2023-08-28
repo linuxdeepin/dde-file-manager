@@ -174,20 +174,6 @@ void FrameManagerPrivate::switchToNormalized(int cf)
     }
 }
 
-void FrameManagerPrivate::displaySizeChanged(int size)
-{
-    auto displaySize = static_cast<DisplaySize>(size);
-    if (displaySize == CfgPresenter->displaySize())
-        return;
-
-    qDebug() << "change display size" << size << (canvas != nullptr);
-    if (canvas) {
-        CfgPresenter->setDisplaySize(displaySize);
-        canvas->setIconLevel(OrganizerUtils::covertIconLevel(size, false));
-        q->layout();
-    }
-}
-
 void FrameManagerPrivate::showOptionWindow()
 {
     if (options) {
@@ -204,7 +190,6 @@ void FrameManagerPrivate::showOptionWindow()
 
     options->moveToCenter(QCursor::pos());
     options->show();
-
 }
 
 QWidget *FrameManagerPrivate::findView(QWidget *root) const
@@ -258,7 +243,6 @@ bool FrameManager::initialize()
     connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom, Qt::QueuedConnection);
-    connect(CfgPresenter, &ConfigPresenter::changeDisplaySize, d, &FrameManagerPrivate::displaySizeChanged, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::showOptionWindow, d, &FrameManagerPrivate::showOptionWindow, Qt::QueuedConnection);
 
     return true;
@@ -311,19 +295,6 @@ void FrameManager::turnOn(bool build)
 
     d->model = new CollectionModel(this);
     d->model->setModelShell(d->canvas->fileInfoModel());
-
-    // adjust canvas icon level
-    {
-        int viewIconLevel = d->canvas->iconLevel();
-        DisplaySize size  = static_cast<DisplaySize>(OrganizerUtils::covertIconLevel(viewIconLevel, true));
-        CfgPresenter->setDisplaySize(size);
-
-        int newIconLevel = OrganizerUtils::covertIconLevel(size, false);
-        if (viewIconLevel != newIconLevel) {
-            qInfo() << "adjust canvas icon level from" << viewIconLevel << "to" << newIconLevel;
-            d->canvas->setIconLevel(newIconLevel);
-        }
-    }
 
     if (build) {
         onBuild();

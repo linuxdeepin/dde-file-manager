@@ -29,68 +29,50 @@ SizeSlider::~SizeSlider()
     dpfSignalDispatcher->unsubscribe("ddplugin_canvas", "signal_CanvasManager_IconSizeChanged", this, &SizeSlider::syncIconLevel);
 }
 
-void SizeSlider::switchMode(SizeSlider::Mode mode)
+void SizeSlider::init()
 {
-    if (!slider) {
-        QVBoxLayout *box = new QVBoxLayout(this);
-        box->setContentsMargins(10, 10, 10, 10);
-        setLayout(box);
+    if (slider)
+        return;
 
-        label = new QLabel(this);
-        label->setFixedHeight(30);
-        box->addWidget(label);
+    QVBoxLayout *box = new QVBoxLayout(this);
+    box->setContentsMargins(10, 10, 10, 10);
+    setLayout(box);
 
-        slider = new DSlider(Qt::Horizontal, this);
-        box->addWidget(slider);
+    label = new QLabel(this);
+    label->setFixedHeight(30);
+    box->addWidget(label);
 
-        QIcon empty = QIcon::fromTheme("empty");
-        // keep the sequence calling icon related functions.
-        slider->setIconSize(QSize(32, 32));
-        // create left button
-        slider->setLeftIcon(empty);
-        // left icon should be 16pix
-        // find left button.
-        {
-            auto leftBtn = findChildren<DIconButton *>();
-            if (leftBtn.size() != 1) {
-                qCritical() << "can not find left button" << leftBtn.size();
-            } else {
-                auto btn = leftBtn.first();
-                btn->setIconSize(QSize(16, 16));
-            }
+    slider = new DSlider(Qt::Horizontal, this);
+    box->addWidget(slider);
+
+    QIcon empty = QIcon::fromTheme("empty");
+    // keep the sequence calling icon related functions.
+    slider->setIconSize(QSize(32, 32));
+    // create left button
+    slider->setLeftIcon(empty);
+    // left icon should be 16pix
+    // find left button.
+    {
+        auto leftBtn = findChildren<DIconButton *>();
+        if (leftBtn.size() != 1) {
+            qCritical() << "can not find left button" << leftBtn.size();
+        } else {
+            auto btn = leftBtn.first();
+            btn->setIconSize(QSize(16, 16));
         }
-
-        // create right button
-        slider->setRightIcon(empty);
-        slider->setPageStep(1);
-        slider->slider()->setSingleStep(1);
-        slider->slider()->setTickInterval(1);
-        slider->setEnabledAcrossStyle(true);
-
-        connect(slider, &DSlider::valueChanged, this, &SizeSlider::setIconLevel);
-        connect(slider, &DSlider::iconClicked, this, &SizeSlider::iconClicked);
     }
 
-    curMode = mode;
-    if (mode == View)
-        resetToView();
-    else
-        resetToIcon();
-}
+    // create right button
+    slider->setRightIcon(empty);
+    slider->setPageStep(1);
+    slider->slider()->setSingleStep(1);
+    slider->slider()->setTickInterval(1);
+    slider->setEnabledAcrossStyle(true);
 
-void SizeSlider::resetToView()
-{
-    // setRange may send valueChanged.
-    slider->blockSignals(true);
-    slider->slider()->setRange(DisplaySize::kSmaller, DisplaySize::kLarger);
-    slider->blockSignals(false);
+    connect(slider, &DSlider::valueChanged, this, &SizeSlider::setIconLevel);
+    connect(slider, &DSlider::iconClicked, this, &SizeSlider::iconClicked);
 
-    slider->setBelowTicks(ticks(slider->maximum() - slider->minimum() + 1));
-
-    label->setText(tr("Display size"));
-    auto cur = CfgPresenter->displaySize();
-
-    setValue(cur);
+    resetToIcon();
 }
 
 void SizeSlider::resetToIcon()
@@ -123,7 +105,7 @@ void SizeSlider::setValue(int v)
         return;
 
     if (v < slider->minimum() || v > slider->maximum()) {
-        qWarning() << "invalid level " << v << "mode" << curMode;
+        qWarning() << "invalid level " << v;
         return;
     }
 
@@ -163,17 +145,10 @@ QStringList SizeSlider::ticks(int count)
 
 void SizeSlider::setIconLevel(int lv)
 {
-    if (curMode == View)
-        emit CfgPresenter->changeDisplaySize(static_cast<DisplaySize>(lv));
-    else
-        dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasManager_SetIconLevel", lv);
+    dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasManager_SetIconLevel", lv);
 }
 
 void SizeSlider::syncIconLevel(int lv)
 {
-    // covert icon size to display size .
-    if (curMode == View)
-       lv = OrganizerUtils::covertIconLevel(lv, true);
-
     setValue(lv);
 }

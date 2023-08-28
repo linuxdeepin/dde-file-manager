@@ -94,9 +94,6 @@ private:
     bool dropMimeData(QDropEvent *event) const;
     bool dropFiles(QDropEvent *event) const;
 
-public slots:
-    void onIconSizeChanged(const int level);
-
 private slots:
     void onItemsChanged(const QString &key);
 
