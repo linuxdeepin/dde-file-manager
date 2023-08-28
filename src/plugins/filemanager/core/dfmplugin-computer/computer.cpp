@@ -34,8 +34,12 @@ inline constexpr char kComputerDConfigName[] { "org.deepin.dde.file-manager.comp
 inline constexpr char kComputerDConfHideMyDirs[] { "hideMyDirectories" };
 inline constexpr char kComputerDConfHide3rdEntries[] { "hide3rdEntries" };
 
-inline constexpr char kComputerSettingHideMyDirs[] { "01_advance.05_other.04_hide_my_directories" };
-inline constexpr char kComputerSettingHide3rdEntries[] { "01_advance.05_other.05_hide_3rd_entryies" };
+inline constexpr char kComputerSettingGroup[] { "02_workspace.02_computer" };
+inline constexpr char kComputerSettingHideBuiltin[] { "02_workspace.02_computer.00_hide_builtin_partition" };
+inline constexpr char kComputerSettingHideLoop[] { "02_workspace.02_computer.02_hide_loop_partitions" };
+inline constexpr char kComputerSettingShowFsTag[] { "02_workspace.02_computer.03_show_filesystemtag_on_diskicon" };
+inline constexpr char kComputerSettingHideMyDirs[] { "02_workspace.02_computer.04_hide_my_directories" };
+inline constexpr char kComputerSettingHide3rdEntries[] { "02_workspace.02_computer.05_hide_3rd_entryies" };
 
 DFMBASE_USE_NAMESPACE
 
@@ -153,6 +157,16 @@ void Computer::addComputerSettingItem()
     auto ret = DConfigManager::instance()->addConfig(kComputerDConfigName, &err);
     if (!ret)
         qWarning() << "cannot regist dconfig of computer plugin:" << err;
+
+    SettingJsonGenerator::instance()->addGroup(kComputerSettingGroup, tr("Computer display items"));
+    SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideBuiltin,
+                                                        "Hide built-in disks on the Computer page",
+                                                        false);
+    SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideLoop,
+                                                        "Hide loop partitions on the Computer page");
+    SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingShowFsTag,
+                                                        "Show file system on disk icon",
+                                                        false);
 
     SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideMyDirs,
                                                         tr("Hide My Directories on the Computer page"),

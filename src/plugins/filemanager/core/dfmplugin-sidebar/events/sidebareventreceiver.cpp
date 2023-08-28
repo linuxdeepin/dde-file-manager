@@ -76,7 +76,7 @@ QString SideBarEventReceiver::handleAddSidebarVisiableControl(const QString &key
 {
     static int order = 30;
     DFMBASE_USE_NAMESPACE;
-    SettingJsonGenerator::instance()->addConfig("01_advance.04_items_in_sidebar.30_3rd_plugin_splitter",
+    SettingJsonGenerator::instance()->addConfig("01_sidebar.00_items_in_sidebar.30_3rd_plugin_splitter",
                                                 { { "key", "30_3rd_plugin_splitter" },
                                                   { "name", tr("3rd plugins") },
                                                   { "type", "sidebar-splitter" } });
@@ -84,7 +84,7 @@ QString SideBarEventReceiver::handleAddSidebarVisiableControl(const QString &key
     QString key;
     do {
         order++;
-        key = QString("01_advance.04_items_in_sidebar.%1_%2").arg(order).arg(keyName);
+        key = QString("01_sidebar.00_items_in_sidebar.%1_%2").arg(order).arg(keyName);
     } while (!SettingJsonGenerator::instance()->addCheckBoxConfig(key, displayName));
     qInfo() << "custom sidebar setting item added:" << key << order << keyName << displayName;
     return key;
