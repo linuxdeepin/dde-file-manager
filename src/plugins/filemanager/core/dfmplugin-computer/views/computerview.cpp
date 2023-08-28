@@ -121,7 +121,7 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();
-    handlePartitionsVisiable();
+    handleComputerItemVisible();
     DListView::showEvent(event);
 }
 
@@ -188,7 +188,7 @@ void ComputerView::initConnect()
         this->update(computerModel()->index(row, 0));
     });
 
-    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::updatePartitionsVisiable, this, &ComputerView::handlePartitionsVisiable);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::updatePartitionsVisiable, this, &ComputerView::handleComputerItemVisible);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
 
     connectShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
@@ -260,22 +260,69 @@ void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
         edit(idx);
 }
 
-void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
+void ComputerView::handleDisksVisible()
 {
+    /* NOTE(xust): disks hidden by dconfig is treat as disks hidden by HintIgnore.
+     * devices should be hidden both in sidebar and computer.
+     * hidden in sidebar is handled in ComputerItemWatcher when dconfig changed.
+     * this part only handle items hidden in computer.
+     *
+     * HintIgnore > DConfig > SettingPanel
+     *
+     * hidden by HintIgnore is handled in BlockEntryFileEntity::exist() function.
+     * if it's true, treat the device as not exists.
+     */
+
     auto model = this->computerModel();
     if (!model) {
         qCritical() << "model is released somewhere! " << __FUNCTION__;
         return;
     }
 
-    qInfo() << "ignored/hidden disks:" << hiddenDisks;
+    const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
+
+    qInfo() << "ignored/hidden disks:" << hiddenPartitions;
     for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
+        QString currSuffix = model->data(model->index(i, 0), ComputerModel::kSuffixRole).toString();
+        if (currSuffix != SuffixInfo::kBlock)
+            continue;
         auto item = model->items.at(i);
-        this->setRowHidden(i, hiddenDisks.contains(item.url));
+        this->setRowHidden(i, hiddenPartitions.contains(item.url));
+    }
+    handleDiskSplitterVisible();
+}
+
+void ComputerView::handleUserDirVisible()
+{
+    bool hideUserDir = ComputerItemWatcher::hideUserDir();
+    const int kDiskSplitterIndex = 7;
+    for (int i = 0; i < kDiskSplitterIndex && i < model()->rowCount(); ++i)
+        setRowHidden(i, hideUserDir);
+}
+
+void ComputerView::handle3rdEntriesVisible()
+{
+    bool hide3rdEntries = ComputerItemWatcher::hide3rdEntries();
+    const static QStringList kNativaSuffixes { SuffixInfo::kUserDir,
+                                               SuffixInfo::kBlock,
+                                               SuffixInfo::kProtocol,
+                                               "vault",
+                                               "ventry" };
+
+    for (int i = 0; i < model()->rowCount(); ++i) {
+        QString currSuffix = model()->data(model()->index(i, 0), ComputerModel::kSuffixRole).toString();
+        if (kNativaSuffixes.contains(currSuffix))
+            continue;
+
+        int shape = model()->data(model()->index(i, 0), ComputerModel::kItemShapeTypeRole).toInt();
+        if (shape == ComputerItemData::kSplitterItem)
+            continue;
+
+        setRowHidden(i, hide3rdEntries);
     }
 }
 
-void ComputerView::handleDiskSplitterVisiable()
+void ComputerView::handleDiskSplitterVisible()
 {
     auto model = this->computerModel();
     if (!model) {
@@ -326,22 +373,11 @@ void ComputerView::onSelectionChanged(const QItemSelection &selected, const QIte
     dp->statusBar->showSingleSelectionMessage();
 }
 
-void ComputerView::handlePartitionsVisiable()
+void ComputerView::handleComputerItemVisible()
 {
-    /* NOTE(xust): disks hidden by dconfig is treat as disks hidden by HintIgnore.
-     * devices should be hidden both in sidebar and computer.
-     * hidden in sidebar is handled in ComputerItemWatcher when dconfig changed.
-     * this part only handle items hidden in computer.
-     *
-     * HintIgnore > DConfig > SettingPanel
-     *
-     * hidden by HintIgnore is handled in BlockEntryFileEntity::exist() function.
-     * if it's true, treat the device as not exists.
-     */
-
-    const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
-    hideSpecificDisks(hiddenPartitions);
-    handleDiskSplitterVisiable();
+    handleUserDirVisible();
+    handle3rdEntriesVisible();
+    handleDisksVisible();
 
     dp->statusBar->itemCounted(dp->visibleItemCount());
 }

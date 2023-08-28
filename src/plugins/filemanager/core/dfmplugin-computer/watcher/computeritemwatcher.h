@@ -53,6 +53,8 @@ public:
     static QString diskGroup();
     int getGroupId(const QString &groupName);
 
+    static bool hideUserDir();
+    static bool hide3rdEntries();
     static QList<QUrl> disksHiddenByDConf();
     static QList<QUrl> disksHiddenBySettingPanel();
     static QList<QUrl> hiddenPartitions();
