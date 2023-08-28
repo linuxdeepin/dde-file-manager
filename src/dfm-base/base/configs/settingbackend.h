@@ -42,6 +42,10 @@ protected:
 
     void initPresetSettingConfig();
 
+    void initBasicSettingConfig();
+    void initWorkspaceSettingConfig();
+    void initAdvanceSettingConfig();
+
 private:
     explicit SettingBackend(QObject *parent = nullptr);
     ~SettingBackend();

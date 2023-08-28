@@ -34,6 +34,9 @@
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
+#define SETTING_GROUP_TOP "01_sidebar"
+#define SETTING_GROUP_LV2 "01_sidebar.00_items_in_sidebar"
+
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
 QMap<QString, SortFunc> SideBarHelper::kSortFuncs {};
 bool SideBarHelper::contextMenuEnabled { true };
@@ -190,30 +193,29 @@ void SideBarHelper::bindSettings()
 {
     static const std::map<QString, QString> kvs {
         // group 00_quick_access_splitter
-        { "01_advance.04_items_in_sidebar.01_recent", "recent" },
-        { "01_advance.04_items_in_sidebar.02_home", "home" },
-        { "01_advance.04_items_in_sidebar.03_desktop", "desktop" },
-        { "01_advance.04_items_in_sidebar.04_videos", "videos" },
-        { "01_advance.04_items_in_sidebar.05_music", "music" },
-        { "01_advance.04_items_in_sidebar.06_pictures", "pictures" },
-        { "01_advance.04_items_in_sidebar.07_documents", "documents" },
-        { "01_advance.04_items_in_sidebar.08_downloads", "downloads" },
-        { "01_advance.04_items_in_sidebar.09_trash", "trash" },
+        { SETTING_GROUP_LV2 ".01_recent", "recent" },
+        { SETTING_GROUP_LV2 ".02_home", "home" },
+        { SETTING_GROUP_LV2 ".03_desktop", "desktop" },
+        { SETTING_GROUP_LV2 ".04_videos", "videos" },
+        { SETTING_GROUP_LV2 ".05_music", "music" },
+        { SETTING_GROUP_LV2 ".06_pictures", "pictures" },
+        { SETTING_GROUP_LV2 ".07_documents", "documents" },
+        { SETTING_GROUP_LV2 ".08_downloads", "downloads" },
+        { SETTING_GROUP_LV2 ".09_trash", "trash" },
 
         // group 10_partitions_splitter
-        { "01_advance.04_items_in_sidebar.11_computer", "computer" },
-        //        { "01_advance.04_items_in_sidebar.12_vault", "vault" },
-        { "01_advance.04_items_in_sidebar.13_builtin", "builtin_disks" },
-        { "01_advance.04_items_in_sidebar.14_loop", "loop_dev" },
-        { "01_advance.04_items_in_sidebar.15_other_disks", "other_disks" },
+        { SETTING_GROUP_LV2 ".11_computer", "computer" },
+        { SETTING_GROUP_LV2 ".13_builtin", "builtin_disks" },
+        { SETTING_GROUP_LV2 ".14_loop", "loop_dev" },
+        { SETTING_GROUP_LV2 ".15_other_disks", "other_disks" },
 
         // group 16_network_splitters
-        { "01_advance.04_items_in_sidebar.17_computers_in_lan", "computers_in_lan" },
-        { "01_advance.04_items_in_sidebar.18_my_shares", "my_shares" },
-        { "01_advance.04_items_in_sidebar.19_mounted_share_dirs", "mounted_share_dirs" },
+        { SETTING_GROUP_LV2 ".17_computers_in_lan", "computers_in_lan" },
+        { SETTING_GROUP_LV2 ".18_my_shares", "my_shares" },
+        { SETTING_GROUP_LV2 ".19_mounted_share_dirs", "mounted_share_dirs" },
 
         // group 20_tag_splitter
-        { "01_advance.04_items_in_sidebar.21_tags", "tags" }
+        { SETTING_GROUP_LV2 ".21_tags", "tags" }
     };
 
     std::for_each(kvs.begin(), kvs.end(), [](std::pair<QString, QString> pair) {
@@ -249,61 +251,62 @@ void SideBarHelper::bindSetting(const QString &itemVisiableSettingKey, const QSt
 void SideBarHelper::initSettingPane()
 {
     auto ins = SettingJsonGenerator::instance();
-    ins->addGroup("01_advance.04_items_in_sidebar", "Items on sidebar pane");
-    ins->addConfig("01_advance.04_items_in_sidebar.00_quick_access_splitter",
+    ins->addGroup(SETTING_GROUP_TOP, QObject::tr("Sidebar"));
+    ins->addGroup(SETTING_GROUP_LV2, "Items on sidebar pane");
+    ins->addConfig(SETTING_GROUP_LV2 ".00_quick_access_splitter",
                    { { "key", "00_quick_access_splitter" },
                      { "name", "Quick access" },
                      { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.01_recent",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".01_recent",
                            "Recent");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.02_home",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".02_home",
                            "Home");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.03_desktop",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".03_desktop",
                            "Desktop");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.04_videos",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".04_videos",
                            "Videos");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.05_music",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".05_music",
                            "Music");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.06_pictures",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".06_pictures",
                            "Pictures");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.07_documents",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".07_documents",
                            "Documents");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.08_downloads",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".08_downloads",
                            "Downloads");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.09_trash",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".09_trash",
                            "Trash");
 
-    ins->addConfig("01_advance.04_items_in_sidebar.10_partitions_splitter",
+    ins->addConfig(SETTING_GROUP_LV2 ".10_partitions_splitter",
                    { { "key", "10_partitions_splitter" },
                      { "name", "Partitions" },
                      { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.11_computer",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".11_computer",
                            "Computer");
-    //    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.12_vault",
+    //    ins->addCheckBoxConfig(SETTING_GROUP_LV2".12_vault",
     //                           "Vault");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.13_builtin",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".13_builtin",
                            "Built-in disks");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.14_loop",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".14_loop",
                            "Loop partitions");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.15_other_disks",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".15_other_disks",
                            "Mounted partitions and discs");
 
-    ins->addConfig("01_advance.04_items_in_sidebar.16_network_splitters",
+    ins->addConfig(SETTING_GROUP_LV2 ".16_network_splitters",
                    { { "key", "16_network_splitters" },
                      { "name", "Network" },
                      { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.17_computers_in_lan",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".17_computers_in_lan",
                            "Computers in LAN");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.18_my_shares",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".18_my_shares",
                            "My shares");
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.19_mounted_share_dirs",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".19_mounted_share_dirs",
                            "Mounted sharing folders");
 
-    ins->addConfig("01_advance.04_items_in_sidebar.20_tag_splitter",
+    ins->addConfig(SETTING_GROUP_LV2 ".20_tag_splitter",
                    { { "key", "20_tag_splitter" },
                      { "name", "Tag" },
                      { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig("01_advance.04_items_in_sidebar.21_tags",
+    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".21_tags",
                            "Added tags");
 }
 
