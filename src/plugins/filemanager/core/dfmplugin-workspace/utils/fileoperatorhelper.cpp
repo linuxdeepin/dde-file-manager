@@ -153,7 +153,11 @@ void FileOperatorHelper::copyFiles(const FileView *view)
             return;
     }
 
-    qInfo() << "Copy shortcut key to clipboard, selected urls: " << selectedUrls
+    if (selectedUrls.isEmpty())
+        return;
+
+    qInfo() << "Copy shortcut key to clipboard, selected urls: " << selectedUrls.first()
+            << ", selected count: " << selectedUrls.size()
             << ", current dir: " << view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
@@ -175,7 +179,11 @@ void FileOperatorHelper::cutFiles(const FileView *view)
     if (ok && !urls.isEmpty())
         selectedUrls = urls;
 
-    qInfo() << "Cut shortcut key to clipboard, selected urls: " << selectedUrls
+    if (selectedUrls.isEmpty())
+        return;
+
+    qInfo() << "Cut shortcut key to clipboard, selected urls: " << selectedUrls.first()
+            << ", selected count: " << selectedUrls.size()
             << ", current dir: " << view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
