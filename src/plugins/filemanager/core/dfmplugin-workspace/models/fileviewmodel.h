@@ -109,6 +109,7 @@ Q_SIGNALS:
     void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
     void requestSetFilterData(const QVariant &data);
     void requestSetFilterCallback(FileViewFilterCallback callback);
+    void requestShowHiddenChanged(bool value);
 
 public Q_SLOTS:
     void onFileThumbUpdated(const QUrl &url, const QString &thumb);
@@ -121,6 +122,7 @@ public Q_SLOTS:
     void onGenericAttributeChanged(DFMBASE_NAMESPACE::Application::GenericAttribute ga, const QVariant &value);
     void onDConfigChanged(const QString &config, const QString &key);
     void onSetCursorWait();
+    void onHiddenSettingChanged(bool value);
 
 private:
     void initFilterSortWork();

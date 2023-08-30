@@ -44,6 +44,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     itemRootData = new FileItemData(dirRootUrl);
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
+    connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileViewModel::onHiddenSettingChanged);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);
     connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
     waitTimer.setInterval(50);
@@ -749,6 +750,16 @@ void FileViewModel::onSetCursorWait()
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
+void FileViewModel::onHiddenSettingChanged(bool value)
+{
+    if (value) {
+        currentFilters |= QDir::Hidden;
+    } else {
+        currentFilters &= ~QDir::Hidden;
+    }
+    Q_EMIT requestShowHiddenChanged(value);
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -800,8 +811,8 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestClearThumbnail, filterSortWorker.data(), &FileSortWorker::handleClearThumbnail, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestShowHiddenChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
-    connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 
     filterSortThread->start();
