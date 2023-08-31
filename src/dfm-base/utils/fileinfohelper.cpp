@@ -93,19 +93,6 @@ void FileInfoHelper::cacheFileInfoByThread(const QSharedPointer<FileInfo> dfileI
     });
 }
 
-void FileInfoHelper::fileRefreshAsyncCallBack(bool success, void *userData)
-{
-    Q_UNUSED(success);
-    if (!userData)
-        return;
-    auto data = static_cast<FileRefreshCallBackData *>(userData);
-    if (!data->info)
-        return;
-
-    FileInfoHelper::instance().cacheFileInfoByThread(data->info);
-    delete data;
-}
-
 FileInfoHelper::~FileInfoHelper()
 {
     aboutToQuit();
@@ -140,8 +127,13 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
     if (!asyncInfo)
         return;
 
-    FileRefreshCallBackData *data = new FileRefreshCallBackData;
-    data->info = asyncInfo;
-    if (!asyncInfo->asyncQueryDfmFileInfo(0, &FileInfoHelper::fileRefreshAsyncCallBack, data))
-        delete data;
+    auto callback = [asyncInfo](bool success, void *data){
+        Q_UNUSED(data);
+        if (!success) {
+            qWarning() << "Failed to query file information asynchronously! url = " << asyncInfo->fileUrl();
+            return ;
+        }
+        FileInfoHelper::instance().cacheFileInfoByThread(asyncInfo);
+    };
+    asyncInfo->asyncQueryDfmFileInfo(0, callback);
 }
