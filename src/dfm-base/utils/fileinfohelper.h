@@ -24,11 +24,6 @@ class FileInfoHelper : public QObject
 {
     Q_OBJECT
 public:
-    struct FileRefreshCallBackData{
-        FileInfoPointer info{ nullptr };
-    };
-
-public:
     ~FileInfoHelper() override;
     static FileInfoHelper &instance();
     QSharedPointer<FileInfoHelperUeserData> fileCountAsync(QUrl &url);
@@ -36,7 +31,6 @@ public:
                                                               const QString &inod, const bool isGvfs);
     void fileRefreshAsync(const QSharedPointer<dfmbase::FileInfo> dfileInfo);
     void cacheFileInfoByThread(const QSharedPointer<FileInfo> dfileInfo);
-    static void fileRefreshAsyncCallBack(bool success, void *userData);
 
 private:
     explicit FileInfoHelper(QObject *parent = nullptr);
