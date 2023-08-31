@@ -222,6 +222,8 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
         setTargetPermissions(fromInfo, toInfo);
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->urlOf(UrlInfoType::kUrl));
+        if (workData->exBlockSyncEveryWrite)
+            sync();
         return true;
     }
     // resize target file
@@ -263,6 +265,10 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
 
     delete[] data;
     data = nullptr;
+
+    // 执行同步策略
+    if (workData->exBlockSyncEveryWrite && toFd > 0)
+        syncfs(toFd);
 
     if (toFd > 0)
         close(toFd);
