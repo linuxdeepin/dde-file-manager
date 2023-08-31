@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesortworker.h"
-#include "models/fileitemdata.h"
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
@@ -31,11 +30,6 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
 FileSortWorker::~FileSortWorker()
 {
     isCanceled = true;
-    if (rootdata) {
-        rootdata = nullptr;
-        delete rootdata;
-    }
-    qDeleteAll(childrenDataMap.values());
     childrenDataMap.clear();
     childrenUrlList.clear();
     visibleChildren.clear();
@@ -91,23 +85,23 @@ int FileSortWorker::childrenCount()
     return visibleChildren.count();
 }
 
-FileItemData *FileSortWorker::childData(const QUrl &url)
+FileItemDataPointer FileSortWorker::childData(const QUrl &url)
 {
     QReadLocker lk(&childrenDataLocker);
     return childrenDataMap.value(url);
 }
 
-void FileSortWorker::setRootData(FileItemData *data)
+void FileSortWorker::setRootData(const FileItemDataPointer data)
 {
     rootdata = data;
 }
 
-FileItemData *FileSortWorker::rootData() const
+FileItemDataPointer FileSortWorker::rootData() const
 {
     return rootdata;
 }
 
-FileItemData *FileSortWorker::childData(const int index)
+FileItemDataPointer FileSortWorker::childData(const int index)
 {
     QUrl url;
     {
@@ -162,11 +156,12 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
     if (currentKey != key)
         return;
 
+    childrenDataLastMap.clear();
     this->children = children;
     for (const auto &child : children) {
         childrenUrlList.append(child->fileUrl());
         QWriteLocker lk(&childrenDataLocker);
-        childrenDataMap.insert(child->fileUrl(), new FileItemData(child, rootdata));
+        childrenDataMap.insert(child->fileUrl(), FileItemDataPointer(new FileItemData(child, rootdata.data())));
     }
 
     if (isCanceled)
@@ -196,6 +191,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
     if (currentKey != key)
         return;
 
+    childrenDataLastMap.clear();
     if (this->childrenUrlList.isEmpty()) {
         handleIteratorLocalChildren(key, children, sortRole, sortOrder, isMixDirAndFile);
         if (isFinished) {
@@ -215,7 +211,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
         this->childrenUrlList.append(sortInfo->fileUrl());
         {
             QWriteLocker lk(&childrenDataLocker);
-            childrenDataMap.insert(sortInfo->fileUrl(), new FileItemData(sortInfo, rootdata));
+            childrenDataMap.insert(sortInfo->fileUrl(), FileItemDataPointer(new FileItemData(sortInfo, rootdata.data())));
         }
         if (checkFilters(sortInfo))
             newChildren.append(sortInfo->fileUrl());
@@ -278,6 +274,8 @@ void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPoint
     if (!child)
         return;
 
+    childrenDataLastMap.clear();
+
     addChild(child, info);
 }
 
@@ -288,6 +286,7 @@ void FileSortWorker::handleIteratorChildren(const QString &key, QList<SortInfoPo
     if (currentKey != key)
         return;
 
+    childrenDataLastMap.clear();
     int total = children.length();
 
     int showIndex = visibleChildren.length();
@@ -310,7 +309,8 @@ void FileSortWorker::handleIteratorChildren(const QString &key, QList<SortInfoPo
         childrenUrlList.append(sortInfo->fileUrl());
         {
             QWriteLocker lk(&childrenDataLocker);
-            childrenDataMap.insert(sortInfo->fileUrl(), new FileItemData(sortInfo->fileUrl(), infos.at(i), rootdata));
+            childrenDataMap.insert(sortInfo->fileUrl(),
+                                   FileItemDataPointer(new FileItemData(sortInfo->fileUrl(), infos.at(i), rootdata.data())));
         }
         if (!checkFilters(sortInfo))
             continue;
@@ -344,7 +344,7 @@ void FileSortWorker::setFilters(QDir::Filters filters)
 void FileSortWorker::setNameFilters(const QStringList &filters)
 {
     nameFilters = filters;
-    QMap<QUrl, FileItemData *>::iterator itr = childrenDataMap.begin();
+    QMap<QUrl, FileItemDataPointer>::iterator itr = childrenDataMap.begin();
     for (; itr != childrenDataMap.end(); ++itr) {
         checkNameFilters(itr.value());
     }
@@ -625,8 +625,9 @@ void FileSortWorker::handleRefresh()
     {
         QWriteLocker lk(&childrenDataLocker);
         childrenUrlList.clear();
-        qDeleteAll(childrenDataMap.values());
+        childrenDataLastMap = childrenDataMap;
         childrenDataMap.clear();
+
     }
 
     if (!empty)
@@ -667,7 +668,7 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
     handleUpdateFile(url);
 }
 
-void FileSortWorker::checkNameFilters(FileItemData *itemData)
+void FileSortWorker::checkNameFilters(const FileItemDataPointer itemData)
 {
     if (!itemData || itemData->data(Global::ItemRoles::kItemFileIsDirRole).toBool() || nameFilters.isEmpty())
         return;
@@ -936,7 +937,8 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const FileInfoPoi
     childrenUrlList.append(sortInfo->fileUrl());
     {
         QWriteLocker lk(&childrenDataLocker);
-        childrenDataMap.insert(sortInfo->fileUrl(), new FileItemData(sortInfo->fileUrl(), info, rootdata));
+        childrenDataMap.insert(sortInfo->fileUrl(),
+                               FileItemDataPointer(new FileItemData(sortInfo->fileUrl(), info, rootdata.data())));
     }
     if (!checkFilters(sortInfo))
         return;
@@ -972,13 +974,13 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     childrenUrlList.append(sortInfo->fileUrl());
     {
         auto info = InfoFactory::create<FileInfo>(sortInfo->fileUrl());
-        FileItemData *item{nullptr};
+        FileItemDataPointer item{nullptr};
         if (info) {
             info->refresh();
-            item = new FileItemData(sortInfo->fileUrl(), info, rootdata);
+            item.reset(new FileItemData(sortInfo->fileUrl(), info, rootdata.data()));
             item->setSortFileInfo(sortInfo);
         } else {
-            item = new FileItemData(sortInfo, rootdata);
+            item.reset(new FileItemData(sortInfo, rootdata.data()));
         }
 
         QWriteLocker lk(&childrenDataLocker);
