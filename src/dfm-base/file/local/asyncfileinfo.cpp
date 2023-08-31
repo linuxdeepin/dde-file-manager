@@ -524,13 +524,20 @@ void AsyncFileInfo::removeNotifyUrl(const QUrl &url, const QString &infoPtr)
     d->notifyUrls.remove(url, infoPtr);
 }
 
-void AsyncFileInfo::cacheAsyncAttributes()
+bool AsyncFileInfo::cacheAsyncAttributes()
 {
     assert(qApp->thread() != QThread::currentThread());
+    auto dfmFileInfo = d->dfmFileInfo;
+    if (d->tokenKey != quintptr(dfmFileInfo.data()))
+        return false;
+
+    if (d->cacheing)
+        return false;
     if (!d->cacheing)
         d->cacheing = true;
     d->cacheAllAttributes();
     d->cacheing = false;
+    return true;
 }
 
 bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)
@@ -545,7 +552,7 @@ bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierA
     if (!d->dfmFileInfo) {
         d->cacheing = false;
         return false;
-    }
+    } 
 
     d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
     d->cacheing = false;
@@ -575,6 +582,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
     if (dfileInfo) {
         notInit = true;
         dfmFileInfo = dfileInfo;
+        tokenKey = quintptr(dfmFileInfo.data());
         return;
     }
 
@@ -584,6 +592,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
         qWarning("Failed, dfm-io use factory create fileinfo");
         abort();
     }
+    tokenKey = quintptr(dfmFileInfo.data());
 }
 
 QMimeType AsyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
