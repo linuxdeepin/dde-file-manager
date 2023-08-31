@@ -44,11 +44,11 @@ void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfil
         return;
 
     auto asyncInfo = dfileInfo.dynamicCast<AsyncFileInfo>();
-    if (!asyncInfo) {
+    if (asyncInfo.isNull())
         return;
-    }
 
-    asyncInfo->cacheAsyncAttributes();
+    if (!asyncInfo->cacheAsyncAttributes())
+        return;
 
     emit fileRefreshFinished(dfileInfo->fileUrl(), QString::number(quintptr(dfileInfo.data()), 16), false);
 

@@ -182,7 +182,7 @@ public:
     QMultiMap<QUrl, QString> notifyUrls() const;
     void setNotifyUrl(const QUrl &url, const QString &infoPtr);
     void removeNotifyUrl(const QUrl &url, const QString &infoPtr);
-    void cacheAsyncAttributes();
+    bool cacheAsyncAttributes();
     bool asyncQueryDfmFileInfo(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr);
 };
 }

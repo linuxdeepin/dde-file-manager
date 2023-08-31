@@ -56,7 +56,7 @@ TEST_F(UT_LocalFileDirIterator, testLocalFileIterator)
     stub.set_lamda(&FileUtils::isLocalDevice, []{ __DBG_STUB_INVOKE__ return false;});
     typedef FileInfoPointer (*TransfromInfo)(const QString &, FileInfoPointer);
     stub.set_lamda(static_cast<TransfromInfo>(&dfmbase::InfoFactory::transfromInfo), []{ __DBG_STUB_INVOKE__ return nullptr;});
-    stub.set_lamda(&AsyncFileInfo::cacheAsyncAttributes, []{ __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&AsyncFileInfo::cacheAsyncAttributes, []{ __DBG_STUB_INVOKE__  return true;});
     EXPECT_TRUE(iterator->fileInfo().isNull());
 
     EXPECT_EQ(fileUrl, iterator->fileUrl());
