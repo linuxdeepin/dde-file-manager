@@ -1305,12 +1305,10 @@ void FileOperateBaseWorker::determineCountProcessType()
 
                         if (targetIsRemovable) {
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
-                            countWriteType = workData->exBlockSyncEveryWrite ?
-                                        CountWriteSizeType::kCustomizeType :
-                                        CountWriteSizeType::kWriteBlockType;
+                            countWriteType = workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType : CountWriteSizeType::kWriteBlockType;
+                            targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
+
                             workData->isBlockDevice = true;
-                            targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ?
-                                        0 : getSectorsWritten();
                         }
 
                         qDebug("Block device path: \"%s\", Sys dev path: \"%s\", Is removable: %d, Log-Sec: %d",
@@ -1333,15 +1331,7 @@ void FileOperateBaseWorker::syncFilesToDevice()
         return;
 
     qInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
-    for (const auto &url : completeTargetFiles) {
-        std::string stdStr = url.path().toUtf8().toStdString();
-        int tofd = open(stdStr.data(), O_RDONLY);
-        if (-1 != tofd) {
-            syncfs(tofd);
-            close(tofd);
-        }
-    }
-
+    sync();
     qInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
 
     qDebug() << __FUNCTION__ << "syncFilesToDevice begin";
