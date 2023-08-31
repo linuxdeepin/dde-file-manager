@@ -129,7 +129,7 @@ void ComputerPropertyDialog::iniThread()
 void ComputerPropertyDialog::computerProcess(QMap<ComputerInfoItem, QString> computerInfo)
 {
     if (computerInfo.contains(ComputerInfoItem::kName))
-        computerName->setRightValue(computerInfo[ComputerInfoItem::kName]);
+        computerName->setRightValue(computerInfo[ComputerInfoItem::kName], Qt::TextElideMode::ElideRight);
     if (computerInfo.contains(ComputerInfoItem::kVersion))
         computerVersionNum->setRightValue(computerInfo[ComputerInfoItem::kVersion]);
     if (computerInfo.contains(ComputerInfoItem::kEdition)) {
