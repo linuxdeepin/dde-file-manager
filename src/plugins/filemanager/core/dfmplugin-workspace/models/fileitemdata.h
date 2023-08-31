@@ -41,4 +41,6 @@ private:
 
 }
 
+typedef QSharedPointer<DPWORKSPACE_NAMESPACE::FileItemData> FileItemDataPointer;
+
 #endif   // FILEITEMDATA_H

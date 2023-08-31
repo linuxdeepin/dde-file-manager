@@ -76,14 +76,14 @@ QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent)
     if (!filterSortWorker)
         return QModelIndex();
 
-    FileItemData *itemData = nullptr;
+    FileItemDataPointer itemData = nullptr;
     if (!isParentValid) {
         itemData = filterSortWorker->rootData();
     } else {
         itemData = filterSortWorker->childData(row);
     }
 
-    return createIndex(row, column, itemData);
+    return createIndex(row, column, itemData.data());
 }
 
 QUrl FileViewModel::rootUrl() const
@@ -98,7 +98,7 @@ QModelIndex FileViewModel::rootIndex() const
 
     auto data = filterSortWorker->rootData();
     if (data) {
-        return createIndex(0, 0, data);
+        return createIndex(0, 0, data.data());
     } else {
         return QModelIndex();
     }
@@ -158,7 +158,7 @@ FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
         return nullptr;
 
     const QModelIndex &parentIndex = index.parent();
-    FileItemData *item = nullptr;
+    FileItemDataPointer item{ nullptr };
     if (!parentIndex.isValid()) {
         item = filterSortWorker->rootData();
     } else {
@@ -272,7 +272,7 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
     if (filterSortWorker.isNull())
         return QVariant();
 
-    FileItemData *itemData = nullptr;
+    FileItemDataPointer itemData = nullptr;
     int columnRole = role;
     if (!parentIndex.isValid()) {
         itemData = filterSortWorker->rootData();
@@ -783,7 +783,7 @@ void FileViewModel::initFilterSortWork()
 
     filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, nameFilters, currentFilters));
     beginInsertRows(QModelIndex(), 0, 0);
-    filterSortWorker->setRootData(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl)));
+    filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl))));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
     filterSortWorker->moveToThread(filterSortThread.data());
