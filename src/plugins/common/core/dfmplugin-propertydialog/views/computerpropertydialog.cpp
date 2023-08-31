@@ -330,7 +330,7 @@ QString ComputerInfoThread::cpuInfo() const
     QString result { "" };
 
     if (DSysInfo::cpuModelName().contains("Hz")) {
-        result =  DSysInfo::cpuModelName();
+        result = DSysInfo::cpuModelName();
     } else {
         qInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE);
         QDBusInterface interface(SYSTEM_INFO_SERVICE,
