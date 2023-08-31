@@ -48,6 +48,7 @@ public:
     QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
     QReadWriteLock notifyLock;
     QMultiMap<QUrl, QString> notifyUrls;
+    quint64 tokenKey{0};
     AsyncFileInfo *const q;
 
 public:
