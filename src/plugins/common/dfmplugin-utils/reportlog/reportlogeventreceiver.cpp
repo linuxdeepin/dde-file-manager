@@ -35,9 +35,12 @@ void ReportLogEventReceiver::bindEvents()
 
     // connect all the signal events of plugins which need report log.
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
-
-    dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
-    dpfSignalDispatcher->subscribe("ddplugin_organizer", "signal_CollectionView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
+    auto canvasEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "signal_CanvasView_ReportMenuData") };
+    if (canvasEventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+        dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
+    auto organizerEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_organizer", "signal_CollectionView_ReportMenuData") };
+    if (organizerEventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+        dpfSignalDispatcher->subscribe("ddplugin_organizer", "signal_CollectionView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
 
@@ -96,7 +99,7 @@ void ReportLogEventReceiver::handleMenuData(const QString &name, const QList<QUr
     ReportLogManager::instance()->reportMenuData(name, urlList);
 }
 
-void ReportLogEventReceiver::handleBlockMountData(const QString& id, bool result)
+void ReportLogEventReceiver::handleBlockMountData(const QString &id, bool result)
 {
     ReportLogManager::instance()->reportBlockMountData(id, result);
 }
