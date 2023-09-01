@@ -95,13 +95,12 @@ bool SystemPathUtil::isSystemPath(QString path) const
 
 bool SystemPathUtil::checkContainsSystemPath(const QList<QUrl> &urlList)
 {
-    for (const auto &url : urlList) {
-        auto info = InfoFactory::create<FileInfo>(url);
-        if (info && isSystemPath(info->pathOf(PathInfoType::kAbsoluteFilePath)))
-            return true;
-    }
+    if (urlList.isEmpty())
+        return false;
+    if (urlList.first().scheme() == Global::Scheme::kFile)
+        return checkContainsSystemPathByFileUrl(urlList);
 
-    return false;
+    return checkContainsSystemPathByFileInfo(urlList);
 }
 
 SystemPathUtil::SystemPathUtil(QObject *parent)
@@ -164,6 +163,24 @@ void SystemPathUtil::cleanPath(QString *path) const
     if (path->size() > 1 && path->at(0) == '/' && path->endsWith("/")) {
         path->chop(1);
     }
+}
+
+bool SystemPathUtil::checkContainsSystemPathByFileInfo(const QList<QUrl> &urlList)
+{
+    for (const auto &url : urlList) {
+        auto info = InfoFactory::create<FileInfo>(url);
+        if (info && isSystemPath(info->pathOf(PathInfoType::kAbsoluteFilePath)))
+            return true;
+    }
+
+    return false;
+}
+
+bool SystemPathUtil::checkContainsSystemPathByFileUrl(const QList<QUrl> &urlList)
+{
+    return std::any_of(urlList.begin(), urlList.end(),[this](const QUrl &url){
+        return isSystemPath(url.path());
+    });
 }
 
 void SystemPathUtil::loadSystemPaths()
