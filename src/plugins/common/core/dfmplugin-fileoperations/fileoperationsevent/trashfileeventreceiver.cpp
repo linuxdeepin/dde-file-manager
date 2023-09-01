@@ -57,12 +57,12 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     if (sources.isEmpty())
         return nullptr;
 
-    if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
-        DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", windowId, sources, flags)) {
         return nullptr;
     }
 
-    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", windowId, sources, flags)) {
+    if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
+        DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
         return nullptr;
     }
 
