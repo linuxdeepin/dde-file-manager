@@ -353,16 +353,14 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
     if (sources.isEmpty())
         return nullptr;
 
-    if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
-        DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
+    // hook events
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_DeleteFile", windowId, sources, flags)) {
         return nullptr;
     }
 
-    if (!dfmbase::FileUtils::isLocalFile(sources.first())) {
-        // hook events
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_DeleteFile", windowId, sources, flags)) {
-            return nullptr;
-        }
+    if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
+        DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
+        return nullptr;
     }
 
     // Delete local file with shift+delete, show a confirm dialog.
