@@ -53,9 +53,11 @@ void VirtualExtensionImplPlugin::bindSceneOnAdded(const QString &newScene)
 void VirtualExtensionImplPlugin::followEvents()
 {
     // `dfmplugin-emblem` is a lazy loedded plugin, cannot follow it whene current init
-    bool ret = dpfHookSequence->follow("dfmplugin_emblem", "hook_ExtendEmblems_Fetch",
-                                       &ExtensionEmblemManager::instance(), &ExtensionEmblemManager::onFetchCustomEmblems);
-    if (!ret) {
+    auto eventID { DPF_NAMESPACE::Event::instance()->eventType("dfmplugin_emblem", "hook_ExtendEmblems_Fetch") };
+    if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid) {
+        dpfHookSequence->follow("dfmplugin_emblem", "hook_ExtendEmblems_Fetch",
+                                &ExtensionEmblemManager::instance(), &ExtensionEmblemManager::onFetchCustomEmblems);
+    } else {
         connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this,
                 [](const QString &iid, const QString &name) {
                     Q_UNUSED(iid)

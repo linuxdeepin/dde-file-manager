@@ -155,7 +155,9 @@ void Tag::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_LayoutText", TagManager::instance(), &TagManager::addIconTagsHandle);
 
     // canvas
-    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasItemDelegate_LayoutText", TagManager::instance(), &TagManager::addIconTagsHandle);
+    auto eventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "hook_CanvasItemDelegate_LayoutText") };
+    if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+        dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasItemDelegate_LayoutText", TagManager::instance(), &TagManager::addIconTagsHandle);
 
     // paste
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
