@@ -36,6 +36,8 @@ private:
     void initialize();
     void mkPath(const QString &path);
     void cleanPath(QString *path) const;
+    bool checkContainsSystemPathByFileInfo(const QList<QUrl> &urlList);
+    bool checkContainsSystemPathByFileUrl(const QList<QUrl> &urlList);
 
 public:
     void loadSystemPaths();
