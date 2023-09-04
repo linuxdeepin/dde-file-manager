@@ -135,10 +135,10 @@ bool BlockEntryFileEntity::exists() const
     }
 
     // 是否是设备根节点，设备根节点无须记录
-    if (hasPartitionTable) {   // 替换 FileUtils::deviceShouldBeIgnore
-        qInfo() << msg << "device with a partition table." << id;
-        return false;
-    }
+    //    if (hasPartitionTable) {   // 替换 FileUtils::deviceShouldBeIgnore
+    //        qInfo() << msg << "device with a partition table." << id;
+    //        return false;
+    //    }
 
     if (hasPartition && hasExtendedPartition) {
         qInfo() << msg << "device with extended partition." << id;
