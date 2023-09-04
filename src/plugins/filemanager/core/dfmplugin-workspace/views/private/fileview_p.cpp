@@ -66,6 +66,12 @@ void FileViewPrivate::initIconModeView()
         headerView = nullptr;
     }
 
+    if (emptyInteractionArea) {
+        q->removeHeaderWidget(0);
+        delete emptyInteractionArea;
+        emptyInteractionArea = nullptr;
+    }
+
     if (statusBar) {
         statusBar->setScalingVisible(true);
         q->setIconSize(QSize(iconSizeList()[currentIconSizeLevel],
@@ -90,6 +96,13 @@ void FileViewPrivate::initListModeView()
     }
 
     q->addHeaderWidget(headerView);
+    if (!emptyInteractionArea) {
+        emptyInteractionArea = new QWidget(q);
+        emptyInteractionArea->setFixedHeight(10);
+        emptyInteractionArea->installEventFilter(q);
+    }
+
+    q->addHeaderWidget(emptyInteractionArea);
 
     QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
     QObject::connect(headerView, &HeaderView::sectionResized, q, &FileView::onHeaderSectionResized);
