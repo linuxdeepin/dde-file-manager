@@ -1416,6 +1416,19 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
             return true;
         }
     } break;
+    case QEvent::MouseButtonPress: {
+        if (obj != d->emptyInteractionArea)
+            break;
+        auto e = dynamic_cast<QMouseEvent *>(event);
+        if (!e)
+            break;
+
+        if (e->button() == Qt::RightButton) {
+            QContextMenuEvent menuEvent(QContextMenuEvent::Mouse, { -1, -1 });
+            contextMenuEvent(&menuEvent);
+            return true;
+        }
+    } break;
     case QEvent::Move:
         if (obj != horizontalScrollBar()->parentWidget())
             return DListView::eventFilter(obj, event);
@@ -1564,8 +1577,8 @@ void FileView::initializeScrollBarWatcher()
     connect(verticalScrollBar(), &QScrollBar::sliderPressed, this, [this] { d->scrollBarSliderPressed = true; });
     connect(verticalScrollBar(), &QScrollBar::sliderReleased, this, [this] { d->scrollBarSliderPressed = false; });
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, [this] {
-       if (d->scrollBarSliderPressed)
-           d->scrollBarValueChangedTimer->start();
+        if (d->scrollBarSliderPressed)
+            d->scrollBarValueChangedTimer->start();
     });
 }
 
