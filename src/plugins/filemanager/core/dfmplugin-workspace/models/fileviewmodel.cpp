@@ -44,6 +44,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     itemRootData = new FileItemData(dirRootUrl);
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
+    connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileViewModel::onHiddenSettingChanged);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);
     connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
     waitTimer.setInterval(50);
@@ -75,14 +76,14 @@ QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent)
     if (!filterSortWorker)
         return QModelIndex();
 
-    FileItemData *itemData = nullptr;
+    FileItemDataPointer itemData = nullptr;
     if (!isParentValid) {
         itemData = filterSortWorker->rootData();
     } else {
         itemData = filterSortWorker->childData(row);
     }
 
-    return createIndex(row, column, itemData);
+    return createIndex(row, column, itemData.data());
 }
 
 QUrl FileViewModel::rootUrl() const
@@ -97,7 +98,7 @@ QModelIndex FileViewModel::rootIndex() const
 
     auto data = filterSortWorker->rootData();
     if (data) {
-        return createIndex(0, 0, data);
+        return createIndex(0, 0, data.data());
     } else {
         return QModelIndex();
     }
@@ -157,7 +158,7 @@ FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
         return nullptr;
 
     const QModelIndex &parentIndex = index.parent();
-    FileItemData *item = nullptr;
+    FileItemDataPointer item{ nullptr };
     if (!parentIndex.isValid()) {
         item = filterSortWorker->rootData();
     } else {
@@ -271,7 +272,7 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
     if (filterSortWorker.isNull())
         return QVariant();
 
-    FileItemData *itemData = nullptr;
+    FileItemDataPointer itemData = nullptr;
     int columnRole = role;
     if (!parentIndex.isValid()) {
         itemData = filterSortWorker->rootData();
@@ -749,6 +750,16 @@ void FileViewModel::onSetCursorWait()
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
+void FileViewModel::onHiddenSettingChanged(bool value)
+{
+    if (value) {
+        currentFilters |= QDir::Hidden;
+    } else {
+        currentFilters &= ~QDir::Hidden;
+    }
+    Q_EMIT requestShowHiddenChanged(value);
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -772,7 +783,7 @@ void FileViewModel::initFilterSortWork()
 
     filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, nameFilters, currentFilters));
     beginInsertRows(QModelIndex(), 0, 0);
-    filterSortWorker->setRootData(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl)));
+    filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl))));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
     filterSortWorker->moveToThread(filterSortThread.data());
@@ -800,8 +811,8 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestClearThumbnail, filterSortWorker.data(), &FileSortWorker::handleClearThumbnail, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestShowHiddenChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
-    connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 
     filterSortThread->start();

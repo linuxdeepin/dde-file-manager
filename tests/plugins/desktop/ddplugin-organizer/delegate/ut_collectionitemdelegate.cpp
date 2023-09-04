@@ -42,12 +42,9 @@ TEST(CollectionItemDelegate, paint)
     stub.set_lamda(VADDR(CollectionItemDelegate,initStyleOption), [&opt](){
         opt = true;
     });
-
     stub.set_lamda(&CollectionItemDelegate::isTransparent, [](){
         return false;
     });
-
-
     bool icon = false;
     stub.set_lamda(&CollectionItemDelegate::paintIcon, [&icon](){
         icon = true;
@@ -104,8 +101,8 @@ TEST(CollectionItemDelegate, createTextlayout)
     auto lay = obj.d->createTextlayout(QModelIndex(0, 0, nullptr, nullptr), &pa);
     EXPECT_EQ(lay->text(), QString("test"));
     EXPECT_EQ(lay->attribute<int>(ElideTextLayout::kLineHeight), 11);
-    EXPECT_EQ(lay->attribute<int>(ElideTextLayout::kAlignment), Qt::AlignCenter);
-    EXPECT_EQ(lay->attribute<uint>(ElideTextLayout::kWrapMode), (uint)QTextOption::WrapAnywhere);
+    EXPECT_EQ(lay->attribute<int>(ElideTextLayout::kAlignment), Qt::AlignHCenter);
+    EXPECT_EQ(lay->attribute<uint>(ElideTextLayout::kWrapMode), (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
     EXPECT_EQ(lay->attribute<QFont>(ElideTextLayout::kFont), pa.font());
     EXPECT_EQ(lay->attribute<Qt::LayoutDirection>(ElideTextLayout::kTextDirection), pa.layoutDirection());
     delete lay;

@@ -28,7 +28,9 @@ DPFILEOPERATIONS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QSet<QString> FileOperationsUtils::fileNameUsing = {};
-static constexpr char kFileBigSize[] { "dfm.operate.bigfilesize" };
+inline constexpr char kFileOperations[] { "org.deepin.dde.file-manager.operations" };
+inline constexpr char kFileBigSize[] { "file.operation.bigfilesize" };
+inline constexpr char kBlockEverySync[] { "file.operation.blockeverysync" };
 QMutex FileOperationsUtils::mutex;
 
 /*!
@@ -154,8 +156,14 @@ bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
 qint64 FileOperationsUtils::bigFileSize()
 {
     // 获取当前配置
-    qint64 alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileBigSize).toLongLong();
-    if (alltotrash <= 0)
+    qint64 bigSize = DConfigManager::instance()->value(kFileOperations, kFileBigSize).toLongLong();
+    if (bigSize <= 0)
         return 80 * 1024 * 1024;
-    return alltotrash;
+    return bigSize;
+}
+
+bool FileOperationsUtils::blockSync()
+{
+    bool sync = DConfigManager::instance()->value(kFileOperations, kBlockEverySync).toBool();
+    return sync;
 }

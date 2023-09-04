@@ -149,3 +149,22 @@ TEST(TypeMethodGroup, subWidgets)
     EXPECT_EQ(list.first(), &wid);
     type.categories.clear();
 }
+
+TEST(TypeMethodGroup, onChenged)
+{
+    bool connect = false;
+    stub_ext::StubExt stub;
+    stub.set_lamda(&ConfigPresenter::switchToNormalized,[&connect](ConfigPresenter *self, int){
+        __DBG_STUB_INVOKE__
+        connect = true;
+    });
+    TypeMethodGroup type;
+    CheckBoxWidget *check = new CheckBoxWidget("temp_check");
+    check->setProperty("CheckboxID",1);
+    QObject::connect(check,&CheckBoxWidget::chenged,&type,&TypeMethodGroup::onChenged);
+    check->chenged(true);
+
+    EXPECT_FALSE(connect);
+
+    delete check;
+}

@@ -256,6 +256,7 @@ TEST(ScreenProxyQt, displayMode)
 {
     stub_ext::StubExt stub;
     ScreenProxyQt sp;
+    sp.onPrimaryChanged();
     QList<ScreenPointer> scs;
     stub.set_lamda(VADDR(ScreenProxyQt, screens), [&scs](){
         return scs;
@@ -280,7 +281,6 @@ TEST(ScreenProxyQt, displayMode)
     scs.append(ScreenPointer(new ProxyNullScreen2()));
     EXPECT_EQ(sp.displayMode(), kExtend);
 }
-
 
 TEST(ScreenProxyQt, checkUsedScreens)
 {
@@ -421,3 +421,19 @@ TEST(ScreenProxyQt, bug_214195_fakescreen)
         sp.events.clear();
     }
 }
+TEST(ScreenProxyQt, Changed)
+{
+     ScreenProxyQt sp;
+     ScreenProxyQt sp1;
+     QRect rect = QRect(1,1,2,2);
+     sp.onScreenGeometryChanged(rect);
+     bool isFind = sp.events.find(AbstractScreenProxy::kGeometry)==sp.events.end()?false:true;
+     EXPECT_TRUE(isFind);
+     sp.onScreenAvailableGeometryChanged(rect);
+     isFind = sp.events.find(AbstractScreenProxy::kAvailableGeometry)==sp.events.end()?false:true;
+     EXPECT_TRUE(isFind);
+     sp1.onDockChanged();
+     isFind = sp1.events.find(AbstractScreenProxy::kAvailableGeometry)==sp.events.end()?false:true;
+     EXPECT_TRUE(isFind);
+}
+

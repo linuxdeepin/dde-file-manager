@@ -26,16 +26,22 @@ void AppendCompressEventReceiver::initEventConnect()
                             this, &AppendCompressEventReceiver::handleIsDrop);
 
     // desktop
-    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DragMove",
-                            this, &AppendCompressEventReceiver::handleSetMouseStyleOnDesktop);
-    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DropData",
-                            this, &AppendCompressEventReceiver::handleDragDropCompressOnDesktop);
+    auto canvasEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "hook_CanvasView_DragMove") };
+    if (canvasEventID != DPF_NAMESPACE::EventTypeScope::kInValid) {
+        dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DragMove",
+                                this, &AppendCompressEventReceiver::handleSetMouseStyleOnDesktop);
+        dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DropData",
+                                this, &AppendCompressEventReceiver::handleDragDropCompressOnDesktop);
+    }
 
     // organizer
-    dpfHookSequence->follow("ddplugin_organizer", "hook_CollectionView_DragMove",
-                            this, &AppendCompressEventReceiver::handleSetMouseStyleOnOrganizer);
-    dpfHookSequence->follow("ddplugin_organizer", "hook_CollectionView_DropData",
-                            this, &AppendCompressEventReceiver::handleDragDropCompressOnDesktop);
+    auto organizerEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_organizer", "hook_CollectionView_DragMove") };
+    if (organizerEventID != DPF_NAMESPACE::EventTypeScope::kInValid) {
+        dpfHookSequence->follow("ddplugin_organizer", "hook_CollectionView_DragMove",
+                                this, &AppendCompressEventReceiver::handleSetMouseStyleOnOrganizer);
+        dpfHookSequence->follow("ddplugin_organizer", "hook_CollectionView_DropData",
+                                this, &AppendCompressEventReceiver::handleDragDropCompressOnDesktop);
+    }
 }
 
 bool AppendCompressEventReceiver::handleSetMouseStyle(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *type)

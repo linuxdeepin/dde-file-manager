@@ -6,6 +6,7 @@
 #define FILESORTWORKER_H
 
 #include "dfmplugin_workspace_global.h"
+#include "models/fileitemdata.h"
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/interfaces/abstractsortfilter.h>
@@ -21,7 +22,6 @@
 
 using namespace dfmbase;
 namespace dfmplugin_workspace {
-class FileItemData;
 class FileSortWorker : public QObject
 {
     Q_OBJECT
@@ -44,10 +44,10 @@ public:
                              const bool isMixDirAndFile);
     QUrl mapToIndex(int index);
     int childrenCount();
-    FileItemData *childData(const int index);
-    FileItemData *childData(const QUrl &url);
-    void setRootData(FileItemData *data);
-    FileItemData *rootData() const;
+    FileItemDataPointer childData(const int index);
+    FileItemDataPointer childData(const QUrl &url);
+    void setRootData(const FileItemDataPointer data);
+    FileItemDataPointer rootData() const;
     void cancel();
     int getChildShowIndex(const QUrl &url);
     QList<QUrl> getChildrenUrls();
@@ -115,7 +115,7 @@ public slots:
     void handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
 
 private:
-    void checkNameFilters(FileItemData *itemData);
+    void checkNameFilters(const FileItemDataPointer itemData);
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
     void filterAllFiles(const bool byInfo = false);
     void filterAllFilesOrdered();
@@ -125,6 +125,7 @@ private:
     void addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info);
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortFilter::SortScenarios sort);
+    bool sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo);
 
 private:
     bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
@@ -141,13 +142,14 @@ private:
     QList<SortInfoPointer> children {};
     QList<QUrl> childrenUrlList {};
     QReadWriteLock childrenDataLocker;
-    QMap<QUrl, FileItemData *> childrenDataMap {};
+    QMap<QUrl, FileItemDataPointer> childrenDataMap {};
+    QMap<QUrl, FileItemDataPointer> childrenDataLastMap {};
     QList<QUrl> visibleChildren {};
     QReadWriteLock locker;
     AbstractSortFilterPointer sortAndFilter { nullptr };
     FileViewFilterCallback filterCallback { nullptr };
     QVariant filterData;
-    FileItemData *rootdata { nullptr };
+    FileItemDataPointer rootdata { nullptr };
     QString currentKey;
     Global::ItemRoles orgSortRole { Global::ItemRoles::kItemDisplayRole };
     Qt::SortOrder sortOrder { Qt::AscendingOrder };

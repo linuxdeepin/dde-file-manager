@@ -19,4 +19,6 @@ TEST(MethodGroupHelper, create)
 
     auto cast = qobject_cast<TypeMethodGroup *>(obj);
     EXPECT_NE(cast, nullptr);
+    delete obj;
+
 }

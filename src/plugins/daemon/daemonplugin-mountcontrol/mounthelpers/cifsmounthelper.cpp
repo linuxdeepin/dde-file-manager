@@ -438,7 +438,7 @@ void SmbcAPI::init()
 {
     if (initialized)
         return;
-    libSmbc = new QLibrary("libsmbclient.so");
+    libSmbc = new QLibrary("libsmbclient.so.0");
     if (!libSmbc->load()) {
         qCritical() << "cannot load smbc";
         delete libSmbc;
@@ -488,8 +488,8 @@ QMap<QString, QString> SmbcAPI::versionMapper()
 
 QString CifsMountHelperPrivate::probeVersion(const QString &host, ushort port)
 {
-    Q_ASSERT(smbcAPI.isInitialized());
-    Q_ASSERT(smbcAPI.getSmbcNegprot());
+    if (!smbcAPI.isInitialized() || !smbcAPI.getSmbcNegprot())
+        return "default";
 
     QString verName = smbcAPI.getSmbcNegprot()(host.toStdString().c_str(),
                                                port,
@@ -501,8 +501,8 @@ QString CifsMountHelperPrivate::probeVersion(const QString &host, ushort port)
 
 QString CifsMountHelperPrivate::parseIP(const QString &host, uint16_t port)
 {
-    Q_ASSERT(smbcAPI.isInitialized());
-    Q_ASSERT(smbcAPI.getSmbcResolveHost());
+    if (!smbcAPI.isInitialized() || !smbcAPI.getSmbcResolveHost())
+        return parseIP_old(host);
 
     char ip[INET6_ADDRSTRLEN];
     int ret = smbcAPI.getSmbcResolveHost()(host.toStdString().c_str(),
@@ -513,4 +513,37 @@ QString CifsMountHelperPrivate::parseIP(const QString &host, uint16_t port)
     if (ret != 0)
         qWarning() << "cannot resolve ip address for" << host;
     return QString(ip);
+}
+
+QString CifsMountHelperPrivate::parseIP_old(const QString &host)
+{
+    if (host.isEmpty())
+        return "";
+
+    addrinfo *result;
+    addrinfo hints {};
+    hints.ai_family = AF_UNSPEC;   // either IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM;
+    char addressString[INET6_ADDRSTRLEN];
+    QString ipAddr;
+    if (0 != getaddrinfo(host.toUtf8().toStdString().c_str(), nullptr, &hints, &result))
+        return "";
+
+    for (addrinfo *addr = result; addr != nullptr; addr = addr->ai_next) {
+        switch (addr->ai_family) {
+        case AF_INET:
+            ipAddr = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in *>(addr->ai_addr)->sin_addr), addressString, INET_ADDRSTRLEN);
+            break;
+        case AF_INET6:
+            ipAddr = inet_ntop(addr->ai_family, &(reinterpret_cast<sockaddr_in6 *>(addr->ai_addr)->sin6_addr), addressString, INET6_ADDRSTRLEN);
+            break;
+        default:
+            break;
+        }
+        if (!ipAddr.isEmpty())
+            break;
+    }
+
+    freeaddrinfo(result);
+    return ipAddr;
 }

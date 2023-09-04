@@ -271,3 +271,63 @@ TEST_F(TestFileOperator, showFilesProperty)
     ASSERT_EQ(in.size(), 1);
     EXPECT_EQ(in.first(), one);
 }
+
+TEST_F(TestFileOperator, pasteFiles)
+{
+    QList<QUrl> lists;
+    QUrl url1("url1");
+    QUrl url2("url2");
+    lists.push_back(url1);
+    lists.push_back(url2);
+    stub.set_lamda(& ClipBoard::clipboardFileUrlList,[&lists](){return lists;});
+    ClipBoard::ClipboardAction action =  ClipBoard::kRemoteCopiedAction;
+    stub.set_lamda(& ClipBoard::clipboardAction,[&action](){return action;});
+    bool callRootUrl = false;
+    stub.set_lamda(&CollectionModel::rootUrl,[&callRootUrl,url1](){callRootUrl = true; return url1;});
+    CollectionView v("uuid",nullptr);
+
+    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+    EXPECT_TRUE(callRootUrl);
+
+    action = ClipBoard::kRemoteAction;
+    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+
+    action = ClipBoard::kCopyAction;
+    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+
+    action = ClipBoard::kCutAction;
+    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+}
+TEST_F(TestFileOperator, callBackFunction)
+{
+     FileOperatorPrivate::CallBackFunc funckey = FileOperatorPrivate::CallBackFunc::kCallBackTouchFile;
+     QPair<FileOperatorPrivate::CallBackFunc, QVariant> pair(funckey,QVariant::fromValue(QString("temp_str")));
+     QMap<AbstractJobHandler::CallbackKey, QVariant> *map = new QMap<AbstractJobHandler::CallbackKey, QVariant>();
+     map->insert(AbstractJobHandler::CallbackKey::kCustom,QVariant::fromValue(pair));
+
+     QList<QUrl> lists;
+     QUrl url1("url1");
+     QUrl url2("url2");
+     lists.push_back(url1);
+     lists.push_back(url2);
+     map->insert(AbstractJobHandler::CallbackKey::kTargets,QVariant::fromValue(lists));
+     AbstractJobHandler::CallbackArgus args(map);
+
+     EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
+
+     funckey = FileOperatorPrivate::CallBackFunc::kCallBackPasteFiles;
+     pair.first = funckey;
+     map->insert(AbstractJobHandler::CallbackKey::kCustom,QVariant::fromValue(pair));
+
+     JobHandlePointer jobptr(new AbstractJobHandler());
+     map->insert(AbstractJobHandler::CallbackKey::kJobHandle,QVariant::fromValue(jobptr));
+     EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
+
+     funckey = FileOperatorPrivate::CallBackFunc::kCallBackRenameFiles;
+     pair.first = funckey;
+     map->insert(AbstractJobHandler::CallbackKey::kCustom,QVariant::fromValue(pair));
+     map->insert(AbstractJobHandler::CallbackKey::kSourceUrls,QVariant::fromValue(lists));
+     map->insert(AbstractJobHandler::CallbackKey::kTargets,QVariant::fromValue(lists));
+     EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
+
+}

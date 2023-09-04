@@ -65,6 +65,9 @@ bool TrashFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sour
         return false;
     if (sources.first().scheme() != scheme())
         return false;
+    // trash sub dir file do not run
+    if (!FileUtils::isTrashRootFile(sources.first()) && !FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first())))
+        return true;
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCleanTrash,
                                  windowId,
@@ -81,6 +84,9 @@ bool TrashFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sourc
         return false;
     if (sources.first().scheme() != scheme())
         return false;
+    // trash sub dir file do not run
+    if (!FileUtils::isTrashRootFile(sources.first()) && !FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first())))
+        return true;
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCleanTrash,
                                  windowId,

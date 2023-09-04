@@ -1,0 +1,28 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "file.operation.bigfilesize": {
+            "value":"83886080",
+            "serial":0,
+            "flags":[],
+            "name":"Big File",
+            "name[zh_CN]":"大文件大小",
+            "description[zh_CN]":"用于拷贝时判断文件是否是大文件的size，默认是80MB，value的单位是byte",
+            "description":"Size used to determine whether a file is a large file during copying，the default is 80MB,The unit of value is byte",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "file.operation.blockeverysync": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Safe synchronization mode",
+            "name[zh_CN]":"安全同步模式",
+            "description[zh_CN]":"安全同步模式是拷贝到外设块设备时，每次写入执行同步到设备。高性能模式是拷贝到外设块设备时，每个任务完成后在进行同步到设备。默认是高性能模式（即关闭安全同步模式）。",
+            "description":"Safe synchronization mode is when copying to a peripheral block device, synchronize to the device for each write. High-performance mode is to synchronize to the device after each task is completed when copying to a peripheral block device.Default is high performance mode (i.e. turn off safe synchronization mode).",
+            "permissions":"readwrite",
+            "visibility":"private"
+        }
+    }
+}

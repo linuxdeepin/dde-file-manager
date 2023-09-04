@@ -110,7 +110,11 @@ bool OpenDirMenuScene::triggered(QAction *action)
 
     // open in new window
     if (actionId == ActionID::kOpenInNewWindow) {
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+        QUrl cdUrl = d->focusFile;
+        FileInfoPointer infoPtr = InfoFactory::create<FileInfo>(cdUrl);
+        if (infoPtr && infoPtr->isAttributes(OptInfoType::kIsSymLink))
+            cdUrl = QUrl::fromLocalFile(infoPtr->pathOf(PathInfoType::kSymLinkTarget));
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl);
         return true;
     }
 

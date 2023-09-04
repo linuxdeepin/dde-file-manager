@@ -351,7 +351,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
 
         FileUtils::cacheCopyingFileUrl(url);
         initSignalCopyWorker();
-        if (fromInfo->size() > bigFileSize || !supportDfmioCopy) {
+        if (fromInfo->size() > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
             ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
         } else {
             ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
@@ -998,7 +998,7 @@ bool FileOperateBaseWorker::doCopyOtherFile(const FileInfoPointer fromInfo, cons
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     bool ok{ false };
-    if (fromInfo->size() > bigFileSize || !supportDfmioCopy) {
+    if (fromInfo->size() > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
         ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
     } else {
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
@@ -1304,9 +1304,11 @@ void FileOperateBaseWorker::determineCountProcessType()
                         }
 
                         if (targetIsRemovable) {
-                            countWriteType = CountWriteSizeType::kWriteBlockType;
+                            workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
+                            countWriteType = workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType : CountWriteSizeType::kWriteBlockType;
+                            targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
+
                             workData->isBlockDevice = true;
-                            targetDeviceStartSectorsWritten = getSectorsWritten();
                         }
 
                         qDebug("Block device path: \"%s\", Sys dev path: \"%s\", Is removable: %d, Log-Sec: %d",
@@ -1327,6 +1329,10 @@ void FileOperateBaseWorker::syncFilesToDevice()
 {
     if (CountWriteSizeType::kWriteBlockType != countWriteType)
         return;
+
+    qInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
+    sync();
+    qInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
 
     qDebug() << __FUNCTION__ << "syncFilesToDevice begin";
     qint64 writeSize = getWriteDataSize();

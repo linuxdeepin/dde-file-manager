@@ -185,10 +185,15 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // open
     if (actionId == ActionID::kOpen) {
         if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isAttributes(OptInfoType::kIsDir)) {
+            QUrl cdUrl = d->focusFile;
+            FileInfoPointer infoPtr = InfoFactory::create<FileInfo>(cdUrl);
+            if (infoPtr && infoPtr->isAttributes(OptInfoType::kIsSymLink))
+                cdUrl = QUrl::fromLocalFile(infoPtr->pathOf(PathInfoType::kSymLinkTarget));
+
             if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
-                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl);
             } else {
-                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, d->windowId, d->focusFile);
+                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, d->windowId, cdUrl);
             }
         } else {
             dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
