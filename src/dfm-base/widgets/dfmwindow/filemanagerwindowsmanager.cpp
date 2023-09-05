@@ -54,7 +54,7 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
             qInfo() << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
-            qApp->setActiveWindow(window);
+            window->activateWindow();
             return window;
         }
     }
