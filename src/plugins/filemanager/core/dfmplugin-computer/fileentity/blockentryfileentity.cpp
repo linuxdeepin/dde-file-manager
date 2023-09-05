@@ -122,11 +122,11 @@ bool BlockEntryFileEntity::exists() const
     }
 
     if (!hasFileSystem && !opticalDrive && !isEncrypted) {
-        bool removable { qvariant_cast<bool>(datas.value(DeviceProperty::kRemovable)) };
-        if (!removable) {   // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-            qInfo() << msg << "system disk without filesystem." << id;
+//        bool removable { qvariant_cast<bool>(datas.value(DeviceProperty::kRemovable)) };
+//        if (!removable) {   // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
+            qInfo() << msg << "no fs, no optical, no encrypted." << id;
             return false;
-        }
+//        }
     }
 
     if (cryptoBackingDevice.length() > 1) {
