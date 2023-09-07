@@ -77,11 +77,6 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
         const auto &results = SearchManager::instance()->matchedResults(taskId);
         QMutexLocker lk(&mutex);
         childrens.append(std::move(results));
-        lk.unlock();
-
-        std::call_once(onceFlag, [this]() {
-            SearchEventCaller::sendShowAdvanceSearchButton(winId, true);
-        });
     }
 }
 
