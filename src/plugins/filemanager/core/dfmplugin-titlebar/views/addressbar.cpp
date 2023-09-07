@@ -590,6 +590,11 @@ QUrl AddressBar::currentUrl()
     return {};
 }
 
+void AddressBar::showOnFocusLostOnce()
+{
+    d->isKeepVisible = true;
+}
+
 bool AddressBar::event(QEvent *e)
 {
     // blumia: When window lost focus and then get activated, we should hide
@@ -631,8 +636,11 @@ void AddressBar::focusOutEvent(QFocusEvent *e)
         return;
     }
     d->completerView->hide();
+    if (d->isKeepVisible) {
+        d->isKeepVisible = false;
+        return QLineEdit::focusOutEvent(e);
+    }
     emit lostFocus();
-    return QLineEdit::focusOutEvent(e);
 }
 
 void AddressBar::keyPressEvent(QKeyEvent *e)

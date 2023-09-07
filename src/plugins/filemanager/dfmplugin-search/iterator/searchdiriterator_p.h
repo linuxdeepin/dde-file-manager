@@ -49,7 +49,6 @@ private:
     quint64 winId;
     QString taskId;
     QMutex mutex;
-    std::once_flag onceFlag;
     std::once_flag searchOnceFlag;
 
     SearchDirIterator *q;

@@ -5,9 +5,12 @@
 #include "advancesearchbar.h"
 #include "advancesearchbar_p.h"
 #include "utils/searchhelper.h"
+#include "utils/custommanager.h"
+#include "events/searcheventcaller.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -159,7 +162,7 @@ void AdvanceSearchBarPrivate::initConnection()
 
 void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
 {
-    if (!filterInfoCache.contains(url)) {
+    if (!contains(url)) {
         q->resetForm();
         return;
     }
@@ -231,6 +234,55 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     q->onOptionChanged();
 }
 
+bool AdvanceSearchBarPrivate::contains(const QUrl &url)
+{
+    if (filterInfoCache.contains(url))
+        return true;
+
+    // If there is an entry in `filterInfoCache `that is the same as winId and targetUrl in `url`,
+    // then it is considered that `filterInfoCache` contains `url`.
+    const auto &targetUrl = SearchHelper::searchTargetUrl(url);
+    auto winId = SearchHelper::searchWinId(url);
+    const auto &keys = filterInfoCache.keys();
+    auto iter = std::find_if(keys.begin(), keys.end(), [&targetUrl, winId](const QUrl &urlKey) {
+        auto tmpWinId = SearchHelper::searchWinId(urlKey);
+        const auto &tmpTargetUrl = SearchHelper::searchTargetUrl(urlKey);
+        return (tmpWinId == winId && UniversalUtils::urlEquals(tmpTargetUrl, targetUrl));
+    });
+
+    if (iter == keys.end())
+        return false;
+
+    // update and return true
+    auto cache = filterInfoCache.take(*iter);
+    filterInfoCache.insert(url, cache);
+    return true;
+}
+
+void AdvanceSearchBarPrivate::saveOptions(QMap<int, QVariant> &options)
+{
+    if (!currentSearchUrl.isValid() || !SearchHelper::isSearchFile(currentSearchUrl)) {
+
+        auto winId = FMWindowsIns.findWindowId(this);
+        auto window = FMWindowsIns.findWindowById(winId);
+        Q_ASSERT(window);
+
+        const auto &url = window->currentUrl();
+        if (!url.isValid())
+            return;
+
+        currentSearchUrl = url;
+        if (!SearchHelper::isSearchFile(url)) {
+            const auto &searchUrl = SearchHelper::fromSearchFile(url, "", QString::number(winId));
+            options[AdvanceSearchBarPrivate::kCurrentUrl] = searchUrl;
+            filterInfoCache[searchUrl] = options;
+        }
+    }
+
+    options[AdvanceSearchBarPrivate::kCurrentUrl] = currentSearchUrl;
+    filterInfoCache[currentSearchUrl] = options;
+}
+
 bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVariant data)
 {
     if (!data.isValid())
@@ -248,10 +300,17 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
         return false;
 
     const auto &filter = parseFilterData(filterData);
-    if (filter.comboValid[kSearchRange] && !filter.includeSubDir) {
+    if (SearchHelper::isSearchFile(filter.currentUrl) && filter.comboValid[kSearchRange] && !filter.includeSubDir) {
         const QUrl &parentUrl = SearchHelper::searchTargetUrl(filter.currentUrl);
+        QString parentPath = CustomManager::instance()->redirectedPath(parentUrl);
+        if (parentPath.isEmpty())
+            parentPath = parentUrl.toLocalFile();
+
+        if (!parentPath.endsWith("/"))
+            parentPath += '/';
+
         QString filePath = info->pathOf(PathInfoType::kFilePath);
-        filePath.remove(parentUrl.toLocalFile().endsWith("/") ? parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
+        filePath = filePath.mid(filePath.indexOf(parentPath) + 1);
         if (filePath.contains('/'))
             return false;
     }
@@ -416,11 +475,9 @@ void AdvanceSearchBar::onOptionChanged()
     formData[AdvanceSearchBarPrivate::kAccessDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kAccessDateRange]->currentData();
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kCreateDateRange]->currentData();
 
+    d->saveOptions(formData);
+
     auto winId = FMWindowsIns.findWindowId(this);
-
-    formData[AdvanceSearchBarPrivate::kCurrentUrl] = d->currentSearchUrl;
-    d->filterInfoCache[d->currentSearchUrl] = formData;
-
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterData", winId, d->currentSearchUrl, QVariant::fromValue(formData));
 
     FilterCallback callback { AdvanceSearchBarPrivate::shouldVisiableByFilterRule };
@@ -439,6 +496,7 @@ void AdvanceSearchBar::hideEvent(QHideEvent *event)
     if (window && !window->isMinimized()) {
         resetForm();
         d->filterInfoCache.clear();
+        d->currentSearchUrl = QUrl();
     }
 
     QScrollArea::hideEvent(event);
