@@ -28,6 +28,7 @@ public:
     bool completerViewVisible();
     void setCurrentUrl(const QUrl &url);
     QUrl currentUrl();
+    void showOnFocusLostOnce();
 
 protected:
     bool event(QEvent *e) override;
