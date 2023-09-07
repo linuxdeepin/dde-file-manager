@@ -67,6 +67,8 @@ public:
     void initUI();
     void initConnection();
     void refreshOptions(const QUrl &url);
+    bool contains(const QUrl &url);
+    void saveOptions(QMap<int, QVariant> &options);
 
     static bool shouldVisiableByFilterRule(DFMBASE_NAMESPACE::FileInfo *info, QVariant data);
     static FileFilter parseFilterData(const QMap<int, QVariant> &data);

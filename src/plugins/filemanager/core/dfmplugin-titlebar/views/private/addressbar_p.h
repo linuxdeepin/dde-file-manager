@@ -67,6 +67,7 @@ class AddressBarPrivate : public QObject
     QRegExp ipRegExp;   // 0.0.0.0-255.255.255.255
     QRegExp protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
     bool inputIsIpAddress { false };
+    bool isKeepVisible { false };
 
 public:
     explicit AddressBarPrivate(AddressBar *qq);
