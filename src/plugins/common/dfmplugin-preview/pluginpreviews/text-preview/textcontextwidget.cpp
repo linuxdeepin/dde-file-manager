@@ -20,6 +20,7 @@ TextContextWidget::TextContextWidget(QWidget *parent)
     titleWidget->setFixedHeight(30);
     titleWidget->setFrameStyle(QFrame::NoFrame);
     titleWidget->setReadOnly(true);
+    titleWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QVBoxLayout *mainLay = new QVBoxLayout(this);
     mainLay->addWidget(titleWidget);
