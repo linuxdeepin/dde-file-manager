@@ -270,11 +270,17 @@ void ShortcutHelper::undoFiles()
 
 void ShortcutHelper::deleteFiles()
 {
-    if (view->selectedUrlList().isEmpty())
+    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    if (selectUrls.isEmpty())
         return;
+    // v5功能 判断当前目录是否有写权限，没有就提示权限错误
+    if (!view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
+        DialogManager::instance()->showNoPermissionDialog(selectUrls);
+        return;
+    }
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_DeleteFiles", windowId, view->selectedUrlList()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_DeleteFiles", windowId, selectUrls))
         return;
 
     // Todo(yanghao):only support trash on root url
@@ -286,16 +292,21 @@ void ShortcutHelper::deleteFiles()
 
 void ShortcutHelper::moveToTrash()
 {
+    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    if (selectUrls.isEmpty())
+        return;
+    // v5功能 判断当前目录是否有写权限，没有就提示权限错误
+    if (!view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
+        DialogManager::instance()->showNoPermissionDialog(selectUrls);
+        return;
+    }
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_MoveToTrash", windowId, view->selectedUrlList()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_MoveToTrash", windowId, selectUrls))
         return;
     // Todo(lanxs): QUrl to LocalFile
     // complete deletion eg: gvfs, vault
     // only support trash on root url
-    const QList<QUrl> &urls = view->selectedUrlList();
-
-    if (!urls.isEmpty())
-        FileOperatorHelperIns->moveToTrash(view, urls);
+    FileOperatorHelperIns->moveToTrash(view, selectUrls);
 }
 
 void ShortcutHelper::touchFolder()
