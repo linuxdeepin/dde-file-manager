@@ -95,6 +95,7 @@ void TitleBarWidget::initializeUi()
     // search button
     searchButton = new DToolButton;
     searchButton->setIcon(QIcon::fromTheme("search"));
+    searchButton->setFocusPolicy(Qt::NoFocus);
     // option button
     optionButtonBox = new OptionButtonBox;
 #ifdef ENABLE_TESTING
@@ -234,9 +235,26 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
         return false;
     }
 
-    if (watched == addressBar && event->type() == QEvent::Hide && !crumbBar->controller()->isKeepAddressBar()) {
-        showCrumbBar();
-        return true;
+    if (watched == addressBar) {
+        switch (event->type()) {
+        case QEvent::FocusOut: {
+            // keep the `addressBar` displayed when click `filterButton`
+            bool posContains = searchButton->geometry().contains(mapFromGlobal(QCursor::pos()));
+            bool isDown = searchButton->isDown();
+            if (posContains || isDown) {
+                addressBar->showOnFocusLostOnce();
+                return false;
+            }
+        } break;
+        case QEvent::Hide:
+            if (!crumbBar->controller()->isKeepAddressBar()) {
+                showCrumbBar();
+                return true;
+            }
+            break;
+        default:
+            break;
+        }
     }
 
     return false;
@@ -245,14 +263,14 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
 void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
 {
     if (switchBtn) {
-        searchButton->setHidden(true);
         searchButton->setObjectName("filterButton");
         searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
         searchButton->setIconSize(QSize(16, 16));
         searchButton->setProperty("showFilterView", false);
         searchButtonSwitchState = true;
     } else {
-        searchButton->setHidden(false);
+        if (searchButton->isDown())
+            TitleBarEventCaller::sendShowFilterView(this, false);
         searchButton->setIcon(QIcon::fromTheme("search"));
         searchButton->setIconSize(QSize(32, 32));
         searchButton->setDown(false);
