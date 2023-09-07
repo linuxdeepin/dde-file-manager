@@ -388,7 +388,7 @@ QVariantHash AsyncFileInfo::extraProperties() const
 
 QIcon AsyncFileInfo::fileIcon()
 {
-    if (d->cacheing) {
+    if (d->cacheing || d->cacheingAttributes) {
         QIcon icon;
         {   // if already loaded thumb just return it.
             QReadLocker rlk(&d->iconLock);
@@ -531,12 +531,10 @@ bool AsyncFileInfo::cacheAsyncAttributes()
     if (d->tokenKey != quintptr(dfmFileInfo.data()))
         return false;
 
-    if (d->cacheing)
-        return false;
-    if (!d->cacheing)
-        d->cacheing = true;
+    if (!d->cacheingAttributes)
+        d->cacheingAttributes = true;
     d->cacheAllAttributes();
-    d->cacheing = false;
+    d->cacheingAttributes = false;
     return true;
 }
 
@@ -997,7 +995,6 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardSize, attribute(DFileInfo::AttributeID::kStandardSize));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFilePath, filePath());
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardParentPath, path());
-    auto tmpdfmfileinfo = dfmFileInfo;
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileExists, DFile(q->fileUrl()).exists());
     // redirectedFileUrl
     auto symlink = symLinkTarget();
@@ -1033,7 +1030,6 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixInode, attribute(DFileInfo::AttributeID::kUnixInode));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixUID, attribute(DFileInfo::AttributeID::kUnixUID));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kUnixGID, attribute(DFileInfo::AttributeID::kUnixGID));
-    tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(dfmFileInfo->permissions()));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeCreated, attribute(DFileInfo::AttributeID::kTimeCreated));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeChanged, attribute(DFileInfo::AttributeID::kTimeChanged));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeModified, attribute(DFileInfo::AttributeID::kTimeModified));
@@ -1042,10 +1038,10 @@ void AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeChangedUsec, attribute(DFileInfo::AttributeID::kTimeChangedUsec));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeModifiedUsec, attribute(DFileInfo::AttributeID::kTimeModifiedUsec));
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kTimeAccessUsec, attribute(DFileInfo::AttributeID::kTimeAccessUsec));
-    if (tmpdfmfileinfo)
-        tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(dfmFileInfo->permissions()));
-
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardFileType, QVariant::fromValue(fileType()));
+    auto tmpdfmfileinfo = dfmFileInfo;
+    if (tmpdfmfileinfo)
+        tmp.insert(AsyncFileInfo::AsyncAttributeID::kAccessPermissions, QVariant::fromValue(tmpdfmfileinfo->permissions()));
     // GenericIconName
     tmp.insert(AsyncFileInfo::AsyncAttributeID::kStandardContentType, attribute(DFileInfo::AttributeID::kStandardContentType));
     // iconname
