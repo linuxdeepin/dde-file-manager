@@ -344,10 +344,6 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
         if (!child)
             continue;
 
-        // 在收到文件创建前，fileinfo的实例已缓存，所以这是异步的fileinfo就不会刷新，判断文件是否存在还是false
-        // 所以再次刷新fileinfo
-        child->refresh();
-
         auto sortInfo = addChild(child);
         if (sortInfo)
             newSortInfo.append(sortInfo);
