@@ -1306,7 +1306,7 @@ QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Q
     }
 
     if (index.isValid()) {
-        if (viewMode() == IconMode) {
+        if (d->currentViewMode == DFMGLOBAL_NAMESPACE::ViewMode::kIconMode) {
             bool lastRow = indexOfRow(index) == rowCount() - 1;
 
             if (!lastRow
