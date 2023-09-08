@@ -282,10 +282,10 @@ void BlockEntryFileEntity::loadDiskInfo()
     auto id = QString(DeviceId::kBlockDeviceIdPrefix)
             + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
 
-    datas = UniversalUtils::convertFromQMap(DevProxyMng->queryBlockInfo(id));
+    datas = UniversalUtils::convertFromQMap(DevProxyMng->queryBlockInfo(id, true));
     auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
     if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
-        auto clearBlkData = DevProxyMng->queryBlockInfo(clearBlkId);
+        auto clearBlkData = DevProxyMng->queryBlockInfo(clearBlkId, true);
         datas.insert(BlockAdditionalProperty::kClearBlockProperty, clearBlkData);
     }
 
