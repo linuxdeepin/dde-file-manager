@@ -676,7 +676,11 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
                 addDevice(diskGroup(), url, ComputerItemData::kLargeItem, true);
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
-            if (propertyName == DeviceProperty::kOptical)
+            // when these properties changed, reload the cache.
+            QStringList queryInfoOnChanged { DeviceProperty::kOptical,
+                                             DeviceProperty::kFileSystem,
+                                             DeviceProperty::kCleartextDevice };
+            if (queryInfoOnChanged.contains(propertyName))
                 onUpdateBlockItem(id);
             Q_EMIT itemPropertyChanged(devUrl, propertyName, var.variant());
         }
