@@ -364,14 +364,18 @@ QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
 {
     QString label = datas.value(kIdLabel).toString();
     qlonglong size = datas.value(kSizeTotal).toLongLong();
+    QString mountPoint = datas.value(kMountPoint).toString();
 
     // get system disk name if there is no alias
-    if (datas.value(kMountPoint).toString() == "/")
+    if (mountPoint == "/")
         return QObject::tr("System Disk");
-    if (datas.value(kIdLabel).toString().startsWith("_dde_data"))
-        return QObject::tr("Data Disk");
-    if (datas.value(kIdLabel).toString().startsWith("_dde_"))
-        return datas.value(kIdLabel).toString().mid(5);
+    if (!mountPoint.startsWith("/media/"))
+    {
+        if (label.startsWith("_dde_data"))
+            return QObject::tr("Data Disk");
+        if (label.startsWith("_dde_"))
+            return datas.value(kIdLabel).toString().mid(5);
+    }
     return nameOfDefault(label, size);
 }
 
