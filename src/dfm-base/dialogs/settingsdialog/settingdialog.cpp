@@ -215,7 +215,7 @@ SettingDialog::SettingDialog(QWidget *parent)
     if (dtkSettings) {
         dtkSettings->setParent(this);
         SettingBackend::instance()->setToSettings(dtkSettings);
-        updateSettings("QObject", dtkSettings);
+        updateSettings(dtkSettings);
     }
 }
 

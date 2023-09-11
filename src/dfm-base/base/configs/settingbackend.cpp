@@ -12,7 +12,7 @@
 #include <QDebug>
 #include <QApplication>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 #define TOP_GROUP_BASE "00_base"
 #define LV2_GROUP_OPEN_ACTION "00_base.00_open_action"
@@ -206,27 +206,27 @@ void SettingBackend::initBasicSettingConfig()
     ins->addGroup(TOP_GROUP_BASE, "Basic");
     ins->addGroup(LV2_GROUP_OPEN_ACTION, "Open behavior");
     ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window",
-                           "Always open folder in new window",
+                           tr("Always open folder in new window"),
                            false);
     ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".01_open_file_action",
-                           "Open file:",
-                           QStringList { "Click",
-                                         "Double click" },
+                           tr("Open file:"),
+                           QStringList { tr("Click"),
+                                         tr("Double click") },
                            1);
 
     // base / new_win_and_tab
-    ins->addGroup(LV2_GROUP_NEW_TAB_WINDOWS, "New window and tab");
+    ins->addGroup(LV2_GROUP_NEW_TAB_WINDOWS, tr("New window and tab"));
     ins->addComboboxConfig(LV2_GROUP_NEW_TAB_WINDOWS ".00_default_window_path",
-                           "Open from default window:",
+                           tr("Open from default window:"),
                            { { "values",
-                               QStringList { "Computer",
-                                             "Home",
-                                             "Desktop",
-                                             "Videos",
-                                             "Music",
-                                             "Pictures",
-                                             "Documents",
-                                             "Downloads" } },
+                               QStringList { tr("Computer"),
+                                             tr("Home"),
+                                             tr("Desktop"),
+                                             tr("Videos"),
+                                             tr("Music"),
+                                             tr("Pictures"),
+                                             tr("Documents"),
+                                             tr("Downloads") } },
                              { "keys",
                                QStringList { "computer:///",
                                              "standard://home",
@@ -238,17 +238,17 @@ void SettingBackend::initBasicSettingConfig()
                                              "standard://downloads" } } },
                            "computer:///");
     ins->addComboboxConfig(LV2_GROUP_NEW_TAB_WINDOWS ".01_new_tab_path",
-                           "Open in new tab:",
+                           tr("Open in new tab:"),
                            { { "values",
-                               QStringList { "Current Directory",
-                                             "Computer",
-                                             "Home",
-                                             "Desktop",
-                                             "Videos",
-                                             "Music",
-                                             "Pictures",
-                                             "Documents",
-                                             "Downloads" } },
+                               QStringList { tr("Current Directory"),
+                                             tr("Computer"),
+                                             tr("Home"),
+                                             tr("Desktop"),
+                                             tr("Videos"),
+                                             tr("Music"),
+                                             tr("Pictures"),
+                                             tr("Documents"),
+                                             tr("Downloads") } },
                              { "keys",
                                QStringList { "",
                                              "computer:///",
@@ -263,12 +263,12 @@ void SettingBackend::initBasicSettingConfig()
     // base / files_and_folders
     ins->addGroup(LV2_GROUP_FILES_AND_FOLDERS, tr("Files and folders"));
     ins->addCheckBoxConfig(LV2_GROUP_FILES_AND_FOLDERS ".00_show_hidden",
-                           "Show hidden files",
+                           tr("Show hidden files"),
                            false);
     ins->addCheckBoxConfig(LV2_GROUP_FILES_AND_FOLDERS ".01_show_suffix",
-                           "Show file extensions");
+                           tr("Show file extensions"));
     ins->addCheckBoxConfig(LV2_GROUP_FILES_AND_FOLDERS ".02_mixed_sort",
-                           "Mix sorting of files and folders",
+                           tr("Mix sorting of files and folders"),
                            false);
 }
 
@@ -280,38 +280,38 @@ void SettingBackend::initWorkspaceSettingConfig()
     ins->addGroup(LV2_GROUP_VIEW, tr("View"));
 
     ins->addComboboxConfig(LV2_GROUP_VIEW ".00_icon_size",
-                           "Default size:",
-                           QStringList { "Extra small",
-                                         "Small",
-                                         "Medium",
-                                         "Large",
-                                         "Extra large" },
+                           tr("Default size:"),
+                           QStringList { tr("Extra small"),
+                                         tr("Small"),
+                                         tr("Medium"),
+                                         tr("Large"),
+                                         tr("Extra large") },
                            1);
     ins->addComboboxConfig(LV2_GROUP_VIEW ".01_view_mode",
-                           "Default view:",
-                           { { "values", QStringList { "Icon", "List" } },
+                           tr("Default view:"),
+                           { { "values", QStringList { tr("Icon"), tr("List") } },
                              { "keys", QVariantList { 1, 2 } } },
                            1);
 
     ins->addGroup(LV2_GROUP_PREVIEW, tr("Thumbnail preview"));
 
     ins->addCheckBoxConfig(LV2_GROUP_PREVIEW ".00_compress_file_preview",
-                           "Compressed file preview",
+                           tr("Compressed file preview"),
                            false);
     ins->addCheckBoxConfig(LV2_GROUP_PREVIEW ".01_text_file_preview",
-                           "Text preview");
+                           tr("Text preview"));
     ins->addCheckBoxConfig(LV2_GROUP_PREVIEW ".02_document_file_preview",
-                           "Document preview");
+                           tr("Document preview"));
     ins->addCheckBoxConfig(LV2_GROUP_PREVIEW ".03_image_file_preview",
-                           "Image preview");
+                           tr("Image preview"));
     ins->addCheckBoxConfig(LV2_GROUP_PREVIEW ".04_video_file_preview",
-                           "Video preview");
+                           tr("Video preview"));
     ins->addCheckBoxConfig(LV2_GROUP_PREVIEW ".05_audio_file_preview",
-                           "Music preview");
+                           tr("Music preview"));
     ins->addConfig(LV2_GROUP_PREVIEW ".06_remote_env_file_preview",
                    { { "key", "06_remote_env_file_preview" },
-                     { "text", "The remote environment shows thumbnail previews" },
-                     { "message", "Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze" },
+                     { "text", tr("The remote environment shows thumbnail previews") },
+                     { "message", tr("Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze") },
                      { "type", "checkBoxWithMessage" },
                      { "default", false } });
 }
@@ -320,44 +320,44 @@ void SettingBackend::initAdvanceSettingConfig()
 {
     auto ins = SettingJsonGenerator::instance();
 
-    ins->addGroup(TOP_GROUP_ADVANCE, "Advanced");
+    ins->addGroup(TOP_GROUP_ADVANCE, tr("Advanced"));
 
     ins->addGroup(LV2_GROUP_SEARCH, tr("Search"));
     ins->addCheckBoxConfig(LV2_GROUP_SEARCH ".00_index_internal",
-                           "Auto index internal disk");
+                           tr("Auto index internal disk"));
     ins->addCheckBoxConfig(LV2_GROUP_SEARCH ".01_index_external",
-                           "Index external storage device after connected to computer",
+                           tr("Index external storage device after connected to computer"),
                            false);
     ins->addCheckBoxConfig(LV2_GROUP_SEARCH ".02_index_search",
-                           "Full-Text search",
+                           tr("Full-Text search"),
                            false);
 
-    ins->addGroup(LV2_GROUP_MOUNT, "Mount");
+    ins->addGroup(LV2_GROUP_MOUNT, tr("Mount"));
     ins->addConfig(LV2_GROUP_MOUNT ".00_auto_mount",
                    { { "key", "00_auto_mount" },
-                     { "text", "Auto mount" },
+                     { "text", tr("Auto mount") },
                      { "type", "mountCheckBox" },
                      { "default", true } });
     ins->addConfig(LV2_GROUP_MOUNT ".01_auto_mount_and_open",
                    { { "key", "01_auto_mount_and_open" },
-                     { "text", "Open after auto mount" },
+                     { "text", tr("Open after auto mount") },
                      { "type", "openCheckBox" },
                      { "default", false } });
     ins->addCheckBoxConfig(LV2_GROUP_MOUNT ".02_mtp_show_bottom_info",
-                           "Show item counts and sizes in the path of mounted MTP devices",
+                           tr("Show item counts and sizes in the path of mounted MTP devices"),
                            false);
     ins->addConfig(LV2_GROUP_MOUNT ".04_merge_the_entries_of_samba_shared_folders",
                    { { "key", "04_merge_the_entries_of_samba_shared_folders" },
-                     { "text", "Merge the entries of Samba shared folders" },
+                     { "text", tr("Merge the entries of Samba shared folders") },
                      { "type", "checkBoxWithMessage" },
-                     { "message", "Switching the entry display may lead to failed mounting" },
+                     { "message", tr("Switching the entry display may lead to failed mounting") },
                      { "default", true } });
 
     ins->addGroup(LV2_GROUP_DIALOG, "Dialog");
     ins->addCheckBoxConfig(LV2_GROUP_DIALOG ".00_default_chooser_dialog",
-                           "Use the file chooser dialog of File Manager");
+                           tr("Use the file chooser dialog of File Manager"));
     ins->addCheckBoxConfig(LV2_GROUP_DIALOG ".01_delete_confirmation_dialog",
-                           "Ask for my confirmation when deleting files",
+                           tr("Ask for my confirmation when deleting files"),
                            false);
 }
 

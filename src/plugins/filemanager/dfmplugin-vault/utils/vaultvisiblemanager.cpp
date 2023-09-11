@@ -120,7 +120,7 @@ void VaultVisibleManager::addVaultComputerMenu()
 void VaultVisibleManager::addSettingPaneItem()
 {
     SettingJsonGenerator::instance()->addCheckBoxConfig("01_sidebar.00_items_in_sidebar.12_vault",
-                                                        "Vault");
+                                                        tr("Vault"));
 }
 
 void VaultVisibleManager::addSideBarVaultItem()
