@@ -160,12 +160,12 @@ void Computer::addComputerSettingItem()
 
     SettingJsonGenerator::instance()->addGroup(kComputerSettingGroup, tr("Computer display items"));
     SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideBuiltin,
-                                                        "Hide built-in disks on the Computer page",
+                                                        tr("Hide built-in disks on the Computer page"),
                                                         false);
     SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideLoop,
-                                                        "Hide loop partitions on the Computer page");
+                                                        tr("Hide loop partitions on the Computer page"));
     SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingShowFsTag,
-                                                        "Show file system on disk icon",
+                                                        tr("Show file system on disk icon"),
                                                         false);
 
     SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideMyDirs,
