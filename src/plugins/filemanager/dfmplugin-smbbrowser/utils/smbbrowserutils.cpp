@@ -163,7 +163,7 @@ QMap<QUrl, SmbShareNode> &shareNodes()
 void initSettingPane()
 {
     dfmbase::SettingJsonGenerator::instance()->addCheckBoxConfig("10_advance.01_mount.03_always_show_offline_remote_connection",
-                                                                 "Keep showing the mounted Samba shares");
+                                                                 QObject::tr("Keep showing the mounted Samba shares"));
 }
 
 }

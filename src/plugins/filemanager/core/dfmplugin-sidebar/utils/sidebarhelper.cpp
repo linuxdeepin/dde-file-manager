@@ -255,59 +255,59 @@ void SideBarHelper::initSettingPane()
     ins->addGroup(SETTING_GROUP_LV2, "Items on sidebar pane");
     ins->addConfig(SETTING_GROUP_LV2 ".00_quick_access_splitter",
                    { { "key", "00_quick_access_splitter" },
-                     { "name", "Quick access" },
+                     { "name", QObject::tr("Quick access") },
                      { "type", "sidebar-splitter" } });
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".01_recent",
-                           "Recent");
+                           QObject::tr("Recent"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".02_home",
-                           "Home");
+                           QObject::tr("Home"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".03_desktop",
-                           "Desktop");
+                           QObject::tr("Desktop"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".04_videos",
-                           "Videos");
+                           QObject::tr("Videos"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".05_music",
-                           "Music");
+                           QObject::tr("Music"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".06_pictures",
-                           "Pictures");
+                           QObject::tr("Pictures"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".07_documents",
-                           "Documents");
+                           QObject::tr("Documents"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".08_downloads",
-                           "Downloads");
+                           QObject::tr("Downloads"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".09_trash",
-                           "Trash");
+                           QObject::tr("Trash"));
 
     ins->addConfig(SETTING_GROUP_LV2 ".10_partitions_splitter",
                    { { "key", "10_partitions_splitter" },
-                     { "name", "Partitions" },
+                     { "name", QObject::tr("Partitions") },
                      { "type", "sidebar-splitter" } });
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".11_computer",
-                           "Computer");
+                           QObject::tr("Computer"));
     //    ins->addCheckBoxConfig(SETTING_GROUP_LV2".12_vault",
     //                           "Vault");
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".13_builtin",
-                           "Built-in disks");
+                           QObject::tr("Built-in disks"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".14_loop",
-                           "Loop partitions");
+                           QObject::tr("Loop partitions"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".15_other_disks",
-                           "Mounted partitions and discs");
+                           QObject::tr("Mounted partitions and discs"));
 
     ins->addConfig(SETTING_GROUP_LV2 ".16_network_splitters",
                    { { "key", "16_network_splitters" },
-                     { "name", "Network" },
+                     { "name", QObject::tr("Network") },
                      { "type", "sidebar-splitter" } });
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".17_computers_in_lan",
-                           "Computers in LAN");
+                           QObject::tr("Computers in LAN"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".18_my_shares",
-                           "My shares");
+                           QObject::tr("My shares"));
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".19_mounted_share_dirs",
-                           "Mounted sharing folders");
+                           QObject::tr("Mounted sharing folders"));
 
     ins->addConfig(SETTING_GROUP_LV2 ".20_tag_splitter",
                    { { "key", "20_tag_splitter" },
-                     { "name", "Tag" },
+                     { "name", QObject::tr("Tag") },
                      { "type", "sidebar-splitter" } });
     ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".21_tags",
-                           "Added tags");
+                           QObject::tr("Added tags"));
 }
 
 void SideBarHelper::registCustomSettingItem()
