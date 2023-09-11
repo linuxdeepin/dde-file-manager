@@ -108,6 +108,7 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
             if (idx.isValid()) {
                 if (!this->model()->data(idx, ComputerModel::DataRoles::kItemIsEditingRole).toBool()) {
                     Q_EMIT enterPressed(idx);
+                    this->cdTo(idx);
                     return true;
                 } else {
                     this->setCurrentIndex(idx);
