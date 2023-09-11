@@ -37,7 +37,6 @@ void SideBarEventReceiver::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Hidden", this, &SideBarEventReceiver::handleItemHidden);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_TriggerEdit", this, &SideBarEventReceiver::handleItemTriggerEdit);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Sidebar_UpdateSelection", this, &SideBarEventReceiver::handleSidebarUpdateSelection);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SidebarSetting_AddItem", this, &SideBarEventReceiver::handleAddSidebarVisiableControl);
 }
 
 void SideBarEventReceiver::handleItemHidden(const QUrl &url, bool visible)
@@ -70,24 +69,6 @@ void SideBarEventReceiver::handleSidebarUpdateSelection(quint64 winId)
             break;
         }
     }
-}
-
-QString SideBarEventReceiver::handleAddSidebarVisiableControl(const QString &keyName, const QString &displayName)
-{
-    static int order = 30;
-    DFMBASE_USE_NAMESPACE;
-    SettingJsonGenerator::instance()->addConfig("01_sidebar.00_items_in_sidebar.30_3rd_plugin_splitter",
-                                                { { "key", "30_3rd_plugin_splitter" },
-                                                  { "name", tr("3rd plugins") },
-                                                  { "type", "sidebar-splitter" } });
-
-    QString key;
-    do {
-        order++;
-        key = QString("01_sidebar.00_items_in_sidebar.%1_%2").arg(order).arg(keyName);
-    } while (!SettingJsonGenerator::instance()->addCheckBoxConfig(key, displayName));
-    qInfo() << "custom sidebar setting item added:" << key << order << keyName << displayName;
-    return key;
 }
 
 void SideBarEventReceiver::handleSetContextMenuEnable(bool enable)
