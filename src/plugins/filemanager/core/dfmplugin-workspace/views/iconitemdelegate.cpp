@@ -186,7 +186,7 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     iconRect.moveCenter(option.rect.center());
     iconRect.moveTop(option.rect.top());
 
-    geometries << iconRect;
+    geometries << itemIconRect(option.rect).toRect();
 
     const QString &fileName = displayFileName(index);
 
@@ -196,10 +196,7 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 
     // init file name geometry
     QRect labelRect = option.rect;
-    int backgroundMargin = kIconModeColumuPadding;
-    labelRect.setWidth(labelRect.width() - 2 * kIconModeTextPadding - 2 * backgroundMargin - kIconModeBackRadius);
-    labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
-    labelRect.setTop(iconRect.bottom() + kIconModeTextPadding + kIconModeIconSpacing);
+    labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
 
     QStyleOptionViewItem opt = option;
 
@@ -212,12 +209,11 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     QList<QRectF> lines = calFileNameRect(fileName, labelRect.adjusted(0, 0, 0, 99999), elide ? opt.textElideMode : Qt::ElideNone);
 
     labelRect = GlobalPrivate::boundingRect(lines).toRect();
-    labelRect.setTop(iconRect.bottom());
+    labelRect.setTop(iconRect.bottom() + kIconModeTextPadding + kIconModeIconSpacing);
     geometries << labelRect;
 
     // background rect
     QRect backgroundRect = option.rect;
-    backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
     geometries << backgroundRect;
 
     return geometries;
@@ -228,23 +224,21 @@ void IconItemDelegate::updateItemSizeHint()
     Q_D(IconItemDelegate);
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
-    int width = parent()->parent()->iconSize().width() + 30;
+    int width = parent()->parent()->iconSize().width();
+    if (iconSizeList().indexOf(width) >= 0)
+        width += iconWidth().at(iconSizeList().indexOf(width));
 #ifdef DTKWIDGET_CLASS_DSizeMode
     int height = parent()->parent()->iconSize().height()
-            + 2 * DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding)   // 上下两个icon的间距
-            + 3 * d->textLineHeight   // 3行文字的高度
-            + 2 * kIconModeTextPadding   // 文字两边的间距
-            + kIconModeIconSpacing;   // icon的间距
+            + 2 * d->textLineHeight   // 2行文字的高度
+            + kIconModeTextPadding   // 文字与icon之间的空隙
+            + 2 * kIconModeIconSpacing;   // icon与背景的上下两个间距
 #else
     int height = parent()->parent()->iconSize().height()
-            + 2 * kIconModeColumnPadding   // 上下两个icon的间距
-            + 3 * d->textLineHeight   // 3行文字的高度
-            + 2 * kIconModeTextPadding   // 文字两边的间距
-            + kIconModeIconSpacing;   // icon的间距
+            + 2 * d->textLineHeight   // 2行文字的高度
+            + kIconModeTextPadding   // 文字与icon之间的空隙
+            + 2 * kIconModeIconSpacing;   // icon与背景的间距
 #endif
-
-    int size = qMax(width, height);
-    d->itemSizeHint = QSize(size, size);
+    d->itemSizeHint = QSize(width, height);
 }
 
 int IconItemDelegate::iconSizeLevel() const
@@ -314,11 +308,8 @@ QRectF IconItemDelegate::itemIconRect(const QRectF &itemRect) const
     // init icon geomerty
     QRectF iconRect = itemRect;
     iconRect.setSize(parent()->parent()->iconSize());
-
-    double iconTopOffset = (itemRect.height() - iconRect.height()) / 3.0;
     iconRect.moveLeft(itemRect.left() + (itemRect.width() - iconRect.width()) / 2.0);
-    iconRect.moveTop(itemRect.top() + iconTopOffset);   // move icon down
-
+    iconRect.moveTop(iconRect.top() + kIconModeIconSpacing);
     return iconRect;
 }
 
@@ -375,7 +366,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
                                                               const QModelIndex &index, int backgroundMargin) const
 {
     Q_UNUSED(index);
-
+    Q_UNUSED(backgroundMargin);
     painter->save();
 
     bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
@@ -409,22 +400,17 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     }
 
     QRectF backgroundRect = option.rect;
-
+    QSizeF iconSize = parent()->parent()->iconSize();
+    // 左右上下和icon的边距都是6
+    backgroundRect.setSize(iconSize + QSizeF(2 * kIconModeIconSpacing, 2 * kIconModeIconSpacing));
     // for checkmark
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    if (DGuiApplicationHelper::instance()->isCompactMode())
-        backgroundRect.adjust(backgroundMargin, 2 * backgroundMargin, -backgroundMargin, 0);
-    else
-        backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
-#else
-    backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
-#endif
+    qreal backgroundx = (option.rect.width() - backgroundRect.width()) / 2.0;
+    backgroundRect.moveLeft(backgroundRect.left() + backgroundx); // x坐标居中
     // draw background
     QPainterPath path;
-    backgroundRect.moveTopLeft(QPointF(0.5, 0.5) + backgroundRect.topLeft());
     path.addRoundedRect(backgroundRect, kIconModeBackRadius, kIconModeBackRadius);
 
-    if (!isDragMode) {   // 拖拽的图标不画背景
+    if (isSelected || (option.state & QStyle::StateFlag::State_MouseOver)) {   // 只有选中和mouseover才绘制背景
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, backgroundColor);
         painter->setRenderHint(QPainter::Antialiasing, false);
@@ -435,22 +421,6 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
-    }
-
-    if (isSelected) {
-        QRect rc = option.rect;
-        rc.setSize({ 20, 20 });
-#ifdef DTKWIDGET_CLASS_DSizeMode
-        rc.moveTopRight(DSizeModeHelper::element(QPoint(option.rect.right(), option.rect.top() + 5),
-                                                 QPoint(option.rect.right() - 5, option.rect.top() + 5)));
-#else
-        rc.moveTopRight(QPoint(option.rect.right() - 5, option.rect.top() + 5));
-#endif
-        DStyleOptionButton check;
-        check.state = DStyle::State_Enabled | DStyle::State_On;
-        check.rect = rc;
-
-        DApplication::style()->drawPrimitive(DStyle::PE_IndicatorItemViewItemCheck, &check, painter);
     }
 
     painter->restore();
@@ -478,9 +448,6 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
         ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
-    //    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
-    //    WorkspaceEventSequence::instance()->doPaintIconItem(kItemIconRole, url, painter, &iconRect, );
-
     paintEmblems(painter, iconRect, index);
 
     return iconRect;
@@ -489,6 +456,8 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPainterPath path,
                                          int backgroundMargin, const QStyleOptionViewItem &opt, const QModelIndex &index) const
 {
+    Q_UNUSED(path);
+    Q_UNUSED(backgroundMargin);
     Q_D(const IconItemDelegate);
 
     if (index == d->editingIndex)
@@ -507,9 +476,6 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     // init file name geometry
     QRectF labelRect = opt.rect;
     labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
-    labelRect.setWidth(opt.rect.width() - 2 * kIconModeTextPadding - 2 * backgroundMargin - kIconModeBackRadius);
-    labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
-    labelRect.setBottom(path.boundingRect().toRect().bottom());
 
     //文管窗口拖拽时的字体保持白色
     if (isDragMode) {
@@ -527,32 +493,24 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     if (isSelected && singleSelected) {
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
         /// init file name text
-        const QList<QRectF> &lines = calFileNameRect(displayName, labelRect.adjusted(0, 0, 0, 99999), opt.textElideMode);
-        qreal height = GlobalPrivate::boundingRect(lines).height();
+        d->expandedIndex = index;
 
-        if (height > labelRect.height()) {
-            d->expandedIndex = index;
+        setEditorData(d->expandedItem, index);
+        parent()->parent()->setIndexWidget(index, d->expandedItem);
 
-            setEditorData(d->expandedItem, index);
-            parent()->parent()->setIndexWidget(index, d->expandedItem);
+        // 重设item状态
+        d->expandedItem->setIndex(index);
+        d->expandedItem->setOption(opt);
+        d->expandedItem->setTextBounding(QRectF());
+        d->expandedItem->setFixedWidth(0);
 
-            // 重设item状态
-            d->expandedItem->setIndex(index);
-            d->expandedItem->setOption(opt);
-            d->expandedItem->setTextBounding(QRectF());
-            d->expandedItem->setFixedWidth(0);
-            double iconTopOffset = (opt.rect.height() - iconRect.height()) / 3.0;
-
-            d->expandedItem->setContentsMargins(backgroundMargin, static_cast<int>(std::ceil(iconTopOffset)), backgroundMargin, 0);
-
-            if (parent()->parent()->indexOfRow(index) == parent()->parent()->rowCount() - 1) {
-                d->lastAndExpandedIndex = index;
-            }
-
-            updateEditorGeometry(d->expandedItem, opt, index);
-
-            return;
+        if (parent()->parent()->indexOfRow(index) == parent()->parent()->rowCount() - 1) {
+            d->lastAndExpandedIndex = index;
         }
+
+        updateEditorGeometry(d->expandedItem, opt, index);
+
+        return;
     } else {
         if (!singleSelected) {
             const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
@@ -674,7 +632,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     QLabel *icon = item->getIconLabel();
 
     if (iconSize.height() != icon->size().height()) {
-        double iconTopOffset = (opt.rect.height() - iconSize.height()) / 3.0;   // update edit pos
+        double iconTopOffset = kIconModeIconSpacing;   // update edit pos
         icon->setFixedHeight(iconSize.height() + static_cast<int>(std::ceil(iconTopOffset)));
     }
 }
