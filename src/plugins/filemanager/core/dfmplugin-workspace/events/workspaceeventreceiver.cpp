@@ -405,3 +405,4 @@ void WorkspaceEventReceiver::handleRegisterDataCache(const QString &scheme)
 {
     //    FileModelManager::instance()->registerDataCache(scheme);
 }
+
