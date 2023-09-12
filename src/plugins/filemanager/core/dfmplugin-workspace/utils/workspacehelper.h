@@ -68,6 +68,7 @@ public:
     DFMBASE_NAMESPACE::Global::ViewMode findViewMode(const QString &scheme);
     void selectFiles(quint64 windowId, const QList<QUrl> &files);
     void selectAll(quint64 windowId);
+    void reverseSelect(quint64 windowId);
     void setSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
     DFMBASE_NAMESPACE::Global::ItemRoles sortRole(quint64 windowId);
 
