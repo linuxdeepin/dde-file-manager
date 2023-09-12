@@ -58,7 +58,7 @@ void ExpandedItem::paintEvent(QPaintEvent *)
     const QMargins &margins = contentsMargins();
 
     QRectF labelRect(kIconModeTextPadding + margins.left(),
-                     margins.top() + iconHeight + kIconModeTextPadding + kIconModeIconSpacing,
+                     margins.top() + iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing,
                      width() - kIconModeTextPadding * 2 - margins.left() - margins.right(),
                      INT_MAX);
 

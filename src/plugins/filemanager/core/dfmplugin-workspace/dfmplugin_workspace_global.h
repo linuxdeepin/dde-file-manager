@@ -32,7 +32,12 @@ enum class DirOpenMode : uint8_t {
 // view defines
 inline QList<int> iconSizeList()
 {
-    return { 48, 64, 96, 128, 256 };
+    return { 48, 64, 96, 128, 160, 192, 224, 256 };
+}
+
+inline QList<int> iconWidth()
+{
+    return { 44, 36, 28, 28, 28, 28, 28, 32 };
 }
 
 // model defines

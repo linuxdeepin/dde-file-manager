@@ -121,8 +121,8 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
         QTextLayout newlay;
         newlay.setFont(lay->font());
         {
-            auto oldWrap = (QTextOption::WrapMode)attribute<uint>(kWrapMode);
-            setAttribute(kWrapMode, (uint)QTextOption::NoWrap);
+            auto oldWrap = static_cast<QTextOption::WrapMode>(attribute<uint>(kWrapMode));
+            setAttribute(kWrapMode, static_cast<uint>(QTextOption::NoWrap));
             initLayoutOption(&newlay);
 
             // restore
