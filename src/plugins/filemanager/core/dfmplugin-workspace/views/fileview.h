@@ -79,6 +79,7 @@ public:
     int selectedIndexCount() const;
     void selectFiles(const QList<QUrl> &files) const;
     void setSelectionMode(const SelectionMode mode);
+    void reverseSelect() const;
     void setEnabledSelectionModes(const QList<SelectionMode> &modes);
     void setSort(const DFMGLOBAL_NAMESPACE::ItemRoles role, const Qt::SortOrder order);
     void setViewSelectState(bool isSelect);

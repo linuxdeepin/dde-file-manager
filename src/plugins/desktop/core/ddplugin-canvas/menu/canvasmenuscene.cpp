@@ -342,6 +342,11 @@ bool CanvasMenuScene::triggered(QAction *action)
                 d->view->selectAll();
                 return true;
             }
+
+            if (actionId == dfmplugin_menu::ActionID::kReverseSelect) {
+                d->view->toggleSelect();
+                return true;
+            }
         }
 
         // ClipBoardMenu scene

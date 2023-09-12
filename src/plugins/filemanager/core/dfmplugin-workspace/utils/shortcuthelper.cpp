@@ -170,20 +170,7 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
             touchFolder();
             return true;
         case Qt::Key_I:
-            if (view->selectionMode() == FileView::SingleSelection)
-                return false;
-
-            auto urls = view->selectedUrlList();
-            if (urls.isEmpty())
-                return false;
-
-            QList<QUrl> list = view->model()->getChildrenUrls();
-            for (const QUrl &url : urls) {
-                list.removeAll(url);
-            }
-
-            view->selectFiles(list);
-            return true;
+            return reverseSelect();
         }
         break;
     case Qt::AltModifier:
@@ -320,9 +307,9 @@ void ShortcutHelper::touchFolder()
 
 void ShortcutHelper::toggleHiddenFiles()
 {
-    //Todo(yanghao)
-    // Todo(yanghao): preSelectionUrls
-    // d->preSelectionUrls = urls;
+    // Todo(yanghao)
+    //  Todo(yanghao): preSelectionUrls
+    //  d->preSelectionUrls = urls;
     view->itemDelegate()->hideAllIIndexWidget();
     view->clearSelection();
     view->model()->toggleHiddenFiles();
@@ -369,4 +356,22 @@ void ShortcutHelper::openInTerminal()
 void ShortcutHelper::cdUp()
 {
     view->cdUp();
+}
+
+bool ShortcutHelper::reverseSelect()
+{
+    if (view->selectionMode() == FileView::SingleSelection)
+        return false;
+
+    auto urls = view->selectedUrlList();
+    if (urls.isEmpty())
+        return false;
+
+    QList<QUrl> list = view->model()->getChildrenUrls();
+    for (const QUrl &url : urls) {
+        list.removeAll(url);
+    }
+
+    view->selectFiles(list);
+    return true;
 }
