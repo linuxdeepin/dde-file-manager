@@ -216,7 +216,7 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
     ViewMode mode = static_cast<ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
 
     if (mode != ViewMode::kIconMode && mode != ViewMode::kListMode
-            && mode != ViewMode::kExtendMode && mode != ViewMode::kAllViewMode) {
+        && mode != ViewMode::kExtendMode && mode != ViewMode::kAllViewMode) {
         qWarning() << "Config view mode is invalid, reset it to icon mode.";
         mode = Global::ViewMode::kIconMode;
         Application::instance()->setAppAttribute(Application::kViewMode, static_cast<int>(mode));
@@ -237,6 +237,13 @@ void WorkspaceHelper::selectAll(quint64 windowId)
     FileView *view = findFileViewByWindowID(windowId);
     if (view)
         view->selectAll();
+}
+
+void WorkspaceHelper::reverseSelect(quint64 windowId)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        view->reverseSelect();
 }
 
 void WorkspaceHelper::setSort(quint64 windowId, Global::ItemRoles role)

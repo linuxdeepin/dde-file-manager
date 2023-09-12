@@ -70,6 +70,7 @@ public Q_SLOTS:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
     void refresh(bool silent);
     void selectAll() override;
+    void toggleSelect();
 protected Q_SLOTS:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;

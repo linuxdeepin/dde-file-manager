@@ -197,6 +197,7 @@ QStringList BaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("rename");   // 重命名
         ret.append("delete");   // 删除
         ret.append("paste");
+        ret.append("reverse-select");
         ret.append("select-all");
         ret.append(ActionID::kSeparatorLine);
 

@@ -26,6 +26,7 @@ inline constexpr char kSelectAll[] = "select-all";
 inline constexpr char kOpenInNewWindow[] = "open-in-new-window";
 inline constexpr char kOpenInNewTab[] = "open-in-new-tab";
 inline constexpr char kOpenInTerminal[] = "open-in-terminal";
+inline constexpr char kReverseSelect[] = "reverse-select";
 
 // FileOperatorMenu
 inline constexpr char kOpen[] = "open";
