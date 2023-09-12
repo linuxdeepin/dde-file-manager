@@ -30,6 +30,12 @@ public:
     QVariant data(int role) const;
 
     void setAvailableState(bool b);
+    void setExpandabled(bool b);
+    void setDepth(const int8_t depth);
+    void setSubFileCount(const int count);
+
+private:
+    bool canExpand() const;
 
 private:
     FileItemData *parent { nullptr };
@@ -37,6 +43,9 @@ private:
     FileInfoPointer info { nullptr };
     SortInfoPointer sortInfo { nullptr };
     bool isAvailable { true };
+    std::atomic_int8_t depth { 0 };
+    std::atomic_bool expandabled { false };
+    std::atomic_int subFileCount{ 0 }; // sub file count,not contain hide file
 };
 
 }
