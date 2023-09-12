@@ -268,10 +268,12 @@ void FileManagerWindow::closeEvent(QCloseEvent *event)
 
 void FileManagerWindow::hideEvent(QHideEvent *event)
 {
-    QVariantMap state;
-    state["sidebar"] = d->splitterPosition();
-    if (state["sidebar"].toInt() > 0)
+    int width = d->splitterPosition();
+    if (width >= d->kMinimumLeftWidth && width <= d->kMaximumLeftWidth) {
+        QVariantMap state;
+        state["sidebar"] = width;
         Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
+    }
 
     return DMainWindow::hideEvent(event);
 }
