@@ -33,6 +33,7 @@ OpenDirMenuScenePrivate::OpenDirMenuScenePrivate(OpenDirMenuScene *qq)
     predicateName[ActionID::kOpenInNewWindow] = tr("Open in new window");
     predicateName[ActionID::kOpenInNewTab] = tr("Open in new tab");
     predicateName[ActionID::kOpenInTerminal] = tr("Open in terminal");
+    predicateName[ActionID::kReverseSelect] = tr("Reverse select");
 }
 
 OpenDirMenuScene::OpenDirMenuScene(QObject *parent)
@@ -175,6 +176,10 @@ void OpenDirMenuScene::normalMenu(QMenu *parent)
 
         openAsAdminAction(parent);
     }
+
+    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kReverseSelect));
+    d->predicateAction[ActionID::kReverseSelect] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kReverseSelect);
 }
 
 void OpenDirMenuScene::openAsAdminAction(QMenu *parent)

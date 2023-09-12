@@ -23,6 +23,8 @@ public:
     void registerAction(QKeySequence::StandardKey shortcut, bool autoRepeat = true);
     bool processKeyPressEvent(QKeyEvent *event);
 
+    bool reverseSelect();
+
 protected slots:
     void acitonTriggered();
     void copyFiles();

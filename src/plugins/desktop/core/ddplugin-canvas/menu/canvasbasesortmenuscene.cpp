@@ -198,6 +198,7 @@ QStringList CanvasBaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("delete");   // 删除
         ret.append("paste");
         ret.append("select-all");
+        ret.append("reverse-select");
         ret.append(ActionID::kSeparatorLine);
 
         ret.append("add-share");   // 添加共享

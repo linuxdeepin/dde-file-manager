@@ -288,6 +288,10 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
             WorkspaceHelper::instance()->actionNewTab(d->windowId, d->focusFile);
             return true;
         }
+        if (actionId == dfmplugin_menu::ActionID::kReverseSelect) {
+            WorkspaceHelper::instance()->reverseSelect(d->windowId);
+            return true;
+        }
     }
 
     return AbstractMenuScene::triggered(action);
