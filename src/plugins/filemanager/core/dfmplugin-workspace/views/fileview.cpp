@@ -1143,7 +1143,7 @@ QRect FileView::visualRect(const QModelIndex &index) const
     }
 
     rect.moveLeft(rect.left() - horizontalOffset());
-    rect.moveTop(rect.top() - verticalOffset());
+    rect.moveTop(rect.top() - verticalOffset() + DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding));
 
     return rect;
 }
