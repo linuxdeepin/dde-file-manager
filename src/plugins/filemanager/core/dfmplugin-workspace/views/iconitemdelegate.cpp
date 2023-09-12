@@ -224,19 +224,16 @@ void IconItemDelegate::updateItemSizeHint()
         width += iconWidth().at(iconSizeList().indexOf(width));
 #ifdef DTKWIDGET_CLASS_DSizeMode
     int height = parent()->parent()->iconSize().height()
-            + 2 * kIconModeIconSpacing   // icon与背景的上下两个间距
             + 2 * d->textLineHeight   // 2行文字的高度
             + kIconModeTextPadding   // 文字与icon之间的空隙
-            + kIconModeTextPadding / 2;   // 文字item底部的距离
+            + 2 * kIconModeIconSpacing;   // icon与背景的上下两个间距
 #else
     int height = parent()->parent()->iconSize().height()
-            + 2 * kIconModeIconSpacing;   // icon与背景的间距
             + 2 * d->textLineHeight   // 2行文字的高度
             + kIconModeTextPadding   // 文字与icon之间的空隙
-            + kIconModeTextPadding / 2;   // 文字item底部的距离
+            + 2 * kIconModeIconSpacing;   // icon与背景的间距
 #endif
     d->itemSizeHint = QSize(width, height);
-    parent()->parent()->updateViewportContentsMargins(d->itemIconSize);
 }
 
 int IconItemDelegate::iconSizeLevel() const
