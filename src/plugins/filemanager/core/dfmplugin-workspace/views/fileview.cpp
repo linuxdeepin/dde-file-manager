@@ -593,6 +593,11 @@ void FileView::setSelectionMode(const QAbstractItemView::SelectionMode mode)
         QAbstractItemView::setSelectionMode(mode);
 }
 
+void FileView::reverseSelect() const
+{
+    d->shortcutHelper->reverseSelect();
+}
+
 void FileView::setEnabledSelectionModes(const QList<QAbstractItemView::SelectionMode> &modes)
 {
     d->enabledSelectionModes = modes;

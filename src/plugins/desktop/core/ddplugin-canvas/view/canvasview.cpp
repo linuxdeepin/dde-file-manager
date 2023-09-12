@@ -577,6 +577,11 @@ void CanvasView::selectAll()
 #endif
 }
 
+void CanvasView::toggleSelect()
+{
+    d->keySelector->toggleSelect();
+}
+
 void CanvasView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
     QAbstractItemView::currentChanged(current, previous);
