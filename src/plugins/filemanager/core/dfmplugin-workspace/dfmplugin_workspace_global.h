@@ -37,7 +37,7 @@ inline QList<int> iconSizeList()
 
 inline QList<int> iconWidth()
 {
-    return { 44, 36, 28, 28, 28, 28, 28, 28 };
+    return { 44, 36, 28, 28, 28, 28, 28, 32 };
 }
 
 // model defines
@@ -50,7 +50,7 @@ inline constexpr int kCompactIconViewSpacing { 0 };
 inline constexpr int kCompactIconModeColumnPadding { 5 };
 #endif
 
-inline constexpr int kIconViewSpacing { 5 }; // icon模式下的间距的一半
+inline constexpr int kIconViewSpacing { 5 };   // icon模式下的间距的一半
 inline constexpr int kListViewSpacing { 0 };
 inline constexpr int kIconModeColumnPadding { 10 };
 inline constexpr int kDefualtHeaderSectionWidth { 140 };
@@ -64,7 +64,7 @@ inline constexpr int kListModeLeftMargin { 10 };
 inline constexpr int kListModeRightMargin { 10 };
 inline constexpr int kColumnPadding { 10 };
 inline constexpr int kMinMoveLenght { 3 };
-inline constexpr int kIconHorizontalMargin { 15 }; // 水平Margin的宽度
+inline constexpr int kIconHorizontalMargin { 15 };   // 水平Margin的宽度
 inline constexpr int kCompactIconHorizontalMargin { 10 };
 
 // tab defines
