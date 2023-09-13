@@ -378,8 +378,13 @@ void DeviceWatcher::onProtoDevUnmounted(const QString &id)
 QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType type, bool reload)
 {
     if (type == DFMMOUNT::DeviceType::kBlockDevice) {
-        if (reload)
-            d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(id));
+        if (reload) {
+            QVariantMap newInfo = DeviceHelper::loadBlockInfo(id);
+            const QVariantMap &oldInfo = d->allBlockInfos.value(id, QVariantMap());
+            newInfo[DeviceProperty::kSizeFree] = oldInfo.value(DeviceProperty::kSizeFree, 0);
+            newInfo[DeviceProperty::kSizeUsed] = oldInfo.value(DeviceProperty::kSizeUsed, 0);
+            d->allBlockInfos.insert(id, newInfo);
+        }
 
         return d->allBlockInfos.value(id);
     } else if (type == DFMMOUNT::DeviceType::kProtocolDevice) {
