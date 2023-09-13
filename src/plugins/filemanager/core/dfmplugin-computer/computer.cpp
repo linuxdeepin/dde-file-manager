@@ -34,12 +34,13 @@ inline constexpr char kComputerDConfigName[] { "org.deepin.dde.file-manager.comp
 inline constexpr char kComputerDConfHideMyDirs[] { "hideMyDirectories" };
 inline constexpr char kComputerDConfHide3rdEntries[] { "hide3rdEntries" };
 
-inline constexpr char kComputerSettingGroup[] { "02_workspace.02_computer" };
-inline constexpr char kComputerSettingHideBuiltin[] { "02_workspace.02_computer.00_hide_builtin_partition" };
-inline constexpr char kComputerSettingHideLoop[] { "02_workspace.02_computer.02_hide_loop_partitions" };
-inline constexpr char kComputerSettingShowFsTag[] { "02_workspace.02_computer.03_show_filesystemtag_on_diskicon" };
-inline constexpr char kComputerSettingHideMyDirs[] { "02_workspace.02_computer.04_hide_my_directories" };
-inline constexpr char kComputerSettingHide3rdEntries[] { "02_workspace.02_computer.05_hide_3rd_entryies" };
+#define COMPUTER_SETTING_GROUP "02_workspace.02_computer"
+inline constexpr char kComputerSettingGroup[] { COMPUTER_SETTING_GROUP };
+inline constexpr char kComputerSettingHideMyDirs[] { COMPUTER_SETTING_GROUP".00_hide_my_directories" };
+inline constexpr char kComputerSettingHideBuiltin[] { COMPUTER_SETTING_GROUP".01_hide_builtin_partition" };
+inline constexpr char kComputerSettingHideLoop[] { COMPUTER_SETTING_GROUP".02_hide_loop_partitions" };
+inline constexpr char kComputerSettingHide3rdEntries[] { COMPUTER_SETTING_GROUP".03_hide_3rd_entryies" };
+inline constexpr char kComputerSettingShowFsTag[] { COMPUTER_SETTING_GROUP".04_show_filesystemtag_on_diskicon" };
 
 DFMBASE_USE_NAMESPACE
 
