@@ -67,18 +67,22 @@ void FileViewMenuHelper::showEmptyAreaMenu()
         return;
     }
 
-    DMenu menu(this->view);
-    scene->create(&menu);
-    scene->updateState(&menu);
+    if (menu) {
+        delete menu;
+        menu = nullptr;
+    }
+
+    menu = new DMenu(view);
+    scene->create(menu);
+    scene->updateState(menu);
     reloadCursor();
 
-    QAction *act = menu.exec(QCursor::pos());
-    if (act)
-        if (act) {
-            QList<QUrl> urls { view->rootUrl() };
-            dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), urls);
-            scene->triggered(act);
-        }
+    QAction *act = menu->exec(QCursor::pos());
+    if (act) {
+        QList<QUrl> urls { view->rootUrl() };
+        dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), urls);
+        scene->triggered(act);
+    }
     delete scene;
 }
 
@@ -120,14 +124,19 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
         return;
     }
 
-    DMenu menu(this->view);
+    if (menu) {
+        delete menu;
+        menu = nullptr;
+    }
+
+    menu = new DMenu(view);
     setWaitCursor();
-    scene->create(&menu);
+    scene->create(menu);
     setWaitCursor();
-    scene->updateState(&menu);
+    scene->updateState(menu);
     reloadCursor();
 
-    QAction *act = menu.exec(QCursor::pos());
+    QAction *act = menu->exec(QCursor::pos());
     if (act) {
         dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), selectUrls);
         scene->triggered(act);

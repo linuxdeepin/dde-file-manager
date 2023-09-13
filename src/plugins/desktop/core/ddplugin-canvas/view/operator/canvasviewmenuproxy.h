@@ -9,6 +9,10 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
+class QMenu;
+QT_END_NAMESPACE
+
 namespace ddplugin_canvas {
 class CanvasView;
 class CanvasViewMenuProxy : public QObject
@@ -25,6 +29,7 @@ public slots:
 
 private:
     CanvasView *view = nullptr;
+    QMenu *menu { nullptr };
 };
 
 }
