@@ -890,6 +890,9 @@ void FileView::onHeaderViewSectionChanged(const QUrl &url)
 
 bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
+    if (selectedIndexCount() > 1)
+        return false;
+
     return DListView::edit(index, trigger, event);
 }
 
