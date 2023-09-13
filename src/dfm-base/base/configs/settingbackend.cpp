@@ -58,9 +58,9 @@ BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::k
     { LV2_GROUP_MOUNT ".04_merge_the_entries_of_samba_shared_folders", Application::kMergeTheEntriesOfSambaSharedFolders },
     { LV2_GROUP_DIALOG ".00_default_chooser_dialog", Application::kOverrideFileChooserDialog },
     { LV2_GROUP_DIALOG ".01_delete_confirmation_dialog", Application::kShowDeleteConfirmDialog },
-    { LV2_GROUP_COMPUTER_VIEW ".00_hide_builtin_partition", Application::kHiddenSystemPartition },
+    { LV2_GROUP_COMPUTER_VIEW ".01_hide_builtin_partition", Application::kHiddenSystemPartition },
     { LV2_GROUP_COMPUTER_VIEW ".02_hide_loop_partitions", Application::kHideLoopPartitions },
-    { LV2_GROUP_COMPUTER_VIEW ".03_show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
+    { LV2_GROUP_COMPUTER_VIEW ".04_show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
 };
 
 SettingBackend::SettingBackend(QObject *parent)
