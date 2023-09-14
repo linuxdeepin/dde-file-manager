@@ -37,6 +37,8 @@ public:
     virtual ~LocalDirIteratorPrivate() override;
 
     FileInfoPointer fileInfo();
+    FileInfoPointer fileInfo(const QSharedPointer<DFileInfo> dfmInfo);
+    QList<FileInfoPointer> fileInfos();
 
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr;   // dfmio的文件迭代器
