@@ -2180,6 +2180,11 @@ void CollectionView::sort(int role)
     return;
 }
 
+void CollectionView::toggleSelect()
+{
+    d->toggleSelect();
+}
+
 void CollectionView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
     QAbstractItemView::currentChanged(current, previous);
