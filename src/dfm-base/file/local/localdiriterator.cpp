@@ -35,21 +35,30 @@ LocalDirIteratorPrivate::~LocalDirIteratorPrivate()
 
 FileInfoPointer LocalDirIteratorPrivate::fileInfo()
 {
-    auto url = dfmioDirIterator->next();
-    auto fileinfo = dfmioDirIterator->fileInfo();
+    if (dfmioDirIterator.isNull())
+        return nullptr;
+    return fileInfo(dfmioDirIterator->fileInfo());
+}
+
+FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo> dfmInfo)
+{
+    if (dfmInfo.isNull())
+        return nullptr;
+
+    auto url = dfmInfo->uri();
     QSharedPointer<FileInfo> info { nullptr };
-    const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
+    const QString &fileName = dfmInfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
     bool isHidden = false;
     if (fileName.startsWith(".")) {
         isHidden = true;
     } else {
         isHidden = hideFileList.contains(fileName);
     }
-    auto targetPath = fileinfo->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
+    auto targetPath = dfmInfo->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
     if (FileUtils::isLocalDevice(url) && (targetPath.isEmpty() || FileUtils::isLocalDevice(QUrl::fromLocalFile(targetPath)))) {
-        info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url, fileinfo));
+        info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url, dfmInfo));
     } else {
-        info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, fileinfo));
+        info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, dfmInfo));
         info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
         info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes();
     }
@@ -67,6 +76,22 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo()
     }
 
     return infoTrans;
+}
+
+QList<FileInfoPointer> LocalDirIteratorPrivate::fileInfos()
+{
+    if (dfmioDirIterator.isNull())
+        return {};
+    auto dfmInfos = dfmioDirIterator->fileInfoList();
+    QList<FileInfoPointer> infos;
+    for (const auto &dfmInfo : dfmInfos) {
+        auto info = fileInfo(dfmInfo);
+        if (info.isNull())
+            continue;
+        infos.append(info);
+    }
+
+    return infos;
 }
 
 /*!
@@ -234,4 +259,11 @@ DEnumeratorFuture *LocalDirIterator::asyncIterator()
     if (d->dfmioDirIterator)
         return d->dfmioDirIterator->asyncIterator();
     return nullptr;
+}
+
+QList<FileInfoPointer> LocalDirIterator::fileInfos() const
+{
+    if (d->dfmioDirIterator)
+        return {};
+    return d->fileInfos();
 }

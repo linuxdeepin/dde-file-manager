@@ -278,7 +278,7 @@ void RootInfo::handleTraversalResult(const FileInfoPointer &child, const QString
         Q_EMIT iteratorAddFile(travseToken, sortInfo, child);
 }
 
-void RootInfo::handleTraversalResults(QList<FileInfoPointer> children, const QString &travseToken)
+void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken)
 {
     QList<SortInfoPointer> sortInfos;
     QList<FileInfoPointer> infos;
@@ -317,7 +317,7 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
 
 void RootInfo::handleTraversalSort(const QString &travseToken)
 {
-    emit requestSort(travseToken);
+    emit requestSort(travseToken, url);
 }
 
 void RootInfo::handleGetSourceData(const QString &currentToken)
