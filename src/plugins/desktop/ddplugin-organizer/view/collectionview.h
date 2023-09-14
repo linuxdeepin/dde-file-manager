@@ -56,7 +56,7 @@ public:
     void keyboardSearch(const QString &search) override;
     QVariant inputMethodQuery(Qt::InputMethodQuery query) const override;
     void sort(int role);
-
+    void toggleSelect();
     using QAbstractItemView::selectedIndexes;
 protected Q_SLOTS:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
