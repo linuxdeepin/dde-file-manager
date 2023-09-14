@@ -412,6 +412,9 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
                     }
                 }
                 return true;
+            } else if (dfmplugin_menu::ActionID::kReverseSelect == actionId) {
+                d->view->toggleSelect();
+                return true;
             }
             return false;
         } else {

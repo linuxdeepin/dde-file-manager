@@ -60,7 +60,6 @@ void SelectionSyncHelper::setShell(CanvasSelectionShell *sh)
 
 void SelectionSyncHelper::clearExteralSelection()
 {
-    qDebug() << "innerSelectionChanged";
     if (!enabled || !external || !external->hasSelection())
         return;
 
@@ -75,7 +74,6 @@ void SelectionSyncHelper::clearExteralSelection()
 
 void SelectionSyncHelper::clearInnerSelection()
 {
-    qDebug() << "externalSelectionChanged";
     if (!enabled || !inner || !inner->hasSelection())
         return;
 
