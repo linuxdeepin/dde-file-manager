@@ -130,7 +130,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     connect(root, &RootInfo::watcherUpdateFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateFile, Qt::QueuedConnection);
     connect(root, &RootInfo::watcherUpdateHideFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateHideFile, Qt::QueuedConnection);
     connect(root, &RootInfo::traversalFinished, filterSortWorker.data(), &FileSortWorker::handleTraversalFinish, Qt::QueuedConnection);
-    connect(root, &RootInfo::requestSort, filterSortWorker.data(), &FileSortWorker::handleSortAll, Qt::QueuedConnection);
+    connect(root, &RootInfo::requestSort, filterSortWorker.data(), &FileSortWorker::handleSortDir, Qt::QueuedConnection);
 
     // fetch files
     const QModelIndex &index = rootIndex();
@@ -781,11 +781,15 @@ void FileViewModel::initFilterSortWork()
     Qt::SortOrder order = static_cast<Qt::SortOrder>(valueMap.value("sortOrder", Qt::SortOrder::AscendingOrder).toInt());
     ItemRoles role = static_cast<ItemRoles>(valueMap.value("sortRole", kItemFileDisplayNameRole).toInt());
 
+    if (filterSortWorker)
+        filterSortWorker->disconnect();
+
     filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, nameFilters, currentFilters));
     beginInsertRows(QModelIndex(), 0, 0);
     filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl))));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
+    filterSortWorker->setTreeView(true);
     filterSortWorker->moveToThread(filterSortThread.data());
 
     // connect signals
