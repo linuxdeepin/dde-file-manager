@@ -51,9 +51,11 @@ void DeviceWatcher::stopPollingUsage()
 void DeviceWatcherPrivate::queryUsageAsync()
 {
     QtConcurrent::run([this] {
-        std::for_each(allBlockInfos.cbegin(), allBlockInfos.cend(),
+        auto blocks = allBlockInfos;
+        auto protocols = allProtocolInfos;
+        std::for_each(blocks.cbegin(), blocks.cend(),
                       [this](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kBlockDevice); });
-        std::for_each(allProtocolInfos.cbegin(), allProtocolInfos.cend(),
+        std::for_each(protocols.cbegin(), protocols.cend(),
                       [this](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kProtocolDevice); });
     });
 }
