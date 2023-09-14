@@ -28,6 +28,8 @@ class SideBarViewPrivate : public QObject
     QPoint dropPos;
     QModelIndex previous;
     QModelIndex current;
+    QModelIndex currentHoverIndex;
+    bool isItemDragged = false;
     QList<QUrl> urlsForDragEvent;
     qint64 lastOpTime;   //上次操作的时间（ms）
     QUrl draggedUrl;
