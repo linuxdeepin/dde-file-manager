@@ -35,6 +35,8 @@ public:
     QVariantMap groupExpandState() const;
     QModelIndex previousIndex() const;
     void setPreviousIndex(const QModelIndex &index);
+    bool isDropTarget(const QModelIndex &index);
+    bool isSideBarItemDragged();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

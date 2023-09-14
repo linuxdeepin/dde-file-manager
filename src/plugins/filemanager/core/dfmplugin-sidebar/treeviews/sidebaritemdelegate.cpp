@@ -104,14 +104,11 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QRect r(itemRect.topLeft() + dx, itemRect.bottomRight() + dw);
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
 
-    SideBarItem *subItem = dynamic_cast<SideBarItem *>(item);
+    bool isDragedItem = sidebarView->isSideBarItemDragged();
+    bool isDropTarget = sidebarView->isDropTarget(index);
     bool keepDrawingHighlighted = false;
-    bool isUrlEqual = UniversalUtils::urlEquals(index.data(SideBarItem::kItemUrlRole).toUrl(), sidebarView->currentUrl());
-    if (!isUrlEqual && subItem) {
-        bool foundByCb = subItem->itemInfo().findMeCb && subItem->itemInfo().findMeCb(subItem->url(), sidebarView->currentUrl());
-        if (foundByCb || UniversalUtils::urlEquals(subItem->url(), sidebarView->currentUrl()))
-            isUrlEqual = true;
-    }
+    const auto &itemUrl = index.data(SideBarItem::kItemUrlRole).toUrl();
+    bool isUrlEqual = UniversalUtils::urlEquals(itemUrl, sidebarView->currentUrl());
     bool isDraggingItemNotHighlighted = selected && !isUrlEqual;
     if (isUrlEqual) {
         // If the dragging and moving source item is not the current highlighted one,
@@ -119,22 +116,22 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         keepDrawingHighlighted = true;
     }
 
-    if (selected || keepDrawingHighlighted) {   // Draw selected background
+    // Draw the background color when dragging files, rather than when dragging an item
+    if ((selected && isDragedItem) || keepDrawingHighlighted) {   // Draw selected background
         QPalette::ColorGroup colorGroup = QPalette::Normal;
         QColor bgColor = option.palette.color(colorGroup, QPalette::Highlight);
 
         if (isDraggingItemNotHighlighted) {
-            auto baseColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
             if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
                 bgColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
             else
-                bgColor = baseColor.lighter();
+                bgColor = QColor(230, 230, 230);
         }
 
         painter->setBrush(bgColor);
         painter->setPen(Qt::NoPen);
         painter->drawRoundedRect(r, kRadius, kRadius);
-    } else if (opt.state.testFlag(QStyle::State_MouseOver)) {   // Draw mouse over background
+    } else if (!isDragedItem && (opt.state.testFlag(QStyle::State_MouseOver) || isDropTarget)) {   // Draw mouse over background
         drawMouseHoverBackground(painter, palette, r, widgetColor);
         if (separatorItem)
             drawMouseHoverExpandButton(painter, r, separatorItem->isExpanded());
