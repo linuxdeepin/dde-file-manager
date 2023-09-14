@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include <DApplication>
+#include <DFileDragClient>
 #include <QMenu>
 #include <QItemSelection>
 #include <QItemSelectionRange>
@@ -32,6 +33,7 @@
 using namespace testing;
 using namespace dfmbase;
 using namespace ddplugin_organizer;
+DGUI_USE_NAMESPACE
 
 TEST(CollectionViewPrivate, helpAction) {
 
