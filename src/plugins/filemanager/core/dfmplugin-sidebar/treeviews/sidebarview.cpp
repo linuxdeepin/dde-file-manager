@@ -172,17 +172,10 @@ void SidebarViewStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
         pen.setWidth(2);
         painter->setPen(pen);
 
-        int height = opt.rect.height();
-        if (height > 0) {
-            QPoint posLeft = opt.rect.topLeft();
-            QPoint posRight = opt.rect.bottomRight();
-            painter->drawRoundedRect(QRect(posLeft + QPoint(12, 0), posRight + QPoint(-14, 0)), 8, 8);
-            return;
-        } else {
-            QPoint pos = opt.rect.bottomLeft();
-            painter->drawRect(QRect(pos + QPoint(-40, 0), opt.rect.bottomRight()));
-            return;
-        }
+        QPoint posLeft = opt.rect.topLeft();
+        QPoint posRight = opt.rect.bottomRight();
+        painter->drawRoundedRect(QRect(posLeft + QPoint(10, 0), posRight + QPoint(-10, 0)), 8, 8);
+        return;
     }
     QProxyStyle::drawPrimitive(element, option, painter, widget);
 }
@@ -256,6 +249,7 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
+    d->currentHoverIndex = QModelIndex();
     d->updateDFMMimeData(event);
     if (event->source() != this) {
         d->urlsForDragEvent = d->dfmMimeData.isValid() ? d->dfmMimeData.urls() : event->mimeData()->urls();
@@ -267,6 +261,7 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 
     } else {
         d->urlsForDragEvent.clear();
+        d->isItemDragged = true;
     }
 
     d->previousRowCount = model()->rowCount();
@@ -283,14 +278,12 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 
 void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 {
-    SideBarItem *item = itemAt(event->pos());
-    if (event->source() != this) {
-        QModelIndex index = indexAt(event->pos());
-        d->draggedUrl = urlAt(event->pos());
-        setCurrentIndex(index);
-    }
+    if (event->source() != this)
+        d->currentHoverIndex = indexAt(event->pos());
 
+    SideBarItem *item = itemAt(event->pos());
     if (item) {
+        viewport()->update();
         if (!d->canMove(event)) {
             event->setDropAction(Qt::IgnoreAction);
             event->ignore();
@@ -311,11 +304,19 @@ void SideBarView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     Q_UNUSED(event)
     d->draggedUrl = QUrl("");
+    d->isItemDragged = false;
     setState(State::NoState);
+
+    if (d->currentHoverIndex.isValid()) {
+        update(d->currentHoverIndex);
+        d->currentHoverIndex = QModelIndex();
+    }
 }
 
 void SideBarView::dropEvent(QDropEvent *event)
 {
+    d->currentHoverIndex = QModelIndex();
+    d->isItemDragged = false;
     if (d->draggedUrl.isValid()) {   // select the dragged item when dropped.
         d->notifyOrderChanged();   // notify to update the persistence data
     }
@@ -412,6 +413,7 @@ void SideBarView::startDrag(Qt::DropActions supportedActions)
 {
     if (!d->draggedUrl.isValid())
         return;
+    d->isItemDragged = true;
     DTreeView::startDrag(supportedActions);
 }
 
@@ -569,6 +571,16 @@ QModelIndex SideBarView::previousIndex() const
 void SideBarView::setPreviousIndex(const QModelIndex &index)
 {
     d->previous = index;
+}
+
+bool SideBarView::isDropTarget(const QModelIndex &index)
+{
+    return index == d->currentHoverIndex;
+}
+
+bool SideBarView::isSideBarItemDragged()
+{
+    return d->isItemDragged;
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
