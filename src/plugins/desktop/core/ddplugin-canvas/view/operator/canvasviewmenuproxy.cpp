@@ -79,15 +79,10 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
         return;
     }
 
-    if (menu) {
-        delete menu;
-        menu = nullptr;
-    }
-
-    menu = new QMenu(view);
-    canvasScene->create(menu);
-    canvasScene->updateState(menu);
-    if (QAction *act = menu->exec(QCursor::pos())) {
+    QMenu menu(view);
+    canvasScene->create(&menu);
+    canvasScene->updateState(&menu);
+    if (QAction *act = menu.exec(QCursor::pos())) {
         QList<QUrl> urls { view->model()->rootUrl() };
         dpfSignalDispatcher->publish("ddplugin_canvas", "signal_CanvasView_ReportMenuData", act->text(), urls);
         canvasScene->triggered(act);
@@ -137,16 +132,11 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
         return;
     }
 
-    if (menu) {
-        delete menu;
-        menu = nullptr;
-    }
+    QMenu menu(view);
+    canvasScene->create(&menu);
+    canvasScene->updateState(&menu);
 
-    menu = new QMenu(view);
-    canvasScene->create(menu);
-    canvasScene->updateState(menu);
-
-    if (QAction *act = menu->exec(QCursor::pos())) {
+    if (QAction *act = menu.exec(QCursor::pos())) {
         dpfSignalDispatcher->publish("ddplugin_canvas", "signal_CanvasView_ReportMenuData", act->text(), selectUrls);
         canvasScene->triggered(act);
     }

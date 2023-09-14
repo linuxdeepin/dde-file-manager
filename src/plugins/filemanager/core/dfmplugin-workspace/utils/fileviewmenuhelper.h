@@ -10,10 +10,6 @@
 #include <QObject>
 #include <QString>
 
-QT_BEGIN_NAMESPACE
-class QMenu;
-QT_END_NAMESPACE
-
 namespace dfmplugin_workspace {
 
 class FileView;
@@ -34,7 +30,6 @@ private:
     QString currentMenuScene() const;
 
     FileView *view { nullptr };
-    QMenu *menu { nullptr };
 };
 
 }
