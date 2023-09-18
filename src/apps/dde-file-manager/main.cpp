@@ -164,9 +164,11 @@ static bool pluginsLoad()
 
 static void handleSIGTERM(int sig)
 {
-    qCritical() << "break with !SIGTERM! " << sig;
+    qWarning() << "break with !SIGTERM! " << sig;
 
     if (qApp) {
+        // Don't use headless if SIGTERM, cause system shutdown blocked
+        qApp->setProperty("SIGTERM", true);
         qApp->quit();
     }
 }
@@ -317,7 +319,8 @@ int main(int argc, char *argv[])
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
-    if (enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
+    bool isSigterm { qApp->property("SIGTERM").toBool() };
+    if (!isSigterm && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
         a.closeServer();
         QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
     }
