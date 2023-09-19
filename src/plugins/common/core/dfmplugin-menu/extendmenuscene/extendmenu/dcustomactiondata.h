@@ -28,6 +28,7 @@ public:
     int position() const;
     QString icon() const;
     QString command() const;
+    QString parentPath() const;
     DCustomActionDefines::Separator separator() const;
     QList<DCustomActionData> acitons() const;
     DCustomActionDefines::ActionArg nameArg() const;
@@ -45,6 +46,7 @@ protected:
     QString actionCommand;   //菜单执行动作
     DCustomActionDefines::Separator actionSeparator;
     QList<DCustomActionData> childrenActions;   //当前action的子actions
+    QString actionParentPath;
 };
 
 //根项
