@@ -124,6 +124,7 @@ static const char *const kConfNotShowIn("X-DDE-FileManager-NotShowIn");   // "De
 static const char *const kConfNotShowInAlias("X-DFM-NotShowIn");
 static const char *const kConfSupportSuffix("X-DDE-FileManager-SupportSuffix");   // for deepin-compress *.7z.001,*.7z.002,*.7z.003...
 static const char *const kConfSupportSuffixAlias("X-DFM-SupportSuffix");
+static const char *const kConfParentMenuPath("X-DFM-ParentMenuPath");
 static const char *const kConfSign("Sign");
 
 //菜单基本信息
