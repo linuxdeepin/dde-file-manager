@@ -84,6 +84,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SelectAll",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectAll);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_ReverseSelect",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleReverseSelect);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SetSelectionMode",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSelectionMode);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SetEnabledSelectionModes",
@@ -177,6 +179,11 @@ void WorkspaceEventReceiver::handleSelectFiles(quint64 windowId, const QList<QUr
 void WorkspaceEventReceiver::handleSelectAll(quint64 windowId)
 {
     WorkspaceHelper::instance()->selectAll(windowId);
+}
+
+void WorkspaceEventReceiver::handleReverseSelect(quint64 windowId)
+{
+    WorkspaceHelper::instance()->reverseSelect(windowId);
 }
 
 void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
@@ -391,4 +398,3 @@ void WorkspaceEventReceiver::handleRegisterDataCache(const QString &scheme)
 {
     //    FileModelManager::instance()->registerDataCache(scheme);
 }
-
