@@ -806,10 +806,10 @@ void FileViewModel::initFilterSortWork()
     },
             Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeHiddenFilter, filterSortWorker.data(), &FileSortWorker::onToggleHiddenFiles, Qt::QueuedConnection);
-    connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::setFilters, Qt::QueuedConnection);
-    connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::setNameFilters, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::handleFilters, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::HandleNameFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestUpdateFile, filterSortWorker.data(), &FileSortWorker::handleUpdateFile, Qt::QueuedConnection);
-    connect(this, &FileViewModel::requestSortChildren, filterSortWorker.data(), &FileSortWorker::resort, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestSortChildren, filterSortWorker.data(), &FileSortWorker::handleResort, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSetFilterData, filterSortWorker.data(), &FileSortWorker::handleFilterData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
