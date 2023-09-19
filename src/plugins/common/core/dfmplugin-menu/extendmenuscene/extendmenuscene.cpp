@@ -19,6 +19,8 @@
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
 
+static constexpr char kActionPosInMenu[] { "act_pos" };
+
 AbstractMenuScene *ExtendMenuCreator::create()
 {
     std::call_once(loadFlag, [this]() {
@@ -55,13 +57,79 @@ int ExtendMenuScenePrivate::mayComboPostion(const DCustomActionData &acdata, DCu
     int pos = acdata.position(combo);
     // if kMultiDirs or kMultiFiles is not set pos, try to use kFileAndDir.
     if (combo == DCustomActionDefines::kMultiDirs
-            || combo == DCustomActionDefines::kMultiFiles) {
+        || combo == DCustomActionDefines::kMultiFiles) {
         if (pos == acdata.position()) {
             pos = acdata.position(DCustomActionDefines::kFileAndDir);
         }
     }
 
     return pos;
+}
+
+void ExtendMenuScenePrivate::getSubMenus(QMenu *currMenu, const QString &parentMenuName, QMap<QString, QMenu *> &subMenus)
+{
+    Q_ASSERT(currMenu);
+
+    auto actions = currMenu->actions();
+    for (auto act : actions) {
+        QString actID = act->property("actionID").toString();
+        const auto &subMenu = act->menu();
+
+        if (!actID.isEmpty() && subMenu) {
+            if (!parentMenuName.isEmpty())
+                actID.prepend(parentMenuName + "/");
+
+            subMenus.insert(actID, subMenu);
+            getSubMenus(subMenu, actID, subMenus);
+        }
+    }
+}
+
+bool ExtendMenuScenePrivate::insertIntoExistedMenu(QAction *action, const QMap<QString, QMenu *> &menus)
+{
+    QString parentPath = action->property(DCustomActionDefines::kConfParentMenuPath).toString();
+
+    bool foundParent = !parentPath.isEmpty() && menus.contains(parentPath);
+    if (!foundParent)
+        return false;
+
+    QMenu *menu = menus.value(parentPath);
+    auto subActions = menu->actions();
+    std::for_each(subActions.cbegin(), subActions.cend(), [menu](QAction *act) {
+        menu->removeAction(act);
+    });
+
+    bool hasPos = false;
+    int pos = action->property(kActionPosInMenu).toInt(&hasPos);
+    if (!hasPos)
+        pos = -1;
+
+    int actPos = -1;
+    if (pos < 0 || pos >= subActions.count()) {
+        actPos = subActions.count();
+        subActions.append(action);
+    } else {
+        actPos = pos;
+        subActions.insert(pos, action);
+    }
+
+    auto separatPos = cacheActionsSeparator.value(action, DCustomActionDefines::kNone);
+    if (separatPos & DCustomActionDefines::kTop) {
+        QAction *separator = new QAction(menu);
+        separator->setSeparator(true);
+        subActions.insert(actPos, separator);
+        actPos++;   // separator inserted before action, the pos grows.
+    }
+    if (separatPos & DCustomActionDefines::kBottom) {
+        QAction *separator = new QAction(menu);
+        separator->setSeparator(true);
+        subActions.insert(actPos + 1, separator);
+    }
+
+    cacheActionsSeparator.remove(action);
+
+    menu->addActions(subActions);
+    return true;
 }
 
 ExtendMenuScene::ExtendMenuScene(DCustomActionParser *parser, QObject *parent)
@@ -159,7 +227,7 @@ bool ExtendMenuScene::create(QMenu *parent)
 
     //匹配类型支持
 #ifdef MENU_CHECK_FOCUSONLY
-    usedEntrys = builder.matchActions({d->focusFile}, usedEntrys);
+    usedEntrys = builder.matchActions({ d->focusFile }, usedEntrys);
 #else
     usedEntrys = builder.matchActions(d->selectFiles, usedEntrys);
 #endif
@@ -184,7 +252,7 @@ bool ExtendMenuScene::create(QMenu *parent)
         if (actionData.separator() != DCustomActionDefines::kNone)
             d->cacheActionsSeparator.insert(action, actionData.separator());
 
-        //根据组合类型获取插入位置
+            //根据组合类型获取插入位置
 #ifdef MENU_CHECK_FOCUSONLY
         auto pos = d->mayComboPostion(actionData, fileCombo);
 #else
@@ -193,12 +261,8 @@ bool ExtendMenuScene::create(QMenu *parent)
 
         //位置是否有效
         if (pos > 0) {
-            auto temp = d->cacheLocateActions.find(pos);
-            if (temp == d->cacheLocateActions.end()) {
-                d->cacheLocateActions.insert(pos, { action });
-            } else {   //位置冲突，往后放
-                temp->append(action);
-            }
+            d->cacheLocateActions[pos].append(action);
+            action->setProperty(kActionPosInMenu, pos);
         }
 
         auto actions = d->childActions(action);
@@ -215,24 +279,33 @@ void ExtendMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
+    // get all ID-ed submenus from parent
+    QMap<QString, QMenu *> existedMenus;
+    d->getSubMenus(parent, "", existedMenus);
+
     auto systemActions = parent->actions();
     for (auto it = systemActions.begin(); it != systemActions.end(); ++it)
         parent->removeAction(*it);
     Q_ASSERT(parent->actions().isEmpty());
 
     for (auto action : d->extendActions) {
+        bool handled = d->insertIntoExistedMenu(action, existedMenus);
 
         bool hasPos = false;
         for (auto pos : d->cacheLocateActions.keys()) {
             auto posActions = d->cacheLocateActions.value(pos);
             if (posActions.contains(action)) {
                 hasPos = true;
+                if (handled) {
+                    posActions.removeAll(action);
+                    d->cacheLocateActions.insert(pos, posActions);
+                }
                 break;
             }
         }
 
         // 该action已记录位置，从位置缓存列表进行添加
-        if (hasPos)
+        if (hasPos || handled)
             continue;
 
         // 未配置位置的项，追加到已有菜单项之后

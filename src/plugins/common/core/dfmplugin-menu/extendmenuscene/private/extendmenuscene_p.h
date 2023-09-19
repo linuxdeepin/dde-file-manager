@@ -19,6 +19,9 @@ public:
     explicit ExtendMenuScenePrivate(ExtendMenuScene *qq);
     QList<QAction *> childActions(QAction *action);
     int mayComboPostion(const DCustomActionData &acdata, DCustomActionDefines::ComboType combo);
+    void getSubMenus(QMenu *currMenu, const QString &parentMenuName, QMap<QString, QMenu *> &subMenus);
+    bool insertIntoExistedMenu(QAction *act, const QMap<QString, QMenu *> &menus);
+
 public:
     DCustomActionParser *customParser = nullptr;
     QList<QAction *> extendActions;

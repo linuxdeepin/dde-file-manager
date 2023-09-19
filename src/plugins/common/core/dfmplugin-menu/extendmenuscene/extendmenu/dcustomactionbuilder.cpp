@@ -69,13 +69,13 @@ void DCustomActionBuilder::setFocusFile(const QUrl &file)
     }
 
     fileFullName = info->nameOf(NameInfoType::kFileName);
-    //baseName
+    // baseName
     if (info->isAttributes(OptInfoType::kIsDir)) {
         fileBaseName = fileFullName;
         return;
     }
-    //fix bug 65159,这里只针对一些常见的后缀处理，暂不针对一些非标准的特殊情况做处理,待后续产品有特殊要求再处理特殊情况
-    //suffixForFileName对复式后缀会返回xx.*,比如test.7z.001返回的是7z.*
+    // fix bug 65159,这里只针对一些常见的后缀处理，暂不针对一些非标准的特殊情况做处理,待后续产品有特殊要求再处理特殊情况
+    // suffixForFileName对复式后缀会返回xx.*,比如test.7z.001返回的是7z.*
     //不过在一些非标准的复式后缀判定中，仍可能判定不准确：比如：test.part1.rar被识别成rar
     //隐藏文件：".tar"、".tar.gz"后缀识别成""和".gz"
     //可能无法识别到后缀：如test.run或者.tar
@@ -188,7 +188,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
 #ifdef MENU_CHECK_FOCUSONLY
     // add kFileAndDir if type is kMultiDirs or kMultiFiles.
     if (type == DCustomActionDefines::kMultiDirs
-            || type == DCustomActionDefines::kMultiFiles) {
+        || type == DCustomActionDefines::kMultiFiles) {
         type |= DCustomActionDefines::kFileAndDir;
     }
 #endif
@@ -203,14 +203,14 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
 QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &selects,
                                                              QList<DCustomActionEntry> oriActions)
 {
-    //todo：细化功能颗粒度，一个函数尽量专职一件事
+    // todo：细化功能颗粒度，一个函数尽量专职一件事
     /*
      *根据选中内容、配置项、选中项类型匹配合适的菜单项
      *是否action支持的协议
      *是否action支持的后缀
      *action不支持类型过滤（不加上父类型过滤，todo: 为何不支持项不考虑?）
      *action支持类型过滤(类型过滤要加上父类型一起过滤)
-    */
+     */
 
     //具体配置过滤
     for (auto &singleUrl : selects) {
@@ -228,7 +228,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
          * fileMimeTypesNoParent:不包含父类mimetype的集合
          * 目的是在一些应用对文件的识别支持上有差异：比如xlsx的 parentMimeTypes 是application/zip
          * 归档管理器打开则会被作为解压
-        */
+         */
 
         QStringList fileMimeTypes;
         QStringList fileMimeTypesNoParent;
@@ -338,7 +338,7 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
         return rets;
     };
 
-    //url转为文件路径
+    // url转为文件路径
     auto urlListToLocalFile = [](const QList<QUrl> &files) {
         QStringList rets;
         for (auto it = files.begin(); it != files.end(); ++it) {
@@ -347,7 +347,7 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
         return rets;
     };
 
-    //url字符串
+    // url字符串
     auto urlListToString = [](const QList<QUrl> &files) {
         QStringList rets;
         for (auto it = files.begin(); it != files.end(); ++it) {
@@ -515,14 +515,16 @@ void DCustomActionBuilder::appendParentMimeType(const QStringList &parentmimeTyp
 */
 QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const
 {
-    //fix-bug 59298
-    //createAction 构造action 图标等, 把关于构造action参数放在createAction中
+    // fix-bug 59298
+    // createAction 构造action 图标等, 把关于构造action参数放在createAction中
     QAction *action = createAciton(actionData);
     QMenu *menu = new QMenu(parentForSubmenu);
     menu->setToolTipsVisible(true);
 
     action->setMenu(menu);
     action->setProperty(DCustomActionDefines::kCustomActionFlag, true);
+    if (!actionData.actionParentPath.isEmpty())
+        action->setProperty(DCustomActionDefines::kConfParentMenuPath, actionData.actionParentPath);
 
     //子项,子项的顺序由解析器保证
     QList<DCustomActionData> subActions = actionData.acitons();
@@ -567,6 +569,9 @@ QAction *DCustomActionBuilder::createAciton(const DCustomActionData &actionData)
     QAction *action = new QAction;
     action->setProperty(DCustomActionDefines::kCustomActionFlag, true);
 
+    if (!actionData.actionParentPath.isEmpty())
+        action->setProperty(DCustomActionDefines::kConfParentMenuPath, actionData.actionParentPath);
+
     //执行动作
     action->setProperty(DCustomActionDefines::kCustomActionCommand, actionData.command());
     action->setProperty(DCustomActionDefines::kCustomActionCommandArgFlag, actionData.commandArg());
@@ -574,13 +579,13 @@ QAction *DCustomActionBuilder::createAciton(const DCustomActionData &actionData)
     //标题
     {
         const QString &&name = makeName(actionData.name(), actionData.nameArg());
-        //TODO width是临时值，最终效果需设计定义
+        // TODO width是临时值，最终效果需设计定义
         const QString &&elidedName = fontMetriecs.elidedText(name, Qt::ElideMiddle, 150);
         action->setText(elidedName);
         if (elidedName != name)
             action->setToolTip(name);
     }
-//story#4481,产品变更暂不考虑图标
+// story#4481,产品变更暂不考虑图标
 #if 0
     //图标
     const QString &iconName = actionData.icon();

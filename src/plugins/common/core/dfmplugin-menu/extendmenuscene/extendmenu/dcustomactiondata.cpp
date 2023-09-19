@@ -7,12 +7,24 @@
 using namespace dfmplugin_menu;
 
 DCustomActionData::DCustomActionData()
-    : actionPosition(0), actionNameArg(DCustomActionDefines::kNoneArg), actionCmdArg(DCustomActionDefines::kNoneArg), actionSeparator(DCustomActionDefines::kNone)
+    : actionPosition(0),
+      actionNameArg(DCustomActionDefines::kNoneArg),
+      actionCmdArg(DCustomActionDefines::kNoneArg),
+      actionSeparator(DCustomActionDefines::kNone)
 {
 }
 
 DCustomActionData::DCustomActionData(const DCustomActionData &other)
-    : comboPos(other.comboPos), actionPosition(other.actionPosition), actionNameArg(other.actionNameArg), actionCmdArg(other.actionCmdArg), actionName(other.actionName), actionIcon(other.actionIcon), actionCommand(other.actionCommand), actionSeparator(other.actionSeparator), childrenActions(other.childrenActions)
+    : comboPos(other.comboPos),
+      actionPosition(other.actionPosition),
+      actionNameArg(other.actionNameArg),
+      actionCmdArg(other.actionCmdArg),
+      actionName(other.actionName),
+      actionIcon(other.actionIcon),
+      actionCommand(other.actionCommand),
+      actionSeparator(other.actionSeparator),
+      childrenActions(other.childrenActions),
+      actionParentPath(other.actionParentPath)
 {
 }
 
@@ -29,6 +41,7 @@ DCustomActionData &DCustomActionData::operator=(const DCustomActionData &other)
     actionIcon = other.actionIcon;
     actionCommand = other.actionCommand;
     childrenActions = other.childrenActions;
+    actionParentPath = other.actionParentPath;
     return *this;
 }
 
@@ -69,6 +82,11 @@ QString DCustomActionData::icon() const
 QString DCustomActionData::command() const
 {
     return actionCommand;
+}
+
+QString DCustomActionData::parentPath() const
+{
+    return actionParentPath;
 }
 
 DCustomActionDefines::Separator DCustomActionData::separator() const

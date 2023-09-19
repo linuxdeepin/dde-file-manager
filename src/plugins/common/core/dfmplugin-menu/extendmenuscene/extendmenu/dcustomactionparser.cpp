@@ -140,7 +140,7 @@ QList<DCustomActionEntry> DCustomActionParser::getActionFiles(bool onDesktop)
 {
     QList<DCustomActionEntry> ret;
     foreach (const DCustomActionEntry &entry, actionEntry) {
-        //NotShowIn
+        // NotShowIn
         if (isActionShouldShow(entry.actionNotShowIn, onDesktop))
             ret << entry;   //一级菜单不在桌面/文管显示则跳过该项
     }
@@ -181,7 +181,7 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
         QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
         hierarchyNum = 1;
         bool isVisible = parseFile(childrenActions, actionSetting, targetGroup, basicInfos, needSort, true);
-        //bug-59348 解决解析失败 count++ 导致不能显示50个有效文件(一级菜单)
+        // bug-59348 解决解析失败 count++ 导致不能显示50个有效文件(一级菜单)
         if (isVisible) {
             topActionCount++;
         }
@@ -229,12 +229,12 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     actData.actionName = name;
     actionNameDynamicArg(actData);
 
-    //story#4481,产品变更暂不考虑icon
+    // story#4481,产品变更暂不考虑icon
 #if 0
     //icon
     actData.m_icon = getValue(actionSetting, group, kActionIcon).toString();
 #endif
-    //pos
+    // pos
     actData.actionPosition = getValue(actionSetting, group, kActionPos).toInt();
     if (0 == actData.actionPosition)
         actData.actionPosition = getValue(actionSetting, group, kActionPosAlias).toInt();
@@ -242,15 +242,18 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     if (0 == actData.actionPosition && isSort)   //未定义pos行为当前层级以上级指定顺序
         isSort = false;
 
-    //separator
+    // separator
     QString separator = getValue(actionSetting, group, kActionSeparator).toString().simplified();
     if (separator.isEmpty())
         separator = getValue(actionSetting, group, kActionSeparatorAlias).toString().simplified();
     actData.actionSeparator = separtor.value(separator, kNone);
 
-    //actions 父子action级联与动作
+    QString parentMenuPath = getValue(actionSetting, group, kConfParentMenuPath).toString();
+    actData.actionParentPath = parentMenuPath;
 
-    //actions 父级级联与动作
+    // actions 父子action级联与动作
+
+    // actions 父级级联与动作
     QString actions = getValue(actionSetting, group, kActionGroups).toString().simplified();
     if (actions.isEmpty()) {
         //无级联检查是否有动作
@@ -260,7 +263,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         actData.actionCommand = command;
         execDynamicArg(actData);
     } else {
-        //add 子菜单项，父级有子菜单，则忽略动作，即便子菜单无一有效，后续也不再添加动作
+        // add 子菜单项，父级有子菜单，则忽略动作，即便子菜单无一有效，后续也不再添加动作
         QList<DCustomActionData> tpChildrenActions;
         auto actStr = getValue(actionSetting, group, kActionGroups);
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
@@ -318,40 +321,40 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
             tpEntry.actionFileCombo = target;
         }
 
-        //MimeType
+        // MimeType
         QString mimeTypeStr = getValue(actionSetting, group, kConfMimeType).toString().simplified();
         if (!mimeTypeStr.isEmpty())
             tpEntry.actionMimeTypes = mimeTypeStr.split(":");
 
-        //X-DFM-ExcludeMimeTypes
+        // X-DFM-ExcludeMimeTypes
         QString excludeMimeTypesStr = getValue(actionSetting, group, kConfExcludeMimeTypes).toString().simplified();
         if (excludeMimeTypesStr.isEmpty())
             excludeMimeTypesStr = getValue(actionSetting, group, kConfExcludeMimeTypesAlias).toString().simplified();
         if (!excludeMimeTypesStr.isEmpty())
             tpEntry.actionExcludeMimeTypes = excludeMimeTypesStr.split(":");
 
-        //X-DFM-SupportSchemes
+        // X-DFM-SupportSchemes
         QString supportSchemesStr = getValue(actionSetting, group, kConfSupportSchemes).toString().simplified();
         if (supportSchemesStr.isEmpty())
             supportSchemesStr = getValue(actionSetting, group, kConfSupportSchemesAlias).toString().simplified();
         if (!supportSchemesStr.isEmpty())
             tpEntry.actionSupportSchemes = supportSchemesStr.split(":");
 
-        //X-DFM-NotShowIn
+        // X-DFM-NotShowIn
         QString supportNotShowInStr = getValue(actionSetting, group, kConfNotShowIn).toString().simplified();
         if (supportNotShowInStr.isEmpty())
             supportNotShowInStr = getValue(actionSetting, group, kConfNotShowInAlias).toString().simplified();
         if (!supportNotShowInStr.isEmpty())
             tpEntry.actionNotShowIn = supportNotShowInStr.split(":");
 
-        //X-DFM-SupportSuffix
+        // X-DFM-SupportSuffix
         QString supportSuffixStr = getValue(actionSetting, group, kConfSupportSuffix).toString().simplified();
         if (supportSuffixStr.isEmpty())
             supportSuffixStr = getValue(actionSetting, group, kConfSupportSuffixAlias).toString().simplified();
         if (!supportSuffixStr.isEmpty())
             tpEntry.actionSupportSuffix = supportSuffixStr.split(":");
 
-        //comboPos
+        // comboPos
         if (!comboPosForTopAction(actionSetting, group, actData))
             return false;   //有一级菜单项支持的类型，但全无效，自动作为无效废弃项
 
@@ -404,12 +407,12 @@ void DCustomActionParser::initHash()
     separtor.insert("Both", Separator::kBoth);
     separtor.insert("Bottom", Separator::kBottom);
 
-    //name参数类型仅支持：DirName BaseName FileName
+    // name参数类型仅支持：DirName BaseName FileName
     actionNameArg.insert(kStrActionArg[kDirName], ActionArg::kDirName);   //%d
     actionNameArg.insert(kStrActionArg[kBaseName], ActionArg::kBaseName);   //%b
     actionNameArg.insert(kStrActionArg[kFileName], ActionArg::kFileName);   //"%a",
 
-    //cmd参数类型只支持：DirPath FilePath FilePaths UrlPath UrlPaths
+    // cmd参数类型只支持：DirPath FilePath FilePaths UrlPath UrlPaths
     actionExecArg.insert(kStrActionArg[kDirPath], ActionArg::kDirPath);   //"%p"
     actionExecArg.insert(kStrActionArg[kFilePath], ActionArg::kFilePath);   //"%f"
     actionExecArg.insert(kStrActionArg[kFilePaths], ActionArg::kFilePaths);   //"%F"
@@ -456,7 +459,7 @@ bool DCustomActionParser::actionFileInfos(FileBasicInfos &basicInfo, QSettings &
 */
 void DCustomActionParser::actionNameDynamicArg(DCustomActionData &act)
 {
-    //name参数类型仅支持：DirName BaseName FileName
+    // name参数类型仅支持：DirName BaseName FileName
     int firstValidIndex = act.actionName.indexOf("%");
     auto cnt = act.actionName.length() - 1;
     if (0 == cnt || 0 > firstValidIndex) {
@@ -482,7 +485,7 @@ void DCustomActionParser::actionNameDynamicArg(DCustomActionData &act)
 */
 void DCustomActionParser::execDynamicArg(DCustomActionData &act)
 {
-    //cmd参数类型只支持：DirPath FilePath FilePaths UrlPath UrlPaths
+    // cmd参数类型只支持：DirPath FilePath FilePaths UrlPath UrlPaths
     int firstValidIndex = act.actionCommand.indexOf("%");
     auto cnt = act.actionCommand.length() - 1;
     if (0 == cnt || 0 > firstValidIndex) {
