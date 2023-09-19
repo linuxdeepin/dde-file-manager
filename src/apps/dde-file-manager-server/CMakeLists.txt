@@ -37,15 +37,20 @@ target_link_libraries(
     ${DtkWidget_LIBRARIES}
 )
 
-if (NOT DEFINED SYSTEMD_USER_UNIT_DIR)
-    pkg_get_variable(SYSTEMD_USER_UNIT_DIR systemd systemduserunitdir)
-endif()
 
-macro(install_symlink filepath wantsdir)
-    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/link/${wantsdir}/)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${SYSTEMD_USER_UNIT_DIR}/${filepath} ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath})
-    install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION ${SYSTEMD_USER_UNIT_DIR}/${wantsdir}/)
-endmacro(install_symlink)
+if (COMPLIE_ON_V23)
+    if (NOT DEFINED SYSTEMD_USER_UNIT_DIR)
+        pkg_get_variable(SYSTEMD_USER_UNIT_DIR systemd systemduserunitdir)
+    endif()
+
+    macro(install_symlink filepath wantsdir)
+        file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/link/${wantsdir}/)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${SYSTEMD_USER_UNIT_DIR}/${filepath} ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath})
+        install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION ${SYSTEMD_USER_UNIT_DIR}/${wantsdir}/)
+    endmacro(install_symlink)
+
+    install_symlink(dde-filemanager-server.service dde-session-initialized.target.wants)
+endif()
 
 # binary
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
@@ -58,4 +63,3 @@ install(FILES dbusservice/org.deepin.filemanager.server.service
 install(FILES dbusservice/dde-filemanager-server.service
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
 
-install_symlink(dde-filemanager-server.service dde-session-initialized.target.wants)
