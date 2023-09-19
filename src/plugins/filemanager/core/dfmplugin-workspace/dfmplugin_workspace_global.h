@@ -37,7 +37,7 @@ inline QList<int> iconSizeList()
 
 inline QList<int> iconWidth()
 {
-    return { 44, 36, 28, 28, 28, 28, 28, 32 };
+    return { 44, 36, 28, 28, 28, 28, 28, 28 };
 }
 
 // model defines
