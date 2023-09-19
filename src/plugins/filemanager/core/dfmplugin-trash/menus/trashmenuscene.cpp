@@ -167,11 +167,17 @@ bool TrashMenuScene::triggered(QAction *action)
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileDeletionDate);
             return true;
         }
-        qWarning() << "action not found, id: " << actId;
         return false;
-    } else {
-        return AbstractMenuScene::triggered(action);
+    } else if (auto s = scene(action)) {
+        if (s->name() == kOpenDirMenuSceneName
+            && actId == dfmplugin_menu::ActionID::kReverseSelect) {
+            dpfSlotChannel->push("dfmplugin_workspace",
+                                 "slot_View_ReverseSelect", d->windowId);
+            return true;
+        }
     }
+
+    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *TrashMenuScene::scene(QAction *action) const
@@ -201,6 +207,7 @@ TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
     selectSupportActions.insert(kPropertyMenuSceneName, "property");
     selectSupportActions.insert(kTrashMenuSceneName, TrashActionId::kRestore);
     selectSupportActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewWindow);
+    selectSupportActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kReverseSelect);
 }
 
 void TrashMenuScenePrivate::updateMenu(QMenu *menu)

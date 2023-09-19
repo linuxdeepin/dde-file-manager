@@ -54,6 +54,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_View_GetSelectedUrls)
     DPF_EVENT_REG_SLOT(slot_View_SelectFiles)
     DPF_EVENT_REG_SLOT(slot_View_SelectAll)
+    DPF_EVENT_REG_SLOT(slot_View_ReverseSelect)
     DPF_EVENT_REG_SLOT(slot_View_SetSelectionMode)
     DPF_EVENT_REG_SLOT(slot_View_SetEnabledSelectionModes)
     DPF_EVENT_REG_SLOT(slot_View_SetDragEnabled)
