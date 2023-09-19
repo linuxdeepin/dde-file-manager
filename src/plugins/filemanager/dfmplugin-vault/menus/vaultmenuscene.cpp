@@ -59,6 +59,7 @@ QStringList VaultMenuScenePrivate::normalMenuActionRule()
         "copy",
         "rename",
         "delete",
+        "reverse-select",
         "separator-line",
         "send-to",
         "property"
