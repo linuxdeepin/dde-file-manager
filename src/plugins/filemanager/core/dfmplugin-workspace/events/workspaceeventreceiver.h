@@ -36,6 +36,7 @@ public slots:
     void handleSetTabAlias(const QUrl &url, const QString &name);
     void handleSelectFiles(quint64 windowId, const QList<QUrl> &files);
     void handleSelectAll(quint64 windowId);
+    void handleReverseSelect(quint64 windowId);
     void handleSetSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
 
     void handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode);
