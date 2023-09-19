@@ -173,7 +173,7 @@ QRectF ExpandedItem::textGeometry(int width) const
         width -= (margins.left() + margins.right());
 
         QRect labelRect(kIconModeTextPadding + margins.left(),
-                        iconHeight + kIconModeTextPadding + kIconModeRectRadius + margins.top(),
+                        iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing + margins.top(),
                         width - kIconModeTextPadding * 2,
                         INT_MAX);
 
