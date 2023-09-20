@@ -312,26 +312,26 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
 
     ComputerUtils::setCursorState(true);
     DevMngIns->mountBlockDevAsync(id, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
-        bool isOpticalDevice = id.contains(QRegularExpression("/sr[0-9]*$"));
-        if (ok || isOpticalDevice) {
-            QUrl u = isOpticalDevice ? ComputerUtils::makeBurnUrl(id) : ComputerUtils::makeLocalUrl(mpt);
-
-            if (isOpticalDevice)
-                this->waitUDisks2DataReady(id);
-
-            ComputerItemWatcherInstance->insertUrlMapper(id, u);
-            if (!shellId.isEmpty())
-                ComputerItemWatcherInstance->insertUrlMapper(shellId, QUrl::fromLocalFile(mpt));
-
-            cdTo(id, u, winId, act);
-        } else {
+        if (!ok) {
             if (err.code == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
                 ComputerUtils::setCursorState();
                 return;
             }
             qInfo() << "mount device failed: " << id << err.message << err.code;
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
+            return;
         }
+
+        bool isOpticalDevice = id.contains(QRegularExpression("/sr[0-9]*$"));
+        if (isOpticalDevice)
+            this->waitUDisks2DataReady(id);
+
+        QUrl u = isOpticalDevice ? ComputerUtils::makeBurnUrl(id) : ComputerUtils::makeLocalUrl(mpt);
+        ComputerItemWatcherInstance->insertUrlMapper(id, u);
+        if (!shellId.isEmpty())
+            ComputerItemWatcherInstance->insertUrlMapper(shellId, QUrl::fromLocalFile(mpt));
+
+        cdTo(id, u, winId, act);
         ComputerUtils::setCursorState();
     });
 }
