@@ -44,6 +44,7 @@ protected:
     static constexpr int kDefaultWindowHeight { 700 };
     static constexpr int kMinimumLeftWidth { 40 };
     static constexpr int kMaximumLeftWidth { 600 };
+    static constexpr int kDefaultLeftWidth { 200 };
 
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
     QHBoxLayout *midLayout { nullptr };
