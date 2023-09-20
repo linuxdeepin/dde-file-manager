@@ -455,7 +455,7 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
     bool isTrashFile = FileUtils::isTrashFile(fromInfo->urlOf(UrlInfoType::kUrl));
     if (isTrashFile) {
         auto trashInfoUrl= trashInfo(fromInfo);
-        fileNewName = fileOriginName(trashInfoUrl);
+        fileNewName = trashInfoUrl.isValid() ? fileOriginName(trashInfoUrl) : fileName;
     }
     newTargetInfo.reset();
     if (!doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, skip, true))
