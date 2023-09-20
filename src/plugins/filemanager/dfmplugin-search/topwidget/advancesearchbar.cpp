@@ -145,8 +145,8 @@ void AdvanceSearchBarPrivate::initUI()
     mainLayout->addSpacing(20);
 
     q->setWidget(this);
-    // 禁用横向滚动条
-    q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // 启用横向滚动条
+    q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     // 禁用竖向滚动条
     q->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
