@@ -104,8 +104,10 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
 
         qInfo() << "start checking if path should be writable" << url;
         SyncFileInfo fileInfo(url);
-        if (fileInfo.isAttributes(FileInfo::FileIsType::kIsWritable)) {
-            qInfo() << "file for current user is writable, ignore prehandle" << url;
+        if (fileInfo.isAttributes(FileInfo::FileIsType::kIsWritable)
+            && fileInfo.isAttributes(FileInfo::FileIsType::kIsExecutable)
+            && fileInfo.isAttributes(FileInfo::FileIsType::kIsReadable)) {
+            qInfo() << "file for current user is full permission, ignore prehandle" << url;
             break;
         }
 
