@@ -785,7 +785,6 @@ void AddressBar::inputMethodEvent(QInputMethodEvent *e)
 
 void AddressBar::enterEvent(QEvent *e)
 {
-
     if (d->indicatorType == AddressBar::Search && d->spinner.isPlaying()) {
         d->spinner.hide();
         d->pauseButton->setVisible(true);
