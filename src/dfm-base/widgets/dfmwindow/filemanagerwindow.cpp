@@ -351,7 +351,7 @@ void FileManagerWindow::updateUi()
 {
     if (d->sideBar && d->workspace) {
         const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
-        int splitterPos = state.value("sidebar", d->kMaximumLeftWidth).toInt();
+        int splitterPos = state.value("sidebar", d->kDefaultLeftWidth).toInt();
         d->setSplitterPosition(splitterPos);
     }
 }

@@ -1136,14 +1136,9 @@ QRect FileView::visualRect(const QModelIndex &index) const
         int columnIndex = index.row() % columnCount;
         int rowIndex = index.row() / columnCount;
 
-<<<<<<< HEAD
         rect.setTop(rowIndex * (itemSize.height() + 2 * iconViewSpacing) +
                     (rowIndex == 0 ? iconViewSpacing : 0));
         rect.setLeft(columnIndex * itemWidth + (columnIndex == 0 ? iconViewSpacing : 0));
-=======
-        rect.setTop(rowIndex * (itemSize.height() + iconViewSpacing * 2) + iconViewSpacing + DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding));
-        rect.setLeft(columnIndex * itemWidth + iconViewSpacing);
->>>>>>> fix: [UI] File drawing problem
         rect.setSize(itemSize);
     }
 
