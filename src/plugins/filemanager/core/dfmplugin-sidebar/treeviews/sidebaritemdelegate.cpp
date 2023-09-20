@@ -109,6 +109,12 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     bool keepDrawingHighlighted = false;
     const auto &itemUrl = index.data(SideBarItem::kItemUrlRole).toUrl();
     bool isUrlEqual = UniversalUtils::urlEquals(itemUrl, sidebarView->currentUrl());
+    SideBarItem *subItem = dynamic_cast<SideBarItem *>(item);
+    if (!isUrlEqual && subItem) {
+        bool foundByCb = subItem->itemInfo().findMeCb && subItem->itemInfo().findMeCb(subItem->url(), sidebarView->currentUrl());
+        if (foundByCb || UniversalUtils::urlEquals(subItem->url(), sidebarView->currentUrl()))
+            isUrlEqual = true;
+    }
     bool isDraggingItemNotHighlighted = selected && !isUrlEqual;
     if (isUrlEqual) {
         // If the dragging and moving source item is not the current highlighted one,
