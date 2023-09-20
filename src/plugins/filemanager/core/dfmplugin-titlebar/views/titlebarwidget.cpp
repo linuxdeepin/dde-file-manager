@@ -206,6 +206,7 @@ void TitleBarWidget::showCrumbBar()
     if (addressBar) {
         addressBar->clear();
         addressBar->hide();
+        searchBarDeactivated();
     }
     setFocus();
 }
