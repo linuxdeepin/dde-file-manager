@@ -460,11 +460,6 @@ void AdvanceSearchBar::refreshOptions(const QUrl &url)
     d->refreshOptions(url);
 }
 
-void AdvanceSearchBar::setCurrentUrl(const QUrl &url)
-{
-    d->currentSearchUrl = url;
-}
-
 void AdvanceSearchBar::onOptionChanged()
 {
     QMap<int, QVariant> formData;
