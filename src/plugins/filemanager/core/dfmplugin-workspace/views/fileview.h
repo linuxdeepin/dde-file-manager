@@ -182,6 +182,7 @@ private slots:
     void updateView();
     void updateOneView(const QModelIndex &index);
     void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void onDefaultViewModeChanged(int mode);
 
 private:
     void initializeModel();

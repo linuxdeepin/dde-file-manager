@@ -758,6 +758,22 @@ void FileView::onSelectionChanged(const QItemSelection &selected, const QItemSel
     WorkspaceEventCaller::sendViewSelectionChanged(winId, selected, deselected);
 }
 
+void FileView::onDefaultViewModeChanged(int mode)
+{
+    Global::ViewMode newMode = static_cast<Global::ViewMode>(mode);
+
+    if (newMode == d->currentViewMode)
+        return;
+
+    Global::ViewMode oldMode = d->currentViewMode;
+    loadViewState(rootUrl());
+
+    if (oldMode == d->currentViewMode)
+        return;
+
+    setViewMode(d->currentViewMode);
+}
+
 bool FileView::isIconViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kIconMode;
@@ -1518,6 +1534,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
+    connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
