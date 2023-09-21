@@ -29,7 +29,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-    ${GIO-QT_INCLUDE_DIRS}
     ${DtkGui_INCLUDE_DIRS}
     ${DtkWidget_INCLUDE_DIRS}
 )
