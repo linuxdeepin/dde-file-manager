@@ -12,6 +12,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/asyncfileinfo.h>
@@ -24,7 +25,7 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
-Q_DECLARE_METATYPE(QStringList*)
+Q_DECLARE_METATYPE(QStringList *)
 
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
@@ -39,10 +40,10 @@ DDPCORE_USE_NAMESPACE
     dpfSlotChannel->disconnect(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic))
 
 #define CanvasCorelFollow(topic, args...) \
-        dpfHookSequence->follow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->follow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 #define CanvasCorelUnfollow(topic, args...) \
-        dpfHookSequence->unfollow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->unfollow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 static void registerFileSystem()
 {
@@ -67,6 +68,10 @@ void ddplugin_core::Core::initialize()
     // main window of desktop showed. So invoke the method here to make sure the instance is initialized in main thread.
     // NOTE(xust): this may take 10ms when app launch, but no better way to solve the level-2 issue for now.
     DFMIO::DFMUtils::fileIsRemovable(QUrl::fromLocalFile("/"));
+
+    QString err;
+    DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop", &err);
+    qInfo() << "register desktop dconfig:" << err;
 }
 
 bool ddplugin_core::Core::start()
@@ -209,7 +214,7 @@ bool EventHandle::init()
     connect(screenProxy, &AbstractScreenProxy::screenAvailableGeometryChanged, this, &EventHandle::publishScreenAvailableGeometryChanged, Qt::DirectConnection);
 
     // screen slot event
-    //CanvasCoreSlot(slot_ScreenProxy_Instance, &EventHandle::screenProxyInstance);
+    // CanvasCoreSlot(slot_ScreenProxy_Instance, &EventHandle::screenProxyInstance);
     CanvasCoreSlot(slot_ScreenProxy_PrimaryScreen, &EventHandle::primaryScreen);
     CanvasCoreSlot(slot_ScreenProxy_Screens, &EventHandle::screens);
     CanvasCoreSlot(slot_ScreenProxy_LogicScreens, &EventHandle::logicScreens);
@@ -233,7 +238,7 @@ bool EventHandle::init()
     connect(frame, &AbstractDesktopFrame::geometryChanged, this, &EventHandle::publishGeometryChanged, Qt::DirectConnection);
     connect(frame, &AbstractDesktopFrame::availableGeometryChanged, this, &EventHandle::publishAvailableGeometryChanged, Qt::DirectConnection);
 
-    //CanvasCoreSlot(slot_DesktopFrame_Instance, &EventHandle::desktopFrame);
+    // CanvasCoreSlot(slot_DesktopFrame_Instance, &EventHandle::desktopFrame);
     CanvasCoreSlot(slot_DesktopFrame_RootWindows, &EventHandle::rootWindows);
     CanvasCoreSlot(slot_DesktopFrame_LayoutWidget, &EventHandle::layoutWidget);
 
