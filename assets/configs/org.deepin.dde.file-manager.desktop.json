@@ -1,0 +1,17 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "autoAlign":{
+            "value": -1,
+            "serial":0,
+            "flags":[],
+            "name":"Enable auto align on desktop",
+            "name[zh_CN]":"启用桌面自动排列",
+            "description[zh_CN]":"用于控制是否启用桌面自动排列",
+            "description":"It's used to control whether the auto align on desktop is enabled.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}
