@@ -618,8 +618,11 @@ QIcon AsyncFileInfoPrivate::defaultIcon()
         const auto &&target = q->pathOf(PathInfoType::kSymLinkTarget);
         if (!target.isEmpty() && target != q->pathOf(PathInfoType::kFilePath)) {
             FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
-            if (info)
+            if (info) {
+                if (info->fileIcon().name() == "unknown")
+                    info->customData(Global::ItemRoles::kItemFileRefreshIcon);
                 icon = info->fileIcon();
+            }
         }
     }
 

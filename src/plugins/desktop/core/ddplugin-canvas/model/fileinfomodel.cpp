@@ -56,6 +56,9 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
     QMap<QUrl, FileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
+            if (itemInfo->isAttributes(OptInfoType::kIsSymLink) &&
+                    !FileUtils::isLocalDevice(QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget))))
+                itemInfo->refresh();
             fileUrls.append(itemInfo->urlOf(UrlInfoType::kUrl));
             fileMaps.insert(itemInfo->urlOf(UrlInfoType::kUrl), itemInfo);
         }
