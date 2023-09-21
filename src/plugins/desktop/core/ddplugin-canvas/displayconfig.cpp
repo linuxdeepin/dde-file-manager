@@ -4,6 +4,7 @@
 
 #include "displayconfig.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <QThread>
@@ -30,6 +31,11 @@ static const char *const kKeySortOrder = "SortOrder";
 static const char *const kKeyAutoAlign = "AutoSort";
 static const char *const kKeyIconLevel = "IconLevel";
 static const char *const kKeyCustomWaterMask = "WaterMaskUseJson";
+
+namespace desktop_dconfig {
+static const char *const kConfigName = "org.deepin.dde.file-manager.desktop";
+static const char *const kConfKeyAutoAlign = "autoAlign";
+}
 
 static void compatibilityFuncForDisbaleAutoMerage(QSettings *set)
 {
@@ -74,10 +80,11 @@ DisplayConfig::DisplayConfig(QObject *parent)
     syncTimer = new QTimer();
     syncTimer->setSingleShot(true);
     syncTimer->setInterval(1000);
-    connect(syncTimer, &QTimer::timeout, this, [this]() {
-        QMutexLocker lk(&mtxLock);
-        settings->sync();
-    },
+    connect(
+            syncTimer, &QTimer::timeout, this, [this]() {
+                QMutexLocker lk(&mtxLock);
+                settings->sync();
+            },
             Qt::QueuedConnection);
 }
 
@@ -221,6 +228,13 @@ bool DisplayConfig::setSortMethod(const int &role, const Qt::SortOrder &order)
 
 bool DisplayConfig::autoAlign()
 {
+    int config = dfmbase::DConfigManager::instance()->value(desktop_dconfig::kConfigName,
+                                                            desktop_dconfig::kConfKeyAutoAlign,
+                                                            -1)
+                         .toInt();
+
+    if (config != -1)
+        return config > 0;
     return value(kGroupGeneral, kKeyAutoAlign, false).toBool();
 }
 
@@ -229,6 +243,10 @@ void DisplayConfig::setAutoAlign(bool align)
     QHash<QString, QVariant> values;
     values.insert(kKeyAutoAlign, align);
     setValues(kGroupGeneral, values);
+
+    dfmbase::DConfigManager::instance()->setValue(desktop_dconfig::kConfigName,
+                                                  desktop_dconfig::kConfKeyAutoAlign,
+                                                  align ? 1 : 0);
 }
 
 int DisplayConfig::iconLevel()
