@@ -44,10 +44,16 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
                     continue;
                 }
 
-                const FileInfoPointer linkInfo = InfoFactory::create<FileInfo>(targetUrl);
-                if (!linkInfo || !linkInfo->exists()) {
+                dfmio::DFile file(targetUrl);
+                if (!file.exists()) {
                     hasInvalidSymlink = true;
                     continue;
+                }
+
+                const FileInfoPointer linkInfo = InfoFactory::create<FileInfo>(targetUrl);
+                if (linkInfo && !linkInfo->exists() && linkInfo->timeOf(TimeInfoType::kCreateTimeSecond) == 0) {
+                    info->refresh();
+                    linkInfo->refresh();
                 }
             }
         }
