@@ -149,10 +149,10 @@ void BurnFilesAuditLogJob::doLog(QDBusInterface &interface)
 void BurnFilesAuditLogJob::writeLog(QDBusInterface &interface, const QString &discPath, const QString &nativePath, qint64 size)
 {
     static const QString kLogKey { "cdrecord" };
-    static const QString kLogTemplate { "ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9" };
+    static const QString kLogTemplate { QObject::tr("ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9") };
     static const QString &kUserName { SysInfoUtils::getUser() };
 
-    const QString &result { burnedSuccess ? "Success" : "Failed" };
+    const QString &result { burnedSuccess ? QObject::tr("Success") : QObject::tr("Failed") };
     const QString &dateTime { QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") };
     const QString &burner { AuditHelper::bunner(property(DeviceProperty::kDrive)) };
     const QString &discType { AuditHelper::opticalMedia(property(DeviceProperty::kMedia)) };
