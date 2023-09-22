@@ -114,16 +114,11 @@ void IconItemDelegate::paint(QPainter *painter,
 
     oldFont = opt.font;
 
-    int iconModeColumnPadding = kIconModeColumnPadding;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    iconModeColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding);
-#endif
-
-    const QPainterPath &path = paintItemBackgroundAndGeomerty(painter, opt, index, iconModeColumnPadding);
+    const QPainterPath &path  = paintItemBackgroundAndGeomerty(painter, opt, index, 0);
 
     const QRectF &iconRect = paintItemIcon(painter, opt, index);
 
-    paintItemFileName(painter, iconRect, path, iconModeColumnPadding, opt, index);
+    paintItemFileName(painter, iconRect, path, 0, opt, index);
 
     painter->setOpacity(1);
 }
@@ -229,16 +224,19 @@ void IconItemDelegate::updateItemSizeHint()
         width += iconWidth().at(iconSizeList().indexOf(width));
 #ifdef DTKWIDGET_CLASS_DSizeMode
     int height = parent()->parent()->iconSize().height()
+            + 2 * kIconModeIconSpacing   // icon与背景的上下两个间距
             + 2 * d->textLineHeight   // 2行文字的高度
             + kIconModeTextPadding   // 文字与icon之间的空隙
-            + 2 * kIconModeIconSpacing;   // icon与背景的上下两个间距
+            + kIconModeTextPadding / 2;   // 文字item底部的距离
 #else
     int height = parent()->parent()->iconSize().height()
+            + 2 * kIconModeIconSpacing;   // icon与背景的间距
             + 2 * d->textLineHeight   // 2行文字的高度
             + kIconModeTextPadding   // 文字与icon之间的空隙
-            + 2 * kIconModeIconSpacing;   // icon与背景的间距
+            + kIconModeTextPadding / 2;   // 文字item底部的距离
 #endif
     d->itemSizeHint = QSize(width, height);
+    parent()->parent()->updateViewportContentsMargins(d->itemIconSize);
 }
 
 int IconItemDelegate::iconSizeLevel() const
@@ -476,8 +474,10 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QRectF labelRect = opt.rect;
     labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
 
+    bool singleSelected = parent()->parent()->selectedIndexCount() < 2;
+    bool isSelectedOpt = opt.state & QStyle::State_Selected;
     //文管窗口拖拽时的字体保持白色
-    if (isDragMode) {
+    if (isDragMode || (!singleSelected && isSelectedOpt)) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
     } else {
         painter->setPen(opt.palette.color(QPalette::Text));
@@ -486,8 +486,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     const QString &displayName = displayFileName(index);
 
     // if has selected show all file name else show elide file name.
-    bool singleSelected = parent()->parent()->selectedIndexCount() < 2;
-    bool isSelected = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
+    bool isSelected = !isDragMode && isSelectedOpt && opt.showDecorationSelected;
 
     if (isSelected && singleSelected) {
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
@@ -517,12 +516,19 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     }
 
     //图标拖拽时保持活动色
-    auto background = isDragMode ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight)) : QBrush(Qt::NoBrush);
+    auto background = isDragMode || (!singleSelected && isSelectedOpt)
+            ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight))
+            : QBrush(Qt::NoBrush);
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
     const FileInfoPointer &info = parent()->fileInfo(index);
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
+    if (!singleSelected && isSelectedOpt) {
+        layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
+        labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
+        labelRect.setWidth(labelRect.width() - 2 * kIconModeRectRadius);
+    }
 
     layout->layout(labelRect, opt.textElideMode, painter, background);
 }

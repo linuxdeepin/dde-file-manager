@@ -114,6 +114,7 @@ public:
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
 
     bool isVerticalScrollBarSliderDragging() const;
+    void updateViewportContentsMargins(const QSize &itemSize);
 
     using DListView::edit;
     using DListView::updateGeometries;

@@ -107,7 +107,6 @@ void FileView::setViewMode(Global::ViewMode mode)
     }
 
     setItemDelegate(d->delegates[static_cast<int>(d->currentViewMode)]);
-
     switch (d->currentViewMode) {
     case Global::ViewMode::kIconMode:
         setUniformItemSizes(false);
@@ -122,6 +121,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         setMinimumWidth(0);
         break;
     case Global::ViewMode::kListMode:
+        viewport()->setContentsMargins(0,0,0,0);
         setUniformItemSizes(true);
         setResizeMode(Fixed);
         setOrientation(QListView::TopToBottom, false);
@@ -662,6 +662,31 @@ bool FileView::isVerticalScrollBarSliderDragging() const
     return false;
 }
 
+void FileView::updateViewportContentsMargins(const QSize &itemSize)
+{
+    if (isListViewMode() || itemSize.width() <= spacing())
+        return;
+    int itemWidth = itemSize.width() + 2 * spacing();
+    int iconHorizontalMargin = kIconHorizontalMargin;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, kIconHorizontalMargin);
+#endif
+
+    if (itemWidth < 2 * kIconHorizontalMargin)
+        return;
+
+    int contentsWidth = contentsSize().width();
+    if (contentsWidth < itemWidth)
+        return;
+    int widthModel = (contentsWidth - 1) % itemWidth;
+    if (widthModel >= iconHorizontalMargin && widthModel <= itemWidth - kIconHorizontalMargin)
+        return;
+    int margin = kIconHorizontalMargin - (widthModel >= iconHorizontalMargin ? itemWidth - widthModel : widthModel);
+    if (margin <= 0 || margin > kIconHorizontalMargin)
+        return;
+    viewport()->setContentsMargins(margin, 0, margin, 0);
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     if (!url.isValid())
@@ -891,6 +916,9 @@ void FileView::resizeEvent(QResizeEvent *event)
     // TODO(liuyangming) crash when launch via command with params.
     if (itemDelegate() && itemDelegate()->editingIndex().isValid())
         doItemsLayout();
+
+    if (isIconViewMode())
+        updateViewportContentsMargins(itemSizeHint());
 }
 
 void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
@@ -1086,13 +1114,14 @@ QRect FileView::visualRect(const QModelIndex &index) const
         int columnIndex = index.row() % columnCount;
         int rowIndex = index.row() / columnCount;
 
-        rect.setTop(rowIndex * (itemSize.height() + iconViewSpacing * 2) + iconViewSpacing);
-        rect.setLeft(columnIndex * itemWidth + iconViewSpacing);
+        rect.setTop(rowIndex * (itemSize.height() + 2 * iconViewSpacing) +
+                    (rowIndex == 0 ? iconViewSpacing : 0));
+        rect.setLeft(columnIndex * itemWidth + (columnIndex == 0 ? iconViewSpacing : 0));
         rect.setSize(itemSize);
     }
 
     rect.moveLeft(rect.left() - horizontalOffset());
-    rect.moveTop(rect.top() - verticalOffset() + DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding));
+    rect.moveTop(rect.top() - verticalOffset());
 
     return rect;
 }
@@ -1112,7 +1141,14 @@ int FileView::horizontalOffset() const
 
 int FileView::verticalOffset() const
 {
-    return DListView::verticalOffset();
+    if (isListViewMode())
+        return DListView::verticalOffset();
+
+    int iconViewColumnPadding = kIconModeColumnPadding;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    iconViewColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding);
+#endif
+    return DListView::verticalOffset() - iconViewColumnPadding;
 }
 
 QList<ItemRoles> FileView::getColumnRoles() const
