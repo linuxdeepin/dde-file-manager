@@ -15,8 +15,8 @@
 namespace dfmplugin_workspace {
 
 // begin file view item icon delegate global define
-inline constexpr int kIconModeTextPadding = { 4 };
-inline constexpr int kIconModeIconSpacing = { 6 };
+inline constexpr int kIconModeTextPadding = { 4 }; // 选中背景和文字之间的距离
+inline constexpr int kIconModeIconSpacing = { 6 }; // icon与背景的边距
 inline constexpr int kIconModeRectRadius = kIconModeTextPadding;
 inline constexpr int kIconModeBackRadius = { 6 };
 inline constexpr int kIconModeColumuPadding { 10 };
