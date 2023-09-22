@@ -155,40 +155,30 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
     if (itemCount <= 0)
         return;
 
-    QPoint offset(-view->horizontalOffset(), 0);
     QRect actualRect(qMin(rect.left(), rect.right()),
-                     qMin(rect.top(), rect.bottom()) + view->verticalOffset(),
+                     qMin(rect.top(), rect.bottom()),
                      abs(rect.width()),
                      abs(rect.height()));
 
     const QModelIndex &sampleIndex = view->model()->index(0, 0, view->rootIndex());
     int itemHeight = view->rectForIndex(sampleIndex).height() + view->spacing() * 2;
 
-    int firstRow = actualRect.top() / itemHeight;
-    int lastRow = actualRect.bottom() / itemHeight + 1;
+    int firstRow = (actualRect.top() + view->verticalOffset()) / itemHeight;
+    int lastRow = (actualRect.bottom() + view->verticalOffset()) / itemHeight + 1;
 
     int rowItemCount = view->itemCountForRow();
     int firstIndex = firstRow * rowItemCount;
     int lastIndex = qMin(lastRow * rowItemCount, itemCount);
 
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    QPoint iconOffset = DSizeModeHelper::element(QPoint(kIconModeColumnPadding, kIconModeColumnPadding),
-                                                 QPoint(kCompactIconModeColumnPadding, kCompactIconModeColumnPadding));
-#else
-    QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
-#endif
-
     for (int i = firstIndex; i < lastIndex; ++i) {
         const QModelIndex &index = view->model()->index(i, 0, view->rootIndex());
-        const QRect &itemRect = view->rectForIndex(index);
+        // 这里就是实际绘制区域
+        const QRect &itemRect = view->visualRect(index);
 
-        QRect realItemRect(itemRect.topLeft() + offset + iconOffset,
-                           itemRect.bottomRight() + offset - iconOffset);
-
-        if (!(actualRect.left() > realItemRect.right() - 3
-              || actualRect.top() > realItemRect.bottom() - 3
-              || realItemRect.left() + 3 > actualRect.right()
-              || realItemRect.top() + 3 > actualRect.bottom())) {
+        if (!(actualRect.left() > itemRect.right()
+              || actualRect.top() > itemRect.bottom()
+              || itemRect.left() > actualRect.right()
+              || itemRect.top() > actualRect.bottom())) {
             if (!selection->contains(index)) {
                 QItemSelectionRange selectionRange(index);
                 selection->push_back(selectionRange);

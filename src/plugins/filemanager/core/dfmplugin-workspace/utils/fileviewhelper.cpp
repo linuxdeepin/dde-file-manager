@@ -267,32 +267,28 @@ int FileViewHelper::caculateListItemIndex(const QSize &itemSize, const QPoint &p
 
 int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos)
 {
-    int iconModeColumnPadding = kIconModeColumnPadding;
     int iconViewSpacing = kIconViewSpacing;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconModeColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding);
     iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
 #endif
 
     int itemHeight = itemSize.height() + iconViewSpacing * 2;
-    if (pos.y() % itemHeight < (iconViewSpacing + iconModeColumnPadding)
-        || pos.y() % itemHeight > (itemHeight - iconModeColumnPadding))
+    if (pos.y()  % itemHeight < iconViewSpacing
+        || pos.y() % itemHeight > (itemHeight - iconViewSpacing))
         return -1;
 
     int itemWidth = itemSize.width() + iconViewSpacing * 2;
-
-    if (pos.x() % itemWidth <= (iconViewSpacing + iconModeColumnPadding)
-        || pos.x() % itemWidth > (itemHeight - iconModeColumnPadding))
+    if (pos.x() % itemWidth < iconViewSpacing
+        || pos.x() % itemWidth > (itemHeight - iconViewSpacing))
         return -1;
 
     int columnIndex = pos.x() / itemWidth;
-    int contentWidth = view->maximumViewportSize().width();
-    int columnCount = qMax((contentWidth - 1) / itemWidth, 1);
+    int columnCount = view->itemCountForRow();
 
     if (columnIndex >= columnCount)
         return -1;
 
-    int rowIndex = pos.y() / (itemSize.height() + iconViewSpacing * 2);
+    int rowIndex = pos.y() / itemHeight;
     return rowIndex * columnCount + columnIndex;
 }
 
