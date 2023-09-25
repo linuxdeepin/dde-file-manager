@@ -76,6 +76,8 @@ class FileViewPrivate
     QPoint mouseLastPos { QPoint(0, 0) };
     QRect mouseMoveRect { QRect(-1, -1, 1, 1) };
 
+    bool itemsExpandable { false };
+
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;

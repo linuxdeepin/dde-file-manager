@@ -16,6 +16,7 @@ QT_END_NAMESPACE
 
 namespace dfmplugin_workspace {
 
+class AbstractItemPaintProxy;
 class FileViewHelper;
 class FileView;
 class BaseItemDelegatePrivate;
@@ -23,6 +24,11 @@ class BaseItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
+    enum RectOfItemType {
+        kItemIconRect,
+        kItemTreeArrowRect
+    };
+
     explicit BaseItemDelegate(FileViewHelper *parent);
 
     virtual ~BaseItemDelegate() override;
@@ -105,6 +111,8 @@ public:
 
     virtual QList<QRect> itemGeomertys(const QStyleOptionViewItem &opt, const QModelIndex &index) const;
 
+    virtual QRect getRectOfItem(RectOfItemType type, const QModelIndex &index);
+
     QModelIndex editingIndex() const;
 
     QWidget *editingIndexWidget() const;
@@ -113,6 +121,8 @@ public:
 
     void paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const;
     QSize getIndexIconSize(const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const;
+
+    void setPaintProxy(AbstractItemPaintProxy *proxy);
 
 protected:
     explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent);

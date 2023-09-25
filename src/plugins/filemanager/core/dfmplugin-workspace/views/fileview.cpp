@@ -11,6 +11,8 @@
 #include "baseitemdelegate.h"
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
+#include "listitempaintproxy.h"
+#include "treeitempaintproxy.h"
 #include "fileviewstatusbar.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
@@ -123,6 +125,14 @@ void FileView::setViewMode(Global::ViewMode mode)
         break;
     case Global::ViewMode::kListMode:
         viewport()->setContentsMargins(0,0,0,0);
+        if (d->itemsExpandable/*Application::instance()->appAttribute(Application::kListItemExpandable).toBool()*/) {
+            auto proxy = new TreeItemPaintProxy(this);
+            proxy->setStyleProxy(style());
+            d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(proxy);
+        } else {
+            d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(new ListItemPaintProxy(this));
+        }
+
         setUniformItemSizes(true);
         setResizeMode(Fixed);
         setOrientation(QListView::TopToBottom, false);
@@ -896,6 +906,38 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     return QModelIndex();
 }
 
+bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
+{
+    // calculate expand arrow rect
+    int depth = model()->data(index, kItemTreeViewDepthRole).toInt();
+
+    QRect arrowRect = itemDelegate()->getRectOfItem(BaseItemDelegate::kItemTreeArrowRect, index);
+
+    QRect itemRect = visualRect(index);
+    int centerY = itemRect.center().y();
+    itemRect.setRight(itemRect.left() + kListModeLeftMargin + 15 +  50 * depth);
+    itemRect.setHeight(itemRect.height() / 2 + 5);
+    int centerX = (itemRect.width() / 2 ) + itemRect.left();
+    itemRect.moveCenter(QPoint(centerX, centerY));
+
+    if (!itemRect.contains(pos))
+        return false;
+
+    // get expand state
+    bool expanded = model()->data(index, kItemTreeViewExpandabledRole).toBool();
+    if (expanded) {
+        // do collapse
+        qInfo() << "do collapse item, index = " << index;
+        model()->doCollapse(index);
+    } else {
+        // do expanded
+        qInfo() << "do expanded item, index = " << index;
+        model()->doExpand(index);
+    }
+
+    return true;
+}
+
 DirOpenMode FileView::currentDirOpenMode() const
 {
     DirOpenMode mode;
@@ -915,6 +957,15 @@ DirOpenMode FileView::currentDirOpenMode() const
 void FileView::onWidgetUpdate()
 {
     this->update();
+}
+
+void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
+{
+    if (aa == Application::kListItemExpandable) {
+        d->itemsExpandable = value.toBool();
+
+        // todo: try to repaint the list
+    }
 }
 
 void FileView::onRowCountChanged()
@@ -1021,6 +1072,11 @@ void FileView::mousePressEvent(QMouseEvent *event)
                 if (dragDropMode() != NoDragDrop) {
                     setDragDropMode(DropOnly);
                 }
+            }
+        } else if (d->currentViewMode == Global::ViewMode::kListMode && d->itemsExpandable) {
+            if (expandOrCollapseItem(index, event->pos())) {
+                d->lastMousePressedIndex = QModelIndex();
+                break;
             }
         } else if (WindowUtils::keyCtrlIsPressed() && selectionModel()->isSelected(index)) {
             d->selectHelper->setSelection(selectionModel()->selection());
@@ -1588,6 +1644,8 @@ void FileView::initializeDelegate()
     d->fileViewHelper = new FileViewHelper(this);
     setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(d->fileViewHelper));
     setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
+
+    d->itemsExpandable = Application::instance()->appAttribute(Application::kListItemExpandable).toBool();
 }
 
 void FileView::initializeStatusBar()

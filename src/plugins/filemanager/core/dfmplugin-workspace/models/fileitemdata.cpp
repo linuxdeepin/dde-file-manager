@@ -243,8 +243,9 @@ void FileItemData::setSubFileCount(const int count)
 bool FileItemData::canExpand() const
 {
     if (info) {
-        if (!info->isDir())
-            return false;
+//        if (!info->isDir())
+//            return false;
+        return true;
     } else {
         if (sortInfo && !sortInfo->isDir())
             return false;

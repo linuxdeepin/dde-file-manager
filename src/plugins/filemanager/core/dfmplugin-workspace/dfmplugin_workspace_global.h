@@ -66,6 +66,9 @@ inline constexpr int kColumnPadding { 10 };
 inline constexpr int kMinMoveLenght { 3 };
 inline constexpr int kIconHorizontalMargin { 15 };   // 水平Margin的宽度
 inline constexpr int kCompactIconHorizontalMargin { 10 };
+inline constexpr int kTreeItemIndent { 30 };
+inline constexpr int kTreeExpandArrowWidth { 12 };
+inline constexpr int kTreeExpandArrowHeight { 12 };
 
 // tab defines
 inline constexpr int kMaxTabCount { 8 };

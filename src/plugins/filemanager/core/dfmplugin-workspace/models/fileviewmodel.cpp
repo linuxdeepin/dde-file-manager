@@ -139,17 +139,66 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
         if (prehandler) {
             quint64 winId = FileManagerWindowsManager::instance().findWindowId(qobject_cast<FileView *>(QObject::parent()));
-            prehandler(winId, url, [this, index]() {
+            prehandler(winId, url, [this, index, url]() {
                 this->canFetchFiles = true;
+                this->fetchingUrl = url;
                 this->fetchMore(index);
             });
         }
     } else {
         canFetchFiles = true;
+        fetchingUrl = dirRootUrl;
         fetchMore(index);
     }
 
     return index;
+}
+
+void FileViewModel::doExpand(const QModelIndex &index)
+{
+    if (!index.isValid())
+        return;
+
+    if (!filterSortWorker) {
+        qWarning() << "The model do not stand by, beacuse the sort worker unexist.";
+        return;
+    }
+
+    const QUrl &url = index.data(kItemUrlRole).toUrl();
+    RootInfo *expandRoot = FileDataManager::instance()->fetchRoot(url);
+
+    connect(expandRoot, &RootInfo::requestCloseTab, this, [](const QUrl &url) { WorkspaceHelper::instance()->closeTab(url); }, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::getSourceData, expandRoot, &RootInfo::handleGetSourceData, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::iteratorLocalFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorLocalChildren, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::iteratorAddFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorChildren, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::watcherAddFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherAddChildren, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::watcherRemoveFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherRemoveChildren, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::watcherUpdateFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateFile, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::watcherUpdateHideFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateHideFile, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::traversalFinished, filterSortWorker.data(), &FileSortWorker::handleTraversalFinish, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::requestSort, filterSortWorker.data(), &FileSortWorker::handleSortDir, Qt::QueuedConnection);
+
+    canFetchFiles = true;
+    fetchingUrl = url;
+    fetchMore(index);
+
+    FileItemDataPointer item = filterSortWorker->childData(index.row());
+    if (item)
+        item->setExpandabled(true);
+}
+
+void FileViewModel::doCollapse(const QModelIndex &index)
+{
+    if (!index.isValid())
+        return;
+
+    const QUrl &collapseUrl = index.data(kItemUrlRole).toUrl();
+    Q_EMIT requestCollapseItem(currentKey, collapseUrl);
+
+    FileItemDataPointer item = filterSortWorker->childData(index.row());
+    if (item)
+        item->setExpandabled(false);
 }
 
 FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
@@ -331,10 +380,16 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     canFetchFiles = false;
 
     bool ret { false };
+
+    if (!fetchingUrl.isValid()) {
+        qWarning() << "Can't fetch more with invalid url.";
+        return;
+    }
+
     if (filterSortWorker.isNull()) {
-        ret = FileDataManager::instance()->fetchFiles(dirRootUrl, currentKey);
+        ret = FileDataManager::instance()->fetchFiles(fetchingUrl, currentKey);
     } else {
-        ret = FileDataManager::instance()->fetchFiles(dirRootUrl,
+        ret = FileDataManager::instance()->fetchFiles(fetchingUrl,
                                                       currentKey,
                                                       filterSortWorker->getSortRole(),
                                                       filterSortWorker->getSortOrder());
@@ -816,6 +871,7 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestClearThumbnail, filterSortWorker.data(), &FileSortWorker::handleClearThumbnail, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestShowHiddenChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestCollapseItem, filterSortWorker.data(), &FileSortWorker::handleCloseExpand, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 
