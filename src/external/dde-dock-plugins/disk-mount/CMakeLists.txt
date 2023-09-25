@@ -25,6 +25,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
 pkg_check_modules(Gesttings REQUIRED  gsettings-qt)
 pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
+pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 
 set(QRC_FILE
     resources.qrc
@@ -55,6 +56,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
     PkgConfig::dfm-mount
+    PkgConfig::mount
     Qt5::Concurrent
 )
 
