@@ -206,7 +206,7 @@ public:
                                     QString *errorString = nullptr)
     {
         if (!url.isValid()) {
-            qWarning() << "url is unvalid !!! url = " << url;
+            qWarning() << "url is invalid !!! url = " << url;
             return nullptr;
         }
 
