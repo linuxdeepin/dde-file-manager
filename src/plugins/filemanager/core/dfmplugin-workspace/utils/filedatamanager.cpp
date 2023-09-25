@@ -38,26 +38,33 @@ bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLO
     return true;
 }
 
-void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh)
+void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh, const bool self)
 {
-    if (!rootInfoMap.contains(rootUrl))
-        return;
-    if (!rootInfoMap.value(rootUrl))
-        return;
-    auto count = rootInfoMap.value(rootUrl)->clearTraversalThread(key);
-    if (count > 0)
-        return;
+    auto rootInfoKeys = rootInfoMap.keys();
+    for (const auto &rootInfo : rootInfoKeys) {
+        if (!self && rootUrl == rootInfo)
+            continue;
 
-    if (!checkNeedCache(rootUrl) || refresh)
-        rootInfoMap.value(rootUrl)->reset();
+        if (rootInfo.path().startsWith(rootUrl.path())) {
+            auto count = rootInfoMap.value(rootInfo)->clearTraversalThread(key);
+            if (count > 0)
+                continue;
+            if (!checkNeedCache(rootInfo) || refresh) {
+                rootInfoMap.value(rootInfo)->disconnect();
+                rootInfoMap.value(rootInfo)->reset();
+            }
+        }
+    }
 }
 
 void FileDataManager::cleanRoot(const QUrl &rootUrl)
 {
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
-        if (rootInfo.path().startsWith(rootUrl.path()))
+        if (rootInfo.path().startsWith(rootUrl.path())) {
+            rootInfoMap.value(rootInfo)->disconnect();
             rootInfoMap.remove(rootInfo);
+        }
     }
 }
 
@@ -76,8 +83,7 @@ void FileDataManager::onAppAttributeChanged(Application::ApplicationAttribute aa
 
 void FileDataManager::onHandleFileDeleted(const QUrl url)
 {
-    if (rootInfoMap.contains(url))
-        rootInfoMap.value(url)->reset();
+    cleanRoot(url);
 }
 
 FileDataManager::FileDataManager(QObject *parent)
