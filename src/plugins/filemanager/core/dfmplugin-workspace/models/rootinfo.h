@@ -145,6 +145,7 @@ private:
 
     QList<TraversalThreadPointer> discardedThread {};
     QList<QSharedPointer<QThread>> threads {};
+    std::atomic_bool needStartWatcher { true };
 };
 }
 
