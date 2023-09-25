@@ -30,6 +30,7 @@ RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
 
 RootInfo::~RootInfo()
 {
+    disconnect();
     cancelWatcherEvent = true;
     watcherEventFuture.waitForFinished();
     for (const auto &thread : traversalThreads) {
@@ -93,6 +94,9 @@ void RootInfo::startWork(const QString &key, const bool getCache)
 
 void RootInfo::startWatcher()
 {
+    if (needStartWatcher == false)
+        return;
+    needStartWatcher = false;
     if (watcher)
         watcher->disconnect(this);
 
@@ -112,7 +116,7 @@ void RootInfo::startWatcher()
     connect(watcher.data(), &AbstractFileWatcher::fileRename,
             this, &RootInfo::dofileMoved);
 
-    watcher->startWatcher();
+    watcher->restartWatcher();
 }
 
 int RootInfo::clearTraversalThread(const QString &key)
@@ -133,7 +137,8 @@ int RootInfo::clearTraversalThread(const QString &key)
     if (thread->traversalThread->isRunning())
         traversaling = false;
     thread->traversalThread->quit();
-
+    if (traversalThreads.isEmpty())
+        needStartWatcher = true;
     return traversalThreads.count();
 }
 
@@ -227,6 +232,8 @@ void RootInfo::doWatcherEvent()
             if (event.second == kAddFile)
                 continue;
             else if (event.second == kRmFile) {
+                emit InfoCacheController::instance().removeCacheFileInfo({ fileUrl });
+                WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
                 emit requestCloseTab(fileUrl);
                 break;
             }
@@ -241,6 +248,8 @@ void RootInfo::doWatcherEvent()
             updateChild(fileUrl);
         } else {
             removeChildren({ fileUrl });
+            emit InfoCacheController::instance().removeCacheFileInfo({ fileUrl });
+            WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
             emit requestCloseTab(fileUrl);
         }
     }
@@ -312,6 +321,8 @@ void RootInfo::handleTraversalSort(const QString &travseToken)
 
 void RootInfo::handleGetSourceData(const QString &currentToken)
 {
+    if (needStartWatcher)
+        startWatcher();
     QList<SortInfoPointer> newDatas = sourceDataList;
     emit sourceDatas(currentToken, newDatas, originSortRole, originSortOrder, originMixSort, !traversaling);
 }

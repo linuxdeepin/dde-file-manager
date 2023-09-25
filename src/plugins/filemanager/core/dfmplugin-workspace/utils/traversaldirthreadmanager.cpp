@@ -114,7 +114,8 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         return 0;
     }
 
-    Q_EMIT iteratorInitFinished();
+    if (!future)
+        Q_EMIT iteratorInitFinished();
 
     if (!timer)
         timer = new QElapsedTimer();
