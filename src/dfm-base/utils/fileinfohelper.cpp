@@ -47,7 +47,14 @@ void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfil
     if (asyncInfo.isNull())
         return;
 
-    if (!asyncInfo->cacheAsyncAttributes())
+    auto resluts = asyncInfo->cacheAsyncAttributes();
+
+    while (resluts == 0) {
+        QThread::msleep(50);
+        resluts = asyncInfo->cacheAsyncAttributes();
+    }
+
+    if (resluts < 0)
         return;
 
     emit fileRefreshFinished(dfileInfo->fileUrl(), QString::number(quintptr(dfileInfo.data()), 16), false);

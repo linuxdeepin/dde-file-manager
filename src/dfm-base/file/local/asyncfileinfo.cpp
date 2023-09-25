@@ -524,18 +524,21 @@ void AsyncFileInfo::removeNotifyUrl(const QUrl &url, const QString &infoPtr)
     d->notifyUrls.remove(url, infoPtr);
 }
 
-bool AsyncFileInfo::cacheAsyncAttributes()
+int AsyncFileInfo::cacheAsyncAttributes()
 {
     assert(qApp->thread() != QThread::currentThread());
     auto dfmFileInfo = d->dfmFileInfo;
     if (d->tokenKey != quintptr(dfmFileInfo.data()))
-        return false;
+        return -1;
+
+    if (d->cacheingAttributes)
+        return 0;
 
     if (!d->cacheingAttributes)
         d->cacheingAttributes = true;
     d->cacheAllAttributes();
     d->cacheingAttributes = false;
-    return true;
+    return 1;
 }
 
 bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)

@@ -108,7 +108,7 @@ bool AbstractFileWatcher::startWatcher()
 bool AbstractFileWatcher::stopWatcher()
 {
     if (!d->started)
-        return false;
+        return true;
 
     if (d->stop()) {
         d->started = false;
