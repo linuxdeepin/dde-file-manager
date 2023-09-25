@@ -5,6 +5,7 @@
 #include "baseitemdelegate.h"
 #include "private/baseitemdelegate_p.h"
 #include "fileview.h"
+#include "abstractitempaintproxy.h"
 #include "utils/fileviewhelper.h"
 #include "utils/itemdelegatehelper.h"
 #include "events/workspaceeventcaller.h"
@@ -145,6 +146,14 @@ QRectF BaseItemDelegate::itemIconRect(const QRectF &itemRect) const
     return QRectF(itemRect);
 }
 
+QRect BaseItemDelegate::getRectOfItem(BaseItemDelegate::RectOfItemType type, const QModelIndex &index)
+{
+    Q_UNUSED(type)
+    Q_UNUSED(index)
+
+    return QRect();
+}
+
 FileViewHelper *BaseItemDelegate::parent() const
 {
     return dynamic_cast<FileViewHelper *>(QStyledItemDelegate::parent());
@@ -176,6 +185,16 @@ QSize BaseItemDelegate::getIndexIconSize(const QStyleOptionViewItem &option, con
         iconSize.scale(size, Qt::KeepAspectRatio);
 
     return iconSize;
+}
+
+void BaseItemDelegate::setPaintProxy(AbstractItemPaintProxy *proxy)
+{
+    if (d->paintProxy) {
+        delete d->paintProxy;
+        d->paintProxy = nullptr;
+    }
+
+    d->paintProxy = proxy;
 }
 
 QModelIndex BaseItemDelegate::editingIndex() const

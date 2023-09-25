@@ -19,6 +19,7 @@ QT_END_NAMESPACE
 
 namespace dfmplugin_workspace {
 
+class AbstractItemPaintProxy;
 class FileViewHelper;
 class BaseItemDelegate;
 class BaseItemDelegatePrivate
@@ -33,6 +34,8 @@ public:
     QSize itemSizeHint;
     mutable QModelIndex editingIndex;
     mutable QLineEdit *editor = nullptr;
+
+    AbstractItemPaintProxy *paintProxy { nullptr };
 
     BaseItemDelegate *q_ptr;
     Q_DECLARE_PUBLIC(BaseItemDelegate)
