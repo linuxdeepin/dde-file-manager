@@ -141,6 +141,8 @@ public slots:
 
     void onWidgetUpdate();
 
+    void onAppAttributeChanged(DFMBASE_NAMESPACE::Application::ApplicationAttribute aa, const QVariant &value);
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -217,6 +219,8 @@ private:
     QList<SelectionMode> fetchSupportSelectionModes();
 
     bool cdUp();
+
+    bool expandOrCollapseItem(const QModelIndex &index, const QPoint &pos);
 };
 
 }

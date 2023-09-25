@@ -58,6 +58,9 @@ public:
     QModelIndex setRootUrl(const QUrl &url);
     void refresh();
 
+    void doExpand(const QModelIndex &index);
+    void doCollapse(const QModelIndex &index);
+
     ModelState currentState() const;
     FileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> getChildrenUrls() const;
@@ -111,6 +114,8 @@ Q_SIGNALS:
     void requestSetFilterCallback(FileViewFilterCallback callback);
     void requestShowHiddenChanged(bool value);
 
+    void requestCollapseItem(const QString &key, const QUrl &parent);
+
 public Q_SLOTS:
     void onFileThumbUpdated(const QUrl &url, const QString &thumb);
     void onFileUpdated(int show);
@@ -134,6 +139,7 @@ private:
     void startCursorTimer();
 
     QUrl dirRootUrl;
+    QUrl fetchingUrl;
 
     ModelState state { ModelState::kIdle };
     bool readOnly { false };

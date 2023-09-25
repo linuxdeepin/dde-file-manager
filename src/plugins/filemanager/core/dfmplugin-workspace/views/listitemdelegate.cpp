@@ -7,6 +7,7 @@
 #include "listitemdelegate.h"
 #include "fileview.h"
 #include "listitemeditor.h"
+#include "abstractitempaintproxy.h"
 #include "models/fileviewmodel.h"
 #include <dfm-base/dfm_base_global.h>
 #include "utils/itemdelegatehelper.h"
@@ -337,6 +338,19 @@ QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
     return iconRect;
 }
 
+QRect ListItemDelegate::getRectOfItem(BaseItemDelegate::RectOfItemType type, const QModelIndex &index)
+{
+    QRect itemRect = parent()->parent()->visualRect(index);
+    switch (type) {
+    case BaseItemDelegate::kItemIconRect:
+        break;
+    case BaseItemDelegate::kItemTreeArrowRect:
+        break;
+    }
+
+    return BaseItemDelegate::getRectOfItem(type, index);
+}
+
 /*!
  * \brief paintItemBackground 绘制listviewitemd的交替绘制和选中时的高亮绘制
  *
@@ -408,14 +422,12 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
  **/
 QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (!parent() || !parent()->parent())
+    if (!parent() || !parent()->parent() || !d->paintProxy)
         return QRect();
 
-    bool isEnabled = option.state & QStyle::State_Enabled;
     QStyleOptionViewItem opt = option;
 
     opt.rect += QMargins(-kListModeLeftMargin, 0, -kListModeRightMargin, 0);
-
     opt.rect.setLeft(opt.rect.left() + kListModeLeftPadding);
     opt.rect.setRight(opt.rect.right() - kListModeRightPadding);
 
@@ -424,7 +436,7 @@ QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     iconRect.setSize(parent()->parent()->iconSize());
     iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
 
-    ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+    d->paintProxy->drawIcon(painter, &iconRect, opt, index);
 
     paintEmblems(painter, iconRect, index);
 

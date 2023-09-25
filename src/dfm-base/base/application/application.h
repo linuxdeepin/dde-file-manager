@@ -31,7 +31,8 @@ public:
         kUrlOfNewWindow,   // default path to new window
         kUrlOfNewTab,   // default path to new tabs
         kThemeName,
-        kFileAndDirMixedSort   // Mixed sorting of ordinary files and directories
+        kFileAndDirMixedSort,   // Mixed sorting of ordinary files and directories
+        kListItemExpandable   // Item expandable as tree in FileView with list view mode
     };
 
     Q_ENUM(ApplicationAttribute)

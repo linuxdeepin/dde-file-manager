@@ -22,6 +22,7 @@ BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivat
     { "base.default_view.view_mode", Application::kViewMode },
     { "base.default_view.view_size_adjustable", Application::kViewSizeAdjustable },
     { "base.default_view.mixed_sort", Application::kFileAndDirMixedSort },
+    { "base.default_view.item_expandable", Application::kListItemExpandable},
 };
 
 BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::keyToGA {
