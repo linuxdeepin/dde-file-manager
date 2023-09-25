@@ -60,7 +60,7 @@ void ListItemDelegate::paint(QPainter *painter,
 {
     QStyleOptionViewItem opt = option;
 
-    parent()->fileInfo(index);
+    auto info = parent()->fileInfo(index);
     initStyleOption(&opt, index);
     painter->setFont(opt.font);
 

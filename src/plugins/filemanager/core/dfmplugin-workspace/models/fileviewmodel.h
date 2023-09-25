@@ -92,6 +92,7 @@ public:
     void toggleHiddenFiles();
     void setReadOnly(bool value);
     void updateThumbnailIcon(const QModelIndex &index, const QString &thumb);
+    void setTreeView(const bool isTree);
 
 Q_SIGNALS:
     void stateChanged();
@@ -115,6 +116,7 @@ Q_SIGNALS:
     void requestShowHiddenChanged(bool value);
 
     void requestCollapseItem(const QString &key, const QUrl &parent);
+    void requestTreeView(const bool isTree);
 
 public Q_SLOTS:
     void onFileThumbUpdated(const QUrl &url, const QString &thumb);

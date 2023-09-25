@@ -29,7 +29,8 @@ public:
                     const QString &key,
                     DFMGLOBAL_NAMESPACE::ItemRoles role = DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole,
                     Qt::SortOrder order = Qt::AscendingOrder);
-    void cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh = false);
+    // self = false, will clean children
+    void cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh = false, const bool self = true);
     void cleanRoot(const QUrl &rootUrl);
     void setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active);
 

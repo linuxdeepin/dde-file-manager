@@ -122,6 +122,7 @@ void FileView::setViewMode(Global::ViewMode mode)
 #endif
         d->initIconModeView();
         setMinimumWidth(0);
+        model()->setTreeView(false);
         break;
     case Global::ViewMode::kListMode:
         viewport()->setContentsMargins(0,0,0,0);
@@ -129,8 +130,10 @@ void FileView::setViewMode(Global::ViewMode mode)
             auto proxy = new TreeItemPaintProxy(this);
             proxy->setStyleProxy(style());
             d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(proxy);
+            model()->setTreeView(true);
         } else {
             d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(new ListItemPaintProxy(this));
+            model()->setTreeView(false);
         }
 
         setUniformItemSizes(true);
