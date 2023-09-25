@@ -163,14 +163,14 @@ private:
     void switchListView();
     QList<QUrl> sortAllTreeFilesByParent(const QUrl &dir, const bool reverse = false);
     QList<QUrl> sortTreeFiles(const QList<QUrl> &children, const bool reverse = false);
-    QList<QUrl> removeChildrenByParents(const QList<QUrl> &dirs);
+    QList<QUrl> removeChildrenByParents(const QList<QUrl> &dirs, const bool removeSelf = true);
     QList<QUrl> removeVisibleTreeChildren(const QUrl &parent, const bool removeSelf = true);
     void removeSubDir(const QUrl &dir, const bool removeSelf = true);
     void removeFileItems(const QList<QUrl> &urls);
     int8_t findDepth(const QUrl &parent);
     int findEndPos(const QUrl &dir);
     int findStartPos(const QUrl &parent);
-    int findStartPos(const QList<QUrl> &list,const QUrl &parent);
+    int findStartPos(const QList<QUrl> &list, const QUrl &parent);
 
     void insertVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
                                const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);

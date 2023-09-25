@@ -197,8 +197,10 @@ void FileViewModel::doCollapse(const QModelIndex &index)
     Q_EMIT requestCollapseItem(currentKey, collapseUrl);
 
     FileItemDataPointer item = filterSortWorker->childData(index.row());
-    if (item)
+    if (item && item->data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
         item->setExpandabled(false);
+        FileDataManager::instance()->cleanRoot(collapseUrl, currentKey);
+    }
 }
 
 FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
@@ -715,6 +717,12 @@ void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QString 
     info->setExtendedAttributes(ExtInfoType::kFileThumbnail, thumbIcon);
 }
 
+void FileViewModel::setTreeView(const bool isTree)
+{
+    FileDataManager::instance()->cleanRoot(rootUrl(), currentKey, false, false);
+    Q_EMIT requestTreeView(isTree);
+}
+
 void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)
 {
     auto updateIndex = getIndexByUrl(url);
@@ -872,6 +880,7 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestClearThumbnail, filterSortWorker.data(), &FileSortWorker::handleClearThumbnail, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestShowHiddenChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestCollapseItem, filterSortWorker.data(), &FileSortWorker::handleCloseExpand, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestTreeView, filterSortWorker.data(), &FileSortWorker::handleSwitchTreeView, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 

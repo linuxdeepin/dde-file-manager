@@ -284,7 +284,7 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> ch
 
         if (sortInfo->isDir() && visibleTreeChildren.keys().contains(sortInfo->fileUrl()))
         {
-            removeSubDir(sortInfo->fileUrl(), true);
+            removeSubDir(sortInfo->fileUrl(), false);
             continue;
         }
     }
@@ -555,7 +555,8 @@ void FileSortWorker::handleAddChildren(const QString &key,
 
     // In the home, it is necessary to sort by display name.
     // So, using `sortAllFiles` to reorder
-    bool isHome = current.path() == StandardPaths::location(StandardPaths::kHomePath);
+    auto parentUrl = UrlRoute::urlParent(children.first()->fileUrl());
+    bool isHome = parentUrl.path() == StandardPaths::location(StandardPaths::kHomePath);
     if (!isHome && sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
             && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
         if (handleSource)
@@ -565,10 +566,8 @@ void FileSortWorker::handleAddChildren(const QString &key,
 
     if (isCanceled)
         return;
-
     // 对当前的目录排序， 若果处理的是获取源数据，在没有获取完，不进行排序
     if ((!handleSource || isFinished) && isSort) {
-        auto parentUrl = UrlRoute::urlParent(children.first()->fileUrl());
         auto startPos = findStartPos(parentUrl);
         auto sortList = sortTreeFiles(visibleTreeChildren.take(parentUrl));
         // 找到endpos
@@ -618,15 +617,12 @@ bool FileSortWorker::handleAddChildren(const QString &key,
     }
 
     this->children.insert(parentUrl, tmpChildren);
-
-    if (newChildren.isEmpty())
-        return false;
-
     childUrls.append(newChildren);
     visibleTreeChildren.insert(parentUrl, childUrls);
+    if (newChildren.isEmpty())
+        return false;
     depthMap.remove(depth - 1, parentUrl);
     depthMap.insertMulti(depth - 1, parentUrl);
-
     insertVisibleChildren(startPos + posOffset, newChildren);
 
     return true;
@@ -856,11 +852,15 @@ void FileSortWorker::switchTreeView()
     // 当前只有一层，只需要展开获取每个目录的展开属性,只有父母这一层
     for (const auto &url : visibleTreeChildren.value(current)) {
         const auto item = childData(url);
+        if (!item)
+            continue;
         if (!item->data(Global::ItemRoles::kItemFileIsDirRole).toBool())
             continue;
         auto dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters | QDir::Hidden, flags);
-        if (dirIterator && dirIterator->hasNext())
+        if (dirIterator && dirIterator->hasNext()) {
+            item->setExpandabled(false);
             item->setSubFileCount(1);
+        }
     }
     emit requestUpdateView();
 }
@@ -877,12 +877,19 @@ void FileSortWorker::switchListView()
     insertVisibleChildren(0, allShowList, InsertOpt::kInsertOptForce);
     // 移除children
     auto allShowChildren = children.value(current);
+    QList<QUrl> removeChildren;
+    for (const auto &url : children.keys())
+    {
+        if (url == current)
+            continue;
+        removeChildren.append(children.value(url).keys());
+    }
     children.clear();
     children.insert(current, allShowChildren);
     // 移除fileitem
     QWriteLocker lk(&childrenDataLocker);
-    for (const auto &sortInfo : allShowChildren)
-        childrenDataMap.remove(sortInfo->fileUrl());
+    for (const auto &url : removeChildren)
+        childrenDataMap.remove(url);
 }
 
 QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool reverse)
@@ -962,11 +969,12 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
     return sortList;
 }
 
-QList<QUrl> FileSortWorker::removeChildrenByParents(const QList<QUrl> &dirs)
+QList<QUrl> FileSortWorker::removeChildrenByParents(const QList<QUrl> &dirs, const bool removeSelf)
 {
     QList<QUrl> urls;
     for (const auto &dir :dirs) {
-        urls.append(dir);
+        if (removeSelf)
+            urls.append(dir);
         for (const auto &sortInfo : children.value(dir))
             urls << sortInfo->fileUrl();
         children.remove(dir);
@@ -1014,7 +1022,7 @@ void FileSortWorker::removeSubDir(const QUrl &dir, const bool removeSelf)
     // 移除itemdata
     if (removeDir.isEmpty())
         return;
-    auto removeList = removeChildrenByParents(removeDir);
+    auto removeList = removeChildrenByParents(removeDir, removeSelf);
     if (removeList.isEmpty())
         return;
     removeFileItems(removeList);
@@ -1050,7 +1058,7 @@ int FileSortWorker::findEndPos(const QUrl &dir)
     if (index == visibleTreeChildren.value(parentUrl).length() - 1)
         return findEndPos(UrlRoute::urlParent(dir));
 
-    return findStartPos(visibleTreeChildren.value(parentUrl).at(index + 1));
+    return getChildShowIndex(visibleTreeChildren.value(parentUrl).at(index + 1));
 }
 
 int FileSortWorker::findStartPos(const QUrl &parent)
