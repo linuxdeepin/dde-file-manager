@@ -274,7 +274,8 @@ void ShortcutHelper::deleteFiles()
     if (selectUrls.isEmpty())
         return;
     // v5功能 判断当前目录是否有写权限，没有就提示权限错误
-    if (!view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
+    if (selectUrls.first().scheme() == Global::Scheme::kFile
+            && !view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
         DialogManager::instance()->showNoPermissionDialog(selectUrls);
         return;
     }
@@ -296,7 +297,8 @@ void ShortcutHelper::moveToTrash()
     if (selectUrls.isEmpty())
         return;
     // v5功能 判断当前目录是否有写权限，没有就提示权限错误
-    if (!view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
+    if (selectUrls.first().scheme() == Global::Scheme::kFile
+            && !view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
         DialogManager::instance()->showNoPermissionDialog(selectUrls);
         return;
     }
