@@ -21,43 +21,79 @@ TreeItemPaintProxy::TreeItemPaintProxy(QObject *parent)
 
 void TreeItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    Q_UNUSED(index)
-
-    int depth = index.data(kItemTreeViewDepthRole).toInt();
-
-    int iconIntent = (kTreeItemIndent * depth) + kTreeExpandArrowWidth;
+    *rect = iconRect(index, rect->toRect());
 
     bool isEnabled = option.state & QStyle::State_Enabled;
-    rect->moveLeft(rect->left() + iconIntent);
     ItemDelegateHelper::paintIcon(painter, option.icon, *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
-    if (index.data(kItemTreeViewCanExpandRole).toBool())
+    if (index.data(kItemTreeViewCanExpandRole).toBool()) {
         drawExpandArrow(painter, *rect, option, index);
+
+        // test block
+        {
+//            QRect itemRect = view()->visualRect(index);
+//            QRectF rectI = iconRect(index, itemRect);
+//            QRectF rectA = arrowRect(rectI);
+//            rectA = rectA.marginsAdded(QMarginsF(5, 5,5,5));
+//            painter->save();
+//            painter->setPen(Qt::red);
+//            painter->setBrush(Qt::red);
+//            painter->drawRect(rectA);
+//            painter->restore();
+        }
+    }
 }
 
-QRectF TreeItemPaintProxy::iconRect(const QModelIndex &index, const QRect &itemRect)
+QRectF TreeItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex &index)
 {
-    QSize iconSize = view()->iconSize();
+    QRect itemRect = view()->visualRect(index);
+    switch (type) {
+    case RectOfItemType::kItemIconRect:
+        return iconRect(index, itemRect);
+    case RectOfItemType::kItemTreeArrowRect:
+        QRectF iconRect = this->iconRect(index, itemRect);
+        return arrowRect(iconRect);
+    }
 
     return QRectF();
 }
 
-QRect TreeItemPaintProxy::drawExpandArrow(QPainter *painter, const QRectF &rect, const QStyleOptionViewItem &option, const QModelIndex &index)
+void TreeItemPaintProxy::drawExpandArrow(QPainter *painter, const QRectF &rect, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     QStyleOptionViewItem opt = option;
-    QRect arrowRect = opt.rect;
+    QRectF arrowRect = this->arrowRect(rect);
 
-    arrowRect.setRight(static_cast<int>(rect.left()) - 5);
-    arrowRect.setLeft(arrowRect.right() - kTreeExpandArrowWidth);
-    arrowRect.setHeight(kTreeExpandArrowHeight);
-    arrowRect.moveCenter(QPoint(arrowRect.left() + (kTreeExpandArrowWidth / 2), static_cast<int>(rect.center().y())));
-    opt.rect = arrowRect;
+    opt.rect = arrowRect.toRect();
 
     if (index.data(kItemTreeViewExpandabledRole).toBool()) {
         style->drawPrimitive(QStyle::PE_IndicatorArrowDown, &opt, painter, nullptr);
     } else {
         style->drawPrimitive(QStyle::PE_IndicatorArrowRight, &opt, painter, nullptr);
     }
+}
+
+QRectF TreeItemPaintProxy::iconRect(const QModelIndex &index, const QRect &itemRect)
+{
+    QRectF iconRect = itemRect;
+    QSize iconSize = view()->iconSize();
+    iconRect.setSize(iconSize);
+
+    int depth = index.data(kItemTreeViewDepthRole).toInt();
+    int iconIntent = (kTreeItemIndent * depth) + kTreeExpandArrowWidth;
+
+    iconRect.moveLeft(iconRect.left() + kListModeLeftMargin + + kListModeLeftPadding + iconIntent);
+    iconRect.moveTop(iconRect.top() + ((itemRect.bottom() - iconRect.bottom()) / 2));
+
+    return iconRect;
+}
+
+QRectF TreeItemPaintProxy::arrowRect(const QRectF &iconRect)
+{
+    QRectF arrowRect = iconRect;
+
+    arrowRect.moveLeft(iconRect.left() - kTreeExpandArrowWidth - 5);
+    arrowRect.setSize(QSizeF(kTreeExpandArrowWidth, kTreeExpandArrowHeight));
+    arrowRect.moveTop(iconRect.top() + (iconRect.bottom() - arrowRect.bottom()) / 2);
 
     return arrowRect;
 }

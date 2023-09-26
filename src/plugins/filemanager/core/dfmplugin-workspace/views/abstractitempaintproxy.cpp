@@ -34,6 +34,14 @@ void AbstractItemPaintProxy::drawText(QPainter *painter, QRectF *rect, const QSt
     Q_UNUSED(index)
 }
 
+QRectF AbstractItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex &index)
+{
+    Q_UNUSED(type)
+    Q_UNUSED(index)
+
+    return QRectF();
+}
+
 void AbstractItemPaintProxy::setStyleProxy(QStyle *style)
 {
     this->style = style;
