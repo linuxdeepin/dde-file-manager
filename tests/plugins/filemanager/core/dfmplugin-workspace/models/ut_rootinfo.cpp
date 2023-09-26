@@ -590,3 +590,12 @@ TEST_F(UT_RootInfo, Bug_195309_fileInfo)
     // rootInfoObj->fileInfo() did not call fileinfo.refresh() anymore.
     // EXPECT_TRUE(calledRefresh);
 }
+
+TEST_F(UT_RootInfo, Bug_221483_traversalToken) {
+    QString key("threadKey");
+    ItemRoles role = ItemRoles::kItemFileDisplayNameRole;
+    Qt::SortOrder order = Qt::AscendingOrder;
+    bool getCache = rootInfoObj->initThreadOfFileData(key, role, order, false);
+
+    EXPECT_EQ(rootInfoObj->traversalThreads.value(key)->traversalThread->traversalToken, key);
+}

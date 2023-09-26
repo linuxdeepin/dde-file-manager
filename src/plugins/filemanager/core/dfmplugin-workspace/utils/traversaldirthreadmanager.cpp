@@ -59,6 +59,11 @@ void TraversalDirThreadManager::setSortAgruments(const Qt::SortOrder order, cons
     }
 }
 
+void TraversalDirThreadManager::setTraversalToken(const QString &token)
+{
+    traversalToken = token;
+}
+
 void TraversalDirThreadManager::start()
 {
     auto local = dirIterator.dynamicCast<LocalDirIterator>();
