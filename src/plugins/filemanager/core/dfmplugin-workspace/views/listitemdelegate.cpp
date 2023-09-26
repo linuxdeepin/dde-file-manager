@@ -338,17 +338,9 @@ QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
     return iconRect;
 }
 
-QRect ListItemDelegate::getRectOfItem(BaseItemDelegate::RectOfItemType type, const QModelIndex &index)
+QRect ListItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index)
 {
-    QRect itemRect = parent()->parent()->visualRect(index);
-    switch (type) {
-    case BaseItemDelegate::kItemIconRect:
-        break;
-    case BaseItemDelegate::kItemTreeArrowRect:
-        break;
-    }
-
-    return BaseItemDelegate::getRectOfItem(type, index);
+    return d->paintProxy->rectByType(type, index).toRect();
 }
 
 /*!
@@ -425,19 +417,9 @@ QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     if (!parent() || !parent()->parent() || !d->paintProxy)
         return QRect();
 
-    QStyleOptionViewItem opt = option;
-
-    opt.rect += QMargins(-kListModeLeftMargin, 0, -kListModeRightMargin, 0);
-    opt.rect.setLeft(opt.rect.left() + kListModeLeftPadding);
-    opt.rect.setRight(opt.rect.right() - kListModeRightPadding);
-
     // draw icon
-    QRectF iconRect = opt.rect;
-    iconRect.setSize(parent()->parent()->iconSize());
-    iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
-
-    d->paintProxy->drawIcon(painter, &iconRect, opt, index);
-
+    QRectF iconRect = option.rect;
+    d->paintProxy->drawIcon(painter, &iconRect, option, index);
     paintEmblems(painter, iconRect, index);
 
     return iconRect;

@@ -16,11 +16,13 @@ public:
     explicit TreeItemPaintProxy(QObject *parent = nullptr);
 
     virtual void drawIcon(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index) override;
-
-    QRectF iconRect(const QModelIndex &index, const QRect &itemRect);
+    QRectF rectByType(RectOfItemType type, const QModelIndex &index) override;
 
 private:
-    QRect drawExpandArrow(QPainter *painter, const QRectF &rect, const QStyleOptionViewItem &option, const QModelIndex &index);
+    void drawExpandArrow(QPainter *painter, const QRectF &rect, const QStyleOptionViewItem &option, const QModelIndex &index);
+    QRectF iconRect(const QModelIndex &index, const QRect &itemRect);
+    QRectF arrowRect(const QRectF &iconRect);
+
     FileView *view();
 };
 
