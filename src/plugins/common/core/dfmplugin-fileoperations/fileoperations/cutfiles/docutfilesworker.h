@@ -33,6 +33,7 @@ protected:
     void stop() override;
     bool initArgs() override;
     void onUpdateProgress() override;
+    void endWork() override;
 
     bool cutFiles();
     bool doCutFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo);
