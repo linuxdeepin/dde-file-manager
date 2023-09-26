@@ -911,19 +911,10 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
 
 bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
 {
-    // calculate expand arrow rect
-    int depth = model()->data(index, kItemTreeViewDepthRole).toInt();
+    QRect arrowRect = itemDelegate()->getRectOfItem(RectOfItemType::kItemTreeArrowRect, index);
+    arrowRect = arrowRect.marginsAdded(QMargins(5, 5, 5, 5));
 
-    QRect arrowRect = itemDelegate()->getRectOfItem(BaseItemDelegate::kItemTreeArrowRect, index);
-
-    QRect itemRect = visualRect(index);
-    int centerY = itemRect.center().y();
-    itemRect.setRight(itemRect.left() + kListModeLeftMargin + 15 +  50 * depth);
-    itemRect.setHeight(itemRect.height() / 2 + 5);
-    int centerX = (itemRect.width() / 2 ) + itemRect.left();
-    itemRect.moveCenter(QPoint(centerX, centerY));
-
-    if (!itemRect.contains(pos))
+    if (!arrowRect.contains(pos))
         return false;
 
     // get expand state
@@ -1684,6 +1675,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
     connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
+    connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {

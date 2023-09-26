@@ -9,12 +9,18 @@
 
 namespace dfmplugin_workspace {
 
+class FileView;
 class ListItemPaintProxy : public AbstractItemPaintProxy
 {
 public:
     explicit ListItemPaintProxy(QObject *parent = nullptr);
 
     virtual void drawIcon(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+    virtual QRectF rectByType(RectOfItemType type, const QModelIndex &index) override;
+
+    QRectF iconRect(const QModelIndex &index, const QRect &itemRect);
+private:
+    FileView *view();
 };
 
 }

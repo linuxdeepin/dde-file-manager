@@ -153,7 +153,7 @@ QList<QRect> BaseItemDelegate::itemGeomertys(const QStyleOptionViewItem &opt, co
     return {};
 }
 
-QRect BaseItemDelegate::getRectOfItem(BaseItemDelegate::RectOfItemType type, const QModelIndex &index)
+QRect BaseItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index)
 {
     Q_UNUSED(type)
     Q_UNUSED(index)

@@ -40,6 +40,11 @@ inline QList<int> iconWidth()
     return { 44, 36, 28, 28, 28, 28, 28, 32 };
 }
 
+enum class RectOfItemType : uint8_t {
+    kItemIconRect,
+    kItemTreeArrowRect
+};
+
 // model defines
 enum class ModelState : uint8_t {
     kIdle,

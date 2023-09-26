@@ -24,11 +24,6 @@ class BaseItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    enum RectOfItemType {
-        kItemIconRect,
-        kItemTreeArrowRect
-    };
-
     explicit BaseItemDelegate(FileViewHelper *parent);
 
     virtual ~BaseItemDelegate() override;
