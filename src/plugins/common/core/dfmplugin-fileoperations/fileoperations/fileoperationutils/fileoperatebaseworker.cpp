@@ -228,6 +228,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
             localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
         ret = localFileHandler->deleteFile(fromUrl);
         if (!ret) {
+            qWarning() << "delete file error, case: " << localFileHandler->errorString();
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, false,
                                           localFileHandler->errorString());
         }
@@ -334,14 +335,12 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
         ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (ok) {
             workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
-            ok = deleteFile(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
+            cutAndDeleteFiles.append(fromInfo);
         }
     } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
         ok = checkAndCopyDir(fromInfo, toInfo, skip);
-        if (ok) {
+        if (ok)
             workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
-            ok = deleteDir(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
-        }
     } else {
         const QUrl &url = toInfo->urlOf(UrlInfoType::kUrl);
 
@@ -357,7 +356,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
             ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
         }
         if (ok)
-            ok = deleteFile(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
+            cutAndDeleteFiles.append(fromInfo);
         FileUtils::removeCopyingFileUrl(url);
     }
 
@@ -675,6 +674,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
         return false;
     }
 
+    bool self = true;
     while (iterator->hasNext()) {
         if (!stateCheck()) {
             return false;
@@ -686,7 +686,23 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
         if (!ok && (!skip || !*skip)) {
             return false;
         }
+
+        if (jobType == AbstractJobHandler::JobType::kCutType) {
+            if (!ok) {
+                self = false;
+                continue;
+            }
+
+            if (info->isAttributes(OptInfoType::kIsSymLink) || info->isAttributes(OptInfoType::kIsFile)) {
+                cutAndDeleteFiles.append(info);
+            } else if (self && !cutAndDeleteFiles.contains(info)) {
+                self = false;
+            }
+        }
     }
+
+    if (jobType == AbstractJobHandler::JobType::kCutType && self)
+        cutAndDeleteFiles.append(fromInfo);
 
     if (isTargetFileLocal && isSourceFileLocal) {
         DirPermsissonPointer dirinfo(new DirSetPermissonInfo);

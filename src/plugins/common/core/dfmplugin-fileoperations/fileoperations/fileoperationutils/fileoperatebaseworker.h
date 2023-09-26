@@ -135,6 +135,7 @@ protected:
     QString blocakTargetRootPath;
 
     std::atomic_int threadCopyFileCount { 0 };
+    QList<FileInfoPointer> cutAndDeleteFiles;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

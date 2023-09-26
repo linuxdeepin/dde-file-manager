@@ -203,6 +203,19 @@ void DoCutFilesWorker::onUpdateProgress()
     emitSpeedUpdatedNotify(writSize);
 }
 
+void DoCutFilesWorker::endWork()
+{
+    // delete all cut source files
+    bool skip{false};
+    for (const auto &info : cutAndDeleteFiles) {
+        if (!deleteFile(info->fileUrl(), targetOrgUrl, &skip)) {
+            qWarning() << "delete file error, so do not delete other files!!!!";
+            break;
+        }
+    }
+    return FileOperateBaseWorker::endWork();
+}
+
 void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
 {
     JobInfoPointer info(new QMap<quint8, QVariant>);
