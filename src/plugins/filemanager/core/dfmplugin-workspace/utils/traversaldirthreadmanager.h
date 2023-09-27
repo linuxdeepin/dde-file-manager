@@ -40,6 +40,8 @@ public:
                                        QObject *parent = nullptr);
     virtual ~TraversalDirThreadManager() override;
     void setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole, const bool isMixDirAndFile);
+    void setTraversalToken(const QString &token);
+
     void start();
 
 public Q_SLOTS:
