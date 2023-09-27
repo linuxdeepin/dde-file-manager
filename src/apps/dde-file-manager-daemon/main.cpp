@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 
     initLog();
     if (!pluginsLoad()) {
-        qCritical() << "Load pugin failed!";
+        qCritical() << "Load plugin failed!";
         abort();
     }
     signal(SIGTERM, handleSIGTERM);
