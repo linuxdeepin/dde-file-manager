@@ -116,6 +116,7 @@ public:
     bool isVerticalScrollBarSliderDragging() const;
     void updateViewportContentsMargins(const QSize &itemSize);
     bool indexInRect(const QRect &actualRect, const QModelIndex &index);
+    QList<QUrl> selectedTreeViewUrlList() const;
 
     using DListView::edit;
     using DListView::updateGeometries;

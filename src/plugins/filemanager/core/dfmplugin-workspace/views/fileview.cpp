@@ -718,6 +718,43 @@ bool FileView::indexInRect(const QRect &actualRect, const QModelIndex &index)
     return false;
 }
 
+QList<QUrl> FileView::selectedTreeViewUrlList() const
+{
+    if (isIconViewMode() || !d->itemsExpandable)
+        return selectedUrlList();
+
+    QModelIndex rootIndex = this->rootIndex();
+    QList<QUrl> list;
+
+    QModelIndex expandIndex;
+    auto selectIndex = selectedIndexes();
+    if (selectIndex.count() < 1)
+        return list;
+    if (selectIndex.count() >= 2)
+        std::sort(selectIndex.begin(), selectIndex.end(),
+              [](const QModelIndex &left, const  QModelIndex &right){
+            return left.row() < right.row();
+        });
+    for (const QModelIndex &index : selectIndex) {
+        bool expandIsParent = expandIndex.isValid() ?
+                    index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() >
+                        expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() : false;
+        if (index.parent() != rootIndex ||
+                (expandIndex.isValid() && expandIsParent))
+            continue;
+        if (!expandIndex.isValid() || !expandIsParent) {
+            list << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
+            if (index.data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
+                expandIndex = index;
+            } else if (expandIndex.isValid()) {
+                expandIndex = QModelIndex();
+            }
+        }
+    }
+
+    return list;
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     if (!url.isValid())
