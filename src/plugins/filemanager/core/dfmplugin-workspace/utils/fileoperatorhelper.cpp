@@ -140,7 +140,7 @@ void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, co
 
 void FileOperatorHelper::copyFiles(const FileView *view)
 {
-    QList<QUrl> selectedUrls = view->selectedUrlList();
+    QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
     // trans url to local
     QList<QUrl> urls {};
     bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
@@ -173,7 +173,7 @@ void FileOperatorHelper::cutFiles(const FileView *view)
     const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(view->rootUrl());
     if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable))
         return;
-    QList<QUrl> selectedUrls = view->selectedUrlList();
+    QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
     QList<QUrl> urls {};
     bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
     if (ok && !urls.isEmpty())

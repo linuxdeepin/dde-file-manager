@@ -113,6 +113,7 @@ public:
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
 
     bool isVerticalScrollBarSliderDragging() const;
+    QList<QUrl> selectedTreeViewUrlList() const;
 
     using DListView::edit;
     using DListView::updateGeometries;
