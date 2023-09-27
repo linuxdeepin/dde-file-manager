@@ -112,7 +112,6 @@ private:
     void enqueueEvent(const QPair<QUrl, EventType> &e);
     QPair<QUrl, EventType> dequeueEvent();
     FileInfoPointer fileInfo(const QUrl &url);
-    QString currentKey(const QString &travseToken);
 
 public:
     AbstractFileWatcherPointer watcher;
