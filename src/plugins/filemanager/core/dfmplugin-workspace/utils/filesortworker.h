@@ -149,10 +149,11 @@ private:
     void setSourceHandleState(const bool isFinished);
     void resetFilters(const QDir::Filters filters = QDir::NoFilter);
     void checkNameFilters(const FileItemDataPointer itemData);
-    void filterAllFilesOrdered();
-    void filterAndSortFiles(const QUrl &dir, const bool fileter = false, const bool reverse = false);
-    QList<QUrl> filterFilesByParent(const QUrl &dir, const bool byInfo = false);
-    void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false);
+    void filterAllFilesOrdered(const bool expand = false);
+    void filterAndSortFiles(const QUrl &dir, const bool fileter = false,
+                            const bool reverse = false, const bool expand = false);
+    QList<QUrl> filterFilesByParent(const QUrl &dir, const bool byInfo = false, const bool expand = false);
+    void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false, const bool expand = false);
 
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortFilter::SortScenarios sort);
@@ -176,7 +177,7 @@ private:
                                const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
     void removeVisibleChildren(const int startPos, const int size);
     void creatAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
-
+    void setItemCanExpand(const FileItemDataPointer &item);
 
 private:
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,

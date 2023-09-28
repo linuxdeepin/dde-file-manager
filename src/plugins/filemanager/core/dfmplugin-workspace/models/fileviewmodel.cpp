@@ -120,18 +120,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     initFilterSortWork();
 
     // connect signals
-    connect(root, &RootInfo::requestCloseTab, this, [](const QUrl &url) { WorkspaceHelper::instance()->closeTab(url); }, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::getSourceData, root, &RootInfo::handleGetSourceData, Qt::QueuedConnection);
-    connect(root, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);
-    connect(root, &RootInfo::iteratorLocalFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorLocalChildren, Qt::QueuedConnection);
-    connect(root, &RootInfo::iteratorAddFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorChildren, Qt::QueuedConnection);
-    connect(root, &RootInfo::watcherAddFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherAddChildren, Qt::QueuedConnection);
-    connect(root, &RootInfo::watcherRemoveFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherRemoveChildren, Qt::QueuedConnection);
-    connect(root, &RootInfo::watcherUpdateFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateFile, Qt::QueuedConnection);
-    connect(root, &RootInfo::watcherUpdateHideFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateHideFile, Qt::QueuedConnection);
-    connect(root, &RootInfo::traversalFinished, filterSortWorker.data(), &FileSortWorker::handleTraversalFinish, Qt::QueuedConnection);
-    connect(root, &RootInfo::requestSort, filterSortWorker.data(), &FileSortWorker::handleSortDir, Qt::QueuedConnection);
-
+    connectRootAndFilterSortWork(root);
     // fetch files
     const QModelIndex &index = rootIndex();
 
@@ -823,6 +812,23 @@ void FileViewModel::onHiddenSettingChanged(bool value)
     Q_EMIT requestShowHiddenChanged(value);
 }
 
+void FileViewModel::connectRootAndFilterSortWork(const RootInfo *root)
+{
+    if (filterSortWorker.isNull())
+        return;
+    connect(root, &RootInfo::requestCloseTab, this, [](const QUrl &url) { WorkspaceHelper::instance()->closeTab(url); }, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::getSourceData, root, &RootInfo::handleGetSourceData, Qt::QueuedConnection);
+    connect(root, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::iteratorLocalFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorLocalChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::iteratorAddFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherAddFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherAddChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherRemoveFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherRemoveChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherUpdateFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateFile, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherUpdateHideFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateHideFile, Qt::QueuedConnection);
+    connect(root, &RootInfo::traversalFinished, filterSortWorker.data(), &FileSortWorker::handleTraversalFinish, Qt::QueuedConnection);
+    connect(root, &RootInfo::requestSort, filterSortWorker.data(), &FileSortWorker::handleSortDir, Qt::QueuedConnection);
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -860,7 +866,12 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::insertFinish, this, &FileViewModel::onInsertFinish, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeRows, this, &FileViewModel::onRemove, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeFinish, this, &FileViewModel::onRemoveFinish, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() { canFetchFiles = true; fetchMore(rootIndex()); }, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() {
+        canFetchFiles = true;
+        fetchingUrl = rootUrl();
+        RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
+        connectRootAndFilterSortWork(root);
+        fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() {
