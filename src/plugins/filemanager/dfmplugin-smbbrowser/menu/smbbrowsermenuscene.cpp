@@ -145,10 +145,10 @@ AbstractMenuScene *SmbBrowserMenuScene::scene(QAction *action) const
 SmbBrowserMenuScenePrivate::SmbBrowserMenuScenePrivate(AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[SmbBrowserActionId::kOpenSmb] = tr("Open");
+    predicateName[SmbBrowserActionId::kOpenSmb] = tr("&Open");
     predicateName[SmbBrowserActionId::kOpenSmbInNewWin] = tr("Open in new window");
     predicateName[SmbBrowserActionId::kOpenSmbInNewTab] = tr("Open in new tab");
-    predicateName[SmbBrowserActionId::kProperties] = tr("Properties");
+    predicateName[SmbBrowserActionId::kProperties] = tr("P&roperties");
     predicateName[SmbBrowserActionId::kMountSmb] = tr("Mount");
     predicateName[SmbBrowserActionId::kUnmountSmb] = tr("Unmount");
 }
