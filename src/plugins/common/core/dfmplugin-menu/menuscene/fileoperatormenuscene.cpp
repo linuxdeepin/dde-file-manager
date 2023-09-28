@@ -35,9 +35,9 @@ AbstractMenuScene *FileOperatorMenuCreator::create()
 FileOperatorMenuScenePrivate::FileOperatorMenuScenePrivate(FileOperatorMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[ActionID::kOpen] = tr("Open");
-    predicateName[ActionID::kRename] = tr("Rename");
-    predicateName[ActionID::kDelete] = tr("Delete");
+    predicateName[ActionID::kOpen] = tr("&Open");
+    predicateName[ActionID::kRename] = tr("Rena&me");
+    predicateName[ActionID::kDelete] = tr("&Delete");
     predicateName[ActionID::kEmptyTrash] = tr("Empty Trash");
     predicateName[ActionID::kSetAsWallpaper] = tr("Set as wallpaper");
 }

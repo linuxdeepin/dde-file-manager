@@ -31,9 +31,9 @@ AbstractMenuScene *ClipBoardMenuCreator::create()
 ClipBoardMenuScenePrivate::ClipBoardMenuScenePrivate(AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[ActionID::kPaste] = tr("Paste");
-    predicateName[ActionID::kCut] = tr("Cut");
-    predicateName[ActionID::kCopy] = tr("Copy");
+    predicateName[ActionID::kPaste] = tr("&Paste");
+    predicateName[ActionID::kCut] = tr("Cu&t");
+    predicateName[ActionID::kCopy] = tr("&Copy");
 }
 
 ClipBoardMenuScene::ClipBoardMenuScene(QObject *parent)
@@ -88,7 +88,7 @@ AbstractMenuScene *ClipBoardMenuScene::scene(QAction *action) const
 }
 
 bool ClipBoardMenuScene::create(QMenu *parent)
-{   
+{
     if (d->isEmptyArea) {
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kPaste));
         d->predicateAction[ActionID::kPaste] = tempAction;
@@ -124,7 +124,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
                     || !curDirInfo->isAttributes(OptInfoType::kIsWritable);
             paste->setDisabled(disabled);
         }
-    } else {// update menu by focus fileinfo
+    } else {   // update menu by focus fileinfo
         if (auto copy = d->predicateAction.value(ActionID::kCopy)) {
             if (!d->focusFileInfo->isAttributes(OptInfoType::kIsReadable) && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink))
                 copy->setDisabled(true);
