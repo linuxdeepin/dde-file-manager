@@ -561,7 +561,8 @@ void FileStatisticsJob::run()
     d->sizeInfo.reset(new FileUtils::FilesSizeInfo());
     if (d->sourceUrlList.isEmpty())
         return;
-    if (!FileUtils::isLocalDevice(d->sourceUrlList.first())) {
+    if (d->sourceUrlList.first().scheme() != Global::Scheme::kFile
+            || !FileUtils::isLocalDevice(d->sourceUrlList.first())) {
         statistcsOtherFileSystem();
         return;
     }
