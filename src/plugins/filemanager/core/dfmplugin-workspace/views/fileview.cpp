@@ -949,7 +949,6 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
 bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
 {
     QRect arrowRect = itemDelegate()->getRectOfItem(RectOfItemType::kItemTreeArrowRect, index);
-    arrowRect = arrowRect.marginsAdded(QMargins(5, 5, 5, 5));
 
     if (!arrowRect.contains(pos))
         return false;
@@ -1087,10 +1086,18 @@ void FileView::mousePressEvent(QMouseEvent *event)
             setCurrentIndex(QModelIndex());
 
         QModelIndex index = indexAt(event->pos());
-        d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
 
         if (itemDelegate())
             itemDelegate()->commitDataAndCloseActiveEditor();
+
+        if (d->currentViewMode == Global::ViewMode::kListMode && d->itemsExpandable) {
+            if (index.data(kItemTreeViewCanExpandRole).toBool() && expandOrCollapseItem(index, event->pos())) {
+                d->lastMousePressedIndex = QModelIndex();
+                return;
+            }
+        }
+
+        d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
 
         if (isEmptyArea) {
             if (selectionMode() != QAbstractItemView::SingleSelection)
@@ -1103,11 +1110,6 @@ void FileView::mousePressEvent(QMouseEvent *event)
                 if (dragDropMode() != NoDragDrop) {
                     setDragDropMode(DropOnly);
                 }
-            }
-        } else if (d->currentViewMode == Global::ViewMode::kListMode && d->itemsExpandable) {
-            if (expandOrCollapseItem(index, event->pos())) {
-                d->lastMousePressedIndex = QModelIndex();
-                break;
             }
         } else if (WindowUtils::keyCtrlIsPressed() && selectionModel()->isSelected(index)) {
             d->selectHelper->setSelection(selectionModel()->selection());

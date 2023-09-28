@@ -34,6 +34,16 @@ QRectF ListItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex &in
     }
 }
 
+QList<QRect> ListItemPaintProxy::allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    QList<QRect> rects {};
+
+    QRect itemRect = option.rect;
+    rects.append(iconRect(index, itemRect).toRect());
+
+    return rects;
+}
+
 QRectF ListItemPaintProxy::iconRect(const QModelIndex &index, const QRect &itemRect)
 {
     Q_UNUSED(index)

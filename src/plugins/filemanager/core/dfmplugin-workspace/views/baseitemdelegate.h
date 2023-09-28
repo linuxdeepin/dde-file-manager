@@ -106,7 +106,7 @@ public:
 
     virtual QList<QRect> itemGeomertys(const QStyleOptionViewItem &opt, const QModelIndex &index) const;
 
-    virtual QRect getRectOfItem(RectOfItemType type, const QModelIndex &index);
+    virtual QRect getRectOfItem(RectOfItemType type, const QModelIndex &index) const;
 
     QModelIndex editingIndex() const;
 
