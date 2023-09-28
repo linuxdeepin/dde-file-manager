@@ -45,8 +45,9 @@ void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
 
 void OptionButtonBoxPrivate::loadViewMode(const QUrl &url)
 {
-    auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefualtViewMode(url.scheme()));
-    auto viewMode = static_cast<ViewMode>(Application::appObtuselySetting()->value("FileViewState", url).toMap().value("viewMode", defaultViewMode).toInt());
+    QUrl tmpUrl = url.adjusted(QUrl::RemoveQuery);
+    auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefualtViewMode(tmpUrl.scheme()));
+    auto viewMode = static_cast<ViewMode>(Application::appObtuselySetting()->value("FileViewState", tmpUrl).toMap().value("viewMode", defaultViewMode).toInt());
 
     switchMode(viewMode);
 }
