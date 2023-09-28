@@ -28,6 +28,7 @@ namespace dfmplugin_workspace {
 class FileView;
 class FileItemData;
 class FileSortWorker;
+class RootInfo;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -132,6 +133,7 @@ public Q_SLOTS:
     void onHiddenSettingChanged(bool value);
 
 private:
+    void connectRootAndFilterSortWork(const RootInfo *root);
     void initFilterSortWork();
     void quitFilterSortWork();
     void discardFilterSortObjects();
