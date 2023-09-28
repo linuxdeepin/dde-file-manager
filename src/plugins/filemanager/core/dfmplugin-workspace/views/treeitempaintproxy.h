@@ -17,6 +17,7 @@ public:
 
     virtual void drawIcon(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index) override;
     QRectF rectByType(RectOfItemType type, const QModelIndex &index) override;
+    QList<QRect> allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 private:
     void drawExpandArrow(QPainter *painter, const QRectF &rect, const QStyleOptionViewItem &option, const QModelIndex &index);

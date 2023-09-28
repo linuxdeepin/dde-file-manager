@@ -132,18 +132,14 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
 void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(index)
-
-    const QSize &iconSize = parent()->parent()->iconSize();
-    int columnX = 0;
-
     const QRect &optRect = option.rect + QMargins(-kListModeLeftMargin - kListModeLeftPadding, 0, -kListModeRightMargin - kListModeRightMargin, 0);
-    QRect iconRect = optRect;
-    iconRect.setSize(iconSize);
+    QRect iconRect = getRectOfItem(RectOfItemType::kItemIconRect, index);
 
     const QList<ItemRoles> &columnRoleList = parent()->parent()->model()->getColumnRoles();
     if (columnRoleList.isEmpty())
         return;
+
+    int columnX = 0;
     QRect rect = optRect;
     for (int i = 0; i < columnRoleList.length(); ++i) {
         int rol = columnRoleList.at(i);
@@ -262,15 +258,19 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     const QList<ItemRoles> &columnRoleList = parent()->parent()->model()->getColumnRoles();
     int columnX = 0;
 
+    QStyleOptionViewItem opt = option;
     /// draw icon
-    const QRect &optRect = option.rect + QMargins(-kListModeLeftMargin - kLeftPadding, 0, -kListModeRightMargin - kRightPadding, 0);
+    const QRect &optRect = opt.rect + QMargins(-kListModeLeftMargin - kLeftPadding, 0, -kListModeRightMargin - kRightPadding, 0);
+    opt.rect = optRect;
 
-    QRect iconRect = optRect;
-    iconRect.setSize(parent()->parent()->iconSize());
+    geomertys.append(d->paintProxy->allPaintRect(opt, index));
 
-    geomertys << iconRect;
+//    QRect iconRect = optRect;
+//    iconRect.setSize(parent()->parent()->iconSize());
 
-    columnX = iconRect.right() + GlobalPrivate::kIconSpacing;
+//    geomertys << iconRect;
+
+    columnX = geomertys.first().right() + GlobalPrivate::kIconSpacing;
 
     QRect rect = optRect;
     rect.setLeft(columnX);
@@ -338,7 +338,7 @@ QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
     return iconRect;
 }
 
-QRect ListItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index)
+QRect ListItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index) const
 {
     return d->paintProxy->rectByType(type, index).toRect();
 }

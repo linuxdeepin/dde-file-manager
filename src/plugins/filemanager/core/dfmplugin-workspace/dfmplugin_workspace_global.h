@@ -65,8 +65,9 @@ inline constexpr int kListModeRightMargin { 10 };
 inline constexpr int kColumnPadding { 10 };
 inline constexpr int kMinMoveLenght { 3 };
 inline constexpr int kTreeItemIndent { 30 };
-inline constexpr int kTreeExpandArrowWidth { 12 };
-inline constexpr int kTreeExpandArrowHeight { 12 };
+inline constexpr int kTreeExpandArrowWidth { 20 };
+inline constexpr int kTreeExpandArrowHeight { 20 };
+inline constexpr int kTreeArrowAndIconDistance { 10 };
 
 // tab defines
 inline constexpr int kMaxTabCount { 8 };

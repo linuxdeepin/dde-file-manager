@@ -104,7 +104,7 @@ public:
 
     virtual QRectF itemIconRect(const QRectF &itemRect) const;
 
-    virtual QRect getRectOfItem(RectOfItemType type, const QModelIndex &index);
+    virtual QRect getRectOfItem(RectOfItemType type, const QModelIndex &index) const;
 
     QModelIndex editingIndex() const;
 
