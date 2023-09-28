@@ -31,7 +31,7 @@ AbstractMenuScene *PropertyMenuCreator::create()
 PropertyMenuScenePrivate::PropertyMenuScenePrivate(PropertyMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[PropertyActionId::kProperty] = tr("Properties");
+    predicateName[PropertyActionId::kProperty] = tr("P&roperties");
 }
 
 void PropertyMenuScenePrivate::updateMenu(QMenu *menu)

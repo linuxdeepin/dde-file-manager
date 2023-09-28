@@ -106,11 +106,11 @@ AbstractMenuScene *MyShareMenuCreator::create()
 MyShareMenuScenePrivate::MyShareMenuScenePrivate(AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[MySharesActionId::kOpenShareFolder] = tr("Open");
+    predicateName[MySharesActionId::kOpenShareFolder] = tr("&Open");
     predicateName[MySharesActionId::kOpenShareInNewWin] = tr("Open in new window");
     predicateName[MySharesActionId::kOpenShareInNewTab] = tr("Open in new tab");
     predicateName[MySharesActionId::kCancleSharing] = tr("Cancel sharing");
-    predicateName[MySharesActionId::kShareProperty] = tr("Properties");
+    predicateName[MySharesActionId::kShareProperty] = tr("P&roperties");
 }
 
 void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
