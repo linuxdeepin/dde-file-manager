@@ -25,6 +25,7 @@ public:
     virtual void drawText(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index);
 
     virtual QRectF rectByType(RectOfItemType type, const QModelIndex &index);
+    virtual QList<QRect> allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index);
 
     void setStyleProxy(QStyle *style);
 

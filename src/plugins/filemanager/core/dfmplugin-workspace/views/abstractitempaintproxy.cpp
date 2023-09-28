@@ -42,6 +42,14 @@ QRectF AbstractItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex
     return QRectF();
 }
 
+QList<QRect> AbstractItemPaintProxy::allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+
+    return QList<QRect>();
+}
+
 void AbstractItemPaintProxy::setStyleProxy(QStyle *style)
 {
     this->style = style;

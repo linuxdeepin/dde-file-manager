@@ -17,6 +17,7 @@ public:
 
     virtual void drawIcon(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index) override;
     virtual QRectF rectByType(RectOfItemType type, const QModelIndex &index) override;
+    virtual QList<QRect> allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
     QRectF iconRect(const QModelIndex &index, const QRect &itemRect);
 private:

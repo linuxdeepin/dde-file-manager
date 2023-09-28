@@ -146,7 +146,7 @@ QRectF BaseItemDelegate::itemIconRect(const QRectF &itemRect) const
     return QRectF(itemRect);
 }
 
-QRect BaseItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index)
+QRect BaseItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index) const
 {
     Q_UNUSED(type)
     Q_UNUSED(index)
