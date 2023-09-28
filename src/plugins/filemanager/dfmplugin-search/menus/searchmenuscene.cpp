@@ -187,7 +187,8 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     QVariantHash tmpParams = params;
     QList<AbstractMenuScene *> currentScene;
     const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
-    auto menuScene = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", targetUrl.scheme()).toString();
+    const auto &scheme = targetUrl.scheme() == Global::Scheme::kComputer ? Global::Scheme::kFile : targetUrl.scheme();
+    auto menuScene = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", scheme).toString();
     if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(menuScene)) {
         currentScene.append(scene);
         tmpParams[MenuParamKey::kCurrentDir] = targetUrl;
