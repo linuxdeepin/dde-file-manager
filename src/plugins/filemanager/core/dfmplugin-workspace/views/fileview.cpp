@@ -995,6 +995,7 @@ void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const
         d->itemsExpandable = value.toBool();
 
         // todo: try to repaint the list
+        setViewMode(d->currentViewMode);
     }
 }
 
