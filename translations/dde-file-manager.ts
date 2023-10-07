@@ -17,12 +17,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="262"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="256"/>
         <source>File Manager</source>
         <translation>File Manager</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="266"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="260"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</translation>
     </message>
@@ -47,7 +47,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="213"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="221"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
@@ -215,6 +215,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="18"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="18"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="18"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="263"/>
         <source>Home</source>
         <translation>Home</translation>
     </message>
@@ -224,6 +225,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="15"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="15"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="15"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="265"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
@@ -233,6 +235,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="33"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="33"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="267"/>
         <source>Videos</source>
         <translation>Videos</translation>
     </message>
@@ -242,6 +245,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="21"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="21"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="21"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="269"/>
         <source>Music</source>
         <translation>Music</translation>
     </message>
@@ -251,6 +255,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="26"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="26"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="26"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="271"/>
         <source>Pictures</source>
         <translation>Pictures</translation>
     </message>
@@ -260,6 +265,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="16"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="16"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="16"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="273"/>
         <source>Documents</source>
         <translation>Documents</translation>
     </message>
@@ -269,6 +275,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="17"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="17"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="17"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="275"/>
         <source>Downloads</source>
         <translation>Downloads</translation>
     </message>
@@ -277,6 +284,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="31"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="31"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="31"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="277"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
@@ -287,11 +295,12 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="74"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="261"/>
         <source>Recent</source>
         <translation>Recent</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="225"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="238"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
@@ -299,7 +308,7 @@
         <translation>Auto mount</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="251"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="264"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
@@ -401,6 +410,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="288"/>
         <source>Built-in disks</source>
         <translation>Built-in disks</translation>
     </message>
@@ -408,6 +418,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="13"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="13"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="13"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="284"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
@@ -415,6 +426,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="14"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="299"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/events/smbbrowsereventreceiver.cpp" line="54"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/fileinfo/smbsharefileinfo.cpp" line="38"/>
         <source>Computers in LAN</source>
@@ -424,6 +436,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="290"/>
         <source>Loop partitions</source>
         <translation>Loop partitions</translation>
     </message>
@@ -431,6 +444,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="303"/>
         <source>Mounted sharing folders</source>
         <translation>Mounted sharing folders</translation>
     </message>
@@ -438,6 +452,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="22"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="301"/>
         <source>My shares</source>
         <translation>My shares</translation>
     </message>
@@ -445,6 +460,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="296"/>
         <source>Network</source>
         <translation>Network</translation>
     </message>
@@ -452,6 +468,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="292"/>
         <source>Mounted partitions and discs</source>
         <translation>Mounted partitions and discs</translation>
     </message>
@@ -459,6 +476,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="281"/>
         <source>Partitions</source>
         <translation>Partitions</translation>
     </message>
@@ -466,6 +484,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="258"/>
         <source>Quick access</source>
         <translation>Quick access</translation>
     </message>
@@ -473,6 +492,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="307"/>
         <source>Tag</source>
         <translation>Tag</translation>
     </message>
@@ -480,6 +500,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="30"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="310"/>
         <source>Added tags</source>
         <translation>Added tags</translation>
     </message>
@@ -494,6 +515,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="166"/>
         <source>Keep showing the mounted Samba shares</source>
         <translation>Keep showing the mounted Samba shares</translation>
     </message>
@@ -911,11 +933,11 @@
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="560"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="319"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="141"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="400"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="82"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="214"/>
         <source>Open in new window</source>
         <translation>Open in new window</translation>
@@ -925,11 +947,11 @@
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="564"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="323"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="137"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="145"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="404"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="85"/>
         <source>Open in new tab</source>
         <translation>Open in new tab</translation>
     </message>
@@ -948,7 +970,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="58"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="156"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
         <source>Properties</source>
@@ -1697,6 +1719,11 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Failed</source>
         <translation type="unfinished">Failed</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="254"/>
+        <source>Sidebar</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2842,6 +2869,282 @@
     </message>
 </context>
 <context>
+    <name>dfmbase::SettingBackend</name>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="209"/>
+        <source>Always open folder in new window</source>
+        <translation type="unfinished">Always open folder in new window</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="212"/>
+        <source>Open file:</source>
+        <translation type="unfinished">Open file:</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="213"/>
+        <source>Click</source>
+        <translation type="unfinished">Click</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="214"/>
+        <source>Double click</source>
+        <translation type="unfinished">Double click</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="218"/>
+        <source>New window and tab</source>
+        <translation type="unfinished">New window and tab</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="220"/>
+        <source>Open from default window:</source>
+        <translation type="unfinished">Open from default window:</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="222"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
+        <source>Computer</source>
+        <translation type="unfinished">Computer</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="223"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="245"/>
+        <source>Home</source>
+        <translation type="unfinished">Home</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="224"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="246"/>
+        <source>Desktop</source>
+        <translation type="unfinished">Desktop</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="225"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
+        <source>Videos</source>
+        <translation type="unfinished">Videos</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="226"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="248"/>
+        <source>Music</source>
+        <translation type="unfinished">Music</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="227"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
+        <source>Pictures</source>
+        <translation type="unfinished">Pictures</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="228"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="250"/>
+        <source>Documents</source>
+        <translation type="unfinished">Documents</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="229"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="251"/>
+        <source>Downloads</source>
+        <translation type="unfinished">Downloads</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="241"/>
+        <source>Open in new tab:</source>
+        <translation type="unfinished">Open in new tab:</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="243"/>
+        <source>Current Directory</source>
+        <translation type="unfinished">Current Directory</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
+        <source>Files and folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
+        <source>Show hidden files</source>
+        <translation type="unfinished">Show hidden files</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
+        <source>Show file extensions</source>
+        <translation type="unfinished">Show file extensions</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
+        <source>Mix sorting of files and folders</source>
+        <translation type="unfinished">Mix sorting of files and folders</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
+        <source>Workspace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
+        <source>View</source>
+        <translation type="unfinished">View</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
+        <source>Default size:</source>
+        <translation type="unfinished">Default size:</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
+        <source>Extra small</source>
+        <translation type="unfinished">Extra small</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
+        <source>Small</source>
+        <translation type="unfinished">Small</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="286"/>
+        <source>Medium</source>
+        <translation type="unfinished">Medium</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="287"/>
+        <source>Large</source>
+        <translation type="unfinished">Large</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="288"/>
+        <source>Extra large</source>
+        <translation type="unfinished">Extra large</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="291"/>
+        <source>Default view:</source>
+        <translation type="unfinished">Default view:</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
+        <source>Icon</source>
+        <translation type="unfinished">Icon</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
+        <source>List</source>
+        <translation type="unfinished">List</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
+        <source>Thumbnail preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
+        <source>Compressed file preview</source>
+        <translation type="unfinished">Compressed file preview</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
+        <source>Text preview</source>
+        <translation type="unfinished">Text preview</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="304"/>
+        <source>Document preview</source>
+        <translation type="unfinished">Document preview</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
+        <source>Image preview</source>
+        <translation type="unfinished">Image preview</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="308"/>
+        <source>Video preview</source>
+        <translation type="unfinished">Video preview</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="310"/>
+        <source>Music preview</source>
+        <translation type="unfinished">Music preview</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="313"/>
+        <source>The remote environment shows thumbnail previews</source>
+        <translation type="unfinished">The remote environment shows thumbnail previews</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="314"/>
+        <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
+        <translation type="unfinished">Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="323"/>
+        <source>Advanced</source>
+        <translation type="unfinished">Advanced</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="325"/>
+        <source>Search</source>
+        <translation type="unfinished">Search</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
+        <source>Auto index internal disk</source>
+        <translation type="unfinished">Auto index internal disk</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="329"/>
+        <source>Index external storage device after connected to computer</source>
+        <translation type="unfinished">Index external storage device after connected to computer</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="332"/>
+        <source>Full-Text search</source>
+        <translation type="unfinished">Full-Text search</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="335"/>
+        <source>Mount</source>
+        <translation type="unfinished">Mount</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
+        <source>Auto mount</source>
+        <translation type="unfinished">Auto mount</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="343"/>
+        <source>Open after auto mount</source>
+        <translation type="unfinished">Open after auto mount</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="347"/>
+        <source>Show item counts and sizes in the path of mounted MTP devices</source>
+        <translation type="unfinished">Show item counts and sizes in the path of mounted MTP devices</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="351"/>
+        <source>Merge the entries of Samba shared folders</source>
+        <translation type="unfinished">Merge the entries of Samba shared folders</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="353"/>
+        <source>Switching the entry display may lead to failed mounting</source>
+        <translation type="unfinished">Switching the entry display may lead to failed mounting</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
+        <source>Use the file chooser dialog of File Manager</source>
+        <translation type="unfinished">Use the file chooser dialog of File Manager</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
+        <source>Ask for my confirmation when deleting files</source>
+        <translation type="unfinished">Ask for my confirmation when deleting files</translation>
+    </message>
+</context>
+<context>
     <name>dfmbase::Shortcut</name>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="17"/>
@@ -3504,10 +3807,40 @@
 <context>
     <name>dfmplugin_computer::Computer</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="42"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="129"/>
         <source>Computer</source>
         <translation>Computer</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="162"/>
+        <source>Computer display items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="164"/>
+        <source>Hide built-in disks on the Computer page</source>
+        <translation type="unfinished">Hide built-in disks on the Computer page</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="167"/>
+        <source>Hide loop partitions on the Computer page</source>
+        <translation type="unfinished">Hide loop partitions on the Computer page</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="169"/>
+        <source>Show file system on disk icon</source>
+        <translation type="unfinished">Show file system on disk icon</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="173"/>
+        <source>Hide My Directories on the Computer page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="189"/>
+        <source>Hide 3rd party entries on the Computer page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3584,12 +3917,12 @@
 <context>
     <name>dfmplugin_computer::ComputerItemWatcher</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="327"/>
         <source>My Directories</source>
         <translation>My Directories</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="332"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
@@ -4137,7 +4470,7 @@
 <context>
     <name>dfmplugin_filepreview::PreviewDialogManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/utils/previewdialogmanager.cpp" line="58"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/filepreview/utils/previewdialogmanager.cpp" line="64"/>
         <source>Unable to find the original file</source>
         <translation>Unable to find the original file</translation>
     </message>
@@ -4841,7 +5174,7 @@
 <context>
     <name>dfmplugin_smbbrowser::SmbBrowser</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="147"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="149"/>
         <source>Computers in LAN</source>
         <translation>Computers in LAN</translation>
     </message>
@@ -5977,17 +6310,18 @@
 <context>
     <name>dfmplugin_vault::VaultVisibleManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="60"/>
         <source>My Vault</source>
         <translation>My Vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="134"/>
         <source>File Vault</source>
         <translation>File Vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="151"/>
         <source>Vault</source>
         <translation>Vault</translation>
     </message>
