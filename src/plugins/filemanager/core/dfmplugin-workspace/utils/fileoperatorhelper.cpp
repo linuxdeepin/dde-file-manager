@@ -246,7 +246,7 @@ void FileOperatorHelper::undoFiles(const FileView *view)
 
 void FileOperatorHelper::moveToTrash(const FileView *view)
 {
-    const QList<QUrl> selectedUrls = view->selectedUrlList();
+    const QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
     if (selectedUrls.isEmpty())
         return;
 
@@ -278,7 +278,7 @@ void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &ur
 
 void FileOperatorHelper::deleteFiles(const FileView *view)
 {
-    const QList<QUrl> selectedUrls = view->selectedUrlList();
+    const QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
     if (selectedUrls.isEmpty())
         return;
 
@@ -335,7 +335,7 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
 
 void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 {
-    QList<QUrl> urls = view->selectedUrlList();
+    QList<QUrl> urls = view->selectedTreeViewUrlList();
     if (urls.isEmpty())
         return;
 
