@@ -306,6 +306,9 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> ch
             childrenDataMap.remove(sortInfo->fileUrl());
         }
 
+        if (subVisibleList.isEmpty())
+            setItemCanExpand(childData(parentUrl));
+
         int showIndex = -1;
         {
             QReadLocker lk(&locker);
@@ -707,14 +710,6 @@ void FileSortWorker::filterAndSortFiles(const QUrl &dir, const bool fileter, con
         if (removeItemList.isEmpty())
             removeFileItems(removeItemList);
     }
-
-    if (!fileter || !expand)
-        return;
-
-    QReadLocker lk(&childrenDataLocker);
-    for (const auto &item : childrenDataMap) {
-        setItemCanExpand(item);
-    }
 }
 
 QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byInfo, const bool expand)
@@ -803,19 +798,29 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     if (isCanceled)
         return;
 
-    auto visibleList = getChildrenUrls();
-    int showIndex = visibleList.length();
+    int showIndex = findStartPos(parentUrl);;
 
     // 插入到每个目录下的显示目录
     auto subVisibleList = visibleTreeChildren.take(parentUrl);
-    subVisibleList.insert(insertSortList(sortInfo->fileUrl(), subVisibleList, sort), sortInfo->fileUrl());
+    auto offset = subVisibleList.length();
+    if (orgSortRole != Global::ItemRoles::kItemDisplayRole)
+        offset = insertSortList(sortInfo->fileUrl(), subVisibleList, sort);
+    // 根目录下的offset计算不一样
+    if (parentUrl == current) {
+        if (offset >= subVisibleList.length() || offset == 0) {
+            offset = offset >= subVisibleList.length() ? childrenCount() : 0;
+        } else {
+            auto tmpUrl = offset >= subVisibleList.length() ? QUrl() : subVisibleList.at(offset);
+            offset = getChildShowIndex(tmpUrl);
+            if (offset < 0)
+                offset = childrenCount();
+        }
+    }
+    subVisibleList.insert(offset, sortInfo->fileUrl());
     visibleTreeChildren.insert(parentUrl, subVisibleList);
-    if (!depthMap.values(depth - 1).contains(parentUrl))
-        depthMap.insert(depth - 1, parentUrl);
 
     // kItemDisplayRole 是不进行排序的
-    if (orgSortRole != Global::ItemRoles::kItemDisplayRole)
-        showIndex = insertSortList(sortInfo->fileUrl(), visibleList, sort);
+    showIndex += offset;
 
 
     if (isCanceled)
@@ -867,13 +872,7 @@ void FileSortWorker::switchTreeView()
         const auto item = childData(url);
         if (!item)
             continue;
-        if (!item->data(Global::ItemRoles::kItemFileIsDirRole).toBool())
-            continue;
-        auto dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters | QDir::Hidden, flags);
-        if (dirIterator && dirIterator->hasNext()) {
-            item->setExpandabled(false);
-            item->setSubFileCount(1);
-        }
+        setItemCanExpand(item);
     }
     emit requestUpdateView();
 }
@@ -1169,7 +1168,7 @@ void FileSortWorker::creatAndInsertItemData(const int8_t depth, const SortInfoPo
 
 void FileSortWorker::setItemCanExpand(const FileItemDataPointer &item)
 {
-    if (!item->data(Global::ItemRoles::kItemFileIsDirRole).toBool())
+    if (item.isNull() || !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool())
         return;
     auto dirUrl = item->data(Global::ItemRoles::kItemUrlRole).toUrl();
     auto path = dirUrl.path();
