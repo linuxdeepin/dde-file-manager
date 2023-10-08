@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icons/deepin/">
+        <file>builtin/actions/icon_screensaver_32px.svg</file>
+    </qresource>
+</RCC>

@@ -3,12 +3,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "wlsetplugin.h"
-#include "wallpapersettings.h"
 #include "settingsdbusinterface.h"
+
+#ifndef COMPILE_ON_V20
+#include "wallpapersettings.h"
 #include "private/autoactivatewindow.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include <dfm-base/utils/universalutils.h>
+#else
+#include <QDBusMessage>
+#include <QDBusPendingCall>
+#endif
+
 #include <QDBusConnection>
 
 using namespace ddplugin_wallpapersetting;
@@ -79,6 +86,7 @@ bool EventHandle::init()
     return true;
 }
 
+#ifndef COMPILE_ON_V20
 bool EventHandle::wallpaperSetting(const QString &name)
 {
     show(name, (int)WallpaperSettings::Mode::WallpaperMode);
@@ -146,6 +154,27 @@ void EventHandle::show(QString name, int mode)
 
     QMetaObject::invokeMethod(wallpaperSettings,"refreshList",Qt::QueuedConnection);
 }
+#else
+bool EventHandle::wallpaperSetting(const QString &name)
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
+                                   "com.deepin.dde.ControlCenter", "ShowPage");
+    msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("WallpaperSetting"))});
+    QDBusConnection::sessionBus().asyncCall(msg, 5);
+    qInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
+    return true;
+}
+
+bool EventHandle::screenSaverSetting(const QString &name)
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
+                                   "com.deepin.dde.ControlCenter", "ShowPage");
+    msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("ScreensaverSetting"))});
+    QDBusConnection::sessionBus().asyncCall(msg, 5);
+    qInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
+    return true;
+}
+#endif
 
 bool EventHandle::hookCanvasRequest(const QString &screen)
 {
