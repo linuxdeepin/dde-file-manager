@@ -4,6 +4,24 @@ project(ddplugin-wallpapersetting)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+if (COMPLIE_ON_V20)
+set(SRC_FILES
+    wlsetplugin.h
+    wlsetplugin.cpp
+    settingsdbusinterface.h
+    settingsdbusinterface.cpp
+    wallpapersetting.json
+)
+
+add_library(${PROJECT_NAME}
+    SHARED
+    ${SRC_FILES}
+)
+target_link_libraries(${PROJECT_NAME}
+    DFM::framework
+)
+
+else()
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -37,8 +55,6 @@ add_library(${PROJECT_NAME}
     ${QRCS}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Qt5Svg REQUIRED)
@@ -62,6 +78,9 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Svg
     PkgConfig::xcb
     )
+endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 #install library file
 install(TARGETS
