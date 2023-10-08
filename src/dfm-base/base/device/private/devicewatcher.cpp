@@ -334,6 +334,7 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
                 item[DeviceProperty::kSizeTotal] = 0;
                 item[DeviceProperty::kSizeFree] = 0;
                 item[DeviceProperty::kSizeUsed] = 0;
+                DeviceHelper::persistentOpticalInfo(item);
             }
             emit DevMngIns->blockDevPropertyChanged(id, name, var);
         }
@@ -382,9 +383,14 @@ QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType ty
     if (type == DFMMOUNT::DeviceType::kBlockDevice) {
         if (reload) {
             QVariantMap newInfo = DeviceHelper::loadBlockInfo(id);
-            const QVariantMap &oldInfo = d->allBlockInfos.value(id, QVariantMap());
-            newInfo[DeviceProperty::kSizeFree] = oldInfo.value(DeviceProperty::kSizeFree, 0);
-            newInfo[DeviceProperty::kSizeUsed] = oldInfo.value(DeviceProperty::kSizeUsed, 0);
+            // Xust: fix issue that no device usage display when dfm launched
+            // But I still don't understand what's being done here, maybe a more reasonable explanation is needed from xust
+            bool isOptical { newInfo[DeviceProperty::kOpticalDrive].toBool() };
+            if (!isOptical) {
+                const QVariantMap &oldInfo = d->allBlockInfos.value(id, QVariantMap());
+                newInfo[DeviceProperty::kSizeFree] = oldInfo.value(DeviceProperty::kSizeFree, 0);
+                newInfo[DeviceProperty::kSizeUsed] = oldInfo.value(DeviceProperty::kSizeUsed, 0);
+            }
             d->allBlockInfos.insert(id, newInfo);
         }
 
