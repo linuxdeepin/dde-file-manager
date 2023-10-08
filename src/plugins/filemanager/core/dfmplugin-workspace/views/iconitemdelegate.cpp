@@ -217,7 +217,7 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 void IconItemDelegate::updateItemSizeHint()
 {
     Q_D(IconItemDelegate);
-    d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
+    d->textLineHeight = parent()->parent()->fontMetrics().height();
 
     int width = parent()->parent()->iconSize().width();
     if (iconSizeList().indexOf(width) >= 0)

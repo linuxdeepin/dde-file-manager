@@ -320,7 +320,7 @@ void ListItemDelegate::updateItemSizeHint()
 {
     Q_D(ListItemDelegate);
 
-    d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
+    d->textLineHeight = parent()->parent()->fontMetrics().height();
     d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.33), d->textLineHeight));
 }
 
