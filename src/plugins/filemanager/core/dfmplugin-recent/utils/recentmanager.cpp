@@ -12,6 +12,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/file/local/localfilehandler.h>
 
@@ -248,7 +249,10 @@ QUrl RecentHelper::rootUrl()
 
 void RecentHelper::removeRecent(const QList<QUrl> &urls)
 {
-    DDialog dlg;
+    //In wayland , dialog needs to set a parent , otherwise it will enter the window modal incorrectly
+    QWidget *parent = WindowUtils::isWayLand() ? qApp->activeWindow() : nullptr;
+
+    DDialog dlg(parent);
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
     dlg.addButton(QObject::tr("Cancel", "button"));
     dlg.addButton(QObject::tr("Remove", "button"), true, DDialog::ButtonRecommend);
