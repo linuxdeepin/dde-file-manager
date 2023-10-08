@@ -18,6 +18,9 @@ DPF_USE_NAMESPACE
 DDP_WALLPAERSETTING_USE_NAMESPACE
 using namespace ddplugin_wallpapersetting;
 using namespace ddplugin_desktop_util;
+
+#ifdef COMPILE_ON_V23
+
 class UT_WlSetPlugin : public testing::Test
 {
 protected:
@@ -184,3 +187,4 @@ TEST_F(UT_EventHandle, hookCanvasRequest)
     });
     EXPECT_TRUE( event->hookCanvasRequest("window"));
 }
+#endif

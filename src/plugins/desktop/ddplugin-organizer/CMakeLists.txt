@@ -14,7 +14,6 @@ FILE(GLOB_RECURSE CORE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
