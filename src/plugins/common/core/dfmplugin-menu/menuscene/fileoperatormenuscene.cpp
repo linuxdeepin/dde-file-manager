@@ -59,6 +59,7 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
+    d->treeSelectedUrls = params.value(MenuParamKey::kTreeSelectFiles).value<QList<QUrl>>();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
@@ -168,7 +169,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
     // rename
     if (auto rename = d->predicateAction.value(ActionID::kRename)) {
-        if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+        if ((!d->treeSelectedUrls.isEmpty() && d->selectFiles.count() > 1) || !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
     // open menu by focus fileinfo, so do not compare other files
@@ -209,9 +210,13 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // delete
     if (actionId == ActionID::kDelete) {
         if (QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
-            dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, d->windowId,
+                                         d->treeSelectedUrls.isEmpty() ? d->selectFiles : d->treeSelectedUrls,
+                                         AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
-            dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId,
+                                         d->treeSelectedUrls.isEmpty() ? d->selectFiles : d->treeSelectedUrls,
+                                         AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
 
         return true;

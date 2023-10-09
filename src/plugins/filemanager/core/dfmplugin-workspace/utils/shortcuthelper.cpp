@@ -257,7 +257,7 @@ void ShortcutHelper::undoFiles()
 
 void ShortcutHelper::deleteFiles()
 {
-    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    const QList<QUrl> &selectUrls = view->selectedTreeViewUrlList();
     if (selectUrls.isEmpty())
         return;
     // v5功能 判断当前目录是否有写权限，没有就提示权限错误
@@ -280,7 +280,7 @@ void ShortcutHelper::deleteFiles()
 
 void ShortcutHelper::moveToTrash()
 {
-    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    const QList<QUrl> &selectUrls = view->selectedTreeViewUrlList();
     if (selectUrls.isEmpty())
         return;
     // v5功能 判断当前目录是否有写权限，没有就提示权限错误

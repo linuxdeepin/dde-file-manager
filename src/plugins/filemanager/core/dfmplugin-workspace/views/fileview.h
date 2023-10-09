@@ -117,6 +117,7 @@ public:
     void updateViewportContentsMargins(const QSize &itemSize);
     bool indexInRect(const QRect &actualRect, const QModelIndex &index);
     QList<QUrl> selectedTreeViewUrlList() const;
+    void selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const;
 
     using DListView::edit;
     using DListView::updateGeometries;

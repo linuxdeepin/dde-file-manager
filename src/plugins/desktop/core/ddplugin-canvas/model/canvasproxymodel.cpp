@@ -743,8 +743,19 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         return true;
     }
 
+    // treeveiew drop urls
+    QList<QUrl> treeSelectUrl;
+    if (data->formats().contains(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey)) {
+        auto treeUrlsStr = QString(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey));
+        auto treeUrlss = treeUrlsStr.split("\n");
+        for (const auto &url : treeUrlss) {
+            if (url.isEmpty())
+                continue;
+            treeSelectUrl.append(QUrl(url));
+        }
+    }
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
-        FileOperatorProxyIns->dropToTrash(urlList);
+        FileOperatorProxyIns->dropToTrash(treeSelectUrl.isEmpty() ? urlList : treeSelectUrl);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         // nothing to do.
@@ -758,7 +769,7 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     case Qt::CopyAction:
     case Qt::MoveAction:
         if (urlList.count() > 0)
-            FileOperatorProxyIns->dropFiles(action, targetFileUrl, urlList);
+            FileOperatorProxyIns->dropFiles(action, targetFileUrl, treeSelectUrl.isEmpty() ? urlList : treeSelectUrl);
         break;
     case Qt::LinkAction:
         break;
