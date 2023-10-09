@@ -435,14 +435,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
-            FileInfoPointer fileInfo = this->fileInfo(*it);
-            if (fileInfo.isNull())
-                (*it).data(Global::ItemRoles::kItemCreateFileInfoRole);
-            fileInfo = this->fileInfo(*it);
-            if (fileInfo.isNull())
-                continue;
-            const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
-
+            const QUrl &url = (*it).data(Global::ItemRoles::kItemUrlRole).toUrl();
             if (urlsSet.contains(url))
                 continue;
 
@@ -483,8 +476,20 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
 
+    // treeveiew drop urls
+    QList<QUrl> treeSelectUrl;
+    if (data->formats().contains(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey)) {
+        auto treeUrlsStr = QString(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey));
+        auto treeUrlss = treeUrlsStr.split("\n");
+        for (const auto &url : treeUrlss) {
+            if (url.isEmpty())
+                continue;
+            treeSelectUrl.append(QUrl(url));
+        }
+    }
+
     if (FileUtils::isTrashDesktopFile(targetUrl)) {
-        FileOperatorHelperIns->moveToTrash(view, dropUrls);
+        FileOperatorHelperIns->moveToTrash(view, treeSelectUrl.isEmpty() ? dropUrls : treeSelectUrl);
         return true;
     } else if (FileUtils::isDesktopFile(targetUrl)) {
         FileOperatorHelperIns->openFilesByApp(view, dropUrls, QStringList { targetUrl.toLocalFile() });
@@ -499,7 +504,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     case Qt::MoveAction:
         if (dropUrls.count() > 0)
             // call move
-            FileOperatorHelperIns->dropFiles(view, action, targetUrl, dropUrls);
+            FileOperatorHelperIns->dropFiles(view, action, targetUrl, treeSelectUrl.isEmpty() ? dropUrls : treeSelectUrl);
         break;
     default:
         break;
@@ -858,7 +863,7 @@ void FileViewModel::initFilterSortWork()
     filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl))));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
-    filterSortWorker->setTreeView(true);
+    filterSortWorker->setTreeView(Application::instance()->appAttribute(Application::kListItemExpandable).toBool());
     filterSortWorker->moveToThread(filterSortThread.data());
 
     // connect signals

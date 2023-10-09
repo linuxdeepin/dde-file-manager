@@ -707,6 +707,45 @@ QList<QUrl> FileView::selectedTreeViewUrlList() const
     return list;
 }
 
+void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const
+{
+    selectedUrls.clear();
+    treeSelectedUrls.clear();
+    if (isIconViewMode() || !d->itemsExpandable)
+        return selectedUrls.append(selectedUrlList());
+
+    QModelIndex rootIndex = this->rootIndex();
+
+    QModelIndex expandIndex;
+    auto selectIndex = selectedIndexes();
+    if (selectIndex.count() < 1)
+        return;
+    if (selectIndex.count() >= 2)
+        std::sort(selectIndex.begin(), selectIndex.end(),
+              [](const QModelIndex &left, const  QModelIndex &right){
+            return left.row() < right.row();
+        });
+    for (const QModelIndex &index : selectIndex) {
+        selectedUrls.append(index.data(Global::ItemRoles::kItemUrlRole).toUrl());
+        bool expandIsParent = expandIndex.isValid() ?
+                    index.data(Global::ItemRoles::kItemUrlRole).toString().startsWith(
+                        expandIndex.data(Global::ItemRoles::kItemUrlRole).toString()) : false;
+        if (index.parent() != rootIndex ||
+                (expandIndex.isValid() && expandIsParent))
+            continue;
+        if (!expandIndex.isValid() || !expandIsParent) {
+            treeSelectedUrls << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
+            if (index.data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
+                expandIndex = index;
+            } else if (expandIndex.isValid()) {
+                expandIndex = QModelIndex();
+            }
+        }
+    }
+
+    return;
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     if (!url.isValid())
@@ -1260,6 +1299,18 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         dfmmimeData.setUrls(data->urls());
         data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey, dfmmimeData.toByteArray());
         data->setUrls(transformedUrls);
+        // treeview set treeview select url
+        if (isListViewMode() && d->itemsExpandable) {
+            auto treeSelectedUrl = selectedTreeViewUrlList();
+            transformedUrls.clear();
+            UniversalUtils::urlsTransformToLocal(treeSelectedUrl, &transformedUrls);
+            QByteArray ba;
+            for (const auto &url : transformedUrls) {
+                ba.append(url.toString() + "\n");
+            }
+            data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey, ba);
+        }
+
 
         QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(currentViewMode(), indexes);
         QDrag *drag = new QDrag(this);
