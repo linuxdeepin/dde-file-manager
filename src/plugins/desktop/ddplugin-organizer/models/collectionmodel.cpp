@@ -540,12 +540,24 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
         return false;
     }
 
+    // treeveiew drop urls
+    QList<QUrl> treeSelectUrl;
+    if (data->formats().contains(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey)) {
+        auto treeUrlsStr = QString(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey));
+        auto treeUrlss = treeUrlsStr.split("\n");
+        for (const auto &url : treeUrlss) {
+            if (url.isEmpty())
+                continue;
+            treeSelectUrl.append(QUrl(url));
+        }
+    }
+
     if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
         targetFileUrl = QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget));
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
-        FileOperatorIns->dropToTrash(urlList);
+        FileOperatorIns->dropToTrash(treeSelectUrl.isEmpty() ? urlList : treeSelectUrl);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         // nothing to do.
@@ -559,7 +571,7 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     case Qt::CopyAction:
     case Qt::MoveAction:
         if (urlList.count() > 0)
-            FileOperatorIns->dropFilesToCanvas(action, targetFileUrl, urlList);
+            FileOperatorIns->dropFilesToCanvas(action, targetFileUrl, treeSelectUrl.isEmpty() ? urlList : treeSelectUrl);
         break;
     case Qt::LinkAction:
         break;

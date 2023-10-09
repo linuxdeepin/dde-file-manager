@@ -146,12 +146,16 @@ bool UrlRoute::isVirtual(const QUrl &url)
  */
 QUrl UrlRoute::urlParent(const QUrl &url)
 {
+    // todo liyigang need a rule to get parenturl
     const QString &path = url.path();
 
     if (path == "/")
         return QUrl();
-    QUrl reUrl;
-    reUrl.setScheme(url.scheme());
+    QUrl reUrl = url;
+    if (url.scheme() == Global::Scheme::kRecent) {
+        reUrl.setPath("/");
+        return reUrl;
+    }
     QStringList paths = path.split("/");
     paths.removeAt(0);
     if (!paths.isEmpty() && paths.last().isEmpty())

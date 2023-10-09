@@ -114,6 +114,7 @@ public:
 
     bool isVerticalScrollBarSliderDragging() const;
     QList<QUrl> selectedTreeViewUrlList() const;
+    void selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const;
 
     using DListView::edit;
     using DListView::updateGeometries;
