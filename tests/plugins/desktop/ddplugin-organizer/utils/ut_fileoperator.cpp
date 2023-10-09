@@ -40,17 +40,19 @@ TEST(FileOperatorPrivate, filterDesktopFile)
     EXPECT_EQ(urls.first(), one);
 }
 
-namespace  {
+namespace {
 class TestFileOperator : public testing::Test
 {
 public:
-    virtual void SetUp() override {
+    virtual void SetUp() override
+    {
         view = new CollectionView("1", nullptr);
         sel.setModel(&model);
         view->QAbstractItemView::setModel(&model);
         view->setSelectionModel(&sel);
     }
-    virtual void TearDown() override {
+    virtual void TearDown() override
+    {
         stub.clear();
         delete view;
     }
@@ -66,13 +68,13 @@ public:
 TEST_F(TestFileOperator, callBackRenameFiles)
 {
     bool clear = false;
-    stub.set_lamda(&QItemSelectionModel::clearSelection, [&clear](){
-       clear = true;
+    stub.set_lamda(&QItemSelectionModel::clearSelection, [&clear]() {
+        clear = true;
     });
 
     bool clearidx = false;
-    stub.set_lamda(VADDR(QItemSelectionModel,clearCurrentIndex), [&clearidx](){
-       clearidx = true;
+    stub.set_lamda(VADDR(QItemSelectionModel, clearCurrentIndex), [&clearidx]() {
+        clearidx = true;
     });
 
     fo.d->renameFileData.insert(QUrl(), QUrl());
@@ -88,9 +90,9 @@ TEST_F(TestFileOperator, callBackRenameFiles)
     QUrl one = QUrl::fromLocalFile("/tmp/1");
     QUrl two = QUrl::fromLocalFile("/tmp/2");
     QUrl one1 = QUrl::fromLocalFile("/tmp/11");
-    QUrl two1= QUrl::fromLocalFile("/tmp/22");
+    QUrl two1 = QUrl::fromLocalFile("/tmp/22");
 
-    fo.d->callBackRenameFiles({one,two}, {one1,two1});
+    fo.d->callBackRenameFiles({ one, two }, { one1, two1 });
     EXPECT_TRUE(clear);
     EXPECT_TRUE(clearidx);
     ASSERT_EQ(fo.d->renameFileData.size(), 2);
@@ -105,12 +107,12 @@ TEST_F(TestFileOperator, getSelectedUrls)
     model.d->fileList.append(one);
     model.d->fileList.append(two);
 
-    stub.set_lamda(&QItemSelectionModel::selectedIndexes, [this](){
-        return QModelIndexList{QModelIndex(0,0, nullptr, &model),
-                    QModelIndex(1,0, nullptr, &model)};
+    stub.set_lamda(&QItemSelectionModel::selectedIndexes, [this]() {
+        return QModelIndexList { QModelIndex(0, 0, nullptr, &model),
+                                 QModelIndex(1, 0, nullptr, &model) };
     });
 
-    stub.set_lamda(VADDR(CollectionView,isIndexHidden), [](){
+    stub.set_lamda(VADDR(CollectionView, isIndexHidden), []() {
         return false;
     });
 
@@ -123,14 +125,13 @@ TEST_F(TestFileOperator, getSelectedUrls)
 TEST_F(TestFileOperator, copyFiles)
 {
     QUrl one = QUrl::fromLocalFile("/tmp/1");
-    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one](){
-        return QList<QUrl>{one};
+    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one]() {
+        return QList<QUrl> { one };
     });
 
     QList<QUrl> in;
-    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long , ClipBoard::ClipboardAction &&, QList<QUrl> &);
-    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *,
-                   dpf::EventType type, unsigned long long id, ClipBoard::ClipboardAction ac, QList<QUrl> &urls) {
+    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long, ClipBoard::ClipboardAction &&, QList<QUrl> &);
+    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *, dpf::EventType type, unsigned long long id, ClipBoard::ClipboardAction ac, QList<QUrl> &urls) {
         EXPECT_EQ(type, GlobalEventType::kWriteUrlsToClipboard);
         EXPECT_EQ(id, view->winId());
         EXPECT_EQ(ac, ClipBoard::ClipboardAction::kCopyAction);
@@ -146,14 +147,13 @@ TEST_F(TestFileOperator, copyFiles)
 TEST_F(TestFileOperator, cutFiles)
 {
     QUrl one = QUrl::fromLocalFile("/tmp/1");
-    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one](){
-        return QList<QUrl>{one};
+    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one]() {
+        return QList<QUrl> { one };
     });
 
     QList<QUrl> in;
-    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long , ClipBoard::ClipboardAction &&, QList<QUrl> &);
-    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *,
-                   dpf::EventType type, unsigned long long id, ClipBoard::ClipboardAction ac, QList<QUrl> &urls) {
+    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long, ClipBoard::ClipboardAction &&, QList<QUrl> &);
+    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *, dpf::EventType type, unsigned long long id, ClipBoard::ClipboardAction ac, QList<QUrl> &urls) {
         EXPECT_EQ(type, GlobalEventType::kWriteUrlsToClipboard);
         EXPECT_EQ(id, view->winId());
         EXPECT_EQ(ac, ClipBoard::ClipboardAction::kCutAction);
@@ -169,14 +169,13 @@ TEST_F(TestFileOperator, cutFiles)
 TEST_F(TestFileOperator, openFiles)
 {
     QUrl one = QUrl::fromLocalFile("/tmp/1");
-    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one](){
-        return QList<QUrl>{one};
+    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one]() {
+        return QList<QUrl> { one };
     });
 
     QList<QUrl> in;
-    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long , const QList<QUrl> &);
-    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *,
-                   dpf::EventType type, unsigned long long id, const QList<QUrl> &urls) {
+    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long, const QList<QUrl> &);
+    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *, dpf::EventType type, unsigned long long id, const QList<QUrl> &urls) {
         EXPECT_EQ(type, GlobalEventType::kOpenFiles);
         EXPECT_EQ(id, view->winId());
         in = urls;
@@ -191,14 +190,13 @@ TEST_F(TestFileOperator, openFiles)
 TEST_F(TestFileOperator, moveToTrash)
 {
     QUrl one = QUrl::fromLocalFile("/tmp/1");
-    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one](){
-        return QList<QUrl>{one};
+    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one]() {
+        return QList<QUrl> { one };
     });
 
     QList<QUrl> in;
-    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long , QList<QUrl> &, AbstractJobHandler::JobFlag &&, nullptr_t &&);
-    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *,
-                   dpf::EventType type, unsigned long long id, QList<QUrl> &urls, AbstractJobHandler::JobFlag flag, nullptr_t ) {
+    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long, QList<QUrl> &, AbstractJobHandler::JobFlag &&, nullptr_t &&);
+    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *, dpf::EventType type, unsigned long long id, QList<QUrl> &urls, AbstractJobHandler::JobFlag flag, nullptr_t) {
         EXPECT_EQ(type, GlobalEventType::kMoveToTrash);
         EXPECT_EQ(id, view->winId());
         EXPECT_EQ(flag, AbstractJobHandler::JobFlag::kNoHint);
@@ -214,14 +212,13 @@ TEST_F(TestFileOperator, moveToTrash)
 TEST_F(TestFileOperator, deleteFiles)
 {
     QUrl one = QUrl::fromLocalFile("/tmp/1");
-    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one](){
-        return QList<QUrl>{one};
+    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one]() {
+        return QList<QUrl> { one };
     });
 
     QList<QUrl> in;
-    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long , QList<QUrl> &, AbstractJobHandler::JobFlag &&, nullptr_t &&);
-    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *,
-                   dpf::EventType type, unsigned long long id, QList<QUrl> &urls, AbstractJobHandler::JobFlag flag, nullptr_t ) {
+    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long, QList<QUrl> &, AbstractJobHandler::JobFlag &&, nullptr_t &&);
+    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &in](EventDispatcherManager *, dpf::EventType type, unsigned long long id, QList<QUrl> &urls, AbstractJobHandler::JobFlag flag, nullptr_t) {
         EXPECT_EQ(type, GlobalEventType::kDeleteFiles);
         EXPECT_EQ(id, view->winId());
         EXPECT_EQ(flag, AbstractJobHandler::JobFlag::kNoHint);
@@ -237,9 +234,8 @@ TEST_F(TestFileOperator, deleteFiles)
 TEST_F(TestFileOperator, undoFiles)
 {
     bool call = false;
-    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long , nullptr_t &&);
-    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &call](EventDispatcherManager *,
-                   dpf::EventType type, unsigned long long id, nullptr_t ) {
+    typedef bool (EventDispatcherManager::*PublishFunc)(dpf::EventType, unsigned long long, nullptr_t &&);
+    stub.set_lamda((PublishFunc)&EventDispatcherManager::publish, [this, &call](EventDispatcherManager *, dpf::EventType type, unsigned long long id, nullptr_t) {
         EXPECT_EQ(type, GlobalEventType::kRevocation);
         EXPECT_EQ(id, view->winId());
         call = true;
@@ -253,14 +249,13 @@ TEST_F(TestFileOperator, undoFiles)
 TEST_F(TestFileOperator, showFilesProperty)
 {
     QUrl one = QUrl::fromLocalFile("/tmp/1");
-    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one](){
-        return QList<QUrl>{one};
+    stub.set_lamda(&FileOperatorPrivate::getSelectedUrls, [one]() {
+        return QList<QUrl> { one };
     });
 
     QList<QUrl> in;
-    typedef QVariant (EventChannelManager::*PushFunc)(const QString &, const QString &, QList<QUrl> , QVariantHash &&);
-    stub.set_lamda((PushFunc)&EventChannelManager::push, [this, &in](EventChannelManager *,
-                   const QString &space, const QString &topic, QList<QUrl> &urls, QVariantHash &) {
+    typedef QVariant (EventChannelManager::*PushFunc)(const QString &, const QString &, QList<QUrl>, QVariantHash &&);
+    stub.set_lamda((PushFunc)&EventChannelManager::push, [this, &in](EventChannelManager *, const QString &space, const QString &topic, QList<QUrl> &urls, QVariantHash &) {
         EXPECT_EQ(space, QString("dfmplugin_propertydialog"));
         EXPECT_EQ(topic, QString("slot_PropertyDialog_Show"));
         in = urls;
@@ -274,60 +269,59 @@ TEST_F(TestFileOperator, showFilesProperty)
 
 TEST_F(TestFileOperator, pasteFiles)
 {
+    //    QList<QUrl> lists;
+    //    QUrl url1("url1");
+    //    QUrl url2("url2");
+    //    lists.push_back(url1);
+    //    lists.push_back(url2);
+    //    stub.set_lamda(& ClipBoard::clipboardFileUrlList,[&lists](){return lists;});
+    //    ClipBoard::ClipboardAction action =  ClipBoard::kRemoteCopiedAction;
+    //    stub.set_lamda(& ClipBoard::clipboardAction,[&action](){return action;});
+    //    bool callRootUrl = false;
+    //    stub.set_lamda(&CollectionModel::rootUrl,[&callRootUrl,url1](){callRootUrl = true; return url1;});
+    //    CollectionView v("uuid",nullptr);
+
+    //    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+    //    EXPECT_TRUE(callRootUrl);
+
+    //    action = ClipBoard::kRemoteAction;
+    //    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+
+    //    action = ClipBoard::kCopyAction;
+    //    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+
+    //    action = ClipBoard::kCutAction;
+    //    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+}
+TEST_F(TestFileOperator, callBackFunction)
+{
+    FileOperatorPrivate::CallBackFunc funckey = FileOperatorPrivate::CallBackFunc::kCallBackTouchFile;
+    QPair<FileOperatorPrivate::CallBackFunc, QVariant> pair(funckey, QVariant::fromValue(QString("temp_str")));
+    QMap<AbstractJobHandler::CallbackKey, QVariant> *map = new QMap<AbstractJobHandler::CallbackKey, QVariant>();
+    map->insert(AbstractJobHandler::CallbackKey::kCustom, QVariant::fromValue(pair));
+
     QList<QUrl> lists;
     QUrl url1("url1");
     QUrl url2("url2");
     lists.push_back(url1);
     lists.push_back(url2);
-    stub.set_lamda(& ClipBoard::clipboardFileUrlList,[&lists](){return lists;});
-    ClipBoard::ClipboardAction action =  ClipBoard::kRemoteCopiedAction;
-    stub.set_lamda(& ClipBoard::clipboardAction,[&action](){return action;});
-    bool callRootUrl = false;
-    stub.set_lamda(&CollectionModel::rootUrl,[&callRootUrl,url1](){callRootUrl = true; return url1;});
-    CollectionView v("uuid",nullptr);
+    map->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(lists));
+    AbstractJobHandler::CallbackArgus args(map);
 
-    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
-    EXPECT_TRUE(callRootUrl);
+    EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
 
-    action = ClipBoard::kRemoteAction;
-    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+    funckey = FileOperatorPrivate::CallBackFunc::kCallBackPasteFiles;
+    pair.first = funckey;
+    map->insert(AbstractJobHandler::CallbackKey::kCustom, QVariant::fromValue(pair));
 
-    action = ClipBoard::kCopyAction;
-    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
+    JobHandlePointer jobptr(new AbstractJobHandler());
+    map->insert(AbstractJobHandler::CallbackKey::kJobHandle, QVariant::fromValue(jobptr));
+    EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
 
-    action = ClipBoard::kCutAction;
-    EXPECT_NO_FATAL_FAILURE(fo.pasteFiles(&v));
-}
-TEST_F(TestFileOperator, callBackFunction)
-{
-     FileOperatorPrivate::CallBackFunc funckey = FileOperatorPrivate::CallBackFunc::kCallBackTouchFile;
-     QPair<FileOperatorPrivate::CallBackFunc, QVariant> pair(funckey,QVariant::fromValue(QString("temp_str")));
-     QMap<AbstractJobHandler::CallbackKey, QVariant> *map = new QMap<AbstractJobHandler::CallbackKey, QVariant>();
-     map->insert(AbstractJobHandler::CallbackKey::kCustom,QVariant::fromValue(pair));
-
-     QList<QUrl> lists;
-     QUrl url1("url1");
-     QUrl url2("url2");
-     lists.push_back(url1);
-     lists.push_back(url2);
-     map->insert(AbstractJobHandler::CallbackKey::kTargets,QVariant::fromValue(lists));
-     AbstractJobHandler::CallbackArgus args(map);
-
-     EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
-
-     funckey = FileOperatorPrivate::CallBackFunc::kCallBackPasteFiles;
-     pair.first = funckey;
-     map->insert(AbstractJobHandler::CallbackKey::kCustom,QVariant::fromValue(pair));
-
-     JobHandlePointer jobptr(new AbstractJobHandler());
-     map->insert(AbstractJobHandler::CallbackKey::kJobHandle,QVariant::fromValue(jobptr));
-     EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
-
-     funckey = FileOperatorPrivate::CallBackFunc::kCallBackRenameFiles;
-     pair.first = funckey;
-     map->insert(AbstractJobHandler::CallbackKey::kCustom,QVariant::fromValue(pair));
-     map->insert(AbstractJobHandler::CallbackKey::kSourceUrls,QVariant::fromValue(lists));
-     map->insert(AbstractJobHandler::CallbackKey::kTargets,QVariant::fromValue(lists));
-     EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
-
+    funckey = FileOperatorPrivate::CallBackFunc::kCallBackRenameFiles;
+    pair.first = funckey;
+    map->insert(AbstractJobHandler::CallbackKey::kCustom, QVariant::fromValue(pair));
+    map->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(lists));
+    map->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(lists));
+    EXPECT_NO_FATAL_FAILURE(fo.callBackFunction(args));
 }
