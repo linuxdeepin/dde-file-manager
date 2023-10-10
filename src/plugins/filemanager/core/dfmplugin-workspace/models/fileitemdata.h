@@ -32,10 +32,9 @@ public:
     void setAvailableState(bool b);
     void setExpandabled(bool b);
     void setDepth(const int8_t depth);
-    void setSubFileCount(const int count);
 
 private:
-    bool canExpand() const;
+    bool isDir() const;
 
 private:
     FileItemData *parent { nullptr };
