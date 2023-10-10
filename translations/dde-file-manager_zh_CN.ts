@@ -4729,6 +4729,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="89"/>
+        <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>

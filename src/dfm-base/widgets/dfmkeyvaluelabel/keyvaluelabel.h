@@ -89,11 +89,12 @@ public:
     QString LeftValue();
 
     QString RightValue();
-    void setLeftVauleLabelFixedWidth(int width);
 
     DLabel *leftWidget();
 
     RightValueWidget *rightWidget();
+
+    void setLeftVauleLabelFixedWidth(int width);
 
 Q_SIGNALS:
     void valueAreaClicked();

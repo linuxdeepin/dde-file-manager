@@ -299,7 +299,7 @@ void SettingBackend::initWorkspaceSettingConfig()
                       { "text", tr("Restore default view mode") },
                       { "type", "pushButton" },
                       { "trigger", QVariant(Application::kRestoreViewMode)} });
-    ins->addCheckBoxConfig(LV2_GROUP_PREVIEW ".03_list_item_expandable",
+    ins->addCheckBoxConfig(LV2_GROUP_VIEW ".03_list_item_expandable",
                            tr("Item expandable as tree in FileView with list view mode"),
                            false);
 

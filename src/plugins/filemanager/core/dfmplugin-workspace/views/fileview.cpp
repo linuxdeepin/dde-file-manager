@@ -776,8 +776,8 @@ void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &t
     for (const QModelIndex &index : selectIndex) {
         selectedUrls.append(index.data(Global::ItemRoles::kItemUrlRole).toUrl());
         bool expandIsParent = expandIndex.isValid() ?
-                    index.data(Global::ItemRoles::kItemUrlRole).toString().startsWith(
-                        expandIndex.data(Global::ItemRoles::kItemUrlRole).toString()) : false;
+                    index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() >
+                        expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() : false;
         if (index.parent() != rootIndex ||
                 (expandIndex.isValid() && expandIsParent))
             continue;

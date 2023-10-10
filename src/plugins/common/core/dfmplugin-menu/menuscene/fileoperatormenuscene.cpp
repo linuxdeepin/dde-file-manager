@@ -169,7 +169,9 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
     // rename
     if (auto rename = d->predicateAction.value(ActionID::kRename)) {
-        if ((!d->treeSelectedUrls.isEmpty() && d->selectFiles.count() > 1) || !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+        if ((!d->treeSelectedUrls.isEmpty() && d->selectFiles.count() != d->treeSelectedUrls.count())
+                || !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename)
+                || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
     // open menu by focus fileinfo, so do not compare other files
