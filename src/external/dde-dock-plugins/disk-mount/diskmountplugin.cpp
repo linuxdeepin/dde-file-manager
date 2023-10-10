@@ -186,7 +186,7 @@ std::once_flag &DiskMountPlugin::onceFlag()
     return flag;
 }
 
-#ifndef COMPILE_ON_V20
+#ifdef COMPILE_ON_V23
 QIcon DiskMountPlugin::icon(const DockPart &dockPart, DGuiApplicationHelper::ColorType)
 {
     if (dockPart == DockPart::SystemPanel) {
@@ -200,5 +200,4 @@ PluginFlags DiskMountPlugin::flags() const
 {
     return PluginFlag::Type_Tray | PluginFlag::Attribute_CanDrag | PluginFlag::Attribute_CanInsert;
 }
-
 #endif
