@@ -149,11 +149,11 @@ private:
     void setSourceHandleState(const bool isFinished);
     void resetFilters(const QDir::Filters filters = QDir::NoFilter);
     void checkNameFilters(const FileItemDataPointer itemData);
-    void filterAllFilesOrdered(const bool expand = false);
+    void filterAllFilesOrdered();
     void filterAndSortFiles(const QUrl &dir, const bool fileter = false,
-                            const bool reverse = false, const bool expand = false);
-    QList<QUrl> filterFilesByParent(const QUrl &dir, const bool byInfo = false, const bool expand = false);
-    void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false, const bool expand = false);
+                            const bool reverse = false);
+    QList<QUrl> filterFilesByParent(const QUrl &dir, const bool byInfo = false);
+    void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false);
 
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortFilter::SortScenarios sort);
@@ -176,8 +176,7 @@ private:
     void insertVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
                                const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
     void removeVisibleChildren(const int startPos, const int size);
-    void creatAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
-    void setItemCanExpand(const FileItemDataPointer &item);
+    void createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
 
 private:
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,

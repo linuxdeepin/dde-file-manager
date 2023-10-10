@@ -214,7 +214,7 @@ QVariant FileItemData::data(int role) const
     case kItemTreeViewExpandabledRole:
         return QVariant(expandabled);
     case kItemTreeViewCanExpandRole:
-        return canExpand();
+        return isDir();
     default:
         return QVariant();
     }
@@ -235,20 +235,12 @@ void FileItemData::setDepth(const int8_t depth)
     this->depth = depth;
 }
 
-void FileItemData::setSubFileCount(const int count)
+bool FileItemData::isDir() const
 {
-    subFileCount = count;
-}
+    if (info)
+        return info->isAttributes(OptInfoType::kIsDir);
+    if (sortInfo)
+        return sortInfo->isDir();
 
-bool FileItemData::canExpand() const
-{
-    if (info) {
-        if (!info->isAttributes(OptInfoType::kIsDir))
-            return false;
-    } else {
-        if (sortInfo && !sortInfo->isDir())
-            return false;
-    }
-
-    return subFileCount > 0;
+    return false;
 }
