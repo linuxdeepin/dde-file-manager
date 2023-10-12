@@ -22,6 +22,7 @@
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/filedatamanager.h"
+#include "utils/itemdelegatehelper.h"
 #include "events/workspaceeventsequence.h"
 
 #include <dfm-base/mimedata/dfmmimedata.h>
@@ -689,6 +690,23 @@ void FileView::updateViewportContentsMargins(const QSize &itemSize)
     viewport()->setContentsMargins(margin, 0, margin, 0);
 }
 
+bool FileView::indexInRect(const QRect &actualRect, const QModelIndex &index)
+{
+    auto paintRect = visualRect(index);
+    auto opt = viewOptions();
+    opt.rect = paintRect;
+    auto rectList = itemDelegate()->itemGeomertys(opt, index);
+    for (const auto &rect : rectList) {
+        if (!(actualRect.left() > rect.right()
+                      || actualRect.top() > rect.bottom()
+                      || rect.left() > actualRect.right()
+                      || rect.top() > actualRect.bottom()))
+            return true;
+    }
+
+    return false;
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     if (!url.isValid())
@@ -857,6 +875,28 @@ bool FileView::cdUp()
         WorkspaceEventCaller::sendChangeCurrentUrl(windowId, computerRoot);
     }
     return false;
+}
+
+QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) const
+{
+    if (isListViewMode())
+        return QModelIndex();
+
+    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
+    auto index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
+    if (index == -1 || index >= model()->rowCount(rootIndex()))
+        return QModelIndex();
+
+    auto currentIndex = model()->index(index, 0, rootIndex());
+    auto paintRect = visualRect(currentIndex);
+    auto opt = viewOptions();
+    opt.rect = paintRect;
+    auto rectList = itemDelegate()->itemGeomertys(opt, currentIndex);
+    for (const auto &rect : rectList) {
+        if (rect.contains(pos))
+            return currentIndex;
+    }
+    return QModelIndex();
 }
 
 DirOpenMode FileView::currentDirOpenMode() const
@@ -1089,15 +1129,12 @@ void FileView::dropEvent(QDropEvent *event)
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
 {
-    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
     QSize itemSize = itemSizeHint();
+    if (isIconViewMode())
+        return iconIndexAt(pos, itemSize);
 
-    int index = -1;
-    if (isListViewMode()) {
-        index = FileViewHelper::caculateListItemIndex(itemSize, actualPos);
-    } else if (isIconViewMode()) {
-        index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
-    }
+    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
+    int index = FileViewHelper::caculateListItemIndex(itemSize, actualPos);
 
     if (index == -1 || index >= model()->rowCount(rootIndex()))
         return QModelIndex();
@@ -1143,7 +1180,7 @@ QRect FileView::visualRect(const QModelIndex &index) const
     }
 
     rect.moveLeft(rect.left() - horizontalOffset());
-    rect.moveTop(rect.top() - verticalOffset() + DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding));
+    rect.moveTop(rect.top() - verticalOffset());
 
     return rect;
 }
@@ -1163,14 +1200,7 @@ int FileView::horizontalOffset() const
 
 int FileView::verticalOffset() const
 {
-    if (isListViewMode())
-        return DListView::verticalOffset();
-
-    int iconViewColumnPadding = kIconModeColumnPadding;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    iconViewColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding);
-#endif
-    return DListView::verticalOffset() - iconViewColumnPadding;
+    return DListView::verticalOffset();
 }
 
 QList<ItemRoles> FileView::getColumnRoles() const

@@ -181,7 +181,8 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     iconRect.moveCenter(option.rect.center());
     iconRect.moveTop(option.rect.top());
 
-    geometries << itemIconRect(option.rect).toRect();
+    auto itemIconRectf = itemIconRect(option.rect);
+    geometries << itemIconRectf.toRect();
 
     const QString &fileName = displayFileName(index);
 
@@ -208,8 +209,10 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     geometries << labelRect;
 
     // background rect
-    QRect backgroundRect = option.rect;
-    geometries << backgroundRect;
+    QRectF backgroundRect = itemIconRectf;
+    backgroundRect.adjust(-kIconModeIconSpacing, -kIconModeIconSpacing,
+                          kIconModeIconSpacing, kIconModeIconSpacing);
+    geometries << backgroundRect.toRect();
 
     return geometries;
 }
@@ -306,6 +309,34 @@ QRectF IconItemDelegate::itemIconRect(const QRectF &itemRect) const
     iconRect.moveLeft(itemRect.left() + (itemRect.width() - iconRect.width()) / 2.0);
     iconRect.moveTop(iconRect.top() + kIconModeIconSpacing);
     return iconRect;
+}
+
+QList<QRect> IconItemDelegate::itemGeomertys(const QStyleOptionViewItem &opt, const QModelIndex &index) const
+{
+    QList<QRect> geometries;
+    // init icon geomerty
+    auto iconRect = itemIconRect(opt.rect);
+    // background rect
+    QRectF backgroundRect = iconRect;
+    backgroundRect.adjust(-kIconModeIconSpacing, -kIconModeIconSpacing,
+                          kIconModeIconSpacing, kIconModeIconSpacing);
+    geometries << backgroundRect.toRect();
+
+    const QString &fileName = displayFileName(index);
+
+    if (fileName.isEmpty()) {
+        return geometries;
+    }
+
+    // init file name geometry
+    QRect labelRect = opt.rect;
+    labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
+
+    QList<QRectF> lines = calFileNameRect(fileName, labelRect.adjusted(0, 0, 0, 99999), opt.textElideMode);
+    for (const auto &line : lines) {
+        geometries.append(line.toRect());
+    }
+    return geometries;
 }
 
 QString IconItemDelegate::displayFileName(const QModelIndex &index) const
@@ -519,13 +550,12 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
             : QBrush(Qt::NoBrush);
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
-
+    labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
     const FileInfoPointer &info = parent()->fileInfo(index);
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
     if (!singleSelected && isSelectedOpt) {
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
         labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
-        labelRect.setWidth(labelRect.width() - 2 * kIconModeRectRadius);
     }
 
     layout->layout(labelRect, opt.textElideMode, painter, background);
@@ -614,7 +644,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
         //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
         d->expandedItem->show();
         d->expandedItem->setTextBounding(QRect());
-        editor->setFixedWidth(option.rect.width());
+        editor->setFixedWidth(option.rect.width() - kIconModeRectRadius);
         d->expandedItem->setIconHeight(iconSize.height());
         editor->adjustSize();
 

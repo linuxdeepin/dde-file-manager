@@ -115,6 +115,7 @@ public:
 
     bool isVerticalScrollBarSliderDragging() const;
     void updateViewportContentsMargins(const QSize &itemSize);
+    bool indexInRect(const QRect &actualRect, const QModelIndex &index);
 
     using DListView::edit;
     using DListView::updateGeometries;
@@ -183,7 +184,7 @@ private slots:
     void updateHorizontalOffset();
     void updateView();
     void updateOneView(const QModelIndex &index);
-    void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void onSelectionChanged(const QItemSelection &indexInRect, const QItemSelection &deselected);
     void onDefaultViewModeChanged(int mode);
 
 private:
@@ -220,6 +221,7 @@ private:
     QList<SelectionMode> fetchSupportSelectionModes();
 
     bool cdUp();
+    QModelIndex iconIndexAt(const QPoint &pos, const QSize &itemSize) const;
 };
 
 }
