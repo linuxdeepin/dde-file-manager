@@ -31,6 +31,8 @@ RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
 RootInfo::~RootInfo()
 {
     disconnect();
+    if (watcher)
+        watcher->stopWatcher();
     cancelWatcherEvent = true;
     watcherEventFuture.waitForFinished();
     for (const auto &thread : traversalThreads) {
@@ -97,8 +99,10 @@ void RootInfo::startWatcher()
     if (needStartWatcher == false)
         return;
     needStartWatcher = false;
-    if (watcher)
+    if (watcher) {
+        watcher->stopWatcher();
         watcher->disconnect(this);
+    }
 
     // create watcher
     watcher = WatcherFactory::create<AbstractFileWatcher>(url);
@@ -137,8 +141,11 @@ int RootInfo::clearTraversalThread(const QString &key)
     if (thread->traversalThread->isRunning())
         traversaling = false;
     thread->traversalThread->quit();
-    if (traversalThreads.isEmpty())
+    if (traversalThreads.isEmpty()) {
+        if (watcher)
+            watcher->stopWatcher();
         needStartWatcher = true;
+    }
     return traversalThreads.count();
 }
 

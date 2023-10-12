@@ -106,8 +106,10 @@ void WatcherCache::removeCacheWatcherByParent(const QUrl &parent)
     Q_D(WatcherCache);
     auto keys = d->watchers.keys();
     for (const auto &url : keys) {
-        if (url.scheme() == parent.scheme() && url.path().startsWith(parent.path()))
+        if (url.scheme() == parent.scheme() && url.path().startsWith(parent.path())) {
+            d->watchers.value(url)->stopWatcher();
             d->watchers.remove(url);
+        }
     }
 }
 
