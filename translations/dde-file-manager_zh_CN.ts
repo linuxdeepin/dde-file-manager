@@ -17,12 +17,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="260"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="256"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="264"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="260"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>文件管理器是一款功能强大的文件管理工具，它包括搜索、复制、回收站、压缩/解压缩，文件属性等管理功能。</translation>
     </message>
@@ -150,24 +150,24 @@
         <translation>若想确认继续操作是否安全，请联系系统管理员。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="370"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="371"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="44"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="45"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="375"/>
         <source>Data Disk</source>
         <translation>数据盘</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
         <source>Blank %1 Disc</source>
         <translation>空白%1光盘</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="372"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="378"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
@@ -175,17 +175,17 @@
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="427"/>
         <source>%1 Drive</source>
         <translation>%1 驱动器</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="439"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="443"/>
         <source>%1 Encrypted</source>
         <translation>%1 已加密</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="446"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="450"/>
         <source>%1 Volume</source>
         <translation>%1 卷</translation>
     </message>
@@ -336,20 +336,20 @@
         <translation>无法找到链接目标文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="437"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="440"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="523"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="439"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="525"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="66"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限访问该文件夹</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="445"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="528"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>您没有权限遍历子文件</translation>
@@ -858,7 +858,7 @@
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="329"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="257"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -932,7 +932,7 @@
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="38"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="560"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="319"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="323"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="141"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="400"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
@@ -946,7 +946,7 @@
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="41"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="564"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="327"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="145"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="404"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
@@ -1348,33 +1348,33 @@
         <translation>未知设备</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="258"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>移 除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="257"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="261"/>
         <source>Do you want to remove this item?</source>
         <translation>您确定要移除选中的此项内容？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="263"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>您确定要移除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="260"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="264"/>
         <source>It does not delete the original files</source>
         <translation>此操作不会删除源文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="334"/>
         <source>Clear recent history</source>
         <translation>清除最近访问</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="346"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="350"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="171"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="194"/>
         <source>Source path</source>
@@ -1526,7 +1526,7 @@
         <translation>正在搜索...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="287"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="294"/>
         <source>My Vault</source>
         <translation>我的保险箱</translation>
     </message>
@@ -2844,6 +2844,14 @@
     </message>
 </context>
 <context>
+    <name>dfmbase::RightValueWidget</name>
+    <message>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="274"/>
+        <source>Copy complete info</source>
+        <translation>复制完整信息</translation>
+    </message>
+</context>
+<context>
     <name>dfmbase::SettingBackend</name>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="209"/>
@@ -3398,12 +3406,7 @@
         <translation>修改时间：%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="762"/>
-        <source>In data statistics</source>
-        <translation>正在统计数据</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="763"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="765"/>
         <source>Original folder</source>
         <translation>原始文件夹</translation>
     </message>
@@ -4388,8 +4391,8 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
-        <source>Copy or Cut File failed，cause: %1</source>
-        <translation>复制或剪切文件失败，原因是 %1</translation>
+        <source>Copy or Cut File failed, cause: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="232"/>
@@ -4913,17 +4916,17 @@
 <context>
     <name>dfmplugin_recent::RecentManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="94"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="99"/>
         <source>Last access</source>
         <translation>最近访问时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="122"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="123"/>
         <source>Recent</source>
         <translation>最近使用</translation>
     </message>
@@ -5514,17 +5517,17 @@
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="74"/>
         <source>item</source>
         <translation>项目</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="76"/>
         <source>items</source>
         <translation>项目</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="82"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="78"/>
         <source>Contains %1 %2</source>
         <translation>包含%1个%2</translation>
     </message>
@@ -6317,22 +6320,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="566"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="567"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="568"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="569"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="570"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="571"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="572"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="573"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>

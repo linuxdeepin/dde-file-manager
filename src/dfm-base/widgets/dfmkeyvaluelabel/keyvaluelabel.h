@@ -23,6 +23,7 @@ class RightValueWidget : public QTextEdit
     Q_OBJECT
 public:
     explicit RightValueWidget(QWidget *parent = nullptr);
+    void setCompleteText(const QString &text);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -36,6 +37,7 @@ Q_SIGNALS:
     void clicked();
 
 private:
+    QString completeText;
     bool isContextMenuShow { false };
 };
 

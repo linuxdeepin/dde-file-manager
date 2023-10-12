@@ -6,6 +6,7 @@
 
 #include <QFontMetrics>
 #include <QMenu>
+#include <QClipboard>
 
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -115,10 +116,11 @@ void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt
 {
     rightValueEdit->setAlignment(aligment);
     QFontMetrics fontM(rightValueEdit->font());
-    int fontW = rightValueEdit->width() * kMaxShowRowNum - fontM.averageCharWidth() * kMaxShowRowNum;
+    int fontW = rightValueEdit->width() * kMaxShowRowNum - fontM.averageCharWidth() * (kMaxShowRowNum + 1);
     if (fontW < fontMinWidth)
         fontW = fontMinWidth;
     QString elideNote = fontM.elidedText(value, elideMode, fontW);
+    rightValueEdit->setCompleteText(value);
     rightValueEdit->setText(elideNote);
     if (toolTipVisibility)
         rightValueEdit->setToolTip(value);
@@ -218,6 +220,11 @@ RightValueWidget::RightValueWidget(QWidget *parent)
     connect(this, &RightValueWidget::customContextMenuRequested, this, &RightValueWidget::customContextMenuEvent);
 }
 
+void RightValueWidget::setCompleteText(const QString &text)
+{
+    completeText = text;
+}
+
 void RightValueWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     QTextEdit::mouseReleaseEvent(event);
@@ -249,17 +256,31 @@ void RightValueWidget::customContextMenuEvent(const QPoint &pos)
     QMenu *menu = createStandardContextMenu(curPos);
     if (!menu)
         return;
+
     QList<QAction *> acts = menu->actions();
+    const QString text = document()->toPlainText();
     for (int i = 0; i < acts.size(); ++i) {
         const QString &objectName = acts.at(i)->objectName();
         if (objectName == QString(kSelectAllName)) {
-            if (textCursor().selectedText() == document()->toPlainText())
+            if (textCursor().selectedText() == text)
                 acts.at(i)->setEnabled(false);
             else
                 acts.at(i)->setEnabled(true);
             break;
         }
     }
+
+    if (text != completeText) {
+        QAction *copyComplete = new QAction(tr("Copy complete info"), menu);
+        connect(copyComplete, &QAction::triggered, this, [this](){
+            QApplication::clipboard()->setText(completeText);
+        });
+        if (acts.size() > 0)
+            menu->insertAction(acts[0], copyComplete);
+        else
+            menu->addAction(copyComplete);
+    }
+
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->popup(curPos);
 }
