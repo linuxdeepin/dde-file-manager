@@ -292,6 +292,12 @@ void SettingBackend::initWorkspaceSettingConfig()
                            { { "values", QStringList { tr("Icon"), tr("List") } },
                              { "keys", QVariantList { 1, 2 } } },
                            1);
+    ins->addConfig(LV2_GROUP_VIEW ".02_restore_view_mode",
+                    { { "key", "02_restore_view_mode" },
+                      { "desc", tr("Restore default view mode for all directories") },
+                      { "text", tr("Restore default view mode") },
+                      { "type", "pushButton" },
+                      { "trigger", QVariant(Application::kRestoreViewMode)} });
 
     ins->addGroup(LV2_GROUP_PREVIEW, tr("Thumbnail preview"));
 

@@ -67,6 +67,12 @@ public:
 
     Q_ENUM(GenericAttribute)
 
+    enum TriggerAttribute {
+        kRestoreViewMode    // restore defualt view mode to all dir
+    };
+
+    Q_ENUM(TriggerAttribute)
+
     explicit Application(QObject *parent = nullptr);
     ~Application();
 
@@ -88,6 +94,8 @@ public:
     static Settings *appObtuselySetting();
 
     static Settings *dataPersistence();
+
+    static void appAttributeTrigger(TriggerAttribute ta);
 
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
