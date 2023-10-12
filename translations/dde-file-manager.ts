@@ -2844,6 +2844,14 @@
     </message>
 </context>
 <context>
+    <name>dfmbase::RightValueWidget</name>
+    <message>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="275"/>
+        <source>Copy complete info</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dfmbase::SettingBackend</name>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="209"/>
@@ -5519,17 +5527,17 @@
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="75"/>
         <source>item</source>
         <translation>item</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="77"/>
         <source>items</source>
         <translation>items</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="82"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="79"/>
         <source>Contains %1 %2</source>
         <translation>Contains %1 %2</translation>
     </message>
