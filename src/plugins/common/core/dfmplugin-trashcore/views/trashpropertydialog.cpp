@@ -42,15 +42,12 @@ void TrashPropertyDialog::initUI()
     fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignRight);
     fileCountAndFileSize->leftWidget()->setFixedWidth(150);
 
-    QFrame *infoFrame = new QFrame;
+    DFrame *infoFrame = new DFrame;
     infoFrame->setMaximumHeight(48);
     QHBoxLayout *infoLayout = new QHBoxLayout;
     infoLayout->setContentsMargins(10, 10, 10, 10);
     infoLayout->addWidget(fileCountAndFileSize);
     infoFrame->setLayout(infoLayout);
-
-    QString backColor = palette().color(QPalette::Base).name();
-    infoFrame->setStyleSheet(QString("background-color: %1; border-radius: 8px;").arg(backColor));
 
     QFrame *contenFrame = new QFrame;
 
