@@ -279,7 +279,7 @@ int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &ite
 
     int itemWidth = itemSize.width() + iconViewSpacing * 2;
     if (pos.x() % itemWidth < iconViewSpacing
-        || pos.x() % itemWidth > (itemHeight - iconViewSpacing))
+        || pos.x() % itemWidth > (itemWidth - iconViewSpacing))
         return -1;
 
     int columnIndex = pos.x() / itemWidth;

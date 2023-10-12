@@ -145,6 +145,13 @@ QRectF BaseItemDelegate::itemIconRect(const QRectF &itemRect) const
     return QRectF(itemRect);
 }
 
+QList<QRect> BaseItemDelegate::itemGeomertys(const QStyleOptionViewItem &opt, const QModelIndex &index) const
+{
+    Q_UNUSED(opt);
+    Q_UNUSED(index);
+    return {};
+}
+
 FileViewHelper *BaseItemDelegate::parent() const
 {
     return dynamic_cast<FileViewHelper *>(QStyledItemDelegate::parent());

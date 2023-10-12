@@ -172,13 +172,7 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
 
     for (int i = firstIndex; i < lastIndex; ++i) {
         const QModelIndex &index = view->model()->index(i, 0, view->rootIndex());
-        // 这里就是实际绘制区域
-        const QRect &itemRect = view->visualRect(index);
-
-        if (!(actualRect.left() > itemRect.right()
-              || actualRect.top() > itemRect.bottom()
-              || itemRect.left() > actualRect.right()
-              || itemRect.top() > actualRect.bottom())) {
+        if (view->indexInRect(actualRect, index)) {
             if (!selection->contains(index)) {
                 QItemSelectionRange selectionRange(index);
                 selection->push_back(selectionRange);

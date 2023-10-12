@@ -49,6 +49,7 @@ public:
     void hideNotEditingIndexWidget() override;
 
     QRectF itemIconRect(const QRectF &itemRect) const override;
+    QList<QRect> itemGeomertys(const QStyleOptionViewItem &opt, const QModelIndex &index) const override;
 
     QString displayFileName(const QModelIndex &index) const;
     QList<QRectF> calFileNameRect(const QString &name, const QRectF &rect, Qt::TextElideMode elideMode) const;
