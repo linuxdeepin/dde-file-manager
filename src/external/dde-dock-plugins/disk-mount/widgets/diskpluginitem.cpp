@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "diskpluginitem.h"
+#include "diskmountplugin.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -40,7 +41,7 @@ void DiskPluginItem::updateIcon()
 {
     QString &&iconName = "drive-removable-dock-symbolic";
 
-#ifndef COMPILE_ON_V20
+#if defined(COMPILE_ON_V23) || defined(USE_DOCK_NEW_INTERFACE)
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
         iconName.append(PLUGIN_MIN_ICON_NAME);
 #else
