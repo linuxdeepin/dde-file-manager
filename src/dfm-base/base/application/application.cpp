@@ -301,6 +301,30 @@ Settings *Application::dataPersistence()
     return dpGlobal;
 }
 
+void Application::appAttributeTrigger(TriggerAttribute ta)
+{
+    switch(ta) {
+    case kRestoreViewMode:
+        auto defaultViewMode = appAttribute(Application::kViewMode).toInt();
+        auto settings = appObtuselySetting();
+
+        const QStringList &keys = settings->keyList("FileViewState");
+        for (const QString &url : keys) {
+            auto map = settings->value("FileViewState", url).toMap();
+            if (map.contains("viewMode")) {
+                qDebug() << "Set " << url << "viewMode to " << defaultViewMode;
+                map["viewMode"] = defaultViewMode;
+                settings->setValue("FileViewState", url, map);
+            }
+        }
+
+        settings->sync();
+
+        if (instance())
+            Q_EMIT instance()->viewModeChanged(defaultViewMode);
+    }
+}
+
 Application::Application(ApplicationPrivate *dd, QObject *parent)
     : QObject(parent), d(dd)
 {

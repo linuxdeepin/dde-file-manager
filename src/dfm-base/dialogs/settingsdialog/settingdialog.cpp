@@ -16,6 +16,7 @@
 #include <DSettingsOption>
 #include <DSettingsWidgetFactory>
 #include <dsettingsbackend.h>
+#include <DPushButton>
 
 #include <QWindow>
 #include <QFile>
@@ -180,6 +181,7 @@ SettingDialog::SettingDialog(QWidget *parent)
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);
 
     widgetFactory()->registerWidget("checkBoxWithMessage", &SettingDialog::createCheckBoxWithMessage);
+    widgetFactory()->registerWidget("pushButton", &SettingDialog::createPushButton);
 
     auto creators = CustomSettingItemRegister::instance()->getCreators();
     auto iter = creators.cbegin();
@@ -309,6 +311,33 @@ QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *op
     QObject::connect(option, &DSettingsOption::valueChanged, cb, [=](QVariant value) { cb->setChecked(value.toBool()); });
 
     return qMakePair(cb, nullptr);
+}
+
+QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    const QString &desc = option->data("desc").toString();
+    const QString &text = option->data("text").toString();
+    auto attributeType = option->data("trigger").toInt();
+
+    auto rightWidget = new QWidget;
+    rightWidget->setContentsMargins(0, 0, 0, 0);
+    QHBoxLayout *layout = new QHBoxLayout(rightWidget);
+    layout->setMargin(0);
+    rightWidget->setLayout(layout);
+
+    layout->addStretch(0);
+
+    DPushButton *button = new DPushButton;
+    button->setText(text);
+
+    layout->addWidget(button, 0, Qt::AlignRight);
+
+    connect(button, &DPushButton::clicked, option, [ = ]{
+        Application::appAttributeTrigger(static_cast<Application::TriggerAttribute>(attributeType));
+    });
+
+    return qMakePair(new QLabel(desc), rightWidget);
 }
 
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)
