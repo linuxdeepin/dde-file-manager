@@ -103,6 +103,8 @@ public:
 
     virtual QRectF itemIconRect(const QRectF &itemRect) const;
 
+    virtual QList<QRect> itemGeomertys(const QStyleOptionViewItem &opt, const QModelIndex &index) const;
+
     QModelIndex editingIndex() const;
 
     QWidget *editingIndexWidget() const;
