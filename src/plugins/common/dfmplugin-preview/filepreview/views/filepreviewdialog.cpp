@@ -13,7 +13,6 @@
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-framework/dpf.h>
 
-#include <DWindowCloseButton>
 #include <DGuiApplicationHelper>
 #include <DAnchors>
 
@@ -125,8 +124,8 @@ void FilePreviewDialog::openFile()
 
 void FilePreviewDialog::childEvent(QChildEvent *event)
 {
-    if (closeButton && event->added()) {
-        closeButton->raise();
+    if (closeBtn && event->added()) {
+        closeBtn->raise();
     }
 
     return DAbstractDialog::childEvent(event);
@@ -196,21 +195,13 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 
 void FilePreviewDialog::initUI()
 {
-    closeButton = new DWindowCloseButton(this);
-    closeButton->setObjectName("CloseButton");
-    closeButton->setFocusPolicy(Qt::NoFocus);
-    closeButton->setIconSize({ 50, 50 });
-    closeButton->setFixedSize({ 30, 30 });
-    QColor base_color = palette().base().color();
-    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
-    if (ct == DGuiApplicationHelper::LightType) {
-        closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
-    } else {
-        closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
-    }
-
-    DAnchorsBase::setAnchor(closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
-    connect(closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
+    closeBtn = new DFloatingButton(DStyle::SP_CloseButton, this);
+    closeBtn->setStyleSheet("background-color: transparent;");
+    closeBtn->setFixedSize(46, 46);
+    closeBtn->setIconSize(QSize(40, 40));
+    closeBtn->setFlat(true);
+    DAnchorsBase::setAnchor(closeBtn, Qt::AnchorRight, this, Qt::AnchorRight);
+    connect(closeBtn, &QPushButton::clicked, this, &FilePreviewDialog::close);
 
     separator = new DHorizontalLine(this);
     separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

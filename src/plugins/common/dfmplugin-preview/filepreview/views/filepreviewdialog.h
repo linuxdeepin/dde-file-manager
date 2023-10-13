@@ -11,12 +11,9 @@
 
 #include <DAbstractDialog>
 #include <DHorizontalLine>
+#include <DFloatingButton>
 
 #include <QUrl>
-
-DWIDGET_BEGIN_NAMESPACE
-class DWindowCloseButton;
-DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_filepreview {
 class FilePreviewDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
@@ -58,7 +55,7 @@ private:
 
     QList<QUrl> fileList;
 
-    DTK_WIDGET_NAMESPACE::DWindowCloseButton *closeButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DFloatingButton *closeBtn { Q_NULLPTR };
     DTK_WIDGET_NAMESPACE::DHorizontalLine *separator { nullptr };
     FilePreviewDialogStatusBar *statusBar { nullptr };
 
