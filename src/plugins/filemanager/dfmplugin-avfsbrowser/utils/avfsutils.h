@@ -7,6 +7,7 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
+#include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <QString>
@@ -35,7 +36,11 @@ public:
 
     static inline QStringList supportedArchives()
     {
-        return DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes();
+        QStringList supported = dfmbase::MimeTypeDisplayManager::instance()->supportArchiveMimetypes();
+        supported.removeAll(dfmbase::Global::Mime::kTypeCdImage);
+        supported.removeAll(dfmbase::Global::Mime::kTypeArchiveRAR);
+        supported.removeAll(dfmbase::Global::Mime::kTypeAppRAR);
+        return supported;
     }
     static bool isSupportedArchives(const QUrl &url);
     static bool isSupportedArchives(const QString &path);
