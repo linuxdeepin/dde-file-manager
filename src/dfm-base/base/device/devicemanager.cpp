@@ -703,7 +703,12 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     };
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
+    QStringList ports { port };
+    static const QStringList &defaultSmbPorts { "445", "139" };
+    if (u.scheme() == "smb" && defaultSmbPorts.contains(port))
+        ports = defaultSmbPorts;
+
+    NetworkUtils::instance()->doAfterCheckNet(host, ports, [=](bool ok) {
         QApplication::restoreOverrideCursor();
         if (ok) {
             DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice,

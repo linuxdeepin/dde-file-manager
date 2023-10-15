@@ -621,8 +621,13 @@ void ComputerController::handleNetworkCdCall(quint64 winId, DFMEntryFileInfoPoin
         qWarning() << "parse ip address failed: " << target;
         ComputerEventCaller::cdTo(winId, target);
     } else {
+        QStringList ports { port };
+        static const QStringList &defaultSmbPorts { "445", "139" };
+        if (target.scheme() == "smb" && defaultSmbPorts.contains(port))
+            ports = defaultSmbPorts;
+
         ComputerUtils::setCursorState(true);
-        NetworkUtils::instance()->doAfterCheckNet(ip, port, [winId, target, ip](bool ok) {
+        NetworkUtils::instance()->doAfterCheckNet(ip, ports, [winId, target, ip](bool ok) {
             ComputerUtils::setCursorState(false);
             if (ok)
                 ComputerEventCaller::cdTo(winId, target);

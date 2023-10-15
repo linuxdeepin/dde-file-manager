@@ -341,8 +341,20 @@ bool DeviceHelper::checkNetworkConnection(const QString &id)
         return true;
 
     QString host, port;
-    if (NetworkUtils::instance()->parseIp(url.path(), host, port))
+    if (NetworkUtils::instance()->parseIp(url.path(), host, port)) {
+        if (url.scheme() == "smb" && url.port() == -1) {
+            QStringList defaultSmbPorts = { "445", "139" };
+            return std::any_of(defaultSmbPorts.cbegin(), defaultSmbPorts.cend(),
+                               [host](const QString &port) {
+                                   bool connected = NetworkUtils::instance()->checkNetConnection(host, port);
+                                   qDebug() << "checking network connection of" << host
+                                            << "at" << port
+                                            << connected;
+                                   return connected;
+                               });
+        }
         return NetworkUtils::instance()->checkNetConnection(host, port);
+    }
 
     qWarning() << "cannot parse host and port of" << id;
     return true;
