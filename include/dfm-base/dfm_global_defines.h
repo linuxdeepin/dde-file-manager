@@ -82,7 +82,7 @@ enum ItemRoles {
     kItemFileOriginalPath = Qt::UserRole + 23,
     kItemFileDeletionDate = Qt::UserRole + 24,
     kItemFileRefreshIcon = Qt::UserRole + 25,
-    kItemFileIsAvailableRole = Qt::UserRole + 26, // the item gray display and can not select
+    kItemFileIsAvailableRole = Qt::UserRole + 26,   // the item gray display and can not select
     kItemFileIsDirRole = Qt::UserRole + 27,
     kItemFileIsWritableRole = Qt::UserRole + 28,
     kItemFileCanRenameRole = Qt::UserRole + 29,
@@ -127,6 +127,8 @@ inline constexpr char kTypeTextXPython[] { "text/x-python" };
 inline constexpr char kTypeTextPlain[] { "text/plain" };
 inline constexpr char kTypeAppXOleStorage[] { "application/x-ole-storage" };
 inline constexpr char kTypeAppZip[] { "application/zip" };
+inline constexpr char kTypeArchiveRAR[] { "application/vnd.rar" };
+inline constexpr char kTypeAppRAR[] { "application/rar" };
 inline constexpr char kTypeAppXDesktop[] { "application/x-desktop" };
 // image
 inline constexpr char kTypeImageIef[] { "image/ief" };
