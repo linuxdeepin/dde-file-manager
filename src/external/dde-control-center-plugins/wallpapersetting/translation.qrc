@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>translations/dcc-wallpapersetting-plugin.ts</file>
-        <file>translations/dcc-wallpapersetting-plugin_zh_CN.ts</file>
-        <file>translations/dcc-wallpapersetting-plugin_en_US.ts</file>
-    </qresource>
-</RCC>
