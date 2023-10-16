@@ -20,7 +20,6 @@ Build-Depends:
  libdtkcore5-bin,
  qttools5-dev-tools,
  qttools5-dev,
- dde-control-center-dev,
  dde-dock-dev(>=4.8.4.1),
  libdframeworkdbus-dev,
  libtag1-dev,
@@ -160,9 +159,3 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager,
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of dde-file-manager
-
-Package: dcc-wallpapersetting-plugin
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: plugin of dde-control-center
- Wallpaper setting and screensaver setting plugin of dde-control-center which is created by dde-file-manager 
