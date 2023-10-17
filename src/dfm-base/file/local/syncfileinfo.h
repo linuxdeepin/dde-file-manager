@@ -61,6 +61,7 @@ public:
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
     // cache attribute
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
+    virtual void updateAttributes(const QList<FileInfoAttributeID> &types = {}) override;
 };
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::SyncFileInfo> DFMSyncFileInfoPointer;

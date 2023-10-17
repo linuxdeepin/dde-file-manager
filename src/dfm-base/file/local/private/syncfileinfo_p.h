@@ -31,6 +31,7 @@ class SyncFileInfoPrivate
 public:
     SyncFileInfo *const q;
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };   // 缓存文件的FileType
+    DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
     DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
@@ -45,7 +46,6 @@ public:
     QVariant isLocalDevice;
     QVariant isCdRomDevice;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
-    InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
     QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;
 
@@ -95,6 +95,9 @@ public:
     void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
     QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
                         const QString &inod = QString(), const bool isGvfs = false);
+    FileInfo::FileType updateFileType();
+    QIcon updateIcon();
+    void updateMediaInfo(const DFileInfo::MediaType type, const QList<DFileInfo::AttributeExtendID> &ids);
 };
 }
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::SyncFileInfoPrivate *)

@@ -441,3 +441,10 @@ void dfmbase::ProxyFileInfo::setExtendedAttributes(const FileExtendedInfoType &k
 
     return FileInfo::setExtendedAttributes(key, value);
 }
+
+void ProxyFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &types)
+{
+    CALL_PROXY(updateAttributes(types));
+
+    return FileInfo::updateAttributes(types);
+}

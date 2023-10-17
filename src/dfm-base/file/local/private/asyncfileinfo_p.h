@@ -32,9 +32,11 @@ public:
     DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
     std::atomic_bool notInit { false };
-    std::atomic_bool cacheing { false };
+    std::atomic_bool queringAttribute { false };
     std::atomic_bool cacheingAttributes { false };
-    char memrySeat[5];
+    std::atomic_bool needUpdateMediaInfo;
+    DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
+    char memrySeat[7];
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
     QVariantHash extraProperties;   // 扩展属性列表
     QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
@@ -45,12 +47,14 @@ public:
     QIcon fileIcon;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
-    InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
-    QMap<AsyncFileInfo::AsyncAttributeID, QVariant> cacheAsyncAttributes;
+    InfoHelperUeserDataPointer updateFileCountFuture { nullptr };
+    QMap<FileInfo::FileInfoAttributeID, QVariant> cacheAsyncAttributes;
     QReadWriteLock notifyLock;
     QMultiMap<QUrl, QString> notifyUrls;
     quint64 tokenKey{0};
     AsyncFileInfo *const q;
+    QReadWriteLock changesLock;
+    QList<FileInfo::FileInfoAttributeID> changesAttributes;
 
 public:
     explicit AsyncFileInfoPrivate(AsyncFileInfo *qq);
@@ -95,15 +99,19 @@ public:
     bool canFetch() const;
     QString sizeFormat() const;
     QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
-    QVariant asyncAttribute(AsyncFileInfo::AsyncAttributeID key) const;
+    QVariant asyncAttribute(FileInfo::FileInfoAttributeID key) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
 
     FileInfo::FileType fileType() const;
-    void cacheAllAttributes();
+    int cacheAllAttributes();
+    bool inserAsyncAttribute(const FileInfo::FileInfoAttributeID id, const QVariant &value);
     void fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
                         const QString &inod = QString(), const bool isGvfs = false);
     void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
+    void updateThumbnail(const QUrl &url);
+    QIcon updateIcon();
+    void updateMediaInfo(const DFileInfo::MediaType type, const QList<DFileInfo::AttributeExtendID> &ids);
 };
 
 AsyncFileInfoPrivate::AsyncFileInfoPrivate(AsyncFileInfo *qq)

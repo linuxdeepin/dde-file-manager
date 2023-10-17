@@ -456,6 +456,11 @@ QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::FileInfo:
     return QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>();
 }
 
+void dfmbase::FileInfo::updateAttributes(const QList<dfmbase::FileInfo::FileInfoAttributeID> &types)
+{
+    Q_UNUSED(types);
+}
+
 /*!
   * \brief setExtendedAttributes 设置文件的扩展属性
   * \param ExInfo 扩展属性key \param QVariant 属性

@@ -13,6 +13,7 @@
 #include <dfm-base/file/local/localfileiconprovider.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfileinfo.h>
@@ -112,7 +113,6 @@ void SyncFileInfo::refresh()
     }
     QWriteLocker locker(&d->lock);
     d->dfmFileInfo->refresh();
-    d->fileCountFuture.reset(nullptr);
     d->fileMimeTypeFuture.reset(nullptr);
     d->mediaFuture.reset(nullptr);
     d->fileType = FileInfo::FileType::kUnknown;
@@ -126,7 +126,6 @@ void SyncFileInfo::refresh()
     d->mimeTypeMode = QMimeDatabase::MatchDefault;
     d->cacheAttributes.clear();
     d->fileIcon = QIcon();
-    extendOtherCache.clear();
 }
 
 void SyncFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
@@ -377,40 +376,7 @@ SyncFileInfo::FileType SyncFileInfo::fileType() const
             return fileType;
         }
     }
-
-    const QUrl &fileUrl = url;
-    if (FileUtils::isTrashFile(fileUrl) && isAttributes(FileIsType::kIsSymLink)) {
-        {
-            QWriteLocker locker(&d->lock);
-            d->fileType = FileInfo::FileType::kRegularFile;
-        }
-        fileType = FileInfo::FileType::kRegularFile;
-        return fileType;
-    }
-
-    // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
-    // In addition we want to follow symlinks.
-    const QString &absoluteFilePath = d->filePath();
-    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
-    QT_STATBUF statBuffer;
-    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
-        if (S_ISDIR(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kDirectory;
-        else if (S_ISCHR(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kCharDevice;
-        else if (S_ISBLK(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kBlockDevice;
-        else if (S_ISFIFO(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kFIFOFile;
-        else if (S_ISSOCK(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kSocketFile;
-        else if (S_ISREG(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kRegularFile;
-
-        QWriteLocker locker(&d->lock);
-        d->fileType = FileInfo::FileType(fileType);
-    }
-    return fileType;
+    return d->updateFileType();
 }
 /*!
  * \brief countChildFile 文件夹下子文件的个数，只统计下一层不递归
@@ -455,22 +421,7 @@ QIcon SyncFileInfo::fileIcon()
     if (!icon.isNull())
         return icon;
 
-    icon = LocalFileIconProvider::globalProvider()->icon(this);
-    if (isAttributes(OptInfoType::kIsSymLink)) {
-        const auto &&target = symLinkTarget();
-        if (!target.isEmpty() && target != filePath()) {
-            FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
-            if (info)
-                icon = info->fileIcon();
-        }
-    }
-
-    {
-        QWriteLocker wlk(&d->iconLock);
-        d->fileIcon = icon;
-    }
-
-    return icon;
+    return d->updateIcon();
 }
 
 QMimeType SyncFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
@@ -511,6 +462,10 @@ QMimeType SyncFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
         d->fileMimeTypeFuture = future;
     } else if (d->fileMimeTypeFuture->finish) {
         type = d->fileMimeTypeFuture->data.value<QMimeType>();
+        rlk.unlock();
+        QWriteLocker wlk(&d->lock);
+        d->mimeType = type;
+        d->mimeTypeMode = mode;
     }
 
     return type;
@@ -567,6 +522,72 @@ void SyncFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const 
     }
 }
 
+void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &types)
+{
+    auto typeAll = types;
+    if (typeAll.isEmpty()) {
+        // 更新所有属性
+        typeAll.append(FileInfoAttributeID::kThumbnailIcon);
+        typeAll.append(FileInfoAttributeID::kStandardFileType);
+        typeAll.append(FileInfoAttributeID::kStandardIcon);
+        typeAll.append(FileInfoAttributeID::kFileMediaInfo);
+        typeAll.append(FileInfoAttributeID::kFileMimeType);
+
+        typeAll.append(FileInfoAttributeID::kStandardSize);
+    }
+    // 更新缩略图
+    if (typeAll.contains(FileInfoAttributeID::kThumbnailIcon)) {
+        typeAll.removeOne(FileInfoAttributeID::kThumbnailIcon);
+        ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
+    }
+
+    // 更新filetype
+    if (typeAll.contains(FileInfoAttributeID::kStandardFileType)) {
+        typeAll.removeOne(FileInfoAttributeID::kStandardFileType);
+            d->updateFileType();
+    }
+
+    // 更新fileicon
+    if (typeAll.contains(FileInfoAttributeID::kStandardIcon)) {
+        typeAll.removeOne(FileInfoAttributeID::kStandardIcon);
+        d->updateIcon();
+    }
+
+    // 更新mediaInfo
+    if (typeAll.contains(FileInfoAttributeID::kFileMediaInfo)) {
+        typeAll.removeOne(FileInfoAttributeID::kFileMediaInfo);
+        DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
+        QList<DFileInfo::AttributeExtendID> extendIDs;
+        {
+            QReadLocker lk(&d->lock);
+            mediaType = d->mediaType;
+            extendIDs = d->extendIDs;
+        }
+        if (!extendIDs.isEmpty())
+            d->updateMediaInfo(mediaType, extendIDs);
+    }
+
+    // 更新filemimetype
+    if (typeAll.contains(FileInfoAttributeID::kFileMimeType)) {
+        typeAll.removeOne(FileInfoAttributeID::kFileMimeType);
+        QMimeType type;
+        QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
+        {
+            QReadLocker locker(&d->lock);
+            modeCache = d->mimeTypeMode;
+        }
+        type = d->mimeTypes(url.path(), modeCache);
+        QWriteLocker locker(&d->lock);
+        d->mimeType = type;
+    }
+
+    if (typeAll.isEmpty())
+        return;
+
+    QWriteLocker locker(&d->lock);
+    d->dfmFileInfo->refresh();
+}
+
 void SyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
 {
     mimeTypeMode = QMimeDatabase::MatchDefault;
@@ -607,6 +628,78 @@ QMimeType SyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase:
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }
     return db.mimeTypeForFile(q->sharedFromThis(), mode);
+}
+
+FileInfo::FileType SyncFileInfoPrivate::updateFileType()
+{
+    FileInfo::FileType fileType;
+    const QUrl &fileUrl = q->fileUrl();
+    if (FileUtils::isTrashFile(fileUrl) && q->isAttributes(FileInfo::FileIsType::kIsSymLink)) {
+        {
+            QWriteLocker locker(&lock);
+            this->fileType = FileInfo::FileType::kRegularFile;
+        }
+        fileType = FileInfo::FileType::kRegularFile;
+        return fileType;
+    }
+
+    // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
+    // In addition we want to follow symlinks.
+    const QString &absoluteFilePath = filePath();
+    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
+    QT_STATBUF statBuffer;
+    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
+        if (S_ISDIR(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kDirectory;
+        else if (S_ISCHR(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kCharDevice;
+        else if (S_ISBLK(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kBlockDevice;
+        else if (S_ISFIFO(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kFIFOFile;
+        else if (S_ISSOCK(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kSocketFile;
+        else if (S_ISREG(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kRegularFile;
+
+        QWriteLocker locker(&lock);
+        this->fileType = FileInfo::FileType(fileType);
+    }
+    return fileType;
+}
+
+QIcon SyncFileInfoPrivate::updateIcon()
+{
+    QIcon icon = LocalFileIconProvider::globalProvider()->icon(q);
+    if (q->isAttributes(OptInfoType::kIsSymLink)) {
+        const auto &&target = symLinkTarget();
+        if (!target.isEmpty() && target != filePath()) {
+            FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
+            if (info)
+                icon = info->fileIcon();
+        }
+    }
+
+    {
+        QWriteLocker wlk(&iconLock);
+        fileIcon = icon;
+    }
+    return icon;
+}
+
+void SyncFileInfoPrivate::updateMediaInfo(const DFileInfo::MediaType type, const QList<DFileInfo::AttributeExtendID> &ids)
+{
+    QReadLocker rlocker(&lock);
+    if (!ids.isEmpty() && !mediaFuture) {
+        rlocker.unlock();
+        QWriteLocker wlocker(&lock);
+        mediaFuture.reset(new InfoDataFuture(dfmFileInfo->attributeExtend(type, ids, 0)));
+    } else if (mediaFuture && mediaFuture->isFinished()) {
+        rlocker.unlock();
+        QWriteLocker wlocker(&lock);
+        attributesExtend = mediaFuture->mediaInfo();
+        mediaFuture.reset(nullptr);
+    }
 }
 
 /*!
@@ -911,25 +1004,28 @@ QVariant SyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) co
 QMap<DFileInfo::AttributeExtendID, QVariant> SyncFileInfoPrivate::mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids)
 {
     if (dfmFileInfo) {
-        extendIDs = ids;
-
-        auto it = ids.begin();
-        while (it != ids.end()) {
-            if (attributesExtend.count(*it))
-                it = ids.erase(it);
-            else
-                ++it;
+        {
+            QWriteLocker wlocker(&lock);
+            mediaType = type;
+            extendIDs = ids;
         }
-
-        if (!ids.isEmpty() && !mediaFuture) {
-            mediaFuture.reset(new InfoDataFuture(dfmFileInfo->attributeExtend(type, ids, 0)));
-        } else if (mediaFuture && mediaFuture->isFinished()) {
-            attributesExtend = mediaFuture->mediaInfo();
-            mediaFuture.reset(nullptr);
+        {
+            QReadLocker rlocker(&lock);
+            auto it = ids.begin();
+            while (it != ids.end()) {
+                if (attributesExtend.count(*it))
+                    it = ids.erase(it);
+                else
+                    ++it;
+            }
         }
+        if (!ids.isEmpty())
+            updateMediaInfo(type, ids);
     }
 
+    QReadLocker rlocker(&lock);
     return attributesExtend;
+
 }
 
 SyncFileInfoPrivate::SyncFileInfoPrivate(SyncFileInfo *qq)

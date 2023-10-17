@@ -224,6 +224,12 @@ Qt::DropActions DesktopFileInfo::supportedOfAttributes(const SupportType type) c
     return ProxyFileInfo::supportedOfAttributes(type);
 }
 
+void DesktopFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &types)
+{
+    ProxyFileInfo::updateAttributes(types);
+    d->updateInfo(urlOf(UrlInfoType::kUrl));
+}
+
 bool DesktopFileInfo::canTag() const
 {
     if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")

@@ -54,8 +54,10 @@ void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfil
         resluts = asyncInfo->cacheAsyncAttributes();
     }
 
-    if (resluts < 0)
+    if (resluts <= 1) {
+        checkInfoRefresh(asyncInfo);
         return;
+    }
 
     emit fileRefreshFinished(dfileInfo->fileUrl(), QString::number(quintptr(dfileInfo.data()), 16), false);
 
@@ -64,6 +66,8 @@ void FileInfoHelper::threadHandleDfmFileInfo(const QSharedPointer<FileInfo> dfil
         for (const auto &strToken : notifyUrls.values(url))
             emit fileRefreshFinished(url, strToken, true);
     }
+
+    checkInfoRefresh(asyncInfo);
 }
 
 QSharedPointer<FileInfoHelperUeserData> FileInfoHelper::fileCountAsync(QUrl &url)
@@ -138,9 +142,28 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
         Q_UNUSED(data);
         if (!success) {
             qWarning() << "Failed to query file information asynchronously! url = " << asyncInfo->fileUrl();
+            FileInfoHelper::instance().checkInfoRefresh(asyncInfo);
             return ;
         }
         FileInfoHelper::instance().cacheFileInfoByThread(asyncInfo);
     };
+
+    if (qureingInfo.containsByLock(asyncInfo) && needQureingInfo.containsByLock(asyncInfo))
+        return;
+
+    if (qureingInfo.containsByLock(asyncInfo)) {
+        needQureingInfo.appendByLock(asyncInfo);
+        return;
+    }
+    qureingInfo.appendByLock(asyncInfo);
     asyncInfo->asyncQueryDfmFileInfo(0, callback);
+}
+
+void FileInfoHelper::checkInfoRefresh(QSharedPointer<FileInfo> dfileInfo)
+{
+    qureingInfo.removeOneByLock(dfileInfo);
+    if (needQureingInfo.containsByLock(dfileInfo)) {
+        needQureingInfo.removeOneByLock(dfileInfo);
+        fileRefreshAsync(dfileInfo);
+    }
 }
