@@ -101,7 +101,7 @@ void CustomWaterMaskLabel::onConfigChanged(const QString &cfg, const QString &ke
 
 void CustomWaterMaskLabel::update()
 {
-    if (!maskEnabled || !systemMaskEnable) {
+    if (!maskEnabled) {
         hide();
         return;
     }
@@ -122,12 +122,11 @@ void CustomWaterMaskLabel::update()
     return;
 }
 
-void CustomWaterMaskLabel::onSystemMaskShow(bool showEnable, QPoint pos)
+void CustomWaterMaskLabel::onSystemMaskShow(const QPoint &pos)
 {
-    systemMaskEnable = showEnable;
     systemMaskPosition = pos;
+    setPosition();
 
-    update();
     return;
 }
 

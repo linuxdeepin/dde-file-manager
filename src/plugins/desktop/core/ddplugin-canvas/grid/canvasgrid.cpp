@@ -310,10 +310,10 @@ GridCore &CanvasGrid::core() const
     return *static_cast<GridCore*>(d);
 }
 
-void CanvasGrid::requestSync()
+void CanvasGrid::requestSync(int ms)
 {
     d->syncTimer.stop();
-    d->syncTimer.start();
+    d->syncTimer.start(ms);
 }
 
 CanvasGridPrivate::CanvasGridPrivate(CanvasGrid *qq)

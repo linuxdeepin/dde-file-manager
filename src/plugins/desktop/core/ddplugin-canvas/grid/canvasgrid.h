@@ -51,7 +51,7 @@ public:
     void arrange();
 
     GridCore &core() const;
-    void requestSync();
+    void requestSync(int ms = 100);
 
 protected:
     explicit CanvasGrid(QObject *parent = nullptr);

@@ -9,6 +9,8 @@
 
 #include <QLabel>
 
+namespace ddplugin_canvas {
+
 class CustomWaterMaskLabel : public QLabel
 {
     Q_OBJECT
@@ -17,7 +19,7 @@ public:
     ~CustomWaterMaskLabel();
 public slots:
     void refresh();
-    void onSystemMaskShow(bool showEnable, QPoint pos);
+    void onSystemMaskShow(const QPoint &pos);
 protected slots:
     void onConfigChanged(const QString &cfg, const QString &key);
 protected:
@@ -30,9 +32,8 @@ private:
     QString maskLogoUri;
     QSize maskSize = QSize(0, 0);
     QPoint maskOffset = QPoint(0, 0);
-
-    bool systemMaskEnable = false;
     QPoint systemMaskPosition = QPoint(0, 0);
 };
+}
 
 #endif // CUSTOMWATERMASKLABEL_H

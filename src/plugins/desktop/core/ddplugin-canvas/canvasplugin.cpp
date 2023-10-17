@@ -17,6 +17,9 @@ DFMBASE_USE_NAMESPACE
 
 void CanvasPlugin::initialize()
 {
+    QString err;
+    DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop.sys-watermask", &err);
+    qInfo() << "register desktop dconfig:" << err;
 }
 
 bool CanvasPlugin::start()
@@ -26,11 +29,6 @@ bool CanvasPlugin::start()
 
     //! slow call: GlobalData::onClipboardDataChanged()
     ClipBoard::instance();
-
-    QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop", &err);
-    if (!ret)
-        qWarning() << "create dconfig failed: " << err;
 
     proxy = new CanvasManager();
     proxy->init();

@@ -470,9 +470,7 @@ void CanvasView::setGeometry(const QRect &rect)
         updateGrid();
 
         if (d->waterMask)
-            d->waterMask->refresh();
-        if (d->customWaterMask)
-            d->customWaterMask->refresh();
+            d->waterMask->updatePosition();
     }
 }
 
@@ -489,6 +487,12 @@ void CanvasView::updateGrid()
     d->updateGridSize(geometry().size(), geometryMargins, itemSize);
 
     GridIns->updateSize(d->screenNum, QSize(d->canvasInfo.columnCount, d->canvasInfo.rowCount));
+
+    //! reset timer to sync profile.
+    //! we need to save current item pos after a while
+    //! because there will be a wrong available geometry at screen or mode changes.
+    GridIns->requestSync(2000);
+
     update();
 }
 
@@ -732,18 +736,10 @@ void CanvasView::initUI()
     setRootIndex(model()->rootIndex());
 
     // water mask
-    if (d->isWaterMaskOn()) {
+    if (d->isWaterMaskOn() && WatermaskContainer::isEnable()) {
         Q_ASSERT(!d->waterMask);
-        d->waterMask = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
-        d->waterMask->lower();
+        d->waterMask = new WatermaskContainer(this);
         d->waterMask->refresh();
-
-        d->customWaterMask = new CustomWaterMaskLabel(this);
-        d->customWaterMask->lower();
-        d->waterMask->stackUnder(d->customWaterMask);
-        d->customWaterMask->refresh();
-
-        connect(d->waterMask, &WaterMaskFrame::showMask, d->customWaterMask, &CustomWaterMaskLabel::onSystemMaskShow);
     }
 }
 
