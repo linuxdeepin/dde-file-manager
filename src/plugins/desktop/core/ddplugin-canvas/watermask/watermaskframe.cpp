@@ -64,7 +64,7 @@ void WaterMaskFrame::updatePosition()
         int y = wid->height() - curRightBottom.y() - curMaskSize.height();
         move(x, y);
 
-        emit showMask(maskAlwaysOn, QPoint(x, y));
+        emit showMask(QPoint(x, y));
     }
 }
 
@@ -149,8 +149,10 @@ QMap<QString, WaterMaskFrame::ConfigInfo> WaterMaskFrame::parseJson(QJsonObject 
 {
     QMap<QString, WaterMaskFrame::ConfigInfo> ret;
 
-    if (configs->contains("isMaskAlwaysOn"))
-        maskAlwaysOn = configs->value("isMaskAlwaysOn").toBool(true);
+//    if (configs->contains("isMaskAlwaysOn"))
+//        maskAlwaysOn = configs->value("isMaskAlwaysOn").toBool(true);
+    //! WaterMaskFrame is created if isMaskAlwaysOn is true.
+    maskAlwaysOn = true;
 
     {
         ConfigInfo cfg = defaultCfg(configs);

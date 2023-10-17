@@ -128,13 +128,16 @@ DeepinLicenseHelper::LicenseProperty DeepinLicenseHelper::getAuthorizationProper
         qInfo() << "no such property: AuthorizationProperty in license.";
     } else {
         bool ok = false;
-        if (authprop.toInt(&ok) == 2)
-            prop = LicenseProperty::Enterprise;
-        else if (authprop.toInt(&ok) == 1)
-            prop = LicenseProperty::Government;
-        else
-            prop = LicenseProperty::Noproperty;
+        int value = authprop.toInt(&ok);
+        static QMap<int, LicenseProperty> licenseProperty = {
+            {1, LicenseProperty::Government},
+            {2, LicenseProperty::Enterprise},
+            {5, LicenseProperty::Office},
+            {6, LicenseProperty::BusinessSystem},
+            {7, LicenseProperty::Equipment},
+        };
 
+        prop = licenseProperty.value(value, LicenseProperty::Noproperty);
         if (!ok) {
             qWarning() << "invalid value of AuthorizationProperty" << authprop;
             prop = LicenseProperty::Noproperty;

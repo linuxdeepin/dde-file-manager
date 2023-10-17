@@ -28,7 +28,7 @@ public slots:
 protected slots:
     void stateChanged(int state, int prop);
 signals:
-    void showMask(bool showEnable, QPoint pos);
+    void showMask(QPoint pos);
 protected:
     struct ConfigInfo
     {

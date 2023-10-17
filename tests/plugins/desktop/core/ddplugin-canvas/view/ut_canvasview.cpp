@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QDrag>
 #include <QEvent>
+
 DFMBASE_USE_NAMESPACE
 using namespace testing;
 using namespace ddplugin_canvas;
@@ -58,8 +59,12 @@ TEST(CanvasView, initUI)
     });
 
     bool refreshMask = false;
-    stub.set_lamda(&WaterMaskFrame::refresh, [&refreshMask](){
+    stub.set_lamda(&WatermaskContainer::refresh, [&refreshMask](){
         refreshMask = true;
+    });
+
+    stub.set_lamda(&WatermaskContainer::isEnable, [](){
+        return true;
     });
 
     view.initUI();
@@ -79,7 +84,6 @@ TEST(CanvasView, initUI)
     ASSERT_NE(view.d->waterMask, nullptr);
     EXPECT_TRUE(initlicense);
     EXPECT_TRUE(refreshMask);
-    EXPECT_EQ(view.d->waterMask->configFile,QString("/usr/share/deepin/dde-desktop-watermask.json"));
 }
 
 TEST(CanvasView, verticalAndhorizontalOffset)

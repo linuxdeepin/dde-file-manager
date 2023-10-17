@@ -1,0 +1,127 @@
+{
+	"magic": "dsg.config.meta",
+	"version": "1.0",
+	"contents": {
+		"logoRight": {
+			"value": 160,
+			"serial": 0,
+			"flags": [],
+			"name": "Distance to the right border",
+			"name[zh_CN]": "图标右边距",
+			"description[zh_CN]": "图标的右边界与桌面窗口右边界的水平距离。",
+			"description": "The horizontal distance between the right boundary of the icon and the right boundary of the desktop window.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"logoBottom": {
+			"value": 98,
+			"serial": 0,
+			"flags": [],
+			"name": "Distance to the bottom border",
+			"name[zh_CN]": "图标下边距",
+			"description[zh_CN]": "图标的下边界与桌面窗口下边界的垂直距离。",
+			"description": "The vertical distance between the lower boundary of the icon and the lower boundary of the desktop window.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"logoWidth": {
+			"value": 114,
+			"serial": 0,
+			"flags": [],
+			"name": "Width of logo",
+			"name[zh_CN]": "图标宽度",
+			"description[zh_CN]": "图标显示区域的宽度。",
+			"description": "The width of the logo area to display.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"logoHeight": {
+			"value": 30,
+			"serial": 0,
+			"flags": [],
+			"name": "Height of logo",
+			"name[zh_CN]": "图标高度",
+			"description[zh_CN]": "图标显示区域的高。",
+			"description": "The height of the logo area to display.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"textXPos": {
+			"value": 114,
+			"serial": 0,
+			"flags": [],
+			"name": "Horizontal position of the text",
+			"name[zh_CN]": "文本的横坐标",
+			"description[zh_CN]": "文本区域的左边界到图标区域左边界的水平距离。",
+			"description": "Horizontal distance from the left border of the text area to the left border of the logo area.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"textYPos": {
+			"value": 0,
+			"serial": 0,
+			"flags": [],
+			"name": "Vertical position of the text",
+			"name[zh_CN]": "文本的纵坐标",
+			"description[zh_CN]": "文本区域的上边界到图标区域上边界的垂直距离。",
+			"description": "Vertical distance from the upper boundary of the text area to the upper boundary of the logo area.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"textWidth": {
+			"value": 100,
+			"serial": 0,
+			"flags": [],
+			"name": "Width of text area",
+			"name[zh_CN]": "文本的宽度",
+			"description[zh_CN]": "文本显示区域的宽度",
+			"description": "The width of the text area to display.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"textHeight": {
+			"value": 30,
+			"serial": 0,
+			"flags": [],
+			"name": "Height of text area",
+			"name[zh_CN]": "文本的高度",
+			"description[zh_CN]": "文本显示区域的高度。",
+			"description": "Height of the text display area.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+        "textColor": {
+			"value": "#F5F5F5F5",
+			"serial": 0,
+			"flags": [],
+			"name": "Color of text",
+			"name[zh_CN]": "文本颜色",
+			"description[zh_CN]": "文本的颜色，格式为十六进制的颜色值ARGB，#F5F5F5F5。",
+			"description": "The color of the text, formatted as a hexadecimal color value, #F5F5F5F5.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+        "textFontSize": {
+			"value": 11,
+			"serial": 0,
+			"flags": [],
+			"name": "Font size of text",
+			"name[zh_CN]": "文本的字体大小",
+			"description[zh_CN]": "文本的字体大小，值为像素大小。",
+			"description": "The font size of the text, the value is in pixels.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+        "textAlign": {
+			"value": 65,
+			"serial": 0,
+			"flags": [],
+			"name": "Text Alignment",
+			"name[zh_CN]": "文本对齐方式",
+			"description[zh_CN]": "文本的对齐方式，左对齐：0x0001，右对齐：0x0002，水平居中：0x0004，上对齐：0x0020，下对齐：0x0040，垂直居中：0x0080。可组合，如左下对齐：0x0001|0x0040=0x0041=65",
+			"description": "Text alignment, left justified: 0x0001, right justified: 0x0002, horizontally centered: 0x0004, top justified: 0x0020, bottom justified: 0x0040, vertically centered: 0x0080.Can be combined, e.g. bottom left alignment: 0x0001|0x0040=0x0041=65",
+			"permissions": "readwrite",
+			"visibility": "public"
+		}
+	}
+}

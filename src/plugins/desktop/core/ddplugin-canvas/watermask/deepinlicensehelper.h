@@ -32,7 +32,10 @@ public:
         Noproperty = 0,
         Secretssecurity,
         Government,
-        Enterprise
+        Enterprise,
+        Office,
+        BusinessSystem,
+        Equipment
     };
 
     static DeepinLicenseHelper *instance();
