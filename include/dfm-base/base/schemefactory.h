@@ -228,7 +228,7 @@ public:
                 auto info = qSharedPointerDynamicCast<T>(instance().SchemeFactory<FileInfo>::
                                                                  create(Global::Scheme::kAsyncFile, url, errorString));
                 if (info)
-                    info->refresh();
+                    info->updateAttributes();
                 return info;
             }
         }

@@ -101,5 +101,12 @@ QString ShareFileInfoPrivate::fileName() const
 
 void dfmplugin_myshares::ShareFileInfo::refresh()
 {
+    ProxyFileInfo::refresh();
+    d->refresh();
+}
+
+void ShareFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &types)
+{
+    ProxyFileInfo::updateAttributes(types);
     d->refresh();
 }

@@ -484,15 +484,16 @@ void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
         return;
 
     FileInfoPointer info;
-    {
-        QReadLocker lk(&childrenDataLocker);
-        info = childrenDataMap.value(child->fileUrl())->fileInfo();
-    }
+
+    auto item = childData(child->fileUrl());
+    if (item.isNull())
+        return;
+    info = item->fileInfo();
 
     if (!info)
         return;
 
-    info->refresh();
+    info->updateAttributes();
 
     sortInfoUpdateByFileInfo(info);
 

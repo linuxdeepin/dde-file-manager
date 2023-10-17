@@ -29,6 +29,7 @@ public:
     virtual bool canAttributes(const FileCanType type) const override;
     Qt::DropActions supportedOfAttributes(const SupportType type) const override;
     QString viewOfTip(const ViewType type = ViewType::kEmptyDir) const override;
+    virtual void updateAttributes(const QList<FileInfoAttributeID> &types = {}) override;
 };
 
 }   // namepsace dfmplugin_optical

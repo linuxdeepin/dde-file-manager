@@ -54,11 +54,15 @@ Q_SIGNALS:
 private Q_SLOTS:
     void aboutToQuit();
     void handleFileRefresh(QSharedPointer<FileInfo> dfileInfo);
+private:
+    void checkInfoRefresh(QSharedPointer<FileInfo> dfileInfo);
 
 private:
     QSharedPointer<QThread> thread { nullptr };
     QSharedPointer<FileInfoAsycWorker> worker { nullptr };
     std::atomic_bool stoped { false };
+    DThreadList<FileInfoPointer> qureingInfo;
+    DThreadList<FileInfoPointer> needQureingInfo;
     QThreadPool pool;
 };
 }

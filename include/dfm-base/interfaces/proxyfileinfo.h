@@ -82,6 +82,7 @@ public:
     virtual QVariant customAttribute(const char *key, const dfmio::DFileInfo::DFileAttributeType type) override;
     virtual QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(dfmio::DFileInfo::MediaType type, QList<dfmio::DFileInfo::AttributeExtendID> ids) const override;
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
+    virtual void updateAttributes(const QList<FileInfoAttributeID> &types = {}) override;
 };
 }
 #endif   // PROXYFILEINFO_H

@@ -58,7 +58,7 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
             if (itemInfo->isAttributes(OptInfoType::kIsSymLink) &&
                     !FileUtils::isLocalDevice(QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget))))
-                itemInfo->refresh();
+                itemInfo->updateAttributes();
             fileUrls.append(itemInfo->urlOf(UrlInfoType::kUrl));
             fileMaps.insert(itemInfo->urlOf(UrlInfoType::kUrl), itemInfo);
         }
@@ -195,7 +195,7 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
         // a redundant refresh is still required here, because the current variant of FileInfo
         // (like DesktopFileInfo created from DesktopFileCreator) is not in InfoCache and will not be refreshed automatically.
         if (auto info = fileMap.value(url))
-            info->refresh();
+            info->updateAttributes();
     }
 
     const QModelIndex &index = q->index(url);

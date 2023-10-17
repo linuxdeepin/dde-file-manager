@@ -8,6 +8,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <QGuiApplication>
@@ -61,9 +62,13 @@ void ThumbnailFactory::init()
 
 void ThumbnailFactory::joinThumbnailJob(const QUrl &url, ThumbnailSize size)
 {
+    if (FileUtils::containsCopyingFileUrl(url))
+        return;
     if (taskMap.isEmpty())
         taskPushTimer.start();
 
+    if (taskMap.contains(url))
+        return;
     taskMap.insert(url, size);
     if (taskMap.size() < kMaxCountLimit)
         return;

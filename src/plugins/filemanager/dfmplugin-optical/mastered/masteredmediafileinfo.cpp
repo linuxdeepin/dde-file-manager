@@ -132,6 +132,17 @@ void MasteredMediaFileInfo::refresh()
     setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
+void MasteredMediaFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &types)
+{
+    ProxyFileInfo::updateAttributes(types);
+    if (proxy) {
+        return;
+    }
+
+    d->backupInfo(urlOf(UrlInfoType::kUrl));
+    setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
+}
+
 bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {

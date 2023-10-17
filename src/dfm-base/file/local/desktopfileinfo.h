@@ -35,6 +35,7 @@ public:
     //QSet<MenuAction> disableMenuActionList() const override;
     virtual Qt::DropActions supportedOfAttributes(const SupportType type) const override;
     virtual bool canAttributes(const FileCanType type) const override;
+    virtual void updateAttributes(const QList<FileInfoAttributeID> &types = {}) override;
     static QMap<QString, QVariant> desktopFileInfo(const QUrl &fileUrl);
 
 private:
