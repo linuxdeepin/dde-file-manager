@@ -143,6 +143,11 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
             break;
         }
 
+        if (info.value(GlobalServerDefines::DeviceProperty::kIsLoopDevice).toBool()) {
+            qInfo() << "chmod for readonly loop device doesn't work, give up prehandle" << url << deviceID;
+            break;
+        }
+
         // ask for user whether to chmod.
         const QString &deviceName = DeviceUtils::convertSuitableDisplayName(info);
         if (!askForConfirmChmod(deviceName)) {
