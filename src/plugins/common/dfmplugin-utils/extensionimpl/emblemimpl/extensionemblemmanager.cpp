@@ -161,20 +161,24 @@ void EmblemIconWorker::mergeGroup(const QList<QPair<QString, int>> &oldGroup,
 {
     Q_ASSERT(group);
 
-    *group = oldGroup;
-    if (oldGroup.size() >= kMaxEmblemCount)
-        return;
+    // Merge old and new,
+    // New overwrites old if same location exists
 
-    // other plugins canot override first plugin's emblem icon
-    QList<int> posSpace { 0, 1, 2, 3 };
-    std::for_each(oldGroup.begin(), oldGroup.end(), [&posSpace](const QPair<QString, int> &pair) {
-        posSpace.removeOne(pair.second);
+    QMap<int, QString> tmpMap;
+    std::for_each(oldGroup.begin(), oldGroup.end(), [&tmpMap](const QPair<QString, int> &pair) {
+        tmpMap.insert(pair.second, pair.first);
     });
 
-    std::for_each(newGroup.begin(), newGroup.end(), [posSpace, group](const QPair<QString, int> &pair) {
-        if (posSpace.contains(pair.second))
-            group->push_back(pair);
+    std::for_each(newGroup.begin(), newGroup.end(), [&tmpMap](const QPair<QString, int> &pair) {
+        tmpMap.insert(pair.second, pair.first);
     });
+
+    for (auto iter = tmpMap.begin(); iter != tmpMap.end(); ++iter) {
+        if (group->size() >= kMaxEmblemCount)
+            return;
+
+        group->push_back(qMakePair(iter.value(), iter.key()));
+    }
 }
 
 ExtensionEmblemManager &ExtensionEmblemManager::instance()
