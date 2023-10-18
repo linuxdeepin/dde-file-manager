@@ -20,7 +20,7 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
 {
     if (dirUrl.isValid()) {
         auto path = url.path();
-        if (path != QDir::separator() && path.endsWith(QDir::separator()))
+        if (path != "/" && path != QDir::separator() && path.endsWith(QDir::separator()))
             path = path.left(path.length() - 1);
         dirUrl.setPath(path);
         dirIterator = DirIteratorFactory::create<AbstractDirIterator>(dirUrl, nameFilters, filters, flags);

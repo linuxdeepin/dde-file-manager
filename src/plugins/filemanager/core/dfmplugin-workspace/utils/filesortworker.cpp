@@ -903,7 +903,9 @@ void FileSortWorker::sortOnlyOrderChange()
 
     QList<QUrl> dirList, fileList;
     for (const auto &url : visibleChildren) {
-        const auto &info = InfoFactory::create<FileInfo>(url);
+        FileItemDataPointer dataPtr = childrenDataMap.value(url);
+        const auto &info = dataPtr->fileInfo() ? dataPtr->fileInfo() : InfoFactory::create<FileInfo>(url);
+
         if (!info)
             continue;
         if (info->isAttributes(OptInfoType::kIsDir)) {
@@ -919,7 +921,6 @@ void FileSortWorker::sortOnlyOrderChange()
         visibleChildren = dirList;
     }
     Q_EMIT insertFinish();
-    return;
 }
 
 void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info)
@@ -1052,11 +1053,9 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     const auto &rightItem = childrenDataMap.value(right);
 
     const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
-            ? leftItem->fileInfo()
-            : InfoFactory::create<FileInfo>(left);
+            ? leftItem->fileInfo() : InfoFactory::create<FileInfo>(left);
     const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
-            ? rightItem->fileInfo()
-            : InfoFactory::create<FileInfo>(right);
+            ? rightItem->fileInfo() : InfoFactory::create<FileInfo>(right);
 
     if (!leftInfo)
         return false;
@@ -1164,12 +1163,6 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
 
     if (isCanceled)
         return 0;
-
-    if ((sortOrder == Qt::AscendingOrder) ^ !lessThan(needNode, list.first(), sort))
-        return 0;
-
-    if ((sortOrder == Qt::AscendingOrder) ^ lessThan(needNode, list.last(), sort))
-        return list.count();
 
     int row = (begin + end) / 2;
 
