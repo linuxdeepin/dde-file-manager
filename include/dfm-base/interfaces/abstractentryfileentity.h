@@ -30,15 +30,15 @@ public:
     virtual bool showUsageSize() const = 0;
     virtual EntryFileInfo::EntryOrder order() const = 0;
 
-    virtual void refresh() { }
-    virtual quint64 sizeTotal() const { return 0; }
-    virtual quint64 sizeUsage() const { return 0; }
-    virtual QString description() const { return {}; }
-    virtual QUrl targetUrl() const { return {}; }
-    virtual bool isAccessable() const { return true; }
-    virtual bool renamable() const { return false; }
-    virtual QVariantHash extraProperties() const { return datas; }
-    virtual void setExtraProperty(const QString &key, const QVariant &val) { datas[key] = val; }
+    virtual inline void refresh() {}
+    virtual inline quint64 sizeTotal() const { return 0; }
+    virtual inline quint64 sizeUsage() const { return 0; }
+    virtual inline QString description() const { return {}; }
+    virtual inline QUrl targetUrl() const { return {}; }
+    virtual inline bool isAccessable() const { return true; }
+    virtual inline bool renamable() const { return false; }
+    virtual inline QVariantHash extraProperties() const { return datas; }
+    virtual inline void setExtraProperty(const QString &key, const QVariant &val) { datas[key] = val; }
 
 protected:
     QUrl entryUrl {};
@@ -52,7 +52,7 @@ class EntryEntityFactor
 
 public:
     template<class T>
-    static bool registCreator(const QString &suffix)
+    static inline bool registCreator(const QString &suffix)
     {
         if (creators.contains(suffix)) {
             qDebug() << "register failed: already exists" << suffix;
@@ -64,12 +64,12 @@ public:
         return true;
     }
 
-    static AbstractEntryFileEntity *create(const QString &suffix, const QUrl &url)
+    static inline AbstractEntryFileEntity *create(const QString &suffix, const QUrl &url)
     {
         return creators.contains(suffix) ? creators.value(suffix)(url) : nullptr;
     }
 };
 
-}
+} // namespace dfmbase
 
 #endif   // ENTRYFILEENTITY_H
