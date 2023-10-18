@@ -7,7 +7,7 @@
 
 #include "dfmplugin_computer_global.h"
 
-#include <dfm-base/file/entry/entities/abstractentryfileentity.h>
+#include <dfm-base/interfaces/abstractentryfileentity.h>
 
 namespace dfmbase {
 class DesktopFile;

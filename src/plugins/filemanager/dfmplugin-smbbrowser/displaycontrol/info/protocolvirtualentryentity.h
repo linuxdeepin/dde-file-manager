@@ -7,7 +7,7 @@
 
 #include "dfmplugin_smbbrowser_global.h"
 
-#include <dfm-base/file/entry/entities/abstractentryfileentity.h>
+#include <dfm-base/interfaces/abstractentryfileentity.h>
 
 DPSMBBROWSER_BEGIN_NAMESPACE
 

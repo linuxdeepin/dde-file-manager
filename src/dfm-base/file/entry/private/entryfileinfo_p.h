@@ -6,8 +6,8 @@
 #define ENTRYFILEINFO_P_H
 
 #include <dfm-base/interfaces/private/fileinfo_p.h>
-#include "file/entry/entities/abstractentryfileentity.h"
-#include "file/entry/entryfileinfo.h"
+#include <dfm-base/interfaces/abstractentryfileentity.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
 
 namespace dfmbase {
 class EntryFileInfoPrivate : public FileInfoPrivate

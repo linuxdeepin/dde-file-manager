@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractentryfileentity.h"
+#include <dfm-base/interfaces/abstractentryfileentity.h>
 
 namespace dfmbase {
 
@@ -22,4 +22,4 @@ AbstractEntryFileEntity::~AbstractEntryFileEntity()
 {
 }
 
-}
+}   // namespace dfmbase

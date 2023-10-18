@@ -6,7 +6,8 @@
 #define VAULTENTRYFILEENTITY_H
 
 #include "dfmplugin_vault_global.h"
-#include <dfm-base/file/entry/entities/abstractentryfileentity.h>
+
+#include <dfm-base/interfaces/abstractentryfileentity.h>
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/utils/filestatisticsjob.h>
 
