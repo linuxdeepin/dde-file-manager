@@ -188,6 +188,17 @@
             "description":"Size used to determine whether a file is a large file during copying",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.iterator.allasync": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Async Iteration",
+            "name[zh_CN]":"异步迭代文件",
+            "description[zh_CN]":"用于判断是否所以目录都使用异步迭代方式加载文件",
+            "description":"Used to determine if all directories use async iteration to load files",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

@@ -9,6 +9,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-io/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
@@ -17,6 +18,10 @@
 
 USING_IO_NAMESPACE
 using namespace dfmbase;
+
+namespace DConfigKeys {
+static constexpr char kAllAsync[] { "dfm.iterator.allasync" };
+}
 
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
                                                  QDir::Filters filters, QDirIterator::IteratorFlags flags,
@@ -216,6 +221,11 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
 
 bool LocalDirIterator::oneByOne()
 {
+    // all dir iterator will in async proccess if this func return true directly.
+    if (DConfigManager::instance()->value(kDefaultCfgPath, DConfigKeys::kAllAsync, true).toBool())
+        return true;
+
+    // local dir will iterator in sync proccess and others in aysnc proccess
     if (!url().isValid())
         return true;
 
