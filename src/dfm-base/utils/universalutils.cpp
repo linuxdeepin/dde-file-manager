@@ -486,7 +486,12 @@ void UniversalUtils::prepareForSleep(QObject *obj, const char *cslot)
             "org.freedesktop.login1.Manager",
             "PrepareForSleep",
             obj,
-            cslot);
+                cslot);
+}
+
+bool UniversalUtils::isNetworkRoot(const QUrl &url)
+{
+    return urlEquals(url, QUrl("network:///"));
 }
 
 }

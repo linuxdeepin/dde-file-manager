@@ -137,6 +137,11 @@ void SmbBrowser::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelDelete);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_MoveToTrash", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CopyFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CutFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PreViewFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
 }
 

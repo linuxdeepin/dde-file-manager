@@ -53,7 +53,6 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
         return false;
 
     d->url = d->selectFiles.first();
-
     auto subScenes = subscene();
     if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter"))
         subScenes << filterScene;
@@ -93,8 +92,9 @@ void SmbBrowserMenuScene::updateState(QMenu *parent)
         return AbstractMenuScene::updateState(parent);
 
     bool isMounted = smb_browser_utils::isSmbMounted(d->url.toString());
-    mountAct->setVisible(!isMounted);
+    mountAct->setVisible(d->url.path() == "/" ? false : !isMounted);
     unmountAct->setVisible(isMounted);
+    propertyAct->setVisible(d->url.path() == "/" ? false : isMounted);
     propertyAct->setEnabled(isMounted);
 
     AbstractMenuScene::updateState(parent);

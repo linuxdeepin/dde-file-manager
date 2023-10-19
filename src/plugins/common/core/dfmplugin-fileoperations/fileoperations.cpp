@@ -22,6 +22,7 @@ DPFILEOPERATIONS_USE_NAMESPACE
 void FileOperations::initialize()
 {
     initEventHandle();
+    followEvents();
 }
 
 bool FileOperations::start()
@@ -279,4 +280,14 @@ void FileOperations::initEventHandle()
                                                                                      const QList<QUrl>,
                                                                                      const QVariant,
                                                                                      AbstractJobHandler::OperatorCallback)>(&FileOperationsEventReceiver::handleOperationHideFiles));
+}
+
+void FileOperations::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles",
+                            FileOperationsEventReceiver::instance(), &FileOperationsEventReceiver::handleShortCut);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_MoveToTrash",
+                            FileOperationsEventReceiver::instance(), &FileOperationsEventReceiver::handleShortCut);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
+                            FileOperationsEventReceiver::instance(), &FileOperationsEventReceiver::handleShortCutPaste);
 }

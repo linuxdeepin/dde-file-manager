@@ -22,7 +22,7 @@ OpticalEventReceiver &OpticalEventReceiver::instance()
     return ins;
 }
 
-bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls)
+bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls, const QUrl &)
 {
     auto iter = std::find_if(urls.cbegin(), urls.cend(), [](const QUrl &url) {
         return OpticalHelper::burnIsOnDisc(url);

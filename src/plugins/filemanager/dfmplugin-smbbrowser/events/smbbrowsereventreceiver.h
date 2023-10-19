@@ -21,7 +21,8 @@ public:
 
 public Q_SLOTS:
     bool detailViewIcon(const QUrl &url, QString *iconName);
-    bool cancelDelete(quint64, const QList<QUrl> &urls);
+    bool cancelDelete(quint64, const QList<QUrl> &urls, const QUrl&rootUrl);
+    bool cancelMoveToTrash(quint64, const QList<QUrl> &, const QUrl&rootUrl);
 
     bool hookSetTabName(const QUrl &url, QString *tabName);
 

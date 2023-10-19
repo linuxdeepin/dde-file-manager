@@ -1181,4 +1181,31 @@ void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
         callback(args);
     }
 }
+
+bool FileOperationsEventReceiver::handleShortCut(quint64, const QList<QUrl> &urls, const QUrl &rootUrl)
+{
+    if (urls.isEmpty())
+        return false;
+    const auto &currentFileInfo = InfoFactory::create<FileInfo>(rootUrl);
+    // v5功能 判断当前目录是否有写权限，没有就提示权限错误
+    if (urls.first().scheme() == Global::Scheme::kFile
+            && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
+        DialogManager::instance()->showNoPermissionDialog(urls);
+        return true;
+    }
+    return false;
+}
+
+bool FileOperationsEventReceiver::handleShortCutPaste(quint64, const QList<QUrl> &, const QUrl &target)
+{
+    if (target.scheme() == Global::Scheme::kFile) {
+        const auto &currentFileInfo = InfoFactory::create<FileInfo>(target);
+        if (currentFileInfo && currentFileInfo->isAttributes(OptInfoType::kIsDir) && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
+            // show error tip message
+            DialogManager::instance()->showNoPermissionDialog(QList<QUrl>() << target);
+            return true;
+        }
+    }
+    return false;
+}
 }   // namespace dfmplugin_fileoperations

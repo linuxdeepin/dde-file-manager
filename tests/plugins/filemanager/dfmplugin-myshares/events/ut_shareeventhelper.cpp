@@ -29,19 +29,19 @@ TEST_F(UT_ShareEventHelper, BlockPaste)
 TEST_F(UT_ShareEventHelper, BlockDelete)
 {
     stub.set_lamda(&ShareEventHelper::containsShareUrl, [] { __DBG_STUB_INVOKE__ return true; });
-    EXPECT_TRUE(ShareEventHelper::instance()->blockDelete(0, { QUrl("usershare:///hello") }));
+    EXPECT_TRUE(ShareEventHelper::instance()->blockDelete(0, { QUrl("usershare:///hello") }, QUrl("usershare:///hello")));
 
     stub.set_lamda(&ShareEventHelper::containsShareUrl, [] { __DBG_STUB_INVOKE__ return false; });
-    EXPECT_FALSE(ShareEventHelper::instance()->blockDelete(0, { QUrl("usershare:///hello") }));
+    EXPECT_FALSE(ShareEventHelper::instance()->blockDelete(0, { QUrl("usershare:///hello") }, QUrl("usershare:///hello")));
 }
 
 TEST_F(UT_ShareEventHelper, BlockMoveToTrash)
 {
     stub.set_lamda(&ShareEventHelper::containsShareUrl, [] { __DBG_STUB_INVOKE__ return true; });
-    EXPECT_TRUE(ShareEventHelper::instance()->blockMoveToTrash(0, { QUrl("usershare:///hello") }));
+    EXPECT_TRUE(ShareEventHelper::instance()->blockMoveToTrash(0, { QUrl("usershare:///hello") }, QUrl("usershare:///hello")));
 
     stub.set_lamda(&ShareEventHelper::containsShareUrl, [] { __DBG_STUB_INVOKE__ return false; });
-    EXPECT_FALSE(ShareEventHelper::instance()->blockMoveToTrash(0, { QUrl("usershare:///hello") }));
+    EXPECT_FALSE(ShareEventHelper::instance()->blockMoveToTrash(0, { QUrl("usershare:///hello") }, QUrl("usershare:///hello")));
 }
 
 TEST_F(UT_ShareEventHelper, HookSendOpenWindow)

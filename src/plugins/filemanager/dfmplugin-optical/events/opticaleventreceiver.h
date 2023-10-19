@@ -20,7 +20,7 @@ public:
     static OpticalEventReceiver &instance();
 
 public slots:
-    bool handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls);
+    bool handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls, const QUrl &);
     bool handleCheckDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);

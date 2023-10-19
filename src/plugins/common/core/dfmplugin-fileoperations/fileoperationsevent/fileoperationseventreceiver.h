@@ -183,6 +183,9 @@ public slots:
     void handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
                                   const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
+    bool handleShortCut(quint64, const QList<QUrl> &urls, const QUrl &rootUrl);
+    bool handleShortCutPaste(quint64, const QList<QUrl> &, const QUrl &target);
+
 private:
     enum class RenameTypes {
         kBatchRepalce,

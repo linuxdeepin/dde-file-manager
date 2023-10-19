@@ -52,8 +52,8 @@ TEST_F(UT_SmbBrowserEventReceiver, DetailViewIcon)
 
 TEST_F(UT_SmbBrowserEventReceiver, CancelDelete)
 {
-    EXPECT_FALSE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl::fromLocalFile("/") }));
-    EXPECT_TRUE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl("smb://1.2.3.4/hello") }));
-    EXPECT_TRUE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl("ftp://1.2.3.4/hello") }));
-    EXPECT_TRUE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl("sftp://1.2.3.4/hello") }));
+    EXPECT_FALSE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl::fromLocalFile("/") }, QUrl("usershare:///hello")));
+    EXPECT_TRUE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl("smb://1.2.3.4/hello") }, QUrl("usershare:///hello")));
+    EXPECT_TRUE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl("ftp://1.2.3.4/hello") }, QUrl("usershare:///hello")));
+    EXPECT_TRUE(SmbBrowserEventReceiver::instance()->cancelDelete(0, QList<QUrl> { QUrl("sftp://1.2.3.4/hello") }, QUrl("usershare:///hello")));
 }

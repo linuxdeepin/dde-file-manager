@@ -29,7 +29,7 @@ bool ShareEventHelper::blockPaste(quint64, const QList<QUrl> &fromUrls, const QU
     return false;
 }
 
-bool ShareEventHelper::blockDelete(quint64, const QList<QUrl> &urls)
+bool ShareEventHelper::blockDelete(quint64, const QList<QUrl> &urls, const QUrl &)
 {
     if (containsShareUrl(urls)) {
         qDebug() << "delete event is blocked, trying to delete usershare:///*";
@@ -38,7 +38,7 @@ bool ShareEventHelper::blockDelete(quint64, const QList<QUrl> &urls)
     return false;
 }
 
-bool ShareEventHelper::blockMoveToTrash(quint64, const QList<QUrl> &urls)
+bool ShareEventHelper::blockMoveToTrash(quint64, const QList<QUrl> &urls, const QUrl &)
 {
     if (containsShareUrl(urls)) {
         qDebug() << "move to trash event is blocked, trying to delete usershare:///*";
