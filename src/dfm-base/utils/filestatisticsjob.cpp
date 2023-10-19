@@ -116,46 +116,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
     if (!checkInode(info))
         return;
 
-    if (info->isAttributes(OptInfoType::kIsFile)) {
-        do {
-            auto isSyslink = info->isAttributes(OptInfoType::kIsSymLink);
-            if (isSyslink) {
-                const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
-                if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
-                    return;
-                }
-                fileStatistics << symLinkTargetUrl;
-            }
-
-            // ###(zccrs): skip the file,os file
-            if (UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), QUrl::fromLocalFile("/proc/kcore"))
-                || UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), QUrl::fromLocalFile("/dev/core"))) {
-                break;
-            }
-            //skip os file Shortcut
-            if (info->isAttributes(OptInfoType::kIsSymLink)
-                && (skipPath.contains(info->pathOf(PathInfoType::kSymLinkTarget)))) {
-                break;
-            }
-
-            const FileInfo::FileType &type = info->fileType();
-
-            if (!checkFileType(type))
-                break;
-
-            auto size = info->size();
-            if (size > 0) {
-                totalSize += size;
-                emitSizeChanged();
-            }
-            // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
-            // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
-            // 判断文件是否是链接文件
-            totalProgressSize += (size <= 0 || isSyslink) ? FileUtils::getMemoryPageSize() : size;
-        } while (false);
-
-        ++filesCount;
-    } else {
+    if (info->isAttributes(OptInfoType::kIsDir)) {
         // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
         totalProgressSize += FileUtils::getMemoryPageSize();
         if (info->isAttributes(OptInfoType::kIsSymLink)) {
@@ -199,73 +160,53 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
                     }
                 }
 
-                if (!fileHints.testFlag(FileStatisticsJob::kSingleDepth))
+                if (!fileHints.testFlag(FileStatisticsJob::kSingleDepth) && info->isAttributes(OptInfoType::kIsDir))
                     directoryQueue << url;
+
             } while (false);
-        } else if (!fileHints.testFlag(FileStatisticsJob::kSingleDepth)) {
+        } else if (!fileHints.testFlag(FileStatisticsJob::kSingleDepth) && info->isAttributes(OptInfoType::kIsDir)) {
             directoryQueue << url;
         }
+    } else {
+        do {
+            auto isSyslink = info->isAttributes(OptInfoType::kIsSymLink);
+            if (isSyslink) {
+                const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
+                if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
+                    return;
+                }
+                fileStatistics << symLinkTargetUrl;
+            }
+
+            // ###(zccrs): skip the file,os file
+            if (UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), QUrl::fromLocalFile("/proc/kcore"))
+                || UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), QUrl::fromLocalFile("/dev/core"))) {
+                break;
+            }
+            //skip os file Shortcut
+            if (info->isAttributes(OptInfoType::kIsSymLink)
+                && (skipPath.contains(info->pathOf(PathInfoType::kSymLinkTarget)))) {
+                break;
+            }
+
+            const FileInfo::FileType &type = info->fileType();
+
+            if (!checkFileType(type))
+                break;
+
+            auto size = info->size();
+            if (size > 0) {
+                totalSize += size;
+                emitSizeChanged();
+            }
+            // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+            // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
+            // 判断文件是否是链接文件
+            totalProgressSize += (size <= 0 || isSyslink) ? FileUtils::getMemoryPageSize() : size;
+        } while (false);
+
+        ++filesCount;
     }
-}
-
-void FileStatisticsJobPrivate::processFileByFts(const QUrl &url, const bool followLink)
-{
-    // The files counted are not counted
-    if (sizeInfo->allFiles.contains(url))
-        return;
-
-    char *paths[2] = { nullptr, nullptr };
-    paths[0] = strdup(url.path().toUtf8().toStdString().data());
-    auto openflags = fileHints.testFlag(FileStatisticsJob::kExcludeSourceFile) ? FTS_COMFOLLOW : 0;
-    FTS *fts = fts_open(paths, openflags, nullptr);
-
-    if (nullptr == fts) {
-        qWarning() << "open file by fts failed ! url = " << url << ", case " << strerror(errno);
-        return;
-    }
-    if (paths[0])
-        free(paths[0]);
-
-    auto singleDepth = fileHints.testFlag(FileStatisticsJob::kSingleDepth);
-    while (1) {
-        FTSENT *ent = fts_read(fts);
-        if (nullptr == ent)
-            break;
-
-        if (!stateCheck())
-            break;
-
-        if (!checkInode(ent, fts))
-            continue;
-
-        QUrl currentUrl = QUrl::fromLocalFile(ent->fts_path);
-
-        if (fileHints.testFlag(FileStatisticsJob::kExcludeSourceFile) && currentUrl.path() == url.path())
-            continue;
-
-        sizeInfo->allFiles.append(currentUrl);
-
-        auto isLink = S_ISLNK(ent->fts_statp->st_mode);
-        if (isLink) {
-            statisticSysLink(currentUrl, fts, ent, singleDepth, followLink);
-            continue;
-        }
-
-        if (skipPath.contains(ent->fts_path)) {
-            filesCount++;
-            continue;
-        }
-
-        if (!S_ISDIR(ent->fts_statp->st_mode)) {
-            statisticFile(ent);
-            continue;
-        }
-
-        statisticDir(url, fts, singleDepth, ent);
-    }
-
-    if (fts)
-        fts_close(fts);
 }
 
 void FileStatisticsJobPrivate::emitSizeChanged()
@@ -326,94 +267,6 @@ bool FileStatisticsJobPrivate::checkFileType(const FileInfo::FileType &fileType)
     return true;
 }
 
-FileInfo::FileType FileStatisticsJobPrivate::getFileType(const uint mode)
-{
-    FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
-    if (S_ISDIR(mode))
-        fileType = FileInfo::FileType(FileInfo::FileType::kDirectory);
-    else if (S_ISCHR(mode))
-        fileType = FileInfo::FileType(FileInfo::FileType::kCharDevice);
-    else if (S_ISBLK(mode))
-        fileType = FileInfo::FileType(FileInfo::FileType::kBlockDevice);
-    else if (S_ISFIFO(mode))
-        fileType = FileInfo::FileType(FileInfo::FileType::kFIFOFile);
-    else if (S_ISSOCK(mode))
-        fileType = FileInfo::FileType(FileInfo::FileType::kSocketFile);
-    else if (S_ISREG(mode))
-        fileType = FileInfo::FileType(FileInfo::FileType::kRegularFile);
-
-    return fileType;
-}
-
-void FileStatisticsJobPrivate::statisticDir(const QUrl &url, FTS *fts, const bool singleDepth, FTSENT *ent)
-{
-    if (sizeInfo->dirSize == 0) {
-        sizeInfo->dirSize = ent->fts_statp->st_size == 0
-                ? FileUtils::getMemoryPageSize()
-                : static_cast<quint16>(ent->fts_statp->st_size);
-    }
-    totalProgressSize += FileUtils::getMemoryPageSize();
-    ++directoryCount;
-    if (singleDepth && QString(ent->fts_path) != url.path())
-        fts_set(fts, ent, FTS_SKIP);
-}
-
-void FileStatisticsJobPrivate::statisticFile(FTSENT *ent)
-{
-    const FileInfo::FileType &fileType = getFileType(ent->fts_statp->st_mode);
-    if (!checkFileType(fileType))
-        return;
-    filesCount++;
-    totalSize += ent->fts_statp->st_size;
-    totalProgressSize += ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
-}
-
-void FileStatisticsJobPrivate::statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink)
-{
-    if (!singleDepth) {
-        if (S_ISDIR(ent->fts_statp->st_mode)) {
-            directoryCount++;
-        } else {
-            filesCount++;
-        }
-        totalSize += ent->fts_statp->st_size;
-        return;
-    }
-    auto info = InfoFactory::create<FileInfo>(currentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!info) {
-        filesCount++;
-        return;
-    }
-    const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
-    if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
-        return;
-    }
-    if (skipPath.contains(symLinkTargetUrl.path())) {
-        filesCount++;
-        return;
-    }
-
-    if (info->isAttributes(OptInfoType::kIsFile)) {
-        const FileInfo::FileType &type = info->fileType();
-        if (!checkFileType(type))
-            return;
-
-        totalProgressSize += FileUtils::getMemoryPageSize();
-        fileStatistics << symLinkTargetUrl;
-        filesCount++;
-        totalSize += info->size();
-        return;
-    }
-
-    ++directoryCount;
-    if (singleDepth)
-        return;
-
-    fileStatistics << symLinkTargetUrl;
-    if (followLink)
-        fts_set(fts, ent, FTS_SYMFOLLOW);
-}
-
 bool FileStatisticsJobPrivate::checkInode(const FileInfoPointer info)
 {
     auto fileInode = info->extendAttributes(ExtInfoType::kInode).toULongLong();
@@ -424,20 +277,6 @@ bool FileStatisticsJobPrivate::checkInode(const FileInfoPointer info)
             } else {
                 directoryCount++;
             }
-            return false;
-        }
-        inodelist.append(fileInode);
-    }
-    return true;
-}
-
-bool FileStatisticsJobPrivate::checkInode(FTSENT *ent, FTS *fts)
-{
-    auto fileInode =  ent->fts_statp->st_ino;
-    if (fileInode > 0) {
-        if (inodelist.contains(fileInode)) {
-            if (S_ISDIR(ent->fts_statp->st_mode))
-                fts_set(fts, ent, FTS_SKIP);
             return false;
         }
         inodelist.append(fileInode);
@@ -561,12 +400,7 @@ void FileStatisticsJob::run()
     d->sizeInfo.reset(new FileUtils::FilesSizeInfo());
     if (d->sourceUrlList.isEmpty())
         return;
-    if (d->sourceUrlList.first().scheme() != Global::Scheme::kFile
-            || !FileUtils::isLocalDevice(d->sourceUrlList.first())) {
-        statistcsOtherFileSystem();
-        return;
-    }
-    statistcsByFts();
+    statistcsOtherFileSystem();
 }
 
 void FileStatisticsJob::setSizeInfo()
@@ -693,24 +527,6 @@ void FileStatisticsJob::statistcsOtherFileSystem()
         d->iteratorCanStop = false;
     }
     setSizeInfo();
-    d->setState(kStoppedState);
-}
-
-void FileStatisticsJob::statistcsByFts()
-{
-    Q_EMIT dataNotify(0, 0, 0);
-
-    const bool followLink = !d->fileHints.testFlag(kNoFollowSymlink);
-
-    for (const auto &url : d->sourceUrlList) {
-        if (!d->stateCheck()) {
-            d->setState(kStoppedState);
-            setSizeInfo();
-            return;
-        }
-
-        d->processFileByFts(url, followLink);
-    }
     d->setState(kStoppedState);
 }
 
