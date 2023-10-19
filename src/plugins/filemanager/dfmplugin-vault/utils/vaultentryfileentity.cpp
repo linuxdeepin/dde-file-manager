@@ -61,9 +61,9 @@ bool VaultEntryFileEntity::showUsageSize() const
     return false;
 }
 
-EntryFileInfo::EntryOrder VaultEntryFileEntity::order() const
+AbstractEntryFileEntity::EntryOrder VaultEntryFileEntity::order() const
 {
-    EntryFileInfo::EntryOrder order = EntryFileInfo::EntryOrder(static_cast<int>(EntryFileInfo::EntryOrder::kOrderCustom) + 1);
+    AbstractEntryFileEntity::EntryOrder order = AbstractEntryFileEntity::EntryOrder(static_cast<int>(AbstractEntryFileEntity::EntryOrder::kOrderCustom) + 1);
     return order;
 }
 

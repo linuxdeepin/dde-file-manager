@@ -58,9 +58,9 @@ bool UserEntryFileEntity::showUsageSize() const
     return false;
 }
 
-DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder UserEntryFileEntity::order() const
+DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder UserEntryFileEntity::order() const
 {
-    return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderUserDir;
+    return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderUserDir;
 }
 
 QUrl UserEntryFileEntity::targetUrl() const

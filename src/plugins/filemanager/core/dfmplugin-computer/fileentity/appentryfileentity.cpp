@@ -58,9 +58,9 @@ QString AppEntryFileEntity::description() const
     return tr("Double click to open it");
 }
 
-DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder AppEntryFileEntity::order() const
+DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder AppEntryFileEntity::order() const
 {
-    return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderApps;
+    return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderApps;
 }
 
 QVariantHash AppEntryFileEntity::extraProperties() const

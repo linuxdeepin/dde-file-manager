@@ -79,25 +79,25 @@ bool ProtocolEntryFileEntity::showUsageSize() const
     return true;
 }
 
-DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
+DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder ProtocolEntryFileEntity::order() const
 {
     const QString &id = datas.value(DeviceProperty::kId).toString();
 
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kFtp)
         || id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSFtp))
-        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderFtp;
+        return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderFtp;
 
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb)
         || DFMBASE_NAMESPACE::DeviceUtils::isSamba(QUrl(id)))
-        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderSmb;
+        return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSmb;
 
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kMtp))
-        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderMTP;
+        return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderMTP;
 
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kGPhoto2))
-        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderGPhoto2;
+        return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderGPhoto2;
 
-    return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderFiles;
+    return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderFiles;
 }
 
 quint64 ProtocolEntryFileEntity::sizeTotal() const

@@ -28,7 +28,7 @@ public:
     virtual bool showProgress() const override;
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
-    virtual dfmbase::EntryFileInfo::EntryOrder order() const override;
+    virtual dfmbase::AbstractEntryFileEntity::EntryOrder order() const override;
     virtual QUrl targetUrl() const override;
 };
 

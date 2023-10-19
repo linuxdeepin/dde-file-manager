@@ -494,12 +494,12 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     } else if (info->extraProperty(DeviceProperty::kHintSystem).toBool()) {
         key = kItemVisiableControlKeys[0];
         reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";
-    } else if (info->order() == EntryFileInfo::kOrderSmb || info->order() == EntryFileInfo::kOrderFtp) {
+    } else if (info->order() == AbstractEntryFileEntity::kOrderSmb || info->order() == AbstractEntryFileEntity::kOrderFtp) {
         key = kItemVisiableControlKeys[3];
         reportName = "Sharing Folders";
-        if (info->order() == EntryFileInfo::kOrderSmb)
+        if (info->order() == AbstractEntryFileEntity::kOrderSmb)
             subGroup = Global::Scheme::kSmb;
-        else if (info->order() == EntryFileInfo::kOrderFtp)
+        else if (info->order() == AbstractEntryFileEntity::kOrderFtp)
             subGroup = Global::Scheme::kFtp;
     } else {
         key = kItemVisiableControlKeys[2];
@@ -511,18 +511,18 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     QString iconName { info->fileIcon().name() };
     if (info->fileIcon().name().startsWith("media"))
         iconName = "media-optical-symbolic";
-    else if (info->order() == EntryFileInfo::kOrderRemovableDisks)   // always display as USB icon for removable disks.
+    else if (info->order() == AbstractEntryFileEntity::kOrderRemovableDisks)   // always display as USB icon for removable disks.
         iconName = "drive-removable-media-symbolic";
     else
         iconName += "-symbolic";
 
-    static const QList<EntryFileInfo::EntryOrder> ejectableOrders {
-        EntryFileInfo::kOrderRemovableDisks,
-        EntryFileInfo::kOrderOptical,
-        EntryFileInfo::kOrderSmb,
-        EntryFileInfo::kOrderFtp,
-        EntryFileInfo::kOrderGPhoto2,
-        EntryFileInfo::kOrderMTP
+    static const QList<AbstractEntryFileEntity::EntryOrder> ejectableOrders {
+        AbstractEntryFileEntity::kOrderRemovableDisks,
+        AbstractEntryFileEntity::kOrderOptical,
+        AbstractEntryFileEntity::kOrderSmb,
+        AbstractEntryFileEntity::kOrderFtp,
+        AbstractEntryFileEntity::kOrderGPhoto2,
+        AbstractEntryFileEntity::kOrderMTP
     };
 
     QVariantMap map {

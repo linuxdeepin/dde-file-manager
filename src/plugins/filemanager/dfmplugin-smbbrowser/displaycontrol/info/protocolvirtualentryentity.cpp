@@ -47,9 +47,9 @@ bool dfmplugin_smbbrowser::ProtocolVirtualEntryEntity::showUsageSize() const
     return false;
 }
 
-EntryFileInfo::EntryOrder dfmplugin_smbbrowser::ProtocolVirtualEntryEntity::order() const
+AbstractEntryFileEntity::EntryOrder dfmplugin_smbbrowser::ProtocolVirtualEntryEntity::order() const
 {
-    return EntryFileInfo::EntryOrder::kOrderSmb;
+    return AbstractEntryFileEntity::EntryOrder::kOrderSmb;
 }
 
 QUrl ProtocolVirtualEntryEntity::targetUrl() const
