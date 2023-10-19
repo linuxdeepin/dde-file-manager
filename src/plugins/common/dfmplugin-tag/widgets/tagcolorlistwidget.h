@@ -44,7 +44,6 @@ private slots:
     void initUiForSizeMode();
 
 private:
-    void setCentralLayout() noexcept;
     void initUiElement();
     void initConnect();
 

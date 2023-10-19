@@ -55,7 +55,8 @@ void TagWidgetPrivate::initializeUI()
     crumbEdit->setObjectName("tagCrumbEdit");
     crumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     crumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
-    tagColorListLayout = new QHBoxLayout(q);
+
+    tagColorListLayout = new QHBoxLayout;
     tagColorListLayout->addWidget(tagLable);
     tagColorListLayout->addWidget(tagLeftLable);
     tagColorListLayout->addWidget(colorListWidget);
@@ -71,14 +72,15 @@ void TagWidgetPrivate::initializeUI()
 #else
     mainLayout->setContentsMargins(10, 10, 10, 10);
     crumbEdit->setMaximumHeight(100);
-#endif
     q->setFixedHeight(kTagWidgetHeight);
+#endif
 }
 
 void TagWidgetPrivate::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 10, 10, 10);
-    crumbEdit->setMaximumHeight(DSizeModeHelper::element(40, 100));
+    crumbEdit->setMaximumHeight(DSizeModeHelper::element(50, 100));
+    q->setFixedHeight(DSizeModeHelper::element(90, kTagWidgetHeight));
 #endif
 }
