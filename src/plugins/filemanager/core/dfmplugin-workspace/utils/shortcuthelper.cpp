@@ -234,27 +234,28 @@ void ShortcutHelper::acitonTriggered()
 
 void ShortcutHelper::copyFiles()
 {
+    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    if (selectUrls.isEmpty())
+        return;
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_CopyFiles", windowId, selectUrls, view->rootUrl()))
+        return;
     FileOperatorHelperIns->copyFiles(view);
 }
 
 void ShortcutHelper::cutFiles()
 {
+    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    if (selectUrls.isEmpty())
+        return;
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_CutFiles", windowId, selectUrls, view->rootUrl()))
+        return;
     FileOperatorHelperIns->cutFiles(view);
 }
 
 void ShortcutHelper::pasteFiles()
 {
-    const QUrl &rootUrl { view->rootUrl() };
-    // Use `hook_ShortCut_PasteFiles` if url isn't local
-    if (rootUrl.scheme() == Global::Scheme::kFile) {
-        const auto &currentFileInfo = InfoFactory::create<FileInfo>(rootUrl);
-        if (currentFileInfo && currentFileInfo->isAttributes(OptInfoType::kIsDir) && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
-            // show error tip message
-            DialogManager::instance()->showNoPermissionDialog(QList<QUrl>() << rootUrl);
-            return;
-        }
-    }
-
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
     if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, sourceUrls, view->rootUrl()))
@@ -273,15 +274,8 @@ void ShortcutHelper::deleteFiles()
     const QList<QUrl> &selectUrls = view->selectedUrlList();
     if (selectUrls.isEmpty())
         return;
-    // v5功能 判断当前目录是否有写权限，没有就提示权限错误
-    if (selectUrls.first().scheme() == Global::Scheme::kFile
-            && !view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
-        DialogManager::instance()->showNoPermissionDialog(selectUrls);
-        return;
-    }
-
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_DeleteFiles", windowId, selectUrls))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_DeleteFiles", windowId, selectUrls, view->rootUrl()))
         return;
 
     // Todo(yanghao):only support trash on root url
@@ -296,14 +290,8 @@ void ShortcutHelper::moveToTrash()
     const QList<QUrl> &selectUrls = view->selectedUrlList();
     if (selectUrls.isEmpty())
         return;
-    // v5功能 判断当前目录是否有写权限，没有就提示权限错误
-    if (selectUrls.first().scheme() == Global::Scheme::kFile
-            && !view->rootIndex().data(Global::ItemRoles::kItemFileIsWritableRole).toBool()) {
-        DialogManager::instance()->showNoPermissionDialog(selectUrls);
-        return;
-    }
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_MoveToTrash", windowId, selectUrls))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_MoveToTrash", windowId, selectUrls, view->rootUrl()))
         return;
     // Todo(lanxs): QUrl to LocalFile
     // complete deletion eg: gvfs, vault
@@ -337,6 +325,12 @@ void ShortcutHelper::showFilesProperty()
 void ShortcutHelper::previewFiles()
 {
     QList<QUrl> urls = view->selectedUrlList();
+
+    if (urls.isEmpty())
+        return;
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PreViewFiles", windowId, urls, view->rootUrl()))
+        return;
 
     QList<QUrl> selectUrls = urls;
     QList<QUrl> urlsTrans {};

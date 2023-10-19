@@ -86,10 +86,13 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_DragDrop_IsDrop)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileCanMove)
 
+    DPF_EVENT_REG_HOOK(hook_ShortCut_CopyFiles)
+    DPF_EVENT_REG_HOOK(hook_ShortCut_CutFiles)
     DPF_EVENT_REG_HOOK(hook_ShortCut_PasteFiles)
     DPF_EVENT_REG_HOOK(hook_ShortCut_DeleteFiles)
     DPF_EVENT_REG_HOOK(hook_ShortCut_MoveToTrash)
     DPF_EVENT_REG_HOOK(hook_ShortCut_EnterPressed)
+    DPF_EVENT_REG_HOOK(hook_ShortCut_PreViewFiles)
 
     DPF_EVENT_REG_HOOK(hook_Delegate_PaintListItem)
     DPF_EVENT_REG_HOOK(hook_Delegate_LayoutText)

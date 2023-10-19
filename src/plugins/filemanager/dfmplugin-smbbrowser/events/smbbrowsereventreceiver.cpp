@@ -34,7 +34,7 @@ bool SmbBrowserEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
     return false;
 }
 
-bool SmbBrowserEventReceiver::cancelDelete(quint64, const QList<QUrl> &urls)
+bool SmbBrowserEventReceiver::cancelDelete(quint64, const QList<QUrl> &urls, const QUrl &rootUrl)
 {
     if (urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSmb
         && urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kFtp
@@ -42,7 +42,22 @@ bool SmbBrowserEventReceiver::cancelDelete(quint64, const QList<QUrl> &urls)
         qDebug() << "SmbBrowser could't delete";
         return false;
     }
+    // Network Neighborhood dot not use
+    if (UniversalUtils::isNetworkRoot(rootUrl)) {
+        qDebug() << "Network Neighborhood view SmbBrowser could't delete";
+        return true;
+    }
     return true;
+}
+
+bool SmbBrowserEventReceiver::cancelMoveToTrash(quint64, const QList<QUrl> &, const QUrl &rootUrl)
+{
+    // Network Neighborhood dot not use
+    if (UniversalUtils::isNetworkRoot(rootUrl)) {
+        qDebug() << "Network Neighborhood view SmbBrowser could't using";
+        return true;
+    }
+    return false;
 }
 
 bool SmbBrowserEventReceiver::hookSetTabName(const QUrl &url, QString *tabName)

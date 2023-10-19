@@ -47,6 +47,8 @@ public:
 
 private slots:
     void initEventHandle();
+private:
+    void followEvents();
 };
 
 DPFILEOPERATIONS_END_NAMESPACE
