@@ -22,7 +22,6 @@ TagColorListWidget::TagColorListWidget(QWidget *parent)
     setObjectName("tagActionWidget");
     setFocusPolicy(Qt::StrongFocus);
 
-    setCentralLayout();
     initUiElement();
     initConnect();
 }
@@ -73,11 +72,6 @@ void TagColorListWidget::clearToolTipText()
     setToolTipText(QStringLiteral(" "));
 }
 
-void TagColorListWidget::setCentralLayout() noexcept
-{
-    setLayout(mainLayout);
-}
-
 void TagColorListWidget::initUiElement()
 {
     QList<QColor> colors = TagHelper::instance()->defualtColors();
@@ -104,6 +98,7 @@ void TagColorListWidget::initUiElement()
     buttonLayout->setSpacing(0);
 
     mainLayout = new QVBoxLayout(this);
+    setLayout(mainLayout);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     mainLayout->addLayout(buttonLayout);

@@ -68,7 +68,7 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
         DPushButton *btn = new DPushButton(frame);
         btn->setEnabled(false);
         btn->setFixedHeight(1);
-        QVBoxLayout *vlayout = new QVBoxLayout(this);
+        QVBoxLayout *vlayout = new QVBoxLayout(frame);
         vlayout->setMargin(0);
         vlayout->setSpacing(10);
         vlayout->addWidget(btn);
