@@ -24,7 +24,7 @@ public:
     virtual bool showProgress() const override;
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
-    virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
+    virtual DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder order() const override;
     virtual quint64 sizeTotal() const override;
     virtual quint64 sizeUsage() const override;
     virtual void refresh() override;

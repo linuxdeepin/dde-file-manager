@@ -7,6 +7,7 @@
 
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/abstractentryfileentity.h>
 
 namespace dfmbase {
 
@@ -14,30 +15,10 @@ class EntryFileInfoPrivate;
 class EntryFileInfo : public FileInfo
 {
 public:
-    enum EntryOrder {
-        kOrderUserDir,
-
-        kOrderSysDiskRoot,
-        kOrderSysDiskData,
-        kOrderSysDisks,
-        kOrderRemovableDisks,
-        kOrderOptical,
-
-        kOrderSmb,
-        kOrderFtp,
-        kOrderMTP,
-        kOrderGPhoto2,
-        kOrderFiles,
-
-        kOrderApps,
-
-        kOrderCustom,
-    };
-
     explicit EntryFileInfo(const QUrl &url);
     virtual ~EntryFileInfo() override;
 
-    EntryOrder order() const;
+    AbstractEntryFileEntity::EntryOrder order() const;
 
     bool renamable() const;
     QString displayName() const;

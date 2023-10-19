@@ -4,8 +4,6 @@
 
 #include "entryfileinfo.h"
 #include "private/entryfileinfo_p.h"
-#include "dbusservice/global_server_defines.h"
-#include "base/standardpaths.h"
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QRegularExpression>
@@ -54,9 +52,10 @@ EntryFileInfo::~EntryFileInfo()
     d = nullptr;
 }
 
-EntryFileInfo::EntryOrder EntryFileInfo::order() const
+AbstractEntryFileEntity::EntryOrder EntryFileInfo::order() const
 {
-    return d->entity ? d->entity->order() : EntryOrder::kOrderCustom;
+    return d->entity ? d->entity->order()
+                     : AbstractEntryFileEntity::EntryOrder::kOrderCustom;
 }
 
 QUrl EntryFileInfo::targetUrl() const

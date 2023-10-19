@@ -166,10 +166,10 @@ TEST_F(UT_ComputerUtils, SortItem)
 TEST_F(UT_ComputerUtils, DeviceTypeInfo)
 {
     DFMEntryFileInfoPointer inf(new EntryFileInfo(blockUrl));
-    QList<EntryFileInfo::EntryOrder> orders { EntryFileInfo::kOrderUserDir, EntryFileInfo::kOrderSysDiskRoot,
-                                              EntryFileInfo::kOrderRemovableDisks, EntryFileInfo::kOrderOptical,
-                                              EntryFileInfo::kOrderMTP,
-                                              EntryFileInfo::kOrderGPhoto2, EntryFileInfo::kOrderFiles };
+    QList<AbstractEntryFileEntity::EntryOrder> orders { AbstractEntryFileEntity::kOrderUserDir, AbstractEntryFileEntity::kOrderSysDiskRoot,
+                                                        AbstractEntryFileEntity::kOrderRemovableDisks, AbstractEntryFileEntity::kOrderOptical,
+                                                        AbstractEntryFileEntity::kOrderMTP,
+                                                        AbstractEntryFileEntity::kOrderGPhoto2, AbstractEntryFileEntity::kOrderFiles };
     stub.set_lamda(&EntryFileInfo::order, [&] { __DBG_STUB_INVOKE__ return orders.takeFirst(); });
     for (int i = 0; i < orders.count(); i++) {
         EXPECT_FALSE(ComputerUtils::deviceTypeInfo(inf).isEmpty());

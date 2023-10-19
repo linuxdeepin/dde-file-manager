@@ -38,11 +38,11 @@ TEST(UT_VaultEntryFileEntity, showProgress)
 TEST(UT_VaultEntryFileEntity, showTotalSize_one)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&VaultHelper::state, []{
+    stub.set_lamda(&VaultHelper::state, [] {
         return VaultState::kUnlocked;
     });
-    typedef void(FileStatisticsJob::*FuncType)(const QList<QUrl> &);
-    stub.set_lamda(static_cast<FuncType>(&FileStatisticsJob::start), []{});
+    typedef void (FileStatisticsJob::*FuncType)(const QList<QUrl> &);
+    stub.set_lamda(static_cast<FuncType>(&FileStatisticsJob::start), [] {});
 
     VaultEntryFileEntity entity(QUrl("dfmvault:///"));
     bool isOk = entity.showTotalSize();
@@ -53,7 +53,7 @@ TEST(UT_VaultEntryFileEntity, showTotalSize_one)
 TEST(UT_VaultEntryFileEntity, showTotalSize_two)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&VaultHelper::state, []{
+    stub.set_lamda(&VaultHelper::state, [] {
         return VaultState::kUnknow;
     });
 
@@ -72,9 +72,9 @@ TEST(UT_VaultEntryFileEntity, showUsageSize)
 TEST(UT_VaultEntryFileEntity, order)
 {
     VaultEntryFileEntity entity(QUrl("dfmvault:///"));
-    EntryFileInfo::EntryOrder order = entity.order();
+    AbstractEntryFileEntity::EntryOrder order = entity.order();
 
-    EXPECT_TRUE(order == EntryFileInfo::EntryOrder(static_cast<int>(EntryFileInfo::EntryOrder::kOrderCustom) + 1));
+    EXPECT_TRUE(order == AbstractEntryFileEntity::EntryOrder(static_cast<int>(AbstractEntryFileEntity::EntryOrder::kOrderCustom) + 1));
 }
 
 TEST(UT_VaultEntryFileEntity, sizeTotal_one)
@@ -119,15 +119,5 @@ TEST(UT_VaultEntryFileEntity, slotFinishedThread)
     VaultEntryFileEntity entity(QUrl("dfmvault:///"));
     entity.slotFinishedThread();
 
-    EXPECT_TRUE(entity.showSizeState ==  false);
+    EXPECT_TRUE(entity.showSizeState == false);
 }
-
-
-
-
-
-
-
-
-
-

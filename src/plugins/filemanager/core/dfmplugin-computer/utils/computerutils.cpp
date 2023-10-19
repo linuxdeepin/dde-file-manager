@@ -246,26 +246,26 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
 {
     DFMBASE_USE_NAMESPACE
     switch (info->order()) {
-    case EntryFileInfo::kOrderUserDir:
+    case AbstractEntryFileEntity::kOrderUserDir:
         return QObject::tr("User directory");
-    case EntryFileInfo::kOrderSysDiskRoot:
-    case EntryFileInfo::kOrderSysDiskData:
-    case EntryFileInfo::kOrderSysDisks:
+    case AbstractEntryFileEntity::kOrderSysDiskRoot:
+    case AbstractEntryFileEntity::kOrderSysDiskData:
+    case AbstractEntryFileEntity::kOrderSysDisks:
         return QObject::tr("Local disk");
-    case EntryFileInfo::kOrderRemovableDisks:
+    case AbstractEntryFileEntity::kOrderRemovableDisks:
         return QObject::tr("Removable disk");
-    case EntryFileInfo::kOrderOptical:
+    case AbstractEntryFileEntity::kOrderOptical:
         return QObject::tr("DVD");
-    case EntryFileInfo::kOrderSmb:
-    case EntryFileInfo::kOrderFtp:
+    case AbstractEntryFileEntity::kOrderSmb:
+    case AbstractEntryFileEntity::kOrderFtp:
         return QObject::tr("Network shared directory");
-    case EntryFileInfo::kOrderMTP:
+    case AbstractEntryFileEntity::kOrderMTP:
         return QObject::tr("Android mobile device");
-    case EntryFileInfo::kOrderGPhoto2:
+    case AbstractEntryFileEntity::kOrderGPhoto2:
         if (getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl)).contains("Apple_Inc"))
             return QObject::tr("Apple mobile device");
         return QObject::tr("Android mobile device");
-    case EntryFileInfo::kOrderFiles:
+    case AbstractEntryFileEntity::kOrderFiles:
         //        return QObject::tr("");
     default:
         return QObject::tr("Unknown device");

@@ -110,17 +110,17 @@ void ComputerMenuScene::updateState(QMenu *parent)
 
     QStringList disabled, keeped;
     switch (d->info->order()) {
-    case EntryFileInfo::kOrderUserDir:
+    case AbstractEntryFileEntity::kOrderUserDir:
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kProperty };
         break;
 
-    case EntryFileInfo::kOrderSysDiskRoot:
-    case EntryFileInfo::kOrderSysDiskData:
-    case EntryFileInfo::kOrderSysDisks:
+    case AbstractEntryFileEntity::kOrderSysDiskRoot:
+    case AbstractEntryFileEntity::kOrderSysDiskData:
+    case AbstractEntryFileEntity::kOrderSysDisks:
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kRename, kProperty };
         break;
 
-    case EntryFileInfo::kOrderRemovableDisks: {
+    case AbstractEntryFileEntity::kOrderRemovableDisks: {
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kSafelyRemove, kProperty, kRename, kFormat };
         keeped << (d->info->targetUrl().isValid() ? QStringList { kUnmount } : QStringList { kMount });
 
@@ -128,7 +128,7 @@ void ComputerMenuScene::updateState(QMenu *parent)
             disabled << kRename;
     } break;
 
-    case EntryFileInfo::kOrderOptical: {
+    case AbstractEntryFileEntity::kOrderOptical: {
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kSafelyRemove, kEject, kProperty };
         bool optical = d->info->extraProperty(DeviceProperty::kOptical).toBool();
         bool erasable = d->info->extraProperty(DeviceProperty::kMedia).toString().contains(QRegularExpression("_r(w|e)"));
@@ -146,8 +146,8 @@ void ComputerMenuScene::updateState(QMenu *parent)
             disabled = keeped;
     } break;
 
-    case EntryFileInfo::kOrderSmb:
-    case EntryFileInfo::kOrderFtp: {
+    case AbstractEntryFileEntity::kOrderSmb:
+    case AbstractEntryFileEntity::kOrderFtp: {
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kProperty };
 
         if (d->info->targetUrl().isValid())
@@ -158,12 +158,12 @@ void ComputerMenuScene::updateState(QMenu *parent)
             keeped << kLogoutAndForget;
     } break;
 
-    case EntryFileInfo::kOrderMTP:
-    case EntryFileInfo::kOrderGPhoto2:
-    case EntryFileInfo::kOrderFiles: {
+    case AbstractEntryFileEntity::kOrderMTP:
+    case AbstractEntryFileEntity::kOrderGPhoto2:
+    case AbstractEntryFileEntity::kOrderFiles: {
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kUnmount, kProperty };
     } break;
-    case EntryFileInfo::kOrderApps:
+    case AbstractEntryFileEntity::kOrderApps:
         keeped = QStringList { kOpen };
         break;
 

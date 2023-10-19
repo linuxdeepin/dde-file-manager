@@ -33,7 +33,7 @@ public:
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
     virtual QString description() const override;
-    virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
+    virtual DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder order() const override;
     virtual QVariantHash extraProperties() const override;
     virtual bool isAccessable() const override;
 

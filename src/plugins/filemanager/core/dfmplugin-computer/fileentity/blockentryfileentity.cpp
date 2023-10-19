@@ -74,19 +74,19 @@ QIcon BlockEntryFileEntity::icon() const
     bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
     bool isEncrypted = datas.value(DeviceProperty::kIsEncrypted).toBool();
     switch (order()) {
-    case EntryFileInfo::EntryOrder::kOrderSysDiskRoot:
+    case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot:
         return QIcon::fromTheme(IconName::kRootBlock);
-    case EntryFileInfo::EntryOrder::kOrderSysDiskData:
+    case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData:
         return QIcon::fromTheme(IconName::kInnerBlock);
-    case EntryFileInfo::EntryOrder::kOrderSysDisks:
+    case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSysDisks:
         return isEncrypted
                 ? QIcon::fromTheme(IconName::kEncryptedInnerBlock)
                 : QIcon::fromTheme(IconName::kInnerBlock);
-    case EntryFileInfo::EntryOrder::kOrderOptical:
+    case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderOptical:
         return canPowerOff
                 ? QIcon::fromTheme(IconName::kOpticalBlockExternal)
                 : QIcon::fromTheme(IconName::kOpticalBlock);
-    case EntryFileInfo::EntryOrder::kOrderRemovableDisks:
+    case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderRemovableDisks:
         return isEncrypted
                 ? QIcon::fromTheme(IconName::kEncryptedRemovableBlock)
                 : QIcon::fromTheme(IconName::kRemovableBlock);
@@ -122,11 +122,11 @@ bool BlockEntryFileEntity::exists() const
     }
 
     if (!hasFileSystem && !opticalDrive && !isEncrypted) {
-//        bool removable { qvariant_cast<bool>(datas.value(DeviceProperty::kRemovable)) };
-//        if (!removable) {   // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-            qInfo() << msg << "no fs, no optical, no encrypted." << id;
-            return false;
-//        }
+        //        bool removable { qvariant_cast<bool>(datas.value(DeviceProperty::kRemovable)) };
+        //        if (!removable) {   // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
+        qInfo() << msg << "no fs, no optical, no encrypted." << id;
+        return false;
+        //        }
     }
 
     if (cryptoBackingDevice.length() > 1) {
@@ -169,24 +169,24 @@ bool BlockEntryFileEntity::showUsageSize() const
     return showSizeAndProgress();
 }
 
-EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
+AbstractEntryFileEntity::EntryOrder BlockEntryFileEntity::order() const
 {
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
     if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
-        return EntryFileInfo::EntryOrder::kOrderSysDiskRoot;
+        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
 
     bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
     if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_data") /* && !canPowerOff*/)
-        return EntryFileInfo::EntryOrder::kOrderSysDiskData;
+        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
 
     if (datas.value(DeviceProperty::kOptical).toBool()
         || datas.value(DeviceProperty::kOpticalDrive).toBool())
-        return EntryFileInfo::EntryOrder::kOrderOptical;
+        return AbstractEntryFileEntity::EntryOrder::kOrderOptical;
 
     if (canPowerOff && !isSiblingOfRoot())
-        return EntryFileInfo::EntryOrder::kOrderRemovableDisks;
+        return AbstractEntryFileEntity::EntryOrder::kOrderRemovableDisks;
 
-    return EntryFileInfo::EntryOrder::kOrderSysDisks;
+    return AbstractEntryFileEntity::EntryOrder::kOrderSysDisks;
 }
 
 quint64 BlockEntryFileEntity::sizeTotal() const

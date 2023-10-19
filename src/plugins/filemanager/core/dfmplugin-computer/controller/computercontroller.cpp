@@ -129,10 +129,9 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     if (!info)
         return;
-
-    QList<EntryFileInfo::EntryOrder> typesCanSetAlias { EntryFileInfo::kOrderSysDiskData,
-                                                        EntryFileInfo::kOrderSysDiskRoot,
-                                                        EntryFileInfo::kOrderSysDisks };
+    QList<AbstractEntryFileEntity::EntryOrder> typesCanSetAlias { AbstractEntryFileEntity::kOrderSysDiskData,
+                                                                  AbstractEntryFileEntity::kOrderSysDiskRoot,
+                                                                  AbstractEntryFileEntity::kOrderSysDisks };
     bool shouldSetAlias = typesCanSetAlias.contains(info->order());
     auto rename = [info, url, name]() {
         if (info->nameOf(NameInfoType::kSuffix) != SuffixInfo::kBlock || info->displayName() == name)
@@ -360,9 +359,9 @@ void ComputerController::actEject(const QUrl &url)
 
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
 {
-    if (info->order() == EntryFileInfo::kOrderApps) {
+    if (info->order() == AbstractEntryFileEntity::kOrderApps) {
         onOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
-    } else if (info->order() > EntryFileInfo::kOrderCustom) {
+    } else if (info->order() > AbstractEntryFileEntity::kOrderCustom) {
         ComputerEventCaller::sendCtrlNOnItem(winId, info->urlOf(UrlInfoType::kUrl));
     } else {
         auto target = info->targetUrl();
@@ -378,9 +377,9 @@ void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPoint
 
 void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info)
 {
-    if (info->order() == EntryFileInfo::kOrderApps) {
+    if (info->order() == AbstractEntryFileEntity::kOrderApps) {
         onOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
-    } else if (info->order() > EntryFileInfo::kOrderCustom) {
+    } else if (info->order() > AbstractEntryFileEntity::kOrderCustom) {
         ComputerEventCaller::sendCtrlTOnItem(winId, info->urlOf(UrlInfoType::kUrl));
     } else {
         auto target = info->targetUrl();
@@ -511,7 +510,7 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
     if (!info)
         return;
 
-    if (info->order() == EntryFileInfo::EntryOrder::kOrderApps)
+    if (info->order() == AbstractEntryFileEntity::EntryOrder::kOrderApps)
         return;
 
     if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kUserDir) {

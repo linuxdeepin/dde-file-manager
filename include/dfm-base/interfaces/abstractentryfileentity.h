@@ -6,7 +6,6 @@
 #define ENTRYFILEENTITY_H
 
 #include <dfm-base/dfm_base_global.h>
-#include <dfm-base/file/entry/entryfileinfo.h>
 
 #include <QUrl>
 #include <QIcon>
@@ -18,6 +17,26 @@ class AbstractEntryFileEntity : public QObject
 {
     Q_OBJECT
 public:
+    enum EntryOrder {
+        kOrderUserDir,
+
+        kOrderSysDiskRoot,
+        kOrderSysDiskData,
+        kOrderSysDisks,
+        kOrderRemovableDisks,
+        kOrderOptical,
+
+        kOrderSmb,
+        kOrderFtp,
+        kOrderMTP,
+        kOrderGPhoto2,
+        kOrderFiles,
+
+        kOrderApps,
+
+        kOrderCustom,
+    };
+
     explicit AbstractEntryFileEntity(const QUrl &url);
     virtual ~AbstractEntryFileEntity();
 
@@ -28,9 +47,9 @@ public:
     virtual bool showProgress() const = 0;
     virtual bool showTotalSize() const = 0;
     virtual bool showUsageSize() const = 0;
-    virtual EntryFileInfo::EntryOrder order() const = 0;
+    virtual EntryOrder order() const = 0;
 
-    virtual inline void refresh() {}
+    virtual inline void refresh() { }
     virtual inline quint64 sizeTotal() const { return 0; }
     virtual inline quint64 sizeUsage() const { return 0; }
     virtual inline QString description() const { return {}; }
@@ -70,6 +89,6 @@ public:
     }
 };
 
-} // namespace dfmbase
+}   // namespace dfmbase
 
 #endif   // ENTRYFILEENTITY_H
