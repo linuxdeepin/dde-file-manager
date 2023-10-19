@@ -25,16 +25,10 @@ public:
     bool stateCheck();
 
     void processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue);
-    void processFileByFts(const QUrl &url, const bool followLink);
     void emitSizeChanged();
     int countFileCount(const char *name);
     bool checkFileType(const FileInfo::FileType &fileType);
-    FileInfo::FileType getFileType(const uint mode);
-    void statisticDir(const QUrl &url, FTS *fts, const bool singleDepth, FTSENT *ent);
-    void statisticFile(FTSENT *ent);
-    void statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink);
     bool checkInode(const FileInfoPointer info);
-    bool checkInode(FTSENT *ent, FTS *fts);
 
     FileStatisticsJob *q;
     QTimer *notifyDataTimer;
