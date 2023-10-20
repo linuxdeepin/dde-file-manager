@@ -49,7 +49,7 @@ void ThumbnailFactory::init()
     taskPushTimer.setSingleShot(true);
     taskPushTimer.setInterval(kPushInterval);
     connect(&taskPushTimer, &QTimer::timeout, this, &ThumbnailFactory::pushTask);
-
+    connect(this, &ThumbnailFactory::thumbnailJob, this, &ThumbnailFactory::doJoinThumbnailJob, Qt::QueuedConnection);
     connect(qApp, &QGuiApplication::aboutToQuit, this, &ThumbnailFactory::onAboutToQuit);
 
     connect(this, &ThumbnailFactory::addTask, worker.data(), &ThumbnailWorker::onTaskAdded, Qt::QueuedConnection);
@@ -62,18 +62,11 @@ void ThumbnailFactory::init()
 
 void ThumbnailFactory::joinThumbnailJob(const QUrl &url, ThumbnailSize size)
 {
-    if (FileUtils::containsCopyingFileUrl(url))
+    if (QThread::currentThread() != qApp->thread()) {
+        emit thumbnailJob(url, size);
         return;
-    if (taskMap.isEmpty())
-        taskPushTimer.start();
-
-    if (taskMap.contains(url))
-        return;
-    taskMap.insert(url, size);
-    if (taskMap.size() < kMaxCountLimit)
-        return;
-
-    pushTask();
+    }
+    doJoinThumbnailJob(url, size);
 }
 
 bool ThumbnailFactory::registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator)
@@ -93,4 +86,23 @@ void ThumbnailFactory::pushTask()
 {
     auto map = std::move(taskMap);
     emit addTask(map);
+}
+
+void ThumbnailFactory::doJoinThumbnailJob(const QUrl &url, ThumbnailSize size)
+{
+    if (FileUtils::containsCopyingFileUrl(url))
+        return;
+
+    if (taskMap.contains(url))
+        return;
+
+    if (taskMap.isEmpty())
+        taskPushTimer.start();
+
+
+    taskMap.insert(url, size);
+    if (taskMap.size() < kMaxCountLimit)
+        return;
+
+    pushTask();
 }
