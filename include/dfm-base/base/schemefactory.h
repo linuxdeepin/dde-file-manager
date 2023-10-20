@@ -237,10 +237,10 @@ public:
         if (!info) {
             auto tarScheme = scheme(url);
             info = instance().SchemeFactory<FileInfo>::create(tarScheme, url, errorString);
-            if (info && tarScheme == Global::Scheme::kAsyncFile) {
-                info->refresh();
-                emit InfoCacheController::instance().cacheFileInfo(url, info);
-            }
+            if (info && tarScheme == Global::Scheme::kAsyncFile)
+                info->updateAttributes();
+
+            emit InfoCacheController::instance().cacheFileInfo(url, info);
         }
 
         if (!info)

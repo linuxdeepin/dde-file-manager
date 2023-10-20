@@ -34,10 +34,11 @@ Q_SIGNALS:
     void produceFailed(const QUrl &src);
 
     void addTask(const ThumbnailWorker::ThumbnailTaskMap &taskMap);
-
+    void thumbnailJob(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 private Q_SLOTS:
     void onAboutToQuit();
     void pushTask();
+    void doJoinThumbnailJob(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 
 protected:
     explicit ThumbnailFactory(QObject *parent = nullptr);

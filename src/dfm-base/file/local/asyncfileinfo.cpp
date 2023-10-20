@@ -460,7 +460,7 @@ QVariant AsyncFileInfo::customData(int role) const
             extendOtherCache.remove(ExtInfoType::kFileThumbnail);
         }
         QWriteLocker locker(&d->iconLock);
-        if (d->fileIcon.name() == "unknow")
+        if (d->fileIcon.name() == "unknown")
             d->fileIcon = QIcon();
         return QVariant();
     }
@@ -498,6 +498,7 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
     if (typeAll.isEmpty()) {
         // 更新所有属性
         typeAll.append(FileInfoAttributeID::kThumbnailIcon);
+        typeAll.append(FileInfoAttributeID::kStandardIcon);
 
         typeAll.append(FileInfoAttributeID::kStandardSize);
         QReadLocker rlk(&d->lock);
@@ -1150,7 +1151,6 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
             if (notInit && hid.isValid())
                 cacheAsyncAttributes.insert(FileInfo::FileInfoAttributeID::kStandardIsHidden, hid);
         }
-        updateIcon();
         // kMimeTypeName
         fileMimeTypeAsync();
         return 2;
@@ -1166,8 +1166,6 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
 
         if (changesAttributes.isEmpty())
             return 1;
-
-        updateIcon();
 
         if (changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileType) ||
                 changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileExists) ||
