@@ -101,6 +101,59 @@ SideBarItem *SideBarModel::itemFromIndex(int index, const QModelIndex &parent) c
     return itemFromIndex(this->index(index, 0, parent));
 }
 
+QList<SideBarItemSeparator *> SideBarModel::groupItems() const
+{
+    QList<SideBarItemSeparator *> items;
+
+    for (int i = 0; i != rowCount(); ++i) {
+        auto item = itemFromIndex(i);
+        SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
+        if (groupItem)
+            items.append(groupItem);
+    }
+
+    return items;
+}
+
+QList<SideBarItem *> SideBarModel::subItems() const
+{
+    QList<SideBarItem *> items;
+    QList<SideBarItemSeparator *> groups { groupItems() };
+
+    for (auto groupItem : groups) {
+        Q_ASSERT(groupItem);
+        int childCount = groupItem->rowCount();
+        for (int i = 0; i != childCount; ++i) {
+            QStandardItem *childItem = groupItem->child(i);
+            SideBarItem *subItem = static_cast<SideBarItem *>(childItem);
+            if (subItem)
+                items.append(subItem);
+        }
+    }
+
+    return items;
+}
+
+QList<SideBarItem *> SideBarModel::subItems(const QString &groupName) const
+{
+    QList<SideBarItem *> items;
+    QList<SideBarItemSeparator *> groups { groupItems() };
+
+    for (auto groupItem : groups) {
+        Q_ASSERT(groupItem);
+        if (groupItem->group() != groupName)
+            continue;
+        int childCount = groupItem->rowCount();
+        for (int i = 0; i != childCount; ++i) {
+            QStandardItem *childItem = groupItem->child(i);
+            SideBarItem *subItem = static_cast<SideBarItem *>(childItem);
+            if (subItem)
+                items.append(subItem);
+        }
+    }
+    return items;
+}
+
 bool SideBarModel::insertRow(int row, SideBarItem *item)
 {
     if (!item)
@@ -153,6 +206,7 @@ int SideBarModel::appendRow(SideBarItem *item)
     SideBarItemSeparator *topItem = dynamic_cast<SideBarItemSeparator *>(item);
     SideBarItem *groupOther = nullptr;
     if (topItem) {   //Top item
+        auto t = topItem->group();
         QStandardItemModel::appendRow(item);
         return rowCount() - 1;   //The return value is the index of top item.
     } else {   //Sub item

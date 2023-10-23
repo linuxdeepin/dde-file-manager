@@ -28,6 +28,7 @@ public:
     void setCurrentUrl(const QUrl &sidebarUrl) override;
     QUrl currentUrl() const override;
     void changeEvent(QEvent *event) override;
+    void initSettingPanel();
 
     QAbstractItemView *view();
 
@@ -41,7 +42,8 @@ public:
     void editItem(const QUrl &url);
     void setItemVisiable(const QUrl &url, bool visible);
     void updateItemVisiable(const QVariantMap &states);
-    QList<QUrl> findItems(const QString &group) const;
+    QList<QUrl> findItemUrlsByGroupName(const QString &group) const;
+    QList<QUrl> findItemUrlsByVisibleControlKey(const QString &key) const;
     void updateSelection();
     void saveStateWhenClose();
 

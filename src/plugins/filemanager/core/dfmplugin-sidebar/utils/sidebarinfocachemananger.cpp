@@ -23,7 +23,7 @@ SideBarInfoCacheMananger::GroupList SideBarInfoCacheMananger::groups() const
     return cacheInfoMap.keys();
 }
 
-SideBarInfoCacheMananger::CacheInfoList SideBarInfoCacheMananger::indexCacheMap(const Group &name) const
+SideBarInfoCacheMananger::CacheInfoList SideBarInfoCacheMananger::indexCacheList(const Group &name) const
 {
     return cacheInfoMap.value(name);
 }
@@ -104,36 +104,9 @@ bool SideBarInfoCacheMananger::updateItemInfoCache(const QUrl &url, const ItemIn
     return ret;
 }
 
-bool SideBarInfoCacheMananger::containsHiddenUrl(const QUrl &url)
-{
-    return hiddenUrlList.contains(url);
-}
-
-void SideBarInfoCacheMananger::addHiddenUrl(const QUrl &url)
-{
-    if (!hiddenUrlList.contains(url))
-        hiddenUrlList.append(url);
-}
-
-void SideBarInfoCacheMananger::removeHiddenUrl(const QUrl &url)
-{
-    if (hiddenUrlList.contains(url))
-        hiddenUrlList.removeOne(url);
-}
-
 ItemInfo SideBarInfoCacheMananger::itemInfo(const QUrl &url)
 {
     return bindedInfos.value(url);
-}
-
-QList<QUrl> SideBarInfoCacheMananger::findItems(const QString &visiableKey)
-{
-    QList<QUrl> ret;
-    for (const auto &item : bindedInfos.values()) {
-        if (item.visiableControlKey == visiableKey)
-            ret.append(item.url);
-    }
-    return ret;
 }
 
 bool SideBarInfoCacheMananger::contains(const ItemInfo &info) const

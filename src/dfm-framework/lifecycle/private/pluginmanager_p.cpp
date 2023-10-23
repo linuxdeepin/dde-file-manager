@@ -130,6 +130,7 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
             dirItera.next();
             PluginMetaObjectPointer metaObj(new PluginMetaObject);
             const QString &fileName { dirItera.path() + "/" + dirItera.fileName() };
+            qDebug() << "scan plugin:" << fileName;
             metaObj->d->loader->setFileName(fileName);
             QJsonObject &&metaJson = metaObj->d->loader->metaData();
             QJsonObject &&dataJson = metaJson.value("MetaData").toObject();

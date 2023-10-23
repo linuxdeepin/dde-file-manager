@@ -9,6 +9,7 @@
 #include "utils/sidebarhelper.h"
 #include "events/sidebareventreceiver.h"
 
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/base/urlroute.h>
@@ -37,9 +38,11 @@ bool SideBar::start()
         return false;
     }
 
-    SideBarHelper::initSettingPane();
-    SideBarHelper::bindSettings();
+    SideBarHelper::initDefaultSettingPanel();
     SideBarHelper::registCustomSettingItem();
+
+    dpfSignalDispatcher->installEventFilter(DFMBASE_NAMESPACE::GlobalEventType::kShowSettingDialog, this,
+                                            &SideBar::onAboutToShowSettingDialog);
 
     return true;
 }
@@ -103,4 +106,27 @@ void SideBar::onConfigChanged(const QString &cfg, const QString &key)
         }
     }
 #endif
+}
+
+// always return false?
+// Just trying to bind data, not really filtering it
+bool SideBar::onAboutToShowSettingDialog(quint64 winId)
+{
+    auto win { FMWindowsIns.findWindowById(winId) };
+    if (!win) {
+        qWarning() << "Invalid window id";
+        return false;
+    }
+
+    // TODO(zhangs): runtime config
+    // bind setting datas
+    static std::once_flag flag;
+    std::call_once(flag, [this, win]() {
+        auto widget = dynamic_cast<SideBarWidget *>(win->sideBar());
+        widget->initSettingPanel();
+        dpfSignalDispatcher->removeEventFilter(DFMBASE_NAMESPACE::GlobalEventType::kShowSettingDialog, this,
+                                               &SideBar::onAboutToShowSettingDialog);
+    });
+
+    return false;
 }

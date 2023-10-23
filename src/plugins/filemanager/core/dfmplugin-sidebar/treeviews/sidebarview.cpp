@@ -234,8 +234,9 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
     QModelIndex index = indexAt(event->pos());
     if (index.isValid() && index.data(SideBarItem::kItemTypeRole) == SideBarItem::kSidebarItem) {
         const QUrl &url = index.data(SideBarItem::kItemUrlRole).toUrl();
-        if (url.isValid()) {
-            auto info = SideBarInfoCacheMananger::instance()->itemInfo(url);
+        SideBarItem *item = itemAt(event->pos());
+        if (url.isValid() && item) {
+            auto info = item->itemInfo();
             QString reportName = info.reportName;
             QVariantMap data;
             data.insert("sidebar_item", reportName);

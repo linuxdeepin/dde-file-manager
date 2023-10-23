@@ -63,7 +63,8 @@ void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
         { "Property_Key_QtItemFlags", QVariant::fromValue(Qt::ItemIsEnabled | Qt::ItemIsSelectable) },
         { "Property_Key_Ejectable", false },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(ContextMenuCallback(sidebarMenuCall)) },
-        { "Property_Key_VisiableControl", "mounted_share_dirs" }
+        { "Property_Key_VisiableControl", "mounted_share_dirs" },
+        { "Property_Key_VisiableDisplayName", QObject::tr("Mounted sharing folders") }
         //        { "Property_Key_ReportName", reportName }
     };
     dpfSlotChannel->push(kSidebarEventNS, kSbSlotAdd, info->targetUrl(), opts);
