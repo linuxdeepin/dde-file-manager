@@ -283,6 +283,7 @@ int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
     Q_D(IconItemDelegate);
 
     if (level == iconSizeLevel()) {
+        parent()->parent()->setIconSize(iconSizeByIconSizeLevel());
         return level;
     }
 
