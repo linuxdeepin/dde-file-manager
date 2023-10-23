@@ -21,6 +21,7 @@ public:
         kItemUrlRole = Dtk::UserRole + 1,
         kItemGroupRole,
         kItemTypeRole,
+        kItemHiddenRole,
         kItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
@@ -44,6 +45,9 @@ public:
     QString group() const;
     void setGroup(const QString &group = "");
     QString subGourp() const;
+
+    bool isHidden() const;
+    void setHiiden(bool hidden);
 
     ItemInfo itemInfo() const;
 };

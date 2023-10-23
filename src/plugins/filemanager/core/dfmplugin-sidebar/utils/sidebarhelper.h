@@ -33,9 +33,9 @@ public:
     static SortFunc sortFunc(const QString &subGroup);
     static void updateSideBarSelection(quint64 winId);
 
-    static void bindSettings();
     static void bindSetting(const QString &itemVisiableSettingKey, const QString &itemVisiableControlKey);
-    static void initSettingPane();
+    static void initDefaultSettingPanel();
+    static void initDetailSettingPannel(const QString &group, const QString &key, const QString &value);
     static void registCustomSettingItem();
     static QVariantMap hiddenRules();
     static QVariantMap groupExpandRules();

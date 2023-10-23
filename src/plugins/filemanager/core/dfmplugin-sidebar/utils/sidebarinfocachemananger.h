@@ -29,10 +29,8 @@ public:
     bool contains(const ItemInfo &info) const;
     bool contains(const QUrl &url) const;
     GroupList groups() const;
-    CacheInfoList indexCacheMap(const Group &name) const;
-    bool containsHiddenUrl(const QUrl &url);
+    CacheInfoList indexCacheList(const Group &name) const;
     ItemInfo itemInfo(const QUrl &url);   // the funcs is for QHash<QUrl, ItemInfo> bindedInfos;
-    QList<QUrl> findItems(const QString &visiableKey);
 
     bool addItemInfoCache(const ItemInfo &info);
     bool insertItemInfoCache(Index i, const ItemInfo &info);
@@ -41,15 +39,11 @@ public:
     bool updateItemInfoCache(const Group &name, const QUrl &url, const ItemInfo &info);
     bool updateItemInfoCache(const QUrl &url, const ItemInfo &info);
 
-    void addHiddenUrl(const QUrl &url);   // TODO(zhangs): update
-    void removeHiddenUrl(const QUrl &url);   // TODO(zhangs): update
-
 private:
     SideBarInfoCacheMananger();
 
 private:
     GroupCacheMap cacheInfoMap;
-    QList<QUrl> hiddenUrlList;
     QHash<QUrl, ItemInfo> bindedInfos;
 };
 

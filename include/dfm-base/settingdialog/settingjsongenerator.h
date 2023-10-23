@@ -46,6 +46,10 @@ public:
     static SettingJsonGenerator *instance();
 
     QByteArray genSettingJson();
+
+    bool hasGroup(const QString &key) const;
+    bool hasConfig(const QString &key) const;
+
     bool addGroup(const QString &key, const QString &name);
     bool addConfig(const QString &key, const QVariantMap &config);
     bool addCheckBoxConfig(const QString &key, const QString &text, bool defaultVal = true);

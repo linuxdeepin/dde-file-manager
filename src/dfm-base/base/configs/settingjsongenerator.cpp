@@ -41,6 +41,16 @@ QByteArray SettingJsonGenerator::genSettingJson()
     return doc.toJson(QJsonDocument::Indented);
 }
 
+bool SettingJsonGenerator::hasGroup(const QString &key) const
+{
+    return configGroups.contains(key);
+}
+
+bool SettingJsonGenerator::hasConfig(const QString &key) const
+{
+    return configs.contains(key);
+}
+
 bool SettingJsonGenerator::addGroup(const QString &key, const QString &name)
 {
     if (key.count(".") > 1) {

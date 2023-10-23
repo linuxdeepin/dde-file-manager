@@ -28,7 +28,6 @@ void Vault::initialize()
 bool Vault::start()
 {
     VaultVisibleManager::instance()->pluginServiceRegister();
-    VaultVisibleManager::instance()->addSettingPaneItem();
     return true;
 }
 

@@ -25,6 +25,7 @@ public slots:
     void handleOpenWindow(const QUrl &url, const QVariant &opt);
     void handleLoadPlugins(const QStringList &names);
     void handleHeadless();
+    void handleShowSettingDialog(quint64 windowId);
 
 private:
     explicit CoreEventReceiver(QObject *parent = nullptr);

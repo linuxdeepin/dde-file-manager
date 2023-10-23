@@ -41,11 +41,6 @@ void SideBarEventReceiver::bindEvents()
 
 void SideBarEventReceiver::handleItemHidden(const QUrl &url, bool visible)
 {
-    if (visible)
-        SideBarInfoCacheMananger::instance()->removeHiddenUrl(url);
-    else
-        SideBarInfoCacheMananger::instance()->addHiddenUrl(url);
-
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar)
         sidebar->setItemVisiable(url, visible);
@@ -90,7 +85,7 @@ QList<QUrl> SideBarEventReceiver::handleGetGroupItems(quint64 winId, const QStri
     }
 
     if (wid)
-        return wid->findItems(group);
+        return wid->findItemUrlsByGroupName(group);
 
     qDebug() << "cannot find sidebarwidget for winid: " << winId << group;
     return {};
@@ -101,12 +96,6 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
-
-    if (properties.contains(PropertyKey::kVisiableSettingKey)
-        && properties.contains(PropertyKey::kVisiableControlKey)) {
-        SideBarHelper::bindSetting(properties.value(PropertyKey::kVisiableSettingKey).toString(),
-                                   properties.value(PropertyKey::kVisiableControlKey).toString());
-    }
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
@@ -171,8 +160,12 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
         info.isEjectable = properties[PropertyKey::kIsEjectable].toBool();
     if (properties.contains(PropertyKey::kIsEditable))
         info.isEditable = properties[PropertyKey::kIsEditable].toBool();
-    if (properties.contains(PropertyKey::kIsHidden))
-        info.isHidden = properties[PropertyKey::kIsHidden].toBool();
+    if (properties.contains(PropertyKey::kVisiableControlKey))
+        info.visiableControlKey = properties[PropertyKey::kVisiableControlKey].toString();
+    if (properties.contains(PropertyKey::kVisiableDisplayName))
+        info.visiableDisplayName = properties[PropertyKey::kVisiableDisplayName].toString();
+    if (properties.contains(PropertyKey::kReportName))
+        info.reportName = properties[PropertyKey::kReportName].toString();
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
@@ -195,12 +188,6 @@ bool SideBarEventReceiver::handleItemInsert(int index, const QUrl &url, const QV
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
-
-    if (properties.contains(PropertyKey::kVisiableSettingKey)
-        && properties.contains(PropertyKey::kVisiableControlKey)) {
-        SideBarHelper::bindSetting(properties.value(PropertyKey::kVisiableSettingKey).toString(),
-                                   properties.value(PropertyKey::kVisiableControlKey).toString());
-    }
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {

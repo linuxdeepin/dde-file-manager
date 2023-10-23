@@ -86,6 +86,7 @@ SideBarItem *SideBarHelper::createItemByInfo(const ItemInfo &info)
                                         info.displayName,
                                         info.group,
                                         info.url);
+
     item->setFlags(info.flags);
 
     // create `unmount action` for removable device
@@ -110,7 +111,7 @@ SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
 
     // Currently, only bookmark and tag groups support internal drag.
     // In the next stage, quick access would be instead of bookmark.
-    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag || item->group() == DefaultGroup::kCommon) {
+    if (item->group() == DefaultGroup::kTag || item->group() == DefaultGroup::kCommon) {
         auto flags { Qt::ItemIsEnabled | Qt::ItemIsDropEnabled };
         item->setFlags(flags);
     } else
@@ -189,40 +190,6 @@ void SideBarHelper::updateSideBarSelection(quint64 winId)
     }
 }
 
-void SideBarHelper::bindSettings()
-{
-    static const std::map<QString, QString> kvs {
-        // group 00_quick_access_splitter
-        { SETTING_GROUP_LV2 ".01_recent", "recent" },
-        { SETTING_GROUP_LV2 ".02_home", "home" },
-        { SETTING_GROUP_LV2 ".03_desktop", "desktop" },
-        { SETTING_GROUP_LV2 ".04_videos", "videos" },
-        { SETTING_GROUP_LV2 ".05_music", "music" },
-        { SETTING_GROUP_LV2 ".06_pictures", "pictures" },
-        { SETTING_GROUP_LV2 ".07_documents", "documents" },
-        { SETTING_GROUP_LV2 ".08_downloads", "downloads" },
-        { SETTING_GROUP_LV2 ".09_trash", "trash" },
-
-        // group 10_partitions_splitter
-        { SETTING_GROUP_LV2 ".11_computer", "computer" },
-        { SETTING_GROUP_LV2 ".13_builtin", "builtin_disks" },
-        { SETTING_GROUP_LV2 ".14_loop", "loop_dev" },
-        { SETTING_GROUP_LV2 ".15_other_disks", "other_disks" },
-
-        // group 16_network_splitters
-        { SETTING_GROUP_LV2 ".17_computers_in_lan", "computers_in_lan" },
-        { SETTING_GROUP_LV2 ".18_my_shares", "my_shares" },
-        { SETTING_GROUP_LV2 ".19_mounted_share_dirs", "mounted_share_dirs" },
-
-        // group 20_tag_splitter
-        { SETTING_GROUP_LV2 ".21_tags", "tags" }
-    };
-
-    std::for_each(kvs.begin(), kvs.end(), [](std::pair<QString, QString> pair) {
-        bindSetting(pair.first, pair.second);
-    });
-}
-
 void SideBarHelper::bindSetting(const QString &itemVisiableSettingKey, const QString &itemVisiableControlKey)
 {
     auto getter = [](const QString &key) {
@@ -248,66 +215,74 @@ void SideBarHelper::bindSetting(const QString &itemVisiableSettingKey, const QSt
     bindConf(itemVisiableSettingKey, itemVisiableControlKey);
 }
 
-void SideBarHelper::initSettingPane()
+void SideBarHelper::initDefaultSettingPanel()
 {
     auto ins = SettingJsonGenerator::instance();
+
     ins->addGroup(SETTING_GROUP_TOP, QObject::tr("Sidebar"));
     ins->addGroup(SETTING_GROUP_LV2, "Items on sidebar pane");
-    ins->addConfig(SETTING_GROUP_LV2 ".00_quick_access_splitter",
-                   { { "key", "00_quick_access_splitter" },
-                     { "name", QObject::tr("Quick access") },
-                     { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".01_recent",
-                           QObject::tr("Recent"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".02_home",
-                           QObject::tr("Home"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".03_desktop",
-                           QObject::tr("Desktop"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".04_videos",
-                           QObject::tr("Videos"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".05_music",
-                           QObject::tr("Music"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".06_pictures",
-                           QObject::tr("Pictures"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".07_documents",
-                           QObject::tr("Documents"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".08_downloads",
-                           QObject::tr("Downloads"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".09_trash",
-                           QObject::tr("Trash"));
+}
 
-    ins->addConfig(SETTING_GROUP_LV2 ".10_partitions_splitter",
-                   { { "key", "10_partitions_splitter" },
-                     { "name", QObject::tr("Partitions") },
-                     { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".11_computer",
-                           QObject::tr("Computer"));
-    //    ins->addCheckBoxConfig(SETTING_GROUP_LV2".12_vault",
-    //                           "Vault");
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".13_builtin",
-                           QObject::tr("Built-in disks"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".14_loop",
-                           QObject::tr("Loop partitions"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".15_other_disks",
-                           QObject::tr("Mounted partitions and discs"));
+void SideBarHelper::initDetailSettingPannel(const QString &group, const QString &key, const QString &value)
+{
+    int groupSortPrefix { 0 };
+    QString groupKey;
+    QString groupLabel;
 
-    ins->addConfig(SETTING_GROUP_LV2 ".16_network_splitters",
-                   { { "key", "16_network_splitters" },
-                     { "name", QObject::tr("Network") },
-                     { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".17_computers_in_lan",
-                           QObject::tr("Computers in LAN"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".18_my_shares",
-                           QObject::tr("My shares"));
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".19_mounted_share_dirs",
-                           QObject::tr("Mounted sharing folders"));
+    if (group == DefaultGroup::kCommon) {
+        groupSortPrefix = 100;
+        groupKey = QString("%1").arg(groupSortPrefix) + "_quick_access_splitter";
+        groupLabel = QObject::tr("Quick access");
+    } else if (group == DefaultGroup::kDevice) {
+        groupSortPrefix = 200;
+        groupKey = QString("%1").arg(groupSortPrefix) + "_partitions_splitter";
+        groupLabel = QObject::tr("Partitions");
+    } else if (group == DefaultGroup::kNetwork) {
+        groupSortPrefix = 300;
+        groupKey = QString("%1").arg(groupSortPrefix) + "_network_splitters";
+        groupLabel = QObject::tr("Network");
+    } else if (group == DefaultGroup::kTag) {
+        groupSortPrefix = 400;
+        groupKey = QString("%1").arg(groupSortPrefix) + "_tag_splitter";
+        groupLabel = QObject::tr("Tag");
+    } else {   // TODO(zhangs): gorup_other
+        qWarning() << "Invalid group:" << groupKey;
+        return;
+    }
+    Q_ASSERT(!groupKey.isEmpty());
 
-    ins->addConfig(SETTING_GROUP_LV2 ".20_tag_splitter",
-                   { { "key", "20_tag_splitter" },
-                     { "name", QObject::tr("Tag") },
-                     { "type", "sidebar-splitter" } });
-    ins->addCheckBoxConfig(SETTING_GROUP_LV2 ".21_tags",
-                           QObject::tr("Added tags"));
+    QString fullGroupKey { SETTING_GROUP_LV2 + QString(".") + groupKey };
+    QVariantMap groupMap = { { "key", groupKey },
+                             { "name", groupLabel },
+                             { "type", "sidebar-splitter" } };
+    auto ins = SettingJsonGenerator::instance();
+
+    // add group configs
+    if (!ins->hasConfig(fullGroupKey))
+        ins->addConfig(fullGroupKey, groupMap);
+
+    // add checkbox configs
+    static QMap<QString, QStringList> itemKeysMap { { DefaultGroup::kCommon, {} },
+                                                    { DefaultGroup::kDevice, {} },
+                                                    { DefaultGroup::kNetwork, {} },
+                                                    { DefaultGroup::kTag, {} } };
+    if (itemKeysMap[group].contains(key)) {
+        qDebug() << "repeat key:" << key << group;
+        return;
+    }
+    itemKeysMap[group].push_back(key);
+
+    static QMap<QString, int> levelMap { { DefaultGroup::kCommon, 0 },
+                                         { DefaultGroup::kDevice, 0 },
+                                         { DefaultGroup::kNetwork, 0 },
+                                         { DefaultGroup::kTag, 0 } };
+    Q_ASSERT(levelMap[group] < 100);
+    int itemPrefix { groupSortPrefix + (++levelMap[group]) };
+    QString fullItemKey { SETTING_GROUP_LV2 + QString(".") + QString("%1_%2").arg(itemPrefix).arg(key) };
+    if (!ins->hasConfig(fullItemKey)) {
+        ins->addCheckBoxConfig(fullItemKey, value);
+        SideBarHelper::bindSetting(fullItemKey, key);
+    }
 }
 
 void SideBarHelper::registCustomSettingItem()

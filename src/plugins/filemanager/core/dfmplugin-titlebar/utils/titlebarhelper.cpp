@@ -8,6 +8,7 @@
 #include "dialogs/diskpasswordchangingdialog.h"
 #include "views/titlebarwidget.h"
 
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
@@ -15,7 +16,6 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/finallyutil.h>
-#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
@@ -242,14 +242,7 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
 
 void TitleBarHelper::showSettingsDialog(quint64 windowId)
 {
-    auto window = FMWindowsIns.findWindowById(windowId);
-
-    if (!window) {
-        qWarning() << "Invalid window id: " << windowId;
-        return;
-    }
-
-    DialogManagerInstance->showSetingsDialog(window);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kShowSettingDialog, windowId);
 }
 
 void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
