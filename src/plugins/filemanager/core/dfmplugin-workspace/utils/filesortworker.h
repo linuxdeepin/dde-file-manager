@@ -65,7 +65,7 @@ signals:
     void requestFetchMore();
     void selectAndEditFile(const QUrl &url);
 
-    void requestSetIdel();
+    void requestSetIdel(int visiableCount, int totalCount);
     void updateRow(int row);
 
     // notify data

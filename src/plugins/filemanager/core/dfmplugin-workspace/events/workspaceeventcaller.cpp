@@ -96,3 +96,8 @@ bool WorkspaceEventCaller::sendViewItemClicked(const QVariantMap &data)
     bool ret = dpfSignalDispatcher->publish(kEventNS, "signal_View_ItemClicked", data);
     return ret;
 }
+
+void WorkspaceEventCaller::sendEnterDirReportLog(const QVariantMap &data)
+{
+    dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_Commit", QString("EnterDirectory"), data);
+}

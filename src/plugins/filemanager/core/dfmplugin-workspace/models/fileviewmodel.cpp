@@ -11,6 +11,7 @@
 #include "models/rootinfo.h"
 #include "models/fileitemdata.h"
 #include "events/workspaceeventsequence.h"
+#include "events/workspaceeventcaller.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/application/settings.h>
@@ -108,6 +109,10 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
     if (!url.isValid())
         return QModelIndex();
+
+    QVariantMap data;
+    data.insert("action", "Open");
+    WorkspaceEventCaller::sendEnterDirReportLog(data);
 
     // insert root index
     beginResetModel();
@@ -760,6 +765,18 @@ void FileViewModel::onHiddenSettingChanged(bool value)
     Q_EMIT requestShowHiddenChanged(value);
 }
 
+void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
+{
+    QVariantMap data;
+    data.insert("action", "Finish");
+    data.insert("visiable files", visiableCount);
+    data.insert("total files", totalCount);
+    WorkspaceEventCaller::sendEnterDirReportLog(data);
+
+    this->changeState(ModelState::kIdle);
+    closeCursorTimer();
+}
+
 void FileViewModel::initFilterSortWork()
 {
     discardFilterSortObjects();
@@ -796,11 +813,7 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() { canFetchFiles = true; fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() {
-        this->changeState(ModelState::kIdle);
-        closeCursorTimer();
-    },
-            Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, &FileViewModel::onWorkFinish, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeHiddenFilter, filterSortWorker.data(), &FileSortWorker::onToggleHiddenFiles, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::setFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::setNameFilters, Qt::QueuedConnection);

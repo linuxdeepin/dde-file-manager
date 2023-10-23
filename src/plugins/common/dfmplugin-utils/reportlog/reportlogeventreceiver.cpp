@@ -35,6 +35,7 @@ void ReportLogEventReceiver::bindEvents()
 
     // connect all the signal events of plugins which need report log.
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
     auto canvasEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "signal_CanvasView_ReportMenuData") };
     if (canvasEventID != DPF_NAMESPACE::EventTypeScope::kInValid)
         dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
