@@ -57,3 +57,14 @@ TEST_F(UT_FileView, paintEvent)
     EXPECT_FALSE(view.viewport() == nullptr);
     EXPECT_TRUE(flag);
 }
+
+TEST_F(UT_FileView, Bug_224471_setViewMode)
+{
+    stub.set_lamda(&FileView::initializeModel, [](){});
+
+    FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
+    view.setViewMode(DFMGLOBAL_NAMESPACE::ViewMode::kListMode);
+
+    EXPECT_EQ(view.iconSize().width(), kListViewIconSize);
+    EXPECT_EQ(view.iconSize().height(), kListViewIconSize);
+}

@@ -122,6 +122,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         setMinimumWidth(0);
         break;
     case Global::ViewMode::kListMode:
+        setIconSize(QSize(kListViewIconSize, kListViewIconSize));
         setUniformItemSizes(true);
         setResizeMode(Fixed);
         setOrientation(QListView::TopToBottom, false);
@@ -462,6 +463,7 @@ void FileView::keyPressEvent(QKeyEvent *event)
 
 void FileView::onScalingValueChanged(const int value)
 {
+    d->currentIconSizeLevel = value;
     qobject_cast<IconItemDelegate *>(itemDelegate())->setIconSizeByIconSizeLevel(value);
     setFileViewStateValue(rootUrl(), "iconSizeLevel", value);
 }
@@ -717,6 +719,7 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
     QSignalBlocker blocker(d->statusBar->scalingSlider());
     Q_UNUSED(blocker)
 
+    d->currentIconSizeLevel = sizeIndex;
     d->statusBar->scalingSlider()->setValue(sizeIndex);
     itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
 }
