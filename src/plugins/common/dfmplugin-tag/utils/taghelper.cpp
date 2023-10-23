@@ -237,6 +237,7 @@ QVariantMap TagHelper::createSidebarItemInfo(const QString &tag)
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
         { "Property_Key_VisiableControl", "tags" },
+        { "Property_Key_VisiableDisplayName", QObject::tr("Added tags") },
         { "Property_Key_ReportName", "Tag" }
     };
 

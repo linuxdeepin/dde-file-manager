@@ -486,23 +486,30 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     };
 
     static const QStringList kItemVisiableControlKeys { "builtin_disks", "loop_dev", "other_disks", "mounted_share_dirs" };
-    QString key;
+    static const QStringList kItemVisiableControlNames { QObject::tr("Built-in disks"), QObject::tr("Loop partitions"),
+                                                         QObject::tr("Mounted partitions and discs"), QObject::tr("Mounted sharing folders") };
+    QString visableKey;
+    QString visableName;
     QString reportName = "Unknown Disk";
     QString subGroup = Global::Scheme::kComputer;
     if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
-        key = kItemVisiableControlKeys[1];
+        visableKey = kItemVisiableControlKeys[1];
+        visableName = kItemVisiableControlNames[1];
     } else if (info->extraProperty(DeviceProperty::kHintSystem).toBool()) {
-        key = kItemVisiableControlKeys[0];
+        visableKey = kItemVisiableControlKeys[0];
+        visableName = kItemVisiableControlNames[0];
         reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";
     } else if (info->order() == EntryFileInfo::kOrderSmb || info->order() == EntryFileInfo::kOrderFtp) {
-        key = kItemVisiableControlKeys[3];
+        visableKey = kItemVisiableControlKeys[3];
+        visableName = kItemVisiableControlNames[3];
         reportName = "Sharing Folders";
         if (info->order() == EntryFileInfo::kOrderSmb)
             subGroup = Global::Scheme::kSmb;
         else if (info->order() == EntryFileInfo::kOrderFtp)
             subGroup = Global::Scheme::kFtp;
     } else {
-        key = kItemVisiableControlKeys[2];
+        visableKey = kItemVisiableControlKeys[2];
+        visableName = kItemVisiableControlNames[2];
     }
 
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
@@ -526,7 +533,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     };
 
     QVariantMap map {
-        { "Property_Key_Group", key == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
+        { "Property_Key_Group", visableKey == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
         { "Property_Key_SubGroup", subGroup },
         { "Property_Key_DisplayName", info->displayName() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
@@ -537,7 +544,8 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
         { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) },
-        { "Property_Key_VisiableControl", key },
+        { "Property_Key_VisiableControl", visableKey },
+        { "Property_Key_VisiableDisplayName", visableName },
         { "Property_Key_ReportName", reportName }
     };
 

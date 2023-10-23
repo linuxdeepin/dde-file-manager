@@ -13,6 +13,7 @@
 DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarItem;
+class SideBarItemSeparator;
 class SideBarModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -27,11 +28,14 @@ public:
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
     SideBarItem *itemFromIndex(const QModelIndex &index) const;
     SideBarItem *itemFromIndex(int index, const QModelIndex &parent = QModelIndex()) const;
+    QList<SideBarItemSeparator *> groupItems() const;
+    QList<SideBarItem *> subItems() const;
+    QList<SideBarItem *> subItems(const QString &groupName) const;
+
     bool insertRow(int row, SideBarItem *item);
     int appendRow(SideBarItem *item);
     bool removeRow(const QUrl &url);
     void updateRow(const QUrl &url, const ItemInfo &newInfo);
-    //    QStringList groups() const;
     QModelIndex findRowByUrl(const QUrl &url) const;
 
 private:

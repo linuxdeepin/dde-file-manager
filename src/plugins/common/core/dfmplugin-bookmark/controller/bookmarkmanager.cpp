@@ -270,7 +270,7 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
             { "Property_Key_Icon", bookmarkIcon },
             { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
             { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
-            { "Property_Key_VisiableControl", bookmarkName.toLower() },
+            { "Property_Key_VisiableControl", "hidden_me" },
             { "Property_Key_ReportName", kConfigGroupBookmark },
             { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
             { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) }

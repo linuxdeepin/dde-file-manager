@@ -110,6 +110,8 @@ void Core::onAllPluginsInitialized()
                                    CoreEventReceiver::instance(), &CoreEventReceiver::handleLoadPlugins);
     dpfSignalDispatcher->subscribe(GlobalEventType::kHeadlessStarted,
                                    CoreEventReceiver::instance(), &CoreEventReceiver::handleHeadless);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kShowSettingDialog, CoreEventReceiver::instance(),
+                                   &CoreEventReceiver::handleShowSettingDialog);
 }
 
 void Core::onAllPluginsStarted()

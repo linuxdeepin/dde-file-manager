@@ -60,12 +60,22 @@ QUrl SideBarItem::targetUrl() const
 
 void SideBarItem::setUrl(const QUrl &url)
 {
-    this->setData(QVariant::fromValue(url), kItemUrlRole);
+    setData(QVariant::fromValue(url), kItemUrlRole);
 }
 
 void SideBarItem::setGroup(const QString &group)
 {
     setData(group, Roles::kItemGroupRole);
+}
+
+bool SideBarItem::isHidden() const
+{
+    return data(Roles::kItemGroupRole).toBool();
+}
+
+void SideBarItem::setHiiden(bool hidden)
+{
+    setData(hidden, Roles::kItemHiddenRole);
 }
 
 QString SideBarItem::subGourp() const

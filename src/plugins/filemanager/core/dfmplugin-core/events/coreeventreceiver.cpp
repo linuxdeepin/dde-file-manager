@@ -6,6 +6,7 @@
 #include "utils/corehelper.h"
 
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/lifecycle/lifecycle.h>
 
@@ -73,4 +74,16 @@ void CoreEventReceiver::handleHeadless()
     Q_ASSERT(qApp->applicationName() == "dde-file-manager");
 
     CoreHelper::instance().cacheDefaultWindow();
+}
+
+void CoreEventReceiver::handleShowSettingDialog(quint64 windowId)
+{
+    auto window = FMWindowsIns.findWindowById(windowId);
+
+    if (!window) {
+        qWarning() << "Invalid window id: " << windowId;
+        return;
+    }
+
+    DialogManagerInstance->showSetingsDialog(window);
 }
