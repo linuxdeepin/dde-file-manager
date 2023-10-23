@@ -123,6 +123,7 @@ public Q_SLOTS:
     void onDConfigChanged(const QString &config, const QString &key);
     void onSetCursorWait();
     void onHiddenSettingChanged(bool value);
+    void onWorkFinish(int visiableCount, int totalCount);
 
 private:
     void initFilterSortWork();

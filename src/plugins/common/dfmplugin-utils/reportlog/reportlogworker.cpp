@@ -11,6 +11,7 @@
 #include "datas/filemenureportdata.h"
 #include "datas/appstartupreportdata.h"
 #include "datas/reportdatainterface.h"
+#include "datas/enterdirreportdata.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/private/devicehelper.h>
@@ -49,7 +50,8 @@ bool ReportLogWorker::init()
         new SearchReportData,
         new VaultReportData,
         new FileMenuReportData,
-        new AppStartupReportData
+        new AppStartupReportData,
+        new EnterDirReportData
     };
 
     std::for_each(datas.cbegin(), datas.cend(), [this](ReportDataInterface *dat) { registerLogData(dat->type(), dat); });

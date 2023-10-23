@@ -31,6 +31,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_View_HeaderViewSectionChanged)
 
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_RegisterFileView)

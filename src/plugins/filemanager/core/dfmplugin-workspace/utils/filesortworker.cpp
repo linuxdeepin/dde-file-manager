@@ -195,7 +195,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
     if (this->childrenUrlList.isEmpty()) {
         handleIteratorLocalChildren(key, children, sortRole, sortOrder, isMixDirAndFile);
         if (isFinished) {
-            Q_EMIT requestSetIdel();
+            Q_EMIT requestSetIdel(visibleChildren.count(), childrenUrlList.count());
         } else {
             Q_EMIT getSourceData(currentKey);
         }
@@ -229,7 +229,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
         Q_EMIT insertFinish();
 
         if (isFinished) {
-            Q_EMIT requestSetIdel();
+            Q_EMIT requestSetIdel(visibleChildren.count(), childrenUrlList.count());
         } else {
             Q_EMIT getSourceData(currentKey);
         }
@@ -259,7 +259,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
         Q_EMIT insertFinish();
 
     if (isFinished) {
-        Q_EMIT requestSetIdel();
+        Q_EMIT requestSetIdel(visibleChildren.count(), childrenUrlList.count());
     } else {
         Q_EMIT getSourceData(currentKey);
     }
@@ -460,7 +460,7 @@ void FileSortWorker::handleTraversalFinish(const QString &key)
     if (currentKey != key)
         return;
 
-    Q_EMIT requestSetIdel();
+    Q_EMIT requestSetIdel(visibleChildren.count(), childrenUrlList.count());
 
     setNameFilters(nameFilters);
 }
