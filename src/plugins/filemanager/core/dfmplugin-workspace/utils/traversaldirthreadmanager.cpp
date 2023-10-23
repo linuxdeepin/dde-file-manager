@@ -89,8 +89,10 @@ void TraversalDirThreadManager::onAsyncIteratorOver()
 
 void TraversalDirThreadManager::run()
 {
-    if (dirIterator.isNull())
+    if (dirIterator.isNull()) {
+        emit traversalFinished(traversalToken);
         return;
+    }
 
     QElapsedTimer timer;
     timer.start();
