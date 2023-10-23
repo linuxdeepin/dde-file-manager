@@ -261,17 +261,15 @@ bool AdvanceSearchBarPrivate::contains(const QUrl &url)
 
 void AdvanceSearchBarPrivate::saveOptions(QMap<int, QVariant> &options)
 {
+    auto winId = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(winId);
+    Q_ASSERT(window);
+
+    const auto &url = window->currentUrl();
+    if (!url.isValid())
+        return;
+
     if (!currentSearchUrl.isValid() || !SearchHelper::isSearchFile(currentSearchUrl)) {
-
-        auto winId = FMWindowsIns.findWindowId(this);
-        auto window = FMWindowsIns.findWindowById(winId);
-        Q_ASSERT(window);
-
-        const auto &url = window->currentUrl();
-        if (!url.isValid())
-            return;
-
-        currentSearchUrl = url;
         if (!SearchHelper::isSearchFile(url)) {
             const auto &searchUrl = SearchHelper::fromSearchFile(url, "", QString::number(winId));
             options[AdvanceSearchBarPrivate::kCurrentUrl] = searchUrl;
@@ -279,6 +277,7 @@ void AdvanceSearchBarPrivate::saveOptions(QMap<int, QVariant> &options)
         }
     }
 
+    currentSearchUrl = url;
     options[AdvanceSearchBarPrivate::kCurrentUrl] = currentSearchUrl;
     filterInfoCache[currentSearchUrl] = options;
 }
