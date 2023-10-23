@@ -32,7 +32,6 @@ public slots:
     void removeComputerVaultItem();
     void onComputerRefresh();
     void addVaultComputerMenu();
-    void addSettingPaneItem();
 
 public:
     static VaultVisibleManager *instance();

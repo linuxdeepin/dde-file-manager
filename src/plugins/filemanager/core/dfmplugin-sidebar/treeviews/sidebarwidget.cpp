@@ -67,6 +67,22 @@ void SideBarWidget::changeEvent(QEvent *event)
     return QWidget::changeEvent(event);
 }
 
+void SideBarWidget::initSettingPanel()
+{
+    // travel model and add group settings to panel
+    const auto &groups { SideBarInfoCacheMananger::instance()->groups() };
+    std::for_each(groups.begin(), groups.end(), [](const QString &group) {
+        auto items { kSidebarModelIns->subItems(group) };
+        for (auto item : items) {
+            const QString &key { item->itemInfo().visiableControlKey };
+            const QString &name { item->itemInfo().visiableDisplayName };
+            Q_ASSERT(!key.isEmpty() && !name.isEmpty());
+            qDebug("Add sidebar setting, key: %s, value: %s", qPrintable(key), qPrintable(name));
+            SideBarHelper::initDetailSettingPannel(group, key, name);
+        }
+    });
+}
+
 QAbstractItemView *SideBarWidget::view()
 {
     return sidebarView;
@@ -75,13 +91,10 @@ QAbstractItemView *SideBarWidget::view()
 int SideBarWidget::addItem(SideBarItem *item)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    // TODO(zhangs): custom group
-    int r { kSidebarModelIns->appendRow(item) };
-    bool hideAddedItem = r >= 0 && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url());
-    if (!SideBarHelper::hiddenRules().value(item->itemInfo().visiableControlKey, true).toBool())
-        hideAddedItem = true;
 
-    if (hideAddedItem)
+    int r { kSidebarModelIns->appendRow(item) };
+    bool hidden { !SideBarHelper::hiddenRules().value(item->itemInfo().visiableControlKey, true).toBool() };
+    if (r >= 0 && hidden)
         setItemVisiable(item->url(), false);
 
     return r;
@@ -92,11 +105,9 @@ bool SideBarWidget::insertItem(const int index, SideBarItem *item)
     Q_ASSERT(qApp->thread() == QThread::currentThread());
 
     bool r { kSidebarModelIns->insertRow(index, item) };
-    bool hideInsertedItem = r && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url());
-    if (!SideBarHelper::hiddenRules().value(item->itemInfo().visiableControlKey, true).toBool())
-        hideInsertedItem = true;
+    bool hidden { !SideBarHelper::hiddenRules().value(item->itemInfo().visiableControlKey, true).toBool() };
 
-    if (hideInsertedItem)
+    if (r && hidden)
         setItemVisiable(item->url(), false);
 
     return r;
@@ -164,8 +175,9 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
         qInfo() << "index is invalid";
         return;
     }
-    QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+    SideBarItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
     if (item && item->parent()) {
+        //  item->setHiiden(visible);
         sidebarView->setRowHidden(item->row(), item->parent()->index(), !visible);
     }
 
@@ -175,7 +187,7 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
 void SideBarWidget::updateItemVisiable(const QVariantMap &states)
 {
     for (auto iter = states.cbegin(); iter != states.cend(); ++iter) {
-        auto urls = SideBarInfoCacheMananger::instance()->findItems(iter.key());
+        auto urls = findItemUrlsByVisibleControlKey(iter.key());
         bool visiable = iter.value().toBool();
         std::for_each(urls.cbegin(), urls.cend(), [visiable, this](const QUrl &url) { setItemVisiable(url, visiable); });
     }
@@ -183,21 +195,26 @@ void SideBarWidget::updateItemVisiable(const QVariantMap &states)
     sidebarView->updateSeparatorVisibleState();
 }
 
-QList<QUrl> SideBarWidget::findItems(const QString &group) const
+QList<QUrl> SideBarWidget::findItemUrlsByGroupName(const QString &group) const
+{
+    Q_ASSERT(kSidebarModelIns);
+    QList<QUrl> ret;
+    QList<SideBarItem *> items { kSidebarModelIns->subItems(group) };
+    std::for_each(items.begin(), items.end(), [&ret](SideBarItem *item) {
+        if (!item)
+            return;
+        ret.append(item->url());
+    });
+
+    return ret;
+}
+
+QList<QUrl> SideBarWidget::findItemUrlsByVisibleControlKey(const QString &key) const
 {
     QList<QUrl> ret;
-    for (int r = 0; r < kSidebarModelIns->rowCount(); r++) {
-        auto item = kSidebarModelIns->itemFromIndex(kSidebarModelIns->index(r, 0));
-        if (!(item && item->group() == group))
-            continue;
-        for (int i = 0; i < item->rowCount(); i++) {
-            QStandardItem *subItem = item->child(i);
-            if (!subItem)
-                continue;
-            auto u = subItem->index().data(SideBarItem::kItemUrlRole).toUrl();
-            if (u.isValid())
-                ret << u;
-        }
+    for (const SideBarItem *item : kSidebarModelIns->subItems()) {
+        if (item->itemInfo().visiableControlKey == key)
+            ret.append(item->url());
     }
 
     return ret;
@@ -310,7 +327,6 @@ void SideBarWidget::initDefaultModel()
 {
     currentGroups << DefaultGroup::kCommon
                   << DefaultGroup::kDevice
-                  << DefaultGroup::kBookmark
                   << DefaultGroup::kNetwork
                   << DefaultGroup::kTag
                   << DefaultGroup::kOther
@@ -320,7 +336,6 @@ void SideBarWidget::initDefaultModel()
     groupDisplayName.insert(DefaultGroup::kDevice, tr("Partitions"));
     groupDisplayName.insert(DefaultGroup::kNetwork, tr("Network"));
     groupDisplayName.insert(DefaultGroup::kTag, tr("Tag"));
-    groupDisplayName.insert(DefaultGroup::kBookmark, tr("Bookmark"));
     groupDisplayName.insert(DefaultGroup::kOther, tr("Other"));
     groupDisplayName.insert(DefaultGroup::kNotExistedGroup, tr("Unknown Group"));
 
@@ -331,31 +346,6 @@ void SideBarWidget::initDefaultModel()
         addItem(item);
     }
 
-    // use cache info to create items of groups.
-    auto allGroup = SideBarInfoCacheMananger::instance()->groups();
-    std::for_each(allGroup.cbegin(), allGroup.cend(), [this](const QString &name) {
-        auto list = SideBarInfoCacheMananger::instance()->indexCacheMap(name);
-        for (auto &&info : list) {
-            SideBarItem *item = SideBarHelper::createItemByInfo(info);
-            addItem(item);
-        }
-    });
-
-    // The following code is moved to bookmark plugin.
-    /*
-     //create defualt items
-        static std::once_flag flag;
-        std::call_once(flag, [this]() {
-            static const QStringList names { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
-
-            for (const QString &name : names) {
-                SideBarItem *item = SideBarHelper::createDefaultItem(name, DefaultGroup::kCommon);
-                addItem(item);
-                SideBarInfoCacheMananger::instance()->addItemInfoCache(item->itemInfo());
-            }
-        });
-    */
-    // init done, then we should update the separator visible state.
     sidebarView->updateSeparatorVisibleState();
 }
 
