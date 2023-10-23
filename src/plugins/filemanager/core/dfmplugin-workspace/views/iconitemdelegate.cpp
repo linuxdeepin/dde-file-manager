@@ -403,11 +403,13 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     QColor backgroundColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
 
     QColor baseColor = backgroundColor;
+    bool isUpshow = false;
     if (option.widget) {
         baseColor = option.widget->palette().base().color();
         DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
         if (ct == DGuiApplicationHelper::DarkType) {
             baseColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, +5, 0, 0, 0, 0);
+            isUpshow = true;
         }
     }
 
@@ -415,7 +417,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
         backgroundColor.setAlpha(backgroundColor.alpha() + 30);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
-        if (ct == DGuiApplicationHelper::DarkType) {
+        if (ct == DGuiApplicationHelper::DarkType && !isUpshow) {
             baseColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, +5, 0, 0, 0, 0);
             backgroundColor = baseColor;
         } else {
