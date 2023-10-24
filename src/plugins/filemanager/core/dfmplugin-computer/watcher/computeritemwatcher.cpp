@@ -694,6 +694,9 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
                 removeDevice(url);
             else
                 addDevice(diskGroup(), url, ComputerItemData::kLargeItem, true);
+        } else if ((propertyName == DeviceProperty::kHasPartitionTable) && var.variant().toBool()) {// when new node added the PartitionTable should be triggered, remove the node.bug 224925
+            qDebug() << DeviceProperty::kHasPartitionTable << " changed for: " << url;   // log for bug:#224925
+            removeDevice(url);
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             // when these properties changed, reload the cache.
@@ -702,6 +705,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
                                              DeviceProperty::kCleartextDevice };
             if (queryInfoOnChanged.contains(propertyName))
                 onUpdateBlockItem(id);
+
             Q_EMIT itemPropertyChanged(devUrl, propertyName, var.variant());
         }
 

@@ -273,7 +273,7 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     }
 
     pos = findItem(data.url);
-    qInfo() << "devUrl = " << data.url << ",pos = " << pos;   // log for bug:#182939
+    qInfo() << "item added: devUrl = " << data.url << ",pos = " << pos;   // log for bug:#182939
     if (pos > 0) {   // update the item
         onItemUpdated(data.url);
     } else {
@@ -314,6 +314,8 @@ void ComputerModel::onItemRemoved(const QUrl &url)
 {
     int pos = findItem(url);
     if (pos > 0) {
+        qInfo() << "item removed: " << url << ",pos = " << pos;   // log for bug:#224925
+
         if (view->selectedUrlList().contains(url))
             //        view->clearSelection(); // NOTE: this do not work, might be a bug in QT
             view->setCurrentIndex(QModelIndex());   // NOTE: and this works good.
