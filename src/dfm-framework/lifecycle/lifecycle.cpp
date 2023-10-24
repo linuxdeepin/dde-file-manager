@@ -159,5 +159,10 @@ bool isAllPluginsStarted()
     return pluginManager->isAllPluginsStarted();
 }
 
+void setLazyloadFilter(std::function<bool(const QString &)> filter)
+{
+    pluginManager->setLazyloadFilter(filter);
+}
+
 }   // namespace LifeCycle
 DPF_END_NAMESPACE
