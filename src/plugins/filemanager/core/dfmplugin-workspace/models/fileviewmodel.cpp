@@ -174,7 +174,7 @@ void FileViewModel::doExpand(const QModelIndex &index)
 
     FileItemDataPointer item = filterSortWorker->childData(index.row());
     if (item)
-        item->setExpandabled(true);
+        item->setExpanded(true);
 }
 
 void FileViewModel::doCollapse(const QModelIndex &index)
@@ -186,9 +186,10 @@ void FileViewModel::doCollapse(const QModelIndex &index)
     Q_EMIT requestCollapseItem(currentKey, collapseUrl);
 
     FileItemDataPointer item = filterSortWorker->childData(index.row());
-    if (item && item->data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
-        item->setExpandabled(false);
+    if (item && item->data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
+        item->setExpanded(false);
         FileDataManager::instance()->cleanRoot(collapseUrl, currentKey);
+        Q_EMIT dataChanged(index, index);
     }
 }
 
