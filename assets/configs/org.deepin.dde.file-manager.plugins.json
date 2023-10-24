@@ -13,6 +13,17 @@
             "permissions": "readwrite",
             "visibility": "public"
         },
+        "filemanager.disablelist": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "dde-file-manager plugin disablelist",
+            "name[zh_CN]": "文件管理器插件启停列表",
+            "description[zh_CN]": "文件管理器插件启停列表，列表中的插件将无法被启用，它的优先级低于黑名单",
+            "description": "The dde-file-manager plugin start and stop list, the plugin in the list will not be enabled, it is lower priority than the black list",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
         "desktop.blackList": {
             "value": [],
             "serial": 0,
