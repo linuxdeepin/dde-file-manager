@@ -1,0 +1,46 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef DFM_PLUGIN_DEFINES_H
+#define DFM_PLUGIN_DEFINES_H
+
+#include <dfm-base/dfm_base_global.h>
+
+#include <QStringList>
+
+DFMBASE_BEGIN_NAMESPACE
+
+namespace Plugins {
+namespace Core {
+inline constexpr std::initializer_list<const char *> kCommon {
+    "dfmplugin-bookmark", "dfmplugin-fileoperations", "dfmplugin-menu",
+    "dfmplugin-propertydialog", "dfmplugin-trashcore", "dfmplugin-utils"
+};
+inline constexpr std::initializer_list<const char *> kCommonVirtual {
+    "dfmplugin-appendcompress", "dfmplugin-bluetooth", "dfmplugin-extensionimpl",
+    "dfmplugin-global", "dfmplugin-openwith", "dfmplugin-reportlog",
+    "dfmplugin-testing", "dfmplugin-vaultassist"
+};
+inline constexpr std::initializer_list<const char *> kFileManager {
+    "dfmplugin-core", "dfmplugin-optical", "dfmplugin-computer",
+    "dfmplugin-detailspace", "dfmplugin-sidebar", "dfmplugin-titlebar",
+    "dfmplugin-workspace", "dfmplugin-smbbrowser"
+};
+}   // namespace Core
+
+namespace Utils {
+inline QStringList filemanagerCorePlugins()
+{
+    QStringList result;
+    std::copy(Plugins::Core::kCommon.begin(), Plugins::Core::kCommon.end(), std::back_inserter(result));
+    std::copy(Plugins::Core::kCommonVirtual.begin(), Plugins::Core::kCommonVirtual.end(), std::back_inserter(result));
+    std::copy(Plugins::Core::kFileManager.begin(), Plugins::Core::kFileManager.end(), std::back_inserter(result));
+    return result;
+}
+}   // namespace Utils
+}   // namespace Plugins
+
+DFMBASE_END_NAMESPACE
+
+#endif   // DFM_PLUGIN_DEFINES_H

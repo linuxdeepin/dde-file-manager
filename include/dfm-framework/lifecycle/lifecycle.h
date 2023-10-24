@@ -13,6 +13,8 @@
 #include <QString>
 #include <QObject>
 
+#include <functional>
+
 DPF_BEGIN_NAMESPACE
 
 namespace LifeCycle {
@@ -36,6 +38,8 @@ void shutdownPlugins();
 
 bool loadPlugin(PluginMetaObjectPointer &pointer);
 void shutdownPlugin(PluginMetaObjectPointer &pointer);
+
+void setLazyloadFilter(std::function<bool(const QString &)> filter);
 }   // namepsace LifeCycle
 
 DPF_END_NAMESPACE

@@ -85,13 +85,21 @@ bool PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
 bool PluginManagerPrivate::readPlugins()
 {
     scanfAllPlugin(&readQueue, pluginLoadPaths, pluginLoadIIDs, blackPlguinNames);
-    qInfo() << "Lazy load plugin names: " << lazyLoadPluginsNames;
     std::for_each(readQueue.begin(), readQueue.end(), [this](PluginMetaObjectPointer obj) {
         readJsonToMeta(obj);
-        if (!lazyLoadPluginsNames.contains(obj->name()))
-            pluginsToLoad.append(obj);
-        else
-            qInfo() << "Skip load(lazy load): " << obj->name();
+        const QString &pluginName { obj->name() };
+        if (lazyLoadPluginsNames.contains(pluginName)) {
+            qDebug() << "Skip load(lazy load): " << pluginName;
+            return;
+        }
+
+        if (lazypluginFilter && lazypluginFilter(pluginName)) {
+            lazyLoadPluginsNames.append(pluginName);
+            qDebug() << "Skip load(lazy load by filter): " << pluginName;
+            return;
+        }
+
+        pluginsToLoad.append(obj);
     });
 
 #ifdef QT_DEBUG

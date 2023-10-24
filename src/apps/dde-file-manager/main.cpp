@@ -8,6 +8,7 @@
 
 #include "tools/upgrade/builtininterface.h"
 
+#include <dfm-base/dfm_plugin_defines.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
@@ -82,6 +83,17 @@ static void setEnvForRoot()
     }
 }
 
+static bool lazyLoadFilter(const QString &name)
+{
+    static const auto &kAllNames {
+        DFMBASE_NAMESPACE::Plugins::Utils::filemanagerCorePlugins()
+    };
+
+    if (!kAllNames.contains(name))
+        return true;
+    return false;
+}
+
 static bool pluginsLoad()
 {
     QString msg;
@@ -104,11 +116,6 @@ static bool pluginsLoad()
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
 
-    static const QStringList kLazyLoadPluginNames { "dfmplugin-emblem", "dfmplugin-burn", "dfmplugin-dirshare",
-                                                    "dfmplugin-tag", "dfmplugin-avfsbrowser", "dfmplugin-myshares",
-                                                    /*"dfmplugin-smbbrowser",*/ "dfmplugin-recent", "dfmplugin-search",
-                                                    "dfmplugin-vault", "dfmplugin-filepreview", "dfmplugin-trash", "dfmplugin-phone" };
-
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.blackList").toStringList() };
 
 #ifndef ENABLE_SMB_IN_ADMIN
@@ -122,16 +129,17 @@ static bool pluginsLoad()
     if (SysInfoUtils::isOpenAsAdmin() && !blackNames.contains("dfmplugin-smbbrowser"))
         blackNames << "dfmplugin-smbbrowser";
 #endif
+    DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames);
 
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
     if (enableHeadless && CommandParser::instance().isSet("d"))
-        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames);
+        qDebug() << "hot launch";
     else
-        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames, kLazyLoadPluginNames);
+        DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
-    qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qInfo() << "Load plugin paths: " << DPF_NAMESPACE::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
     if (!DPF_NAMESPACE::LifeCycle::readPlugins())

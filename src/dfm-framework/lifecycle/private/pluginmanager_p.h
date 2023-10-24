@@ -40,6 +40,7 @@ class PluginManagerPrivate : public QSharedData
     QQueue<PluginMetaObjectPointer> loadQueue;
     bool allPluginsInitialized { false };
     bool allPluginsStarted { false };
+    std::function<bool(const QString &)> lazypluginFilter;
 
 public:
     explicit PluginManagerPrivate(PluginManager *qq);
