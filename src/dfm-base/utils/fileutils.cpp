@@ -676,26 +676,25 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
 
-        int number = 1;
+        int number = 0;
 
         forever {
             if (info->isAttributes(OptInfoType::kIsFile)) {
                 if (info->nameOf(NameInfoType::kSuffix).isEmpty()) {
-                    if (number == 1) {
-
+                    if (number == 0) {
                         linkBaseName = QString("%1 %2").arg(baseName, shortcut);
                     } else {
                         linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
                     }
                 } else {
-                    if (number == 1) {
+                    if (number == 0) {
                         linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, info->nameOf(NameInfoType::kSuffix));
                     } else {
                         linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info->nameOf(NameInfoType::kSuffix));
                     }
                 }
             } else if (info->isAttributes(OptInfoType::kIsDir)) {
-                if (number == 1) {
+                if (number == 0) {
                     linkBaseName = QString("%1 %2").arg(baseName, shortcut);
                 } else {
                     linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
