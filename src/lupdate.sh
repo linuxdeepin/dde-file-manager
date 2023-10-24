@@ -6,3 +6,7 @@
 
 lupdate ./ -ts -no-obsolete ../translations/dde-file-manager.ts
 lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_zh_CN.ts
+lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_zh_TW.ts
+lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_zh_HK.ts
+lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_ug.ts
+lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_bo.ts
