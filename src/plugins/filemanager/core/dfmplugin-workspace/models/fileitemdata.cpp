@@ -211,8 +211,8 @@ QVariant FileItemData::data(int role) const
         return isAvailable;
     case kItemTreeViewDepthRole:
         return QVariant(depth);
-    case kItemTreeViewExpandabledRole:
-        return QVariant(expandabled);
+    case kItemTreeViewExpandedRole:
+        return QVariant(expanded);
     case kItemTreeViewCanExpandRole:
         return isDir();
     default:
@@ -225,9 +225,9 @@ void FileItemData::setAvailableState(bool b)
     isAvailable = b;
 }
 
-void FileItemData::setExpandabled(bool b)
+void FileItemData::setExpanded(bool b)
 {
-    expandabled = b;
+    expanded = b;
 }
 
 void FileItemData::setDepth(const int8_t depth)
