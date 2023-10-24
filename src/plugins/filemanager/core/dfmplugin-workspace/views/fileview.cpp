@@ -11,6 +11,8 @@
 #include "baseitemdelegate.h"
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
+#include "listitempaintproxy.h"
+#include "treeitempaintproxy.h"
 #include "fileviewstatusbar.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
@@ -120,10 +122,21 @@ void FileView::setViewMode(Global::ViewMode mode)
 #endif
         d->initIconModeView();
         setMinimumWidth(0);
+        model()->setTreeView(false);
         break;
     case Global::ViewMode::kListMode:
         setIconSize(QSize(kListViewIconSize, kListViewIconSize));
         viewport()->setContentsMargins(0,0,0,0);
+        if (d->itemsExpandable/*Application::instance()->appAttribute(Application::kListItemExpandable).toBool()*/) {
+            auto proxy = new TreeItemPaintProxy(this);
+            proxy->setStyleProxy(style());
+            d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(proxy);
+            model()->setTreeView(true);
+        } else {
+            d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(new ListItemPaintProxy(this));
+            model()->setTreeView(false);
+        }
+
         setUniformItemSizes(true);
         setResizeMode(Fixed);
         setOrientation(QListView::TopToBottom, false);
@@ -707,6 +720,82 @@ bool FileView::indexInRect(const QRect &actualRect, const QModelIndex &index)
     return false;
 }
 
+QList<QUrl> FileView::selectedTreeViewUrlList() const
+{
+    if (isIconViewMode() || !d->itemsExpandable)
+        return selectedUrlList();
+
+    QModelIndex rootIndex = this->rootIndex();
+    QList<QUrl> list;
+
+    QModelIndex expandIndex;
+    auto selectIndex = selectedIndexes();
+    if (selectIndex.count() < 1)
+        return list;
+    if (selectIndex.count() >= 2)
+        std::sort(selectIndex.begin(), selectIndex.end(),
+              [](const QModelIndex &left, const  QModelIndex &right){
+            return left.row() < right.row();
+        });
+    for (const QModelIndex &index : selectIndex) {
+        bool expandIsParent = expandIndex.isValid() ?
+                    index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() >
+                        expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() : false;
+        if (index.parent() != rootIndex ||
+                (expandIndex.isValid() && expandIsParent))
+            continue;
+        if (!expandIndex.isValid() || !expandIsParent) {
+            list << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
+            if (index.data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
+                expandIndex = index;
+            } else if (expandIndex.isValid()) {
+                expandIndex = QModelIndex();
+            }
+        }
+    }
+
+    return list;
+}
+
+void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const
+{
+    selectedUrls.clear();
+    treeSelectedUrls.clear();
+    if (isIconViewMode() || !d->itemsExpandable)
+        return selectedUrls.append(selectedUrlList());
+
+    QModelIndex rootIndex = this->rootIndex();
+
+    QModelIndex expandIndex;
+    auto selectIndex = selectedIndexes();
+    if (selectIndex.count() < 1)
+        return;
+    if (selectIndex.count() >= 2)
+        std::sort(selectIndex.begin(), selectIndex.end(),
+              [](const QModelIndex &left, const  QModelIndex &right){
+            return left.row() < right.row();
+        });
+    for (const QModelIndex &index : selectIndex) {
+        selectedUrls.append(index.data(Global::ItemRoles::kItemUrlRole).toUrl());
+        bool expandIsParent = expandIndex.isValid() ?
+                    index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() >
+                        expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() : false;
+        if (index.parent() != rootIndex ||
+                (expandIndex.isValid() && expandIsParent))
+            continue;
+        if (!expandIndex.isValid() || !expandIsParent) {
+            treeSelectedUrls << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
+            if (index.data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
+                expandIndex = index;
+            } else if (expandIndex.isValid()) {
+                expandIndex = QModelIndex();
+            }
+        }
+    }
+
+    return;
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     if (!url.isValid())
@@ -899,6 +988,28 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     return QModelIndex();
 }
 
+bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
+{
+    QRect arrowRect = itemDelegate()->getRectOfItem(RectOfItemType::kItemTreeArrowRect, index);
+
+    if (!arrowRect.contains(pos))
+        return false;
+
+    // get expand state
+    bool expanded = model()->data(index, kItemTreeViewExpandabledRole).toBool();
+    if (expanded) {
+        // do collapse
+        qInfo() << "do collapse item, index = " << index;
+        model()->doCollapse(index);
+    } else {
+        // do expanded
+        qInfo() << "do expanded item, index = " << index;
+        model()->doExpand(index);
+    }
+
+    return true;
+}
+
 DirOpenMode FileView::currentDirOpenMode() const
 {
     DirOpenMode mode;
@@ -918,6 +1029,16 @@ DirOpenMode FileView::currentDirOpenMode() const
 void FileView::onWidgetUpdate()
 {
     this->update();
+}
+
+void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
+{
+    if (aa == Application::kListItemExpandable) {
+        d->itemsExpandable = value.toBool();
+
+        // todo: try to repaint the list
+        setViewMode(d->currentViewMode);
+    }
 }
 
 void FileView::onRowCountChanged()
@@ -1008,10 +1129,18 @@ void FileView::mousePressEvent(QMouseEvent *event)
             setCurrentIndex(QModelIndex());
 
         QModelIndex index = indexAt(event->pos());
-        d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
 
         if (itemDelegate())
             itemDelegate()->commitDataAndCloseActiveEditor();
+
+        if (d->currentViewMode == Global::ViewMode::kListMode && d->itemsExpandable) {
+            if (index.data(kItemTreeViewCanExpandRole).toBool() && expandOrCollapseItem(index, event->pos())) {
+                d->lastMousePressedIndex = QModelIndex();
+                return;
+            }
+        }
+
+        d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
 
         if (isEmptyArea) {
             if (selectionMode() != QAbstractItemView::SingleSelection)
@@ -1244,6 +1373,18 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         dfmmimeData.setUrls(data->urls());
         data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey, dfmmimeData.toByteArray());
         data->setUrls(transformedUrls);
+        // treeview set treeview select url
+        if (isListViewMode() && d->itemsExpandable) {
+            auto treeSelectedUrl = selectedTreeViewUrlList();
+            transformedUrls.clear();
+            UniversalUtils::urlsTransformToLocal(treeSelectedUrl, &transformedUrls);
+            QByteArray ba;
+            for (const auto &url : transformedUrls) {
+                ba.append(url.toString() + "\n");
+            }
+            data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey, ba);
+        }
+
 
         QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(currentViewMode(), indexes);
         QDrag *drag = new QDrag(this);
@@ -1591,6 +1732,8 @@ void FileView::initializeDelegate()
     d->fileViewHelper = new FileViewHelper(this);
     setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(d->fileViewHelper));
     setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
+
+    d->itemsExpandable = Application::instance()->appAttribute(Application::kListItemExpandable).toBool();
 }
 
 void FileView::initializeStatusBar()
@@ -1626,6 +1769,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
     connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
+    connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {

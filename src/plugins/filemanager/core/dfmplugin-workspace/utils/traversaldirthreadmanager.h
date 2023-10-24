@@ -48,9 +48,9 @@ public Q_SLOTS:
     void onAsyncIteratorOver();
 
 Q_SIGNALS:
-    void updateChildrenManager(QList<FileInfoPointer> children, QString traversalToken);
+    void updateChildrenManager(const QList<FileInfoPointer> children, QString traversalToken);
     // Special processing If it is a local file, directly read all the simple sorting lists of the file
-    void updateLocalChildren(QList<SortInfoPointer> children,
+    void updateLocalChildren(const QList<SortInfoPointer> children,
                              dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                              Qt::SortOrder sortOrder,
                              bool isMixDirAndFile, QString traversalToken);

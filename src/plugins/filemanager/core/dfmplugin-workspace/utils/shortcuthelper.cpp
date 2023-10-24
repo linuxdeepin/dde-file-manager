@@ -258,7 +258,7 @@ void ShortcutHelper::undoFiles()
 
 void ShortcutHelper::deleteFiles()
 {
-    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    const QList<QUrl> &selectUrls = view->selectedTreeViewUrlList();
     if (selectUrls.isEmpty())
         return;
     auto windowId = WorkspaceHelper::instance()->windowId(view);
@@ -274,7 +274,7 @@ void ShortcutHelper::deleteFiles()
 
 void ShortcutHelper::moveToTrash()
 {
-    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    const QList<QUrl> &selectUrls = view->selectedTreeViewUrlList();
     if (selectUrls.isEmpty())
         return;
     auto windowId = WorkspaceHelper::instance()->windowId(view);

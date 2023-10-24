@@ -9,6 +9,8 @@
 #include <QElapsedTimer>
 #include <QDebug>
 
+typedef QList<QSharedPointer<DFMBASE_NAMESPACE::SortFileInfo>>& SortInfoList;
+
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
 USING_IO_NAMESPACE

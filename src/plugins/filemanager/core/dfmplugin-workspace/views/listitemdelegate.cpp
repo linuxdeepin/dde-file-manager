@@ -7,6 +7,7 @@
 #include "listitemdelegate.h"
 #include "fileview.h"
 #include "listitemeditor.h"
+#include "abstractitempaintproxy.h"
 #include "models/fileviewmodel.h"
 #include <dfm-base/dfm_base_global.h>
 #include "utils/itemdelegatehelper.h"
@@ -59,7 +60,7 @@ void ListItemDelegate::paint(QPainter *painter,
 {
     QStyleOptionViewItem opt = option;
 
-    parent()->fileInfo(index);
+    auto info = parent()->fileInfo(index);
     initStyleOption(&opt, index);
     painter->setFont(opt.font);
 
@@ -131,18 +132,14 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
 void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(index)
-
-    const QSize &iconSize = parent()->parent()->iconSize();
-    int columnX = 0;
-
     const QRect &optRect = option.rect + QMargins(-kListModeLeftMargin - kListModeLeftPadding, 0, -kListModeRightMargin - kListModeRightMargin, 0);
-    QRect iconRect = optRect;
-    iconRect.setSize(iconSize);
+    QRect iconRect = getRectOfItem(RectOfItemType::kItemIconRect, index);
 
     const QList<ItemRoles> &columnRoleList = parent()->parent()->model()->getColumnRoles();
     if (columnRoleList.isEmpty())
         return;
+
+    int columnX = 0;
     QRect rect = optRect;
     for (int i = 0; i < columnRoleList.length(); ++i) {
         int rol = columnRoleList.at(i);
@@ -261,15 +258,19 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     const QList<ItemRoles> &columnRoleList = parent()->parent()->model()->getColumnRoles();
     int columnX = 0;
 
+    QStyleOptionViewItem opt = option;
     /// draw icon
-    const QRect &optRect = option.rect + QMargins(-kListModeLeftMargin - kLeftPadding, 0, -kListModeRightMargin - kRightPadding, 0);
+    const QRect &optRect = opt.rect + QMargins(-kListModeLeftMargin - kLeftPadding, 0, -kListModeRightMargin - kRightPadding, 0);
+    opt.rect = optRect;
 
-    QRect iconRect = optRect;
-    iconRect.setSize(parent()->parent()->iconSize());
+    geomertys.append(d->paintProxy->allPaintRect(opt, index));
 
-    geomertys << iconRect;
+//    QRect iconRect = optRect;
+//    iconRect.setSize(parent()->parent()->iconSize());
 
-    columnX = iconRect.right() + GlobalPrivate::kIconSpacing;
+//    geomertys << iconRect;
+
+    columnX = geomertys.first().right() + GlobalPrivate::kIconSpacing;
 
     QRect rect = optRect;
     rect.setLeft(columnX);
@@ -335,6 +336,11 @@ QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
     iconRect.setSize(parent()->parent()->iconSize());
 
     return iconRect;
+}
+
+QRect ListItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index) const
+{
+    return d->paintProxy->rectByType(type, index).toRect();
 }
 
 /*!
@@ -408,24 +414,12 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
  **/
 QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (!parent() || !parent()->parent())
+    if (!parent() || !parent()->parent() || !d->paintProxy)
         return QRect();
 
-    bool isEnabled = option.state & QStyle::State_Enabled;
-    QStyleOptionViewItem opt = option;
-
-    opt.rect += QMargins(-kListModeLeftMargin, 0, -kListModeRightMargin, 0);
-
-    opt.rect.setLeft(opt.rect.left() + kListModeLeftPadding);
-    opt.rect.setRight(opt.rect.right() - kListModeRightPadding);
-
     // draw icon
-    QRectF iconRect = opt.rect;
-    iconRect.setSize(parent()->parent()->iconSize());
-    iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
-
-    ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
-
+    QRectF iconRect = option.rect;
+    d->paintProxy->drawIcon(painter, &iconRect, option, index);
     paintEmblems(painter, iconRect, index);
 
     return iconRect;

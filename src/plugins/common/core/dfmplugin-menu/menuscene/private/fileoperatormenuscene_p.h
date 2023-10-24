@@ -18,6 +18,7 @@ class FileOperatorMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     friend class FileOperatorMenuScene;
     explicit FileOperatorMenuScenePrivate(FileOperatorMenuScene *qq);
+    QList<QUrl> treeSelectedUrls;
 };
 
 }

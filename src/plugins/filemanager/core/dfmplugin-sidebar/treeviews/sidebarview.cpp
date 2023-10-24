@@ -253,6 +253,19 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
     d->updateDFMMimeData(event);
     if (event->source() != this) {
         d->urlsForDragEvent = d->dfmMimeData.isValid() ? d->dfmMimeData.urls() : event->mimeData()->urls();
+        // treeveiew drop urls
+        if (event->mimeData()->formats().contains(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey)) {
+            auto treeUrlsStr = QString(event->mimeData()->data(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey));
+            auto treeUrlss = treeUrlsStr.split("\n");
+            QList<QUrl> treeSelectUrl;
+            for (const auto &url : treeUrlss) {
+                if (url.isEmpty())
+                    continue;
+                treeSelectUrl.append(QUrl(url));
+            }
+            if (!treeUrlss.isEmpty())
+                d->urlsForDragEvent = treeSelectUrl;
+        }
         if (!d->canEnter(event)) {
             event->setDropAction(Qt::IgnoreAction);
             event->ignore();

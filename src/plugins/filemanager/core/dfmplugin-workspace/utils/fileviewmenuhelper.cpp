@@ -92,7 +92,8 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
         return;
     }
 
-    QList<QUrl> selectUrls = view->selectedUrlList();
+    QList<QUrl> selectUrls,treeSelectUrls;
+    view->selectedTreeViewUrlList(selectUrls, treeSelectUrls);
     QUrl tgUrl;
 
     QVariantHash params;
@@ -107,6 +108,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
         selectUrls.prepend(tgUrl);
     }
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
+    params[MenuParamKey::kTreeSelectFiles] = QVariant::fromValue(treeSelectUrls);
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = false;

@@ -55,25 +55,27 @@ Q_SIGNALS:
 
     void itemAdded();
     void iteratorLocalFiles(const QString &key,
-                            QList<SortInfoPointer> children,
+                            const QList<SortInfoPointer> children,
                             const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                             const Qt::SortOrder sortOrder,
                             const bool isMixDirAndFile);
     void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo, const FileInfoPointer info);
-    void iteratorAddFiles(const QString &key, QList<SortInfoPointer> sortInfos, QList<FileInfoPointer> infos);
-    void watcherAddFiles(QList<SortInfoPointer> children);
-    void watcherRemoveFiles(QList<SortInfoPointer> children);
+    void iteratorAddFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos);
+    void watcherAddFiles(const QList<SortInfoPointer> children);
+    void watcherRemoveFiles(const QList<SortInfoPointer> children);
     void traversalFinished(const QString &key);
     void sourceDatas(const QString &key,
-                     QList<SortInfoPointer> children,
+                     const QList<SortInfoPointer> children,
                      const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                      const Qt::SortOrder sortOrder,
                      const bool isMixDirAndFile,
                      const bool isFinished);
     void watcherUpdateFile(const SortInfoPointer sortInfo);
     void watcherUpdateHideFile(const QUrl &hidUrl);
-    void requestSort(const QString &key);
+    void requestSort(const QString &key, const QUrl &dirUrl);
     void requestCloseTab(const QUrl &url);
+
+    void requestTreeSortDir(const QString &key, const QUrl &parent);
 
 public Q_SLOTS:
     void doFileDeleted(const QUrl &url);
@@ -84,7 +86,7 @@ public Q_SLOTS:
     void doThreadWatcherEvent();
 
     void handleTraversalResult(const FileInfoPointer &child, const QString &travseToken);
-    void handleTraversalResults(QList<FileInfoPointer> children, const QString &travseToken);
+    void handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                     Qt::SortOrder sortOrder,
