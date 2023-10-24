@@ -386,7 +386,7 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
         } else {
             // alternately background color
             painter->setOpacity(0);
-            if (index.row() % 2 == 1) {
+            if (index.row() % 2 == 0) {
                 adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
                 painter->setOpacity(1);
             }
