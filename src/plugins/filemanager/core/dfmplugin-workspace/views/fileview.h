@@ -116,6 +116,8 @@ public:
     bool isVerticalScrollBarSliderDragging() const;
     void updateViewportContentsMargins(const QSize &itemSize);
     bool indexInRect(const QRect &actualRect, const QModelIndex &index);
+    QList<QUrl> selectedTreeViewUrlList() const;
+    void selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const;
 
     using DListView::edit;
     using DListView::updateGeometries;
@@ -143,6 +145,8 @@ public slots:
     DirOpenMode currentDirOpenMode() const;
 
     void onWidgetUpdate();
+
+    void onAppAttributeChanged(DFMBASE_NAMESPACE::Application::ApplicationAttribute aa, const QVariant &value);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -222,6 +226,7 @@ private:
 
     bool cdUp();
     QModelIndex iconIndexAt(const QPoint &pos, const QSize &itemSize) const;
+    bool expandOrCollapseItem(const QModelIndex &index, const QPoint &pos);
 };
 
 }

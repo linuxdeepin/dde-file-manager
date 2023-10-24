@@ -30,6 +30,7 @@ public:
     void updateItemSizeHint() override;
 
     QRectF itemIconRect(const QRectF &itemRect) const override;
+    QRect getRectOfItem(RectOfItemType type, const QModelIndex &index) const override;
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) override;
@@ -51,6 +52,7 @@ private:
 
     int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role) const;
 
+    bool expandable { false };
     Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };
 

@@ -36,6 +36,7 @@ BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivat
     { LV2_GROUP_NEW_TAB_WINDOWS ".01_new_tab_path", Application::kUrlOfNewTab },
     { LV2_GROUP_VIEW ".00_icon_size", Application::kIconSizeLevel },
     { LV2_GROUP_VIEW ".01_view_mode", Application::kViewMode },
+    { LV2_GROUP_VIEW ".03_list_item_expandable", Application::kListItemExpandable },
     { LV2_GROUP_FILES_AND_FOLDERS ".02_mixed_sort", Application::kFileAndDirMixedSort },
 };
 
@@ -297,6 +298,9 @@ void SettingBackend::initWorkspaceSettingConfig()
                       { "text", tr("Restore default view mode") },
                       { "type", "pushButton" },
                       { "trigger", QVariant(Application::kRestoreViewMode)} });
+    ins->addCheckBoxConfig(LV2_GROUP_VIEW ".03_list_item_expandable",
+                           tr("Item expandable as tree in FileView with list view mode"),
+                           false);
 
     ins->addGroup(LV2_GROUP_PREVIEW, tr("Thumbnail preview"));
 

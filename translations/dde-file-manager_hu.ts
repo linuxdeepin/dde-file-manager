@@ -3894,7 +3894,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="221"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
-        <translation>A %1 csak olvasható. Szeretné engedélyezni az olvasási és írási jogosultságokat? </translation>
+        <translation>A %1 csak olvasható. Szeretné engedélyezni az olvasási és írási jogosultságokat? </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="222"/>
@@ -5771,7 +5771,7 @@
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
         <translation>A % 1 könyvtár foglalt, 
-kérjük törölje a fájlokat ebben a könyvtárban, és próbálja meg újra feloldani a széf zárolását. </translation>
+kérjük törölje a fájlokat ebben a könyvtárban, és próbálja meg újra feloldani a széf zárolását. </translation>
     </message>
 </context>
 <context>

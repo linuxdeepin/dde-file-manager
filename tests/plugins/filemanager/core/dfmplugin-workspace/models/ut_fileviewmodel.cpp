@@ -151,7 +151,7 @@ TEST_F(UT_FileViewModel, RootUrl) {
 
 TEST_F(UT_FileViewModel, Refresh) {
     bool cleanRootCalled = false;
-    stub.set_lamda((void(FileDataManager::*)(const QUrl &, const QString &, const bool))ADDR(FileDataManager, cleanRoot), [&cleanRootCalled]{ cleanRootCalled = true;});
+    stub.set_lamda((void(FileDataManager::*)(const QUrl &, const QString &, const bool, const bool))ADDR(FileDataManager, cleanRoot), [&cleanRootCalled]{ cleanRootCalled = true;});
 
     model->refresh();
     EXPECT_TRUE(cleanRootCalled);

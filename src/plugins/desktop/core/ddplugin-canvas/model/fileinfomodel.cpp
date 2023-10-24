@@ -512,8 +512,22 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         targetFileUrl = QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget));
     }
 
+    // treeveiew drop urls
+    QList<QUrl> treeSelectUrl;
+    if (data->formats().contains(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey)) {
+        auto treeUrlsStr = QString(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey));
+        auto treeUrlss = treeUrlsStr.split("\n");
+        for (const auto &url : treeUrlss) {
+            if (url.isEmpty())
+                continue;
+            treeSelectUrl.append(QUrl(url));
+        }
+    }
+
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
-        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, urlList, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0,
+                                     treeSelectUrl.isEmpty() ? urlList : treeSelectUrl,
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         // nothing to do.
@@ -528,11 +542,13 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     case Qt::MoveAction: {
         if (action == Qt::MoveAction) {
             if (urlList.count() > 0)
-                dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, treeSelectUrl.isEmpty() ? urlList : treeSelectUrl,
+                                             targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             // default is copy file
             if (urlList.count() > 0)
-                dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, treeSelectUrl.isEmpty() ? urlList : treeSelectUrl,
+                                             targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
     } break;
     case Qt::LinkAction:

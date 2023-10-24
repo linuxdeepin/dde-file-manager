@@ -28,6 +28,7 @@ namespace dfmplugin_workspace {
 class FileView;
 class FileItemData;
 class FileSortWorker;
+class RootInfo;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -57,6 +58,9 @@ public:
 
     QModelIndex setRootUrl(const QUrl &url);
     void refresh();
+
+    void doExpand(const QModelIndex &index);
+    void doCollapse(const QModelIndex &index);
 
     ModelState currentState() const;
     FileInfoPointer fileInfo(const QModelIndex &index) const;
@@ -89,6 +93,7 @@ public:
     void toggleHiddenFiles();
     void setReadOnly(bool value);
     void updateThumbnailIcon(const QModelIndex &index, const QString &thumb);
+    void setTreeView(const bool isTree);
 
 Q_SIGNALS:
     void stateChanged();
@@ -111,6 +116,9 @@ Q_SIGNALS:
     void requestSetFilterCallback(FileViewFilterCallback callback);
     void requestShowHiddenChanged(bool value);
 
+    void requestCollapseItem(const QString &key, const QUrl &parent);
+    void requestTreeView(const bool isTree);
+
 public Q_SLOTS:
     void onFileThumbUpdated(const QUrl &url, const QString &thumb);
     void onFileUpdated(int show);
@@ -126,6 +134,7 @@ public Q_SLOTS:
     void onWorkFinish(int visiableCount, int totalCount);
 
 private:
+    void connectRootAndFilterSortWork(const RootInfo *root);
     void initFilterSortWork();
     void quitFilterSortWork();
     void discardFilterSortObjects();
@@ -135,6 +144,7 @@ private:
     void startCursorTimer();
 
     QUrl dirRootUrl;
+    QUrl fetchingUrl;
 
     ModelState state { ModelState::kIdle };
     bool readOnly { false };

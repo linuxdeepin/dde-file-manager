@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QDirIterator>
 #include <QReadWriteLock>
+#include <QMultiMap>
 
 using namespace dfmbase;
 namespace dfmplugin_workspace {
@@ -29,6 +30,12 @@ class FileSortWorker : public QObject
         kSortOptNone = 0,
         kSortOptOnlyOrderChanged = 1,
         kSortOptOtherChanged = 2,
+    };
+
+    enum class InsertOpt : uint8_t {
+        kInsertOptAppend = 0,
+        kInsertOptReplace = 1,
+        kInsertOptForce = 2,
     };
 
 public:
@@ -57,6 +64,9 @@ public:
     DFMGLOBAL_NAMESPACE::ItemRoles getSortRole() const;
     Qt::SortOrder getSortOrder() const;
 
+    // 只有在没有启动sort线程时才能调用，线程启动成功了，发送信号处理
+    void setTreeView(const bool isTree);
+
 signals:
     void insertRows(int first, int count);
     void insertFinish();
@@ -79,59 +89,102 @@ signals:
 public slots:
     // Receive all local files of iteration of iterator thread, perform filtering and sorting
     void handleIteratorLocalChildren(const QString &key,
-                                     QList<SortInfoPointer> children,
+                                     const QList<SortInfoPointer> children,
                                      const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
                                      const Qt::SortOrder sortOrder,
                                      const bool isMixDirAndFile);
     void handleSourceChildren(const QString &key,
-                              QList<SortInfoPointer> children,
+                              const QList<SortInfoPointer> children,
                               const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
                               const Qt::SortOrder sortOrder,
                               const bool isMixDirAndFile,
                               const bool isFinished);
-    void handleIteratorChild(const QString &key, const SortInfoPointer child, const FileInfoPointer info);
-    void handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<FileInfoPointer> infos);
+    void handleIteratorChildren(const QString &key,const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos);
+    void handleTraversalFinish(const QString &key);
+    void handleSortDir(const QString &key, const QUrl &parent);
+
     // Get data from the data area according to the url, filter and sort the data
     void handleModelGetSourceData();
-    void setFilters(QDir::Filters filters);
-    void setNameFilters(const QStringList &filters);
-    void resetFilters(const QDir::Filters filters = QDir::NoFilter);
-    void onToggleHiddenFiles();
-    void onShowHiddenFileChanged(bool isShow);
-    void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
-
-    void handleWatcherAddChildren(QList<SortInfoPointer> children);
-    void handleWatcherRemoveChildren(QList<SortInfoPointer> children);
-    void resort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
-    void handleTraversalFinish(const QString &key);
-    void handleSortAll(const QString &key);
-    void handleWatcherUpdateFile(const SortInfoPointer child);
-    void handleWatcherUpdateHideFile(const QUrl &hidUrl);
-    void handleUpdateFile(const QUrl &url);
+    void handleFilters(QDir::Filters filters);
+    void HandleNameFilters(const QStringList &filters);
     void handleFilterData(const QVariant &data);
     void handleFilterCallFunc(FileViewFilterCallback callback);
+
+    void onToggleHiddenFiles();
+    void onShowHiddenFileChanged(bool isShow);
+
+    void handleWatcherAddChildren(const QList<SortInfoPointer> children);
+    void handleWatcherRemoveChildren(const QList<SortInfoPointer> children);
+    void handleWatcherUpdateFile(const SortInfoPointer child);
+    void handleWatcherUpdateHideFile(const QUrl &hidUrl);
+
+    void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
+    void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
+
+    void handleUpdateFile(const QUrl &url);
+
     void handleRefresh();
     void handleClearThumbnail();
     void handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
 
+    // treeview solts
+public slots:
+    void handleCloseExpand(const QString &key, const QUrl &parent);
+    // 如果不是tree视图，切换到tree视图，就去执行处理dir是否可以展开属性设置
+    // 如果是tree视图，切换到普通试图，去掉所有子目录，去掉所有的是否可以展开属性
+    void handleSwitchTreeView(const bool isTree);
+
 private:
+    void handleAddChildren(const QString &key,
+                           QList<SortInfoPointer> children,
+                           const QList<FileInfoPointer> &childInfos,
+                           const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
+                           const Qt::SortOrder sortOrder,
+                           const bool isMixDirAndFile,
+                           const bool handleSource,
+                           const bool isFinished, const bool isSort = true);
+    bool handleAddChildren(const QString &key,
+                           const QList<SortInfoPointer> &children,
+                           const QList<FileInfoPointer> &childInfos);
+    void setSourceHandleState(const bool isFinished);
+    void resetFilters(const QDir::Filters filters = QDir::NoFilter);
     void checkNameFilters(const FileItemDataPointer itemData);
-    bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
-    void filterAllFiles(const bool byInfo = false);
     void filterAllFilesOrdered();
-    void sortAllFiles();
-    // 有序的情况下只是点击升序还是降序特殊处理
-    void sortOnlyOrderChange();
-    void addChild(const SortInfoPointer &sortInfo, const FileInfoPointer &info);
+    void filterAndSortFiles(const QUrl &dir, const bool fileter = false,
+                            const bool reverse = false);
+    QList<QUrl> filterFilesByParent(const QUrl &dir, const bool byInfo = false);
+    void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false);
+
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortFilter::SortScenarios sort);
     bool sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo);
 
 private:
-    bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
-    QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
+    void switchTreeView();
+    void switchListView();
+    QList<QUrl> sortAllTreeFilesByParent(const QUrl &dir, const bool reverse = false);
+    QList<QUrl> sortTreeFiles(const QList<QUrl> &children, const bool reverse = false);
+    QList<QUrl> removeChildrenByParents(const QList<QUrl> &dirs, const bool removeSelf = true);
+    QList<QUrl> removeVisibleTreeChildren(const QUrl &parent, const bool removeSelf = true);
+    void removeSubDir(const QUrl &dir, const bool removeSelf = true);
+    void removeFileItems(const QList<QUrl> &urls);
+    int8_t findDepth(const QUrl &parent);
+    int findEndPos(const QUrl &dir);
+    int findStartPos(const QUrl &parent);
+    int findStartPos(const QList<QUrl> &list, const QUrl &parent);
+
+    void insertVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
+                               const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
+    void removeVisibleChildren(const int startPos, const int size);
+    void createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
+
+private:
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
                        AbstractSortFilter::SortScenarios sort);
+    bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
+    QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
+
+    bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
     bool isDefaultHiddenFile(const QUrl &fileUrl);
 
 private:
@@ -139,8 +192,7 @@ private:
     QStringList nameFilters {};
     QDir::Filters filters { QDir::NoFilter };
     QDirIterator::IteratorFlags flags { QDirIterator::NoIteratorFlags };
-    QList<SortInfoPointer> children {};
-    QList<QUrl> childrenUrlList {};
+    QMap<QUrl, QMap<QUrl, SortInfoPointer>> children {};
     QReadWriteLock childrenDataLocker;
     QMap<QUrl, FileItemDataPointer> childrenDataMap {};
     QMap<QUrl, FileItemDataPointer> childrenDataLastMap {};
@@ -157,6 +209,9 @@ private:
     std::atomic_bool isCanceled { false };
     bool isMixDirAndFile { false };
     char placeholderMemory[4];
+    QMap<QUrl, QList<QUrl>> visibleTreeChildren{};
+    QMultiMap<int8_t, QUrl> depthMap;
+    std::atomic_bool istree;
 };
 
 }
