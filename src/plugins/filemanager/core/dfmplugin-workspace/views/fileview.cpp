@@ -746,7 +746,7 @@ QList<QUrl> FileView::selectedTreeViewUrlList() const
             continue;
         if (!expandIndex.isValid() || !expandIsParent) {
             list << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
-            if (index.data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
+            if (index.data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
                 expandIndex = index;
             } else if (expandIndex.isValid()) {
                 expandIndex = QModelIndex();
@@ -785,7 +785,7 @@ void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &t
             continue;
         if (!expandIndex.isValid() || !expandIsParent) {
             treeSelectedUrls << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
-            if (index.data(Global::ItemRoles::kItemTreeViewExpandabledRole).toBool()) {
+            if (index.data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
                 expandIndex = index;
             } else if (expandIndex.isValid()) {
                 expandIndex = QModelIndex();
@@ -996,7 +996,7 @@ bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
         return false;
 
     // get expand state
-    bool expanded = model()->data(index, kItemTreeViewExpandabledRole).toBool();
+    bool expanded = model()->data(index, kItemTreeViewExpandedRole).toBool();
     if (expanded) {
         // do collapse
         qInfo() << "do collapse item, index = " << index;
