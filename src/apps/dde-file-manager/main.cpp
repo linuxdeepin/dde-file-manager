@@ -94,6 +94,29 @@ static bool lazyLoadFilter(const QString &name)
     return false;
 }
 
+static QStringList buildBlackNames()
+{
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.blackList").toStringList() };
+    const QStringList &disableNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.disablelist").toStringList() };
+#ifndef ENABLE_SMB_IN_ADMIN
+    /*
+     * NOTE(xust): the secret manager cannot be launched in WAYLAND ADMIN mode,
+     * which cause file-manager freeze when mount samba (dfm-mount using secret-manager
+     * to save/get the password of samba by sync).
+     * and the Admin mode is designed for operate files those normal user cannot write
+     * and should be the smallest dfm, so remove the smb-browser plugin in Admin mode
+     * */
+    if (SysInfoUtils::isOpenAsAdmin() && !blackNames.contains("dfmplugin-smbbrowser"))
+        blackNames << "dfmplugin-smbbrowser";
+#endif
+
+    std::copy_if(disableNames.begin(), disableNames.end(), std::back_inserter(blackNames), [blackNames](const QString &name) {
+        return !blackNames.contains(name);
+    });
+    qDebug() << "build all blacknames:" << blackNames;
+    return blackNames;
+}
+
 static bool pluginsLoad()
 {
     QString msg;
@@ -115,21 +138,7 @@ static bool pluginsLoad()
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
-
-    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.blackList").toStringList() };
-
-#ifndef ENABLE_SMB_IN_ADMIN
-    /*
-     * NOTE(xust): the secret manager cannot be launched in WAYLAND ADMIN mode,
-     * which cause file-manager freeze when mount samba (dfm-mount using secret-manager
-     * to save/get the password of samba by sync).
-     * and the Admin mode is designed for operate files those normal user cannot write
-     * and should be the smallest dfm, so remove the smb-browser plugin in Admin mode
-     * */
-    if (SysInfoUtils::isOpenAsAdmin() && !blackNames.contains("dfmplugin-smbbrowser"))
-        blackNames << "dfmplugin-smbbrowser";
-#endif
-    DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames);
+    DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, buildBlackNames());
 
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
