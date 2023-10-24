@@ -39,7 +39,7 @@
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="98"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="110"/>
         <source>%1 Volume</source>
-        <translation>བམ་པོ་%1 </translation>
+        <translation>བམ་པོ་%1 </translation>
     </message>
 </context>
 <context>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
         <source>Blank %1 Disc</source>
-        <translation>འོད་སྡེར་སྟོང་པ་%1 </translation>
+        <translation>འོད་སྡེར་སྟོང་པ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="413"/>
@@ -175,17 +175,17 @@
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
         <source>%1 Drive</source>
-        <translation>སྐུལ་ཆས་%1 </translation>
+        <translation>སྐུལ་ཆས་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="439"/>
         <source>%1 Encrypted</source>
-        <translation>གསང་སྡོམ་%1 </translation>
+        <translation>གསང་སྡོམ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="446"/>
         <source>%1 Volume</source>
-        <translation>བམ་པོ་%1 </translation>
+        <translation>བམ་པོ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="244"/>
@@ -867,7 +867,7 @@
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1172"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation>（འདྲ་དཔེ། %1）</translation>
+        <translation>（འདྲ་དཔེ། %1）</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="79"/>
@@ -2648,7 +2648,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="508"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>ཡིག་ཆ་&quot;%1&quot; བཟུང་ཟིན་པས། མིང་གཞན་སྤྱོད་རོགས།</translation>
+        <translation>ཡིག་ཆ་&quot;%1&quot; བཟུང་ཟིན་པས། མིང་གཞན་སྤྱོད་རོགས།</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>

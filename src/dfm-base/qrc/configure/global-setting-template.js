@@ -127,6 +127,12 @@
                             "text": "Mix sorting of files and folders",
                             "type": "checkbox",
                             "default": false
+                        },
+                        {
+                            "key": "item_expandable",
+                            "text": "Display list with expandable items",
+                            "type": "checkbox",
+                            "default": false
                         }
                     ]
                 },

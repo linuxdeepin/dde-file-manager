@@ -46,6 +46,8 @@ public:
     bool oneByOne() override;
     bool initIterator() override;
     DFMIO::DEnumeratorFuture *asyncIterator();
+    // get all sub file's fileinfo
+    virtual QList<FileInfoPointer> fileInfos() const override;
 };
 }
 

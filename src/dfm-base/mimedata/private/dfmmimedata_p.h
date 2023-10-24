@@ -26,6 +26,7 @@ public:
     QString version;
 
     QList<QUrl> urlList;
+    QList<QUrl> perantUrlList;
 };
 
 }   // namespace dfmbase

@@ -90,6 +90,9 @@ enum ItemRoles {
     kItemFileCanDragRole = Qt::UserRole + 31,
     kItemFileSizeIntRole = Qt::UserRole + 32,
     kItemCreateFileInfoRole = Qt::UserRole + 33,
+    kItemTreeViewDepthRole = Qt::UserRole + 34,
+    kItemTreeViewExpandabledRole = Qt::UserRole + 35,
+    kItemTreeViewCanExpandRole = Qt::UserRole + 36, // item can expand
     kItemUnknowRole = Qt::UserRole + 999
 };
 
@@ -144,6 +147,7 @@ inline constexpr char kTypeAudioFlac[] { "audio/flac" };
 // custom
 inline constexpr char kDataUserIDKey[] { "userid_for_drag" };
 inline constexpr char kDFMMimeDataKey[] { "dfm_mimedata_for_drag" };
+inline constexpr char kDFMTreeUrlsKey[] { "dfm_tree_urls_for_drag" };
 }   // namespace Mime
 
 namespace Scheme {

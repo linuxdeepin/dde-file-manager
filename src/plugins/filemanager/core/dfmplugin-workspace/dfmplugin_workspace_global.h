@@ -40,6 +40,11 @@ inline QList<int> iconWidth()
     return { 44, 36, 28, 28, 28, 28, 28, 32 };
 }
 
+enum class RectOfItemType : uint8_t {
+    kItemIconRect,
+    kItemTreeArrowRect
+};
+
 // model defines
 enum class ModelState : uint8_t {
     kIdle,
@@ -66,6 +71,10 @@ inline constexpr int kColumnPadding { 10 };
 inline constexpr int kMinMoveLenght { 3 };
 inline constexpr int kIconHorizontalMargin { 15 };   // 水平Margin的宽度
 inline constexpr int kCompactIconHorizontalMargin { 10 };
+inline constexpr int kTreeItemIndent { 30 };
+inline constexpr int kTreeExpandArrowWidth { 20 };
+inline constexpr int kTreeExpandArrowHeight { 20 };
+inline constexpr int kTreeArrowAndIconDistance { 10 };
 
 // tab defines
 inline constexpr int kMaxTabCount { 8 };

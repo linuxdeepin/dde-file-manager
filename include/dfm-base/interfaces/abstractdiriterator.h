@@ -116,6 +116,11 @@ public:
     {
         return true;
     }
+    // get all sub file's fileinfo
+    virtual QList<FileInfoPointer> fileInfos() const
+    {
+        return {};
+    }
 };
 
 }
