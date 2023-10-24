@@ -37,6 +37,7 @@ public:
     void addBlackPluginName(const QString &name);
     void addLazyLoadPluginName(const QString &name);
     void setPluginPaths(const QStringList &pluginPaths);
+    void setLazyloadFilter(std::function<bool(const QString &)> filter);
 
     bool readPlugins();
     bool loadPlugins();
