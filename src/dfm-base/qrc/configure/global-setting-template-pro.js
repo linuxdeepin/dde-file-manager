@@ -254,12 +254,6 @@
                             "default": false
                         },
                         {
-                            "key": "mtp_show_bottom_info",
-                            "text": "Show item counts and sizes in the path of mounted MTP devices",
-                            "type": "checkbox",
-                            "default": false
-                        },
-                        {
                             "key": "always_show_offline_remote_connection",
                             "text": "Keep showing the mounted Samba shares",
                             "type": "checkbox",

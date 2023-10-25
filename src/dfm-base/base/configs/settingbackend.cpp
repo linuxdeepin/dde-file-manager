@@ -54,7 +54,6 @@ BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::k
     { LV2_GROUP_PREVIEW ".06_remote_env_file_preview", Application::kShowThunmbnailInRemote },
     { LV2_GROUP_MOUNT ".00_auto_mount", Application::kAutoMount },
     { LV2_GROUP_MOUNT ".01_auto_mount_and_open", Application::kAutoMountAndOpen },
-    { LV2_GROUP_MOUNT ".02_mtp_show_bottom_info", Application::kMTPShowBottomInfo },
     { LV2_GROUP_MOUNT ".04_merge_the_entries_of_samba_shared_folders", Application::kMergeTheEntriesOfSambaSharedFolders },
     { LV2_GROUP_DIALOG ".00_default_chooser_dialog", Application::kOverrideFileChooserDialog },
     { LV2_GROUP_DIALOG ".01_delete_confirmation_dialog", Application::kShowDeleteConfirmDialog },
@@ -343,9 +342,6 @@ void SettingBackend::initAdvanceSettingConfig()
                      { "text", tr("Open after auto mount") },
                      { "type", "openCheckBox" },
                      { "default", false } });
-    ins->addCheckBoxConfig(LV2_GROUP_MOUNT ".02_mtp_show_bottom_info",
-                           tr("Show item counts and sizes in the path of mounted MTP devices"),
-                           false);
     ins->addConfig(LV2_GROUP_MOUNT ".04_merge_the_entries_of_samba_shared_folders",
                    { { "key", "04_merge_the_entries_of_samba_shared_folders" },
                      { "text", tr("Merge the entries of Samba shared folders") },
