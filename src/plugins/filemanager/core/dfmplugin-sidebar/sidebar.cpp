@@ -118,15 +118,9 @@ bool SideBar::onAboutToShowSettingDialog(quint64 winId)
         return false;
     }
 
-    // TODO(zhangs): runtime config
     // bind setting datas
-    static std::once_flag flag;
-    std::call_once(flag, [this, win]() {
-        auto widget = dynamic_cast<SideBarWidget *>(win->sideBar());
-        widget->initSettingPanel();
-        dpfSignalDispatcher->removeEventFilter(DFMBASE_NAMESPACE::GlobalEventType::kShowSettingDialog, this,
-                                               &SideBar::onAboutToShowSettingDialog);
-    });
+    auto widget = dynamic_cast<SideBarWidget *>(win->sideBar());
+    widget->resetSettingPanel();
 
     return false;
 }

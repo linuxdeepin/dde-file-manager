@@ -67,20 +67,11 @@ void SideBarWidget::changeEvent(QEvent *event)
     return QWidget::changeEvent(event);
 }
 
-void SideBarWidget::initSettingPanel()
+void SideBarWidget::resetSettingPanel()
 {
-    // travel model and add group settings to panel
-    const auto &groups { SideBarInfoCacheMananger::instance()->groups() };
-    std::for_each(groups.begin(), groups.end(), [](const QString &group) {
-        auto items { kSidebarModelIns->subItems(group) };
-        for (auto item : items) {
-            const QString &key { item->itemInfo().visiableControlKey };
-            const QString &name { item->itemInfo().visiableDisplayName };
-            Q_ASSERT(!key.isEmpty() && !name.isEmpty());
-            qDebug("Add sidebar setting, key: %s, value: %s", qPrintable(key), qPrintable(name));
-            SideBarHelper::initDetailSettingPannel(group, key, name);
-        }
-    });
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    clearSettingPanel();
+    initSettingPannel();
 }
 
 QAbstractItemView *SideBarWidget::view()
@@ -166,7 +157,7 @@ void SideBarWidget::editItem(const QUrl &url)
 
 void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
 {
-    qInfo() << "url = " << url << ",visible = " << visible;
+    qDebug() << "url = " << url << ",visible = " << visible;
 
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     // find out the item index by url
@@ -374,4 +365,50 @@ void SideBarWidget::initConnect()
     connect(kSidebarModelIns.data(), &SideBarModel::rowsInserted, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsMoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
+}
+
+void SideBarWidget::clearSettingPanel()
+{
+    const auto &bindings { SideBarInfoCacheMananger::instance()->getLastSettingBindingKeys() };
+    const auto &settings { SideBarInfoCacheMananger::instance()->getLastSettingKeys() };
+    // clear binding
+    std::for_each(bindings.begin(), bindings.end(), [](const QString &key) {
+        SideBarHelper::removebindingSetting(key);
+    });
+    // clear config
+    std::for_each(settings.begin(), settings.end(), [](const QString &key) {
+        SideBarHelper::removeItemFromSetting(key);
+    });
+
+    // clear cache
+    SideBarInfoCacheMananger::instance()->clearLastSettingKey();
+    SideBarInfoCacheMananger::instance()->clearLastSettingBindingKey();
+}
+
+void SideBarWidget::initSettingPannel()
+{
+    // travel model and add group settings to panel
+    QMap<QString, QStringList> itemKeysMap { { DefaultGroup::kCommon, {} },
+                                             { DefaultGroup::kDevice, {} },
+                                             { DefaultGroup::kNetwork, {} },
+                                             { DefaultGroup::kTag, {} } };
+    QMap<QString, int> levelMap { { DefaultGroup::kCommon, 0 },
+                                  { DefaultGroup::kDevice, 0 },
+                                  { DefaultGroup::kNetwork, 0 },
+                                  { DefaultGroup::kTag, 0 } };
+    const auto &groups { SideBarInfoCacheMananger::instance()->groups() };
+    std::for_each(groups.begin(), groups.end(), [&itemKeysMap, &levelMap](const QString &group) {
+        auto items { kSidebarModelIns->subItems(group) };
+        for (auto item : items) {
+            const QString &key { item->itemInfo().visiableControlKey };
+            const QString &name { item->itemInfo().visiableDisplayName };
+            Q_ASSERT(!key.isEmpty() && !name.isEmpty());
+            if (itemKeysMap[group].contains(key) || key == "hidden_me") {
+                qDebug() << "reject key:" << key << group;
+                continue;
+            }
+            itemKeysMap[group].push_back(key);
+            SideBarHelper::addItemToSettingPannel(group, key, name, &levelMap);
+        }
+    });
 }

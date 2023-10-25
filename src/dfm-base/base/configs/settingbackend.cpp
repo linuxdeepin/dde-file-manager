@@ -137,6 +137,17 @@ void SettingBackend::addSettingAccessor(const QString &key, GetOptFunc get, Save
         qInfo() << "null getter function is passed for key: " << key;
 }
 
+void SettingBackend::removeSettingAccessor(const QString &key)
+{
+    if (!d->setters.contains(key) || !d->getters.contains(key)) {
+        qWarning() << "Invalid key, cannot remove!";
+        return;
+    }
+
+    d->setters.remove(key);
+    d->getters.remove(key);
+}
+
 void SettingBackend::addSettingAccessor(Application::ApplicationAttribute attr, SaveOptFunc set)
 {
     if (!d->keyToAA.containsValue(attr)) {
@@ -160,6 +171,11 @@ void SettingBackend::addSettingAccessor(Application::GenericAttribute attr, Save
 void SettingBackend::addToSerialDataKey(const QString &key)
 {
     d->serialDataKey.insert(key);
+}
+
+void SettingBackend::removeSerialDataKey(const QString &key)
+{
+    d->serialDataKey.remove(key);
 }
 
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)
@@ -293,11 +309,11 @@ void SettingBackend::initWorkspaceSettingConfig()
                              { "keys", QVariantList { 1, 2 } } },
                            1);
     ins->addConfig(LV2_GROUP_VIEW ".02_restore_view_mode",
-                    { { "key", "02_restore_view_mode" },
-                      { "desc", tr("Restore default view mode for all directories") },
-                      { "text", tr("Restore default view mode") },
-                      { "type", "pushButton" },
-                      { "trigger", QVariant(Application::kRestoreViewMode)} });
+                   { { "key", "02_restore_view_mode" },
+                     { "desc", tr("Restore default view mode for all directories") },
+                     { "text", tr("Restore default view mode") },
+                     { "type", "pushButton" },
+                     { "trigger", QVariant(Application::kRestoreViewMode) } });
     ins->addCheckBoxConfig(LV2_GROUP_VIEW ".03_list_item_expandable",
                            tr("Item expandable as tree in FileView with list view mode"),
                            false);

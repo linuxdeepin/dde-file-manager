@@ -86,6 +86,32 @@ bool SettingJsonGenerator::addGroup(const QString &key, const QString &name)
     return true;
 }
 
+bool SettingJsonGenerator::removeGroup(const QString &key)
+{
+    if (key.count(".") > 1) {
+        qWarning() << "max group level is 2, inputed: " << key.count(".") << key;
+        return false;
+    }
+    if (key.startsWith(".") || key.endsWith(".")) {
+        qWarning() << "the dot must not be start or end of the key." << key;
+        return false;
+    }
+
+    if (key.contains(".")) {
+        if (configGroups.remove(key) == 0) {
+            qWarning() << "remove failed: " << key;
+            return false;
+        }
+    } else {
+        if (topGroups.remove(key) == 0) {
+            qWarning() << "remove failed: " << key;
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool SettingJsonGenerator::addConfig(const QString &key, const QVariantMap &config)
 {
     if (key.count(".") != 2) {
@@ -121,6 +147,33 @@ bool SettingJsonGenerator::addConfig(const QString &key, const QVariantMap &conf
 
     configs.insert(key, config);
     return true;
+}
+
+bool SettingJsonGenerator::removeConfig(const QString &key)
+{
+    if (key.count(".") != 2) {
+        qWarning() << "config can only be inserted in level 2:" << key;
+        return false;
+    }
+    if (key.startsWith(".") || key.endsWith(".")) {
+        qWarning() << "the dot must not be start or end of the key." << key;
+        return false;
+    }
+    if (key.contains("..")) {
+        qWarning() << "cannot remove config into empty group: " << key;
+        return false;
+    }
+
+    QStringList frags = key.split(".");
+    if (frags.count() != 3)
+        return false;
+
+    frags.removeLast();
+    bool ret1 { tmpConfigGroups.remove(frags.join(".")) > 0 };
+    frags.removeLast();
+    bool ret2 { tmpTopGroups.remove(frags.first()) > 0 };
+    bool ret3 { configs.remove(key) > 0 };
+    return ret1 && ret2 && ret3;
 }
 
 bool SettingJsonGenerator::addCheckBoxConfig(const QString &key, const QString &text, bool defaultVal)

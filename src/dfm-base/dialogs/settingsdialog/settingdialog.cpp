@@ -161,7 +161,6 @@ void SettingDialog::loadSettings(const QString & /*templateFile*/)
     //    file.close();
 
     QByteArray configJson = SettingJsonGenerator::instance()->genSettingJson();
-
     if (!QDBusConnection::systemBus().interface()->isServiceRegistered("com.deepin.anything"))
         configJson = removeQuickSearchIndex(configJson);
 
@@ -333,7 +332,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
 
     layout->addWidget(button, 0, Qt::AlignRight);
 
-    connect(button, &DPushButton::clicked, option, [ = ]{
+    connect(button, &DPushButton::clicked, option, [=] {
         Application::appAttributeTrigger(static_cast<Application::TriggerAttribute>(attributeType));
     });
 
