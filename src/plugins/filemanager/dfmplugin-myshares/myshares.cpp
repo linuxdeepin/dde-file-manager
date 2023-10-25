@@ -34,21 +34,19 @@ using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url
 Q_DECLARE_METATYPE(ContextMenuCallback);
 void MyShares::initialize()
 {
-    DFMBASE_USE_NAMESPACE
-    UrlRoute::regScheme(ShareUtils::scheme(), "/", ShareUtils::icon(), true, tr("My Shares"));
-
-    InfoFactory::regClass<ShareFileInfo>(ShareUtils::scheme());
-    DirIteratorFactory::regClass<ShareIterator>(ShareUtils::scheme());
-    WatcherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
-    dfmplugin_menu_util::menuSceneRegisterScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
-    beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
-    beMySubScene("BookmarkMenu");
-
-    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
-    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
-
-    followEvents();
-    bindWindows();
+    // TODO(zhangs): add feature for lazyload plugins depends
+    auto dirsharePlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-dirshare") };
+    if (dirsharePlugin && dirsharePlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        doInitialize();
+    } else {
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-dirshare")
+                        doInitialize();
+                },
+                Qt::DirectConnection);
+    }
 }
 
 bool MyShares::start()
@@ -194,4 +192,23 @@ void MyShares::bindWindows()
         onWindowOpened(id);
     });
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
+}
+
+void MyShares::doInitialize()
+{
+    DFMBASE_USE_NAMESPACE
+    UrlRoute::regScheme(ShareUtils::scheme(), "/", ShareUtils::icon(), true, tr("My Shares"));
+
+    InfoFactory::regClass<ShareFileInfo>(ShareUtils::scheme());
+    DirIteratorFactory::regClass<ShareIterator>(ShareUtils::scheme());
+    WatcherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
+    dfmplugin_menu_util::menuSceneRegisterScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
+    beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
+    beMySubScene("BookmarkMenu");
+
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
+
+    followEvents();
+    bindWindows();
 }

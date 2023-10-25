@@ -39,6 +39,7 @@ private:
     void beMySubOnAdded(const QString &newScene);
     void followEvents();
     void bindWindows();
+    void doInitialize();
 
 private:
     QSet<QString> waitToBind;
