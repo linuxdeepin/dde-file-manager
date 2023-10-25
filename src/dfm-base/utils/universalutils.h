@@ -46,6 +46,8 @@ public:
     static void userChange(QObject *obj, const char *cslot = nullptr);
 
     static void prepareForSleep(QObject *obj, const char *cslot = nullptr);
+
+    static bool isParentUrl(const QUrl &child, const QUrl &parent);
 };
 
 }

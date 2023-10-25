@@ -486,7 +486,15 @@ void UniversalUtils::prepareForSleep(QObject *obj, const char *cslot)
             "org.freedesktop.login1.Manager",
             "PrepareForSleep",
             obj,
-            cslot);
+                cslot);
+}
+
+bool UniversalUtils::isParentUrl(const QUrl &child, const QUrl &parent)
+{
+    auto parentStr = parent.toString();
+    parentStr = parentStr.endsWith(QDir::separator()) ?
+                parentStr : parentStr + QDir::separator();
+    return child.toString().startsWith(parentStr);
 }
 
 }
