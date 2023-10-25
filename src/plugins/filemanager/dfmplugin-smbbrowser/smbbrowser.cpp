@@ -66,6 +66,9 @@ bool SmbBrowser::start()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kFtp));
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSFtp));
 
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", smb_browser_utils::networkScheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", QString(Global::Scheme::kSmb));
+
     ProtocolDeviceDisplayManager::instance();
     registerNetworkAccessPrehandler();
 

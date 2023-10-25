@@ -390,6 +390,17 @@ bool WorkspaceHelper::registeredFileView(const QString &scheme) const
     return registeredFileViewScheme.contains(scheme);
 }
 
+void WorkspaceHelper::setNotSupportTreeView(const QString &scheme)
+{
+    if (!notSupportTreeView.contains(scheme))
+        notSupportTreeView.append(scheme);
+}
+
+bool WorkspaceHelper::supportTreeView(const QString &scheme) const
+{
+    return !notSupportTreeView.contains(scheme);
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;

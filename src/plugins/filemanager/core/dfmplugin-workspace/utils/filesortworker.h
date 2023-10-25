@@ -186,6 +186,7 @@ private:
 
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
     bool isDefaultHiddenFile(const QUrl &fileUrl);
+    QUrl parantUrl(const QUrl &url);
 
 private:
     QUrl current;
@@ -212,6 +213,7 @@ private:
     QMap<QUrl, QList<QUrl>> visibleTreeChildren{};
     QMultiMap<int8_t, QUrl> depthMap;
     std::atomic_bool istree;
+    std::atomic_bool currentSupportTreeView {false};
 };
 
 }
