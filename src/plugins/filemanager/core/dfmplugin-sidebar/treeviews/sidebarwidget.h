@@ -28,7 +28,7 @@ public:
     void setCurrentUrl(const QUrl &sidebarUrl) override;
     QUrl currentUrl() const override;
     void changeEvent(QEvent *event) override;
-    void initSettingPanel();
+    void resetSettingPanel();
 
     QAbstractItemView *view();
 
@@ -56,6 +56,8 @@ private:
     void initializeUi();
     void initDefaultModel();
     void initConnect();
+    void clearSettingPanel();
+    void initSettingPannel();
 
 private:
     SideBarView *sidebarView { nullptr };

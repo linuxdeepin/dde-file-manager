@@ -39,12 +39,22 @@ public:
     bool updateItemInfoCache(const Group &name, const QUrl &url, const ItemInfo &info);
     bool updateItemInfoCache(const QUrl &url, const ItemInfo &info);
 
+    QStringList getLastSettingKeys() const;
+    void appendLastSettingKey(const QString &value);
+    void clearLastSettingKey();
+
+    QStringList getLastSettingBindingKeys() const;
+    void appendLastSettingBindingKey(const QString &value);
+    void clearLastSettingBindingKey();
+
 private:
     SideBarInfoCacheMananger();
 
 private:
     GroupCacheMap cacheInfoMap;
     QHash<QUrl, ItemInfo> bindedInfos;
+    QStringList lastSettingKeys;
+    QStringList lastSettingBindingKeys;
 };
 
 DPSIDEBAR_END_NAMESPACE
