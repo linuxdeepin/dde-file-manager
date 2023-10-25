@@ -85,6 +85,7 @@ void Search::regSearchToWorkspace()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", SearchHelper::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SearchHelper::scheme(), SearchMenuCreator::name());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetDefaultViewMode", SearchHelper::scheme(), Global::ViewMode::kListMode);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", SearchHelper::scheme());
 
     CreateTopWidgetCallback createCallback { []() { return new AdvanceSearchBar(); } };
     ShowTopWidgetCallback showCallback { SearchHelper::showTopWidget };
