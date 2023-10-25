@@ -975,7 +975,7 @@ QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) c
     auto tmp = dfmFileInfo;
     if (tmp && tmp->queryAttributeFinished()) {
         bool getOk{false};
-        auto value = dfmFileInfo->attribute(key, &getOk);
+        auto value = tmp->attribute(key, &getOk);
         if (ok)
             *ok = getOk;
         if (!getOk) {
