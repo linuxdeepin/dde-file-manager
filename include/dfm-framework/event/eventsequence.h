@@ -90,7 +90,7 @@ public:
     {
         Q_ASSERT(topic.startsWith(kHookStrategePrefix));
         if (Q_UNLIKELY(!follow(EventConverter::convert(space, topic), obj, std::move(method)))) {
-            qCritical() << "Topic " << space << ":" << topic << "is invalid";
+            qWarning() << "Topic " << space << ":" << topic << "is invalid";
             return false;
         }
         return true;
@@ -100,7 +100,7 @@ public:
     inline bool follow(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qCritical() << "Event " << type << "is invalid";
+            qWarning() << "Event " << type << "is invalid";
             return false;
         }
 
