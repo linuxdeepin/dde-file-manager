@@ -903,6 +903,9 @@ void FileSortWorker::switchListView()
     QWriteLocker lk(&childrenDataLocker);
     for (const auto &url : removeChildren)
         childrenDataMap.remove(url);
+
+    for (auto itemData : childrenDataMap)
+        itemData->setExpanded(false);
 }
 
 QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool reverse)
