@@ -619,6 +619,9 @@ bool FileSortWorker::handleAddChildren(const QString &key,
         index++;
     }
 
+    if (depth == 0)
+        parentUrl = current;
+
     this->children.insert(parentUrl, tmpChildren);
     childUrls.append(newChildren);
     visibleTreeChildren.insert(parentUrl, childUrls);
@@ -1051,7 +1054,7 @@ int8_t FileSortWorker::findDepth(const QUrl &parent)
         return 0;
     auto parentItem = childData(parent);
     if (parentItem.isNull())
-        return -1;
+        return 0;
     return parentItem->data(Global::ItemRoles::kItemTreeViewDepthRole).value<int8_t>() + 1;
 }
 
