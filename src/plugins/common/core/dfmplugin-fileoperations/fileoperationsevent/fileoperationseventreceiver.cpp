@@ -144,7 +144,8 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     case kCutFile:
         if (targets.isEmpty())
             return true;
-        handleOperationCut(windowId, sources, targets.first(), AbstractJobHandler::JobFlag::kRevocation, handle);
+        for (int i = 0; i < sources.size(); ++i)
+            handleOperationCut(windowId, { sources.at(i) }, targets.at(i), AbstractJobHandler::JobFlag::kRevocation, handle);
         break;
     case kDeleteFiles:
         handleOperationDeletes(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
