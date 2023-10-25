@@ -156,46 +156,31 @@ void FileDialogPrivate::handleOpenNewWindow(const QUrl &url)
 
 bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix)
 {
-    bool suffixCheck = false;
     for (QString nameFilterList : nameFilters) {
         for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) {
             QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
             if (re.exactMatch(filename)) {
-                suffixCheck = true;
-                break;
+                return false;
             }
-        }
-        if (suffixCheck) {
-            break;
         }
     }
 
     // query matched suffix
-    if (!suffixCheck && !nameFilters.isEmpty()) {
+    if (!nameFilters.isEmpty()) {
         QMimeDatabase mdb;
         // get current selected suffix
         int index = q->selectedNameFilterIndex();
         QString filter = nameFilters[index];
         QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(filter);
         if (!newNameFilters.isEmpty()) {
-            for (const QString &newFilter : newNameFilters) {
-                suffix = mdb.suffixForFileName(newFilter);
-                // If the suffix is not found, use the regular expression to query again
-                if (suffix.isEmpty()) {
-                    QRegExp regExp(newFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-                    mdb.allMimeTypes().first().suffixes().first();
-                    for (QMimeType m : mdb.allMimeTypes()) {
-                        for (QString suffixe : m.suffixes()) {
-                            if (regExp.exactMatch(suffixe)) {
-                                suffix = suffixe;
-                                return true;
-                            }
-                        }
-                    }
-                } else {
-                    return true;
-                }
+            const QString firstFilter = newNameFilters.first();
+            suffix = mdb.suffixForFileName(firstFilter);
+            if (suffix.isEmpty()) {
+                suffix = firstFilter.mid(2);
+                if (suffix.isEmpty())
+                    return false;
             }
+            return true;
         }
     }
 
