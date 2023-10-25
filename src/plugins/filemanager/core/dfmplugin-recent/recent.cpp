@@ -61,6 +61,7 @@ bool Recent::start()
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", RecentHelper::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", RecentHelper::scheme(), RecentMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", RecentHelper::scheme());
 
     addFileOperations();
 
