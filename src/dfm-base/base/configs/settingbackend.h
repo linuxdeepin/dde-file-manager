@@ -32,9 +32,11 @@ public:
     using GetOptFunc = std::function<QVariant()>;
     using SaveOptFunc = std::function<void(const QVariant &)>;
     void addSettingAccessor(const QString &key, GetOptFunc get, SaveOptFunc set);
+    void removeSettingAccessor(const QString &key);
     void addSettingAccessor(Application::ApplicationAttribute attr, SaveOptFunc set);
     void addSettingAccessor(Application::GenericAttribute attr, SaveOptFunc set);
     void addToSerialDataKey(const QString &key);
+    void removeSerialDataKey(const QString &key);
 
 protected:
     void doSetOption(const QString &key, const QVariant &value);

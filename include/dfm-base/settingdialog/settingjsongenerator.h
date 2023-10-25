@@ -51,7 +51,9 @@ public:
     bool hasConfig(const QString &key) const;
 
     bool addGroup(const QString &key, const QString &name);
+    bool removeGroup(const QString &key);
     bool addConfig(const QString &key, const QVariantMap &config);
+    bool removeConfig(const QString &key);
     bool addCheckBoxConfig(const QString &key, const QString &text, bool defaultVal = true);
     bool addComboboxConfig(const QString &key, const QString &name, const QStringList &options, int defaultVal = 0);
     bool addComboboxConfig(const QString &key, const QString &name, const QVariantMap &options, QVariant defaultVal = QVariant());

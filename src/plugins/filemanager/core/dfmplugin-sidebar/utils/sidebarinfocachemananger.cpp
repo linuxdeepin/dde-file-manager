@@ -12,6 +12,38 @@ SideBarInfoCacheMananger::SideBarInfoCacheMananger()
 {
 }
 
+QStringList SideBarInfoCacheMananger::getLastSettingBindingKeys() const
+{
+    return lastSettingBindingKeys;
+}
+
+void SideBarInfoCacheMananger::appendLastSettingBindingKey(const QString &value)
+{
+    if (!lastSettingBindingKeys.contains(value))
+        lastSettingBindingKeys.append(value);
+}
+
+void SideBarInfoCacheMananger::clearLastSettingBindingKey()
+{
+    lastSettingBindingKeys.clear();
+}
+
+QStringList SideBarInfoCacheMananger::getLastSettingKeys() const
+{
+    return lastSettingKeys;
+}
+
+void SideBarInfoCacheMananger::appendLastSettingKey(const QString &value)
+{
+    if (!lastSettingKeys.contains(value))
+        lastSettingKeys.append(value);
+}
+
+void SideBarInfoCacheMananger::clearLastSettingKey()
+{
+    lastSettingKeys.clear();
+}
+
 SideBarInfoCacheMananger *SideBarInfoCacheMananger::instance()
 {
     static SideBarInfoCacheMananger instance;
