@@ -131,7 +131,7 @@ public:
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
         if (!subscribe(EventConverter::convert(space, topic), obj, std::move(method))) {
-            qCritical() << "Topic " << space << ":" << topic << "is invalid";
+            qWarning() << "Topic " << space << ":" << topic << "is invalid";
             return false;
         }
         return true;
@@ -141,7 +141,7 @@ public:
     [[gnu::hot]] inline bool subscribe(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qCritical() << "Event " << type << "is invalid";
+            qWarning() << "Event " << type << "is invalid";
             return false;
         }
 
@@ -285,7 +285,7 @@ public:
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
         if (!installEventFilter(EventConverter::convert(space, topic), obj, std::move(method))) {
-            qCritical() << "Topic " << space << ":" << topic << "is invalid";
+            qWarning() << "Topic " << space << ":" << topic << "is invalid";
             return false;
         }
         return true;
@@ -295,7 +295,7 @@ public:
     inline bool installEventFilter(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qCritical() << "Event " << type << "is invalid";
+            qWarning() << "Event " << type << "is invalid";
             return false;
         }
 
