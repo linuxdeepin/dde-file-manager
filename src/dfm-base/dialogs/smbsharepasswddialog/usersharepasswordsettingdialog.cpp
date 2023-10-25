@@ -39,7 +39,6 @@ void UserSharePasswordSettingDialog::initializeUi()
     setDefaultButton(1);
 
     QFrame *editArea = new QFrame(this);
-//    editArea->setStyleSheet("QFrame {border: 1px solid red;}");
     QVBoxLayout *editAreaLay = new QVBoxLayout(editArea);
     editArea->setLayout(editAreaLay);
     // 20px between title and password edit, 20px betweent hint and buttons
@@ -49,7 +48,6 @@ void UserSharePasswordSettingDialog::initializeUi()
     passwordEdit = new Dtk::Widget::DPasswordEdit(this);
     editAreaLay->addWidget(passwordEdit);
     DLabel *notice = new DLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
-//    notice->setStyleSheet("border: 1px solid black");
     DFontSizeManager::instance()->bind(notice, DFontSizeManager::SizeType::T8);
     editAreaLay->addWidget(notice);
 
@@ -69,7 +67,6 @@ void UserSharePasswordSettingDialog::initializeUi()
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-        this->setFixedSize(QSize(390, 210));
     }
 
     setTabOrder(passwordEdit, getButton(0));
