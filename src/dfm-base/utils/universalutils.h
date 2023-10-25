@@ -47,6 +47,8 @@ public:
 
     static void prepareForSleep(QObject *obj, const char *cslot = nullptr);
     static bool isNetworkRoot(const QUrl &url);
+
+    static bool isParentUrl(const QUrl &child, const QUrl &parent);
 };
 
 }

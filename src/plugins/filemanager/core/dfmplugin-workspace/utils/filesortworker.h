@@ -164,9 +164,9 @@ private:
     void switchListView();
     QList<QUrl> sortAllTreeFilesByParent(const QUrl &dir, const bool reverse = false);
     QList<QUrl> sortTreeFiles(const QList<QUrl> &children, const bool reverse = false);
-    QList<QUrl> removeChildrenByParents(const QList<QUrl> &dirs, const bool removeSelf = true);
-    QList<QUrl> removeVisibleTreeChildren(const QUrl &parent, const bool removeSelf = true);
-    void removeSubDir(const QUrl &dir, const bool removeSelf = true);
+    QList<QUrl> removeChildrenByParents(const QList<QUrl> &dirs);
+    QList<QUrl> removeVisibleTreeChildren(const QUrl &parent);
+    void removeSubDir(const QUrl &dir);
     void removeFileItems(const QList<QUrl> &urls);
     int8_t findDepth(const QUrl &parent);
     int findEndPos(const QUrl &dir);

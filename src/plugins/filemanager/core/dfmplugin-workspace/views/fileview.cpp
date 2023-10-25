@@ -738,9 +738,14 @@ QList<QUrl> FileView::selectedTreeViewUrlList() const
             return left.row() < right.row();
         });
     for (const QModelIndex &index : selectIndex) {
-        bool expandIsParent = expandIndex.isValid() ?
-                    index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() >
-                        expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() : false;
+        bool expandIsParent = false;
+        if (expandIndex.isValid()) {
+            auto parentUrl = expandIndex.data(Global::ItemRoles::kItemUrlRole).toUrl();
+            auto child = index.data(Global::ItemRoles::kItemUrlRole).toUrl();
+            expandIsParent = (index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt()
+                    > expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt())
+                    && UniversalUtils::isParentUrl(child, parentUrl);
+        }
         if (index.parent() != rootIndex ||
                 (expandIndex.isValid() && expandIsParent))
             continue;
@@ -777,9 +782,14 @@ void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &t
         });
     for (const QModelIndex &index : selectIndex) {
         selectedUrls.append(index.data(Global::ItemRoles::kItemUrlRole).toUrl());
-        bool expandIsParent = expandIndex.isValid() ?
-                    index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() >
-                        expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt() : false;
+        bool expandIsParent = false;
+        if (expandIndex.isValid()) {
+            auto parentUrl = expandIndex.data(Global::ItemRoles::kItemUrlRole).toUrl();
+            auto child = index.data(Global::ItemRoles::kItemUrlRole).toUrl();
+            expandIsParent = (index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt()
+                    > expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt())
+                    && UniversalUtils::isParentUrl(child, parentUrl);
+        }
         if (index.parent() != rootIndex ||
                 (expandIndex.isValid() && expandIsParent))
             continue;
