@@ -543,17 +543,18 @@ void AbstractWorker::saveOperations()
             || jobType == AbstractJobHandler::JobType::kMoveToTrashType
             || jobType == AbstractJobHandler::JobType::kRestoreType) {
             GlobalEventType operatorType = GlobalEventType::kDeleteFiles;
-            QUrl targetUrl;
+            QList<QUrl> targetUrls;
             switch (jobType) {
             case AbstractJobHandler::JobType::kCopyType:
                 operatorType = GlobalEventType::kDeleteFiles;
-                targetUrl = UrlRoute::urlParent(completeSourceFiles.first());
+                targetUrls.append(UrlRoute::urlParent(completeSourceFiles.first()));
                 break;
             case AbstractJobHandler::JobType::kCutType:
                 operatorType = GlobalEventType::kCutFile;
                 if (!sourceUrls.isEmpty() && FileUtils::isTrashFile(sourceUrls.first()))
                     operatorType = GlobalEventType::kMoveToTrash;
-                targetUrl = UrlRoute::urlParent(completeSourceFiles.first());
+                for (auto url : completeSourceFiles)
+                    targetUrls.append(UrlRoute::urlParent(url));
                 break;
             case AbstractJobHandler::JobType::kMoveToTrashType:
                 operatorType = GlobalEventType::kRestoreFromTrash;
@@ -568,7 +569,7 @@ void AbstractWorker::saveOperations()
             QVariantMap values;
             values.insert("event", QVariant::fromValue(static_cast<uint16_t>(operatorType)));
             values.insert("sources", QUrl::toStringList(completeTargetFiles));
-            values.insert("targets", QUrl::toStringList({ targetUrl }));
+            values.insert("targets", QUrl::toStringList(targetUrls));
             if (jobType != AbstractJobHandler::JobType::kDeleteType)
                 dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
         }
