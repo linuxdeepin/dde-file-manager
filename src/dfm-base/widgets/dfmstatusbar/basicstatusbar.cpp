@@ -53,18 +53,7 @@ void BasicStatusBar::itemSelected(const int selectFiles, const int selectFolders
 
     const bool dirUrlsEmpty = selectFolderList.isEmpty();
     if (!dirUrlsEmpty) {
-        // check mtp setting
-        const bool showInfo = Application::instance()->genericAttribute(Application::GenericAttribute::kMTPShowBottomInfo).toBool();
-        if (!showInfo) {
-            bool isMtp = FileUtils::isMtpFile(selectFolderList.first());
-            if (isMtp) {
-                d->showContains = false;
-            } else {
-                d->calcFolderContains(selectFolderList);
-            }
-        } else {
-            d->calcFolderContains(selectFolderList);
-        }
+        d->calcFolderContains(selectFolderList);
     }
 
     updateStatusMessage();
@@ -94,18 +83,7 @@ void BasicStatusBar::itemSelected(const QList<FileInfo *> &infoList)
 
     const bool dirUrlsEmpty = selectFolderList.isEmpty();
     if (!dirUrlsEmpty) {
-        // check mtp setting
-        const bool showInfo = Application::instance()->genericAttribute(Application::GenericAttribute::kMTPShowBottomInfo).toBool();
-        if (!showInfo) {
-            bool isMtp = FileUtils::isMtpFile(selectFolderList.first());
-            if (isMtp) {
-                d->showContains = false;
-            } else {
-                d->calcFolderContains(selectFolderList);
-            }
-        } else {
-            d->calcFolderContains(selectFolderList);
-        }
+        d->calcFolderContains(selectFolderList);
     }
 
     updateStatusMessage();
