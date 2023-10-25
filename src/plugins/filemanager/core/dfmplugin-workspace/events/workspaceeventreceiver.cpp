@@ -67,6 +67,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Tab_SetAlias",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetTabAlias);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_NotSupportTreeView",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleNotSupportTreeView);
 
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetVisualGeometry",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetVisualGeometry);
@@ -191,6 +193,11 @@ void WorkspaceEventReceiver::handleReverseSelect(quint64 windowId)
 void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
 {
     WorkspaceHelper::instance()->setSort(windowId, role);
+}
+
+void WorkspaceEventReceiver::handleNotSupportTreeView(const QString &scheme)
+{
+    WorkspaceHelper::instance()->setNotSupportTreeView(scheme);
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)

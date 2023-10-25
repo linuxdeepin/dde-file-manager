@@ -94,6 +94,9 @@ public:
     void registerFileView(const QString &scheme);
     bool registeredFileView(const QString &scheme) const;
 
+    void setNotSupportTreeView(const QString &scheme);
+    bool supportTreeView(const QString &scheme) const;
+
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
@@ -119,6 +122,7 @@ private:
     DefaultViewMode defaultViewMode;
 
     QList<QString> registeredFileViewScheme {};
+    QList<QString> notSupportTreeView{};
 
     Q_DISABLE_COPY(WorkspaceHelper)
 };

@@ -190,6 +190,8 @@ bool FileView::setRootUrl(const QUrl &url)
 
     const QUrl &fileUrl = parseSelectedUrl(url);
     const QModelIndex &index = model()->setRootUrl(fileUrl);
+    d->itemsExpandable = Application::instance()->appAttribute(Application::kListItemExpandable).toBool()
+            && WorkspaceHelper::instance()->supportTreeView(fileUrl.scheme());
 
     setRootIndex(index);
 
@@ -1040,9 +1042,11 @@ void FileView::onWidgetUpdate()
 
 void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
 {
-    if (aa == Application::kListItemExpandable) {
-        d->itemsExpandable = value.toBool();
-
+    if (aa == Application::kListItemExpandable ) {
+        if (d->itemsExpandable ==
+                (value.toBool() && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme())))
+            return;
+        d->itemsExpandable = (value.toBool() && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()));
         // todo: try to repaint the list
         setViewMode(d->currentViewMode);
     }
@@ -1740,7 +1744,8 @@ void FileView::initializeDelegate()
     setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(d->fileViewHelper));
     setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
 
-    d->itemsExpandable = Application::instance()->appAttribute(Application::kListItemExpandable).toBool();
+    d->itemsExpandable = Application::instance()->appAttribute(Application::kListItemExpandable).toBool()
+            && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme());
 }
 
 void FileView::initializeStatusBar()
