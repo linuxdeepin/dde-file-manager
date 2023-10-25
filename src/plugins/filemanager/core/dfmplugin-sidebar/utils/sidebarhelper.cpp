@@ -215,6 +215,12 @@ void SideBarHelper::bindSetting(const QString &itemVisiableSettingKey, const QSt
     bindConf(itemVisiableSettingKey, itemVisiableControlKey);
 }
 
+void SideBarHelper::removebindingSetting(const QString &itemVisiableSettingKey)
+{
+    SettingBackend::instance()->removeSerialDataKey(itemVisiableSettingKey);
+    SettingBackend::instance()->removeSettingAccessor(itemVisiableSettingKey);
+}
+
 void SideBarHelper::initDefaultSettingPanel()
 {
     auto ins = SettingJsonGenerator::instance();
@@ -223,8 +229,9 @@ void SideBarHelper::initDefaultSettingPanel()
     ins->addGroup(SETTING_GROUP_LV2, "Items on sidebar pane");
 }
 
-void SideBarHelper::initDetailSettingPannel(const QString &group, const QString &key, const QString &value)
+void SideBarHelper::addItemToSettingPannel(const QString &group, const QString &key, const QString &value, QMap<QString, int> *levelMap)
 {
+    Q_ASSERT(levelMap);
     int groupSortPrefix { 0 };
     QString groupKey;
     QString groupLabel;
@@ -258,31 +265,28 @@ void SideBarHelper::initDetailSettingPannel(const QString &group, const QString 
     auto ins = SettingJsonGenerator::instance();
 
     // add group configs
-    if (!ins->hasConfig(fullGroupKey))
+    if (!ins->hasConfig(fullGroupKey)) {
         ins->addConfig(fullGroupKey, groupMap);
+        SideBarInfoCacheMananger::instance()->appendLastSettingKey(fullGroupKey);
+    }
 
     // add checkbox configs
-    static QMap<QString, QStringList> itemKeysMap { { DefaultGroup::kCommon, {} },
-                                                    { DefaultGroup::kDevice, {} },
-                                                    { DefaultGroup::kNetwork, {} },
-                                                    { DefaultGroup::kTag, {} } };
-    if (itemKeysMap[group].contains(key)) {
-        qDebug() << "repeat key:" << key << group;
-        return;
-    }
-    itemKeysMap[group].push_back(key);
-
-    static QMap<QString, int> levelMap { { DefaultGroup::kCommon, 0 },
-                                         { DefaultGroup::kDevice, 0 },
-                                         { DefaultGroup::kNetwork, 0 },
-                                         { DefaultGroup::kTag, 0 } };
-    Q_ASSERT(levelMap[group] < 100);
-    int itemPrefix { groupSortPrefix + (++levelMap[group]) };
+    Q_ASSERT((*levelMap)[group] < 100);
+    (*levelMap)[group] = (*levelMap)[group] + 1;
+    int itemPrefix { groupSortPrefix + (*levelMap)[group] };
     QString fullItemKey { SETTING_GROUP_LV2 + QString(".") + QString("%1_%2").arg(itemPrefix).arg(key) };
     if (!ins->hasConfig(fullItemKey)) {
         ins->addCheckBoxConfig(fullItemKey, value);
+        SideBarInfoCacheMananger::instance()->appendLastSettingKey(fullItemKey);
         SideBarHelper::bindSetting(fullItemKey, key);
+        SideBarInfoCacheMananger::instance()->appendLastSettingBindingKey(fullItemKey);
     }
+}
+
+void SideBarHelper::removeItemFromSetting(const QString &key)
+{
+    auto ins = SettingJsonGenerator::instance();
+    ins->removeConfig(key);
 }
 
 void SideBarHelper::registCustomSettingItem()
