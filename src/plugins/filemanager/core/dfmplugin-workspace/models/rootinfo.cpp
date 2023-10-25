@@ -141,11 +141,9 @@ int RootInfo::clearTraversalThread(const QString &key)
     if (thread->traversalThread->isRunning())
         traversaling = false;
     thread->traversalThread->quit();
-    if (traversalThreads.isEmpty()) {
-        if (watcher)
-            watcher->stopWatcher();
+    if (traversalThreads.isEmpty())
         needStartWatcher = true;
-    }
+
     return traversalThreads.count();
 }
 
