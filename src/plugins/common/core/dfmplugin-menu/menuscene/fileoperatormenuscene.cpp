@@ -171,6 +171,13 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
+
+    // set as wallpaper
+    if (auto setWallpaper = d->predicateAction.value(ActionID::kSetAsWallpaper)) {
+        if (FileUtils::isMtpFile(d->focusFileInfo->urlOf(UrlInfoType::kUrl)))
+            setWallpaper->setDisabled(true);
+    }
+
     // open menu by focus fileinfo, so do not compare other files
     return AbstractMenuScene::updateState(parent);
 }
