@@ -68,6 +68,7 @@ void TraversalDirThreadManager::setTraversalToken(const QString &token)
 
 void TraversalDirThreadManager::start()
 {
+    running = true;
     auto local = dirIterator.dynamicCast<LocalDirIterator>();
     if (local && local->oneByOne()) {
         future = local->asyncIterator();
@@ -81,6 +82,11 @@ void TraversalDirThreadManager::start()
     TraversalDirThread::start();
 }
 
+bool TraversalDirThreadManager::isRunning() const
+{
+    return running;
+}
+
 void TraversalDirThreadManager::onAsyncIteratorOver()
 {
     Q_EMIT iteratorInitFinished();
@@ -91,6 +97,7 @@ void TraversalDirThreadManager::run()
 {
     if (dirIterator.isNull()) {
         emit traversalFinished(traversalToken);
+        running = false;
         return;
     }
 
@@ -106,6 +113,7 @@ void TraversalDirThreadManager::run()
         count = iteratorOneByOne(timer);
         qInfo() << "dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
     }
+    running = false;
 }
 
 int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
