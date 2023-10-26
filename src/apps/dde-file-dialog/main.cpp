@@ -9,6 +9,7 @@
 #include <QTextCodec>
 #include <QIcon>
 
+#include <dfm-base/dfm_plugin_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
@@ -65,20 +66,35 @@ static bool singlePluginLoad(const QString &pluginName, const QString &libName)
     return true;
 }
 
+static bool lazyLoadFilter(const QString &name)
+{
+    static const auto &kAllNames {
+        DFMBASE_NAMESPACE::Plugins::Utils::filemanagerCorePlugins()
+    };
+
+    if (!kAllNames.contains(name) && (name != kDialogCorePluginName))
+        return true;
+    return false;
+}
+
+static bool blackListFilter(const QString &name)
+{
+    static const auto &kBlackNames { DConfigManager::instance()->value(kPluginsDConfName, "filedialog.blackList").toStringList() };
+    if (kBlackNames.contains(name))
+        return true;
+    static const auto &kAllNames {
+        DFMBASE_NAMESPACE::Plugins::Utils::filemanagerAllPlugins()
+    };
+    if (!kAllNames.contains(name) && (name != kDialogCorePluginName))
+        return true;
+    return false;
+}
+
 static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
         qWarning() << "Load plugins but dconfig failed: " << msg;
-    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filedialog.blackList").toStringList() };
-
-    static const QStringList kLazyLoadPluginNames {
-        "dfmplugin-emblem",
-        "dfmplugin-tag",
-        "dfmplugin-avfsbrowser",
-        "dfmplugin-recent",
-        "dfmplugin-search"
-    };
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
@@ -98,7 +114,9 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::initialize({ kDialogPluginInterface,
                                            kFmPluginInterface,
                                            kCommonPluginInterface },
-                                         pluginsDirs, blackNames, kLazyLoadPluginNames);
+                                         pluginsDirs);
+    DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
+    DPF_NAMESPACE::LifeCycle::setBlackListFilter(blackListFilter);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
