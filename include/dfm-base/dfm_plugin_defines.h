@@ -29,6 +29,17 @@ inline constexpr std::initializer_list<const char *> kFileManager {
 };
 }   // namespace Core
 
+namespace Edge {
+inline constexpr std::initializer_list<const char *> kCommon {
+    "dfmplugin-emblem", "dfmplugin-filepreview", "dfmplugin-tag",
+    "dfmplugin-dirshare", "dfmplugin-burn"
+};
+inline constexpr std::initializer_list<const char *> kFileManager {
+    "dfmplugin-trash", "dfmplugin-recent", "dfmplugin-avfsbrowser",
+    "dfmplugin-search", "dfmplugin-myshares", "dfmplugin-vault"
+};
+}   // namespace Edge
+
 namespace Utils {
 inline QStringList filemanagerCorePlugins()
 {
@@ -36,6 +47,13 @@ inline QStringList filemanagerCorePlugins()
     std::copy(Plugins::Core::kCommon.begin(), Plugins::Core::kCommon.end(), std::back_inserter(result));
     std::copy(Plugins::Core::kCommonVirtual.begin(), Plugins::Core::kCommonVirtual.end(), std::back_inserter(result));
     std::copy(Plugins::Core::kFileManager.begin(), Plugins::Core::kFileManager.end(), std::back_inserter(result));
+    return result;
+}
+inline QStringList filemanagerAllPlugins()
+{
+    QStringList result { filemanagerCorePlugins() };
+    std::copy(Plugins::Edge::kCommon.begin(), Plugins::Edge::kCommon.end(), std::back_inserter(result));
+    std::copy(Plugins::Edge::kFileManager.begin(), Plugins::Edge::kFileManager.end(), std::back_inserter(result));
     return result;
 }
 }   // namespace Utils

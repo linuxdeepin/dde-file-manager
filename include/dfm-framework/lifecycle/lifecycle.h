@@ -40,6 +40,7 @@ bool loadPlugin(PluginMetaObjectPointer &pointer);
 void shutdownPlugin(PluginMetaObjectPointer &pointer);
 
 void setLazyloadFilter(std::function<bool(const QString &)> filter);
+void setBlackListFilter(std::function<bool(const QString &)> filter);
 }   // namepsace LifeCycle
 
 DPF_END_NAMESPACE
