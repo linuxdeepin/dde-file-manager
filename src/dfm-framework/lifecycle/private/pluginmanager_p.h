@@ -40,7 +40,8 @@ class PluginManagerPrivate : public QSharedData
     QQueue<PluginMetaObjectPointer> loadQueue;
     bool allPluginsInitialized { false };
     bool allPluginsStarted { false };
-    std::function<bool(const QString &)> lazypluginFilter;
+    std::function<bool(const QString &)> lazyPluginFilter;
+    std::function<bool(const QString &)> blackListFilter;
 
 public:
     explicit PluginManagerPrivate(PluginManager *qq);
@@ -58,28 +59,26 @@ public:
     bool startPlugins();
     void stopPlugins();
 
-    static void scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
-                               const QStringList &pluginPaths,
-                               const QStringList &pluginIIDs,
-                               const QStringList &blackList);
-    static void scanfRealPlugin(QQueue<PluginMetaObjectPointer> *destQueue, PluginMetaObjectPointer metaObj,
-                                const QJsonObject &dataJson, const QStringList &blackList);
-    static void scanfVirtualPlugin(QQueue<PluginMetaObjectPointer> *destQueue, const QString &fileName,
-                                   const QJsonObject &dataJson, const QStringList &blackList);
-    static void readJsonToMeta(PluginMetaObjectPointer metaObject);
-    static void jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData);
-    static void dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
-                            const QQueue<PluginMetaObjectPointer> *srcQueue);
-
 private:
     bool doLoadPlugin(PluginMetaObjectPointer pointer);
     bool doInitPlugin(PluginMetaObjectPointer pointer);
     bool doStartPlugin(PluginMetaObjectPointer pointer);
     bool doStopPlugin(PluginMetaObjectPointer pointer);
 
-    static bool doPluginSort(const PluginDependGroup group,
-                             QMap<QString, PluginMetaObjectPointer> src,
-                             QQueue<PluginMetaObjectPointer> *dest);
+    void scanfAllPlugin();
+    void scanfRealPlugin(PluginMetaObjectPointer metaObj,
+                         const QJsonObject &dataJson);
+    void scanfVirtualPlugin(const QString &fileName,
+                            const QJsonObject &dataJson);
+    bool isBlackListed(const QString &name);
+
+    void readJsonToMeta(PluginMetaObjectPointer metaObject);
+    void jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData);
+    void dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
+                     const QQueue<PluginMetaObjectPointer> *srcQueue);
+    bool doPluginSort(const PluginDependGroup group,
+                      QMap<QString, PluginMetaObjectPointer> src,
+                      QQueue<PluginMetaObjectPointer> *dest);
 };
 
 DPF_END_NAMESPACE

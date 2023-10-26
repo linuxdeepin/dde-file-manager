@@ -161,7 +161,12 @@ bool isAllPluginsStarted()
 
 void setLazyloadFilter(std::function<bool(const QString &)> filter)
 {
-    pluginManager->setLazyloadFilter(filter);
+    pluginManager->setLazyLoadFilter(filter);
+}
+
+void setBlackListFilter(std::function<bool(const QString &)> filter)
+{
+    pluginManager->setBlackListFilter(filter);
 }
 
 }   // namespace LifeCycle

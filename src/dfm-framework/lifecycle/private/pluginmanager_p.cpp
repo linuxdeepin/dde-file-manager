@@ -84,7 +84,7 @@ bool PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
  */
 bool PluginManagerPrivate::readPlugins()
 {
-    scanfAllPlugin(&readQueue, pluginLoadPaths, pluginLoadIIDs, blackPlguinNames);
+    scanfAllPlugin();
     std::for_each(readQueue.begin(), readQueue.end(), [this](PluginMetaObjectPointer obj) {
         readJsonToMeta(obj);
         const QString &pluginName { obj->name() };
@@ -93,7 +93,7 @@ bool PluginManagerPrivate::readPlugins()
             return;
         }
 
-        if (lazypluginFilter && lazypluginFilter(pluginName)) {
+        if (lazyPluginFilter && lazyPluginFilter(pluginName)) {
             lazyLoadPluginsNames.append(pluginName);
             qDebug() << "Skip load(lazy load by filter): " << pluginName;
             return;
@@ -119,17 +119,12 @@ bool PluginManagerPrivate::readPlugins()
  * \param pluginPaths
  * \param pluginIID
  */
-void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
-                                          const QStringList &pluginPaths,
-                                          const QStringList &pluginIIDs,
-                                          const QStringList &blackList)
+void PluginManagerPrivate::scanfAllPlugin()
 {
-    Q_ASSERT(destQueue);
-
-    if (pluginIIDs.isEmpty())
+    if (pluginLoadIIDs.isEmpty())
         return;
 
-    for (const QString &path : pluginPaths) {
+    for (const QString &path : pluginLoadPaths) {
         QDirIterator dirItera(path, { "*.so" },
                               QDir::Filter::Files,
                               QDirIterator::IteratorFlag::NoIteratorFlags);
@@ -143,65 +138,71 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
             QJsonObject &&metaJson = metaObj->d->loader->metaData();
             QJsonObject &&dataJson = metaJson.value("MetaData").toObject();
             QString &&iid = metaJson.value("IID").toString();
-            if (!pluginIIDs.contains(iid))
+            if (!pluginLoadIIDs.contains(iid))
                 continue;
 
             bool isVirtual = dataJson.contains(kVirtualPluginMeta) && dataJson.contains(kVirtualPluginList);
             if (isVirtual)
-                scanfVirtualPlugin(destQueue, fileName, dataJson, blackList);
+                scanfVirtualPlugin(fileName, dataJson);
             else
-                scanfRealPlugin(destQueue, metaObj, dataJson, blackList);
+                scanfRealPlugin(metaObj, dataJson);
         }
     }
 }
 
-void PluginManagerPrivate::scanfRealPlugin(QQueue<PluginMetaObjectPointer> *destQueue, PluginMetaObjectPointer metaObj,
-                                           const QJsonObject &dataJson, const QStringList &blackList)
+void PluginManagerPrivate::scanfRealPlugin(PluginMetaObjectPointer metaObj,
+                                           const QJsonObject &dataJson)
 {
-    Q_ASSERT(destQueue);
     Q_ASSERT(metaObj);
 
     QString &&name = dataJson.value(kPluginName).toString();
-    if (blackList.contains(name)) {
-        qWarning() << "Black plugin: " << name << "don't load!";
+    if (isBlackListed(name))
         return;
-    }
 
     metaObj->d->isVirtual = false;
     metaObj->d->name = name;
-    destQueue->append(metaObj);
+    readQueue.append(metaObj);
     metaObj->d->state = PluginMetaObject::kReaded;
 }
 
-void PluginManagerPrivate::scanfVirtualPlugin(QQueue<PluginMetaObjectPointer> *destQueue, const QString &fileName,
-                                              const QJsonObject &dataJson, const QStringList &blackList)
+void PluginManagerPrivate::scanfVirtualPlugin(const QString &fileName,
+                                              const QJsonObject &dataJson)
 {
-    Q_ASSERT(destQueue);
-
     QJsonObject &&metaDataJson { dataJson.value(kVirtualPluginMeta).toObject() };
     QString &&realName { metaDataJson.value(kPluginName).toString() };
-    if (blackList.contains(realName)) {
-        qWarning() << "Black plugin: " << realName << "don't load!";
+    if (isBlackListed(realName))
         return;
-    }
 
     QJsonArray &&virtualJsonArray { dataJson.value(kVirtualPluginList).toArray() };
     for (auto iter = virtualJsonArray.begin(); iter != virtualJsonArray.end(); ++iter) {
         QJsonObject &&object { iter->toObject() };
         QString &&name { object.value(kPluginName).toString() };
-        if (blackList.contains(name)) {
-            qWarning() << "Black plugin: " << name << "don't load!";
-            continue;
-        }
+        if (isBlackListed(name))
+            return;
 
         PluginMetaObjectPointer metaObj(new PluginMetaObject);
         metaObj->d->loader->setFileName(fileName);
         metaObj->d->isVirtual = true;
         metaObj->d->realName = realName;
         metaObj->d->name = name;
-        destQueue->append(metaObj);
+        readQueue.append(metaObj);
         metaObj->d->state = PluginMetaObject::kReaded;
     }
+}
+
+bool PluginManagerPrivate::isBlackListed(const QString &name)
+{
+    if (blackPlguinNames.contains(name)) {
+        qWarning() << "Black plugin: " << name << "don't load!";
+        return true;
+    }
+
+    if (blackListFilter && blackListFilter(name)) {
+        qWarning() << "Black plugin(filter): " << name << "don't load!";
+        return true;
+    }
+
+    return false;
 }
 
 /*!

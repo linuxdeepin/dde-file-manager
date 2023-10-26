@@ -19,7 +19,7 @@ void AppExitController::onExit()
 {
     ++curSeconds;
     if (curSeconds < totalSeconds) {
-        qInfo() << "File Dialog: Ready to exit: " << (totalSeconds - curSeconds);
+        qDebug() << "File Dialog: Ready to exit: " << (totalSeconds - curSeconds);
         return;
     }
     qWarning() << "File Dialog: App exit!";

@@ -37,9 +37,14 @@ void PluginManager::setPluginPaths(const QStringList &pluginPaths)
     d->pluginLoadPaths = pluginPaths;
 }
 
-void PluginManager::setLazyloadFilter(std::function<bool(const QString &)> filter)
+void PluginManager::setLazyLoadFilter(std::function<bool(const QString &)> filter)
 {
-    d->lazypluginFilter = filter;
+    d->lazyPluginFilter = filter;
+}
+
+void PluginManager::setBlackListFilter(std::function<bool(const QString &)> filter)
+{
+    d->blackListFilter = filter;
 }
 
 PluginMetaObjectPointer PluginManager::pluginMetaObj(const QString &pluginName, const QString version) const
