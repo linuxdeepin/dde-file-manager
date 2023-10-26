@@ -978,10 +978,9 @@ QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) c
         auto value = tmp->attribute(key, &getOk);
         if (ok)
             *ok = getOk;
-        if (!getOk) {
+        if (!getOk)
             qDebug() << static_cast<int>(key) << q->fileUrl() << tmp->lastError().errorMsg();
-            return QVariant();
-        }
+
         return value;
     }
     return QVariant();
