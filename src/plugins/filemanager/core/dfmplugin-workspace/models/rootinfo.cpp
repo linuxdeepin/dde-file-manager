@@ -127,16 +127,18 @@ int RootInfo::clearTraversalThread(const QString &key)
 
     auto thread = traversalThreads.take(key);
     auto traversalThread = thread->traversalThread;
-    traversalThread->disconnect();
-
-    discardedThread.append(traversalThread);
-    connect(thread->traversalThread.data(), &TraversalDirThread::finished, this, [this, traversalThread] {
-        discardedThread.removeAll(traversalThread);
-        traversalThread->disconnect();
-    },
-            Qt::QueuedConnection);
-    if (thread->traversalThread->isRunning())
+    if (traversalThread->isRunning())
+        emit traversalFinished(key);
+    traversalThread->disconnect(this);
+    if (traversalThread->isRunning()) {
+        discardedThread.append(traversalThread);
+        connect(thread->traversalThread.data(), &TraversalDirThread::finished, this, [this, traversalThread] {
+            discardedThread.removeAll(traversalThread);
+            traversalThread->disconnect();
+        },
+                Qt::QueuedConnection);
         traversaling = false;
+    }
     thread->traversalThread->quit();
     if (traversalThreads.isEmpty())
         needStartWatcher = true;
@@ -326,6 +328,8 @@ void RootInfo::handleGetSourceData(const QString &currentToken)
         startWatcher();
     QList<SortInfoPointer> newDatas = sourceDataList;
     emit sourceDatas(currentToken, newDatas, originSortRole, originSortOrder, originMixSort, !traversaling);
+    if (!traversaling)
+        emit traversalFinished(currentToken);
 }
 
 void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)
