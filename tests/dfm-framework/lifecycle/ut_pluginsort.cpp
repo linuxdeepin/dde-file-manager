@@ -43,7 +43,8 @@ TEST_F(UT_PluginSort, test_rhombus_depends)
     PluginDependGroup group { { A, B }, { A, C }, { B, D }, { C, D } };
     QMap<QString, PluginMetaObjectPointer> src { { A->name(), A }, { B->name(), B }, { C->name(), C }, { D->name(), D } };
     QQueue<PluginMetaObjectPointer> dest;
-    EXPECT_TRUE(PluginManagerPrivate::doPluginSort(group, src, &dest));
+    PluginManagerPrivate d { nullptr };
+    EXPECT_TRUE(d.doPluginSort(group, src, &dest));
     EXPECT_EQ(src.size(), dest.size());
     EXPECT_EQ(dest.at(0)->name(), "A");
     EXPECT_EQ(dest.at(3)->name(), "D");
@@ -57,12 +58,13 @@ TEST_F(UT_PluginSort, test_rhombus_depends_circle)
     PluginDependGroup group { { A, B }, { A, C }, { B, D }, { D, B } };
     QMap<QString, PluginMetaObjectPointer> src { { A->name(), A }, { B->name(), B }, { C->name(), C }, { D->name(), D } };
     QQueue<PluginMetaObjectPointer> dest;
-    EXPECT_FALSE(PluginManagerPrivate::doPluginSort(group, src, &dest));
+    PluginManagerPrivate d { nullptr };
+    EXPECT_FALSE(d.doPluginSort(group, src, &dest));
     EXPECT_EQ(dest.at(0)->name(), "A");
     EXPECT_EQ(dest.at(1)->name(), "C");
 
     group = { { A, B }, { A, C }, { B, D }, { A, A } };
-    EXPECT_FALSE(PluginManagerPrivate::doPluginSort(group, src, &dest));
+    EXPECT_FALSE(d.doPluginSort(group, src, &dest));
 }
 
 TEST_F(UT_PluginSort, test_rhombus_complex)
@@ -70,7 +72,8 @@ TEST_F(UT_PluginSort, test_rhombus_complex)
     PluginDependGroup group { { A, C }, { A, D }, { A, G }, { B, C }, { D, B }, { D, E }, { F, E }, { G, F }, { B, G } };
     QMap<QString, PluginMetaObjectPointer> src { { A->name(), A }, { B->name(), B }, { C->name(), C }, { D->name(), D }, { E->name(), E }, { F->name(), F }, { G->name(), G } };
     QQueue<PluginMetaObjectPointer> dest;
-    EXPECT_TRUE(PluginManagerPrivate::doPluginSort(group, src, &dest));
+    PluginManagerPrivate d { nullptr };
+    EXPECT_TRUE(d.doPluginSort(group, src, &dest));
     QStringList trueRet { "ADBCGFE", "ADBGCFE" };
     QString ret;
     for (auto v : dest) {
