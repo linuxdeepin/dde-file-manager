@@ -32,6 +32,7 @@ class TraversalDirThreadManager : public TraversalDirThread
     int countCeiling = 500;
     dfmio::DEnumeratorFuture *future { nullptr };
     QString traversalToken;
+    std::atomic_bool running = false;
 
 public:
     explicit TraversalDirThreadManager(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -43,6 +44,8 @@ public:
     void setTraversalToken(const QString &token);
 
     void start();
+
+    bool isRunning() const;
 
 public Q_SLOTS:
     void onAsyncIteratorOver();

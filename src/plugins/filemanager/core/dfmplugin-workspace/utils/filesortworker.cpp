@@ -913,7 +913,9 @@ void FileSortWorker::switchListView()
 QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool reverse)
 {
     QList<QUrl> visibleList;
-    int8_t depth = depthMap.key(dir, -1);
+    int8_t depth = depthMap.key(dir, -2);
+    if (depth <= -2)
+        return {};
     QList<QUrl> depthParentUrls{ dir };
     bool bSort = orgSortRole != Global::ItemRoles::kItemDisplayRole;
     // 执行排序
@@ -923,6 +925,9 @@ QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool
         for(const auto &parent : depthParentUrls) {
             if (isCanceled)
                 return {};
+            if (!UniversalUtils::urlEquals(dir, parent) && UniversalUtils::isParentUrl(parent, dir))
+                continue;
+
             auto sortList = bSort ? sortTreeFiles(visibleTreeChildren.take(parent), reverse) : visibleTreeChildren.value(parent);
             if (sortList.isEmpty())
                 continue;

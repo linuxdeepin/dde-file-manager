@@ -1011,11 +1011,11 @@ bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
     bool expanded = model()->data(index, kItemTreeViewExpandedRole).toBool();
     if (expanded) {
         // do collapse
-        qInfo() << "do collapse item, index = " << index;
+        qInfo() << "do collapse item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
         model()->doCollapse(index);
     } else {
         // do expanded
-        qInfo() << "do expanded item, index = " << index;
+        qInfo() << "do expanded item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
         model()->doExpand(index);
     }
 
