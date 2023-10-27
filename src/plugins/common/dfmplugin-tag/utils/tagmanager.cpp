@@ -53,12 +53,12 @@ TagManager::~TagManager()
 
 void TagManager::initializeConnection()
 {
-    connect(TagProxyHandleIns, &TagProxyHandle::newTagsAdded, this, &TagManager::onTagAdded);
-    connect(TagProxyHandleIns, &TagProxyHandle::tagsDeleted, this, &TagManager::onTagDeleted);
-    connect(TagProxyHandleIns, &TagProxyHandle::tagsColorChanged, this, &TagManager::onTagColorChanged);
-    connect(TagProxyHandleIns, &TagProxyHandle::tagsNameChanged, this, &TagManager::onTagNameChanged);
-    connect(TagProxyHandleIns, &TagProxyHandle::filesTagged, this, &TagManager::onFilesTagged);
-    connect(TagProxyHandleIns, &TagProxyHandle::filesUntagged, this, &TagManager::onFilesUntagged);
+    connect(&FileTagCacheIns, &FileTagCacheController::newTagsAdded, this, &TagManager::onTagAdded);
+    connect(&FileTagCacheIns, &FileTagCacheController::tagsDeleted, this, &TagManager::onTagDeleted);
+    connect(&FileTagCacheIns, &FileTagCacheController::tagsColorChanged, this, &TagManager::onTagColorChanged);
+    connect(&FileTagCacheIns, &FileTagCacheController::tagsNameChanged, this, &TagManager::onTagNameChanged);
+    connect(&FileTagCacheIns, &FileTagCacheController::filesTagged, this, &TagManager::onFilesTagged);
+    connect(&FileTagCacheIns, &FileTagCacheController::filesUntagged, this, &TagManager::onFilesUntagged);
 }
 
 TagManager *TagManager::instance()
@@ -132,11 +132,11 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPai
 
     QString path = info->pathOf(PathInfoType::kFilePath);
     path = FileUtils::bindPathTransform(path, false);
-    const auto &tags = FileTagCacheController::instance().getTagsByFile(path);
+    const auto &tags = FileTagCacheIns.getTagsByFile(path);
     if (tags.isEmpty())
         return false;
 
-    const auto &tagsColor = FileTagCacheController::instance().getCacheTagsColor(tags);
+    const auto &tagsColor = FileTagCacheIns.getCacheTagsColor(tags);
     if (!tagsColor.isEmpty()) {
         QRectF boundingRect(0, 0, (tagsColor.size() + 1) * kTagDiameter / 2, kTagDiameter);
         boundingRect.moveCenter(rect->center());
@@ -157,11 +157,11 @@ bool TagManager::addIconTagsHandle(const FileInfoPointer &info, ElideTextLayout 
 
     QString path = info->pathOf(PathInfoType::kFilePath);
     path = FileUtils::bindPathTransform(path, false);
-    const auto &fileTags = FileTagCacheController::instance().getTagsByFile(path);
+    const auto &fileTags = FileTagCacheIns.getTagsByFile(path);
     if (fileTags.isEmpty())
         return false;
 
-    const auto &tagsColor = FileTagCacheController::instance().getCacheTagsColor(fileTags);
+    const auto &tagsColor = FileTagCacheIns.getCacheTagsColor(fileTags);
 
     if (!tagsColor.isEmpty()) {
         auto document = layout->documentHandle();
@@ -284,7 +284,7 @@ QStringList TagManager::getTagsByUrls(const QList<QUrl> &urls) const
         paths.append(url.path());
     }
 
-    return FileTagCacheController::instance().getTagsByFiles(paths);
+    return FileTagCacheIns.getTagsByFiles(paths);
 }
 
 QStringList TagManager::getFilesByTag(const QString &tag)

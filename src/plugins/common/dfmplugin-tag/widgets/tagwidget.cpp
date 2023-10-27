@@ -62,7 +62,7 @@ void TagWidget::loadTags(const QUrl &url)
         format.setBackground(QBrush(it.value()));
         format.setBackgroundRadius(5);
 
-        d->crumbEdit->insertCrumb(format, 0);
+        d->crumbEdit->insertCrumb(format);
     }
     d->crumbEdit->setProperty("LoadFileTags", false);
 
@@ -157,7 +157,7 @@ void TagWidget::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
         format.setBackground(QBrush(it.value()));
         format.setBackgroundRadius(5);
 
-        d->crumbEdit->insertCrumb(format, 0);
+        d->crumbEdit->insertCrumb(format);
     }
 
     d->crumbEdit->setProperty("updateCrumbsColor", false);

@@ -56,7 +56,7 @@ void Tag::initialize()
         connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Tag::onAllPluginsStarted, Qt::DirectConnection);
 
     connect(TagProxyHandleIns, &TagProxyHandle::tagServiceRegistered, [] {
-        emit FileTagCacheController::instance().initLoadTagInfos();
+        emit FileTagCacheIns.initLoadTagInfos();
     });
 
     if (!TagProxyHandleIns->connectToService()) {
@@ -70,7 +70,7 @@ void Tag::initialize()
 
 bool Tag::start()
 {
-    emit FileTagCacheController::instance().initLoadTagInfos();
+    emit FileTagCacheIns.initLoadTagInfos();
 
     CustomViewExtensionView func { Tag::createTagWidget };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
