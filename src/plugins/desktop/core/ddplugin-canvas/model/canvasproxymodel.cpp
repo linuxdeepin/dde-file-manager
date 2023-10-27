@@ -41,6 +41,8 @@ void CanvasProxyModelPrivate::sourceReset()
     createMapping();
     q->endResetModel();
     qInfo() << "canvas model reseted, file count:" << fileList.count();
+
+    sendLoadReport();
 }
 
 void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, int start, int end)
@@ -205,6 +207,21 @@ void CanvasProxyModelPrivate::sortMainDesktopFile(QList<QUrl> &files, Qt::SortOr
                 files.push_back(it->second);
         }
     }
+}
+
+void CanvasProxyModelPrivate::sendLoadReport()
+{
+    static bool reportedFirstLoad { false };
+    if (Q_LIKELY(reportedFirstLoad))
+        return;
+
+    QVariantMap data {};
+    data.insert("filesCount", fileList.count());
+    data.insert("time", QDateTime::currentDateTime().toString());
+    dpfSignalDispatcher->publish("ddplugin_canvas", "signal_ReportLog_LoadFilesFinish",
+                                 QString(DFMGLOBAL_NAMESPACE::DataPersistence::kDesktopLoadFilesTime),
+                                 QVariant(data));
+    reportedFirstLoad = true;
 }
 
 bool CanvasProxyModelPrivate::insertFilter(const QUrl &url)

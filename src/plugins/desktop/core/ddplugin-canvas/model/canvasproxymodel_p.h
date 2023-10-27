@@ -54,6 +54,7 @@ protected:
 
 private:
     void sortMainDesktopFile(QList<QUrl> &files, Qt::SortOrder order) const;
+    void sendLoadReport();
 
 public:
     QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;

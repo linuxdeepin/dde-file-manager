@@ -22,6 +22,8 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
+    void sendPaintReport();
+
     int painted = 3;
     QString screen;
     QPixmap pixmap;

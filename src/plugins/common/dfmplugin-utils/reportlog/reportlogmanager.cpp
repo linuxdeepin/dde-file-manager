@@ -71,10 +71,16 @@ void ReportLogManager::reportBlockMountData(const QString &id, bool result)
     Q_EMIT requestReportBlockMountData(id, result);
 }
 
+void ReportLogManager::reportDesktopStartUp(const QString &key, const QVariant &data)
+{
+    Q_EMIT requestReportDesktopStartUp(key, data);
+}
+
 void ReportLogManager::initConnection()
 {
     connect(this, &ReportLogManager::requestCommitLog, reportWorker, &ReportLogWorker::commitLog, Qt::QueuedConnection);
     connect(this, &ReportLogManager::requestReportMenuData, reportWorker, &ReportLogWorker::handleMenuData, Qt::QueuedConnection);
     connect(this, &ReportLogManager::requestReportNetworkMountData, reportWorker, &ReportLogWorker::handleMountNetworkResult, Qt::QueuedConnection);
     connect(this, &ReportLogManager::requestReportBlockMountData, reportWorker, &ReportLogWorker::handleBlockMountData, Qt::QueuedConnection);
+    connect(this, &ReportLogManager::requestReportDesktopStartUp, reportWorker, &ReportLogWorker::handleDesktopStartUpData, Qt::QueuedConnection);
 }

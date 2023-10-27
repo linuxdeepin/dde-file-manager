@@ -45,6 +45,9 @@ void ReportLogEventReceiver::bindEvents()
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
 
+    dpfSignalDispatcher->subscribe("ddplugin_background", "signal_ReportLog_BackgroundPaint", this, &ReportLogEventReceiver::handleDesktopStartupData);
+    dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_ReportLog_LoadFilesFinish", this, &ReportLogEventReceiver::handleDesktopStartupData);
+
     lazyBindCommitEvent("dfmplugin-search", "dfmplugin_search");
     lazyBindCommitEvent("dfmplugin-vault", "dfmplugin_vault");
 
@@ -108,4 +111,9 @@ void ReportLogEventReceiver::handleBlockMountData(const QString &id, bool result
 void ReportLogEventReceiver::handleMountNetworkResult(bool ret, dfmmount::DeviceError err, const QString &msg)
 {
     ReportLogManager::instance()->reportNetworkMountData(ret, err, msg);
+}
+
+void ReportLogEventReceiver::handleDesktopStartupData(const QString &key, const QVariant &data)
+{
+    ReportLogManager::instance()->reportDesktopStartUp(key, data);
 }
