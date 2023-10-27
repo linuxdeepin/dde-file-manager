@@ -1701,7 +1701,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="389"/>
         <source>Device disconnected</source>
-        <translation>光驱设备未连接</translation>
+        <translation>设备断开连接</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="152"/>
@@ -2959,7 +2959,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
         <source>Files and folders</source>
-        <translation>文件和目录</translation>
+        <translation>文件和文件夹</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
@@ -2994,7 +2994,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
         <source>Extra small</source>
-        <translation>特小</translation>
+        <translation>极小</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
@@ -3014,7 +3014,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="288"/>
         <source>Extra large</source>
-        <translation>特大</translation>
+        <translation>极大</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="291"/>
@@ -3838,7 +3838,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide 3rd party entries on the Computer page</source>
-        <translation>计算机工作区隐藏第三方项</translation>
+        <translation>计算机工作区隐藏第三方入口</translation>
     </message>
 </context>
 <context>
