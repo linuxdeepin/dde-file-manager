@@ -25,6 +25,7 @@ private:
     QRectF arrowRect(const QRectF &iconRect);
 
     FileView *view();
+    int firstColumnRightBoundary { 0 };
 };
 
 }

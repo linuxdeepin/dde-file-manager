@@ -23,8 +23,13 @@ void TreeItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
 {
     *rect = iconRect(index, rect->toRect());
 
-    bool isEnabled = option.state & QStyle::State_Enabled;
-    ItemDelegateHelper::paintIcon(painter, option.icon, *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+    int nameColumnWidth = view()->getColumnWidth(0);
+    firstColumnRightBoundary = option.rect.x() + nameColumnWidth - 1 - view()->viewportMargins().left();
+
+    if (rect->right() <= firstColumnRightBoundary) {
+        bool isEnabled = option.state & QStyle::State_Enabled;
+        ItemDelegateHelper::paintIcon(painter, option.icon, *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+    }
 
     if (index.data(kItemTreeViewCanExpandRole).toBool())
         drawExpandArrow(painter, *rect, option, index);
@@ -46,6 +51,8 @@ QRectF TreeItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex &in
 
 QList<QRect> TreeItemPaintProxy::allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+    Q_UNUSED(option)
+
     QList<QRect> rects {};
     QRect itemRect = view()->visualRect(index);
     QRectF icon = iconRect(index, itemRect);
@@ -64,12 +71,15 @@ void TreeItemPaintProxy::drawExpandArrow(QPainter *painter, const QRectF &rect, 
     // the real arrow size to paint smaller than the given rect
     opt.rect = arrowRect.toRect().marginsRemoved(QMargins(5, 5, 5, 5));
 
+    if (opt.rect.right() > firstColumnRightBoundary)
+        return;
+
     painter->save();
     bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     if (isSelected) {
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
     } else {
-        painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
+        painter->setPen(opt.palette.color(QPalette::Active, QPalette::Text));
     }
 
     if (index.data(kItemTreeViewExpandedRole).toBool()) {
