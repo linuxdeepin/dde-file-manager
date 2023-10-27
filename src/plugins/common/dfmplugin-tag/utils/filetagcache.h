@@ -9,6 +9,8 @@
 #include <QThread>
 #include <QSharedPointer>
 
+#define FileTagCacheIns FileTagCacheController::instance()
+
 namespace dfmplugin_tag {
 
 class FileTagCachePrivate;
@@ -81,6 +83,13 @@ public:
 
 Q_SIGNALS:
     void initLoadTagInfos();
+
+    void filesTagged(const QVariantMap &fileAndTags);
+    void filesUntagged(const QVariantMap &fileAndTags);
+    void newTagsAdded(const QVariantMap &tags);
+    void tagsColorChanged(const QVariantMap &oldAndNew);
+    void tagsDeleted(const QStringList &tags);
+    void tagsNameChanged(const QVariantMap &oldAndNew);
 
 private:
     explicit FileTagCacheController(QObject *parent = nullptr);

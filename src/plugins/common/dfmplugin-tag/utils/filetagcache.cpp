@@ -31,16 +31,19 @@ void FileTagCacheWorker::loadFileTagsFromDatabase()
 void FileTagCacheWorker::onTagAdded(const QVariantMap &tags)
 {
     FileTagCache::instance().addTags(tags);
+    emit FileTagCacheIns.newTagsAdded(tags);
 }
 
 void FileTagCacheWorker::onTagDeleted(const QVariant &tags)
 {
     FileTagCache::instance().deleteTags(tags.toStringList());
+    emit FileTagCacheIns.tagsDeleted(tags.toStringList());
 }
 
 void FileTagCacheWorker::onTagsColorChanged(const QVariantMap &tagAndColorName)
 {
     FileTagCache::instance().changeTagColor(tagAndColorName);
+    emit FileTagCacheIns.tagsColorChanged(tagAndColorName);
 }
 
 void FileTagCacheWorker::onTagsNameChanged(const QVariantMap &oldAndNew)
@@ -49,16 +52,19 @@ void FileTagCacheWorker::onTagsNameChanged(const QVariantMap &oldAndNew)
     auto &&map { oldAndNew.toStdMap() };
     for (auto [oldName, newName] : map)
         FileTagCache::instance().changeFilesTagName(oldName, newName.toString());
+    emit FileTagCacheIns.tagsNameChanged(oldAndNew);
 }
 
 void FileTagCacheWorker::onFilesTagged(const QVariantMap &fileAndTags)
 {
     FileTagCache::instance().taggeFiles(fileAndTags);
+    emit FileTagCacheIns.filesTagged(fileAndTags);
 }
 
 void FileTagCacheWorker::onFilesUntagged(const QVariantMap &fileAndTags)
 {
     FileTagCache::instance().untaggeFiles(fileAndTags);
+    emit FileTagCacheIns.filesUntagged(fileAndTags);
 }
 
 FileTagCachePrivate::FileTagCachePrivate(FileTagCache *qq)
