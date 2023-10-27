@@ -692,14 +692,20 @@ void FileView::updateViewportContentsMargins(const QSize &itemSize)
         return;
 
     int contentsWidth = contentsSize().width();
-    if (contentsWidth < itemWidth)
+    if (contentsWidth < itemWidth) {
+        viewport()->setContentsMargins(0, 0, 0, 0);
         return;
+    }
     int widthModel = (contentsWidth - 1) % itemWidth;
-    if (widthModel >= iconHorizontalMargin && widthModel <= itemWidth - kIconHorizontalMargin)
+    if (widthModel >= iconHorizontalMargin && widthModel <= itemWidth - kIconHorizontalMargin) {
+        viewport()->setContentsMargins(0, 0, 0, 0);
         return;
+    }
     int margin = kIconHorizontalMargin - (widthModel >= iconHorizontalMargin ? itemWidth - widthModel : widthModel);
-    if (margin <= 0 || margin > kIconHorizontalMargin)
+    if (margin <= 0 || margin > kIconHorizontalMargin) {
+        viewport()->setContentsMargins(0, 0, 0, 0);
         return;
+    }
     viewport()->setContentsMargins(margin, 0, margin, 0);
 }
 
@@ -868,6 +874,8 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
 
     d->statusBar->scalingSlider()->setValue(sizeIndex);
     itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
+    if (isIconViewMode())
+        updateViewportContentsMargins(itemSizeHint());
 }
 
 void FileView::onShowFileSuffixChanged(bool isShow)
@@ -1313,8 +1321,12 @@ QRect FileView::visualRect(const QModelIndex &index) const
         int columnIndex = index.row() % columnCount;
         int rowIndex = index.row() / columnCount;
 
-        rect.setTop(rowIndex * (itemSize.height() + 2 * iconViewSpacing) +
-                    (rowIndex == 0 ? iconViewSpacing : 0));
+        int iconVerticalTopMargin = 0;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+#endif
+        rect.setTop(rowIndex * (itemSize.height() + 2 * iconViewSpacing) + iconVerticalTopMargin +
+                    (rowIndex == 0 ? 1 * iconViewSpacing : 0 * iconViewSpacing));
         rect.setLeft(columnIndex * itemWidth + (columnIndex == 0 ? iconViewSpacing : 0));
         rect.setSize(itemSize);
     }
@@ -1350,6 +1362,13 @@ QList<ItemRoles> FileView::getColumnRoles() const
 
 void FileView::updateGeometries()
 {
+    if (isIconViewMode()) {
+        int iconVerticalTopMargin = 0;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+#endif
+        resizeContents(contentsSize().width(), contentsSize().height() + iconVerticalTopMargin);
+    }
     if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();
     }

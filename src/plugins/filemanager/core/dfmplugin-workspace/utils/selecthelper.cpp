@@ -163,8 +163,12 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
     const QModelIndex &sampleIndex = view->model()->index(0, 0, view->rootIndex());
     int itemHeight = view->rectForIndex(sampleIndex).height() + view->spacing() * 2;
 
-    int firstRow = (actualRect.top() + view->verticalOffset()) / itemHeight;
-    int lastRow = (actualRect.bottom() + view->verticalOffset()) / itemHeight + 1;
+    int iconVerticalTopMargin = 0;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+#endif
+    int firstRow = (actualRect.top() + view->verticalOffset() - iconVerticalTopMargin) / itemHeight;
+    int lastRow = (actualRect.bottom() + view->verticalOffset() - iconVerticalTopMargin) / itemHeight + 1;
 
     int rowItemCount = view->itemCountForRow();
     int firstIndex = firstRow * rowItemCount;
