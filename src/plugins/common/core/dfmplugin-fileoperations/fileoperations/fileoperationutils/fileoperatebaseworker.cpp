@@ -1343,7 +1343,8 @@ void FileOperateBaseWorker::determineCountProcessType()
 
 void FileOperateBaseWorker::syncFilesToDevice()
 {
-    if (CountWriteSizeType::kWriteBlockType != countWriteType)
+
+    if (isTargetFileLocal)
         return;
 
     qInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
