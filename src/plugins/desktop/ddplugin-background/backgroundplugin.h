@@ -16,6 +16,12 @@ class BackgroundPlugin : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "background.json")
+
+    DPF_EVENT_NAMESPACE(DDP_BACKGROUND_NAMESPACE)
+
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_BackgroundPaint)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

@@ -24,12 +24,14 @@ public:
     void reportMenuData(const QString &name, const QList<QUrl> &urlList);
     void reportNetworkMountData(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
     void reportBlockMountData(const QString &id, bool result);
+    void reportDesktopStartUp(const QString &key, const QVariant &data);
 
 Q_SIGNALS:
     void requestCommitLog(const QString &type, const QVariantMap &args);
     void requestReportMenuData(const QString &name, const QList<QUrl> &urlList);
     void requestReportNetworkMountData(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
     void requestReportBlockMountData(const QString &id, bool result);
+    void requestReportDesktopStartUp(const QString &key, const QVariant &data);
 
 private:
     explicit ReportLogManager(QObject *parent = nullptr);

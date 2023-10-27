@@ -111,6 +111,7 @@ private:
 
     // FileInfoModel begin
     DPF_EVENT_REG_SIGNAL(signal_FileInfoModel_DataReplaced)
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_LoadFilesFinish)
 
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_RootUrl)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_RootIndex)

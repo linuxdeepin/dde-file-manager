@@ -7,6 +7,7 @@
 
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/interfaces/screen/abstractscreen.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QPaintEvent>
 #include <QBackingStore>
@@ -14,6 +15,7 @@
 #include <QFileInfo>
 #include <QImageReader>
 #include <QPaintDevice>
+#include <QDateTime>
 #include <qpa/qplatformwindow.h>
 #include <qpa/qplatformscreen.h>
 #include <qpa/qplatformbackingstore.h>
@@ -52,10 +54,25 @@ void BackgroundDefault::paintEvent(QPaintEvent *event)
         QImage *image = static_cast<QImage *>(backingStore()->handle()->paintDevice());
         QPainter pa(image);
         pa.drawPixmap(0, 0, noScalePixmap);
+        sendPaintReport();
         return;
     }
 
     QPainter pa(this);
     pa.drawPixmap(event->rect().topLeft(), pixmap, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
+    sendPaintReport();
     return;
+}
+
+void BackgroundDefault::sendPaintReport()
+{
+    static bool reportedPaint { false };
+    if (Q_LIKELY(reportedPaint))
+        return;
+
+    QVariant data = QDateTime::currentDateTime().toString();
+    dpfSignalDispatcher->publish("ddplugin_background", "signal_ReportLog_BackgroundPaint",
+                                 QString(DFMGLOBAL_NAMESPACE::DataPersistence::kDesktopDrawWallpaperTime),
+                                 data);
+    reportedPaint = true;
 }

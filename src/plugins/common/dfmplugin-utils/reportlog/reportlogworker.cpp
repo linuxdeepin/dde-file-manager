@@ -12,9 +12,12 @@
 #include "datas/appstartupreportdata.h"
 #include "datas/reportdatainterface.h"
 #include "datas/enterdirreportdata.h"
+#include "datas/desktopstartupreportdata.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/private/devicehelper.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <dfm-mount/dblockdevice.h>
 
@@ -51,7 +54,8 @@ bool ReportLogWorker::init()
         new VaultReportData,
         new FileMenuReportData,
         new AppStartupReportData,
-        new EnterDirReportData
+        new EnterDirReportData,
+        new DesktopStartUpReportData
     };
 
     std::for_each(datas.cbegin(), datas.cend(), [this](ReportDataInterface *dat) { registerLogData(dat->type(), dat); });
@@ -153,6 +157,30 @@ void ReportLogWorker::handleBlockMountData(const QString &id, bool result)
     }
 
     commitLog("BlockMount", rec);
+}
+
+void ReportLogWorker::handleDesktopStartUpData(const QString &key, const QVariant &data)
+{
+    using namespace DFMGLOBAL_NAMESPACE::DataPersistence;
+
+    QVariantMap desktopStartUpData = Application::instance()->dataPersistence()->value(kReportGroup, kDesktopStartUpReportKey).toMap();
+    if (key == kDesktopLoadFilesTime) {
+        QVariantMap loadData = data.toMap();
+        desktopStartUpData.insert(kDesktopLoadFilesTime, loadData["time"]);
+        desktopStartUpData.insert(kDesktopLoadFilesCount, loadData["filesCount"]);
+    } else if (key == kDesktopDrawWallpaperTime) {
+        desktopStartUpData.insert(key, data);
+    }
+
+    if (desktopStartUpData.contains(QString(kDesktopLaunchTime))) {
+        if (desktopStartUpData.contains(QString(kDesktopLoadFilesTime)) &&
+                desktopStartUpData.contains(QString(kDesktopDrawWallpaperTime))) {
+            Application::instance()->dataPersistence()->remove(kReportGroup, kDesktopStartUpReportKey);
+            commitLog("DesktopStartup", desktopStartUpData);
+        } else {
+            Application::instance()->dataPersistence()->setValue(kReportGroup, kDesktopStartUpReportKey, desktopStartUpData);
+        }
+    }
 }
 
 void ReportLogWorker::handleMountNetworkResult(bool ret, dfmmount::DeviceError err, const QString &msg)

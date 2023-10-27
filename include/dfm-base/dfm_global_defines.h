@@ -178,6 +178,17 @@ namespace DataBase {
 inline constexpr char kDfmDBName[] { "dfmruntime.db" };
 }   // namespace DataBase
 
+namespace DataPersistence {
+// groups
+inline constexpr char kReportGroup[] { "Report" };
+//keys
+inline constexpr char kDesktopStartUpReportKey[] { "DesktopStartUp" };
+inline constexpr char kDesktopLaunchTime[] { "DesktopLaunchTime" };
+inline constexpr char kDesktopDrawWallpaperTime[] { "DrawWallPaperTime" };
+inline constexpr char kDesktopLoadFilesTime[] { "LoadFilesTime" };
+inline constexpr char kDesktopLoadFilesCount[] { "LoadFilesCount" };
+}   // namespace DataPersistence
+
 }   // namespace Global
 }   // namespace dfmbase
 

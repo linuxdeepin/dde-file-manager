@@ -10,6 +10,9 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -258,6 +261,12 @@ int main(int argc, char *argv[])
     } else {
         qWarning() << "desktop is disabled...";
     }
+
+    QVariantMap startUpData {};
+    startUpData.insert(DFMGLOBAL_NAMESPACE::DataPersistence::kDesktopLaunchTime, mainTime);
+    Application::instance()->dataPersistence()->setValue(DFMGLOBAL_NAMESPACE::DataPersistence::kReportGroup,
+                                                         DFMGLOBAL_NAMESPACE::DataPersistence::kDesktopStartUpReportKey,
+                                                         startUpData);
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
