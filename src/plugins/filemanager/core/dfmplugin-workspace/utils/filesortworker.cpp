@@ -23,7 +23,11 @@ using namespace dfmio;
 FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilterCallback callfun, const QStringList &nameFilters, const QDir::Filters filters, const QDirIterator::IteratorFlags flags, QObject *parent)
     : QObject(parent), current(url), nameFilters(nameFilters), filters(filters), flags(flags), filterCallback(callfun), currentKey(key)
 {
-    sortAndFilter = SortFilterFactory::create<AbstractSortFilter>(url);
+    auto dirPath = url.path();
+    if (!dirPath.isEmpty() && dirPath != QDir::separator() && url.path().endsWith(QDir::separator()))
+        dirPath.chop(1);
+    current.setPath(dirPath);
+    sortAndFilter = SortFilterFactory::create<AbstractSortFilter>(current);
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FileSortWorker::handleFileInfoUpdated, Qt::QueuedConnection);
@@ -192,7 +196,12 @@ void FileSortWorker::handleSortDir(const QString &key, const QUrl &parent)
 {
     if (currentKey != key)
         return;
-    filterAndSortFiles(parent);
+    auto dirUrl = parent;
+    auto dirPath = parent.path();
+    if (!dirPath.isEmpty() && dirPath != QDir::separator() && parent.path().endsWith(QDir::separator()))
+        dirPath.chop(1);
+    dirUrl.setPath(dirPath);
+    filterAndSortFiles(dirUrl);
 }
 
 void FileSortWorker::handleModelGetSourceData()
@@ -716,7 +725,8 @@ void FileSortWorker::filterAndSortFiles(const QUrl &dir, const bool fileter, con
 QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byInfo)
 {
     // 先排深度是0的url
-    int8_t depth = depthMap.key(dir, -1);
+    int8_t depth = getDepth(dir);
+    depth = depth < 0 ? -1 : depth;
 
     QList<QUrl> allSubUnShowDir;
     QList<QUrl> depthParentUrls{ dir };
@@ -913,7 +923,7 @@ void FileSortWorker::switchListView()
 QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool reverse)
 {
     QList<QUrl> visibleList;
-    int8_t depth = depthMap.key(dir, -2);
+    int8_t depth = getDepth(dir);
     if (depth <= -2)
         return {};
     QList<QUrl> depthParentUrls{ dir };
@@ -1447,4 +1457,15 @@ QUrl FileSortWorker::parantUrl(const QUrl &url)
         return parent;
 
     return current;
+}
+
+int8_t FileSortWorker::getDepth(const QUrl &url)
+{
+    for (const auto &key : depthMap.keys()) {
+        for (const auto &value : depthMap.values(key)) {
+        if (UniversalUtils::urlEquals(url, value))
+            return key;
+        }
+    }
+    return -2;
 }
