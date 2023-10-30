@@ -425,7 +425,7 @@ void TaskWidget::initUI()
     lbDstPath = new ElidedLable;
     lbRmTime = new QLabel;
     lbSrcPath->setFixedWidth(kMsgLabelWidth);
-    lbSrcPath->setText("In data statistics ...");
+    lbSrcPath->setText(tr("In data statistics ..."));
     lbDstPath->setFixedWidth(kMsgLabelWidth);
     lbSpeed->setFixedWidth(kSpeedLabelWidth);
     lbRmTime->setFixedWidth(kSpeedLabelWidth);
