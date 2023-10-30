@@ -187,6 +187,7 @@ private:
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
     bool isDefaultHiddenFile(const QUrl &fileUrl);
     QUrl parantUrl(const QUrl &url);
+    int8_t getDepth(const QUrl &url);
 
 private:
     QUrl current;
