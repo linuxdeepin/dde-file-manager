@@ -399,8 +399,6 @@ void ConnectToServerDialog::initializeUi()
     // init collection area
     {
         collectionServerView = new DListView();
-        collectionServerView->setFixedWidth(425);
-        collectionServerView->setViewportMargins(0, 0, collectionServerView->verticalScrollBar()->sizeHint().width(), 0);
         collectionServerView->setVerticalScrollMode(DListView::ScrollPerPixel);
         collectionServerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         collectionServerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -450,43 +448,36 @@ void ConnectToServerDialog::initializeUi()
         emptyLayout->setSpacing(0);
     }
 
-    // init collection area visiable
-    {
-        const bool hasCollections = collectionServerView->count() > 0;
-        emptyFrame->setVisible(!hasCollections);
-        collectionServerView->setVisible(hasCollections);
-    }
-
     // do layout
     {
         QHBoxLayout *layout = new QHBoxLayout();
         layout->addSpacing(8);
         DLabel *collectionLabel = new DLabel(tr("My Favorites"));
-        layout->addWidget(collectionLabel, 0, Qt::AlignVCenter);
+        layout->addWidget(collectionLabel);
 
         QVBoxLayout *contentLayout = new QVBoxLayout();
         contentLayout->addLayout(addressLayout);
         contentLayout->addSpacing(5);
         contentLayout->addLayout(layout);
-        contentLayout->addStretch();
         contentLayout->addSpacing(5);
-        contentLayout->addWidget(collectionServerView, 0, Qt::AlignVCenter);
+        contentLayout->addWidget(collectionServerView);
         contentLayout->setContentsMargins(0, 0, 0, 0);
 
         QHBoxLayout *centerNotesLayout = new QHBoxLayout();
         centerNotesLayout->addWidget(emptyFrame);
-        contentLayout->addLayout(centerNotesLayout, Qt::AlignVCenter);
+        contentLayout->addLayout(centerNotesLayout);
 
         QFrame *contentFrame = new QFrame(this);
         contentFrame->setLayout(contentLayout);
         addContent(contentFrame);
     }
+
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(theAddButton), AcName::kAcComputerTitleBarAddBtn);
 
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                          qobject_cast<QWidget *>(collectionServerView), AcName::kAcComputerTitleBarCollectionServerView);
+                         qobject_cast<QWidget *>(collectionServerView), AcName::kAcComputerTitleBarCollectionServerView);
 
 #endif
 
