@@ -129,6 +129,10 @@ bool ExtendMenuScenePrivate::insertIntoExistedMenu(QAction *action, const QMap<Q
     cacheActionsSeparator.remove(action);
 
     menu->addActions(subActions);
+    auto holdingAct = menu->menuAction();
+    if (holdingAct)
+        holdingAct->setVisible(true);
+
     return true;
 }
 
