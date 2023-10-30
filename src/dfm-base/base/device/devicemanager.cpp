@@ -906,6 +906,8 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type)
             return;
         if (info.value(DeviceProperty::kHintIgnore).toBool())
             return;
+        if (!info.value(DeviceProperty::kHasFileSystem).toBool())
+            return;
 
         mountBlockDevAsync(id, {}, cb);
     }
