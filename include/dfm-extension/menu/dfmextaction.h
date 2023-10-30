@@ -24,6 +24,8 @@ public:
     using HoveredFunc = std::function<void(DFMExtAction *)>;
     using DeletedFunc = std::function<void(DFMExtAction *)>;
 
+    ~DFMExtAction();
+
 public:
     void setIcon(const std::string &icon);
     std::string icon() const;
@@ -60,7 +62,6 @@ public:
 
 protected:
     explicit DFMExtAction(DFMExtActionPrivate *d_ptr);
-    ~DFMExtAction();
     DFMExtActionPrivate *d;
 };
 
