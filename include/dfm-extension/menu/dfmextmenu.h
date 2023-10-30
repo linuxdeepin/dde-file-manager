@@ -24,6 +24,8 @@ public:
     using HoveredFunc = std::function<void(DFMExtAction *action)>;
     using DeletedFunc = std::function<void(DFMExtMenu *)>;
 
+    ~DFMExtMenu();
+
 public:
     std::string title() const;
     void setTitle(const std::string &title);
@@ -48,7 +50,6 @@ public:
 
 protected:
     explicit DFMExtMenu(DFMExtMenuPrivate *d_ptr);
-    ~DFMExtMenu();
     DFMExtMenuPrivate *d;
 };
 
