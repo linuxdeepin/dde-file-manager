@@ -282,7 +282,15 @@ QString ComputerInfoThread::edition() const
                         return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Government")).arg(DSysInfo::minorVersion());
                     } else if (kEnterprise == authorizedInfo) {
                         return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Enterprise")).arg(DSysInfo::minorVersion());
+                    } else if (kUnauthorized == authorizedInfo) {
+                        return defaultEdition;
                     } else {
+                        QDBusReply<QString> reply = deepinLicenseInfo.call("AuthorizationPropertyString");
+                        if (reply.isValid()) {
+                            QString info = reply.value();
+                            return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(info).arg(DSysInfo::minorVersion());
+                        }
+                        qCritical() << "DBus interface(AuthorizationPropertyString) call failed!";
                         return defaultEdition;
                     }
                 } else {
