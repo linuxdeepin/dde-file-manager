@@ -19,7 +19,7 @@ DPUTILS_BEGIN_NAMESPACE
 class EmblemIconWorker : public QObject
 {
     Q_OBJECT
-
+    using CacheType = QMap<QString, QList<QPair<QString, int>>>;
 Q_SIGNALS:
     void emblemIconChanged(const QString &path, const QList<QPair<QString, int>> &emblemGroup);
 
@@ -33,14 +33,19 @@ private:
     // method 1
     void parseEmblemIcons(const QString &path, int count, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin> plugin);
 
+    CacheType makeCache(const QString &path, const QList<QPair<QString, int>> &group);
     void makeLayoutGroup(const std::vector<DFMEXT::DFMExtEmblemIconLayout> &layouts, QList<QPair<QString, int>> *group);
+    QList<QPair<QString, int>> updateLayoutGroup(const QList<QPair<QString, int>> &cache, const QList<QPair<QString, int>> &group);
     void makeNormalGroup(const std::vector<std::string> &icons, int count, QList<QPair<QString, int>> *group);
     void mergeGroup(const QList<QPair<QString, int>> &oldGroup,
                     const QList<QPair<QString, int>> &newGroup,
                     QList<QPair<QString, int>> *group);
+    bool hasCachedByOtherLocationEmblem(const QString &path, quint64 addr);
+    void saveToPluginCache(quint64 addr, const QString &path, const QList<QPair<QString, int>> &group);
 
 private:
-    QMap<QString, QList<QPair<QString, int>>> embelmCaches;
+    CacheType embelmCaches;   // filePath -> pair<iconPath, iconCount>
+    QMap<quint64, CacheType> pluginCaches;   // plugin -> filePath -> pair<iconPath, iconCount>
 };
 
 class ExtensionEmblemManagerPrivate : public QObject
