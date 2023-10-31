@@ -71,39 +71,50 @@ void EmblemIconWorker::onFetchEmblemIcons(const QList<QPair<QString, int>> &loca
 void EmblemIconWorker::onClearCache()
 {
     embelmCaches.clear();
+    pluginCaches.clear();
 }
 
 bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, QSharedPointer<dfmext::DFMExtEmblemIconPlugin> plugin)
 {
     const auto &emblem { plugin->locationEmblemIcons(path.toStdString(), count) };
     const std::vector<DFMEXT::DFMExtEmblemIconLayout> &layouts { emblem.emblems() };
-    if (layouts.empty())
+    // why add `pluginCaches` ?
+    // To clear the emblem icon when a plugin returns an empty `DFMExtEmblemIconLayout`.
+    quint64 pluginAddr { reinterpret_cast<quint64>(plugin.data()) };
+    const CacheType &curPluginCache { pluginCaches.value(pluginAddr) };
+    if (layouts.empty() && curPluginCache.value(path).isEmpty())
+        return false;
+    if (hasCachedByOtherLocationEmblem(path, pluginAddr))
         return false;
 
     if (embelmCaches.contains(path)) {   // check changed
         const QList<QPair<QString, int>> &oldGroup { embelmCaches[path] };
         QList<QPair<QString, int>> newGroup;
         makeLayoutGroup(layouts, &newGroup);
+        newGroup = updateLayoutGroup(curPluginCache.value(path), newGroup);
         QList<QPair<QString, int>> mergedGroup;
         mergeGroup(oldGroup, newGroup, &mergedGroup);
         if (mergedGroup != oldGroup) {
             embelmCaches[path] = mergedGroup;
+            saveToPluginCache(pluginAddr, path, mergedGroup);
             emit emblemIconChanged(path, mergedGroup);
-            return true;
         }
     } else {   // save to cache
         QList<QPair<QString, int>> group;
         makeLayoutGroup(layouts, &group);
         emit emblemIconChanged(path, group);
         embelmCaches.insert(path, group);
-        return true;
+        saveToPluginCache(pluginAddr, path, group);
     }
 
-    return false;
+    return true;
 }
 
 void EmblemIconWorker::parseEmblemIcons(const QString &path, int count, QSharedPointer<dfmext::DFMExtEmblemIconPlugin> plugin)
 {
+    quint64 pluginAddr { reinterpret_cast<quint64>(plugin.data()) };
+    if (hasCachedByOtherLocationEmblem(path, pluginAddr))
+        return;
     const std::vector<std::string> &icons { plugin->emblemIcons(path.toStdString()) };
 
     if (icons.empty())
@@ -129,6 +140,13 @@ void EmblemIconWorker::parseEmblemIcons(const QString &path, int count, QSharedP
     }
 }
 
+EmblemIconWorker::CacheType EmblemIconWorker::makeCache(const QString &path, const QList<QPair<QString, int>> &group)
+{
+    CacheType cache;
+    cache.insert(path, group);
+    return cache;
+}
+
 void EmblemIconWorker::makeLayoutGroup(const std::vector<dfmext::DFMExtEmblemIconLayout> &layouts, QList<QPair<QString, int>> *group)
 {
     Q_ASSERT(group);
@@ -139,6 +157,32 @@ void EmblemIconWorker::makeLayoutGroup(const std::vector<dfmext::DFMExtEmblemIco
         if (pos < kMaxEmblemCount)
             group->push_back({ path, pos });
     });
+}
+
+QList<QPair<QString, int>> EmblemIconWorker::updateLayoutGroup(const QList<QPair<QString, int>> &cache, const QList<QPair<QString, int>> &group)
+{
+    if (cache == group || cache.isEmpty())
+        return group;
+
+    QHash<int, QString> tmpMap;
+    std::for_each(group.begin(), group.end(), [&tmpMap](const QPair<QString, int> &pair) {
+        tmpMap.insert(pair.second, pair.first);
+    });
+
+    std::for_each(cache.begin(), cache.end(), [&tmpMap](const QPair<QString, int> &pair) {
+        if (!tmpMap.contains(pair.second))
+            tmpMap.insert(pair.second, "");
+    });
+
+    QList<QPair<QString, int>> updatedGroup;
+    for (auto iter = tmpMap.begin(); iter != tmpMap.end(); ++iter) {
+        if (updatedGroup.size() >= kMaxEmblemCount)
+            break;
+
+        updatedGroup.push_back(qMakePair(iter.value(), iter.key()));
+    }
+
+    return updatedGroup;
 }
 
 void EmblemIconWorker::makeNormalGroup(const std::vector<std::string> &icons, int count, QList<QPair<QString, int>> *group)
@@ -164,7 +208,7 @@ void EmblemIconWorker::mergeGroup(const QList<QPair<QString, int>> &oldGroup,
     // Merge old and new,
     // New overwrites old if same location exists
 
-    QMap<int, QString> tmpMap;
+    QHash<int, QString> tmpMap;
     std::for_each(oldGroup.begin(), oldGroup.end(), [&tmpMap](const QPair<QString, int> &pair) {
         tmpMap.insert(pair.second, pair.first);
     });
@@ -179,6 +223,27 @@ void EmblemIconWorker::mergeGroup(const QList<QPair<QString, int>> &oldGroup,
 
         group->push_back(qMakePair(iter.value(), iter.key()));
     }
+}
+
+bool EmblemIconWorker::hasCachedByOtherLocationEmblem(const QString &path, quint64 addr)
+{
+    for (auto iter = pluginCaches.begin(); iter != pluginCaches.end(); ++iter) {
+        const CacheType &cache { iter.value() };
+        if (iter.key() != addr && cache.contains(path))
+            return true;
+    }
+    return false;
+}
+
+void EmblemIconWorker::saveToPluginCache(quint64 addr, const QString &path, const QList<QPair<QString, int>> &group)
+{
+    if (pluginCaches.contains(addr)) {
+        CacheType &cache = pluginCaches[addr];
+        cache.insert(path, group);
+        return;
+    }
+
+    pluginCaches.insert(addr, makeCache(path, group));
 }
 
 ExtensionEmblemManager &ExtensionEmblemManager::instance()
@@ -246,7 +311,6 @@ bool ExtensionEmblemManager::onFetchCustomEmblems(const QUrl &url, QList<QIcon> 
 void ExtensionEmblemManager::onEmblemIconChanged(const QString &path, const QList<QPair<QString, int>> &group)
 {
     Q_D(ExtensionEmblemManager);
-
     d->positionEmbelmCaches[path] = group;
     auto eventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "slot_FileInfoModel_UpdateFile") };
     if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
