@@ -8,6 +8,7 @@
 #include "daemonplugin_anything_global.h"
 
 #include <dfm-framework/dpf.h>
+#include <QProcess>
 
 DAEMONPANYTHING_BEGIN_NAMESPACE
 
@@ -22,7 +23,29 @@ public:
     virtual void stop() override;
 
 private:
+    bool startAnythingByLib();
+    void stopAnythingByLib();
+
+private:
     QLibrary *backendLib;
+    bool stopped;
+};
+
+class AnythingMonitorThread : public QThread
+{
+    Q_OBJECT
+public:
+    explicit AnythingMonitorThread(QProcess *server, bool *stopped) : QThread(nullptr)
+    {
+        this->server = server;
+        this->stopped = stopped;
+    }
+
+    void run() override;
+
+private:
+    QProcess *server;
+    bool *stopped;
 };
 
 DAEMONPANYTHING_END_NAMESPACE
