@@ -57,7 +57,7 @@ public:
     bool ejectBlockDev(const QString &id, const QVariantMap &opts = {});
 #endif
 
-    void mountBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType1 cb = nullptr);
+    void mountBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType1 cb = nullptr, int timeout = 0);
     bool unmountBlockDev(const QString &id, const QVariantMap &opts = {});
     void unmountBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
     void lockBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
@@ -93,6 +93,8 @@ public:
 
     void stopScanDrive(const QString &id);
     void stopAllScanTask();
+
+    void retryMount(const QString &id, DFMMOUNT::DeviceType type, int timeout);
 
 Q_SIGNALS:
     // device watch
@@ -130,7 +132,7 @@ Q_SIGNALS:
 private:
     explicit DeviceManager(QObject *parent = nullptr);
     virtual ~DeviceManager() override;
-    void doAutoMount(const QString &id, DFMMOUNT::DeviceType type);
+    void doAutoMount(const QString &id, DFMMOUNT::DeviceType type, int timeout = 0);
 
 private:
     QScopedPointer<DeviceManagerPrivate> d;
