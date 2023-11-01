@@ -147,7 +147,7 @@ QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
 }
 #endif
 
-void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType1 cb)
+void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType1 cb, int timeout)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
     Q_ASSERT(qApp->thread() == QThread::currentThread());
@@ -203,14 +203,21 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             }
 
             bool optical = dev->optical();
-            auto callback = [cb, removable, optical, id, this](bool ok, const OperationErrorInfo &err, const QString &mpt) {
+            auto callback = [cb, removable, optical, id, timeout, this](bool ok, const OperationErrorInfo &err, const QString &mpt) {
                 this->blockDevMountResult(id, ok);
                 if (!mpt.isEmpty() && removable && !optical)
                     DeviceManagerPrivate::handleDlnfsMount(mpt, true);
+
                 if (ok)
                     Q_EMIT this->blockDevMountedManually(id, mpt);   // redundant: to notify deviceproxymanager update the cache.
+
                 if (cb)
                     cb(ok, err, mpt);
+
+                if (mpt.isEmpty()) {
+                    qWarning()<<"mount err:" << err.code <<" : " << err.message;
+                    retryMount(id, DeviceType::kBlockDevice, timeout+1); // if device not mounted, mount it again
+                }
             };
             dev->mountAsync(opts, callback);
         } else {
@@ -865,7 +872,7 @@ DeviceManager::DeviceManager(QObject *parent)
 
 DeviceManager::~DeviceManager() { }
 
-void DeviceManager::doAutoMount(const QString &id, DeviceType type)
+void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 {
     if (type == DeviceType::kProtocolDevice) {   // alwasy auto mount protocol device
         mountProtocolDevAsync(id);
@@ -909,8 +916,19 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type)
         if (!info.value(DeviceProperty::kHasFileSystem).toBool())
             return;
 
-        mountBlockDevAsync(id, {}, cb);
+        mountBlockDevAsync(id, {}, cb, timeout);
     }
+}
+
+void DeviceManager::retryMount(const QString &id, DFMMOUNT::DeviceType type, int timeout)
+{
+    if(timeout > 1){
+        qWarning() << " retry mount stoped by timeout more than " << timeout << " times for: "<< id;
+        return;
+    }
+
+    qInfo() << " retry mount 5s later:" << id;
+    QTimer::singleShot(5000, this, [id, type, timeout] { DeviceManager::instance()->doAutoMount(id, type, timeout); });
 }
 
 DeviceManagerPrivate::DeviceManagerPrivate(DeviceManager *qq)
