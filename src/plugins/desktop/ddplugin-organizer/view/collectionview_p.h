@@ -70,7 +70,7 @@ public:
     void undoFiles();
     void previewFiles();
     void showFilesProperty();
-    bool continuousSelection(QEvent *event, QPersistentModelIndex &newCurrent) const;
+    void continuousSelection(const QPersistentModelIndex &newCurrent);
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
 
     void updateDFMMimeData(QDropEvent *event);
