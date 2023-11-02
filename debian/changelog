@@ -1,3 +1,9 @@
+dde-file-manager (6.0.33) unstable; urgency=medium
+
+  * update file manager baseline version to V6.0.33
+
+ -- lvwujun <lvwujun@uniontech.com>  Thur, 2 Nov 2023 11:07:21 +0800
+
 dde-file-manager (6.0.31) unstable; urgency=medium
 
   * update file manager baseline version to V6.0.31
