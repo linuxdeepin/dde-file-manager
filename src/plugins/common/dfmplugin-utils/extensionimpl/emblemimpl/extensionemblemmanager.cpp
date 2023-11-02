@@ -119,8 +119,6 @@ void EmblemIconWorker::parseEmblemIcons(const QString &path, int count, QSharedP
 
     if (icons.empty())
         return;
-    if (icons.size() == 1 && icons.at(0).empty())
-        return;
 
     if (embelmCaches.contains(path)) {   // check changed
         const QList<QPair<QString, int>> &oldGroup { embelmCaches[path] };
