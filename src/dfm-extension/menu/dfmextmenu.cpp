@@ -18,9 +18,6 @@ DFMExtMenu::DFMExtMenu(DFMExtMenuPrivate *d_ptr)
 
 DFMExtMenu::~DFMExtMenu()
 {
-    if (d->deletedFunc)
-        d->deletedFunc(this);
-
     delete d;
     d = nullptr;
 }
