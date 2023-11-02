@@ -36,22 +36,15 @@ DFMExtMenuImplPrivate::DFMExtMenuImplPrivate(DFMExtMenuImpl *qImpl, QMenu *m)
                      this, &DFMExtMenuImplPrivate::onActionTriggered);
     // 应用于actions获取implmenu时自动释放，将匿名函数挂载到menu以屏蔽循环的释放冲突
     QObject::connect(menu, &QObject::destroyed, menu, [=]() {
-        if (interiorEntity) {
+        q->deleted(q);
+        if (q)
             delete q;
-        }
     });
 }
 
 DFMExtMenuImplPrivate::~DFMExtMenuImplPrivate()
 {
-    if (interiorEntity) {   // 文管内部创建采用逆向释放，信号槽绑定
-        return;
-    } else {   //! 非文管创建的impl正向释放
-        if (menu) {
-            delete menu;
-            menu = nullptr;
-        }
-    }
+    q = nullptr;
 }
 
 DFMExtMenuImpl *DFMExtMenuImplPrivate::menuImpl() const
@@ -124,6 +117,7 @@ bool DFMExtMenuImplPrivate::addAction(DFMExtAction *action)
             return false;
 
         QAction *ac = actionImpl_d->qaction();
+        ac->setParent(menu);
         menu->addAction(ac);
         return true;
     }
@@ -147,6 +141,7 @@ bool DFMExtMenuImplPrivate::insertAction(DFMExtAction *before, DFMExtAction *act
             return false;
 
         QAction *ac = impl_d->qaction();
+        ac->setParent(menu);
         menu->insertAction(beforeAc, ac);
         return true;
     }

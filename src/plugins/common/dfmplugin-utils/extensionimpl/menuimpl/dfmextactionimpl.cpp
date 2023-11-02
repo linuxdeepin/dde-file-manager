@@ -36,22 +36,19 @@ DFMExtActionImplPrivate::DFMExtActionImplPrivate(DFMExtActionImpl *qImpl, QActio
     connect(action, &QAction::hovered, this, &DFMExtActionImplPrivate::onActionHovered);
     connect(action, &QAction::triggered, this, &DFMExtActionImplPrivate::onActionTriggered);
     // 应用于接口actions批量获取时，随qAction释放，将匿名函数挂载到action对象上，避免循环的释放冲突
-    connect(action, &QAction::destroyed, action, [=]() {
-        if (interiorEntity)
+    connect(action, &QAction::destroyed, this, [=]() {
+        if (action->menu())
+            action->menu()->deleteLater();
+        q->deleted(q);
+        if (q)
             delete q;
     });
 }
 
 DFMExtActionImplPrivate::~DFMExtActionImplPrivate()
 {
-    if (interiorEntity) {   // 文管内部创建的impl采用逆向释放
-        return;
-    } else {   // 非文管创建正向释放
-        if (action) {
-            delete action;
-            action = nullptr;
-        }
-    }
+    q = nullptr;
+    qDebug() << "release extend action" << action->text();
 }
 
 DFMExtActionImpl *DFMExtActionImplPrivate::actionImpl() const
@@ -142,7 +139,6 @@ void DFMExtActionImplPrivate::setMenu(DFMExtMenu *menu)
         // 文管内部的创建的不能设置
         if (menuImpl_d->isInterior())
             return;
-
         QMenu *menu = menuImpl_d->qmenu();
         action->setMenu(menu);
     }
