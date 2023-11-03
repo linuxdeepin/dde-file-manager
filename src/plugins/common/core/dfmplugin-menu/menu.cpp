@@ -219,6 +219,9 @@ void Menu::initialize()
 {
     handle = new MenuHandle();
     handle->init();
+
+    qApp->setProperty("_d_menu_keyboardsearch_disabled", true);
+    qApp->setProperty("_d_menu_underlineshortcut", true);
 }
 
 bool Menu::start()
