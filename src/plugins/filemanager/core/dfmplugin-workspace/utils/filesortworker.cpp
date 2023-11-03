@@ -187,7 +187,7 @@ void FileSortWorker::handleTraversalFinish(const QString &key)
     if (currentKey != key)
         return;
 
-    Q_EMIT requestSetIdel();
+    Q_EMIT requestSetIdel(visibleChildren.count(), childrenDataMap.count());
 
     HandleNameFilters(nameFilters);
 }
@@ -295,8 +295,7 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> ch
         if (sortInfo.isNull())
             continue;
 
-        if (sortInfo->isDir() && visibleTreeChildren.keys().contains(sortInfo->fileUrl()))
-        {
+        if (sortInfo->isDir() && visibleTreeChildren.keys().contains(sortInfo->fileUrl())) {
             removeSubDir(sortInfo->fileUrl());
             continue;
         }
@@ -333,7 +332,6 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> ch
             visibleChildren.removeAt(showIndex);
         }
         Q_EMIT removeFinish();
-
     }
     this->children.insert(parentUrl, subChildren);
     visibleTreeChildren.insert(parentUrl, subVisibleList);
@@ -537,7 +535,7 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
 
 void FileSortWorker::handleCloseExpand(const QString &key, const QUrl &parent)
 {
-    if (isCanceled || key != currentKey || UniversalUtils::urlEquals(parent , current))
+    if (isCanceled || key != currentKey || UniversalUtils::urlEquals(parent, current))
         return;
     if (!children.keys().contains(parent))
         return;
@@ -574,7 +572,7 @@ void FileSortWorker::handleAddChildren(const QString &key,
     auto parentUrl = parantUrl(children.first()->fileUrl());
     bool isHome = parentUrl.path() == StandardPaths::location(StandardPaths::kHomePath);
     if (!isHome && sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
-            && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
+        && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
         if (handleSource)
             setSourceHandleState(isFinished);
         return;
@@ -625,7 +623,7 @@ bool FileSortWorker::handleAddChildren(const QString &key,
             newChildren.append(sortInfo->fileUrl());
         if (isCanceled)
             return false;
-        FileInfoPointer info{ nullptr };
+        FileInfoPointer info { nullptr };
         if (infosSize > 0 && index < infosSize)
             info = childInfos.at(index);
         createAndInsertItemData(depth, sortInfo, info);
@@ -647,7 +645,7 @@ bool FileSortWorker::handleAddChildren(const QString &key,
 void FileSortWorker::setSourceHandleState(const bool isFinished)
 {
     if (isFinished) {
-        Q_EMIT requestSetIdel();
+        Q_EMIT requestSetIdel(visibleChildren.count(), childrenDataMap.count());
     } else {
         Q_EMIT getSourceData(currentKey);
     }
@@ -729,19 +727,18 @@ QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byIn
     depth = depth < 0 ? -1 : depth;
 
     QList<QUrl> allSubUnShowDir;
-    QList<QUrl> depthParentUrls{ dir };
+    QList<QUrl> depthParentUrls { dir };
     // 执行
     while (!depthParentUrls.isEmpty()) {
         if (isCanceled)
             return {};
-        for(const auto &parent : depthParentUrls) {
+        for (const auto &parent : depthParentUrls) {
             if (isCanceled)
                 return {};
             if (!UniversalUtils::urlEquals(parent, current) && !UniversalUtils::isParentUrl(parent, dir))
                 continue;
             auto sortInfo = children.value(parantUrl(parent)).value(parent);
-            if (!UniversalUtils::urlEquals(parent, current) &&
-                    !checkFilters(sortInfo, byInfo)) {
+            if (!UniversalUtils::urlEquals(parent, current) && !checkFilters(sortInfo, byInfo)) {
                 allSubUnShowDir.append(removeVisibleTreeChildren(parent));
                 continue;
             }
@@ -806,7 +803,8 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     if (isCanceled)
         return;
 
-    int showIndex = findStartPos(parentUrl);;
+    int showIndex = findStartPos(parentUrl);
+    ;
 
     // 插入到每个目录下的显示目录
     auto subVisibleList = visibleTreeChildren.take(parentUrl);
@@ -830,7 +828,6 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
 
     // kItemDisplayRole 是不进行排序的
     showIndex += offset;
-
 
     if (isCanceled)
         return;
@@ -903,8 +900,7 @@ void FileSortWorker::switchListView()
     // 移除children
     auto allShowChildren = children.value(current);
     QList<QUrl> removeChildren;
-    for (const auto &url : children.keys())
-    {
+    for (const auto &url : children.keys()) {
         if (UniversalUtils::urlEquals(url, current))
             continue;
         removeChildren.append(children.value(url).keys());
@@ -926,13 +922,13 @@ QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool
     int8_t depth = getDepth(dir);
     if (depth <= -2)
         return {};
-    QList<QUrl> depthParentUrls{ dir };
+    QList<QUrl> depthParentUrls { dir };
     bool bSort = orgSortRole != Global::ItemRoles::kItemDisplayRole;
     // 执行排序
     while (!depthParentUrls.isEmpty()) {
         if (isCanceled)
             return {};
-        for(const auto &parent : depthParentUrls) {
+        for (const auto &parent : depthParentUrls) {
             if (isCanceled)
                 return {};
             if (!UniversalUtils::urlEquals(dir, parent) && UniversalUtils::isParentUrl(parent, dir))
@@ -1002,7 +998,7 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
 QList<QUrl> FileSortWorker::removeChildrenByParents(const QList<QUrl> &dirs)
 {
     QList<QUrl> urls;
-    for (const auto &dir :dirs) {
+    for (const auto &dir : dirs) {
         for (const auto &sortInfo : children.value(dir))
             urls << sortInfo->fileUrl();
         children.remove(dir);
@@ -1017,7 +1013,7 @@ QList<QUrl> FileSortWorker::removeVisibleTreeChildren(const QUrl &parent)
 {
     auto depth = depthMap.key(parent);
     QList<QUrl> depthParentUrls = depthMap.values(depth);
-    QList<QUrl> removeUrls { };
+    QList<QUrl> removeUrls {};
     while (!depthParentUrls.isEmpty()) {
         if (isCanceled)
             return {};
@@ -1159,7 +1155,7 @@ void FileSortWorker::removeVisibleChildren(const int startPos, const int size)
 void FileSortWorker::createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info)
 {
     // 设置
-    FileItemDataPointer item{ nullptr };
+    FileItemDataPointer item { nullptr };
     if (info.isNull()) {
         item.reset(new FileItemData(child, rootdata.data()));
     } else {
@@ -1169,7 +1165,7 @@ void FileSortWorker::createAndInsertItemData(const int8_t depth, const SortInfoP
 
     item->setDepth(depth);
 
-    if ( !istree  || !child->isDir()) {
+    if (!istree || !child->isDir()) {
         QWriteLocker lk(&childrenDataLocker);
         childrenDataMap.insert(child->fileUrl(), item);
         return;
@@ -1232,9 +1228,11 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     const auto &rightItem = childrenDataMap.value(right);
 
     const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
-            ? leftItem->fileInfo() : InfoFactory::create<FileInfo>(left);
+            ? leftItem->fileInfo()
+            : InfoFactory::create<FileInfo>(left);
     const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
-            ? rightItem->fileInfo() : InfoFactory::create<FileInfo>(right);
+            ? rightItem->fileInfo()
+            : InfoFactory::create<FileInfo>(right);
 
     if (!leftInfo)
         return false;
@@ -1331,7 +1329,6 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
     }
 }
 
-
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
 {
     // 处理继承
@@ -1427,7 +1424,6 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     return true;
 }
 
-
 bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
 {
     static DThreadList<QUrl> defaultHiddenUrls;
@@ -1453,7 +1449,7 @@ QUrl FileSortWorker::parantUrl(const QUrl &url)
         return current;
     auto parent = UrlRoute::urlParent(url);
     if (UniversalUtils::urlEquals(current, parent) || UniversalUtils::isParentUrl(current, parent)
-            || !childData(parent).isNull())
+        || !childData(parent).isNull())
         return parent;
 
     return current;
@@ -1463,8 +1459,8 @@ int8_t FileSortWorker::getDepth(const QUrl &url)
 {
     for (const auto &key : depthMap.keys()) {
         for (const auto &value : depthMap.values(key)) {
-        if (UniversalUtils::urlEquals(url, value))
-            return key;
+            if (UniversalUtils::urlEquals(url, value))
+                return key;
         }
     }
     return -2;
