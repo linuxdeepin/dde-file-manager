@@ -94,25 +94,25 @@ void FileViewPrivate::initListModeView()
             headerView->setSelectionModel(q->selectionModel());
         }
 
-    q->addHeaderWidget(headerView);
-    if (!emptyInteractionArea) {
-        emptyInteractionArea = new QWidget(q);
-        emptyInteractionArea->setFixedHeight(10);
-        emptyInteractionArea->installEventFilter(q);
+        q->addHeaderWidget(headerView);
+        if (!emptyInteractionArea) {
+            emptyInteractionArea = new QWidget(q);
+            emptyInteractionArea->setFixedHeight(10);
+            emptyInteractionArea->installEventFilter(q);
+        }
+
+        q->addHeaderWidget(emptyInteractionArea);
+
+        QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
+        QObject::connect(headerView, &HeaderView::sectionResized, q, &FileView::onHeaderSectionResized);
+        QObject::connect(headerView, &HeaderView::sortIndicatorChanged, q, &FileView::onSortIndicatorChanged);
+        QObject::connect(headerView, &HeaderView::sectionMoved, q, &FileView::onHeaderSectionMoved);
+        QObject::connect(headerView, &HeaderView::sectionHandleDoubleClicked, q, &FileView::onSectionHandleDoubleClicked);
+        QObject::connect(headerView, &HeaderView::hiddenSectionChanged, q, &FileView::onHeaderHiddenChanged);
+        QObject::connect(q->horizontalScrollBar(), &QScrollBar::valueChanged, headerView, [=](int value) {
+            headerView->move(-value, headerView->y());
+        });
     }
-
-    q->addHeaderWidget(emptyInteractionArea);
-
-    QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
-    QObject::connect(headerView, &HeaderView::sectionResized, q, &FileView::onHeaderSectionResized);
-    QObject::connect(headerView, &HeaderView::sortIndicatorChanged, q, &FileView::onSortIndicatorChanged);
-    QObject::connect(headerView, &HeaderView::sectionMoved, q, &FileView::onHeaderSectionMoved);
-    QObject::connect(headerView, &HeaderView::sectionHandleDoubleClicked, q, &FileView::onSectionHandleDoubleClicked);
-    QObject::connect(headerView, &HeaderView::hiddenSectionChanged, q, &FileView::onHeaderHiddenChanged);
-    QObject::connect(q->horizontalScrollBar(), &QScrollBar::valueChanged, headerView, [=](int value) {
-        headerView->move(-value, headerView->y());
-    });
-
     if (statusBar)
         statusBar->setScalingVisible(false);
 }
