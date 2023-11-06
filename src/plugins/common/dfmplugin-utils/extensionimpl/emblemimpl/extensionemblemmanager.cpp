@@ -84,8 +84,6 @@ bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, 
     const CacheType &curPluginCache { pluginCaches.value(pluginAddr) };
     if (layouts.empty() && curPluginCache.value(path).isEmpty())
         return false;
-    if (hasCachedByOtherLocationEmblem(path, pluginAddr))
-        return false;
 
     if (embelmCaches.contains(path)) {   // check changed
         const QList<QPair<QString, int>> &oldGroup { embelmCaches[path] };
@@ -96,7 +94,7 @@ bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, 
         mergeGroup(oldGroup, newGroup, &mergedGroup);
         if (mergedGroup != oldGroup) {
             embelmCaches[path] = mergedGroup;
-            saveToPluginCache(pluginAddr, path, mergedGroup);
+            saveToPluginCache(pluginAddr, path, newGroup);
             emit emblemIconChanged(path, mergedGroup);
         }
     } else {   // save to cache
