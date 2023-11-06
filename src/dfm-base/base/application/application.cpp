@@ -309,7 +309,14 @@ void Application::appAttributeTrigger(TriggerAttribute ta)
         auto settings = appObtuselySetting();
 
         const QStringList &keys = settings->keyList("FileViewState");
+        const QStringList &defaultKeys = settings->defaultConfigkeyList("FileViewState");
         for (const QString &url : keys) {
+            if (defaultKeys.contains(url)) {
+                auto defaultMap = settings->defaultConfigValue("FileViewState", url).toMap();
+                if (defaultMap.contains("viewMode") && defaultMap["viewMode"] != defaultViewMode)
+                    continue;
+            }
+
             auto map = settings->value("FileViewState", url).toMap();
             if (map.contains("viewMode")) {
                 qDebug() << "Set " << url << "viewMode to " << defaultViewMode;

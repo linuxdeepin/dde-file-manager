@@ -98,6 +98,9 @@ QWidget *FileView::widget() const
 
 void FileView::setViewMode(Global::ViewMode mode)
 {
+    if (!isVisible())
+        return;
+
     if (itemDelegate())
         itemDelegate()->hideAllIIndexWidget();
 
@@ -1913,8 +1916,9 @@ void FileView::updateSelectedUrl()
 
 void FileView::updateListHeaderView()
 {
-    if (!d->headerView)
+    if (!d->headerView) {
         return;
+    }
 
     d->headerView->setModel(Q_NULLPTR);
     d->headerView->setModel(model());

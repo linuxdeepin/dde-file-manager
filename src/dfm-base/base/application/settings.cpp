@@ -513,6 +513,27 @@ QStringList Settings::keyList(const QString &group) const
 
     return keyList;
 }
+
+QStringList Settings::defaultConfigkeyList(const QString &group) const
+{
+    QStringList keyList;
+    QSet<QString> keys = this->keys(group);
+
+    for (const QString &ordered_key : d->defaultData.groupKeyOrderedList(group)) {
+        if (keys.contains(ordered_key)) {
+            keyList << ordered_key;
+            keys.remove(ordered_key);
+        }
+    }
+
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 14, 0))
+    keyList << keys.toList();
+#else
+    keyList << keys.values();
+#endif
+
+    return keyList;
+}
 /*!
  * \brief Settings::toUrlValue 从QVariant转换为QUrl
  *
@@ -577,6 +598,16 @@ QVariant Settings::value(const QString &group, const QString &key, const QVarian
 QVariant Settings::value(const QString &group, const QUrl &key, const QVariant &defaultValue) const
 {
     return value(group, d->urlToKey(key), defaultValue);
+}
+
+QVariant Settings::defaultConfigValue(const QString &group, const QString &key, const QVariant &defaultValue) const
+{
+    return d->defaultData.values.value(group).value(key, defaultValue);
+}
+
+QVariant Settings::defaultConfigValue(const QString &group, const QUrl &key, const QVariant &defaultValue) const
+{
+    return defaultConfigValue(group, d->urlToKey(key), defaultValue);
 }
 /*!
  * \brief Settings::urlValue 获取属性转换为对应文件的url
