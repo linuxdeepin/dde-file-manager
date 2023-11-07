@@ -453,7 +453,7 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
     // bug 205732, 回收站文件找到源文件名称
     bool isTrashFile = FileUtils::isTrashFile(fromInfo->urlOf(UrlInfoType::kUrl));
     if (isTrashFile) {
-        auto trashInfoUrl= trashInfo(fromInfo);
+        auto trashInfoUrl = trashInfo(fromInfo);
         fileNewName = trashInfoUrl.isValid() ? fileOriginName(trashInfoUrl) : fileName;
     }
     newTargetInfo.reset();
@@ -478,14 +478,14 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
         QStringList pathList;
         QString pathValue = newFromInfo->urlOf(UrlInfoType::kUrl).path();
         pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator()
-                ? QString(pathValue).left(pathValue.length() -1)
+                ? QString(pathValue).left(pathValue.length() - 1)
                 : pathValue;
         pathList.append(pathValue);
         do {
             QUrl newUrl = newFromInfo->urlOf(UrlInfoType::kUrl);
             pathValue = newFromInfo->pathOf(PathInfoType::kSymLinkTarget);
             pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator()
-                    ? QString(pathValue).left(pathValue.length() -1)
+                    ? QString(pathValue).left(pathValue.length() - 1)
                     : pathValue;
             newUrl.setPath(pathValue);
             FileInfoPointer symlinkTarget = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
@@ -538,6 +538,9 @@ bool FileOperateBaseWorker::doCheckNewFile(const FileInfoPointer &fromInfo, cons
     auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
     if (createNewTargetInfo(fromInfo, toInfo, newTargetInfo, newTargetUrl, skip, isCountSize))
         return true;
+    if (!newTargetInfo)
+        return false;
+
     if (!workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->urlOf(UrlInfoType::kUrl), newTargetUrl)) {
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
                                                                         toInfo->urlOf(UrlInfoType::kUrl),
@@ -742,8 +745,8 @@ void FileOperateBaseWorker::initCopyWay()
     }
 
     if (DeviceUtils::isSamba(targetUrl)
-            || DeviceUtils::isFtp(targetUrl)
-            || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
+        || DeviceUtils::isFtp(targetUrl)
+        || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
         countWriteType = CountWriteSizeType::kCustomizeType;
 
     if (!workData->signalThread) {
@@ -792,7 +795,6 @@ void FileOperateBaseWorker::removeTrashInfo(const QUrl &trashInfoUrl)
     qDebug() << "delete trash file info. trashInfoUrl = " << trashInfoUrl;
     localFileHandler->deleteFile(trashInfoUrl);
 }
-
 
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
 {
@@ -1013,7 +1015,7 @@ bool FileOperateBaseWorker::doCopyOtherFile(const FileInfoPointer fromInfo, cons
     const QString &targetUrl = toInfo->urlOf(UrlInfoType::kUrl).toString();
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
-    bool ok{ false };
+    bool ok { false };
     if (fromInfo->size() > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
         ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
     } else {

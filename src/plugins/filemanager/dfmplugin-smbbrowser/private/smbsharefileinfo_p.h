@@ -19,6 +19,8 @@ public:
     explicit SmbShareFileInfoPrivate(SmbShareFileInfo *qq);
     virtual ~SmbShareFileInfoPrivate();
 
+    bool canDrop() const;
+
 private:
     SmbShareNode node;
     QString fileName() const;
