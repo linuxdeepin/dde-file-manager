@@ -34,6 +34,7 @@ class Computer : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_View_ItemListFilter)
     DPF_EVENT_REG_HOOK(hook_View_ItemFilterOnAdd)
     DPF_EVENT_REG_HOOK(hook_View_ItemFilterOnRemove)
+    DPF_EVENT_REG_HOOK(hook_Device_AcquireDevPwd)
 
     // Plugin interface
 public:

@@ -23,6 +23,7 @@
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-framework/dpf.h>
 
 #include <DMenu>
 
@@ -37,6 +38,8 @@ DWIDGET_USE_NAMESPACE
 
 using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
+
+Q_DECLARE_METATYPE(QString *)
 
 ComputerController *ComputerController::instance()
 {
@@ -256,7 +259,14 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     if (isEncrypted) {
         if (!isUnlocked) {
             ComputerUtils::setCursorState();
-            QString passwd = DialogManagerInstance->askPasswordForLockedDevice(driveName);
+            QString passwd;
+            bool hooked = dpfHookSequence->run("dfmplugin_computer",
+                                               "hook_Device_AcquireDevPwd",
+                                               info->extraProperty(DeviceProperty::kDevice).toString(),
+                                               &passwd);
+            if (!hooked)
+                passwd = DialogManagerInstance->askPasswordForLockedDevice(driveName);
+
             if (passwd.isEmpty()) {
                 ComputerUtils::setCursorState();
                 return;

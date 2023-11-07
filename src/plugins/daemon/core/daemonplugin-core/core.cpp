@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "core.h"
+#include "polkit/policykithelper.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
@@ -11,6 +12,7 @@
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -46,5 +48,13 @@ bool Core::start()
         qputenv(kEnvNameOfDaemonRegistered, "FALSE");
     }
 
+    bindEvents();
+
     return true;
+}
+
+void Core::bindEvents()
+{
+    dpfSlotChannel->connect("daemonplugin_core", "slot_Polkit_CheckAuth",
+                            PolicyKitHelper::instance(), &PolicyKitHelper::checkAuthorization);
 }
