@@ -40,6 +40,7 @@ private:
     void openWithDialog();
     void openInHomeDirectory();
     void openInUrls();
+    void openSession();
     void openWindowWithUrl(const QUrl &url);
     void processEvent();
 

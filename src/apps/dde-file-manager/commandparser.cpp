@@ -4,6 +4,7 @@
 
 #include "commandparser.h"
 #include "private/commandparser_p.h"
+#include "sessionloader.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -113,6 +114,10 @@ void CommandParser::processCommand()
         openInHomeDirectory();
         return;
     }
+    if (isSet("s") || isSet("sessionfile")) {
+        openSession();
+        return;
+    }
 
     openInUrls();
 }
@@ -171,6 +176,9 @@ void CommandParser::initOptions()
     QCommandLineOption openHomeOption(QStringList() << "O"
                                                     << "open-home",
                                       "open home");
+    QCommandLineOption sessionOption(QStringList() << "s"
+                                                   << "sessionfile",
+                                     "support session loader");
 
     addOption(newWindowOption);
     addOption(backendOption);
@@ -183,6 +191,7 @@ void CommandParser::initOptions()
     addOption(workingDirOption);
     addOption(openWithDialog);
     addOption(openHomeOption);
+    addOption(sessionOption);
 }
 
 void CommandParser::addOption(const QCommandLineOption &option)
@@ -254,7 +263,6 @@ void CommandParser::openInHomeDirectory()
 void CommandParser::openInUrls()
 {
     QList<QUrl> argumentUrls;
-
     for (QString path : positionalArguments()) {
         if (!isSet("raw")) {
             //路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
@@ -309,6 +317,14 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
         });
     }
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n"));
+}
+
+void CommandParser::openSession()
+{
+    QString sessionPath;
+    if (!SessionBusiness::instance()->readPath(&sessionPath))
+        return;
+    openWindowWithUrl(QUrl(sessionPath));
 }
 
 void CommandParser::processEvent()

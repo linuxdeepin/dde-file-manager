@@ -124,10 +124,7 @@ FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
 bool CoreHelper::eventFilter(QObject *watched, QEvent *event)
 {
     auto appName = qApp->applicationName();
-    Q_ASSERT(appName == "dde-file-manager" ||
-             appName == "dde-file-dialog" ||
-             appName == "dde-select-dialog-x11" ||
-             appName == "dde-select-dialog-wayland");
+    Q_ASSERT(appName == "dde-file-manager" || appName == "dde-file-dialog" || appName == "dde-select-dialog-x11" || appName == "dde-select-dialog-wayland");
 
     // Purpose does not filter any events
     constexpr bool ret { false };

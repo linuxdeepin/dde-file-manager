@@ -7,6 +7,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QUrl>
 #include <QCloseEvent>
@@ -358,6 +359,9 @@ void FileManagerWindow::updateUi()
 
 void FileManagerWindow::initConnect()
 {
+    connect(this, &FileManagerWindow::currentUrlChanged, this, [this](const QUrl &url) {
+        emit FMWindowsIns.currentUrlChanged(this->winId(), url);
+    });
 }
 
 }
