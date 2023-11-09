@@ -42,6 +42,7 @@ public slots:
     void onWallperSetting(CanvasView *);
     void onChangeIconLevel(bool increase);
     void onTrashStateChanged();
+    void onFontChanged();
     void refresh(bool silent);
 protected slots:
     void reloadItem();

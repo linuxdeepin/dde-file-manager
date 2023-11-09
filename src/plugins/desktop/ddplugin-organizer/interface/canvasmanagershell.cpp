@@ -32,11 +32,13 @@ CanvasManagerShell::CanvasManagerShell(QObject *parent)
 CanvasManagerShell::~CanvasManagerShell()
 {
     CanvasManagerUnsubscribe(signal_CanvasManager_IconSizeChanged, &CanvasManagerShell::iconSizeChanged);
+    CanvasManagerUnsubscribe(signal_CanvasManager_FontChanged, &CanvasManagerShell::fontChanged);
 }
 
 bool CanvasManagerShell::initialize()
 {
     CanvasManagerSubscribe(signal_CanvasManager_IconSizeChanged, &CanvasManagerShell::iconSizeChanged);
+    CanvasManagerSubscribe(signal_CanvasManager_FontChanged, &CanvasManagerShell::fontChanged);
     return true;
 }
 

@@ -94,7 +94,7 @@ protected:
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
 private:
-    QScopedPointer<CanvasViewPrivate> d;
+    CanvasViewPrivate *d;
 };
 
 }

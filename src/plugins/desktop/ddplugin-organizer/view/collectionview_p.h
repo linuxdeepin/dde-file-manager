@@ -28,7 +28,6 @@ public:
 
     void initUI();
     void initConnect();
-    void updateRegionView();
     void updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize);
     void updateVerticalBarRange();
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;

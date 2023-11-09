@@ -239,6 +239,16 @@ void NormalizedModePrivate::onIconSizeChanged()
         q->layout();
 }
 
+void NormalizedModePrivate::onFontChanged()
+{
+    for (const CollectionHolderPointer &holder : holders.values()) {
+        auto view = holder->itemView();
+        view->updateRegionView();
+    }
+
+    q->layout();
+}
+
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
 {
     // order by config
@@ -303,6 +313,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(FileOperatorIns, &FileOperator::requestDropFile, d, &NormalizedModePrivate::onDropFile, Qt::DirectConnection);
 
     connect(canvasManagerShell, &CanvasManagerShell::iconSizeChanged, d, &NormalizedModePrivate::onIconSizeChanged);
+    connect(canvasManagerShell, &CanvasManagerShell::fontChanged, d, &NormalizedModePrivate::onFontChanged);
 
     // must be DirectConnection to keep sequential
     connect(model, &CollectionModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);

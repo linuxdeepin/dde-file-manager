@@ -304,7 +304,7 @@ WId CanvasView::winId() const
 
 void CanvasView::paintEvent(QPaintEvent *event)
 {
-    ViewPainter painter(d.get());
+    ViewPainter painter(d);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
     // debug网格信息展示
@@ -370,7 +370,7 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
         if (!data)
             return;
 
-        QPixmap pixmap = ViewPainter::polymerize(validIndexes, d.get());
+        QPixmap pixmap = ViewPainter::polymerize(validIndexes, d);
         QDrag *drag = new QDrag(this);
         drag->setPixmap(pixmap);
         drag->setMimeData(data);
@@ -727,9 +727,6 @@ void CanvasView::initUI()
     auto delegate = new CanvasItemDelegate(this);
     setItemDelegate(delegate);
     delegate->setIconLevel(DispalyIns->iconLevel());
-
-    // repaint when selecting with mouse move.
-    connect(qApp, &QApplication::fontChanged, this, &CanvasView::updateGrid);
 
     Q_ASSERT(selectionModel());
     d->operState().setView(this);

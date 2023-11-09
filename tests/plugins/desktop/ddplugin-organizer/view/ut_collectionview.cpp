@@ -672,7 +672,7 @@ TEST_F(TestCollectionView, updateRegionView)
         self->d->itemSizeHint = QSize(48, 48);
     });
 
-    view->d->updateRegionView();
+    view->updateRegionView();
     EXPECT_EQ(view->d->viewMargins, QMargins(6, 2, 6, 2));
     EXPECT_EQ(view->d->columnCount, 6);
     EXPECT_EQ(view->d->cellWidth, 48);

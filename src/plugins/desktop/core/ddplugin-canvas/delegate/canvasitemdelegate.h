@@ -45,6 +45,7 @@ public:
     bool mayExpand(QModelIndex *who = nullptr) const;
     static QRectF boundingRect(const QList<QRectF> &rects);
     QSize paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index);
+    int textLineHeight() const;
 
 public:
     QRect iconRect(const QRect &paintRect) const;

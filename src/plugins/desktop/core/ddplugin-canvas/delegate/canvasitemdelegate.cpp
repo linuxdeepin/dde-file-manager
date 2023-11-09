@@ -300,6 +300,11 @@ QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionVie
     return paintIcon(painter, indexOption.icon, indexOption.rect, Qt::AlignCenter, QIcon::Normal).size();
 }
 
+int CanvasItemDelegate::textLineHeight() const
+{
+    return d->textLineHeight;
+}
+
 QList<QRect> CanvasItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QList<QRect> geometries;
