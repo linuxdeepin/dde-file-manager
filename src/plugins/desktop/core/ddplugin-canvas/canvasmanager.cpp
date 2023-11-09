@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "private/canvasmanager_p.h"
-#include "view/canvasview_p.h"
+#include "view/canvasview.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "view/operator/fileoperatorproxy.h"
@@ -20,7 +20,7 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <QCoreApplication>
+#include <QApplication>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
@@ -88,6 +88,9 @@ void CanvasManager::init()
     CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
     CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
+
+    // update grid by font changed
+    connect(qApp, &QApplication::fontChanged, this, &CanvasManager::onFontChanged);
 
     // register menu
     dfmplugin_menu_util::menuSceneRegisterScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
@@ -642,6 +645,20 @@ void CanvasManager::onTrashStateChanged()
             emit d->sourceModel->dataChanged(idx, idx);
         }
     }
+}
+
+void CanvasManager::onFontChanged()
+{
+    bool changed = false;
+    for (auto it = d->viewMap.begin(); it != d->viewMap.end(); ++it) {
+        if (it.value()->itemDelegate()->textLineHeight() != it.value()->fontMetrics().height()) {
+            it.value()->updateGrid();
+            changed = true;
+        }
+    };
+
+    if (changed)
+        d->hookIfs->fontChanged();
 }
 
 void CanvasManager::refresh(bool silent)

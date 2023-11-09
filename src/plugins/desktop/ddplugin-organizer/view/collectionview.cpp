@@ -85,15 +85,6 @@ void CollectionViewPrivate::initConnect()
     });
 }
 
-void CollectionViewPrivate::updateRegionView()
-{
-    q->itemDelegate()->updateItemSizeHint();
-    auto itemSize = q->itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
-
-    const QMargins viewMargin(kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin);
-    updateViewSizeData(q->geometry().size(), viewMargin, itemSize);
-}
-
 QList<QRect> CollectionViewPrivate::itemPaintGeomertys(const QModelIndex &index) const
 {
     if (Q_UNLIKELY(!index.isValid()))
@@ -1228,6 +1219,15 @@ WId CollectionView::winId() const
     }
 }
 
+void CollectionView::updateRegionView()
+{
+    itemDelegate()->updateItemSizeHint();
+    auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+
+    const QMargins viewMargin(kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin);
+    d->updateViewSizeData(geometry().size(), viewMargin, itemSize);
+}
+
 void CollectionView::openEditor(const QUrl &url)
 {
     QModelIndex index = model()->index(url);
@@ -1805,7 +1805,7 @@ void CollectionView::resizeEvent(QResizeEvent *event)
 {
     QAbstractItemView::resizeEvent(event);
 
-    d->updateRegionView();
+    updateRegionView();
 
     if (d->canUpdateVerticalBarRange) {
         d->updateVerticalBarRange();

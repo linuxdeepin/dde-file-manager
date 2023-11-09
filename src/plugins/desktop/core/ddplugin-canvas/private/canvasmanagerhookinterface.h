@@ -20,6 +20,7 @@ public:
 public:
     // signals
     virtual void iconSizeChanged(int level) const;
+    virtual void fontChanged() const;
     virtual void autoArrangeChanged(bool on) const;
     virtual bool requestWallpaperSetting(const QString &screen) const;
 };

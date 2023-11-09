@@ -31,6 +31,11 @@ void CanvasManagerHook::iconSizeChanged(int level) const
     CanvasManagerPublish(signal_CanvasManager_IconSizeChanged, level);
 }
 
+void CanvasManagerHook::fontChanged() const
+{
+    CanvasManagerPublish(signal_CanvasManager_FontChanged);
+}
+
 void CanvasManagerHook::autoArrangeChanged(bool on) const
 {
     CanvasManagerPublish(signal_CanvasManager_AutoArrangeChanged, on);
