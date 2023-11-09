@@ -42,6 +42,8 @@ Q_SIGNALS:
     void windowClosed(quint64 windId);
     void lastWindowClosed();
 
+    void currentUrlChanged(quint64 windId, const QUrl &url);
+
 private:
     explicit FileManagerWindowsManager(QObject *parent = nullptr);
     ~FileManagerWindowsManager() override;

@@ -18,7 +18,7 @@ namespace dfmbase {
 enum GlobalEventType {
     kUnknowType = 0,   // DPF_NAMESPACE::EventTypeScope::kWellKnownEventBase
 
-    kChangeCurrentUrl = 1,
+    kChangeCurrentUrl = 1, // req url changing
     kOpenNewWindow,
     kOpenNewTab,
     kSaveOperator,   // save operator

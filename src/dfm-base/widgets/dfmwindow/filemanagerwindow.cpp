@@ -420,6 +420,9 @@ void FileManagerWindow::updateUi()
 
 void FileManagerWindow::initConnect()
 {
+    connect(this, &FileManagerWindow::currentUrlChanged, this, [this](const QUrl &url) {
+        emit FMWindowsIns.currentUrlChanged(this->winId(), url);
+    });
 }
 
 }

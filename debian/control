@@ -40,6 +40,7 @@ Build-Depends:
  libboost-filesystem-dev,
  libsecret-1-dev,
  libkf5codecs-dev,
+ libkf5config-dev,
  libpoppler-cpp-dev,
  libcryptsetup-dev,
  libpcre3-dev,
