@@ -1,0 +1,8 @@
+{
+	"name": "dde-select-dialog-wayland",
+	"exec": "/usr/bin/dde-select-dialog-wayland",
+	"logType": "journal",
+	"logPath": "~/.cache/deepin/dde-select-dialog-wayland",
+    "visible": "1",
+    "version": "V1.0"
+}

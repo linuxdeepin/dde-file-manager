@@ -206,8 +206,7 @@ static void initEnv()
 
 static void initLog()
 {
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static void checkUpgrade(SingleApplication *app)

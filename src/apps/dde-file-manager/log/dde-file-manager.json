@@ -1,0 +1,8 @@
+{
+	"name": "dde-file-manager",
+	"exec": "/usr/bin/dde-file-manager",
+	"logType": "journal",
+	"logPath": "~/.cache/deepin/dde-file-manager",
+    "visible": "1",
+    "version": "V1.0"
+}

@@ -1,0 +1,8 @@
+{
+	"name": "dde-select-dialog-x11",
+	"exec": "/usr/bin/dde-select-dialog-x11",
+	"logType": "journal",
+	"logPath": "~/.cache/deepin/dde-select-dialog-x11",
+    "visible": "1",
+    "version": "V1.0"
+}

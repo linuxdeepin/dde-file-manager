@@ -33,8 +33,7 @@ DCORE_USE_NAMESPACE
 
 static void initLog()
 {
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static bool pluginsLoad()
