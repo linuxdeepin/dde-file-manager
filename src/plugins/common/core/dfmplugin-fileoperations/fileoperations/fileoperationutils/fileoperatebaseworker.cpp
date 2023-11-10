@@ -1353,11 +1353,11 @@ void FileOperateBaseWorker::syncFilesToDevice()
     sync();
     qInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
 
-    qDebug() << __FUNCTION__ << "syncFilesToDevice begin";
+    qDebug() << "syncFilesToDevice begin";
     qint64 writeSize = getWriteDataSize();
     while (!isStopped() && sourceFilesTotalSize > 0 && writeSize < sourceFilesTotalSize) {
         QThread::msleep(100);
         writeSize = getWriteDataSize();
     }
-    qDebug() << __FUNCTION__ << "syncFilesToDevice end";
+    qDebug() << "syncFilesToDevice end";
 }

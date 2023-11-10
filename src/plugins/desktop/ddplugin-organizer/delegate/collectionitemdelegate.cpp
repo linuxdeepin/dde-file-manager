@@ -248,7 +248,7 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     if (!itemEditor)
         return;
 
-    qDebug() << __FUNCTION__ << index << itemEditor->text();
+    qDebug() << index << itemEditor->text();
     QString newName = itemEditor->text();
     if (newName.isEmpty())
         return;

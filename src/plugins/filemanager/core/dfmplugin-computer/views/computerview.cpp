@@ -276,7 +276,7 @@ void ComputerView::handleDisksVisible()
 
     auto model = this->computerModel();
     if (!model) {
-        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        qCritical() << "model is released somewhere!";
         return;
     }
 
@@ -327,7 +327,7 @@ void ComputerView::handleDiskSplitterVisible()
 {
     auto model = this->computerModel();
     if (!model) {
-        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        qCritical() << "model is released somewhere!";
         return;
     }
 

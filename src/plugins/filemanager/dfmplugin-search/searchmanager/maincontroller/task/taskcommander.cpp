@@ -111,7 +111,7 @@ bool TaskCommander::start()
     // 无工作对象，直接结束。
     if (!isOn) {
         d->isWorking = false;
-        qWarning() << __FUNCTION__ << "no searcher...";
+        qWarning() << "no searcher...";
         // 加入队列，在start函数返回后发送结束信号
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection, Q_ARG(QString, d->taskId));
     }
