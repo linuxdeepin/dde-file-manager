@@ -18,6 +18,7 @@
 #include <dfm-base/base/device/private/devicehelper.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-framework/dpf.h>
 
 #include <dfm-mount/dblockdevice.h>
 
@@ -176,6 +177,13 @@ void ReportLogWorker::handleDesktopStartUpData(const QString &key, const QVarian
         if (desktopStartUpData.contains(QString(kDesktopLoadFilesTime)) &&
                 desktopStartUpData.contains(QString(kDesktopDrawWallpaperTime))) {
             Application::instance()->dataPersistence()->remove(kReportGroup, kDesktopStartUpReportKey);
+
+            bool organizerEnabled = dpfSlotChannel->push("ddplugin_organizer", "slot_Organizer_Enabled").toBool();
+            bool useColorBackground = dpfSlotChannel->push("ddplugin_background", "slot_FetchUseColorBackground").toBool();
+
+            desktopStartUpData.insert("OrganizerEnabled", organizerEnabled);
+            desktopStartUpData.insert("UseColorBackground", useColorBackground);
+
             commitLog("DesktopStartup", desktopStartUpData);
         } else {
             Application::instance()->dataPersistence()->setValue(kReportGroup, kDesktopStartUpReportKey, desktopStartUpData);

@@ -328,6 +328,11 @@ void FrameManager::turnOff()
     d->canvas = nullptr;
 }
 
+bool FrameManager::organizerEnabled()
+{
+    return CfgPresenter->isEnable();
+}
+
 void FrameManager::onBuild()
 {
     d->buildSurface();
