@@ -363,7 +363,7 @@ void ComputerController::actEject(const QUrl &url)
             }
         });
     } else {
-        qDebug() << url << "is not support " << __FUNCTION__;
+        qDebug() << url << "is not support ";
     }
 }
 
@@ -451,7 +451,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
             }
         });
     } else {
-        qDebug() << info->urlOf(UrlInfoType::kUrl) << "is not support " << __FUNCTION__;
+        qDebug() << info->urlOf(UrlInfoType::kUrl) << "is not support ";
     }
 }
 
@@ -463,7 +463,7 @@ void ComputerController::actSafelyRemove(DFMEntryFileInfoPointer info)
 void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar)
 {
     if (!info) {
-        qWarning() << "info is not valid!" << __FUNCTION__;
+        qWarning() << "info is not valid!";
         return;
     }
 

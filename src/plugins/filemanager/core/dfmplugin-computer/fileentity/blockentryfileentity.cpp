@@ -45,7 +45,7 @@ BlockEntryFileEntity::BlockEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     if (!url.path().endsWith(SuffixInfo::kBlock)) {
-        qWarning() << "wrong suffix in" << __FUNCTION__ << "url";
+        qWarning() << "wrong suffix:" << url;
         abort();
     }
 

@@ -225,7 +225,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     if (!itemEditor)
         return;
 
-    qDebug() << __FUNCTION__ << index << itemEditor->text();
+    qDebug() << index << itemEditor->text();
     QString newName = itemEditor->text();
     if (newName.isEmpty())
         return;
@@ -740,7 +740,7 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
     return QRect(qRound(x), qRound(y), w, h);
 }
 
-QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect,  const FileInfoPointer &info)
+QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info)
 {
     // todo(zy) uing extend painter by registering.
     if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {

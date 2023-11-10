@@ -213,7 +213,7 @@ void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionF
 {
     //! do not enable QAbstractItemView using this to select.
     //! it will disturb selections of CanvasView
-    //qWarning() << __FUNCTION__ << "do not using this" << rect.normalized();
+    //qWarning() << "do not using this" << rect.normalized();
     return;
 
     //    QItemSelection selection;
