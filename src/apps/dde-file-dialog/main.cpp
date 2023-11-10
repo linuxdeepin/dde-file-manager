@@ -37,8 +37,7 @@ static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
 
 static void initLog()
 {
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static void initEnv()

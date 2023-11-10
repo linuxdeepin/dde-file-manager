@@ -142,10 +142,7 @@ static void registerDDESession()
 
 static void initLog()
 {
-    const QString logFormat = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
-    dpfLogManager->setLogFormat(logFormat);
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static void checkUpgrade(DApplication *app)

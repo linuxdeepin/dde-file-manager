@@ -63,3 +63,5 @@ install(FILES dbusservice/org.deepin.filemanager.server.service
 install(FILES dbusservice/dde-filemanager-server.service
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
 
+# log config
+install(FILES log/${PROJECT_NAME}.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)

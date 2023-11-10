@@ -54,15 +54,7 @@ static void initEnv()
 
 static void initLog()
 {
-
-    QString logPath = "/var/log/" + QCoreApplication::organizationName() + QLatin1Char('/') + QCoreApplication::applicationName() + QLatin1Char('/');
-    QDir logDir(logPath);
-    if (!logDir.exists())
-        QDir().mkpath(logPath);
-
-    dpfLogManager->setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static bool pluginsLoad()
