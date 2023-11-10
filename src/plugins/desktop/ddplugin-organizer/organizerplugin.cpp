@@ -14,7 +14,9 @@ void OrganizerPlugin::initialize()
 
 bool OrganizerPlugin::start()
 {
-    instance = new FrameManager();
+    instance = new FrameManager();   
+    bindEvent();
+
     return instance->initialize();
 }
 
@@ -22,4 +24,9 @@ void OrganizerPlugin::stop()
 {
     delete instance;
     instance = nullptr;
+}
+
+void OrganizerPlugin::bindEvent()
+{
+    dpfSlotChannel->connect("ddplugin_organizer", "slot_Organizer_Enabled", instance, &FrameManager::organizerEnabled);
 }

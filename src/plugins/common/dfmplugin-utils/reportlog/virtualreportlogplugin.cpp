@@ -5,8 +5,11 @@
 #include "virtualreportlogplugin.h"
 #include "reportlogmanager.h"
 
+#include "dfm-base/base/application/application.h"
+
 #include <QTimer>
 
+using namespace dfmbase;
 using namespace dfmplugin_utils;
 
 void VirtualReportLogPlugin::initialize()
@@ -21,6 +24,7 @@ bool VirtualReportLogPlugin::start()
     QTimer::singleShot(3000, this, [=]() {
         QVariantMap data;
         data.insert("type", true);
+        data.insert("TreeViewModeEnabled", Application::instance()->appAttribute(Application::kListItemExpandable).toBool());
 
         ReportLogManager::instance()->commit("AppStartup", data);
     });

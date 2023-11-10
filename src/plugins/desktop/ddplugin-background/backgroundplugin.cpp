@@ -18,6 +18,8 @@ bool BackgroundPlugin::start()
     backgroundManager = new BackgroundManager;
     backgroundManager->init();
 
+    bindEvent();
+
     return true;
 }
 
@@ -25,4 +27,9 @@ void BackgroundPlugin::stop()
 {
     delete backgroundManager;
     backgroundManager = nullptr;
+}
+
+void BackgroundPlugin::bindEvent()
+{
+    dpfSlotChannel->connect("ddplugin_background", "slot_FetchUseColorBackground", backgroundManager, &BackgroundManager::useColorBackground);
 }

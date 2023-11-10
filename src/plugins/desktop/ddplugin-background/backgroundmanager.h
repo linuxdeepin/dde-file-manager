@@ -30,6 +30,8 @@ public:
     virtual QMap<QString, QString> allBackgroundPath();
     virtual QString backgroundPath(const QString &screen);
     void restBackgroundManager();
+    bool useColorBackground();
+
 private slots:
     void onBackgroundBuild();
     void onDetachWindows();

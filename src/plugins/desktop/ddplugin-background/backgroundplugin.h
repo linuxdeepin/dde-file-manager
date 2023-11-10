@@ -22,12 +22,17 @@ class BackgroundPlugin : public dpf::Plugin
     // signal events
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_BackgroundPaint)
 
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_FetchUseColorBackground)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
 
 private:
+    void bindEvent();
+
     BackgroundManager *backgroundManager = nullptr;
 };
 

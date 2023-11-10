@@ -24,6 +24,8 @@ public:
     void layout();
     void turnOn(bool build = true);
     void turnOff();
+
+    bool organizerEnabled();
 signals:
 
 public slots:
