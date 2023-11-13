@@ -64,7 +64,7 @@ inline bool isWellKnownEvenType(EventType type)
 inline void threadEventAlert(const QString &eventName)
 {
     if (Q_UNLIKELY(QThread::currentThread() != QCoreApplication::instance()->thread()))
-        qWarning() << "[Event Thread]: The event call does not run in the main thread: " << eventName;
+        qCWarning(logDPF) << "[Event Thread]: The event call does not run in the main thread: " << eventName;
 }
 
 inline void threadEventAlert(const QString &space, const QString &topic)

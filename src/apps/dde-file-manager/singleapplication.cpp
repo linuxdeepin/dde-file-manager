@@ -17,6 +17,8 @@
 
 #include <linux/limits.h>
 
+Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
+
 DFMBASE_USE_NAMESPACE
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
@@ -47,7 +49,7 @@ QLocalSocket *SingleApplication::getNewClientConnect(const QString &key, const Q
             }
         }
     } else {
-        qDebug() << localSocket->errorString();
+        qCDebug(logAppFileManager) << localSocket->errorString();
     }
 
     return localSocket;
@@ -106,7 +108,7 @@ void SingleApplication::handleNewClient(const QString &uniqueKey)
         socket->waitForReadyRead();
 
         for (const QByteArray &i : socket->readAll().split(' '))
-            qDebug() << QString::fromLocal8Bit(QByteArray::fromBase64(i));
+            qCDebug(logAppFileManager) << QString::fromLocal8Bit(QByteArray::fromBase64(i));
     }
 }
 
@@ -132,7 +134,7 @@ bool SingleApplication::setSingleInstance(const QString &key)
 
 void SingleApplication::handleConnection()
 {
-    qDebug() << "new connection is coming";
+    qCDebug(logAppFileManager) << "new connection is coming";
     QLocalSocket *nextPendingConnection = localServer->nextPendingConnection();
     connect(nextPendingConnection, SIGNAL(readyRead()), this, SLOT(readData()));
 }

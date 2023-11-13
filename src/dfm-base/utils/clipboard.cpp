@@ -47,18 +47,18 @@ void onClipboardDataChanged()
 
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
     if (!mimeData || mimeData->formats().isEmpty()) {
-        qWarning() << "get null mimeData from QClipBoard or remote formats is null!";
+        qCWarning(logDFMBase) << "get null mimeData from QClipBoard or remote formats is null!";
         return;
     }
     if (mimeData->hasFormat(kRemoteCopyKey)) {
-        qInfo() << "clipboard use other !";
+        qCInfo(logDFMBase) << "clipboard use other !";
         clipboardAction = ClipBoard::kRemoteAction;
         remoteCurrentCount++;
         return;
     }
     // 远程协助功能
     if (mimeData->hasFormat(kRemoteAssistanceCopyKey)) {
-        qInfo() << "Remote copy: set remote copy action";
+        qCInfo(logDFMBase) << "Remote copy: set remote copy action";
         clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
@@ -126,7 +126,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             const FileInfoPointer &info = InfoFactory::create<FileInfo>(qurl, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
 
             if (!info) {
-                qWarning() << QString("create file info error, case : %1").arg(error);
+                qCWarning(logDFMBase) << QString("create file info error, case : %1").arg(error);
                 continue;
             }
             QStringList iconList;
@@ -149,7 +149,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
                 QIcon thumb(DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->thumbnailFilePath(QFileInfo(info->pathOf(PathInfoType::kAbsoluteFilePath)),
                                                                                                  DTK_GUI_NAMESPACE::DThumbnailProvider::Large));
                 if (thumb.isNull()) {
-                    //qWarning() << "thumbnail file faild " << fileInfo->absoluteFilePath();
+                    //qCWarning(logDFMBase) << "thumbnail file faild " << fileInfo->absoluteFilePath();
                 } else {
                     icon = thumb;
                 }
@@ -184,7 +184,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
     if (dfmbase::FileUtils::isLocalFile(curUrl)) {
         localPath = curUrl.toString().toLocal8Bit();
     } else {
-        qInfo() << "Remote Assistance copy: current url not local file";
+        qCInfo(logDFMBase) << "Remote Assistance copy: current url not local file";
         return;
     }
 
@@ -201,7 +201,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
 void ClipBoard::setDataToClipboard(QMimeData *mimeData)
 {
     if (!mimeData) {
-        qWarning() << "set data to clipboard failed, mimeData is null!";
+        qCWarning(logDFMBase) << "set data to clipboard failed, mimeData is null!";
         return;
     }
 
@@ -297,11 +297,11 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     QAtomicInt currentCount = GlobalData::remoteCurrentCount;
     const QMimeData *mimedata = qApp->clipboard()->mimeData();
     if (!mimedata) {
-        qWarning() << "the clipboard mimedata is invalid!";
+        qCWarning(logDFMBase) << "the clipboard mimedata is invalid!";
         return QList<QUrl>();
     }
     if (GlobalData::clipboardAction != kRemoteAction) {
-        qWarning() << "current action is not RemoteAction ,error action " << GlobalData::clipboardAction;
+        qCWarning(logDFMBase) << "current action is not RemoteAction ,error action " << GlobalData::clipboardAction;
         return QList<QUrl>();
     }
     //使用x11创建一个窗口去阻塞获取URl
@@ -394,7 +394,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     XCloseDisplay(display);
 
     if (isCanceled) {
-        qWarning() << "user cancel remote download !";
+        qCWarning(logDFMBase) << "user cancel remote download !";
         return QList<QUrl>();
     }
 

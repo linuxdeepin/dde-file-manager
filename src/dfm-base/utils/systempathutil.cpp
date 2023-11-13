@@ -29,7 +29,7 @@ QString SystemPathUtil::systemPath(const QString &key)
     QString path { systemPathsMap.value(key) };
     if (Q_UNLIKELY(!QDir(path).exists()) && xdgDirs.contains(key)) {
         bool flag = QDir::home().mkpath(path);
-        qDebug() << "mkpath" << path << flag;
+        qCDebug(logDFMBase) << "mkpath" << path << flag;
     }
     return path;
 }
@@ -146,7 +146,7 @@ void SystemPathUtil::mkPath(const QString &path)
 {
     if (!QDir(path).exists()) {
         bool flag = QDir::home().mkpath(path);
-        qDebug() << "mkpath" << path << flag;
+        qCDebug(logDFMBase) << "mkpath" << path << flag;
     }
 }
 

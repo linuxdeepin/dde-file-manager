@@ -37,8 +37,8 @@ QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, Thumb
     auto sz = static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size);
     QString thumbPath = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(qInf, sz);
     if (thumbPath.isEmpty()) {
-        qWarning() << "thumbnail: cannot generate thumbnail by default creator for" << filePath;
-        qWarning() << "thumbnail:" << DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
+        qCWarning(logDFMBase) << "thumbnail: cannot generate thumbnail by default creator for" << filePath;
+        qCWarning(logDFMBase) << "thumbnail:" << DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
         return {};
     }
 
@@ -49,7 +49,7 @@ QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, Thumbna
 {
     QImage img = videoThumbnailCreatorLib(filePath, size);
     if (img.isNull()) {
-        qWarning() << "thumbnail: create video's thumbnail by lib failed, try ffmpeg" << filePath;
+        qCWarning(logDFMBase) << "thumbnail: create video's thumbnail by lib failed, try ffmpeg" << filePath;
         img = videoThumbnailCreatorFfmpeg(filePath, size);
     }
 
@@ -66,7 +66,7 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
 
     QImage img;
     if (!ffmpeg.waitForFinished()) {
-        qWarning() << "thumbnail: ffmpeg execute failed: "
+        qCWarning(logDFMBase) << "thumbnail: ffmpeg execute failed: "
                    << ffmpeg.errorString()
                    << filePath;
         return img;
@@ -86,7 +86,7 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
     }
 
     if (!img.loadFromData(outputs.toLocal8Bit().data(), "png"))
-        qWarning() << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
     return img;
 }
 
@@ -113,7 +113,7 @@ QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, Thumbnai
     QImage img;
     DFMIO::DFile dfile(filePath);
     if (!dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-        qWarning() << "thumbnail: can not open this file." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: can not open this file." << filePath;
         return img;
     }
 
@@ -151,7 +151,7 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbna
 
     QImage img;
     if (!ffmpeg.waitForFinished()) {
-        qWarning() << "thumbnail: ffmpeg execute failed: "
+        qCWarning(logDFMBase) << "thumbnail: ffmpeg execute failed: "
                    << ffmpeg.errorString()
                    << filePath;
         return img;
@@ -159,7 +159,7 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbna
 
     const QByteArray &output = ffmpeg.readAllStandardOutput();
     if (!img.loadFromData(output))
-        qWarning() << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
 
     return img;
 }
@@ -175,7 +175,7 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
 
     QImageReader reader(filePath, suffix.toLatin1());
     if (!reader.canRead()) {
-        qWarning() << "thumbnail: can not read this file:"
+        qCWarning(logDFMBase) << "thumbnail: can not read this file:"
                    << reader.errorString()
                    << filePath;
         return {};
@@ -186,7 +186,7 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     //fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
     //这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
     if (!imageSize.isValid()) {
-        qWarning() << "thumbnail: fail to read image file attribute data." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: fail to read image file attribute data." << filePath;
         return {};
     }
 
@@ -197,7 +197,7 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     reader.setAutoTransform(true);
     QImage image;
     if (!reader.read(&image)) {
-        qWarning() << "thumbnail: read failed."
+        qCWarning(logDFMBase) << "thumbnail: read failed."
                    << reader.errorString()
                    << filePath;
         return image;
@@ -228,7 +228,7 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
     process.start(readerBinary, arguments);
 
     if (!process.waitForFinished() || process.exitCode() != 0) {
-        qWarning() << "thumbnail: deepin-reader execute failed:"
+        qCWarning(logDFMBase) << "thumbnail: deepin-reader execute failed:"
                    << process.errorString()
                    << filePath;
 
@@ -239,7 +239,7 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
     if (dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
         const QByteArray &output = dfile.readAll();
         if (output.isEmpty()) {
-            qWarning() << "thumbnail: read failed:" << filePath;
+            qCWarning(logDFMBase) << "thumbnail: read failed:" << filePath;
             dfile.close();
             return img;
         }
@@ -256,18 +256,18 @@ QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, Thumbnail
     QImage img;
     QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
     if (!doc || doc->is_locked()) {
-        qWarning() << "thumbnail: can not read this pdf file." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: can not read this pdf file." << filePath;
         return img;
     }
 
     if (doc->pages() < 1) {
-        qWarning() << "thumbnail: this stream is invalid." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: this stream is invalid." << filePath;
         return img;
     }
 
     QScopedPointer<const poppler::page> page(doc->create_page(0));
     if (!page) {
-        qWarning() << "thumbnail: can not get this page at index 0." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: can not get this page at index 0." << filePath;
         return img;
     }
 
@@ -277,14 +277,14 @@ QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, Thumbnail
 
     poppler::image imageData = pr.render_page(page.data(), 72, 72, -1, -1, -1, size);
     if (!imageData.is_valid()) {
-        qWarning() << "thumbnail: the render page is invalid." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: the render page is invalid." << filePath;
         return img;
     }
 
     poppler::image::format_enum format = imageData.format();
     switch (format) {
     case poppler::image::format_invalid:
-        qWarning() << "thumbnail: image format is invalid." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: image format is invalid." << filePath;
         break;
     case poppler::image::format_mono:
         img = QImage(reinterpret_cast<uchar *>(imageData.data()), imageData.width(), imageData.height(), QImage::Format_Mono);

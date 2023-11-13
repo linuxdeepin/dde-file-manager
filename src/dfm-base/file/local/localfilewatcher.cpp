@@ -37,7 +37,7 @@ bool LocalFileWatcherPrivate::start()
 
     started = watcher->start();
     if (!started)
-        qWarning() << "watcher start failed, error: " << watcher->lastError().errorMsg();
+        qCWarning(logDFMBase) << "watcher start failed, error: " << watcher->lastError().errorMsg();
     return started;
 }
 /*!
@@ -74,7 +74,7 @@ void LocalFileWatcherPrivate::initFileWatcher()
 {
     watcher.reset(new DWatcher(url));
     if (!watcher) {
-        qWarning("watcher create failed.");
+        qCWarning(logDFMBase, "watcher create failed.");
         abort();
     }
 }

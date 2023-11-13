@@ -544,7 +544,7 @@ void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &
     // 更新filetype
     if (typeAll.contains(FileInfoAttributeID::kStandardFileType)) {
         typeAll.removeOne(FileInfoAttributeID::kStandardFileType);
-            d->updateFileType();
+        d->updateFileType();
     }
 
     // 更新fileicon
@@ -556,7 +556,7 @@ void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &
     // 更新mediaInfo
     if (typeAll.contains(FileInfoAttributeID::kFileMediaInfo)) {
         typeAll.removeOne(FileInfoAttributeID::kFileMediaInfo);
-        DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
+        DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
         QList<DFileInfo::AttributeExtendID> extendIDs;
         {
             QReadLocker lk(&d->lock);
@@ -592,19 +592,19 @@ void SyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo>
 {
     mimeTypeMode = QMimeDatabase::MatchDefault;
     if (url.isEmpty()) {
-        qWarning("Failed, can't use empty url init fileinfo");
+        qCWarning(logDFMBase, "Failed, can't use empty url init fileinfo");
         abort();
     }
 
     if (UrlRoute::isVirtual(url)) {
-        qWarning("Failed, can't use virtual scheme init local fileinfo");
+        qCWarning(logDFMBase, "Failed, can't use virtual scheme init local fileinfo");
         abort();
     }
 
     QUrl cvtResultUrl = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 
     if (!url.isValid()) {
-        qWarning("Failed, can't use valid url init fileinfo");
+        qCWarning(logDFMBase, "Failed, can't use valid url init fileinfo");
         abort();
     }
 
@@ -616,7 +616,7 @@ void SyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo>
     dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
 
     if (!dfmFileInfo) {
-        qWarning("Failed, dfm-io use factory create fileinfo");
+        qCWarning(logDFMBase, "Failed, dfm-io use factory create fileinfo");
         abort();
     }
 }
@@ -888,10 +888,10 @@ bool SyncFileInfoPrivate::isExecutable() const
         isExecutable = this->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
     }
     if (!success) {
-        qDebug() << "cannot obtain the property kAccessCanExecute of" << q->fileUrl();
+        qCWarning(logDFMBase) << "cannot obtain the property kAccessCanExecute of" << q->fileUrl();
 
         if (FileUtils::isGvfsFile(q->fileUrl())) {
-            qDebug() << "trying to get isExecutable by judging whether the dir can be iterated" << q->fileUrl();
+            qCDebug(logDFMBase) << "trying to get isExecutable by judging whether the dir can be iterated" << q->fileUrl();
             struct dirent *next { nullptr };
             DIR *dirp = opendir(filePath().toUtf8().constData());
             if (!dirp) {
@@ -902,7 +902,7 @@ bool SyncFileInfoPrivate::isExecutable() const
                 closedir(dirp);
                 isExecutable = (next || errno == 0);
             }
-            qDebug() << "dir can be iterated? " << isExecutable << q->fileUrl();
+            qCDebug(logDFMBase) << "dir can be iterated? " << isExecutable << q->fileUrl();
         }
     }
 
@@ -1025,7 +1025,6 @@ QMap<DFileInfo::AttributeExtendID, QVariant> SyncFileInfoPrivate::mediaInfo(DFil
 
     QReadLocker rlocker(&lock);
     return attributesExtend;
-
 }
 
 SyncFileInfoPrivate::SyncFileInfoPrivate(SyncFileInfo *qq)

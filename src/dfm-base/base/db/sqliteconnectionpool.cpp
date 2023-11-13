@@ -35,10 +35,10 @@ QSqlDatabase SqliteConnectionPoolPrivate::createConnection(const QString &databa
     db.setDatabaseName(databaseName);
 
     if (db.open()) {
-        qInfo().noquote() << QString("Connection created: %1, sn: %2").arg(connectionName).arg(++sn);
+        qCInfo(logDFMBase).noquote() << QString("Connection created: %1, sn: %2").arg(connectionName).arg(++sn);
         return db;
     } else {
-        qWarning().noquote() << "Create connection error:" << db.lastError().text();
+        qCWarning(logDFMBase).noquote() << "Create connection error:" << db.lastError().text();
         return QSqlDatabase();
     }
 }
@@ -68,12 +68,12 @@ QSqlDatabase SqliteConnectionPool::openConnection(const QString &databaseName)
 
     if (QSqlDatabase::contains(fullConnectionName)) {
         QSqlDatabase existingDb = QSqlDatabase::database(fullConnectionName);
-        qDebug().noquote() << QString("Test connection on borrow, execute: %1, for connection %2")
-                                      .arg(kTestSql)
-                                      .arg(fullConnectionName);
+        qCDebug(logDFMBase).noquote() << QString("Test connection on borrow, execute: %1, for connection %2")
+                                                 .arg(kTestSql)
+                                                 .arg(fullConnectionName);
         QSqlQuery query(kTestSql, existingDb);
         if (query.lastError().type() != QSqlError::NoError && !existingDb.open()) {
-            qCritical().noquote() << "Open datatabase error:" << existingDb.lastError().text();
+            qCCritical(logDFMBase).noquote() << "Open datatabase error:" << existingDb.lastError().text();
             return QSqlDatabase();
         }
         return existingDb;
@@ -82,7 +82,7 @@ QSqlDatabase SqliteConnectionPool::openConnection(const QString &databaseName)
             QObject::connect(QThread::currentThread(), &QThread::finished, qApp, [fullConnectionName] {
                 if (QSqlDatabase::contains(fullConnectionName)) {
                     QSqlDatabase::removeDatabase(fullConnectionName);
-                    qInfo().noquote() << QString("Connection deleted: %1").arg(fullConnectionName);
+                    qCInfo(logDFMBase).noquote() << QString("Connection deleted: %1").arg(fullConnectionName);
                 }
             });
         }

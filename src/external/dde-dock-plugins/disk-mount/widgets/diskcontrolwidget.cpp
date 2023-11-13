@@ -15,6 +15,9 @@
 #include <QLabel>
 #include <QSharedPointer>
 #include <QTimer>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 static const int kWidth = 300;
 
@@ -180,7 +183,7 @@ int DiskControlWidget::addItems(const QStringList &list, bool isBlockDevice)
         else {
             // do not show local vfs mounts. smb is mounted at /media/$USER/smbmounts so it should be displayed.
             if (id.startsWith("file://") && !id.contains(QRegularExpression("^file:///media/[\\s\\S]*/smbmounts"))) {   // TODO(xust), smb's mount point might be changed later.
-                qDebug() << "protocol device is ignored: " << id;
+                qCDebug(logAppDock) << "protocol device is ignored: " << id;
                 continue;
             }
             dev.reset(new DAttachedProtocolDevice(id));
@@ -219,7 +222,7 @@ void DiskControlWidget::handleWhetherScanning(const QString &method, const QStri
     } else if (method == "detach_all") {
         //        DevProxyMng->detachAllDevices();
     } else {
-        qWarning() << "[disk-mount] unknow method: " << method << "or id: " << id;
+        qCWarning(logAppDock) << "[disk-mount] unknow method: " << method << "or id: " << id;
     }
 }
 
@@ -291,7 +294,7 @@ void DiskControlWidget::onAskStopScanning(const QString &method, const QString &
         if (index == 1)   // user clicked stop
             handleWhetherScanning(method, id);
         else
-            qInfo() << "[disk-mount] Continue scanning, status: " << method;
+            qCInfo(logAppDock) << "[disk-mount] Continue scanning, status: " << method;
     });
 }
 
@@ -309,6 +312,6 @@ void DiskControlWidget::onDeviceBusy(int action)
         notifyMessage(tr("The device is busy, cannot eject now"));
         break;
     default:
-        qWarning() << "[disk-mount]: Unknown action: " << action;
+        qCWarning(logAppDock) << "[disk-mount]: Unknown action: " << action;
     }
 }

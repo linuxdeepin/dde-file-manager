@@ -50,7 +50,7 @@ void Event::registerEventType(EventStratege stratege, const QString &space, cons
 {
     QString key { space + ":" + topic };
     if (Q_UNLIKELY(d->eventsMap[stratege].contains(key))) {
-        qWarning() << "Register repeat event: " << key;
+        qCWarning(logDPF) << "Register repeat event: " << key;
         return;
     }
 

@@ -142,7 +142,7 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
 
     makePath(thumbnailPath);
     if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
-        qWarning() << "thumbnail: save failed." << fileUrl;
+        qCWarning(logDFMBase) << "thumbnail: save failed." << fileUrl;
         return "";
     }
 

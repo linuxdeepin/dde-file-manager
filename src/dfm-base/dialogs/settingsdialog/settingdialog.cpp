@@ -89,12 +89,12 @@ void SettingDialog::settingFilter(QByteArray &data)
     QJsonParseError err;
     QJsonDocument doc { QJsonDocument::fromJson(data, &err) };
     if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config template json is not valid!" << err.errorString();
+        qCWarning(logDFMBase) << "config template json is not valid!" << err.errorString();
         return;
     }
 
     if (!doc.object().contains(kGroupsName)) {
-        qWarning() << "config template is not valid, no group item";
+        qCWarning(logDFMBase) << "config template is not valid, no group item";
         return;
     }
 

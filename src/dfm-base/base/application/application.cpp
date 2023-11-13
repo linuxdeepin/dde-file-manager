@@ -12,6 +12,8 @@
 #include <QtConcurrent>
 #include <QDBusInterface>
 
+Q_LOGGING_CATEGORY(logDFMBase, "log.lib.dfmbase")
+
 namespace dfmbase {
 
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, gsGlobal, ("deepin/dde-file-manager", Settings::kGenericConfig))
@@ -46,7 +48,7 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
         bool ok = false;
         Application::ApplicationAttribute aa = static_cast<Application::ApplicationAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData(), &ok));
         if (!ok) {
-            qWarning() << "Cannot cast value " << key << " to ApplicationAttribute!";
+            qCWarning(logDFMBase) << "Cannot cast value " << key << " to ApplicationAttribute!";
             return;
         }
 
@@ -66,7 +68,7 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
         bool ok = false;
         Application::GenericAttribute ga = static_cast<Application::GenericAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData(), &ok));
         if (!ok) {
-            qWarning() << "Cannot cast value " << key << " to GenericAttribute!";
+            qCWarning(logDFMBase) << "Cannot cast value " << key << " to GenericAttribute!";
             return;
         }
 
@@ -152,7 +154,7 @@ void Application::setAppAttribute(Application::ApplicationAttribute aa, const QV
         for (const QString &url : keys) {
             auto map = settings->value("FileViewState", url).toMap();
             if (map.contains("iconSizeLevel")) {
-                qDebug() << "reset" << url << "iconSizeLevel to " << value.toInt();
+                qCDebug(logDFMBase) << "reset" << url << "iconSizeLevel to " << value.toInt();
                 map["iconSizeLevel"] = value;
                 settings->setValue("FileViewState", url, map);
             }
@@ -303,7 +305,7 @@ Settings *Application::dataPersistence()
 
 void Application::appAttributeTrigger(TriggerAttribute ta)
 {
-    switch(ta) {
+    switch (ta) {
     case kRestoreViewMode:
         auto defaultViewMode = appAttribute(Application::kViewMode).toInt();
         auto settings = appObtuselySetting();
@@ -319,7 +321,7 @@ void Application::appAttributeTrigger(TriggerAttribute ta)
 
             auto map = settings->value("FileViewState", url).toMap();
             if (map.contains("viewMode")) {
-                qDebug() << "Set " << url << "viewMode to " << defaultViewMode;
+                qCDebug(logDFMBase) << "Set " << url << "viewMode to " << defaultViewMode;
                 map["viewMode"] = defaultViewMode;
                 settings->setValue("FileViewState", url, map);
             }

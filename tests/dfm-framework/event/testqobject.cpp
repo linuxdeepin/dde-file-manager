@@ -34,13 +34,11 @@ bool TestQObject::bigger15(int v, int *called)
 
 bool TestQObject::empty1()
 {
-    qDebug() << __PRETTY_FUNCTION__;
     return false;
 }
 
 bool TestQObject::empty2()
 {
-    qDebug() << __PRETTY_FUNCTION__;
     return true;
 }
 

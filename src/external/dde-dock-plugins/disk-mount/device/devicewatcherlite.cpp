@@ -10,7 +10,7 @@
 #include <dfm-mount/dblockdevice.h>
 #include <dfm-mount/dprotocoldevice.h>
 
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QThread>
@@ -18,6 +18,8 @@
 #include <QRegularExpression>
 
 #include <libmount.h>
+
+Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 DFM_MOUNT_USE_NS
 
@@ -166,7 +168,7 @@ void DeviceWatcherLite::detachProtocolDevice(const QString &id)
     proPtr->unmountAsync({}, [=](bool ok, const OperationErrorInfo &err) {
         if (!ok && that)
             Q_EMIT this->operationFailed(kUnmount);
-        qDebug() << "[disk-mount]: detach protocol device: " << id << err.message << err.code;
+        qCDebug(logAppDock) << "[disk-mount]: detach protocol device: " << id << err.message << err.code;
     });
 }
 
@@ -179,7 +181,7 @@ void DeviceWatcherLite::detachAllDevices()
             blks.append(siblings.first());
     });
 
-    qDebug() << "[disk-mount]: about to unmount blocks and its siblings: " << blks;
+    qCDebug(logAppDock) << "[disk-mount]: about to unmount blocks and its siblings: " << blks;
     std::for_each(blks.cbegin(), blks.cend(), [=](const QString &blk) { detachBlockDevice(blk); });
 
     const QStringList &protocols = allMountedProtocols();
@@ -189,7 +191,7 @@ void DeviceWatcherLite::detachAllDevices()
             waitToUnmount.append(proto);
     });
 
-    qDebug() << "[disk-mount]: about to unmount protocols: " << waitToUnmount;
+    qCDebug(logAppDock) << "[disk-mount]: about to unmount protocols: " << waitToUnmount;
     std::for_each(waitToUnmount.cbegin(), waitToUnmount.cend(), [this](const QString &proto) { detachProtocolDevice(proto); });
 }
 
@@ -202,14 +204,14 @@ void DeviceWatcherLite::unmountStacked(const QString &mpt)
     static constexpr char kDaemonMountPath[] { "/com/deepin/filemanager/daemon/MountControl" };
     static constexpr char kDaemonMountIface[] { "com.deepin.filemanager.daemon.MountControl" };
 
-    qDebug() << "[disk-mount]: construct daemon interface";
+    qCDebug(logAppDock) << "[disk-mount]: construct daemon interface";
     QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
-    qDebug() << "[disk-mount]: constructed daemon interface";
+    qCDebug(logAppDock) << "[disk-mount]: constructed daemon interface";
     iface.setTimeout(1000);
     QDBusReply<QVariantMap> reply = iface.call("Unmount", mpt,
                                                QVariantMap { { "fsType", "common" }, { "unmountAllStacked", true } });
     const auto &ret = reply.value();
-    qDebug() << "unmount all stacked mount of: " << mpt << ret;
+    qCDebug(logAppDock) << "unmount all stacked mount of: " << mpt << ret;
 }
 
 void DeviceWatcherLite::removeDevice(bool unmountDone, QSharedPointer<dfmmount::DBlockDevice> blk)
@@ -229,7 +231,7 @@ void DeviceWatcherLite::removeDevice(bool unmountDone, QSharedPointer<dfmmount::
         blk->powerOffAsync({}, [=](bool ok, const OperationErrorInfo &err) {
             if (that && !ok)
                 Q_EMIT this->operationFailed(kPowerOff);
-            qDebug() << "[disk-mount]: poweroff device: " << err.message << err.code;
+            qCDebug(logAppDock) << "[disk-mount]: poweroff device: " << err.message << err.code;
         });
     };
 
@@ -237,7 +239,7 @@ void DeviceWatcherLite::removeDevice(bool unmountDone, QSharedPointer<dfmmount::
         blk->ejectAsync({}, [=](bool ok, const OperationErrorInfo &err) {
             if (that && !ok)
                 Q_EMIT this->operationFailed(kEject);
-            qDebug() << "[disk-mount]: eject device: " << err.message << err.code;
+            qCDebug(logAppDock) << "[disk-mount]: eject device: " << err.message << err.code;
         });
     } else {
         if (blk->isEncrypted()) {
@@ -262,7 +264,7 @@ bool DeviceWatcherLite::isSiblingOfRoot(QSharedPointer<DBlockDevice> blkDev)
         const QString &rootDevId = "/org/freedesktop/UDisks2/block_devices/" + rootDev.mid(5);
         QSharedPointer<DBlockDevice> rootBlk = createBlockDevicePtr(rootDevId);
         rootDrive = rootBlk ? rootBlk->drive() : "";
-        qInfo() << "got root drive:" << rootDrive << rootDev;
+        qCInfo(logAppDock) << "got root drive:" << rootDrive << rootDev;
     });
 
     return rootDrive == blkDev->drive();
@@ -275,7 +277,7 @@ QString DeviceWatcherLite::getMountInfo(const QString &in, SearchBy what)
         return {};
 
     if (mnt_table_parse_mtab(tab, nullptr) != 0) {
-        qWarning() << "Invalid mnt_table_parse_mtab call";
+        qCWarning(logAppDock) << "Invalid mnt_table_parse_mtab call";
         if (tab) mnt_free_table(tab);
         return {};
     }
@@ -290,7 +292,7 @@ QString DeviceWatcherLite::getMountInfo(const QString &in, SearchBy what)
         return out;
     }
 
-    qWarning() << "Invalid libmnt_fs*";
+    qCWarning(logAppDock) << "Invalid libmnt_fs*";
     if (tab) mnt_free_table(tab);
     return {};
 }

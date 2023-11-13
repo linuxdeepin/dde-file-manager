@@ -6,7 +6,7 @@
 #include "utils/upgradeutils.h"
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
-#include <QDebug>
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
 using namespace dfm_upgrade;
 DFMBASE_USE_NAMESPACE
@@ -126,7 +126,7 @@ bool DConfigUpgradeUnit::upgradeMenuConfigs()
             const auto &newVal = mappedActions().value(action, action);
             action = newVal.isEmpty() ? action : newVal;   // if no mapped keys, use old version.
             if (newVal.isEmpty())
-                qInfo() << "upgrade: no mapped key, keep old value: " << action;
+                qCInfo(logToolUpgrade) << "upgrade: no mapped key, keep old value: " << action;
         }
     };
 
@@ -135,17 +135,17 @@ bool DConfigUpgradeUnit::upgradeMenuConfigs()
     auto desktopActionHidden = DConfigManager::instance()->value(kDefaultCfgPath, kDesktopActionHidden).toStringList();
     auto fileDialogActionHidden = DConfigManager::instance()->value(kDefaultCfgPath, kFileDialogActionHidden).toStringList();
 
-    qInfo() << "upgrade: [old] fileManagerHiddenActions: " << fileManagerActionHidden;
+    qCInfo(logToolUpgrade) << "upgrade: [old] fileManagerHiddenActions: " << fileManagerActionHidden;
     upgradeActions(fileManagerActionHidden);
-    qInfo() << "upgrade: [new] fileManagerHiddenActions: " << fileManagerActionHidden;
+    qCInfo(logToolUpgrade) << "upgrade: [new] fileManagerHiddenActions: " << fileManagerActionHidden;
 
-    qInfo() << "upgrade: [old] desktopActionHidden: " << desktopActionHidden;
+    qCInfo(logToolUpgrade) << "upgrade: [old] desktopActionHidden: " << desktopActionHidden;
     upgradeActions(desktopActionHidden);
-    qInfo() << "upgrade: [new] desktopActionHidden: " << desktopActionHidden;
+    qCInfo(logToolUpgrade) << "upgrade: [new] desktopActionHidden: " << desktopActionHidden;
 
-    qInfo() << "upgrade: [old] fileDialogActionHidden: " << fileDialogActionHidden;
+    qCInfo(logToolUpgrade) << "upgrade: [old] fileDialogActionHidden: " << fileDialogActionHidden;
     upgradeActions(fileDialogActionHidden);
-    qInfo() << "upgrade: [old] fileDialogActionHidden: " << fileDialogActionHidden;
+    qCInfo(logToolUpgrade) << "upgrade: [old] fileDialogActionHidden: " << fileDialogActionHidden;
 
     DConfigManager::instance()->setValue(kDefaultCfgPath, kDesktopActionHidden, desktopActionHidden);
     DConfigManager::instance()->setValue(kDefaultCfgPath, kFileManagerActionHidden, fileManagerActionHidden);
@@ -164,7 +164,7 @@ bool DConfigUpgradeUnit::upgradeSmbConfigs()
     auto alwaysShowSamba = oldVal.toBool();
     // 2. write to dconfig
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kSambaPermanent, alwaysShowSamba);
-    qInfo() << "upgrade: set samba permanent to dconfig, value:" << alwaysShowSamba;
+    qCInfo(logToolUpgrade) << "upgrade: set samba permanent to dconfig, value:" << alwaysShowSamba;
     return true;
 }
 
@@ -182,14 +182,14 @@ bool DConfigUpgradeUnit::upgradeRecentConfigs()
     if (!oldValue.isValid())
         return true;
 
-    const QString &configFile {"org.deepin.dde.file-manager.sidebar"};
+    const QString &configFile { "org.deepin.dde.file-manager.sidebar" };
     if (!DConfigManager::instance()->addConfig(configFile))
         return false;
 
     bool showRecent = oldValue.toBool();
-    qInfo() << "upgrade: the old `showRecent` is" << showRecent;
+    qCInfo(logToolUpgrade) << "upgrade: the old `showRecent` is" << showRecent;
     auto theSidebarVisiableList = DConfigManager::instance()->value(configFile, "itemVisiable").toMap();
-    qInfo() << "upgrade: the new dconfig sidebar visiable list:" << theSidebarVisiableList;
+    qCInfo(logToolUpgrade) << "upgrade: the new dconfig sidebar visiable list:" << theSidebarVisiableList;
     theSidebarVisiableList["recent"] = showRecent;
     DConfigManager::instance()->setValue(configFile, "itemVisiable", theSidebarVisiableList);
     return true;

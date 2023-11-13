@@ -38,7 +38,7 @@ namespace dfmbase {
 
 AsyncFileInfo::AsyncFileInfo(const QUrl &url)
     : FileInfo(url), d(new AsyncFileInfoPrivate(this))
-{ 
+{
     d->init(url);
 }
 
@@ -454,7 +454,7 @@ QVariant AsyncFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
     if (role == kItemFileRefreshIcon) {
-            // kMimeTypeName
+        // kMimeTypeName
         {
             QWriteLocker lk(&extendOtherCacheLock);
             extendOtherCache.remove(ExtInfoType::kFileThumbnail);
@@ -532,8 +532,8 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
         typeAll.removeOne(FileInfoAttributeID::kFileCount);
         QReadLocker rlocker(&d->lock);
         if (d->fileCountFuture
-                && d->fileCountFuture->finish
-                && (!d->updateFileCountFuture || d->updateFileCountFuture->finish)) {
+            && d->fileCountFuture->finish
+            && (!d->updateFileCountFuture || d->updateFileCountFuture->finish)) {
             rlocker.unlock();
             auto future = FileInfoHelper::instance().fileCountAsync(const_cast<AsyncFileInfo *>(this)->url);
             QWriteLocker wlocker(&d->lock);
@@ -546,7 +546,7 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
         typeAll.removeOne(FileInfoAttributeID::kFileMediaInfo);
         // 再在缓存和正在查询都不调用，缓存时会去调用
         if (!d->cacheingAttributes && !d->queringAttribute) {
-            DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
+            DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
             QList<DFileInfo::AttributeExtendID> extendIDs;
             {
                 QReadLocker lk(&d->lock);
@@ -565,7 +565,6 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
     if (d->queringAttribute)
         return;
     FileInfoHelper::instance().fileRefreshAsync(sharedFromThis());
-
 }
 
 QMultiMap<QUrl, QString> AsyncFileInfo::notifyUrls() const
@@ -623,7 +622,7 @@ bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierA
     if (!d->dfmFileInfo) {
         d->queringAttribute = false;
         return false;
-    } 
+    }
 
     d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
     d->queringAttribute = false;
@@ -634,19 +633,19 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
 {
     mimeTypeMode = QMimeDatabase::MatchDefault;
     if (url.isEmpty()) {
-        qWarning("Failed, can't use empty url init fileinfo");
+        qCWarning(logDFMBase, "Failed, can't use empty url init fileinfo");
         abort();
     }
 
     if (UrlRoute::isVirtual(url)) {
-        qWarning("Failed, can't use virtual scheme init local fileinfo");
+        qCWarning(logDFMBase, "Failed, can't use virtual scheme init local fileinfo");
         abort();
     }
 
     QUrl cvtResultUrl = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 
     if (!url.isValid()) {
-        qWarning("Failed, can't use valid url init fileinfo");
+        qCWarning(logDFMBase, "Failed, can't use valid url init fileinfo");
         abort();
     }
 
@@ -658,7 +657,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
     }
     dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
     if (!dfmFileInfo) {
-        qWarning("Failed, dfm-io use factory create fileinfo");
+        qCWarning(logDFMBase, "Failed, dfm-io use factory create fileinfo");
         abort();
     }
     tokenKey = quintptr(dfmFileInfo.data());
@@ -874,10 +873,10 @@ bool AsyncFileInfoPrivate::isExecutable() const
         isExecutable = this->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
     }
     if (!success) {
-        qDebug() << "cannot obtain the property kAccessCanExecute of" << q->fileUrl();
+        qCDebug(logDFMBase) << "cannot obtain the property kAccessCanExecute of" << q->fileUrl();
 
         if (FileUtils::isGvfsFile(q->fileUrl())) {
-            qDebug() << "trying to get isExecutable by judging whether the dir can be iterated" << q->fileUrl();
+            qCDebug(logDFMBase) << "trying to get isExecutable by judging whether the dir can be iterated" << q->fileUrl();
             struct dirent *next { nullptr };
             DIR *dirp = opendir(filePath().toUtf8().constData());
             if (!dirp) {
@@ -888,7 +887,7 @@ bool AsyncFileInfoPrivate::isExecutable() const
                 closedir(dirp);
                 isExecutable = (next || errno == 0);
             }
-            qDebug() << "dir can be iterated? " << isExecutable << q->fileUrl();
+            qCDebug(logDFMBase) << "dir can be iterated? " << isExecutable << q->fileUrl();
         }
     }
 
@@ -974,12 +973,12 @@ QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) c
     assert(qApp->thread() != QThread::currentThread());
     auto tmp = dfmFileInfo;
     if (tmp && tmp->queryAttributeFinished()) {
-        bool getOk{false};
+        bool getOk { false };
         auto value = tmp->attribute(key, &getOk);
         if (ok)
             *ok = getOk;
         if (!getOk)
-            qDebug() << static_cast<int>(key) << q->fileUrl() << tmp->lastError().errorMsg();
+            qCWarning(logDFMBase) << static_cast<int>(key) << q->fileUrl() << tmp->lastError().errorMsg();
 
         return value;
     }
@@ -1066,7 +1065,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
         changesAttributes.clear();
     }
     if (needUpdateMediaInfo) {
-        DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
+        DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
         QList<DFileInfo::AttributeExtendID> extendIDs;
         {
             QReadLocker lk(&lock);
@@ -1141,8 +1140,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIcon, attribute(DFileInfo::AttributeID::kStandardIcon));
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice, FileUtils::isLocalDevice(q->fileUrl()));
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsCdRomDevice, FileUtils::isCdRomDevice(q->fileUrl()));
-    if (cacheTmp.isEmpty())
-    {
+    if (cacheTmp.isEmpty()) {
         {
             QWriteLocker lk(&lock);
             QVariant hid = cacheAsyncAttributes.value(FileInfo::FileInfoAttributeID::kStandardIsHidden);
@@ -1166,10 +1164,8 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
         if (changesAttributes.isEmpty())
             return 1;
 
-        if (changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileType) ||
-                changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileExists) ||
-                changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardContentType))
-            fileMimeTypeAsync(); // kMimeTypeName
+        if (changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileType) || changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileExists) || changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardContentType))
+            fileMimeTypeAsync();   // kMimeTypeName
     }
 
     return 2;

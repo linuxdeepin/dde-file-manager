@@ -4,7 +4,6 @@
 
 #include <dfm-framework/backtrace/backtrace.h>
 
-#include <qlogging.h>
 #include <QCoreApplication>
 
 #include <mutex>
@@ -14,8 +13,6 @@
 #include <execinfo.h>
 #include <cxxabi.h>
 #include <dlfcn.h>
-
-#define TOSTRING(s) #s
 
 DPF_BEGIN_NAMESPACE
 namespace backtrace {
@@ -64,7 +61,7 @@ static void printStack(void *frames[], int numFrames)
 {
     for (int i = 0; i < numFrames; ++i) {
         const std::string &stackInfo = demangle(frames[i]);
-        qCritical("* %d>  %s", i, stackInfo.data());
+        qCCritical(logDPF, "* %d>  %s", i, stackInfo.data());
     }
 }
 
@@ -86,18 +83,18 @@ static void stackTraceHandler(int sig)
 {
     // reset to default handler
     signal(sig, SIG_DFL);
-    qCritical("Received signal %d (%s)\n", sig, strsignal(sig));
+    qCCritical(logDPF, "Received signal %d (%s)\n", sig, strsignal(sig));
 
     QString head;
     head = QString("****************** %0 crashed backtrace ******************")
                    .arg(qApp->applicationName());
     QString end { head.size(), '*' };
-    qCritical("%s", head.toStdString().data());
+    qCCritical(logDPF, "%s", head.toStdString().data());
 
     // skip the top three signal handler related frames
     printStack(3);
 
-    qCritical("%s", end.toStdString().data());
+    qCCritical(logDPF, "%s", end.toStdString().data());
 
     // Efforts to fix or suppress TSAN warnings "signal-unsafe call inside of
     // a signal" have failed, so just warn the user about them.

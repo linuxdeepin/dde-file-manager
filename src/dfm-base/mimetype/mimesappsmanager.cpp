@@ -83,7 +83,7 @@ void MimeAppsWorker::updateCache()
 
 void MimeAppsWorker::writeData(const QString &path, const QByteArray &content)
 {
-    qDebug() << path;
+    qCDebug(logDFMBase) << path;
     QFile file(path);
     if (file.open(QFile::WriteOnly)) {
         file.write(content);
@@ -95,7 +95,8 @@ QByteArray MimeAppsWorker::readData(const QString &path)
 {
     QFile file(path);
     if (!file.open(QFile::ReadOnly)) {
-        qDebug() << path << "isn't exists!";
+        qCWarning(logDFMBase) << path << "isn't exists!";
+        return {};
     }
     QByteArray content = file.readAll();
     file.close();
@@ -230,7 +231,7 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
     g_list_free(apps);
 
     if (!app) {
-        qWarning() << "no app found name as:" << appPath;
+        qCWarning(logDFMBase) << "no app found name as:" << appPath;
         return false;
     }
 
@@ -246,7 +247,7 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
                                        mimeType.toLocal8Bit().constData(),
                                        &error);
     if (error) {
-        qDebug() << "fail to set default app for type:" << error->message;
+        qCWarning(logDFMBase) << "fail to set default app for type:" << error->message;
         return false;
     }
 
@@ -325,7 +326,7 @@ QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
 
                     // if desktop file was not existed do not recommend!!
                     if (!QFileInfo::exists(app)) {
-                        qWarning() << app << "not exist anymore";
+                        qCWarning(logDFMBase) << app << "not exist anymore";
                         continue;
                     }
 
@@ -385,7 +386,7 @@ QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const QUrl &ur
     QString mimeAssociationsFile = QString("%1/%2/%3").arg(StandardPaths::location(StandardPaths::kApplicationSharePath), "mimetypeassociations", "mimetypeassociations.json");
     QFile file(mimeAssociationsFile);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "could not open file :" << mimeAssociationsFile << ", error:" << file.errorString();
+        qCWarning(logDFMBase) << "could not open file :" << mimeAssociationsFile << ", error:" << file.errorString();
         return recommendedApps;
     }
     const QByteArray data = file.readAll();
@@ -394,7 +395,7 @@ QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const QUrl &ur
     QJsonParseError *jsonPaserError = nullptr;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(data, jsonPaserError);
     if (jsonPaserError) {
-        qDebug() << "json file paser error:" << jsonPaserError->errorString();
+        qCWarning(logDFMBase) << "json file paser error:" << jsonPaserError->errorString();
         return recommendedApps;
     }
     QJsonObject obj = jsonDoc.object();
@@ -469,7 +470,7 @@ QMap<QString, DesktopFile> MimesAppsManager::getDesktopObjs()
 
 void MimesAppsManager::initMimeTypeApps()
 {
-    qDebug() << "getMimeTypeApps in" << QThread::currentThread() << qApp->thread();
+    qCDebug(logDFMBase) << "getMimeTypeApps in" << QThread::currentThread() << qApp->thread();
     DesktopFiles.clear();
     DesktopObjs.clear();
     DDE_MimeTypes.clear();
@@ -529,7 +530,7 @@ void MimesAppsManager::initMimeTypeApps()
     //check mime apps from cache
     QFile f(getMimeInfoCacheFilePath());
     if (!f.open(QIODevice::ReadOnly)) {
-        qDebug() << "failed to read mime info cache file:" << f.errorString();
+        qCWarning(logDFMBase) << "failed to read mime info cache file:" << f.errorString();
         return;
     }
 
@@ -604,7 +605,7 @@ void MimesAppsManager::initMimeTypeApps()
 void MimesAppsManager::loadDDEMimeTypes()
 {
     QSettings settings(getDDEMimeTypeFile(), QSettings::IniFormat);
-    qDebug() << settings.childGroups();
+    qCDebug(logDFMBase) << settings.childGroups();
 
     QFile file(getDDEMimeTypeFile());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {

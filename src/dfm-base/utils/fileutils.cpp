@@ -96,7 +96,7 @@ QString sizeString(const QString &str)
 QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, int forceUnit, QStringList unitList)
 {
     if (num < 0) {
-        qWarning() << "Negative number passed to formatSize():" << num;
+        qCWarning(logDFMBase) << "Negative number passed to formatSize():" << num;
         num = 0;
     }
 
@@ -459,7 +459,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         fileBaseName.replace(pair.first, pair.second);
 
         if (fileBaseName.trimmed().isEmpty()) {
-            qWarning() << "replace fileBaseName(not include suffix) trimmed is empty string";
+            qCWarning(logDFMBase) << "replace fileBaseName(not include suffix) trimmed is empty string";
             continue;
         }
 
@@ -519,7 +519,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
         QUrl changedUrl = { info->getUrlByType(UrlInfoType::kGetUrlByNewFileName, fileBaseName) };
 
         if (isDesktopApp) {
-            qDebug() << "this is desktop app case,file name will be changed { " << oldFileName << " } to { "
+            qCDebug(logDFMBase) << "this is desktop app case,file name will be changed { " << oldFileName << " } to { "
                      << fileBaseName << " } for path:" << info->urlOf(UrlInfoType::kUrl);
         }
 
@@ -578,7 +578,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
             needRecombination = true;
 
         if (isDesktopApp) {
-            qDebug() << "this is desktop app case,file name will be changed as { "
+            qCDebug(logDFMBase) << "this is desktop app case,file name will be changed as { "
                      << fileBaseName << " } for path:" << info->urlOf(UrlInfoType::kUrl);
         }
 
@@ -649,7 +649,7 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
         }
 
         if (codec->toUnicode(data) != fullChar) {
-            qWarning() << "Failed convert" << fullChar << "to" << codec->name() << "coding";
+            qCWarning(logDFMBase) << "Failed convert" << fullChar << "to" << codec->name() << "coding";
             continue;
         }
 
@@ -1119,7 +1119,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                          QString("dde-file-manager"),   // icon
                          QObject::tr("This system wallpaper is locked. Please contact your admin."),
                          QString(), QStringList(), QVariantMap(), 5000);
-        qInfo() << "wallpaper is locked..";
+        qCInfo(logDFMBase) << "wallpaper is locked..";
         return false;
     }
 
@@ -1141,7 +1141,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
             const QString screen = qApp->primaryScreen()->name();
             msg.setArguments({ screen, pictureFilePath });
             QDBusConnection::sessionBus().asyncCall(msg);
-            qInfo() << "setBackground calls Appearance SetMonitorBackground" << screen;
+            qCInfo(logDFMBase) << "setBackground calls Appearance SetMonitorBackground" << screen;
             return true;
         }
     }
@@ -1152,7 +1152,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                                                       "Set");
     msg.setArguments({ "Background", pictureFilePath });
     QDBusConnection::sessionBus().asyncCall(msg);
-    qInfo() << "setBackground calls Appearance Set";
+    qCInfo(logDFMBase) << "setBackground calls Appearance Set";
 
     return true;
 }
@@ -1439,7 +1439,7 @@ bool Match::match(const QString &path, const QString &name)
             re.setPattern(pattern.first);
 
             if (!re.isValid()) {
-                qWarning() << re.errorString();
+                qCWarning(logDFMBase) << re.errorString();
                 continue;
             }
 
@@ -1455,7 +1455,7 @@ bool Match::match(const QString &path, const QString &name)
         re.setPattern(pattern.second);
 
         if (!re.isValid()) {
-            qWarning() << re.errorString();
+            qCWarning(logDFMBase) << re.errorString();
             continue;
         }
 

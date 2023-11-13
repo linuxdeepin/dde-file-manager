@@ -4,8 +4,9 @@
 
 #include "upgradelocker.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
 
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 using namespace dfm_upgrade;
 
 UpgradeLocker::UpgradeLocker()
@@ -28,7 +29,7 @@ bool UpgradeLocker::isLock()
     // 将当前进程附加到共享内存。
     if (sharedMemory.attach()) {
         // attach成功表明已经存在运行的进程。
-        qInfo()<<"There is already existed shared memory";
+        qCInfo(logToolUpgrade) << "There is already existed shared memory";
         return true;
     } else {
         // 不成功表明没有进程运行。

@@ -89,13 +89,13 @@ bool PluginManagerPrivate::readPlugins()
         readJsonToMeta(obj);
         const QString &pluginName { obj->name() };
         if (lazyLoadPluginsNames.contains(pluginName)) {
-            qDebug() << "Skip load(lazy load): " << pluginName;
+            qCDebug(logDPF) << "Skip load(lazy load): " << pluginName;
             return;
         }
 
         if (lazyPluginFilter && lazyPluginFilter(pluginName)) {
             lazyLoadPluginsNames.append(pluginName);
-            qDebug() << "Skip load(lazy load by filter): " << pluginName;
+            qCDebug(logDPF) << "Skip load(lazy load by filter): " << pluginName;
             return;
         }
 
@@ -103,11 +103,11 @@ bool PluginManagerPrivate::readPlugins()
     });
 
 #ifdef QT_DEBUG
-    qDebug() << "Start traversing the meta information of all plugins: ";
+    qCDebug(logDPF) << "Start traversing the meta information of all plugins: ";
     for (auto read : readQueue) {
-        qDebug() << read;
+        qCDebug(logDPF) << read;
     }
-    qDebug() << "End traversal of meta information for all plugins!";
+    qCDebug(logDPF) << "End traversal of meta information for all plugins!";
 #endif
 
     return readQueue.isEmpty() ? false : true;
@@ -133,7 +133,7 @@ void PluginManagerPrivate::scanfAllPlugin()
             dirItera.next();
             PluginMetaObjectPointer metaObj(new PluginMetaObject);
             const QString &fileName { dirItera.path() + "/" + dirItera.fileName() };
-            qDebug() << "scan plugin:" << fileName;
+            qCDebug(logDPF) << "scan plugin:" << fileName;
             metaObj->d->loader->setFileName(fileName);
             QJsonObject &&metaJson = metaObj->d->loader->metaData();
             QJsonObject &&dataJson = metaJson.value("MetaData").toObject();
@@ -193,12 +193,12 @@ void PluginManagerPrivate::scanfVirtualPlugin(const QString &fileName,
 bool PluginManagerPrivate::isBlackListed(const QString &name)
 {
     if (blackPlguinNames.contains(name)) {
-        qWarning() << "Black plugin: " << name << "don't load!";
+        qCWarning(logDPF) << "Black plugin: " << name << "don't load!";
         return true;
     }
 
     if (blackListFilter && blackListFilter(name)) {
-        qWarning() << "Black plugin(filter): " << name << "don't load!";
+        qCWarning(logDPF) << "Black plugin(filter): " << name << "don't load!";
         return true;
     }
 
@@ -265,7 +265,7 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
  */
 bool PluginManagerPrivate::loadPlugins()
 {
-    qInfo() << "Start loading all plugins: ";
+    qCInfo(logDPF) << "Start loading all plugins: ";
     dependsSort(&loadQueue, &pluginsToLoad);
 
     bool ret = true;
@@ -273,7 +273,7 @@ bool PluginManagerPrivate::loadPlugins()
         if (!PluginManagerPrivate::doLoadPlugin(pointer))
             ret = false;
     });
-    qInfo() << "End loading all plugins.";
+    qCInfo(logDPF) << "End loading all plugins.";
 
     return ret;
 }
@@ -283,13 +283,13 @@ bool PluginManagerPrivate::loadPlugins()
  */
 bool PluginManagerPrivate::initPlugins()
 {
-    qInfo() << "Start initializing all plugins: ";
+    qCInfo(logDPF) << "Start initializing all plugins: ";
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
         if (!PluginManagerPrivate::doInitPlugin(pointer))
             ret = false;
     });
-    qInfo() << "End initialization of all plugins.";
+    qCInfo(logDPF) << "End initialization of all plugins.";
 
     emit Listener::instance()->pluginsInitialized();
     allPluginsInitialized = true;
@@ -302,13 +302,13 @@ bool PluginManagerPrivate::initPlugins()
  */
 bool PluginManagerPrivate::startPlugins()
 {
-    qInfo() << "Start start all plugins: ";
+    qCInfo(logDPF) << "Start start all plugins: ";
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
         if (!PluginManagerPrivate::doStartPlugin(pointer))
             ret = false;
     });
-    qInfo() << "End start of all plugins.";
+    qCInfo(logDPF) << "End start of all plugins.";
 
     emit Listener::instance()->pluginsStarted();
     allPluginsStarted = true;
@@ -350,10 +350,10 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
         for (const PluginDepend &depend : ptr->depends()) {
             QString &&name { depend.name() };
             if (srcMap.contains(name)) {
-                qInfo("Dependency `%s` <- `%s`", qUtf8Printable(name), qUtf8Printable(ptr->name()));
+                qCInfo(logDPF, "Dependency `%s` <- `%s`", qUtf8Printable(name), qUtf8Printable(ptr->name()));
                 dependGroup.append({ srcMap.value(name), ptr });
             } else {
-                qWarning("Plugin `%s` cannot depend a unkonw plugin: `%s`", qUtf8Printable(ptr->name()), qUtf8Printable(name));
+                qCWarning(logDPF, "Plugin `%s` cannot depend a unkonw plugin: `%s`", qUtf8Printable(ptr->name()), qUtf8Printable(name));
             }
         }
     });
@@ -361,7 +361,7 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
     // sort
     dstQueue->clear();
     if (!doPluginSort(dependGroup, srcMap, dstQueue)) {
-        qWarning() << "Sort depnd group failed!";
+        qCWarning(logDPF) << "Sort depnd group failed!";
         *dstQueue = *srcQueue;
         return;
     }
@@ -373,17 +373,17 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
 
     // 流程互斥
     if (pointer->d->state >= PluginMetaObject::State::kLoaded) {
-        qInfo() << "Is Loaded plugin: "
-                << pointer->d->name
-                << pointer->fileName();
+        qCInfo(logDPF) << "Is Loaded plugin: "
+                       << pointer->d->name
+                       << pointer->fileName();
         return true;
     }
 
     // 必须执行了读取操作
     if (pointer->d->state != PluginMetaObject::State::kReaded) {
-        qCritical() << "Failed load plugin: "
-                    << pointer->d->name
-                    << pointer->fileName();
+        qCCritical(logDPF) << "Failed load plugin: "
+                           << pointer->d->name
+                           << pointer->fileName();
         return false;
     }
 
@@ -394,13 +394,13 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
         if (creator)
             pointer->d->plugin = creator->create(pointer->name());
         pointer->d->state = PluginMetaObject::State::kLoaded;
-        qInfo() << "Virtual Plugin: " << pointer->d->name << " has been loaded";
+        qCInfo(logDPF) << "Virtual Plugin: " << pointer->d->name << " has been loaded";
         return true;
     }
 
     if (!pointer->d->loader->load()) {
         pointer->d->error = "Failed load plugin: " + pointer->d->loader->errorString();
-        qCritical() << pointer->errorString() << pointer->d->name << pointer->d->loader->fileName();
+        qCCritical(logDPF) << pointer->errorString() << pointer->d->name << pointer->d->loader->fileName();
         return false;
     }
 
@@ -420,13 +420,13 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
 
     if (isNullPluginInstance) {
         pointer->d->error = "Failed get plugin instance is nullptr";
-        qCritical() << pointer->d->name << pointer->d->error;
+        qCCritical(logDPF) << pointer->d->name << pointer->d->error;
         return false;
     }
 
     // load success
     pointer->d->state = PluginMetaObject::State::kLoaded;
-    qInfo() << "Loaded plugin: " << pointer->d->name << pointer->d->loader->fileName();
+    qCInfo(logDPF) << "Loaded plugin: " << pointer->d->name << pointer->d->loader->fileName();
     if (pointer->isVirtual())
         loadedVirtualPlugins.push_back(pointer->d->realName);
 
@@ -438,28 +438,28 @@ bool PluginManagerPrivate::doInitPlugin(PluginMetaObjectPointer pointer)
     Q_ASSERT(pointer);
 
     if (pointer->d->state >= PluginMetaObject::State::kInitialized) {
-        qInfo() << "Is initialized plugin: "
-                << pointer->d->name
-                << pointer->fileName();
+        qCInfo(logDPF) << "Is initialized plugin: "
+                       << pointer->d->name
+                       << pointer->fileName();
         return true;
     }
 
     if (pointer->d->state != PluginMetaObject::State::kLoaded) {
-        qCritical() << "Failed initialized plugin: "
-                    << pointer->d->name
-                    << pointer->fileName();
+        qCCritical(logDPF) << "Failed initialized plugin: "
+                           << pointer->d->name
+                           << pointer->fileName();
         return false;
     }
 
     if (pointer->d->plugin.isNull()) {
         pointer->d->error = "Failed initialized plugin, plugin instance is nullptr";
-        qCritical() << pointer->d->name << pointer->d->error;
+        qCCritical(logDPF) << pointer->d->name << pointer->d->error;
         return false;
     }
 
     pointer->d->state = PluginMetaObject::State::kInitialized;
     pointer->d->plugin->initialize();
-    qInfo() << "Initialized plugin: " << pointer->d->name;
+    qCInfo(logDPF) << "Initialized plugin: " << pointer->d->name;
     emit Listener::instance()->pluginInitialized(pointer->d->iid, pointer->d->name);
 
     return true;
@@ -470,34 +470,34 @@ bool PluginManagerPrivate::doStartPlugin(PluginMetaObjectPointer pointer)
     Q_ASSERT(pointer);
 
     if (pointer->d->state >= PluginMetaObject::State::kStarted) {
-        qInfo() << "Is started plugin:"
-                << pointer->d->name
-                << pointer->fileName();
+        qCInfo(logDPF) << "Is started plugin:"
+                       << pointer->d->name
+                       << pointer->fileName();
         return true;
     }
 
     if (pointer->d->state != PluginMetaObject::State::kInitialized) {
-        qCritical() << "Failed start plugin:"
-                    << pointer->d->name
-                    << pointer->fileName();
+        qCCritical(logDPF) << "Failed start plugin:"
+                           << pointer->d->name
+                           << pointer->fileName();
         return false;
     }
 
     if (pointer->d->plugin.isNull()) {
         pointer->d->error = "Failed start plugin, plugin instance is nullptr";
-        qCritical() << pointer->d->name << pointer->d->error;
+        qCCritical(logDPF) << pointer->d->name << pointer->d->error;
         return false;
     }
 
     if (pointer->d->plugin->start()) {
-        qInfo() << "Started plugin: " << pointer->d->name;
+        qCInfo(logDPF) << "Started plugin: " << pointer->d->name;
         pointer->d->state = PluginMetaObject::State::kStarted;
         emit Listener::instance()->pluginStarted(pointer->d->iid, pointer->d->name);
         return true;
     }
 
     pointer->d->error = "Failed start plugin in function start() logic";
-    qCritical() << pointer->d->error.toLocal8Bit().data();
+    qCCritical(logDPF) << pointer->d->error.toLocal8Bit().data();
     return false;
 }
 
@@ -506,44 +506,44 @@ bool PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
     Q_ASSERT(pointer);
 
     if (pointer->d->state >= PluginMetaObject::State::kStoped) {
-        qInfo() << "Is stoped plugin:"
-                << pointer->d->name
-                << pointer->fileName();
+        qCInfo(logDPF) << "Is stoped plugin:"
+                       << pointer->d->name
+                       << pointer->fileName();
         return true;
     }
 
     if (pointer->d->state != PluginMetaObject::State::kStarted) {
-        qCritical() << "Failed stop plugin:"
-                    << pointer->d->name
-                    << pointer->fileName();
+        qCCritical(logDPF) << "Failed stop plugin:"
+                           << pointer->d->name
+                           << pointer->fileName();
         return false;
     }
 
     if (pointer->d->plugin.isNull()) {
         pointer->d->error = "Failed stop plugin, plugin instance is nullptr";
-        qCritical() << pointer->d->name << pointer->d->error;
+        qCCritical(logDPF) << pointer->d->name << pointer->d->error;
         return false;
     }
 
     pointer->d->plugin->stop();
     pointer->d->plugin = nullptr;
     pointer->d->state = PluginMetaObject::State::kStoped;
-    qInfo() << "stop" << pointer->d->loader->fileName();
+    qCInfo(logDPF) << "stop" << pointer->d->loader->fileName();
 
     if (!pointer->d->loader->unload()) {
-        qWarning() << "Unload plugin failed: " << pointer->d->loader->errorString();
+        qCWarning(logDPF) << "Unload plugin failed: " << pointer->d->loader->errorString();
         return false;
     }
 
     pointer->d->state = PluginMetaObject::State::kShutdown;
-    qDebug() << "shutdown" << pointer->d->loader->fileName();
+    qCDebug(logDPF) << "shutdown" << pointer->d->loader->fileName();
     return true;
 }
 
 bool PluginManagerPrivate::doPluginSort(const PluginDependGroup group, QMap<QString, PluginMetaObjectPointer> src, QQueue<PluginMetaObjectPointer> *dest)
 {
     if (!group.isEmpty() && src.isEmpty()) {
-        qWarning() << "Maybe circle depends occured";
+        qCWarning(logDPF) << "Maybe circle depends occured";
         return false;
     }
 
@@ -573,7 +573,7 @@ bool PluginManagerPrivate::doPluginSort(const PluginDependGroup group, QMap<QStr
     }
 
     if (!nextGroup.isEmpty() && nextGroup.size() == group.size()) {
-        qWarning() << "Maybe circle depends occured, header circle";
+        qCWarning(logDPF) << "Maybe circle depends occured, header circle";
         return false;
     }
 

@@ -68,7 +68,7 @@ public:
         for (auto handler : list) {
             if (handler.compare(obj, method)) {
                 if (!list.removeOne(handler)) {
-                    qWarning() << "Cannot remove: " << handler.objectIndex->objectName();
+                    qCWarning(logDPF) << "Cannot remove: " << handler.objectIndex->objectName();
                     ret = false;
                 }
             }
@@ -90,7 +90,7 @@ public:
     {
         Q_ASSERT(topic.startsWith(kHookStrategePrefix));
         if (Q_UNLIKELY(!follow(EventConverter::convert(space, topic), obj, std::move(method)))) {
-            qWarning() << "Topic " << space << ":" << topic << "is invalid";
+            qCWarning(logDPF) << "Topic " << space << ":" << topic << "is invalid";
             return false;
         }
         return true;
@@ -100,7 +100,7 @@ public:
     inline bool follow(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qWarning() << "Event " << type << "is invalid";
+            qCWarning(logDPF) << "Event " << type << "is invalid";
             return false;
         }
 

@@ -10,8 +10,10 @@
 
 #include "builtininterface.h"
 
-#include <QDebug>
 #include <QCoreApplication>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(logToolUpgrade, "log.tool.upgrade")
 
 using namespace dfm_upgrade;
 
@@ -21,7 +23,7 @@ int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
 
     CrashHandle crash;
     if (crash.isCrashed()) {
-        qCritical() << "fail to upgrade, crashed twice.";
+        qCCritical(logToolUpgrade) << "fail to upgrade, crashed twice.";
         crash.clearCrash();
         QFile::remove(upgradeConfigDir() + "/" + kUpgradeFlag);
         return 0;
@@ -29,7 +31,7 @@ int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
 
     crash.regSignal();
 
-    qInfo() << "upgrade args" << args;
+    qCInfo(logToolUpgrade) << "upgrade args" << args;
 
     // is desktop or file manager?
     bool isDesktop = args.contains(kArgDesktop);
@@ -39,13 +41,13 @@ int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
     // check lock
     UpgradeLocker locker;
     if (locker.isLock()) {
-        qWarning() << "there is a process in upgrading.";
+        qCWarning(logToolUpgrade) << "there is a process in upgrading.";
         return -1;
     }
 
     // check the flag file again.
     if (!isNeedUpgrade()) {
-        qCritical() << "flag file has been removed.";
+        qCCritical(logToolUpgrade) << "flag file has been removed.";
         return -1;
     }
 
@@ -53,7 +55,7 @@ int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
     ProcessDialog dlg;
     dlg.initialize(isDesktop);
     if (!dlg.execDialog()) {
-        qInfo() << "break by user";
+        qCInfo(logToolUpgrade) << "break by user";
         return -1;
     }
 
@@ -68,8 +70,7 @@ int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
     crash.clearCrash();
 
     // datas have been upgraded.
-    qInfo() << "the upgrader has done.";
+    qCInfo(logToolUpgrade) << "the upgrader has done.";
     dlg.restart();
     return 0;
 }
-
