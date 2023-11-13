@@ -150,9 +150,10 @@ void ThumbnailWorker::createThumbnail(const QUrl &url, Global::ThumbnailSize siz
     // check whether the file is stable
     // if not, rejoin the event queue and create thumbnail later
     if (!d->checkFileStable(url)) {
-        ThumbnailTaskMap taskMap { { url, size } };
-        QMetaObject::invokeMethod(this, "onTaskAdded", Qt::QueuedConnection,
-                                  Q_ARG(ThumbnailTaskMap, taskMap));
+        ThumbnailTaskMap taskMap { { d->originalUrl, size } };
+        QTimer::singleShot(2000, this, [taskMap, this] {
+            onTaskAdded(taskMap);
+        });
         return;
     }
 
