@@ -22,6 +22,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(DtkCMake REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
+
 # TODO: control it by CI. (Automation Testing)
 add_definitions(-DENABLE_TESTING)
 

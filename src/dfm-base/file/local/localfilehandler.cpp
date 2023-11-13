@@ -70,13 +70,13 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
 {
     QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
     if (!oper) {
-        qWarning() << "create operator failed, url: " << url;
+        qCWarning(logDFMBase) << "create operator failed, url: " << url;
         return false;
     }
 
     bool success = oper->touchFile();
     if (!success) {
-        qWarning() << "touch file failed, url: " << url;
+        qCWarning(logDFMBase) << "touch file failed, url: " << url;
 
         d->setError(oper->lastError());
 
@@ -90,8 +90,8 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
     }
 
     d->loadTemplateInfo(url, tempUrl);
-    qInfo("touchFile source file : %s, Template file %s, successed by dfmio function touchFile!",
-          url.path().toStdString().c_str(), tempUrl.path().toStdString().c_str());
+    qCInfo(logDFMBase, "touchFile source file : %s, Template file %s, successed by dfmio function touchFile!",
+           url.path().toStdString().c_str(), tempUrl.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, url);
 
     return true;
@@ -105,13 +105,13 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
 {
     QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(dir) };
     if (!oper) {
-        qWarning() << "create operator failed, url: " << dir;
+        qCWarning(logDFMBase) << "create operator failed, url: " << dir;
         return false;
     }
 
     bool success = oper->makeDirectory();
     if (!success) {
-        qWarning() << "make directory failed, url: " << dir;
+        qCWarning(logDFMBase) << "make directory failed, url: " << dir;
 
         d->setError(oper->lastError());
 
@@ -121,7 +121,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(dir);
     fileInfo->refresh();
 
-    qInfo("mkdir source file : %s, successed by dfmio function makeDirectory!", dir.path().toStdString().c_str());
+    qCInfo(logDFMBase, "mkdir source file : %s, successed by dfmio function makeDirectory!", dir.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, dir);
 
     return true;
@@ -136,20 +136,20 @@ bool LocalFileHandler::rmdir(const QUrl &url)
     QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
 
     if (!oper) {
-        qWarning() << "create operator failed, url: " << url;
+        qCWarning(logDFMBase) << "create operator failed, url: " << url;
         return false;
     }
 
     QString targetTrash = oper->trashFile();
     if (targetTrash.isEmpty()) {
-        qWarning() << "trash file failed, url: " << url;
+        qCWarning(logDFMBase) << "trash file failed, url: " << url;
 
         d->setError(oper->lastError());
 
         return false;
     }
 
-    qInfo("rmdir source file : %s, successed by dfmio function trashFile!", url.path().toStdString().c_str());
+    qCInfo(logDFMBase, "rmdir source file : %s, successed by dfmio function trashFile!", url.path().toStdString().c_str());
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
 
@@ -186,15 +186,16 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
             const QString &newName = newUrl.fileName();
             QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
             if (!oper) {
-                qWarning() << "create operator failed, url: " << url;
+                qCWarning(logDFMBase) << "create operator failed, url: " << url;
                 return false;
             }
 
             bool success = oper->renameFile(newName);
-            qInfo("rename source file : %s , target file :%s , successed : %d  in mtp\
-                  by dfmio function rename!", url.path().toStdString().c_str(),
-                  newUrl.path().toStdString().c_str(),
-                  success);
+            qCInfo(logDFMBase, "rename source file : %s , target file :%s , successed : %d  in mtp\
+                  by dfmio function rename!",
+                   url.path().toStdString().c_str(),
+                   newUrl.path().toStdString().c_str(),
+                   success);
             if (success)
                 return true;
         }
@@ -217,24 +218,25 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
 
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(newUrl);
         fileInfo->refresh();
-        qInfo("rename source file : %s , target file :%s successed by system function rename!",
-              sourceFile.toStdString().c_str(),
-              targetFile.toStdString().c_str());
+        qCInfo(logDFMBase, "rename source file : %s , target file :%s successed by system function rename!",
+               sourceFile.toStdString().c_str(),
+               targetFile.toStdString().c_str());
         return true;
     }
 
     QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
     if (!oper) {
-        qWarning() << "create operator failed, url: " << url;
+        qCWarning(logDFMBase) << "create operator failed, url: " << url;
         return false;
     }
 
     bool success = oper->renameFile(newUrl);
-    qInfo("rename source file : %s , target file :%s , successed : %d \
-          by dfmio function rename!", url.path().toStdString().c_str(),
-          newUrl.path().toStdString().c_str(), success);
+    qCInfo(logDFMBase, "rename source file : %s , target file :%s , successed : %d \
+          by dfmio function rename!",
+           url.path().toStdString().c_str(),
+           newUrl.path().toStdString().c_str(), success);
     if (!success) {
-        qWarning() << "rename file failed, url: " << url;
+        qCWarning(logDFMBase) << "rename file failed, url: " << url;
 
         d->setError(oper->lastError());
 
@@ -280,9 +282,8 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
         FileInfoPointer fileInfoLink = fileInfo;
         while (fileInfoLink->isAttributes(OptInfoType::kIsSymLink)) {
             QString targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
-            targetLink = targetLink.endsWith(QDir::separator()) && targetLink != QDir::separator() ?
-                        QString(targetLink).left(targetLink.length() -1)
-                      : targetLink;
+            targetLink = targetLink.endsWith(QDir::separator()) && targetLink != QDir::separator() ? QString(targetLink).left(targetLink.length() - 1)
+                                                                                                   : targetLink;
             if (targetList.contains(targetLink))
                 break;
             targetList.append(targetLink);
@@ -361,20 +362,20 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
     bool ok = false;
 
     if (desktopFile.isEmpty()) {
-        qDebug() << "Failed to open desktop file with gio: app file path is empty";
+        qCWarning(logDFMBase) << "Failed to open desktop file with gio: app file path is empty";
         return ok;
     }
 
     if (fileUrls.isEmpty()) {
-        qDebug() << "Failed to open desktop file with gio: file path is empty";
+        qCWarning(logDFMBase) << "Failed to open desktop file with gio: file path is empty";
         return ok;
     }
 
-    qDebug() << desktopFile << fileUrls;
+    qCDebug(logDFMBase) << desktopFile << fileUrls;
 
     GDesktopAppInfo *appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
     if (!appInfo) {
-        qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
+        qCWarning(logDFMBase) << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
     }
 
@@ -389,7 +390,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         QStringList args;
         args << "-e" << exec.split(" ").at(0) << filePathsStr;
         QString termPath = defaultTerminalPath();
-        qDebug() << termPath << args;
+        qCDebug(logDFMBase) << termPath << args;
         ok = QProcess::startDetached(termPath, args);
     } else {
         ok = d->launchApp(desktopFile, filePathsStr);
@@ -423,21 +424,21 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
     QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(sourcefile) };
 
     if (!oper) {
-        qWarning() << "create operator failed, url: " << sourcefile;
+        qCWarning(logDFMBase) << "create operator failed, url: " << sourcefile;
         return false;
     }
 
     bool success = oper->createLink(link);
     if (!success) {
-        qWarning() << "create link failed, url: " << sourcefile << " link url: " << link;
+        qCWarning(logDFMBase) << "create link failed, url: " << sourcefile << " link url: " << link;
 
         d->setError(oper->lastError());
 
         return false;
     }
 
-    qInfo("create system link, source file %s, link file %s successed !",
-          sourcefile.path().toStdString().c_str(), link.path().toStdString().c_str());
+    qCInfo(logDFMBase, "create system link, source file %s, link file %s successed !",
+           sourcefile.path().toStdString().c_str(), link.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, link);
 
     return true;
@@ -452,7 +453,7 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
 {
     QSharedPointer<DFMIO::DFile> dfile { new DFMIO::DFile(url) };
     if (!dfile) {
-        qWarning() << "create file failed, url: " << url;
+        qCWarning(logDFMBase) << "create file failed, url: " << url;
         return false;
     }
 
@@ -464,7 +465,7 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
 
     bool success = dfile->setPermissions(DFMIO::DFile::Permissions(uint16_t(permissions)));
     if (!success) {
-        qWarning() << "set permissions failed, url: " << url;
+        qCWarning(logDFMBase) << "set permissions failed, url: " << url;
 
         d->setError(dfile->lastError());
 
@@ -507,13 +508,13 @@ bool LocalFileHandler::moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMI
 {
     QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(sourceUrl) };
     if (!dOperator) {
-        qWarning() << "create file operator failed, url: " << sourceUrl;
+        qCWarning(logDFMBase) << "create file operator failed, url: " << sourceUrl;
         return false;
     }
 
     bool success = dOperator->moveFile(destUrl, flag);
     if (!success) {
-        qWarning() << "move file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
+        qCWarning(logDFMBase) << "move file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
 
         d->setError(dOperator->lastError());
 
@@ -527,13 +528,13 @@ bool LocalFileHandler::copyFile(const QUrl &sourceUrl, const QUrl &destUrl, dfmi
 {
     QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(sourceUrl) };
     if (!dOperator) {
-        qWarning() << "create file operator failed, url: " << sourceUrl;
+        qCWarning(logDFMBase) << "create file operator failed, url: " << sourceUrl;
         return false;
     }
 
     bool success = dOperator->copyFile(destUrl, flag);
     if (!success) {
-        qWarning() << "copy file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
+        qCWarning(logDFMBase) << "copy file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
 
         d->setError(dOperator->lastError());
 
@@ -547,13 +548,13 @@ QString LocalFileHandler::trashFile(const QUrl &url)
 {
     QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(url) };
     if (!dOperator) {
-        qWarning() << "create file operator failed, url: " << url;
+        qCWarning(logDFMBase) << "create file operator failed, url: " << url;
         return QString();
     }
 
     QString targetTrash = dOperator->trashFile();
     if (targetTrash.isEmpty()) {
-        qWarning() << "trash file failed, url: " << url;
+        qCWarning(logDFMBase) << "trash file failed, url: " << url;
         d->setError(dOperator->lastError());
     }
 
@@ -569,29 +570,29 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
     QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(url) };
 
     if (!dOperator) {
-        qWarning() << "create file operator failed, url: " << url;
+        qCWarning(logDFMBase) << "create file operator failed, url: " << url;
         return false;
     }
 
     bool success = dOperator->deleteFile();
     if (!success) {
-        qWarning() << "delete file failed, url: " << url;
+        qCWarning(logDFMBase) << "delete file failed, url: " << url;
 
         d->setError(dOperator->lastError());
 
         return false;
     }
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
-    qInfo() << "delete file success: " << url;
+    qCInfo(logDFMBase) << "delete file success: " << url;
 
     return true;
 }
 
 bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
 {
-    qInfo() << "Recursive delete " << url;
+    qCInfo(logDFMBase) << "Recursive delete " << url;
     if (SystemPathUtil::instance()->isSystemPath(url.toLocalFile())) {
-        qWarning() << "Cannot delete system path!!!!!!!!!!!!!!!!!";
+        qCWarning(logDFMBase) << "Cannot delete system path!!!!!!!!!!!!!!!!!";
         abort();
     }
 
@@ -604,7 +605,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
 
     QSharedPointer<DFMIO::DEnumerator> enumerator { new DFMIO::DEnumerator(url) };
     if (!enumerator) {
-        qWarning() << "Cannot create enumerator";
+        qCWarning(logDFMBase) << "Cannot create enumerator";
         return false;
     }
 
@@ -664,8 +665,9 @@ bool LocalFileHandlerPrivate::launchApp(const QString &desktopFilePath, const QS
 
 bool LocalFileHandlerPrivate::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    qInfo("launch App By DBus, desktopFile : %s, files count : %d !", desktopFile.toStdString().c_str(), filePaths.count());
-    qDebug() << "launch App By DBus, files : \n" << filePaths;
+    qCInfo(logDFMBase, "launch App By DBus, desktopFile : %s, files count : %d !", desktopFile.toStdString().c_str(), filePaths.count());
+    qCDebug(logDFMBase) << "launch App By DBus, files : \n"
+                        << filePaths;
     if (UniversalUtils::checkLaunchAppInterface())
         return UniversalUtils::launchAppByDBus(desktopFile, filePaths);
     return false;
@@ -673,13 +675,13 @@ bool LocalFileHandlerPrivate::launchAppByDBus(const QString &desktopFile, const 
 
 bool LocalFileHandlerPrivate::launchAppByGio(const QString &desktopFilePath, const QStringList &fileUrls)
 {
-    qDebug() << "launchApp by gio:" << desktopFilePath << fileUrls;
+    qCDebug(logDFMBase) << "launchApp by gio:" << desktopFilePath << fileUrls;
 
     const QByteArray &cDesktopFilePath = desktopFilePath.toLocal8Bit();
 
     g_autoptr(GDesktopAppInfo) appInfo = g_desktop_app_info_new_from_filename(cDesktopFilePath.data());
     if (!appInfo) {
-        qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
+        qCWarning(logDFMBase) << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
     }
 
@@ -694,11 +696,11 @@ bool LocalFileHandlerPrivate::launchAppByGio(const QString &desktopFilePath, con
     gboolean ok = g_app_info_launch(reinterpret_cast<GAppInfo *>(appInfo), gfiles, nullptr, &gerror);
 
     if (gerror) {
-        qWarning() << "Error when trying to open desktop file with gio:" << gerror->message;
+        qCWarning(logDFMBase) << "Error when trying to open desktop file with gio:" << gerror->message;
     }
 
     if (!ok) {
-        qWarning() << "Failed to open desktop file with gio: g_app_info_launch returns false";
+        qCWarning(logDFMBase) << "Failed to open desktop file with gio: g_app_info_launch returns false";
     }
     if (gfiles)
         g_list_free(gfiles);
@@ -771,9 +773,8 @@ QString LocalFileHandlerPrivate::getFileMimetype(const QUrl &url)
 
 bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
 {
-    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ?
-                QString(path).left(path.length() -1)
-              : path;
+    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ? QString(path).left(path.length() - 1)
+                                                                                      : path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
@@ -783,9 +784,8 @@ bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
     targetList.append(path);
     while (isSymLink) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
-        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ?
-                    QString(pathValue).left(pathValue.length() -1)
-                  : pathValue;
+        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ? QString(pathValue).left(pathValue.length() - 1)
+                                                                                            : pathValue;
         if (targetList.contains(pathValue))
             break;
         targetList.append(pathValue);
@@ -869,9 +869,8 @@ bool LocalFileHandlerPrivate::openExcutableFile(const QString &path, int flag)
 
 bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
 {
-    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ?
-                QString(path).left(path.length() -1)
-              : path;
+    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ? QString(path).left(path.length() - 1)
+                                                                                      : path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
@@ -880,9 +879,8 @@ bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
     targetList.append(pathValue);
     while (info->isAttributes(OptInfoType::kIsSymLink)) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
-        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ?
-                    QString(pathValue).left(pathValue.length() -1)
-                  : pathValue;
+        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ? QString(pathValue).left(pathValue.length() - 1)
+                                                                                            : pathValue;
         if (targetList.contains(pathValue))
             break;
         targetList.append(pathValue);
@@ -905,9 +903,9 @@ bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
 
 bool LocalFileHandlerPrivate::shouldAskUserToAddExecutableFlag(const QString &path)
 {
-    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ?
-                QString(path).left(path.length() -1)
-              : path;;
+    QString pathValue = path.endsWith(QDir::separator()) && path != QDir::separator() ? QString(path).left(path.length() - 1)
+                                                                                      : path;
+    ;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     FileInfoPointer info { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(pathValue)) };
     if (!info)
@@ -917,9 +915,8 @@ bool LocalFileHandlerPrivate::shouldAskUserToAddExecutableFlag(const QString &pa
     targetList.append(pathValue);
     while (info->isAttributes(OptInfoType::kIsSymLink)) {
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
-        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ?
-                    QString(pathValue).left(pathValue.length() -1)
-                  : pathValue;
+        pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ? QString(pathValue).left(pathValue.length() - 1)
+                                                                                            : pathValue;
         if (targetList.contains(pathValue))
             break;
         targetList.append(pathValue);
@@ -958,7 +955,7 @@ bool LocalFileHandlerPrivate::addExecutableFlagAndExecuse(const QString &path, i
 bool LocalFileHandlerPrivate::isFileWindowsUrlShortcut(const QString &path)
 {
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
-    qDebug() << mimetype;
+    qCDebug(logDFMBase) << mimetype;
     if (mimetype == "application/x-mswinurl")
         return true;
     return false;
@@ -999,7 +996,7 @@ void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &temp
         if (!arr.isEmpty() && file.open(DFMIO::DFile::OpenFlag::kAppend)) {
             qint64 writeCount = file.write(arr);
             if (writeCount <= 0)
-                qWarning() << "file touch succ, but write template failed";
+                qCWarning(logDFMBase) << "file touch succ, but write template failed";
         }
 
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
@@ -1054,7 +1051,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
                 mimeType = QString();
                 transUrls.replace(transUrls.indexOf(fileUrl), DeviceUtils::getSambaFileUriFromNative(fileUrl));
             } else {
-                qDebug() << "no default application for" << fileUrl;
+                qCWarning(logDFMBase) << "no default application for" << fileUrl;
                 return false;
             }
         }
@@ -1065,7 +1062,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
             if (recommendApps.count() > 0) {
                 defaultDesktopFile = recommendApps.first();
             } else {
-                qDebug() << "no default application for" << transUrls;
+                qCWarning(logDFMBase) << "no default application for" << transUrls;
                 return false;
             }
         }
@@ -1146,10 +1143,11 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
         }
     }
 
-    qInfo("rename Files Batch, source files count : %d, success files count : %d .\
-          ",urls.count(), successUrls.count());
+    qCInfo(logDFMBase, "rename Files Batch, source files count : %d, success files count : %d .\
+          ",
+           urls.count(), successUrls.count());
 
-    qDebug() << "rename Files Batch, source files : \n %1 " << urls << "\n successed files : \n %2" <<  successUrls;
+    qCDebug(logDFMBase) << "rename Files Batch, source files : \n %1 " << urls << "\n successed files : \n %2" << successUrls;
 
     return successUrls.size() == urls.size();
 }

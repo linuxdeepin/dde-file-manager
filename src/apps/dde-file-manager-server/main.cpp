@@ -16,6 +16,8 @@
 
 #include <signal.h>
 
+Q_LOGGING_CATEGORY(logAppServer, "log.app.dde-file-manager-server")
+
 static constexpr char kServerInterface[] { "org.deepin.plugin.server" };
 static constexpr char kPluginCore[] { "serverplugin-core" };
 static constexpr char kLibCore[] { "libserverplugin-core.so" };
@@ -40,24 +42,24 @@ static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qWarning() << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppServer) << "Load plugins but dconfig failed: " << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppServer) << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/server");
     pluginsDirs.push_back(pluginsDir);
 #else
     pluginsDirs << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
                 << QString(DFM_PLUGIN_SERVER_EDGE_DIR);
 #endif
-    qInfo() << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppServer) << "Using plugins dir:" << pluginsDirs;
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "server.blackList").toStringList() };
     DPF_NAMESPACE::LifeCycle::initialize({ kServerInterface }, pluginsDirs, blackNames);
 
-    qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
-    qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qCInfo(logAppServer) << "Depend library paths:" << QCoreApplication::libraryPaths();
+    qCInfo(logAppServer) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
     if (!DPF_NAMESPACE::LifeCycle::readPlugins())
@@ -68,7 +70,7 @@ static bool pluginsLoad()
     if (corePlugin.isNull())
         return false;
     if (!corePlugin->fileName().contains(kLibCore)) {
-        qWarning() << corePlugin->fileName() << "is not" << kLibCore;
+        qCWarning(logAppServer) << corePlugin->fileName() << "is not" << kLibCore;
         return false;
     }
     if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
@@ -83,7 +85,7 @@ static bool pluginsLoad()
 
 static void handleSIGTERM(int sig)
 {
-    qCritical() << "break with !SIGTERM! " << sig;
+    qCCritical(logAppServer) << "break with !SIGTERM! " << sig;
 
     if (qApp) {
         qApp->quit();
@@ -110,7 +112,7 @@ int main(int argc, char *argv[])
     initLog();
 
     if (!pluginsLoad()) {
-        qCritical() << "Load pugin failed!";
+        qCCritical(logAppServer) << "Load pugin failed!";
         abort();
     }
 

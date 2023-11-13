@@ -116,7 +116,7 @@ QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return "";
     }
 
@@ -131,7 +131,7 @@ QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
         if (cryptoBackingDev != "/") {
             auto backingDev = DeviceHelper::createBlockDevice(cryptoBackingDev);
             if (!backingDev) {
-                qWarning() << "cannot create block device: " << cryptoBackingDev;
+                qCWarning(logDFMBase) << "cannot create block device: " << cryptoBackingDev;
                 return "";
             }
             removable = backingDev->removable();
@@ -141,7 +141,7 @@ QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
         return originalMpt;
     } else {
         // TODO, handle optical
-        qWarning() << "device is not mountable: " << errMsg << id;
+        qCWarning(logDFMBase) << "device is not mountable: " << errMsg << id;
         return "";
     }
 }
@@ -154,7 +154,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
         Q_EMIT blockDevMountResult(id, false);
@@ -163,7 +163,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
 
     if (dev->optical()) {
         if (d->isMountingOptical) {
-            qWarning() << "Currently mounting a disc!";
+            qCWarning(logDFMBase) << "Currently mounting a disc!";
             Q_EMIT blockDevMountResult(id, false);
             return;
         }
@@ -178,7 +178,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
 
         QFutureWatcher<void> *fw { new QFutureWatcher<void>() };
         connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
-            qInfo() << "query optical item info finished, about to starting mounting it...";
+            qCInfo(logDFMBase) << "query optical item info finished, about to starting mounting it...";
             d->isMountingOptical = false;
             dev->mountAsync(opts, callback);
             delete fw;
@@ -193,7 +193,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             if (cryptoBackingDev != "/") {
                 auto backingDev = DeviceHelper::createBlockDevice(cryptoBackingDev);
                 if (!backingDev) {
-                    qWarning() << "cannot create block device: " << cryptoBackingDev;
+                    qCWarning(logDFMBase) << "cannot create block device: " << cryptoBackingDev;
                     if (cb)
                         cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
                     Q_EMIT blockDevMountResult(id, false);
@@ -215,13 +215,13 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
                     cb(ok, err, mpt);
 
                 if (mpt.isEmpty()) {
-                    qWarning()<<"mount err:" << err.code <<" : " << err.message;
-                    retryMount(id, DeviceType::kBlockDevice, timeout+1); // if device not mounted, mount it again
+                    qCWarning(logDFMBase) << "mount err:" << err.code << " : " << err.message;
+                    retryMount(id, DeviceType::kBlockDevice, timeout + 1);   // if device not mounted, mount it again
                 }
             };
             dev->mountAsync(opts, callback);
         } else {
-            qWarning() << "device is not mountable: " << errMsg << id;
+            qCWarning(logDFMBase) << "device is not mountable: " << errMsg << id;
             if (cb)
                 cb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorNotMountable), "");
 
@@ -236,7 +236,7 @@ bool DeviceManager::unmountBlockDev(const QString &id, const QVariantMap &opts)
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return false;
     }
 
@@ -272,7 +272,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError));
         emit blockDevUnmountAsyncFailed(id, DeviceError::kUnhandledError);
@@ -305,7 +305,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
         }
 
         unmountBlockDevAsync(cleartextId, options, [=](bool ok, const OperationErrorInfo &err) {
-            qInfo() << "unmount device finished: " << id << cleartextId << ok << err.code << err.message;
+            qCInfo(logDFMBase) << "unmount device finished: " << id << cleartextId << ok << err.code << err.message;
             if (ok && !noLock)
                 dev->lockAsync({});
             else
@@ -316,7 +316,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
     } else {
         DeviceManagerPrivate::unmountStackedMount(mpt);
         dev->unmountAsync(opts, [cb, this, id](bool ok, const OperationErrorInfo &err) {
-            qInfo() << "unmount device finished: " << id << ok << err.code << err.message;
+            qCInfo(logDFMBase) << "unmount device finished: " << id << ok << err.code << err.message;
             if (cb)
                 cb(ok, err);
             if (!ok)
@@ -333,19 +333,19 @@ bool DeviceManager::lockBlockDev(const QString &id, const QVariantMap &opts)
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return false;
     }
 
     if (!dev->isEncrypted()) {
-        qWarning() << "this is not a lockable device: " << id;
+        qCWarning(logDFMBase) << "this is not a lockable device: " << id;
         return false;
     }
 
     if (dev->lock(opts)) {
         return true;
     } else {
-        qWarning() << "lock device failed: " << dev->lastError().message;
+        qCWarning(logDFMBase) << "lock device failed: " << dev->lastError().message;
         return false;
     }
 }
@@ -357,7 +357,7 @@ void DeviceManager::lockBlockDevAsync(const QString &id, const QVariantMap &opts
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError));
         return;
@@ -379,12 +379,12 @@ QString DeviceManager::unlockBlockDev(const QString &id, const QString &passwd, 
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return "";
     }
 
     if (!dev->isEncrypted()) {
-        qWarning() << "this is not a lockable device: " << id;
+        qCWarning(logDFMBase) << "this is not a lockable device: " << id;
         return "";
     }
 
@@ -395,7 +395,7 @@ QString DeviceManager::unlockBlockDev(const QString &id, const QString &passwd, 
     cleartextId.clear();
     bool ok = dev->unlock(passwd, cleartextId, opts);
     if (!ok)
-        qWarning() << "unlock device failed: " << id << dev->lastError().message;
+        qCWarning(logDFMBase) << "unlock device failed: " << id << dev->lastError().message;
     return cleartextId;
 }
 #endif
@@ -406,14 +406,14 @@ void DeviceManager::unlockBlockDevAsync(const QString &id, const QString &passwd
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
         return;
     }
 
     if (!dev->isEncrypted()) {
-        qWarning() << "this is not a lockable device: " << id;
+        qCWarning(logDFMBase) << "this is not a lockable device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorNotEncryptable), "");
         return;
@@ -435,12 +435,12 @@ bool DeviceManager::powerOffBlockDev(const QString &id, const QVariantMap &opts)
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return false;
     }
 
     if (!dev->canPowerOff()) {
-        qWarning() << "device cannot be poweroff! " << id;
+        qCWarning(logDFMBase) << "device cannot be poweroff! " << id;
         return false;
     }
     return dev->powerOff(opts);
@@ -453,7 +453,7 @@ void DeviceManager::powerOffBlockDevAsync(const QString &id, const QVariantMap &
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError));
         emit blockDevPoweroffAysncFailed(id, DeviceError::kUnhandledError);
@@ -468,7 +468,7 @@ void DeviceManager::powerOffBlockDevAsync(const QString &id, const QVariantMap &
     }
 
     dev->powerOffAsync(opts, [this, cb, id](bool ok, const OperationErrorInfo &err) {
-        qInfo() << "power off device finished: " << ok << err.code << err.message;
+        qCInfo(logDFMBase) << "power off device finished: " << ok << err.code << err.message;
         if (cb)
             cb(ok, err);
         if (!ok)
@@ -483,13 +483,13 @@ bool DeviceManager::ejectBlockDev(const QString &id, const QVariantMap &opts)
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return false;
     }
 
     QString errMsg;
     if (!DeviceHelper::isEjectableBlockDev(dev, errMsg)) {
-        qWarning() << "device cannot be eject!" << errMsg;
+        qCWarning(logDFMBase) << "device cannot be eject!" << errMsg;
         return false;
     }
     return dev->eject(opts);
@@ -502,7 +502,7 @@ void DeviceManager::ejectBlockDevAsync(const QString &id, const QVariantMap &opt
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError));
         emit blockDevEjectAsyncFailed(id, DeviceError::kUnhandledError);
@@ -511,14 +511,14 @@ void DeviceManager::ejectBlockDevAsync(const QString &id, const QVariantMap &opt
 
     QString errMsg;
     if (!DeviceHelper::isEjectableBlockDev(dev, errMsg)) {
-        qWarning() << "device cannot be eject!" << errMsg;
+        qCWarning(logDFMBase) << "device cannot be eject!" << errMsg;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorNotEjectable));
         emit blockDevEjectAsyncFailed(id, DeviceError::kUserErrorNotEjectable);
         return;
     }
     dev->ejectAsync(opts, [this, id, cb](bool ok, const OperationErrorInfo &err) {
-        qInfo() << "eject device finished: " << ok << err.code << err.message;
+        qCInfo(logDFMBase) << "eject device finished: " << ok << err.code << err.message;
         if (cb)
             cb(ok, err);
         if (!ok)
@@ -533,17 +533,17 @@ bool DeviceManager::renameBlockDev(const QString &id, const QString &newName, co
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return false;
     }
 
     if (!dev->hasFileSystem()) {
-        qWarning() << "device cannot be renames cause it does not have filesystem interface" << id;
+        qCWarning(logDFMBase) << "device cannot be renames cause it does not have filesystem interface" << id;
         return false;
     }
 
     if (!dev->mountPoint().isEmpty()) {
-        qWarning() << "device cannot be renamed cause it's still mounted yet" << id;
+        qCWarning(logDFMBase) << "device cannot be renamed cause it's still mounted yet" << id;
         return false;
     }
 
@@ -557,7 +557,7 @@ void DeviceManager::renameBlockDevAsync(const QString &id, const QString &newNam
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError));
         return;
@@ -566,23 +566,23 @@ void DeviceManager::renameBlockDevAsync(const QString &id, const QString &newNam
     if (dev->isEncrypted()) {
         auto clearDevId = dev->getProperty(Property::kEncryptedCleartextDevice).toString();
         if (clearDevId == "/") {   // the unlockded device's cleartext device's id is '/'
-            qInfo() << "rename: locked device cannot be renamed: " << id;
+            qCInfo(logDFMBase) << "rename: locked device cannot be renamed: " << id;
             return;
         }
-        qDebug() << "rename: redirect to cleartext device: " << clearDevId;
+        qCDebug(logDFMBase) << "rename: redirect to cleartext device: " << clearDevId;
         renameBlockDevAsync(clearDevId, newName, opts, cb);
         return;
     }
 
     if (!dev->hasFileSystem()) {
-        qWarning() << "device cannot be renames cause it does not have filesystem interface" << id;
+        qCWarning(logDFMBase) << "device cannot be renames cause it does not have filesystem interface" << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorNotMountable));
         return;
     }
 
     if (!dev->mountPoint().isEmpty()) {
-        qWarning() << "device cannot be renamed cause it's still mounted yet" << id;
+        qCWarning(logDFMBase) << "device cannot be renamed cause it's still mounted yet" << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorAlreadyMounted));
         return;
@@ -597,7 +597,7 @@ bool DeviceManager::rescanBlockDev(const QString &id, const QVariantMap &opts)
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return false;
     }
 
@@ -610,7 +610,7 @@ void DeviceManager::rescanBlockDevAsync(const QString &id, const QVariantMap &op
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError));
         return;
@@ -624,7 +624,7 @@ QString DeviceManager::mountProtocolDev(const QString &id, const QVariantMap &op
 
     auto dev = DeviceHelper::createProtocolDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return "";
     }
     return dev->mount(opts);
@@ -636,7 +636,7 @@ void DeviceManager::mountProtocolDevAsync(const QString &id, const QVariantMap &
 
     auto dev = DeviceHelper::createProtocolDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
         return;
@@ -650,7 +650,7 @@ bool DeviceManager::unmountProtocolDev(const QString &id, const QVariantMap &opt
 
     auto dev = DeviceHelper::createProtocolDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         return false;
     }
     return dev->unmount(opts);
@@ -662,7 +662,7 @@ void DeviceManager::unmountProtocolDevAsync(const QString &id, const QVariantMap
 
     auto dev = DeviceHelper::createProtocolDevice(id);
     if (!dev) {
-        qWarning() << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "cannot create block device: " << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError));
         return;
@@ -682,7 +682,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     Q_ASSERT_X(!address.isEmpty(), __FUNCTION__, "address is emtpy");
     QUrl u(address);
     if (!u.isValid()) {
-        qDebug() << "url is not valid: " << u << address;
+        qCWarning(logDFMBase) << "url is not valid: " << u << address;
         return;
     }
 
@@ -722,7 +722,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
                                                 wrappedCb, timeout);
         } else {
             wrappedCb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorTimedOut), "");
-            qWarning() << "cannot access network " << host << ":" << port;
+            qCWarning(logDFMBase) << "cannot access network " << host << ":" << port;
         }
     });
 }
@@ -730,12 +730,12 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
 void DeviceManager::doAutoMountAtStart()
 {
     if (!DeviceUtils::isAutoMountEnable()) {
-        qInfo() << "auto mount is disabled.";
+        qCInfo(logDFMBase) << "auto mount is disabled.";
         return;
     }
 
     if (UniversalUtils::currentLoginUser() != getuid()) {
-        qInfo() << "give up auto mount cause current user is not logined";
+        qCInfo(logDFMBase) << "give up auto mount cause current user is not logined";
         return;
     }
 
@@ -775,8 +775,8 @@ void DeviceManager::detachAllRemovableBlockDevs()
 QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
 {
     auto siblings = d->watcher->getSiblings(id);
-    qDebug() << "got siblings of " << id << "\n"
-             << siblings;
+    qCDebug(logDFMBase) << "got siblings of " << id << "\n"
+                        << siblings;
     if (siblings.isEmpty())
         siblings << id;
     const auto &&me = DeviceHelper::loadBlockInfo(id);
@@ -786,7 +786,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, canPowerOff, cb](bool allUnmounted, const OperationErrorInfo &err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                                    // 'device busy' error.
+                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else if (canPowerOff)
@@ -805,8 +805,8 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
         unmountBlockDevAsync(dev, {}, [allUnmounted, func, opCount, dev](bool ok, const OperationErrorInfo &err) {
             *allUnmounted &= ok;
             *opCount -= 1;
-            qInfo() << "detach device: " << dev << ", siblings remain: " << *opCount
-                    << ", success? " << ok << err.message;
+            qCInfo(logDFMBase) << "detach device: " << dev << ", siblings remain: " << *opCount
+                               << ", success? " << ok << err.message;
             if (*opCount == 0)
                 func(*allUnmounted, err);
         });
@@ -826,7 +826,7 @@ void DeviceManager::detachProtoDev(const QString &id)
 {
     unmountProtocolDevAsync(id, {}, [id](bool ok, const OperationErrorInfo &err) {
         if (!ok)
-            qWarning() << "unmount protocol device failed: " << id << err.message << err.code;
+            qCWarning(logDFMBase) << "unmount protocol device failed: " << id << err.message << err.code;
     });
 }
 
@@ -870,7 +870,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() { }
+DeviceManager::~DeviceManager() {}
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 {
@@ -880,21 +880,21 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
     }
 
     if (!DeviceUtils::isAutoMountEnable()) {
-        qInfo() << "auto mount is disabled";
+        qCInfo(logDFMBase) << "auto mount is disabled";
         return;
     }
     if (!UniversalUtils::isLogined()) {
-        qInfo() << "give up auto mount cause no logined user" << id;
+        qCInfo(logDFMBase) << "give up auto mount cause no logined user" << id;
         return;
     }
 
     if (UniversalUtils::currentLoginUser() != getuid()) {
-        qInfo() << "give up auto mount cause current user is not logined" << id;
+        qCInfo(logDFMBase) << "give up auto mount cause current user is not logined" << id;
         return;
     }
 
     if (UniversalUtils::isInLiveSys()) {
-        qInfo() << "auto mount is disabled in live system." << id;
+        qCInfo(logDFMBase) << "auto mount is disabled in live system." << id;
         return;
     }
 
@@ -922,12 +922,12 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 
 void DeviceManager::retryMount(const QString &id, DFMMOUNT::DeviceType type, int timeout)
 {
-    if(timeout > 1){
-        qWarning() << " retry mount stoped by timeout more than " << timeout << " times for: "<< id;
+    if (timeout > 1) {
+        qCWarning(logDFMBase) << " retry mount stoped by timeout more than " << timeout << " times for: " << id;
         return;
     }
 
-    qInfo() << " retry mount 5s later:" << id;
+    qCInfo(logDFMBase) << " retry mount 5s later:" << id;
     QTimer::singleShot(5000, this, [id, type, timeout] { DeviceManager::instance()->doAutoMount(id, type, timeout); });
 }
 
@@ -940,7 +940,7 @@ void DeviceManagerPrivate::mountAllBlockDev()
 {
     const QStringList &devs { q->getAllBlockDevID(DeviceQueryOption::kMountable | DeviceQueryOption::kNotIgnored
                                                   | DeviceQueryOption::kNotMounted) };
-    qInfo() << "start to mount block devs: " << devs;
+    qCInfo(logDFMBase) << "start to mount block devs: " << devs;
     for (const auto &dev : devs)
         q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
 }
@@ -949,19 +949,19 @@ bool DeviceManagerPrivate::isDaemonMountRunning()
 {
     auto systemBusIFace = QDBusConnection::systemBus().interface();
     if (!systemBusIFace) {
-        qWarning() << "daemon mount is not available.";
+        qCWarning(logDFMBase) << "daemon mount is not available.";
         return false;
     }
 
     if (!systemBusIFace->isServiceRegistered(kDaemonService)) {
-        qWarning() << "daemon service is not registered";
+        qCWarning(logDFMBase) << "daemon service is not registered";
         return false;
     }
 
     QDBusInterface daemonIface(kDaemonService, kDaemonPath, kDaemonIntroIface,
                                QDBusConnection::systemBus());
     QDBusReply<QString> reply = daemonIface.call(kDaemonIntroMethod);
-    qDebug() << reply.value();
+    qCDebug(logDFMBase) << reply.value();
     return reply.value().contains("<node name=\"MountControl\"/>");
 }
 
@@ -975,19 +975,19 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
     if (mount) {
         auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs").toBool();
         if (!enableDlnfsMount) {
-            qInfo() << "dlnfs: mount is disabled";
+            qCInfo(logDFMBase) << "dlnfs: mount is disabled";
             return;
         }
     }
 
     if (!isDaemonMountRunning()) {
-        qWarning() << "dlnfs: daemon mount is not working...";
+        qCWarning(logDFMBase) << "dlnfs: daemon mount is not working...";
         return;
     }
 
     QString method = mount ? "Mount" : "Unmount";
 
-    qInfo() << QString("dlnfs: start %1ing dlnfs on %2").arg(method).arg(mpt);
+    qCInfo(logDFMBase) << QString("dlnfs: start %1ing dlnfs on %2").arg(method).arg(mpt);
 
     QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
     QDBusReply<QVariantMap> reply = iface.call(method, mpt, QVariantMap { { "fsType", "dlnfs" } });
@@ -995,9 +995,9 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
 
     QString msg = QString("dlnfs: %1 on %2, result:").arg(method).arg(mpt);
 
-    qDebug() << msg << ret;
+    qCDebug(logDFMBase) << msg << ret;
     if (!ret.value("result").toBool())
-        qWarning() << msg << ret;
+        qCWarning(logDFMBase) << msg << ret;
 }
 
 void DeviceManagerPrivate::unmountStackedMount(const QString &mpt)
@@ -1006,7 +1006,7 @@ void DeviceManagerPrivate::unmountStackedMount(const QString &mpt)
     QDBusReply<QVariantMap> reply = iface.call("Unmount", mpt,
                                                QVariantMap { { "fsType", "common" }, { "unmountAllStacked", true } });
     const auto &ret = reply.value();
-    qDebug() << "unmount all stacked mount of: " << mpt << ret;
+    qCDebug(logDFMBase) << "unmount all stacked mount of: " << mpt << ret;
 }
 
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,
@@ -1104,7 +1104,7 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
         }
         newMsg = newMsg.replace("\\r\\n", "\n");
 
-        qDebug() << "filtered question message is: " << newMsg;
+        qCDebug(logDFMBase) << "filtered question message is: " << newMsg;
     }
     DWIDGET_USE_NAMESPACE
     DDialog askForChoice;

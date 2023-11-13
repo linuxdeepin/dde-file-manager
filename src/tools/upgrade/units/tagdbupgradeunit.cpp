@@ -18,6 +18,8 @@
 
 #include <dfm-io/dfmio_utils.h>
 
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
+
 static constexpr char kTagOldDbName1[] = ".__main.db";
 static constexpr char kTagOldDb1TableTagProperty[] = "tag_property";
 
@@ -150,7 +152,7 @@ bool TagDbUpgradeUnit::upgradeTagProperty()
         temp.setAmbiguity(1);
 
         if (-1 == newTagDbhandle->insert<TagProperty>(temp))
-            qWarning() << QString("%1 upgrade failed !").arg(bean->getTagName());
+            qCWarning(logToolUpgrade) << QString("%1 upgrade failed !").arg(bean->getTagName());
     }
 
     return true;
@@ -190,7 +192,7 @@ bool TagDbUpgradeUnit::upgradeFileTag()
         info.setFuture("null");
 
         if (-1 == newTagDbhandle->insert<FileTagInfo>(info))
-            qWarning() << QString("%1 upgrade failed !").arg(bean->getFilePath());
+            qCWarning(logToolUpgrade) << QString("%1 upgrade failed !").arg(bean->getFilePath());
     }
 
     return true;

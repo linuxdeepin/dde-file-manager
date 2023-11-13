@@ -4,8 +4,9 @@
 
 #include "settingbackend.h"
 #include "private/settingbackend_p.h"
-#include "dconfig/dconfigmanager.h"
-#include "dfm-base/settingdialog/settingjsongenerator.h"
+
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/settingdialog/settingjsongenerator.h>
 
 #include <DSettings>
 
@@ -130,17 +131,17 @@ void SettingBackend::addSettingAccessor(const QString &key, GetOptFunc get, Save
     if (set)
         d->setters.insert(key, set);
     else
-        qInfo() << "null setter function is passed for key: " << key;
+        qCInfo(logDFMBase) << "null setter function is passed for key: " << key;
     if (get)
         d->getters.insert(key, get);
     else
-        qInfo() << "null getter function is passed for key: " << key;
+        qCInfo(logDFMBase) << "null getter function is passed for key: " << key;
 }
 
 void SettingBackend::removeSettingAccessor(const QString &key)
 {
     if (!d->setters.contains(key) || !d->getters.contains(key)) {
-        qWarning() << "Invalid key, cannot remove!";
+        qCWarning(logDFMBase) << "Invalid key, cannot remove!";
         return;
     }
 
@@ -151,7 +152,7 @@ void SettingBackend::removeSettingAccessor(const QString &key)
 void SettingBackend::addSettingAccessor(Application::ApplicationAttribute attr, SaveOptFunc set)
 {
     if (!d->keyToAA.containsValue(attr)) {
-        qWarning() << "NO mapped for ApplicationAttr::" << attr;
+        qCWarning(logDFMBase) << "NO mapped for ApplicationAttr::" << attr;
         return;
     }
     auto uiKey = d->keyToAA.key(attr);
@@ -161,7 +162,7 @@ void SettingBackend::addSettingAccessor(Application::ApplicationAttribute attr, 
 void SettingBackend::addSettingAccessor(Application::GenericAttribute attr, SaveOptFunc set)
 {
     if (!d->keyToGA.containsValue(attr)) {
-        qWarning() << "NO map for GenericAttr::" << attr;
+        qCWarning(logDFMBase) << "NO map for GenericAttr::" << attr;
         return;
     }
     auto uiKey = d->keyToGA.key(attr);

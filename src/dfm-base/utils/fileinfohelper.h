@@ -6,7 +6,7 @@
 #define FILEINFOHELPER_H
 
 #include <dfm-base/dfm_base_global.h>
-#include "fileinfoasycworker.h"
+#include <dfm-base/utils/fileinfoasycworker.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/threadcontainer.h>
 
@@ -54,6 +54,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void aboutToQuit();
     void handleFileRefresh(QSharedPointer<FileInfo> dfileInfo);
+
 private:
     void checkInfoRefresh(QSharedPointer<FileInfo> dfileInfo);
 

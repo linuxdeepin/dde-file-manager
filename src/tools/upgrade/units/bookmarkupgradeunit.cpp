@@ -5,13 +5,14 @@
 #include "bookmarkupgradeunit.h"
 #include "bookmarkupgrade/defaultitemmanager.h"
 #include <dfm-base/base/urlroute.h>
-#include <QDebug>
 
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QFile>
 #include <QStandardPaths>
 #include <QVariantMap>
+
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
 using namespace dfm_upgrade;
 DFMBASE_USE_NAMESPACE
@@ -58,7 +59,7 @@ QString BookMarkUpgradeUnit::name()
 bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
 {
     Q_UNUSED(args)
-    qInfo() << "begin upgrade";
+    qCInfo(logToolUpgrade) << "begin upgrade";
     QFile file(kConfigurationPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;
@@ -78,7 +79,7 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
 
 bool BookMarkUpgradeUnit::upgrade()
 {
-    qInfo() << "upgrading";
+    qCInfo(logToolUpgrade) << "upgrading";
     const QVariantList &quickAccessItems = initData();
     doUpgrade(quickAccessItems);   //generate quick access field to configuration
 
@@ -87,7 +88,7 @@ bool BookMarkUpgradeUnit::upgrade()
 
 void BookMarkUpgradeUnit::completed()
 {
-    qInfo() << "completed";
+    qCInfo(logToolUpgrade) << "completed";
 }
 
 QVariantList BookMarkUpgradeUnit::initData() const
@@ -152,20 +153,20 @@ QVariantList BookMarkUpgradeUnit::initData() const
             item.insert(kKeydefaultItem, false);
             sortedBookmarkOrderList.append(item);
         }
-        qInfo() << "sortedBookmarkOrderList.count = " << sortedBookmarkOrderList.count();
-        qInfo() << "Warning: Do not get the bookmark order data from config, so transfer the bookmark raw data without sort as well.";
+        qCInfo(logToolUpgrade) << "sortedBookmarkOrderList.count = " << sortedBookmarkOrderList.count();
+        qCInfo(logToolUpgrade) << "Warning: Do not get the bookmark order data from config, so transfer the bookmark raw data without sort as well.";
     }
 
-    qInfo() << "before: quickAccessItemList.count = " << quickAccessItemList.count();
+    qCInfo(logToolUpgrade) << "before: quickAccessItemList.count = " << quickAccessItemList.count();
     // 4. append the final sort data to `quickAccessItemList` which is for writting to config in field `QuickAccess`
     for (const QVariant &item : sortedBookmarkOrderList) {
         QVariantHash data = item.toHash();
         QString readableStr = data.value("url").toUrl().toString();   // convert url to human readable string.
         data.insert("url", readableStr);
         quickAccessItemList.append(data);
-        qInfo() << "Bookmark raw data is sorded to quickAccessItemList";
+        qCInfo(logToolUpgrade) << "Bookmark raw data is sorded to quickAccessItemList";
     }
-    qInfo() << "after: quickAccessItemList.count = " << quickAccessItemList.count();
+    qCInfo(logToolUpgrade) << "after: quickAccessItemList.count = " << quickAccessItemList.count();
     return quickAccessItemList;
 }
 

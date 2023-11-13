@@ -145,14 +145,14 @@ DevStorage DeviceWatcherPrivate::queryUsageOfProtocol(const QVariantMap &itemDat
 
 void DeviceWatcher::initDevDatas()
 {
-    qInfo() << "initDevDatas start";
+    qCInfo(logDFMBase) << "initDevDatas start";
     auto mng { DDeviceManager::instance() };
     const auto &devs { mng->devices() };
     for (const auto &dev : devs.value(DeviceType::kBlockDevice))
         d->allBlockInfos.insert(dev, DeviceHelper::loadBlockInfo(dev));
     for (const auto &dev : devs.value(DeviceType::kProtocolDevice))
         d->allProtocolInfos.insert(dev, DeviceHelper::loadProtocolInfo(dev));
-    qInfo() << "initDevDatas end";
+    qCInfo(logDFMBase) << "initDevDatas end";
 }
 
 /*!
@@ -166,7 +166,7 @@ void DeviceWatcher::initDevDatas()
  */
 void DeviceWatcher::queryOpticalDevUsage(const QString &id)
 {
-    FinallyUtil final([id] { qInfo() << "query optical usage finished for" << id; });
+    FinallyUtil final([id] { qCInfo(logDFMBase) << "query optical usage finished for" << id; });
     Q_UNUSED(final);
 
     QVariantMap data = DeviceHelper::loadBlockInfo(id);
@@ -192,7 +192,7 @@ void DeviceWatcher::queryOpticalDevUsage(const QString &id)
 void DeviceWatcher::startWatch()
 {
     if (d->isWatching) {
-        qInfo() << "watching device changes now...";
+        qCInfo(logDFMBase) << "watching device changes now...";
         return;
     }
 
@@ -200,7 +200,7 @@ void DeviceWatcher::startWatch()
     mng->startMonitorWatch();
     auto blkMonitor = mng->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
     if (!blkMonitor) {
-        qWarning() << "block monitor is not valid!!!";
+        qCWarning(logDFMBase) << "block monitor is not valid!!!";
     } else {
         auto ptr = blkMonitor.data();
         d->connections << connect(ptr, &DBlockMonitor::driveAdded, DeviceManager::instance(), &DeviceManager::blockDriveAdded);
@@ -220,7 +220,7 @@ void DeviceWatcher::startWatch()
 
     auto protoMonitor = mng->getRegisteredMonitor(DeviceType::kProtocolDevice).objectCast<DProtocolMonitor>();
     if (!protoMonitor) {
-        qWarning() << "protocol monitor is not valid!!!";
+        qCWarning(logDFMBase) << "protocol monitor is not valid!!!";
     } else {
         auto ptr = protoMonitor.data();
         d->connections << connect(ptr, &DProtocolMonitor::deviceAdded, this, &DeviceWatcher::onProtoDevAdded);
@@ -243,7 +243,7 @@ void DeviceWatcher::stopWatch()
 
 void DeviceWatcher::onBlkDevAdded(const QString &id)
 {
-    qDebug() << "new block device added: " << id;
+    qCDebug(logDFMBase) << "new block device added: " << id;
     auto dev = DeviceHelper::createBlockDevice(id);
     d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(dev));
 
@@ -253,7 +253,7 @@ void DeviceWatcher::onBlkDevAdded(const QString &id)
 
 void DeviceWatcher::onBlkDevRemoved(const QString &id)
 {
-    qDebug() << "block device removed: " << id;
+    qCDebug(logDFMBase) << "block device removed: " << id;
     QString oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
     d->allBlockInfos.remove(id);
     emit DevMngIns->blockDevRemoved(id, oldMpt);
@@ -317,8 +317,8 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
         const auto &var = iter.value();
         auto name = DeviceHelper::castFromDFMMountProperty(property);
         if (name.isEmpty()) {
-            qInfo() << Utils::getNameByProperty(property) << "has no mapped device name";
-            qInfo() << "changed value is: " << var;
+            qCInfo(logDFMBase) << Utils::getNameByProperty(property) << "has no mapped device name";
+            qCInfo(logDFMBase) << "changed value is: " << var;
             continue;
         } else {
             QVariantMap &item = d->allBlockInfos[id];
@@ -343,7 +343,7 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
 
 void DeviceWatcher::onProtoDevAdded(const QString &id)
 {
-    qDebug() << "new protocol device added: " << id;
+    qCDebug(logDFMBase) << "new protocol device added: " << id;
     d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
 
     emit DevMngIns->protocolDevAdded(id);
@@ -352,7 +352,7 @@ void DeviceWatcher::onProtoDevAdded(const QString &id)
 
 void DeviceWatcher::onProtoDevRemoved(const QString &id)
 {
-    qDebug() << "protocol device removed: " << id;
+    qCDebug(logDFMBase) << "protocol device removed: " << id;
     QString oldMpt = d->allProtocolInfos.value(id).value(DeviceProperty::kMountPoint).toString();
     d->allProtocolInfos.remove(id);
 

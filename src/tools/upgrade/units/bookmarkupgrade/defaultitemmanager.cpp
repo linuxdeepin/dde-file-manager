@@ -8,6 +8,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/systempathutil.h>
 
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
+
 USING_IO_NAMESPACE
 
 using namespace dfm_upgrade;

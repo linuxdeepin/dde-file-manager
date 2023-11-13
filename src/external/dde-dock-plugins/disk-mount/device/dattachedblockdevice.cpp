@@ -8,11 +8,13 @@
 
 #include <QCoreApplication>
 #include <QVariantMap>
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QFile>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QTime>
+
+Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 static const char *const kBurnSegOndisc = "disc_files";
 
@@ -187,6 +189,6 @@ void DAttachedBlockDevice::query()
                          "org.deepin.filemanager.server.DeviceManager", QDBusConnection::sessionBus());
     iface.setTimeout(3);
     QDBusReply<QVariantMap> ret = iface.callWithArgumentList(QDBus::CallMode::AutoDetect, "QueryBlockDeviceInfo", QList<QVariant> { deviceId, false });
-    qInfo() << "query info of costs" << deviceId << t.elapsed();
+    qCInfo(logAppDock) << "query info of costs" << deviceId << t.elapsed();
     info = ret.value();
 }

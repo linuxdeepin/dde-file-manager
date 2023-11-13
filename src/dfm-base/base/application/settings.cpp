@@ -179,7 +179,7 @@ void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
     }
 
     if (!file.open(QFile::ReadOnly)) {
-        qWarning() << file.errorString();
+        qCWarning(logDFMBase) << file.errorString();
 
         return;
     }
@@ -205,12 +205,12 @@ void SettingsPrivate::fromJson(const QByteArray &json, Data *data)
     const QJsonDocument &doc = QJsonDocument::fromJson(json, &error);
 
     if (error.error != QJsonParseError::NoError) {
-        qWarning() << error.errorString();
+        qCWarning(logDFMBase) << error.errorString();
         return;
     }
 
     if (!doc.isObject()) {
-        qWarning() << QString();
+        qCWarning(logDFMBase) << QString();
         return;
     }
 
@@ -220,7 +220,7 @@ void SettingsPrivate::fromJson(const QByteArray &json, Data *data)
         const QJsonValue &value = begin.value();
 
         if (!value.isObject()) {
-            qWarning() << QString();
+            qCWarning(logDFMBase) << QString();
             continue;
         }
 
@@ -957,7 +957,7 @@ void Settings::setWatchChanges(bool watchChanges)
         }
         d->settingWatcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(d->settingFile));
         if (!d->settingWatcher) {
-            qWarning() << "Create watcher failed:" << d->settingFile;
+            qCWarning(logDFMBase) << "Create watcher failed:" << d->settingFile;
             return;
         }
 

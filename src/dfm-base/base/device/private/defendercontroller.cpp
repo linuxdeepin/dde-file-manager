@@ -61,8 +61,8 @@ bool DefenderController::stopScanning(const QUrl &url)
 
 bool DefenderController::stopScanning(const QList<QUrl> &urls)
 {
-    qInfo() << "stopScanning:" << urls;
-    qInfo() << "current scanning:" << scanningPaths;
+    qCInfo(logDFMBase) << "stopScanning:" << urls;
+    qCInfo(logDFMBase) << "current scanning:" << scanningPaths;
 
     // make sure monitor DBus
     start();
@@ -75,7 +75,7 @@ bool DefenderController::stopScanning(const QList<QUrl> &urls)
         return true;
 
     foreach (const QUrl &path, paths) {
-        qInfo() << "send RequestStopUsbScannig:" << path;
+        qCInfo(logDFMBase) << "send RequestStopUsbScannig:" << path;
         interface->asyncCall("RequestStopUsbScannig", path.toLocalFile());
     }
 
@@ -105,13 +105,13 @@ void DefenderController::start()
 {
     static std::once_flag flg;
     std::call_once(flg, [this]() {
-        qInfo() << "create dbus interface:" << kDefenderServiceName;
+        qCInfo(logDFMBase) << "create dbus interface:" << kDefenderServiceName;
         interface.reset(new QDBusInterface(kDefenderServiceName,
                                            kDefenderServicePath,
                                            kDefenderInterfaceName,
                                            QDBusConnection::sessionBus()));
 
-        qInfo() << "create dbus interface done";
+        qCInfo(logDFMBase) << "create dbus interface done";
 
         QDBusConnection::sessionBus().connect(
                 kDefenderServiceName,
@@ -121,18 +121,18 @@ void DefenderController::start()
                 this,
                 SLOT(scanningUsbPathsChanged(QStringList)));
 
-        qInfo() << "start get usb scanning path";
+        qCInfo(logDFMBase) << "start get usb scanning path";
         QStringList list = interface->property("ScanningUsbPaths").toStringList();
         foreach (const QString &p, list)
             scanningPaths << QUrl::fromLocalFile(p);
 
-        qInfo() << "get usb scanning path done:" << scanningPaths;
+        qCInfo(logDFMBase) << "get usb scanning path done:" << scanningPaths;
     });
 }
 
 void DefenderController::scanningUsbPathsChanged(const QStringList &list)
 {
-    qInfo() << "reveive signal: scanningUsbPathsChanged, " << list;
+    qCInfo(logDFMBase) << "reveive signal: scanningUsbPathsChanged, " << list;
     scanningPaths.clear();
     foreach (const QString &p, list)
         scanningPaths << QUrl::fromLocalFile(p);

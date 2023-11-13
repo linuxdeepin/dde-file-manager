@@ -135,7 +135,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
     QString errMsg = "", title = "";
     if (type == OperateType::kMount) {
         title = kMountFailed;
-        qWarning() << "mount device failed: " << err.code << err.message;
+        qCWarning(logDFMBase) << "mount device failed: " << err.code << err.message;
 
         if (err.code == DeviceError::kUserErrorNetworkAnonymousNotAllowed)
             errMsg = tr("Anonymous mount is not allowed");
@@ -167,7 +167,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
 
 void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
 {
-    qDebug() << urls << "no perssion";
+    qCDebug(logDFMBase) << urls << "no perssion";
     if (urls.isEmpty()) {
         return;
     }
@@ -261,7 +261,7 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
     Q_ASSERT(window);
 
     if (window->property("isSettingDialogShown").toBool()) {
-        qWarning() << "isSettingDialogShown true";
+        qCWarning(logDFMBase) << "isSettingDialogShown true";
         return;
     }
     window->setProperty("isSettingDialogShown", true);

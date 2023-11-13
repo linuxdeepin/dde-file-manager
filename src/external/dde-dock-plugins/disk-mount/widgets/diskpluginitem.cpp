@@ -13,6 +13,8 @@
 #include <QApplication>
 #include <DGuiApplicationHelper>
 
+Q_DECLARE_LOGGING_CATEGORY(logAppDock)
+
 DGUI_USE_NAMESPACE
 
 /*!

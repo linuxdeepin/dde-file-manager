@@ -29,7 +29,7 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
         return "";
 
     if (!thumbHelper.canGenerateThumbnail(url)) {
-        qDebug() << "thumbnail: the file does not support generate thumbnails: " << url;
+        qCWarning(logDFMBase) << "thumbnail: the file does not support generate thumbnails: " << url;
         return "";
     }
 
@@ -59,7 +59,7 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
         img = ThumbnailCreators::defaultThumbnailCreator(absoluteFilePath, size);
 
     if (img.isNull()) {
-        qDebug() << "thumbnail: cannot generate thumbnail for file: " << url;
+        qCWarning(logDFMBase) << "thumbnail: cannot generate thumbnail for file: " << url;
         return "";
     }
 
@@ -100,7 +100,7 @@ bool ThumbnailWorker::registerCreator(const QString &mimeType, ThumbnailWorker::
     Q_ASSERT(creator);
 
     if (d->creators.contains(mimeType)) {
-        qWarning() << "register failed, the mime type has already been registered." << mimeType;
+        qCWarning(logDFMBase) << "register failed, the mime type has already been registered." << mimeType;
         return false;
     }
 

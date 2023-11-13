@@ -160,9 +160,9 @@ bool UniversalUtils::inMainThread()
  */
 void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
 {
-    qInfo() << " create dbus to block computer shut down!!!";
+    qCInfo(logDFMBase) << " create dbus to block computer shut down!!!";
     if (replay.value().isValid()) {
-        qWarning() << "current qt dbus replyBlokShutDown is using!";
+        qCWarning(logDFMBase) << "current qt dbus replyBlokShutDown is using!";
         return;
     }
 
@@ -178,7 +178,7 @@ void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
         << QString("block");   // mode
 
     replay = loginManager.callWithArgumentList(QDBus::Block, "Inhibit", arg);
-    qInfo() << " create over dbus to block computer shut down!!!";
+    qCInfo(logDFMBase) << " create over dbus to block computer shut down!!!";
 }
 
 qint64 UniversalUtils::computerMemory()
@@ -273,11 +273,11 @@ bool UniversalUtils::checkLaunchAppInterface()
                 if (xmlCode.contains("LaunchApp")) {
                     initStatus = true;
                 } else {
-                    qWarning() << QString("%1 : doesn't have LaunchApp interface.").arg(APP_MANAGER_SERVICE);
+                    qCWarning(logDFMBase) << QString("%1 : doesn't have LaunchApp interface.").arg(APP_MANAGER_SERVICE);
                     initStatus = false;
                 }
             } else {
-                qWarning() << QString("%1 : Introspect error").arg(APP_MANAGER_SERVICE) << xmlCode;
+                qCWarning(logDFMBase) << QString("%1 : Introspect error").arg(APP_MANAGER_SERVICE) << xmlCode;
                 initStatus = false;
             }
         } else {
@@ -303,7 +303,7 @@ bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringLi
 bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
 {
     if (checkLaunchAppInterface()) {
-        qDebug() << "launch cmd by dbus:" << cmd << args;
+        qCDebug(logDFMBase) << "launch cmd by dbus:" << cmd << args;
         QDBusInterface appManager(APP_MANAGER_SERVICE,
                                   APP_MANAGER_PATH,
                                   APP_MANAGER_INTERFACE,
@@ -322,7 +322,7 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
 
         return true;
     } else {
-        qDebug() << "launch cmd by qt:" << cmd << args;
+        qCDebug(logDFMBase) << "launch cmd by qt:" << cmd << args;
         return QProcess::startDetached(cmd, args, wd);
     }
 

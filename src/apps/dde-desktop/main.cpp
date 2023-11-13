@@ -35,6 +35,8 @@
 #include <unistd.h>
 #include <malloc.h>
 
+Q_LOGGING_CATEGORY(logAppDesktop, "log.app.dde-desktop")
+
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dde_desktop;
@@ -62,12 +64,12 @@ static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qWarning() << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppDesktop) << "Load plugins but dconfig failed: " << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppDesktop) << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/desktop");
     pluginsDirs.push_back(pluginsDir + "/common");
     pluginsDirs.push_back(pluginsDir);
@@ -78,7 +80,7 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_DESKTOP_EDGE_DIR);
 #endif
 
-    qInfo() << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppDesktop) << "Using plugins dir:" << pluginsDirs;
 
     // TODO(xust): the GVolumeMonitor object MUST be initialized in MAIN thread, so a initialize operation is added in dbusregister::initialize.
     // the function `DFMIO::DFMUtils::fileIsRemovable` indirectly initialized the GVolumeMonitor object and the function is invoked everywhere.
@@ -90,8 +92,8 @@ static bool pluginsLoad()
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
     DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames, kLazyLoadPluginNames);
 
-    qInfo() << "Depend library paths:" << DApplication::libraryPaths();
-    qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qCInfo(logAppDesktop) << "Depend library paths:" << DApplication::libraryPaths();
+    qCInfo(logAppDesktop) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
     if (!DPF_NAMESPACE::LifeCycle::readPlugins())
@@ -102,7 +104,7 @@ static bool pluginsLoad()
     if (corePlugin.isNull())
         return false;
     if (!corePlugin->fileName().contains(kLibCore)) {
-        qWarning() << corePlugin->fileName() << "is not" << kLibCore;
+        qCWarning(logAppDesktop) << corePlugin->fileName() << "is not" << kLibCore;
         return false;
     }
     if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
@@ -150,7 +152,7 @@ static void checkUpgrade(DApplication *app)
     if (!dfm_upgrade::isNeedUpgrade())
         return;
 
-    qInfo() << "try to upgrade in desktop";
+    qCInfo(logAppDesktop) << "try to upgrade in desktop";
     QMap<QString, QString> args;
     args.insert("version", app->applicationVersion());
     args.insert(dfm_upgrade::kArgDesktop, "dde-desktop");
@@ -160,7 +162,7 @@ static void checkUpgrade(DApplication *app)
 
     int ret = dfm_upgrade::tryUpgrade(lib, args);
     if (ret < 0) {
-        qWarning() << "something error, exit current process." << app->applicationPid();
+        qCWarning(logAppDesktop) << "something error, exit current process." << app->applicationPid();
         _Exit(-1);
     } else if (ret == 0) {
         auto arguments = app->arguments();
@@ -169,7 +171,7 @@ static void checkUpgrade(DApplication *app)
             arguments.pop_front();
 
         QDBusConnection::sessionBus().unregisterService(kDesktopServiceName);
-        qInfo() << "restart self " << app->applicationFilePath() << arguments;
+        qCInfo(logAppDesktop) << "restart self " << app->applicationFilePath() << arguments;
         QProcess::startDetached(app->applicationFilePath(), arguments);
         _Exit(-1);
     }
@@ -226,21 +228,21 @@ int main(int argc, char *argv[])
     initLog();
     autoReleaseMemory();
 
-    qInfo() << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()
-            << "argments" << a.arguments() << mainTime;
+    qCInfo(logAppDesktop) << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()
+                          << "argments" << a.arguments() << mainTime;
 
     {
         QDBusConnection conn = QDBusConnection::sessionBus();
 
         if (!conn.registerService(kDesktopServiceName)) {
-            qCritical() << "registerService Failed, maybe service exist" << conn.lastError();
+            qCCritical(logAppDesktop) << "registerService Failed, maybe service exist" << conn.lastError();
             exit(0x0002);
         }
 
         DesktopDBusInterface *interface = new DesktopDBusInterface(&a);
         auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
         if (!conn.registerObject(kDesktopServicePath, kDesktopServiceInterface, interface, registerOptions)) {
-            qCritical() << "registerObject Failed" << conn.lastError();
+            qCCritical(logAppDesktop) << "registerObject Failed" << conn.lastError();
             exit(0x0003);
         }
 
@@ -252,11 +254,11 @@ int main(int argc, char *argv[])
         checkUpgrade(&a);
 
         if (!pluginsLoad()) {
-            qCritical() << "Load pugin failed!";
+            qCCritical(logAppDesktop) << "Load pugin failed!";
             abort();
         }
     } else {
-        qWarning() << "desktop is disabled...";
+        qCWarning(logAppDesktop) << "desktop is disabled...";
     }
 
     QVariantMap startUpData {};

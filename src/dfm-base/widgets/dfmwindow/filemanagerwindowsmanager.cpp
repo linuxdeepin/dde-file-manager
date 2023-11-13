@@ -51,7 +51,7 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
         if (window && UniversalUtils::urlEquals(window->currentUrl(), url)) {
-            qInfo() << "Find url: " << url << " window: " << window;
+            qCInfo(logDFMBase) << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
             window->activateWindow();
@@ -135,11 +135,11 @@ void FileManagerWindowsManagerPrivate::onWindowClosed(FileManagerWindow *window)
         auto isDefaultWindow = window->property("_dfm_isDefaultWindow");
         if (window->saveClosedSate() && (!isDefaultWindow.isValid() || !isDefaultWindow.toBool()))
             saveWindowState(window);
-        qInfo() << "Last window deletelater" << window->internalWinId();
+        qCInfo(logDFMBase) << "Last window deletelater" << window->internalWinId();
         emit manager->lastWindowClosed();
         window->deleteLater();
     } else {
-        qInfo() << "Window deletelater !";
+        qCInfo(logDFMBase) << "Window deletelater !";
         window->deleteLater();
     }
 
@@ -191,7 +191,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         }
     }
     if (!d->isValidUrl(showedUrl, &error)) {
-        qWarning() << "Url: " << showedUrl << "is Invalid, error: " << error;
+        qCWarning(logDFMBase) << "Url: " << showedUrl << "is Invalid, error: " << error;
         // use home as showed url if default url is invalid
         showedUrl = UrlRoute::pathToReal(QDir::home().path());
         if (!d->isValidUrl(showedUrl, &error))
@@ -202,7 +202,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     if (!isNewWindow) {
         auto window = d->activeExistsWindowByUrl(showedUrl);
         if (!window)
-            qWarning() << "Cannot find a exists window by url: " << showedUrl;
+            qCWarning(logDFMBase) << "Cannot find a exists window by url: " << showedUrl;
         return window;
     }
 
@@ -218,7 +218,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         if (!noLoad.isValid() || !noLoad.toBool())
             d->loadWindowState(window);
         else
-            qDebug() << "do not load window state" << window << noLoad;
+            qCDebug(logDFMBase) << "do not load window state" << window << noLoad;
     }
 
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
@@ -228,7 +228,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
 
     connect(window, &FileManagerWindow::aboutToOpen, this, [this, window]() {
         auto &&id { window->internalWinId() };
-        qInfo() << "Window showed" << id;
+        qCInfo(logDFMBase) << "Window showed" << id;
         emit windowOpened(id);
     });
 
@@ -237,7 +237,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     });
 
     // In order for the plugin to cache the current window (before the base frame is installed)
-    qInfo() << "New window created: " << window->winId() << showedUrl;
+    qCInfo(logDFMBase) << "New window created: " << window->winId() << showedUrl;
 
     d->windows.insert(window->internalWinId(), window);
 
@@ -297,12 +297,12 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::findWindowById(q
     if (d->windows.contains(winId))
         return d->windows.value(winId);
 
-    qWarning() << "The `d->windows` cannot find winId: " << winId;
+    qCWarning(logDFMBase) << "The `d->windows` cannot find winId: " << winId;
     for (QWidget *top : qApp->topLevelWidgets()) {
         if (top->internalWinId() == winId)
             return qobject_cast<FileManagerWindowsManager::FMWindow *>(top);
     }
-    qWarning() << "Null window returned!";
+    qCWarning(logDFMBase) << "Null window returned!";
 
     return nullptr;
 }

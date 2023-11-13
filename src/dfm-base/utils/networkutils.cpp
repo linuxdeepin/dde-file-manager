@@ -28,7 +28,7 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port)
     QTcpSocket conn;
     conn.connectToHost(host, port.toInt());
     bool connected = conn.waitForConnected(3000);
-    qInfo() << "connect to host" << host
+    qCInfo(logDFMBase) << "connect to host" << host
             << "at port" << port
             << "result:" << connected << conn.error();
     return connected;
@@ -112,7 +112,7 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
 
     auto busy = !checkNetConnection(host, port);
     if (busy)
-        qInfo() << "can not connect url = " << url << " host =  " << host << " port = " << port;
+        qCInfo(logDFMBase) << "can not connect url = " << url << " host =  " << host << " port = " << port;
 
     return busy;
 }

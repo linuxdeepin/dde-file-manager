@@ -14,4 +14,8 @@
 #define DPF_STR(s) #s
 #define DPF_MACRO_TO_STR(s) DPF_STR(s)
 
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logDPF)
+
 #endif   // GLOBAL_DFM_FRAMEWORK_H

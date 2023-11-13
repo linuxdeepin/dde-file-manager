@@ -49,7 +49,7 @@ public:
     virtual bool showUsageSize() const = 0;
     virtual EntryOrder order() const = 0;
 
-    virtual inline void refresh() { }
+    virtual inline void refresh() {}
     virtual inline quint64 sizeTotal() const { return 0; }
     virtual inline quint64 sizeUsage() const { return 0; }
     virtual inline QString description() const { return {}; }
@@ -74,7 +74,7 @@ public:
     static inline bool registCreator(const QString &suffix)
     {
         if (creators.contains(suffix)) {
-            qDebug() << "register failed: already exists" << suffix;
+            qCWarning(logDFMBase) << "register failed: already exists" << suffix;
             return false;
         }
         creators.insert(suffix, [](const QUrl &url) {

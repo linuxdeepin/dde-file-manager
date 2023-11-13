@@ -116,7 +116,7 @@ void TaskWidget::onButtonClicked()
 {
     QObject *obj { sender() };
     if (!obj) {
-        qWarning() << "the button is null or the button is release!";
+        qCWarning(logDFMBase) << "the button is null or the button is release!";
         return;
     }
     if (infoTimer.isActive())
@@ -203,7 +203,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         showBtnByAction(AbstractJobHandler::SupportAction::kCancelAction);
         lbErrorMsg->show();
         showConflictButtons(true, false);
-        qWarning() << QString("create source file %1 Info failed in show conflict Info function!").arg(source.path());
+        qCWarning(logDFMBase) << QString("create source file %1 Info failed in show conflict Info function!").arg(source.path());
         return;
     }
     error.clear();
@@ -213,7 +213,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         lbErrorMsg->show();
         showConflictButtons(true, false);
         showBtnByAction(AbstractJobHandler::SupportAction::kCancelAction);
-        qWarning() << QString("create source file %1 Info failed in show conflict Info function!").arg(target.path());
+        qCWarning(logDFMBase) << QString("create source file %1 Info failed in show conflict Info function!").arg(target.path());
         return;
     }
 

@@ -9,8 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#define protected public
-
 DPF_USE_NAMESPACE
 
 class UT_EventDispatcher : public testing::Test

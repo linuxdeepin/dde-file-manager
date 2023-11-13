@@ -33,7 +33,7 @@ bool ConfigSynchronizer::watchChange(const SyncPair &pair)
 
     const auto &&uniKey = pair.serialize();
     if (d->syncPairs.contains(uniKey)) {
-        qInfo() << QString("%1 already watched").arg(uniKey);
+        qCInfo(logDFMBase) << QString("%1 already watched").arg(uniKey);
         return false;
     }
 
@@ -88,7 +88,7 @@ void ConfigSynchronizerPrivate::syncToAppSet(const QString &cfgPath, const QStri
                 }
 
                 syncFunc(cfgPath, cfgKey, var);
-                qDebug() << QString("%1:%2 is synced to DSetting by custom sync func.").arg(cfgPath).arg(cfgKey);
+                qCDebug(logDFMBase) << QString("%1:%2 is synced to DSetting by custom sync func.").arg(cfgPath).arg(cfgKey);
             } else {
                 const auto &val = iter.value().set.val;
                 switch (iter.value().set.type) {

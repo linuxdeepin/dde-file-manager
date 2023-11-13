@@ -5,25 +5,25 @@
 #include "upgradefactory.h"
 #include "units/unitlist.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
 
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 using namespace dfm_upgrade;
 
 UpgradeFactory::UpgradeFactory()
 {
-
 }
 
 void UpgradeFactory::previous(const QMap<QString, QString> &args)
 {
     units = createUnits();
-    qInfo() << QString("load %0 units").arg(units.size());
+    qCInfo(logToolUpgrade) << QString("load %0 units").arg(units.size());
 
     for (auto unit = units.begin(); unit != units.end();) {
         QString name = (*unit)->name();
-        qInfo() << "initialize unit" << name;
+        qCInfo(logToolUpgrade) << "initialize unit" << name;
         if (!(*unit)->initialize(args)) {
-            qCritical() << "fail to init" << name;
+            qCCritical(logToolUpgrade) << "fail to init" << name;
             unit = units.erase(unit);
         } else {
             unit++;
@@ -35,9 +35,9 @@ void UpgradeFactory::doUpgrade()
 {
     for (auto unit = units.begin(); unit != units.end(); unit++) {
         QString name = (*unit)->name();
-        qInfo() << "upgrade unit" << name;
+        qCInfo(logToolUpgrade) << "upgrade unit" << name;
         if (!(*unit)->upgrade()) {
-            qCritical() << "fail to upgrade" << name;
+            qCCritical(logToolUpgrade) << "fail to upgrade" << name;
         }
     }
 }
@@ -46,7 +46,7 @@ void UpgradeFactory::completed()
 {
     for (auto unit = units.begin(); unit != units.end(); unit++) {
         QString name = (*unit)->name();
-        qInfo() << "complete unit" << name;
+        qCInfo(logToolUpgrade) << "complete unit" << name;
         (*unit)->completed();
     }
 }

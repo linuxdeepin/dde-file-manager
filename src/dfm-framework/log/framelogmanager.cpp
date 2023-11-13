@@ -8,6 +8,8 @@
 
 #include <mutex>
 
+Q_LOGGING_CATEGORY(logDPF, "log.lib.dpf")
+
 DCORE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 

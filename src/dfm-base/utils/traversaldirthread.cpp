@@ -25,7 +25,7 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
         dirUrl.setPath(path);
         dirIterator = DirIteratorFactory::create<AbstractDirIterator>(dirUrl, nameFilters, filters, flags);
         if (!dirIterator) {
-            qWarning() << "Failed create dir iterator from" << url;
+            qCWarning(logDFMBase) << "Failed create dir iterator from" << url;
             return;
         }
     }
@@ -73,9 +73,9 @@ void TraversalDirThread::run()
     QElapsedTimer timer;
     timer.start();
 
-    qInfo() << "dir query start, url: " << dirUrl;
+    qCInfo(logDFMBase) << "dir query start, url: " << dirUrl;
     dirIterator->cacheBlockIOAttribute();
-    qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
+    qCInfo(logDFMBase) << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
 
     if (stopFlag)
         return;
@@ -95,5 +95,5 @@ void TraversalDirThread::run()
     stopFlag = true;
     emit updateChildren(childrenList);
 
-    qInfo() << "dir query end, file count: " << childrenList.size() << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+    qCInfo(logDFMBase) << "dir query end, file count: " << childrenList.size() << " url: " << dirUrl << " elapsed: " << timer.elapsed();
 }

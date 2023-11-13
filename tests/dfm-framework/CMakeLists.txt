@@ -10,11 +10,12 @@ file(GLOB_RECURSE UT_CXX_FILE
 # 源文件
 file(GLOB_RECURSE HEADER_FILES
     FILES_MATCHING PATTERN "${HeaderPath}/event/*.h"
-    "${HeaderPath}/lifecycle/*.h" "${HeaderPath}/listener/*.h")
+    "${HeaderPath}/lifecycle/*.h" "${HeaderPath}/listener/*.h" "${HeaderPath}/log/*.h")
 file(GLOB_RECURSE SRC_FILES
     FILES_MATCHING PATTERN "${SourcePath}/event/*.cpp" "${SourcePath}/event/*.h"
      "${SourcePath}/lifecycle/*.cpp" "${SourcePath}/lifecycle/*.h"
-     "${SourcePath}/listener/*.cpp" "${SourcePath}/listener/*.h")
+     "${SourcePath}/listener/*.cpp" "${SourcePath}/listener/*.h"
+     "${SourcePath}/log/*.h" "${SourcePath}/log/*.cpp")
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)

@@ -12,6 +12,8 @@
 #include <QTextBlock>
 #include <QDebug>
 
+#include <dfm-base/dfm_base_global.h>
+
 using namespace dfmbase;
 
 ElideTextLayout::ElideTextLayout(const QString &text)
@@ -48,7 +50,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     QList<QRectF> ret;
     QTextLayout *lay = document->firstBlock().layout();
     if (!lay) {
-        qWarning() << "invaild block" << document->firstBlock().text();
+        qCWarning(logDFMBase) << "invaild block" << document->firstBlock().text();
         return ret;
     }
 
