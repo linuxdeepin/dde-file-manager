@@ -22,7 +22,8 @@
 
 #include <dfm-framework/dpf.h>
 
-using namespace dfmplugin_workspace;
+namespace dfmplugin_workspace {
+DFM_LOG_REISGER_CATEGORY(DPWORKSPACE_NAMESPACE)
 
 void Workspace::initialize()
 {
@@ -51,7 +52,7 @@ bool Workspace::start()
     const QString &scheme = Global::Scheme::kFile;
 
     if (WorkspaceHelper::instance()->isRegistedTopWidget(scheme)) {
-        qWarning() << "custom top widget sechme " << scheme << "has been resigtered!";
+        fmWarning() << "custom top widget sechme " << scheme << "has been resigtered!";
         return false;
     }
 
@@ -83,3 +84,4 @@ void Workspace::onWindowClosed(quint64 windId)
 {
     WorkspaceHelper::instance()->removeWorkspace(windId);
 }
+}   // namespace dfmplugin_workspace

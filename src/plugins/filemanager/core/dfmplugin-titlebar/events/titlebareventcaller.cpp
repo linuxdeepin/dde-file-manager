@@ -36,7 +36,7 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
     if (!url.isValid()) {
-        qWarning() << "Invalid url: " << url;
+        fmWarning() << "Invalid url: " << url;
         return;
     }
 

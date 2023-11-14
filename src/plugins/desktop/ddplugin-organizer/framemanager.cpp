@@ -45,14 +45,14 @@ void FrameManagerPrivate::buildSurface()
     for (QWidget *win : root) {
         const QString screenName = win->property(DesktopFrameProperty::kPropScreenName).toString();
         if (screenName.isEmpty()) {
-            qWarning() << "can not get screen name from root window";
+            fmWarning() << "can not get screen name from root window";
             continue;
         }
 
         SurfacePointer surface = surfaceWidgets.value(screenName);
         if (surface.isNull()) {
             // add new widget
-            qInfo() << "screen:" << screenName << "  added, create it.";
+            fmInfo() << "screen:" << screenName << "  added, create it.";
             surface = createSurface(win);
             surfaceWidgets.insert(screenName, surface);
         }
@@ -66,7 +66,7 @@ void FrameManagerPrivate::buildSurface()
         for (const QString &sp : surfaceWidgets.keys()) {
             if (!rootMap.contains(sp)) {
                 surfaceWidgets.take(sp);
-                qInfo() << "remove surface:" << sp;
+                fmInfo() << "remove surface:" << sp;
             }
         }
     }
@@ -139,7 +139,7 @@ void FrameManagerPrivate::enableChanged(bool e)
     if (e == CfgPresenter->isEnable())
         return;
 
-    qDebug() << "enableChanged" << e;
+    fmDebug() << "enableChanged" << e;
     CfgPresenter->setEnable(e);
     if (e)
         q->turnOn();
@@ -152,7 +152,7 @@ void FrameManagerPrivate::switchToCustom()
     Q_ASSERT(organizer);
 
     if (organizer->mode() == OrganizerMode::kCustom) {
-        qDebug() << "reject to switch: current mode had been custom.";
+        fmDebug() << "reject to switch: current mode had been custom.";
         return;
     }
 
@@ -236,7 +236,7 @@ bool FrameManager::initialize()
     dfmplugin_menu_util::menuSceneBind(ExtendCanvasCreator::name(), "CanvasMenu");
 
     bool enable = CfgPresenter->isEnable();
-    qInfo() << "Organizer enable:" << enable;
+    fmInfo() << "Organizer enable:" << enable;
     if (enable)
         turnOn(false); // builded by signal.
 
@@ -259,7 +259,7 @@ void FrameManager::switchMode(OrganizerMode mode)
     if (d->organizer)
         delete d->organizer;
 
-    qInfo() << "switch to" << mode;
+    fmInfo() << "switch to" << mode;
 
     d->organizer = OrganizerCreator::createOrganizer(mode);
     Q_ASSERT(d->organizer);

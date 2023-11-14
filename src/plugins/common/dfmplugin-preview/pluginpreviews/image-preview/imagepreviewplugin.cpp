@@ -5,10 +5,12 @@
 #include "imagepreviewplugin.h"
 
 DFMBASE_USE_NAMESPACE
-using namespace plugin_filepreview;
+namespace plugin_filepreview {
+DFM_LOG_REISGER_CATEGORY(PREVIEW_NAMESPACE)
+
 AbstractBasePreview *ImagePreviewPlugin::create(const QString &key)
 {
     Q_UNUSED(key)
-
     return new ImagePreview();
 }
+}   // namespace plugin_filepreview

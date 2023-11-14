@@ -189,7 +189,7 @@ bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
         int ret = access(path.c_str(), F_OK);
         exist = (ret == 0);
 
-        qInfo() << "gvfs path: " << path.c_str() << ", exist: " << exist << ", error: " << strerror(errno);
+        fmInfo() << "gvfs path: " << path.c_str() << ", exist: " << exist << ", error: " << strerror(errno);
 
         exist = true;
         QMutexLocker lk(&mtxForCheckGvfs);
@@ -326,6 +326,6 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
         converted = QUrl();   // make it invalid to got handled by default property dialog
     }
 
-    qDebug() << "convert url from" << url << "to" << converted;
+    fmDebug() << "convert url from" << url << "to" << converted;
     return converted;
 }

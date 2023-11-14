@@ -9,7 +9,8 @@
 
 #include <QDBusConnection>
 
-SERVERVAULT_USE_NAMESPACE
+namespace serverplugin_vaultdaemon {
+DFM_LOG_REISGER_CATEGORY(SERVERVAULT_NAMESPCE)
 
 void VaultManagerDBusWorker::launchService()
 {
@@ -18,20 +19,20 @@ void VaultManagerDBusWorker::launchService()
     QDBusConnection conn { QDBusConnection::sessionBus() };
     // register service
     if (!conn.registerService("org.deepin.filemanager.server")) {
-        qCritical("Vault Daemon: Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
+        fmCritical("Vault Daemon: Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
         ::exit(EXIT_FAILURE);
     }
 
-    qInfo() << "Init DBus VaultManager start";
+    fmInfo() << "Init DBus VaultManager start";
     // register object
     vaultManager.reset(new VaultManagerDBus);
     Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
     if (!conn.registerObject("/org/deepin/filemanager/server/VaultManager",
-                                    vaultManager.data())) {
-        qWarning("Vault Daemon: Cannot register the \"/org/deepin/filemanager/server/VaultManager\" object.\n");
+                             vaultManager.data())) {
+        fmWarning("Vault Daemon: Cannot register the \"/org/deepin/filemanager/server/VaultManager\" object.\n");
         vaultManager.reset(nullptr);
     }
-    qInfo() << "Vault Daemon: Init DBus VaultManager end";
+    fmInfo() << "Vault Daemon: Init DBus VaultManager end";
 }
 
 void VaultDaemon::initialize()
@@ -56,3 +57,5 @@ void VaultDaemon::stop()
     workerThread.quit();
     workerThread.wait();
 }
+
+}   // namespace serverplugin_vaultdaemon

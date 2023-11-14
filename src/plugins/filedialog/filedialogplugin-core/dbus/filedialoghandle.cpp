@@ -45,7 +45,7 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
 {
     d_func()->dialog = qobject_cast<FileDialog *>(FMWindowsIns.createWindow({}, true));
     if (!d_func()->dialog) {
-        qCritical() << "File Dialog: Create window failed";
+        fmCritical() << "File Dialog: Create window failed";
         abort();
     }
     auto &&defaultPath { DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath) };
@@ -485,9 +485,9 @@ void FileDialogHandle::show()
         d->dialog->updateAsDefaultSize();
         d->dialog->moveCenter();
         setWindowStayOnTop();
-        qDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        fmDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
         FMWindowsIns.showWindow(d->dialog);
-        qDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        fmDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
     }
 }
 

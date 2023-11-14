@@ -68,30 +68,30 @@ WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
     : QObject(parent), q(parent)
 {
 
-    qInfo() << "create com.deepin.wm interface.";
+    fmDebug() << "create com.deepin.wm interface.";
     wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm",
                           QDBusConnection::sessionBus(), q);
-    qInfo() << "end com.deepin.wm interface.";
+    fmDebug() << "end com.deepin.wm interface.";
 
     regionMonitor = new DRegionMonitor(q);
     connect(regionMonitor, &DRegionMonitor::buttonPress, this, &WallpaperSettingsPrivate::onMousePressed);
 
-    qInfo() << QString("create %1.").arg(APPEARANCE_SERVICE);
+    fmDebug() << QString("create %1.").arg(APPEARANCE_SERVICE);
     appearanceIfs = new AppearanceIfs(APPEARANCE_SERVICE,
                                       APPEARANCE_PATH,
                                       QDBusConnection::sessionBus(), q);
     appearanceIfs->setTimeout(5000);
-    qInfo() << QString("end %1.").arg(APPEARANCE_SERVICE);
+    fmDebug() << QString("end %1.").arg(APPEARANCE_SERVICE);
 
-    qInfo() << "create com.deepin.daemon.ScreenSaver.";
+    fmDebug() << "create com.deepin.daemon.ScreenSaver.";
     screenSaverIfs = new ScreenSaverIfs("com.deepin.ScreenSaver",
                                         "/com/deepin/ScreenSaver",
                                         QDBusConnection::sessionBus(), q);
-    qInfo() << "end com.deepin.daemon.ScreenSaver.";
+    fmDebug() << "end com.deepin.daemon.ScreenSaver.";
 
-    qInfo() << "create" << SessionIfs::staticInterfaceName();
+    fmDebug() << "create" << SessionIfs::staticInterfaceName();
     sessionIfs = new SessionIfs(this);
-    qInfo() << "end" << SessionIfs::staticInterfaceName();
+    fmDebug() << "end" << SessionIfs::staticInterfaceName();
     connect(sessionIfs, &SessionIfs::LockedChanged, this, [this]() {
         if (sessionIfs->locked())
             q->hide();
@@ -105,10 +105,10 @@ void WallpaperSettingsPrivate::propertyForWayland()
 {
     q->winId();
     if (auto win = q->windowHandle()) {
-        qDebug() << "set wayland role override";
+        fmDebug() << "set wayland role override";
         win->setProperty("_d_dwayland_window-type", "wallpaper-set");
     } else {
-        qCritical() << "wayland role error,windowHandle is nullptr!";
+        fmCritical() << "wayland role error,windowHandle is nullptr!";
     }
 }
 
@@ -291,7 +291,7 @@ void WallpaperSettingsPrivate::switchWaitTime(QAbstractButton *toggledBtn, bool 
     int index = waitControl->buttonList().indexOf(toggledBtn);
     auto timeArray = q->availableScreenSaverTime();
     if (index < 0 || index >= timeArray.size()) {
-        qWarning() << "invalid index" << index;
+        fmWarning() << "invalid index" << index;
         return;
     }
 
@@ -314,7 +314,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
     watch->deleteLater();
     QDBusPendingCall call = *watch;
     if (call.isError()) {
-        qWarning() << "failed to get all backgrounds: " << call.error().message();
+        fmWarning() << "failed to get all backgrounds: " << call.error().message();
         reloadTimer.start(5000);
     } else {
         q->closeLoading();
@@ -323,13 +323,13 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         QDBusReply<QString> reply = call.reply();
         QString value = reply.value();
         auto wallapers = processListReply(value);
-        qDebug() << "get available wallpapers" << wallapers;
+        fmDebug() << "get available wallpapers" << wallapers;
 #ifdef COMPILE_ON_V23
         actualEffectivedWallpaper = appearanceIfs->GetCurrentWorkspaceBackgroundForMonitor(screenName);
 #else
         actualEffectivedWallpaper = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
 #endif
-        qDebug() << "get current wallpaper" << screenName << actualEffectivedWallpaper;
+        fmDebug() << "get current wallpaper" << screenName << actualEffectivedWallpaper;
         if (actualEffectivedWallpaper.contains(kDefaultWallpaperPath)) {
             QString errString;
             QUrl currentUrl;
@@ -348,7 +348,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             }
 
             if (!fileInfo) {
-                qWarning() << errString << "get file info failed:" << currentUrl << actualEffectivedWallpaper;
+                fmWarning() << errString << "get file info failed:" << currentUrl << actualEffectivedWallpaper;
             } else {
                 actualEffectivedWallpaper = fileInfo->urlOf(UrlInfoType::kUrl).toString();
             }
@@ -398,7 +398,7 @@ void WallpaperSettingsPrivate::onItemPressed(const QString &itemData)
 
     } else {
         screenSaverIfs->Preview(itemData, 1);
-        qDebug() << "screensaver start" << itemData;
+        fmDebug() << "screensaver start" << itemData;
         if (wallpaperPrview->isVisible()) {
             QThread::msleep(300);
             wallpaperPrview->setVisible(false);
@@ -467,7 +467,7 @@ void WallpaperSettingsPrivate::handleNeedCloseButton(const QString &itemData, co
 void WallpaperSettingsPrivate::onCloseButtonClicked()
 {
     QString itemData = closeButton->property("background").toString();
-    qInfo() << "delete background" << itemData;
+    fmDebug() << "delete background" << itemData;
     if (!itemData.isEmpty()) {
         appearanceIfs->Delete("background", itemData);   // 当前自定义壁纸不一定能删成功
         needDelWallpaper << itemData;
@@ -493,17 +493,17 @@ void WallpaperSettingsPrivate::onMousePressed(const QPoint &pos, int button)
             nativeRect.setSize(nativeRect.size() * scale);
 
             if (!nativeRect.contains(pos)) {
-                qDebug() << "button pressed on blank area quit.";
+                fmDebug() << "button pressed on blank area quit.";
                 q->hide();
             } else {
                 if (!q->isActiveWindow()) {
                     // activate window in mousepress event will case button can not emit clicked signal;
-                    qInfo() << "activate WallpaperSettings by mouse pressed." << button;
+                    fmDebug() << "activate WallpaperSettings by mouse pressed." << button;
                     q->activateWindow();
                 }
             }
         } else {
-            qCritical() << "lost screen " << screenName << "closed";
+            fmCritical() << "lost screen " << screenName << "closed";
             q->hide();
             return;
         }
@@ -522,10 +522,10 @@ void WallpaperSettingsPrivate::onScreenChanged()
         wid->lower();
         q->onGeometryChanged();
         q->raise();
-        qDebug() << "onScreenChanged focus" << screenName << q->isVisible() << q->geometry();
+        fmDebug() << "onScreenChanged focus" << screenName << q->isVisible() << q->geometry();
         q->activateWindow();
     } else {
-        qDebug() << screenName << "lost exit!";
+        fmDebug() << screenName << "lost exit!";
         q->close();
     }
 }
@@ -573,7 +573,7 @@ void WallpaperSettingsPrivate::initCarousel()
     carouselCheckBox->setFocusPolicy(Qt::StrongFocus);
     carouselControl->setFocusPolicy(Qt::NoFocus);
 
-    qDebug() << "DSysInfo::deepinType = " << QString::number(DSysInfo::DeepinProfessional);
+    fmDebug() << "DSysInfo::deepinType = " << QString::number(DSysInfo::DeepinProfessional);
 
     // create time slide
     {
@@ -733,7 +733,7 @@ WallpaperSettings::~WallpaperSettings()
     CanvasCoreUnsubscribe(signal_ScreenProxy_DisplayModeChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
     CanvasCoreUnsubscribe(signal_ScreenProxy_ScreenGeometryChanged, this, &WallpaperSettings::onGeometryChanged);
 
-    qInfo() << "WallpaperSettings deleted";
+    fmDebug() << "WallpaperSettings deleted";
     delete d->loadingLabel;
     d->loadingLabel = nullptr;
 
@@ -764,7 +764,7 @@ void WallpaperSettings::switchMode(WallpaperSettings::Mode mode)
 QString WallpaperSettings::wallpaperSlideShow() const
 {
     if (nullptr == d->appearanceIfs) {
-        qWarning() << "appearanceIfs is nullptr";
+        fmWarning() << "appearanceIfs is nullptr";
         return QString();
     }
 
@@ -774,14 +774,14 @@ QString WallpaperSettings::wallpaperSlideShow() const
     // com::deepin::daemon::Appearance do not export GetWallpaperSlideShow.
     QString wallpaperSlideShow = QDBusPendingReply<QString>(d->appearanceIfs->asyncCallWithArgumentList(QStringLiteral("GetWallpaperSlideShow"), argumentList));
 
-    qInfo() << "dbus Appearance GetWallpaperSlideShow is called, result: " << wallpaperSlideShow;
+    fmDebug() << "dbus Appearance GetWallpaperSlideShow is called, result: " << wallpaperSlideShow;
     return wallpaperSlideShow;
 }
 
 void WallpaperSettings::setWallpaperSlideShow(const QString &period)
 {
     if (nullptr == d->appearanceIfs) {
-        qWarning() << "appearanceIfs is nullptr";
+        fmWarning() << "appearanceIfs is nullptr";
         return;
     }
 
@@ -808,21 +808,21 @@ void WallpaperSettings::adjustGeometry()
     if (auto sc = ddplugin_desktop_util::screenProxyScreen(d->screenName)) {
         screenRect = sc->geometry();
     } else {
-        qCritical() << "invalid screen name:" << d->screenName;
+        fmCritical() << "invalid screen name:" << d->screenName;
         screenRect = QRect(0, 0, 1920, 1080);
     }
 
     int actualHeight = d->kFrameHeight + d->kHeaderSwitcherHeight;
     setFixedSize(screenRect.width() - 20, actualHeight);
 
-    qInfo() << "move befor: " << this->geometry() << d->wallpaperList->geometry() << height()
-            << actualHeight;
+    fmDebug() << "move befor: " << this->geometry() << d->wallpaperList->geometry() << height()
+              << actualHeight;
     move(screenRect.x() + 10, screenRect.y() + screenRect.height() - actualHeight);
     d->wallpaperList->setFixedSize(screenRect.width() - 20, d->kListHeight);
 
     // layout all widgets, the wallpaperList->geometry will adjust after this calling.
     layout()->activate();
-    qInfo() << "this move : " << this->geometry() << d->wallpaperList->geometry();
+    fmDebug() << "this move : " << this->geometry() << d->wallpaperList->geometry();
 
     d->adjustModeSwitcher();
 }
@@ -856,7 +856,7 @@ void WallpaperSettings::onGeometryChanged()
     if (!isHidden())
         d->wallpaperList->updateItemThumb();
 
-    qDebug() << "reset geometry" << this->isVisible() << this->geometry();
+    fmDebug() << "reset geometry" << this->isVisible() << this->geometry();
     activateWindow();
 }
 
@@ -918,17 +918,17 @@ void WallpaperSettings::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Escape:
         hide();
-        qDebug() << "escape key pressed, quit.";
+        fmDebug() << "escape key pressed, quit.";
         break;
     case Qt::Key_Right:
-        qDebug() << "Right";
+        fmDebug() << "Right";
         //Select the next control in the list
         if (widgetList.indexOf(focusWidget(), 0) < widgetList.count() - 1) {
             widgetList.at(widgetList.indexOf(focusWidget(), 0) + 1)->setFocus();
         }
         break;
     case Qt::Key_Left:
-        qDebug() << "Left";
+        fmDebug() << "Left";
         //Select the previous control in the list
         if (widgetList.indexOf(focusWidget(), 0) > 0) {
             widgetList.at(widgetList.indexOf(focusWidget(), 0) - 1)->setFocus();
@@ -945,12 +945,12 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key = dynamic_cast<QKeyEvent *>(event);
         if (!key) {
-            qDebug() << "key is null.";
+            fmDebug() << "key is null.";
             return DBlurEffectWidget::eventFilter(object, event);
         }
-        qDebug() << "keyPress" << (Qt::Key)key->key();
+        fmDebug() << "keyPress" << (Qt::Key)key->key();
         if (key->key() == Qt::Key_Tab) {
-            qDebug() << "Tab";
+            fmDebug() << "Tab";
             //第一个区域发出tab信号，则跳转到第二个区域的第一个控件上
             if (object == d->carouselCheckBox
                 || d->carouselControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))
@@ -972,7 +972,7 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
             }
             //The tab of the third area jumps to the first area: the tab signal connected to wallpaperitem is processed
         } else if (key->key() == Qt::Key_Backtab) {   //BackTab
-            qDebug() << "BackTab(Shift Tab)";
+            fmDebug() << "BackTab(Shift Tab)";
             //If the first area sends a backtab signal, it will jump to the first control (button) of the current option (wallpaperitem) in the third area
             if (object == d->carouselCheckBox
                 || d->carouselControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))
@@ -1053,7 +1053,7 @@ void WallpaperSettings::loadScreenSaver()
     const QStringList &screensaverConfigurableItems = d->screenSaverIfs->ConfigurableItems();
     QStringList saverNameList = d->screenSaverIfs->allScreenSaver();
     if (saverNameList.isEmpty() && !d->screenSaverIfs->isValid()) {
-        qWarning() << "com.deepin.ScreenSaver allScreenSaver fail. retry";
+        fmWarning() << "com.deepin.ScreenSaver allScreenSaver fail. retry";
         d->reloadTimer.start(5000);
         return;
     }
@@ -1109,7 +1109,7 @@ void WallpaperSettings::loadScreenSaver()
         emit currentItem->pressed(currentItem);
     } else {
         if (d->wallpaperList->count() > 0) {
-            qWarning() << "no screen saver item selected,and select default 0.";
+            fmWarning() << "no screen saver item selected,and select default 0.";
             d->wallpaperList->setCurrentIndex(0);
         }
     }
@@ -1120,20 +1120,20 @@ void WallpaperSettings::loadScreenSaver()
 void WallpaperSettings::applyToDesktop()
 {
     if (nullptr == d->appearanceIfs) {
-        qWarning() << "appearanceIfs is nullptr";
+        fmWarning() << "appearanceIfs is nullptr";
         return;
     }
 
     if (d->currentSelectedWallpaper.isEmpty()) {
-        qWarning() << "cureentWallpaper is empty";
+        fmWarning() << "cureentWallpaper is empty";
         return;
     }
 
-    qInfo() << "dbus Appearance SetMonitorBackground is called " << d->screenName << " " << d->currentSelectedWallpaper;
+    fmDebug() << "dbus Appearance SetMonitorBackground is called " << d->screenName << " " << d->currentSelectedWallpaper;
     QList<QVariant> argumentList;
     argumentList << QVariant::fromValue(d->screenName) << QVariant::fromValue(d->currentSelectedWallpaper);
     d->appearanceIfs->asyncCallWithArgumentList(QStringLiteral("SetMonitorBackground"), argumentList);
-    qInfo() << "dbus Appearance SetMonitorBackground end";
+    fmDebug() << "dbus Appearance SetMonitorBackground end";
 
     emit backgroundChanged();
 }
@@ -1141,18 +1141,18 @@ void WallpaperSettings::applyToDesktop()
 void WallpaperSettings::applyToGreeter()
 {
     if (nullptr == d->appearanceIfs) {
-        qWarning() << "m_dbusAppearance is nullptr";
+        fmWarning() << "m_dbusAppearance is nullptr";
         return;
     }
 
     if (d->currentSelectedWallpaper.isEmpty()) {
-        qWarning() << "cureentWallpaper is empty";
+        fmWarning() << "cureentWallpaper is empty";
         return;
     }
 
-    qInfo() << "dbus Appearance greeterbackground is called " << d->currentSelectedWallpaper;
+    fmDebug() << "dbus Appearance greeterbackground is called " << d->currentSelectedWallpaper;
     d->appearanceIfs->Set("greeterbackground", d->currentSelectedWallpaper);
-    qInfo() << "dbus Appearance greeterbackground end ";
+    fmDebug() << "dbus Appearance greeterbackground end ";
 }
 
 bool WallpaperSettings::isWallpaperLocked() const
@@ -1165,7 +1165,7 @@ bool WallpaperSettings::isWallpaperLocked() const
                          QString("dde-file-manager"),   // icon
                          tr("This system wallpaper is locked. Please contact your admin."),
                          QString(), QStringList(), QVariantMap(), 5000);
-        qInfo() << "wallpaper is locked..";
+        fmDebug() << "wallpaper is locked..";
         return true;
     }
 

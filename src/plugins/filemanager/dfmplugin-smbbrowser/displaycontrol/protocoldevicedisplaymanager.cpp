@@ -50,9 +50,9 @@ static constexpr char kCptHookListFilter[] { "hook_View_ItemListFilter" };
 ProtocolDeviceDisplayManager::ProtocolDeviceDisplayManager(QObject *parent)
     : QObject { parent }, d(new ProtocolDeviceDisplayManagerPrivate(this))
 {
-    pddmDbg << "init";
+    fmDebug() << "init";
     d->init();
-    pddmDbg << "init finished";
+    fmDebug() << "init finished";
 }
 
 ProtocolDeviceDisplayManager::~ProtocolDeviceDisplayManager()
@@ -80,10 +80,10 @@ bool ProtocolDeviceDisplayManager::hookItemInsert(const QUrl &entryUrl)
     if (!d->isSupportVEntry(entryUrl))
         return false;
 
-    pddmDbg << entryUrl << "about to be inserted";
+    fmDebug() << entryUrl << "about to be inserted";
 
     if (displayMode() == kAggregation) {
-        pddmDbg << "add aggregation item, ignore seperated item";
+        fmDebug() << "add aggregation item, ignore seperated item";
         QTimer::singleShot(0, this, [=] { addAggregatedItemForSeperatedOnlineItem(entryUrl); });
         return true;
     }
@@ -159,7 +159,7 @@ void ProtocolDeviceDisplayManager::onDConfigChanged(const QString &g, const QStr
     if (g == kDefaultCfgPath && k == dfm_dconfig::kShowOffline) {
         d->showOffline = DConfigManager::instance()->value(kDefaultCfgPath, kShowOffline).toBool();
         d->onShowOfflineChanged();
-        pddmDbg << "showOffline changed: " << d->showOffline;
+        fmDebug() << "showOffline changed: " << d->showOffline;
     }
 }
 
@@ -169,7 +169,7 @@ void ProtocolDeviceDisplayManager::onJsonConfigChanged(const QString &g, const Q
     if (g == kGenericAttribute && k == kSmbAggregation) {
         d->displayMode = v.toBool() ? kAggregation : kSeperate;
         d->onDisplayModeChanged();
-        pddmDbg << "displayMode changed: " << d->displayMode;
+        fmDebug() << "displayMode changed: " << d->displayMode;
     }
 }
 
@@ -178,7 +178,7 @@ void ProtocolDeviceDisplayManager::onMenuSceneAdded(const QString &scene)
     if (scene != plugin_events::kComputerMenu)
         return;
     bool ok = dfmplugin_menu_util::menuSceneBind(VirtualEntryMenuCreator::name(), scene);
-    qInfo() << "bind virtual entry menu to computer: " << ok;
+    fmInfo() << "bind virtual entry menu to computer: " << ok;
 }
 
 void ProtocolDeviceDisplayManagerPrivate::init()

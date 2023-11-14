@@ -9,23 +9,24 @@
 #include <QDBusConnection>
 
 SERVERTAGDAEMON_BEGIN_NAMESPACE
+DFM_LOG_REISGER_CATEGORY(SERVERTAGDAEMON_NAMESPACE)
 
 void TagDBusWorker::launchService()
 {
     Q_ASSERT(QThread::currentThread() != qApp->thread());
     auto conn { QDBusConnection::sessionBus() };
 
-    qInfo() << "Init DBus TagManager start";
+    fmInfo() << "Init DBus TagManager start";
     tagManager.reset(new TagManagerDBus);
     Q_UNUSED(new TagManagerAdaptor(tagManager.data()));
     if (!conn.registerObject("/org/deepin/filemanager/server/TagManager",
                              tagManager.data())) {
-        qWarning("Cannot register the \"/org/deepin/filemanager/server/TagManager\" object.\n");
+        fmWarning("Cannot register the \"/org/deepin/filemanager/server/TagManager\" object.\n");
         tagManager.reset(nullptr);
     } else {
         tagManager->TagsServiceReady();
     }
-    qInfo() << "Init DBus TagManager end";
+    fmInfo() << "Init DBus TagManager end";
 }
 
 void TagDaemon::initialize()

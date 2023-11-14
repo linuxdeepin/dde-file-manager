@@ -6,10 +6,14 @@
 #include <dfm-base/interfaces/abstractbasepreview.h>
 
 DFMBASE_USE_NAMESPACE
-using namespace plugin_filepreview;
+namespace plugin_filepreview {
+
+DFM_LOG_REISGER_CATEGORY(PREVIEW_NAMESPACE)
+
 AbstractBasePreview *TextPreviewPlugin::create(const QString &key)
 {
     Q_UNUSED(key)
 
     return new TextPreview();
 }
+}   //  namespace plugin_filepreview

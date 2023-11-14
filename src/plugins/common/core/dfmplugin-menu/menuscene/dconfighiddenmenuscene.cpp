@@ -51,7 +51,7 @@ void dfmplugin_menu::DConfigHiddenMenuScene::updateState(QMenu *parent)
 
 void DConfigHiddenMenuScene::disableScene()
 {
-    qDebug() << "disable extend menu scene..";
+    fmDebug() << "disable extend menu scene..";
     static const QSet<QString> extendScenes{"OemMenu", "ExtendMenu"};
     // this scene must be the sibling of extendScenes.
     if (auto parent = dynamic_cast<AbstractMenuScene *>(this->parent())) {
@@ -79,7 +79,7 @@ void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)
     if (hiddenActions.isEmpty())
         return;
 
-    qDebug() << "menu: hidden actions: " << hiddenActions;
+    fmDebug() << "menu: hidden actions: " << hiddenActions;
 
     QList<QMenu *> menus { parent };
     do {

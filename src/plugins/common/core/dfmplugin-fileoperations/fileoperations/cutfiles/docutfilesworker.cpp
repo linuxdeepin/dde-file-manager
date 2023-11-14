@@ -184,7 +184,7 @@ bool DoCutFilesWorker::doCutFile(const FileInfoPointer &fromInfo, const FileInfo
         return false;
     }
 
-    qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->urlOf(UrlInfoType::kUrl) << " to url: " << targetPathInfo->urlOf(UrlInfoType::kUrl);
+    fmDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->urlOf(UrlInfoType::kUrl) << " to url: " << targetPathInfo->urlOf(UrlInfoType::kUrl);
 
     bool result = false;
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, &result))
@@ -209,7 +209,7 @@ void DoCutFilesWorker::endWork()
     bool skip{false};
     for (const auto &info : cutAndDeleteFiles) {
         if (!deleteFile(info->fileUrl(), targetOrgUrl, &skip)) {
-            qWarning() << "delete file error, so do not delete other files!!!!";
+            fmWarning() << "delete file error, so do not delete other files!!!!";
             break;
         }
     }

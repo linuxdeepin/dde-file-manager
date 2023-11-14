@@ -39,7 +39,7 @@ void DodgeOper::updatePrepareDodgeValue(QEvent *event)
                     && !isCtrlPressed()
                     && CanvasGrid::Mode::Custom == GridIns->mode()) {
                     prepareDodge = true;
-                    qDebug() << "prepare dodge:" << prepareDodge;
+                    fmDebug() << "prepare dodge:" << prepareDodge;
                     return;
                 }
             }
@@ -215,7 +215,7 @@ bool DodgeItemsOper::tryDodge(const QStringList &orgItems, const GridPos &ref, Q
                 if (!emptyindexes.isEmpty()) {
                     itemIndex = emptyindexes.takeFirst();
                 } else {
-                    qWarning() << "Warning:drag file count greater than current screen empty count.It should not be do dodge!!!";
+                    fmWarning() << "Warning:drag file count greater than current screen empty count.It should not be do dodge!!!";
                     return false;
                 }
             }
@@ -315,7 +315,7 @@ int DodgeItemsOper::findEmptyBackward(int screenNum, int index, int targetAfterN
 
         const int nextPosition = emptyindexes.indexOf(endIndex) + 1;
         if (Q_UNLIKELY(nextPosition >= emptyindexes.count())) {
-            qWarning() << "Backward vacancy search error, insufficient empty!!!";
+            fmWarning() << "Backward vacancy search error, insufficient empty!!!";
             break;
         }
 
@@ -377,7 +377,7 @@ int DodgeItemsOper::findEmptyForward(int screenNum, int index, int targetBeforNe
 
         int arrayPosition = emptyindexes.indexOf(startIndex);
         if (Q_UNLIKELY(arrayPosition == 0)) {
-            qWarning() << "Forward vacancy search error, insufficient empty!!!";
+            fmWarning() << "Forward vacancy search error, insufficient empty!!!";
             break;
         }
         startIndex = emptyindexes.at(--arrayPosition);

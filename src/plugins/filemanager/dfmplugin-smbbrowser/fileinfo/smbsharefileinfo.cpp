@@ -85,7 +85,7 @@ SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(SmbShareFileInfo *qq)
         QMutexLocker locker(&smb_browser_utils::nodesMutex());
         node = smb_browser_utils::shareNodes().value(q->fileUrl());
 #if 0
-        qDebug() << node;
+        fmDebug() << node;
 #endif
     }
 }

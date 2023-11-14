@@ -5,6 +5,8 @@
 #ifndef DAEMONPLUGIN_ACCESSCONTROL_GLOBAL_H
 #define DAEMONPLUGIN_ACCESSCONTROL_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DAEMONPAC_NAMESPACE daemonplugin_accesscontrol
 
 #define DAEMONPAC_BEGIN_NAMESPACE namespace DAEMONPAC_NAMESPACE {
@@ -12,6 +14,7 @@
 #define DAEMONPAC_USE_NAMESPACE using namespace DAEMONPAC_NAMESPACE;
 
 DAEMONPAC_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DAEMONPAC_NAMESPACE)
 
 // error code of change disk password
 enum DPCErrorCode {

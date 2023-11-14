@@ -168,7 +168,7 @@ void SideBarHelper::defaultContextMenu(quint64 windowId, const QUrl &url, const 
 bool SideBarHelper::registerSortFunc(const QString &subGroup, SortFunc func)
 {
     if (kSortFuncs.contains(subGroup)) {
-        qDebug() << subGroup << "has already been registered";
+        fmDebug() << subGroup << "has already been registered";
         return false;
     }
     kSortFuncs.insert(subGroup, func);
@@ -253,7 +253,7 @@ void SideBarHelper::addItemToSettingPannel(const QString &group, const QString &
         groupKey = QString("%1").arg(groupSortPrefix) + "_tag_splitter";
         groupLabel = QObject::tr("Tag");
     } else {   // TODO(zhangs): gorup_other
-        qWarning() << "Invalid group:" << groupKey;
+        fmWarning() << "Invalid group:" << groupKey;
         return;
     }
     Q_ASSERT(!groupKey.isEmpty());

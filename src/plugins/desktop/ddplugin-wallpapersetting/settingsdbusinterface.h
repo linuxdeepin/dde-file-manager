@@ -5,6 +5,8 @@
 #ifndef SETTINGSDBUSINTERFACE_H
 #define SETTINGSDBUSINTERFACE_H
 
+#include "ddplugin_wallpapersetting_global.h"
+
 #include <QObject>
 #include <QDBusContext>
 
@@ -21,10 +23,11 @@ signals:
 public slots:
     void ShowWallpaperChooser(const QString &screen = "");
     void ShowScreensaverChooser(const QString &screen = "");
+
 private:
     EventHandle *handle;
 };
 
 }
 
-#endif // SETTINGSDBUSINTERFACE_H
+#endif   // SETTINGSDBUSINTERFACE_H

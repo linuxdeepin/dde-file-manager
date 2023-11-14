@@ -9,26 +9,27 @@
 #include <QDBusConnection>
 
 SERVERFILEMANAGER1_BEGIN_NAMESPACE
+DFM_LOG_REISGER_CATEGORY(SERVERFILEMANAGER1_NAMESPACE)
 
 void FileManager1DBusWorker::launchService()
 {
     Q_ASSERT(QThread::currentThread() != qApp->thread());
     auto conn { QDBusConnection::sessionBus() };
     if (!conn.registerService("org.freedesktop.FileManager1")) {
-        qWarning("Cannot register the \"org.freedesktop.FileManager1\" service.\n");
+        fmWarning("Cannot register the \"org.freedesktop.FileManager1\" service.\n");
         return;
     }
 
-    qInfo() << "Init DBus FileManager1 start";
+    fmInfo() << "Init DBus FileManager1 start";
     filemanager1.reset(new FileManager1DBus);
     Q_UNUSED(new FileManager1Adaptor(filemanager1.data()));
     if (!conn.registerObject("/org/freedesktop/FileManager1",
                              filemanager1.data())) {
-        qWarning("Cannot register the \"/org/freedesktop/FileManager1\" object.\n");
+        fmWarning("Cannot register the \"/org/freedesktop/FileManager1\" object.\n");
         filemanager1.reset(nullptr);
     }
 
-    qInfo() << "Init DBus FileManager1 end";
+    fmInfo() << "Init DBus FileManager1 end";
 }
 
 void FileManager1::initialize()

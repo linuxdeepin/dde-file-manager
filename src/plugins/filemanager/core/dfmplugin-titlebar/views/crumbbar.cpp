@@ -114,7 +114,7 @@ void CrumbBarPrivate::updateController(const QUrl &url)
         crumbController = CrumbManager::instance()->createControllerByUrl(url);
         // Not found? Then nothing here...
         if (!crumbController) {
-            qWarning() << "Unsupported url / scheme: " << url;
+            fmWarning() << "Unsupported url / scheme: " << url;
             // always has default controller
             crumbController = new CrumbInterface;
         }
@@ -232,7 +232,7 @@ void CrumbBarPrivate::initConnections()
     QObject::connect(&crumbView, &QListView::clicked,
                      q, [=](const QModelIndex &index) {
                          if (index.isValid()) {
-                             qInfo() << "sig send selectedUrl: " << index.data().toUrl();
+                             fmInfo() << "sig send selectedUrl: " << index.data().toUrl();
                              emit q->selectedUrl(index.data(CrumbModel::FileUrlRole).toUrl());
                          }
                      });
@@ -440,8 +440,8 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
     d->clearCrumbs();
 
     if (!d->crumbController) {
-        qWarning("No controller found when trying to call DFMCrumbBar::updateCrumbs() !!!");
-        qDebug() << "updateCrumbs (no controller) : " << url;
+        fmWarning("No controller found when trying to call DFMCrumbBar::updateCrumbs() !!!");
+        fmDebug() << "updateCrumbs (no controller) : " << url;
         return;
     }
 

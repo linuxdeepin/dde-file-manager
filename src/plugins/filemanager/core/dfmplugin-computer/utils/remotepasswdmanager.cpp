@@ -94,7 +94,7 @@ void RemotePasswdManager::onPasswdCleared(GObject *obj, GAsyncResult *res, gpoin
 
     GError_autoptr err = nullptr;
     bool ret = secret_password_clear_finish(res, &err);
-    qInfo() << "on password cleared: " << ret;
+    fmInfo() << "on password cleared: " << ret;
     if (err)
-        qInfo() << "error while clear saved password: " << err->message;
+        fmInfo() << "error while clear saved password: " << err->message;
 }

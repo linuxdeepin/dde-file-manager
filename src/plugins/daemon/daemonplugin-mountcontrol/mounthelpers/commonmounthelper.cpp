@@ -35,7 +35,7 @@ QVariantMap CommonMountHelper::unmount(const QString &path, const QVariantMap &o
     if (ret != 0) {
         mnt_free_table(tab);
         mnt_free_iter(iter);
-        qWarning() << "device: cannot parse mtab" << ret;
+        fmWarning() << "device: cannot parse mtab" << ret;
         return { { MountReturnField::kResult, false },
                  { MountReturnField::kErrorMessage, "cannot parse mtab" } };
     }
@@ -58,8 +58,8 @@ QVariantMap CommonMountHelper::unmount(const QString &path, const QVariantMap &o
     mnt_free_table(tab);
     mnt_free_iter(iter);
 
-    qInfo() << "unmounting sub mounts of " << path;
-    qInfo() << "unmount items: " << unmountTargets;
+    fmInfo() << "unmounting sub mounts of " << path;
+    fmInfo() << "unmount items: " << unmountTargets;
 
     for (const auto &target : unmountTargets) {
         int ret = ::umount(target.toStdString().c_str());

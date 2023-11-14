@@ -92,7 +92,7 @@ void FSearcher::tryNotify()
     qint64 cur = notifyTimer.elapsed();
     if (hasItem() && (cur - lastEmit) > kEmitInterval) {
         lastEmit = cur;
-        qDebug() << "unearthed, current spend:" << cur;
+        fmDebug() << "unearthed, current spend:" << cur;
         emit unearthed(this);
     }
 }

@@ -34,11 +34,11 @@ FileProvider::~FileProvider()
 bool FileProvider::setRoot(const QUrl &url)
 {
     if (!url.isValid()) {
-        qWarning() << "invaild url:" << url;
+        fmWarning() << "invaild url:" << url;
         return false;
     }
 
-    qInfo() << "set root url" << url;
+    fmInfo() << "set root url" << url;
     rootUrl = url;
     if (watcher)
         watcher->disconnect(this);
@@ -52,11 +52,11 @@ bool FileProvider::setRoot(const QUrl &url)
         connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &FileProvider::rename, Qt::QueuedConnection);
         connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &FileProvider::update, Qt::QueuedConnection);
         watcher->startWatcher();
-        qInfo() << "file watcher is started.";
+        fmInfo() << "file watcher is started.";
         return true;
     }
 
-    qWarning() << "fail to create watcher for" << url;
+    fmWarning() << "fail to create watcher for" << url;
     return false;
 }
 
@@ -87,7 +87,7 @@ void FileProvider::refresh(QDir::Filters filters)
 
     updateing = true;
     traversalThread->start();
-    qDebug() << "start file traversal";
+    fmDebug() << "start file traversal";
 }
 
 void FileProvider::installFileFilter(QSharedPointer<FileFilter> filter)
@@ -110,7 +110,7 @@ void FileProvider::reset(QList<QUrl> children)
     QList<QUrl> urls { children };
     for (const auto &filter : fileFilters) {
         if (filter->fileTraversalFilter(urls))
-            qDebug() << "TraversalFilter returns true: it is invalid";
+            fmDebug() << "TraversalFilter returns true: it is invalid";
     }
 
     emit refreshEnd(urls);
@@ -137,7 +137,7 @@ void FileProvider::remove(const QUrl &url)
 {
     for (const auto &filter : fileFilters) {
         if (filter->fileDeletedFilter(url))
-            qWarning() << "DeletedFilter returns true: it is invalid";
+            fmWarning() << "DeletedFilter returns true: it is invalid";
     }
 
     emit fileRemoved(url);

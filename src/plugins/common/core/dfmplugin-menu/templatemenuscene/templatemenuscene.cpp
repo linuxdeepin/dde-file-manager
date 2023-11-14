@@ -22,7 +22,7 @@ AbstractMenuScene *TemplateMenuCreator::create()
     std::call_once(loadFlag, [this]() {
         templateMenu = new TemplateMenu(this);
         templateMenu->loadTemplateFile();
-        qInfo() << "template menus *.* loaded.";
+        fmInfo() << "template menus *.* loaded.";
     });
 
     return new TemplateMenuScene(templateMenu);

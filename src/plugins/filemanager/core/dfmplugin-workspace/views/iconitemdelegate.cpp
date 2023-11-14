@@ -699,7 +699,7 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
         item->setCharCountLimit();
 
     QString suffix = index.data(kItemFileSuffixOfRenameRole).toString();
-    qDebug() << "Display" << index.data(kItemFileDisplayNameRole).toString()
+    fmDebug() << "Display" << index.data(kItemFileDisplayNameRole).toString()
              << "FileName" << index.data(kItemNameRole).toString()
              << "FileNameofrenmae" << index.data(kItemFileNameOfRenameRole).toString()
              << "BaseName" << index.data(kItemFileBaseNameRole).toString()

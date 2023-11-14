@@ -103,15 +103,15 @@ void TraversalDirThreadManager::run()
 
     QElapsedTimer timer;
     timer.start();
-    qInfo() << "dir query start, url: " << dirUrl;
+    fmInfo() << "dir query start, url: " << dirUrl;
 
     int count = 0;
     if (!dirIterator->oneByOne()) {
         count = iteratorAll();
-        qInfo() << "local dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+        fmInfo() << "local dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
     } else {
         count = iteratorOneByOne(timer);
-        qInfo() << "dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+        fmInfo() << "dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
     }
     running = false;
 }
@@ -119,14 +119,14 @@ void TraversalDirThreadManager::run()
 int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
 {
     dirIterator->cacheBlockIOAttribute();
-    qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timere.elapsed();
+    fmInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timere.elapsed();
     if (stopFlag) {
         emit traversalFinished(traversalToken);
         return 0;
     }
 
     if (!dirIterator->initIterator()) {
-        qWarning() << "dir iterator init failed !! url : " << dirUrl;
+        fmWarning() << "dir iterator init failed !! url : " << dirUrl;
         emit traversalFinished(traversalToken);
         return 0;
     }
@@ -183,7 +183,7 @@ int TraversalDirThreadManager::iteratorAll()
     args.insert("sortOrder", sortOrder);
     dirIterator->setArguments(args);
     if (!dirIterator->initIterator()) {
-        qWarning() << "dir iterator init failed !! url : " << dirUrl;
+        fmWarning() << "dir iterator init failed !! url : " << dirUrl;
         emit traversalFinished(traversalToken);
         return 0;
     }

@@ -5,16 +5,16 @@
 #include "organizerplugin.h"
 #include "framemanager.h"
 
-using namespace ddplugin_organizer;
+namespace ddplugin_organizer {
+DFM_LOG_REISGER_CATEGORY(DDP_ORGANIZER_NAMESPACE)
 
 void OrganizerPlugin::initialize()
 {
-
 }
 
 bool OrganizerPlugin::start()
 {
-    instance = new FrameManager();   
+    instance = new FrameManager();
     bindEvent();
 
     return instance->initialize();
@@ -30,3 +30,5 @@ void OrganizerPlugin::bindEvent()
 {
     dpfSlotChannel->connect("ddplugin_organizer", "slot_Organizer_Enabled", instance, &FrameManager::organizerEnabled);
 }
+
+}   // namespace ddplugin_organizer

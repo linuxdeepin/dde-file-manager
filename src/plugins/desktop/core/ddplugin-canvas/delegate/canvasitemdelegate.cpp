@@ -197,7 +197,7 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
     QString suffix = index.data(Global::ItemRoles::kItemFileSuffixOfRenameRole).toString();
-    qDebug() << "Display" << index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
+    fmDebug() << "Display" << index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
              << "FileName" << index.data(Global::ItemRoles::kItemNameRole).toString()
              << "FileNameofrenmae" << index.data(Global::ItemRoles::kItemFileNameOfRenameRole).toString()
              << "BaseName" << index.data(Global::ItemRoles::kItemFileBaseNameRole).toString()
@@ -225,7 +225,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     if (!itemEditor)
         return;
 
-    qDebug() << index << itemEditor->text();
+    fmDebug() << index << itemEditor->text();
     QString newName = itemEditor->text();
     if (newName.isEmpty())
         return;
@@ -620,7 +620,7 @@ void CanvasItemDelegate::commitDataAndCloseEditor()
             emit commitData(editor);
             emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
         } else {
-            qWarning() << "currentIndex is not in editing.";
+            fmWarning() << "currentIndex is not in editing.";
         }
     }
 }
@@ -746,7 +746,7 @@ QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, c
     if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {
-            qWarning() << "publish `kPaintEmblems` event failed!";
+            fmWarning() << "publish `kPaintEmblems` event failed!";
         });
     }
     return rect;

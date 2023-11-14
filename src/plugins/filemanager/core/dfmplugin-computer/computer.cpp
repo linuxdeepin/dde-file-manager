@@ -36,15 +36,17 @@ inline constexpr char kComputerDConfHide3rdEntries[] { "hide3rdEntries" };
 
 #define COMPUTER_SETTING_GROUP "02_workspace.02_computer"
 inline constexpr char kComputerSettingGroup[] { COMPUTER_SETTING_GROUP };
-inline constexpr char kComputerSettingHideMyDirs[] { COMPUTER_SETTING_GROUP".00_hide_my_directories" };
-inline constexpr char kComputerSettingHideBuiltin[] { COMPUTER_SETTING_GROUP".01_hide_builtin_partition" };
-inline constexpr char kComputerSettingHideLoop[] { COMPUTER_SETTING_GROUP".02_hide_loop_partitions" };
-inline constexpr char kComputerSettingHide3rdEntries[] { COMPUTER_SETTING_GROUP".03_hide_3rd_entryies" };
-inline constexpr char kComputerSettingShowFsTag[] { COMPUTER_SETTING_GROUP".04_show_filesystemtag_on_diskicon" };
+inline constexpr char kComputerSettingHideMyDirs[] { COMPUTER_SETTING_GROUP ".00_hide_my_directories" };
+inline constexpr char kComputerSettingHideBuiltin[] { COMPUTER_SETTING_GROUP ".01_hide_builtin_partition" };
+inline constexpr char kComputerSettingHideLoop[] { COMPUTER_SETTING_GROUP ".02_hide_loop_partitions" };
+inline constexpr char kComputerSettingHide3rdEntries[] { COMPUTER_SETTING_GROUP ".03_hide_3rd_entryies" };
+inline constexpr char kComputerSettingShowFsTag[] { COMPUTER_SETTING_GROUP ".04_show_filesystemtag_on_diskicon" };
 
 DFMBASE_USE_NAMESPACE
 
 namespace dfmplugin_computer {
+DFM_LOG_REISGER_CATEGORY(DPCOMPUTER_NAMESPACE)
+
 /*!
  * \class Computer
  * \brief the plugin initializer
@@ -78,7 +80,7 @@ bool Computer::start()
 
     DirAccessPrehandlerType filePrehandler { ComputerEventReceiver::dirAccessPrehandler };
     if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kFile), filePrehandler).toBool())
-        qWarning() << "file's prehandler has been registered";
+        fmWarning() << "file's prehandler has been registered";
 
     addComputerSettingItem();
     return true;
@@ -157,7 +159,7 @@ void Computer::addComputerSettingItem()
     QString err;
     auto ret = DConfigManager::instance()->addConfig(kComputerDConfigName, &err);
     if (!ret)
-        qWarning() << "cannot regist dconfig of computer plugin:" << err;
+        fmWarning() << "cannot regist dconfig of computer plugin:" << err;
 
     SettingJsonGenerator::instance()->addGroup(kComputerSettingGroup, tr("Computer display items"));
     SettingJsonGenerator::instance()->addCheckBoxConfig(kComputerSettingHideBuiltin,

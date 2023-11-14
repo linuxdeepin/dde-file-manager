@@ -34,7 +34,7 @@ FileOperatorPrivate::FileOperatorPrivate(FileOperator *qq)
 {
      canvasOperator = dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasViewPrivate_FileOperator").value<QObject *>();
      if (!canvasOperator)
-         qWarning() << "fail to get canvas file operator";
+         fmWarning() << "fail to get canvas file operator";
 
      // the callback of pasting file on canvas.
      QObject::connect(canvasOperator, SIGNAL(filePastedCallback()), q, SLOT(onCanvasPastedFiles()));
@@ -151,7 +151,7 @@ void FileOperator::pasteFiles(const CollectionView *view, const QString &targetC
     ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
     // 深信服和云桌面的远程拷贝获取的clipboardFileUrlList都是空
     if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
-        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+        fmInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
         ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
         return;
     }
@@ -180,7 +180,7 @@ void FileOperator::pasteFiles(const CollectionView *view, const QString &targetC
         // clear clipboard after cutting files from clipboard
         ClipBoard::instance()->clearClipboard();
     } else {
-        qWarning() << "clipboard action:" << action << "    urls:" << urls;
+        fmWarning() << "clipboard action:" << action << "    urls:" << urls;
     }
 }
 
@@ -439,7 +439,7 @@ void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args
 
         auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         if (Q_UNLIKELY(targets.count() != 1)) {
-            qWarning() << "unknow error.touch file successed,target urls is:" << targets;
+            fmWarning() << "unknow error.touch file successed,target urls is:" << targets;
         }
 
         d->callBackTouchFile(targets.first(), custom.second.toMap());

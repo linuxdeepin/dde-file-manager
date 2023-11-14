@@ -5,6 +5,8 @@
 #ifndef SERVERPLUGIN_VAULTDAEMON_GLOBAL_H
 #define SERVERPLUGIN_VAULTDAEMON_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define SERVERVAULT_NAMESPCE serverplugin_vaultdaemon
 
 #define SERVERVAULT_BEGIN_NAMESPACE namespace SERVERVAULT_NAMESPCE {
@@ -15,6 +17,7 @@
 #include <QDir>
 
 SERVERVAULT_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(SERVERVAULT_NAMESPCE)
 
 #ifdef COMPILE_ON_V23
 inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
@@ -35,4 +38,4 @@ inline constexpr char kVaultTimeConfigFilePath[] { "/../dde-file-manager/vaultTi
 
 SERVERVAULT_END_NAMESPACE
 
-#endif // SERVERPLUGIN_VAULTDAEMON_GLOBAL_H
+#endif   // SERVERPLUGIN_VAULTDAEMON_GLOBAL_H

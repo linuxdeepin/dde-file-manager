@@ -58,7 +58,7 @@ void WlSetPlugin::registerDBus()
     QDBusConnection conn = QDBusConnection::sessionBus();
     auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
     if (!conn.registerObject("/org/deepin/dde/desktop/wallpapersettings", "org.deepin.dde.desktop.wallpapersettings", ifs, registerOptions)) {
-        qCritical() << "org.deepin.dde.desktop.wallpapersettings register object failed" << conn.lastError();
+        fmCritical() << "org.deepin.dde.desktop.wallpapersettings register object failed" << conn.lastError();
         delete ifs;
     }
 }
@@ -122,10 +122,10 @@ void EventHandle::show(QString name, int mode)
 {
     if (name.isNull() || name.isEmpty()
             || ddplugin_desktop_util::screenProxyScreen(name).isNull()) {
-        qWarning() << "invalid screen" << name;
+        fmWarning() << "invalid screen" << name;
         auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (!primary.get()) {
-            qCritical() << "get primary screen failed! stop show wallpaper";
+            fmCritical() << "get primary screen failed! stop show wallpaper";
             return;
         }
 
@@ -161,7 +161,7 @@ bool EventHandle::wallpaperSetting(const QString &name)
                                    "com.deepin.dde.ControlCenter", "ShowPage");
     msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("WallpaperSetting"))});
     QDBusConnection::sessionBus().asyncCall(msg, 5);
-    qInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
+    fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
     return true;
 }
 
@@ -171,7 +171,7 @@ bool EventHandle::screenSaverSetting(const QString &name)
                                    "com.deepin.dde.ControlCenter", "ShowPage");
     msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("ScreensaverSetting"))});
     QDBusConnection::sessionBus().asyncCall(msg, 5);
-    qInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
+    fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
     return true;
 }
 #endif

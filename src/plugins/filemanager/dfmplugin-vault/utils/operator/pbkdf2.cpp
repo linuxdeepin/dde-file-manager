@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <openssl/evp.h>
 
+DPVAULT_USE_NAMESPACE
+
 char pbkdf2::charToHexadecimalChar(char nibble)
 {
     char buf[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
@@ -56,7 +58,7 @@ QString pbkdf2::createRandomSalt(int byte)
 QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &randSalt, int iteration, int cipherByteNum)
 {
     if (cipherByteNum < 0 || cipherByteNum % 2 != 0) {
-        qCritical() << "Vault: cipherByteNum can't less than zero and must be even!";
+        fmCritical() << "Vault: cipherByteNum can't less than zero and must be even!";
         return "";
     }
     // 字节长度
@@ -90,7 +92,7 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
         if (pstr)
             free(pstr);
     } else {
-        qCritical() << "Vault: the function of PKCS5_PBKDF2_HMAC_SHA1 failed";
+        fmCritical() << "Vault: the function of PKCS5_PBKDF2_HMAC_SHA1 failed";
     }
     free(out);
     return strCipherText;

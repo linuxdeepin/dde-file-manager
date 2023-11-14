@@ -210,7 +210,7 @@ bool OemMenuPrivate::isAllEx7zFile(const QList<QUrl> &files) const
 
         auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(f, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
-            qDebug() << errString;
+            fmDebug() << errString;
             return false;
         }
 
@@ -412,9 +412,9 @@ void OemMenu::loadDesktopFile()
 
             menuTypes.removeAll("");
             if (menuTypes.isEmpty()) {
-                qDebug() << "[OEM Menu Support] Entry will probably not be shown due to empty or have no valid"
+                fmDebug() << "[OEM Menu Support] Entry will probably not be shown due to empty or have no valid"
                          << kMenuTypeKey << " and " << kMenuTypeAliasKey << "key in the desktop file.";
-                qDebug() << "[OEM Menu Support] Details:" << fileInfo.filePath() << "with entry name" << entry.localizedValue(kNameKey, kLocaleKey, kDesktopEntryGroup);
+                fmDebug() << "[OEM Menu Support] Details:" << fileInfo.filePath() << "with entry name" << entry.localizedValue(kNameKey, kLocaleKey, kDesktopEntryGroup);
                 continue;
             }
 
@@ -483,7 +483,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
     if (1 == files.count()) {
         auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(files.first(), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (!fileInfo) {
-            qDebug() << errString;
+            fmDebug() << errString;
             return {};
         }
 
@@ -503,7 +503,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
         auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
 
         if (!fileInfo) {
-            qWarning() << "createFileInfo failed: " << file;
+            fmWarning() << "createFileInfo failed: " << file;
             continue;
         }
         filePaths << file.path();
@@ -578,7 +578,7 @@ QList<QAction *> OemMenu::focusNormalActions(const QUrl &foucs, const QList<QUrl
     QString errString;
     auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(foucs, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (!fileInfo) {
-        qWarning() << errString;
+        fmWarning() << errString;
         return actions;
     }
 

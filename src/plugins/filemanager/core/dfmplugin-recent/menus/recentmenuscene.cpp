@@ -65,7 +65,7 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -74,7 +74,7 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
-            qWarning() << "focusFileInfo isNull :" << errString;
+            fmWarning() << "focusFileInfo isNull :" << errString;
             return false;
         }
         if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
@@ -150,7 +150,7 @@ bool RecentMenuScene::triggered(QAction *action)
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
             return true;
         }
-        qWarning() << "action not found, id: " << actId;
+        fmWarning() << "action not found, id: " << actId;
         return false;
     }
 

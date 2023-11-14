@@ -62,7 +62,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     Q_UNUSED(indexFlags)
     auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene(CanvasMenuCreator::name());
     if (!canvasScene) {
-        qWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
+        fmWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
         return;
     }
 
@@ -110,7 +110,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
 
     auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene(CanvasMenuCreator::name());
     if (!canvasScene) {
-        qWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
+        fmWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
         return;
     }
 

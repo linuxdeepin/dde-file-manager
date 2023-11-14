@@ -68,7 +68,7 @@ QString getDeviceIdByStdSmb(const QString &stdSmb)
             return id;
     }
 
-    qDebug() << "cannot find matched device id of" << stdSmb;
+    fmDebug() << "cannot find matched device id of" << stdSmb;
     return stdSmb;
 }
 
@@ -105,16 +105,16 @@ bool startService(const QString &service)
     if (service.isEmpty() || (service != "smb" && service != "nmb"))
         return false;
 
-    qDebug() << QString("activate smbd: construct %1d interface").arg(service);
+    fmDebug() << QString("activate smbd: construct %1d interface").arg(service);
     QDBusInterface iface("org.freedesktop.systemd1",
                          QString("/org/freedesktop/systemd1/unit/%1d_2eservice").arg(service),
                          "org.freedesktop.systemd1.Unit",
                          QDBusConnection::systemBus());
-    qDebug() << QString("activate smbd: constructed %1d interface").arg(service);
+    fmDebug() << QString("activate smbd: constructed %1d interface").arg(service);
 
     QDBusPendingCall call = iface.asyncCall("Start", "replace");
     call.waitForFinished();
-    qDebug() << QString("activate smbd: calling the %1d::Start method: ").arg(service) << call.isValid();
+    fmDebug() << QString("activate smbd: calling the %1d::Start method: ").arg(service) << call.isValid();
     return call.isValid();
 }
 

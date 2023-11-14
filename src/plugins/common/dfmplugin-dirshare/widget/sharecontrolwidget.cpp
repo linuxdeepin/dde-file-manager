@@ -315,7 +315,7 @@ void ShareControlWidget::init()
 {
     info = InfoFactory::create<FileInfo>(url);
     if (!info) {
-        qWarning() << "cannot create file info of " << url;
+        fmWarning() << "cannot create file info of " << url;
         return;
     }
 
@@ -447,7 +447,7 @@ void ShareControlWidget::shareFolder()
             bool ret = file.setPermissions(file.permissions() | DFile::Permission::kWriteGroup | DFile::Permission::kExeGroup
                                            | DFile::Permission::kWriteOther | DFile::Permission::kExeOther);
             if (!ret)
-                qWarning() << "set permission of " << url << "failed.";
+                fmWarning() << "set permission of " << url << "failed.";
         }
 
         // 2. set the mode 'other' of  /home/$USER to r-x when enable anonymous access,
@@ -460,7 +460,7 @@ void ShareControlWidget::shareFolder()
                 using namespace DFMIO;
                 bool ret = home.setPermissions(home.permissions() | DFile::Permission::kReadOther | DFile::Permission::kExeOther);
                 if (!ret)
-                    qWarning() << "set permission for user home failed: " << homePath;
+                    fmWarning() << "set permission for user home failed: " << homePath;
             }
         }
     }

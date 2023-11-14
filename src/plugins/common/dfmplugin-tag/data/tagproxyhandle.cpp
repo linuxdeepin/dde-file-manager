@@ -29,11 +29,11 @@ void TagProxyHandlePrivate::initConnection()
 {
     dbusWatcher.reset(new QDBusServiceWatcher(kTagService, QDBusConnection::sessionBus()));
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
-        qInfo() << "serviceRegistered: " << kTagService;
+        fmInfo() << "serviceRegistered: " << kTagService;
         connectToDBus();
     });
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [] {
-        qWarning() << "Lost connection: " << kTagService;
+        fmWarning() << "Lost connection: " << kTagService;
     });
 
     connectToDBus();
@@ -145,7 +145,7 @@ QVariantHash TagProxyHandle::getAllFileWithTags()
     auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kFilesWithTags));
     reply.waitForFinished();
     if (!reply.isValid()) {
-        qWarning() << "getAllFileWithTags failed :" << reply.error();
+        fmWarning() << "getAllFileWithTags failed :" << reply.error();
         return {};
     }
     const auto &data = d->parseDBusVariant(reply.value());
@@ -229,7 +229,7 @@ bool TagProxyHandle::deleteFileTags(const QVariantMap &value)
 
 bool TagProxyHandle::connectToService()
 {
-    qInfo() << "Start initilize dbus: `TagManagerDBusInterface`";
+    fmInfo() << "Start initilize dbus: `TagManagerDBusInterface`";
     d->tagDBusInterface.reset(new TagManagerDBusInterface(kTagService, kTagDBusPath,
                                                           QDBusConnection::sessionBus(), this));
     d->tagDBusInterface->setTimeout(3000);

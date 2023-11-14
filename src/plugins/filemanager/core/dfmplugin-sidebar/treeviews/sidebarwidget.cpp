@@ -157,13 +157,13 @@ void SideBarWidget::editItem(const QUrl &url)
 
 void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
 {
-    qDebug() << "url = " << url << ",visible = " << visible;
+    fmDebug() << "url = " << url << ",visible = " << visible;
 
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     // find out the item index by url
     const QModelIndex index = this->findItemIndex(url);   // ps: currently,findItemIndex can only find the sub item
     if (!index.isValid()) {
-        qInfo() << "index is invalid";
+        fmInfo() << "index is invalid";
         return;
     }
     SideBarItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
@@ -404,7 +404,7 @@ void SideBarWidget::initSettingPannel()
             const QString &name { item->itemInfo().visiableDisplayName };
             Q_ASSERT(!key.isEmpty() && !name.isEmpty());
             if (itemKeysMap[group].contains(key) || key == "hidden_me") {
-                qDebug() << "reject key:" << key << group;
+                fmDebug() << "reject key:" << key << group;
                 continue;
             }
             itemKeysMap[group].push_back(key);

@@ -252,10 +252,10 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     // get foucs item to set it on top.
     auto foucs = d->operState().current();
     if (!foucs.isValid()) {
-        qWarning() << "current index is invalid.";
+        fmWarning() << "current index is invalid.";
         foucs = indexs.first();
     } else if (!indexs.contains(foucs)) {
-        qWarning() << "current index is not in indexs.";
+        fmWarning() << "current index is not in indexs.";
         foucs = indexs.first();
     }
     const int indexCount = indexs.count();

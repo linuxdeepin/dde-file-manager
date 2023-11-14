@@ -265,11 +265,11 @@ void BasicWidget::basicFill(const QUrl &url)
                                          QDBusConnection::sessionBus());
                 interface.setTimeout(1000);
                 if (interface.isValid()) {
-                    qInfo() << "Start call dbus org.freedesktop.FileManager1 ShowItems!";
+                    fmInfo() << "Start call dbus org.freedesktop.FileManager1 ShowItems!";
                     interface.call("ShowItems", QStringList() << url.toString(), "dfmplugin-propertydialog");
-                    qInfo() << "End call dbus org.freedesktop.FileManager1 ShowItems!";
+                    fmInfo() << "End call dbus org.freedesktop.FileManager1 ShowItems!";
                 } else {
-                    qWarning() << "dbus org.freedesktop.fileManager1 not vailid!";
+                    fmWarning() << "dbus org.freedesktop.fileManager1 not vailid!";
                     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
                 }
             });

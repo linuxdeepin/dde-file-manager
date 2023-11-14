@@ -78,7 +78,7 @@ bool UserShareHelper::share(const ShareInfo &info)
             if (ret)
                 share(info);
             else
-                qWarning() << "start samba service failed: " << errMsg;
+                fmWarning() << "start samba service failed: " << errMsg;
         });
         return false;
     }
@@ -91,7 +91,7 @@ bool UserShareHelper::share(const ShareInfo &info)
     }
 
     ShareInfo oldShare = getOldShareByNewShare(info);
-    qDebug() << "OldShare: " << oldShare << "\nNewShare: " << info;
+    fmDebug() << "OldShare: " << oldShare << "\nNewShare: " << info;
 
     if (isValidShare(info)) {
         const auto &&name = info.value(ShareInfoKeys::kName).toString();
@@ -141,7 +141,7 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
 {
     QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, userName, passwd);
     bool result = reply.isValid() && reply.error().message().isEmpty();
-    qInfo() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
+    fmInfo() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
 
     Q_EMIT sambaPasswordSet(result);
 }
@@ -286,7 +286,7 @@ bool UserShareHelper::isUserSharePasswordSet(const QString &username)
 {
     QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncIsPasswordSet, username);
     bool result = reply.isValid() ? reply.value() : false;
-    qDebug() << "isSharePasswordSet result: " << result << ", error: " << reply.error();
+    fmDebug() << "isSharePasswordSet result: " << result << ", error: " << reply.error();
 
     return result;
 }
@@ -305,7 +305,7 @@ void UserShareHelper::readShareInfos(bool sendSignal)
         QString filePath = fileInfo.absoluteFilePath();
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning() << "open share file failed: " << filePath;
+            fmWarning() << "open share file failed: " << filePath;
             return;
         }
 
@@ -415,9 +415,9 @@ void UserShareHelper::removeShareByShareName(const QString &name)
 {
     QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, true);
     if (reply.isValid() && reply.value()) {
-        qDebug() << "share closed: " << name;
+        fmDebug() << "share closed: " << name;
     } else {
-        qWarning() << "share close failed: " << name << ", " << reply.error();
+        fmWarning() << "share close failed: " << name << ", " << reply.error();
         // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
     }
 
@@ -445,7 +445,7 @@ ShareInfo UserShareHelper::getOldShareByNewShare(const ShareInfo &newShare)
 
 int UserShareHelper::runNetCmd(const QStringList &args, int wait, QString *err)
 {
-    qDebug() << "usershare params:" << args;
+    fmDebug() << "usershare params:" << args;
     QProcess p;
     p.start("net", args);
     p.waitForFinished(wait);
@@ -493,7 +493,7 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
     }
 
     DialogManagerInstance->showErrorDialog(QString(), err);
-    qWarning() << "run net command failed: " << err << ", code is: " << code;
+    fmWarning() << "run net command failed: " << err << ", code is: " << code;
 }
 
 ShareInfo UserShareHelper::makeInfoByFileContent(const QMap<QString, QString> &contents)
@@ -535,7 +535,7 @@ QPair<bool, QString> UserShareHelper::startSmbService()
         const QString &errMsg = reply.error().message();
         if (errMsg.isEmpty()) {
             if (!setSmbdAutoStart())
-                qWarning() << "auto start smbd failed.";
+                fmWarning() << "auto start smbd failed.";
             return { true, "" };
         }
         return { false, errMsg };

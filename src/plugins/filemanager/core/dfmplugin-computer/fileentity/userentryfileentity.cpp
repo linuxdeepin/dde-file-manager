@@ -21,7 +21,7 @@ UserEntryFileEntity::UserEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     if (!url.path().endsWith(SuffixInfo::kUserDir)) {
-        qWarning() << "wrong suffix:" << url;
+        fmWarning() << "wrong suffix:" << url;
         abort();
     }
 

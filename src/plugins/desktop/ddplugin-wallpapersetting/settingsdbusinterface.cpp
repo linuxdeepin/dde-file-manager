@@ -5,15 +5,12 @@
 #include "settingsdbusinterface.h"
 #include "wlsetplugin.h"
 
-
-using namespace ddplugin_wallpapersetting;
+namespace ddplugin_wallpapersetting {
+DFM_LOG_REISGER_CATEGORY(DDP_WALLPAERSETTING_NAMESPACE)
 
 SettingsDBusInterface::SettingsDBusInterface(EventHandle *parent)
-    : QObject(parent)
-    , QDBusContext()
-    , handle(parent)
+    : QObject(parent), QDBusContext(), handle(parent)
 {
-
 }
 
 void SettingsDBusInterface::ShowWallpaperChooser(const QString &screen)
@@ -25,3 +22,4 @@ void SettingsDBusInterface::ShowScreensaverChooser(const QString &screen)
 {
     handle->screenSaverSetting(screen);
 }
+}   // namespace ddplugin_wallpapersetting

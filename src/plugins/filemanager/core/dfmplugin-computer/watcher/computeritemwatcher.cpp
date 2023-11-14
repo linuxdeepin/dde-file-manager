@@ -92,9 +92,9 @@ ComputerDataList ComputerItemWatcher::items()
     for (const auto &item : ret)
         computerItems << item.url;
 
-    qDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
+    fmDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
     dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
-    qDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
+    fmDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
     for (int i = ret.count() - 1; i >= 0; --i) {
         if (!computerItems.contains(ret[i].url)) {
             removeSidebarItem(ret[i].url);
@@ -195,9 +195,9 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
     ComputerDataList ret;
     QStringList devs;
 
-    qInfo() << "start obtain the blocks";
+    fmInfo() << "start obtain the blocks";
     devs = DevProxyMng->getAllBlockIds();
-    qInfo() << "end obtain the blocks";
+    fmInfo() << "end obtain the blocks";
 
     QList<QUrl> hiddenByDConfig { disksHiddenByDConf() };
     for (const auto &dev : devs) {
@@ -220,7 +220,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         if (!hiddenByDConfig.contains(devUrl))   // do not show item which hidden by dconfig
             addSidebarItem(info);
     }
-    qInfo() << "end querying block info";
+    fmInfo() << "end querying block info";
 
     return ret;
 }
@@ -230,9 +230,9 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
     ComputerDataList ret;
     QStringList devs;
 
-    qInfo() << "start obtain the protocol devices";
+    fmInfo() << "start obtain the protocol devices";
     devs = DevProxyMng->getAllProtocolIds();
-    qInfo() << "end obtain the  protocol devices";
+    fmInfo() << "end obtain the  protocol devices";
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
@@ -241,7 +241,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
             continue;
 
         if (DeviceUtils::isMountPointOfDlnfs(info->targetUrl().path())) {
-            qDebug() << "computer: ignore dlnfs mountpoint: " << info->targetUrl();
+            fmDebug() << "computer: ignore dlnfs mountpoint: " << info->targetUrl();
             continue;
         }
 
@@ -256,7 +256,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         addSidebarItem(info);
     }
 
-    qInfo() << "end querying protocol devices info";
+    fmInfo() << "end querying protocol devices info";
 
     return ret;
 }
@@ -279,7 +279,7 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
 
         DFMEntryFileInfoPointer info(new EntryFileInfo(entryUrl));
         if (!info->exists()) {
-            qInfo() << "the appentry is in extension folder but not exist: " << info->urlOf(UrlInfoType::kUrl);
+            fmInfo() << "the appentry is in extension folder but not exist: " << info->urlOf(UrlInfoType::kUrl);
             continue;
         }
         QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
@@ -411,7 +411,7 @@ void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
                                   return in.url.isValid() && item.url.isValid() && UniversalUtils::urlEquals(in.url, item.url);
                               });
     if (found != initedDatas.cend()) {
-        qDebug() << "item already exists: " << in.url << in.itemName;
+        fmDebug() << "item already exists: " << in.url << in.itemName;
         return;
     }
 
@@ -563,9 +563,9 @@ void ComputerItemWatcher::handleSidebarItemsVisiable()
 
     QList<DFMEntryFileInfoPointer> visiableItems, invisiableItems;
 
-    qInfo() << "start obtain the blocks when dconfig changed";
+    fmInfo() << "start obtain the blocks when dconfig changed";
     auto devs = DevProxyMng->getAllBlockIds();
-    qInfo() << "end obtain the blocks when dconfig changed";
+    fmInfo() << "end obtain the blocks when dconfig changed";
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
@@ -577,7 +577,7 @@ void ComputerItemWatcher::handleSidebarItemsVisiable()
         else
             visiableItems.append(info);
     }
-    qInfo() << "end querying if item should be show in sidebar";
+    fmInfo() << "end querying if item should be show in sidebar";
 
     for (const auto &info : invisiableItems)
         removeSidebarItem(info->urlOf(UrlInfoType::kUrl));
@@ -616,7 +616,7 @@ void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, i
 void ComputerItemWatcher::removeDevice(const QUrl &url)
 {
     if (dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemFilterOnRemove", url)) {
-        qDebug() << "computer: [REMOVE] device is filtered by external plugin: " << url;
+        fmDebug() << "computer: [REMOVE] device is filtered by external plugin: " << url;
         return;
     }
 
@@ -669,7 +669,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     if (!info->exists()) return;
 
     if (dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemFilterOnAdd", devUrl)) {
-        qDebug() << "computer: [ADD] device is filtered by external plugin: " << devUrl;
+        fmDebug() << "computer: [ADD] device is filtered by external plugin: " << devUrl;
         return;
     }
 
@@ -703,7 +703,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
             else
                 addDevice(diskGroup(), url, ComputerItemData::kLargeItem, true);
         } else if ((propertyName == DeviceProperty::kHasPartitionTable) && var.variant().toBool()) {   // when new node added the PartitionTable should be triggered, remove the node.bug 224925
-            qDebug() << DeviceProperty::kHasPartitionTable << " changed for: " << url;   // log for bug:#224925
+            fmDebug() << DeviceProperty::kHasPartitionTable << " changed for: " << url;   // log for bug:#224925
             removeDevice(url);
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
@@ -786,7 +786,7 @@ void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
 void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QString &mntPath)
 {
     if (DeviceUtils::isMountPointOfDlnfs(mntPath)) {
-        qDebug() << "computer: ignore dlnfs mountpoint: " << mntPath;
+        fmDebug() << "computer: ignore dlnfs mountpoint: " << mntPath;
         return;
     }
 

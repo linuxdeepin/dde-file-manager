@@ -43,7 +43,7 @@ bool ConfigPresenter::initialize()
     {
         int m = conf->mode();
         if (m < OrganizerMode::kNormalized || m > OrganizerMode::kCustom) {
-            qWarning() << "mode is invalid:" << m;
+            fmWarning() << "mode is invalid:" << m;
             //m = 0;
         }
         // jsut release normal mode
@@ -53,7 +53,7 @@ bool ConfigPresenter::initialize()
     {
         int cf = conf->classification();
         if (cf < Classifier::kType || cf > Classifier::kSize) {
-            qWarning() << "classification is invalid:" << cf;
+            fmWarning() << "classification is invalid:" << cf;
             //cf = 0;
         }
         // // jsut release that classified by type

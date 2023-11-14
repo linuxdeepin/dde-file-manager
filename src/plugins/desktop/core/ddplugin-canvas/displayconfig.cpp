@@ -61,7 +61,7 @@ DisplayConfig::DisplayConfig(QObject *parent)
     Q_ASSERT(qApp->thread() == thread());
 
     auto configPath = path();
-    qDebug() << "DisplayConfig: file path" << configPath;
+    fmDebug() << "DisplayConfig: file path" << configPath;
 
     QFileInfo configFile(configPath);
     if (!configFile.exists()) {
@@ -94,9 +94,9 @@ DisplayConfig::~DisplayConfig()
         workThread->quit();
         int wait = 5;
         while (workThread->isRunning() && wait--) {
-            qInfo() << "wait DisplayConfig thread exit" << wait;
+            fmInfo() << "wait DisplayConfig thread exit" << wait;
             bool exited = workThread->wait(100);
-            qInfo() << "DisplayConfig thread exited:" << exited;
+            fmInfo() << "DisplayConfig thread exited:" << exited;
         }
     }
 

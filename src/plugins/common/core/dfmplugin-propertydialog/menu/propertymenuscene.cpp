@@ -79,7 +79,7 @@ bool PropertyMenuScene::initialize(const QVariantHash &params)
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 

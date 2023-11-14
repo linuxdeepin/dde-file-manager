@@ -46,7 +46,7 @@ void DoCleanTrashFilesWorker::onUpdateProgress()
 bool DoCleanTrashFilesWorker::statisticsFilesSize()
 {
     if (sourceUrls.count() == 0) {
-        qWarning() << "sources files list is empty!";
+        fmWarning() << "sources files list is empty!";
         return false;
     }
 
@@ -79,12 +79,12 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
     QList<QUrl>::iterator it = sourceUrls.begin();
     QList<QUrl>::iterator itend = sourceUrls.end();
     if (!allFilesList.isEmpty()) {
-        qInfo() << "sourceUrls has children, use allFilesList replace sourceUrls"
+        fmInfo() << "sourceUrls has children, use allFilesList replace sourceUrls"
                 << " sourceUrls: " << sourceUrls;
         if (allFilesList.size() > 20)
-            qInfo() << "allFilesList size > 20, ignore allFilesList print";
+            fmInfo() << "allFilesList size > 20, ignore allFilesList print";
         else
-            qInfo() << "allFilesList: " << allFilesList;
+            fmInfo() << "allFilesList: " << allFilesList;
 
         it = allFilesList.begin();
         itend = allFilesList.end();

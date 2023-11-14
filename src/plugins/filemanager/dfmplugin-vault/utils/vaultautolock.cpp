@@ -99,7 +99,7 @@ void VaultAutoLock::processAutoLock()
     quint32 threshold = autoLockState * 60;
 
 #ifdef AUTOLOCK_TEST
-    qDebug() << "vault autolock countdown > " << interval;
+    fmDebug() << "vault autolock countdown > " << interval;
 #endif
 
     if (interval > threshold) {
@@ -120,7 +120,7 @@ void VaultAutoLock::slotLockVault(int state)
     if (state == 0) {
         alarmClock.stop();
     } else {
-        qCritical() << "Vault: cannot lock!";
+        fmCritical() << "Vault: cannot lock!";
     }
 }
 
@@ -151,7 +151,7 @@ void VaultAutoLock::dbusSetRefreshTime(quint64 time)
 {
     QVariant value = VaultDBusUtils::vaultManagerDBusCall(QString("SetRefreshTime"), QVariant::fromValue(time));
     if (value.isNull()) {
-        qCritical() << "Vault: set refresh time failed!";
+        fmCritical() << "Vault: set refresh time failed!";
     }
 }
 

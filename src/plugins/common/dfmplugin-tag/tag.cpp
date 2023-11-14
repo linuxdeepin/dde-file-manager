@@ -40,7 +40,8 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(dfmbase::ElideTextLayout *)
 
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_tag;
+namespace dfmplugin_tag {
+DFM_LOG_REISGER_CATEGORY(DPTAG_NAMESPACE)
 
 void Tag::initialize()
 {
@@ -60,7 +61,7 @@ void Tag::initialize()
     });
 
     if (!TagProxyHandleIns->connectToService()) {
-        qWarning() << "Cannot connect to TagManagerDBus!";
+        fmWarning() << "Cannot connect to TagManagerDBus!";
     }
 
     bindEvents();
@@ -218,3 +219,4 @@ void Tag::bindWindows()
     });
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
 }
+}   // namespace dfmplugin_tag

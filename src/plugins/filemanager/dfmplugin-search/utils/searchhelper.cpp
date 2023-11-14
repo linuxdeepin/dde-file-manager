@@ -171,7 +171,7 @@ bool SearchHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const 
     Q_UNUSED(fromUrls)
 
     if (to.scheme() == SearchHelper::scheme()) {
-        qInfo() << "The search root directory does not support paste!";
+        fmInfo() << "The search root directory does not support paste!";
         return true;
     }
     return false;

@@ -67,7 +67,7 @@ void TemplateMenuPrivate::createActionByNormalFile(const QString &path)
     QString errString;
     auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path), Global::CreateFileInfoType::kCreateFileInfoSync, &errString);
     if (!fileInfo) {
-        qInfo() << "createActionByDesktopFile create FileInfo error: " << errString << path;
+        fmInfo() << "createActionByDesktopFile create FileInfo error: " << errString << path;
         return;
     }
 
@@ -91,11 +91,11 @@ void TemplateMenuPrivate::createActionByDesktopFile(const QDir &dir, const QStri
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(entrySourcePath), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "createActionByDesktopFile create FileInfo error: " << errString << entrySourcePath;
+        fmInfo() << "createActionByDesktopFile create FileInfo error: " << errString << entrySourcePath;
         return;
     }
 
-    qDebug() << "desktop path: " << path << "URL: " << entrySourcePath;
+    fmDebug() << "desktop path: " << path << "URL: " << entrySourcePath;
     const QIcon &icon = QIcon::fromTheme(desktopFile.stringValue("Icon"));
     QAction *action = new QAction(icon, entryText, Q_NULLPTR);
     action->setData(QVariant::fromValue(entrySourcePath));

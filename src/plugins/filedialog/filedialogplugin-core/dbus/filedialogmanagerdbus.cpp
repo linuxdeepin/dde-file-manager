@@ -18,6 +18,7 @@
 #include <QUuid>
 
 DFMBASE_USE_NAMESPACE
+DIALOGCORE_USE_NAMESPACE
 
 FileDialogManagerDBus::FileDialogManagerDBus(QObject *parent)
     : QObject(parent)
@@ -43,7 +44,7 @@ QDBusObjectPath FileDialogManagerDBus::createDialog(QString key)
     }
 
     if (!QDBusConnection::sessionBus().registerObject(path.path(), handle)) {
-        qCritical("File Dialog: Cannot register to the D-Bus object.\n");
+        fmCritical("File Dialog: Cannot register to the D-Bus object.\n");
         handle->deleteLater();
 
         return QDBusObjectPath();

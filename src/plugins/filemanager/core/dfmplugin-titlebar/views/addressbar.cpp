@@ -303,7 +303,7 @@ void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
         // Still not found? Then nothing here...
         if (!crumbController) {
             clearCompleterModel();
-            qDebug() << "Unsupported url / scheme for completion: " << url;
+            fmDebug() << "Unsupported url / scheme for completion: " << url;
             return;
         }
         crumbController->setParent(q);

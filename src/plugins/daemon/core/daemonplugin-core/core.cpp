@@ -19,8 +19,10 @@
 
 #include <unistd.h>
 
-DAEMONPCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+namespace daemonplugin_core {
+DFM_LOG_REISGER_CATEGORY(DAEMONPCORE_NAMESPACE)
 
 static constexpr char kDaemonServicePath[] { "com.deepin.filemanager.daemon" };
 static constexpr char kEnvNameOfDaemonRegistered[] { "DAEMON_SERVICE_REGISTERED" };
@@ -41,10 +43,10 @@ bool Core::start()
 {
     QDBusConnection connection = QDBusConnection::systemBus();
     if (!connection.interface()->isServiceRegistered(kDaemonServicePath)) {
-        qInfo() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "success";
+        fmInfo() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "success";
         qputenv(kEnvNameOfDaemonRegistered, "TRUE");
     } else {
-        qWarning() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "failed";
+        fmWarning() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "failed";
         qputenv(kEnvNameOfDaemonRegistered, "FALSE");
     }
 
@@ -58,3 +60,5 @@ void Core::bindEvents()
     dpfSlotChannel->connect("daemonplugin_core", "slot_Polkit_CheckAuth",
                             PolicyKitHelper::instance(), &PolicyKitHelper::checkAuthorization);
 }
+
+}   // namespace daemonplugin_core

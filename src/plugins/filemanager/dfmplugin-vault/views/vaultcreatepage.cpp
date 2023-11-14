@@ -90,7 +90,7 @@ void VaultActiveView::slotNextWidget()
                 } else if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
                     stackedWidget->setCurrentIndex(nIndex + 2);
                 } else if (encryptionMethod == QString(kConfigKeyNotExist)) {
-                    qCritical() << "Vault: Get encryption method failed, can't next!";
+                    fmCritical() << "Vault: Get encryption method failed, can't next!";
                 }
                 return;
 

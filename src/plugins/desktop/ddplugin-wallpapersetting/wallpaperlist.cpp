@@ -114,7 +114,7 @@ QWidget *WallpaperList::itemAt(int x, int y) const
 {
     Q_UNUSED(y)
     if (grid.width() < 1){
-        qCritical() << "error gridSize().width() " << gridSize().width();
+        fmCritical() << "error gridSize().width() " << gridSize().width();
         return nullptr;
     }
 
@@ -164,7 +164,7 @@ void WallpaperList::setCurrentIndex(int index)
         int end = scrollAnimation.endValue().toInt();
         int current = horizontalScrollBar()->value();
         if (((start - end) * (current - start)) < 0) {
-            qDebug() << "the starting direction is opposite to the target direction"
+            fmDebug() << "the starting direction is opposite to the target direction"
                      << start << end << current << horizontalScrollBar()->maximum();
             scrollAnimation.setStartValue(current);
         }
@@ -185,7 +185,7 @@ WallpaperItem *WallpaperList::currentItem() const
 void WallpaperList::prevPage()
 {
     if (gridSize().width() < 1){
-        qCritical() << "error gridSize().width() " << gridSize().width();
+        fmCritical() << "error gridSize().width() " << gridSize().width();
         return;
     }
 
@@ -196,7 +196,7 @@ void WallpaperList::prevPage()
 void WallpaperList::nextPage()
 {
     if (gridSize().width() < 1){
-        qCritical() << "error gridSize().width() " << gridSize().width();
+        fmCritical() << "error gridSize().width() " << gridSize().width();
         return;
     }
 
@@ -250,7 +250,7 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
 {
     QFrame::resizeEvent(event);
     if (width() < kItemWidth) {
-        qCritical() << "error. widget width is less than ItemWidth" <<
+        fmCritical() << "error. widget width is less than ItemWidth" <<
                    width() << "<" << kItemWidth
                     << "resize" << event->size();
     }
@@ -260,7 +260,7 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
         --itemCount;
 
     if (itemCount < 1) {
-        qCritical() << "screen_item_count: " << itemCount
+        fmCritical() << "screen_item_count: " << itemCount
                     << "set to 1";
         itemCount = 1;
     }
@@ -283,7 +283,7 @@ void WallpaperList::showEvent(QShowEvent *event)
 QWidget *WallpaperList::itemAt(int idx) const
 {
     if (idx >= contentLayout->count() || idx < 0) {
-        qCritical() << "error index" << idx << "gridsie" << grid << geometry() << contentLayout->count();
+        fmCritical() << "error index" << idx << "gridsie" << grid << geometry() << contentLayout->count();
         return nullptr;
     }
 

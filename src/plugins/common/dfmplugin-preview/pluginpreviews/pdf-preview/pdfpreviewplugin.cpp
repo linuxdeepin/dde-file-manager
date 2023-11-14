@@ -5,10 +5,12 @@
 #include "pdfpreviewplugin.h"
 
 DFMBASE_USE_NAMESPACE
-using namespace plugin_filepreview;
+namespace plugin_filepreview {
+DFM_LOG_REISGER_CATEGORY(PREVIEW_NAMESPACE)
 AbstractBasePreview *PDFPreviewPlugin::create(const QString &key)
 {
     Q_UNUSED(key)
 
     return new PDFPreview();
 }
+}   // namespace plugin_filepreview

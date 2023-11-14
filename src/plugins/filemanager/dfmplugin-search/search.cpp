@@ -32,6 +32,7 @@ Q_DECLARE_METATYPE(QVariant *)
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {
+DFM_LOG_REISGER_CATEGORY(DPSEARCH_NAMESPACE)
 
 void Search::initialize()
 {

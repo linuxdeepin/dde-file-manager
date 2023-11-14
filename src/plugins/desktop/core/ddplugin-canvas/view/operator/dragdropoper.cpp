@@ -141,7 +141,7 @@ bool DragDropOper::drop(QDropEvent *event)
 
         ext.insert("dropUrl", QVariant(dropUrl));
         if (view->d->hookIfs->dropData(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
-            qInfo() << "data droped by extend";
+            fmInfo() << "data droped by extend";
             return true;
         }
     }
@@ -331,23 +331,23 @@ bool DragDropOper::dropClientDownload(QDropEvent *event) const
     auto data = event->mimeData();
     if (DFileDragClient::checkMimeData(data)) {
         event->acceptProposedAction();
-        qWarning() << "drop on" << m_target;
+        fmWarning() << "drop on" << m_target;
 
         QList<QUrl> urlList = data->urls();
         if (!urlList.isEmpty()) {
             // todo 排查哪些情况会进这里
             //Q_ASSERT(false);
             DFileDragClient *client = new DFileDragClient(data, const_cast<DragDropOper *>(this));
-            qDebug() << "dragClientDownload" << client << data << urlList;
+            fmDebug() << "dragClientDownload" << client << data << urlList;
             connect(client, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
                 if (state == Finished)
                     selectItems(urlList);
-                qDebug() << "stateChanged" << state << urlList;
+                fmDebug() << "stateChanged" << state << urlList;
             });
 
             connect(client, &DFileDragClient::serverDestroyed, client, &DFileDragClient::deleteLater);
             connect(client, &DFileDragClient::destroyed, []() {
-                qDebug() << "drag client deleted";
+                fmDebug() << "drag client deleted";
             });
         }
 
@@ -373,7 +373,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
     // process this case in other drop function(e.g. move) if targetGridPos is used and it is not drop-needed.
     if (dropIndex.isValid() && !dropOnSelf) {
         if (!targetIndex.isValid()) {
-            qInfo() << "drop on invaild target, skip. drop:" << dropGridPos.x() << dropGridPos.y();
+            fmInfo() << "drop on invaild target, skip. drop:" << dropGridPos.x() << dropGridPos.y();
             return true;
         }
         return false;
@@ -392,7 +392,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
     }
 
     if (itemPos.isEmpty()) {
-        qWarning() << "can not drop invaild items" << sourceUrls;
+        fmWarning() << "can not drop invaild items" << sourceUrls;
         return false;
     }
 
@@ -414,7 +414,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
 
         // reset the focus for key move
         resetFocus(dropGridPos);
-        qDebug() << "append items " << itemPos.first() << "begin" << view->screenNum() << dropGridPos << itemPos.size();
+        fmDebug() << "append items " << itemPos.first() << "begin" << view->screenNum() << dropGridPos << itemPos.size();
     } else if (itemfrom.size() == 1) {
         // items are from one view, using move.
         // normally, item should from the view that is event->source().
@@ -424,14 +424,14 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
             if (GridIns->move(view->screenNum(), dropGridPos, focusItem, itemPos.keys())) {
                 // reset the focus for key move
                 resetFocus(dropGridPos);
-                qDebug() << "move items" << focusItem << itemPos.value(focusItem) << "to"
+                fmDebug() << "move items" << focusItem << itemPos.value(focusItem) << "to"
                          << view->screenNum() << dropGridPos << "count" << itemPos.size();
             }
         } else {
-            qWarning() << "can not find fcous." << focus << fromView->screenNum();
+            fmWarning() << "can not find fcous." << focus << fromView->screenNum();
         }
     } else {
-        qWarning() << "can not find drop item.";
+        fmWarning() << "can not find drop item.";
     }
 
     if (DispalyIns->autoAlign())

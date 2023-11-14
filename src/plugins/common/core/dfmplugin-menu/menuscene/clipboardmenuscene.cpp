@@ -60,7 +60,7 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
     d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -68,7 +68,7 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
-            qDebug() << errString;
+            fmDebug() << errString;
             return false;
         }
     }
@@ -165,12 +165,12 @@ bool ClipBoardMenuScene::triggered(QAction *action)
             // clear clipboard after cutting files from clipboard
             ClipBoard::instance()->clearClipboard();
         } else if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
-            qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+            fmInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
             ClipBoard::setCurUrlToClipboardForRemote(d->currentDir);
         } else if (ClipBoard::kRemoteAction == action) {
             dpfSignalDispatcher->publish(GlobalEventType::kCopy, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kCopyRemote, nullptr, nullptr, QVariant(), nullptr);
         } else {
-            qWarning() << "clipboard action:" << action << "    urls:" << selectedUrlsTemp;
+            fmWarning() << "clipboard action:" << action << "    urls:" << selectedUrlsTemp;
         }
 
     } else if (id == ActionID::kCut) {

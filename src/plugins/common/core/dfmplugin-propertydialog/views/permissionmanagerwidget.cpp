@@ -310,7 +310,7 @@ void PermissionManagerWidget::onComboBoxChanged()
     auto afterMode = fileStat.st_mode;
     // 修改权限失败
     if (preMode == afterMode) {
-        qDebug() << "chmod failed";
+        fmDebug() << "chmod failed";
         QSignalBlocker b1(ownerComboBox), b2(groupComboBox), b3(otherComboBox);
         Q_UNUSED(b1);
         Q_UNUSED(b2);

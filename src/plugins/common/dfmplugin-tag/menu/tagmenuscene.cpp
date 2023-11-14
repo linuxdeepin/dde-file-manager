@@ -115,7 +115,7 @@ bool TagMenuScene::triggered(QAction *action)
         if (d->onCollection) {   // get rect from collection
             const QString id = TagEventCaller::getCollectionViewId(d->focusFile.toString(), &pos);
             if (id.isEmpty()) {
-                qCritical() << "can not find file on collection" << d->focusFile;
+                fmCritical() << "can not find file on collection" << d->focusFile;
                 return true;
             }
             const QRect &visualRect = TagEventCaller::getCollectionVisualRect(id, d->focusFile);
@@ -125,12 +125,12 @@ bool TagMenuScene::triggered(QAction *action)
                 QPoint iconTopLeft = view->mapToGlobal(iconRect.topLeft().toPoint());
                 iconRect.setRect(iconTopLeft.x(), iconTopLeft.y(), iconRect.width(), iconRect.height());
             } else {
-                qWarning() << "can not get collection view, id:" << id;
+                fmWarning() << "can not get collection view, id:" << id;
             }
         } else {   // get rect from desktop
             int viewIndex = TagEventCaller::getDesktopViewIndex(d->focusFile.toString(), &pos);
             if (viewIndex < 0) {
-                qCritical() << "can not find file on canvas" << d->focusFile << viewIndex;
+                fmCritical() << "can not find file on canvas" << d->focusFile << viewIndex;
                 return true;
             }
             const QRect &visualRect = TagEventCaller::getVisualRect(viewIndex, d->focusFile);
@@ -140,7 +140,7 @@ bool TagMenuScene::triggered(QAction *action)
                 QPoint iconTopLeft = view->mapToGlobal(iconRect.topLeft().toPoint());
                 iconRect.setRect(iconTopLeft.x(), iconTopLeft.y(), iconRect.width(), iconRect.height());
             } else {
-                qWarning() << "can not get canvas view, index:" << viewIndex;
+                fmWarning() << "can not get canvas view, index:" << viewIndex;
             }
         }
     } else {

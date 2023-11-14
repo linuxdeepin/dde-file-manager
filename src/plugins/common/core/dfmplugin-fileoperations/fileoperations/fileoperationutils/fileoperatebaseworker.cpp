@@ -228,7 +228,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
             localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
         ret = localFileHandler->deleteFile(fromUrl);
         if (!ret) {
-            qWarning() << "delete file error, case: " << localFileHandler->errorString();
+            fmWarning() << "delete file error, case: " << localFileHandler->errorString();
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, false,
                                           localFileHandler->errorString());
         }
@@ -285,7 +285,7 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
             FileInfoPointer toInfo = InfoFactory::create<FileInfo>(urlTarget, Global::CreateFileInfoType::kCreateFileInfoSync);
             if (!toInfo) {
                 // pause and emit error msg
-                qCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (toInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
+                fmCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (toInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
                 const AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
                 if (AbstractJobHandler::SupportAction::kSkipAction != action) {
                     return false;
@@ -382,7 +382,7 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
 {
     // 检查源文件的文件信息
     if (!fromInfo) {
-        qCritical() << " check file from file info is  nullpter !!!!!!!";
+        fmCritical() << " check file from file info is  nullpter !!!!!!!";
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl),
                                                                         AbstractJobHandler::JobErrorType::kProrogramError);
         setSkipValue(skip, action);
@@ -390,7 +390,7 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
     }
     // 检查源文件是否存在
     if (!fromInfo->exists()) {
-        qCritical() << " check file from file is  not exists !!!!!!!" << fromInfo->fileUrl();
+        fmCritical() << " check file from file is  not exists !!!!!!!" << fromInfo->fileUrl();
         auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
         fromUrl.setPath(fromUrl.path().replace("\\", "/"));
         AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kAbsolutePath).startsWith("/root/")
@@ -405,7 +405,7 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
     }
     // 检查目标文件的文件信息
     if (!toInfo) {
-        qCritical() << " check file to file perant info is  nullpter !!!!!!!";
+        fmCritical() << " check file to file perant info is  nullpter !!!!!!!";
         auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
         fromUrl.setPath(fromUrl.path().replace("\\", "/"));
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl, QUrl(),
@@ -415,7 +415,7 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
     }
     // 检查目标文件是否存在
     if (!toInfo->exists()) {
-        qCritical() << " check file to file perant file is  not exists !!!!!!!";
+        fmCritical() << " check file to file perant file is  not exists !!!!!!!";
         AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
@@ -672,7 +672,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->urlOf(UrlInfoType::kUrl), &error);
     if (!iterator) {
-        qCritical() << "create dir's iterator failed, case : " << error;
+        fmCritical() << "create dir's iterator failed, case : " << error;
         doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
@@ -772,14 +772,14 @@ QString FileOperateBaseWorker::fileOriginName(const QUrl &trashInfoUrl)
         return QString();
     DFile file(trashInfoUrl);
     if (!file.open(dfmio::DFile::OpenFlag::kReadOnly)) {
-        qWarning() << "open trash file info err : " << file.lastError().errorMsg() << " ,trashInfoUrl = " << trashInfoUrl;
+        fmWarning() << "open trash file info err : " << file.lastError().errorMsg() << " ,trashInfoUrl = " << trashInfoUrl;
         return QString();
     }
     auto data = file.readAll().simplified().split(' ');
     // trash info file readAll() = "[Trash Info] Path=%E6%96%B0%E5%BB%BAWord%E6%96%87%E6%A1%A3.doc DeletionDate=2023-05-05T11:19:06";
     // has three char " ", so data has 4 item, the 3th is the "Path=%E6%96%B0%E5%BB%BAWord%E6%96%87%E6%A1%A3.doc"
     if (data.size() <= 3) {
-        qWarning() << "reade trash file info err,trashInfoUrl = " << trashInfoUrl;
+        fmWarning() << "reade trash file info err,trashInfoUrl = " << trashInfoUrl;
         return QString();
     }
     QString filePath(data.at(2));
@@ -792,7 +792,7 @@ void FileOperateBaseWorker::removeTrashInfo(const QUrl &trashInfoUrl)
 {
     if (!localFileHandler || !trashInfoUrl.isValid())
         return;
-    qDebug() << "delete trash file info. trashInfoUrl = " << trashInfoUrl;
+    fmDebug() << "delete trash file info. trashInfoUrl = " << trashInfoUrl;
     localFileHandler->deleteFile(trashInfoUrl);
 }
 
@@ -902,7 +902,7 @@ bool FileOperateBaseWorker::doCopyLocalBigFileResize(const FileInfoPointer fromI
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (-1 == ftruncate(toFd, length)) {
             auto lastError = strerror(errno);
-            qWarning() << "file resize error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+            fmWarning() << "file resize error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
                        << " url to: " << toInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << O_RDONLY
                        << " error code: " << errno << " error msg: " << lastError;
 
@@ -929,7 +929,7 @@ char *FileOperateBaseWorker::doCopyLocalBigFileMap(const FileInfoPointer fromInf
                      per, MAP_SHARED, fd, 0);
         if (!point || point == MAP_FAILED) {
             auto lastError = strerror(errno);
-            qWarning() << "file mmap error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+            fmWarning() << "file mmap error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
                        << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl)
                        << " error code: " << errno << " error msg: " << lastError;
 
@@ -989,7 +989,7 @@ int FileOperateBaseWorker::doOpenFile(const FileInfoPointer fromInfo, const File
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (fd < 0) {
             auto lastError = strerror(errno);
-            qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+            fmWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
                        << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << openFlag
                        << " error code: " << errno << " error msg: " << lastError;
 
@@ -1051,7 +1051,7 @@ bool FileOperateBaseWorker::createNewTargetInfo(const FileInfoPointer &fromInfo,
     newTargetInfo = InfoFactory::create<FileInfo>(fileNewUrl, Global::CreateFileInfoType::kCreateFileInfoSync, &error);
 
     if (!newTargetInfo || !error.isEmpty()) {
-        qWarning() << "newTargetInfo is null = " << !newTargetInfo << ", error message = " << error;
+        fmWarning() << "newTargetInfo is null = " << !newTargetInfo << ", error message = " << error;
         AbstractJobHandler::SupportAction action =
                 doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
                                      toInfo->urlOf(UrlInfoType::kUrl),
@@ -1237,7 +1237,7 @@ qint64 FileOperateBaseWorker::getTidWriteSize()
     QFile file(QStringLiteral("/proc/self/task/%1/io").arg(copyTid));
 
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Failed on open the" << file.fileName() << ", will be not update the job speed and progress";
+        fmWarning() << "Failed on open the" << file.fileName() << ", will be not update the job speed and progress";
 
         return 0;
     }
@@ -1257,7 +1257,7 @@ qint64 FileOperateBaseWorker::getTidWriteSize()
             qint64 size = line.mid(line_head.size()).toLongLong(&ok);
 
             if (!ok) {
-                qWarning() << "Failed to convert to qint64, line string=" << line;
+                fmWarning() << "Failed to convert to qint64, line string=" << line;
 
                 return 0;
             }
@@ -1265,7 +1265,7 @@ qint64 FileOperateBaseWorker::getTidWriteSize()
         }
     }
 
-    qWarning() << "Failed to find \"" << line_head << "\" from the" << file.fileName();
+    fmWarning() << "Failed to find \"" << line_head << "\" from the" << file.fileName();
 
     return 0;
 }
@@ -1294,7 +1294,7 @@ void FileOperateBaseWorker::determineCountProcessType()
     if (device.startsWith("/dev/")) {
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetOrgUrl);
         isTargetFileExBlock = false;
-        qDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
+        fmDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
         const bool isFileSystemTypeExt = DFMUtils::fsTypeFromUrl(targetOrgUrl).startsWith("ext");
         if (!isFileSystemTypeExt) {
             blocakTargetRootPath = rootPath;
@@ -1306,7 +1306,7 @@ void FileOperateBaseWorker::determineCountProcessType()
                     const QByteArray &data = process.readAllStandardOutput();
                     const QByteArrayList &list = data.split(' ');
 
-                    qDebug("lsblk result data: \"%s\"", data.constData());
+                    fmDebug("lsblk result data: \"%s\"", data.constData());
 
                     if (list.size() == 3) {
                         targetSysDevPath = "/sys/dev/block/" + list.first();
@@ -1318,7 +1318,7 @@ void FileOperateBaseWorker::determineCountProcessType()
                         if (!ok) {
                             targetLogSecionSize = 512;
 
-                            qWarning() << "get target log secion size failed!";
+                            fmWarning() << "get target log secion size failed!";
                         }
 
                         if (targetIsRemovable) {
@@ -1329,17 +1329,17 @@ void FileOperateBaseWorker::determineCountProcessType()
                             workData->isBlockDevice = true;
                         }
 
-                        qDebug("Block device path: \"%s\", Sys dev path: \"%s\", Is removable: %d, Log-Sec: %d",
+                        fmDebug("Block device path: \"%s\", Sys dev path: \"%s\", Is removable: %d, Log-Sec: %d",
                                qPrintable(device), qPrintable(targetSysDevPath), bool(targetIsRemovable), targetLogSecionSize);
                     } else {
-                        qWarning("Failed on parse the lsblk result data, data: \"%s\"", data.constData());
+                        fmWarning("Failed on parse the lsblk result data, data: \"%s\"", data.constData());
                     }
                 } else {
-                    qWarning("Failed on exec lsblk command, exit code: %d, error message: \"%s\"", process.exitCode(), process.readAllStandardError().constData());
+                    fmWarning("Failed on exec lsblk command, exit code: %d, error message: \"%s\"", process.exitCode(), process.readAllStandardError().constData());
                 }
             }
         }
-        qDebug("targetIsRemovable = %d", bool(targetIsRemovable));
+        fmDebug("targetIsRemovable = %d", bool(targetIsRemovable));
     }
 }
 
@@ -1349,15 +1349,15 @@ void FileOperateBaseWorker::syncFilesToDevice()
     if (isTargetFileLocal)
         return;
 
-    qInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
+    fmInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
     sync();
-    qInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
+    fmInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
 
-    qDebug() << "syncFilesToDevice begin";
+    fmDebug() << "syncFilesToDevice begin";
     qint64 writeSize = getWriteDataSize();
     while (!isStopped() && sourceFilesTotalSize > 0 && writeSize < sourceFilesTotalSize) {
         QThread::msleep(100);
         writeSize = getWriteDataSize();
     }
-    qDebug() << "syncFilesToDevice end";
+    fmDebug() << "syncFilesToDevice end";
 }

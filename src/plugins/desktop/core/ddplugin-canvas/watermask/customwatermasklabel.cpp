@@ -108,7 +108,7 @@ void CustomWaterMaskLabel::update()
 
     QPixmap waterMaskPixmap = maskPixmap(maskLogoUri, maskSize, devicePixelRatioF());
     if (waterMaskPixmap.isNull()) {
-        qWarning() << "watermask pixmap NULL";
+        fmWarning() << "watermask pixmap NULL";
         hide();
         return;
     }
@@ -135,11 +135,11 @@ QPixmap CustomWaterMaskLabel::maskPixmap(const QString &uri, const QSize &size, 
     QFileInfo file(uri);
     QPixmap pix;
     if (file.size() > (500 << 10)) {
-        qWarning() << "logo size exceed 500KB!";
+        fmWarning() << "logo size exceed 500KB!";
         return pix;
     }
 
-    qInfo() << "custom watermask scaled start" << "uri:" << uri << " size:" << size;
+    fmInfo() << "custom watermask scaled start" << "uri:" << uri << " size:" << size;
 
     QSize scaleSize = size * pixelRatio;
 
@@ -160,7 +160,7 @@ QPixmap CustomWaterMaskLabel::maskPixmap(const QString &uri, const QSize &size, 
         pix.setDevicePixelRatio(pixelRatio);
     }
 
-    qInfo() << "custom watermask scaled finished";
+    fmInfo() << "custom watermask scaled finished";
 
     return pix;
 }

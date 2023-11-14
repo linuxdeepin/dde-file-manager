@@ -72,7 +72,7 @@ void LoadingLabel::resize(const QSize &size)
         contant->move(static_cast<int>(moveDistance) + WAITITEM_ICON_CONTANT_SPACE + icon->width(), size.height() / 3 + MARGIN_OF_WAITICON);
         contant->setFixedSize(contantSize);
     } else {
-        qDebug() << "the parent widget is too small that can not to display the son widget";
+        fmDebug() << "the parent widget is too small that can not to display the son widget";
         icon->setFixedSize(QSize(0, 0));
         contant->setFixedSize(QSize(0, 0));
     }

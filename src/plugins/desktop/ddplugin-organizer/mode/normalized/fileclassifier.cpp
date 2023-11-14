@@ -45,7 +45,7 @@ void FileClassifier::reset(const QList<QUrl> &urls)
     for (const QUrl &url : urls) {
         auto type = classify(url);
         if (type.isEmpty()) {
-            qWarning() << "can not find file:" << url;
+            fmWarning() << "can not find file:" << url;
             continue;
         }
 
@@ -80,7 +80,7 @@ QString FileClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
     Q_ASSERT_X(!oldType.isEmpty(), "FileClassifier", QString("oldUrl is not existed: %0").arg(oldUrl.toString()).toStdString().c_str());
 
     if (Q_UNLIKELY(newType.isEmpty())) {
-        qWarning() << "can not find file:" << newUrl;
+        fmWarning() << "can not find file:" << newUrl;
         collections[oldType]->items.removeOne(oldUrl);
         return newType;
     }
@@ -100,7 +100,7 @@ QString FileClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
     // old does not exist.
     if (oldType.isEmpty()) {
         if (Q_UNLIKELY(newType.isEmpty())) {
-            qWarning() << "can not find file:" << newUrl;
+            fmWarning() << "can not find file:" << newUrl;
             return newType;
         }
 
@@ -115,7 +115,7 @@ QString FileClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
         }
     } else {
         if (Q_UNLIKELY(newType.isEmpty())) {
-            qWarning() << "can not find file:" << newUrl;
+            fmWarning() << "can not find file:" << newUrl;
             regionDatas[oldType].removeOne(oldUrl);
             return newType;
         }
@@ -145,7 +145,7 @@ QString FileClassifier::append(const QUrl &url)
 {
     QString ret = classify(url);
     if (ret.isEmpty()) {
-        qWarning() << "can not find file:" << url;
+        fmWarning() << "can not find file:" << url;
         return ret;
     }
 
@@ -177,7 +177,7 @@ QString FileClassifier::prepend(const QUrl &url)
 {
     QString ret = classify(url);
     if (ret.isEmpty()) {
-        qWarning() << "can not find file:" << url;
+        fmWarning() << "can not find file:" << url;
         return ret;
     }
 

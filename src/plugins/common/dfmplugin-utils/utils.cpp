@@ -12,7 +12,8 @@
 #include "vaultassist/virtualvaulthelperplugin.h"
 #include "testing/virtualtestingplugin.h"
 
-using namespace dfmplugin_utils;
+namespace dfmplugin_utils {
+DFM_LOG_REISGER_CATEGORY(DPUTILS_NAMESPACE)
 
 static constexpr char kReportLog[] { "dfmplugin-reportlog" };
 static constexpr char kAppendcompress[] { "dfmplugin-appendcompress" };
@@ -25,7 +26,7 @@ static constexpr char kTesting[] { "dfmplugin-testing" };
 
 QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 {
-    qInfo() << "Create plugin: " << pluginName;
+    fmInfo() << "Create plugin: " << pluginName;
 
     if (pluginName == kReportLog) {
         QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualReportLogPlugin };
@@ -69,3 +70,4 @@ QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 
     return {};
 }
+}   // namespace dfmplugin_utils

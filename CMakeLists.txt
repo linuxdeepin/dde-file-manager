@@ -129,8 +129,10 @@ message("Build type:"${CMAKE_BUILD_TYPE})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(BUILD_TESTING ON)
+    set(BUILD_DOCS Off)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
+    set(BUILD_DOCS ON CACHE BOOL "Generate doxygen-based documentation")
     # generate qm
     execute_process(COMMAND bash "translate_generation.sh"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
@@ -146,7 +148,6 @@ add_subdirectory(src/external)
 add_subdirectory(src/tools)
 
 # docs
-set(BUILD_DOCS ON CACHE BOOL "Generate doxygen-based documentation")
 find_package(Doxygen)
 if (BUILD_DOCS AND DOXYGEN_FOUND)
     add_subdirectory(docs)

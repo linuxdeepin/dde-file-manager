@@ -83,7 +83,7 @@ bool HiddenFileFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
     if (roles.contains(Global::kItemCreateFileInfoRole)) {
         // get file that removed form .hidden if do not show hidden file.
         if (!model->showHiddenFiles() && url.fileName() == ".hidden") {
-            qDebug() << "refresh by hidden changed.";
+            fmDebug() << "refresh by hidden changed.";
             // do not refresh file info and wait 100ms to let the file atrr changed signal to refresh file
             model->refresh(model->rootIndex(), false, 100, false);
         }
@@ -183,7 +183,7 @@ bool HookFilter::insertFilter(const QUrl &url)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataInserted(url)) {
-        qDebug() << "filter by extend module:" << url;
+        fmDebug() << "filter by extend module:" << url;
         return true;
     }
 
@@ -194,7 +194,7 @@ bool HookFilter::resetFilter(QList<QUrl> &urls)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataRested(&urls))
-        qDebug() << "invalid module: dataRested returns true.";
+        fmDebug() << "invalid module: dataRested returns true.";
 
     return false;
 }
@@ -203,7 +203,7 @@ bool HookFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataChanged(url, roles))
-        qDebug() << "invalid module: dataChanged returns true.";
+        fmDebug() << "invalid module: dataChanged returns true.";
 
     return false;
 }
@@ -212,7 +212,7 @@ bool HookFilter::removeFilter(const QUrl &url)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataRemoved(url))
-        qDebug() << "invalid module: dataRemoved returns true.";
+        fmDebug() << "invalid module: dataRemoved returns true.";
 
     return false;
 }
@@ -221,7 +221,7 @@ bool HookFilter::renameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataRenamed(oldUrl, newUrl)) {
-        qDebug() << "dataRenamed: ignore target" << newUrl << "old:" << oldUrl;
+        fmDebug() << "dataRenamed: ignore target" << newUrl << "old:" << oldUrl;
         return true;
     }
 

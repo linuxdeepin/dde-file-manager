@@ -58,13 +58,13 @@ void CollectionViewMenu::emptyAreaMenu()
     if (auto canvas = getCanvasView()) {
         params[ddplugin_canvas::CanvasMenuParams::kDesktopCanvasView] = reinterpret_cast<qlonglong>(canvas);
     } else {
-        qCritical() << "can not find canvas!";
+        fmCritical() << "can not find canvas!";
         return;
     }
 
     auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene("CanvasMenu");
     if (!canvasScene) {
-        qCritical() << "Create CanvasMenu scene failed";
+        fmCritical() << "Create CanvasMenu scene failed";
         return;
     }
 
@@ -118,13 +118,13 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
     if (auto canvas = getCanvasView()) {
         params[ddplugin_canvas::CanvasMenuParams::kDesktopCanvasView] = reinterpret_cast<qlonglong>(canvas);
     } else {
-        qCritical() << "can not find canvas!";
+        fmCritical() << "can not find canvas!";
         return;
     }
 
     auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene("CanvasMenu");
     if (!canvasScene) {
-        qCritical() << "Create CanvasMenu scene failed";
+        fmCritical() << "Create CanvasMenu scene failed";
         return;
     }
 
@@ -162,7 +162,7 @@ QWidget *CollectionViewMenu::getCanvasView()
         }
     }
     if (!surface) {
-        qWarning() << "can not find surface by view" << view;
+        fmWarning() << "can not find surface by view" << view;
         return canvas;
     }
 
@@ -178,7 +178,7 @@ QWidget *CollectionViewMenu::getCanvasView()
     }
 
     if (!root) {
-        qWarning() << "can not find root frame by screen" << screen;
+        fmWarning() << "can not find root frame by screen" << screen;
         return canvas;
     }
 
@@ -188,7 +188,7 @@ QWidget *CollectionViewMenu::getCanvasView()
             QString type = wid->property(DesktopFrameProperty::kPropWidgetName).toString();
             if (type == "canvas") {
                 canvas = wid;
-                qDebug() << "CollectionViewMenu find canvas" << wid << screen;
+                fmDebug() << "CollectionViewMenu find canvas" << wid << screen;
                 break;
             }
         }

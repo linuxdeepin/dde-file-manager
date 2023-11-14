@@ -20,7 +20,7 @@ void SideBarEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
 
 void SideBarEventCaller::sendEject(const QUrl &url)
 {
-    qInfo() << "Eject device: " << url;
+    fmInfo() << "Eject device: " << url;
     dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Item_EjectClicked", url);
 }
 

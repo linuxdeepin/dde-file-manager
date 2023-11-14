@@ -18,7 +18,9 @@
 
 #include <dfm-framework/dpf.h>
 
-using namespace dfmplugin_sidebar;
+namespace dfmplugin_sidebar {
+DFM_LOG_REISGER_CATEGORY(DPSIDEBAR_NAMESPACE)
+
 DFMBASE_USE_NAMESPACE
 
 void SideBar::initialize()
@@ -34,7 +36,7 @@ bool SideBar::start()
 {
     QString err;
     if (!DConfigManager::instance()->addConfig(ConfigInfos::kConfName, &err)) {
-        qDebug() << "register dconfig failed: " << err;
+        fmDebug() << "register dconfig failed: " << err;
         return false;
     }
 
@@ -114,7 +116,7 @@ bool SideBar::onAboutToShowSettingDialog(quint64 winId)
 {
     auto win { FMWindowsIns.findWindowById(winId) };
     if (!win) {
-        qWarning() << "Invalid window id";
+        fmWarning() << "Invalid window id";
         return false;
     }
 
@@ -124,3 +126,4 @@ bool SideBar::onAboutToShowSettingDialog(quint64 winId)
 
     return false;
 }
+}   // namespace dfmplugin_sidebar

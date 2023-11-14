@@ -14,7 +14,8 @@
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 
-using namespace dfmplugin_trashcore;
+namespace dfmplugin_trashcore {
+DFM_LOG_REISGER_CATEGORY(DPTRASHCORE_NAMESPACE)
 
 void TrashCore::initialize()
 {
@@ -59,3 +60,4 @@ void TrashCore::regCustomPropertyDialog()
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
                          func, TrashCoreHelper::scheme());
 }
+}   // namespace dfmplugin_trashcore

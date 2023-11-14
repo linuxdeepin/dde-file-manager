@@ -35,7 +35,7 @@ CoreEventReceiver *CoreEventReceiver::instance()
 void CoreEventReceiver::handleChangeUrl(quint64 windowId, const QUrl &url)
 {
     if (!url.isValid()) {
-        qWarning() << "Invalid Url: " << url;
+        fmWarning() << "Invalid Url: " << url;
         return;
     }
     CoreHelper::instance().cd(windowId, url);
@@ -57,18 +57,18 @@ void CoreEventReceiver::handleOpenWindow(const QUrl &url, const QVariant &opt)
 
 void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
 {
-    qInfo("Start load plugins at runtime: ");
+    fmInfo("Start load plugins at runtime: ");
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
-        qInfo() << "About to load plugin:" << name;
+        fmInfo() << "About to load plugin:" << name;
         auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
         if (plugin) {
             auto result { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
-            qInfo() << "Load result: " << result
+            fmInfo() << "Load result: " << result
                     << "State: " << plugin->pluginState();
         }
     });
-    qInfo() << "End load plugins at runtime.";
+    fmInfo() << "End load plugins at runtime.";
 }
 
 void CoreEventReceiver::handleHeadless()
@@ -83,7 +83,7 @@ void CoreEventReceiver::handleShowSettingDialog(quint64 windowId)
     auto window = FMWindowsIns.findWindowById(windowId);
 
     if (!window) {
-        qWarning() << "Invalid window id: " << windowId;
+        fmWarning() << "Invalid window id: " << windowId;
         return;
     }
 

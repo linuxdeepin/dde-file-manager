@@ -96,7 +96,7 @@ QUrl AvfsUtils::localUrlToAvfsUrl(const QUrl &url)
 QUrl AvfsUtils::localArchiveToAvfsUrl(const QUrl &url)
 {
     if (url.scheme() != Global::Scheme::kFile) {
-        qWarning() << "non-local file doesn't support to convert to avfs url";
+        fmWarning() << "non-local file doesn't support to convert to avfs url";
         return url;
     }
 
@@ -123,7 +123,7 @@ QUrl AvfsUtils::makeAvfsUrl(const QString &path)
 
 QList<QVariantMap> AvfsUtils::seperateUrl(const QUrl &url)
 {
-    qDebug() << "### split current url:" << url;
+    fmDebug() << "### split current url:" << url;
     QString localPath = url.path();
     if (url.scheme() == scheme())
         localPath = avfsUrlToLocal(url).path();
@@ -142,7 +142,7 @@ QList<QVariantMap> AvfsUtils::seperateUrl(const QUrl &url)
                          { "CrumbData_Key_IconName", "" },
                          { "CrumbData_Key_DisplayText", frags.last() } });
 
-            qDebug() << "# " << localUrlToAvfsUrl(QUrl::fromLocalFile(path));
+            fmDebug() << "# " << localUrlToAvfsUrl(QUrl::fromLocalFile(path));
         } else {
             path.replace(avfsMountPoint() + "/", "/");
             QString icon = parseDirIcon(path);
@@ -150,7 +150,7 @@ QList<QVariantMap> AvfsUtils::seperateUrl(const QUrl &url)
                          { "CrumbData_Key_IconName", icon },
                          { "CrumbData_Key_DisplayText", qApp->translate("QObject", frags.last().toStdString().c_str()) } });
 
-            qDebug() << "# " << QUrl::fromLocalFile(path);
+            fmDebug() << "# " << QUrl::fromLocalFile(path);
 
             if (!icon.isEmpty())   // root node is found.
                 break;

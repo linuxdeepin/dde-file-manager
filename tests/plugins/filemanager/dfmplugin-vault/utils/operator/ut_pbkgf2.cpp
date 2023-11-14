@@ -9,6 +9,8 @@
 
 #include <QString>
 
+DPVAULT_USE_NAMESPACE
+
 TEST(UT_PBKDF2, octalToHexadecimal)
 {
     char *re = pbkdf2::octalToHexadecimal("123", 3);

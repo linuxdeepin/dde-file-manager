@@ -59,7 +59,7 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -200,12 +200,12 @@ bool SendToMenuScene::triggered(QAction *action)
             return true;
         } else {
             if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
-                qDebug() << "send files to: " << action->data().toUrl() << ", " << d->selectFiles;
+                fmDebug() << "send files to: " << action->data().toUrl() << ", " << d->selectFiles;
                 dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), d->selectFiles, action->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
                 return true;
             }
         }
-        qWarning() << "action not found, id: " << actId;
+        fmWarning() << "action not found, id: " << actId;
         return false;
     } else {
         return AbstractMenuScene::triggered(action);
