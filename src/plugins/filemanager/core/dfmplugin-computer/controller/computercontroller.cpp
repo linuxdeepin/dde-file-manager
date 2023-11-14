@@ -40,6 +40,7 @@ using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
 
 Q_DECLARE_METATYPE(QString *)
+Q_DECLARE_METATYPE(bool *)
 
 ComputerController *ComputerController::instance()
 {
@@ -260,10 +261,17 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
         if (!isUnlocked) {
             ComputerUtils::setCursorState();
             QString passwd;
+            bool cancelled = false;
             bool hooked = dpfHookSequence->run("dfmplugin_computer",
                                                "hook_Device_AcquireDevPwd",
                                                info->extraProperty(DeviceProperty::kDevice).toString(),
-                                               &passwd);
+                                               &passwd,
+                                               &cancelled);
+            if (cancelled) {
+                qInfo() << "give up unlock device" << info->extraProperty(DeviceProperty::kDevice);
+                return;
+            }
+
             if (!hooked)
                 passwd = DialogManagerInstance->askPasswordForLockedDevice(driveName);
 
