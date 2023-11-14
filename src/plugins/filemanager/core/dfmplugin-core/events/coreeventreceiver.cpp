@@ -62,9 +62,11 @@ void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
         Q_ASSERT(qApp->thread() == QThread::currentThread());
         qInfo() << "About to load plugin:" << name;
         auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
-        if (plugin)
-            qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin)
+        if (plugin) {
+            auto result { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
+            qInfo() << "Load result: " << result
                     << "State: " << plugin->pluginState();
+        }
     });
     qInfo() << "End load plugins at runtime.";
 }

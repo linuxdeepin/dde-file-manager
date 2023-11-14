@@ -136,7 +136,7 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
                 QUrl destUrl { destUrls.at(index) };
                 discUrls.append(destUrl);
 
-                qInfo() << "Add write permission for " << destUrl;
+                fmInfo() << "Add write permission for " << destUrl;
                 auto permissions = (QFileInfo(destUrl.toLocalFile()).permissions() | QFileDevice::WriteUser
                                     | QFileDevice::ReadGroup | QFileDevice::WriteGroup | QFileDevice::ReadOther);
                 LocalFileHandler().setPermissionsRecursive(destUrl, permissions);
@@ -156,12 +156,12 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
 
 void BurnEventReceiver::handleMountImage(quint64 winId, const QUrl &isoUrl)
 {
-    qInfo() << "Mount image:" << isoUrl;
+    fmInfo() << "Mount image:" << isoUrl;
     QString archiveuri;
     auto info { InfoFactory::create<FileInfo>(isoUrl) };
     if (info && info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
         archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->urlOf(UrlInfoType::kRedirectedFileUrl).toString()));
-        qInfo() << "Mount image redirect the url to:" << info->urlOf(UrlInfoType::kRedirectedFileUrl);
+        fmInfo() << "Mount image redirect the url to:" << info->urlOf(UrlInfoType::kRedirectedFileUrl);
     } else {
         archiveuri = "archive://" + QString(QUrl::toPercentEncoding(isoUrl.toString()));
     }
@@ -182,7 +182,7 @@ void BurnEventReceiver::handleMountImage(quint64 winId, const QUrl &isoUrl)
                 QUrl mpt = QUrl::fromLocalFile(info.value(DeviceProperty::kMountPoint).toString());
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, mpt);
             } else {
-                qWarning() << "archive mount: cannot query mount info: " << doubleEncodedUri;
+                fmWarning() << "archive mount: cannot query mount info: " << doubleEncodedUri;
             }
         }
         gioproc->deleteLater();
