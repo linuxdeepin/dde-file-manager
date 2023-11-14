@@ -41,6 +41,14 @@ else()
     message("COMPILE ON v20")
 endif()
 
+# TODO(zhangs): enable it
+# Disbale qDebug(), qInfo(), qWaring(), qCritical()
+# Use qCDebug() instead of qDebug()
+option(DISABLE_DEBUG_MACRO "Disable Debug Macro" Off)
+if(DISABLE_DEBUG_MACRO)
+    add_definitions(-DDFM_DISABLE_DEBUG_MACRO)
+endif()
+
 include(GNUInstallDirs)
 
 # dbus xml dir

@@ -131,7 +131,7 @@ void DumpISOOptDialog::onButtonClicked(int index, const QString &text)
     if (index == 1) {
         QUrl image { UrlRoute::fromUserInput(fileChooser->text()) };
         if (curDev.isEmpty() || !image.isValid())
-            qWarning() << "Error params: " << curDev << image;
+            fmWarning() << "Error params: " << curDev << image;
         BurnJobManager::instance()->startDumpISOImage(curDev, image);
     }
 }
@@ -151,7 +151,7 @@ void DumpISOOptDialog::onFileChoosed(const QString &fileName)
     // check repetat name iso
     while (info->exists()) {
         if (serial >= kMaxSerial) {
-            qWarning() << "Repeat name files too much!";
+            fmWarning() << "Repeat name files too much!";
             return;
         }
         QString discName { curDiscName + "(" + QString::number(serial) + ")" };
@@ -168,7 +168,7 @@ void DumpISOOptDialog::onPathChanged(const QString &path)
     const QUrl &url { UrlRoute::fromUserInput(path) };
     if (url.isEmpty() || !url.isValid() || !dfmbase::FileUtils::isLocalFile(url)
         || DeviceUtils::isLowSpeedDevice(url) || DeviceUtils::isSamba(url)) {
-        qWarning() << "Path:" << path << "is prohibited";
+        fmWarning() << "Path:" << path << "is prohibited";
         createImgBtn->setEnabled(false);
         return;
     }

@@ -22,8 +22,10 @@
 #include <QWidget>
 #include <QTimer>
 
-using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
+namespace dfmplugin_burn {
+
+DFM_LOG_REISGER_CATEGORY(DPBURN_NAMESPACE)
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPBURN_NAMESPACE) };
 
@@ -47,7 +49,7 @@ bool Burn::start()
     QString err;
     auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.burn", &err);
     if (!ret)
-        qWarning() << "create dconfig failed: " << err;
+        fmWarning() << "create dconfig failed: " << err;
 
     return true;
 }
@@ -102,9 +104,11 @@ void Burn::onPersistenceDataChanged(const QString &group, const QString &key, co
     if (group != Persistence::kBurnStateGroup)
         return;
 
-    qInfo() << "Burn working state changed: " << key << value;
+    fmInfo() << "Burn working state changed: " << key << value;
     auto &&map { value.toMap() };
     auto &&id { map[Persistence::kIdKey].toString() };
     auto &&working { map[Persistence::kWoringKey].toBool() };
     emit DevMngIns->opticalDiscWorkStateChanged(id, key, working);
 }
+
+}   // namespace dfmplugin_burn

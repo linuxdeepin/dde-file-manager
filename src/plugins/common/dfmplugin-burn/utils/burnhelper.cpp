@@ -192,7 +192,7 @@ void BurnHelper::updateBurningStateToPersistence(const QString &id, const QStrin
 void BurnHelper::mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUrl> &targetList)
 {
     if (!srcList.isEmpty() && (srcList.size() != targetList.size())) {
-        qWarning() << "Src url size != targt url size";
+        fmWarning() << "Src url size != targt url size";
         return;
     }
 
@@ -200,12 +200,12 @@ void BurnHelper::mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUr
     static QRegularExpression reg("_dev_sr[0-9]*");
     QRegularExpressionMatch match;
     if (!firsDestPath.contains(reg, &match)) {
-        qWarning() << "Cannot map _dev_sr[0-9]";
+        fmWarning() << "Cannot map _dev_sr[0-9]";
         return;
     }
     QString dev { match.captured().replace("_", "/") };
     if (dev.isEmpty()) {
-        qWarning() << "Empty dev";
+        fmWarning() << "Empty dev";
         return;
     }
 

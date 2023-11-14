@@ -13,7 +13,7 @@
 #define DFMBASE_END_NAMESPACE }
 #define DFMBASE_USE_NAMESPACE using namespace DFMBASE_NAMESPACE;
 
-#include <QLoggingCategory>
+#include <dfm-base/dfm_log_defines.h>
 
 Q_DECLARE_LOGGING_CATEGORY(logDFMBase)
 

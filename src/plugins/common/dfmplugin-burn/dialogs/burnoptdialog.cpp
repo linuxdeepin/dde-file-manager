@@ -264,7 +264,7 @@ DFMBURN::BurnOptions BurnOptDialog::currentBurnOptions()
 
 void BurnOptDialog::startDataBurn()
 {
-    qInfo() << "Start Burn files";
+    fmInfo() << "Start Burn files";
     const QString &volName = volnameEdit->text().trimmed().isEmpty()
             ? lastVolName
             : volnameEdit->text().trimmed();
@@ -283,7 +283,7 @@ void BurnOptDialog::startDataBurn()
 
 void BurnOptDialog::startImageBurn()
 {
-    qInfo() << "Start burn image";
+    fmInfo() << "Start burn image";
     BurnJobManager::Config conf;
     conf.speeds = speedMap[writespeedComb->currentText()];
     conf.opts = currentBurnOptions();

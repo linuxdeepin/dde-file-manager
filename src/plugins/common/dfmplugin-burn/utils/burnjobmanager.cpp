@@ -163,7 +163,7 @@ bool BurnJobManager::deleteStagingDir(const QUrl &url)
     // we cannot delete image file
     bool isDir { DFMIO::DFileInfo(url).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsDir).toBool() };
     if (!isDir) {
-        qInfo() << "Don't delelete img url: " << url;
+        fmInfo() << "Don't delelete img url: " << url;
         return false;
     }
 
@@ -171,16 +171,16 @@ bool BurnJobManager::deleteStagingDir(const QUrl &url)
     static QRegularExpression reg("_dev_sr[0-9]*");
     QRegularExpressionMatch match;
     if (!path.contains(reg, &match)) {
-        qWarning() << "Cannot delete dir (not staging dir)" << path;
+        fmWarning() << "Cannot delete dir (not staging dir)" << path;
         return false;
     }
 
     if (!LocalFileHandler().deleteFileRecursive(url)) {
-        qWarning() << "Delete " << url << "failed!";
+        fmWarning() << "Delete " << url << "failed!";
         return false;
     }
 
-    qInfo() << "Delete cache folder: " << url << "success";
+    fmInfo() << "Delete cache folder: " << url << "success";
     return true;
 }
 
@@ -258,7 +258,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
     d.addButton(QObject::tr("Close", "button"));
     d.addButton(tr("View Image File", "button"), true, DDialog::ButtonType::ButtonRecommend);
     connect(&d, &DDialog::buttonClicked, this, [imageUrl](int index, const QString &text) {
-        qInfo() << "button clicked" << text;
+        fmInfo() << "button clicked" << text;
         if (index == 1) {
             const auto &fileInfo { InfoFactory::create<FileInfo>(imageUrl) };
             QUrl parentUrl { fileInfo->urlOf(UrlInfoType::kParentUrl) };

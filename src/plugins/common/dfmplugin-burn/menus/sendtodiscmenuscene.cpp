@@ -113,7 +113,7 @@ void SendToDiscMenuScenePrivate::addToSendto(QMenu *menu)
     }
 
     if (!sendTo) {
-        qWarning() << "cannot find sendTo menu!!";
+        fmWarning() << "cannot find sendTo menu!!";
         return;
     }
 
