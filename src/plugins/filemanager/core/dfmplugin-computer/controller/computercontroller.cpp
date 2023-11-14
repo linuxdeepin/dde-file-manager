@@ -268,12 +268,14 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                                                &passwd,
                                                &cancelled);
             if (cancelled) {
-                qInfo() << "give up unlock device" << info->extraProperty(DeviceProperty::kDevice);
+                fmInfo() << "give up unlock device" << info->extraProperty(DeviceProperty::kDevice);
                 return;
             }
 
-            if (!hooked)
+            if (!hooked) {
                 passwd = DialogManagerInstance->askPasswordForLockedDevice(driveName);
+                fmInfo() << "password offered by other module.";
+            }
 
             if (passwd.isEmpty()) {
                 ComputerUtils::setCursorState();
