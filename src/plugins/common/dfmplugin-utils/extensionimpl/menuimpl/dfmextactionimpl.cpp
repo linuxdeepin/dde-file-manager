@@ -48,7 +48,7 @@ DFMExtActionImplPrivate::DFMExtActionImplPrivate(DFMExtActionImpl *qImpl, QActio
 DFMExtActionImplPrivate::~DFMExtActionImplPrivate()
 {
     q = nullptr;
-    qDebug() << "release extend action" << action->text();
+    fmDebug() << "release extend action" << action->text();
 }
 
 DFMExtActionImpl *DFMExtActionImplPrivate::actionImpl() const

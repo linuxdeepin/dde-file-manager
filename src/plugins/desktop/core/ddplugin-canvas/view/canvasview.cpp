@@ -74,14 +74,14 @@ QModelIndex CanvasView::indexAt(const QPoint &point) const
         if (QWidget *editor = indexWidget(rowIndex))
             identify << editor->geometry();
         if (checkRect(identify, point)) {
-            //qDebug() << "preesed on editor" << rowIndex;
+            //fmDebug() << "preesed on editor" << rowIndex;
             return rowIndex;
         }
     } else if (itemDelegate()->mayExpand(&rowIndex)) {   // second
         // get the expended rect.
         auto listRect = itemPaintGeomertys(rowIndex);
         if (checkRect(listRect, point)) {
-            //qDebug() << "preesed on expand index" << rowIndex;
+            //fmDebug() << "preesed on expand index" << rowIndex;
             return rowIndex;
         }
     }
@@ -95,7 +95,7 @@ QModelIndex CanvasView::indexAt(const QPoint &point) const
 
         auto listRect = itemPaintGeomertys(rowIndex);
         if (checkRect(listRect, point)) {
-            //qDebug() << "pressed on" << item << rowIndex;
+            //fmDebug() << "pressed on" << item << rowIndex;
             return rowIndex;
         }
     }
@@ -109,7 +109,7 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
 
     QModelIndex current = currentIndex();
     if (!current.isValid()) {
-        qDebug() << "current index is invalid.";
+        fmDebug() << "current index is invalid.";
         return d->firstIndex();
     }
 
@@ -118,12 +118,12 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
         QPair<int, QPoint> postion;
         auto currentItem = model()->fileUrl(current).toString();
         if (Q_UNLIKELY(!GridIns->point(currentItem, postion))) {
-            qWarning() << "can not find pos for" << currentItem;
+            fmWarning() << "can not find pos for" << currentItem;
             return d->firstIndex();
         }
 
         if (Q_UNLIKELY(postion.first != screenNum())) {
-            qWarning() << currentItem << "item is not on" << screenNum() << postion.first;
+            fmWarning() << currentItem << "item is not on" << screenNum() << postion.first;
             return d->firstIndex();
         }
         pos = postion.second;
@@ -189,7 +189,7 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
     if (pos == d->overlapPos())
         return d->lastIndex();
 
-    //qDebug() << "cursorAction" << cursorAction << "KeyboardModifiers" << modifiers << currentItem;
+    //fmDebug() << "cursorAction" << cursorAction << "KeyboardModifiers" << modifiers << currentItem;
     return model()->index(currentItem);
 }
 
@@ -213,7 +213,7 @@ void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionF
 {
     //! do not enable QAbstractItemView using this to select.
     //! it will disturb selections of CanvasView
-    //qWarning() << "do not using this" << rect.normalized();
+    //fmWarning() << "do not using this" << rect.normalized();
     return;
 
     //    QItemSelection selection;
@@ -360,7 +360,7 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
         closePersistentEditor(currentIndex());
 
     if (d->hookIfs && d->hookIfs->startDrag(screenNum(), supportedActions)) {
-        qDebug() << "start drag by extend.";
+        fmDebug() << "start drag by extend.";
         return;
     }
 
@@ -674,7 +674,7 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
             // file info and url changed,but pos will not change
             const QModelIndex &renamedIndex = indexAt(pos);
             if (!renamedIndex.isValid()) {
-                qWarning() << "renamed index is invalid.";
+                fmWarning() << "renamed index is invalid.";
                 return;
             }
             const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
@@ -788,10 +788,10 @@ void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &ge
     // canvas size is view size minus geometry margins.
     QSize canvasSize(viewSize.width() - geometryMargins.left() - geometryMargins.right(),
                      viewSize.height() - geometryMargins.top() - geometryMargins.bottom());
-    qInfo() << "view size" << viewSize << "canvas size" << canvasSize << "view margin" << geometryMargins << "item size" << itemSize;
+    fmInfo() << "view size" << viewSize << "canvas size" << canvasSize << "view margin" << geometryMargins << "item size" << itemSize;
 
     if (canvasSize.width() < 1 || canvasSize.height() < 1) {
-        qCritical() << "canvas size is invalid.";
+        fmCritical() << "canvas size is invalid.";
         return;
     }
 
@@ -803,7 +803,7 @@ void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &ge
     int columnCount = (canvasSize.width() - dockReserveSize.width()) / miniGridWidth;
     int gridWidth = 1;
     if (Q_UNLIKELY(columnCount < 1)) {
-        qCritical() << " column count is 0. set it to 1 and set grid width to " << canvasSize.width();
+        fmCritical() << " column count is 0. set it to 1 and set grid width to " << canvasSize.width();
         gridWidth = canvasSize.width();
         columnCount = 1;
     } else {
@@ -821,7 +821,7 @@ void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &ge
     // it leads to fewer row count and rise the grid margin.
     int rowCount = (canvasSize.height() - dockReserveSize.height()) / miniGridHeight;
     if (Q_UNLIKELY(rowCount < 1)) {
-        qCritical() << "row count is 0. set it to 1 and set grid height to" << canvasSize.height();
+        fmCritical() << "row count is 0. set it to 1 and set grid height to" << canvasSize.height();
         gridHeight = canvasSize.height();
         rowCount = 1;
     } else {
@@ -837,7 +837,7 @@ void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &ge
     // margins around the view，canvas gemotry is view gemotry minus viewMargins.
     viewMargins = geometryMargins + calcMargins(QSize(gridWidth * columnCount, gridHeight * rowCount), canvasSize);
 
-    qInfo() << "grid size change from" << QSize(canvasInfo.columnCount, canvasInfo.rowCount) << "to" << QSize(columnCount, rowCount);
+    fmInfo() << "grid size change from" << QSize(canvasInfo.columnCount, canvasInfo.rowCount) << "to" << QSize(columnCount, rowCount);
     canvasInfo = CanvasInfo(columnCount, rowCount, gridWidth, gridHeight);
 }
 

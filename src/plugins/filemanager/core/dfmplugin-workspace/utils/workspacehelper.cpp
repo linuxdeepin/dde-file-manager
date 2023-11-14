@@ -46,7 +46,7 @@ CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
 {
     const KeyType &theType = url.scheme();
     if (!topWidgetCreators.contains(theType)) {
-        qWarning() << "Scheme: " << theType << "not registered!";
+        fmWarning() << "Scheme: " << theType << "not registered!";
         return nullptr;
     }
     return topWidgetCreators.value(theType)();
@@ -55,7 +55,7 @@ CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
 CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByScheme(const QString &scheme)
 {
     if (!topWidgetCreators.contains(scheme)) {
-        qWarning() << "Scheme: " << scheme << "not registered!";
+        fmWarning() << "Scheme: " << scheme << "not registered!";
         return nullptr;
     }
     return topWidgetCreators.value(scheme)();
@@ -217,7 +217,7 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
 
     if (mode != ViewMode::kIconMode && mode != ViewMode::kListMode
         && mode != ViewMode::kExtendMode && mode != ViewMode::kAllViewMode) {
-        qWarning() << "Config view mode is invalid, reset it to icon mode.";
+        fmWarning() << "Config view mode is invalid, reset it to icon mode.";
         mode = Global::ViewMode::kIconMode;
         Application::instance()->setAppAttribute(Application::kViewMode, static_cast<int>(mode));
     }

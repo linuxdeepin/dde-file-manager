@@ -7,8 +7,10 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
-DPEMBLEM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+namespace dfmplugin_emblem {
+DFM_LOG_REISGER_CATEGORY(DPEMBLEM_NAMESPACE)
 
 void Emblem::initialize()
 {
@@ -20,12 +22,14 @@ bool Emblem::start()
     QString err;
     auto ret = DConfigManager::instance()->addConfig(kConfigPath, &err);
     if (!ret) {
-        qWarning() << "create dconfig failed: " << err;
+        fmWarning() << "create dconfig failed: " << err;
     } else {
         bool hideEmblems = DConfigManager::instance()->value(kConfigPath, kHideSystemEmblems, false).toBool();
         if (hideEmblems)
-           qWarning() << "The system file emblems be hidden by GroupPolicy!";
+            fmWarning() << "The system file emblems be hidden by GroupPolicy!";
     }
 
     return true;
 }
+
+}   // namespace dfmplugin_emblem

@@ -21,7 +21,7 @@ WatermaskContainer::WatermaskContainer(QWidget *parent) : QObject(parent)
 {
     custom = new CustomWaterMaskLabel(parent);
     if (WatermaskSystem::isEnable()) {
-        qInfo() << "use WatermaskSystem.";
+        fmInfo() << "use WatermaskSystem.";
         control = new WatermaskSystem(parent);
 
         custom->lower();
@@ -29,7 +29,7 @@ WatermaskContainer::WatermaskContainer(QWidget *parent) : QObject(parent)
 
         connect(control, &WatermaskSystem::showedOn, custom, &CustomWaterMaskLabel::onSystemMaskShow);
     } else {
-        qInfo() << "use WaterMaskFrame.";
+        fmInfo() << "use WaterMaskFrame.";
         frame = new WaterMaskFrame(kConfFile, parent);
 
         custom->lower();
@@ -48,7 +48,7 @@ bool WatermaskContainer::isEnable()
 
     QFile file(kConfFile);
     if (!file.open(QFile::ReadOnly)) {
-        qWarning() << "WaterMask config file doesn't exist!";
+        fmWarning() << "WaterMask config file doesn't exist!";
         on = 0;
         return on;
     }
@@ -62,7 +62,7 @@ bool WatermaskContainer::isEnable()
         else
             on = 0;
     } else {
-        qCritical() << "config file is invailid" << kConfFile << error.errorString();
+        fmCritical() << "config file is invailid" << kConfFile << error.errorString();
         on = 0;
     }
 

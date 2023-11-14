@@ -90,7 +90,7 @@ QString FileOperationsEventReceiver::newDocmentName(const QUrl &url, const QStri
     if (!dfmbase::FileUtils::isLocalFile(url)) {
         auto &&parentFileInfo { InfoFactory::create<FileInfo>(url) };
         if (!parentFileInfo) {
-            qCritical() << "create parent file info failed!";
+            fmCritical() << "create parent file info failed!";
             return QString();
         }
         localTargetDir = parentFileInfo->pathOf(FileInfo::FilePathInfoType::kFilePath);
@@ -320,7 +320,7 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
 
     // cut file to file current dir
     if (FileUtils::isSameFile(UrlRoute::urlParent(sources[0]), target)) {
-        qWarning() << "cut file to same dir!!!!!!!!!";
+        fmWarning() << "cut file to same dir!!!!!!!!!";
         return nullptr;
     }
 
@@ -1043,7 +1043,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     }
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     info->refresh();
-    qInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
+    fmInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
           static_cast<int>(permissions));
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
@@ -1085,7 +1085,7 @@ bool FileOperationsEventReceiver::handleOperationWriteDataToClipboard(const quin
 {
     Q_UNUSED(windowId);
     if (!data) {
-        qWarning() << " write to clipboard data is nullptr!!!!!!!";
+        fmWarning() << " write to clipboard data is nullptr!!!!!!!";
         return false;
     }
 

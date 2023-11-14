@@ -52,7 +52,7 @@ bool WatermaskSystem::showLicenseState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
     DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
-    qInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
+    fmInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
 
     bool ret = (DSysInfo::DeepinType::DeepinProfessional == deepinType
                 || DSysInfo::DeepinType::DeepinPersonal == deepinType
@@ -61,7 +61,7 @@ bool WatermaskSystem::showLicenseState()
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 7, 0))
     // 教育版
     ret = ret || DSysInfo::UosEdition::UosEducation == uosEdition;
-    qInfo() << "check uos Edition" << ret;
+    fmInfo() << "check uos Edition" << ret;
 #endif
 
     return ret;
@@ -145,7 +145,7 @@ void WatermaskSystem::refresh()
 {
     loadConfig();
 
-    qInfo() << "request state..";
+    fmInfo() << "request state..";
     DeepinLicenseHelper::instance()->delayGetState();
 }
 
@@ -210,7 +210,7 @@ void WatermaskSystem::findResource(const QString &dirPath, const QString &lang, 
 void WatermaskSystem::stateChanged(int state, int prop)
 {
     bool showSate = showLicenseState();
-    qInfo() << "reply ActiveState is" << state << prop << "show" << showSate <<  QLocale::system().name().simplified() << this;
+    fmInfo() << "reply ActiveState is" << state << prop << "show" << showSate <<  QLocale::system().name().simplified() << this;
     static QMap<int, QString> docs = {
         {DeepinLicenseHelper::LicenseProperty::Secretssecurity, QString("secretssecurity")},
         {DeepinLicenseHelper::LicenseProperty::Government, QString("government")},
@@ -255,7 +255,7 @@ void WatermaskSystem::stateChanged(int state, int prop)
             }
                 break;
             default:
-                qWarning() << "unkown active state:" << state;
+                fmWarning() << "unkown active state:" << state;
             }
         }
     }

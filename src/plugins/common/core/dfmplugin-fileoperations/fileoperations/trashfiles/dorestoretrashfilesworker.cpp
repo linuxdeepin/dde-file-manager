@@ -49,7 +49,7 @@ bool DoRestoreTrashFilesWorker::statisticsFilesSize()
 {
     sourceFilesCount = sourceUrls.size();
     if (sourceUrls.count() == 0) {
-        qWarning() << "sources files list is empty!";
+        fmWarning() << "sources files list is empty!";
         return false;
     }
 

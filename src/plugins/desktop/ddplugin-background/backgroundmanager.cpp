@@ -123,7 +123,7 @@ void BackgroundManager::onBackgroundBuild()
 {
     // get wallpapers
     if (d->bridge->isForce() && d->bridge->isRunning())
-        qWarning() << "a force requestion is running. skip to get wallpaper.";
+        fmWarning() << "a force requestion is running. skip to get wallpaper.";
     else
         d->bridge->request(d->backgroundPaths.isEmpty());
 
@@ -133,13 +133,13 @@ void BackgroundManager::onBackgroundBuild()
         if (primary == nullptr) {
             // get screen failed,clear all widget
             d->backgroundWidgets.clear();
-            qCritical() << "get primary screen failed return.";
+            fmCritical() << "get primary screen failed return.";
             return;
         }
 
         const QString &screeName = getScreenName(primary);
         if (screeName.isEmpty()) {
-            qWarning() << "can not get screen name from root window";
+            fmWarning() << "can not get screen name from root window";
             return;
         }
 
@@ -161,7 +161,7 @@ void BackgroundManager::onBackgroundBuild()
 
             const QString screenName = getScreenName(win);
             if (screenName.isEmpty()) {
-                qWarning() << "can not get screen name from root window";
+                fmWarning() << "can not get screen name from root window";
                 continue;
             }
 
@@ -174,7 +174,7 @@ void BackgroundManager::onBackgroundBuild()
                 bwp->setParent(win);
             } else {
                 // add new widget
-                qInfo() << "screen:" << screenName << "  added, create it.";
+                fmInfo() << "screen:" << screenName << "  added, create it.";
                 bwp = createBackgroundWidget(win);
                 d->backgroundWidgets.insert(screenName, bwp);
             }
@@ -186,7 +186,7 @@ void BackgroundManager::onBackgroundBuild()
             for (const QString &sp : d->backgroundWidgets.keys()) {
                 if (!winMap.contains(sp)) {
                     d->backgroundWidgets.take(sp);
-                    qInfo() << "remove screen:" << sp;
+                    fmInfo() << "remove screen:" << sp;
                 }
             }
         }
@@ -233,7 +233,7 @@ bool BackgroundManager::useColorBackground()
 void BackgroundManager::onBackgroundChanged()
 {
     if (d->bridge->isRunning()) {
-        qWarning() << "there is running requetion, redo after it's finished.";
+        fmWarning() << "there is running requetion, redo after it's finished.";
         d->bridge->setRepeat();
     } else {
         d->bridge->request(true);
@@ -248,20 +248,20 @@ void BackgroundManager::onGeometryChanged()
         BackgroundWidgetPointer bw = itor.value();
         auto *win = winMap.value(itor.key());
         if (win == nullptr) {
-            qCritical() << "can not get root " << itor.key() << getScreenName(win);
+            fmCritical() << "can not get root " << itor.key() << getScreenName(win);
             continue;
         }
 
         if (bw.get() != nullptr) {
             QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
             if (bw->geometry() == geometry) {
-                qDebug() << "background geometry is equal to root widget geometry,and discard changes" << bw->geometry()
+                fmDebug() << "background geometry is equal to root widget geometry,and discard changes" << bw->geometry()
                          << win->geometry() << win->property(DesktopFrameProperty::kPropScreenName).toString()
                          << win->property(DesktopFrameProperty::kPropScreenGeometry).toRect() << win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect()
                          << win->property(DesktopFrameProperty::kPropScreenAvailableGeometry);
                 continue;
             }
-            qInfo() << "background geometry change from" << bw->geometry() << "to" << geometry
+            fmInfo() << "background geometry change from" << bw->geometry() << "to" << geometry
                     << "screen name" << getScreenName(win) << "screen geometry" << win->geometry();
             bw->setGeometry(geometry);
             changed = true;
@@ -284,7 +284,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
 
     QRect geometry = d->relativeGeometry(root->geometry());   // scaled area
     bwp->setGeometry(geometry);
-    qDebug() << "screen name" << screenName << "geometry" << geometry << root->geometry() << bwp.get();
+    fmDebug() << "screen name" << screenName << "geometry" << geometry << root->geometry() << bwp.get();
 
     return bwp;
 }
@@ -299,7 +299,7 @@ BackgroundBridge::BackgroundBridge(BackgroundManagerPrivate *ptr)
 
 BackgroundBridge::~BackgroundBridge()
 {
-    qInfo() << "wait for finishing";
+    fmInfo() << "wait for finishing";
     getting = false;
     future.waitForFinished();
 }
@@ -314,7 +314,7 @@ void BackgroundBridge::request(bool refresh)
         req.screen = getScreenName(root);
 
         if (req.screen.isEmpty()) {
-            qWarning() << "can not get screen name from root window";
+            fmWarning() << "can not get screen name from root window";
             continue;
         }
 
@@ -342,7 +342,7 @@ void BackgroundBridge::forceRequest()
         req.screen = sc->name();
 
         if (req.screen.isEmpty()) {
-            qWarning() << "can not get screen name from root window";
+            fmWarning() << "can not get screen name from root window";
             continue;
         }
 
@@ -360,7 +360,7 @@ void BackgroundBridge::forceRequest()
 
 void BackgroundBridge::terminate(bool wait)
 {
-    qInfo() << "terminate last requestion, wait:" << wait << "running:" << getting << future.isRunning() << "force" << force;
+    fmInfo() << "terminate last requestion, wait:" << wait << "running:" << getting << future.isRunning() << "force" << force;
     if (!getting)
         return;
 
@@ -391,7 +391,7 @@ QPixmap BackgroundBridge::getPixmap(const QString &path, const QPixmap &defalutP
 
 void BackgroundBridge::onFinished(void *pData)
 {
-    qInfo() << "finished to get backround.." << pData << "force:" << force;
+    fmInfo() << "finished to get backround.." << pData << "force:" << force;
     force = false;
 
     QList<Requestion> *images = reinterpret_cast<QList<Requestion> *>(pData);
@@ -413,7 +413,7 @@ void BackgroundBridge::onFinished(void *pData)
     delete images;
 
     if (repeat) {
-        qInfo() << "need to request again.";
+        fmInfo() << "need to request again.";
         repeat = false;
         request(true);
     }
@@ -421,7 +421,7 @@ void BackgroundBridge::onFinished(void *pData)
 
 void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
 {
-    qInfo() << "getting background in work thread...." << QThread::currentThreadId();
+    fmInfo() << "getting background in work thread...." << QThread::currentThreadId();
     QList<Requestion> recorder;
     for (Requestion &req : reqs) {
         // check stop
@@ -433,7 +433,7 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
 
         QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path);
         if (backgroundPixmap.isNull()) {
-            qCritical() << "screen " << req.screen << "backfround path" << req.path
+            fmCritical() << "screen " << req.screen << "backfround path" << req.path
                         << "can not read!";
             continue;
         }
@@ -458,7 +458,7 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
                                  trueSize.height()));
         }
 
-        qDebug() << req.screen << "background path" << req.path << "truesize" << trueSize;
+        fmDebug() << req.screen << "background path" << req.path << "truesize" << trueSize;
         req.pixmap = pix;
         recorder.append(req);
     }

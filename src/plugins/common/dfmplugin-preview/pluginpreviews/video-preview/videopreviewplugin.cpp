@@ -5,7 +5,8 @@
 #include "videopreviewplugin.h"
 
 DFMBASE_USE_NAMESPACE
-using namespace plugin_filepreview;
+namespace plugin_filepreview {
+DFM_LOG_REISGER_CATEGORY(PREVIEW_NAMESPACE)
 
 AbstractBasePreview *VideoPreviewPlugin::create(const QString &key)
 {
@@ -13,3 +14,4 @@ AbstractBasePreview *VideoPreviewPlugin::create(const QString &key)
 
     return new VideoPreview();
 }
+}   // namespace plugin_filepreview

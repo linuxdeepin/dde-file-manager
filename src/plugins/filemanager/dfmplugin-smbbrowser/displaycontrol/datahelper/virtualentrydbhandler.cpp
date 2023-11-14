@@ -33,7 +33,7 @@ void VirtualEntryDbHandler::clearData()
 {
     Q_ASSERT(handler);
 
-    pddmDbg << "clear all virtual entry:" << handler->dropTable<VirtualEntryData>();
+    fmDebug() << "clear all virtual entry:" << handler->dropTable<VirtualEntryData>();
 }
 
 void VirtualEntryDbHandler::clearData(const QString &stdSmb)
@@ -42,7 +42,7 @@ void VirtualEntryDbHandler::clearData(const QString &stdSmb)
 
     VirtualEntryData data;
     data.setKey(stdSmb);
-    pddmDbg << "remove virtual entry:" << handler->remove<VirtualEntryData>(data) << stdSmb;
+    fmDebug() << "remove virtual entry:" << handler->remove<VirtualEntryData>(data) << stdSmb;
 }
 
 void VirtualEntryDbHandler::removeData(const QString &stdSmb)
@@ -61,7 +61,7 @@ void VirtualEntryDbHandler::removeData(const QString &stdSmb)
                                [smbHost](const QString &smb) { return smb.startsWith(smbHost + "/"); });
     if (!notLast) {
         handler->remove<VirtualEntryData>(field("key") == smbHost);
-        pddmDbg << "remove host entry:" << smbHost;
+        fmDebug() << "remove host entry:" << smbHost;
     }
 }
 
@@ -92,7 +92,7 @@ QList<QSharedPointer<VirtualEntryData>> VirtualEntryDbHandler::virtualEntries()
     Q_ASSERT(handler);
 
     auto ret = handler->query<VirtualEntryData>().toBeans();
-    pddmDbg << "query all virtual entries:" << ret.count();
+    fmDebug() << "query all virtual entries:" << ret.count();
     return ret;
 }
 
@@ -150,7 +150,7 @@ bool VirtualEntryDbHandler::checkDbExists()
     handler = new SqliteHandle(dbFilePath);
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError()) {
-        pddmWar << "The database is invalid! open error";
+        fmWarning() << "The database is invalid! open error";
         return false;
     }
     db.close();
@@ -169,7 +169,7 @@ bool VirtualEntryDbHandler::createTable()
 VirtualEntryDbHandler::VirtualEntryDbHandler(QObject *parent)
     : QObject(parent)
 {
-    pddmDbg << "start checking db info";
+    fmDebug() << "start checking db info";
     checkDbExists();
-    pddmDbg << "end checking db info";
+    fmDebug() << "end checking db info";
 }

@@ -8,7 +8,8 @@
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
-using namespace dfmplugin_detailspace;
+namespace dfmplugin_detailspace {
+DFM_LOG_REISGER_CATEGORY(DPDETAILSPACE_NAMESPACE)
 DFMBASE_USE_NAMESPACE
 
 void DetailSpace::initialize()
@@ -26,3 +27,5 @@ void DetailSpace::onWindowClosed(quint64 windId)
 {
     DetailSpaceHelper::removeDetailSpace(windId);
 }
+
+}   // namespace dfmplugin_detailspace

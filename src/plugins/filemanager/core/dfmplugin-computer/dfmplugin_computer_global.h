@@ -5,6 +5,8 @@
 #ifndef DFMPLUGIN_COMPUTER_GLOBAL_H
 #define DFMPLUGIN_COMPUTER_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPCOMPUTER_NAMESPACE dfmplugin_computer
 
 #define DPCOMPUTER_BEGIN_NAMESPACE namespace DPCOMPUTER_NAMESPACE {
@@ -15,6 +17,7 @@
 #include <QUrl>
 
 DPCOMPUTER_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPCOMPUTER_NAMESPACE)
 
 struct DeviceInfo
 {

@@ -87,7 +87,7 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
 
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(ComputerUtils::menuSceneName());
     if (!scene) {
-        qWarning() << "Craete scene for computer failed: " << ComputerUtils::menuSceneName();
+        fmWarning() << "Craete scene for computer failed: " << ComputerUtils::menuSceneName();
         return;
     }
 
@@ -125,7 +125,7 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
 
     QString newName(name);
     if (newName.trimmed().isEmpty()) {
-        qInfo() << "empty name is inputed" << name << ", ignore rename action." << url;
+        fmInfo() << "empty name is inputed" << name << ", ignore rename action." << url;
         return;
     }
 
@@ -144,20 +144,20 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
         DevMngIns->renameBlockDevAsync(devId, name, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             ComputerUtils::setCursorState();
             if (!ok)
-                qWarning() << "rename block device failed: " << devId << err.message << err.code;
+                fmWarning() << "rename block device failed: " << devId << err.message << err.code;
         });
     };
 
     if (!shouldSetAlias && info->targetUrl().isValid()) {
         // renaming a mounted device, do unmount first.
-        qDebug() << "rename: do unmount device before rename:" << url;
+        fmDebug() << "rename: do unmount device before rename:" << url;
         DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(url),
                                         { { OperateParamField::kUnmountWithoutLock, true } },
                                         [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
                                             if (ok) {
                                                 rename();
                                             } else {
-                                                qInfo() << "rename: cannot unmount device before rename: " << err.message << err.code;
+                                                fmInfo() << "rename: cannot unmount device before rename: " << err.message << err.code;
                                                 DialogManager::instance()->showErrorDialog(tr("Rename failed"), tr("The device is busy and cannot be renamed now"));
                                             }
                                         });
@@ -177,7 +177,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 
     QString uuid = info->extraProperty(DeviceProperty::kUUID).toString();
     if (uuid.isEmpty()) {
-        qWarning() << "params exception!" << info->urlOf(UrlInfoType::kUrl);
+        fmWarning() << "params exception!" << info->urlOf(UrlInfoType::kUrl);
         return;
     }
 
@@ -212,7 +212,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
         map[kAliasItemName] = displayName;
         map[kAliasItemAlias] = displayAlias;
         list.append(map);
-        qInfo() << "append setting item: " << map;
+        fmInfo() << "append setting item: " << map;
     }
 
     Application::genericSetting()->setValue(kAliasGroupName, kAliasItemName, list);
@@ -231,7 +231,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act)
 {
     if (!info) {
-        qCritical() << "a null info pointer is transfered";
+        fmCritical() << "a null info pointer is transfered";
         return;
     }
 
@@ -280,7 +280,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                     this->mountDevice(winId, newId, shellId, act);
                 } else {
                     DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password"));
-                    qInfo() << "unlock device failed: " << shellId << err.message << err.code;
+                    fmInfo() << "unlock device failed: " << shellId << err.message << err.code;
                 }
             });
         } else {
@@ -326,7 +326,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
                 ComputerUtils::setCursorState();
                 return;
             }
-            qInfo() << "mount device failed: " << id << err.message << err.code;
+            fmInfo() << "mount device failed: " << id << err.message << err.code;
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
             return;
         }
@@ -358,12 +358,12 @@ void ComputerController::actEject(const QUrl &url)
         id = ComputerUtils::getProtocolDevIdByUrl(url);
         DevMngIns->unmountProtocolDevAsync(id, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             if (!ok) {
-                qInfo() << "unmount protocol device failed: " << id << err.message << err.code;
+                fmInfo() << "unmount protocol device failed: " << id << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
         });
     } else {
-        qDebug() << url << "is not support ";
+        fmDebug() << url << "is not support ";
     }
 }
 
@@ -423,12 +423,12 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                 if (ok) {
                     DevMngIns->lockBlockDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
                         if (!ok)
-                            qInfo() << "lock device failed: " << devId << err.message << err.code;
+                            fmInfo() << "lock device failed: " << devId << err.message << err.code;
                     });
                 } else {
                     if (err.code == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
                         return;
-                    qInfo() << "unmount cleartext device failed: " << cleartextId << err.message << err.code;
+                    fmInfo() << "unmount cleartext device failed: " << cleartextId << err.message << err.code;
                     DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
                 }
             });
@@ -437,7 +437,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                 if (!ok) {
                     if (err.code == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
                         return;
-                    qInfo() << "unmount device failed: " << devId << err.message << err.code;
+                    fmInfo() << "unmount device failed: " << devId << err.message << err.code;
                     DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
                 }
             });
@@ -446,12 +446,12 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         devId = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
         DevMngIns->unmountProtocolDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             if (!ok) {
-                qInfo() << "unmount protocol device failed: " << devId << err.message << err.code;
+                fmInfo() << "unmount protocol device failed: " << devId << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
         });
     } else {
-        qDebug() << info->urlOf(UrlInfoType::kUrl) << "is not support ";
+        fmDebug() << info->urlOf(UrlInfoType::kUrl) << "is not support ";
     }
 }
 
@@ -463,7 +463,7 @@ void ComputerController::actSafelyRemove(DFMEntryFileInfoPointer info)
 void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar)
 {
     if (!info) {
-        qWarning() << "info is not valid!";
+        fmWarning() << "info is not valid!";
         return;
     }
 
@@ -479,12 +479,12 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
 {
     if (info->nameOf(NameInfoType::kSuffix) != SuffixInfo::kBlock) {
-        qWarning() << "non block device is not support format" << info->urlOf(UrlInfoType::kUrl);
+        fmWarning() << "non block device is not support format" << info->urlOf(UrlInfoType::kUrl);
         return;
     }
     auto url = info->urlOf(UrlInfoType::kUrl);
     QString devDesc = "/dev/" + url.path().remove("." + QString(SuffixInfo::kBlock));
-    qDebug() << "format: device:" << devDesc;
+    fmDebug() << "format: device:" << devDesc;
 
     QString cmd = "dde-device-formatter";
     QStringList args;
@@ -494,20 +494,20 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
         if (ok) {
             QProcess::startDetached(cmd, args);
         } else {
-            qInfo() << "format: cannot unmount/lock device before format: " << err.message << err.code;
+            fmInfo() << "format: cannot unmount/lock device before format: " << err.message << err.code;
             DialogManager::instance()->showErrorDialog(tr("Format failed"), tr("The device is busy and cannot be formatted now"));
         }
     };
 
     const QString &devId = ComputerUtils::getBlockDevIdByUrl(url);
     if (info->targetUrl().isValid()) {
-        qDebug() << "format: do unmount device before format." << url;
+        fmDebug() << "format: do unmount device before format." << url;
         DevMngIns->unmountBlockDevAsync(devId, {}, callback);
         return;
     } else if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
                && info->extraProperty(DeviceProperty::kCleartextDevice).toString() != "/") {   // unlocked encrypted device, do lock first.
         // lock the device.
-        qDebug() << "format: do lock device before format." << url;
+        fmDebug() << "format: do lock device before format." << url;
         DevMngIns->lockBlockDevAsync(devId, {}, callback);
         return;
     }
@@ -542,7 +542,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
         QString host, share;
         bool ok = DeviceUtils::parseSmbInfo(id, host, share);
         if (!ok) {
-            qWarning() << "computer: cannot parse info, cannot forget item" << id;
+            fmWarning() << "computer: cannot parse info, cannot forget item" << id;
             return;
         }
 
@@ -607,7 +607,7 @@ void ComputerController::handleUnAccessableDevCdCall(quint64 winId, DFMEntryFile
     if (!info)
         return;
 
-    qDebug() << "cannot access device: " << info->urlOf(UrlInfoType::kUrl);
+    fmDebug() << "cannot access device: " << info->urlOf(UrlInfoType::kUrl);
     bool needAskForFormat = info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock
             && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
             && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
@@ -627,7 +627,7 @@ void ComputerController::handleNetworkCdCall(quint64 winId, DFMEntryFileInfoPoin
     auto target = info->targetUrl();
     QString ip, port;
     if (!NetworkUtils::instance()->parseIp(target.path(), ip, port)) {
-        qWarning() << "parse ip address failed: " << target;
+        fmWarning() << "parse ip address failed: " << target;
         ComputerEventCaller::cdTo(winId, target);
     } else {
         QStringList ports { port };

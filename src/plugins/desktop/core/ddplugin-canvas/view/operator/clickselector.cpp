@@ -167,25 +167,25 @@ void ClickSelector::traverseSelect(const QModelIndex &from, const QModelIndex &t
     auto item1 = model->fileUrl(from).toString();
     auto item2 = model->fileUrl(to).toString();
     if (item1.isEmpty() || item2.isEmpty()) {
-        qWarning() << "invalid item" << "from:" << item1 << "to:" << item2;
+        fmWarning() << "invalid item" << "from:" << item1 << "to:" << item2;
         return ;
     }
 
     QPair<int, QPoint> pos1;
     if (!GridIns->point(item1, pos1)) {
-        qWarning() << "from" << item1 << "has no pos";
+        fmWarning() << "from" << item1 << "has no pos";
         return;
     }
 
     QPair<int, QPoint> pos2;
     if (!GridIns->point(item2, pos2)) {
-        qWarning() << "to" << item2 << "has no pos";
+        fmWarning() << "to" << item2 << "has no pos";
         return;
     }
 
     int num = view->screenNum();
     if (pos1.first != num || pos2.first != num) {
-        qWarning() << "item pos is not in view" << num;
+        fmWarning() << "item pos is not in view" << num;
         return;
     }
 

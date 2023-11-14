@@ -102,7 +102,7 @@ bool CustomMode::initialize(CollectionModel *m)
         } else if (srcState == 0) {// 0x0 is uninitialized
             model->refresh(model->rootIndex(), true, 0); // refresh source model.
         } else {
-            qDebug() << "source model is refreshing" << srcState;
+            fmDebug() << "source model is refreshing" << srcState;
         }
     }
 
@@ -181,7 +181,7 @@ void CustomMode::rebuild()
     for (const QString &key : d->dataHandler->keys()) {
         const QString &name = d->dataHandler->name(key);
         auto files = d->dataHandler->items(key);
-        qDebug() << "name" << name << "files" << files.size();
+        fmDebug() << "name" << name << "files" << files.size();
 
         // 复用已有分组
         CollectionHolderPointer collectionHolder = d->holders.value(key);
@@ -242,7 +242,7 @@ void CustomMode::onFileInserted(const QModelIndex &parent, int first, int last)
 
     const QList<QUrl> &files = model->files();
     if (first >= files.count() || last >= files.count()) {
-        qWarning() << "insert file err:" << first << last << files.count();
+        fmWarning() << "insert file err:" << first << last << files.count();
         return;
     }
 
@@ -253,7 +253,7 @@ void CustomMode::onFileInserted(const QModelIndex &parent, int first, int last)
         if (d->dataHandler->takePreItem(file, targetKey, targeIndex)) {
             d->dataHandler->insert(file, targetKey, targeIndex);
         } else {
-            qInfo() << "it not belong collection:" << file;
+            fmInfo() << "it not belong collection:" << file;
             continue;
         }
     }

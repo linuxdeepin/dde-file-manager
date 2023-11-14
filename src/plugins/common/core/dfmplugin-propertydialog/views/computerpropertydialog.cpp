@@ -279,23 +279,23 @@ QString ComputerInfoThread::edition() const
                                                  QDBusConnection::systemBus());
                 deepinLicenseInfo.setTimeout(1000);
                 if (!deepinLicenseInfo.isValid()) {
-                    qWarning() << "Dbus com.deepin.license is not valid!";
+                    fmWarning() << "Dbus com.deepin.license is not valid!";
                     return defaultEdition;
                 }
-                qInfo() << "Start call Dbus com.deepin.license AuthorizationState";
+                fmInfo() << "Start call Dbus com.deepin.license AuthorizationState";
                 int activeInfo = deepinLicenseInfo.property("AuthorizationState").toInt();
-                qInfo() << "End call Dbus com.deepin.license AuthorizationState";
+                fmInfo() << "End call Dbus com.deepin.license AuthorizationState";
                 if (kActivated == activeInfo) {
-                    qInfo() << "Start call Dbus com.deepin.license ServiceProperty";
+                    fmInfo() << "Start call Dbus com.deepin.license ServiceProperty";
                     QVariant info = deepinLicenseInfo.property("ServiceProperty");
-                    qInfo() << "End call Dbus com.deepin.license serviceProperty";
+                    fmInfo() << "End call Dbus com.deepin.license serviceProperty";
                     if (info.isValid() && info.toUInt() == kSecretsSecurity) {
                         return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Secrets Security")).arg(DSysInfo::minorVersion());
                     }
 
-                    qInfo() << "Start call Dbus com.deepin.license AuthorizationProperty";
+                    fmInfo() << "Start call Dbus com.deepin.license AuthorizationProperty";
                     uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
-                    qInfo() << "End call Dbus com.deepin.license AuthorizationProperty";
+                    fmInfo() << "End call Dbus com.deepin.license AuthorizationProperty";
                     if (kGovernment == authorizedInfo) {
                         return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Government")).arg(DSysInfo::minorVersion());
                     } else if (kEnterprise == authorizedInfo) {
@@ -332,14 +332,14 @@ QString ComputerInfoThread::cpuInfo() const
     if (DSysInfo::cpuModelName().contains("Hz")) {
         result = DSysInfo::cpuModelName();
     } else {
-        qInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE);
+        fmInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE);
         QDBusInterface interface(SYSTEM_INFO_SERVICE,
                                  SYSTEM_INFO_PATH,
                                  "org.freedesktop.DBus.Properties",
                                  QDBusConnection::sessionBus());
         interface.setTimeout(1000);
         if (!interface.isValid()) {
-            qWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE);
+            fmWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE);
             return "";
         }
 
@@ -369,7 +369,7 @@ QString ComputerInfoThread::cpuInfo() const
         } else {
             result = QString("%1 @ %2GHz").arg(DSysInfo::cpuModelName()).arg(cpuMaxMhz / 1000);
         }
-        qInfo("End call Dbus %s!", SYSTEM_INFO_SERVICE);
+        fmInfo("End call Dbus %s!", SYSTEM_INFO_SERVICE);
     }
 
     return result;

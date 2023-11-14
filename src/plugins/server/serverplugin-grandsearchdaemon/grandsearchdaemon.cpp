@@ -11,11 +11,12 @@
 #include <QTimer>
 
 SERVERPGRANDSEARCH_NAMESPACE_BEGIN_NAMESPACE
+DFM_LOG_REISGER_CATEGORY(SERVERPGRANDSEARCH_NAMESPACE)
 
 void GrandSearchDaemon::initialize()
 {
     if (qApp->arguments().contains("--no-grandsearch")) {
-        qInfo() << "no grand search...";
+        fmInfo() << "no grand search...";
         return;
     }
 
@@ -26,12 +27,12 @@ void GrandSearchDaemon::initialize()
 
         QDir dir(defaultPath);
         libPath = dir.absoluteFilePath("libdde-grand-search-daemon.so");
-        qInfo() << "daemon lib path:" << libPath;
+        fmInfo() << "daemon lib path:" << libPath;
     }
 
     DaemonLibrary *lib = new DaemonLibrary(libPath);
     if (!lib->load()) {
-        qWarning() << "fail to load grand search library.";
+        fmWarning() << "fail to load grand search library.";
         delete lib;
         return;
     }
@@ -43,11 +44,11 @@ void GrandSearchDaemon::initialize()
 bool GrandSearchDaemon::start()
 {
     if (library) {
-        qInfo() << "ready to start grand seach after 1 seconds.";
+        fmInfo() << "ready to start grand seach after 1 seconds.";
         QTimer::singleShot(1000, library, [this]() {
-            qInfo() << "start grand search daemon" << library->version();
+            fmInfo() << "start grand search daemon" << library->version();
             if (library->start(0, nullptr) != 0) {
-                qWarning() << "fail to start.";
+                fmWarning() << "fail to start.";
                 library->deleteLater();
                 library = nullptr;
             }

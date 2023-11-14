@@ -33,7 +33,7 @@ OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
 void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
 {
     if (currentMode == mode) {
-        qDebug() << "The current mode already : " << int(mode);
+        fmDebug() << "The current mode already : " << int(mode);
         return;
     }
 

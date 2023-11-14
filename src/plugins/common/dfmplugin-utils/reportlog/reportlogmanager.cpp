@@ -25,10 +25,10 @@ ReportLogManager::ReportLogManager(QObject *parent)
 ReportLogManager::~ReportLogManager()
 {
     if (reportWorkThread) {
-        qInfo() << "Log thread start to quit";
+        fmInfo() << "Log thread start to quit";
         reportWorkThread->quit();
         reportWorkThread->wait(2000);
-        qInfo() << "Log thread quited.";
+        fmInfo() << "Log thread quited.";
     }
 }
 

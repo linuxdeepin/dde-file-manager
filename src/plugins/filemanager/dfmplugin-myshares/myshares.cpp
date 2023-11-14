@@ -26,12 +26,13 @@
 
 DWIDGET_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QList<QUrl> *)
-
-using namespace dfmplugin_myshares;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
-
+Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(ContextMenuCallback);
+
+namespace dfmplugin_myshares {
+DFM_LOG_REISGER_CATEGORY(DPMYSHARES_NAMESPACE)
+
 void MyShares::initialize()
 {
     // TODO(zhangs): add feature for lazyload plugins depends
@@ -212,3 +213,4 @@ void MyShares::doInitialize()
     followEvents();
     bindWindows();
 }
+}   // namespace dfmplugin_myshares

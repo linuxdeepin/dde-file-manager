@@ -78,14 +78,14 @@ void BackgroundPreview::updateDisplay()
     auto winMap = rootMap();
     auto *win = winMap.value(screen);
     if (win == nullptr) {
-        qCritical() << "can not get root " << screen;
+        fmCritical() << "can not get root " << screen;
         return;
     }
 
     QSize trueSize = win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size();   // 使用屏幕缩放前的分辨率
     if (backgroundPixmap.isNull()) {
-        qCritical() << "screen " << screen << "backfround path" << filePath
-                    << "can not read!";
+        fmCritical() << "screen " << screen << "backfround path" << filePath
+                     << "can not read!";
         backgroundPixmap = QPixmap(trueSize);
         backgroundPixmap.fill(Qt::white);
     }
@@ -101,8 +101,8 @@ void BackgroundPreview::updateDisplay()
                              trueSize.height()));
     }
 
-    qDebug() << screen << "background path" << filePath << "truesize" << trueSize << "devicePixelRatio"
-             << this->devicePixelRatioF() << pix << "widget" << this;
+    fmDebug() << screen << "background path" << filePath << "truesize" << trueSize << "devicePixelRatio"
+              << this->devicePixelRatioF() << pix << "widget" << this;
     pix.setDevicePixelRatio(this->devicePixelRatioF());
 
     pixmap = pix;

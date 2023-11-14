@@ -71,7 +71,7 @@ bool AnythingSearcher::search()
         const QDBusPendingReply<QStringList, uint, uint> &reply = anythingInterface->asyncCallWithArgumentList("search", argumentList);
         auto results = reply.argumentAt<0>();
         if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "deepin-anything search failed:"
+            fmWarning() << "deepin-anything search failed:"
                        << QDBusError::errorString(reply.error().type())
                        << reply.error().message();
             startOffset = endOffset = 0;
@@ -138,7 +138,7 @@ void AnythingSearcher::tryNotify()
     qint64 cur = notifyTimer.elapsed();
     if (hasItem() && (cur - lastEmit) > kEmitInterval) {
         lastEmit = cur;
-        qDebug() << "unearthed, current spend:" << cur;
+        fmDebug() << "unearthed, current spend:" << cur;
         emit unearthed(this);
     }
 }

@@ -36,7 +36,7 @@ void RecentFileWatcherPrivate::initFileWatcher()
     proxy = WatcherFactory::create<AbstractFileWatcher>(watchUrl);
 
     if (!proxy) {
-        qWarning("watcher create failed.");
+        fmWarning("watcher create failed.");
         abort();
     }
 }
@@ -50,7 +50,7 @@ void RecentFileWatcherPrivate::initConnect()
 
     auto onParentDeleted = [=](const QString &, const QString &deletedPath) {
         if (path.startsWith(deletedPath) && !deletedPath.isEmpty()) {
-            qInfo() << "recent: watched: " << path << ", deleted: " << deletedPath;
+            fmInfo() << "recent: watched: " << path << ", deleted: " << deletedPath;
             Q_EMIT q->fileDeleted(QUrl::fromLocalFile(path));
         }
     };

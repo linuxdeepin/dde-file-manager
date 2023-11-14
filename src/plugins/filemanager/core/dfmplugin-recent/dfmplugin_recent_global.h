@@ -5,6 +5,8 @@
 #ifndef DFMPLUGIN_RECENT_GLOBAL_H
 #define DFMPLUGIN_RECENT_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPRECENT_NAMESPACE dfmplugin_recent
 
 #define DPRECENT_BEGIN_NAMESPACE namespace DPRECENT_NAMESPACE {
@@ -12,6 +14,7 @@
 #define DPRECENT_USE_NAMESPACE using namespace DPRECENT_NAMESPACE;
 
 DPRECENT_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPRECENT_NAMESPACE)
 namespace RecentActionID {
 inline constexpr char kRemove[] { "remove" };
 inline constexpr char kOpenFileLocation[] { "open-file-location" };

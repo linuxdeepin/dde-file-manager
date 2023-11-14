@@ -125,12 +125,12 @@ void AutoActivateWindowPrivate::checkWindowOnX11()
     xcb_generic_error_t *err;
     xcb_query_tree_reply_t *reply = xcb_query_tree_reply(x11Con, cookie, &err);
     if (!reply) {
-        qWarning() << "can not get reply: xcb_query_tree";
+        fmWarning() << "can not get reply: xcb_query_tree";
         return;
     }
 
     if (err) {
-        qWarning() << "xcb_query_tree failed with error code " << err->error_code;
+        fmWarning() << "xcb_query_tree failed with error code " << err->error_code;
         free(reply);
         return;
     }
@@ -169,7 +169,7 @@ bool AutoActivateWindowPrivate::initConnect()
         Q_ASSERT(x11Con);
 
         if (nbr < 0) {
-            qWarning() << "xcb_connect fail." << nbr;
+            fmWarning() << "xcb_connect fail." << nbr;
             xcb_disconnect(x11Con);
             x11Con = nullptr;
             return false;

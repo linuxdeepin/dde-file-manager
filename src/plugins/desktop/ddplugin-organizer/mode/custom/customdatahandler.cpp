@@ -99,12 +99,12 @@ QString CustomDataHandler::replace(const QUrl &oldUrl, const QUrl &newUrl)
     }
 
     if (oldIdx < 0) {
-        qWarning() << "replace: no old url:" << oldUrl;
+        fmWarning() << "replace: no old url:" << oldUrl;
         return "";
     }
 
     if (newIdx >= 0) {
-        qWarning() << "replace: new url is existed:" << newUrl;
+        fmWarning() << "replace: new url is existed:" << newUrl;
         return "";
     }
 

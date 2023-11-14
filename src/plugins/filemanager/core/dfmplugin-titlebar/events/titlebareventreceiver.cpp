@@ -53,7 +53,7 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
 {
     Q_ASSERT(!scheme.isEmpty());
     if (CrumbManager::instance()->isRegisted(scheme)) {
-        qWarning() << "Crumb sechme " << scheme << "has been resigtered!";
+        fmWarning() << "Crumb sechme " << scheme << "has been resigtered!";
         return false;
     }
 

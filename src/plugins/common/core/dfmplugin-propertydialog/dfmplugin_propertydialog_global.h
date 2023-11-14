@@ -5,17 +5,22 @@
 #ifndef DFMPLUGIN_PROPERTYDIALOG_GLOBAL_H
 #define DFMPLUGIN_PROPERTYDIALOG_GLOBAL_H
 
-#define DPPROPERTYDIALOG_BEGIN_NAMESPACE namespace dfmplugin_propertydialog {
-#define DPPROPERTYDIALOG_END_NAMESPACE }
-#define DPPROPERTYDIALOG_USE_NAMESPACE using namespace dfmplugin_propertydialog;
-#define DPPROPERTYDIALOG_NAMESPACE dfmplugin_propertydialog
+#include <dfm-base/dfm_log_defines.h>
 
 #include <QWidget>
 #include <QVariantHash>
 
 #include <functional>
 
+#define DPPROPERTYDIALOG_NAMESPACE dfmplugin_propertydialog
+
+#define DPPROPERTYDIALOG_BEGIN_NAMESPACE namespace DPPROPERTYDIALOG_NAMESPACE {
+#define DPPROPERTYDIALOG_END_NAMESPACE }
+#define DPPROPERTYDIALOG_USE_NAMESPACE using namespace DPPROPERTYDIALOG_NAMESPACE;
+
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPPROPERTYDIALOG_NAMESPACE)
+
 namespace PropertyActionId {
 inline constexpr char kProperty[] { "property" };
 }

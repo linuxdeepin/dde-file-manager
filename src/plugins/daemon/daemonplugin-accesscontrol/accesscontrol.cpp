@@ -9,7 +9,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-DAEMONPAC_USE_NAMESPACE
+namespace daemonplugin_accesscontrol {
+
+DFM_LOG_REISGER_CATEGORY(DAEMONPAC_NAMESPACE)
 
 bool AccessControl::start()
 {
@@ -29,7 +31,7 @@ bool AccessControl::isDaemonServiceRegistered()
     static constexpr char kEnvNameOfDaemonRegistered[] { "DAEMON_SERVICE_REGISTERED" };
 
     QByteArray registered { qgetenv(kEnvNameOfDaemonRegistered) };
-    qInfo() << "Env DAEMON_SERVICE_REGISTERED is: " << registered;
+    fmInfo() << "Env DAEMON_SERVICE_REGISTERED is: " << registered;
     if (QString::fromLocal8Bit(registered) == "TRUE")
         return true;
 
@@ -41,7 +43,7 @@ void AccessControl::initDBusInterce()
     accessControlManager.reset(new AccessControlDBus);
     Q_UNUSED(new AccessControlManagerAdaptor(accessControlManager.data()));
     if (!QDBusConnection::systemBus().registerObject("/com/deepin/filemanager/daemon/AccessControlManager", accessControlManager.data())) {
-        qWarning("Cannot register the \"/com/deepin/filemanager/daemon/AccessControlManager\" object.\n");
+        fmWarning("Cannot register the \"/com/deepin/filemanager/daemon/AccessControlManager\" object.\n");
         accessControlManager.reset(nullptr);
         return;
     }
@@ -50,12 +52,12 @@ void AccessControl::initDBusInterce()
 void AccessControl::initConnect()
 {
     if (Q_UNLIKELY((watcher.isNull()))) {
-        qWarning() << "Wathcer is invliad";
+        fmWarning() << "Wathcer is invliad";
         return;
     }
 
     connect(watcher.data(), &DFMIO::DWatcher::fileAdded, this, [this](const QUrl &url) {
-        qInfo() << "/home/userpath has been created";
+        fmInfo() << "/home/userpath has been created";
         onFileCreatedInHomePath();
     });
     watcher->start();
@@ -72,7 +74,7 @@ void AccessControl::onFileCreatedInHomePath()
         QDir mountDir(mountBaseName);
         if (!mountDir.exists()) {
             if (QDir().mkpath(mountBaseName)) {
-                qInfo() << "done to create /media/anyuser folder";
+                fmInfo() << "done to create /media/anyuser folder";
                 struct stat fileStat;
                 QByteArray nameBytes(mountBaseName.toUtf8());
                 stat(nameBytes.data(), &fileStat);
@@ -82,6 +84,8 @@ void AccessControl::onFileCreatedInHomePath()
         // ACL
         QString aclCmd = QString("setfacl -m o:rx %1").arg(mountBaseName);
         QProcess::execute(aclCmd);
-        qInfo() << "acl the /media/anyuser folder";
+        fmInfo() << "acl the /media/anyuser folder";
     }
 }
+
+}   // namespace daemonplugin_accesscontrol

@@ -17,7 +17,9 @@ Q_DECLARE_METATYPE(bool *)
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPFILEOPERATIONS_USE_NAMESPACE
+
+namespace dfmplugin_fileoperations {
+DFM_LOG_REISGER_CATEGORY(DPFILEOPERATIONS_NAMESPACE)
 
 void FileOperations::initialize()
 {
@@ -30,7 +32,7 @@ bool FileOperations::start()
     QString err;
     auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.operations", &err);
     if (!ret)
-        qWarning() << "create dconfig failed: " << err;
+        fmWarning() << "create dconfig failed: " << err;
 
     return true;
 }
@@ -291,3 +293,4 @@ void FileOperations::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
                             FileOperationsEventReceiver::instance(), &FileOperationsEventReceiver::handleShortCutPaste);
 }
+}   // namespace dfmplugin_fileoperations

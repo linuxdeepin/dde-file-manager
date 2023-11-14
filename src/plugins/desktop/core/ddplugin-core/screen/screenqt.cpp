@@ -52,13 +52,13 @@ QRect ScreenQt::availableGeometry() const
     QRect ret = geometry(); //已经缩放过
 
     if (!DBusHelper::isDockEnable()) {
-        qWarning() << "dde dock is not registered";
+        fmWarning() << "dde dock is not registered";
         return ret;
     }
 
     int dockHideMode = DockInfoIns->hideMode();
     if (1 == dockHideMode) {//隐藏
-        qInfo() << "dock is Hidden";
+        fmInfo() << "dock is Hidden";
         return ret;
     }
 
@@ -69,15 +69,15 @@ QRect ScreenQt::availableGeometry() const
     QRect hRect = handleGeometry();
 
     if (!hRect.contains(dockrectI)) { //使用原始大小判断的dock区所在的屏幕
-        qDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
+        fmDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
         return ret;
     }
 
-    qDebug() << "ScreenQt ret " << ret << name();
+    fmDebug() << "ScreenQt ret " << ret << name();
     switch (DockInfoIns->position()) {
     case 0: //上
         ret.setY(dockrect.bottom());
-        qDebug() << "dock on top, availableGeometry" << ret;
+        fmDebug() << "dock on top, availableGeometry" << ret;
         break;
     case 1: //右
     {
@@ -85,9 +85,9 @@ QRect ScreenQt::availableGeometry() const
         if (w >= 0)
             ret.setWidth(static_cast<int>(w / ratio)); //原始大小计算的宽，需缩放处理
         else {
-            qCritical() << "dockrect.left() - ret.left() is invaild" << w;
+            fmCritical() << "dockrect.left() - ret.left() is invaild" << w;
         }
-        qDebug() << "dock on right,availableGeometry" << ret;
+        fmDebug() << "dock on right,availableGeometry" << ret;
     }
         break;
     case 2: //下
@@ -96,17 +96,17 @@ QRect ScreenQt::availableGeometry() const
         if (h >= 0)
             ret.setHeight(static_cast<int>(h / ratio)); //原始大小计算的高，需缩放处理
         else {
-            qCritical() << "dockrect.top() - ret.top() is invaild" << h;
+            fmCritical() << "dockrect.top() - ret.top() is invaild" << h;
         }
-        qDebug() << "dock on bottom,availableGeometry" << ret;
+        fmDebug() << "dock on bottom,availableGeometry" << ret;
         break;
     }
     case 3: //左
         ret.setX(dockrect.right());
-        qDebug() << "dock on left,availableGeometry" << ret;
+        fmDebug() << "dock on left,availableGeometry" << ret;
         break;
     default:
-        qCritical() << "dock postion error!" << "and  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
+        fmCritical() << "dock postion error!" << "and  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
         break;
     }
     return ret;

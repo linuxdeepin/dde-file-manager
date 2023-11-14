@@ -246,11 +246,11 @@ int SideBarModel::appendRow(SideBarItem *item)
     }
     if (groupOther && !topItem) {   //If can not find out the parent item, just append it to Group_Other
         groupOther->appendRow(item);
-        qInfo() << "Item added to groupOther";
+        fmInfo() << "Item added to groupOther";
         return groupOther->rowCount() - 1;
     }
     QStandardItemModel::appendRow(item);
-    qInfo() << "Item added to the end of sidebar.";
+    fmInfo() << "Item added to the end of sidebar.";
     return rowCount() - 1;
 }
 

@@ -40,7 +40,7 @@ bool TextPreview::setFileUrl(const QUrl &url)
     device.open(url.path().toLocal8Bit().data(), ios::binary);
 
     if (!device.is_open()) {
-        qWarning() << "Text Preview: File open failed!";
+        fmWarning() << "Text Preview: File open failed!";
         return false;
     }
 

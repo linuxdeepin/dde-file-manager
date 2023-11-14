@@ -6,6 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if (COMPLIE_ON_V20)
 set(SRC_FILES
+    ddplugin_wallpapersetting_global.h
     wlsetplugin.h
     wlsetplugin.cpp
     settingsdbusinterface.h

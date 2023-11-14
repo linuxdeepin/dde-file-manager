@@ -108,7 +108,7 @@ void FileView::setViewMode(Global::ViewMode mode)
     if (d->delegates.keys().contains(modeValue)) {
         d->currentViewMode = mode;
     } else {
-        qWarning() << QString("The view mode %1 is not support in this dir! This view will set default mode.").arg(modeValue);
+        fmWarning() << QString("The view mode %1 is not support in this dir! This view will set default mode.").arg(modeValue);
         d->currentViewMode = Global::ViewMode::kIconMode;
     }
 
@@ -1022,11 +1022,11 @@ bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
     bool expanded = model()->data(index, kItemTreeViewExpandedRole).toBool();
     if (expanded) {
         // do collapse
-        qInfo() << "do collapse item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
+        fmInfo() << "do collapse item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
         model()->doCollapse(index);
     } else {
         // do expanded
-        qInfo() << "do expanded item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
+        fmInfo() << "do expanded item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
         model()->doExpand(index);
     }
 
@@ -1397,14 +1397,14 @@ void FileView::startDrag(Qt::DropActions supportedActions)
             return;
         Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
         if (WorkspaceEventSequence::instance()->doCheckDragTarget(data->urls(), QUrl(), &defaultDropAction)) {
-            qDebug() << "Change supported actions: " << defaultDropAction;
+            fmDebug() << "Change supported actions: " << defaultDropAction;
             supportedActions = defaultDropAction;
         }
 
         QList<QUrl> transformedUrls;
         UniversalUtils::urlsTransformToLocal(data->urls(), &transformedUrls);
-        qDebug() << "Drag source urls: " << data->urls();
-        qDebug() << "Drag transformed urls: " << transformedUrls;
+        fmDebug() << "Drag source urls: " << data->urls();
+        fmDebug() << "Drag transformed urls: " << transformedUrls;
         DFMMimeData dfmmimeData;
         dfmmimeData.setUrls(data->urls());
         data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey, dfmmimeData.toByteArray());

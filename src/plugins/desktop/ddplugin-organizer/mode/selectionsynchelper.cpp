@@ -19,12 +19,12 @@ void SelectionSyncHelper::setInnerModel(ItemSelectionModel *sel)
         disconnect(inner, nullptr, this, nullptr);
 
     if (sel) {
-        qDebug() << "set inner selection model." << sel;
+        fmDebug() << "set inner selection model." << sel;
         inner = sel;
         connect(inner, &ItemSelectionModel::destroyed, this, &SelectionSyncHelper::innerModelDestroyed);
         connect(inner, &ItemSelectionModel::selectionChanged, this, &SelectionSyncHelper::clearExteralSelection);
     } else {
-        qWarning() << "set inner selection model to null";
+        fmWarning() << "set inner selection model to null";
         inner = nullptr;
     }
 }
@@ -35,12 +35,12 @@ void SelectionSyncHelper::setExternalModel(QItemSelectionModel *sel)
         disconnect(external, nullptr, this, nullptr);
 
     if (sel) {
-        qDebug() << "set external selection model." << external;
+        fmDebug() << "set external selection model." << external;
         external = sel;
         connect(external, &QItemSelectionModel::destroyed, this, &SelectionSyncHelper::externalModelDestroyed);
         connect(external, &QItemSelectionModel::selectionChanged, this, &SelectionSyncHelper::clearInnerSelection);
     } else {
-        qWarning() << "set external selection model to null";
+        fmWarning() << "set external selection model to null";
         external = nullptr;
     }
 }
@@ -88,12 +88,12 @@ void SelectionSyncHelper::clearInnerSelection()
 
 void SelectionSyncHelper::innerModelDestroyed()
 {
-    qInfo() << "inner selection is destroyed.";
+    fmInfo() << "inner selection is destroyed.";
     inner = nullptr;
 }
 
 void SelectionSyncHelper::externalModelDestroyed()
 {
-    qInfo() << "external selection is destroyed.";
+    fmInfo() << "external selection is destroyed.";
     external = nullptr;
 }

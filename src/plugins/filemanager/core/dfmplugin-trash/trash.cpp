@@ -32,7 +32,8 @@ Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(bool *)
 
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_trash;
+namespace dfmplugin_trash {
+DFM_LOG_REISGER_CATEGORY(DPTRASH_NAMESPACE)
 
 void Trash::initialize()
 {
@@ -171,3 +172,4 @@ void Trash::bindWindows()
     });
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
 }
+}   // namespace dfmplugin_trash

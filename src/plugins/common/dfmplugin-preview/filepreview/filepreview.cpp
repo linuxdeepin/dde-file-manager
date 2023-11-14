@@ -12,7 +12,8 @@
 #include <QSurfaceFormat>
 
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_filepreview;
+namespace dfmplugin_filepreview {
+DFM_LOG_REISGER_CATEGORY(DPFILEPREVIEW_NAMESPACE)
 
 void FilePreview::initialize()
 {
@@ -35,7 +36,7 @@ bool FilePreview::start()
     QString err;
     auto ret = DConfigManager::instance()->addConfig(ConfigInfos::kConfName, &err);
     if (!ret)
-        qWarning() << "File Preview: create dconfig failed: " << err;
+        fmWarning() << "File Preview: create dconfig failed: " << err;
 
     PreviewHelper::instance()->bindConfig();
 
@@ -51,3 +52,4 @@ void FilePreview::onConfigChanged(const QString &cfg, const QString &key)
         dpfSignalDispatcher->publish("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed");
     }
 }
+}   // namespace dfmplugin_filepreview

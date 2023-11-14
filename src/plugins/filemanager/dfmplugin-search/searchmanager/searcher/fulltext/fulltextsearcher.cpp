@@ -84,7 +84,7 @@ void FullTextSearcherPrivate::doIndexTask(const IndexReaderPtr &reader, const In
     const char *filePath = tmp.c_str();
     DIR *dir = nullptr;
     if (!(dir = opendir(filePath))) {
-        qWarning() << "can not open: " << path;
+        fmWarning() << "can not open: " << path;
         return;
     }
 
@@ -145,13 +145,13 @@ void FullTextSearcherPrivate::indexDocs(const IndexWriterPtr &writer, const QStr
     try {
         switch (type) {
         case kAddIndex: {
-            qDebug() << "Adding [" << file << "]";
+            fmDebug() << "Adding [" << file << "]";
             // 添加
             writer->addDocument(fileDocument(file));
             break;
         }
         case kUpdateIndex: {
-            qDebug() << "Update file: [" << file << "]";
+            fmDebug() << "Update file: [" << file << "]";
             // 定义一个更新条件
             TermPtr term = newLucene<Term>(L"path", file.toStdWString());
             // 更新
@@ -159,7 +159,7 @@ void FullTextSearcherPrivate::indexDocs(const IndexWriterPtr &writer, const QStr
             break;
         }
         case kDeleteIndex: {
-            qDebug() << "Delete file: [" << file << "]";
+            fmDebug() << "Delete file: [" << file << "]";
             // 定义一个删除条件
             TermPtr term = newLucene<Term>(L"path", file.toStdWString());
             // 删除
@@ -169,12 +169,12 @@ void FullTextSearcherPrivate::indexDocs(const IndexWriterPtr &writer, const QStr
         }
     } catch (const LuceneException &e) {
         QMetaEnum enumType = QMetaEnum::fromType<FullTextSearcherPrivate::IndexType>();
-        qWarning() << QString::fromStdWString(e.getError()) << " type: " << enumType.valueToKey(type);
+        fmWarning() << QString::fromStdWString(e.getError()) << " type: " << enumType.valueToKey(type);
     } catch (const std::exception &e) {
         QMetaEnum enumType = QMetaEnum::fromType<FullTextSearcherPrivate::IndexType>();
-        qWarning() << QString(e.what()) << " type: " << enumType.valueToKey(type);
+        fmWarning() << QString(e.what()) << " type: " << enumType.valueToKey(type);
     } catch (...) {
-        qWarning() << "Index document failed! " << file;
+        fmWarning() << "Index document failed! " << file;
     }
 }
 
@@ -207,11 +207,11 @@ bool FullTextSearcherPrivate::checkUpdate(const IndexReaderPtr &reader, const QS
             }
         }
     } catch (const LuceneException &e) {
-        qWarning() << QString::fromStdWString(e.getError()) << " file: " << file;
+        fmWarning() << QString::fromStdWString(e.getError()) << " file: " << file;
     } catch (const std::exception &e) {
-        qWarning() << QString(e.what()) << " file: " << file;
+        fmWarning() << QString(e.what()) << " file: " << file;
     } catch (...) {
-         qWarning() << "The file checked failed!" << file;
+         fmWarning() << "The file checked failed!" << file;
     }
 
     return false;
@@ -222,7 +222,7 @@ void FullTextSearcherPrivate::tryNotify()
     int cur = notifyTimer.elapsed();
     if (q->hasItem() && (cur - lastEmit) > kEmitInterval) {
         lastEmit = cur;
-        qDebug() << "unearthed, current spend:" << cur;
+        fmDebug() << "unearthed, current spend:" << cur;
         emit q->unearthed(q);
     }
 }
@@ -253,14 +253,14 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
 
     QDir dir;
     if (!dir.exists(path)) {
-        qWarning() << "Source directory doesn't exist: " << path;
+        fmWarning() << "Source directory doesn't exist: " << path;
         status.storeRelease(AbstractSearcher::kCompleted);
         return false;
     }
 
     if (!dir.exists(indexStorePath())) {
         if (!dir.mkpath(indexStorePath())) {
-            qWarning() << "Unable to create directory: " << indexStorePath();
+            fmWarning() << "Unable to create directory: " << indexStorePath();
             status.storeRelease(AbstractSearcher::kCompleted);
             return false;
         }
@@ -271,22 +271,22 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
         QTime timer;
         timer.start();
         IndexWriterPtr writer = newIndexWriter(true);
-        qInfo() << "Indexing to directory: " << indexStorePath();
+        fmInfo() << "Indexing to directory: " << indexStorePath();
 
         writer->deleteAll();
         doIndexTask(nullptr, writer, path, kCreate);
         writer->optimize();
         writer->close();
 
-        qInfo() << "create index spending: " << timer.elapsed();
+        fmInfo() << "create index spending: " << timer.elapsed();
         status.storeRelease(AbstractSearcher::kCompleted);
         return true;
     } catch (const LuceneException &e) {
-        qWarning() << QString::fromStdWString(e.getError());
+        fmWarning() << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
-        qWarning() << QString(e.what());
+        fmWarning() << QString(e.what());
     } catch (...) {
-        qWarning() << "The file index created failed!";
+        fmWarning() << "The file index created failed!";
     }
 
     status.storeRelease(AbstractSearcher::kCompleted);
@@ -308,11 +308,11 @@ bool FullTextSearcherPrivate::updateIndex(const QString &path)
 
         return true;
     } catch (const LuceneException &e) {
-        qWarning() << QString::fromStdWString(e.getError());
+        fmWarning() << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
-        qWarning() << QString(e.what());
+        fmWarning() << QString(e.what());
     } catch (...) {
-        qWarning() << "The file index updated failed!";
+        fmWarning() << "The file index updated failed!";
     }
 
     return false;
@@ -320,7 +320,7 @@ bool FullTextSearcherPrivate::updateIndex(const QString &path)
 
 bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keyword)
 {
-    qInfo() << "search path: " << path << " keyword: " << keyword;
+    fmInfo() << "search path: " << path << " keyword: " << keyword;
     notifyTimer.start();
 
     bool hasTransform = false;
@@ -385,11 +385,11 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
         reader->close();
         writer->close();
     } catch (const LuceneException &e) {
-        qWarning() << QString::fromStdWString(e.getError());
+        fmWarning() << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
-        qWarning() << QString(e.what());
+        fmWarning() << QString(e.what());
     } catch (...) {
-        qWarning() << "Search failed!";
+        fmWarning() << "Search failed!";
     }
 
     return true;

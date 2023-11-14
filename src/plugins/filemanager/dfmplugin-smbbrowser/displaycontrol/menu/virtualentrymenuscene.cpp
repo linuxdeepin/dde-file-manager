@@ -226,7 +226,7 @@ void VirtualEntryMenuScenePrivate::hookCptActions(QAction *triggered)
 
 void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
 {
-    qInfo() << "unmount all shares of" << stdSmb;
+    fmInfo() << "unmount all shares of" << stdSmb;
     const QStringList &devIds = protocol_display_utilities::getMountedSmb();
     const QString &stdSmbRoot = stdSmb;
 
@@ -236,7 +236,7 @@ void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
             continue;
 
         DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-            qInfo() << "unmount device:" << devId << "which represents" << toStdSmb << "result:" << ok << err.code << err.message;
+            fmInfo() << "unmount device:" << devId << "which represents" << toStdSmb << "result:" << ok << err.code << err.message;
             if (!ok)
                 return DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             if (removeEntry)
@@ -249,14 +249,14 @@ void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
 
 void VirtualEntryMenuScenePrivate::actForgetAggregatedItem()
 {
-    qInfo() << "forget saved pasword of" << stdSmb;
+    fmInfo() << "forget saved pasword of" << stdSmb;
     computer_sidebar_event_calls::callForgetPasswd(stdSmb);
     actUnmountAggregatedItem(true);
 }
 
 void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
 {
-    qInfo() << "do mount for" << stdSmb;
+    fmInfo() << "do mount for" << stdSmb;
     QString path = stdSmb;
     while (path.endsWith("/"))
         path.chop(1);
@@ -269,7 +269,7 @@ void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
 
 void VirtualEntryMenuScenePrivate::actRemoveVirtualEntry()
 {
-    qInfo() << "remove offline entry of" << stdSmb;
+    fmInfo() << "remove offline entry of" << stdSmb;
     Q_ASSERT(selectFiles.count() > 0);
 
     VirtualEntryDbHandler::instance()->removeData(stdSmb);
@@ -295,13 +295,13 @@ void VirtualEntryMenuScenePrivate::actRemoveVirtualEntry()
 
 void VirtualEntryMenuScenePrivate::actCptMount()
 {
-    pddmDbg << "hook on computer mount" << stdSmb;
+    fmDebug() << "hook on computer mount" << stdSmb;
     actMountSeperatedItem();
 }
 
 void VirtualEntryMenuScenePrivate::actCptForget()
 {
-    pddmDbg << "hook on computer forget" << stdSmb;
+    fmDebug() << "hook on computer forget" << stdSmb;
     // do remove the cached data.
     VirtualEntryDbHandler::instance()->removeData(stdSmb);
 }

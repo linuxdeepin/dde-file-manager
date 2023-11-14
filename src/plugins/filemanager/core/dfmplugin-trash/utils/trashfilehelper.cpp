@@ -126,7 +126,7 @@ bool TrashFileHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, con
 
     if (fromUrls.first().scheme() == scheme() && to.scheme() == scheme()) {
         DFMBASE_NAMESPACE::ClipBoard::clearClipboard();
-        qDebug() << "The trash directory does not support paste!";
+        fmDebug() << "The trash directory does not support paste!";
         return true;
     }
     return false;

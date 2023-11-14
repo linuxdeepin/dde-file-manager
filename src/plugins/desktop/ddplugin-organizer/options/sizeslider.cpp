@@ -55,7 +55,7 @@ void SizeSlider::init()
     {
         auto leftBtn = findChildren<DIconButton *>();
         if (leftBtn.size() != 1) {
-            qCritical() << "can not find left button" << leftBtn.size();
+            fmCritical() << "can not find left button" << leftBtn.size();
         } else {
             auto btn = leftBtn.first();
             btn->setIconSize(QSize(16, 16));
@@ -91,7 +91,7 @@ void SizeSlider::resetToIcon()
 
     int cur = iconLevel();
     if (min > cur || max < cur) {
-        qCritical() << QString("canvas icon level %0 is out of range %1 ~ %2.")
+        fmCritical() << QString("canvas icon level %0 is out of range %1 ~ %2.")
                        .arg(cur).arg(min).arg(max);
         cur = min;
     }
@@ -105,7 +105,7 @@ void SizeSlider::setValue(int v)
         return;
 
     if (v < slider->minimum() || v > slider->maximum()) {
-        qWarning() << "invalid level " << v;
+        fmWarning() << "invalid level " << v;
         return;
     }
 

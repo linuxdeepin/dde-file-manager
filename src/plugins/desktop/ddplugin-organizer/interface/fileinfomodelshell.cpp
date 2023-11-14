@@ -46,7 +46,7 @@ QAbstractItemModel *FileInfoModelShell::sourceModel() const
         if (auto ptr = ret.value<QAbstractItemModel *>())
             model = ptr;
         else
-            qCritical() << "get fileInfoModel is nullptr";
+            fmCritical() << "get fileInfoModel is nullptr";
     }
 
     return model;

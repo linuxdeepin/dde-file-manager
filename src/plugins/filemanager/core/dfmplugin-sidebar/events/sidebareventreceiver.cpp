@@ -87,7 +87,7 @@ QList<QUrl> SideBarEventReceiver::handleGetGroupItems(quint64 winId, const QStri
     if (wid)
         return wid->findItemUrlsByGroupName(group);
 
-    qDebug() << "cannot find sidebarwidget for winid: " << winId << group;
+    fmDebug() << "cannot find sidebarwidget for winid: " << winId << group;
     return {};
 }
 

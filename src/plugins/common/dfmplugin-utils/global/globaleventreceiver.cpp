@@ -33,13 +33,13 @@ void GlobalEventReceiver::initEventConnect()
 void GlobalEventReceiver::handleOpenAsAdmin(const QUrl &url)
 {
     if (url.isEmpty() || !url.isValid()) {
-        qWarning() << "Invalid Url: " << url;
+        fmWarning() << "Invalid Url: " << url;
         return;
     }
 
     QString localPath { url.toLocalFile() };
     if (!QDir(localPath).exists()) {
-        qWarning() << "Url path not exists: " << localPath;
+        fmWarning() << "Url path not exists: " << localPath;
         return;
     }
 

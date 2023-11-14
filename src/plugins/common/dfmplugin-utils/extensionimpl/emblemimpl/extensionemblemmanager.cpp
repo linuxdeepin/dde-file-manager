@@ -270,7 +270,7 @@ bool ExtensionEmblemManager::onFetchCustomEmblems(const QUrl &url, QList<QIcon> 
 
         // max emblem icon count
         if (currentCount > kMaxEmblemCount) {
-            qDebug() << "Not enough space paint emblem icon for extension lib url: " << url;
+            fmDebug() << "Not enough space paint emblem icon for extension lib url: " << url;
             return false;
         }
 
@@ -291,7 +291,7 @@ bool ExtensionEmblemManager::onFetchCustomEmblems(const QUrl &url, QList<QIcon> 
                 if (Q_UNLIKELY(pos >= kMaxEmblemCount))
                     continue;
                 if (!emblems->at(pos).isNull()) {
-                    qWarning() << "Not position: " << pos << " to " << url;
+                    fmWarning() << "Not position: " << pos << " to " << url;
                     continue;
                 }
                 const QString &iconName { group[i].first };

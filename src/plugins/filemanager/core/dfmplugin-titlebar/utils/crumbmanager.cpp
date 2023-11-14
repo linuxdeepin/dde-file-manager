@@ -32,7 +32,7 @@ CrumbInterface *CrumbManager::createControllerByUrl(const QUrl &url)
 {
     KeyType &&theType = url.scheme();
     if (!creators.contains(theType)) {
-        qWarning() << "Scheme: " << theType << "not registered!";
+        fmWarning() << "Scheme: " << theType << "not registered!";
         return nullptr;
     }
 

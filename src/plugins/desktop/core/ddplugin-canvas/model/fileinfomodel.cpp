@@ -51,7 +51,7 @@ QIcon FileInfoModelPrivate::fileIcon(FileInfoPointer info)
 
 void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
 {
-    qDebug() << "to reset file, count:" << urls.size();
+    fmDebug() << "to reset file, count:" << urls.size();
     QList<QUrl> fileUrls;
     QMap<QUrl, FileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
@@ -82,7 +82,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
         QReadLocker lk(&lock);
         if (auto cur = fileMap.value(url)) {
             lk.unlock();
-            qInfo() << "the file to insert is existed" << url;
+            fmInfo() << "the file to insert is existed" << url;
             cur->refresh(); // refresh fileinfo.
             const QModelIndex &index = q->index(url);
             emit q->dataChanged(index, index);
@@ -93,7 +93,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
 
     auto itemInfo = FileCreator->createFileInfo(url);
     if (Q_UNLIKELY(!itemInfo)) {
-        qWarning() << "fail to create file info" << url;
+        fmWarning() << "fail to create file info" << url;
         return;
     }
 
@@ -115,7 +115,7 @@ void FileInfoModelPrivate::removeData(const QUrl &url)
     }
 
     if (Q_UNLIKELY(position < 0)) {
-        qInfo() << "file dose not exists:" << url;
+        fmInfo() << "file dose not exists:" << url;
         return;
     }
 
@@ -132,14 +132,14 @@ void FileInfoModelPrivate::removeData(const QUrl &url)
 void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
 {
     if (newUrl.isEmpty()) {
-        qInfo() << "target url is empty, remove old" << oldUrl;
+        fmInfo() << "target url is empty, remove old" << oldUrl;
         removeData(oldUrl);
         return;
     }
 
     auto newInfo = FileCreator->createFileInfo(newUrl);
     if (Q_UNLIKELY(newInfo.isNull())) {
-        qWarning() << "fail to create new file info:" << newUrl << "old" << oldUrl;
+        fmWarning() << "fail to create new file info:" << newUrl << "old" << oldUrl;
         removeData(oldUrl);
         return;
     }
@@ -169,7 +169,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
 
                 // refresh file
                 cur->refresh();
-                qInfo() << "move file" << oldUrl << "to overwritte" << newUrl;
+                fmInfo() << "move file" << oldUrl << "to overwritte" << newUrl;
             } else {
                 fileList.replace(position, newUrl);
                 fileMap.remove(oldUrl);
@@ -498,10 +498,10 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (!parent.isValid() || parent == rootIndex()) {
         // drop file to desktop
         targetFileUrl = rootUrl();
-        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
+        fmInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
     } else {
         targetFileUrl = fileUrl(parent);
-        qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
+        fmInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
     }
 
     auto itemInfo = FileCreator->createFileInfo(targetFileUrl);

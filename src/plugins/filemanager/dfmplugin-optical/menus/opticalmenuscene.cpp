@@ -54,7 +54,7 @@ bool OpticalMenuScene::initialize(const QVariantHash &params)
         d->isBlankDisc = true;
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 

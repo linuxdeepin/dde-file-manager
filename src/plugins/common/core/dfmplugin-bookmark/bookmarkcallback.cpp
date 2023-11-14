@@ -84,7 +84,7 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     const QMap<QUrl, BookmarkData> &bookmarkMap = BookMarkManager::instance()->getBookMarkDataMap();
 
     if (!bookmarkMap.contains(url)) {
-        qCritical() << "boormark:"
+        fmCritical() << "boormark:"
                     << "not find the book mark!";
         return;
     }
@@ -95,7 +95,7 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         return;
     } else if (DeviceUtils::isSamba(url) || DeviceUtils::isFtp(url)) {
         auto srcUrl = DeviceUtils::parseNetSourceUrl(url);
-        qInfo() << "bookmark of net file:" << url << "got souce url:" << srcUrl;
+        fmInfo() << "bookmark of net file:" << url << "got souce url:" << srcUrl;
         if (srcUrl.isValid()) {
             BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, srcUrl);
             return;

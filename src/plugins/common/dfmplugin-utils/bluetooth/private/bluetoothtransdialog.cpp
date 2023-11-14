@@ -98,7 +98,7 @@ void BluetoothTransDialog::sendFilesToDevice(const QString &devId)
     }
 
     if (!dev) {
-        qDebug() << "can not find device: " << devId;
+        fmDebug() << "can not find device: " << devId;
     } else {
         selectedDeviceName = dev->getAlias();
         selectedDeviceId = devId;
@@ -161,7 +161,7 @@ QString BluetoothTransDialog::humanizeObexErrMsg(const QString &msg)
                || msg.contains("Connection reset by peer")) {
         return TXT_ERROR_REASON;
     } else {   // ...TO BE CONTINUE
-        qWarning() << "bluetooth error message: " << msg;
+        fmWarning() << "bluetooth error message: " << msg;
         return "";
     }
 }
@@ -305,7 +305,7 @@ void BluetoothTransDialog::initConn()
             QTimer::singleShot(1000, nullptr, [stack] {   // 这里留一秒的时间用于显示完整的进度，避免进度满就直接跳转页面了
                 if (!stack)
                     return;
-                qDebug() << "delay switch page on trans success";
+                fmDebug() << "delay switch page on trans success";
                 stack->setCurrentIndex(kSuccessPage);
             });
         }
@@ -323,7 +323,7 @@ void BluetoothTransDialog::initConn()
             return;
         stackedWidget->setCurrentIndex(kFailedPage);
         BluetoothManagerInstance->cancelTransfer(sessionPath);
-        qDebug() << "filePath: " << filePath
+        fmDebug() << "filePath: " << filePath
                  << "\nerrorMsg: " << errMsg;
     });
 
@@ -702,7 +702,7 @@ void BluetoothTransDialog::sendFiles()
 
         auto info = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(url);
         if (!info) {
-            qWarning() << "cannot create file info: " << url;
+            fmWarning() << "cannot create file info: " << url;
             close();
             return;
         }

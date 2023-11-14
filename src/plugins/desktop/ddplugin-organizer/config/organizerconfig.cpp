@@ -84,7 +84,7 @@ OrganizerConfig::OrganizerConfig(QObject *parent)
     Q_ASSERT(qApp->thread() == thread());
 
     auto configPath = path();
-    qDebug() << "OrganizerConfig: file path" << configPath;
+    fmDebug() << "OrganizerConfig: file path" << configPath;
 
     QFileInfo configFile(configPath);
     if (!configFile.exists())
@@ -187,7 +187,7 @@ CollectionBaseDataPtr OrganizerConfig::collectionBase(bool custom, const QString
     d->settings->endGroup();
 
     if (key != base->key || base->key.isEmpty() || base->name.isEmpty()) {
-        qWarning() << "invalid collection base" << key << base->key;
+        fmWarning() << "invalid collection base" << key << base->key;
         base.clear();
     }
     return base;

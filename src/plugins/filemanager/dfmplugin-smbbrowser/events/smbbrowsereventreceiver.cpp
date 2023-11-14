@@ -39,12 +39,12 @@ bool SmbBrowserEventReceiver::cancelDelete(quint64, const QList<QUrl> &urls, con
     if (urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSmb
         && urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kFtp
         && urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSFtp) {
-        qDebug() << "SmbBrowser could't delete";
+        fmDebug() << "SmbBrowser could't delete";
         return false;
     }
     // Network Neighborhood dot not use
     if (UniversalUtils::isNetworkRoot(rootUrl)) {
-        qDebug() << "Network Neighborhood view SmbBrowser could't delete";
+        fmDebug() << "Network Neighborhood view SmbBrowser could't delete";
         return true;
     }
     return true;
@@ -54,7 +54,7 @@ bool SmbBrowserEventReceiver::cancelMoveToTrash(quint64, const QList<QUrl> &, co
 {
     // Network Neighborhood dot not use
     if (UniversalUtils::isNetworkRoot(rootUrl)) {
-        qDebug() << "Network Neighborhood view SmbBrowser could't using";
+        fmDebug() << "Network Neighborhood view SmbBrowser could't using";
         return true;
     }
     return false;

@@ -26,7 +26,7 @@ DetailManager &DetailManager::instance()
 bool DetailManager::registerExtensionView(CustomViewExtensionView view, int index)
 {
     if (constructList.keys().contains(index) && index != -1) {
-        qInfo() << "The current index has registered the associated construction class";
+        fmInfo() << "The current index has registered the associated construction class";
         return false;
     }
 
@@ -68,7 +68,7 @@ bool DetailManager::registerBasicViewExtension(const QString &scheme, BasicViewF
         return true;
     }
 
-    qInfo() << "The current scheme has registered the associated construction class";
+    fmInfo() << "The current scheme has registered the associated construction class";
     return false;
 }
 
@@ -79,7 +79,7 @@ bool DetailManager::registerBasicViewExtensionRoot(const QString &scheme, BasicV
         return true;
     }
 
-    qInfo() << "The current scheme has registered the associated construction class";
+    fmInfo() << "The current scheme has registered the associated construction class";
     return false;
 }
 
@@ -138,7 +138,7 @@ bool DetailManager::addBasicFiledFiltes(const QString &scheme, DetailFilterType 
         return true;
     }
 
-    qInfo() << "The current scheme has registered the associated construction class";
+    fmInfo() << "The current scheme has registered the associated construction class";
     return false;
 }
 
@@ -149,7 +149,7 @@ bool DetailManager::addRootBasicFiledFiltes(const QString &scheme, DetailFilterT
         return true;
     }
 
-    qInfo() << "The current scheme has registered the associated construction class";
+    fmInfo() << "The current scheme has registered the associated construction class";
     return false;
 }
 

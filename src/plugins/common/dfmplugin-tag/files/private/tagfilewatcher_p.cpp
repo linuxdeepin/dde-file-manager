@@ -33,7 +33,7 @@ void TagFileWatcherPrivate::initFileWatcher()
     proxy = WatcherFactory::create<AbstractFileWatcher>(watchUrl);
 
     if (!proxy) {
-        qWarning("watcher create failed.");
+        fmWarning("watcher create failed.");
         abort();
     }
 }

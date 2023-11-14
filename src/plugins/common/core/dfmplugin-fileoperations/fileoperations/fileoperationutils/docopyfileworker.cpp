@@ -93,7 +93,7 @@ void DoCopyFileWorker::doMemcpyLocalBigFile(const FileInfoPointer fromInfo, cons
             action = AbstractJobHandler::SupportAction::kNoAction;
             if (!memcpy(destStart, sourceStart, everyCopySize)) {
                 auto lastError = strerror(errno);
-                qWarning() << "file memcpy error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                fmWarning() << "file memcpy error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
                            << " url to: " << toInfo->urlOf(UrlInfoType::kUrl)
                            << " error code: " << errno << " error msg: " << lastError;
 
@@ -154,7 +154,7 @@ bool DoCopyFileWorker::doDfmioFileCopy(FileInfoPointer fromInfo, FileInfoPointer
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!ret) {
             auto lastError = op->lastError().errorMsg();
-            qWarning() << "file copy error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+            fmWarning() << "file copy error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
                        << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl)
                        << " error code: " << op->lastError().code() << " error msg: " << lastError;
 
@@ -390,7 +390,7 @@ bool DoCopyFileWorker::createFileDevice(const FileInfoPointer &fromInfo, const F
         action = AbstractJobHandler::SupportAction::kNoAction;
         file.reset(new DFile(url));
         if (!file) {
-            qCritical() << "create dfm io dfile failed! url = " << url;
+            fmCritical() << "create dfm io dfile failed! url = " << url;
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
                                           AbstractJobHandler::JobErrorType::kProrogramError,
                                           url == toInfo->urlOf(UrlInfoType::kUrl));
@@ -466,7 +466,7 @@ bool DoCopyFileWorker::openFile(const FileInfoPointer &fromInfo, const FileInfoP
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!file->open(flags)) {
             auto lastError = file->lastError();
-            qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+            fmWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
                        << " url to: " << toInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << flags
                        << " error code: " << lastError.code() << " error msg: " << lastError.errorMsg();
 
@@ -539,7 +539,7 @@ bool DoCopyFileWorker::doReadFile(const FileInfoPointer &fromInfo, const FileInf
                 return true;
             }
 
-            qWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
+            fmWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
             const bool fromInfoExist = fromInfo->exists();
             AbstractJobHandler::JobErrorType errortype = fromInfoExist ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
             QString errorstr = fromInfoExist ? fromDevice->lastError().errorMsg() : QString();
@@ -597,7 +597,7 @@ bool DoCopyFileWorker::doWriteFile(const FileInfoPointer &fromInfo, const FileIn
         actionForWrite = AbstractJobHandler::SupportAction::kNoAction;
         do {
             if (!writeFinishedOnce)
-                qDebug() << "write not finished once, current write size: " << sizeWrite << " remain size: " << surplusSize - sizeWrite << " read size: " << readSize;
+                fmDebug() << "write not finished once, current write size: " << sizeWrite << " remain size: " << surplusSize - sizeWrite << " read size: " << readSize;
             surplusData += sizeWrite;
             surplusSize -= sizeWrite;
             sizeWrite = toDevice->write(surplusData, surplusSize);
@@ -612,7 +612,7 @@ bool DoCopyFileWorker::doWriteFile(const FileInfoPointer &fromInfo, const FileIn
         if (sizeWrite >= 0)
             break;
         if (sizeWrite == -1 && toDevice->lastError().code() == DFMIOErrorCode::DFM_IO_ERROR_NONE) {
-            qWarning() << "write failed, but no error, maybe write empty";
+            fmWarning() << "write failed, but no error, maybe write empty";
             break;
         }
 
@@ -691,10 +691,10 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
     }
     delete[] data;
 
-    qDebug("Time spent of integrity check of the file: %d", t.elapsed());
+    fmDebug("Time spent of integrity check of the file: %d", t.elapsed());
 
     if (sourceCheckSum != targetCheckSum) {
-        qWarning("Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", sourceCheckSum, targetCheckSum);
+        fmWarning("Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", sourceCheckSum, targetCheckSum);
         AbstractJobHandler::SupportAction actionForCheck = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
                                                                                 toInfo->urlOf(UrlInfoType::kUrl),
                                                                                 AbstractJobHandler::JobErrorType::kIntegrityCheckingError,

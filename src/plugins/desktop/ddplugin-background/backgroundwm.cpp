@@ -24,7 +24,7 @@ BackgroundWM::~BackgroundWM()
 void BackgroundWM::onAppearanceValueChanged(const QString& key)
 {
     if (QStringLiteral("backgroundUris") == key) {
-        qInfo() << "appearance background changed...";
+        fmInfo() << "appearance background changed...";
         emit backgroundChanged();
     }
 }
@@ -36,16 +36,16 @@ QString BackgroundWM::getBackgroundFromWm(const QString &screen)
         return path;
 
     if (!isWMActive()) {
-        qWarning() << "wm is not registered on dbus";
+        fmWarning() << "wm is not registered on dbus";
         return path;
     }
 
-    qInfo() << "Get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+    fmInfo() << "Get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
     QDBusPendingReply<QString> reply = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);
     reply.waitForFinished();
 
     if (reply.error().type() != QDBusError::NoError) {
-        qWarning() << "Get background failed by wmDBus"
+        fmWarning() << "Get background failed by wmDBus"
                    << reply.error().type() << reply.error().name() << reply.error().message();
     } else {
         path = reply.argumentAt<0>();
@@ -101,21 +101,21 @@ QString BackgroundWM::background(const QString &screen)
     if (!screen.isEmpty()) {
         //1.Get the background from wm
         path = getBackgroundFromWm(screen);
-        qInfo() << "getBackgroundFromWm  path :" << path << "screen" << screen;
+        fmInfo() << "getBackgroundFromWm  path :" << path << "screen" << screen;
 
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
             // 2.Parse background from config file
             path = getBackgroundFromConfig(screen);
-            qWarning() << "getBackgroundFormConfig path :" << path << "screen" << screen;
+            fmWarning() << "getBackgroundFormConfig path :" << path << "screen" << screen;
 
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 // 3.Use the default background
                 path = getDefaultBackground();
-                qCritical() << "getDefaultBackground path :" << path << "screen" << screen;
+                fmCritical() << "getDefaultBackground path :" << path << "screen" << screen;
             }
         }
     } else {
-        qInfo() << "Get background path terminated screen:" << screen << wmInter;
+        fmInfo() << "Get background path terminated screen:" << screen << wmInter;
     }
 
     return path;
@@ -130,7 +130,7 @@ QString BackgroundWM::getDefaultBackground()
                 continue;
             } else {
                 defaultPath = path;
-                qInfo() << "default background path:" << path;
+                fmInfo() << "default background path:" << path;
                 break;
             }
         }

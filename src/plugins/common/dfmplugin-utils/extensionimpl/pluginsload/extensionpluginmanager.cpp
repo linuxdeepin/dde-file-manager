@@ -17,40 +17,40 @@ DPUTILS_BEGIN_NAMESPACE
 void ExtensionPluginInitWorker::doWork(const QStringList &paths)
 {
     // do scan plugins
-    qInfo() << "Start scan extension lib paths: " << paths;
+    fmInfo() << "Start scan extension lib paths: " << paths;
     std::for_each(paths.cbegin(), paths.cend(), [this](const QString &path) {
         QDirIterator itera(path, { "*.so" }, QDir::Files | QDir::NoSymLinks);
         if (!itera.hasNext())
-            qWarning() << "Cannot find extension lib at: " << path;
+            fmWarning() << "Cannot find extension lib at: " << path;
         while (itera.hasNext()) {
             itera.next();
             ExtPluginLoaderPointer ptr { new ExtensionPluginLoader(itera.filePath()) };
             allLoaders.insert({ itera.filePath(), ptr });
-            qInfo() << "Scaned extension plugin: " << itera.filePath();
+            fmInfo() << "Scaned extension plugin: " << itera.filePath();
         }
     });
     emit scanPluginsFinished();
 
     // do load plugins
-    qInfo() << "Start load extension plugins";
+    fmInfo() << "Start load extension plugins";
     for (const auto &[k, v] : allLoaders) {
         if (!v->loadPlugin()) {
-            qWarning() << "Load failed: " << v->fileName() << v->lastError();
+            fmWarning() << "Load failed: " << v->fileName() << v->lastError();
             continue;
         }
-        qInfo() << "Loaded extension plugin:" << v->fileName();
+        fmInfo() << "Loaded extension plugin:" << v->fileName();
         loadedLoaders.insert({ k, v });
     }
     emit loadPluginsFinished();
 
     // do init plugins
-    qInfo() << "Start init extension plugins";
+    fmInfo() << "Start init extension plugins";
     for (const auto &[k, v] : loadedLoaders) {
         if (!v->initialize()) {
-            qWarning() << "init failed: " << v->fileName() << v->lastError();
+            fmWarning() << "init failed: " << v->fileName() << v->lastError();
             continue;
         }
-        qInfo() << "Inited extension plugin:" << v->fileName();
+        fmInfo() << "Inited extension plugin:" << v->fileName();
         doAppendExt(v->fileName(), v);
     }
     // TODO(zhangs): record plugin state

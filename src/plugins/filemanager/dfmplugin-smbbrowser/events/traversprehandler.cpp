@@ -44,7 +44,7 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     }
 
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
-        qInfo() << "mount done: " << url << ok << err.code << err.message << mpt;
+        fmInfo() << "mount done: " << url << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
             doChangeCurrentUrl(winId, mpt, subPath, url);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
@@ -123,10 +123,10 @@ void travers_prehandler::onSmbRootMounted(const QString &mountSource, Handler af
     if (QUrl(mountSource).host().isEmpty())
         return;
 
-    pddmDbg << "do cache root entry" << mountSource;
+    fmDebug() << "do cache root entry" << mountSource;
     VirtualEntryDbHandler::instance()->saveData(VirtualEntryData(mountSource));
 
-    pddmDbg << "add virtual entry for smb root" << mountSource;
+    fmDebug() << "add virtual entry for smb root" << mountSource;
     const QUrl &entryUrl = protocol_display_utilities::makeVEntryUrl(mountSource);
     computer_sidebar_event_calls::callItemAdd(entryUrl);
 }

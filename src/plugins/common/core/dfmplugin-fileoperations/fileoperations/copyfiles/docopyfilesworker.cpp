@@ -40,7 +40,7 @@ bool DoCopyFilesWorker::doWork()
     // 深信服远程下载
     if (sourceUrls.isEmpty() && workData->jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kCopyRemote)) {
         sourceUrls = dfmbase::ClipBoard::instance()->getRemoteUrls();
-        qInfo() << "remote copy source urls list:" << sourceUrls;
+        fmInfo() << "remote copy source urls list:" << sourceUrls;
     }
     // The endcopy interface function has been called here
     if (!AbstractWorker::doWork())
@@ -89,27 +89,27 @@ bool DoCopyFilesWorker::initArgs()
 
     if (sourceUrls.count() <= 0) {
         // pause and emit error msg
-        qCritical() << "sorce file count = 0!!!";
+        fmCritical() << "sorce file count = 0!!!";
         doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     if (!targetUrl.isValid()) {
         // pause and emit error msg
-        qCritical() << "target url is Valid !!!";
+        fmCritical() << "target url is Valid !!!";
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!targetInfo) {
         // pause and emit error msg
-        qCritical() << "create target info error, url = " << targetUrl;
+        fmCritical() << "create target info error, url = " << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
 
     if (!targetInfo->exists()) {
         // pause and emit error msg
-        qCritical() << "target dir is not exists, url = " << targetUrl;
+        fmCritical() << "target dir is not exists, url = " << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;
     }
@@ -156,7 +156,7 @@ bool DoCopyFilesWorker::copyFiles()
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo || !targetInfo) {
             // pause and emit error msg
-            qCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (fileInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
+            fmCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (fileInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
             const AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
                 return false;

@@ -5,23 +5,27 @@
 #ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
 #define DFMPLUGIN_WORKSPACE_GLOBAL_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
-
+#include <dfm-base/dfm_log_defines.h>
 #include <dfm-framework/event/eventhelper.h>
-#include "dtkwidget_config.h"
+
+#include <dtkwidget_config.h>
 
 #include <QList>
 #include <QDir>
 #include <QVariantMap>
+
+#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+
+#define DPWORKSPACE_BEGIN_NAMESPACE namespace DPWORKSPACE_NAMESPACE {
+#define DPWORKSPACE_END_NAMESPACE }
+#define DPWORKSPACE_USE_NAMESPACE using namespace DPWORKSPACE_NAMESPACE;
 
 namespace dfmbase {
 class FileInfo;
 }
 
 DPWORKSPACE_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPWORKSPACE_NAMESPACE)
 
 enum class DirOpenMode : uint8_t {
     kOpenInCurrentWindow,

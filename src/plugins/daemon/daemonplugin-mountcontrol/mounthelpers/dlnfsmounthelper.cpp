@@ -42,7 +42,7 @@ QVariantMap DlnfsMountHelper::mount(const QString &path, const QVariantMap &opts
     p.start(kDlnfs, args);
     p.waitForFinished();
     auto rets = p.readAllStandardError();
-    qInfo() << "dlnfs: mount result: " << rets;
+    fmInfo() << "dlnfs: mount result: " << rets;
     return { { kResult, rets.isEmpty() },
              { kErrorMessage, QString(rets) },
              { kErrorCode, parseErrorCodeByMsg(rets) } };
@@ -56,7 +56,7 @@ QVariantMap DlnfsMountHelper::unmount(const QString &path, const QVariantMap &op
     static constexpr char kFusermount[] { "fusermount" };
     // 1. check if dlnfs is already mounted at `path`
     if (!checkDlnfsExist(path)) {
-        qDebug() << "dlnfs: is not mounted at" << path;
+        fmDebug() << "dlnfs: is not mounted at" << path;
         return { { kResult, true },
                  { kErrorCode, -kMountNotExist },
                  { kErrorMessage, QString("dlnfs is not mounted at %1").arg(path) } };
@@ -64,7 +64,7 @@ QVariantMap DlnfsMountHelper::unmount(const QString &path, const QVariantMap &op
 
     // 2. check `fusermount` process exists.
     if (QStandardPaths::findExecutable(kFusermount).isEmpty()) {
-        qWarning() << "dlnfs: fusermount do not exist";
+        fmWarning() << "dlnfs: fusermount do not exist";
         return { { kResult, false },
                  { kErrorCode, -kFusermountProcessNotExists },
                  { kErrorMessage, "fusermount do not exist" } };
@@ -76,7 +76,7 @@ QVariantMap DlnfsMountHelper::unmount(const QString &path, const QVariantMap &op
     p.start(kFusermount, args);
     p.waitForFinished();
     auto rets = p.readAllStandardError();
-    qInfo() << "dlnfs: unmount result: " << rets;
+    fmInfo() << "dlnfs: unmount result: " << rets;
     return { { kResult, rets.isEmpty() },
              { kErrorMessage, QString(rets) },
              { kErrorCode, parseErrorCodeByMsg(rets) } };
@@ -95,7 +95,7 @@ bool DlnfsMountHelper::checkDlnfsExist(const QString &path)
     Helper d;
     auto tab = d.tab;
     int ret = mnt_table_parse_mtab(tab, nullptr);
-    qDebug() << "parse mtab: " << ret;
+    fmDebug() << "parse mtab: " << ret;
 
     std::string aPath = path.toStdString();
     auto fs = mnt_table_find_target(tab, aPath.c_str(), MNT_ITER_BACKWARD);

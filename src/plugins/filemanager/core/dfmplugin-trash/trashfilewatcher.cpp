@@ -31,7 +31,7 @@ bool TrashFileWatcherPrivate::start()
         return false;
     started = watcher->start();
     if (!started)
-        qWarning() << "watcher start failed, error: " << watcher->lastError().errorMsg();
+        fmWarning() << "watcher start failed, error: " << watcher->lastError().errorMsg();
     return started;
 }
 
@@ -48,7 +48,7 @@ void TrashFileWatcherPrivate::initFileWatcher()
     const QUrl &trashUrl = url;
     watcher.reset(new DWatcher(trashUrl));
     if (!watcher) {
-        qWarning("watcher create failed.");
+        fmWarning("watcher create failed.");
         abort();
     }
 }

@@ -37,7 +37,7 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer handle, const QList<QUrl
                                  const AbstractJobHandler::JobFlags &flags)
 {
     if (!handle) {
-        qWarning() << "JobHandlePointer is a nullptr, setWorkArgs failed!";
+        fmWarning() << "JobHandlePointer is a nullptr, setWorkArgs failed!";
         return;
     }
     connect(this, &AbstractWorker::startWork, this, &AbstractWorker::doWork);
@@ -173,7 +173,7 @@ void AbstractWorker::startCountProccess()
 bool AbstractWorker::statisticsFilesSize()
 {
     if (sourceUrls.isEmpty()) {
-        qWarning() << "sources files list is empty!";
+        fmWarning() << "sources files list is empty!";
         return false;
     }
 
@@ -272,13 +272,13 @@ void AbstractWorker::endWork()
 
     emit finishedNotify(info);
 
-    qInfo() << "\n work end, job: " << jobType
+    fmInfo() << "\n work end, job: " << jobType
             << "\n sources parent: " << (sourceUrls.count() <= 0 ? QUrl() : UrlRoute::urlParent(sourceUrls.first()))
             << "\n sources count: " << sourceUrls.count()
             << "\n target: " << targetUrl
             << "\n time elapsed: " << timeElapsed.elapsed()
             << "\n";
-    qDebug() << "\n sources urls: " << sourceUrls;
+    fmDebug() << "\n sources urls: " << sourceUrls;
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
@@ -364,7 +364,7 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, QVariant::fromValue(emitId));
     emit errorNotify(info);
 
-    qDebug() << "work error, job: " << jobType << " job error: " << error << " url from: " << from << " url to: " << to
+    fmDebug() << "work error, job: " << jobType << " job error: " << error << " url from: " << from << " url to: " << to
              << " error msg: " << errorMsg << id;
 }
 
@@ -449,7 +449,7 @@ void AbstractWorker::checkRetry()
 bool AbstractWorker::doWork()
 {
     timeElapsed.start();
-    qDebug() << "\n=========================\nwork begin, job: " << jobType << " sources: " << sourceUrls << " target: " << targetUrl << "\n";
+    fmDebug() << "\n=========================\nwork begin, job: " << jobType << " sources: " << sourceUrls << " target: " << targetUrl << "\n";
 
     // 执行拷贝的业务逻辑
     if (!initArgs()) {
@@ -476,7 +476,7 @@ bool AbstractWorker::stateCheck()
         return true;
     }
     if (currentState == AbstractJobHandler::JobState::kPauseState) {
-        qInfo() << "Will be suspended";
+        fmInfo() << "Will be suspended";
         if (!workerWait()) {
             return currentState != AbstractJobHandler::JobState::kStopState;
         }
@@ -591,7 +591,7 @@ AbstractWorker::~AbstractWorker()
 void AbstractWorker::initHandleConnects(const JobHandlePointer handle)
 {
     if (!handle) {
-        qWarning() << "JobHandlePointer is a nullptr,so connects failed!";
+        fmWarning() << "JobHandlePointer is a nullptr,so connects failed!";
         return;
     }
     connect(this, &AbstractWorker::progressChangedNotify, handle.get(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);

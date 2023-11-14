@@ -154,7 +154,7 @@ void FileViewModel::doExpand(const QModelIndex &index)
         return;
 
     if (!filterSortWorker) {
-        qWarning() << "The model do not stand by, beacuse the sort worker unexist.";
+        fmWarning() << "The model do not stand by, beacuse the sort worker unexist.";
         return;
     }
 
@@ -379,7 +379,7 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     bool ret { false };
 
     if (!fetchingUrl.isValid()) {
-        qWarning() << "Can't fetch more with invalid url.";
+        fmWarning() << "Can't fetch more with invalid url.";
         return;
     }
 
@@ -471,7 +471,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     targetFileInfo = fileInfo(dropIndex);
     if (!targetFileInfo || (targetFileInfo->isAttributes(OptInfoType::kIsDir) && !targetFileInfo->isAttributes(OptInfoType::kIsWritable))) {
-        qWarning() << "Drop target dir is not writable!";
+        fmWarning() << "Drop target dir is not writable!";
         return false;
     }
     QUrl targetUrl = targetFileInfo->urlOf(UrlInfoType::kUrl);

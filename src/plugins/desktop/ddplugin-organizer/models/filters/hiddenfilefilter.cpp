@@ -20,7 +20,7 @@ static FileInfoPointer createFileInfo(const QUrl &url)
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create FileInfo error: " << errString << url;
+        fmInfo() << "create FileInfo error: " << errString << url;
         return nullptr;
     }
 
@@ -86,7 +86,7 @@ bool HiddenFileFilter::acceptUpdate(const QUrl &url, const QVector<int> &roles)
     if (roles.contains(Global::kItemCreateFileInfoRole)) {
         // get file that removed form .hidden if do not show hidden file.
         if (!showHiddenFiles() && url.fileName() == ".hidden") {
-            qDebug() << "refresh by hidden changed.";
+            fmDebug() << "refresh by hidden changed.";
             refreshModel();
             return false;
         }
@@ -101,7 +101,7 @@ void HiddenFileFilter::updateFlag()
 
 void HiddenFileFilter::hiddenFlagChanged(bool showHidden)
 {
-    qDebug() << "refresh by canvas hidden flag changed." << showHidden;
+    fmDebug() << "refresh by canvas hidden flag changed." << showHidden;
     show = showHidden;
     refreshModel();
 }

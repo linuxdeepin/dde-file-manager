@@ -102,7 +102,7 @@ void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &ta
             for (auto url : urls) {
                 int oldIndex = it.value()->items.indexOf(url);
                 if (-1 == oldIndex) {
-                    qWarning() << "unknow error:" << url << it.value()->items;
+                    fmWarning() << "unknow error:" << url << it.value()->items;
                     continue;
                 }
                 if (oldIndex < targetIndex)
@@ -123,7 +123,7 @@ void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &ta
             }
             emit itemsChanged(sourceId);
         } else {
-            qWarning() << "can not found :" << sourceId;
+            fmWarning() << "can not found :" << sourceId;
         }
         it = collections.find(targetKey);
         if (it != collections.end()) {

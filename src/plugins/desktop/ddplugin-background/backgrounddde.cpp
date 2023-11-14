@@ -14,11 +14,11 @@ DCORE_USE_NAMESPACE
 BackgroundDDE::BackgroundDDE(QObject *parent)
     : BackgroundService(parent)
 {
-    qInfo() << "create org.deepin.dde.Appearance1";
+    fmDebug() << "create org.deepin.dde.Appearance1";
     interface = new InterFace("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
                           QDBusConnection::sessionBus(), this);
     interface->setTimeout(200);
-    qInfo() << "create org.deepin.dde.Appearance1 end";
+    fmDebug() << "create org.deepin.dde.Appearance1 end";
 
     apperanceConf = DConfig::create("org.deepin.dde.appearance", "org.deepin.dde.appearance", "", this);
     connect(apperanceConf, &DConfig::valueChanged, this, &BackgroundDDE::onAppearanceValueChanged);
@@ -38,12 +38,12 @@ QString BackgroundDDE::getBackgroundFromDDE(const QString &screen)
     if (screen.isEmpty())
         return path;
 
-    qInfo() << "Get background by DDE GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+    fmDebug() << "Get background by DDE GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
     QDBusPendingReply<QString> reply = interface->GetCurrentWorkspaceBackgroundForMonitor(screen);
     reply.waitForFinished();
 
     if (reply.error().type() != QDBusError::NoError) {
-        qWarning() << "Get background failed by DDE_DBus"
+        fmWarning() << "Get background failed by DDE_DBus"
                    << reply.error().type() << reply.error().name() << reply.error().message();
     } else {
         path = reply.argumentAt<0>();
@@ -58,7 +58,7 @@ QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
     QString configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
     QFile ddeFile(configPath + "/dde-appearance/config.json");
     if (!ddeFile.open(QFile::ReadOnly | QIODevice::Text)) {
-        qWarning() << "config file doesn't exist";
+        fmWarning() << "config file doesn't exist";
         return path;
     }
 
@@ -66,7 +66,7 @@ QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(ddeFile.readAll(), &error);
     if (error.error != QJsonParseError::NoError) {
-        qCritical() << "config file is invailid :" << error.errorString();
+        fmCritical() << "config file is invailid :" << error.errorString();
         return path;
     }
 
@@ -109,7 +109,7 @@ QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
 void BackgroundDDE::onAppearanceValueChanged(const QString &key)
 {
     if (key == QString("Wallpaper_Uris")) {
-        qInfo() << "appearance Wallpaper_Uris changed...";
+        fmDebug() << "appearance Wallpaper_Uris changed...";
         emit backgroundChanged();
     }
 }
@@ -122,21 +122,21 @@ QString BackgroundDDE::background(const QString &screen)
 
         //1.Get the background from DDE
         path = getBackgroundFromDDE(screen);
-        qInfo() << "getBackgroundFromDDE path :" << path << "screen" << screen;
+        fmDebug() << "getBackgroundFromDDE path :" << path << "screen" << screen;
 
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
             // 2.Parse background from config file
             path = getBackgroundFromConfig(screen);
-            qWarning() << "getBackgroundFormConfig path :" << path << "screen" << screen;
+            fmWarning() << "getBackgroundFormConfig path :" << path << "screen" << screen;
 
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 // 3.Use the default background
                 path = getDefaultBackground();
-                qCritical() << "getDefaultBackground path :" << path << "screen" << screen;
+                fmCritical() << "getDefaultBackground path :" << path << "screen" << screen;
             }
         }
     } else {
-        qInfo() << "Get background path terminated screen:" << screen << interface;
+        fmDebug() << "Get background path terminated screen:" << screen << interface;
     }
 
     return path;

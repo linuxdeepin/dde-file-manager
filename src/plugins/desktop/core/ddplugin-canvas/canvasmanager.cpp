@@ -129,7 +129,7 @@ void CanvasManager::openEditor(const QUrl &url)
             }
         }
         if (!find) {
-            qDebug() << "can not editor,file does not exist:" << url;
+            fmDebug() << "can not editor,file does not exist:" << url;
             return;
         }
     }
@@ -150,7 +150,7 @@ void CanvasManager::openEditor(const QUrl &url)
 
 void CanvasManager::setIconLevel(int level)
 {
-    qInfo() << "change icon level to" << level;
+    fmInfo() << "change icon level to" << level;
     auto allView = views();
     if (allView.isEmpty()) {
         if (DispalyIns->iconLevel() != level) {
@@ -190,7 +190,7 @@ bool CanvasManager::autoArrange() const
 
 void CanvasManager::setAutoArrange(bool on)
 {
-    qInfo() << "set auto arrange" << on;
+    fmInfo() << "set auto arrange" << on;
     DispalyIns->setAutoAlign(on);
     GridIns->setMode(on ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
     if (on) {
@@ -229,7 +229,7 @@ void CanvasManager::onCanvasBuild()
         if (primary == nullptr) {
             //屏幕信息获取失败，清空对应关系
             d->viewMap.clear();
-            qCritical() << "get primary screen failed return.";
+            fmCritical() << "get primary screen failed return.";
             return;
         }
 
@@ -238,7 +238,7 @@ void CanvasManager::onCanvasBuild()
 
         const QString screenName = getScreenName(primary);
         if (screenName.isEmpty()) {
-            qWarning() << "can not get screen name from root window";
+            fmWarning() << "can not get screen name from root window";
             return;
         }
 
@@ -246,10 +246,10 @@ void CanvasManager::onCanvasBuild()
         d->viewMap.clear();
         if (view.get()) {
             d->updateView(view, primary, 1);
-            qInfo() << "update primary view" << screenName;
+            fmInfo() << "update primary view" << screenName;
         } else {
             view = d->createView(primary, 1);
-            qInfo() << "create primary view" << screenName;
+            fmInfo() << "create primary view" << screenName;
         }
 
         d->viewMap.insert(screenName, view);
@@ -264,7 +264,7 @@ void CanvasManager::onCanvasBuild()
 
             const QString screenName = getScreenName(win);
             if (screenName.isEmpty()) {
-                qWarning() << "can not get screen name from root window";
+                fmWarning() << "can not get screen name from root window";
                 continue;
             }
 
@@ -272,10 +272,10 @@ void CanvasManager::onCanvasBuild()
             //新增
             if (view.get()) {
                 d->updateView(view, win, screenNum);
-                qInfo() << "update view" << screenNum << screenName;
+                fmInfo() << "update view" << screenNum << screenName;
             } else {
                 view = d->createView(win, screenNum);
-                qInfo() << "create view" << screenNum << screenName;
+                fmInfo() << "create view" << screenNum << screenName;
                 d->viewMap.insert(screenName, view);
             }
         }
@@ -308,7 +308,7 @@ void CanvasManager::onGeometryChanged()
         CanvasViewPointer view = itor.value();
         auto *win = winMap.value(itor.key());
         if (win == nullptr) {
-            qCritical() << "can not get root " << itor.key() << "num" << view->screenNum();
+            fmCritical() << "can not get root " << itor.key() << "num" << view->screenNum();
             continue;
         }
 
@@ -318,11 +318,11 @@ void CanvasManager::onGeometryChanged()
 
         // no need to update.
         if (view->geometry() == avRect) {
-            qInfo() << "view geometry is equal to rect,and discard changes" << avRect;
+            fmInfo() << "view geometry is equal to rect,and discard changes" << avRect;
             continue;
         }
 
-        qInfo() << "view geometry change from" << view->geometry() << "to" << avRect;
+        fmInfo() << "view geometry change from" << view->geometry() << "to" << avRect;
         view->setGeometry(avRect);
     }
 }
@@ -353,7 +353,7 @@ void CanvasManager::reloadItem()
         existItems.append(df.toString());
     }
 
-    qInfo() << "add items to grid, count:" << existItems.count() << DispalyIns->autoAlign();
+    fmInfo() << "add items to grid, count:" << existItems.count() << DispalyIns->autoAlign();
     GridIns->setItems(existItems);
 
     // rearrange
@@ -477,7 +477,7 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, QWidget *ro
 
 void CanvasManagerPrivate::onHiddenFlagsChanged(bool show)
 {
-    qInfo() << "hidden flags changed to" << show;
+    fmInfo() << "hidden flags changed to" << show;
     if (show != canvasModel->showHiddenFiles()) {
         canvasModel->setShowHiddenFiles(show);
         canvasModel->refresh(canvasModel->rootIndex());
@@ -518,7 +518,7 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
             FileOperatorProxyIns->clearTouchFileData();
 
             // need open editor,only by menu create file
-            qInfo() << "grid touch file " << path;
+            fmInfo() << "grid touch file " << path;
             q->openEditor(url);
             return true;
         }
@@ -614,7 +614,7 @@ void CanvasManagerPrivate::onFileSorted()
     for (const QUrl &df : actualList)
         existItems.append(df.toString());
 
-    qInfo() << "layout items to align" << existItems.size();
+    fmInfo() << "layout items to align" << existItems.size();
     GridIns->setItems(existItems);
     GridIns->setMode(oldMode);
     q->update();

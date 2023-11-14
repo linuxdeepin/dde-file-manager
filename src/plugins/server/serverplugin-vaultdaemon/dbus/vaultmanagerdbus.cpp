@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultmanagerdbus.h"
+#include "serverplugin_vaultdaemon_global.h"
+
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/settings.h>
 
@@ -24,6 +26,7 @@ static constexpr int kTimerOutTime { 60 * 1000 };   // 计时器超时时间/ms
 static constexpr int kTotalWaitTime { 10 };   // 需要等待的分钟数
 
 DFMBASE_USE_NAMESPACE
+SERVERVAULT_USE_NAMESPACE
 
 VaultManagerDBus::VaultManagerDBus(QObject *parent)
     : QObject(parent)
@@ -177,7 +180,7 @@ bool VaultManagerDBus::IsValidInvoker()
         QString Path = f.canonicalFilePath();
         return kVaultWhiteProcess.contains(Path);
     }
-    qWarning() << "Failed to get pid. The caller is not a member of the whitelist";
+    fmWarning() << "Failed to get pid. The caller is not a member of the whitelist";
     return false;
 #endif
 }

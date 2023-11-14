@@ -56,7 +56,7 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
 void ExtendCanvasScenePrivate::normalMenu(QMenu *parent)
 {
     if (Q_UNLIKELY(selectFiles.isEmpty())) {
-        qWarning() << "no files for normal menu.";
+        fmWarning() << "no files for normal menu.";
         return;
     }
 
@@ -143,7 +143,7 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
         });
 
         if (actionIter == actions.end()) {
-            qWarning() << "can not find action:"
+            fmWarning() << "can not find action:"
                        << "display-settings";
         } else {
             QAction *indexAction = *actionIter;
@@ -178,7 +178,7 @@ void ExtendCanvasScenePrivate::updateNormalMenu(QMenu *parent)
     //    });
 
     //    if (actionIter == actions.end()) {
-    //        qWarning() << "can not find action:" << "display-settings";
+    //        fmWarning() << "can not find action:" << "display-settings";
     //        return ;
     //    }
 }
@@ -257,7 +257,7 @@ bool ExtendCanvasScenePrivate::triggerSortby(const QString &actionId)
         if (view)
             view->sort(role);
         else
-            qCritical() << "invaild view to sort.";
+            fmCritical() << "invaild view to sort.";
         return true;
     }
 
@@ -343,7 +343,7 @@ bool ExtendCanvasScene::triggered(QAction *action)
 {
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.values().contains(action)) {
-        qDebug() << "organizer for canvas:" << actionId;
+        fmDebug() << "organizer for canvas:" << actionId;
         if (actionId == ActionID::kOrganizeDesktop) {
             emit CfgPresenter->changeEnableState(action->isChecked());
         } else if (actionId == ActionID::kOrganizeByCustom) {
@@ -374,9 +374,9 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
         bool isCanvas = caller->name() == "CanvasMenu";
         Q_ASSERT_X(isCanvas, "ExtendCanvasScene", "parent scene is not CanvasMenu");
         if (isCanvas) {
-            qDebug() << "filter action" << actionId;
+            fmDebug() << "filter action" << actionId;
             if (Q_UNLIKELY(!d->view)) {
-                qWarning() << "warning:can not get collection view, and filter action failed.";
+                fmWarning() << "warning:can not get collection view, and filter action failed.";
                 return false;
             }
 
@@ -389,7 +389,7 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
                 if (1 == d->selectFiles.count()) {
                     auto index = d->view->model()->index(d->focusFile);
                     if (Q_UNLIKELY(!index.isValid()))
-                        qWarning() << "can not rename: invaild file" << d->focusFile;
+                        fmWarning() << "can not rename: invaild file" << d->focusFile;
                     else
                         d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
                 } else {
@@ -418,7 +418,7 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
             }
             return false;
         } else {
-            qCritical() << "ExtendCanvasScene's parent is not CanvasMenu";
+            fmCritical() << "ExtendCanvasScene's parent is not CanvasMenu";
         }
     }
 

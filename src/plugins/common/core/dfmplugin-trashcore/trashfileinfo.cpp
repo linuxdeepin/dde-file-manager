@@ -156,12 +156,12 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
 {
     d->dFileInfo.reset(new DFileInfo(url));
     if (!d->dFileInfo) {
-        qWarning() << "dfm-io use factory create fileinfo Failed, url: " << url;
+        fmWarning() << "dfm-io use factory create fileinfo Failed, url: " << url;
         return;
     }
     bool init = d->dFileInfo->initQuerier();
     if (!init) {
-        //        qWarning() << "querier init failed, url: " << url;
+        //        fmWarning() << "querier init failed, url: " << url;
         return;
     }
 
@@ -171,7 +171,7 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
         setProxy(InfoFactory::create<FileInfo>(d->targetUrl));
     } else {
         if (!FileUtils::isTrashRootFile(url))
-            qWarning() << "create proxy failed, target url is invalid, url: " << url;
+            fmWarning() << "create proxy failed, target url is invalid, url: " << url;
     }
 }
 

@@ -42,7 +42,7 @@ void DCustomActionBuilder::setActiveDir(const QUrl &dir)
     QString errString;
     auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(dir, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (info.isNull()) {
-        qDebug() << errString;
+        fmDebug() << errString;
         return;
     }
 
@@ -64,7 +64,7 @@ void DCustomActionBuilder::setFocusFile(const QUrl &file)
     QString errString;
     auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (info.isNull()) {
-        qDebug() << errString;
+        fmDebug() << errString;
         return;
     }
 
@@ -129,7 +129,7 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList
 
         auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(file, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (info.isNull()) {
-            qDebug() << errString;
+            fmDebug() << errString;
             continue;
         }
 
@@ -168,7 +168,7 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileComboWithFocus(co
             return (isDir ? DCustomActionDefines::kMultiDirs : DCustomActionDefines::kMultiFiles);
         }
     } else {
-        qDebug() << errString;
+        fmDebug() << errString;
     }
 
     return DCustomActionDefines::kBlankSpace;
@@ -218,7 +218,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
         QString errString;
         const FileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(singleUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
-            qWarning() << "create selected FileInfo failed: " << singleUrl.toString() << errString;
+            fmWarning() << "create selected FileInfo failed: " << singleUrl.toString() << errString;
             continue;
         }
 

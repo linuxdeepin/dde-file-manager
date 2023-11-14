@@ -89,10 +89,10 @@ FileTagCache &FileTagCache::instance()
 
 void FileTagCache::loadFileTagsFromDatabase()
 {
-    qInfo() << "Start initilize FileTagCache";
+    fmInfo() << "Start initilize FileTagCache";
     // 加载数据库所有文件标记,和标记属性到缓存
     if (!TagProxyHandle::instance()->isValid())
-        qWarning() << "tagService is inValid";
+        fmWarning() << "tagService is inValid";
     d->fileTagsCache = TagProxyHandle::instance()->getAllFileWithTags();
     const auto &tagsColor = TagProxyHandle::instance()->getAllTags();
     auto it = tagsColor.begin();

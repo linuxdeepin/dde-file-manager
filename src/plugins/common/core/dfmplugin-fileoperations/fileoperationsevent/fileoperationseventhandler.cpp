@@ -45,7 +45,7 @@ void FileOperationsEventHandler::publishJobResultEvent(AbstractJobHandler::JobTy
         dpfSignalDispatcher->publish(GlobalEventType::kCleanTrashResult, destUrls, ok, errMsg);
         break;
     default:
-        qWarning() << "Invalid Job Type";
+        fmWarning() << "Invalid Job Type";
     }
 }
 
@@ -79,7 +79,7 @@ FileOperationsEventHandler *FileOperationsEventHandler::instance()
 void FileOperationsEventHandler::handleJobResult(DFMBASE_NAMESPACE::AbstractJobHandler::JobType jobType, JobHandlePointer ptr)
 {
     if (!ptr || jobType == AbstractJobHandler::JobType::kUnknow) {
-        qCritical() << "Invalid job: " << jobType;
+        fmCritical() << "Invalid job: " << jobType;
         return;
     }
 

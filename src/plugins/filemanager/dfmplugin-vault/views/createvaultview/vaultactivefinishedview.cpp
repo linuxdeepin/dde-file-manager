@@ -209,7 +209,7 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
                     VaultConfig config;
                     QString encrypitonMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
                     if (encrypitonMethod == QString(kConfigKeyNotExist)) {
-                        qWarning() << "Vault: Get encryption method failed!";
+                        fmWarning() << "Vault: Get encryption method failed!";
                         return;
                     }
 
@@ -219,13 +219,13 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
                     } else if (encrypitonMethod == QString(kConfigValueMethodTransparent)) {
                         password = OperatorCenter::getInstance()->passwordFromKeyring();
                     } else {
-                        qWarning() << "Vault: Get encryption method failed, can't create vault!";
+                        fmWarning() << "Vault: Get encryption method failed, can't create vault!";
                     }
                     if (!password.isEmpty()) {
                         VaultHelper::instance()->createVault(password);
                         OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
                     } else {
-                        qWarning() << "Vault: Get password is empty, failed to create the vault!";
+                        fmWarning() << "Vault: Get password is empty, failed to create the vault!";
                     }
                 });
                 t.detach();

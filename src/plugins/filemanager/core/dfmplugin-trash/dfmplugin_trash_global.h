@@ -5,13 +5,17 @@
 #ifndef DFMPLUGIN_TRASH_GLOBAL_H
 #define DFMPLUGIN_TRASH_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPTRASH_NAMESPACE dfmplugin_trash
 
-#define DPTRASH_BEGIN_NAMESPACE namespace dfmplugin_trash {
+#define DPTRASH_BEGIN_NAMESPACE namespace DPTRASH_NAMESPACE {
 #define DPTRASH_END_NAMESPACE }
-#define DPTRASH_USE_NAMESPACE using namespace dfmplugin_trash;
+#define DPTRASH_USE_NAMESPACE using namespace DPTRASH_NAMESPACE;
 
 DPTRASH_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPTRASH_NAMESPACE)
+
 namespace TrashActionId {
 inline constexpr char kRestore[] { "restore" };
 inline constexpr char kRestoreAll[] { "restore-all" };
