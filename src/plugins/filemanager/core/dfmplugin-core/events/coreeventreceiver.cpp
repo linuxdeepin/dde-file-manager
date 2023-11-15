@@ -65,7 +65,7 @@ void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
         if (plugin) {
             auto result { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
             fmInfo() << "Load result: " << result
-                    << "State: " << plugin->pluginState();
+                     << "State: " << plugin->pluginState();
         }
     });
     fmInfo() << "End load plugins at runtime.";
@@ -75,6 +75,9 @@ void CoreEventReceiver::handleHeadless()
 {
     Q_ASSERT(qApp->applicationName() == "dde-file-manager");
 
+    // The purpose of hot-launch is to start the process faster,
+    // if you just cache the plugin loading, the speed is not ideal.
+    // So here you need to cache an assembled window.
     CoreHelper::instance().cacheDefaultWindow();
 }
 
