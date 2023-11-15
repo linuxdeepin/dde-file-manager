@@ -118,6 +118,8 @@ void ComputerMenuScene::updateState(QMenu *parent)
     case AbstractEntryFileEntity::kOrderSysDiskData:
     case AbstractEntryFileEntity::kOrderSysDisks:
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kRename, kProperty };
+        if (!d->info->renamable())
+            disabled << kRename;
         break;
 
     case AbstractEntryFileEntity::kOrderRemovableDisks: {
