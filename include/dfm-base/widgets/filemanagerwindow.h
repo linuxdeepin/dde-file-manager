@@ -39,9 +39,11 @@ public:
     AbstractFrame *workSpace() const;
     AbstractFrame *detailView() const;
 
+    void loadState();
+    void saveState();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void moveEvent(QMoveEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;

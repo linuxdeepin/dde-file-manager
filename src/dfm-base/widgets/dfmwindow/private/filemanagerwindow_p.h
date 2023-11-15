@@ -36,6 +36,10 @@ public:
     int splitterPosition() const;
     void setSplitterPosition(int pos);
 
+    void loadWindowState();
+    void saveWindowState();
+    void saveSidebarState();
+
 protected:
     QUrl currentUrl;
     static constexpr int kMinimumWindowWidth { 680 };

@@ -23,8 +23,6 @@ public:
     explicit FileManagerWindowsManagerPrivate(FileManagerWindowsManager *serv);
     DFMBASE_NAMESPACE::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
     bool isValidUrl(const QUrl &url, QString *error);
-    void loadWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window);
-    void saveWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window);
     void onWindowClosed(DFMBASE_NAMESPACE::FileManagerWindow *window);
     void onShowHotkeyHelp(DFMBASE_NAMESPACE::FileManagerWindow *window);
 

@@ -7,6 +7,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QUrl>
 #include <QCloseEvent>
@@ -14,8 +15,21 @@
 #include <QHideEvent>
 #include <QApplication>
 #include <QScreen>
+#include <QWindow>
 
 namespace dfmbase {
+
+enum NetWmState {
+    kNetWmStateAbove = 0x1,
+    kNetWmStateBelow = 0x2,
+    kNetWmStateFullScreen = 0x4,
+    kNetWmStateMaximizedHorz = 0x8,
+    kNetWmStateMaximizedVert = 0x10,
+    kNetWmStateModal = 0x20,
+    kNetWmStateStaysOnTop = 0x40,
+    kNetWmStateDemandsAttention = 0x80
+};
+Q_DECLARE_FLAGS(NetWmStates, NetWmState)
 
 /*!
  * \class FileManagerWindowPrivate
@@ -109,13 +123,62 @@ bool FileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
 
 int FileManagerWindowPrivate::splitterPosition() const
 {
-    return splitter ? splitter->sizes().at(0) : kMaximumLeftWidth;
+    if (!splitter || splitter->sizes().isEmpty())
+        return kDefaultLeftWidth;
+    return splitter->sizes().at(0);
 }
 
 void FileManagerWindowPrivate::setSplitterPosition(int pos)
 {
     if (splitter)
         splitter->setSizes({ pos, splitter->width() - pos - splitter->handleWidth() });
+}
+
+void FileManagerWindowPrivate::loadWindowState()
+{
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
+
+    int width = state.value("width").toInt();
+    int height = state.value("height").toInt();
+    NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
+
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏属性都满足，才判断是全屏
+    if ((FMWindowsIns.windowIdList().isEmpty()) && ((windowState & kNetWmStateMaximizedHorz) != 0 && (windowState & kNetWmStateMaximizedVert) != 0)) {
+        // make window to be maximized.
+        // the following calling is copyed from QWidget::showMaximized()
+        q->setWindowState((q->windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen))
+                          | Qt::WindowMaximized);
+    } else {
+        q->resize(width, height);
+    }
+}
+
+void FileManagerWindowPrivate::saveWindowState()
+{
+    /// The power by dxcb platform plugin
+    NetWmStates states = static_cast<NetWmStates>(q->window()->windowHandle()->property("_d_netWmStates").toInt());
+    QVariantMap state;
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏属性都满足，才判断是全屏
+    if ((states & kNetWmStateMaximizedHorz) == 0 || (states & kNetWmStateMaximizedVert) == 0) {
+        state["width"] = q->size().width();
+        state["height"] = q->size().height();
+    } else {
+        const QVariantMap &state1 = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
+        state["width"] = state1.value("width").toInt();
+        state["height"] = state1.value("height").toInt();
+        state["state"] = static_cast<int>(states);
+    }
+    Application::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
+}
+
+void FileManagerWindowPrivate::saveSidebarState()
+{
+    int width = splitterPosition();
+    if (width >= kMinimumLeftWidth && width <= kMaximumLeftWidth) {
+        QVariantMap state;
+        state["sidebar"] = width;
+        Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
+    }
 }
 
 /*!
@@ -259,23 +322,22 @@ AbstractFrame *FileManagerWindow::detailView() const
     return d->detailSpace;
 }
 
+void FileManagerWindow::loadState()
+{
+    d->loadWindowState();
+}
+
+void FileManagerWindow::saveState()
+{
+    d->saveSidebarState();
+    d->saveWindowState();
+}
+
 void FileManagerWindow::closeEvent(QCloseEvent *event)
 {
     // NOTE(zhangs): bug 59239
     emit aboutToClose();
     DMainWindow::closeEvent(event);
-}
-
-void FileManagerWindow::hideEvent(QHideEvent *event)
-{
-    int width = d->splitterPosition();
-    if (width >= d->kMinimumLeftWidth && width <= d->kMaximumLeftWidth) {
-        QVariantMap state;
-        state["sidebar"] = width;
-        Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
-    }
-
-    return DMainWindow::hideEvent(event);
 }
 
 void FileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
