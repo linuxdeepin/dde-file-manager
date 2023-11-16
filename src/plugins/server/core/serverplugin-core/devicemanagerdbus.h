@@ -54,6 +54,7 @@ public slots:
 private:
     void initialize();
     void initConnection();
+    void requestRefreshDesktopAsNeeded(const QString &path, const QString &operation);
 };
 
 #endif   // DEVICEMANAGERDBUS_H

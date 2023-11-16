@@ -3,13 +3,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "devicemanagerdbus.h"
+#include "serverplugin_core_global.h"
 
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+
+#include <dfm-io/denumerator.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QDBusInterface>
 #include <QDebug>
 
+SERVERPCORE_USE_NAMESPACE
+DFM_LOG_REISGER_CATEGORY(SERVERPCORE_NAMESPACE)
 DFMBASE_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
@@ -83,13 +90,40 @@ void DeviceManagerDBus::initConnection()
 
     connect(DevMngIns, &DeviceManager::blockDevMounted, this, [this](const QString &id, const QString &mpt) {
         emit BlockDeviceMounted(id, mpt);
+        requestRefreshDesktopAsNeeded(mpt, "onMount");
     });
     connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, [this](const QString &id, const QString &oldMpt) {
         emit BlockDeviceUnmounted(id, oldMpt);
+        requestRefreshDesktopAsNeeded(oldMpt, "onUnmount");
     });
     connect(DevMngIns, &DeviceManager::blockDevRemoved, this, [this](const QString &id, const QString &oldMpt) {
         emit BlockDeviceRemoved(id, oldMpt);
+        requestRefreshDesktopAsNeeded(oldMpt, "onRemove");
     });
+}
+
+void DeviceManagerDBus::requestRefreshDesktopAsNeeded(const QString &path, const QString &operation)
+{
+    QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
+    if (desktopPath.isEmpty())
+        return;
+
+    fmDebug() << "looking for link files from" << desktopPath;
+    dfmio::DEnumerator enu(QUrl::fromLocalFile(desktopPath));
+    auto files = enu.fileInfoList();
+    bool hasFileLinkToTarget = std::any_of(files.cbegin(), files.cend(), [path](QSharedPointer<dfmio::DFileInfo> file) {
+        bool isSym = file->attribute(dfmio::DFileInfo::AttributeID::kStandardIsSymlink).toBool();
+        if (!isSym) return false;
+        auto target = file->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
+        return target.startsWith(path);
+    });
+    if (hasFileLinkToTarget) {
+        QDBusInterface ifs("com.deepin.dde.desktop",
+                           "/com/deepin/dde/desktop",
+                           "com.deepin.dde.desktop");
+        ifs.asyncCall("Refresh");
+        fmInfo() << "refresh desktop async finished..." << operation << path;
+    }
 }
 
 /*!
