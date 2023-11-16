@@ -66,7 +66,6 @@ public:
     virtual bool start() override;
     virtual void stop() override;
 
-    void connectToServer();
     Q_INVOKABLE void loadLazyPlugins();
 
 protected slots:
@@ -90,7 +89,7 @@ private:
     DPF_EVENT_REG_SIGNAL(signal_ScreenProxy_ScreenGeometryChanged)
     DPF_EVENT_REG_SIGNAL(signal_ScreenProxy_ScreenAvailableGeometryChanged)
 
-    //DPF_EVENT_REG_SLOT(slot_ScreenProxy_Instance)
+    // DPF_EVENT_REG_SLOT(slot_ScreenProxy_Instance)
     DPF_EVENT_REG_SLOT(slot_ScreenProxy_PrimaryScreen)
     DPF_EVENT_REG_SLOT(slot_ScreenProxy_Screens)
     DPF_EVENT_REG_SLOT(slot_ScreenProxy_LogicScreens)
@@ -109,7 +108,7 @@ private:
     DPF_EVENT_REG_SIGNAL(signal_DesktopFrame_GeometryChanged)
     DPF_EVENT_REG_SIGNAL(signal_DesktopFrame_AvailableGeometryChanged)
 
-    //DPF_EVENT_REG_SLOT(slot_DesktopFrame_Instance)
+    // DPF_EVENT_REG_SLOT(slot_DesktopFrame_Instance)
     DPF_EVENT_REG_SLOT(slot_DesktopFrame_RootWindows)
     DPF_EVENT_REG_SLOT(slot_DesktopFrame_LayoutWidget)
 };

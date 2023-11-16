@@ -78,8 +78,6 @@ void Core::initialize()
 
 bool Core::start()
 {
-    connectToServer();
-
     // 手动初始化application
     app = new DFMBASE_NAMESPACE::Application();
 
@@ -94,35 +92,6 @@ void Core::stop()
 
     delete app;
     app = nullptr;
-}
-
-void Core::connectToServer()
-{
-    if (!DevProxyMng->initService()) {
-        fmCritical() << "device manager cannot connect to server!";
-        DevMngIns->startMonitor();
-    }
-    auto refreshDesktop = [](const QString &msg) {
-        fmDebug() << "refresh desktop start..." << msg;
-        QDBusInterface ifs("com.deepin.dde.desktop",
-                           "/com/deepin/dde/desktop",
-                           "com.deepin.dde.desktop");
-        ifs.asyncCall("Refresh");
-        fmDebug() << "refresh desktop async finished..." << msg;
-    };
-    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevMounted");
-    });
-
-    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevUnmounted");
-    });
-
-    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevRemoved");
-    });
-
-    fmInfo() << "connectToServer finished";
 }
 
 void Core::onStart()
