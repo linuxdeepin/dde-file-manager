@@ -150,9 +150,10 @@ void Core::handleLoadPlugins(const QStringList &names)
         Q_ASSERT(qApp->thread() == QThread::currentThread());
         fmInfo() << "About to load plugin:" << name;
         auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
-        if (plugin)
-            fmInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin)
-                    << "State: " << plugin->pluginState();
+        if (plugin) {
+            auto ret { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
+            fmInfo() << "Load result: " << ret << "State: " << plugin->pluginState();
+        }
     });
 }
 
