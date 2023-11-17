@@ -78,6 +78,8 @@ void Core::initialize()
 
 bool Core::start()
 {
+    connectToServer();
+
     // 手动初始化application
     app = new DFMBASE_NAMESPACE::Application();
 
@@ -138,6 +140,16 @@ bool Core::eventFilter(QObject *watched, QEvent *event)
         QMetaObject::invokeMethod(this, "loadLazyPlugins", Qt::QueuedConnection);
     }
     return false;
+}
+
+void Core::connectToServer()
+{
+    if (!DevProxyMng->initService()) {
+        fmCritical() << "device manager cannot connect to server!";
+        DevMngIns->startMonitor();
+    }
+
+    fmInfo() << "connectToServer finished";
 }
 
 void Core::loadLazyPlugins()

@@ -75,6 +75,7 @@ protected slots:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void connectToServer();
 
 private:
     DFMBASE_NAMESPACE::Application *app = nullptr;
