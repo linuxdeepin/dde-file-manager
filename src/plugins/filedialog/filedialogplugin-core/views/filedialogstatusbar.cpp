@@ -46,7 +46,8 @@ void FileDialogStatusBar::setMode(FileDialogStatusBar::Mode mode)
     curMode = mode;
 
     QString acButton = mode == kSave ? tr("Save", "button") : tr("Open", "button");
-    curAcceptButton->setText(acButton);
+    if (curAcceptButton->text().isEmpty())
+        curAcceptButton->setText(acButton);
     curAcceptButton->setObjectName(acButton);
 
     updateLayout();
