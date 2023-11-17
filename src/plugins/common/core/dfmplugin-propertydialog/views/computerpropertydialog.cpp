@@ -272,7 +272,8 @@ QString ComputerInfoThread::edition() const
             return QString("%1%2").arg(DSysInfo::minorVersion()).arg(DSysInfo::uosEditionName());
         } else {
             QString defaultEdition = QString("%1(%2)").arg(DSysInfo::uosEditionName()).arg(DSysInfo::minorVersion());
-            if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()) {
+            if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()
+                    || DSysInfo::UosEdition::UosMilitary == DSysInfo::uosEditionType()) {
                 QDBusInterface deepinLicenseInfo("com.deepin.license",
                                                  "/com/deepin/license/Info",
                                                  "com.deepin.license.Info",
@@ -300,7 +301,12 @@ QString ComputerInfoThread::edition() const
                         return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Government")).arg(DSysInfo::minorVersion());
                     } else if (kEnterprise == authorizedInfo) {
                         return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Enterprise")).arg(DSysInfo::minorVersion());
+                    } else if (kUnauthorized == authorizedInfo) {
+                        return defaultEdition;
                     } else {
+                        const QString info = deepinLicenseInfo.property("AuthorizationPropertyString").toString();
+                        if (!info.isEmpty())
+                            return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(info).arg(DSysInfo::minorVersion());
                         return defaultEdition;
                     }
                 } else {

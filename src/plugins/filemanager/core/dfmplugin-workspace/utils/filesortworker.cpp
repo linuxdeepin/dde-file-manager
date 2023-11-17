@@ -1331,6 +1331,19 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
 
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
 {
+    auto item = childData(sortInfo->fileUrl());
+    if (item && !nameFilters.isEmpty() && !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
+        QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
+        for (int i = 0; i < nameFilters.size(); ++i) {
+            re.setPattern(nameFilters.at(i));
+            if (re.exactMatch(item->data(kItemNameRole).toString())) {
+                item->setAvailableState(true);
+            } else {
+                item->setAvailableState(false);
+            }
+        }
+    }
+
     // 处理继承
     if (sortInfo && sortAndFilter) {
         auto result = sortAndFilter->checkFilters(InfoFactory::create<FileInfo>(sortInfo->fileUrl()), filters, filterData);
