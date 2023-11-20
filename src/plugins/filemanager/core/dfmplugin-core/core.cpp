@@ -4,6 +4,7 @@
 
 #include "core.h"
 #include "events/coreeventreceiver.h"
+#include "utils/corehelper.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/application/application.h>
@@ -99,6 +100,12 @@ void Core::connectToServer()
 void Core::onAllPluginsInitialized()
 {
     fmInfo() << "All plugins initialized";
+    // createWindow may return an existing window, which does not need to be processed again aboutToOpen
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, [](quint64 id) {
+        auto window { FMWindowsIns.findWindowById(id) };
+        if (window)
+            window->installEventFilter(&CoreHelper::instance());
+    });
     // subscribe events
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
                                    CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
