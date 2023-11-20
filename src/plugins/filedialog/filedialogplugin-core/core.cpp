@@ -21,6 +21,7 @@ DFM_LOG_REISGER_CATEGORY(DIALOGCORE_NAMESPACE)
 
 bool Core::start()
 {
+    enterHighPerformanceMode();
     FMWindowsIns.setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);
     });
@@ -96,6 +97,26 @@ void Core::bindSceneOnAdded(const QString &newScene)
             eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Core::bindSceneOnAdded);
         bindScene(newScene);
     }
+}
+
+void Core::enterHighPerformanceMode()
+{
+    auto systemBusIFace = QDBusConnection::systemBus().interface();
+    if (!systemBusIFace) {
+        fmWarning() << "systemBus is not available.";
+        return;
+    }
+
+    if (!systemBusIFace->isServiceRegistered("com.deepin.system.Power")) {
+        fmWarning() << "com.deepin.system.Power is not registered";
+        return;
+    }
+
+    fmInfo() << "About to call dbus LockCpuFreq";
+    QDBusInterface daemonIface("com.deepin.system.Power", "/com/deepin/system/Power", "com.deepin.system.Power",
+                               QDBusConnection::systemBus());
+    // Pull up the CPU frequency for 3s
+    daemonIface.asyncCall("LockCpuFreq", "performance", 3);
 }
 
 }   // namespace filedialog_core
