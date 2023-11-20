@@ -24,6 +24,7 @@ private slots:
     void onAllPluginsStarted();
     void bindScene(const QString &parentScene);
     void bindSceneOnAdded(const QString &newScene);
+    void enterHighPerformanceMode();
 
 private:
     QSet<QString> waitToBind;
