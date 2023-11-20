@@ -931,7 +931,7 @@ QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool
         for (const auto &parent : depthParentUrls) {
             if (isCanceled)
                 return {};
-            if (!UniversalUtils::urlEquals(dir, parent) && UniversalUtils::isParentUrl(parent, dir))
+            if (!UniversalUtils::urlEquals(dir, parent) && !UniversalUtils::isParentUrl(parent, dir))
                 continue;
 
             auto sortList = bSort ? sortTreeFiles(visibleTreeChildren.take(parent), reverse) : visibleTreeChildren.value(parent);
