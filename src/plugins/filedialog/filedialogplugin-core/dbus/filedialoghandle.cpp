@@ -49,8 +49,6 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
         abort();
     }
     auto &&defaultPath { DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath) };
-    // install all widgets before window showed
-    emit d_func()->dialog->aboutToOpen();
     d_func()->dialog->cd(QUrl::fromLocalFile(defaultPath));
 
     //! no need to hide, if the dialog is showed in creating, it must be bug.
@@ -567,6 +565,6 @@ void FileDialogHandle::setWindowStayOnTop()
         QFunctionPointer setWindowProperty = qApp->platformFunction("_d_setWindowProperty");
         // set window stay on top
         if (setWindowProperty && d->dialog)
-            reinterpret_cast<void(*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
+            reinterpret_cast<void (*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
     }
 }
