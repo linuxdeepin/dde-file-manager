@@ -17,6 +17,7 @@ class MasteredMediaFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 
 public:
     explicit MasteredMediaFileInfo(const QUrl &url);
+    explicit MasteredMediaFileInfo(const QUrl &url, const FileInfoPointer proxy);
 
     bool exists() const override;
     virtual QString displayOf(const DisplayInfoType type) const override;

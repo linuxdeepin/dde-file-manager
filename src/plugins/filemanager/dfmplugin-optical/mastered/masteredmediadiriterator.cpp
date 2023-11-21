@@ -11,6 +11,8 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
 
 #include <QStandardPaths>
 
@@ -18,6 +20,8 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_optical;
 
 using namespace GlobalServerDefines;
+
+using namespace dfmio;
 
 MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
                                                    const QStringList &nameFilters,
@@ -33,28 +37,32 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     QString stagingPath { OpticalHelper::localStagingFile(url).path() };
     OpticalHelper::createStagingFolder(devFile);
 
-    stagingIterator = QSharedPointer<QDirIterator>(
-            new QDirIterator(stagingPath, nameFilters, filters, flags));
+    stagingIterator.reset(new dfmio::DEnumerator(QUrl::fromLocalFile(stagingPath), nameFilters,
+                                                 static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                                 static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
 
     bool opticalBlank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
     if (opticalBlank) {
         discIterator.clear();
         return;
     }
-
     QString realpath { mntPoint + OpticalHelper::burnFilePath(url) };
     if (realpath != "/")
-        discIterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filters, flags));
+        discIterator.reset(new dfmio::DEnumerator(QUrl::fromLocalFile(realpath), nameFilters,
+                                                 static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                                 static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
+
 }
 
 QUrl MasteredMediaDirIterator::next()
 {
-    if (discIterator && discIterator->hasNext()) {
-        return changeSchemeUpdate(QUrl::fromLocalFile(discIterator->next()));
+    if (discIterator) {
+        currentUrl = discIterator->next();
     } else {
         discIterator = nullptr;
-        return changeSchemeUpdate(QUrl::fromLocalFile(stagingIterator->next()));
+        currentUrl = stagingIterator->next();
     }
+    return changeSchemeUpdate(currentUrl);
 }
 
 bool MasteredMediaDirIterator::hasNext() const
@@ -64,23 +72,60 @@ bool MasteredMediaDirIterator::hasNext() const
 
 QString MasteredMediaDirIterator::fileName() const
 {
-    return discIterator ? discIterator->fileName() : stagingIterator->fileName();
+    return fileUrl().fileName();
 }
 
 QUrl MasteredMediaDirIterator::fileUrl() const
 {
-    return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->filePath() : stagingIterator->filePath()));
+    return changeScheme(currentUrl);
 }
 
 const FileInfoPointer MasteredMediaDirIterator::fileInfo() const
 {
-    FileInfoPointer fileinfo = FileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
-    return fileinfo->exists() ? fileinfo : FileInfoPointer();   //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
+    assert(QThread::currentThread() != qApp->thread());
+
+    QSharedPointer<DFileInfo> dfmfileinfo = discIterator ? discIterator->fileInfo() : stagingIterator->fileInfo();
+
+    auto url = currentUrl;
+    if (!url.isValid() || dfmfileinfo.isNull()) {
+        //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
+        FileInfoPointer fileinfo = FileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+        return fileinfo->exists() ? fileinfo : FileInfoPointer();
+    }
+
+    const QString &fileName = dfmfileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
+    bool isHidden = false;
+    if (fileName.startsWith(".")) {
+        isHidden = true;
+    }
+
+    QSharedPointer<FileInfo> info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, dfmfileinfo));
+    info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes();
+    info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+
+    QSharedPointer<FileInfo> infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
+    if (infoTrans) {
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, false);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, false);
+        emit InfoCacheController::instance().removeCacheFileInfo({url});
+        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+    } else {
+        fmWarning() << "MasteredMediaFileInfo: info is nullptr, url = " << url;
+        //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
+        FileInfoPointer fileinfo = FileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+        return fileinfo->exists() ? fileinfo : FileInfoPointer();
+    }
+
+    //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
+    FileInfoPointer fileinfo = FileInfoPointer(new MasteredMediaFileInfo(fileUrl(), infoTrans));
+    return fileinfo->exists() ? fileinfo : FileInfoPointer();
+
 }
 
 QUrl MasteredMediaDirIterator::url() const
 {
-    return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->path() : stagingIterator->path()));
+    return changeScheme(discIterator ? discIterator->uri() : stagingIterator->uri());
 }
 
 QUrl MasteredMediaDirIterator::changeScheme(const QUrl &in) const

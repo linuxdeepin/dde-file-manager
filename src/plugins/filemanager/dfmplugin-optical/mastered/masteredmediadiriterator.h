@@ -8,6 +8,7 @@
 #include "dfmplugin_optical_global.h"
 
 #include <dfm-base/interfaces/abstractdiriterator.h>
+#include <dfm-io/denumerator.h>
 
 #include <QSet>
 
@@ -29,12 +30,13 @@ public:
     QUrl url() const override;
 
 private:
-    QSharedPointer<QDirIterator> discIterator;
-    QSharedPointer<QDirIterator> stagingIterator;
+    QSharedPointer<dfmio::DEnumerator> discIterator { nullptr };
+    QSharedPointer<dfmio::DEnumerator> stagingIterator { nullptr };
     QString mntPoint;
     QString devFile;
     QSet<QString> seen;
     QSet<QUrl> skip;
+    QUrl currentUrl;   // 当前迭代器所在位置文件的url
     QUrl changeScheme(const QUrl &in) const;
     QUrl changeSchemeUpdate(const QUrl &in);
 };
