@@ -27,6 +27,14 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
     setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
+MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url, const FileInfoPointer proxy)
+    : ProxyFileInfo(url), d(new MasteredMediaFileInfoPrivate(this))
+{
+    assert(!proxy.isNull());
+    d->backupInfo(url);
+    setProxy(proxy);
+}
+
 bool MasteredMediaFileInfo::exists() const
 {
     if (url.isEmpty())
