@@ -53,7 +53,7 @@ void WaterMaskFrame::refresh()
 {
     loadConfig();
 
-    qInfo() << "request state..";
+    fmInfo() << "request state..";
     DeepinLicenseHelper::instance()->delayGetState();
 }
 
@@ -71,14 +71,14 @@ void WaterMaskFrame::updatePosition()
 void WaterMaskFrame::stateChanged(int state, int prop)
 {
     if (!maskAlwaysOn) {
-        qDebug() << "do not show water mask.";
+        fmDebug() << "do not show water mask.";
         hide();
         return;
     }
 
     bool showSate = showLicenseState();
     bool cn = usingCn();
-    qInfo() << "reply ActiveState is" << state << prop << "show" << showSate
+    fmInfo() << "reply ActiveState is" << state << prop << "show" << showSate
             << "cn" << cn << this;
     curState = state;
     curProperty = static_cast<DeepinLicenseHelper::LicenseProperty>(prop);
@@ -88,29 +88,29 @@ void WaterMaskFrame::stateChanged(int state, int prop)
         if (prop == DeepinLicenseHelper::LicenseProperty::Secretssecurity) {
             auto cfg = configInfos.value(cn ? CfgSecCn : CfgSecEn);
             if (cfg.valid) {
-                qInfo() << "update logo sec" << cn;
+                fmInfo() << "update logo sec" << cn;
                 update(cfg, false);
                 return;
             } else {
-                qWarning() << "invalid config info sec" << cn;
+                fmWarning() << "invalid config info sec" << cn;
             }
         } else if (prop == DeepinLicenseHelper::LicenseProperty::Government) {   //gov
             auto cfg = configInfos.value(cn ? CfgGovCn : CfgGovEn);
             if (cfg.valid) {
-                qInfo() << "update logo gov" << cn;
+                fmInfo() << "update logo gov" << cn;
                 update(cfg, false);
                 return;
             } else {
-                qWarning() << "invalid config info gov" << cn;
+                fmWarning() << "invalid config info gov" << cn;
             }
         } else if (prop == DeepinLicenseHelper::LicenseProperty::Enterprise) {   // com
             auto cfg = configInfos.value(cn ? CfgEntCn : CfgEntEn);
             if (cfg.valid) {
-                qInfo() << "update logo ent" << cn;
+                fmInfo() << "update logo ent" << cn;
                 update(cfg, false);
                 return;
             } else {
-                qWarning() << "invalid config info ent" << cn;
+                fmWarning() << "invalid config info ent" << cn;
             }
         }
     }
@@ -120,7 +120,7 @@ void WaterMaskFrame::stateChanged(int state, int prop)
 
    if (!showSate) {
        textLabel->setText("");
-       qInfo() << "disable show state text";
+       fmInfo() << "disable show state text";
        return;
    }
 
@@ -141,7 +141,7 @@ void WaterMaskFrame::stateChanged(int state, int prop)
     }
         break;
     default:
-        qWarning() << "unkown active state:" << state;
+        fmWarning() << "unkown active state:" << state;
     }
 }
 
@@ -196,7 +196,7 @@ bool WaterMaskFrame::showLicenseState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
     DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
-    qInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
+    fmInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
 
     bool ret = (DSysInfo::DeepinType::DeepinProfessional == deepinType
                 || DSysInfo::DeepinType::DeepinPersonal == deepinType
@@ -205,7 +205,7 @@ bool WaterMaskFrame::showLicenseState()
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 7, 0))
     // 教育版
     ret = ret || DSysInfo::UosEdition::UosEducation == uosEdition;
-    qInfo() << "check uos Edition" << ret;
+    fmInfo() << "check uos Edition" << ret;
 #endif
 
     return ret;
@@ -232,7 +232,7 @@ void WaterMaskFrame::loadConfig()
 {
     QFile file(configFile);
     if (!file.open(QFile::ReadOnly)) {
-        qWarning() << "WaterMask config file doesn't exist!";
+        fmWarning() << "WaterMask config file doesn't exist!";
         return ;
     }
     configInfos.clear();
@@ -245,7 +245,7 @@ void WaterMaskFrame::loadConfig()
     } else {
         // defalut
         configInfos.insert(CfgDefault, ConfigInfo());
-        qCritical() << "config file is invailid" << configFile << error.errorString();
+        fmCritical() << "config file is invailid" << configFile << error.errorString();
     }
 }
 
@@ -366,7 +366,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::govCfg(QJsonObject *configs, bool cn)
             maskLogoUri.replace(0, 1, QDir::homePath());
 
         if (maskLogoUri.isEmpty()) {
-            qWarning() << "can not get logo for gov" << cn;
+            fmWarning() << "can not get logo for gov" << cn;
             cfg.valid = false;
             return cfg;
         } else {
@@ -412,7 +412,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::entCfg(QJsonObject *configs, bool cn)
             maskLogoUri.replace(0, 1, QDir::homePath());
 
         if (maskLogoUri.isEmpty()) {
-            qWarning() << "can not get logo for com" << cn;
+            fmWarning() << "can not get logo for com" << cn;
             cfg.valid = false;
             return cfg;
         } else {
@@ -458,7 +458,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::secCfg(QJsonObject *configs, bool cn)
             maskLogoUri.replace(0, 1, QDir::homePath());
 
         if (maskLogoUri.isEmpty()) {
-            qWarning() << "can not get logo for SecretesSecurity" << cn;
+            fmWarning() << "can not get logo for SecretesSecurity" << cn;
             cfg.valid = false;
             return cfg;
         } else {

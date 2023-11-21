@@ -65,7 +65,7 @@ VaultPolicyState VaultDBusUtils::getVaultPolicy()
             vaulthidestate = static_cast<VaultPolicyState>(varVaule.toInt());
         }
     } else {
-        qWarning() << "Vault: dbus method(QueryVaultAccessPolicyVisible) call failed!";
+        fmWarning() << "Vault: dbus method(QueryVaultAccessPolicyVisible) call failed!";
     }
 
     return vaulthidestate;
@@ -96,7 +96,7 @@ bool VaultDBusUtils::setVaultPolicyState(int policyState)
         }
 
     } else {
-        qWarning() << "Vault: dbus method(FileManagerReply) called failed!";
+        fmWarning() << "Vault: dbus method(FileManagerReply) called failed!";
         return false;
     }
 
@@ -126,7 +126,7 @@ int VaultDBusUtils::getLeftoverErrorInputTimes()
         QDBusPendingReply<int> reply = VaultManagerdbus.call("GetLeftoverErrorInputTimes", QVariant::fromValue(int(getuid())));
         reply.waitForFinished();
         if (reply.isError()) {
-            qWarning() << "Vault: dbus method(GetLeftoverErrorInputTimes) called failed! the error is: " << reply.error().message();
+            fmWarning() << "Vault: dbus method(GetLeftoverErrorInputTimes) called failed! the error is: " << reply.error().message();
         } else {
             leftChance = reply.value();
         }
@@ -146,7 +146,7 @@ void VaultDBusUtils::leftoverErrorInputTimesMinusOne()
         QDBusPendingReply<> reply = VaultManagerdbus.call("LeftoverErrorInputTimesMinusOne", QVariant::fromValue(int(getuid())));
         reply.waitForFinished();
         if (reply.isError())
-            qWarning() << "Vault: dbus method(LeftoverErrorInputTimesMinusOne) called failed! the error is: " << reply.error().message();
+            fmWarning() << "Vault: dbus method(LeftoverErrorInputTimesMinusOne) called failed! the error is: " << reply.error().message();
     }
 }
 
@@ -161,7 +161,7 @@ void VaultDBusUtils::startTimerOfRestorePasswordInput()
         QDBusPendingReply<> reply = VaultManagerdbus.call("StartTimerOfRestorePasswordInput", QVariant::fromValue(int(getuid())));
         reply.waitForFinished();
         if (reply.isError())
-            qWarning() << "Vault: dbus method(StartTimerOfRestorePasswordInput) called failed! the error is: " << reply.error().message();
+            fmWarning() << "Vault: dbus method(StartTimerOfRestorePasswordInput) called failed! the error is: " << reply.error().message();
     }
 }
 
@@ -177,7 +177,7 @@ int VaultDBusUtils::getNeedWaitMinutes()
         QDBusPendingReply<int> reply = VaultManagerdbus.call("GetNeedWaitMinutes", QVariant::fromValue(int(getuid())));
         reply.waitForFinished();
         if (reply.isError()) {
-            qWarning() << "Vault: failed to get the number of minutes to wait! the error is: " << reply.error().message();
+            fmWarning() << "Vault: failed to get the number of minutes to wait! the error is: " << reply.error().message();
         } else {
             result = reply.value();
         }
@@ -196,7 +196,7 @@ void VaultDBusUtils::restoreNeedWaitMinutes()
         QDBusPendingReply<> reply = VaultManagerdbus.call("RestoreNeedWaitMinutes", QVariant::fromValue(int(getuid())));
         reply.waitForFinished();
         if (reply.isError())
-            qWarning() << "Vault: Error when opening the password input timer! the error is: " << reply.error().message();
+            fmWarning() << "Vault: Error when opening the password input timer! the error is: " << reply.error().message();
     }
 }
 
@@ -211,7 +211,7 @@ void VaultDBusUtils::restoreLeftoverErrorInputTimes()
         QDBusPendingReply<> reply = VaultManagerdbus.call("RestoreLeftoverErrorInputTimes", QVariant::fromValue(int(getuid())));
         reply.waitForFinished();
         if (reply.isError())
-            qWarning() << "Vault: Error in restoring the remaining number of incorrect entries! the error is: " << reply.error().message();
+            fmWarning() << "Vault: Error in restoring the remaining number of incorrect entries! the error is: " << reply.error().message();
     }
 }
 
@@ -229,12 +229,12 @@ bool VaultDBusUtils::isServiceRegister(QDBusConnection::BusType type, const QStr
         break;
     }
     if (!interface) {
-        qCritical() << "Vault: dbus is not available.";
+        fmCritical() << "Vault: dbus is not available.";
         return false;
     }
 
     if (!interface->isServiceRegistered(serviceName)) {
-        qCritical() << "Vault: service is not registered";
+        fmCritical() << "Vault: service is not registered";
         return false;
     }
 

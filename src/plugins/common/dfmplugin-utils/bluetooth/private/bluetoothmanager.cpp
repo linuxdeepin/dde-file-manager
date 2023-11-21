@@ -45,12 +45,12 @@ void BluetoothManagerPrivate::resolve(const QDBusReply<QString> &req)
 {
     Q_Q(BluetoothManager);
     const QString replyStr = req.value();
-    qInfo() << replyStr;
+    fmInfo() << replyStr;
     static int maxRetry = 3;
     // GetAdapter method, if there has no adapter, the method returns an emtpy json [], but if the method is not ready,
     // returns a null string. if null, retry
     if (replyStr.isEmpty() && maxRetry > 0) {
-        qInfo() << "retry to get bluetooth adapters..." << maxRetry;
+        fmInfo() << "retry to get bluetooth adapters..." << maxRetry;
         QTimer::singleShot(500, q, [q] {
             q->refresh();
         });
@@ -80,7 +80,7 @@ void BluetoothManagerPrivate::initConnects()
                                                            QDBusServiceWatcher::WatchForRegistration, this);
     connect(watcher, &QDBusServiceWatcher::serviceRegistered, this, [=](const QString &service) {
         if (service == BluetoothService) {
-            qDebug() << "bluetooth: service registered. ";
+            fmDebug() << "bluetooth: service registered. ";
             this->onServiceValidChanged(true);
         }
     });
@@ -116,7 +116,7 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
     const QString path = adapterObj["Path"].toString();
     const QString alias = adapterObj["Alias"].toString();
     const bool powered = adapterObj["Powered"].toBool();
-    qDebug() << "resolve adapter path:" << path;
+    fmDebug() << "resolve adapter path:" << path;
 
     adapter->setId(path);
     adapter->setName(alias);
@@ -130,7 +130,7 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, watcher, adapterPointer, call] {
         if (!adapterPointer) {
-            qDebug() << "adapterPointer released!";
+            fmDebug() << "adapterPointer released!";
             watcher->deleteLater();
             return;
         }
@@ -169,7 +169,7 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
                 }
             }
         } else {
-            qWarning() << call.error().message();
+            fmWarning() << call.error().message();
         }
 
         watcher->deleteLater();
@@ -224,7 +224,7 @@ void BluetoothManagerPrivate::onServiceValidChanged(bool valid)
 {
     Q_Q(BluetoothManager);
     if (valid) {
-        qInfo() << "bluetooth service is valid now...";
+        fmInfo() << "bluetooth service is valid now...";
         QTimer::singleShot(1000, q, [q] { q->refresh(); });
     }
 }
@@ -313,7 +313,7 @@ void BluetoothManagerPrivate::onDevicePropertiesChanged(const QString &json)
 
 void BluetoothManagerPrivate::onTransferCreated(const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath)
 {
-    qDebug() << file << transferPath.path() << sessionPath.path();
+    fmDebug() << file << transferPath.path() << sessionPath.path();
 }
 
 void BluetoothManagerPrivate::onTransferRemoved(const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath, bool done)
@@ -329,12 +329,12 @@ void BluetoothManagerPrivate::onTransferRemoved(const QString &file, const QDBus
 
 void BluetoothManagerPrivate::onObexSessionCreated(const QDBusObjectPath &sessionPath)
 {
-    qDebug() << sessionPath.path();
+    fmDebug() << sessionPath.path();
 }
 
 void BluetoothManagerPrivate::onObexSessionRemoved(const QDBusObjectPath &sessionPath)
 {
-    qDebug() << sessionPath.path();
+    fmDebug() << sessionPath.path();
 }
 
 void BluetoothManagerPrivate::onObexSessionProgress(const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIndex)
@@ -376,7 +376,7 @@ void BluetoothManager::refresh()
     Q_D(BluetoothManager);
 
     if (!d->bluetoothInter || !d->bluetoothInter->isValid()) {
-        qCritical() << "bluetooth interface is not valid!!!";
+        fmCritical() << "bluetooth interface is not valid!!!";
         return;
     }
 
@@ -388,7 +388,7 @@ void BluetoothManager::refresh()
             QDBusReply<QString> reply = call.reply();
             d->resolve(reply);
         } else {
-            qWarning() << call.error().message();
+            fmWarning() << call.error().message();
         }
         watcher->deleteLater();
     });
@@ -403,12 +403,12 @@ bool BluetoothManager::bluetoothSendEnable()
 {
     Q_D(BluetoothManager);
     if (!d->bluetoothInter->isValid()) {
-        qWarning() << "bluetooth interface is not valid";
+        fmWarning() << "bluetooth interface is not valid";
         return false;
     }
     auto canSendFile = d->bluetoothInter->property("CanSendFile");
     if (!canSendFile.isValid()) {
-        qWarning() << "bluetooth interface has no 'CanSendFile' property";
+        fmWarning() << "bluetooth interface has no 'CanSendFile' property";
         return true;   // if there is no this property, then we do not disable bluetooth transfer.
     }
     return canSendFile.toBool();
@@ -476,7 +476,7 @@ bool BluetoothManager::cancelTransfer(const QString &sessionPath)
 {
     Q_D(BluetoothManager);
     d->cancelTransferSession(QDBusObjectPath(sessionPath));
-    qDebug() << sessionPath;
+    fmDebug() << sessionPath;
     return true;
 }
 

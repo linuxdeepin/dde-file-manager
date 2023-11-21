@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "dfm-base/settingdialog/settingjsongenerator.h"
+#include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/dfm_base_global.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -54,17 +55,17 @@ bool SettingJsonGenerator::hasConfig(const QString &key) const
 bool SettingJsonGenerator::addGroup(const QString &key, const QString &name)
 {
     if (key.count(".") > 1) {
-        qWarning() << "max group level is 2, inputed: " << key.count(".") << key;
+        qCWarning(logDFMBase) << "max group level is 2, inputed: " << key.count(".") << key;
         return false;
     }
     if (key.startsWith(".") || key.endsWith(".")) {
-        qWarning() << "the dot must not be start or end of the key." << key;
+        qCWarning(logDFMBase) << "the dot must not be start or end of the key." << key;
         return false;
     }
 
     if (key.contains(".")) {
         if (configGroups.contains(key)) {
-            qWarning() << "same name key has been added:" << key << ":" << configGroups.value(key);
+            qCWarning(logDFMBase) << "same name key has been added:" << key << ":" << configGroups.value(key);
             return false;
         }
         configGroups.insert(key, name);
@@ -72,12 +73,12 @@ bool SettingJsonGenerator::addGroup(const QString &key, const QString &name)
         // check if top group exist.
         QString topGroup = key.split(".").first();
         if (!topGroups.contains(topGroup)) {
-            qWarning() << "no top group exist: " << topGroup;
+            qCWarning(logDFMBase) << "no top group exist: " << topGroup;
             tmpTopGroups.insert(topGroup, topGroup);
         }
     } else {
         if (topGroups.contains(key)) {
-            qWarning() << "same name key has been added: " << key << ":" << topGroups.value(key);
+            qCWarning(logDFMBase) << "same name key has been added: " << key << ":" << topGroups.value(key);
             return false;
         }
         topGroups.insert(key, name);
@@ -89,22 +90,22 @@ bool SettingJsonGenerator::addGroup(const QString &key, const QString &name)
 bool SettingJsonGenerator::removeGroup(const QString &key)
 {
     if (key.count(".") > 1) {
-        qWarning() << "max group level is 2, inputed: " << key.count(".") << key;
+        qCWarning(logDFMBase) << "max group level is 2, inputed: " << key.count(".") << key;
         return false;
     }
     if (key.startsWith(".") || key.endsWith(".")) {
-        qWarning() << "the dot must not be start or end of the key." << key;
+        qCWarning(logDFMBase) << "the dot must not be start or end of the key." << key;
         return false;
     }
 
     if (key.contains(".")) {
         if (configGroups.remove(key) == 0) {
-            qWarning() << "remove failed: " << key;
+            qCWarning(logDFMBase) << "remove failed: " << key;
             return false;
         }
     } else {
         if (topGroups.remove(key) == 0) {
-            qWarning() << "remove failed: " << key;
+            qCWarning(logDFMBase) << "remove failed: " << key;
             return false;
         }
     }
@@ -115,19 +116,19 @@ bool SettingJsonGenerator::removeGroup(const QString &key)
 bool SettingJsonGenerator::addConfig(const QString &key, const QVariantMap &config)
 {
     if (key.count(".") != 2) {
-        qWarning() << "config can only be inserted in level 2:" << key;
+        qCWarning(logDFMBase) << "config can only be inserted in level 2:" << key;
         return false;
     }
     if (key.startsWith(".") || key.endsWith(".")) {
-        qWarning() << "the dot must not be start or end of the key." << key;
+        qCWarning(logDFMBase) << "the dot must not be start or end of the key." << key;
         return false;
     }
     if (key.contains("..")) {
-        qWarning() << "cannot insert config into empty group: " << key;
+        qCWarning(logDFMBase) << "cannot insert config into empty group: " << key;
         return false;
     }
     if (configs.contains(key)) {
-        qWarning() << "a same name key is already added." << key << ":" << configs.value(key);
+        qCWarning(logDFMBase) << "a same name key is already added." << key << ":" << configs.value(key);
         return false;
     }
 
@@ -136,7 +137,7 @@ bool SettingJsonGenerator::addConfig(const QString &key, const QVariantMap &conf
         return false;
     QString configKey = frags.at(2);
     if (config.value("key").toString() != configKey) {
-        qWarning() << "config is not valid with key" << key << config;
+        qCWarning(logDFMBase) << "config is not valid with key" << key << config;
         return false;
     }
 
@@ -152,15 +153,15 @@ bool SettingJsonGenerator::addConfig(const QString &key, const QVariantMap &conf
 bool SettingJsonGenerator::removeConfig(const QString &key)
 {
     if (key.count(".") != 2) {
-        qWarning() << "config can only be inserted in level 2:" << key;
+        qCWarning(logDFMBase) << "config can only be inserted in level 2:" << key;
         return false;
     }
     if (key.startsWith(".") || key.endsWith(".")) {
-        qWarning() << "the dot must not be start or end of the key." << key;
+        qCWarning(logDFMBase) << "the dot must not be start or end of the key." << key;
         return false;
     }
     if (key.contains("..")) {
-        qWarning() << "cannot remove config into empty group: " << key;
+        qCWarning(logDFMBase) << "cannot remove config into empty group: " << key;
         return false;
     }
 
@@ -227,7 +228,7 @@ void SettingJsonGenerator::mergeGroups()
 
 QJsonObject SettingJsonGenerator::constructTopGroup(const QString &key)
 {
-    qDebug() << "construct top group:" << key;
+    qCDebug(logDFMBase) << "construct top group:" << key;
     QJsonObject obj;
     obj.insert("key", key);
     obj.insert("name", topGroups.value(key, "Unknown"));
@@ -246,7 +247,7 @@ QJsonObject SettingJsonGenerator::constructTopGroup(const QString &key)
 
 QJsonObject SettingJsonGenerator::constructConfigGroup(const QString &key)
 {
-    qDebug() << "construct config group:" << key;
+    qCDebug(logDFMBase) << "construct config group:" << key;
     QJsonObject obj;
     obj.insert("key", key.mid(key.indexOf(".") + 1));
     obj.insert("name", configGroups.value(key, "Unknown"));
@@ -265,7 +266,7 @@ QJsonObject SettingJsonGenerator::constructConfigGroup(const QString &key)
 
 QJsonObject SettingJsonGenerator::constructConfig(const QString &key)
 {
-    qDebug() << "construct item: " << key;
+    qCDebug(logDFMBase) << "construct item: " << key;
     QVariantMap config = configs.value(key, QVariantMap());
     return QJsonObject::fromVariantMap(config);
 }

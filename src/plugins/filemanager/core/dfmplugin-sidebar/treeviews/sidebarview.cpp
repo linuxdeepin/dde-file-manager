@@ -342,9 +342,9 @@ void SideBarView::dropEvent(QDropEvent *event)
 
     const QUrl &targetItemUrl { item->targetUrl() };
 
-    qDebug() << "source: " << event->mimeData()->urls();
-    qDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
-    qDebug() << "item->itemInfo().finalUrl: " << item->itemInfo().finalUrl;
+    fmDebug() << "source: " << event->mimeData()->urls();
+    fmDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
+    fmDebug() << "item->itemInfo().finalUrl: " << item->itemInfo().finalUrl;
 
     // wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
     // QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
@@ -352,7 +352,7 @@ void SideBarView::dropEvent(QDropEvent *event)
     QPoint pt = event->pos();   // mapFromGlobal(QCursor::pos());
     QRect rc = visualRect(indexAt(event->pos()));
     if (!rc.contains(pt)) {
-        qDebug() << "mouse not in my area";
+        fmDebug() << "mouse not in my area";
         return DTreeView::dropEvent(event);
     }
 
@@ -361,7 +361,7 @@ void SideBarView::dropEvent(QDropEvent *event)
     QList<QUrl> urls, copyUrls;
     for (const QUrl &url : d->urlsForDragEvent) {
         if (UrlRoute::isRootUrl(url)) {
-            qDebug() << "skip the same dir file..." << url;
+            fmDebug() << "skip the same dir file..." << url;
         } else {
             if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
                 urls << url;
@@ -378,7 +378,7 @@ void SideBarView::dropEvent(QDropEvent *event)
 
             if (!isFolderWritable) {
                 copyUrls << QUrl(url);
-                qDebug() << "this is a unwriteable case:" << url;
+                fmDebug() << "this is a unwriteable case:" << url;
             } else {
                 urls << QUrl(url);
             }
@@ -766,7 +766,7 @@ void SideBarView::updateSeparatorVisibleState()
 
     // when no item is visiable in sidebar, do something, such as hide sidebar?
     if (allItemsInvisiable)
-        qDebug() << "nothing in sidebar is visiable, maybe hide sidebar?";
+        fmDebug() << "nothing in sidebar is visiable, maybe hide sidebar?";
 }
 
 void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)

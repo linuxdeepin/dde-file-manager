@@ -28,7 +28,7 @@ bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> 
         return OpticalHelper::burnIsOnDisc(url);
     });
     if (iter != urls.cend()) {
-        qInfo() << "delete event is blocked, trying to delete disc burn:///*";
+        fmInfo() << "delete event is blocked, trying to delete disc burn:///*";
         return true;
     }
     return false;
@@ -139,7 +139,7 @@ bool OpticalEventReceiver::handleTabClosable(const QUrl &currentUrl, const QUrl 
         const QString &rootDev { OpticalHelper::burnDestDevice(rootUrl) };
         const QString &curDev { OpticalHelper::burnDestDevice(currentUrl) };
         if (rootDev == curDev) {
-            qInfo() << "Close tab: " << currentUrl;
+            fmInfo() << "Close tab: " << currentUrl;
             return true;
         }
     }

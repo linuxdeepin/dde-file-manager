@@ -53,7 +53,7 @@ bool isHiddenMenu(const QString &app)
     auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
     if (!hiddenMenus.isEmpty()) {
         if (hiddenMenus.contains(app) || ((app.startsWith("dde-select-dialog") && hiddenMenus.contains("dde-file-dialog")))) {
-            qDebug() << "menu: hidden menu in app: " << app << hiddenMenus;
+            fmDebug() << "menu: hidden menu in app: " << app << hiddenMenus;
             return true;
         }
     }

@@ -5,7 +5,8 @@
 #include "sharecontrol.h"
 #include "sharecontroldbus.h"
 
-DAEMONPSHARECONTROL_USE_NAMESPACE
+namespace daemonplugin_sharecontrol {
+DFM_LOG_REISGER_CATEGORY(DAEMONPSHARECONTROL_NAMESPACE)
 
 void ShareControl::initialize()
 {
@@ -16,3 +17,5 @@ bool ShareControl::start()
     mng.reset(new ShareControlDBus(this));
     return true;
 }
+
+}   // namespace daemonplugin_sharecontrol

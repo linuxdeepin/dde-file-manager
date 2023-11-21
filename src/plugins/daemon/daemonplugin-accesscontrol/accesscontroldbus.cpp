@@ -58,7 +58,7 @@ QString AccessControlDBus::SetAccessPolicy(const QVariantMap &policy)
         sigInfo.insert(kKeyErrno, kInvalidInvoker);
         sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidInvoker));
         emit AccessPolicySetFinished(sigInfo);
-        qDebug() << invokerPath << " is not allowed to invoke this function";
+        fmDebug() << invokerPath << " is not allowed to invoke this function";
         return invokerPath + " is not allowed";
     }
 
@@ -68,7 +68,7 @@ QString AccessControlDBus::SetAccessPolicy(const QVariantMap &policy)
         sigInfo.insert(kKeyErrno, kInvalidArgs);
         sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidArgs));
         emit AccessPolicySetFinished(sigInfo);
-        qDebug() << "policy is not valid";
+        fmDebug() << "policy is not valid";
         return QString("policy is not valid");
     }
 
@@ -133,7 +133,7 @@ QString AccessControlDBus::SetVaultAccessPolicy(const QVariantMap &policy)
         sigInfo.insert(kKeyErrno, kInvalidInvoker);
         sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidInvoker));
         emit AccessPolicySetFinished(sigInfo);
-        qInfo() << invokerPath << " is not allowed to invoke this function";
+        fmInfo() << invokerPath << " is not allowed to invoke this function";
         return invokerPath + " is not allowed";
     }
 
@@ -143,7 +143,7 @@ QString AccessControlDBus::SetVaultAccessPolicy(const QVariantMap &policy)
         sigInfo.insert(kKeyErrno, kInvalidArgs);
         sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidArgs));
         emit AccessPolicySetFinished(sigInfo);
-        qDebug() << "policy is not valid";
+        fmDebug() << "policy is not valid";
         return QString("policy is not valid");
     }
 
@@ -200,7 +200,7 @@ QString AccessControlDBus::FileManagerReply(int policystate)
 void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString &newPwd)
 {
     if (!checkAuthentication("com.deepin.filemanager.daemon.AccessControlManager.DiskPwd")) {
-        qDebug() << "Check authentication failed";
+        fmDebug() << "Check authentication failed";
         emit DiskPasswordChecked(kAuthenticationFailed);
         return;
     }
@@ -261,22 +261,22 @@ bool AccessControlDBus::Chmod(const QString &path, uint mode)
 
     QFile f(path);
     if (!f.exists()) {
-        qWarning() << "file not exists" << path;
+        fmWarning() << "file not exists" << path;
         return false;
     }
 
     if (!checkAuthentication("com.deepin.filemanager.daemon.AccessControlManager.Chmod")) {
-        qWarning() << "authenticate failed to change permission of" << path;
+        fmWarning() << "authenticate failed to change permission of" << path;
         return false;
     }
 
-    qInfo() << "start changing the access permission of" << path << mode;
+    fmInfo() << "start changing the access permission of" << path << mode;
     int ret = ::Utils::setFileMode(path.toStdString().c_str(), mode);
     if (ret != 0) {
-        qWarning() << "chmod for" << path << "failed due to" << strerror(errno);
+        fmWarning() << "chmod for" << path << "failed due to" << strerror(errno);
         return false;
     }
-    qInfo() << "access permission for" << path << "is modified successfully";
+    fmInfo() << "access permission for" << path << "is modified successfully";
     return true;
 }
 
@@ -285,7 +285,7 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
     DFM_MOUNT_USE_NS
     auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
     if (!dev) {
-        qWarning() << "cannot craete device handler for " << deviceId;
+        fmWarning() << "cannot craete device handler for " << deviceId;
         return;
     }
 
@@ -307,7 +307,7 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
         QtConcurrent::run([deviceId, dev]() {
             int retry = 5;
             while (retry-- && !dev->powerOff()) {
-                qWarning() << "poweroff device failed: " << deviceId << dev->lastError().message;
+                fmWarning() << "poweroff device failed: " << deviceId << dev->lastError().message;
                 QThread::msleep(500);
             }
         });
@@ -319,7 +319,7 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
     DFM_MOUNT_USE_NS
     auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
     if (!dev || dev->hintSystem()) {
-        qWarning() << "cannot create device or device is system disk" << deviceId;
+        fmWarning() << "cannot create device or device is system disk" << deviceId;
         return;
     }
 
@@ -341,9 +341,9 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
                                       MS_REMOUNT | (policy == kPolicyRonly ? MS_RDONLY : 0),
                                       nullptr);
                     if (ret == 0)
-                        qDebug() << "remount with policy " << policy << " from " << source;
+                        fmDebug() << "remount with policy " << policy << " from " << source;
                     else
-                        qDebug() << "remount with policy " << policy << " failed, errno: " << errno << ", errstr: " << strerror(errno);
+                        fmDebug() << "remount with policy " << policy << " failed, errno: " << errno << ", errstr: " << strerror(errno);
                 });
             }
         }
@@ -352,7 +352,7 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
     }
 
     QStringList mountOpts = dev->getProperty(Property::kBlockUserspaceMountOptions).toStringList();
-    qDebug() << "mount opts: ==>" << mountOpts << deviceId;
+    fmDebug() << "mount opts: ==>" << mountOpts << deviceId;
     if (mountOpts.contains("uhelper=udisks2"))   // only chmod for those devices mounted by udisks
         ::Utils::setFileMode(mountPoint, ACCESSPERMS);   // 777
 }
@@ -369,14 +369,14 @@ void AccessControlDBus::initConnect()
 void AccessControlDBus::changeMountedOnInit()
 {
     // 在启动系统的时候对已挂载的设备执行一次策略变更（设备的接入先于 daemon 的启动）
-    qDebug() << "start change access on init...";
+    fmDebug() << "start change access on init...";
     if (globalDevPolicies.contains(kTypeBlock))
         changeMountedBlock(globalDevPolicies.value(kTypeBlock).second, "");
     if (globalDevPolicies.contains(kTypeOptical))
         changeMountedOptical(globalDevPolicies.value(kTypeOptical).second, "");
     if (globalDevPolicies.contains(kTypeProtocol))
         changeMountedProtocol(globalDevPolicies.value(kTypeProtocol).second, "");
-    qDebug() << "end change access on init...";
+    fmDebug() << "end change access on init...";
 }
 
 void AccessControlDBus::changeMountedBlock(int mode, const QString &device)
@@ -433,7 +433,7 @@ void AccessControlDBus::changeMountedBlock(int mode, const QString &device)
                                     MS_REMOUNT | (mode == kPolicyRonly ? MS_RDONLY : 0),
                                     nullptr);
                     if (ret < 0)
-                        qDebug() << "remount " << dev.devDesc << " failed: " << errno << ": " << strerror(errno);
+                        fmDebug() << "remount " << dev.devDesc << " failed: " << errno << ": " << strerror(errno);
                 }
             }
         });
@@ -463,13 +463,13 @@ void AccessControlDBus::changeMountedOptical(int mode, const QString &device)
         if (!dev->mountPoint().isEmpty()) {
             dev->unmountAsync({}, [id, dev](bool ok, const OperationErrorInfo &err) {
                 if (!ok) {
-                    qDebug() << "Error occured while unmount optical device: " << id << err.message;
+                    fmDebug() << "Error occured while unmount optical device: " << id << err.message;
                 } else {
                     QThread::msleep(500);
                     QtConcurrent::run([dev, id]() {
                         int retry = 5;
                         while (retry-- && !dev->powerOff()) {
-                            qDebug() << "Error occured while poweroff optical device: " << id;
+                            fmDebug() << "Error occured while poweroff optical device: " << id;
                             QThread::msleep(500);
                         }
                     });
@@ -488,7 +488,7 @@ void AccessControlDBus::changeMountedProtocol(int mode, const QString &device)
 bool AccessControlDBus::checkAuthentication(const QString &id)
 {
     if (!PolicyKitHelper::instance()->checkAuthorization(id, message().service())) {
-        qInfo() << "Authentication failed !!";
+        fmInfo() << "Authentication failed !!";
         return false;
     }
     return true;

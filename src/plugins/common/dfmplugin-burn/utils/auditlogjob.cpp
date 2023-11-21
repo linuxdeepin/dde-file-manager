@@ -50,21 +50,21 @@ AbstractAuditLogJob::AbstractAuditLogJob(QObject *parent)
 
 void AbstractAuditLogJob::run()
 {
-    qInfo() << "Create D-Bus Auditd interface object start";
+    fmInfo() << "Create D-Bus Auditd interface object start";
     QDBusInterface auditd("org.deepin.PermissionManager.Auditd",
                           "/org/deepin/PermissionManager/Auditd",
                           "org.deepin.PermissionManager.Auditd",
                           QDBusConnection::systemBus());
     auditd.setTimeout(500);
     if (!auditd.isValid()) {
-        qWarning() << "Invalid Auditd D-Bus interface";
+        fmWarning() << "Invalid Auditd D-Bus interface";
         return;
     }
-    qInfo() << "Create D-Bus Auditd interface object end";
+    fmInfo() << "Create D-Bus Auditd interface object end";
 
-    qInfo() << "Call D-Bus WriteAuditLog start";
+    fmInfo() << "Call D-Bus WriteAuditLog start";
     doLog(auditd);
-    qInfo() << "Call D-Bus WriteAuditLog end";
+    fmInfo() << "Call D-Bus WriteAuditLog end";
 }
 
 CopyFromDiscAuditLog::CopyFromDiscAuditLog(const QList<QUrl> &srcList, const QList<QUrl> &destList, QObject *parent)
@@ -81,12 +81,12 @@ void CopyFromDiscAuditLog::doLog(QDBusInterface &interface)
         const QString &destPath { urlsOfDest.at(i).toLocalFile() };
         auto response { interface.call("NeedAuditForCopy", srcPath) };
         if (response.type() != QDBusMessage::ReplyMessage || response.arguments().isEmpty()) {
-            qWarning() << "Call NeedAuditForCopy Failed";
+            fmWarning() << "Call NeedAuditForCopy Failed";
             continue;
         }
         if (!response.arguments().takeFirst().toBool())
             continue;
-        qInfo() << "Current env auditlog allowed: " << srcPath;
+        fmWarning() << "Current env auditlog allowed: " << srcPath;
 
         auto fileInfo { InfoFactory::create<FileInfo>(QUrl::fromLocalFile(srcPath)) };
         if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
@@ -127,7 +127,7 @@ void BurnFilesAuditLogJob::doLog(QDBusInterface &interface)
 
     for (const QFileInfo &info : burnedFileInfoList()) {
         if (!info.exists()) {
-            qWarning() << "File doesn't exitsts: " << info.absoluteFilePath();
+            fmWarning() << "File doesn't exitsts: " << info.absoluteFilePath();
             continue;
         }
 

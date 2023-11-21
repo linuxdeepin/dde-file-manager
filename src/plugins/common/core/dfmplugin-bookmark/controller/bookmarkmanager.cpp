@@ -374,7 +374,7 @@ int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);
     if (!window) {
-        qCritical("can not find window");
+        fmCritical("can not find window");
         abort();
     }
     DDialog dialog(window);
@@ -535,7 +535,7 @@ bool BookMarkManager::isItemDuplicated(const BookmarkData &data)
     while (it.hasNext()) {
         it.next();
         if (it.value().name == data.name && UniversalUtils::urlEquals(it.value().url, data.url)) {
-            qInfo() << "Duplicated bookmark path :" << it.value().url;
+            fmInfo() << "Duplicated bookmark path :" << it.value().url;
             return true;
         }
     }

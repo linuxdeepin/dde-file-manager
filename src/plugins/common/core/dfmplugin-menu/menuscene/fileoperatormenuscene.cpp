@@ -70,7 +70,7 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -78,7 +78,7 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
-            qDebug() << errString;
+            fmDebug() << errString;
             return false;
         }
     }

@@ -431,7 +431,7 @@ bool TabBar::eventFilter(QObject *obj, QEvent *event)
                 if (tabList.contains(t))
                     emit tabCloseRequested(tabList.indexOf(t));
             } else {
-                qDebug("You didn't click on an item.");
+                fmDebug("You didn't click on an item.");
             }
         }
     }

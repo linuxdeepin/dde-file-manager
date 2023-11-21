@@ -16,7 +16,7 @@ PreviewPluginLoaderPrivate::PreviewPluginLoaderPrivate(QObject *parent)
 {
     if (pluginPaths.isEmpty()) {
         QString pluginsDir(qApp->applicationDirPath() + kPluginPath);
-        qInfo() << pluginsDir;
+        fmInfo() << pluginsDir;
         if (!QDir(pluginsDir).exists()) {
             pluginPaths.append(QString::fromLocal8Bit(PLUGINDIR));
         } else {

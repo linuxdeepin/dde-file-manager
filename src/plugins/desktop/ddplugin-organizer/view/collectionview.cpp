@@ -85,15 +85,6 @@ void CollectionViewPrivate::initConnect()
     });
 }
 
-void CollectionViewPrivate::updateRegionView()
-{
-    q->itemDelegate()->updateItemSizeHint();
-    auto itemSize = q->itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
-
-    const QMargins viewMargin(kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin);
-    updateViewSizeData(q->geometry().size(), viewMargin, itemSize);
-}
-
 QList<QRect> CollectionViewPrivate::itemPaintGeomertys(const QModelIndex &index) const
 {
     if (Q_UNLIKELY(!index.isValid()))
@@ -143,7 +134,7 @@ void CollectionViewPrivate::updateVerticalBarRange()
     q->verticalScrollBar()->setRange(0, qMax(0, height));
     q->verticalScrollBar()->setPageStep(q->viewport()->height());
     q->verticalScrollBar()->setSingleStep(1);
-    qDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
+    fmDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
 }
 
 int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const
@@ -313,10 +304,10 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
     // get foucs item to set it on top.
     auto foucs = q->currentIndex();
     if (!foucs.isValid()) {
-        qWarning() << "current index is invalid.";
+        fmWarning() << "current index is invalid.";
         foucs = indexs.first();
     } else if (!indexs.contains(foucs)) {
-        qWarning() << "current index is not in indexs.";
+        fmWarning() << "current index is not in indexs.";
         foucs = indexs.first();
     }
     const int indexCount = indexs.count();
@@ -465,7 +456,7 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qWarning() << "create FileInfo error: " << errString << targetUrl;
+        fmWarning() << "create FileInfo error: " << errString << targetUrl;
         return;
     }
 
@@ -530,7 +521,7 @@ bool CollectionViewPrivate::drop(QDropEvent *event)
 
         ext.insert("dropUrl", QVariant(dropUrl));
         if (CollectionHookInterface::dropData(id, event->mimeData(), event->pos(), &ext)) {
-            qDebug() << "droped by extend";
+            fmDebug() << "droped by extend";
             return true;
         }
     }
@@ -607,13 +598,13 @@ void CollectionViewPrivate::showMenu()
 
         // the current index may be not in selected indexs."
         if (!indexList.contains(index)) {
-            qDebug() << "current index is not selected.";
+            fmDebug() << "current index is not selected.";
             index = indexList.last();
         }
 
         flags = q->model()->flags(index);
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
-            qInfo() << "file is disbale, switch to empty area" << q->model()->fileUrl(index);
+            fmInfo() << "file is disbale, switch to empty area" << q->model()->fileUrl(index);
             isEmptyArea = true;
             flags = q->rootIndex().flags();
         }
@@ -641,7 +632,7 @@ void CollectionViewPrivate::clearClipBoard()
         QString errString;
         auto itemInfo = InfoFactory::create<FileInfo>(urls.first(), Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (Q_UNLIKELY(!itemInfo)) {
-            qInfo() << "create FileInfo error: " << errString << urls.first();
+            fmInfo() << "create FileInfo error: " << errString << urls.first();
             return;
         }
         auto homePath = q->model()->rootUrl().toLocalFile();
@@ -703,7 +694,7 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
             QString errString;
             auto itemInfo = InfoFactory::create<FileInfo>(targetItem, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
             if (Q_UNLIKELY(!itemInfo)) {
-                qWarning() << "create FileInfo error: " << errString << targetItem;
+                fmWarning() << "create FileInfo error: " << errString << targetItem;
                 return false;
             }
             if (itemInfo->isAttributes(OptInfoType::kIsDir) || itemInfo->urlOf(UrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
@@ -729,22 +720,22 @@ bool CollectionViewPrivate::dropClientDownload(QDropEvent *event) const
     auto data = event->mimeData();
     if (DFileDragClient::checkMimeData(data)) {
         event->acceptProposedAction();
-        qWarning() << "drop on" << dropTargetUrl;
+        fmWarning() << "drop on" << dropTargetUrl;
 
         QList<QUrl> urlList = data->urls();
         if (!urlList.isEmpty()) {
             // follow canvas dropClientDownload
             DFileDragClient *client = new DFileDragClient(data, q);
-            qDebug() << "dragClientDownload" << client << data << urlList;
+            fmDebug() << "dragClientDownload" << client << data << urlList;
             connect(client, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
                 if (state == Finished)
                     selectItems(urlList);
-                qDebug() << "stateChanged" << state << urlList;
+                fmDebug() << "stateChanged" << state << urlList;
             });
 
             connect(client, &DFileDragClient::serverDestroyed, client, &DFileDragClient::deleteLater);
             connect(client, &DFileDragClient::destroyed, []() {
-                qDebug() << "drag client deleted";
+                fmDebug() << "drag client deleted";
             });
         }
 
@@ -796,12 +787,12 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
     bool dropOnSelf = targetIndex.isValid() ? q->selectionModel()->selectedIndexes().contains(targetIndex) : false;
 
     if (dropOnSelf) {
-        qInfo() << "drop on self, skip. drop:" << dropPos.x() << dropPos.y();
+        fmInfo() << "drop on self, skip. drop:" << dropPos.x() << dropPos.y();
         return true;
     }
 
     if (targetIndex.isValid()) {
-        qDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
+        fmDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
         return false;
     }
 
@@ -810,7 +801,7 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
         for (const QUrl &url : urls) {
             auto key = provider->key(url);
             if (id != key) {
-                qDebug() << "disbale shift file from other collection.";
+                fmDebug() << "disbale shift file from other collection.";
                 return true;
             }
         }
@@ -831,25 +822,25 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     auto firstUrl = urls.first();
     auto firstIndex = q->model()->index(firstUrl);
     if (firstIndex.isValid()) {
-        qWarning() << "source file belong collection:" << firstUrl;
+        fmWarning() << "source file belong collection:" << firstUrl;
         return false;
     }
 
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(firstUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qWarning() << "create FileInfo error: " << errString << firstUrl;
+        fmWarning() << "create FileInfo error: " << errString << firstUrl;
         return false;
     }
 
     if (itemInfo->pathOf(PathInfoType::kAbsolutePath) != q->model()->fileUrl(q->model()->rootIndex()).toLocalFile()) {
-        qWarning() << "source file not belong desktop:" << event->mimeData()->urls();
+        fmWarning() << "source file not belong desktop:" << event->mimeData()->urls();
         return false;
     }
 
     auto targetIndex = q->indexAt(event->pos());
     if (targetIndex.isValid()) {
-        qDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
+        fmDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
         return false;
     }
 
@@ -877,7 +868,7 @@ bool CollectionViewPrivate::dropMimeData(QDropEvent *event) const
         const Qt::DropAction action = event->dropAction();
 
         if (!targetIndex.isValid()) {
-            qDebug() << "drop files to collection.";
+            fmDebug() << "drop files to collection.";
             return dropFiles(event);
         }
 
@@ -928,7 +919,7 @@ void CollectionViewPrivate::continuousSelection(const QPersistentModelIndex &new
     auto &&currentSelectionStartFile = q->model()->fileUrl(currentSelectionStartIndex);
     auto &&currentSelectionStartNode = provider->items(id).indexOf(currentSelectionStartFile);
     if (Q_UNLIKELY(-1 == currentSelectionStartNode)) {
-        qWarning() << "warning:can not find file:" << currentSelectionStartFile << " in collection:" << id
+        fmWarning() << "warning:can not find file:" << currentSelectionStartFile << " in collection:" << id
                    << ".Or no file is selected.So fix to 0.";
         currentSelectionStartNode = 0;
     }
@@ -936,7 +927,7 @@ void CollectionViewPrivate::continuousSelection(const QPersistentModelIndex &new
     auto &&currentSelectionEndFile = q->model()->fileUrl(newCurrent);
     auto &&currentSelectionEndNode = provider->items(id).indexOf(currentSelectionEndFile);
     if (Q_UNLIKELY(-1 == currentSelectionEndNode)) {
-        qWarning() << "warning:can not find file:" << currentSelectionEndFile << " in collection:" << id
+        fmWarning() << "warning:can not find file:" << currentSelectionEndFile << " in collection:" << id
                    << ".Give up switch selection!";
         return;
     }
@@ -945,11 +936,11 @@ void CollectionViewPrivate::continuousSelection(const QPersistentModelIndex &new
     int maxNode = qMax(currentSelectionStartNode, currentSelectionEndNode);
 
     if (Q_UNLIKELY(minNode < 0)) {
-        qWarning() << "warning:minNode error:" << minNode << " and fix to 0";
+        fmWarning() << "warning:minNode error:" << minNode << " and fix to 0";
         minNode = 0;
     }
     if (Q_UNLIKELY(maxNode >= provider->items(id).count())) {
-        qWarning() << "warning:maxNode error:" << maxNode << "and fix to " << provider->items(id).count() - 1;
+        fmWarning() << "warning:maxNode error:" << maxNode << "and fix to " << provider->items(id).count() - 1;
         maxNode = provider->items(id).count() - 1;
     }
 
@@ -1028,7 +1019,7 @@ void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &ite
     const int availableHeight = viewHeight - viewMargins.top() - viewMargins.bottom();
     rowCount = availableHeight / itemHeight;
     if (Q_UNLIKELY(rowCount < 1)) {
-        qWarning() << "Row count is 0!Fix it to 1,and set cell height to:" << itemHeight;
+        fmWarning() << "Row count is 0!Fix it to 1,and set cell height to:" << itemHeight;
         cellHeight = itemHeight;
         rowCount = 1;
     } else {
@@ -1041,7 +1032,7 @@ void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &ite
     }
 
     if (Q_UNLIKELY(cellHeight < 1)) {
-        qWarning() << "Cell height is:" << cellHeight << "!Fix it to 1";
+        fmWarning() << "Cell height is:" << cellHeight << "!Fix it to 1";
         cellHeight = 1;
     }
 }
@@ -1051,7 +1042,7 @@ void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &i
     const int availableWidth = viewWidth - viewMargins.left() - viewMargins.right();
     columnCount = availableWidth / itemWidth;
     if (Q_UNLIKELY(columnCount < 1)) {
-        qWarning() << "Column count is 0!Fix it to 1,and set cell width to:" << viewWidth;
+        fmWarning() << "Column count is 0!Fix it to 1,and set cell width to:" << viewWidth;
         cellWidth = viewWidth;
         columnCount = 1;
     } else {
@@ -1071,7 +1062,7 @@ void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &i
     }
 
     if (Q_UNLIKELY(cellWidth < 1)) {
-        qWarning() << "Cell width is:" << cellWidth << "!Fix it to 1";
+        fmWarning() << "Cell width is:" << cellWidth << "!Fix it to 1";
         cellWidth = 1;
     }
 }
@@ -1228,6 +1219,15 @@ WId CollectionView::winId() const
     }
 }
 
+void CollectionView::updateRegionView()
+{
+    itemDelegate()->updateItemSizeHint();
+    auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+
+    const QMargins viewMargin(kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin);
+    d->updateViewSizeData(geometry().size(), viewMargin, itemSize);
+}
+
 void CollectionView::openEditor(const QUrl &url)
 {
     QModelIndex index = model()->index(url);
@@ -1243,7 +1243,7 @@ void CollectionView::selectUrl(const QUrl &url, const QItemSelectionModel::Selec
 {
     auto index = model()->index(url);
     if (Q_UNLIKELY(!index.isValid())) {
-        qWarning() << "warning:can not find index for:" << url;
+        fmWarning() << "warning:can not find index for:" << url;
         return;
     }
 
@@ -1395,7 +1395,7 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
     auto currentUrl = model()->fileUrl(current);
     auto node = d->provider->items(d->id).indexOf(currentUrl);
     if (Q_UNLIKELY(-1 == node)) {
-        qWarning() << "current url not belong to me." << currentUrl << d->provider->items(d->id);
+        fmWarning() << "current url not belong to me." << currentUrl << d->provider->items(d->id);
         return QModelIndex();
     }
 
@@ -1781,7 +1781,7 @@ void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
             // file info and url changed,but pos will not change
             const QModelIndex &renamedIndex = indexAt(pos);
             if (!renamedIndex.isValid()) {
-                qWarning() << "renamed index is invalid.";
+                fmWarning() << "renamed index is invalid.";
                 return;
             }
             const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
@@ -1805,7 +1805,7 @@ void CollectionView::resizeEvent(QResizeEvent *event)
 {
     QAbstractItemView::resizeEvent(event);
 
-    d->updateRegionView();
+    updateRegionView();
 
     if (d->canUpdateVerticalBarRange) {
         d->updateVerticalBarRange();
@@ -2001,7 +2001,7 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
         closePersistentEditor(currentIndex());
 
     if (CollectionHookInterface::startDrag(id(), supportedActions)) {
-        qDebug() << "start drag by extend.";
+        fmDebug() << "start drag by extend.";
         return;
     }
 

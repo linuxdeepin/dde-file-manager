@@ -129,7 +129,7 @@ class TestCanvasViewPrivate : public testing::Test
 {
 public:
     void SetUp() override {
-        cvp = view.d.data();
+        cvp = view.d;
         cvp->gridMargins = QMargins(2, 2, 2, 2);
         cvp->viewMargins = QMargins(5, 5, 5, 5);
         cvp->canvasInfo = CanvasViewPrivate::CanvasInfo(10, 10, 50, 50);
@@ -371,7 +371,7 @@ public:
         model->d->fileMap.insert(in1, info1);
         model->d->fileMap.insert(in2, info2);
 
-        cvp = view->d.data();
+        cvp = view->d;
         cvp->gridMargins = QMargins(2, 2, 2, 2);
         cvp->viewMargins = QMargins(5, 5, 5, 5);
         cvp->canvasInfo = CanvasViewPrivate::CanvasInfo(10, 10, 50, 50);

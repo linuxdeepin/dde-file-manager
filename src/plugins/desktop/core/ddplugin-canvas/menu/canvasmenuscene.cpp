@@ -271,7 +271,7 @@ bool CanvasMenuScene::triggered(QAction *action)
                 Qt::SortOrder order = d->view->model()->sortOrder();
                 if (role == d->view->model()->sortRole())
                     order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
-                qInfo() << "sort items by" << actionId << "order" << order;
+                fmInfo() << "sort items by" << actionId << "order" << order;
                 d->view->model()->setSortRole(role, order);
                 d->view->model()->sort();
 
@@ -289,7 +289,7 @@ bool CanvasMenuScene::triggered(QAction *action)
 
         // Display Settings
         if (actionId == ActionID::kDisplaySettings) {
-            qDebug() << "call ControlCenter serivce by dbus.";
+            fmDebug() << "call ControlCenter serivce by dbus.";
 #ifdef COMPILE_ON_V23
             QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
                                            "org.deepin.dde.ControlCenter1", "ShowPage");
@@ -300,7 +300,7 @@ bool CanvasMenuScene::triggered(QAction *action)
 #endif
             msg.setArguments({QVariant::fromValue(QString("display"))});
             QDBusConnection::sessionBus().asyncCall(msg, 5);
-            qInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
+            fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
             return true;
         }
 
@@ -319,17 +319,17 @@ bool CanvasMenuScene::triggered(QAction *action)
         // Auto arrange
         if (actionId == ActionID::kAutoArrange) {
             bool align = action->isChecked();
-            qInfo() << "enable auto arrange" << align;
+            fmInfo() << "enable auto arrange" << align;
             CanvasIns->setAutoArrange(align);
             return true;
         }
 
-        qWarning() << "Note:" << actionId << " is belong to screen scene,but not handled.";
+        fmWarning() << "Note:" << actionId << " is belong to screen scene,but not handled.";
 
     } else {
         auto actionScene = scene(action);
         if (!actionScene) {
-            qWarning() << actionId << " doesn't belong to any scene.";
+            fmWarning() << actionId << " doesn't belong to any scene.";
             return false;
         }
 

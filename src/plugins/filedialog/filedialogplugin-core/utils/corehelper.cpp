@@ -142,12 +142,12 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
         newNameFilterExtension = db->suffixForFileName(filter);   //在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
         if (newNameFilterExtension.isEmpty()) {   //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
             QRegExp regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-            qInfo() << "File Dialog: Cannot find extesion name by QMimeDataBase::suffixForFileName，try regexp: " << filter;
+            fmInfo() << "File Dialog: Cannot find extesion name by QMimeDataBase::suffixForFileName，try regexp: " << filter;
             for (QMimeType m : db->allMimeTypes()) {
                 for (QString suffixe : m.suffixes()) {
                     if (regExp.exactMatch(suffixe)) {
                         newNameFilterExtension = suffixe;
-                        qInfo() << "Find extesion name by regexp: " << suffixe;
+                        fmInfo() << "Find extesion name by regexp: " << suffixe;
                         break;   //查询到后跳出循环
                     }
                 }
@@ -158,11 +158,11 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
         }
 
         if (newNameFilterExtension.isEmpty())
-            qInfo() << "Cannot find extension name";
+            fmInfo() << "Cannot find extension name";
 
         QRegExp re(newNameFilterExtension, Qt::CaseInsensitive, QRegExp::Wildcard);
         if (re.exactMatch(fileNameExtension)) {   //原扩展名与新扩展名不匹配？
-            qInfo() << "Set new filter rules:" << newNameFilters;
+            fmInfo() << "Set new filter rules:" << newNameFilters;
             // TODO(liuyangming):
             // getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰
         }

@@ -5,6 +5,8 @@
 #ifndef DFMPLUGIN_EMBLEM_GLOBAL_H
 #define DFMPLUGIN_EMBLEM_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPEMBLEM_NAMESPACE dfmplugin_emblem
 
 #define DPEMBLEM_BEGIN_NAMESPACE namespace DPEMBLEM_NAMESPACE {
@@ -14,6 +16,7 @@
 #include <QObject>
 
 DPEMBLEM_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPEMBLEM_NAMESPACE)
 
 enum class SystemEmblemType : uint8_t {
     kLink,

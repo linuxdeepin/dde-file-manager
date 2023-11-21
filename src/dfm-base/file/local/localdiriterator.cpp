@@ -77,7 +77,7 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
         emit InfoCacheController::instance().removeCacheFileInfo({url});
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     } else {
-        qWarning() << "info is nullptr url = " << url;
+        qCWarning(logDFMBase) << "info is nullptr url = " << url;
     }
 
     return infoTrans;

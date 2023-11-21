@@ -59,7 +59,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
             addDetailSpace(windowId);
             w = findDetailSpaceByWindowId(windowId);
             if (!w) {
-                qCritical() << "Can't find the detail space!";
+                fmCritical() << "Can't find the detail space!";
                 return;
             }
         }

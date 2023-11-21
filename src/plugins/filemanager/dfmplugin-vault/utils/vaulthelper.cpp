@@ -335,7 +335,7 @@ void VaultHelper::lockVault(bool isForced)
 void VaultHelper::createVaultDialog()
 {
     if (QFile::exists(kVaultBasePathOld + QDir::separator() + QString(kVaultEncrypyDirName) + QDir::separator() + QString(kCryfsConfigFileName))) {
-        qCritical() << "Vault: the old vault not migrate";
+        fmCritical() << "Vault: the old vault not migrate";
         return;
     }
     VaultPageBase *page = new VaultActiveView();
@@ -357,7 +357,7 @@ void VaultHelper::unlockVaultDialog()
                 VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
             }
         } else {
-            qWarning() << "Vault: The password from Keyring is empty!";
+            fmWarning() << "Vault: The password from Keyring is empty!";
         }
     } else {
         VaultUnlockPages *page = new VaultUnlockPages();

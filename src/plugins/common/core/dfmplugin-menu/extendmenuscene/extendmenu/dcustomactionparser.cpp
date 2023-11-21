@@ -222,7 +222,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 
     getNameByType(kActionName);
     if (name.isEmpty()) {
-        qInfo() << "systemName: " << QLocale::system().name();
+        fmInfo() << "systemName: " << QLocale::system().name();
         return false;
     }
 
@@ -545,18 +545,18 @@ void DCustomActionParser::delayRefresh()
 {
     if (refreshTimer) {
         refreshTimer->start(300);
-        qDebug() << "restart refresh timer" << this;
+        fmDebug() << "restart refresh timer" << this;
         return;
     }
 
-    qDebug() << "create refresh timer" << this;
+    fmDebug() << "create refresh timer" << this;
     refreshTimer = new QTimer;
     connect(refreshTimer, &QTimer::timeout, this, [this]() {
         refreshTimer->stop();
         refreshTimer->deleteLater();
         refreshTimer = nullptr;
 
-        qInfo() << "loading custom menus" << this;
+        fmInfo() << "loading custom menus" << this;
         refresh();
     });
     refreshTimer->start(300);

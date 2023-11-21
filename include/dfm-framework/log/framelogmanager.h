@@ -27,14 +27,8 @@ class FrameLogManager : public QObject
 
 public:
     static FrameLogManager *instance();
-
-    void registerConsoleAppender();
-    void registerFileAppender();
-    QString logFilePath();
-    void setlogFilePath(const QString &logFilePath);
-    void setLogFormat(const QString &format);
-    Dtk::Core::Logger *dtkLogger();
-    FilterAppender *filterAppender();
+    void applySuggestedLogSettings();
+    Dtk::Core::Logger *globalDtkLogger();
 
 private:
     explicit FrameLogManager(QObject *parent = nullptr);

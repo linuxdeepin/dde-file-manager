@@ -66,7 +66,7 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
     }
 
     if (reader.hasError()) {
-        qWarning() << "Read recent xml file has error! Error: " << reader.errorString();
+        fmWarning() << "Read recent xml file has error! Error: " << reader.errorString();
         return;
     }
 

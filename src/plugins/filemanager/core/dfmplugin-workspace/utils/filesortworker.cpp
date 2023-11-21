@@ -931,7 +931,7 @@ QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool
         for (const auto &parent : depthParentUrls) {
             if (isCanceled)
                 return {};
-            if (!UniversalUtils::urlEquals(dir, parent) && UniversalUtils::isParentUrl(parent, dir))
+            if (!UniversalUtils::urlEquals(dir, parent) && !UniversalUtils::isParentUrl(parent, dir))
                 continue;
 
             auto sortList = bSort ? sortTreeFiles(visibleTreeChildren.take(parent), reverse) : visibleTreeChildren.value(parent);
@@ -1331,6 +1331,19 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
 
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
 {
+    auto item = childData(sortInfo->fileUrl());
+    if (item && !nameFilters.isEmpty() && !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
+        QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
+        for (int i = 0; i < nameFilters.size(); ++i) {
+            re.setPattern(nameFilters.at(i));
+            if (re.match(item->data(kItemNameRole).toString()).hasMatch()/*re.hasMatch(item->data(kItemNameRole).toString())*/) {
+                item->setAvailableState(true);
+            } else {
+                item->setAvailableState(false);
+            }
+        }
+    }
+
     // 处理继承
     if (sortInfo && sortAndFilter) {
         auto result = sortAndFilter->checkFilters(InfoFactory::create<FileInfo>(sortInfo->fileUrl()), filters, filterData);

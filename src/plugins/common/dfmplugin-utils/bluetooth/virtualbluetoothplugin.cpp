@@ -36,7 +36,7 @@ void VirtualBluetoothPlugin::sendFiles(const QStringList &paths, const QString &
     }
 
     if (paths.isEmpty()) {
-        qDebug() << "bluetooth: cannot send empty files";
+        fmDebug() << "bluetooth: cannot send empty files";
         return;
     }
 

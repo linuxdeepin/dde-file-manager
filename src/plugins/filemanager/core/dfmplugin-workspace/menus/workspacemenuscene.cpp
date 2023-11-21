@@ -196,7 +196,7 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
 
     auto actionScene = scene(action);
     if (!actionScene) {
-        qWarning() << actionId << " doesn't belong to any scene.";
+        fmWarning() << actionId << " doesn't belong to any scene.";
         return false;
     }
 
@@ -265,7 +265,7 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
     const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
     auto actionScene = scene(action);
     if (!actionScene) {
-        qWarning() << actionId << " doesn't belong to any scene.";
+        fmWarning() << actionId << " doesn't belong to any scene.";
         return false;
     }
 

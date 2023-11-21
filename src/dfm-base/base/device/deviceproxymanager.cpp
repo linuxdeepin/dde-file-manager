@@ -90,7 +90,7 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 
 bool DeviceProxyManager::initService()
 {
-    qInfo() << "Start initilize dbus: `DeviceManagerInterface`";
+    qCInfo(logDFMBase) << "Start initilize dbus: `DeviceManagerInterface`";
     d->devMngDBus.reset(new DeviceManagerInterface(kDeviceService, kDevMngPath, QDBusConnection::sessionBus(), this));
     d->initConnection();
     return d->isDBusRuning();

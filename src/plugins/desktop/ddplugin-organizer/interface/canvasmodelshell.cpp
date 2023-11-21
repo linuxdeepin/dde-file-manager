@@ -28,7 +28,7 @@ using namespace ddplugin_organizer;
 
 #define CheckFilterConnected(sig) \
         if (!isSignalConnected(QMetaMethod::fromSignal(&sig))) {\
-            qWarning() << "filter signal was not connected to any object" << #sig;\
+            fmWarning() << "filter signal was not connected to any object" << #sig;\
             return false; \
         }
 

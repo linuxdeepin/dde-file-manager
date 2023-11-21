@@ -21,7 +21,7 @@ void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &s
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!handle) {
-        qWarning() << "JobHandlePointer is a nullptr, setJobArgs failed!";
+        fmWarning() << "JobHandlePointer is a nullptr, setJobArgs failed!";
         return;
     }
     connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractJob::operateAation);
@@ -128,7 +128,7 @@ void AbstractJob::handleRetryErrorSuccess(const quint64 Id)
     // retry error dealing success and dealing next error
     if (errorQueue.size() <= 0 || errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>() != Id) {
         if (errorQueue.size() > 0 && errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>() != Id)
-            qCritical() << "error current error thread id = " << Id << " error Queue error id = " << errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer);
+            fmCritical() << "error current error thread id = " << Id << " error Queue error id = " << errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer);
         return;
     }
     errorQueue.dequeue();

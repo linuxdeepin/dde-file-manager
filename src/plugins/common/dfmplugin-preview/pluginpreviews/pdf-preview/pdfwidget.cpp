@@ -125,11 +125,11 @@ void PdfWidget::onOpened(DocSheet *sheet, Document::Error error)
         sheet->deleteLater();
 
         if (Document::kFileError == error)
-            qWarning() << "PDF Preview: Open failed!";
+            fmWarning() << "PDF Preview: Open failed!";
         else if (Document::kFileDamaged == error)
-            qWarning() << "PDF Preview: Please check if the file is damaged!";
+            fmWarning() << "PDF Preview: Please check if the file is damaged!";
         else if (Document::kConvertFailed == error)
-            qWarning() << "PDF Preview: Conversion failed, please check if the file is damaged!";
+            fmWarning() << "PDF Preview: Conversion failed, please check if the file is damaged!";
 
         return;
     }

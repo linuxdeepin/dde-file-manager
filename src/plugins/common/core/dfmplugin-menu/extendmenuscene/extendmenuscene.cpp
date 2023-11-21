@@ -26,7 +26,7 @@ AbstractMenuScene *ExtendMenuCreator::create()
     std::call_once(loadFlag, [this]() {
         customParser = new DCustomActionParser(this);
         customParser->refresh();
-        qInfo() << "custom menus *.conf loaded.";
+        fmInfo() << "custom menus *.conf loaded.";
     });
 
     return new ExtendMenuScene(customParser);
@@ -166,7 +166,7 @@ bool ExtendMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -174,7 +174,7 @@ bool ExtendMenuScene::initialize(const QVariantHash &params)
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
-            qDebug() << errString;
+            fmDebug() << errString;
             return false;
         }
     }
@@ -202,7 +202,7 @@ bool ExtendMenuScene::create(QMenu *parent)
 
     const QList<DCustomActionEntry> &rootEntry = d->customParser->getActionFiles(d->onDesktop);
 
-    qDebug() << "extendCustomMenu " << !d->isEmptyArea << d->currentDir << d->focusFile << "files" << d->selectFiles.size() << "entrys" << rootEntry.size();
+    fmDebug() << "extendCustomMenu " << !d->isEmptyArea << d->currentDir << d->focusFile << "files" << d->selectFiles.size() << "entrys" << rootEntry.size();
 
     if (parent == nullptr || rootEntry.isEmpty())
         return AbstractMenuScene::create(parent);
@@ -235,7 +235,7 @@ bool ExtendMenuScene::create(QMenu *parent)
 #else
     usedEntrys = builder.matchActions(d->selectFiles, usedEntrys);
 #endif
-    qDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
+    fmDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
 
     if (usedEntrys.isEmpty())
         return AbstractMenuScene::create(parent);
@@ -363,12 +363,12 @@ bool ExtendMenuScene::triggered(QAction *action)
         QString cmd = action->property(DCustomActionDefines::kCustomActionCommand).toString();
         DCustomActionDefines::ActionArg argFlag = static_cast<DCustomActionDefines::ActionArg>(action->property(DCustomActionDefines::kCustomActionCommandArgFlag).toInt());
 
-        qDebug() << "argflag" << argFlag << "dir" << d->currentDir << "foucs" << d->focusFile << "selected" << d->selectFiles;
-        qInfo() << "extend" << action->text() << cmd;
+        fmDebug() << "argflag" << argFlag << "dir" << d->currentDir << "foucs" << d->focusFile << "selected" << d->selectFiles;
+        fmInfo() << "extend" << action->text() << cmd;
 
         QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(
                 cmd, argFlag, d->transformedCurrentDir, d->transformedFocusFile, d->transformedSelectFiles);
-        qInfo() << "exec:" << runable.first << runable.second;
+        fmInfo() << "exec:" << runable.first << runable.second;
 
         if (!runable.first.isEmpty())
             return UniversalUtils::runCommand(runable.first, runable.second);

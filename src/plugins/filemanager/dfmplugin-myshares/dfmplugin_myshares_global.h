@@ -5,6 +5,8 @@
 #ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
 #define DFMPLUGIN_MYSHARES_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPMYSHARES_NAMESPACE dfmplugin_myshares
 #define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
 #define DPMYSHARES_END_NAMESPACE }
@@ -13,6 +15,7 @@
 #include <QVariantMap>
 
 DPMYSHARES_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPMYSHARES_NAMESPACE)
 
 namespace ShareInfoKeys {
 inline constexpr char kName[] { "shareName" };

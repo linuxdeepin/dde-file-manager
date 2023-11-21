@@ -31,7 +31,8 @@ Q_DECLARE_METATYPE(QString *);
 
 // using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
 
-using namespace dfmplugin_optical;
+namespace dfmplugin_optical {
+DFM_LOG_REISGER_CATEGORY(DPOPTICAL_NAMESPACE)
 
 DFMBASE_USE_NAMESPACE
 
@@ -169,3 +170,4 @@ void Optical::onDeviceChanged(const QString &id)
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", discUrl);
     }
 }
+}   // namespace dfmplugin_optical

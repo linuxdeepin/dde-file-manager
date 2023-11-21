@@ -4,6 +4,7 @@
 
 #include "core.h"
 #include "events/coreeventreceiver.h"
+#include "utils/corehelper.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/application/application.h>
@@ -28,13 +29,13 @@
 #include <QDBusPendingCall>
 
 DFMBASE_USE_NAMESPACE
-DPCORE_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(const char *)
-
+namespace dfmplugin_core {
 namespace GlobalPrivate {
 static Application *kDFMApp { nullptr };
 }   // namespace GlobalPrivate
+DFM_LOG_REISGER_CATEGORY(DPCORE_NAMESPACE)
 
 void Core::initialize()
 {
@@ -90,7 +91,7 @@ void Core::connectToServer()
                            "/org/deepin/filemanager/server");
         ifs.asyncCall("Ping");
 
-        qCritical() << "device manager cannot connect to service!";
+        fmCritical() << "device manager cannot connect to service!";
         DevMngIns->startMonitor();
         DevMngIns->startPollingDeviceUsage();
     }
@@ -98,7 +99,13 @@ void Core::connectToServer()
 
 void Core::onAllPluginsInitialized()
 {
-    qInfo() << "All plugins initialized";
+    fmInfo() << "All plugins initialized";
+    // createWindow may return an existing window, which does not need to be processed again aboutToOpen
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, [](quint64 id) {
+        auto window { FMWindowsIns.findWindowById(id) };
+        if (window)
+            window->installEventFilter(&CoreHelper::instance());
+    });
     // subscribe events
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
                                    CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
@@ -116,13 +123,13 @@ void Core::onAllPluginsInitialized()
 
 void Core::onAllPluginsStarted()
 {
-    qInfo() << "All plugins started";
+    fmInfo() << "All plugins started";
     // dde-select-dialog also uses the core plugin, don't start filemanger window
     QString &&curAppName { qApp->applicationName() };
     if (curAppName == "dde-file-manager")
         dpfSignalDispatcher->publish(DPF_MACRO_TO_STR(DPCORE_NAMESPACE), "signal_StartApp");
     else
-        qInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
+        fmInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
 }
 
 /*!
@@ -141,3 +148,4 @@ void Core::onWindowOpened(quint64 windd)
         });
     });
 }
+}   // namespace dfmplugin_core

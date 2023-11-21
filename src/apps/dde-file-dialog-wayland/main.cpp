@@ -16,6 +16,8 @@
 
 #include <signal.h>
 
+Q_LOGGING_CATEGORY(logAppDialogWayland, "log.app.dde-select-dialog-wayland")
+
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -37,8 +39,7 @@ static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
 
 static void initLog()
 {
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static void initEnv()
@@ -97,12 +98,12 @@ static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qWarning() << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppDialogWayland) << "Load plugins but dconfig failed: " << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppDialogWayland) << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
     pluginsDirs.push_back(pluginsDir);
@@ -113,7 +114,7 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
 #endif
 
-    qInfo() << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppDialogWayland) << "Using plugins dir:" << pluginsDirs;
     DPF_NAMESPACE::LifeCycle::initialize({ kDialogPluginInterface,
                                            kFmPluginInterface,
                                            kCommonPluginInterface },
@@ -121,8 +122,8 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
     DPF_NAMESPACE::LifeCycle::setBlackListFilter(blackListFilter);
 
-    qInfo() << "Depend library paths:" << DApplication::libraryPaths();
-    qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qCInfo(logAppDialogWayland) << "Depend library paths:" << DApplication::libraryPaths();
+    qCInfo(logAppDialogWayland) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
     if (!DPF_NAMESPACE::LifeCycle::readPlugins())
@@ -130,11 +131,11 @@ static bool pluginsLoad()
 
     // We should make sure that the core plugin is loaded first
     if (!singlePluginLoad(kDialogCorePluginName, kDialogCoreLibName)) {
-        qWarning() << "Load" << kDialogCorePluginName << "failed";
+        qCWarning(logAppDialogWayland) << "Load" << kDialogCorePluginName << "failed";
         return false;
     }
     if (!singlePluginLoad(kDFMCorePluginName, kDFMCoreLibName)) {
-        qWarning() << "Load" << kDFMCorePluginName << "failed";
+        qCWarning(logAppDialogWayland) << "Load" << kDFMCorePluginName << "failed";
         return false;
     }
 
@@ -147,7 +148,7 @@ static bool pluginsLoad()
 
 static void handleSIGTERM(int sig)
 {
-    qCritical() << "break with !SIGTERM! " << sig;
+    qCCritical(logAppDialogWayland) << "break with !SIGTERM! " << sig;
 
     if (qApp) {
         qApp->quit();
@@ -182,7 +183,7 @@ int main(int argc, char *argv[])
     initLog();
 
     if (!pluginsLoad()) {
-        qCritical() << "Load pugin failed!";
+        qCCritical(logAppDialogWayland) << "Load pugin failed!";
         abort();
     }
 

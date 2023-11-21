@@ -39,14 +39,14 @@ public:
         static_assert(std::is_base_of<QObject, T>::value, "Template type T must be derived QObject");
         const QStringList &fieldNames { SqliteHelper::fieldNames<T>() };
         if (fieldNames.isEmpty()) {
-            qWarning() << "Empty fields!";
+            qCWarning(logDFMBase) << "Empty fields!";
             return false;
         }
 
         QHash<QString, QString> fieldFixes;
         SqliteHelper::fieldTypesMap<T>(fieldNames, &fieldFixes);
         if (fieldFixes.size() != fieldNames.size()) {
-            qWarning() << "field types is not matched";
+            qCWarning(logDFMBase) << "field types is not matched";
             return false;
         }
 

@@ -62,7 +62,7 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -72,7 +72,7 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
-            qDebug() << errString;
+            fmDebug() << errString;
             return false;
         }
         if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))

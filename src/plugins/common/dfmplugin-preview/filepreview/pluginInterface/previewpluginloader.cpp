@@ -149,7 +149,7 @@ void PreviewPluginLoader::update()
 {
 
 #ifdef QT_SHARED
-    qInfo() << "File Preview: checking directory path";
+    fmInfo() << "File Preview: checking directory path";
     const QStringList &paths = dptr->pluginPaths;
     for (int i = 0; i < paths.count(); ++i) {
         const QString &pluginDir = paths.at(i);
@@ -159,7 +159,7 @@ void PreviewPluginLoader::update()
 
         QString path = pluginDir;
 
-        qInfo() << "File Preview: checking directory path" << path << "...";
+        fmInfo() << "File Preview: checking directory path" << path << "...";
 
         if (!QDir(path).exists(QLatin1String(".")))
             continue;
@@ -192,12 +192,12 @@ void PreviewPluginLoader::update()
             }
 #    endif
             if (dfm_debug_component()) {
-                qInfo() << "File Preview: looking at" << fileName;
+                fmInfo() << "File Preview: looking at" << fileName;
             }
             loader = new QPluginLoader(fileName, this);
             if (!loader->load()) {
                 if (dfm_debug_component()) {
-                    qDebug() << loader->errorString();
+                    fmDebug() << loader->errorString();
                 }
                 loader->deleteLater();
                 continue;
@@ -216,7 +216,7 @@ void PreviewPluginLoader::update()
                     keys += dptr->cs ? k.at(m).toString() : k.at(m).toString().toLower();
             }
             if (dfm_debug_component())
-                qInfo() << "File Preview: Got keys from plugin meta data" << keys;
+                fmInfo() << "File Preview: Got keys from plugin meta data" << keys;
 
             if (!metaDataOk) {
                 loader->deleteLater();
@@ -256,7 +256,7 @@ void PreviewPluginLoader::update()
     }
 #else
     if (dfm_debug_component()) {
-        qDebug() << "PreviewPluginLoader::PreviewPluginLoader() ignoring" << dptr->iid
+        fmDebug() << "PreviewPluginLoader::PreviewPluginLoader() ignoring" << dptr->iid
                  << "since plugins are disabled in static builds";
     }
 #endif

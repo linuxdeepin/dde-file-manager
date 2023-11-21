@@ -5,6 +5,8 @@
 #ifndef DFMPLUGIN_TAG_GLOBAL_H
 #define DFMPLUGIN_TAG_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPTAG_NAMESPACE dfmplugin_tag
 
 #define DPTAG_BEGIN_NAMESPACE namespace DPTAG_NAMESPACE {
@@ -14,6 +16,7 @@
 #include <QObject>
 
 DPTAG_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPTAG_NAMESPACE)
 
 enum class QueryOpts : int {
     kTags,   // get all tags

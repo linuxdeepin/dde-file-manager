@@ -54,7 +54,7 @@ int Utils::accessMode(const QString &mps)
 int Utils::setFileMode(const QString &mountPoint, uint mode)
 {
     QByteArray bytes { mountPoint.toLocal8Bit() };
-    qInfo() << "chmod ==>" << bytes << "to" << mode;
+    fmInfo() << "chmod ==>" << bytes << "to" << mode;
     return chmod(bytes.data(), mode);
 }
 
@@ -91,7 +91,7 @@ void Utils::saveDevPolicy(const QVariantMap &policy)
     // 1. if file does not exist then create it
     QFile config(devConfigPath());
     if (!config.open(QIODevice::ReadWrite)) {
-        qDebug() << "config open failed";
+        fmDebug() << "config open failed";
         return;
     }
     config.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
@@ -126,7 +126,7 @@ void Utils::saveDevPolicy(const QVariantMap &policy)
                 foundExist = true;
                 objInfo.insert(kKeyPolicy, inPolicy);
                 objInfo.insert(kKeyTstamp, QString::number(QDateTime::currentSecsSinceEpoch()));
-                qDebug() << "found exist policy, just updtae it";
+                fmDebug() << "found exist policy, just updtae it";
             }
 
             newArr.append(objInfo);
@@ -142,7 +142,7 @@ void Utils::saveDevPolicy(const QVariantMap &policy)
         if (inGlobal == 0)
             obj.insert(kKeyDevice, inDevice);
         newArr.append(obj);
-        qDebug() << "append new policy";
+        fmDebug() << "append new policy";
     }
     doc.setArray(newArr);
     config.close();
@@ -185,7 +185,7 @@ void Utils::loadDevPolicy(DevPolicyType *devPolicies)
         }
     }
 
-    qDebug() << "loaded policy: " << *devPolicies;
+    fmDebug() << "loaded policy: " << *devPolicies;
 }
 
 void Utils::saveVaultPolicy(const QVariantMap &policy)
@@ -193,7 +193,7 @@ void Utils::saveVaultPolicy(const QVariantMap &policy)
     // 1. if file does not exist then create it
     QFile config(valultConfigPath());
     if (!config.open(QIODevice::ReadWrite)) {
-        qDebug() << "config open failed";
+        fmDebug() << "config open failed";
         config.close();
         return;
     }
@@ -210,7 +210,7 @@ void Utils::saveVaultPolicy(const QVariantMap &policy)
     obj.insert(kVaultHideState, policy.value(kVaultHideState).toInt());
     obj.insert(kPolicyState, policy.value(kPolicyState).toInt());
     newArr.append(obj);
-    qDebug() << "append new policy";
+    fmDebug() << "append new policy";
     doc.setArray(newArr);
     config.open(QIODevice::Truncate | QIODevice::ReadWrite);   // overwrite the config file
     config.write(doc.toJson());
@@ -247,14 +247,14 @@ void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
         }
     }
 
-    qDebug() << "loaded policy: " << *vaultPolicies;
+    fmDebug() << "loaded policy: " << *vaultPolicies;
 }
 
 DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const char *device)
 {
     int r = crypt_init(cd, device);
     if (r < 0) {
-        qInfo("crypt_init failed,code is:%d", r);
+        fmInfo("crypt_init failed,code is:%d", r);
         return kInitFailed;
     }
 
@@ -263,7 +263,7 @@ DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const 
                    nullptr); /* additional parameters (not used) */
 
     if (r < 0) {
-        qInfo("crypt_load failed on device %s.\n", crypt_get_device_name(*cd));
+        fmInfo("crypt_load failed on device %s.\n", crypt_get_device_name(*cd));
         crypt_free(*cd);
         return kDeviceLoadFailed;
     }
@@ -271,7 +271,7 @@ DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const 
     r = crypt_activate_by_passphrase(*cd, nullptr, CRYPT_ANY_SLOT,
                                      pwd, strlen(pwd), CRYPT_ACTIVATE_ALLOW_UNBOUND_KEY);
     if (r < 0) {
-        qInfo("crypt_activate_by_passphrase failed on device %s.\n", crypt_get_device_name(*cd));
+        fmInfo("crypt_activate_by_passphrase failed on device %s.\n", crypt_get_device_name(*cd));
         crypt_free(*cd);
         return kPasswordWrong;
     }
@@ -288,7 +288,7 @@ DPCErrorCode Utils::changeDiskPassword(crypt_device *cd, const char *oldPwd, con
                                                strlen(oldPwd), newPwd, strlen(newPwd));
     crypt_free(cd);
     if (r < 0) {
-        qInfo("crypt_keyslot_change_by_passphrase failed,code is:%d", r);
+        fmInfo("crypt_keyslot_change_by_passphrase failed,code is:%d", r);
         return kPasswordChangeFailed;
     }
 

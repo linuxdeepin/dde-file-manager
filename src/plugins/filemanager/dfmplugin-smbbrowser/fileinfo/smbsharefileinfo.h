@@ -14,6 +14,7 @@ class SmbShareFileInfoPrivate;
 class SmbShareFileInfo : public dfmbase::FileInfo
 {
     QSharedPointer<SmbShareFileInfoPrivate> d { nullptr };
+    friend class SmbShareFileInfoPrivate;
 
 public:
     explicit SmbShareFileInfo(const QUrl &url);

@@ -290,7 +290,7 @@ void RecentHelper::clearRecent()
         f.write(kEmptyRecentFile);
         f.close();
     } else {
-        qWarning() << "open recent xbel file failed!!!";
+        fmWarning() << "open recent xbel file failed!!!";
     }
 }
 
@@ -313,7 +313,7 @@ void RecentHelper::openFileLocation(const QList<QUrl> &urls)
 {
     for (const QUrl &url : urls) {
         if (!openFileLocation(url))
-            qWarning() << "failed to open: " << url.path();
+            fmWarning() << "failed to open: " << url.path();
     }
 }
 

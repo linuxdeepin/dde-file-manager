@@ -8,11 +8,12 @@
 
 #include <QStandardPaths>
 #include <QDir>
-#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonParseError>
+
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
 using namespace dfm_upgrade;
 DFMBASE_USE_NAMESPACE
@@ -65,7 +66,7 @@ bool SmbVirtualEntryUpgradeUnit::createDB()
     handler = new SqliteHandle(dbFilePath);
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError()) {
-        qWarning() << "The database is invalid! open error";
+        qCWarning(logToolUpgrade) << "The database is invalid! open error";
         return false;
     }
     db.close();
@@ -93,7 +94,7 @@ QList<VirtualEntryData> SmbVirtualEntryUpgradeUnit::readOldItems()
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(configs, &err);
     if (err.error != QJsonParseError::NoError) {
-        qWarning() << "cannot parse config file:" << err.errorString();
+        qCWarning(logToolUpgrade) << "cannot parse config file:" << err.errorString();
         return {};
     }
 
@@ -137,7 +138,7 @@ void SmbVirtualEntryUpgradeUnit::clearOldItems()
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(configs, &err);
     if (err.error != QJsonParseError::NoError) {
-        qWarning() << "cannot parse config file:" << err.errorString();
+        qCWarning(logToolUpgrade) << "cannot parse config file:" << err.errorString();
         return;
     }
 
@@ -163,8 +164,8 @@ VirtualEntryData SmbVirtualEntryUpgradeUnit::convertFromMap(const QVariantMap &m
     if (protocol.isEmpty() || host.isEmpty() || share.isEmpty())
         return data;
 
-    qDebug() << "upgrade: smb entry: " << protocol << host
-             << share << name;
+    qCDebug(logToolUpgrade) << "upgrade: smb entry: " << protocol << host
+                            << share << name;
 
     data.setDisplayName(name);
     data.setHost(host);

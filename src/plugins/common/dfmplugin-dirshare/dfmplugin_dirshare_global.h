@@ -5,6 +5,8 @@
 #ifndef DFMPLUGIN_DIRSHARE_GLOBAL_H
 #define DFMPLUGIN_DIRSHARE_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPDIRSHARE_NAMESPACE dfmplugin_dirshare
 
 #define DPDIRSHARE_BEGIN_NAMESPACE namespace DPDIRSHARE_NAMESPACE {
@@ -14,6 +16,7 @@
 #include <QVariantMap>
 
 DPDIRSHARE_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPDIRSHARE_NAMESPACE)
 
 namespace ShareActionId {
 inline constexpr char kActAddShareKey[] { "add-share" };

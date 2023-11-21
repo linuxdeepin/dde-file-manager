@@ -9,6 +9,8 @@
 #include "view/canvasview.h"
 #include "delegate/canvasitemdelegate.h"
 #include "model/fileinfomodel.h"
+#include "model/canvasproxymodel.h"
+#include "model/canvasselectionmodel.h"
 #include "hook/canvasmanagerhook.h"
 #include "hook/canvasmodelhook.h"
 #include "hook/canvasviewhook.h"

@@ -67,7 +67,7 @@ public:
         for (auto handler : handlerList) {
             if (handler.compare(obj, method)) {
                 if (!handlerList.removeOne(handler)) {
-                    qWarning() << "Cannot remove: " << handler.objectIndex->objectName();
+                    qCWarning(logDPF) << "Cannot remove: " << handler.objectIndex->objectName();
                     ret = false;
                 }
             }
@@ -107,7 +107,7 @@ public:
         for (auto handler : filterList) {
             if (handler.compare(obj, method)) {
                 if (!filterList.removeOne(handler)) {
-                    qWarning() << "Cannot remove: " << handler.objectIndex->objectName();
+                    qCWarning(logDPF) << "Cannot remove: " << handler.objectIndex->objectName();
                     ret = false;
                 }
             }
@@ -131,7 +131,7 @@ public:
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
         if (!subscribe(EventConverter::convert(space, topic), obj, std::move(method))) {
-            qWarning() << "Topic " << space << ":" << topic << "is invalid";
+            qCWarning(logDPF) << "Topic " << space << ":" << topic << "is invalid";
             return false;
         }
         return true;
@@ -141,7 +141,7 @@ public:
     [[gnu::hot]] inline bool subscribe(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qWarning() << "Event " << type << "is invalid";
+            qCWarning(logDPF) << "Event " << type << "is invalid";
             return false;
         }
 
@@ -285,7 +285,7 @@ public:
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
         if (!installEventFilter(EventConverter::convert(space, topic), obj, std::move(method))) {
-            qWarning() << "Topic " << space << ":" << topic << "is invalid";
+            qCWarning(logDPF) << "Topic " << space << ":" << topic << "is invalid";
             return false;
         }
         return true;
@@ -295,7 +295,7 @@ public:
     inline bool installEventFilter(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qWarning() << "Event " << type << "is invalid";
+            qCWarning(logDPF) << "Event " << type << "is invalid";
             return false;
         }
 

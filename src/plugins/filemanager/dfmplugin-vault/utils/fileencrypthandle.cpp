@@ -53,18 +53,18 @@ void FileEncryptHandle::connectLockScreenToUpdateVaultState()
 {
     QDBusConnection connection = QDBusConnection::sessionBus();
     if (!connection.isConnected()) {
-        qCritical() << "Vault: Cannot connect to the D-Bus session bus.";
+        fmCritical() << "Vault: Cannot connect to the D-Bus session bus.";
         return;
     }
 
     if (!connection.interface()->isServiceRegistered(kAppSessionService)) {
-        qCritical("Vault: Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
+        fmCritical("Vault: Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
         return;
     }
 
     if (!QDBusConnection::sessionBus().connect(kAppSessionService, kAppSessionPath, "org.freedesktop.DBus.Properties",
                                                "PropertiesChanged", "sa{sv}as", this, SLOT(responseLockScreenDBus(QDBusMessage)))) {
-        qCritical() << "Vault: connect lock screen dbus error!";
+        fmCritical() << "Vault: connect lock screen dbus error!";
     }
 }
 
@@ -103,11 +103,11 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
     int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
     if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalCreateVault(d->activeState.value(1));
-        qWarning() << "Vault: create vault failed!";
+        fmWarning() << "Vault: create vault failed!";
     } else {
         d->curState = kUnlocked;
         emit signalCreateVault(flg);
-        qInfo() << "Vault: create vault success!";
+        fmInfo() << "Vault: create vault success!";
     }
     d->activeState.clear();
     d->mutex->unlock();
@@ -140,12 +140,12 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
     if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
         result = false;
         emit signalUnlockVault(d->activeState.value(3));
-        qWarning() << "Vault: unlock vault failed!";
+        fmWarning() << "Vault: unlock vault failed!";
     } else {
         result = true;
         d->curState = kUnlocked;
         emit signalUnlockVault(flg);
-        qInfo() << "Vault: unlock vault success!";
+        fmInfo() << "Vault: unlock vault success!";
     }
     d->activeState.clear();
     d->mutex->unlock();
@@ -168,11 +168,11 @@ void FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
     int flg = d->lockVaultProcess(unlockFileDir, isForced);
     if (d->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalLockVault(d->activeState.value(7));
-        qWarning() << "Vault: lock vault failed! ";
+        fmWarning() << "Vault: lock vault failed! ";
     } else {
         d->curState = kEncrypted;
         emit signalLockVault(flg);
-        qInfo() << "Vault: lock vault success!";
+        fmInfo() << "Vault: lock vault success!";
     }
     d->activeState.clear();
     d->mutex->unlock();
@@ -185,7 +185,7 @@ bool FileEncryptHandle::createDirIfNotExist(QString path)
     } else {
         QDir dir(path);
         if (!dir.isEmpty()) {
-            qCritical() << "Vault: Create vault dir failed, dir is not empty!";
+            fmCritical() << "Vault: Create vault dir failed, dir is not empty!";
             return false;
         }
     }
@@ -195,7 +195,7 @@ bool FileEncryptHandle::createDirIfNotExist(QString path)
 VaultState FileEncryptHandle::state(const QString &encryptBaseDir) const
 {
     if (encryptBaseDir.isEmpty()) {
-        qWarning() << "Vault: not set the base dir!";
+        fmWarning() << "Vault: not set the base dir!";
         return kUnknow;
     }
 
@@ -280,7 +280,7 @@ void FileEncryptHandle::responseLockScreenDBus(const QDBusMessage &msg)
 {
     const QList<QVariant> &arguments = msg.arguments();
     if (kArgumentsNum != arguments.count()) {
-        qCritical() << "Vault: arguments of lock screen dbus error!";
+        fmCritical() << "Vault: arguments of lock screen dbus error!";
         return;
     }
 
@@ -464,7 +464,7 @@ void FileEncryptHandlerPrivate::runVaultProcessAndGetOutput(const QStringList &a
 {
     const QString &cryfsProgram = QStandardPaths::findExecutable("cryfs");
     if (cryfsProgram.isEmpty()) {
-        qCritical() << "Vault: cryfs is not exist!";
+        fmCritical() << "Vault: cryfs is not exist!";
         return;
     }
 
@@ -524,7 +524,7 @@ QStringList FileEncryptHandlerPrivate::algoNameOfSupport()
     QStringList result { "" };
     QString cryfsProgram = QStandardPaths::findExecutable("cryfs");
     if (cryfsProgram.isEmpty()) {
-        qCritical() << "Vault: cryfs is not exist!";
+        fmCritical() << "Vault: cryfs is not exist!";
         return result;
     }
 

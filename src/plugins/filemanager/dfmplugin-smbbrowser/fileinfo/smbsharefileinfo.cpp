@@ -7,6 +7,7 @@
 #include "utils/smbbrowserutils.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/universalutils.h>
 
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
@@ -70,6 +71,8 @@ bool SmbShareFileInfo::canAttributes(const CanableInfoType type) const
     switch (type) {
     case FileCanType::kCanDrag:
         return false;
+    case FileCanType::kCanDrop:
+        return d->canDrop() ? FileInfo::canAttributes(FileCanType::kCanDrop) : false;
     default:
         return FileInfo::canAttributes(type);
     }
@@ -82,13 +85,22 @@ SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(SmbShareFileInfo *qq)
         QMutexLocker locker(&smb_browser_utils::nodesMutex());
         node = smb_browser_utils::shareNodes().value(q->fileUrl());
 #if 0
-        qDebug() << node;
+        fmDebug() << node;
 #endif
     }
 }
 
 SmbShareFileInfoPrivate::~SmbShareFileInfoPrivate()
 {
+}
+
+bool SmbShareFileInfoPrivate::canDrop() const
+{
+    if (UniversalUtils::urlEquals(q->url, smb_browser_utils::netNeighborRootUrl()))
+        return false;
+    if (!smb_browser_utils::isSmbMounted(q->url.toString()))
+        return false;
+    return true;
 }
 
 QString SmbShareFileInfoPrivate::fileName() const

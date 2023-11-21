@@ -50,7 +50,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
                          qobject_cast<QWidget *>(scene), AcName::kAcFileviewMenu);
 #endif
     if (!scene) {
-        qWarning() << "Create scene failed, scene name: " << currentMenuScene();
+        fmWarning() << "Create scene failed, scene name: " << currentMenuScene();
         reloadCursor();
         return;
     }
@@ -87,7 +87,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     setWaitCursor();
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
     if (!scene) {
-        qWarning() << "Create scene failed, scene name: " << currentMenuScene();
+        fmWarning() << "Create scene failed, scene name: " << currentMenuScene();
         reloadCursor();
         return;
     }

@@ -9,7 +9,8 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
-using namespace dfmplugin_propertydialog;
+namespace dfmplugin_propertydialog {
+DFM_LOG_REISGER_CATEGORY(DPPROPERTYDIALOG_NAMESPACE)
 
 void PropertyDialog::initialize()
 {
@@ -46,3 +47,4 @@ void PropertyDialog::bindSceneOnAdded(const QString &newScene)
         bindScene(newScene);
     }
 }
+}   // namespace dfmplugin_propertydialog

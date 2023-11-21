@@ -273,7 +273,7 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     }
 
     pos = findItem(data.url);
-    qInfo() << "item added: devUrl = " << data.url << ",pos = " << pos;   // log for bug:#182939
+    fmInfo() << "item added: devUrl = " << data.url << ",pos = " << pos;   // log for bug:#182939
     if (pos > 0) {   // update the item
         onItemUpdated(data.url);
     } else {
@@ -314,7 +314,7 @@ void ComputerModel::onItemRemoved(const QUrl &url)
 {
     int pos = findItem(url);
     if (pos > 0) {
-        qInfo() << "item removed: " << url << ",pos = " << pos;   // log for bug:#224925
+        fmInfo() << "item removed: " << url << ",pos = " << pos;   // log for bug:#224925
 
         if (view->selectedUrlList().contains(url))
             //        view->clearSelection(); // NOTE: this do not work, might be a bug in QT
@@ -325,7 +325,7 @@ void ComputerModel::onItemRemoved(const QUrl &url)
         endRemoveRows();
         removeOrphanGroup();
     } else {
-        qDebug() << "target item not found" << url;
+        fmDebug() << "target item not found" << url;
     }
 
     view->handleComputerItemVisible();
@@ -342,7 +342,7 @@ void ComputerModel::onItemUpdated(const QUrl &url)
             updateItemInfo(pos);
             return;
         }
-        qDebug() << "target item not found" << url;
+        fmDebug() << "target item not found" << url;
     }
 }
 

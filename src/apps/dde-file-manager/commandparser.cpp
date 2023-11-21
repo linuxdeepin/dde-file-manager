@@ -21,6 +21,8 @@
 #include <QCommandLineOption>
 #include <QDebug>
 
+Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
+
 DFMBASE_USE_NAMESPACE
 
 CommandParserPrivate::CommandParserPrivate()
@@ -87,13 +89,13 @@ void CommandParser::processCommand()
     if (isSet("d")) {
         bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
         if (enableHeadless) {
-            qInfo() << "Start headless";
+            qCInfo(logAppFileManager) << "Start headless";
             dpfSignalDispatcher->publish(GlobalEventType::kHeadlessStarted);
             // whether to add setQuitOnLastWindowClosed
             return;
         }
-        qWarning() << "Cannot start dde-file-manager in no window mode "
-                      "unless you can set the value of `dfm.headless` in DConfig to `true`!";
+        qCWarning(logAppFileManager) << "Cannot start dde-file-manager in no window mode "
+                                        "unless you can set the value of `dfm.headless` in DConfig to `true`!";
         ::exit(0);
     }
 
@@ -129,7 +131,7 @@ void CommandParser::process()
 
 void CommandParser::process(const QStringList &arguments)
 {
-    qDebug() << "App start args: " << arguments;
+    qCDebug(logAppFileManager) << "App start args: " << arguments;
     commandParser->process(arguments);
 }
 

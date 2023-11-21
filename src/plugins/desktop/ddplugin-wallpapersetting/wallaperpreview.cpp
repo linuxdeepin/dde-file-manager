@@ -15,17 +15,17 @@ WallaperPreview::WallaperPreview(QObject *parent)
 {
 
 #ifdef COMPILE_ON_V23
-    qInfo() << "create org.deepin.dde.Appearance1";
+    fmDebug() << "create org.deepin.dde.Appearance1";
     inter = new BackgroudInter("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
                           QDBusConnection::sessionBus(), this);
     inter->setTimeout(1000);
-    qInfo() << "create org.deepin.dde.Appearance1 end";
+    fmDebug() << "create org.deepin.dde.Appearance1 end";
 #else
-    qInfo() << "create com.deepin.wm";
+    fmDebug() << "create com.deepin.wm";
     inter = new BackgroudInter("com.deepin.wm", "/com/deepin/wm",
                           QDBusConnection::sessionBus(), this);
     inter->setTimeout(1000);
-    qInfo() << "create com.deepin.wm end";
+    fmDebug() << "create com.deepin.wm end";
 #endif
 
 }
@@ -92,7 +92,7 @@ void WallaperPreview::buildWidgets()
 {
     DisplayMode mode = ddplugin_desktop_util::screenProxyLastChangedMode();
     auto screens = ddplugin_desktop_util::screenProxyLogicScreens();
-    qInfo() << "screen mode:" << mode << "screen count:" << screens.size();
+    fmDebug() << "screen mode:" << mode << "screen count:" << screens.size();
 
     // 实际是单屏
     if ((DisplayMode::kShowonly == mode) || (DisplayMode::kDuplicate == mode) // 仅显示和复制
@@ -100,7 +100,7 @@ void WallaperPreview::buildWidgets()
 
         ScreenPointer primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (primary == nullptr) {
-            qCritical() << "get primary screen failed return";
+            fmCritical() << "get primary screen failed return";
             previewWidgets.clear();
             return;
         }
@@ -119,7 +119,7 @@ void WallaperPreview::buildWidgets()
         for (auto screenName : previewWidgets.keys()) {
             // 删除实际不存在的数据
             if (!ddplugin_desktop_util::screenProxyScreen(screenName)) {
-                qInfo() << "screen:" << screenName << "  invalid, delete it.";
+                fmDebug() << "screen:" << screenName << "  invalid, delete it.";
                 previewWidgets.remove(screenName);
             }
         }
@@ -131,7 +131,7 @@ void WallaperPreview::buildWidgets()
                     wid->setGeometry(s->geometry());
             } else {
                 // 添加缺少的数据
-                qInfo() << "screen:" << s->name() << " added, create it.";
+                fmDebug() << "screen:" << s->name() << " added, create it.";
                 wid = createWidget(s);
                 previewWidgets.insert(s->name(), wid);
             }
@@ -143,10 +143,10 @@ void WallaperPreview::updateGeometry()
 {
     for (ScreenPointer sp : ddplugin_desktop_util::screenProxyScreens()) {
         PreviewWidgetPtr wid = previewWidgets.value(sp->name());
-        qDebug() << "screen geometry change:" << sp.get() << wid.get();
+        fmDebug() << "screen geometry change:" << sp.get() << wid.get();
         if (wid.get() != nullptr) {
             if (wid->geometry() == sp->geometry()) {
-                qDebug() << "background geometry is equal to screen geometry,and discard changes" << wid->geometry();
+                fmDebug() << "background geometry is equal to screen geometry,and discard changes" << wid->geometry();
                 continue;
             }
 
@@ -163,7 +163,7 @@ PreviewWidgetPtr WallaperPreview::createWidget(ScreenPointer sc)
     wid->setProperty("isPreview", true);
     wid->setProperty("myScreen", sc->name()); // assert screen->name is unique
     wid->setGeometry(sc->geometry());
-    qDebug() << "screen name" << sc->name() << "geometry" << sc->geometry();
+    fmDebug() << "screen name" << sc->name() << "geometry" << sc->geometry();
 
     ddplugin_desktop_util::setPrviewWindow(wid.get());
     return wid;
@@ -181,24 +181,24 @@ QString WallaperPreview::getBackground(const QString &screen)
     inter->setTimeout(timeOut);
 
     while (retry--) {
-        qInfo() << "Get background by GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+        fmDebug() << "Get background by GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
         QDBusPendingReply<QString> reply = inter->GetCurrentWorkspaceBackgroundForMonitor(screen);
         reply.waitForFinished();
 
         if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "Get background failed by DBus and times:" << (5-retry)
+            fmWarning() << "Get background failed by DBus and times:" << (5-retry)
                        << reply.error().type() << reply.error().name() << reply.error().message();
         } else {
             ret = reply.argumentAt<0>();
-            qInfo() << "Get background path succeed:" << ret << "screen" << screen << "   times:" << (5 - retry);
+            fmDebug() << "Get background path succeed:" << ret << "screen" << screen << "   times:" << (5 - retry);
             break;
         }
     }
     inter->setTimeout(oldTimeOut);
 
     if (ret.isEmpty() || !QFile::exists(QUrl(ret).toLocalFile()))
-        qCritical() << "get background fail path :" << ret << "screen" << screen;
+        fmCritical() << "get background fail path :" << ret << "screen" << screen;
     else
-        qInfo() << "getBackground path :" << ret << "screen" << screen;
+        fmDebug() << "getBackground path :" << ret << "screen" << screen;
     return ret;
 }

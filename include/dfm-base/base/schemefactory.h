@@ -206,7 +206,7 @@ public:
                                     QString *errorString = nullptr)
     {
         if (!url.isValid()) {
-            qWarning() << "url is invalid !!! url = " << url;
+            qCWarning(logDFMBase) << "url is invalid !!! url = " << url;
             return nullptr;
         }
 
@@ -244,7 +244,7 @@ public:
         }
 
         if (!info)
-            qWarning() << "info is nullptr url = " << url;
+            qCWarning(logDFMBase) << "info is nullptr url = " << url;
 
         return qSharedPointerDynamicCast<T>(info);
     }
@@ -355,7 +355,7 @@ public:
             if (errorString)
                 *errorString = "The current scheme has registered "
                                "the associated construction class";
-            qWarning() << errorString;
+            qCWarning(logDFMBase) << errorString;
             return false;
         }
 
@@ -392,7 +392,7 @@ public:
             if (errorString)
                 *errorString = "No scheme found for "
                                "URL registration";
-            qWarning() << errorString;
+            qCWarning(logDFMBase) << errorString;
             return nullptr;
         }
 
@@ -404,7 +404,7 @@ public:
             if (errorString)
                 *errorString = "Scheme should be call registered 'regClass()' function "
                                "before create function";
-            qWarning() << errorString;
+            qCWarning(logDFMBase) << errorString;
             return nullptr;
         }
     }

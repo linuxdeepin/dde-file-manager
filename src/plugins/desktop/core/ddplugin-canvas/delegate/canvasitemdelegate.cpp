@@ -197,7 +197,7 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
     QString suffix = index.data(Global::ItemRoles::kItemFileSuffixOfRenameRole).toString();
-    qDebug() << "Display" << index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
+    fmDebug() << "Display" << index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
              << "FileName" << index.data(Global::ItemRoles::kItemNameRole).toString()
              << "FileNameofrenmae" << index.data(Global::ItemRoles::kItemFileNameOfRenameRole).toString()
              << "BaseName" << index.data(Global::ItemRoles::kItemFileBaseNameRole).toString()
@@ -225,7 +225,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     if (!itemEditor)
         return;
 
-    qDebug() << __FUNCTION__ << index << itemEditor->text();
+    fmDebug() << index << itemEditor->text();
     QString newName = itemEditor->text();
     if (newName.isEmpty())
         return;
@@ -298,6 +298,11 @@ QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionVie
 
     painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
     return paintIcon(painter, indexOption.icon, indexOption.rect, Qt::AlignCenter, QIcon::Normal).size();
+}
+
+int CanvasItemDelegate::textLineHeight() const
+{
+    return d->textLineHeight;
 }
 
 QList<QRect> CanvasItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -615,7 +620,7 @@ void CanvasItemDelegate::commitDataAndCloseEditor()
             emit commitData(editor);
             emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
         } else {
-            qWarning() << "currentIndex is not in editing.";
+            fmWarning() << "currentIndex is not in editing.";
         }
     }
 }
@@ -735,13 +740,13 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
     return QRect(qRound(x), qRound(y), w, h);
 }
 
-QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect,  const FileInfoPointer &info)
+QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info)
 {
     // todo(zy) uing extend painter by registering.
     if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {
-            qWarning() << "publish `kPaintEmblems` event failed!";
+            fmWarning() << "publish `kPaintEmblems` event failed!";
         });
     }
     return rect;

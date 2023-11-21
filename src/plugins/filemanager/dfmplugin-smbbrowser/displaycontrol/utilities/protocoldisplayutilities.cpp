@@ -108,7 +108,7 @@ void computer_sidebar_event_calls::sidebarMenuCall(quint64 winId, const QUrl &ur
 
     QScopedPointer<AbstractMenuScene> scene(menuSceneCreateScene(kComputerMenu));
     if (!scene) {
-        pddmWar << "Create scene for computer failed: " << kComputerMenu;
+        fmWarning() << "Create scene for computer failed: " << kComputerMenu;
         return;
     }
 
@@ -160,7 +160,7 @@ QStringList protocol_display_utilities::getMountedSmb()
     }
     std::sort(protoDevs.begin(), protoDevs.end());
     if (protoDevs.count() > 0)
-        pddmDbg << "mounted smbs: " << protoDevs;
+        fmDebug() << "mounted smbs: " << protoDevs;
     return protoDevs;
 }
 

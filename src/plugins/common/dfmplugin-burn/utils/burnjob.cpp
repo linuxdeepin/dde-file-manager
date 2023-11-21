@@ -107,11 +107,11 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
     while (true) {
         char buf[kPipeBufferSize] { 0 };
         if (read(progressFd, buf, kPipeBufferSize) <= 0) {
-            qWarning() << "progressFd break";
+            fmWarning() << "progressFd break";
             break;
         } else {
             QByteArray bufByes(buf);
-            qInfo() << "burn files, read bytes json:" << bufByes;
+            fmInfo() << "burn files, read bytes json:" << bufByes;
             QJsonParseError jsonError;
             QJsonObject obj { QJsonDocument::fromJson(bufByes, &jsonError).object() };
             if (jsonError.error == QJsonParseError::NoError) {
@@ -197,7 +197,7 @@ bool AbstractBurnJob::readyToWork()
     curDeviceInfo = DevProxyMng->queryBlockInfo(curDevId);
     auto &&map { curDeviceInfo };
     if (map.isEmpty()) {
-        qWarning() << "Device info is empty";
+        fmWarning() << "Device info is empty";
         return false;
     }
 
@@ -210,7 +210,7 @@ bool AbstractBurnJob::readyToWork()
         QString mpt { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
         if (!mpt.isEmpty()) {
             if (!DeviceManager::instance()->unmountBlockDev(curDevId)) {
-                qWarning() << "The device was not safely unmounted: " << curDevId;
+                fmWarning() << "The device was not safely unmounted: " << curDevId;
                 emit requestErrorMessageDialog(tr("The device was not safely unmounted"), tr("Disk is busy, cannot unmount now"));
                 return false;
             }
@@ -224,13 +224,13 @@ void AbstractBurnJob::workingInSubProcess()
 {
     int progressPipefd[2] {};
     if (pipe(progressPipefd) < 0) {
-        qWarning() << "pipe failed";
+        fmWarning() << "pipe failed";
         return;
     }
 
     int badPipefd[2] {};
     if (pipe(badPipefd) < 0) {
-        qWarning() << "pipe failed";
+        fmWarning() << "pipe failed";
         return;
     }
 
@@ -250,7 +250,7 @@ void AbstractBurnJob::workingInSubProcess()
 
         int status;
         waitpid(-1, &status, WNOHANG);
-        qDebug() << "start read child process data";
+        fmDebug() << "start read child process data";
         QThread::msleep(1000);
 
         readFunc(progressPipefd[0], badPipefd[0]);
@@ -258,7 +258,7 @@ void AbstractBurnJob::workingInSubProcess()
         close(progressPipefd[0]);
         close(badPipefd[0]);
     } else {
-        qWarning() << "fork failed";
+        fmCritical() << "fork failed";
     }
 }
 
@@ -365,7 +365,7 @@ void EraseJob::updateMessage(JobInfoPointer ptr)
 
 void EraseJob::work()
 {
-    qInfo() << "Start erase device: " << curDev;
+    fmInfo() << "Start erase device: " << curDev;
 
     // TODO(zhangs): check unmount
     firstJobType = curJobType = JobType::kOpticalBlank;
@@ -379,13 +379,13 @@ void EraseJob::work()
     bool ret { true };
     if (!manager->erase()) {
         ret = false;
-        qWarning() << "Erase Failed: " << manager->lastError();
+        fmWarning() << "Erase Failed: " << manager->lastError();
     }
-    qInfo() << "End erase device: " << curDev;
+    fmInfo() << "End erase device: " << curDev;
 
     if (!mediaChangDected()) {
         ret = false;
-        qWarning() << "Device disconnected:" << curDevId;
+        fmWarning() << "Device disconnected:" << curDevId;
         emit requestFailureDialog(static_cast<int>(curJobType), QObject::tr("Device disconnected"), {});
     }
 
@@ -417,7 +417,7 @@ bool BurnISOFilesJob::fileSystemLimitsValid()
         checkStrategy.reset(new RockRidgeCheckStrategy(stagingurl.path()));
 
     if (checkStrategy && !checkStrategy->check()) {
-        qWarning() << "Check Failed: " << checkStrategy->lastError();
+        fmWarning() << "Check Failed: " << checkStrategy->lastError();
         emit requestErrorMessageDialog(tr("The file name or the path is too long. Please shorten the file name or the path and try again."),
                                        checkStrategy->lastInvalidName());
         return false;
@@ -438,10 +438,10 @@ void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
     manager->setStageFile(localPath);
     curPhase = kWriteData;
     bool isSuccess { manager->commit(opts, speeds, volName) };
-    qInfo() << "Burn ret: " << isSuccess << manager->lastError() << localPath;
+    fmInfo() << "Burn ret: " << isSuccess << manager->lastError() << localPath;
     auto check { opts.testFlag(BurnOption::kVerifyDatas) };
     if (check && isSuccess) {
-        qInfo() << "Enable check media";
+        fmInfo() << "Enable check media";
         double gud, slo, bad;
         curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);
@@ -452,7 +452,7 @@ void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
 
 void BurnISOFilesJob::work()
 {
-    qInfo() << "Start burn ISO files: " << curDev;
+    fmInfo() << "Start burn ISO files: " << curDev;
     firstJobType = curJobType = JobType::kOpticalBurn;
     if (!fileSystemLimitsValid())
         return;
@@ -460,7 +460,7 @@ void BurnISOFilesJob::work()
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
-    qInfo() << "End burn ISO files: " << curDev;
+    fmInfo() << "End burn ISO files: " << curDev;
 }
 
 BurnISOImageJob::BurnISOImageJob(const QString &dev, const JobHandlePointer handler)
@@ -478,11 +478,11 @@ void BurnISOImageJob::writeFunc(int progressFd, int checkFd)
     auto manager = createManager(progressFd);
     curPhase = kWriteData;
     bool isSuccess { manager->writeISO(imgPath, speeds) };
-    qInfo() << "Burn ISO ret: " << isSuccess << manager->lastError() << imgPath;
+    fmInfo() << "Burn ISO ret: " << isSuccess << manager->lastError() << imgPath;
 
     auto check { opts.testFlag(BurnOption::kVerifyDatas) };
     if (check && isSuccess) {
-        qInfo() << "Enable check media";
+        fmInfo() << "Enable check media";
         double gud, slo, bad;
         curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);
@@ -493,13 +493,13 @@ void BurnISOImageJob::writeFunc(int progressFd, int checkFd)
 
 void BurnISOImageJob::work()
 {
-    qInfo() << "Start burn ISO image: " << curDev;
+    fmInfo() << "Start burn ISO image: " << curDev;
     firstJobType = curJobType = JobType::kOpticalImageBurn;
     if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
-    qInfo() << "End burn ISO image: " << curDev;
+    fmInfo() << "End burn ISO image: " << curDev;
 }
 
 BurnUDFFilesJob::BurnUDFFilesJob(const QString &dev, const JobHandlePointer handler)
@@ -514,7 +514,7 @@ bool BurnUDFFilesJob::fileSystemLimitsValid()
     // filesystem limits check
     QScopedPointer<BurnCheckStrategy> checkStrategy { new UDFCheckStrategy(stagingurl.path()) };
     if (!checkStrategy->check()) {
-        qWarning() << "Check Failed: " << checkStrategy->lastError();
+        fmWarning() << "Check Failed: " << checkStrategy->lastError();
         emit requestErrorMessageDialog(tr("The file name or the path is too long. Please shorten the file name or the path and try again."),
                                        checkStrategy->lastInvalidName());
         return false;
@@ -536,13 +536,13 @@ void BurnUDFFilesJob::writeFunc(int progressFd, int checkFd)
     manager->setStageFile(localPath);
     curPhase = kWriteData;
     bool isSuccess { manager->commit(opts, speeds, volName) };
-    qInfo() << "Burn UDF ret: " << isSuccess << manager->lastError() << localPath;
+    fmInfo() << "Burn UDF ret: " << isSuccess << manager->lastError() << localPath;
     delete manager;
 }
 
 void BurnUDFFilesJob::work()
 {
-    qInfo() << "Start burn UDF files: " << curDev;
+    fmInfo() << "Start burn UDF files: " << curDev;
     firstJobType = curJobType = JobType::kOpticalBurn;
     if (!fileSystemLimitsValid())
         return;
@@ -550,7 +550,7 @@ void BurnUDFFilesJob::work()
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
-    qInfo() << "End burn UDF files: " << curDev;
+    fmInfo() << "End burn UDF files: " << curDev;
 }
 
 DumpISOImageJob::DumpISOImageJob(const QString &dev, const JobHandlePointer handler)
@@ -589,7 +589,7 @@ void DumpISOImageJob::writeFunc(int progressFd, int checkFd)
     auto manager = createManager(progressFd);
     curPhase = kWriteData;
     bool isSuccess { manager->dumpISO(imagePath) };
-    qInfo() << "Dump ISO ret: " << isSuccess << manager->lastError() << imagePath;
+    fmInfo() << "Dump ISO ret: " << isSuccess << manager->lastError() << imagePath;
     delete manager;
 }
 
@@ -610,11 +610,11 @@ void DumpISOImageJob::finishFunc(bool verify, bool verifyRet)
 
 void DumpISOImageJob::work()
 {
-    qInfo() << "Start dump ISO image: " << curDev;
+    fmInfo() << "Start dump ISO image: " << curDev;
     firstJobType = curJobType = JobType::kOpticalImageDump;
     if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
-    qInfo() << "End dump ISO image: " << curDev;
+    fmInfo() << "End dump ISO image: " << curDev;
 }

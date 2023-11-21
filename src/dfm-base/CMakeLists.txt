@@ -122,7 +122,9 @@ target_include_directories(${BIN_NAME} PUBLIC
 
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager) # also use for install
 target_compile_definitions(
-	${BIN_NAME} PRIVATE APPSHAREDIR="${ShareDir}"
+        ${BIN_NAME}
+        PRIVATE APPSHAREDIR="${ShareDir}"
+        PRIVATE DFM_BASE_INTERNAL_USE=1
 )
 
 add_library(DFM::base ALIAS ${BIN_NAME})

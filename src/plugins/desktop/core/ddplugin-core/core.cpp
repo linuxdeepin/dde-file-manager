@@ -28,7 +28,6 @@
 Q_DECLARE_METATYPE(QStringList *)
 
 DFMBASE_USE_NAMESPACE
-DDPCORE_USE_NAMESPACE
 
 #define CanvasCorePublish(topic) \
     dpfSignalDispatcher->publish(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic))
@@ -45,6 +44,9 @@ DDPCORE_USE_NAMESPACE
 #define CanvasCorelUnfollow(topic, args...) \
     dpfHookSequence->unfollow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
+namespace ddplugin_core {
+DFM_LOG_REISGER_CATEGORY(DDPCORE_NAMESPACE)
+
 static void registerFileSystem()
 {
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
@@ -55,7 +57,7 @@ static void registerFileSystem()
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
 }
 
-void ddplugin_core::Core::initialize()
+void Core::initialize()
 {
     registerFileSystem();
     connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Core::onStart);
@@ -71,10 +73,10 @@ void ddplugin_core::Core::initialize()
 
     QString err;
     DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop", &err);
-    qInfo() << "register desktop dconfig:" << err;
+    fmInfo() << "register desktop dconfig:" << err;
 }
 
-bool ddplugin_core::Core::start()
+bool Core::start()
 {
     connectToServer();
 
@@ -85,42 +87,13 @@ bool ddplugin_core::Core::start()
     return handle->init();
 }
 
-void ddplugin_core::Core::stop()
+void Core::stop()
 {
     delete handle;
     handle = nullptr;
 
     delete app;
     app = nullptr;
-}
-
-void Core::connectToServer()
-{
-    if (!DevProxyMng->initService()) {
-        qCritical() << "device manager cannot connect to server!";
-        DevMngIns->startMonitor();
-    }
-    auto refreshDesktop = [](const QString &msg) {
-        qDebug() << "refresh desktop start..." << msg;
-        QDBusInterface ifs("com.deepin.dde.desktop",
-                           "/com/deepin/dde/desktop",
-                           "com.deepin.dde.desktop");
-        ifs.asyncCall("Refresh");
-        qDebug() << "refresh desktop async finished..." << msg;
-    };
-    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevMounted");
-    });
-
-    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevUnmounted");
-    });
-
-    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, [refreshDesktop](const QString &, const QString &) {
-        refreshDesktop("onBlockDevRemoved");
-    });
-
-    qInfo() << "connectToServer finished";
 }
 
 void Core::onStart()
@@ -146,11 +119,15 @@ void Core::handleLoadPlugins(const QStringList &names)
 {
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
-        qInfo() << "About to load plugin:" << name;
+        fmInfo() << "About to load plugin:" << name;
         auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
-        if (plugin)
-            qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin)
-                    << "State: " << plugin->pluginState();
+        if (plugin) {
+            bool ret = DPF_NAMESPACE::LifeCycle::loadPlugin(plugin);
+            if (ret)
+                fmInfo() << "lazy load State: " << plugin->pluginState();
+            else
+                fmCritical() << "fail to load plugin: " << plugin->pluginState();
+        }
     });
 }
 
@@ -158,18 +135,28 @@ bool Core::eventFilter(QObject *watched, QEvent *event)
 {
     // windows paint
     if (event->type() == QEvent::Paint) {
-        qInfo() << "one window painting" << watched;
+        fmInfo() << "one window painting" << watched;
         qApp->removeEventFilter(this);
         QMetaObject::invokeMethod(this, "loadLazyPlugins", Qt::QueuedConnection);
     }
     return false;
 }
 
+void Core::connectToServer()
+{
+    if (!DevProxyMng->initService()) {
+        fmCritical() << "device manager cannot connect to server!";
+        DevMngIns->startMonitor();
+    }
+
+    fmInfo() << "connectToServer finished";
+}
+
 void Core::loadLazyPlugins()
 {
     std::call_once(lazyFlag, []() {
         const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
-        qInfo() << "load lazy plugins" << list;
+        fmInfo() << "load lazy plugins" << list;
         dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
     });
 }
@@ -357,3 +344,5 @@ void EventHandle::publishAvailableGeometryChanged()
 {
     CanvasCorePublish(signal_DesktopFrame_AvailableGeometryChanged);
 }
+
+}   // namespace ddplugin_core

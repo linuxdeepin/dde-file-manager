@@ -15,39 +15,43 @@
 
 namespace dfm_upgrade {
 
-#define GetUpgradeLibraryPath(path) {\
-    QString libPath(qApp->applicationDirPath() + "/../../tools/libdfm-upgrade.so"); \
-    if (!QFile::exists(libPath)) { \
-        libPath = QString(DFM_TOOLS_DIR) + "/libdfm-upgrade.so"; \
-        qInfo() << QString("library does not exist, use : %1").arg(libPath); \
-    }\
-    path = libPath; \
-}
+#define GetUpgradeLibraryPath(path)                                                     \
+    {                                                                                   \
+        QString libPath(qApp->applicationDirPath() + "/../../tools/libdfm-upgrade.so"); \
+        if (!QFile::exists(libPath)) {                                                  \
+            libPath = QString(DFM_TOOLS_DIR) + "/libdfm-upgrade.so";                    \
+            qInfo() << QString("library does not exist, use : %1").arg(libPath);        \
+        }                                                                               \
+        path = libPath;                                                                 \
+    }
 
 inline constexpr char kUpgradeFlag[] = "dfm-upgraded.lock";
 inline constexpr char kArgDesktop[] = "Desktop";
 inline constexpr char kArgFileManger[] = "FileManager";
 
-typedef  int (*UpgradeFunc)(const QMap<QString, QString> &);
+typedef int (*UpgradeFunc)(const QMap<QString, QString> &);
 
-inline QString upgradeConfigDir() {
+inline QString upgradeConfigDir()
+{
     return QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager";
 }
 
-inline bool isNeedUpgrade() {
+inline bool isNeedUpgrade()
+{
     const QString dirPath = upgradeConfigDir();
     if (QFile::exists(dirPath + "/" + kUpgradeFlag)) {
         QFileInfo dir(dirPath);
         if (!dir.isWritable()) {
             qCritical() << "give up upgrading:the config dir is not writable" << dirPath;
-            return false;;
+            return false;
+            ;
         }
         return true;
     }
     return false;
 }
 
-inline int tryUpgrade(const QString &libPath, const QMap<QString , QString> &args)
+inline int tryUpgrade(const QString &libPath, const QMap<QString, QString> &args)
 {
     // load library
     QLibrary lib(libPath);
@@ -70,4 +74,4 @@ inline int tryUpgrade(const QString &libPath, const QMap<QString , QString> &arg
 
 }
 
-#endif // BUILTININTERFACE_H
+#endif   // BUILTININTERFACE_H

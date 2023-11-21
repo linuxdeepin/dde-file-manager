@@ -108,7 +108,7 @@ void RootInfo::startWatcher()
     // create watcher
     watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (watcher.isNull()) {
-        qWarning() << "Create watcher failed! url = " << url;
+        fmWarning() << "Create watcher failed! url = " << url;
         return;
     }
 

@@ -18,6 +18,7 @@ public:
     explicit CanvasManagerHook(QObject *parent = nullptr);
 public:
     void iconSizeChanged(int level) const override;
+    void fontChanged() const override;
     void autoArrangeChanged(bool on) const override;
     bool requestWallpaperSetting(const QString &screen) const override;
 };

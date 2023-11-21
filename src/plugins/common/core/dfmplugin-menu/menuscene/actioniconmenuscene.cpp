@@ -38,7 +38,7 @@ QString ActionIconMenuScene::name() const
 void ActionIconMenuScene::updateState(QMenu *parent)
 {
     bool visible = actionIconVisible();
-    qDebug() << "menu: action icon visible: " << visible;
+    fmDebug() << "menu: action icon visible: " << visible;
     if (!visible)
         return AbstractMenuScene::updateState(parent);
 

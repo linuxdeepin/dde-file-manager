@@ -28,7 +28,7 @@ VaultFileIteratorPrivate::VaultFileIteratorPrivate(const QUrl &url,
 
     dfmioDirIterator.reset(new DEnumerator(temp));
     if (!dfmioDirIterator) {
-        qWarning("Vault: create enumerator failed!");
+        fmWarning("Vault: create enumerator failed!");
         abort();
     }
 }

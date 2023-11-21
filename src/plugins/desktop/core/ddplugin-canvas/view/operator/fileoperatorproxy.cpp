@@ -46,7 +46,7 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
     // befor call back,recive file created signal
     QPair<int, QPoint> oriPoint;
     if (GridIns->point(path, oriPoint)) {
-        qInfo() << "note:file existed!must check code!" << path << oriPoint << pos;
+        fmInfo() << "note:file existed!must check code!" << path << oriPoint << pos;
         if (CanvasGrid::Mode::Align == GridIns->mode())
             return;
 
@@ -55,9 +55,9 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
 
         // move it
         bool moved = GridIns->move(screenNum, pos, path, { path });
-        qDebug() << "item:" << path << " move:" << moved << " ori:" << oriPoint.first << oriPoint.second << "   target:" << screenNum << pos;
+        fmDebug() << "item:" << path << " move:" << moved << " ori:" << oriPoint.first << oriPoint.second << "   target:" << screenNum << pos;
     } else if (Q_UNLIKELY(GridIns->overloadItems(-1).contains(path))) {
-        qDebug() << "item:" << path << " is overload";
+        fmDebug() << "item:" << path << " is overload";
     } else {
         // record the location and move the file after the real file is created
         touchFileData = qMakePair(path, qMakePair(screenNum, pos));
@@ -91,7 +91,7 @@ void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
                 }
             }
         } else {
-            qWarning() << "there were no model and selection model.";
+            fmWarning() << "there were no model and selection model.";
             pasteFileData = files.toSet();
         }
         emit q->filePastedCallback();
@@ -198,7 +198,7 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
     ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
     // 深信服和云桌面的远程拷贝获取的clipboardFileUrlList都是空
     if (ClipBoard::kRemoteCopiedAction == action) {   // 远程协助
-        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+        fmInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
         ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
         return;
     }
@@ -226,7 +226,7 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
         // clear clipboard after cutting files from clipboard
         ClipBoard::instance()->clearClipboard();
     } else {
-        qWarning() << "clipboard action:" << action << "    urls:" << urls;
+        fmWarning() << "clipboard action:" << action << "    urls:" << urls;
     }
 }
 
@@ -386,7 +386,7 @@ void FileOperatorProxy::callBackFunction(const AbstractJobHandler::CallbackArgus
 
         auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
         if (Q_UNLIKELY(targets.count() != 1)) {
-            qWarning() << "unknow error.touch file successed,target urls is:" << targets;
+            fmWarning() << "unknow error.touch file successed,target urls is:" << targets;
         }
 
         d->callBackTouchFile(targets.first(), custom.second.toMap());

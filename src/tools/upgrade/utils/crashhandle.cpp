@@ -6,9 +6,11 @@
 
 #include <QStandardPaths>
 #include <QFile>
-#include <QDebug>
+#include <QLoggingCategory>
 
 #include <signal.h>
+
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
 // crashed twice
 inline constexpr char kCrashFlag0[] = "dfm-upgraded.crash.0";
@@ -18,7 +20,6 @@ using namespace dfm_upgrade;
 
 CrashHandle::CrashHandle()
 {
-
 }
 
 void CrashHandle::regSignal()
@@ -74,6 +75,6 @@ void CrashHandle::handleSignal(int signal)
     file.open(QFile::NewOnly);
     file.close();
 
-    qCritical() << "upragde crash" << signal;
+    qCCritical(logToolUpgrade) << "upragde crash" << signal;
     raise(signal);
 }

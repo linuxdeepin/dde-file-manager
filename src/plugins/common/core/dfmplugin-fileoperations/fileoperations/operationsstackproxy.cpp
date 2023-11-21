@@ -19,14 +19,14 @@ OperationsStackProxy &OperationsStackProxy::instance()
 void OperationsStackProxy::saveOperations(const QVariantMap &values)
 {
     if (dbusValid) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        fmInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto &&reply = operationsStackDbus->SaveOperations(values);
         reply.waitForFinished();
         if (!reply.isValid()) {
-            qCritical() << "D-Bus reply is invalid " << reply.error();
+            fmCritical() << "D-Bus reply is invalid " << reply.error();
             return;
         }
-        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        fmInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
         return;
     }
 
@@ -39,9 +39,9 @@ void OperationsStackProxy::saveOperations(const QVariantMap &values)
 void OperationsStackProxy::cleanOperations()
 {
     if (dbusValid) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        fmInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         operationsStackDbus->CleanOperations();
-        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        fmInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
         return;
     }
 
@@ -51,14 +51,14 @@ void OperationsStackProxy::cleanOperations()
 QVariantMap OperationsStackProxy::revocationOperations()
 {
     if (dbusValid) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        fmInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto &&reply = operationsStackDbus->RevocationOperations();
         reply.waitForFinished();
         if (!reply.isValid()) {
-            qCritical() << "D-Bus reply is invalid " << reply.error();
+            fmCritical() << "D-Bus reply is invalid " << reply.error();
             return {};
         }
-        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        fmInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
 
         return reply.value();
     }
@@ -83,7 +83,7 @@ void OperationsStackProxy::initialize()
     if (!interface || !interface->isServiceRegistered(kOperationsStackService).value())
         return;
 
-    qInfo() << "Start initilize dbus: `OperationsStackManagerInterface`";
+    fmInfo() << "Start initilize dbus: `OperationsStackManagerInterface`";
     operationsStackDbus.reset(new OperationsStackManagerInterface(kOperationsStackService,
                                                                   kOperationsStackPath,
                                                                   QDBusConnection::sessionBus(),
@@ -92,7 +92,7 @@ void OperationsStackProxy::initialize()
         dbusValid = true;
         operationsStackDbus->setTimeout(3000);
     }
-    qInfo() << "Finish initilize dbus: `OperationsStackManagerInterface`";
+    fmInfo() << "Finish initilize dbus: `OperationsStackManagerInterface`";
 }
 
 DPFILEOPERATIONS_END_NAMESPACE

@@ -16,7 +16,8 @@
 #include <QDBusConnection>
 
 DFMBASE_USE_NAMESPACE
-using namespace filedialog_core;
+namespace filedialog_core {
+DFM_LOG_REISGER_CATEGORY(DIALOGCORE_NAMESPACE)
 
 bool Core::start()
 {
@@ -32,13 +33,13 @@ bool Core::start()
 bool Core::registerDialogDBus()
 {
     if (!QDBusConnection::sessionBus().isConnected()) {
-        qWarning("File Dialog: Cannot connect to the D-Bus session bus.");
+        fmWarning("File Dialog: Cannot connect to the D-Bus session bus.");
         return false;
     }
 
     // add our D-Bus interface and connect to D-Bus
     QString appName { qApp->applicationName() };
-    qInfo() << "Current app is" << appName;
+    fmInfo() << "Current app is" << appName;
     QString serviceName { "com.deepin.filemanager.filedialog" };
     QString pathName { "/com/deepin/filemanager/filedialogmanager" };
 
@@ -51,7 +52,7 @@ bool Core::registerDialogDBus()
     }
 
     if (!QDBusConnection::sessionBus().registerService(serviceName)) {
-        qWarning("File Dialog: Cannot register the \"com.deepin.filemanager.filedialog\" service.\n");
+        fmWarning("File Dialog: Cannot register the \"com.deepin.filemanager.filedialog\" service.\n");
         return false;
     }
 
@@ -59,7 +60,7 @@ bool Core::registerDialogDBus()
     Q_UNUSED(new FiledialogmanagerAdaptor(manager));
 
     if (!QDBusConnection::sessionBus().registerObject(pathName, manager)) {
-        qWarning("File Dialog: Cannot register to the D-Bus object: \"/com/deepin/filemanager/filedialogmanager\"\n");
+        fmWarning("File Dialog: Cannot register to the D-Bus object: \"/com/deepin/filemanager/filedialogmanager\"\n");
         manager->deleteLater();
         return false;
     }
@@ -96,3 +97,5 @@ void Core::bindSceneOnAdded(const QString &newScene)
         bindScene(newScene);
     }
 }
+
+}   // namespace filedialog_core

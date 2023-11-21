@@ -14,6 +14,9 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QProcess>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 /*!
  * \class DiskControlItem
@@ -51,14 +54,14 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
     QWidget::mouseReleaseEvent(e);
     QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
     if (!gsettings.get("filemanagerIntegration").toBool()) {
-        qWarning() << "GSetting `filemanager-integration` is false";
+        qCWarning(logAppDock) << "GSetting `filemanager-integration` is false";
         return;
     }
 
     QUrl &&mountPoint = QUrl(attachedDev->mountpointUrl());
     QUrl &&url = QUrl(attachedDev->accessPointUrl());
 
-    qInfo() << "Open " << url;
+    qCInfo(logAppDock) << "Open " << url;
 
     // 光盘文件系统剥离 RockRidge 后，udisks 的默认挂载权限为 500，为遵从 linux 权限限制，在这里添加访问目录的权限校验
     QFile f(mountPoint.path());
@@ -80,7 +83,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
             QString &&path = url.path();
             QString &&opticalPath = QString("burn://%1").arg(path);
-            qDebug() << "open optical path =>" << opticalPath;
+            qCDebug(logAppDock) << "open optical path =>" << opticalPath;
             QProcess::startDetached(QStringLiteral("dde-file-manager"), { opticalPath });
         } else {
             url = QUrl(attachedDev->mountpointUrl());

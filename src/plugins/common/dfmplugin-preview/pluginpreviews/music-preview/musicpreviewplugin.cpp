@@ -5,10 +5,12 @@
 #include "musicpreviewplugin.h"
 
 DFMBASE_USE_NAMESPACE
-using namespace plugin_filepreview;
+namespace plugin_filepreview {
+DFM_LOG_REISGER_CATEGORY(PREVIEW_NAMESPACE)
 AbstractBasePreview *MusicPreviewPlugin::create(const QString &key)
 {
     Q_UNUSED(key)
 
     return new MusicPreview();
 }
+}   // namespace plugin_filepreview

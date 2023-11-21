@@ -18,6 +18,7 @@
 #include <dfm-base/base/device/private/devicehelper.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-framework/dpf.h>
 
 #include <dfm-mount/dblockdevice.h>
 
@@ -62,22 +63,22 @@ bool ReportLogWorker::init()
 
     logLibrary.setFileName("deepin-event-log");
     if (!logLibrary.load()) {
-        qWarning() << "Report log plugin load log library failed!";
+        fmWarning() << "Report log plugin load log library failed!";
         return false;
     } else {
-        qInfo() << "Report log plugin load log library success.";
+        fmInfo() << "Report log plugin load log library success.";
     }
 
     initEventLogFunc = reinterpret_cast<InitEventLog>(logLibrary.resolve("Initialize"));
     writeEventLogFunc = reinterpret_cast<WriteEventLog>(logLibrary.resolve("WriteEventLog"));
 
     if (!initEventLogFunc || !writeEventLogFunc) {
-        qWarning() << "Log library init failed!";
+        fmWarning() << "Log library init failed!";
         return false;
     }
 
     if (!initEventLogFunc(QApplication::applicationName().toStdString(), false)) {
-        qWarning() << "Log library init function call failed!";
+        fmWarning() << "Log library init function call failed!";
         return false;
     }
 
@@ -88,7 +89,7 @@ void ReportLogWorker::commitLog(const QString &type, const QVariantMap &args)
 {
     ReportDataInterface *interface = logDataObj.value(type, nullptr);
     if (!interface) {
-        qInfo() << "Error: Log data object is not registed.";
+        fmInfo() << "Error: Log data object is not registed.";
         return;
     }
     QJsonObject jsonObject = interface->prepareData(args);
@@ -134,7 +135,7 @@ void ReportLogWorker::handleMenuData(const QString &name, const QList<QUrl> &url
 void ReportLogWorker::handleBlockMountData(const QString &id, bool result)
 {
     if (id.isEmpty()) {
-        qWarning() << "Can't report empty devices' operation";
+        fmWarning() << "Can't report empty devices' operation";
         return;
     }
 
@@ -143,7 +144,7 @@ void ReportLogWorker::handleBlockMountData(const QString &id, bool result)
         BlockDevAutoPtr device = DeviceHelper::createBlockDevice(id);
 
         if (device.isNull()) {
-            qWarning() << "Can't report unexist devices' operation";
+            fmWarning() << "Can't report unexist devices' operation";
             return;
         }
 
@@ -176,6 +177,13 @@ void ReportLogWorker::handleDesktopStartUpData(const QString &key, const QVarian
         if (desktopStartUpData.contains(QString(kDesktopLoadFilesTime)) &&
                 desktopStartUpData.contains(QString(kDesktopDrawWallpaperTime))) {
             Application::instance()->dataPersistence()->remove(kReportGroup, kDesktopStartUpReportKey);
+
+            bool organizerEnabled = dpfSlotChannel->push("ddplugin_organizer", "slot_Organizer_Enabled").toBool();
+            bool useColorBackground = dpfSlotChannel->push("ddplugin_background", "slot_FetchUseColorBackground").toBool();
+
+            desktopStartUpData.insert("OrganizerEnabled", organizerEnabled);
+            desktopStartUpData.insert("UseColorBackground", useColorBackground);
+
             commitLog("DesktopStartup", desktopStartUpData);
         } else {
             Application::instance()->dataPersistence()->setValue(kReportGroup, kDesktopStartUpReportKey, desktopStartUpData);

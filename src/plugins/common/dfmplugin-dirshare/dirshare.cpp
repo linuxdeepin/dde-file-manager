@@ -17,7 +17,8 @@
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 
-using namespace dfmplugin_dirshare;
+namespace dfmplugin_dirshare {
+DFM_LOG_REISGER_CATEGORY(DPDIRSHARE_NAMESPACE)
 
 void DirShare::initialize()
 {
@@ -106,3 +107,4 @@ void DirShare::onShareStateChanged(const QString &path)
     else
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", url);
 }
+}   // namespace dfmplugin_dirshare

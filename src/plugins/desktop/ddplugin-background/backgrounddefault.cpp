@@ -42,7 +42,7 @@ void BackgroundDefault::setPixmap(const QPixmap &pix)
 void BackgroundDefault::paintEvent(QPaintEvent *event)
 {
     if (painted > 0)
-        qInfo() << "background painted" << painted-- << screen << !pixmap.isNull();
+        fmInfo() << "background painted" << painted-- << screen << !pixmap.isNull();
 
     if (pixmap.isNull())
         return;

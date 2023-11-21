@@ -6,8 +6,10 @@
 
 #include <dfm-framework/listener/listener.h>
 
-DDP_BACKGROUND_USE_NAMESPACE
 DPF_USE_NAMESPACE
+
+namespace ddplugin_background {
+DFM_LOG_REISGER_CATEGORY(DDP_BACKGROUND_NAMESPACE)
 
 void BackgroundPlugin::initialize()
 {
@@ -18,6 +20,8 @@ bool BackgroundPlugin::start()
     backgroundManager = new BackgroundManager;
     backgroundManager->init();
 
+    bindEvent();
+
     return true;
 }
 
@@ -26,3 +30,10 @@ void BackgroundPlugin::stop()
     delete backgroundManager;
     backgroundManager = nullptr;
 }
+
+void BackgroundPlugin::bindEvent()
+{
+    dpfSlotChannel->connect("ddplugin_background", "slot_FetchUseColorBackground", backgroundManager, &BackgroundManager::useColorBackground);
+}
+
+}   // namespace ddplugin_background

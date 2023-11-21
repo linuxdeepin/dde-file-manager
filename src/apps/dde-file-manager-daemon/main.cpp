@@ -19,6 +19,8 @@
 #include <sys/types.h>
 #include <signal.h>
 
+Q_LOGGING_CATEGORY(logAppDaemon, "log.app.dde-file-manager-daemon")
+
 static constexpr char kDaemonInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemonplugin-core" };
 static constexpr char kLibCore[] { "libdaemonplugin-core.so" };
@@ -27,7 +29,7 @@ DFMBASE_USE_NAMESPACE
 
 static void handleSIGTERM(int sig)
 {
-    qCritical() << "daemon break with !SIGTERM! " << sig;
+    qCCritical(logAppDaemon) << "daemon break with !SIGTERM! " << sig;
 
     if (qApp) {
         qApp->quit();
@@ -54,27 +56,19 @@ static void initEnv()
 
 static void initLog()
 {
-
-    QString logPath = "/var/log/" + QCoreApplication::organizationName() + QLatin1Char('/') + QCoreApplication::applicationName() + QLatin1Char('/');
-    QDir logDir(logPath);
-    if (!logDir.exists())
-        QDir().mkpath(logPath);
-
-    dpfLogManager->setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qWarning() << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppDaemon) << "Load plugins but dconfig failed: " << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppDaemon) << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/daemon");
     pluginsDirs.push_back(pluginsDir);
 #else
@@ -87,11 +81,11 @@ static bool pluginsLoad()
         blackNames << "daemonplugin-anything";
 #endif
 
-    qInfo() << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppDaemon) << "Using plugins dir:" << pluginsDirs;
     DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs, blackNames);
 
-    qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
-    qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qCInfo(logAppDaemon) << "Depend library paths:" << QCoreApplication::libraryPaths();
+    qCInfo(logAppDaemon) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
     if (!DPF_NAMESPACE::LifeCycle::readPlugins())
@@ -102,7 +96,7 @@ static bool pluginsLoad()
     if (corePlugin.isNull())
         return false;
     if (!corePlugin->fileName().contains(kLibCore)) {
-        qWarning() << corePlugin->fileName() << "is not" << kLibCore;
+        qCWarning(logAppDaemon) << corePlugin->fileName() << "is not" << kLibCore;
         return false;
     }
     if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
@@ -125,7 +119,7 @@ int main(int argc, char *argv[])
 
     initLog();
     if (!pluginsLoad()) {
-        qCritical() << "Load plugin failed!";
+        qCCritical(logAppDaemon) << "Load plugin failed!";
         abort();
     }
     signal(SIGTERM, handleSIGTERM);

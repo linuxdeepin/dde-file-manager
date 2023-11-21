@@ -22,6 +22,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(DtkCMake REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
+
 # TODO: control it by CI. (Automation Testing)
 add_definitions(-DENABLE_TESTING)
 
@@ -38,6 +39,14 @@ else()
     add_definitions(-DCOMPILE_ON_V20)
     set(COMPLIE_ON_V20 TRUE)
     message("COMPILE ON v20")
+endif()
+
+# TODO(zhangs): enable it
+# Disbale qDebug(), qInfo(), qWaring(), qCritical()
+# Use qCDebug() instead of qDebug()
+option(DISABLE_DEBUG_MACRO "Disable Debug Macro" Off)
+if(DISABLE_DEBUG_MACRO)
+    add_definitions(-DDFM_DISABLE_DEBUG_MACRO)
 endif()
 
 include(GNUInstallDirs)
@@ -120,8 +129,10 @@ message("Build type:"${CMAKE_BUILD_TYPE})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(BUILD_TESTING ON)
+    set(BUILD_DOCS Off)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
+    set(BUILD_DOCS ON CACHE BOOL "Generate doxygen-based documentation")
     # generate qm
     execute_process(COMMAND bash "translate_generation.sh"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
@@ -137,7 +148,6 @@ add_subdirectory(src/external)
 add_subdirectory(src/tools)
 
 # docs
-set(BUILD_DOCS ON CACHE BOOL "Generate doxygen-based documentation")
 find_package(Doxygen)
 if (BUILD_DOCS AND DOXYGEN_FOUND)
     add_subdirectory(docs)

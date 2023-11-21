@@ -20,9 +20,10 @@
 #include <QDebug>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
-
-using namespace dfmplugin_avfsbrowser;
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
+
+namespace dfmplugin_avfsbrowser {
+DFM_LOG_REISGER_CATEGORY(DPAVFSBROWSER_NAMESPACE)
 
 DFMBASE_USE_NAMESPACE
 
@@ -39,7 +40,7 @@ void AvfsBrowser::initialize()
 
 bool AvfsBrowser::start()
 {
-    qDebug() << "avfs mounted? " << AvfsUtils::isAvfsMounted() << ", archive preview enabled? " << AvfsUtils::archivePreviewEnabled();
+    fmDebug() << "avfs mounted? " << AvfsUtils::isAvfsMounted() << ", archive preview enabled? " << AvfsUtils::archivePreviewEnabled();
     if (AvfsUtils::archivePreviewEnabled())
         AvfsUtils::mountAvfs();
     connect(Application::instance(), &Application::previewCompressFileChanged,
@@ -89,3 +90,4 @@ void AvfsBrowser::beMySubOnAdded(const QString &newScene)
         beMySubScene(newScene);
     }
 }
+}   // namespace dfmplugin_avfsbrowser

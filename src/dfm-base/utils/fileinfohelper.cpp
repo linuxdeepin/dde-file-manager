@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileinfohelper.h"
-#include "dfm-base/file/local/asyncfileinfo.h"
-#include "dfm-base/utils/fileutils.h"
+
+#include <dfm-base/file/local/asyncfileinfo.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QGuiApplication>
 #include <QTimer>
@@ -138,12 +139,12 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
     if (!asyncInfo)
         return;
 
-    auto callback = [asyncInfo](bool success, void *data){
+    auto callback = [asyncInfo](bool success, void *data) {
         Q_UNUSED(data);
         if (!success) {
-            qWarning() << "Failed to query file information asynchronously! url = " << asyncInfo->fileUrl();
+            qCWarning(logDFMBase) << "Failed to query file information asynchronously! url = " << asyncInfo->fileUrl();
             FileInfoHelper::instance().checkInfoRefresh(asyncInfo);
-            return ;
+            return;
         }
         FileInfoHelper::instance().cacheFileInfoByThread(asyncInfo);
     };

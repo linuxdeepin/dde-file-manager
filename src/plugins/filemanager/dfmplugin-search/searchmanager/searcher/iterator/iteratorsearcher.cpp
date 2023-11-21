@@ -65,7 +65,7 @@ void IteratorSearcher::tryNotify()
     int cur = notifyTimer.elapsed();
     if (hasItem() && (cur - lastEmit) > kEmitInterval) {
         lastEmit = cur;
-        qDebug() << "IteratorSearcher unearthed, current spend:" << cur;
+        fmDebug() << "IteratorSearcher unearthed, current spend:" << cur;
         emit unearthed(this);
     }
 }

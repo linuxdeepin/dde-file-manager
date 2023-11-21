@@ -59,7 +59,7 @@ bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)
         LocalFileHandler handler;
         bool ok = std::all_of(others.cbegin(), others.cend(), [&](const QUrl &u) { return handler.openFile({ u }); });
         if (!ok)
-            qWarning() << "open files failed: " << others;
+            fmWarning() << "open files failed: " << others;
     }
     return true;
 }

@@ -31,6 +31,8 @@
 #include <QResizeEvent>
 
 namespace plugin_filepreview {
+DFM_LOG_REISGER_CATEGORY(PREVIEW_NAMESPACE)
+
 DFMBASE_USE_NAMESPACE
 #ifdef DTKGUI_CLASS_DDciIcon
 DGUI_USE_NAMESPACE;

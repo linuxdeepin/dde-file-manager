@@ -84,8 +84,6 @@ bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, 
     const CacheType &curPluginCache { pluginCaches.value(pluginAddr) };
     if (layouts.empty() && curPluginCache.value(path).isEmpty())
         return false;
-    if (hasCachedByOtherLocationEmblem(path, pluginAddr))
-        return false;
 
     if (embelmCaches.contains(path)) {   // check changed
         const QList<QPair<QString, int>> &oldGroup { embelmCaches[path] };
@@ -96,7 +94,7 @@ bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, 
         mergeGroup(oldGroup, newGroup, &mergedGroup);
         if (mergedGroup != oldGroup) {
             embelmCaches[path] = mergedGroup;
-            saveToPluginCache(pluginAddr, path, mergedGroup);
+            saveToPluginCache(pluginAddr, path, newGroup);
             emit emblemIconChanged(path, mergedGroup);
         }
     } else {   // save to cache
@@ -272,7 +270,7 @@ bool ExtensionEmblemManager::onFetchCustomEmblems(const QUrl &url, QList<QIcon> 
 
         // max emblem icon count
         if (currentCount > kMaxEmblemCount) {
-            qDebug() << "Not enough space paint emblem icon for extension lib url: " << url;
+            fmDebug() << "Not enough space paint emblem icon for extension lib url: " << url;
             return false;
         }
 
@@ -293,7 +291,7 @@ bool ExtensionEmblemManager::onFetchCustomEmblems(const QUrl &url, QList<QIcon> 
                 if (Q_UNLIKELY(pos >= kMaxEmblemCount))
                     continue;
                 if (!emblems->at(pos).isNull()) {
-                    qWarning() << "Not position: " << pos << " to " << url;
+                    fmWarning() << "Not position: " << pos << " to " << url;
                     continue;
                 }
                 const QString &iconName { group[i].first };

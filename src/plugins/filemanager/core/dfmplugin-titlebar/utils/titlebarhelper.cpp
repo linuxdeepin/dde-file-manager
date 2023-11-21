@@ -218,7 +218,7 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
     if (!url.scheme().isEmpty() && UrlRoute::hasScheme(scheme)) {
         if (url.path().isEmpty())
             url.setPath("/");
-        qInfo() << "jump :" << inputStr;
+        fmInfo() << "jump :" << inputStr;
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
         if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
             TitleBarEventCaller::sendOpenFile(sender, url);
@@ -229,13 +229,13 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         if (currentUrl.isValid()) {
             bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
             if (isDisableSearch) {
-                qInfo() << "search : current directory disable to search! " << currentUrl;
+                fmInfo() << "search : current directory disable to search! " << currentUrl;
                 return;
             }
         }
 
         search = true;
-        qInfo() << "search :" << text;
+        fmInfo() << "search :" << text;
         TitleBarEventCaller::sendSearch(sender, text);
     }
 }

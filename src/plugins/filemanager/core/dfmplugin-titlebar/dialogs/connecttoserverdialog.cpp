@@ -93,7 +93,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         }
 
         QString url = getCurrentUrlString();
-        qInfo() << "try connecting" << url;
+        fmInfo() << "try connecting" << url;
         updateCollections(url, false);
 
         const QString &currentDir = QDir::currentPath();
@@ -319,7 +319,7 @@ QString ConnectToServerDialog::getCurrentUrlString()
         return url;
 
     if (url.contains(QRegularExpression(R"([?&]charset=)"))) {
-        qInfo() << "user passed the charset param in url." << url;
+        fmInfo() << "user passed the charset param in url." << url;
         return url;
     }
 

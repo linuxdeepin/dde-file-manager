@@ -6,11 +6,13 @@
 
 #include <QDir>
 #include <QFileInfo>
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QProcess>
 
 #include <unistd.h>
 #include <signal.h>
+
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
 DWIDGET_USE_NAMESPACE
 using namespace dfm_upgrade;
@@ -53,7 +55,7 @@ void ProcessDialog::restart()
 {
     if (killed && !onDesktop) {
         const QString &desktop = "/usr/bin/dde-desktop";
-        qInfo() << "restart desktop...";
+        qCInfo(logToolUpgrade) << "restart desktop...";
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         QProcess::startDetached(desktop);
 #else
@@ -79,10 +81,10 @@ QList<int> ProcessDialog::queryProcess(const QString &exec)
         if (isEqual(exePath, exec)) {
             int tuid = targetUid(info.absoluteFilePath());
             if (tuid == currentUser) {
-                qInfo() << "find active process:" << exePath << pid << "user" << tuid;
+                qCInfo(logToolUpgrade) << "find active process:" << exePath << pid << "user" << tuid;
                 pids.append(pid);
             } else {
-                qInfo() << "find anthoer user's active process:" << exePath << pid << "user" << tuid << currentUser;
+                qCInfo(logToolUpgrade) << "find anthoer user's active process:" << exePath << pid << "user" << tuid << currentUser;
             }
         }
     }
@@ -130,7 +132,7 @@ bool ProcessDialog::isEqual(const QString &link, QString match) const
     //! It is not sure that the suffix '(deleted)' is stable.
     match.append(" (deleted)");
     if (link == match) {
-        qWarning() << "unstable match:" << match;
+        qCWarning(logToolUpgrade) << "unstable match:" << match;
         return true;
     }
 

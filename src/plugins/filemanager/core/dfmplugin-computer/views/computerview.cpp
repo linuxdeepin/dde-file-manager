@@ -276,13 +276,13 @@ void ComputerView::handleDisksVisible()
 
     auto model = this->computerModel();
     if (!model) {
-        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        fmCritical() << "model is released somewhere!";
         return;
     }
 
     const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
 
-    qInfo() << "ignored/hidden disks:" << hiddenPartitions;
+    fmInfo() << "ignored/hidden disks:" << hiddenPartitions;
     for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
         QString currSuffix = model->data(model->index(i, 0), ComputerModel::kSuffixRole).toString();
         if (currSuffix != SuffixInfo::kBlock)
@@ -327,7 +327,7 @@ void ComputerView::handleDiskSplitterVisible()
 {
     auto model = this->computerModel();
     if (!model) {
-        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        fmCritical() << "model is released somewhere!";
         return;
     }
 

@@ -22,10 +22,15 @@ public:
     virtual void stop() override;
 
 private:
+    void bindEvent();
+
     FrameManager *instance = nullptr;
 
 private:
     DPF_EVENT_NAMESPACE(DDP_ORGANIZER_NAMESPACE)
+
+    // Organizer Common
+    DPF_EVENT_REG_SLOT(slot_Organizer_Enabled)
 
     // CollectionView begin
     DPF_EVENT_REG_SLOT(slot_CollectionView_GridPoint)

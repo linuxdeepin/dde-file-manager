@@ -11,6 +11,8 @@
 #include <DApplication>
 #include <QGSettings>
 
+Q_LOGGING_CATEGORY(logAppDock, "log.dock.disk-mount")
+
 static const char *const kOpen = "open";
 static const char *const kEjectAll = "eject_all";
 static const char *const kDiskMountKey = "mount-item-key";
@@ -114,7 +116,7 @@ int DiskMountPlugin::itemSortKey(const QString &itemKey)
 {
     QString &&key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
     int ret = proxyInter()->getValue(this, key, 0).toInt();   // dde-dock默认设置为0
-    qDebug() << "itemSortKey [key:" << key << "," << ret << "] for :" << itemKey;
+    qCDebug(logAppDock) << "itemSortKey [key:" << key << "," << ret << "] for :" << itemKey;
     return ret;
 }
 
@@ -122,7 +124,7 @@ void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 {
     QString &&key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
     proxyInter()->saveValue(this, key, order);
-    qDebug() << "setSortKey [key:" << key << "," << order << "] for :" << itemKey;
+    qCDebug(logAppDock) << "setSortKey [key:" << key << "," << order << "] for :" << itemKey;
 }
 
 void DiskMountPlugin::refreshIcon(const QString &itemKey)

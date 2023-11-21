@@ -32,16 +32,16 @@ AbstractSearcher *TaskCommanderPrivate::createFileNameSearcher(const QUrl &url, 
 {
     bool isBindPath = false;
     if (AnythingSearcher::isSupported(url, isBindPath)) {
-        qInfo() << "Using anything for file name search";
+        fmInfo() << "Using anything for file name search";
         return new AnythingSearcher(url, keyword, isBindPath, q);
     }
 
     if (FSearcher::isSupport(url)) {
-        qInfo() << "Using fsearch for file name search";
+        fmInfo() << "Using fsearch for file name search";
         return new FSearcher(url, keyword, q);
     }
 
-    qInfo() << "Using iterator for file name search";
+    fmInfo() << "Using iterator for file name search";
     return new IteratorSearcher(url, keyword, q);
 }
 
@@ -111,7 +111,7 @@ bool TaskCommander::start()
     // 无工作对象，直接结束。
     if (!isOn) {
         d->isWorking = false;
-        qWarning() << __FUNCTION__ << "no searcher...";
+        fmWarning() << "no searcher...";
         // 加入队列，在start函数返回后发送结束信号
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection, Q_ARG(QString, d->taskId));
     }
@@ -121,7 +121,7 @@ bool TaskCommander::start()
 
 void TaskCommander::stop()
 {
-    qInfo() << "stop" << this->taskID();
+    fmInfo() << "stop" << this->taskID();
     d->futureWatcher.cancel();
 
     for (auto searcher : d->allSearchers) {
@@ -148,7 +148,7 @@ void TaskCommander::createSearcher(const QUrl &url, const QString &keyword)
         FullTextSearcher *searcher = new FullTextSearcher(url, keyword, this);
         //直连，在线程处理
         connect(searcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
-        qInfo() << "Using Full-Text search";
+        fmInfo() << "Using Full-Text search";
         d->allSearchers << searcher;
     }
 

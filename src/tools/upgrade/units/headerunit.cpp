@@ -4,13 +4,15 @@
 
 #include "headerunit.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
 using namespace dfm_upgrade;
 
-HeaderUnit::HeaderUnit() : UpgradeUnit()
+HeaderUnit::HeaderUnit()
+    : UpgradeUnit()
 {
-
 }
 
 QString HeaderUnit::name()
@@ -20,19 +22,19 @@ QString HeaderUnit::name()
 
 bool HeaderUnit::initialize(const QMap<QString, QString> &args)
 {
-    qInfo() << "begin upgrade. the args are" << args;
+    qCInfo(logToolUpgrade) << "begin upgrade. the args are" << args;
     time.start();
     return true;
 }
 
 bool HeaderUnit::upgrade()
 {
-    qInfo() << "init all units spend:" << time.elapsed();
+    qCInfo(logToolUpgrade) << "init all units spend:" << time.elapsed();
     time.start();
     return true;
 }
 
 void HeaderUnit::completed()
 {
-    qInfo() << "all units upgraded and spended:" << time.elapsed();
+    qCInfo(logToolUpgrade) << "all units upgraded and spended:" << time.elapsed();
 }

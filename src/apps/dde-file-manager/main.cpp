@@ -27,6 +27,8 @@
 #include <signal.h>
 #include <malloc.h>
 
+Q_LOGGING_CATEGORY(logAppFileManager, "log.app.dde-file-manager")
+
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -77,7 +79,7 @@ static void setEnvForRoot()
                 QByteArray nameBytes(envName.toLocal8Bit());
                 QByteArray vBytes(v.toLocal8Bit());
                 int ret = setenv(nameBytes.data(), vBytes.data(), 1);
-                qDebug() << "set " << env << "=" << v << "ret=" << ret;
+                qCDebug(logAppFileManager) << "set " << env << "=" << v << "ret=" << ret;
                 return;
             }
         }
@@ -114,7 +116,7 @@ static QStringList buildBlackNames()
     std::copy_if(disableNames.begin(), disableNames.end(), std::back_inserter(blackNames), [blackNames](const QString &name) {
         return !blackNames.contains(name);
     });
-    qDebug() << "build all blacknames:" << blackNames;
+    qCDebug(logAppFileManager) << "build all blacknames:" << blackNames;
     return blackNames;
 }
 
@@ -122,12 +124,12 @@ static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qWarning() << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppFileManager) << "Load plugins but dconfig failed: " << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppFileManager) << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
     pluginsDirs.push_back(pluginsDir);
@@ -138,18 +140,18 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
 #endif
 
-    qInfo() << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppFileManager) << "Using plugins dir:" << pluginsDirs;
     DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, buildBlackNames());
 
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
     if (enableHeadless && CommandParser::instance().isSet("d"))
-        qDebug() << "hot launch";
+        qCDebug(logAppFileManager) << "hot launch";
     else
         DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
 
-    qInfo() << "Depend library paths:" << DApplication::libraryPaths();
-    qInfo() << "Load plugin paths: " << DPF_NAMESPACE::LifeCycle::pluginPaths();
+    qCInfo(logAppFileManager) << "Depend library paths:" << DApplication::libraryPaths();
+    qCInfo(logAppFileManager) << "Load plugin paths: " << DPF_NAMESPACE::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
     if (!DPF_NAMESPACE::LifeCycle::readPlugins())
@@ -176,7 +178,7 @@ static bool pluginsLoad()
 
 static void handleSIGTERM(int sig)
 {
-    qWarning() << "break with !SIGTERM! " << sig;
+    qCWarning(logAppFileManager) << "break with !SIGTERM! " << sig;
 
     if (qApp) {
         // Don't use headless if SIGTERM, cause system shutdown blocked
@@ -187,7 +189,7 @@ static void handleSIGTERM(int sig)
 
 static void handleSIGPIPE(int sig)
 {
-    qCritical() << "ignore !SIGPIPE! " << sig;
+    qCCritical(logAppFileManager) << "ignore !SIGPIPE! " << sig;
 }
 
 static void initEnv()
@@ -207,8 +209,7 @@ static void initEnv()
 
 static void initLog()
 {
-    dpfLogManager->registerConsoleAppender();
-    dpfLogManager->registerFileAppender();
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static void checkUpgrade(SingleApplication *app)
@@ -216,7 +217,7 @@ static void checkUpgrade(SingleApplication *app)
     if (!dfm_upgrade::isNeedUpgrade())
         return;
 
-    qInfo() << "try to upgrade in file manager";
+    qCInfo(logAppFileManager) << "try to upgrade in file manager";
     QMap<QString, QString> args;
     args.insert("version", app->applicationVersion());
     args.insert(dfm_upgrade::kArgFileManger, "dde-file-manager");
@@ -226,7 +227,7 @@ static void checkUpgrade(SingleApplication *app)
 
     int ret = dfm_upgrade::tryUpgrade(lib, args);
     if (ret < 0) {
-        qWarning() << "something error, exit current process." << app->applicationPid();
+        qCWarning(logAppFileManager) << "something error, exit current process." << app->applicationPid();
         _Exit(-1);
     } else if (ret == 0) {
         // restart self
@@ -236,7 +237,7 @@ static void checkUpgrade(SingleApplication *app)
         // remove first
         if (!odlArgs.isEmpty())
             odlArgs.pop_front();
-        qInfo() << "restart self " << app->applicationFilePath() << odlArgs;
+        qCInfo(logAppFileManager) << "restart self " << app->applicationFilePath() << odlArgs;
         QProcess::startDetached(app->applicationFilePath(), odlArgs);
         _Exit(-1);
     }
@@ -307,7 +308,7 @@ int main(int argc, char *argv[])
 
     // open as root
     if (CommandParser::instance().isSet("r")) {
-        qInfo() << "Open as admin";
+        qCInfo(logAppFileManager) << "Open as admin";
         a.openAsAdmin();
         return 0;
     }
@@ -328,13 +329,13 @@ int main(int argc, char *argv[])
         checkUpgrade(&a);
 
         if (!pluginsLoad()) {
-            qCritical() << "Load pugin failed!";
+            qCCritical(logAppFileManager) << "Load pugin failed!";
             abort();
         }
         signal(SIGTERM, handleSIGTERM);
         signal(SIGPIPE, handleSIGPIPE);
     } else {
-        qInfo() << "new client";
+        qCInfo(logAppFileManager) << "new client";
         a.handleNewClient(uniqueKey);
         return 0;
     }

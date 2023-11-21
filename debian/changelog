@@ -1,3 +1,17 @@
+dde-file-manager (6.0.35) unstable; urgency=medium
+
+  * update file manager baseline version to V6.0.35
+  * 
+
+ -- xushitong <xushitong@uniontech.com>  Wed, 15 Nov 2023 20:40:51 +0800
+
+dde-file-manager (6.0.34) unstable; urgency=medium
+
+  * baseline of feature disk encryption
+  * 
+
+ -- xushitong <xushitong@uniontech.com>  Wed, 08 Nov 2023 13:48:32 +0800
+
 dde-file-manager (6.0.33) unstable; urgency=medium
 
   * update file manager baseline version to V6.0.33

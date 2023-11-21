@@ -145,7 +145,7 @@ void AnythingMonitorFilter::readHomePathOfAllUsers()
         QFile file { "/etc/passwd" };
 
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qCritical("Can not open /etc/passwd!");
+            fmCritical("Can not open /etc/passwd!");
             return;
         }
 

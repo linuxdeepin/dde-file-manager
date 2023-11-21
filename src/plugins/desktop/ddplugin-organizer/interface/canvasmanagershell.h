@@ -24,6 +24,7 @@ public:
     void setIconLevel(const int level);
 signals:
     void iconSizeChanged(const int level);
+    void fontChanged();
 };
 
 }

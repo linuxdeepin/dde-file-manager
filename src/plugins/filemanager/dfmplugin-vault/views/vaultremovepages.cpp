@@ -240,7 +240,7 @@ void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
             //! Before deleting, set the copy, clip, and compress task dialog box in the vault as the top-level window.
             if (false) {
                 //! todo to be realized
-                qDebug() << "Whether there are copying, clipping or compression tasks in the current safe, the vault cannot be deleted!";
+                fmDebug() << "Whether there are copying, clipping or compression tasks in the current safe, the vault cannot be deleted!";
             } else {
                 //! The verification is successful, first lock the vault
                 VaultHelper::instance()->lockVault(false);

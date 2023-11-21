@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "core.h"
+#include "polkit/policykithelper.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
@@ -11,14 +12,17 @@
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 
 #include <unistd.h>
 
-DAEMONPCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+namespace daemonplugin_core {
+DFM_LOG_REISGER_CATEGORY(DAEMONPCORE_NAMESPACE)
 
 static constexpr char kDaemonServicePath[] { "com.deepin.filemanager.daemon" };
 static constexpr char kEnvNameOfDaemonRegistered[] { "DAEMON_SERVICE_REGISTERED" };
@@ -39,12 +43,22 @@ bool Core::start()
 {
     QDBusConnection connection = QDBusConnection::systemBus();
     if (!connection.interface()->isServiceRegistered(kDaemonServicePath)) {
-        qInfo() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "success";
+        fmInfo() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "success";
         qputenv(kEnvNameOfDaemonRegistered, "TRUE");
     } else {
-        qWarning() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "failed";
+        fmWarning() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "failed";
         qputenv(kEnvNameOfDaemonRegistered, "FALSE");
     }
 
+    bindEvents();
+
     return true;
 }
+
+void Core::bindEvents()
+{
+    dpfSlotChannel->connect("daemonplugin_core", "slot_Polkit_CheckAuth",
+                            PolicyKitHelper::instance(), &PolicyKitHelper::checkAuthorization);
+}
+
+}   // namespace daemonplugin_core

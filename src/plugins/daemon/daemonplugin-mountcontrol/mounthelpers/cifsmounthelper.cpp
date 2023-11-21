@@ -37,7 +37,7 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
 {
     using namespace MountReturnField;
     if (!path.startsWith("smb://")) {
-        qWarning() << "can only mount samba for now.";
+        fmWarning() << "can only mount samba for now.";
         return { { kMountPoint, "" },
                  { kResult, false },
                  { kErrorCode, -kNotSupportedScheme },
@@ -53,7 +53,7 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     QString mpt;
     int ret = checkMount(aPath, mpt);
     if (ret == kAlreadyMounted) {
-        qDebug() << path << "is already mounted at" << mpt;
+        fmDebug() << path << "is already mounted at" << mpt;
         return { { kMountPoint, mpt },
                  { kResult, true },
                  { kErrorCode, 0 },
@@ -67,15 +67,15 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
                  { kErrorCode, -kCannotGenerateMountPath },
                  { kErrorMessage, "cannot generate mount point" } };
 
-    qDebug() << "try to mkdir: " << mntPath;
+    fmDebug() << "try to mkdir: " << mntPath;
     if (!mkdir(mntPath)) {
-        qDebug() << "cannot mkdir for" << path;
+        fmDebug() << "cannot mkdir for" << path;
         return { { kMountPoint, "" },
                  { kResult, false },
                  { kErrorCode, -kCannotMkdirMountPoint },
                  { kErrorMessage, "cannot create mount point" + mntPath } };
     } else {
-        qDebug() << "try to mount" << path << "on" << mntPath;
+        fmDebug() << "try to mount" << path << "on" << mntPath;
     }
 
     auto params(opts);
@@ -91,7 +91,7 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
         const QString &ip = d->parseIP(host, port == -1 ? 0 : port);
         if (!ip.isEmpty()) {
             params.insert(MountOptionsField::kIp, ip);
-            qInfo() << "mount: got ip" << ip << "of host" << host;
+            fmInfo() << "mount: got ip" << ip << "of host" << host;
         }
     }
 
@@ -106,13 +106,13 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
         QString args(arg.c_str());
         static QRegularExpression regxCheckPasswd(",pass=.*,dom");
         args.replace(regxCheckPasswd, ",pass=******,dom");
-        qInfo() << "mount: trying mount" << aPath << "on" << mntPath << "with opts:" << args;
+        fmInfo() << "mount: trying mount" << aPath << "on" << mntPath << "with opts:" << args;
 
         ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", 0,
                       arg.c_str());
 
         if (ret == 0) {
-            qInfo() << "mount: mount cifs success, params are: " << args;
+            fmInfo() << "mount: mount cifs success, params are: " << args;
             return { { kMountPoint, mntPath }, { kResult, true }, { kErrorCode, 0 } };
         } else {
             // if params contains 'timeout', first try mount with `handletimeout` param,
@@ -120,18 +120,18 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
             // if failed, try without any timeout param.
             if (params.contains(MountOptionsField::kTimeout)) {
                 if (params.contains(MountOptionsField::kTryWaitReconn)) {
-                    qInfo() << "mount: try with handletimeout";
+                    fmInfo() << "mount: try with handletimeout";
                     params.remove(MountOptionsField::kTryWaitReconn);
                 } else {
-                    qInfo() << "mount: try without timeout param";
+                    fmInfo() << "mount: try without timeout param";
                     params.remove(MountOptionsField::kTimeout);
                 }
                 continue;
             } else {
                 errNum = errno;
                 errMsg = strerror(errNum);
-                qWarning() << "mount: failed: " << path << errNum << errMsg;
-                qInfo() << "mount: clean dir" << mntPath;
+                fmWarning() << "mount: failed: " << path << errNum << errMsg;
+                fmInfo() << "mount: clean dir" << mntPath;
                 rmdir(mntPath);
                 break;
             }
@@ -152,13 +152,13 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
     QString mpt;
     int ret = checkMount(aPath, mpt);
     if (ret == kNotExist) {
-        qDebug() << "mount is not exist: " << path;
+        fmDebug() << "mount is not exist: " << path;
         return { { kResult, false },
                  { kErrorCode, -kMountNotExist },
                  { kErrorMessage, path + " is not mounted" } };
     }
     if (ret == kNotOwner && !checkAuth()) {
-        qInfo() << "check auth failed: " << path;
+        fmInfo() << "check auth failed: " << path;
         return { { kResult, false },
                  { kErrorCode, -kNotOwnerOfMount },
                  { kErrorMessage, "invoker is not the owner of mount" } };
@@ -168,7 +168,7 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
     int err = errno;
     QString errMsg = strerror(errno);
     if (ret != 0)
-        qWarning() << "unmount failed: " << path << err << errMsg;
+        fmWarning() << "unmount failed: " << path << err << errMsg;
     else
         rmdir(mpt);
 
@@ -187,17 +187,17 @@ CifsMountHelper::MountStatus CifsMountHelper::checkMount(const QString &path, QS
     Helper d;
     auto tab = d.tab;
     int ret = mnt_table_parse_mtab(tab, nullptr);
-    qDebug() << "parse mtab: " << ret;
+    fmDebug() << "parse mtab: " << ret;
 
     std::string aPath = path.toStdString();
     auto fs = mnt_table_find_source(tab, aPath.c_str(), MNT_ITER_BACKWARD);
     if (!fs)
         fs = mnt_table_find_target(tab, aPath.c_str(), MNT_ITER_BACKWARD);
 
-    qDebug() << "find mount: " << fs << aPath.c_str();
+    fmDebug() << "find mount: " << fs << aPath.c_str();
     if (fs) {
         mpt = mnt_fs_get_target(fs);
-        qDebug() << "find mounted at: " << mpt << path;
+        fmDebug() << "find mounted at: " << mpt << path;
         if (!mpt.contains(QRegularExpression("^/media/.*/smbmounts/")))
             return kNotMountByDaemon;
 
@@ -206,7 +206,7 @@ CifsMountHelper::MountStatus CifsMountHelper::checkMount(const QString &path, QS
             return kNotCifs;
 
         QStringList opts = QString(mnt_fs_get_options(fs)).split(",");
-        qDebug() << "mount opts:" << opts;
+        fmDebug() << "mount opts:" << opts;
 
         auto iter = std::find_if(opts.cbegin(), opts.cend(),
                                  [](const QString &opt) { return opt.startsWith("uid="); });
@@ -258,7 +258,7 @@ QString CifsMountHelper::mountRoot()
     // if /media/$user/smbmounts does not exist
     auto user = getpwuid(invokerUid());
     if (!user) {
-        qWarning() << "cifs: mount root doesn't exist";
+        fmWarning() << "cifs: mount root doesn't exist";
         return "";
     }
 
@@ -356,7 +356,7 @@ bool CifsMountHelper::mkdir(const QString &path)
     auto aPath = path.toStdString();
     int ret = ::mkdir(aPath.c_str(), 0755);
     if (ret != 0)
-        qWarning() << "mkdir failed: " << path << strerror(errno) << errno;
+        fmWarning() << "mkdir failed: " << path << strerror(errno) << errno;
     return ret == 0;
 }
 
@@ -365,7 +365,7 @@ bool CifsMountHelper::rmdir(const QString &path)
     auto aPath = path.toStdString();
     int ret = ::rmdir(aPath.c_str());
     if (ret != 0)
-        qWarning() << "rmdir failed: " << path << strerror(errno) << errno;
+        fmWarning() << "rmdir failed: " << path << strerror(errno) << errno;
     return ret == 0;
 }
 
@@ -373,14 +373,14 @@ bool CifsMountHelper::mkdirMountRootPath()
 {
     auto mntRoot = mountRoot();
     if (mntRoot.isEmpty()) {
-        qWarning() << "cifs: mount root is empty";
+        fmWarning() << "cifs: mount root is empty";
         return false;
     }
 
     auto dir = opendir(mntRoot.toStdString().c_str());
     if (!dir) {
         int ret = ::mkdir(mntRoot.toStdString().c_str(), 0755);
-        qInfo() << "mkdir mntRoot: " << mntRoot << "failed: " << strerror(errno) << errno;
+        fmInfo() << "mkdir mntRoot: " << mntRoot << "failed: " << strerror(errno) << errno;
         return ret == 0;
     } else {
         closedir(dir);
@@ -402,7 +402,7 @@ void CifsMountHelper::cleanMountPoint()
             auto &&path = mnt.absoluteFilePath();
             QDir ddd(path);
             if (ddd.entryList(QDir::NoDotAndDotDot | QDir::AllEntries).count() == 0) {
-                qDebug() << ddd.path() << "was cleaned";
+                fmDebug() << ddd.path() << "was cleaned";
                 rmdir(path);
             }
         }
@@ -418,12 +418,12 @@ SmbcAPI::~SmbcAPI()
 {
     if (smbcCtx && smbcFreeContext) {
         int ret = smbcFreeContext(smbcCtx, true);
-        qInfo() << "free smbc client: " << ret;
+        fmInfo() << "free smbc client: " << ret;
     }
 
     if (libSmbc) {
         if (!libSmbc->unload())
-            qCritical() << "cannot unload smbc";
+            fmCritical() << "cannot unload smbc";
         delete libSmbc;
     }
     initialized = false;
@@ -440,7 +440,7 @@ void SmbcAPI::init()
         return;
     libSmbc = new QLibrary("libsmbclient.so.0");
     if (!libSmbc->load()) {
-        qCritical() << "cannot load smbc";
+        fmCritical() << "cannot load smbc";
         delete libSmbc;
         libSmbc = nullptr;
         return;
@@ -456,7 +456,7 @@ void SmbcAPI::init()
     initialized = (smbcNewContext && smbcFreeContext && smbcNegprot && smbcResolveHost
                    && smbcCtx);
 
-    qInfo() << "smbc initialized: " << initialized;
+    fmInfo() << "smbc initialized: " << initialized;
 }
 
 FnSmbcNegprot SmbcAPI::getSmbcNegprot() const
@@ -511,7 +511,7 @@ QString CifsMountHelperPrivate::parseIP(const QString &host, uint16_t port)
                                            ip,
                                            sizeof(ip));
     if (ret != 0)
-        qWarning() << "cannot resolve ip address for" << host;
+        fmWarning() << "cannot resolve ip address for" << host;
     return QString(ip);
 }
 

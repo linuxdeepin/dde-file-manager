@@ -44,7 +44,10 @@ set_target_properties(${BIN_NAME} PROPERTIES
 
 add_library(DFM::framework ALIAS ${BIN_NAME})
 
-target_compile_definitions(${BIN_NAME} PRIVATE VERSION="${CMAKE_PROJECT_VERSION}")
+target_compile_definitions(${BIN_NAME}
+    PRIVATE VERSION="${CMAKE_PROJECT_VERSION}"
+    PRIVATE DPF_INTERNAL_USE=1
+    )
 
 # install dev
 install(TARGETS ${BIN_NAME} LIBRARY DESTINATION ${LIB_INSTALL_DIR})

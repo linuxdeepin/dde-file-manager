@@ -37,16 +37,21 @@ void ReportLogEventReceiver::bindEvents()
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
     auto canvasEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "signal_CanvasView_ReportMenuData") };
-    if (canvasEventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+    if (canvasEventID != DPF_NAMESPACE::EventTypeScope::kInValid) {
         dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
+        dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_ReportLog_LoadFilesFinish", this, &ReportLogEventReceiver::handleDesktopStartupData);
+    }
     auto organizerEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_organizer", "signal_CollectionView_ReportMenuData") };
     if (organizerEventID != DPF_NAMESPACE::EventTypeScope::kInValid)
         dpfSignalDispatcher->subscribe("ddplugin_organizer", "signal_CollectionView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
+
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
 
-    dpfSignalDispatcher->subscribe("ddplugin_background", "signal_ReportLog_BackgroundPaint", this, &ReportLogEventReceiver::handleDesktopStartupData);
-    dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_ReportLog_LoadFilesFinish", this, &ReportLogEventReceiver::handleDesktopStartupData);
+    auto backgroundEventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_background", "signal_ReportLog_BackgroundPaint") };
+    if (backgroundEventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+        dpfSignalDispatcher->subscribe("ddplugin_background", "signal_ReportLog_BackgroundPaint", this, &ReportLogEventReceiver::handleDesktopStartupData);
+
 
     lazyBindCommitEvent("dfmplugin-search", "dfmplugin_search");
     lazyBindCommitEvent("dfmplugin-vault", "dfmplugin_vault");

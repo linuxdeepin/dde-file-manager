@@ -36,6 +36,7 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 DFMBASE_USE_NAMESPACE
 
 namespace dfmplugin_recent {
+DFM_LOG_REISGER_CATEGORY(DPRECENT_NAMESPACE)
 
 void Recent::initialize()
 {

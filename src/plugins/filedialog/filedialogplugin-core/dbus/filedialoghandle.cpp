@@ -45,12 +45,10 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
 {
     d_func()->dialog = qobject_cast<FileDialog *>(FMWindowsIns.createWindow({}, true));
     if (!d_func()->dialog) {
-        qCritical() << "File Dialog: Create window failed";
+        fmCritical() << "File Dialog: Create window failed";
         abort();
     }
     auto &&defaultPath { DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath) };
-    // install all widgets before window showed
-    emit d_func()->dialog->aboutToOpen();
     d_func()->dialog->cd(QUrl::fromLocalFile(defaultPath));
 
     //! no need to hide, if the dialog is showed in creating, it must be bug.
@@ -485,9 +483,9 @@ void FileDialogHandle::show()
         d->dialog->updateAsDefaultSize();
         d->dialog->moveCenter();
         setWindowStayOnTop();
-        qDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        fmDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
         FMWindowsIns.showWindow(d->dialog);
-        qDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
+        fmDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
     }
 }
 
@@ -567,6 +565,6 @@ void FileDialogHandle::setWindowStayOnTop()
         QFunctionPointer setWindowProperty = qApp->platformFunction("_d_setWindowProperty");
         // set window stay on top
         if (setWindowProperty && d->dialog)
-            reinterpret_cast<void(*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
+            reinterpret_cast<void (*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
     }
 }

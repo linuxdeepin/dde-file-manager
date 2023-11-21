@@ -5,6 +5,8 @@
 #ifndef FILEDIALOGPLUGIN_CORE_GLOBAL_H
 #define FILEDIALOGPLUGIN_CORE_GLOBAL_H
 
+#include <dfm-base/dfm_log_defines.h>
+
 #define DIALOGCORE_NAMESPACE filedialog_core
 
 #define DIALOGCORE_BEGIN_NAMESPACE namespace DIALOGCORE_NAMESPACE {
@@ -12,6 +14,7 @@
 #define DIALOGCORE_USE_NAMESPACE using namespace DIALOGCORE_NAMESPACE;
 
 DIALOGCORE_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DIALOGCORE_NAMESPACE)
 
 namespace UISize {
 inline constexpr int kTitleMaxWidth { 200 };

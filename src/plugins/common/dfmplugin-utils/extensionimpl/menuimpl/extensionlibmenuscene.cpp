@@ -63,7 +63,7 @@ bool ExtensionLibMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -76,7 +76,7 @@ bool ExtensionLibMenuScene::create(QMenu *parent)
         return false;
 
     if (ExtensionPluginManager::instance().currentState() != ExtensionPluginManager::kInitialized) {
-        qWarning() << "Extension loading...";
+        fmWarning() << "Extension loading...";
         return false;
     }
 

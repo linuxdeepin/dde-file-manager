@@ -18,7 +18,8 @@
 
 #include <dfm-framework/dpf.h>
 
-using namespace dfmplugin_titlebar;
+namespace dfmplugin_titlebar {
+DFM_LOG_REISGER_CATEGORY(DPTITLEBAR_NAMESPACE)
 
 void TitleBar::initialize()
 {
@@ -114,3 +115,5 @@ void TitleBar::bindEvents()
     dpfSlotChannel->connect(curSpace, "slot_ServerDialog_RemoveHistory",
                             SearchHistroyManager::instance(), &SearchHistroyManager::removeSearchHistory);
 }
+
+}   // namespace dfmplugin_titlebar

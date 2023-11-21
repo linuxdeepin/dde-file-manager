@@ -5,16 +5,20 @@
 #ifndef DFMPLUGIN_SEARCH_GLOBAL_H
 #define DFMPLUGIN_SEARCH_GLOBAL_H
 
-#define DPSEARCH_BEGIN_NAMESPACE namespace dfmplugin_search {
-#define DPSEARCH_END_NAMESPACE }
-#define DPSEARCH_USE_NAMESPACE using namespace dfmplugin_search;
+#include <dfm-base/dfm_log_defines.h>
+
 #define DPSEARCH_NAMESPACE dfmplugin_search
+#define DPSEARCH_BEGIN_NAMESPACE namespace DPSEARCH_NAMESPACE {
+#define DPSEARCH_END_NAMESPACE }
+#define DPSEARCH_USE_NAMESPACE using namespace DPSEARCH_NAMESPACE;
 
 // When the version of glib is greater than or equal to 2.66,
 // the header files of glib cannot be included in extern "C"
 #define GLIB_VERSION_MIN_REQUIRED GLIB_VERSION_2_50
 
 DPSEARCH_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPSEARCH_NAMESPACE)
+
 namespace SearchActionId {
 inline constexpr char kOpenFileLocation[] { "open-file-location" };
 inline constexpr char kSrtPath[] { "sort-by-path" };

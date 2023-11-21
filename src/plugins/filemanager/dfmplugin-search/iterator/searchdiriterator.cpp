@@ -83,7 +83,7 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
 void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
 {
     if (taskId == id) {
-        qInfo() << "taskId: " << taskId << "search completed!";
+        fmInfo() << "taskId: " << taskId << "search completed!";
         searchFinished = true;
     }
 }

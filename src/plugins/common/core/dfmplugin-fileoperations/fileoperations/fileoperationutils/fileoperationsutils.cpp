@@ -64,7 +64,7 @@ bool FileOperationsUtils::isFilesSizeOutLimit(const QUrl &url, const qint64 limi
 
     if (nullptr == fts) {
         perror("fts_open");
-        qWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
+        fmWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
         return false;
     }
     while (1) {
@@ -100,7 +100,7 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
 
     if (nullptr == fts) {
         perror("fts_open");
-        qWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
+        fmWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
         return;
     }
     while (1) {

@@ -25,7 +25,9 @@
 #include <QApplication>
 #include <QThread>
 
-using namespace dfmplugin_menu;
+namespace dfmplugin_menu {
+DFM_LOG_REISGER_CATEGORY(DPMENU_NAMESPACE)
+
 DFMBASE_USE_NAMESPACE
 
 #define MenuHandlePublish(topic, args...) \
@@ -200,12 +202,12 @@ void MenuHandle::publishSceneRemoved(const QString &scene)
 void MenuHandle::createSubscene(AbstractSceneCreator *creator, AbstractMenuScene *parent)
 {
     if (!parent) {
-        qDebug() << "target  SceneCreator not exist!!!";
+        fmDebug() << "target  SceneCreator not exist!!!";
         return;
     }
 
     if (!creator) {
-        qDebug() << "target MenuScene not exist!!!";
+        fmDebug() << "target MenuScene not exist!!!";
         return;
     }
 
@@ -234,3 +236,4 @@ void Menu::stop()
     delete handle;
     handle = nullptr;
 }
+}   // namespace dfmplugin_menu

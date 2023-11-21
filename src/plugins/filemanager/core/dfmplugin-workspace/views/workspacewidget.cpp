@@ -85,7 +85,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         QString error;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
         if (!fileView) {
-            qWarning() << "Cannot create view for " << url << "Reason: " << error;
+            fmWarning() << "Cannot create view for " << url << "Reason: " << error;
             return;
         }
 #ifdef ENABLE_TESTING
@@ -437,7 +437,7 @@ void WorkspaceWidget::handleCtrlN()
 {
     ViewPtr fileView = views[workspaceUrl.scheme()];
     if (!fileView) {
-        qWarning() << "Cannot find view by url: " << workspaceUrl;
+        fmWarning() << "Cannot find view by url: " << workspaceUrl;
         return;
     }
 
@@ -466,9 +466,9 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
 
     if (topWidgets.contains(scheme)) {
         bool showUrl { interface->isShowFromUrl(topWidgets[scheme].data(), url) };
-        qDebug() << interface->isKeepShow() << showUrl;
+        fmDebug() << interface->isKeepShow() << showUrl;
         topWidgets[scheme]->setVisible(interface && (showUrl || interface->isKeepShow()));
-        qDebug() << topWidgets[scheme]->contentsMargins();
+        fmDebug() << topWidgets[scheme]->contentsMargins();
     } else {
         if (interface) {
             TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());

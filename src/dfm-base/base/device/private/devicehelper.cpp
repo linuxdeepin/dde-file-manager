@@ -61,7 +61,7 @@ QVariantMap DeviceHelper::loadBlockInfo(const QString &id)
 {
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qDebug() << "device is not exist!: " << id;
+        qCWarning(logDFMBase) << "device is not exist!: " << id;
         return {};
     }
     return loadBlockInfo(dev);
@@ -133,7 +133,7 @@ QVariantMap DeviceHelper::loadProtocolInfo(const QString &id)
 {
     auto dev = DeviceHelper::createProtocolDevice(id);
     if (!dev) {
-        qDebug() << "device is not exist!: " << id;
+        qCWarning(logDFMBase) << "device is not exist!: " << id;
         return {};
     }
     return loadProtocolInfo(dev);
@@ -247,7 +247,7 @@ bool DeviceHelper::askForStopScanning(const QUrl &mpt)
         if (DefenderController::instance().stopScanning(mpt))
             return true;
 
-        qWarning() << "stop scanning device failed: " << mpt;
+        qCWarning(logDFMBase) << "stop scanning device failed: " << mpt;
         DialogManagerInstance->showErrorDialog(QObject::tr("Unmount failed"), QObject::tr("Cannot stop scanning device"));
     }
     return false;
@@ -262,7 +262,7 @@ void DeviceHelper::openFileManagerToDevice(const QString &blkId, const QString &
         //            mountPoint = QString("burn:///dev/%1/disc_files/").arg(blkId.mid(blkId.lastIndexOf("/") + 1));
         //        }
         QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountPoint });
-        qInfo() << "open by dde-file-manager: " << mountPoint;
+        qCInfo(logDFMBase) << "open by dde-file-manager: " << mountPoint;
         return;
     }
 
@@ -309,7 +309,7 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
     Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
     Application::dataPersistence()->sync();
 
-    qDebug() << "optical usage persistented: " << datas;
+    qCDebug(logDFMBase) << "optical usage persistented: " << datas;
 }
 
 void DeviceHelper::readOpticalInfo(QVariantMap &datas)
@@ -325,12 +325,12 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
         datas[DeviceProperty::kOpticalMediaType] = info.value(kBurnMediaType).toInt();
         datas[DeviceProperty::kOpticalWriteSpeed] = info.value(kBurnWriteSpeed).toStringList();
 
-        qDebug() << "optical usage loaded: " << tag << "\n"
-                 << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << "\n"
-                 << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << "\n"
-                 << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << "\n"
-                 << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << "\n"
-                 << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
+        qCDebug(logDFMBase) << "optical usage loaded: " << tag << "\n"
+                            << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << "\n"
+                            << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << "\n"
+                            << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << "\n"
+                            << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << "\n"
+                            << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
     }
 }
 
@@ -347,16 +347,16 @@ bool DeviceHelper::checkNetworkConnection(const QString &id)
             return std::any_of(defaultSmbPorts.cbegin(), defaultSmbPorts.cend(),
                                [host](const QString &port) {
                                    bool connected = NetworkUtils::instance()->checkNetConnection(host, port);
-                                   qDebug() << "checking network connection of" << host
-                                            << "at" << port
-                                            << connected;
+                                   qCDebug(logDFMBase) << "checking network connection of" << host
+                                                       << "at" << port
+                                                       << connected;
                                    return connected;
                                });
         }
         return NetworkUtils::instance()->checkNetConnection(host, port);
     }
 
-    qWarning() << "cannot parse host and port of" << id;
+    qCWarning(logDFMBase) << "cannot parse host and port of" << id;
     return true;
 }
 

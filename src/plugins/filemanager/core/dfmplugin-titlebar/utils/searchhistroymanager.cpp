@@ -63,7 +63,7 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
     if (keyword.startsWith(url.scheme())) {
         if (keyword.startsWith(Global::Scheme::kSmb) || keyword.startsWith(Global::Scheme::kFtp) || keyword.startsWith(Global::Scheme::kSFtp)) {
             if (!url.isValid()) {
-                qDebug() << "Url is invalid, do not write it to history.";
+                fmDebug() << "Url is invalid, do not write it to history.";
                 return;
             }
         }
@@ -119,7 +119,7 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
     if (ret)
         Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
     else
-        qWarning() << keyword << "not exist in history";
+        fmWarning() << keyword << "not exist in history";
 
     return ret;
 }

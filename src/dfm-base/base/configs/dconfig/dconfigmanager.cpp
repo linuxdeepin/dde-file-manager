@@ -110,7 +110,7 @@ QVariant DConfigManager::value(const QString &config, const QString &key, const 
     if (d->configs.contains(config))
         return d->configs.value(config)->value(key, fallback);
     else
-        qWarning() << "Config: " << config << "is not registered!!!";
+        qCWarning(logDFMBase) << "Config: " << config << "is not registered!!!";
     return fallback;
 #else
     return fallback;

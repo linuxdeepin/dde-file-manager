@@ -1,0 +1,8 @@
+{
+	"name": "dde-file-dialog",
+	"exec": "/usr/bin/dde-file-dialog",
+	"logType": "journal",
+	"logPath": "~/.cache/deepin/dde-file-dialog",
+    "visible": "1",
+    "version": "V1.0"
+}

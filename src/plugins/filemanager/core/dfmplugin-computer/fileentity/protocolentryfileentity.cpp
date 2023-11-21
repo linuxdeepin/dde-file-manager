@@ -28,7 +28,7 @@ ProtocolEntryFileEntity::ProtocolEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     if (!url.path().endsWith(SuffixInfo::kProtocol)) {
-        qWarning() << "wrong suffix in" << __FUNCTION__ << "url";
+        fmWarning() << "wrong suffix:" << url;
         abort();
     }
 

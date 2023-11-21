@@ -45,7 +45,7 @@ BlockEntryFileEntity::BlockEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     if (!url.path().endsWith(SuffixInfo::kBlock)) {
-        qWarning() << "wrong suffix in" << __FUNCTION__ << "url";
+        fmWarning() << "wrong suffix:" << url;
         abort();
     }
 
@@ -112,42 +112,42 @@ bool BlockEntryFileEntity::exists() const
     QString msg { "blockdevice is ignored: " };
 
     if (isLoopDevice && !hasFileSystem) {
-        qInfo() << msg << "loop device without filesystem." << id;
+        fmInfo() << msg << "loop device without filesystem." << id;
         return false;
     }
 
     if (hintIgnore && !isLoopDevice) {
-        qInfo() << msg << "hintIgnore is TRUE:" << id;
+        fmInfo() << msg << "hintIgnore is TRUE:" << id;
         return false;
     }
 
     if (!hasFileSystem && !opticalDrive && !isEncrypted) {
         //        bool removable { qvariant_cast<bool>(datas.value(DeviceProperty::kRemovable)) };
         //        if (!removable) {   // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-        qInfo() << msg << "no fs, no optical, no encrypted." << id;
+        fmInfo() << msg << "no fs, no optical, no encrypted." << id;
         return false;
         //        }
     }
 
     if (cryptoBackingDevice.length() > 1) {
-        qInfo() << msg << "decrypted cleartext device." << id;
+        fmInfo() << msg << "decrypted cleartext device." << id;
         return false;
     }
 
     // 是否是设备根节点，设备根节点无须记录
     //    if (hasPartitionTable) {   // 替换 FileUtils::deviceShouldBeIgnore
-    //        qInfo() << msg << "device with a partition table." << id;
+    //        fmInfo() << msg << "device with a partition table." << id;
     //        return false;
     //    }
 
     if (hasPartition && hasExtendedPartition) {
-        qInfo() << msg << "device with extended partition." << id;
+        fmInfo() << msg << "device with extended partition." << id;
         return false;
     }
 
     quint64 blkSize = { qvariant_cast<quint64>(datas.value(DeviceProperty::kSizeTotal)) };
     if (blkSize < 1024 && !opticalDrive && !hasFileSystem) {
-        qInfo() << msg << "tiny size." << blkSize << id;
+        fmInfo() << msg << "tiny size." << blkSize << id;
         return false;
     }
 
@@ -312,7 +312,7 @@ void BlockEntryFileEntity::loadWindowsVoltag()
     QJsonParseError err;
     auto doc = QJsonDocument::fromJson(f.readAll(), &err);
     if (doc.isNull() || err.error != QJsonParseError::NoError) {
-        qDebug() << "Cannot parse file: " << cfgUrl << err.errorString() << err.error;
+        fmDebug() << "Cannot parse file: " << cfgUrl << err.errorString() << err.error;
         return;
     }
 
@@ -350,7 +350,7 @@ bool BlockEntryFileEntity::isSiblingOfRoot() const
         const QString &rootDevId = DeviceUtils::getBlockDeviceId(rootDev);
         const auto &data = DevProxyMng->queryBlockInfo(rootDevId);
         rootDrive = data.value(DeviceProperty::kDrive).toString();
-        qInfo() << "got root drive:" << rootDrive << rootDev;
+        fmInfo() << "got root drive:" << rootDrive << rootDev;
     });
 
     return rootDrive == this->datas.value(DeviceProperty::kDrive);

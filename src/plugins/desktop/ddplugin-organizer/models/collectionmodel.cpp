@@ -38,7 +38,7 @@ void CollectionModelPrivate::reset()
 
     auto model = q->sourceModel();
     if (!model) {
-        qWarning() << "invaild source model.";
+        fmWarning() << "invaild source model.";
         return;
     }
 
@@ -75,7 +75,7 @@ void CollectionModelPrivate::createMapping()
         return;
 
     if (!handler) {
-        qWarning() << "no handler: clear all datas";
+        fmWarning() << "no handler: clear all datas";
         clearMapping();
         return;
     }
@@ -135,7 +135,7 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
 {
     Q_UNUSED(sourceParent)
     if (!handler) {
-        qWarning() << "no handler to insert";
+        fmWarning() << "no handler to insert";
         return;
     }
 
@@ -199,7 +199,7 @@ void CollectionModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &n
     if (handler)
         accept = handler->acceptRename(oldUrl, newUrl);
     else
-        qWarning() << "no handler to insert reamed file.";
+        fmWarning() << "no handler to insert reamed file.";
 
     if (row < 0) {   // no old data, need to insert
         if (!fileMap.contains(newUrl) && accept) {   // insert it if accept.
@@ -504,16 +504,16 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     if (!parent.isValid() || parent == rootIndex()) {
         // drop file to desktop
         targetFileUrl = fileUrl(rootIndex());
-        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
+        fmInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
     } else {
         targetFileUrl = fileUrl(parent);
-        qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
+        fmInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
     }
 
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(targetFileUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create FileInfo error: " << errString << targetFileUrl;
+        fmInfo() << "create FileInfo error: " << errString << targetFileUrl;
         return false;
     }
 
@@ -562,6 +562,6 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 void CollectionModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     Q_UNUSED(sourceModel);
-    qWarning() << "forbid setting source model";
+    fmWarning() << "forbid setting source model";
     return;
 }

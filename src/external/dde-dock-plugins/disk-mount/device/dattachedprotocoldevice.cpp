@@ -9,10 +9,12 @@
 #include <QVariantMap>
 #include <QIcon>
 #include <QDateTime>
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QRegularExpression>
 #include <QDBusInterface>
 #include <QDBusReply>
+
+Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 /*!
  * \class DAttachedProtocolDevice
@@ -99,9 +101,9 @@ void DAttachedProtocolDevice::query()
                          "org.deepin.filemanager.server.DeviceManager", QDBusConnection::sessionBus());
     iface.setTimeout(3);
     QDBusReply<QVariantMap> ret = iface.callWithArgumentList(QDBus::CallMode::AutoDetect, "QueryProtocolDeviceInfo", QList<QVariant> { deviceId, false });
-    qInfo() << "query info of costs" << deviceId << t.elapsed();
+    qCInfo(logAppDock) << "query info of costs" << deviceId << t.elapsed();
     info = ret.value();
-    qInfo() << "the queried info of protocol device:" << info;
+    qCInfo(logAppDock) << "the queried info of protocol device:" << info;
 }
 
 bool DAttachedProtocolDevice::parseHostAndPort(QString &host, QString &port)

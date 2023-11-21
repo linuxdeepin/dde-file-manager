@@ -125,7 +125,7 @@ bool VaultMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
-        qWarning() << "Vault: menu scene:" << name() << " init failed.";
+        fmWarning() << "Vault: menu scene:" << name() << " init failed.";
         return false;
     }
 

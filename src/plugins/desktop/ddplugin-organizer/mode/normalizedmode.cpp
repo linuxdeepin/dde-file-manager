@@ -60,7 +60,7 @@ QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, C
             // overlap pos
             nextPos.setX(gridSize.width() - width);
             nextPos.setY(gridSize.height() - height);
-            qDebug() << "stack collection:" << gridSize << width << height << nextPos;
+            fmDebug() << "stack collection:" << gridSize << width << height << nextPos;
 
             QPoint validPos(nextPos);
             // update next pos
@@ -133,14 +133,14 @@ void NormalizedModePrivate::switchCollection()
     for (const CollectionBaseDataPtr &base : classifier->baseData()) {
         if (holders.contains(base->key)) {
             if (base->items.isEmpty()) {
-                qDebug() << "Collection " << base->key << "is empty, remove it.";
+                fmDebug() << "Collection " << base->key << "is empty, remove it.";
                 holders.remove(base->key);
                 changed = true;
             }
         } else {
             if (!base->items.isEmpty()) {
                 // create new collection.
-                qDebug() << "Collection " << base->key << "isn't existed, create it.";
+                fmDebug() << "Collection " << base->key << "isn't existed, create it.";
                 CollectionHolderPointer collectionHolder(createCollection(base->key));
                 connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, &NormalizedModePrivate::collectionStyleChanged);
                 holders.insert(base->key, collectionHolder);
@@ -239,6 +239,16 @@ void NormalizedModePrivate::onIconSizeChanged()
         q->layout();
 }
 
+void NormalizedModePrivate::onFontChanged()
+{
+    for (const CollectionHolderPointer &holder : holders.values()) {
+        auto view = holder->itemView();
+        view->updateRegionView();
+    }
+
+    q->layout();
+}
+
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
 {
     // order by config
@@ -292,7 +302,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
 
     // 根据配置创建分类器, 默认按类型
     auto type = CfgPresenter->classification();
-    qInfo() << "classification:" << type;
+    fmInfo() << "classification:" << type;
 
     setClassifier(type);
     Q_ASSERT(d->classifier);
@@ -303,6 +313,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(FileOperatorIns, &FileOperator::requestDropFile, d, &NormalizedModePrivate::onDropFile, Qt::DirectConnection);
 
     connect(canvasManagerShell, &CanvasManagerShell::iconSizeChanged, d, &NormalizedModePrivate::onIconSizeChanged);
+    connect(canvasManagerShell, &CanvasManagerShell::fontChanged, d, &NormalizedModePrivate::onFontChanged);
 
     // must be DirectConnection to keep sequential
     connect(model, &CollectionModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);
@@ -322,7 +333,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
 void NormalizedMode::reset()
 {
     auto type = CfgPresenter->classification();
-    qInfo() << "normalized mode reset to " << type;
+    fmInfo() << "normalized mode reset to " << type;
 
     // delete the current classifier
     removeClassifier();
@@ -358,7 +369,7 @@ void NormalizedMode::layout()
         auto style = CfgPresenter->normalStyle(holder->id());
         if (Q_UNLIKELY(style.key != holder->id())) {
             if (!style.key.isEmpty())
-                qWarning() << "unknow err:style key is error:" << style.key << ",and fix to :" << holder->id();
+                fmWarning() << "unknow err:style key is error:" << style.key << ",and fix to :" << holder->id();
             style.key = holder->id();
         }
 
@@ -403,7 +414,7 @@ void NormalizedMode::rebuild()
         // order item as config
         d->restore(CfgPresenter->normalProfile());
 
-        qInfo() << QString("Classifying %0 files takes %1 ms").arg(files.size()).arg(time.elapsed());
+        fmInfo() << QString("Classifying %0 files takes %1 ms").arg(files.size()).arg(time.elapsed());
         time.restart();
 
         if (!files.isEmpty())
@@ -413,7 +424,7 @@ void NormalizedMode::rebuild()
     // 从分类器中获取组,根据组创建分区
     for (const QString &key : d->classifier->keys()) {
         auto files = d->classifier->items(key);
-        qDebug() << "type" << key << "files" << files.size();
+        fmDebug() << "type" << key << "files" << files.size();
 
         // 复用已有分组
         CollectionHolderPointer collectionHolder = d->holders.value(key);
@@ -438,7 +449,7 @@ void NormalizedMode::rebuild()
 
     layout();
 
-    qInfo() << QString("create groups %0 takes %1 ms").arg(d->holders.size()).arg(time.elapsed());
+    fmInfo() << QString("create groups %0 takes %1 ms").arg(d->holders.size()).arg(time.elapsed());
 
     emit collectionChanged();
 }
@@ -453,12 +464,12 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
         FileOperatorIns->removeRenameFileData(oldUrl);
         auto key = d->classifier->key(newUrl);
         if (key.isEmpty()) {
-            qWarning() << "warning:can not find key for :" << newUrl;
+            fmWarning() << "warning:can not find key for :" << newUrl;
             return;
         }
         auto holder = d->holders.value(key);
         if (Q_UNLIKELY(!holder)) {
-            qWarning() << "warning:can not find holder for :" << key;
+            fmWarning() << "warning:can not find holder for :" << key;
             return;
         }
 
@@ -541,7 +552,7 @@ bool NormalizedMode::setClassifier(Classifier id)
 {
     if (d->classifier) {
         if (d->classifier->mode() == id) {
-            qDebug() << "ingore setting, current classifier was" << id;
+            fmDebug() << "ingore setting, current classifier was" << id;
             return true;
         }
 

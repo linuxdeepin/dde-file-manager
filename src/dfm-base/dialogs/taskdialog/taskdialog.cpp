@@ -33,7 +33,7 @@ void TaskDialog::addTask(const JobHandlePointer taskHandler)
 {
     TaskWidget *wid = nullptr;
     if (!taskHandler) {
-        qWarning() << "task handler is null";
+        qCWarning(logDFMBase) << "task handler is null";
         return;
     }
 
@@ -118,7 +118,7 @@ void TaskDialog::blockShutdown()
 void TaskDialog::addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *wid)
 {
     if (!wid) {
-        qWarning() << "TaskWidget is a null value!";
+        qCWarning(logDFMBase) << "TaskWidget is a null value!";
         return;
     }
 
@@ -208,7 +208,7 @@ void TaskDialog::removeTask()
         return;
 
     if (!taskItems.contains(jobHandler)) {
-        qWarning() << "taskItems not contains the task!";
+        qCWarning(logDFMBase) << "taskItems not contains the task!";
         return;
     }
 

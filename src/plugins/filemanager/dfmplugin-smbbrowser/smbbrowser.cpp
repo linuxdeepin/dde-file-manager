@@ -21,11 +21,12 @@
 
 #include <QMenu>
 
-using namespace dfmplugin_smbbrowser;
+Q_DECLARE_METATYPE(QString *)
+
+namespace dfmplugin_smbbrowser {
+DFM_LOG_REISGER_CATEGORY(DPSMBBROWSER_NAMESPACE)
 
 DFMBASE_USE_NAMESPACE
-
-Q_DECLARE_METATYPE(QString *)
 
 void SmbBrowser::initialize()
 {
@@ -170,11 +171,11 @@ void SmbBrowser::registerNetworkAccessPrehandler()
     PrehandlerFunc handler { travers_prehandler::networkAccessPrehandler };
     PrehandlerFunc smbHanlder { travers_prehandler::smbAccessPrehandler };
     if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSmb), smbHanlder).toBool())
-        qWarning() << "smb's prehandler has been registered";
+        fmWarning() << "smb's prehandler has been registered";
     if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSFtp), handler).toBool())
-        qWarning() << "sftp's prehandler has been registered";
+        fmWarning() << "sftp's prehandler has been registered";
     if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kFtp), handler).toBool())
-        qWarning() << "ftp's prehandler has been registered";
+        fmWarning() << "ftp's prehandler has been registered";
 }
 
 void SmbBrowser::registerNetworkToSearch()
@@ -184,3 +185,4 @@ void SmbBrowser::registerNetworkToSearch()
     dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", QString(Global::Scheme::kSmb), property);
     dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", QString(Global::Scheme::kNetwork), property);
 }
+}   // namespace dfmplugin_smbbrowser

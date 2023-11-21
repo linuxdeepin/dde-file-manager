@@ -26,9 +26,9 @@ PropertyDialogManager &PropertyDialogManager::instance()
 
 bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView viewCreator, const QString &name, int index)
 {
-    qInfo() << "Model " << name << " register to property dialog, index at " << index;
+    fmInfo() << "Model " << name << " register to property dialog, index at " << index;
     while (creatorOptions.keys().contains(index) && index != -1) {   // FIXME(whoever): using a number passed by user as the key is not reliable, refact the mechanism.
-        qInfo() << "The current index has registered the associated construction class" << index << name;
+        fmInfo() << "The current index has registered the associated construction class" << index << name;
         index++;   // NOTE(xust): this is a temp solution to solve the issue that the share control widget not shown in property dialog.
         //        return false;
     }
@@ -93,7 +93,7 @@ QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url,
 bool PropertyDialogManager::registerCustomView(CustomViewExtensionView view, const QString &scheme)
 {
     if (viewCreateFunctionHash.keys().contains(scheme)) {
-        qInfo() << "The current index has registered";
+        fmInfo() << "The current index has registered";
         return false;
     }
 
@@ -120,7 +120,7 @@ bool PropertyDialogManager::registerBasicViewExtension(BasicViewFieldFunc func, 
         return true;
     }
 
-    qInfo() << "The current scheme has registered the associated construction class";
+    fmInfo() << "The current scheme has registered the associated construction class";
     return false;
 }
 
@@ -165,7 +165,7 @@ bool PropertyDialogManager::addBasicFiledFiltes(const QString &scheme, PropertyF
         return true;
     }
 
-    qInfo() << "The current scheme has registered the associated construction class";
+    fmInfo() << "The current scheme has registered the associated construction class";
     return false;
 }
 

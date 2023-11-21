@@ -224,7 +224,7 @@ bool TagManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGro
 bool TagManager::registerTagColor(const QString &tagName, const QString &color)
 {
     if (tagColorMap.contains(tagName)) {
-        qInfo() << "This tag name has registed: " << tagName;
+        fmInfo() << "This tag name has registed: " << tagName;
         return false;
     }
 
@@ -358,9 +358,9 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
         if (TagProxyHandleIns->addTagsForFiles(infos))
             return true;
 
-        qWarning() << "Create tags successfully! But failed to tag files";
+        fmWarning() << "Create tags successfully! But failed to tag files";
     } else {
-        qWarning() << "The tag don't exist.";
+        fmWarning() << "The tag don't exist.";
     }
     return false;
 }

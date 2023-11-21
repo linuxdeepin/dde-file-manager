@@ -53,7 +53,7 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
         return {};
     FinallyUtil finally { [tab]() { if (tab) mnt_free_table(tab); } };
     if (mnt_table_parse_mtab(tab, nullptr) != 0) {
-        qWarning() << "Invalid mnt_table_parse_mtab call";
+        qCWarning(logDFMBase) << "Invalid mnt_table_parse_mtab call";
         return {};
     }
 
@@ -64,7 +64,7 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
     if (fs)
         return { get(fs) };
 
-    qWarning() << "Invalid libmnt_fs*";
+    qCWarning(logDFMBase) << "Invalid libmnt_fs*";
     return {};
 }
 
@@ -462,7 +462,7 @@ QString DeviceUtils::nameOfSize(const quint64 &size)
 {
     quint64 num = size;
     if (num < 0) {
-        qWarning() << "Negative number passed to formatSize():" << num;
+        qCWarning(logDFMBase) << "Negative number passed to formatSize():" << num;
         num = 0;
     }
 
@@ -643,7 +643,7 @@ bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 
     int ret = mnt_table_parse_mtab(tab, nullptr);
     if (ret != 0) {
-        qWarning() << "device: cannot parse mtab" << ret;
+        qCWarning(logDFMBase) << "device: cannot parse mtab" << ret;
         return false;
     }
 

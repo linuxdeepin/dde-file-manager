@@ -10,10 +10,10 @@ DBusHelper::DBusHelper(QObject *parent)
     : QObject{parent}
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    qInfo() << "create dock and display dbus interface.";
+    fmInfo() << "create dock and display dbus interface.";
     m_dock = new DBusDock(this);
     m_display = new DBusDisplay(this);
-    qInfo() << "the dbus interface: dock is" << isDockEnable()  << "display is" << isDisplayEnable();
+    fmInfo() << "the dbus interface: dock is" << isDockEnable()  << "display is" << isDisplayEnable();
 }
 
 DBusHelper *DBusHelper::ins()
@@ -73,7 +73,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, DockRect &rect)
 
 QDebug operator<<(QDebug deg, const DockRect &rect)
 {
-    qDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
+    fmDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
 
     return deg;
 }
@@ -96,7 +96,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, DisplayRect &rect
 
 QDebug operator<<(QDebug deg, const DisplayRect &rect)
 {
-    qDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
+    fmDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
 
     return deg;
 }

@@ -41,6 +41,7 @@ public:
     CollectionItemDelegate *itemDelegate() const;
     CollectionDataProvider *dataProvider() const;
     WId winId() const;
+    void updateRegionView();
 
     void openEditor(const QUrl &url);
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);

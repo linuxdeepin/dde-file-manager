@@ -350,7 +350,7 @@ void WorkspaceEventReceiver::handleRegisterCustomTopWidget(const QVariantMap &da
 {
     CustomTopWidgetInfo info(dataMap);
     if (WorkspaceHelper::instance()->isRegistedTopWidget(info.scheme)) {
-        qWarning() << "custom top widget sechme " << info.scheme << "has been resigtered!";
+        fmWarning() << "custom top widget sechme " << info.scheme << "has been resigtered!";
     }
 
     WorkspaceHelper::instance()->registerTopWidgetCreator(info.scheme, [=]() {

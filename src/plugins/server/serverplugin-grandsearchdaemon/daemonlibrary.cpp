@@ -22,28 +22,28 @@ bool DaemonLibrary::load()
         return true;
     QLibrary *lib = new QLibrary(libPath, this);
     if (!lib->load()) {
-        qCritical() << "can not load" << libPath << lib->errorString();
+        fmCritical() << "can not load" << libPath << lib->errorString();
         delete lib;
         return false;
     }
 
     verFunc = reinterpret_cast<VerDaemon>(lib->resolve("grandSearchDaemonAppVersion"));
     if (!verFunc) {
-        qCritical() << "no such api grandSearchDaemonAppVersion in" << libPath;
+        fmCritical() << "no such api grandSearchDaemonAppVersion in" << libPath;
         delete lib;
         return false;
     }
 
     startFunc = reinterpret_cast<StartDaemon>(lib->resolve("startGrandSearchDaemon"));
     if (!startFunc) {
-        qCritical() << "no such api startGrandSearchDaemon in" << libPath;
+        fmCritical() << "no such api startGrandSearchDaemon in" << libPath;
         delete lib;
         return false;
     }
 
     stopFunc = reinterpret_cast<StopDaemon>(lib->resolve("stopGrandSearchDaemon"));
     if (!stopFunc) {
-        qCritical() << "no such api stopGrandSearchDaemon in" << libPath;
+        fmCritical() << "no such api stopGrandSearchDaemon in" << libPath;
         delete lib;
         return false;
     }
@@ -66,7 +66,7 @@ void DaemonLibrary::unload()
 int DaemonLibrary::start(int argc, char *argv[])
 {
     if (!startFunc) {
-        qCritical() << "no such api startGrandSearchDaemon";
+        fmCritical() << "no such api startGrandSearchDaemon";
         return -1;
     }
     return startFunc(argc, argv);
@@ -75,7 +75,7 @@ int DaemonLibrary::start(int argc, char *argv[])
 int DaemonLibrary::stop()
 {
     if (!stopFunc) {
-        qCritical() << "no such api stopGrandSearchDaemon";
+        fmCritical() << "no such api stopGrandSearchDaemon";
         return -1;
     }
     return stopFunc();
@@ -84,7 +84,7 @@ int DaemonLibrary::stop()
 QString DaemonLibrary::version()
 {
     if (!verFunc) {
-        qCritical() << "no such api grandSearchDaemonAppVersion";
+        fmCritical() << "no such api grandSearchDaemonAppVersion";
         return "";
     }
     return QString(verFunc());

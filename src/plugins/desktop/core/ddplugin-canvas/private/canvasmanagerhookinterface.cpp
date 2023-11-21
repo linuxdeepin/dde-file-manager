@@ -26,6 +26,11 @@ void CanvasManagerHookInterface::iconSizeChanged(int level) const
     return;
 }
 
+void CanvasManagerHookInterface::fontChanged() const
+{
+    return;
+}
+
 void CanvasManagerHookInterface::autoArrangeChanged(bool on) const
 {
     return;

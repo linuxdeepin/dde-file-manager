@@ -27,7 +27,7 @@ VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFil
                                                   static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
                                                   static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
     if (!dfmioDirIterator)
-        qCritical("Vault: create DEnumerator failed!");
+        fmCritical("Vault: create DEnumerator failed!");
 }
 
 VaultFileIterator::~VaultFileIterator()
@@ -82,7 +82,7 @@ const FileInfoPointer VaultFileIterator::fileInfo() const
         emit InfoCacheController::instance().removeCacheFileInfo({url});
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     } else {
-        qWarning() << "Vault: info is nullptr, url = " << url;
+        fmWarning() << "Vault: info is nullptr, url = " << url;
         return  InfoFactory::create<FileInfo>(fileUrl());
     }
 

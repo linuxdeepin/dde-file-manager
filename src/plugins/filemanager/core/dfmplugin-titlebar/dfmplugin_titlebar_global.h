@@ -5,10 +5,7 @@
 #ifndef DFMPLUGIN_TITLEBAR_GLOBAL_H
 #define DFMPLUGIN_TITLEBAR_GLOBAL_H
 
-#define DPTITLEBAR_BEGIN_NAMESPACE namespace dfmplugin_titlebar {
-#define DPTITLEBAR_END_NAMESPACE }
-#define DPTITLEBAR_USE_NAMESPACE using namespace dfmplugin_titlebar;
-#define DPTITLEBAR_NAMESPACE dfmplugin_titlebar
+#include <dfm-base/dfm_log_defines.h>
 
 #include <QObject>
 #include <QUrl>
@@ -17,7 +14,14 @@
 
 #include <functional>
 
+#define DPTITLEBAR_NAMESPACE dfmplugin_titlebar
+
+#define DPTITLEBAR_BEGIN_NAMESPACE namespace DPTITLEBAR_NAMESPACE {
+#define DPTITLEBAR_END_NAMESPACE }
+#define DPTITLEBAR_USE_NAMESPACE using namespace DPTITLEBAR_NAMESPACE;
+
 DPTITLEBAR_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPTITLEBAR_NAMESPACE)
 
 namespace CustomKey {
 inline constexpr char kUrl[] { "CrumbData_Key_Url" };

@@ -8,7 +8,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
-#include <QDebug>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
 namespace dfm_upgrade {
 namespace UpgradeUtils {
@@ -18,7 +20,7 @@ QVariant genericAttribute(const QString &key)
     auto paths = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
     if (paths.count() > 0) {
         auto genCfgPath = paths.first() + "/deepin/dde-file-manager.json";
-        qInfo() << "upgrade: genericAttribute config path: " << genCfgPath;
+        qCInfo(logToolUpgrade) << "upgrade: genericAttribute config path: " << genCfgPath;
 
         QFile cfgFile(genCfgPath);
         if (cfgFile.open(QIODevice::ReadOnly)) {
@@ -45,7 +47,7 @@ QVariant applicationAttribute(const QString &key)
     auto paths = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
     if (paths.count() > 0) {
         auto appCfgPath = paths.first() + "/deepin/dde-file-manager/dde-file-manager.json";
-        qInfo() << "upgrade: applicationAttribute config path: " << appCfgPath;
+        qCInfo(logToolUpgrade) << "upgrade: applicationAttribute config path: " << appCfgPath;
 
         QFile cfgFile(appCfgPath);
         if (cfgFile.open(QIODevice::ReadOnly)) {

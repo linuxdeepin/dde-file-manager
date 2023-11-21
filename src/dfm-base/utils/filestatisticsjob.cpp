@@ -56,7 +56,7 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
     state = s;
 
     if (notifyDataTimer->thread() && notifyDataTimer->thread()->loopLevel() <= 0) {
-        qWarning() << "The thread of notify data timer no event loop" << notifyDataTimer->thread();
+        qCWarning(logDFMBase) << "The thread of notify data timer no event loop" << notifyDataTimer->thread();
     }
 
     if (s == FileStatisticsJob::kRunningState) {
@@ -70,7 +70,7 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
             Q_EMIT q->sizeChanged(totalSize);
         }
 
-        qDebug() << "statistic finished(may stop), result: " << totalSize << filesCount << directoryCount;
+        qCDebug(logDFMBase) << "statistic finished(may stop), result: " << totalSize << filesCount << directoryCount;
     }
 
     Q_EMIT q->stateChanged(s);
@@ -109,7 +109,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
     FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
     if (!info) {
-        qDebug() << "Url not yet supported: " << url;
+        qCWarning(logDFMBase) << "Url not yet supported: " << url;
         return;
     }
 
@@ -343,7 +343,7 @@ SizeInfoPointer FileStatisticsJob::getFileSizeInfo()
 void FileStatisticsJob::start(const QList<QUrl> &sourceUrls)
 {
     if (isRunning()) {
-        qDebug() << "current thread is running... reject to start.";
+        qCWarning(logDFMBase) << "current thread is running... reject to start.";
         return;
     }
     d->sourceUrlList = sourceUrls;
@@ -433,7 +433,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
             if (!info) {
-                qDebug() << "Url not yet supported: " << url;
+                qCWarning(logDFMBase) << "Url not yet supported: " << url;
                 continue;
             }
 
@@ -505,7 +505,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                                                                       QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
         if (!d->iterator) {
-            qWarning() << "Failed on create dir iterator, for url:" << directory_url;
+            qCWarning(logDFMBase) << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
         d->iteratorCanStop = true;

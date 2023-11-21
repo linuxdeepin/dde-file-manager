@@ -33,18 +33,18 @@ static bool validPrimaryChanged(const ScreenProxyQt *proxy)
         // 偶现，通过Qt获取到的屏幕名称可能是虚拟屏幕名称:0.0，需要延迟几百毫秒后才会获取到正确的名称（例如HDMI）
         // 规避方案：延迟100毫秒重复获取，超过10秒则放弃获取
         if (Q_UNLIKELY(QString(":0.0") == qApp->primaryScreen()->name())) {
-            qWarning() << " The screen name obtained by Qt is :0.0, which is re obtained after a delay of 100 milliseconds."
+            fmWarning() << " The screen name obtained by Qt is :0.0, which is re obtained after a delay of 100 milliseconds."
                           "Current times:" << times;
             times++;
             if (Q_LIKELY(times < 100)) {
                 QTimer::singleShot(100, proxy, &ScreenProxyQt::onPrimaryChanged);
             } else {
-                qCritical() << "Can not get the correct primary name.Current primary name is " << qApp->primaryScreen()->name();
+                fmCritical() << "Can not get the correct primary name.Current primary name is " << qApp->primaryScreen()->name();
                 times = 0;
             }
             return false;
         } else {
-            qInfo() << "Primary screen changed, the screen name obtained by Qt is " << qApp->primaryScreen()->name()
+            fmInfo() << "Primary screen changed, the screen name obtained by Qt is " << qApp->primaryScreen()->name()
                     <<".Current times:" << times;
             //! When using dual-screen mode with only one screen, if the screen is switched from Screen 1 to Screen 2
             //! in the Control Center, Qt does not emit a related screen change signal.
@@ -77,7 +77,7 @@ QList<ScreenPointer> ScreenProxyQt::screens() const
     for (QScreen *sc : qApp->screens()) {
         if (screenMap.contains(sc)) {
             if (sc->name().isEmpty() || sc->geometry().size() == QSize(0, 0)) {
-                qCritical() << "screen error. does it is closed?" << sc->name();
+                fmCritical() << "screen error. does it is closed?" << sc->name();
                 continue;
             }
             order.append(screenMap.value(sc));
@@ -99,7 +99,7 @@ QList<ScreenPointer> ScreenProxyQt::logicScreens() const
     for (QScreen *sc : allScreen) {
         if (screenMap.contains(sc))
             if (sc->name().isEmpty() || sc->geometry().size() == QSize(0, 0)) {
-                qCritical() << "screen error. does it is closed?" << sc->name();
+                fmCritical() << "screen error. does it is closed?" << sc->name();
                 continue;
             }
             order.append(screenMap.value(sc));
@@ -198,7 +198,7 @@ void ScreenProxyQt::onScreenAdded(QScreen *screen)
     screenMap.insert(screen, psc);
     connectScreen(psc);
 
-    qInfo() << "add screen:" << screen->name();
+    fmInfo() << "add screen:" << screen->name();
     appendEvent(kScreen);
 }
 
@@ -207,7 +207,7 @@ void ScreenProxyQt::onScreenRemoved(QScreen *screen)
     auto psc = screenMap.take(screen);
     if (psc.get() != nullptr) {
         disconnectScreen(psc);
-        qInfo() << "del screen:" << screen->name();
+        fmInfo() << "del screen:" << screen->name();
         appendEvent(kScreen);
     }
 }
@@ -232,7 +232,7 @@ void ScreenProxyQt::onDockChanged()
 void ScreenProxyQt::processEvent()
 {
     DisplayMode mode = displayMode();
-    qInfo() << "current mode" << mode << "lastmode" << lastMode;
+    fmInfo() << "current mode" << mode << "lastmode" << lastMode;
 
     if (mode != lastMode) {
         lastMode = mode;
@@ -269,14 +269,14 @@ bool ScreenProxyQt::checkUsedScreens()
     QStringList scs;
     dpfHookSequence->run("ddplugin_core", "hook_ScreenProxy_ScreensInUse", &scs);
     auto inuse = scs.toSet();
-    qInfo() << "current screens" << cur << "used" << inuse;
+    fmInfo() << "current screens" << cur << "used" << inuse;
 
     bool invaild = false;
     for (const QString &sc : inuse) {
         if (cur.contains(sc))
             continue;
         invaild = true;
-        qWarning() << "screen" << sc << "was losted";
+        fmWarning() << "screen" << sc << "was losted";
         break;
     }
 

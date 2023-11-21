@@ -48,7 +48,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     curDev = qvariant_cast<QString>(map[DeviceProperty::kDevice]);
 
     if (curDev.isEmpty()) {
-        qWarning() << "Error url: " << url << "Cannot acquire dev";
+        fmWarning() << "Error url: " << url << "Cannot acquire dev";
         return false;
     }
 
@@ -154,7 +154,7 @@ void OpticalMediaWidget::updateUi()
     }
 
     if (isBlank) {
-        qInfo() << "Empty disc, disballe dump iso";
+        fmInfo() << "Empty disc, disballe dump iso";
         pbDump->setEnabled(false);
     } else {
         pbDump->setEnabled(true);
@@ -198,14 +198,14 @@ bool OpticalMediaWidget::isSupportedUDF()
 void OpticalMediaWidget::onBurnButtonClicked()
 {
     if (statisticWorker->isRunning()) {
-        qWarning() << "statisticWorker is running";
+        fmWarning() << "statisticWorker is running";
         return;
     }
 
     // not mount point
     QDir dirMnt(curMnt);
     if (!dirMnt.exists()) {
-        qWarning() << "Mount points doesn't exist: " << curMnt;
+        fmWarning() << "Mount points doesn't exist: " << curMnt;
         return;
     }
 
@@ -213,7 +213,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
     QUrl urlOfStage { OpticalHelper::localStagingFile(curDev) };
     QDir dirStage(urlOfStage.path());
     if (!dirStage.exists()) {
-        qWarning() << "Staging files not exist: " << dirStage;
+        fmWarning() << "Staging files not exist: " << dirStage;
         return;
     }
 
@@ -234,7 +234,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
         for (const auto &stageInfo : listFilesInStage) {
             if (stageInfo.fileName() != discFileInfo.fileName())
                 continue;
-            qInfo() << "Remove file: " << stageInfo.fileName();
+            fmInfo() << "Remove file: " << stageInfo.fileName();
             if (stageInfo.isFile()) {
                 dirStage.remove(stageInfo.fileName());
             } else {

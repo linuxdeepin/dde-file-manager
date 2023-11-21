@@ -51,7 +51,7 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
         if (window && UniversalUtils::urlEquals(window->currentUrl(), url)) {
-            qInfo() << "Find url: " << url << " window: " << window;
+            qCInfo(logDFMBase) << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
             window->activateWindow();
@@ -85,43 +85,6 @@ bool FileManagerWindowsManagerPrivate::isValidUrl(const QUrl &url, QString *erro
     return true;
 }
 
-void FileManagerWindowsManagerPrivate::loadWindowState(FileManagerWindow *window)
-{
-    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
-
-    int width = state.value("width").toInt();
-    int height = state.value("height").toInt();
-    NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
-
-    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
-    if ((windows.size() == 0) && ((windowState & kNetWmStateMaximizedHorz) != 0 && (windowState & kNetWmStateMaximizedVert) != 0)) {
-        // make window to be maximized.
-        // the following calling is copyed from QWidget::showMaximized()
-        window->setWindowState((window->windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen))
-                               | Qt::WindowMaximized);
-    } else {
-        window->resize(width, height);
-    }
-}
-
-void FileManagerWindowsManagerPrivate::saveWindowState(FileManagerWindow *window)
-{
-    /// The power by dxcb platform plugin
-    NetWmStates states = static_cast<NetWmStates>(window->window()->windowHandle()->property("_d_netWmStates").toInt());
-    QVariantMap state;
-    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
-    if ((states & kNetWmStateMaximizedHorz) == 0 || (states & kNetWmStateMaximizedVert) == 0) {
-        state["width"] = window->size().width();
-        state["height"] = window->size().height();
-    } else {
-        const QVariantMap &state1 = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
-        state["width"] = state1.value("width").toInt();
-        state["height"] = state1.value("height").toInt();
-        state["state"] = static_cast<int>(states);
-    }
-    Application::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
-}
-
 void FileManagerWindowsManagerPrivate::onWindowClosed(FileManagerWindow *window)
 {
     int count = windows.count();
@@ -134,12 +97,12 @@ void FileManagerWindowsManagerPrivate::onWindowClosed(FileManagerWindow *window)
     if (count == 1) {   // last window
         auto isDefaultWindow = window->property("_dfm_isDefaultWindow");
         if (window->saveClosedSate() && (!isDefaultWindow.isValid() || !isDefaultWindow.toBool()))
-            saveWindowState(window);
-        qInfo() << "Last window deletelater" << window->internalWinId();
+            window->saveState();
+        qCInfo(logDFMBase) << "Last window deletelater" << window->internalWinId();
         emit manager->lastWindowClosed();
         window->deleteLater();
     } else {
-        qInfo() << "Window deletelater !";
+        qCInfo(logDFMBase) << "Window deletelater !";
         window->deleteLater();
     }
 
@@ -191,7 +154,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         }
     }
     if (!d->isValidUrl(showedUrl, &error)) {
-        qWarning() << "Url: " << showedUrl << "is Invalid, error: " << error;
+        qCWarning(logDFMBase) << "Url: " << showedUrl << "is Invalid, error: " << error;
         // use home as showed url if default url is invalid
         showedUrl = UrlRoute::pathToReal(QDir::home().path());
         if (!d->isValidUrl(showedUrl, &error))
@@ -202,7 +165,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     if (!isNewWindow) {
         auto window = d->activeExistsWindowByUrl(showedUrl);
         if (!window)
-            qWarning() << "Cannot find a exists window by url: " << showedUrl;
+            qCWarning(logDFMBase) << "Cannot find a exists window by url: " << showedUrl;
         return window;
     }
 
@@ -216,9 +179,9 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     {
         auto noLoad = window->property("_dfm_Disable_RestoreWindowState_");
         if (!noLoad.isValid() || !noLoad.toBool())
-            d->loadWindowState(window);
+            window->loadState();
         else
-            qDebug() << "do not load window state" << window << noLoad;
+            qCDebug(logDFMBase) << "do not load window state" << window << noLoad;
     }
 
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
@@ -228,7 +191,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
 
     connect(window, &FileManagerWindow::aboutToOpen, this, [this, window]() {
         auto &&id { window->internalWinId() };
-        qInfo() << "Window showed" << id;
+        qCInfo(logDFMBase) << "Window showed" << id;
         emit windowOpened(id);
     });
 
@@ -237,7 +200,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     });
 
     // In order for the plugin to cache the current window (before the base frame is installed)
-    qInfo() << "New window created: " << window->winId() << showedUrl;
+    qCInfo(logDFMBase) << "New window created: " << window->winId() << showedUrl;
 
     d->windows.insert(window->internalWinId(), window);
 
@@ -297,12 +260,12 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::findWindowById(q
     if (d->windows.contains(winId))
         return d->windows.value(winId);
 
-    qWarning() << "The `d->windows` cannot find winId: " << winId;
+    qCWarning(logDFMBase) << "The `d->windows` cannot find winId: " << winId;
     for (QWidget *top : qApp->topLevelWidgets()) {
         if (top->internalWinId() == winId)
             return qobject_cast<FileManagerWindowsManager::FMWindow *>(top);
     }
-    qWarning() << "Null window returned!";
+    qCWarning(logDFMBase) << "Null window returned!";
 
     return nullptr;
 }

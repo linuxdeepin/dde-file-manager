@@ -47,35 +47,35 @@ DiscDeviceScanner::DiscDeviceScanner(QObject *parent)
 bool DiscDeviceScanner::startScan()
 {
     if (discScanTimer->isActive()) {
-        qWarning() << "Timer is active, cannot start again";
+        qCWarning(logDFMBase) << "Timer is active, cannot start again";
         return false;
     }
 
     if (discDevIdGroup.isEmpty()) {
-        qWarning() << "Current disc dev is empty, cannot start timer";
+        qCWarning(logDFMBase) << "Current disc dev is empty, cannot start timer";
         return false;
     }
 
     // only try to open read/write if not root, since it doesn't seem
     // to make a difference for root and can have negative side-effects
     if (SysInfoUtils::isRootUser()) {
-        qWarning() << "Current user is root, cannot start timer";
+        qCWarning(logDFMBase) << "Current user is root, cannot start timer";
         return false;
     }
 
     // cause a lot of logs in server version
     if (SysInfoUtils::isServerSys()) {
-        qWarning() << "Current OS version is server, cannot start timer";
+        qCWarning(logDFMBase) << "Current OS version is server, cannot start timer";
         return false;
     }
 
     // Usually the Community Edition does not require an optical drive to be inserted
     if (SysInfoUtils::isDesktopSys() && !SysInfoUtils::isProfessional()) {
-        qWarning() << "Current OS version is deepin destkop, does not require start timer";
+        qCWarning(logDFMBase) << "Current OS version is deepin destkop, does not require start timer";
         return false;
     }
 
-    qInfo() << "Start scan disc";
+    qCInfo(logDFMBase) << "Start scan disc";
     discScanTimer->start(kTimerInterval);
 
     return true;
@@ -84,10 +84,10 @@ bool DiscDeviceScanner::startScan()
 void DiscDeviceScanner::stopScan()
 {
     if (!discScanTimer->isActive()) {
-        qWarning() << "Timer is active, canot stop";
+        qCWarning(logDFMBase) << "Timer is active, canot stop";
         return;
     }
-    qInfo() << "Stop scan disc";
+    qCInfo(logDFMBase) << "Stop scan disc";
     discScanTimer->stop();
 }
 
@@ -165,7 +165,7 @@ void DiscDeviceScanner::initialize()
     std::call_once(flag, [this]() {
         // ony runing desktop or filemanger, not allowed to run simultaneously
         if (qApp->applicationName() != kDesktopAppName && DevProxyMng->isDBusRuning()) {
-            qInfo() << "Current app is filemanger and desktop running, don't init";
+            qCInfo(logDFMBase) << "Current app is filemanger and desktop running, don't init";
             return;
         }
 

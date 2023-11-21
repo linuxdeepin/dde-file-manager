@@ -12,14 +12,16 @@
 
 #include <QDBusConnection>
 
-using namespace ddplugin_canvas;
+namespace ddplugin_canvas {
+DFM_LOG_REISGER_CATEGORY(DDP_CANVAS_NAMESPACE)
+
 DFMBASE_USE_NAMESPACE
 
 void CanvasPlugin::initialize()
 {
     QString err;
     DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop.sys-watermask", &err);
-    qInfo() << "register desktop dconfig:" << err;
+    fmInfo() << "register desktop dconfig:" << err;
 }
 
 bool CanvasPlugin::start()
@@ -51,7 +53,8 @@ void CanvasPlugin::registerDBus()
     QDBusConnection conn = QDBusConnection::sessionBus();
     auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
     if (!conn.registerObject("/org/deepin/dde/desktop/canvas", "org.deepin.dde.desktop.canvas", ifs, registerOptions)) {
-        qCritical() << "org.deepin.dde.desktop.canvas register object failed" << conn.lastError();
+        fmCritical() << "org.deepin.dde.desktop.canvas register object failed" << conn.lastError();
         delete ifs;
     }
 }
+}   // namespace ddplugin_canvas

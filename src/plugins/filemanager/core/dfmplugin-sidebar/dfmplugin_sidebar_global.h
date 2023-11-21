@@ -5,12 +5,7 @@
 #ifndef DFMPLUGIN_SIDEBAR_GLOBAL_H
 #define DFMPLUGIN_SIDEBAR_GLOBAL_H
 
-#define DPSIDEBAR_NAMESPACE dfmplugin_sidebar
-
-#define DPSIDEBAR_BEGIN_NAMESPACE namespace DPSIDEBAR_NAMESPACE {
-#define DPSIDEBAR_END_NAMESPACE }
-#define DPSIDEBAR_USE_NAMESPACE using namespace DPSIDEBAR_NAMESPACE;
-
+#include <dfm-base/dfm_log_defines.h>
 #include <dfm-framework/event/eventhelper.h>
 
 #include <QUrl>
@@ -20,7 +15,14 @@
 
 #include <functional>
 
+#define DPSIDEBAR_NAMESPACE dfmplugin_sidebar
+
+#define DPSIDEBAR_BEGIN_NAMESPACE namespace DPSIDEBAR_NAMESPACE {
+#define DPSIDEBAR_END_NAMESPACE }
+#define DPSIDEBAR_USE_NAMESPACE using namespace DPSIDEBAR_NAMESPACE;
+
 DPSIDEBAR_BEGIN_NAMESPACE
+DFM_LOG_USE_CATEGORY(DPSIDEBAR_NAMESPACE)
 
 namespace DefaultGroup {
 inline constexpr char kCommon[] { "Group_Common" };

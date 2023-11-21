@@ -14,7 +14,9 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
-using namespace dfmplugin_bookmark;
+namespace dfmplugin_bookmark {
+DFM_LOG_REISGER_CATEGORY(DPBOOKMARK_NAMESPACE)
+
 DFMBASE_USE_NAMESPACE
 
 void BookMark::initialize()
@@ -106,3 +108,4 @@ void BookMark::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Group_Sort", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleItemSort);
 }
+}   // namespace dfmplugin_bookmark

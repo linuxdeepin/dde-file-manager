@@ -51,3 +51,7 @@ install(FILES data/applications/dde-computer.desktop DESTINATION share/applicati
 install(FILES data/applications/dde-trash.desktop DESTINATION share/applications/)
 install(FILES data/applications/dde-home.desktop DESTINATION share/applications/)
 
+# log config
+install(FILES log/${PROJECT_NAME}.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)
+
+

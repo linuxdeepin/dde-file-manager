@@ -16,7 +16,8 @@ Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_vault;
+namespace dfmplugin_vault {
+DFM_LOG_REISGER_CATEGORY(DPVAULT_NAMESPACE)
 
 void Vault::initialize()
 {
@@ -40,3 +41,4 @@ void Vault::bindWindows()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened,
             VaultVisibleManager::instance(), &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
 }
+}   // namespace dfmplugin_vault

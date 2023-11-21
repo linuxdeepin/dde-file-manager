@@ -33,6 +33,7 @@ find_package(Qt5 COMPONENTS
 
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
+    DFM::base
     Qt5::DBus
     ${PolkitAgent_LIBRARIES}
     ${PolkitQt5_LIBRARIES}

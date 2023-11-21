@@ -139,7 +139,7 @@ void ShareMenuScenePrivate::addSubActions(QMenu *subMenu)
         return;
 
     bool bluetoothAvailable = dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_IsAvailable").toBool();
-    qDebug() << "bluetooth: menu action can be added: " << bluetoothAvailable;
+    fmDebug() << "bluetooth: menu action can be added: " << bluetoothAvailable;
     if (bluetoothAvailable) {
         auto *act = subMenu->addAction(predicateName[ActionID::kShareToBluetooth]);
         act->setProperty(ActionPropertyKey::kActionID, ActionID::kShareToBluetooth);

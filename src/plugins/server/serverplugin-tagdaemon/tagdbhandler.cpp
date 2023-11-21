@@ -407,16 +407,16 @@ void TagDbHandler::initialize()
     handle.reset(new SqliteHandle(dbFilePath));
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError()) {
-        qWarning() << "The tag database is invalid! open error";
+        fmWarning() << "The tag database is invalid! open error";
         return;
     }
     db.close();
 
     if (!createTable(kTagTableFileTags))
-        qWarning() << "Create table failed:" << kTagTableFileTags;
+        fmWarning() << "Create table failed:" << kTagTableFileTags;
 
     if (!createTable(kTagTableTagProperty))
-        qWarning() << "Create table failed:" << kTagTableFileTags;
+        fmWarning() << "Create table failed:" << kTagTableFileTags;
 }
 
 bool TagDbHandler::createTable(const QString &tableName)
