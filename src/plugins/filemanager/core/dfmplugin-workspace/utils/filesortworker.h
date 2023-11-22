@@ -188,6 +188,8 @@ private:
     bool isDefaultHiddenFile(const QUrl &fileUrl);
     QUrl parantUrl(const QUrl &url);
     int8_t getDepth(const QUrl &url);
+    int findRealShowIndex(const QUrl &preItemUrl);
+    int indexOfVisibleChild(const QUrl &itemUrl);
 
 private:
     QUrl current;
