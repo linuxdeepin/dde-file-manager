@@ -27,7 +27,6 @@ set(SRCS
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Network REQUIRED)
 find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(KF5Config REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
@@ -43,7 +42,6 @@ target_link_libraries(
     Qt5::Network
     DFM::base
     DFM::framework
-    KF5::ConfigCore
     ${DtkWidget_LIBRARIES}
     )
 
