@@ -13,6 +13,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include <dfm-base/dfm_desktop_defines.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QImageReader>
 #include <QtConcurrent>
@@ -219,9 +220,10 @@ bool BackgroundManager::useColorBackground()
 {
     bool used { false };
     for (auto path : d->backgroundPaths.values()) {
+        QString localPath = UniversalUtils::covertUrlToLocalPath(path);
         // these dirs save solid color wallpapers.
-        used = path.startsWith("/usr/share/wallpapers/custom-solidwallpapers")
-                || path.startsWith("/usr/share/wallpapers/deepin-solidwallpapers");
+        used = localPath.startsWith("/usr/share/wallpapers/custom-solidwallpapers")
+                || localPath.startsWith("/usr/share/wallpapers/deepin-solidwallpapers");
 
         if (used)
             return used;

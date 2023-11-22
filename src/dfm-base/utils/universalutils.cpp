@@ -501,4 +501,12 @@ bool UniversalUtils::isParentUrl(const QUrl &child, const QUrl &parent)
     return child.toString().startsWith(parentStr);
 }
 
+QString UniversalUtils::covertUrlToLocalPath(const QString &url)
+{
+    if (url.startsWith("/"))
+        return url;
+    else
+        return QUrl(QUrl::fromPercentEncoding(url.toUtf8())).toLocalFile();
+}
+
 }
