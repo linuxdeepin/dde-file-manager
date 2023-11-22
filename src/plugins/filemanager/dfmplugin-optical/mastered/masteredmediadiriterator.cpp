@@ -67,7 +67,12 @@ QUrl MasteredMediaDirIterator::next()
 
 bool MasteredMediaDirIterator::hasNext() const
 {
-    return (discIterator && discIterator->hasNext()) || (stagingIterator && stagingIterator->hasNext());
+    // hasnext 会跳转到下一个
+    if (discIterator && discIterator->hasNext())
+        return true;
+    if (discIterator)
+        discIterator.reset(nullptr);
+    return stagingIterator && stagingIterator->hasNext();
 }
 
 QString MasteredMediaDirIterator::fileName() const
