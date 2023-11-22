@@ -30,7 +30,7 @@ public:
     QUrl url() const override;
 
 private:
-    QSharedPointer<dfmio::DEnumerator> discIterator { nullptr };
+    mutable QSharedPointer<dfmio::DEnumerator> discIterator { nullptr };
     QSharedPointer<dfmio::DEnumerator> stagingIterator { nullptr };
     QString mntPoint;
     QString devFile;

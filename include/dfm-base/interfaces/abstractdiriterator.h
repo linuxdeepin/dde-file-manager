@@ -43,7 +43,7 @@ public:
      *
      * \param
      *
-     * \return bool 返回是否还有下一个文件
+     * \return bool 返回是否还有下一个文件  hasnext 会跳转到下一个
      */
     virtual bool hasNext() const = 0;
     /*!
