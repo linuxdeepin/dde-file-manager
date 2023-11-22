@@ -220,8 +220,8 @@ bool BackgroundManager::useColorBackground()
     bool used { false };
     for (auto path : d->backgroundPaths.values()) {
         // these dirs save solid color wallpapers.
-        used = path.startsWith("/usr/share/wallpapers/custom-solidwallpapers")
-                || path.startsWith("/usr/share/wallpapers/deepin-solidwallpapers");
+        used = path.startsWith("file:///usr/share/wallpapers/custom-solidwallpapers")
+                || path.startsWith("file:///usr/share/wallpapers/deepin-solidwallpapers");
 
         if (used)
             return used;
