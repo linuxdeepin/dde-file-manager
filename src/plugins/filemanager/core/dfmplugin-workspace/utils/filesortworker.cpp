@@ -804,7 +804,6 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
         return;
 
     int showIndex = findStartPos(parentUrl);
-    ;
 
     // 插入到每个目录下的显示目录
     auto subVisibleList = visibleTreeChildren.take(parentUrl);
@@ -828,6 +827,13 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
 
     // kItemDisplayRole 是不进行排序的
     showIndex += offset;
+
+    // 不为子目录中第一项的情况下，需要判断前面的项是否有展开
+    if (subIndex != 0) {
+        QUrl preItemUrl = subVisibleList.at(subIndex - 1);
+        // 前一项展开的情况下，实际插入的位置应该在所有展开子项之后
+        showIndex = findRealShowIndex(preItemUrl);
+    }
 
     if (isCanceled)
         return;
@@ -1477,4 +1483,24 @@ int8_t FileSortWorker::getDepth(const QUrl &url)
         }
     }
     return -2;
+}
+
+int FileSortWorker::findRealShowIndex(const QUrl &preItemUrl)
+{
+    const FileItemDataPointer &preItemPtr = childrenDataMap.value(preItemUrl, nullptr);
+    if (!preItemPtr || !preItemPtr->data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool())
+        return indexOfVisibleChild(preItemUrl) + 1;
+
+    QList<QUrl> preSubItemList = visibleTreeChildren.value(preItemUrl, {});
+    if (preSubItemList.isEmpty())
+        return indexOfVisibleChild(preItemUrl) + 1;
+
+    const QUrl &subPreItemUrl = preSubItemList.last();
+    return findRealShowIndex(subPreItemUrl);
+}
+
+int FileSortWorker::indexOfVisibleChild(const QUrl &itemUrl)
+{
+    QReadLocker lk(&locker);
+    return visibleChildren.indexOf(itemUrl);
 }
