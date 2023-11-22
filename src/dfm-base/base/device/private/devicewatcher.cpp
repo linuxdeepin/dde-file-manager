@@ -304,6 +304,8 @@ void DeviceWatcher::onBlkDevFsRemoved(const QString &id)
     // this will not happen frequently
     if (!data.isEmpty())
         d->allBlockInfos.insert(id, data);
+    else
+        d->allBlockInfos.remove(id);
 
     emit DevMngIns->blockDevFsRemoved(id);
     using namespace GlobalServerDefines;
@@ -383,6 +385,8 @@ QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType ty
     if (type == DFMMOUNT::DeviceType::kBlockDevice) {
         if (reload) {
             QVariantMap newInfo = DeviceHelper::loadBlockInfo(id);
+            if (newInfo.isEmpty())
+                return QVariantMap();
             // Xust: fix issue that no device usage display when dfm launched
             // But I still don't understand what's being done here, maybe a more reasonable explanation is needed from xust
             bool isOptical { newInfo[DeviceProperty::kOpticalDrive].toBool() };
@@ -393,8 +397,7 @@ QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType ty
             }
             d->allBlockInfos.insert(id, newInfo);
         }
-
-        return d->allBlockInfos.value(id);
+        return d->allBlockInfos.value(id, QVariantMap());
     } else if (type == DFMMOUNT::DeviceType::kProtocolDevice) {
         if (reload) {
             const auto &&info = DeviceHelper::loadProtocolInfo(id);
@@ -402,7 +405,7 @@ QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType ty
                 d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
         }
 
-        return d->allProtocolInfos.value(id);
+        return d->allProtocolInfos.value(id, QVariantMap());
     }
     return QVariantMap();
 }

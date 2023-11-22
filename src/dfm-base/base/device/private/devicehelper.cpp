@@ -62,14 +62,14 @@ QVariantMap DeviceHelper::loadBlockInfo(const QString &id)
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
         qCWarning(logDFMBase) << "device is not exist!: " << id;
-        return {};
+        return QVariantMap();
     }
     return loadBlockInfo(dev);
 }
 
 QVariantMap DeviceHelper::loadBlockInfo(const BlockDevAutoPtr &dev)
 {
-    if (!dev) return {};
+    if (!dev) return QVariantMap();
 
     auto getNullStrIfNotValid = [&dev](Property p) {
         auto ret = dev->getProperty(p);

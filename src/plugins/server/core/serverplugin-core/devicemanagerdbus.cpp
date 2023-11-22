@@ -80,7 +80,8 @@ void DeviceManagerDBus::initConnection()
     connect(DevMngIns, &DeviceManager::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
     connect(DevMngIns, &DeviceManager::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
     connect(DevMngIns, &DeviceManager::blockDevPropertyChanged, this, [this](const QString &id, const QString &property, const QVariant &val) {
-        emit this->BlockDevicePropertyChanged(id, property, QDBusVariant(val));
+        if (!val.isNull() && val.isValid())
+            emit this->BlockDevicePropertyChanged(id, property, QDBusVariant(val));
     });
 
     connect(DevMngIns, &DeviceManager::protocolDevMounted, this, &DeviceManagerDBus::ProtocolDeviceMounted);
