@@ -323,10 +323,10 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
 
 void CommandParser::openSession()
 {
-    QString sessionPath;
+    QString sessionPath = "";
     if (!SessionBusiness::instance()->readPath(&sessionPath))
-        return;
-    openWindowWithUrl(QUrl(sessionPath));
+        qCWarning(logAppFileManager) << "no session path get";
+    openWindowWithUrl(QUrl::fromLocalFile(sessionPath));
 }
 
 void CommandParser::processEvent()

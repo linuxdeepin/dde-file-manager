@@ -7,8 +7,10 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QDebug>
-#include <KConfig>
-#include <KConfigGroup>
+#include <QFile>
+#include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
 
@@ -83,28 +85,57 @@ void SessionBusiness::savePath(const QString &path)
         qCWarning(logAppFileManager) << "failed to save path caused no usm session api init";
         return;
     }
-    KConfig config(sessionAPI.filename());
-    KConfigGroup general = config.group("General");
-    general.writeEntry("Path", path);
+    QString filePath = QString("%1/.config/%2").arg(QDir::homePath()).arg(sessionAPI.filename());
+
+    QJsonObject jsonObj;
+    jsonObj["path"] = path;
+    QJsonDocument doc(jsonObj);
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qCWarning(logAppFileManager) << "Failed to write data:" << path << " to file:" << filePath;
+        return;
+    }
+
+    file.write(doc.toJson());
+    file.close();
+
+    qCInfo(logAppFileManager) << "done to write data:" << path << " to file:" << filePath;
 }
 
-bool SessionBusiness::readPath(QString *path)
+bool SessionBusiness::readPath(QString *data)
 {
     if (!sessionAPI.isInitialized()) {
         qCWarning(logAppFileManager) << "failed to read path caused no usm session api init";
         return false;
     }
 
-    if (!path) {
+    if (!data) {
         qCWarning(logAppFileManager) << "path is null";
         return false;
     }
 
-    KConfig config(sessionAPI.filename());
-    KConfigGroup general = config.group("General");
-    *path = general.readEntry("Path", "");
-    qCInfo(logAppFileManager) << "get general path:" << *path;
-    return true;
+    QString filePath = QString("%1/.config/%2").arg(QDir::homePath()).arg(sessionAPI.filename());
+    QString &path = *data;
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qCWarning(logAppFileManager) << "can't not read data from:" << filePath;
+        return false;
+    }
+
+    QByteArray jsonData = file.readAll();
+    file.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    if (doc.isNull()) {
+        qCWarning(logAppFileManager) << "can't get the doc from:" << filePath;
+        return false;
+    }
+
+    QJsonObject jsonObj = doc.object();
+    path = jsonObj["path"].toString();
+    qCInfo(logAppFileManager) << "get the data:" << path << " from:" << filePath;
+
+    return !path.isEmpty();
 }
 
 void SessionBusiness::bindEvents()
@@ -132,5 +163,5 @@ void SessionBusiness::onCurrentUrlChanged(quint64 windId, const QUrl &url)
         getAPI()->setWindowProperty(window->winId());
     }
 
-    savePath(url.path());
+    savePath(url.toLocalFile());
 }
