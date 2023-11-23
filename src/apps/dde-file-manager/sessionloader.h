@@ -9,12 +9,12 @@
 #include <QObject>
 #include <QUrl>
 
-typedef int (*FnConnectSM)(void);
+typedef int (*FnConnectSM)(unsigned long long wid);
 typedef void (*FnDisconnectSM)(void);
 typedef void (*FnRequestSaveYourself)(void);
 typedef int (*FnParseArguments)(int argc, char *argv[]);
 typedef int (*FnSetWindowProperty)(unsigned long long wid);
-typedef const char *(*FnFilename)(void);
+typedef const char *(*FnFilename)(unsigned long long wid);
 
 class UsmSessionAPI
 {
@@ -47,14 +47,14 @@ class SessionBusiness final : public QObject
 public:
     static SessionBusiness *instance();
     UsmSessionAPI *getAPI();
-    bool readPath(QString *path = nullptr);
+    bool readPath(const QString &fileName, QString *path = nullptr);
 
 private:
     explicit SessionBusiness(QObject *parent = nullptr);
     virtual ~SessionBusiness();
 
     void bindEvents();
-    void savePath(const QString &path);
+    void savePath(unsigned long long wid, const QString &path);
 
 private slots:
     void onWindowOpened(quint64 windId);
