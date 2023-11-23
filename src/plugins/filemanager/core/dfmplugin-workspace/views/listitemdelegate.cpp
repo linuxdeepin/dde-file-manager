@@ -265,10 +265,10 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 
     geomertys.append(d->paintProxy->allPaintRect(opt, index));
 
-//    QRect iconRect = optRect;
-//    iconRect.setSize(parent()->parent()->iconSize());
+    //    QRect iconRect = optRect;
+    //    iconRect.setSize(parent()->parent()->iconSize());
 
-//    geomertys << iconRect;
+    //    geomertys << iconRect;
 
     columnX = geomertys.first().right() + GlobalPrivate::kIconSpacing;
 
@@ -512,7 +512,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
     if (data.canConvert<QString>()) {
         QString fileName {};
 
-        if (Q_LIKELY(!FileUtils::isDesktopFile(url))) {
+        if (Q_LIKELY(!FileUtils::isDesktopFileSuffix(url))) {
             do {
                 if (role != kItemNameRole && role != kItemFileDisplayNameRole)
                     break;

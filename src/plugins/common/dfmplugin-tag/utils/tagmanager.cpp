@@ -522,7 +522,7 @@ bool TagManager::localFileCanTagFilter(const FileInfoPointer &info) const
     if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
         return false;
 
-    if (FileUtils::isDesktopFile(url)) {
+    if (FileUtils::isDesktopFileSuffix(url)) {
         auto desktopInfo { dynamic_cast<DesktopFileInfo *>(info.data()) };
         if (desktopInfo)
             return desktopInfo->canTag();
