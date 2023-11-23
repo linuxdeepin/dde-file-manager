@@ -262,14 +262,45 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 
 bool FileUtils::isDesktopFile(const QUrl &url)
 {
-    if (Q_UNLIKELY(FileUtils::isTrashFile(url)))
-        return url.toString().endsWith(".desktop");
-    return url.toLocalFile().endsWith(".desktop");
+    // At present, there is no dfmio library code. For temporary repair, use the method on v20 to obtain mimeType
+    auto info = InfoFactory::create<FileInfo>(url);
+    if (!info)
+        return false;
+    return isDesktopFileInfo(info);
+}
+
+bool FileUtils::isDesktopFileSuffix(const QUrl &url)
+{
+    // It's not rigorous,
+    // but there are interfaces that call "isDesktopFile"
+    // so often that it would be a performance loss to
+    // create a fileinfo
+    return url.toString().endsWith(".desktop");
+}
+
+bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
+{
+    Q_ASSERT(info);
+    const QString &suffix = info->nameOf(NameInfoType::kSuffix);
+    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
+        || info->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)) {
+        const QUrl &url = info->urlOf(UrlInfoType::kUrl);
+        QMimeType type = info->fileMimeType();
+        if (!type.isValid())
+            type = DMimeDatabase().mimeTypeForFile(url.path(), QMimeDatabase::MatchDefault, QString());
+
+        // QMimeType::suffixes is not the same as fileinfo's `kSuffix`.
+        if (type.name() == "application/x-desktop"
+            && type.suffixes().contains(DFMBASE_NAMESPACE::Global::Scheme::kDesktop, Qt::CaseInsensitive))
+            return true;
+    }
+
+    return false;
 }
 
 bool FileUtils::isTrashDesktopFile(const QUrl &url)
 {
-    if (isDesktopFile(url)) {
+    if (isDesktopFileSuffix(url)) {
         DesktopFile df(url.toLocalFile());
         return df.desktopDeepinId() == kDDETrashId;
     }
@@ -278,7 +309,7 @@ bool FileUtils::isTrashDesktopFile(const QUrl &url)
 
 bool FileUtils::isComputerDesktopFile(const QUrl &url)
 {
-    if (isDesktopFile(url)) {
+    if (isDesktopFileSuffix(url)) {
         DesktopFile df(url.toLocalFile());
         return df.desktopDeepinId() == kDDEComputerId;
     }
@@ -287,7 +318,7 @@ bool FileUtils::isComputerDesktopFile(const QUrl &url)
 
 bool FileUtils::isHomeDesktopFile(const QUrl &url)
 {
-    if (isDesktopFile(url)) {
+    if (isDesktopFileSuffix(url)) {
         DesktopFile df(url.toLocalFile());
         return df.desktopDeepinId() == kDDEHomeId;
     }
@@ -520,7 +551,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
 
         if (isDesktopApp) {
             qCDebug(logDFMBase) << "this is desktop app case,file name will be changed { " << oldFileName << " } to { "
-                     << fileBaseName << " } for path:" << info->urlOf(UrlInfoType::kUrl);
+                                << fileBaseName << " } for path:" << info->urlOf(UrlInfoType::kUrl);
         }
 
         if (changedUrl != url)
@@ -579,7 +610,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
 
         if (isDesktopApp) {
             qCDebug(logDFMBase) << "this is desktop app case,file name will be changed as { "
-                     << fileBaseName << " } for path:" << info->urlOf(UrlInfoType::kUrl);
+                                << fileBaseName << " } for path:" << info->urlOf(UrlInfoType::kUrl);
         }
 
         ++index;

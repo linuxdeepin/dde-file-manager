@@ -36,6 +36,9 @@ public:
 
     // check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
     static bool isDesktopFile(const QUrl &url);
+    static bool isDesktopFileSuffix(const QUrl &url);
+    static bool isDesktopFileInfo(const FileInfoPointer &info);
+
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
     static bool isHomeDesktopFile(const QUrl &url);

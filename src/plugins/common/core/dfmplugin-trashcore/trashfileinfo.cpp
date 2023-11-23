@@ -241,7 +241,7 @@ QString TrashFileInfo::displayOf(const DisPlayInfoType type) const
             return QString();
 
         if (d->targetUrl.isValid()) {
-            if (FileUtils::isDesktopFile(d->targetUrl)) {
+            if (FileUtils::isDesktopFileSuffix(d->targetUrl)) {
                 DesktopFileInfo dfi(d->targetUrl);
                 return dfi.displayOf(DisPlayInfoType::kFileDisplayName);
             }
@@ -324,7 +324,7 @@ QFile::Permissions TrashFileInfo::permissions() const
 QIcon TrashFileInfo::fileIcon()
 {
     if (d->targetUrl.isValid()) {
-        if (FileUtils::isDesktopFile(d->targetUrl)) {
+        if (FileUtils::isDesktopFileSuffix(d->targetUrl)) {
             DesktopFileInfo dfi(d->targetUrl);
             return dfi.fileIcon();
         }
