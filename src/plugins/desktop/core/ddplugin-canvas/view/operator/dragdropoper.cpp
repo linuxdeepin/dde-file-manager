@@ -484,6 +484,19 @@ bool DragDropOper::dropMimeData(QDropEvent *event) const
             }
         }
         return true;
+    } else if (WindowUtils::isWayLand()) {
+        // Bug-209635，wayland下wine应用拖拽时，QDragEvent中的action为Qt::IgnoreActon
+        // 当拖拽事件action无效时，判断文件来源，wine应用默认做CopyAction处理
+        QList<QUrl> urls = event->mimeData()->urls();
+
+        if (!urls.isEmpty()) {
+            const QUrl from = QUrl(urls.first());
+            if (!from.path().contains("/.deepinwine/"))
+                return false;
+            if (model->dropMimeData(event->mimeData(), Qt::CopyAction, targetIndex.row(), targetIndex.column(), targetIndex))
+                event->acceptProposedAction();
+            return true;
+        }
     }
     return false;
 }
