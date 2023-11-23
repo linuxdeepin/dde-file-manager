@@ -268,7 +268,6 @@ static void initSessionBusiness(int argc, char *argv[])
 
     if (SessionBusiness::instance()->getAPI()->init()) {
         SessionBusiness::instance()->getAPI()->parseArguments(argc, argv);
-        SessionBusiness::instance()->getAPI()->connectSM();
     }
 }
 

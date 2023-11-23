@@ -318,15 +318,18 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, QStringList() << name);
         });
     }
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n"));
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n") || isSet("s") || isSet("sessionfile"));
 }
 
 void CommandParser::openSession()
 {
-    QString sessionPath = "";
-    if (!SessionBusiness::instance()->readPath(&sessionPath))
-        qCWarning(logAppFileManager) << "no session path get";
-    openWindowWithUrl(QUrl::fromLocalFile(sessionPath));
+    for (QString filename : positionalArguments()) {
+        QString sessionFile = "";
+        if (!SessionBusiness::instance()->readPath(filename, &sessionFile))
+            qCWarning(logAppFileManager) << "no session path get";
+        openWindowWithUrl(QUrl::fromLocalFile(sessionFile));
+        break;   // current time only support one file.
+    }
 }
 
 void CommandParser::processEvent()

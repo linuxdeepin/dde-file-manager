@@ -79,13 +79,13 @@ UsmSessionAPI *SessionBusiness::getAPI()
     return &sessionAPI;
 }
 
-void SessionBusiness::savePath(const QString &path)
+void SessionBusiness::savePath(unsigned long long wid, const QString &path)
 {
     if (!sessionAPI.isInitialized()) {
         qCWarning(logAppFileManager) << "failed to save path caused no usm session api init";
         return;
     }
-    QString filePath = QString("%1/.config/%2").arg(QDir::homePath()).arg(sessionAPI.filename());
+    QString filePath = QString("%1/.config/%2").arg(QDir::homePath()).arg(sessionAPI.filename(wid));
 
     QJsonObject jsonObj;
     jsonObj["path"] = path;
@@ -102,7 +102,7 @@ void SessionBusiness::savePath(const QString &path)
     qCInfo(logAppFileManager) << "done to write data:" << path << " to file:" << filePath;
 }
 
-bool SessionBusiness::readPath(QString *data)
+bool SessionBusiness::readPath(const QString &fileName, QString *data)
 {
     if (!sessionAPI.isInitialized()) {
         qCWarning(logAppFileManager) << "failed to read path caused no usm session api init";
@@ -114,7 +114,7 @@ bool SessionBusiness::readPath(QString *data)
         return false;
     }
 
-    QString filePath = QString("%1/.config/%2").arg(QDir::homePath()).arg(sessionAPI.filename());
+    QString filePath = QString("%1/.config/session/%2_%3").arg(QDir::homePath()).arg(QCoreApplication::applicationName()).arg(fileName);
     QString &path = *data;
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -150,6 +150,7 @@ void SessionBusiness::onWindowOpened(quint64 windId)
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
     if (getAPI()->isInitialized()) {
+        getAPI()->connectSM(window->winId());
         getAPI()->setWindowProperty(window->winId());
     }
 }
@@ -159,9 +160,5 @@ void SessionBusiness::onCurrentUrlChanged(quint64 windId, const QUrl &url)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
-    if (getAPI()->isInitialized()) {
-        getAPI()->setWindowProperty(window->winId());
-    }
-
-    savePath(url.toLocalFile());
+    savePath(window->winId(), url.toLocalFile());
 }
