@@ -210,6 +210,11 @@ QList<QIcon> EmblemHelper::systemEmblems(const FileInfoPointer &info) const
     if (!info)
         return {};
 
+    // feat: https://pms.uniontech.com/story-view-31477.html
+    // For desktop files hide all system emblem icons
+    if (FileUtils::isDesktopFileInfo(info))
+        return {};
+
     QList<QIcon> emblems;
 
     if (info->isAttributes(OptInfoType::kIsSymLink))
