@@ -182,14 +182,14 @@ void ComputerPropertyDialog::closeEvent(QCloseEvent *event)
 
 static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision = 1)
 {
-    static QString type[] { " B", " KB", " MB", " GB", " TB" };
+    QStringList type { " B", " KB", " MB", " GB", " TB" };
 
     qulonglong lc = cap;
     double dc = cap;
     double ds = size;
 
-    for (size_t p = 0; p < sizeof(type); ++p) {
-        if (cap < pow(size, p + 1) || p == sizeof(type) - 1) {
+    for (int p = 0; p < type.size(); ++p) {
+        if (cap < pow(size, p + 1) || p == (type.size() - 1)) {
             if (!precision) {
                 //! 内存总大小只能是整数所以当内存大小有小数时，就需要向上取整
                 int mem = static_cast<int>(ceil(lc / pow(size, p)));
