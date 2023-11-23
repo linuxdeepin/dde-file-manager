@@ -31,8 +31,7 @@ using namespace filedialog_core;
 DWIDGET_USE_NAMESPACE
 
 FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
-    : QFrame(parent)
-    , mainWindow(qobject_cast<FileDialog *>(parent))
+    : QFrame(parent), mainWindow(qobject_cast<FileDialog *>(parent))
 {
     initializeUi();
     initializeConnect();
@@ -270,6 +269,9 @@ void FileDialogStatusBar::initializeUi()
     mainLayout->addWidget(line);
     mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
     mainLayout->addLayout(contentLayout);
+
+    // 在布局未更新前，界面不应该被显示
+    setVisible(false);
 }
 
 void FileDialogStatusBar::initializeConnect()
@@ -291,6 +293,7 @@ void FileDialogStatusBar::updateLayout()
     if (!mainWindow)
         return;
 
+    setVisible(true);
     while (contentLayout->count() > 0)
         delete contentLayout->takeAt(0);
 
