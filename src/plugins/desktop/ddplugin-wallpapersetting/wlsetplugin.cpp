@@ -157,8 +157,8 @@ void EventHandle::show(QString name, int mode)
 #else
 bool EventHandle::wallpaperSetting(const QString &name)
 {
-    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                   "com.deepin.dde.ControlCenter", "ShowPage");
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
+                                   "org.deepin.dde.ControlCenter1", "ShowPage");
     msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("WallpaperSetting"))});
     QDBusConnection::sessionBus().asyncCall(msg, 5);
     fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
@@ -167,8 +167,8 @@ bool EventHandle::wallpaperSetting(const QString &name)
 
 bool EventHandle::screenSaverSetting(const QString &name)
 {
-    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                   "com.deepin.dde.ControlCenter", "ShowPage");
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
+                                   "org.deepin.dde.ControlCenter1", "ShowPage");
     msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("ScreensaverSetting"))});
     QDBusConnection::sessionBus().asyncCall(msg, 5);
     fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
