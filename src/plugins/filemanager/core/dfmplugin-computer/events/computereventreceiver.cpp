@@ -18,6 +18,7 @@
 
 #include <QDebug>
 #include <QDBusInterface>
+#include <QApplication>
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -224,7 +225,7 @@ bool ComputerEventReceiver::askForConfirmChmod(const QString &devName)
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     using namespace Dtk::Widget;
     DDialog dlg(tr("%1 is read-only. Do you want to enable read and write permissions for it?").arg(devName),
-                tr("Once enabled, read/write permission will be granted permanently"));
+                tr("Once enabled, read/write permission will be granted permanently"), qApp->activeWindow());
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
     dlg.addButton(tr("Cancel"));
     int confirmIdx = dlg.addButton(tr("Enable Now"), true, DDialog::ButtonRecommend);

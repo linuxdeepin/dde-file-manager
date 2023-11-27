@@ -1016,18 +1016,7 @@ void DeviceManagerPrivate::unmountStackedMount(const QString &mpt)
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,
                                                                        const QString &domainDefault, const QString &uri)
 {
-    // NOTE: in both x11 and wayland, if dialog's parent is setted  , the dialog.exec blocks all
-    // visiable windows, which means you cannot do operations in an idle file manager window
-    // when a dialog is exec-ed, which is not expected actually.
-    // but in wayland, if the dialog is an orphan, it's modaled but the layer can be switched,
-    // which means when the dialog is lower than the main window(main window shadows the dialog)
-    // then the whole application blocked, you cannot move or switch its' layer but can only
-    // kill the process.
-    // so only in wayland, give parent to dialog to AVOID this.
-    // "dialogs' layer can be switched when exec in wayland" is a known BUG, says that there is no
-    // concept of dialogs in wayland, but only the 'popup' menu.
-    QWidget *parent = WindowUtils::isWayLand() ? qApp->activeWindow() : nullptr;
-    MountAskPasswordDialog dlg(parent);
+    MountAskPasswordDialog dlg(qApp->activeWindow());
 
     // daemon mount return plain text which should be replaced with translated text.
     QString msg(message);
@@ -1111,7 +1100,7 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
         qCDebug(logDFMBase) << "filtered question message is: " << newMsg;
     }
     DWIDGET_USE_NAMESPACE
-    DDialog askForChoice;
+    DDialog askForChoice(qApp->activeWindow());
     askForChoice.setTitle(title);
     askForChoice.setMessage(newMsg);
     askForChoice.addButtons(choices);

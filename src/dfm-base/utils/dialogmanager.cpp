@@ -48,7 +48,7 @@ DDialog *DialogManager::showQueryScanningDialog(const QString &title)
 
 void DialogManager::showErrorDialog(const QString &title, const QString &message)
 {
-    DDialog d(title, message);
+    DDialog d(title, message, qApp->activeWindow());
     Qt::WindowFlags flags = d.windowFlags();
     // dialog show top
     d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
@@ -60,7 +60,7 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
 
 int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, const QString &title, const QString &message, QString btnTxt)
 {
-    DDialog d(title, message);
+    DDialog d(title, message, qApp->activeWindow());
     d.moveToCenter();
     QStringList buttonTexts;
     buttonTexts.append(btnTxt);
@@ -176,7 +176,7 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
     f.setPixelSize(16);
     QFontMetrics fm(f);
 
-    DDialog d;
+    DDialog d(qApp->activeWindow());
 
     if (urls.count() == 1) {
 
@@ -232,7 +232,7 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
 
 void DialogManager::showCopyMoveToSelfDialog()
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     d.setTitle(tr("Operation failed!"));
     d.setMessage(tr("Target folder is inside the source folder!"));
     QStringList buttonTexts;
@@ -278,24 +278,13 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
  */
 QString DialogManager::askPasswordForLockedDevice(const QString &devName)
 {
-    // NOTE: in both x11 and wayland, if dialog's parent is setted  , the dialog.exec blocks all
-    // visiable windows, which means you cannot do operations in an idle file manager window
-    // when a dialog is exec-ed, which is not expected actually.
-    // but in wayland, if the dialog is an orphan, it's modaled but the layer can be switched,
-    // which means when the dialog is lower than the main window(main window shadows the dialog)
-    // then the whole application blocked, you cannot move or switch its' layer but can only
-    // kill the process.
-    // so only in wayland, give parent to dialog to AVOID this.
-    // "dialogs' layer can be switched when exec in wayland" is a known BUG, says that there is no
-    // concept of dialogs in wayland, but only the 'popup' menu.
-    QWidget *parent = WindowUtils::isWayLand() ? qApp->activeWindow() : nullptr;
-    MountSecretDiskAskPasswordDialog dialog(tr("The passphrase is needed to access encrypted data on %1.").arg(devName), parent);
+    MountSecretDiskAskPasswordDialog dialog(tr("The passphrase is needed to access encrypted data on %1.").arg(devName), qApp->activeWindow());
     return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
 }
 
 bool DialogManager::askForFormat()
 {
-    DDialog dlg;
+    DDialog dlg(qApp->activeWindow());
     dlg.setIcon(warningIcon);
     dlg.addButton(tr("Cancel", "button"));
     dlg.addButton(tr("Format", "button"), true, DDialog::ButtonRecommend);
@@ -306,7 +295,7 @@ bool DialogManager::askForFormat()
 
 int DialogManager::showRunExcutableScriptDialog(const QUrl &url)
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     const int maxDisplayNameLength = 250;
 
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
@@ -337,7 +326,7 @@ int DialogManager::showRunExcutableScriptDialog(const QUrl &url)
 
 int DialogManager::showRunExcutableFileDialog(const QUrl &url)
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
     const int maxDisplayNameLength = 200;
@@ -385,7 +374,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList, bool isTras
         title = DeleteFileItems.arg(urlList.size());
     }
 
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     if (!d.parentWidget()) {
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
     }
@@ -429,7 +418,7 @@ int DialogManager::showClearTrashDialog(const quint64 &count)
     else
         title = ClearTrashMutliple.arg(count);
 
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     if (!d.parentWidget()) {
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
     }
@@ -451,7 +440,7 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     if (urls.isEmpty())
         return QDialog::Rejected;
 
-    DDialog d;
+    DDialog d(qApp->activeWindow());
 
     if (!d.parentWidget()) {
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
@@ -489,7 +478,7 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
 
 void DialogManager::showRestoreFailedDialog(const int count)
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     d.setTitle(tr("Operation failed!"));
     if (count == 1) {
         d.setMessage(tr("Failed to restore %1 file, the target folder is read-only").arg(QString::number(1)));
@@ -503,7 +492,7 @@ void DialogManager::showRestoreFailedDialog(const int count)
 
 int DialogManager::showRenameNameSameErrorDialog(const QString &name)
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     QFontMetrics fm(d.font());
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
     QStringList buttonTexts;
@@ -517,7 +506,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name)
 
 void DialogManager::showRenameBusyErrDialog()
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     QFontMetrics fm(d.font());
     d.setTitle(tr("Device or resource busy"));
     QStringList buttonTexts;
@@ -530,7 +519,7 @@ void DialogManager::showRenameBusyErrDialog()
 
 int DialogManager::showRenameNameDotBeginDialog()
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     QFontMetrics fm(d.font());
     d.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
     d.addButton(tr("Hide"), true, DDialog::ButtonWarning);
@@ -556,7 +545,7 @@ int DialogManager::showUnableToVistDir(const QString &dir)
     int code = -1;
     if (showFlag) {
         showFlag = false;
-        DDialog d;
+        DDialog d(qApp->activeWindow());
         d.setTitle(tr("Unable to access %1").arg(dir));
         d.setMessage(" ");
         QStringList buttonTexts;
@@ -573,7 +562,7 @@ int DialogManager::showUnableToVistDir(const QString &dir)
 
 DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const QString &targetName, const QUrl &linkfile)
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     QString warnText = tr("%1 that this shortcut refers to has been changed or moved");
     QFontMetrics fm(d.font());
     QString _targetName = fm.elidedText(targetName, Qt::ElideMiddle, 120);
@@ -601,7 +590,7 @@ DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const Q
 
 int DialogManager::showAskIfAddExcutableFlagAndRunDialog()
 {
-    DDialog d;
+    DDialog d(qApp->activeWindow());
     // i18n text from: https://github.com/linuxdeepin/internal-discussion/issues/456 , seems a little weird..
     QString message = tr("This file is not executable, do you want to add the execute permission and run?");
     d.addButton(tr("Cancel", "button"));

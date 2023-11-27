@@ -20,6 +20,7 @@
 #include <QPushButton>
 #include <QStandardPaths>
 #include <QRegularExpression>
+#include <QApplication>
 
 using namespace dfmplugin_burn;
 DWIDGET_USE_NAMESPACE
@@ -36,7 +37,7 @@ int BurnHelper::showOpticalBlankConfirmationDialog()
     buttonTexts.append(QObject::tr("Cancel", "button"));
     buttonTexts.append(QObject::tr("Erase", "button"));
 
-    DDialog d;
+    DDialog d(qApp->activeWindow());
 
     if (!d.parentWidget()) {
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
@@ -62,7 +63,8 @@ int BurnHelper::showOpticalImageOpSelectionDialog()
     buttonTexts.append(QObject::tr("Cancel", "button"));
     buttonTexts.append(QObject::tr("Burn image", "button"));
     buttonTexts.append(QObject::tr("Burn files", "button"));
-    DDialog d;
+
+    DDialog d(qApp->activeWindow());
 
     if (!d.parentWidget())
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
