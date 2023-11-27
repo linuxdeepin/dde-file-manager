@@ -530,8 +530,9 @@ bool PluginManagerPrivate::doStopPlugin(PluginMetaObjectPointer pointer)
     pointer->d->state = PluginMetaObject::State::kStoped;
     qCInfo(logDPF) << "stop" << pointer->d->loader->fileName();
 
-    if (!pointer->d->loader->unload()) {
-        qCWarning(logDPF) << "Unload plugin failed: " << pointer->d->loader->errorString();
+    if (!pointer->d->isVirtual && !pointer->d->loader->unload()) {
+        qCWarning(logDPF) << "Unload plugin failed: " << pointer->d->name
+                          << pointer->d->loader->errorString();
         return false;
     }
 
