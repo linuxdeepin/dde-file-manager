@@ -1161,6 +1161,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
         if (d->currentViewMode == Global::ViewMode::kListMode && d->itemsExpandable) {
             if (index.data(kItemTreeViewCanExpandRole).toBool() && expandOrCollapseItem(index, event->pos())) {
                 d->lastMousePressedIndex = QModelIndex();
+                d->pressedStartWithExpand = true;
                 return;
             }
         }
@@ -1222,6 +1223,9 @@ void FileView::mousePressEvent(QMouseEvent *event)
 
 void FileView::mouseMoveEvent(QMouseEvent *event)
 {
+    if (d->pressedStartWithExpand)
+        return;
+
     if (event->buttons() & Qt::LeftButton)
         d->mouseMoveRect = QRect(event->globalPos(), d->mouseLastPos);
 
@@ -1230,6 +1234,8 @@ void FileView::mouseMoveEvent(QMouseEvent *event)
 
 void FileView::mouseReleaseEvent(QMouseEvent *event)
 {
+    d->pressedStartWithExpand = false;
+
     if (event->buttons() & Qt::LeftButton) {
         d->mouseMoveRect = QRect(-1, -1, 1, 1);
         d->mouseLastPos = QPoint(0, 0);

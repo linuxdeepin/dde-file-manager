@@ -72,6 +72,7 @@ class FileViewPrivate
     QTimer *scrollBarValueChangedTimer { nullptr };
     bool scrollBarSliderPressed { false };
 
+    bool pressedStartWithExpand { false };
     bool mouseLeftPressed { false };
     QPoint mouseLastPos { QPoint(0, 0) };
     QRect mouseMoveRect { QRect(-1, -1, 1, 1) };
