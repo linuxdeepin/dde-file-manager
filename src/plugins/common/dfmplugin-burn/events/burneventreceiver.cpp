@@ -61,7 +61,7 @@ void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUD
 
 void BurnEventReceiver::handleShowDumpISODlg(const QString &devId)
 {
-    QScopedPointer<DumpISOOptDialog> dlg { new DumpISOOptDialog(devId) };
+    QScopedPointer<DumpISOOptDialog> dlg { new DumpISOOptDialog(devId, qApp->activeWindow()) };
     dlg->exec();
 }
 
@@ -97,7 +97,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
                     DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn,
                                                              tr("Unable to burn. Not enough free space on the target disk."));
                 } else {
-                    QScopedPointer<BurnOptDialog> dlg { new BurnOptDialog(dev) };
+                    QScopedPointer<BurnOptDialog> dlg { new BurnOptDialog(dev, qApp->activeWindow()) };
                     dlg->setISOImage(urls.front());
                     dlg->exec();
                 }
