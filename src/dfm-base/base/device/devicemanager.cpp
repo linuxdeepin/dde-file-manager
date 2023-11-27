@@ -169,6 +169,10 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
         }
 
         auto callback = [cb, id, this](bool ok, const OperationErrorInfo &err, const QString &mpt) {
+            // For DVD+RW/DVD-RW discs burned with PW,
+            // dfm-burn does not accurately get the capacity information,
+            // so it needs to be updated.
+            d->watcher->updateOpticalDevUsage(id, mpt);
             Q_EMIT this->blockDevMountResult(id, ok);
             if (ok)
                 Q_EMIT this->blockDevMountedManually(id, mpt);   // redundant: to notify deviceproxymanager update the cache.

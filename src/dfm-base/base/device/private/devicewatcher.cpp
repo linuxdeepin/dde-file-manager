@@ -182,11 +182,59 @@ void DeviceWatcher::queryOpticalDevUsage(const QString &id)
         data[DeviceProperty::kOpticalMediaType] = static_cast<int>(info->mediaType());
         data[DeviceProperty::kOpticalWriteSpeed] = info->writeSpeed();
     }
-    if (sizeChanged) {
-        DeviceHelper::persistentOpticalInfo(data);
-        emit DevMngIns->devSizeChanged(id, data[DeviceProperty::kSizeTotal].toULongLong(), data[DeviceProperty::kSizeFree].toULongLong());
-        DevProxyMng->reloadOpticalInfo(id);
-    }
+    if (sizeChanged)
+        saveOpticalDevUsage(id, data);
+}
+
+/*!
+ * \brief DeviceWatcher::updateOpticalDevUsage
+ * \param id
+ * \param mpt
+ *
+ * TODO(zhangs): this is WORKAROUND!!!
+ * refactor: optical disc info by SCSI
+ */
+void DeviceWatcher::updateOpticalDevUsage(const QString &id, const QString &mpt)
+{
+    FinallyUtil final([id] { qCInfo(logDFMBase) << "update optical usage finished for" << id; });
+    Q_UNUSED(final);
+    if (mpt.isEmpty())
+        return;
+
+    QVariantMap data = DeviceHelper::loadBlockInfo(id);
+    if (data.value(DeviceProperty::kId).toString().isEmpty() || !data.value(DeviceProperty::kOptical).toBool())
+        return;
+
+    const QString &mediaType { DeviceUtils::formatOpticalMediaType(data.value(DeviceProperty::kMedia).toString()) };
+    if (mediaType != "DVD+RW" && mediaType != "DVD-RW")
+        return;
+
+    const QString &fs { data.value(DeviceProperty::kFileSystem).toString() };
+    if (fs != "udf")
+        return;
+
+    const quint64 freeSize { data.value(DeviceProperty::kSizeFree).toULongLong() };
+    if (freeSize != 0)
+        return;
+
+    // Note: QStorageInfo::bytesTotal is not accurate for DVD-RW
+    // TODO(zhangs): For the total capacity of a DVD-RW disc,
+    // the current total capacity is only the capacity of the region being **formatted**,
+    // not the capacity of the physical disc. Although you can refer to the dvd+rw-mediainfo
+    // implementation, this involves a lot of low level code and is not suitable to be written in dde-file-manager,
+    // it should be implemented in `dfm-burn` in the future!
+    QStorageInfo si(mpt);
+    qint64 avai = si.bytesAvailable() > 0 ? si.bytesAvailable() : 0;
+    data[DeviceProperty::kSizeUsed] = static_cast<quint64>(si.bytesTotal() - avai);
+
+    saveOpticalDevUsage(id, data);
+}
+
+void DeviceWatcher::saveOpticalDevUsage(const QString &id, const QVariantMap &data)
+{
+    DeviceHelper::persistentOpticalInfo(data);
+    emit DevMngIns->devSizeChanged(id, data[DeviceProperty::kSizeTotal].toULongLong(), data[DeviceProperty::kSizeFree].toULongLong());
+    DevProxyMng->reloadOpticalInfo(id);
 }
 
 void DeviceWatcher::startWatch()
