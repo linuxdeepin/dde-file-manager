@@ -40,6 +40,8 @@ public:
     void initDevDatas();
 
     void queryOpticalDevUsage(const QString &id);
+    void updateOpticalDevUsage(const QString &id, const QString &mpt);
+    void saveOpticalDevUsage(const QString &id, const QVariantMap &data);
 
 private Q_SLOTS:
     void onBlkDevAdded(const QString &id);
