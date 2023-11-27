@@ -185,7 +185,7 @@ CollectionTitleBar::CollectionTitleBar(const QString &uuid, QWidget *parent)
 {
     setObjectName("titleBar");
     setBlendMode(DBlurEffectWidget::InWindowBlend);
-    setMaskColor(QColor(0, 31, 119, static_cast<int>(0.2 * 255)));
+    setMaskColor(QColor(0, 0, 0, static_cast<int>(0.1 * 255)));
 
     d->nameWidget->installEventFilter(this);
 
@@ -290,7 +290,7 @@ void CollectionTitleBar::rounded()
 {
     QPainterPath path;
     const qreal radius = 8;
-    QRect rect(0, 0, width(), height());
+    QRect rect(0, 0, width() + 1, height()); // Correct 1px for width
 
     path.moveTo(rect.topLeft().x() + radius, rect.topLeft().y() + radius);
     path.arcTo(QRect(rect.topLeft(), QSize(radius * 2, radius * 2)), 90, 90);

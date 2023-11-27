@@ -36,7 +36,9 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
-static constexpr int kCollectionViewMargin = 2;
+// no need view margin, this 2px used to draw inner and out order.
+static constexpr int kCollectionViewMargin = 0; //2
+
 static constexpr int kCollectionItemVerticalMargin = 2;
 static constexpr int kIconOffset = 10;
 static constexpr int kIconSelectMargin = 3;
@@ -70,7 +72,8 @@ void CollectionViewPrivate::initUI()
     delegate = new CollectionItemDelegate(q);
     q->setItemDelegate(delegate);
 
-    // todo:disble selection???
+    auto ef = new GraphicsEffect(q);
+    q->viewport()->setGraphicsEffect(ef);
 }
 
 void CollectionViewPrivate::initConnect()
@@ -2215,4 +2218,99 @@ void CollectionView::currentChanged(const QModelIndex &current, const QModelInde
     // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
     if (!testAttribute(Qt::WA_InputMethodEnabled))
         setAttribute(Qt::WA_InputMethodEnabled, true);
+}
+
+GraphicsEffect::GraphicsEffect(CollectionView *parent)
+    : QGraphicsEffect(parent)
+    , view(parent)
+{
+
+}
+
+void GraphicsEffect::draw(QPainter *painter)
+{
+    const int opacity = view->viewport()->height() * view->viewport()->devicePixelRatioF() * 0.05;
+
+    bool drawTop = false;
+    bool drawBottom = false;
+    {
+        const int currentScroll = view->verticalScrollBar()->value();
+        const int maxScroll = view->verticalScrollBar()->maximum();
+        const int minScroll = view->verticalScrollBar()->minimum();
+        if (opacity > 1) {
+            if (minScroll != maxScroll) {
+                if (currentScroll == maxScroll)
+                    drawTop = true;
+                else if (currentScroll == minScroll)
+                    drawBottom = true;
+                else {
+                    drawTop = true;
+                    drawBottom = true;
+                }
+            }
+        }
+    }
+
+    if (!drawTop && !drawBottom) {
+        drawSource(painter);
+        return;
+    }
+
+    QPoint offset;
+    const QPixmap source = sourcePixmap(Qt::LogicalCoordinates, &offset, QGraphicsEffect::NoPad);
+    if (source.isNull())
+        return;
+
+    const auto size = source.size();
+    painter->save();
+
+    QPixmap target(source.size());
+    target.fill(Qt::transparent);
+    QPainter pixmapPainter(&target);
+    pixmapPainter.setRenderHints(painter->renderHints());
+
+    int begin = 0;
+    if (drawTop) {
+        pixmapPainter.save();
+        for (; begin < opacity; ++begin ) {
+            QRect rect(0, begin, size.width(), 1);
+            pixmapPainter.setOpacity((begin) / qreal(opacity));
+            pixmapPainter.drawPixmap(rect, source, rect);
+        }
+        pixmapPainter.restore();
+    }
+
+    if (drawBottom) {
+        pixmapPainter.save();
+
+        const QRect content(0, begin, size.width(), size.height() - begin - opacity);
+        pixmapPainter.drawPixmap(content, source, content);
+
+        int bottom = size.height() - opacity;
+        for (int i = 0; i < opacity; ++i ) {
+            QRect rect(0, bottom + i, size.width(), 1);
+            pixmapPainter.setOpacity((opacity - i) / qreal(opacity));
+            pixmapPainter.drawPixmap(rect, source, rect);
+        }
+
+        pixmapPainter.restore();
+    } else {
+        const QRect content(0, begin, size.width(), size.height() - begin);
+        pixmapPainter.drawPixmap(content, source, content);
+    }
+
+    target.setDevicePixelRatio(source.devicePixelRatioF());
+    painter->drawPixmap(offset, target);
+    painter->restore();
+}
+
+void GraphicsEffect::sourceChanged(QGraphicsEffect::ChangeFlags flags)
+{
+    updateBoundingRect();
+    update();
+}
+
+QRectF GraphicsEffect::boundingRectFor(const QRectF &sourceRect) const
+{
+    return sourceRect;
 }

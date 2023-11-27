@@ -47,12 +47,14 @@ public:
 signals:
     void sigRequestClose(const QString &id);
     void sigRequestAdjustSizeMode(const CollectionFrameSize &size);
-
+protected slots:
+    void updateMaskColor();
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     QSharedPointer<CollectionWidgetPrivate> d = nullptr;
