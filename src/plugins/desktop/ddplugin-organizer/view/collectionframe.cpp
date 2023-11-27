@@ -409,13 +409,26 @@ void CollectionFrame::resizeEvent(QResizeEvent *event)
 
 void CollectionFrame::paintEvent(QPaintEvent *event)
 {
+    // draw out border
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
-    bool isDark = Dtk::Gui::DGuiApplicationHelper::instance()->themeType() == Dtk::Gui::DGuiApplicationHelper::DarkType;
+    // dark :#000000 20%, light #000000 8%
+    qreal alpha = Dtk::Gui::DGuiApplicationHelper::instance()->themeType() == Dtk::Gui::DGuiApplicationHelper::DarkType
+            ? 0.2 : 0.08;
+
     p.setPen(Qt::NoPen);
-    p.setBrush(isDark ? QColor(41, 41, 41, 89) : QColor(126, 126, 126, 64));
-    p.drawRoundRect(QRect(QPoint(0, 0), size()), kWidgetRoundRadius, kWidgetRoundRadius);
+    p.setBrush(QColor(0, 0, 0, static_cast<int>(255 * alpha)));
+
+    const QRect rect(QPoint(0, 0), size());
+    QPainterPath out;
+    out.addRoundedRect(rect, kWidgetRoundRadius, kWidgetRoundRadius);
+    QPainterPath in;
+    in.addRoundedRect(rect.marginsRemoved(QMargins(1, 1, 1, 1)), kWidgetRoundRadius, kWidgetRoundRadius);
+    p.drawPath(out - in);
+
+    // transparent
     event->accept();
+    return;
 }
 
 void CollectionFrame::focusOutEvent(QFocusEvent *event)
@@ -431,7 +444,7 @@ void CollectionFrame::initUi()
     setAutoFillBackground(false);
 
     d->mainLayout = new QVBoxLayout(this);
-    d->mainLayout->setContentsMargins(0, 0, 0, 0);
+    d->mainLayout->setContentsMargins(1, 1, 1, 1); // 1px for border
     this->setLayout(d->mainLayout);
     setContentsMargins(0, 0, 0, 0);
 }

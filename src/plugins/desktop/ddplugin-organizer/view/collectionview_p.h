@@ -17,7 +17,22 @@
 #include <QUrl>
 #include <QPointer>
 
+#include <QGraphicsEffect>
+
 namespace ddplugin_organizer {
+
+class GraphicsEffect : public QGraphicsEffect
+{
+    Q_OBJECT
+public:
+    explicit GraphicsEffect(CollectionView *parent);
+protected:
+    void draw(QPainter *painter) override;
+    void sourceChanged(ChangeFlags flags) override;
+    QRectF boundingRectFor(const QRectF &sourceRect) const override;
+private:
+    CollectionView *view;
+};
 
 class CollectionViewPrivate : public QObject
 {
