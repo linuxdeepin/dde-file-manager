@@ -719,7 +719,6 @@ void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QString 
 
 void FileViewModel::setTreeView(const bool isTree)
 {
-    FileDataManager::instance()->cleanRoot(rootUrl(), currentKey, false, false);
     Q_EMIT requestTreeView(isTree);
 }
 
