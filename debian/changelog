@@ -1,8 +1,14 @@
+dde-file-manager (6.0.37) unstable; urgency=medium
+
+  * update file manager baseline version to V6.0.37
+
+ -- lvwujun <lvwujun@uniontech.com>  Wed, 29 Nov 2023 14:42:33 +0800
+
 dde-file-manager (6.0.36) unstable; urgency=medium
 
   * update file manager baseline version to V6.0.36
 
- -- lvwujun <lvwujun@uniontech.com>  Thur, 22 Nov 2023 15:47:21 +0800
+ -- lvwujun <lvwujun@uniontech.com>  Wed, 22 Nov 2023 15:47:21 +0800
 
 dde-file-manager (6.0.35) unstable; urgency=medium
 
@@ -22,7 +28,7 @@ dde-file-manager (6.0.33) unstable; urgency=medium
 
   * update file manager baseline version to V6.0.33
 
- -- lvwujun <lvwujun@uniontech.com>  Thur, 2 Nov 2023 11:07:21 +0800
+ -- lvwujun <lvwujun@uniontech.com>  Thu, 2 Nov 2023 11:07:21 +0800
 
 dde-file-manager (6.0.31) unstable; urgency=medium
 
@@ -58,7 +64,7 @@ dde-file-manager (6.0.26) unstable; urgency=medium
 
   * update file manager baseline version to V6.0.26 that merged eagle-sp5-2
 
- -- lvwujun <lvwujun@uniontech.com>  Thur, 3 Aug 2023 11:08:21 +0800
+ -- lvwujun <lvwujun@uniontech.com>  Thu, 3 Aug 2023 11:08:21 +0800
 
 dde-file-manager (6.0.25) unstable; urgency=medium
 
@@ -100,7 +106,7 @@ dde-file-manager (6.0.19) unstable; urgency=medium
 
   * update file manager V6.0.19 baseline version
 
- -- lvwujun <lvwujun@uniontech.com>  Thur, 31 May 2023 15:13:07 +0800
+ -- lvwujun <lvwujun@uniontech.com>  Thu, 31 May 2023 15:13:07 +0800
 
 dde-file-manager (6.0.18) unstable; urgency=medium
 
@@ -134,7 +140,7 @@ dde-file-manager (6.0.12) unstable; urgency=medium
 
   * update file manager V6.0.12 baseline version
 
- -- lvwujun <lvwujun@uniontech.com>  Thur, 23 Mar 2023 15:36:29 +0800
+ -- lvwujun <lvwujun@uniontech.com>  Thu, 23 Mar 2023 15:36:29 +0800
 
 dde-file-manager (6.0.9) unstable; urgency=medium
 
