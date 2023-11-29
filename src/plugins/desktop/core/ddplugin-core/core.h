@@ -66,7 +66,7 @@ public:
     virtual bool start() override;
     virtual void stop() override;
 
-    Q_INVOKABLE void loadLazyPlugins();
+    Q_INVOKABLE void initializeAfterPainted();
 
 protected slots:
     void onStart();

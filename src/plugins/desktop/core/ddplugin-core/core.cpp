@@ -7,6 +7,7 @@
 #include "screen/screenproxyqt.h"
 
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/clipboard.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/schemefactory.h>
@@ -108,7 +109,7 @@ void Core::onFrameReady()
     disconnect(handle->frame, &WindowFrame::windowShowed, this, &Core::onFrameReady);
     // no window to show, load plugins directly.
     if (handle->frame->rootWindows().isEmpty()) {
-        QMetaObject::invokeMethod(this, "loadLazyPlugins", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, "initializeAfterPainted", Qt::QueuedConnection);
     } else {
         // to get paint event.
         qApp->installEventFilter(this);
@@ -137,7 +138,7 @@ bool Core::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::Paint) {
         fmInfo() << "one window painting" << watched;
         qApp->removeEventFilter(this);
-        QMetaObject::invokeMethod(this, "loadLazyPlugins", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, "initializeAfterPainted", Qt::QueuedConnection);
     }
     return false;
 }
@@ -152,12 +153,15 @@ void Core::connectToServer()
     fmInfo() << "connectToServer finished";
 }
 
-void Core::loadLazyPlugins()
+void Core::initializeAfterPainted()
 {
     std::call_once(lazyFlag, []() {
+        // init all lazy plguis call once
         const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
         fmInfo() << "load lazy plugins" << list;
         dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
+        // init clipboard
+        ClipBoard::instance()->onClipboardDataChanged();
     });
 }
 
