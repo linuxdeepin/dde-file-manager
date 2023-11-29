@@ -11,6 +11,8 @@
 #include <DGuiApplicationHelper>
 #include <DDBusSender>
 #include <DDesktopServices>
+#include <dtkwidget_global.h>
+
 #include <QScrollBar>
 #include <QLabel>
 #include <QSharedPointer>
@@ -18,6 +20,8 @@
 #include <QLoggingCategory>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
+DGUI_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 static const int kWidth = 300;
 

@@ -12,10 +12,13 @@
 #include <dfm-base/utils/sysinfoutils.h>
 
 #include <DDesktopServices>
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
 
 #include <QProcess>
 #include <QMenu>
 
+DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE

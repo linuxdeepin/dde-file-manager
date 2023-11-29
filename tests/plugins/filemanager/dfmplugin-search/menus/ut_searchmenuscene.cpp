@@ -20,6 +20,8 @@
 #include <gtest/gtest.h>
 
 #include <DDesktopServices>
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
 
 #include <QAction>
 #include <QMenu>
@@ -29,6 +31,7 @@ DPF_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 class TestScene : public AbstractMenuScene
 {

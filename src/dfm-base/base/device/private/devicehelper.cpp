@@ -16,6 +16,8 @@
 #include <dfm-base/utils/networkutils.h>
 
 #include <DDesktopServices>
+#include <dtkwidget_global.h>
+#include <dtkgui_global.h>
 #include <DDialog>
 #include <QDebug>
 #include <QStandardPaths>
@@ -33,6 +35,9 @@ static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeed" };
 
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
+// see: https://github.com/linuxdeepin/dtk/issues/134
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 DevAutoPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType type)
 {
@@ -266,7 +271,6 @@ void DeviceHelper::openFileManagerToDevice(const QString &blkId, const QString &
         return;
     }
 
-    DWIDGET_USE_NAMESPACE
     DDesktopServices::showFolder(QUrl::fromLocalFile(mpt));
 }
 

@@ -9,6 +9,7 @@
 #include <DGuiApplicationHelper>
 #include <DDialog>
 #include <DDesktopServices>
+#include <dtkwidget_global.h>
 #include <QVBoxLayout>
 #include <QGSettings>
 #include <QFile>
@@ -25,6 +26,7 @@ Q_DECLARE_LOGGING_CATEGORY(logAppDock)
  */
 
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 DiskControlItem::DiskControlItem(QSharedPointer<DAttachedDevice> attachedDevicePtr, QWidget *parent)
     : QFrame(parent),
