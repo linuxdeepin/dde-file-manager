@@ -80,8 +80,11 @@ void onClipboardDataChanged()
 ClipBoard::ClipBoard(QObject *parent)
     : QObject(parent)
 {
-    connect(qApp->clipboard(), &QClipboard::dataChanged, this, &ClipBoard::onClipboardDataChanged, Qt::QueuedConnection);
-    GlobalData::onClipboardDataChanged();
+    connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this]() {
+        onClipboardDataChanged();
+        emit clipboardDataChanged();
+    },
+            Qt::QueuedConnection);
 }
 
 ClipBoard *ClipBoard::instance()
@@ -427,6 +430,4 @@ QList<QUrl> ClipBoard::getUrlsByX11()
 void ClipBoard::onClipboardDataChanged()
 {
     GlobalData::onClipboardDataChanged();
-
-    emit clipboardDataChanged();
 }

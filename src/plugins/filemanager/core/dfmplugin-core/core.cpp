@@ -49,8 +49,6 @@ void Core::initialize()
     InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
-    // 初始化剪切板
-    ClipBoard::instance();
 
     connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
     connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
@@ -132,10 +130,6 @@ void Core::onAllPluginsStarted()
         fmInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
 }
 
-/*!
- * \brief init all lazy plguis call once
- * \param windd
- */
 void Core::onWindowOpened(quint64 windd)
 {
     Q_UNUSED(windd)
@@ -143,8 +137,11 @@ void Core::onWindowOpened(quint64 windd)
     static std::once_flag flag;
     std::call_once(flag, []() {
         QTimer::singleShot(0, []() {
+            // init all lazy plguis call once
             const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
+            // init clipboard
+            ClipBoard::instance()->onClipboardDataChanged();
         });
     });
 }

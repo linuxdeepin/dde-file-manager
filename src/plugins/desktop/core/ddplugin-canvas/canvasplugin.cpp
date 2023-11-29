@@ -7,7 +7,6 @@
 #include "utils/fileutil.h"
 #include "canvasdbusinterface.h"
 
-#include <dfm-base/utils/clipboard.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QDBusConnection>
@@ -28,9 +27,6 @@ bool CanvasPlugin::start()
 {
     // initialize file creator
     DesktopFileCreator::instance();
-
-    //! slow call: GlobalData::onClipboardDataChanged()
-    ClipBoard::instance();
 
     proxy = new CanvasManager();
     proxy->init();

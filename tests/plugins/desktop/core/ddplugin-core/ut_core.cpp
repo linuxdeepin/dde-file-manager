@@ -297,8 +297,6 @@ TEST(TestEventHandle, signal_events)
     delete handle;
 }
 
-
-
 TEST(TestCore, handleLoadPlugins)
 {
     Core core;
@@ -306,20 +304,19 @@ TEST(TestCore, handleLoadPlugins)
     core.handle = &han;
     core.handle->frame = new WindowFrame();
 
-    QStringList names{"name1","name2"};
+    QStringList names { "name1", "name2" };
 
     bool flag = false;
     stub_ext::StubExt stub;
     stub.set_lamda(&DPF_NAMESPACE::LifeCycle::pluginMetaObj,
                    [&flag](const QString &pluginName,
-                   const QString version){
-        __DBG_STUB_INVOKE__
-        flag = true;
-        return PluginMetaObjectPointer();
-    });
+                           const QString version) {
+                       __DBG_STUB_INVOKE__
+                       flag = true;
+                       return PluginMetaObjectPointer();
+                   });
     core.handleLoadPlugins(names);
     EXPECT_TRUE(flag);
-
 }
 
 TEST(TestCore, eventFilter)
@@ -327,12 +324,12 @@ TEST(TestCore, eventFilter)
     QEvent::Type type = QEvent::Type::Paint;
     QEvent event(type);
     Core core;
-    QObject watched ;
+    QObject watched;
 
     stub_ext::StubExt stub;
     bool flag = false;
 
-    stub.set_lamda(&QObject::removeEventFilter,[&flag](){
+    stub.set_lamda(&QObject::removeEventFilter, [&flag]() {
         __DBG_STUB_INVOKE__
         flag = true;
     });
@@ -343,6 +340,6 @@ TEST(TestCore, eventFilter)
 TEST(TestCore, loadLazyPlugins)
 {
     Core core;
-    core.loadLazyPlugins();
-    EXPECT_NE(core.lazyFlag._M_once,__GTHREAD_ONCE_INIT);
+    core.initializeAfterPainted();
+    EXPECT_NE(core.lazyFlag._M_once, __GTHREAD_ONCE_INIT);
 }
