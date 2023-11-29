@@ -22,6 +22,8 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <DDesktopServices>
+#include <dtkwidget_global.h>
+#include <dtkgui_config.h>
 
 #include <QDebug>
 #include <QtConcurrent>
@@ -34,6 +36,8 @@ Q_DECLARE_METATYPE(QString *)
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 TrashFileEventReceiver::TrashFileEventReceiver(QObject *parent)
     : QObject(parent)
@@ -149,7 +153,6 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
         if (DialogManagerInstance->showClearTrashDialog(static_cast<quint64>(sources.length())) != QDialog::Accepted) return nullptr;
     }
 
-    DWIDGET_USE_NAMESPACE
     DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
 
     QList<QUrl> urls = std::move(sources);

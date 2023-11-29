@@ -17,6 +17,8 @@
 #include <DDialog>
 #include <DRecentManager>
 #include <DDesktopServices>
+#include <dtkgui_global.h>
+#include <dtkwidget_global.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -27,6 +29,8 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 DFMBASE_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
+
 using namespace dfmplugin_recent;
 
 RecentFileHelper *RecentFileHelper::instance()

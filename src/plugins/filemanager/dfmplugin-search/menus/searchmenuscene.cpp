@@ -14,11 +14,14 @@
 #include <dfm-base/dfm_menu_defines.h>
 
 #include <DDesktopServices>
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
 
 #include <QProcess>
 #include <QMenu>
 
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 using namespace dfmplugin_search;
 DFMBASE_USE_NAMESPACE
 

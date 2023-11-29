@@ -19,8 +19,12 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <DDesktopServices>
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
 
 DFMBASE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 class TagDirMenuSceneTest : public testing::Test
@@ -116,7 +120,6 @@ TEST_F(TagDirMenuSceneTest, scene)
 
 TEST_F(TagDirMenuSceneTest, openFileLocation)
 {
-    DWIDGET_USE_NAMESPACE
     stub_ext::StubExt st;
     st.set_lamda(SysInfoUtils::isRootUser, [] { return true; });
 
