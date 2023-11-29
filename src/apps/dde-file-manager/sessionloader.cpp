@@ -160,5 +160,5 @@ void SessionBusiness::onCurrentUrlChanged(quint64 windId, const QUrl &url)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
-    savePath(window->winId(), url.toLocalFile());
+    savePath(window->winId(), url.toString());
 }

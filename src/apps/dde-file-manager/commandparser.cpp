@@ -327,7 +327,7 @@ void CommandParser::openSession()
         QString sessionFile = "";
         if (!SessionBusiness::instance()->readPath(filename, &sessionFile))
             qCWarning(logAppFileManager) << "no session path get";
-        openWindowWithUrl(QUrl::fromLocalFile(sessionFile));
+        openWindowWithUrl(QUrl(sessionFile));
         break;   // current time only support one file.
     }
 }
