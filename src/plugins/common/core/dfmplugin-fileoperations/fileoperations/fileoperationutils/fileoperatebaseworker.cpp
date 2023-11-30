@@ -1352,10 +1352,14 @@ void FileOperateBaseWorker::syncFilesToDevice()
     fmInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
     sync();
     fmInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
-
+    // 这里本来是拷贝到了手动分区的盘，不需要后面去等待同步计算进度结果
+    if (CountWriteSizeType::kWriteBlockType != countWriteType)
+        return;
     fmDebug() << "syncFilesToDevice begin";
+    sync();
     qint64 writeSize = getWriteDataSize();
-    while (!isStopped() && sourceFilesTotalSize > 0 && writeSize < sourceFilesTotalSize) {
+    // 上面本来就自己阻塞调用了同步，这里不用计算写入是否是100%（这里统计的写入不一定准确）
+    while (!isStopped() && sourceFilesTotalSize > 0 && (static_cast<double>(writeSize)/sourceFilesTotalSize) < 0.98) {
         QThread::msleep(100);
         writeSize = getWriteDataSize();
     }
