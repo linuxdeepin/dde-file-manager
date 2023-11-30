@@ -50,7 +50,7 @@ void OrganizationGroup::reset()
         if (!methodCombox) {
             methodCombox = new MethodComBox(tr("Organize by"), this);
             methodCombox->initCheckBox();
-            methodCombox->setFixedSize(kContentWidght, kContentHeight);
+            methodCombox->setFixedSize(kContentWidght, kCheckEntryHeight);
             contentLayout->insertWidget(1, methodCombox, 0, Qt::AlignTop);
             // requiring widget to be visible when layout calculates sizehint.
             methodCombox->setVisible(true);
