@@ -15,6 +15,8 @@
 #include <QTime>
 #include <QFileInfo>
 #include <QTextCodec>
+#include <QBuffer>
+#include <QImageReader>
 
 #include <unicode/ucnv.h>
 #include <unicode/ucsdet.h>
@@ -22,6 +24,11 @@
 #include <taglib/fileref.h>
 #include <taglib/taglib.h>
 #include <taglib/tpropertymap.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/attachedpictureframe.h>
+#include <taglib/apetag.h>
 
 using namespace plugin_filepreview;
 MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent)
@@ -137,6 +144,26 @@ void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
             fileAlbum = QString(tr("unknown album"));
 
         QImage img = mediaPlayer->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+
+        if (img.isNull()) {
+            QUrl url(currentUrl);
+            TagLib::MPEG::File f(url.toLocalFile().toLocal8Bit());
+            if (f.isValid()) {
+                if (f.ID3v2Tag()) {
+                    TagLib::ID3v2::FrameList frameList = f.ID3v2Tag()->frameListMap()["APIC"];
+                    if (!frameList.isEmpty()) {
+                        TagLib::ID3v2::AttachedPictureFrame *picFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList.front());
+                        QBuffer buffer;
+                        buffer.setData(picFrame->picture().data(), static_cast<int>(picFrame->picture().size()));
+                        QImageReader imageReader(&buffer);
+                        img = imageReader.read();
+                    }
+                }
+
+                f.clear();
+            }
+        }
+
         if (img.isNull()) {
             img = QImage(":/icons/icons/default_music_cover.png");
         }
