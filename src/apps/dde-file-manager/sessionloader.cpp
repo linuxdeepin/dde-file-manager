@@ -149,7 +149,7 @@ void SessionBusiness::onWindowOpened(quint64 windId)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
-    if (getAPI()->isInitialized()) {
+    if (!window->isHidden() && getAPI()->isInitialized()) {
         getAPI()->connectSM(window->winId());
         getAPI()->setWindowProperty(window->winId());
     }
@@ -160,5 +160,7 @@ void SessionBusiness::onCurrentUrlChanged(quint64 windId, const QUrl &url)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
-    savePath(window->winId(), url.toString());
+    if (!window->isHidden()) {
+        savePath(window->winId(), url.toString());
+    }
 }
