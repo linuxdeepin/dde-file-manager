@@ -54,6 +54,7 @@ pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 pkg_search_module(Dtk REQUIRED dtkcore IMPORTED_TARGET)
 pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
+pkg_search_module(taglib REQUIRED taglib)
 
 # generate dbus interface
 qt5_add_dbus_interface(SRCS
@@ -112,6 +113,7 @@ target_link_libraries(${BIN_NAME} PUBLIC
     poppler-cpp
     KF5::Codecs
     ${DtkWidget_LIBRARIES}
+    ${taglib_LIBRARIES}
 )
 
 target_include_directories(${BIN_NAME} PUBLIC

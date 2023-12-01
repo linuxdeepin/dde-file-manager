@@ -19,12 +19,21 @@
 #include <QPainter>
 #include <QImageReader>
 #include <QDebug>
+#include <QBuffer>
 
 // use original poppler api
 #include <poppler/cpp/poppler-document.h>
 #include <poppler/cpp/poppler-image.h>
 #include <poppler/cpp/poppler-page.h>
 #include <poppler/cpp/poppler-page-renderer.h>
+
+#include <taglib/tag.h>
+#include <taglib/taglib.h>
+#include <taglib/tpropertymap.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/attachedpictureframe.h>
 
 static constexpr char kFormat[] { ".png" };
 
@@ -160,6 +169,24 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbna
     const QByteArray &output = ffmpeg.readAllStandardOutput();
     if (!img.loadFromData(output))
         qCWarning(logDFMBase) << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
+
+    if (img.isNull()) {
+        TagLib::MPEG::File f(filePath.toStdString().c_str());
+        if (f.isValid()) {
+            if (f.ID3v2Tag()) {
+                TagLib::ID3v2::FrameList frameList = f.ID3v2Tag()->frameListMap()["APIC"];
+                if (!frameList.isEmpty()) {
+                    TagLib::ID3v2::AttachedPictureFrame *picFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList.front());
+                    QBuffer buffer;
+                    buffer.setData(picFrame->picture().data(), static_cast<int>(picFrame->picture().size()));
+                    QImageReader imageReader(&buffer);
+                    img = imageReader.read();
+                }
+            }
+
+            f.clear();
+        }
+    }
 
     return img;
 }
