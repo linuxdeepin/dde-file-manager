@@ -177,7 +177,8 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
     // set as wallpaper
     if (auto setWallpaper = d->predicateAction.value(ActionID::kSetAsWallpaper)) {
-        if (FileUtils::isMtpFile(d->focusFileInfo->urlOf(UrlInfoType::kUrl)))
+        auto focusUrl = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
+        if (FileUtils::isMtpFile(focusUrl) || FileUtils::isGvfsFile(focusUrl))
             setWallpaper->setDisabled(true);
     }
 
