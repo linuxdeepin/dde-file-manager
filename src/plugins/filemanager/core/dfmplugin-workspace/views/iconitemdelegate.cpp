@@ -422,6 +422,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
             backgroundColor = baseColor;
         } else {
             backgroundColor = backgroundColor.lighter();
+            backgroundColor.setAlpha(22); // Hover背景设置透明度为8% (22/255);
         }
     } else {
         backgroundColor = baseColor;
@@ -441,6 +442,9 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     if (isSelected || (option.state & QStyle::StateFlag::State_MouseOver)) {   // 只有选中和mouseover才绘制背景
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, backgroundColor);
+        backgroundColor.setAlpha(40); // Hover背景边框设置透明度为16% (40/255);
+        painter->setPen(backgroundColor);
+        painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
     }
 
