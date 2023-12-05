@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
     bool isSigterm { qApp->property("SIGTERM").toBool() };
     if (!isSigterm && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
         a.closeServer();
-        QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+        QProcess::startDetached(QString(argv[0]), {"-d"});
     }
 
     return ret;
