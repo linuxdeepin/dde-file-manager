@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
     initSessionBusiness(argc, argv);
 
     CommandParser::instance().process();
-
+    qCInfo(logAppFileManager) << "App version: " << BUILD_VERSION;
     // working dir
     if (CommandParser::instance().isSet("w")) {
         QDir::setCurrent(CommandParser::instance().value("w"));
