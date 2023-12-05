@@ -60,6 +60,7 @@ void FileDialogMenuScene::filterAction(QMenu *parent, bool isSubMenu)
                                               "open", "rename", "delete", "copy", "cut", "paste" };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
                                               "OpenWithMenu", "ShareMenu", "SortAndDisplayMenu" };
+    static const QStringList extSceneList { "ExtendMenu", "OemMenu", "ExtensionLibMenu" };
 
     auto actions = parent->actions();
     for (auto act : actions) {
@@ -70,17 +71,24 @@ void FileDialogMenuScene::filterAction(QMenu *parent, bool isSubMenu)
 
         QString id { act->property(ActionPropertyKey::kActionID).toString() };
         QString sceneName { findSceneName(act) };
-        if (!isSubMenu) {
-            if (!whiteActIdList.contains(id) || !whiteSceneList.contains(sceneName)) {
-                act->setVisible(false);
-            } else {
-                auto subMenu = act->menu();
-                if (subMenu)
-                    filterAction(subMenu, true);
-            }
-        } else {
+
+        if (extSceneList.contains(sceneName)) {
+            act->setVisible(true);
+            continue;
+        }
+
+        if (isSubMenu) {
             if (!whiteSceneList.contains(sceneName))
                 act->setVisible(false);
+            continue;
+        }
+
+        if (!whiteActIdList.contains(id) || !whiteSceneList.contains(sceneName)) {
+            act->setVisible(false);
+        } else {
+            auto subMenu = act->menu();
+            if (subMenu)
+                filterAction(subMenu, true);
         }
     }
 }
