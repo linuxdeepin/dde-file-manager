@@ -78,6 +78,12 @@ bool FileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
         case Qt::Key_W:
             emit q->reqCloseCurrentTab();
             return true;
+        case Qt::Key_T:
+            emit q->reqCreateTab();
+            return true;
+        case Qt::Key_N:
+            emit q->reqCreateWindow();
+            return true;
         case Qt::Key_1:
         case Qt::Key_2:
         case Qt::Key_3:

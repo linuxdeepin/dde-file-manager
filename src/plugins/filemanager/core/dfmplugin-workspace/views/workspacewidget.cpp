@@ -292,26 +292,7 @@ void WorkspaceWidget::onPreviousTab()
     tabBar->activatePreviousTab();
 }
 
-void WorkspaceWidget::keyPressEvent(QKeyEvent *event)
-{
-    switch (event->modifiers()) {
-    case Qt::ControlModifier:
-        switch (event->key()) {
-        case Qt::Key_N:
-            handleCtrlN();
-            return;
-        case Qt::Key_T:
-            handleCtrlT();
-            return;
-        default:
-            break;
-        }
-        break;
-    }
-    AbstractFrame::keyPressEvent(event);
-}
-
-void WorkspaceWidget::handleCtrlT()
+void WorkspaceWidget::onCreateNewTab()
 {
     // If a directory is selected, open NewTab through the URL of the selected directory
     auto view = currentView();
@@ -433,7 +414,7 @@ void WorkspaceWidget::initViewLayout()
     setLayout(widgetLayout);
 }
 
-void WorkspaceWidget::handleCtrlN()
+void WorkspaceWidget::onCreateNewWindow()
 {
     ViewPtr fileView = views[workspaceUrl.scheme()];
     if (!fileView) {
