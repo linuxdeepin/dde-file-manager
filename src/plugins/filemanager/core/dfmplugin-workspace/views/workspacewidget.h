@@ -72,11 +72,12 @@ public slots:
     void onNextTab();
     void onPreviousTab();
     void onCloseCurrentTab();
+    void onCreateNewTab();
+    void onCreateNewWindow();
     void onSetCurrentTabIndex(const int index);
     void onRefreshCurrentView();
 
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
     void showEvent(QShowEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
 
@@ -88,8 +89,6 @@ private:
     void initConnect();
     void initTabBar();
     void initViewLayout();
-    void handleCtrlN();
-    void handleCtrlT();
     void initCustomTopWidgets(const QUrl &url);
     void setCurrentView(const QUrl &url);
 

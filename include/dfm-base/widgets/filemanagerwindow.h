@@ -66,6 +66,8 @@ Q_SIGNALS:
     void reqBack();   // ctrl / alt + Left
     void reqForward();   // ctrl / alt + Right
     void reqCloseCurrentTab();   // ctrl + W
+    void reqCreateTab();   // ctrl + T
+    void reqCreateWindow();   // ctrl + N
     void reqTriggerActionByIndex(int index);   // ctrl + [1, 8]
     void reqActivateTabByIndex(int index);   // alt + [1, 8]
     void reqShowHotkeyHelp();   // ctrl + shift + ?

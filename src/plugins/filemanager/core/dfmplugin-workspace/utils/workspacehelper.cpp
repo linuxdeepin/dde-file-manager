@@ -418,6 +418,8 @@ void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
     connect(window, &FileManagerWindow::reqActivateNextTab, widget, &WorkspaceWidget::onNextTab);
     connect(window, &FileManagerWindow::reqActivatePreviousTab, widget, &WorkspaceWidget::onPreviousTab);
     connect(window, &FileManagerWindow::reqCloseCurrentTab, widget, &WorkspaceWidget::onCloseCurrentTab);
+    connect(window, &FileManagerWindow::reqCreateTab, widget, &WorkspaceWidget::onCreateNewTab);
+    connect(window, &FileManagerWindow::reqCreateWindow, widget, &WorkspaceWidget::onCreateNewWindow);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, widget, &WorkspaceWidget::onSetCurrentTabIndex);
     connect(window, &FileManagerWindow::reqRefresh, widget, &WorkspaceWidget::onRefreshCurrentView);
 }
