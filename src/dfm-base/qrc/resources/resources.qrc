@@ -18,8 +18,6 @@
         <file>icons/deepin/builtin/dark/icons/dfm_tag_16px.svg</file>
         <file>icons/deepin/builtin/dark/icons/dfm_tag_gray_16px.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_tag_gray_16px.svg</file>
-        <file>icons/deepin/builtin/light/actions/dfm_view_filter_16px.svg</file>
-        <file>icons/deepin/builtin/dark/actions/dfm_view_filter_16px.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_addressbar_glowing_128px.svg</file>
         <file>icons/deepin/builtin/dark/icons/dfm_addressbar_glowing_128px.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_safebox_64px.svg</file>
@@ -70,5 +68,6 @@
         <file>icons/deepin/builtin/light/icons/dfm_success_128px.svg</file>
         <file>icons/deepin/builtin/dark/icons/no_favorites_yet.svg</file>
         <file>icons/deepin/builtin/light/icons/no_favorites_yet.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_view_filter_16px.svg</file>
     </qresource>
 </RCC>
