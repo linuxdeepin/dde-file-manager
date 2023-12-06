@@ -68,3 +68,20 @@ TEST_F(UT_FileView, Bug_224471_setViewMode)
     EXPECT_EQ(view.iconSize().width(), kListViewIconSize);
     EXPECT_EQ(view.iconSize().height(), kListViewIconSize);
 }
+
+TEST_F(UT_FileView, Bug_232671_setViewMode)
+{
+    stub.set_lamda(&FileView::initializeModel, [](){});
+
+    FileView view(QUrl(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()));
+
+    view.setVisible(false);
+    view.setViewMode(DFMGLOBAL_NAMESPACE::ViewMode::kIconMode);
+
+    EXPECT_TRUE(view.itemDelegate() != nullptr);
+    EXPECT_EQ(view.currentViewMode(), DFMGLOBAL_NAMESPACE::ViewMode::kIconMode);
+
+    view.setVisible(true);
+    view.setViewMode(DFMGLOBAL_NAMESPACE::ViewMode::kListMode);
+    EXPECT_NE(view.currentViewMode(), DFMGLOBAL_NAMESPACE::ViewMode::kListMode);
+}
