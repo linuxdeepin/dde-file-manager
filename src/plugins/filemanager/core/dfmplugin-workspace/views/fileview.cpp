@@ -98,7 +98,9 @@ QWidget *FileView::widget() const
 
 void FileView::setViewMode(Global::ViewMode mode)
 {
-    if (!isVisible())
+    // itemDelegate 未设置时为未初始化状态，此时调用setViewMode需要执行设置流程
+    // itemDelegate 已设置时，若view不可见，则暂不执行viewMode设置逻辑
+    if (!isVisible() && itemDelegate())
         return;
 
     if (itemDelegate())
