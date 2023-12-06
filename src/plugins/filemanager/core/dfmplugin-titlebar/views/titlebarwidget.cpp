@@ -241,8 +241,8 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
         case QEvent::FocusOut: {
             // keep the `addressBar` displayed when click `filterButton`
             bool posContains = searchButton->geometry().contains(mapFromGlobal(QCursor::pos()));
-            bool isDown = searchButton->isDown();
-            if (posContains || isDown) {
+            bool isChecked = searchButton->isChecked();
+            if (posContains || isChecked) {
                 addressBar->showOnFocusLostOnce();
                 return false;
             }
@@ -266,17 +266,16 @@ void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
     if (switchBtn) {
         searchButton->setObjectName("filterButton");
         searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
+        searchButton->setCheckable(true);
         searchButton->setIconSize(QSize(16, 16));
-        searchButton->setProperty("showFilterView", false);
         searchButtonSwitchState = true;
     } else {
-        if (searchButton->isDown())
+        if (searchButton->isChecked())
             TitleBarEventCaller::sendShowFilterView(this, false);
         searchButton->setIcon(QIcon::fromTheme("search"));
+        searchButton->setCheckable(false);
         searchButton->setIconSize(QSize(32, 32));
-        searchButton->setDown(false);
         searchButtonSwitchState = false;
-        // TODO(zhangs): workspace->toggleAdvanceSearchBar(false);
     }
 }
 
@@ -285,10 +284,7 @@ void TitleBarWidget::onSearchButtonClicked()
     if (!searchButtonSwitchState) {
         showAddrsssBar(QUrl());
     } else {
-        bool oldState = searchButton->property("showFilterView").toBool();
-        searchButton->setDown(!oldState);
-        searchButton->setProperty("showFilterView", !oldState);
-        TitleBarEventCaller::sendShowFilterView(this, !oldState);
+        TitleBarEventCaller::sendShowFilterView(this, searchButton->isChecked());
     }
 }
 
