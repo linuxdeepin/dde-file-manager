@@ -287,6 +287,14 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                 ComputerUtils::setCursorState();
 
                 if (ok) {
+                    auto clearDevUrl = ComputerUtils::makeBlockDevUrl(newId);
+                    EntryFileInfo clearDevInfo(clearDevUrl);
+                    if (clearDevInfo.extraProperty(DeviceProperty::kFileSystem).toString() == "LVM2_member") {
+                        ComputerItemWatcherInstance->removeDevice(ComputerUtils::makeBlockDevUrl(shellId));
+                        fmInfo() << "lvm group has been unlockded, remove it." << shellId << newId;
+                        return;
+                    }
+
                     this->mountDevice(winId, newId, shellId, act);
                 } else {
                     DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password"));

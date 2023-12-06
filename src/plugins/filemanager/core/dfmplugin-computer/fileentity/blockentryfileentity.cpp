@@ -129,6 +129,14 @@ bool BlockEntryFileEntity::exists() const
         //        }
     }
 
+    if (isEncrypted) {
+        QVariantHash clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty).toHash();
+        if (clearInfo.value(DeviceProperty::kFileSystem).toString() == "LVM2_member") {
+            fmInfo() << msg << "lvm group should not be displayed" << id;
+            return false;
+        }
+    }
+
     if (cryptoBackingDevice.length() > 1) {
         fmInfo() << msg << "decrypted cleartext device." << id;
         return false;
