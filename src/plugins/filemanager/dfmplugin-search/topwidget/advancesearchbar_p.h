@@ -73,6 +73,10 @@ public:
     static bool shouldVisiableByFilterRule(DFMBASE_NAMESPACE::FileInfo *info, QVariant data);
     static FileFilter parseFilterData(const QMap<int, QVariant> &data);
 
+public Q_SLOTS:
+    void updateBackgroundColor();
+
+public:
     QBoxLayout *mainLayout;
     DLabel *asbLabels[kLabelCount];
     DComboBox *asbCombos[kLabelCount];

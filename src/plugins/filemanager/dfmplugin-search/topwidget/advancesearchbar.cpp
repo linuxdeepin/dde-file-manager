@@ -14,6 +14,7 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <DApplicationHelper>
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
 #include <DLabel>
@@ -145,6 +146,9 @@ void AdvanceSearchBarPrivate::initUI()
     mainLayout->addSpacing(20);
 
     q->setWidget(this);
+    q->setFrameShape(QFrame::NoFrame);
+    q->setAutoFillBackground(true);   // 允许自动填充背景
+    updateBackgroundColor();
     // 启用横向滚动条
     q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     // 禁用竖向滚动条
@@ -153,6 +157,7 @@ void AdvanceSearchBarPrivate::initUI()
 
 void AdvanceSearchBarPrivate::initConnection()
 {
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &AdvanceSearchBarPrivate::updateBackgroundColor);
     connect(resetBtn, &DCommandLinkButton::pressed, q, &AdvanceSearchBar::onResetButtonPressed);
 
     for (int i = 0; i < kLabelCount; i++) {
@@ -280,6 +285,20 @@ void AdvanceSearchBarPrivate::saveOptions(QMap<int, QVariant> &options)
     currentSearchUrl = url;
     options[AdvanceSearchBarPrivate::kCurrentUrl] = currentSearchUrl;
     filterInfoCache[currentSearchUrl] = options;
+}
+
+void AdvanceSearchBarPrivate::updateBackgroundColor()
+{
+    QPalette palette = q->palette();
+
+    QColor bgColor;
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+        bgColor.setRgb(255, 255, 255);
+    else
+        bgColor.setRgb(40, 40, 40);
+
+    palette.setColor(QPalette::Background, bgColor);
+    q->setPalette(palette);
 }
 
 bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVariant data)
