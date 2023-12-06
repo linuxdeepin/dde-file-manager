@@ -7,8 +7,6 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include "utils/vaultdefine.h"
-
 #include <DSecureString>
 
 #include <QObject>
@@ -27,13 +25,8 @@ public:
      */
     bool createDirAndFile();
 
-    /*!
-     * \brief savePasswordAndPasswordHint Save password, save Password hint to file
-     * \param password 密码
-     * \param passwordHint 密码提示
-     * \return 是否成功
-     */
-    bool savePasswordAndPasswordHint(const QString &password, const QString &passwordHint);
+    bool encryptByPBKDF2AndSaveCipher(const QString &password);
+    bool saveHintInfo(const QString &hint);
 
     /*!
      * \brief createKey rsa生成密钥对，私钥加密密码，将密文写入文件，将一部分公钥写入文件（另一部分公钥提供给用户）
@@ -72,11 +65,13 @@ public:
      */
     bool getPasswordHint(QString &passwordHint);
 
-    //! 获取盐值及密码密文
-    QString getSaltAndPasswordCipher();
+    void setCryfsPassword(const QString &psw);
+    QString getCryfsPassword() const;
+    void clearCryfsPassword();
 
-    //! 清除盐值及密码密文的缓存
-    void clearSaltAndPasswordCipher();
+    void setPinCode(const QString &pin);
+    QString pinCode() const;
+    void clearPinCode();
 
     //! 获得加密文件夹路径
     QString getEncryptDirPath();
@@ -95,8 +90,17 @@ public:
     //! 执行shell命令并获得shell命令的返回值
     int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
 
+    bool createVault();
+    void removeVault(const QString &basePath);
+
     bool savePasswordToKeyring(const QString &password);
     QString passwordFromKeyring();
+
+    bool checkAndGetTpmAlgo(QString *hashAlgoName, QString *keyAlgoName, QString *backInfo);
+    bool encryptByTPM(const QString &sType);
+
+Q_SIGNALS:
+    void fileRemovedProgress(int value);
 
 private:
     explicit OperatorCenter(QObject *parent = nullptr);
@@ -106,6 +110,8 @@ private:
     bool executeProcess(const QString &cmd);
     // 保存第二次加密后的密文,并更新保险箱版本信息
     bool secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt, const char *vaultVersion);
+    bool statisticsFilesInDir(const QString &dirPath, int *filesCount);
+    void removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount);
 
 public:
     /*!
@@ -142,6 +148,7 @@ private:
     QString strUserKey;
     QString standOutput;
     QString strPubKey;
+    QString strPinCode;
 };
 }
 #endif   // OPERATORCENTER_H

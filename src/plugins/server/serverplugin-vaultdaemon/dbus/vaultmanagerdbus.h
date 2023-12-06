@@ -99,6 +99,9 @@ public Q_SLOTS:
      */
     void RestoreNeedWaitMinutes(int userID);
 
+    int GetUnlockCompletedState(const QString &basePath) const;
+    int TransparentUnlockVault(const QString &basePath);
+
 Q_SIGNALS:
     /**
      * @brief LockEventTriggered 锁屏信号

@@ -98,10 +98,6 @@ void VaultAutoLock::processAutoLock()
     quint64 interval = curTime - lastAccessTime;
     quint32 threshold = autoLockState * 60;
 
-#ifdef AUTOLOCK_TEST
-    fmDebug() << "vault autolock countdown > " << interval;
-#endif
-
     if (interval > threshold) {
         //        VaultAutoLock::killVaultTasks();
         VaultHelper::instance()->lockVault(true);

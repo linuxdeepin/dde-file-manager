@@ -86,14 +86,11 @@ FileEncryptHandle *FileEncryptHandle::instance()
  *  调用runVaultProcess函数进行创建保险箱并返回创建状态标记。
  *  最后使用信号signalCreateVault发送创建状态标记。
  */
-void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &unlockFileDir,
+bool FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &unlockFileDir,
                                     const QString &passWord, EncryptType type, int blockSize)
 {
     if (!(createDirIfNotExist(lockBaseDir) && createDirIfNotExist(unlockFileDir)))
-        return;
-
-    d->mutex->lock();
-    d->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
+        return false;
 
     const QString &algoName = d->encryptTypeMap.value(type);
     DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
@@ -101,16 +98,20 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
     config.set(kConfigNodeName, kConfigKeyAlgoName, QVariant(algoName));
 
     int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
-    if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
-        emit signalCreateVault(d->activeState.value(1));
-        fmWarning() << "Vault: create vault failed!";
-    } else {
+
+    if (flg == 0) {
         d->curState = kUnlocked;
-        emit signalCreateVault(flg);
         fmInfo() << "Vault: create vault success!";
+        return true;
     }
-    d->activeState.clear();
-    d->mutex->unlock();
+
+    if (flg == -1) {
+        fmCritical() << "Vault: create vault process crash!";
+        return false;
+    }
+
+    fmCritical() << "Vault: create vault failed! error code is: " << flg;
+    return false;
 }
 
 /*!
@@ -130,27 +131,24 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
         return false;
     }
 
-
-    bool result { false };
-    d->mutex->lock();
-    d->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
     d->syncGroupPolicyAlgoName();
 
     int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
-    if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
-        result = false;
-        emit signalUnlockVault(d->activeState.value(3));
-        fmWarning() << "Vault: unlock vault failed!";
-    } else {
-        result = true;
-        d->curState = kUnlocked;
-        emit signalUnlockVault(flg);
-        fmInfo() << "Vault: unlock vault success!";
+    if (-1 == flg) {
+        fmCritical() << "Vault: the cryfs process crash!";
+        return false;
     }
-    d->activeState.clear();
-    d->mutex->unlock();
 
-    return result;
+    if (flg != 0) {
+        emit signalUnlockVault(flg);
+        fmWarning() << "Vault: unlock vault failed!";
+        return false;
+    }
+
+    d->curState = kUnlocked;
+    emit signalUnlockVault(flg);
+    fmInfo() << "Vault: unlock vault success!";
+    return true;
 }
 
 /*!
@@ -161,21 +159,29 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
  *  调用runVaultProcess函数进行上锁保险箱并返回上锁状态标记。
  *  最后使用信号signalLockVault发送上锁状态标记。
  */
-void FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
+bool FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
 {
-    d->mutex->lock();
     d->activeState.insert(7, static_cast<int>(ErrorCode::kSuccess));
     int flg = d->lockVaultProcess(unlockFileDir, isForced);
-    if (d->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
-        emit signalLockVault(d->activeState.value(7));
-        fmWarning() << "Vault: lock vault failed! ";
-    } else {
-        d->curState = kEncrypted;
-        emit signalLockVault(flg);
-        fmInfo() << "Vault: lock vault success!";
+
+    if (-1 == flg) {
+        d->activeState.clear();
+        fmCritical() << "Vault: lock vault failed, progress crash!";
+        return false;
     }
+
+    if (d->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
+        emit signalLockVault(static_cast<int>(ErrorCode::kResourceBusy));
+        fmWarning() << "Vault: lock vault failed! ";
+        d->activeState.clear();
+        return false;
+    }
+
+    d->curState = kEncrypted;
+    emit signalLockVault(flg);
+    fmInfo() << "Vault: lock vault success!";
     d->activeState.clear();
-    d->mutex->unlock();
+    return true;
 }
 
 bool FileEncryptHandle::createDirIfNotExist(QString path)

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "passwordrecoveryview.h"
+#include "utils/encryption/vaultconfig.h"
 
 #include <QVBoxLayout>
 
@@ -55,12 +56,20 @@ void PasswordRecoveryView::setResultsPage(QString password)
 
 void PasswordRecoveryView::buttonClicked(int index, const QString &text)
 {
+    Q_UNUSED(text)
+
     switch (index) {
-    case 0:
-        emit signalJump(PageType::kUnlockPage);
-        break;
-    case 1:
+    case 0: {
+        VaultConfig config;
+        const QString type = config.get(kConfigNodeName, kConfigKeyEncryptionMethod).toString();
+        if (kConfigValueMethodTpmWithPin == type) {
+            emit signalJump(PageType::kUnlockWidgetForTpm);
+        } else if (kConfigValueMethodKey == type) {
+            emit signalJump(PageType::kUnlockPage);
+        }
+    } break;
+    case 1: {
         emit sigCloseDialog();
-        break;
+    } break;
     }
 }

@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "pathmanager.h"
-#include "vaultdefine.h"
 
 #include <dfm-io/dfmio_utils.h>
 

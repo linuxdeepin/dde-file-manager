@@ -5,7 +5,6 @@
 #ifndef PASSWORDRECOVERYPAGE_H
 #define PASSWORDRECOVERYPAGE_H
 #include "dfmplugin_vault_global.h"
-#include "utils/vaultdefine.h"
 
 #include <QFrame>
 

@@ -6,6 +6,8 @@
 #include "vaultconfig.h"
 #include "utils/operator/pbkdf2.h"
 #include "utils/operator/rsam.h"
+#include "utils/vaulthelper.h"
+#include "events/vaulteventcaller.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -20,6 +22,7 @@
 #include <QTime>
 #include <QtGlobal>
 #include <QProcess>
+#include <QtConcurrent>
 
 #undef signals
 extern "C" {
@@ -98,6 +101,53 @@ bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, cons
     return true;
 }
 
+bool OperatorCenter::statisticsFilesInDir(const QString &dirPath, int *filesCount)
+{
+    QDir dir(dirPath);
+    if (!dir.exists())
+        return false;
+
+    dir.setSorting(QDir::DirsFirst);
+    QFileInfoList list = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
+    int count = list.size();
+    for (int i = 0; i < count; ++i) {
+        (*filesCount)++;
+        if (list.at(i).isDir()) {
+            statisticsFilesInDir(list.at(i).filePath(), filesCount);
+        }
+    }
+
+    return true;
+}
+
+void OperatorCenter::removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount)
+{
+    QDir dir(dirPath);
+    if (!dir.exists() || filesCount < 1)
+        return;
+
+    dir.setSorting(QDir::DirsFirst);
+    QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
+    int count = infoList.size();
+    for (int i = 0; i < count; ++i) {
+        if (infoList.at(i).isDir()) {
+            removeDir(infoList.at(i).absoluteFilePath(), filesCount, removedFileCount, removedDirCount);
+        } else if (infoList.at(i).isFile()) {
+            QFile file(infoList.at(i).absoluteFilePath());
+            file.remove();
+            (*removedFileCount)++;
+            int value = static_cast<int>(100 * static_cast<float>(*removedFileCount + *removedDirCount) / static_cast<float>(filesCount));
+            emit fileRemovedProgress(value);
+        }
+    }
+
+    QDir tempDir;
+    tempDir.rmdir(dirPath);
+    (*removedDirCount)++;
+    int value = static_cast<int>(100 * static_cast<float>(*removedFileCount + *removedDirCount) / static_cast<float>(filesCount));
+    emit fileRemovedProgress(value);
+}
+
 bool OperatorCenter::createKeyNew(const QString &password)
 {
     strPubKey.clear();
@@ -172,14 +222,24 @@ bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString
     rsaCipherfile.close();
 
     password = rsam::publicKeyDecrypt(strRsaCipher, strLocalPubKey);
+    QString inputPassword = password;
+    VaultConfig config;
+    const QString type = config.get(kConfigNodeName, kConfigKeyEncryptionMethod).toString();
+    if (kConfigValueMethodTpmWithPin == type) {
+        if (password.contains("--")) {
+            int pos = password.lastIndexOf("--");
+            inputPassword = password.mid(0, pos);
+        }
+    }
 
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
     QString temp = "";
-    if (!checkPassword(password, temp)) {
+    if (!checkPassword(inputPassword, temp)) {
         fmCritical() << "Vault: user key error!";
         return false;
     }
 
+    password = temp;
     return true;
 }
 
@@ -252,7 +312,7 @@ bool OperatorCenter::createDirAndFile()
     return true;
 }
 
-bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const QString &passwordHint)
+bool OperatorCenter::encryptByPBKDF2AndSaveCipher(const QString &password)
 {
     // encrypt password，write salt and cihper to file
     // random salt
@@ -264,6 +324,11 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
     // save the second encrypt cipher, and update version
     secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt, kConfigVaultVersion1050);
 
+    return true;
+}
+
+bool OperatorCenter::saveHintInfo(const QString &hint)
+{
     // 保存密码提示信息
     const QString &strPasswordHintFilePath = makeVaultLocalPath(kPasswordHintFileName);
     QFile passwordHintFile(strPasswordHintFilePath);
@@ -271,17 +336,10 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
         fmCritical() << "Vault: open password hint file failed!";
         return false;
     }
-    QTextStream out2(&passwordHintFile);
-    out2 << passwordHint;
-    passwordHintFile.close();
 
-    VaultConfig config;
-    const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant(kConfigKeyNotExist)).toString();
-    if (useUserPassword != kConfigKeyNotExist) {
-        strCryfsPassword = password;
-    } else {
-        strCryfsPassword = strSaltAndCiphertext;
-    }
+    QTextStream out2(&passwordHintFile);
+    out2 << hint;
+    passwordHintFile.close();
 
     return true;
 }
@@ -459,14 +517,34 @@ bool OperatorCenter::getPasswordHint(QString &passwordHint)
     return true;
 }
 
-QString OperatorCenter::getSaltAndPasswordCipher()
+void OperatorCenter::setCryfsPassword(const QString &psw)
+{
+    strCryfsPassword = psw;
+}
+
+QString OperatorCenter::getCryfsPassword() const
 {
     return strCryfsPassword;
 }
 
-void OperatorCenter::clearSaltAndPasswordCipher()
+void OperatorCenter::clearCryfsPassword()
 {
     strCryfsPassword.clear();
+}
+
+void OperatorCenter::setPinCode(const QString &pin)
+{
+    strPinCode = pin;
+}
+
+QString OperatorCenter::pinCode() const
+{
+    return strPinCode;
+}
+
+void OperatorCenter::clearPinCode()
+{
+    strPinCode.clear();
 }
 
 QString OperatorCenter::getEncryptDirPath()
@@ -569,6 +647,56 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
     }
 }
 
+bool OperatorCenter::createVault()
+{
+    VaultConfig config;
+    QString encrypitonMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+    if (encrypitonMethod == QString(kConfigKeyNotExist)) {
+        fmCritical() << "Vault: Get encryption method failed!";
+        return false;
+    }
+
+    QString password { "" };
+    if (encrypitonMethod == QString(kConfigValueMethodKey)
+            || kConfigValueMethodTpmWithPin == encrypitonMethod
+            || kConfigValueMethodTpmWithoutPin == encrypitonMethod) {
+        password = OperatorCenter::getInstance()->getCryfsPassword();
+    } else if (encrypitonMethod == QString(kConfigValueMethodTransparent)) {
+        password = OperatorCenter::getInstance()->passwordFromKeyring();
+    } else {
+        fmCritical() << "Vault: Get encryption method failed, can't create vault!";
+        return false;
+    }
+
+    if (password.isEmpty()) {
+        fmCritical() << "Vault: Get password is empty, failed to create the vault!";
+        return false;
+    }
+
+    bool ret = VaultHelper::instance()->createVault(password);
+    if (!ret)
+        return ret;
+
+    OperatorCenter::getInstance()->clearCryfsPassword();
+    return true;
+}
+
+void OperatorCenter::removeVault(const QString &basePath)
+{
+    if (basePath.isEmpty())
+        return;
+
+    QtConcurrent::run([this, basePath](){
+        int filesCount { 0 };
+        int removedFileCount { 0 };
+        int removedDirCount { 0 };
+        if (statisticsFilesInDir(basePath, &filesCount)) {
+            filesCount++;   // the basePath dir
+            removeDir(basePath, filesCount, &removedFileCount, &removedDirCount);
+        }
+    });
+}
+
 bool OperatorCenter::savePasswordToKeyring(const QString &password)
 {
     fmInfo() << "Vault: start store password to keyring!";
@@ -634,4 +762,117 @@ QString OperatorCenter::passwordFromKeyring()
     fmInfo() << "Vault: Read password end!";
 
     return result;
+}
+
+bool OperatorCenter::checkAndGetTpmAlgo(QString *hashAlgoName, QString *keyAlgoName, QString *backInfo)
+{
+    const QString hashAlgo = VaultHelper::instance()->getTpmHashAlgoFromDConfig();
+    const QString keyAlgo = VaultHelper::instance()->getTpmKeyAlgoFromDConfig() ;
+    if (hashAlgo.isEmpty() || keyAlgo.isEmpty()) {
+        fmCritical() << "Vault: get tpm algo name from group policy failed!";
+        return false;
+    }
+
+    bool isAlgoChanged { false };
+    bool ret1;
+    if (!VaultEventCaller::isSupportAlgoByTPM(hashAlgo, &ret1)) {
+        fmCritical() << "Vault: get support algo failed!";
+        return false;
+    }
+    if (!ret1) {
+        const QString defaultHashAlgo = "sha256";
+        bool ret2;
+        if (!VaultEventCaller::isSupportAlgoByTPM(defaultHashAlgo, &ret2)) {
+            fmCritical() << "Vault: get support algo failed!";
+            return false;
+        }
+        if (!ret2) {
+            const QString defaultHashAlgoTwo = "sm3_256";
+            bool ret5;
+            if (!VaultEventCaller::isSupportAlgoByTPM(defaultHashAlgoTwo, &ret5)) {
+                fmCritical() << "Vault: get support algo failed!";
+                return false;
+            }
+            if (!ret5) {
+                *backInfo = tr("TPM not support the final algo: %1").arg(defaultHashAlgoTwo);
+                return false;
+            } else {
+                *hashAlgoName = defaultHashAlgoTwo;
+                isAlgoChanged = true;
+            }
+        } else {
+            *hashAlgoName = defaultHashAlgo;
+            isAlgoChanged = true;
+        }
+    } else {
+        *hashAlgoName = hashAlgo;
+    }
+
+    bool ret3;
+    if (!VaultEventCaller::isSupportAlgoByTPM(keyAlgo, &ret3)) {
+        fmCritical() << "Vault: get support algo failed!";
+        return false;
+    }
+    if (!ret3) {
+        const QString defaultKeyAlgo = "aes";
+        bool ret4;
+        if (!VaultEventCaller::isSupportAlgoByTPM(defaultKeyAlgo, &ret4)) {
+            fmCritical() << "Vault: get support algo failed!";
+            return false;
+        }
+        if (!ret4) {
+            const QString defaultKeyAlgoTwo = "sm4";
+            bool ret6;
+            if (!VaultEventCaller::isSupportAlgoByTPM(defaultKeyAlgoTwo, &ret6)) {
+                fmCritical() << "Vault: get support algo failed!";
+                return false;
+            }
+            if (!ret6) {
+                *backInfo = tr("TPM not support the final algo: %1").arg(defaultKeyAlgoTwo);
+                return false;
+            } else {
+                *keyAlgoName = defaultKeyAlgoTwo;
+                isAlgoChanged = true;
+            }
+        } else {
+            *keyAlgoName = defaultKeyAlgo;
+            isAlgoChanged = true;
+        }
+    } else {
+        *keyAlgoName = keyAlgo;
+    }
+
+    if (isAlgoChanged) {
+        *backInfo = tr("Key algorihm %1 failed to set and has been switched to %2 algorithm").arg(keyAlgo).arg(*keyAlgoName);
+    }
+    return true;
+}
+
+bool OperatorCenter::encryptByTPM(const QString &sType)
+{
+    VaultConfig config;
+    const QString hashAlgo = config.get(kConfigNodeNameOfTPM, kConfigKeyPrimaryHashAlgo).toString();
+    const QString keyAlgo = config.get(kConfigNodeNameOfTPM, kConfigKeyPrimaryKeyAlgo).toString();
+    const QString dirPath = kVaultBasePath;
+    const QString password = OperatorCenter::getInstance()->getCryfsPassword();
+    QVariantMap map {
+        { "PropertyKey_PrimaryHashAlgo", hashAlgo },
+        { "PropertyKey_PrimaryKeyAlgo", keyAlgo },
+        { "PropertyKey_MinorHashAlgo", hashAlgo },
+        { "PropertyKey_MinorKeyAlgo", keyAlgo },
+        { "PropertyKey_DirPath", dirPath },
+        { "PropertyKey_Plain", password },
+    };
+    if (sType == kConfigValueMethodTpmWithoutPin) {
+        map.insert("PropertyKey_EncryptType", 1);
+        map.insert("PropertyKey_Pcr", "7");
+        map.insert("PropertyKey_PcrBank", hashAlgo);
+    } else if (sType == kConfigValueMethodTpmWithPin) {
+        map.insert("PropertyKey_EncryptType", 2);
+        map.insert("PropertyKey_PinCode", OperatorCenter::getInstance()->pinCode());
+    } else {
+        return false;
+    }
+
+    return VaultEventCaller::encryptByTPM(map);
 }

@@ -15,13 +15,6 @@ QT_END_NAMESPACE
 
 SERVERVAULT_BEGIN_NAMESPACE
 
-inline constexpr char kConfigNodeName[] { "INFO" };
-inline constexpr char kConfigKeyEncryptionMethod[] { "encryption_method" };
-inline constexpr char kConfigValueMethodKey[] { "key_encryption" };
-inline constexpr char kConfigValueMethodTransparent[] { "transparent_encryption" };
-inline constexpr char kConfigKeyNotExist[] { "NoExist" };
-inline constexpr char kConfigKeyAlgoName[] { "algoName" };
-
 class VaultConfigOperator
 {
 public:

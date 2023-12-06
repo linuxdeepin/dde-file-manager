@@ -41,15 +41,6 @@ public:
     stub_ext::StubExt stub;
 };
 
-TEST_F(UT_VaultActiveSetUnlockMethodView, clearText)
-{
-    view->clearText();
-
-    EXPECT_TRUE(view->passwordEdit->lineEdit()->text().isEmpty());
-    EXPECT_TRUE(view->repeatPasswordEdit->lineEdit()->text().isEmpty());
-    EXPECT_TRUE(view->tipsEdit->lineEdit()->text().isEmpty());
-}
-
 TEST_F(UT_VaultActiveSetUnlockMethodView, slotPasswordEditing)
 {
     view->passwordEdit->setText("Qwer@1234");
@@ -140,7 +131,7 @@ TEST_F(UT_VaultActiveSetUnlockMethodView, slotNextBtnClicked_keyEncrytion)
 {
     bool isSavePassword { false };
     stub.set_lamda(&VaultConfig::set, [] { __DBG_STUB_INVOKE__ });
-    stub.set_lamda(&OperatorCenter::savePasswordAndPasswordHint, [ &isSavePassword ] { __DBG_STUB_INVOKE__ isSavePassword = true; return true; });
+    stub.set_lamda(&OperatorCenter::encryptByPBKDF2AndSaveCipher, [ &isSavePassword ] { __DBG_STUB_INVOKE__ isSavePassword = true; return true; });
     stub.set_lamda(&OperatorCenter::createKeyNew, [] { __DBG_STUB_INVOKE__ return true; });
 
     view->typeCombo->setCurrentIndex(0);

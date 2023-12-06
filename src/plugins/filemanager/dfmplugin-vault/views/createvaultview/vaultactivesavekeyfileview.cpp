@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultactivesavekeyfileview.h"
-#include "utils/vaultdefine.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/policy/policymanager.h"
 

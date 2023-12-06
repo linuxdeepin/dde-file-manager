@@ -16,24 +16,19 @@ class VaultDBusUtils
 {
 public:
     static QVariant vaultManagerDBusCall(QString function, const QVariant &vaule = {});
-
     static VaultPolicyState getVaultPolicy();
-
     static bool setVaultPolicyState(int policyState);
-
     static void lockEventTriggered(QObject *obj, const char *cslot = nullptr);
-
     static int getLeftoverErrorInputTimes();
-
     static void leftoverErrorInputTimesMinusOne();
-
     static void startTimerOfRestorePasswordInput();
-
     static int getNeedWaitMinutes();
-
     static void restoreNeedWaitMinutes();
-
     static void restoreLeftoverErrorInputTimes();
+    static int getUnlockCompleteState(const QString &basePath);
+    static void transparentUnlockVault(const QString &basePath);
+
+private:
     static bool isServiceRegister(QDBusConnection::BusType type, const QString &serviceName);
 };
 }

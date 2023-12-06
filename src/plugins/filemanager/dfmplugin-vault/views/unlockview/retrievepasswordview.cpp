@@ -5,6 +5,7 @@
 #include "retrievepasswordview.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/policy/policymanager.h"
+#include "utils/encryption/vaultconfig.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -148,11 +149,19 @@ QString RetrievePasswordView::titleText()
 
 void RetrievePasswordView::buttonClicked(int index, const QString &text)
 {
+    Q_UNUSED(text)
+
     switch (index) {
-    case 0:
-        emit signalJump(PageType::kUnlockPage);
-        break;
-    case 1:
+    case 0: {
+        VaultConfig config;
+        const QString type = config.get(kConfigNodeName, kConfigKeyEncryptionMethod).toString();
+        if (kConfigValueMethodTpmWithPin == type) {
+            emit signalJump(PageType::kUnlockWidgetForTpm);
+        } else if (kConfigValueMethodKey == type) {
+            emit signalJump(PageType::kUnlockPage);
+        }
+    } break;
+    case 1: {
         //! 用户权限认证(异步授权)
         auto ins = Authority::instance();
         ins->checkAuthorization(PolicyKitRetrievePasswordActionId,
@@ -160,6 +169,8 @@ void RetrievePasswordView::buttonClicked(int index, const QString &text)
                                 Authority::AllowUserInteraction);
         connect(ins, &Authority::checkAuthorizationFinished,
                 this, &RetrievePasswordView::slotCheckAuthorizationFinished);
+    } break;
+    default:
         break;
     }
 }

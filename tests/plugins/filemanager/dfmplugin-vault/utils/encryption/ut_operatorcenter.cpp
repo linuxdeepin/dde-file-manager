@@ -292,7 +292,7 @@ TEST(UT_OperatorCenter, createDirAndFile_three)
 TEST(UT_OperatorCenter, savePasswordAndPasswordHint_one)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&OperatorCenter::secondSaveSaltAndCiphertext, []{
+    stub.set_lamda(&OperatorCenter::encryptByPBKDF2AndSaveCipher, []{
         return true;
     });
     stub.set_lamda(&OperatorCenter::makeVaultLocalPath, []{
@@ -303,7 +303,7 @@ TEST(UT_OperatorCenter, savePasswordAndPasswordHint_one)
         return false;
     });
 
-    bool isOk = OperatorCenter::getInstance()->savePasswordAndPasswordHint("UT_TEST", "UT_TEST");
+    bool isOk = OperatorCenter::getInstance()->encryptByPBKDF2AndSaveCipher("UT_TEST");
 
     EXPECT_FALSE(isOk);
 }
@@ -311,7 +311,7 @@ TEST(UT_OperatorCenter, savePasswordAndPasswordHint_one)
 TEST(UT_OperatorCenter, savePasswordAndPasswordHint_two)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&OperatorCenter::secondSaveSaltAndCiphertext, []{
+    stub.set_lamda(&OperatorCenter::encryptByPBKDF2AndSaveCipher, []{
         return true;
     });
     stub.set_lamda(&OperatorCenter::makeVaultLocalPath, []{
@@ -326,7 +326,7 @@ TEST(UT_OperatorCenter, savePasswordAndPasswordHint_two)
         return QVariant::fromValue<QString>(kConfigKeyNotExist);
     });
 
-    bool isOk = OperatorCenter::getInstance()->savePasswordAndPasswordHint("UT_TEST", "UT_TEST");
+    bool isOk = OperatorCenter::getInstance()->encryptByPBKDF2AndSaveCipher("UT_TEST");
 
     EXPECT_TRUE(isOk);
 }
@@ -349,7 +349,7 @@ TEST(UT_OperatorCenter, savePasswordAndPasswordHint_three)
         return QVariant::fromValue<QString>("UT_TEST");
     });
 
-    bool isOk = OperatorCenter::getInstance()->savePasswordAndPasswordHint("UT_TEST", "UT_TEST");
+    bool isOk = OperatorCenter::getInstance()->encryptByPBKDF2AndSaveCipher("UT_TEST");
 
     EXPECT_TRUE(isOk);
 }
@@ -630,7 +630,7 @@ TEST(UT_OperatorCenter, getPasswordHint_two)
 TEST(UT_OperatorCenter, getSaltAndPasswordCipher)
 {
     OperatorCenter::getInstance()->strCryfsPassword = "UT_TEST";
-    QString cipher = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+    QString cipher = OperatorCenter::getInstance()->getCryfsPassword();
 
     EXPECT_TRUE(cipher ==  "UT_TEST");
 }
@@ -638,7 +638,7 @@ TEST(UT_OperatorCenter, getSaltAndPasswordCipher)
 TEST(UT_OperatorCenter, clearSaltAndPasswordCipher)
 {
     OperatorCenter::getInstance()->strCryfsPassword = "UT_TEST";
-    OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
+    OperatorCenter::getInstance()->clearCryfsPassword();
 
     EXPECT_TRUE(OperatorCenter::getInstance()->strCryfsPassword.isEmpty());
 }

@@ -11,6 +11,9 @@
 
 DPVAULT_USE_NAMESPACE
 
+inline constexpr int kKeyLength { 2048 };   // 密钥的长度
+inline constexpr char kKeyBegin[] { "BEGIN RSA PUBLIC KEY" };   // 代码生成key
+
 bool rsam::createPublicAndPrivateKey(QString &publicKey, QString &privateKey)
 
 {

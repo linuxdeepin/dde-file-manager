@@ -6,7 +6,6 @@
 #define VAULTHELPER_H
 
 #include "dfmplugin_vault_global.h"
-#include "utils/vaultdefine.h"
 
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/clipboard.h>
@@ -57,7 +56,6 @@ public:
     void appendWinID(const quint64 &winId);
     void removeWinID(const quint64 &winId);
 
-public:
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
 
     static void siderItemClicked(quint64 windowId, const QUrl &url);
@@ -77,25 +75,23 @@ public:
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
     void showInProgressDailog(QString progressState);
+    QString getTpmHashAlgoFromDConfig() const;
+    QString getTpmKeyAlgoFromDConfig() const;
 
 public slots:
     void slotlockVault(int state);
 
-    void createVault(QString &password);
-
+    bool createVault(QString &password);
     bool unlockVault(const QString &password);
-
-    void lockVault(bool isForced);
+    bool lockVault(bool isForced);
 
     void defaultCdAction(const quint64 windowId, const QUrl &url);
 
     void openNewWindow(const QUrl &url);
 
-    void createVaultDialog();
-
-    void unlockVaultDialog();
-
-    void removeVaultDialog();
+    void showCreateVaultDialog();
+    void showUnlockVaultDialog();
+    void showRemoveVaultDialog();
 
     void openWindow();
 
@@ -104,8 +100,6 @@ public slots:
     void newOpenWindow();
 
 signals:
-    void sigCreateVault(int state);
-
     void sigUnlocked(int state);
 
     void sigLocked(int state);

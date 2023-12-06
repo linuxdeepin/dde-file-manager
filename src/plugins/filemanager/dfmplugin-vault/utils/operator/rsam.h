@@ -9,10 +9,9 @@
 
 #include <QString>
 
-DPVAULT_BEGIN_NAMESPACE
-inline constexpr int kKeyLength { 2048 };   // 密钥的长度
-inline constexpr char kKeyBegin[] { "BEGIN RSA PUBLIC KEY" };   // 代码生成key
+DPVAULT_USE_NAMESPACE
 
+namespace dfmplugin_vault {
 class rsam
 {
 public:
@@ -40,6 +39,6 @@ public:
      */
     static QString publicKeyDecrypt(const QString &ciphertext, const QString &publicKey);
 };
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // RSAM_H

@@ -1,0 +1,29 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "tpmHashAlgoName": {
+            "value": "sm3_256",
+            "serial": 0,
+            "flags": [],
+            "name": "保险箱口令哈希算法",
+            "name[zh_CN]": "保险箱口令哈希算法",
+            "description": "保险箱口令哈希算法，默认为(sm3_256),可选算法有(sha256,sha384,sha512,sm3_256,sha3_256,sha3_384,sha3_512)",
+            "description[zh_CN]": "保险箱口令哈希算法，默认为(sm3_256),可选算法有(sha256,sha384,sha512,sm3_256,sha3_256,sha3_384,sha3_512)",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "tpmKeyAlgoName": {
+            "value": "sm4",
+            "serial": 0,
+            "flags": [],
+            "name": "保险箱口令加密算法",
+            "name[zh_CN]": "保险箱口令加密算法",
+            "description": "保险箱口令加密算法，默认为(sm4),可选算法有(sm4,aes,camellia)",
+            "description[zh_CN]": "保险箱口令加密算法，默认为(sm4),可选算法有(sm4,aes,camellia)",
+            "permissions": "readwrite",
+            "visibility": "private"
+        }
+    }
+}
+

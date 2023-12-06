@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "basicwidget.h"
-#include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 
 #include <dfm-base/base/schemefactory.h>
@@ -12,8 +11,6 @@
 
 #include <QFileInfo>
 #include <QDateTime>
-
-static constexpr int kMaximumHeight { 31 };
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -48,43 +45,36 @@ void BasicWidget::initUI()
     fileSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileSize->setLeftValue(tr("Size"));
     fileSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-    fileSize->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     fileCount = new KeyValueLabel(frame);
     fileCount->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileCount->setLeftValue(tr("Contains"));
     fileCount->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-    fileCount->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     fileType = new KeyValueLabel(frame);
     fileType->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileType->setLeftValue(tr("Type"));
     fileType->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-    fileType->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     filePosition = new KeyValueLabel(frame);
     filePosition->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     filePosition->setLeftValue(tr("Location"));
     filePosition->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-    filePosition->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     fileCreated = new KeyValueLabel(frame);
     fileCreated->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileCreated->setLeftValue(tr("Time created"));
     fileCreated->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-    fileCreated->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     fileAccessed = new KeyValueLabel(frame);
     fileAccessed->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileAccessed->setLeftValue(tr("Time accessed"));
     fileAccessed->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-    fileAccessed->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     fileModified = new KeyValueLabel(frame);
     fileModified->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileModified->setLeftValue(tr("Time locked"));
     fileModified->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-    fileModified->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     QGridLayout *gl = new QGridLayout;
     gl->setMargin(0);

@@ -12,7 +12,7 @@
 #include "unlockview/retrievepasswordview.h"
 #include "unlockview/recoverykeyview.h"
 #include "unlockview/passwordrecoveryview.h"
-#include "utils/vaultdefine.h"
+#include "unlockview/unlockwidgetfortpm.h"
 
 #include <QStackedWidget>
 
@@ -33,29 +33,26 @@ public:
     explicit VaultUnlockPages(QWidget *parent = nullptr);
     ~VaultUnlockPages() override;
 
-private:
-    void initUI();
-
 public slots:
     void pageSelect(PageType page);
-
     void onButtonClicked(int index, const QString &text);
+    void onSetBtnEnabled(int index, bool state);
+    void setAllowClose(bool value);
 
-    void onSetBtnEnabled(int index, const bool &state);
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
 private:
+    void showUnlockByTpmWidget();
+
     QStackedWidget *stackedWidget { nullptr };
-
-    //! retrieve password
     RetrievePasswordView *retrievePasswordView { nullptr };
-
-    //! key unlock
     RecoveryKeyView *recoveryKeyView { nullptr };
-
-    //! password unlock
     UnlockView *unlockView { nullptr };
-
     PasswordRecoveryView *passwordRecoveryView { nullptr };
+    UnlockWidgetForTpm *unlockByTpmWidget { Q_NULLPTR };
+    bool allowClose { true };
 };
 }
 #endif   //!VAULTUNLOCKPAGES_H

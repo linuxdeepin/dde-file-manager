@@ -54,6 +54,5 @@ void VaultFileWatcher::onFileRename(const QUrl &fromUrl, const QUrl &toUrl)
 void VaultFileWatcher::onSubfileCreated(const QUrl &url)
 {
     QUrl furl = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
-    fmDebug() << url;
     emit subfileCreated(furl);
 }

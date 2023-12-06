@@ -9,8 +9,11 @@
 #include "createvaultview/vaultactivefinishedview.h"
 #include "utils/policy/policymanager.h"
 #include "utils/encryption/vaultconfig.h"
+#include "events/vaulteventcaller.h"
 
 #include <dfm-base/utils/windowutils.h>
+
+#include <DSpinner>
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -20,8 +23,10 @@
 #include <QHBoxLayout>
 #include <QMouseEvent>
 #include <QWindow>
+#include <QtConcurrent/QtConcurrent>
 
 using namespace dfmplugin_vault;
+DWIDGET_USE_NAMESPACE
 
 VaultActiveView::VaultActiveView(QWidget *parent)
     : VaultPageBase(parent)
@@ -35,27 +40,13 @@ VaultActiveView::VaultActiveView(QWidget *parent)
 
     this->setIcon(QIcon::fromTheme("dfm_vault"));
 
-    //! 初始化试图容器
     stackedWidget = new QStackedWidget(this);
 
-    //! 初始化内部窗体
     startVaultWidget = new VaultActiveStartView(this);
     connect(startVaultWidget, &VaultActiveStartView::sigAccepted,
             this, &VaultActiveView::slotNextWidget);
-    setUnclockMethodWidget = new VaultActiveSetUnlockMethodView(this);
-    connect(setUnclockMethodWidget, &VaultActiveSetUnlockMethodView::sigAccepted,
-            this, &VaultActiveView::slotNextWidget);
-    saveKeyFileWidget = new VaultActiveSaveKeyFileView(this);
-    connect(saveKeyFileWidget, &VaultActiveSaveKeyFileView::sigAccepted,
-            this, &VaultActiveView::slotNextWidget);
-    activeVaultFinishedWidget = new VaultActiveFinishedView(this);
-    connect(activeVaultFinishedWidget, &VaultActiveFinishedView::sigAccepted,
-            this, &VaultActiveView::slotNextWidget);
 
     stackedWidget->addWidget(startVaultWidget);
-    stackedWidget->addWidget(setUnclockMethodWidget);
-    stackedWidget->addWidget(saveKeyFileWidget);
-    stackedWidget->addWidget(activeVaultFinishedWidget);
     stackedWidget->layout()->setMargin(0);
 
     this->addContent(stackedWidget);
@@ -65,8 +56,10 @@ VaultActiveView::VaultActiveView(QWidget *parent)
 
 void VaultActiveView::closeEvent(QCloseEvent *event)
 {
+    if (!allowClose)
+        return event->ignore();
+
     PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
-    //! 响应基类关闭事件
     VaultPageBase::closeEvent(event);
 }
 
@@ -76,37 +69,83 @@ void VaultActiveView::showEvent(QShowEvent *event)
     VaultPageBase::showEvent(event);
 }
 
+void VaultActiveView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape)
+        return;
+
+    VaultPageBase::keyPressEvent(event);
+}
+
 void VaultActiveView::slotNextWidget()
 {
-    if (stackedWidget) {
-        int nIndex = stackedWidget->currentIndex();
-        int nCount = stackedWidget->count();
-        if (nIndex < nCount - 1) {
-            if (nIndex == 1) {  // set encryption method view
-                VaultConfig config;
-                QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
-                if (encryptionMethod == QString(kConfigValueMethodKey)) {
-                    stackedWidget->setCurrentIndex(++nIndex);
-                } else if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
-                    stackedWidget->setCurrentIndex(nIndex + 2);
-                } else if (encryptionMethod == QString(kConfigKeyNotExist)) {
-                    fmCritical() << "Vault: Get encryption method failed, can't next!";
-                }
-                return;
+    if (!stackedWidget)
+        return;
 
-            }
-            stackedWidget->setCurrentIndex(++nIndex);
+    QWidget *curWidget = stackedWidget->currentWidget();
+    if (!curWidget)
+        return;
+
+    if (curWidget == startVaultWidget) {
+        QFutureWatcher<bool> watcher;
+        QEventLoop loop;
+        connect(&watcher, &QFutureWatcher<bool>::finished, this, [&watcher, &loop]{
+            if (watcher.result())
+                loop.exit(0);
+            else
+                loop.exit(-1);
+        });
+        QFuture<bool> future = QtConcurrent::run([]{
+            return VaultEventCaller::checkTPMAvailable();
+        });
+        watcher.setFuture(future);
+
+        DSpinner spinner(this);
+        spinner.setFixedSize(50, 50);
+        spinner.move((width() - spinner.width())/2, (height() - spinner.height())/2);
+        spinner.start();
+        spinner.show();
+
+        allowClose = false;
+        bool tpmAvailable = (loop.exec() == 0) ? true : false;
+        allowClose = true;
+
+        setUnclockMethodWidget = new VaultActiveSetUnlockMethodView(tpmAvailable, this);
+        connect(setUnclockMethodWidget, &VaultActiveSetUnlockMethodView::sigAccepted,
+                this, &VaultActiveView::slotNextWidget);
+        saveKeyFileWidget = new VaultActiveSaveKeyFileView(this);
+        connect(saveKeyFileWidget, &VaultActiveSaveKeyFileView::sigAccepted,
+                this, &VaultActiveView::slotNextWidget);
+        activeVaultFinishedWidget = new VaultActiveFinishedView(this);
+        connect(activeVaultFinishedWidget, &VaultActiveFinishedView::sigAccepted,
+                this, &VaultActiveView::slotNextWidget);
+        connect(activeVaultFinishedWidget, &VaultActiveFinishedView::setAllowClose,
+                this, &VaultActiveView::setAllowClose);
+        stackedWidget->addWidget(setUnclockMethodWidget);
+        stackedWidget->addWidget(saveKeyFileWidget);
+        stackedWidget->addWidget(activeVaultFinishedWidget);
+
+        stackedWidget->setCurrentWidget(setUnclockMethodWidget);
+    } else if (curWidget == setUnclockMethodWidget) {
+        VaultConfig config;
+        QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod).toString();
+        if (kConfigValueMethodKey == encryptionMethod
+                || kConfigValueMethodTpmWithPin == encryptionMethod
+                || kConfigValueMethodTpmWithoutPin == encryptionMethod) {
+            stackedWidget->setCurrentWidget(saveKeyFileWidget);
+        } else if (kConfigValueMethodTransparent == encryptionMethod) {
+            stackedWidget->setCurrentWidget(activeVaultFinishedWidget);
         } else {
-            setBeginingState();
-            accept();
+            fmCritical() << "Get encryption method failed, can't next!";
         }
+    } else if (curWidget == saveKeyFileWidget) {
+        stackedWidget->setCurrentWidget(activeVaultFinishedWidget);
+    } else if (curWidget == activeVaultFinishedWidget) {
+        close();
     }
 }
 
-void VaultActiveView::setBeginingState()
+void VaultActiveView::setAllowClose(bool value)
 {
-    stackedWidget->setCurrentIndex(0);
-    setUnclockMethodWidget->clearText();
-    activeVaultFinishedWidget->setFinishedBtnEnabled(true);
-    setCloseButtonVisible(true);
+    allowClose = value;
 }

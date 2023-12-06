@@ -9,6 +9,7 @@
 #include "utils/policy/policymanager.h"
 #include "utils/fileencrypthandle.h"
 #include "utils/encryption/vaultconfig.h"
+#include "events/vaulteventcaller.h"
 
 #include "plugins/common/dfmplugin-utils/reportlog/datas/vaultreportdata.h"
 #include <dfm-base/base/urlroute.h>
@@ -26,6 +27,8 @@
 #include <QThread>
 #include <QMessageBox>
 #include <QTimer>
+#include <QtConcurrent/QtConcurrent>
+#include <QKeyEvent>
 
 Q_DECLARE_METATYPE(const char *)
 
@@ -33,12 +36,25 @@ using namespace PolkitQt1;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
+using namespace dfmplugin_utils;
 
 VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     : QWidget(parent)
 {
     initUi();
     initConnect();
+}
+
+VaultActiveFinishedView::~VaultActiveFinishedView()
+{
+    if (timer && timer->isActive()) {
+        timer->stop();
+    }
+    delete timer;
+    if (timerProgress && timerProgress->isActive()) {
+        timerProgress->stop();
+    }
+    delete timerProgress;
 }
 
 void VaultActiveFinishedView::initUi()
@@ -112,8 +128,8 @@ void VaultActiveFinishedView::initUi()
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
-    // 初始化定时器
     timer = new QTimer(this);
+    timerProgress = new QTimer(this);
 
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(pLabelTitle), AcName::kAcLabelVaultFinishTitle);
@@ -131,10 +147,10 @@ void VaultActiveFinishedView::initConnect()
 {
     connect(finishedBtn, &DPushButton::clicked,
             this, &VaultActiveFinishedView::slotEncryptVault);
-    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault,
-            this, &VaultActiveFinishedView::slotEncryptComplete);
     connect(timer, &QTimer::timeout,
             this, &VaultActiveFinishedView::slotTimeout);
+    connect(timerProgress, &QTimer::timeout,
+            this, &VaultActiveFinishedView::WaterProgressRising);
 }
 
 void VaultActiveFinishedView::setFinishedBtnEnabled(bool b)
@@ -146,25 +162,25 @@ void VaultActiveFinishedView::setFinishedBtnEnabled(bool b)
     widgetThree->setVisible(false);
 }
 
-void VaultActiveFinishedView::slotEncryptComplete(int nState)
+void VaultActiveFinishedView::createVaultFinished(bool success)
 {
-    using namespace dfmplugin_utils;
-    if (nState == 0) {   // 创建保险箱成功
-        waterProgress->setValue(100);
-        waterProgress->stop();
-        repaint();
-        timer->setSingleShot(true);
-        timer->start(500);
+    timerProgress->stop();
+    waterProgress->setValue(100);
+    waterProgress->stop();
+    if (success) {
         VaultHelper::recordTime(kjsonGroupName, kjsonKeyCreateTime);
 
         // report log
         QVariantMap data;
         data.insert("mode", VaultReportData::kCreated);
-
         dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
     } else {
-        DialogManager::instance()->showMessageDialog(DialogManager::kMsgWarn, "", QString(tr("Failed to create file vault: %1").arg(nState)));
+        encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dfm_fail").pixmap(128, 128));
+        tipsThree->setText(tr("Encrypt failed!"));
     }
+    repaint();
+    timer->setSingleShot(true);
+    timer->start(500);
 }
 
 void VaultActiveFinishedView::slotEncryptVault()
@@ -180,11 +196,11 @@ void VaultActiveFinishedView::slotEncryptVault()
         // 灰化按钮，避免异步时用户再次点击按钮
         finishedBtn->setEnabled(false);
     } else {
+        emit sigAccepted();
         // 切换到保险箱主页面
-        VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
+        VaultEventCaller::sendItemActived(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
         VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
         VaultHelper::recordTime(kjsonGroupName, kjsonKeyLockTime);
-        emit sigAccepted();
     }
 }
 
@@ -192,48 +208,52 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
 {
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
                this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
-    if (isVisible()) {
-        PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage1);
-        if (result == Authority::Yes) {
-            if (finishedBtn->text() == tr("Encrypt")) {
-                // 完成按钮灰化
-                finishedBtn->setEnabled(false);
 
-                // 进度条
-                waterProgress->start();
-                widgetOne->setVisible(false);
-                widgetTow->setVisible(true);
-                widgetThree->setVisible(false);
-
-                std::thread t([]() {
-                    VaultConfig config;
-                    QString encrypitonMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
-                    if (encrypitonMethod == QString(kConfigKeyNotExist)) {
-                        fmWarning() << "Vault: Get encryption method failed!";
-                        return;
-                    }
-
-                    QString password { "" };
-                    if (encrypitonMethod == QString(kConfigValueMethodKey)) {
-                        password = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
-                    } else if (encrypitonMethod == QString(kConfigValueMethodTransparent)) {
-                        password = OperatorCenter::getInstance()->passwordFromKeyring();
-                    } else {
-                        fmWarning() << "Vault: Get encryption method failed, can't create vault!";
-                    }
-                    if (!password.isEmpty()) {
-                        VaultHelper::instance()->createVault(password);
-                        OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
-                    } else {
-                        fmWarning() << "Vault: Get password is empty, failed to create the vault!";
-                    }
-                });
-                t.detach();
-            }
-        } else {
-            finishedBtn->setEnabled(true);
-        }
+    if (!isVisible() || result != Authority::Yes || (finishedBtn->text() != tr("Encrypt"))) {
+        finishedBtn->setEnabled(true);
+        return;
     }
+
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage1);
+
+    // 进度条
+    waterProgress->start();
+    widgetOne->setVisible(false);
+    widgetTow->setVisible(true);
+    widgetThree->setVisible(false);
+    timerProgress->setSingleShot(false);
+    timerProgress->start(1000);
+
+    QFutureWatcher<bool> watcher;
+    QEventLoop loop;
+    connect(&watcher, &QFutureWatcher<bool>::finished, this, [&watcher, &loop]{
+        if (watcher.result())
+            loop.exit(0);
+        else
+            loop.exit(-1);
+    });
+    QFuture<bool> future = QtConcurrent::run([]{
+        VaultConfig config;
+        const QString sType = config.get(kConfigNodeName, kConfigKeyEncryptionMethod).toString();
+        if (sType == kConfigValueMethodTpmWithoutPin || sType == kConfigValueMethodTpmWithPin) {
+            if (!OperatorCenter::getInstance()->encryptByTPM(sType)) {
+                fmCritical() << "Vault: TPM encrypt failed!";
+                return false;
+            }
+        }
+
+        if (!OperatorCenter::getInstance()->createVault()) {
+            fmCritical() << "Vault: Failed to create file vault!";
+            return false;
+        }
+        return true;
+    });
+    watcher.setFuture(future);
+
+    emit setAllowClose(false);
+    bool re = (loop.exec() == 0) ? true : false;
+    createVaultFinished(re);
+    emit setAllowClose(true);
 }
 
 void VaultActiveFinishedView::showEvent(QShowEvent *event)
@@ -254,6 +274,16 @@ void VaultActiveFinishedView::slotTimeout()
         DDialog *pParent = qobject_cast<DDialog *>(parentWidget()->parentWidget());
         if (pParent) {
             pParent->setCloseButtonVisible(true);
+        }
+    }
+}
+
+void VaultActiveFinishedView::WaterProgressRising()
+{
+    if (waterProgress) {
+        int value = waterProgress->value() + 2;
+        if (value < 100) {
+            waterProgress->setValue(value);
         }
     }
 }

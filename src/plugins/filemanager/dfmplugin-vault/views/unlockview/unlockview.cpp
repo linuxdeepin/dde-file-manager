@@ -6,11 +6,13 @@
 #include "utils/vaulthelper.h"
 #include "utils/policy/policymanager.h"
 #include "utils/encryption/interfaceactivevault.h"
-#include "utils/vaultdefine.h"
+#include "utils/encryption/vaultconfig.h"
+#include "utils/encryption/operatorcenter.h"
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
 #include "utils/fileencrypthandle.h"
 #include "dbus/vaultdbusutils.h"
+#include "events/vaulteventcaller.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/application/settings.h>
@@ -75,17 +77,11 @@ void UnlockView::initUI()
     play1->addWidget(passwordEdit);
     play1->addWidget(tipsButton);
 
-    QHBoxLayout *play2 = new QHBoxLayout();
-    play2->setMargin(0);
-    play2->addStretch(1);
-    play2->addWidget(forgetPassword);
-    forgetPassword->setAlignment(Qt::AlignRight);
-
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     mainLayout->addStretch();
     mainLayout->addLayout(play1);
-    mainLayout->addLayout(play2);
+    mainLayout->addWidget(forgetPassword, 0, Qt::AlignRight);
     mainLayout->addStretch();
 
     this->setLayout(mainLayout);
@@ -112,11 +108,12 @@ void UnlockView::initUI()
 
 void UnlockView::buttonClicked(int index, const QString &text)
 {
+    Q_UNUSED(text)
+
     if (index == 1) {
         emit sigBtnEnabled(1, false);
 
         int nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
-
         if (nLeftoverErrorTimes < 1) {
             int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
             passwordEdit->showAlertMessage(tr("Please try again %1 minutes later").arg(nNeedWaitMinutes));
@@ -124,25 +121,13 @@ void UnlockView::buttonClicked(int index, const QString &text)
         }
 
         QString strPwd = passwordEdit->text();
-
         QString strCipher("");
-        if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
-            unlockByPwd = true;
-            VaultHelper::instance()->unlockVault(strCipher);
-            // 密码输入正确后，剩余输入次数还原,需要等待的分钟数还原
-            VaultDBusUtils::restoreLeftoverErrorInputTimes();
-            VaultDBusUtils::restoreNeedWaitMinutes();
-        } else {
-            //! 设置密码输入框颜色
-            //! 修复bug-51508 激活密码框警告状态
+        if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
             passwordEdit->setAlert(true);
-
             // 保险箱剩余错误密码输入次数减1
             VaultDBusUtils::leftoverErrorInputTimesMinusOne();
-
             // 显示错误输入提示
             nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
-
             if (nLeftoverErrorTimes < 1) {
                 // 计时10分钟后，恢复密码编辑框
                 VaultDBusUtils::startTimerOfRestorePasswordInput();
@@ -155,8 +140,14 @@ void UnlockView::buttonClicked(int index, const QString &text)
                 else
                     passwordEdit->showAlertMessage(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes));
             }
+            return;
         }
-        return;
+
+        unlockByPwd = true;
+        // 密码输入正确后，剩余输入次数还原,需要等待的分钟数还原
+        VaultDBusUtils::restoreLeftoverErrorInputTimes();
+        VaultDBusUtils::restoreNeedWaitMinutes();
+        VaultHelper::instance()->unlockVault(strCipher);
     } else {
         emit sigCloseDialog();
     }

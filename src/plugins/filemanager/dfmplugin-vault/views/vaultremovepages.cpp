@@ -13,6 +13,8 @@
 #include "removevaultview/vaultremoveprogressview.h"
 #include "removevaultview/vaultremovebypasswordview.h"
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
+#include "removevaultview/vaultremovebytpmpinwidget.h"
+#include "removevaultview/vaultremovebynonewidget.h"
 
 #include "plugins/common/dfmplugin-utils/reportlog/datas/vaultreportdata.h"
 
@@ -32,131 +34,44 @@
 
 Q_DECLARE_METATYPE(const char *)
 
-constexpr int kKeyVerifyDeleteBtn = 1;
-constexpr int kPassWordDeleteBtn = 2;
-
 using namespace PolkitQt1;
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
+using namespace dfmplugin_utils;
 
 VaultRemovePages::VaultRemovePages(QWidget *parent)
-    : VaultPageBase(parent),
-      passwordView(new VaultRemoveByPasswordView(this)),
-      recoverykeyView(new VaultRemoveByRecoverykeyView(this)),
-      progressView(new VaultRemoveProgressView(this)),
-      stackedWidget(new QStackedWidget(this))
+    : VaultPageBase(parent)
 {
-    setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
-    if (dfmbase::WindowUtils::isWayLand()) {
-        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
-        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
-        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-    }
-    setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
-    //! 修复bug-41001 提示信息显示不全
-    this->setFixedWidth(396);
-    //! 标题
-    DLabel *pTitle = new DLabel(tr("Delete File Vault"), this);
-    //! 文本水平并垂直居中
-    pTitle->setAlignment(Qt::AlignCenter);
-    //! 信息
-    hintInfo = new QLabel(this);
-    //! 文本水平并垂直居中
-    hintInfo->setAlignment(Qt::AlignCenter);
-    //! 修复bug-41001 提示信息显示不全
-    hintInfo->setWordWrap(true);
-    //! 主界面
-    QFrame *mainFrame = new QFrame(this);
-
-    //! 修复bug-41001 提示信息显示不全
-    stackedWidget->setFixedHeight(95);
-    stackedWidget->addWidget(passwordView);
-    stackedWidget->addWidget(recoverykeyView);
-    stackedWidget->addWidget(progressView);
-
-    //! 布局
-    QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
-    mainLayout->setMargin(0);
-    mainLayout->addWidget(pTitle);
-    mainLayout->addWidget(hintInfo);
-    mainLayout->addWidget(stackedWidget);
-
-    mainFrame->setLayout(mainLayout);
-    addContent(mainFrame);
-
-    showVerifyWidget();
-
-    //! 防止点击按钮隐藏界面
-    setOnButtonClickedClose(false);
-
+    initUI();
     initConnect();
+}
 
-#ifdef ENABLE_TESTING
-    AddATTag(qobject_cast<QWidget *>(pTitle), AcName::kAcLabelVaultRemoveTitle);
-    AddATTag(qobject_cast<QWidget *>(hintInfo), AcName::kAcLabelVaultRemoveContent);
-#endif
+void VaultRemovePages::pageSelect(RemoveWidgetType type)
+{
+    switch (type) {
+    case kPasswordWidget: {
+        showPasswordWidget();
+    } break;
+    case kRecoveryKeyWidget: {
+        showRecoveryKeyWidget();
+    } break;
+    case kRemoveProgressWidget: {
+        showRemoveProgressWidget();
+    } break;
+    case kTpmPinWidget: {
+        showTpmPinWidget();
+    } break;
+    case kNoneWidget: {
+        showNodeWidget();
+    } break;
+    default:
+        break;
+    }
 }
 
 void VaultRemovePages::initConnect()
 {
     connect(this, &VaultRemovePages::buttonClicked, this, &VaultRemovePages::onButtonClicked);
-    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, this, &VaultRemovePages::onLockVault);
-    connect(progressView, &VaultRemoveProgressView::removeFinished, this, &VaultRemovePages::onVaultRemoveFinish);
-}
-
-void VaultRemovePages::showVerifyWidget()
-{
-    setInfo(tr("Once deleted, the files in it will be permanently deleted"));
-
-    setCloseButtonVisible(true);
-    clearButtons();
-    QStringList buttonTexts({ tr("Cancel", "button"), tr("Use Key", "button"), tr("Delete", "button") });
-    addButton(buttonTexts[0], false);
-    //! 1050及以上版本无密钥验证
-    if (!VaultHelper::instance()->getVaultVersion())
-        addButton(buttonTexts[1], false);
-    addButton(buttonTexts[2], true, DDialog::ButtonWarning);
-    if (!VaultHelper::instance()->getVaultVersion())
-        setDefaultButton(2);
-    else
-        setDefaultButton(1);
-    stackedWidget->setCurrentIndex(0);
-
-    //! 如果密码提示信息为空，则隐藏提示按钮
-    QString strPwdHint("");
-    if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
-        if (strPwdHint.isEmpty()) {
-            passwordView->setTipsButtonVisible(false);
-        } else {
-            passwordView->setTipsButtonVisible(true);
-        }
-    }
-}
-
-void VaultRemovePages::showRemoveWidget()
-{
-    setInfo(tr("Removing..."));
-    clearButtons();
-    addButton(tr("OK", "button"), true);
-    getButton(0)->setEnabled(false);
-    stackedWidget->setCurrentIndex(2);
-}
-
-void VaultRemovePages::setInfo(const QString &info)
-{
-    hintInfo->setText(info);
-}
-
-void VaultRemovePages::closeEvent(QCloseEvent *event)
-{
-    // 重置界面状态
-    passwordView->clear();
-    recoverykeyView->clear();
-    progressView->clear();
-    removeVault = false;
-
-    // 调用基类关闭事件
-    VaultPageBase::closeEvent(event);
 }
 
 void VaultRemovePages::showEvent(QShowEvent *event)
@@ -165,134 +80,121 @@ void VaultRemovePages::showEvent(QShowEvent *event)
     VaultPageBase::showEvent(event);
 }
 
-void VaultRemovePages::onButtonClicked(int index)
+void VaultRemovePages::showPasswordWidget()
 {
-    switch (index) {
-    case 0:   //点击取消按钮
-        close();
-        break;
-    case 1: {   // 删除
-        if (stackedWidget->currentIndex() == 0) {
-            VaultConfig config;
-            const QString &encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
-            if (encryptionMethod != QString(kConfigValueMethodTransparent)) {
-                // 密码验证
-                QString strPwd = passwordView->getPassword();
-                QString strCipher("");
+    clearContents(true);
+    clearButtons();
 
-                if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
-                    passwordView->showToolTip(tr("Wrong password"), 3000, VaultRemoveByPasswordView::EN_ToolTip::kWarning);
-                    return;
-                }
-            }
-        } else {
-            // 密钥验证
-            QString strKey = recoverykeyView->getRecoverykey();
-            strKey.replace("-", "");
-            QString strCipher("");
+    passwordView = new VaultRemoveByPasswordView(this);
+    setTitle(passwordView->titleText());
+    addContent(passwordView);
+    QStringList btns = passwordView->btnText();
+    if (btns.size() > 1) {
+        addButton(btns[0], false);
+        addButton(btns[1], true, ButtonType::ButtonRecommend);
+    }
+    connect(passwordView, &VaultRemoveByPasswordView::signalJump, this, &VaultRemovePages::pageSelect);
+    connect(passwordView, &VaultRemoveByPasswordView::sigCloseDialog, this, &VaultRemovePages::close);
+}
 
-            if (!InterfaceActiveVault::checkUserKey(strKey, strCipher)) {
-                recoverykeyView->showAlertMessage(tr("Wrong recovery key"));
-                return;
-            }
-        }
+void VaultRemovePages::showRecoveryKeyWidget()
+{
+    recoverykeyView = new VaultRemoveByRecoverykeyView(this);
+}
 
-        //! User authorization authentication (asynchronous authorization)
-        auto ins = Authority::instance();
-        ins->checkAuthorization(kPolkitVaultRemove,
-                                UnixProcessSubject(getpid()),
-                                Authority::AllowUserInteraction);
-        connect(ins, &Authority::checkAuthorizationFinished,
-                this, &VaultRemovePages::slotCheckAuthorizationFinished);
+void VaultRemovePages::showRemoveProgressWidget()
+{
+    clearContents(true);
+    if (getButtons().size() > 1) {
+        getButton(0)->setVisible(false);
+        getButton(1)->setVisible(false);
+    }
+    clearButtons();
 
-        QAbstractButton *btn;
-        //! 1050 and above version without key authentication
-        if (!VaultHelper::instance()->getVaultVersion()) {
-            btn = getButton(kPassWordDeleteBtn);
-        } else {
-            btn = getButton(kKeyVerifyDeleteBtn);
-        }
+    progressView = new VaultRemoveProgressView(this);
+    setTitle(progressView->titleText());
+    addContent(progressView);
+    QStringList btns = progressView->btnText();
+    if (btns.size() > 0)
+        addButton(btns[0], true, ButtonType::ButtonRecommend);
 
-        //! The button is grayed out to prevent users from operating indiscriminately
-        if (btn)
-            btn->setEnabled(false);
-    } break;
-    default:
-        break;
+    connect(progressView, &VaultRemoveProgressView::sigCloseDialog, this, &VaultRemovePages::close);
+    connect(progressView, &VaultRemoveProgressView::setBtnEnable, this, &VaultRemovePages::setBtnEnable);
+
+    progressView->removeVault(kVaultBasePath);
+}
+
+void VaultRemovePages::showTpmPinWidget()
+{
+    clearContents(true);
+    clearButtons();
+
+    tpmPinWidget = new VaultRemoveByTpmPinWidget(this);
+    setTitle(tpmPinWidget->titleText());
+    addContent(tpmPinWidget);
+    QStringList btns = tpmPinWidget->btnText();
+    if (btns.size() > 1) {
+        addButton(btns[0], false);
+        addButton(btns[1], true, ButtonType::ButtonRecommend);
+    }
+
+    connect(tpmPinWidget, &VaultRemoveByTpmPinWidget::closeDialog, this, &VaultRemovePages::close);
+    connect(tpmPinWidget, &VaultRemoveByTpmPinWidget::jumpPage, this, &VaultRemovePages::pageSelect);
+}
+
+void VaultRemovePages::showNodeWidget()
+{
+    clearContents(true);
+    clearButtons();
+
+    noneWidget = new VaultRemoveByNoneWidget(this);
+    setTitle(noneWidget->titleText());
+    addContent(noneWidget);
+    QStringList btns = noneWidget->btnText();
+    if (btns.size() > 1) {
+        addButton(btns[0], false);
+        addButton(btns[1], true, ButtonType::ButtonRecommend);
+    }
+
+    connect(noneWidget, &VaultRemoveByNoneWidget::closeDialog, this, &VaultRemovePages::close);
+    connect(noneWidget, &VaultRemoveByNoneWidget::jumpPage, this, &VaultRemovePages::pageSelect);
+}
+
+void VaultRemovePages::onButtonClicked(int index, const QString &text)
+{
+    if (!getContent(0))
+        return;
+
+    if (getContent(0) == passwordView) {
+        passwordView->buttonClicked(index, text);
+    } else if (getContent(0) == recoverykeyView) {
+
+    } else if (getContent(0) == progressView) {
+        progressView->buttonClicked(index, text);
+    } else if (getContent(0) == tpmPinWidget) {
+        tpmPinWidget->buttonClicked(index, text);
+    } else if (getContent(0) == noneWidget) {
+        noneWidget->buttonClicked(index, text);
     }
 }
 
-void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
+void VaultRemovePages::setBtnEnable(int index, bool enable)
 {
-    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
-               this, &VaultRemovePages::slotCheckAuthorizationFinished);
-    if (isVisible()) {
-        QAbstractButton *btn;
-        //! 1050 and above version without key authentication
-        if (!VaultHelper::instance()->getVaultVersion()) {
-            btn = getButton(kPassWordDeleteBtn);
-        } else {
-            btn = getButton(kKeyVerifyDeleteBtn);
-        }
-        PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kDeleteVaultPage);
-        if (result == Authority::Yes) {
-            removeVault = true;
-            //! Before deleting, set the copy, clip, and compress task dialog box in the vault as the top-level window.
-            if (false) {
-                //! todo to be realized
-                fmDebug() << "Whether there are copying, clipping or compression tasks in the current safe, the vault cannot be deleted!";
-            } else {
-                //! The verification is successful, first lock the vault
-                VaultHelper::instance()->lockVault(false);
-            }
-            //! The button is grayed out to prevent users from operating indiscriminately
-            if (btn)
-                btn->setEnabled(false);
-        } else {
-            if (btn)
-                btn->setEnabled(true);
-        }
+    if (getButton(index)) {
+        getButton(index)->setEnabled(enable);
     }
 }
 
-void VaultRemovePages::onLockVault(int state)
+void VaultRemovePages::initUI()
 {
-    if (removeVault) {
-        if (state == 0) {
-            // 切换至删除界面
-            showRemoveWidget();
-
-            QString vaultLockPath = PathManager::vaultLockPath();
-            QString vaultUnlockPath = PathManager::vaultUnlockPath();
-            progressView->removeVault(vaultLockPath, vaultUnlockPath);
-        } else {
-            if (state != static_cast<int>(ErrorCode::kResourceBusy)) {
-                QString errMsg = tr("Failed to delete file vault");
-                DDialog dialog(this);
-                dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-                dialog.setTitle(errMsg);
-                dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
-                dialog.exec();
-            }
-        }
-        removeVault = false;
-    }
-}
-
-void VaultRemovePages::onVaultRemoveFinish(bool result)
-{
-    using namespace dfmplugin_utils;
-
-    if (result) {
-        VaultHelper::instance()->updateState(VaultState::kNotExisted);
-        // report log
-        QVariantMap data;
-        data.insert("mode", VaultReportData::kDeleted);
-        dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
-        setInfo(tr("Deleted successfully"));
-    } else {
-        setInfo(tr("Failed to delete"));
+    setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+    if (dfmbase::WindowUtils::isWayLand()) {
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
 
-    this->getButton(0)->setEnabled(true);
+    setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
+    this->setFixedWidth(396);
+    setOnButtonClickedClose(false);
 }

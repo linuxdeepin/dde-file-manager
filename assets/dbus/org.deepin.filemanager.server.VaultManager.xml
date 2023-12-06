@@ -46,5 +46,13 @@
     <method name="RestoreNeedWaitMinutes">
       <arg name="userID" type="i" direction="in"/>
     </method>
+    <method name="GetUnlockCompletedState">
+      <arg type="i" direction="out"/>
+      <arg name="basePath" type="s" direction="in"/>
+    </method>
+    <method name="TransparentUnlockVault">
+      <arg type="i" direction="out"/>
+      <arg name="basePath" type="s" direction="in"/>
+    </method>
   </interface>
 </node>

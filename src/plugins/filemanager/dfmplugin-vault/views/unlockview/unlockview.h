@@ -5,7 +5,6 @@
 #ifndef UNLOCKVIEW_H
 #define UNLOCKVIEW_H
 #include "dfmplugin_vault_global.h"
-#include "utils/vaultdefine.h"
 
 #include <DPasswordEdit>
 #include <DToolTip>
@@ -28,32 +27,20 @@ public:
     virtual ~UnlockView() override;
 
     QStringList btnText();
-
     QString titleText();
-
     void buttonClicked(int index, const QString &text);
 
-signals:
-    /*!
-     * /brief signalJump 页面跳转
-     */
-    void signalJump(const PageType type);
-
-    void sigBtnEnabled(const int &index, const bool &state);
-
+Q_SIGNALS:
+    void signalJump(const PageType &type);
+    void sigBtnEnabled(int index, bool state);
     void sigCloseDialog();
 
-public slots:
-
+public Q_SLOTS:
     void onPasswordChanged(const QString &pwd);
-
     void onVaultUlocked(int state);
 
-private slots:
-    //! UI初始化
+private Q_SLOTS:
     void initUI();
-
-    //! 超时函数，定时隐藏tooltip显示
     void slotTooltipTimerTimeout();
 
 protected:

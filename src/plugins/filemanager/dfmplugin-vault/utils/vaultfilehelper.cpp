@@ -77,7 +77,7 @@ bool VaultFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources
     auto tmpFlags = flags;
     tmpFlags |= AbstractJobHandler::JobFlag::kCountProgressCustomize;
     const QUrl url = transUrlsToLocal({ target }).first();
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy, windowId, actualUrls, url, tmpFlags, nullptr);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy, windowId, actualUrls, url, static_cast<int>(tmpFlags), nullptr);
     return true;
 }
 
@@ -362,6 +362,8 @@ bool VaultFileHelper::setPermision(const quint64 windowId,
                                    bool *ok,
                                    QString *error)
 {
+    Q_UNUSED(windowId)
+
     if (VaultHelper::instance()->scheme() != url.scheme())
         return false;
 

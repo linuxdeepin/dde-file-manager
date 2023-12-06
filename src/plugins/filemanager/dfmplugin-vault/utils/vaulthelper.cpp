@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaulthelper.h"
-#include "vaultdefine.h"
 #include "pathmanager.h"
 #include "views/vaultcreatepage.h"
 #include "views/vaultunlockpages.h"
 #include "views/vaultremovepages.h"
+#include "views/utilsview/waitdialog.h"
 #include "views/vaultpropertyview/vaultpropertydialog.h"
 #include "utils/encryption/vaultconfig.h"
 #include "utils/encryption/operatorcenter.h"
@@ -18,12 +18,13 @@
 #include "events/vaulteventcaller.h"
 #include "dbus/vaultdbusutils.h"
 
-#include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -124,10 +125,10 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
 
     switch (instance()->state(PathManager::vaultLockPath())) {
     case VaultState::kNotExisted: {
-        VaultHelper::instance()->createVaultDialog();
+        VaultHelper::instance()->showCreateVaultDialog();
     } break;
     case VaultState::kEncrypted: {
-        VaultHelper::instance()->unlockVaultDialog();
+        VaultHelper::instance()->showUnlockVaultDialog();
     } break;
     case VaultState::kUnlocked:
         instance()->defaultCdAction(windowId, url);
@@ -203,10 +204,10 @@ DMenu *VaultHelper::createMenu()
     DMenu *timeMenu = new DMenu;
     switch (instance()->state(PathManager::vaultLockPath())) {
     case VaultState::kNotExisted:
-        menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::createVaultDialog);
+        menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::showCreateVaultDialog);
         break;
     case VaultState::kEncrypted:
-        menu->addAction(QObject::tr("Unlock"), VaultHelper::instance(), &VaultHelper::unlockVaultDialog);
+        menu->addAction(QObject::tr("Unlock"), VaultHelper::instance(), &VaultHelper::showUnlockVaultDialog);
         break;
     case VaultState::kUnlocked: {
         menu->addAction(QObject::tr("Open"), VaultHelper::instance(), &VaultHelper::openWindow);
@@ -217,7 +218,9 @@ DMenu *VaultHelper::createMenu()
 
         VaultConfig config;
         QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
-        if (encryptionMethod == QString(kConfigValueMethodKey) || encryptionMethod == QString(kConfigKeyNotExist)) {
+        if (encryptionMethod == QString(kConfigValueMethodKey)
+                || encryptionMethod == QString(kConfigKeyNotExist)
+                || encryptionMethod == kConfigValueMethodTpmWithPin) {
             menu->addAction(QObject::tr("Lock"), []() {
                 VaultHelper::instance()->lockVault(false);
             });
@@ -253,7 +256,7 @@ DMenu *VaultHelper::createMenu()
             menu->addSeparator();
         }
 
-        menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
+        menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::showRemoveVaultDialog);
 
         menu->addAction(QObject::tr("Properties"), []() {
             VaultEventCaller::sendVaultProperty(VaultHelper::instance()->rootUrl());
@@ -301,15 +304,10 @@ QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
     }
 }
 
-void VaultHelper::createVault(QString &password)
+bool VaultHelper::createVault(QString &password)
 {
-    static bool flg = true;
-    if (flg) {
-        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault, VaultHelper::instance(), &VaultHelper::sigCreateVault);
-        flg = false;
-    }
     const EncryptType &type = FileEncryptHandle::instance()->encryptAlgoTypeOfGroupPolicy();
-    FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password, type);
+    return FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password, type);
 }
 
 bool VaultHelper::unlockVault(const QString &password)
@@ -322,17 +320,17 @@ bool VaultHelper::unlockVault(const QString &password)
     return FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
-void VaultHelper::lockVault(bool isForced)
+bool VaultHelper::lockVault(bool isForced)
 {
     static bool flg = true;
     if (flg) {
         connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, VaultHelper::instance(), &VaultHelper::slotlockVault);
         flg = false;
     }
-    FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath(), isForced);
+    return FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath(), isForced);
 }
 
-void VaultHelper::createVaultDialog()
+void VaultHelper::showCreateVaultDialog()
 {
     if (QFile::exists(kVaultBasePathOld + QDir::separator() + QString(kVaultEncrypyDirName) + QDir::separator() + QString(kCryfsConfigFileName))) {
         fmCritical() << "Vault: the old vault not migrate";
@@ -344,34 +342,66 @@ void VaultHelper::createVaultDialog()
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Sidebar_UpdateSelection", currentWinID);
 }
 
-void VaultHelper::unlockVaultDialog()
+void VaultHelper::showUnlockVaultDialog()
 {
     VaultConfig config;
     QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
     if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
-        const QString &password = OperatorCenter::getInstance()->passwordFromKeyring();
-        if (!password.isEmpty()) {
-            if (unlockVault(password)) {
-                VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
-                                                         VaultHelper::instance()->rootUrl());
-                VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+        const QString encryptPath = kVaultBasePath + QDir::separator() + kVaultEncrypyDirName;
+        if (kUnlocked != state(encryptPath)) {
+            const QString &password = OperatorCenter::getInstance()->passwordFromKeyring();
+            if (password.isEmpty()) {
+                fmCritical() << "Vault: The password from Keyring is empty!";
+                return;
             }
-        } else {
-            fmWarning() << "Vault: The password from Keyring is empty!";
+            if (!unlockVault(password)) {
+                fmCritical() << "Vault: unlock vault failed!";
+                return;
+            }
         }
-    } else {
+        VaultEventCaller::sendItemActived(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
+        VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+    } else if (encryptionMethod == kConfigValueMethodKey) {
         VaultUnlockPages *page = new VaultUnlockPages();
         page->pageSelect(PageType::kUnlockPage);
         page->exec();
         if (state(PathManager::vaultLockPath()) != kUnlocked)
             dpfSlotChannel->push("dfmplugin_sidebar", "slot_Sidebar_UpdateSelection", currentWinID);
+    } else if (kConfigValueMethodTpmWithPin == encryptionMethod) {
+        VaultUnlockPages *page = new VaultUnlockPages();
+        page->pageSelect(PageType::kUnlockWidgetForTpm);
+        page->exec();
+        if (state(PathManager::vaultLockPath()) != kUnlocked)
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Sidebar_UpdateSelection", currentWinID);
+    } else if (kConfigValueMethodTpmWithoutPin == encryptionMethod) {
+        const QString encryptPath = kVaultBasePath + QDir::separator() + kVaultEncrypyDirName;
+        if (kUnlocked != state(encryptPath)) {
+            WaitDialog dlg(qApp->activeWindow());
+            dlg.exec();
+        } else {
+            VaultEventCaller::sendItemActived(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
+            VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+        }
     }
 }
 
-void VaultHelper::removeVaultDialog()
+void VaultHelper::showRemoveVaultDialog()
 {
-    VaultPageBase *page = new VaultRemovePages();
-    page->exec();
+    VaultConfig config;
+    QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+    if (kConfigValueMethodKey == encryptionMethod) {
+        VaultRemovePages *page = new VaultRemovePages();
+        page->pageSelect(kPasswordWidget);
+        page->exec();
+    } else if (kConfigValueMethodTransparent == encryptionMethod || kConfigValueMethodTpmWithoutPin == encryptionMethod) {
+        VaultRemovePages *page = new VaultRemovePages();
+        page->pageSelect(kNoneWidget);
+        page->exec();
+    } else if (kConfigValueMethodTpmWithPin == encryptionMethod) {
+        VaultRemovePages *page = new VaultRemovePages();
+        page->pageSelect(kTpmPinWidget);
+        page->exec();
+    }
 }
 
 void VaultHelper::openWindow()
@@ -448,6 +478,18 @@ void VaultHelper::showInProgressDailog(QString msg)
     if (msg.contains("Device or resource busy")) {
         DialogManagerInstance->showErrorDialog(tr("Vault"), tr("A task is in progress, so it cannot perform your operation"));
     }
+}
+
+QString VaultHelper::getTpmHashAlgoFromDConfig() const
+{
+    const QVariant ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.vault", "tpmHashAlgoName");
+    return ret.isValid() ? ret.toString() : "";
+}
+
+QString VaultHelper::getTpmKeyAlgoFromDConfig() const
+{
+    const QVariant ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.vault", "tpmKeyAlgoName");
+    return ret.isValid() ? ret.toString() : "";
 }
 
 VaultHelper::VaultHelper()

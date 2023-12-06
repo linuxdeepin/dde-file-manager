@@ -16,10 +16,3 @@ TEST(UT_VaultActiveView, slotNextWidget)
     view.slotNextWidget();
     EXPECT_TRUE(view.stackedWidget->currentIndex() == 1);
 }
-
-TEST(UT_VaultActiveView, setBegingState)
-{
-    VaultActiveView view;
-    view.setBeginingState();
-    EXPECT_TRUE(view.stackedWidget->currentIndex() == 0);
-}

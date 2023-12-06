@@ -6,6 +6,8 @@
 #define DFMPLUGIN_VAULT_GLOBAL_H
 
 #include <dfm-base/dfm_log_defines.h>
+#include <QString>
+#include <QDir>
 
 #define DPVAULT_NAMESPACE dfmplugin_vault
 
@@ -147,6 +149,129 @@ enum class EncryptType : int {
     SM4_128_CTR
 };
 
+inline constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
+inline constexpr char kVaultEncrypyDirName[] { "vault_encrypted" };
+
+inline constexpr char kCryfsConfigFileName[] { "cryfs.config" };
+
+inline constexpr char kPasswordFileName[] { "pbkdf2clipher" };
+inline constexpr char kRSAPUBKeyFileName[] { "rsapubkey" };
+inline constexpr char kRSACiphertextFileName[] { "rsaclipher" };
+inline constexpr char kPasswordHintFileName[] { "passwordHint" };
+inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
+
+//propertydailog and detaillview property change
+inline constexpr char kFieldReplace[] { "kFieldReplace" };
+inline constexpr char kFieldInsert[] { "kFieldInsert" };
+
+//public
+inline constexpr char kNotAll[] { "kNotAll" };
+inline constexpr char kFileSize[] { "kFileSize" };
+inline constexpr char kFileType[] { "kFileType" };
+
+//propertydailog
+inline constexpr char kFileCount[] { "kFileCount" };
+inline constexpr char kFilePosition[] { "kFilePosition" };
+inline constexpr char kFileCreateTime[] { "kFileCreateTime" };
+inline constexpr char kFileAccessedTime[] { "kFileAccessedTime" };
+inline constexpr char kFileModifiedTime[] { "kFileModifiedTime" };
+
+//detailview
+inline constexpr char kFileName[] { "kFileName" };
+inline constexpr char kFileViewSize[] { "kFileViewSize" };
+inline constexpr char kFileDuration[] { "kFileDuration" };
+inline constexpr char kFileInterviewTime[] { "kFileInterviewTime" };
+inline constexpr char kFileChangeTIme[] { "kFileChangeTIme" };
+
+//property Filter
+inline constexpr char kNotFilter[] { "kNotFilter" };
+inline constexpr char kIconTitle[] { "kIconTitle" };
+inline constexpr char kBasisInfo[] { "kBasisInfo" };
+inline constexpr char kPermission[] { "kPermission" };
+inline constexpr char kFileSizeFiled[] { "kFileSizeFiled" };
+inline constexpr char kFileCountFiled[] { "kFileCountFiled" };
+inline constexpr char kFileTypeFiled[] { "kFileTypeFiled" };
+inline constexpr char kFilePositionFiled[] { "kFilePositionFiled" };
+inline constexpr char kFileCreateTimeFiled[] { "kFileCreateTimeFiled" };
+inline constexpr char kFileAccessedTimeFiled[] { "kFileAccessedTimeFiled" };
+inline constexpr char kFileModifiedTimeFiled[] { "kFileModifiedTimeFiled" };
+
+inline constexpr char kBasicView[] { "kBasicView" };
+inline constexpr char kIconView[] { "kIconView" };
+inline constexpr char kFileNameField[] { "kFileNameField" };
+inline constexpr char kFileSizeField[] { "kFileSizeField" };
+inline constexpr char kFileViewSizeField[] { "kFileViewSizeField" };
+inline constexpr char kFileDurationField[] { "kFileDurationField" };
+inline constexpr char kFileTypeField[] { "kFileTypeField" };
+inline constexpr char kFileInterviewTimeField[] { "kFileInterviewTimeField" };
+inline constexpr char kFileChangeTimeField[] { "kFileChangeTimeField" };
+
+inline constexpr int kRandomSaltLength { 10 };   //! 随机盐的字节数
+inline constexpr int kIteration { 1024 };   //! pbkdf2迭代次数
+inline constexpr int kIterationTwo { 10000 };   //! pbkdf2迭代次数
+inline constexpr int kPasswordCipherLength { 50 };   //! 密码密文长度
+inline constexpr int kUserKeyLength { 32 };   //! 用户密钥长度
+inline constexpr int kUserKeyInterceptIndex { 50 };   //! 用户密钥从公钥中截取的起始点索引
+
+inline constexpr char kRootProxy[] { "pkexec deepin-vault-authenticateProxy" };
+
+inline constexpr char kPolkitVaultCreate[] { "com.deepin.filemanager.daemon.VaultManager.Create" };
+inline constexpr char kPolkitVaultRemove[] { "com.deepin.filemanager.daemon.VaultManager.Remove" };
+
+inline constexpr int kBuffterMaxLine { 1024 };   //! shell命令输出每行最大的字符个数
+
+inline const QString kVaultBasePath(QDir::homePath() + QString("/.config/Vault"));   //!! 获取保险箱创建的目录地址
+
+inline const QString kVaultBasePathOld(QDir::homePath() + QString("/.local/share/applications"));   //!! 获取保险箱创建的旧目录地址
+
+inline const QString getCompressorPidShell(QString value)
+{
+    return QString("ps -xo pid,cmd | grep /usr/bin/deepin-compressor | grep ") + value + QString(" | grep -v grep | awk '{print $1}'");
+}
+
+//!! 保险箱时间配置文件
+inline constexpr char kVaultTimeConfigFileSuffix[] { "/../dde-file-manager/vaultTimeConfig.json" };
+inline constexpr char kVaultTimeConfigFile[] { "/../dde-file-manager/vaultTimeConfig" };
+
+inline constexpr char kjsonGroupName[] { "VaultTime" };
+inline constexpr char kjsonKeyInterviewItme[] { "InterviewTime" };
+inline constexpr char kjsonKeyLockTime[] { "LockTime" };
+inline constexpr char kjsonKeyCreateTime[] { "CreateTime" };
+
+//!! 保险箱当前页面标记
+enum VaultPageMark {
+    kUnknown,
+    kCreateVaultPage,
+    kCreateVaultPage1,
+    kUnlockVaultPage,
+    kRetrievePasswordPage,
+    kDeletePage,
+    kDeleteVaultPage,
+    kCopyFilePage,
+    kClipboardPage,
+    kVaultPage
+};
+
+enum PageType : int {
+    kUnlockPage = 0,
+    kRecoverPage = 1,
+    kRetrievePage = 2,
+    kPasswordRecoverPage = 3,
+    kUnlockWidgetForTpm = 4,
+
+    kUserPageType = 100
+};
+
+enum RemoveWidgetType : int {
+    kPasswordWidget = 0,
+    kRecoveryKeyWidget = 1,
+    kRemoveProgressWidget = 2,
+    kTpmPinWidget = 3,
+    kNoneWidget = 4,
+
+    kUserRemoveWidgetType = 100
+};
+
 namespace AcName {
 inline constexpr char kAcSidebarVaultMenu[] { "sidebar_vaultitem_menu" };
 
@@ -206,6 +331,35 @@ inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
 inline constexpr char kAppSessionService[] { "com.deepin.SessionManager" };
 inline constexpr char kAppSessionPath[] { "/com/deepin/SessionManager" };
 #endif
+
+inline constexpr char kConfigNodeName[] { "INFO" };
+inline constexpr char kConfigKeyCipher[] { "pbkgcipher" };
+inline constexpr char kConfigKeyVersion[] { "version" };
+inline constexpr char kConfigKeyUseUserPassWord[] { "use_user_password" };
+inline constexpr char kConfigVaultVersion[] { "new" };
+inline constexpr char kConfigVaultVersion1050[] { "1050" };
+inline constexpr char kConfigKeyAlgoName[] { "algoName" };
+inline constexpr char kConfigKeyEncryptionMethod[] { "encryption_method" };
+inline constexpr char kConfigValueMethodKey[] { "key_encryption" };
+inline constexpr char kConfigValueMethodTransparent[] { "transparent_encryption" };
+inline constexpr char kConfigValueMethodTpmWithoutPin[] { "tpmWithoutPin_encryption" };
+inline constexpr char kConfigValueMethodTpmWithPin[] { "tpmWithPin_encryption" };
+inline constexpr char kConfigKeyNotExist[] { "NoExist" };
+inline constexpr char kGroupPolicyKeyVaultAlgoName[] { "dfm.vault.algo.name" };
+
+inline constexpr char kConfigNodeNameOfTPM[] { "TPM" };
+inline constexpr char kConfigKeyPrimaryHashAlgo[] { "primary_hash_algo" };
+inline constexpr char kConfigKeyPrimaryKeyAlgo[] { "primary_key_algo" };
+
+inline constexpr int kTpmPasswordSize { 14 };
+
+enum UnlockState {
+    kUnlockSuccess = 0,
+    kUnlockFailed,
+    kUnlocking,
+    kTpmNotAvailable
+};
+
 }
 
 #endif   // DFMPLUGIN_VAULT_GLOBAL_H

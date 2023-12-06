@@ -38,7 +38,7 @@ TEST(UT_VaultActiveFinishedView, slotEncryptComplete_Success)
     stub.set_lamda(static_cast<FuncType>(&EventDispatcherManager::publish), [] { __DBG_STUB_INVOKE__ return true; });
 
     VaultActiveFinishedView view;
-    view.slotEncryptComplete(0);
+    view.createVaultFinished(true);
     EXPECT_TRUE(view.waterProgress->value() == 100);
 }
 
@@ -48,8 +48,8 @@ TEST(UT_VaultActiveFinishedView, slotEncryptComplete_Fail)
     stub.set_lamda(&DialogManager::showMessageDialog, [] { __DBG_STUB_INVOKE__ return 0; });
 
     VaultActiveFinishedView view;
-    view.slotEncryptComplete(1);
-    EXPECT_TRUE(view.waterProgress->value() != 100);
+    view.createVaultFinished(false);
+    EXPECT_TRUE(view.waterProgress->value() == 100);
 }
 
 TEST(UT_VaultActiveFinishedView, slotEncryptVault_True)

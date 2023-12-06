@@ -30,19 +30,18 @@ class VaultActiveFinishedView : public QWidget
     Q_OBJECT
 public:
     explicit VaultActiveFinishedView(QWidget *parent = nullptr);
+    ~VaultActiveFinishedView();
 
     void setFinishedBtnEnabled(bool b);
 
 signals:
     void sigAccepted();
-
-public slots:
-    //! 连接创建保险箱返回信号
-    void slotEncryptComplete(int nState);
+    void setAllowClose(bool value);
 
 private slots:
     void slotEncryptVault();
     void slotTimeout();
+    void WaterProgressRising();
     //! 异步授权时，此函数接收授权完成的结果
     void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
 
@@ -52,6 +51,7 @@ protected:
 private:
     void initUi();
     void initConnect();
+    void createVaultFinished(bool success);
 
 private:
     QWidget *widgetOne { nullptr };
@@ -70,8 +70,8 @@ private:
 
     QVBoxLayout *vLayout { nullptr };
 
-    //! 辅助进度条，实现加密过程效果
     QTimer *timer { nullptr };
+    QTimer *timerProgress { Q_NULLPTR };
 };
 }
 #endif   // VAULTACTIVEFINISHEDVIEW_H

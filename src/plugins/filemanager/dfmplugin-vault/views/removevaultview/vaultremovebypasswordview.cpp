@@ -3,14 +3,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultremovebypasswordview.h"
-#include "utils/encryption/interfaceactivevault.h"
+#include "utils/vaulthelper.h"
 #include "utils/encryption/vaultconfig.h"
+#include "utils/encryption/operatorcenter.h"
 
 #include <dfm-framework/event/event.h>
 
 #include <DToolTip>
 #include <DPasswordEdit>
 #include <DFloatingWidget>
+#include <DDialog>
+#include <DLabel>
 
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -18,35 +21,36 @@
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
+using namespace PolkitQt1;
 
 VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     : QWidget(parent)
 {
-    //! 密码输入框
+    DLabel *hintInfo = new DLabel(tr("Once deleted, the files in it will be permanently deleted"), this);
+    hintInfo->setAlignment(Qt::AlignCenter);
+    hintInfo->setWordWrap(true);
+
     pwdEdit = new DPasswordEdit(this);
     pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
-    pwdEdit->setVisible(false);
 
-    //! 提示按钮
     tipsBtn = new QPushButton(this);
     tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QHBoxLayout *layout = new QHBoxLayout();
-    VaultConfig config;
-    const QString &encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
-    if (encryptionMethod != QString(kConfigValueMethodTransparent)) {
-        layout->addWidget(pwdEdit);
-        pwdEdit->setVisible(true);
-    }
+    layout->addWidget(pwdEdit);
     layout->addWidget(tipsBtn);
-    layout->setContentsMargins(0, 15, 0, 0);
-    this->setLayout(layout);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    QVBoxLayout *mainLay = new QVBoxLayout;
+    mainLay->addWidget(hintInfo);
+    mainLay->addItem(layout);
+    setLayout(mainLay);
 
     connect(pwdEdit->lineEdit(), &QLineEdit::textChanged, this, &VaultRemoveByPasswordView::onPasswordChanged);
     connect(tipsBtn, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
-        if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
+        if (OperatorCenter::getInstance()->getPasswordHint(strPwdHint)) {
             QString hint = tr("Password hint: %1").arg(strPwdHint);
             showToolTip(hint, 3000, EN_ToolTip::kInformation);
         }
@@ -62,19 +66,42 @@ VaultRemoveByPasswordView::~VaultRemoveByPasswordView()
 {
 }
 
-QString VaultRemoveByPasswordView::getPassword()
+QStringList VaultRemoveByPasswordView::btnText() const
 {
-    return pwdEdit->text();
+    return { tr("Cancel"), tr("Delete") };
 }
 
-void VaultRemoveByPasswordView::clear()
+QString VaultRemoveByPasswordView::titleText() const
 {
-    //! 重置状态
-    pwdEdit->clear();
-    QLineEdit edit;
-    QPalette palette = edit.palette();
-    pwdEdit->lineEdit()->setPalette(palette);
-    pwdEdit->setEchoMode(QLineEdit::Password);
+    return tr("Delete File Vault");
+}
+
+void VaultRemoveByPasswordView::buttonClicked(int index, const QString &text)
+{
+    Q_UNUSED(text)
+
+    switch (index) {
+    case 0: {
+        emit sigCloseDialog();
+    } break;
+    case 1: {
+        QString strPwd = pwdEdit->text();
+        QString strCipher("");
+        if (!OperatorCenter::getInstance()->checkPassword(strPwd, strCipher)) {
+            showToolTip(tr("Wrong password"), 3000, VaultRemoveByPasswordView::EN_ToolTip::kWarning);
+            return;
+        }
+
+        auto ins = Authority::instance();
+        ins->checkAuthorization(kPolkitVaultRemove,
+                                UnixProcessSubject(getpid()),
+                                Authority::AllowUserInteraction);
+        connect(ins, &Authority::checkAuthorizationFinished,
+                this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
+    } break;
+    default:
+        break;
+    }
 }
 
 void VaultRemoveByPasswordView::showAlertMessage(const QString &text, int duration)
@@ -140,4 +167,25 @@ void VaultRemoveByPasswordView::onPasswordChanged(const QString &password)
         //! 修复bug-51508 取消密码框的警告状态
         pwdEdit->setAlert(false);
     }
+}
+
+void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(Authority::Result result)
+{
+    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+               this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
+
+    if (Authority::Yes != result)
+        return;
+
+    if (!VaultHelper::instance()->lockVault(false)) {
+        QString errMsg = tr("Failed to delete file vault");
+        DDialog dialog(this);
+        dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+        dialog.setTitle(errMsg);
+        dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+        dialog.exec();
+        return;
+    }
+
+    emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
 }

@@ -21,6 +21,12 @@ public:
     static void sendVaultProperty(const QUrl &url);
     static void sendBookMarkDisabled(const QString scheme);
     static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
+
+    static bool checkTPMAvailable();
+    static bool getRandomByTPM(int size, QString *output);
+    static bool isSupportAlgoByTPM(const QString &algoName, bool *support);
+    static bool encryptByTPM(const QVariantMap &map);
+    static bool decryptByTPM(const QVariantMap &map, QString *psw);
 };
 }
 #endif   //VAULTEVENTCALLER_H

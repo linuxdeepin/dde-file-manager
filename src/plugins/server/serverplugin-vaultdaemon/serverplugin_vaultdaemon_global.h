@@ -5,18 +5,19 @@
 #ifndef SERVERPLUGIN_VAULTDAEMON_GLOBAL_H
 #define SERVERPLUGIN_VAULTDAEMON_GLOBAL_H
 
-#include <dfm-base/dfm_log_defines.h>
-
 #define SERVERVAULT_NAMESPCE serverplugin_vaultdaemon
 
 #define SERVERVAULT_BEGIN_NAMESPACE namespace SERVERVAULT_NAMESPCE {
 #define SERVERVAULT_END_NAMESPACE }
 #define SERVERVAULT_USE_NAMESPACE using namespace SERVERVAULT_NAMESPCE;
 
+#include <dfm-base/dfm_log_defines.h>
+
 #include <QString>
 #include <QDir>
 
 SERVERVAULT_BEGIN_NAMESPACE
+
 DFM_LOG_USE_CATEGORY(SERVERVAULT_NAMESPCE)
 
 #ifdef COMPILE_ON_V23
@@ -36,6 +37,32 @@ inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
 inline constexpr char kGroupPolicyKeyVaultAlgoName[] { "dfm.vault.algo.name" };
 inline constexpr char kVaultTimeConfigFilePath[] { "/../dde-file-manager/vaultTimeConfig" };
 
+inline constexpr char kConfigNodeName[] { "INFO" };
+inline constexpr char kConfigKeyEncryptionMethod[] { "encryption_method" };
+inline constexpr char kConfigValueMethodKey[] { "key_encryption" };
+inline constexpr char kConfigValueMethodTransparent[] { "transparent_encryption" };
+inline constexpr char kConfigValueMethodTpmWithoutPin[] { "tpmWithoutPin_encryption" };
+inline constexpr char kConfigValueMethodTpmWithPin[] { "tpmWithPin_encryption" };
+inline constexpr char kConfigKeyNotExist[] { "NoExist" };
+inline constexpr char kConfigKeyAlgoName[] { "algoName" };
+
+inline constexpr char kConfigNodeNameOfTPM[] { "TPM" };
+inline constexpr char kConfigKeyPrimaryHashAlgo[] { "primary_hash_algo" };
+inline constexpr char kConfigKeyPrimaryKeyAlgo[] { "primary_key_algo" };
+
+enum TpmDecryptState {
+    kDecryptSuccess = 0,
+    kDecryptFailed,
+    kNotAvailable
+};
+
+enum UnlockState {
+    kUnlockSuccess = 0,
+    kUnlockFailed,
+    kUnlocking,
+    kTpmNotAvailable
+};
+
 SERVERVAULT_END_NAMESPACE
 
-#endif   // SERVERPLUGIN_VAULTDAEMON_GLOBAL_H
+#endif // SERVERPLUGIN_VAULTDAEMON_GLOBAL_H

@@ -28,7 +28,7 @@ void VaultManagerDBusWorker::launchService()
     vaultManager.reset(new VaultManagerDBus);
     Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
     if (!conn.registerObject("/org/deepin/filemanager/server/VaultManager",
-                             vaultManager.data())) {
+                                    vaultManager.data())) {
         fmWarning("Vault Daemon: Cannot register the \"/org/deepin/filemanager/server/VaultManager\" object.\n");
         vaultManager.reset(nullptr);
     }
@@ -57,5 +57,4 @@ void VaultDaemon::stop()
     workerThread.quit();
     workerThread.wait();
 }
-
-}   // namespace serverplugin_vaultdaemon
+}

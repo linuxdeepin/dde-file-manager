@@ -154,7 +154,7 @@ TEST(UT_VaultEventReceiver, computerOpenItem_state_encrypted)
 
     stub_ext::StubExt stub;
     stub.set_lamda(&VaultHelper::state, []{ return VaultState::kEncrypted; });
-    stub.set_lamda(&VaultHelper::unlockVaultDialog, [ &isFinish ]{ isFinish = true; });
+    stub.set_lamda(&VaultHelper::showUnlockVaultDialog, [ &isFinish ]{ isFinish = true; });
 
     VaultEventReceiver::instance()->computerOpenItem(0, QUrl("file:///test_vault"));
 
@@ -167,7 +167,7 @@ TEST(UT_VaultEventReceiver, computerOpenItem_state_notExisted)
 
     stub_ext::StubExt stub;
     stub.set_lamda(&VaultHelper::state, []{ return VaultState::kNotExisted; });
-    stub.set_lamda(&VaultHelper::createVaultDialog, [ &isFinish ]{ isFinish = true; });
+    stub.set_lamda(&VaultHelper::showCreateVaultDialog, [ &isFinish ]{ isFinish = true; });
 
     VaultEventReceiver::instance()->computerOpenItem(0, QUrl("file:///test_vault"));
 
@@ -328,7 +328,7 @@ TEST(UT_VaultEventReceiver, changeUrlEventFilter_one)
     stub.set_lamda(&VaultHelper::state, []{
         return VaultState::kNotExisted;
     });
-    stub.set_lamda(&VaultHelper::createVaultDialog, [ &isCreate ]{
+    stub.set_lamda(&VaultHelper::showCreateVaultDialog, [ &isCreate ]{
         isCreate = true;
     });
 
@@ -345,7 +345,7 @@ TEST(UT_VaultEventReceiver, changeUrlEventFilter_two)
     stub.set_lamda(&VaultHelper::state, []{
         return VaultState::kEncrypted;
     });
-    stub.set_lamda(&VaultHelper::unlockVaultDialog, [ &isUnlock ]{
+    stub.set_lamda(&VaultHelper::showUnlockVaultDialog, [ &isUnlock ]{
         isUnlock = true;
     });
 

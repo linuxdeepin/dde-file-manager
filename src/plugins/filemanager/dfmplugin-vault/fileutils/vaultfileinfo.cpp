@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultfileinfo.h"
-#include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 #include "utils/pathmanager.h"
 #include "private/vaultfileinfo_p.h"

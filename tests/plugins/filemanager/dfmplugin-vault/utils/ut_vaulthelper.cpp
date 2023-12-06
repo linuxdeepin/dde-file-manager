@@ -117,7 +117,7 @@ TEST(UT_VaultHelper, siderItemClicked_one)
     stub.set_lamda(&VaultHelper::state, []{
         return VaultState::kNotExisted;
     });
-    stub.set_lamda(&VaultHelper::createVaultDialog, [ &isOk ]{
+    stub.set_lamda(&VaultHelper::showCreateVaultDialog, [ &isOk ]{
         isOk = true;
     });
 
@@ -135,7 +135,7 @@ TEST(UT_VaultHelper, siderItemClicked_two)
     stub.set_lamda(&VaultHelper::state, []{
         return VaultState::kEncrypted;
     });
-    stub.set_lamda(&VaultHelper::unlockVaultDialog, [ &isOk ]{
+    stub.set_lamda(&VaultHelper::showUnlockVaultDialog, [ &isOk ]{
         isOk = true;
     });
 
@@ -475,6 +475,7 @@ TEST(UT_VaultHelper, createVault)
     });
     stub.set_lamda(&FileEncryptHandle::createVault, [ &isOk ]{
         isOk = true;;
+        return true;
     });
 
     QString password;
@@ -515,7 +516,7 @@ TEST(UT_VaultHelper, createVaultDialog)
         return QVariant();
     });
 
-    VaultHelper::instance()->createVaultDialog();
+    VaultHelper::instance()->showCreateVaultDialog();
 
     EXPECT_TRUE(isOk);
 }
@@ -539,7 +540,7 @@ TEST(UT_VaultHelper, unlockVaultDialog_one)
     stub.set_lamda(&VaultHelper::defaultCdAction, []{});
     stub.set_lamda(&VaultHelper::recordTime, []{});
 
-    VaultHelper::instance()->unlockVaultDialog();
+    VaultHelper::instance()->showUnlockVaultDialog();
 
     EXPECT_TRUE(isOk);
 }
@@ -558,7 +559,7 @@ TEST(UT_VaultHelper, unlockVaultDialog_two)
         return "";
     });
 
-    VaultHelper::instance()->unlockVaultDialog();
+    VaultHelper::instance()->showUnlockVaultDialog();
 
     EXPECT_TRUE(isOk);
 }
@@ -584,7 +585,7 @@ TEST(UT_VaultHelper, unlockVaultDialog_three)
         return QVariant();
     });
 
-    VaultHelper::instance()->unlockVaultDialog();
+    VaultHelper::instance()->showUnlockVaultDialog();
 
     EXPECT_TRUE(isOk);
 }
@@ -599,7 +600,7 @@ TEST(UT_VaultHelper, removeVaultDialog)
         return 0;
     });
 
-    VaultHelper::instance()->removeVaultDialog();
+    VaultHelper::instance()->showRemoveVaultDialog();
 
     EXPECT_TRUE(isOk);
 }

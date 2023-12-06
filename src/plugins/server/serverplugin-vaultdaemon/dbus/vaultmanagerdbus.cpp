@@ -4,6 +4,7 @@
 
 #include "vaultmanagerdbus.h"
 #include "serverplugin_vaultdaemon_global.h"
+#include "vaultcontrol.h"
 
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/settings.h>
@@ -146,6 +147,22 @@ void VaultManagerDBus::RestoreNeedWaitMinutes(int userID)
     if (!IsValidInvoker())
         return;
     mapNeedMinutes[userID] = kTotalWaitTime;
+}
+
+int VaultManagerDBus::GetUnlockCompletedState(const QString &basePath) const
+{
+    Q_UNUSED(basePath)
+
+    return static_cast<int>(VaultControl::instance()->getUnlockCompletedState());
+}
+
+int VaultManagerDBus::TransparentUnlockVault(const QString &basePath)
+{
+    Q_UNUSED(basePath)
+
+    VaultControl::instance()->transparentUnlockVault();
+
+    return 0;
 }
 
 void VaultManagerDBus::timerEvent(QTimerEvent *event)

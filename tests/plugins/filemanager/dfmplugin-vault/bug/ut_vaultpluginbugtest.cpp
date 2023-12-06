@@ -76,7 +76,7 @@ TEST(UT_VaultPluginBugTest, bug_172923_ErrorPasswordReturnTrue)
     typedef bool(*FuncType2)(QIODevice::OpenMode);
     stub.set_lamda((FuncType2)(bool(QFile::*)(QIODevice::OpenMode))(&QFile::open), [] { __DBG_STUB_INVOKE__ return false; });
 
-    OperatorCenter::getInstance()->savePasswordAndPasswordHint("123456", "password");
+    OperatorCenter::getInstance()->encryptByPBKDF2AndSaveCipher("123456");
     QString cipher;
     bool b = OperatorCenter::getInstance()->checkPassword("123", cipher);
     EXPECT_FALSE(b);

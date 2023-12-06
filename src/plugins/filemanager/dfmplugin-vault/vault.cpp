@@ -7,6 +7,7 @@
 #include "utils/vaulthelper.h"
 #include "events/vaulteventreceiver.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QUrl>
@@ -18,7 +19,6 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_vault {
 DFM_LOG_REISGER_CATEGORY(DPVAULT_NAMESPACE)
-
 void Vault::initialize()
 {
     VaultVisibleManager::instance()->infoRegister();
@@ -28,6 +28,11 @@ void Vault::initialize()
 
 bool Vault::start()
 {
+    QString err;
+    if (!DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.vault", &err))
+        fmWarning() << "Vault: create dconfig failed: " << err;
+
+
     VaultVisibleManager::instance()->pluginServiceRegister();
     return true;
 }
@@ -41,4 +46,4 @@ void Vault::bindWindows()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened,
             VaultVisibleManager::instance(), &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
 }
-}   // namespace dfmplugin_vault
+}

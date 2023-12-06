@@ -5,6 +5,7 @@
 #include "vaultcontrol.h"
 #include "vaulthelper.h"
 #include "vaultconfigoperator.h"
+#include "tpmwork.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/application/settings.h>
@@ -20,6 +21,9 @@
 #include <QProcess>
 #include <QFile>
 #include <QDateTime>
+#include <QLibrary>
+
+#include <fstream>
 
 extern "C" {
 #include <libsecret/secret.h>
@@ -74,8 +78,10 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
             if (!isLocked) {
                 transparentUnlockVault();
             } else {
-                lockVault(VaultHelper::instance()->vaultMountDirLocalPath(), true);
-
+                int re = lockVault(VaultHelper::instance()->vaultMountDirLocalPath(), true);
+                if (re == 0) {
+                    vaultUnlockState = kUnlocking;
+                }
                 DFMBASE_NAMESPACE::Settings setting(kVaultTimeConfigFilePath);
                 setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
             }
@@ -83,11 +89,46 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
     }
 }
 
+bool VaultControl::slotUnlockVault(TpmDecryptState state, const QString passwd)
+{
+    if (state == TpmDecryptState::kDecryptFailed) {
+        vaultUnlockState = kUnlockFailed;
+        return false;
+    } else if (state == TpmDecryptState::kNotAvailable) {
+        vaultUnlockState = kTpmNotAvailable;
+        return false;
+    }
+
+    const QString &mountdirPath = VaultHelper::instance()->vaultMountDirLocalPath();
+    if (!QFile::exists(mountdirPath)) {
+        QDir().mkpath(mountdirPath);
+    }
+    int result = unlockVault(VaultHelper::instance()->vaultBaseDirLocalPath(), mountdirPath, passwd);
+    if (!result) {
+        vaultUnlockState = kUnlockSuccess;
+        fmInfo() << "Unlock vault success!";
+        return true;
+    } else {
+        vaultUnlockState = kUnlockFailed;
+        if (result == 1) {
+            int re = lockVault(mountdirPath, true);
+            if (!re) {
+                fmInfo() << "Run fusermount success!";
+            } else {
+                fmWarning() << "Run fusemount failed!";
+            }
+        }
+        fmWarning() << "Unlock vault failed, error code: " << result;
+    }
+
+    return false;
+}
+
 bool VaultControl::transparentUnlockVault()
 {
     VaultState st = state(VaultHelper::instance()->vaultBaseDirLocalPath());
     if (st != kEncrypted) {
-        fmWarning() << "Vault Daemon: Unlock vault failed, current state is " << st;
+        vaultUnlockState = UnlockState::kUnlockSuccess;
         return false;
     }
 
@@ -120,8 +161,17 @@ bool VaultControl::transparentUnlockVault()
             }
             fmWarning() << "Vault Daemon: Unlock vault failed, error code: " << result;
         }
+    } else if (kConfigValueMethodTpmWithoutPin == encryptionMethod) {
+        if (!work->isRunning())
+            vaultUnlockState = kUnlocking;
+            work->start();
     }
     return false;
+}
+
+UnlockState VaultControl::getUnlockCompletedState() const
+{
+    return vaultUnlockState;
 }
 
 VaultControl::CryfsVersionInfo VaultControl::versionString()
@@ -231,17 +281,17 @@ QString VaultControl::passwordFromKeyring()
 
     QString result { "" };
 
-    GError *error = NULL;
-    SecretService *service = NULL;
+    GError *error = Q_NULLPTR;
+    SecretService *service = Q_NULLPTR;
     char *userName = getlogin();
     fmInfo() << "Vault: Get user name : " << QString(userName);
     GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
     g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
 
-    service = secret_service_get_sync(SECRET_SERVICE_NONE, NULL, &error);
+    service = secret_service_get_sync(SECRET_SERVICE_NONE, Q_NULLPTR, &error);
 
-    SecretValue *value_read = secret_service_lookup_sync(service, NULL, attributes, NULL, &error);
+    SecretValue *value_read = secret_service_lookup_sync(service, Q_NULLPTR, attributes, Q_NULLPTR, &error);
     gsize length;
     const gchar *passwd = secret_value_get(value_read, &length);
     if (length > 0) {
@@ -316,7 +366,16 @@ int VaultControl::lockVault(const QString &unlockFileDir, bool isForced)
         return -1;
 }
 
-VaultControl::VaultControl(QObject *parent)
-    : QObject(parent)
+VaultControl::VaultControl(QObject *parent) : QObject(parent)
 {
+    work =  new TpmWork(this);
+    connect(work, &TpmWork::workFinished, this, &VaultControl::slotUnlockVault);
+}
+
+VaultControl::~VaultControl()
+{
+    if (work) {
+        delete work;
+        work = nullptr;
+    }
 }

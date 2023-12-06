@@ -1,17 +1,18 @@
 // SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "dfmplugin_vault_global.h"
 
 #ifndef PBKDF2_H
-#    define PBKDF2_H
+#define PBKDF2_H
 
-#    define SALT_LENGTH_MAX 100
-#    define CIPHER_LENGHT_MAX 100
+#define SALT_LENGTH_MAX 100
+#define CIPHER_LENGHT_MAX 100
 
-class QString;
+#include "dfmplugin_vault_global.h"
 
-DPVAULT_BEGIN_NAMESPACE
+#include <QString>
+
+namespace dfmplugin_vault {
 class pbkdf2
 {
 public:
@@ -42,6 +43,6 @@ private:
     static char charToHexadecimalChar(char nibble);
     static char *octalToHexadecimal(const char *str, int length);
 };
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // PBKDF2_H

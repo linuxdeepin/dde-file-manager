@@ -6,7 +6,6 @@
 #include "unlockview/retrievepasswordview.h"
 #include "unlockview/retrievepasswordview.h"
 #include "utils/encryption/interfaceactivevault.h"
-#include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 #include "utils/vaultautolock.h"
 
@@ -127,11 +126,19 @@ void VaultUnlockPages::pageSelect(PageType page)
         connect(passwordRecoveryView, &PasswordRecoveryView::sigCloseDialog, this, &VaultUnlockPages::close);
         connect(passwordRecoveryView, &PasswordRecoveryView::sigBtnEnabled, this, &VaultUnlockPages::onSetBtnEnabled);
     } break;
+    case kUnlockWidgetForTpm: {
+        showUnlockByTpmWidget();
+    } break;
+    default:
+        break;
     }
 }
 
 void VaultUnlockPages::onButtonClicked(int index, const QString &text)
 {
+    if (!getContent(0))
+        return;
+
     if (getContent(0) == unlockView) {
         unlockView->buttonClicked(index, text);
     } else if (getContent(0) == retrievePasswordView) {
@@ -140,10 +147,54 @@ void VaultUnlockPages::onButtonClicked(int index, const QString &text)
         recoveryKeyView->buttonClicked(index, text);
     } else if (getContent(0) == passwordRecoveryView) {
         passwordRecoveryView->buttonClicked(index, text);
+    } else if (getContent(0) == unlockByTpmWidget) {
+        unlockByTpmWidget->buttonClicked(index, text);
     }
 }
 
-void VaultUnlockPages::onSetBtnEnabled(int index, const bool &state)
+void VaultUnlockPages::onSetBtnEnabled(int index, bool state)
 {
-    getButton(index)->setEnabled(state);
+    if (getButton(index))
+        getButton(index)->setEnabled(state);
+}
+
+void VaultUnlockPages::setAllowClose(bool value)
+{
+    allowClose = value;
+}
+
+void VaultUnlockPages::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape)
+        return;
+
+    VaultPageBase::keyPressEvent(event);
+}
+
+void VaultUnlockPages::closeEvent(QCloseEvent *event)
+{
+    if (!allowClose)
+        return event->ignore();
+
+    VaultPageBase::closeEvent(event);
+}
+
+void VaultUnlockPages::showUnlockByTpmWidget()
+{
+    clearContents(true);
+    clearButtons();
+
+    unlockByTpmWidget = new UnlockWidgetForTpm(this);
+    setTitle(unlockByTpmWidget->titleText());
+    addContent(unlockByTpmWidget);
+    QStringList btns = unlockByTpmWidget->btnText();
+    if (btns.size() > 1) {
+        insertButton(0, btns[0], false);
+        insertButton(1, btns[1], true, ButtonType::ButtonRecommend);
+        getButton(1)->setEnabled(false);
+    }
+    connect(unlockByTpmWidget, &UnlockWidgetForTpm::signalJump, this, &VaultUnlockPages::pageSelect);
+    connect(unlockByTpmWidget, &UnlockWidgetForTpm::sigCloseDialog, this, &VaultUnlockPages::close);
+    connect(unlockByTpmWidget, &UnlockWidgetForTpm::sigBtnEnabled, this, &VaultUnlockPages::onSetBtnEnabled);
+    connect(unlockByTpmWidget, &UnlockWidgetForTpm::setAllowClose, this, &VaultUnlockPages::setAllowClose);
 }

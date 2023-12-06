@@ -34,60 +34,81 @@ class VaultActiveSetUnlockMethodView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit VaultActiveSetUnlockMethodView(QWidget *parent = nullptr);
-    void clearText();
+    explicit VaultActiveSetUnlockMethodView(bool tpmAvailabel = false, QWidget *parent = nullptr);
 
 signals:
     void sigAccepted();
-
-public slots:
 
 private slots:
     void slotPasswordEditing();
     void slotPasswordEditFinished();
     void slotPasswordEditFocusChanged(bool bFocus);
     void slotRepeatPasswordEditFinished();
+    void tpmPinEditFinished();
+    void repeatPinEditFinished();
     void slotRepeatPasswordEditing();
     void slotRepeatPasswordEditFocusChanged(bool bFocus);
     void slotGenerateEditChanged(const QString &str);
-    //! 下一步按钮点击
     void slotNextBtnClicked();
-    //! 类型切换
     void slotTypeChanged(int index);
-    //! 随即密码长度改变
-    //!    void slotLengthChanged(int length);
-    //! 限制密码的长度
     void slotLimiPasswordLength(const QString &passwordEdit);
 
 private:
     void initUi();
+    void initKeyEncryptWidget();
+    void initTransEncryptWidget();
+    void initTPMWithoutPinEncryptWidget();
+    void initTPMWithPinEncryptWidget();
     void initConnect();
-    //! 校验密码是否符合规则
     bool checkPassword(const QString &passwordEdit);
-    //! 校验重复密码框是否符合规则
     bool checkRepeatPassword();
-    //! 校验界面输入信息是否符合规则
+    bool checkRepeatPin();
+    bool checkTPMPin(const QString &pinCode);
+    bool checkTPMAlgo();
     bool checkInputInfo();
+    void removeEncryptWidgetByType(const QString &type);
+    void addEncryptWidgetByType(const QString &type);
+    bool preprocessKeyEncrypt();
+    bool preprocessTranslateEncrypt();
+    bool preprocessTpmWithoutPinEncrypt();
+    bool preprocessTpmWithPinEncrypt();
+
+protected:
     void showEvent(QShowEvent *event) override;
 
 private:
-    DTK_WIDGET_NAMESPACE::DComboBox *typeCombo { nullptr };
+    DTK_WIDGET_NAMESPACE::DComboBox *typeCombo { Q_NULLPTR };
 
-    DTK_WIDGET_NAMESPACE::DLabel *passwordLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordEdit { nullptr };
+    QWidget *keyEncryptWidget { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *passwordLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordEdit { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *repeatPasswordLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *repeatPasswordEdit { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *passwordHintLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLineEdit *tipsEdit { Q_NULLPTR };
 
-    DTK_WIDGET_NAMESPACE::DLabel *repeatPasswordLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DPasswordEdit *repeatPasswordEdit { nullptr };
+    QWidget *transEncryptWidget { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *transEncryptionText { Q_NULLPTR };
 
-    DTK_WIDGET_NAMESPACE::DLabel *passwordHintLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DLineEdit *tipsEdit { nullptr };
+    QWidget *tpmWithoutPinEncryptWidget { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *tpmWithoutPinText { Q_NULLPTR };
 
-    DTK_WIDGET_NAMESPACE::DLabel *transEncryptionText { nullptr };
-    QVBoxLayout *transEncryptTextLay { nullptr };
+    QWidget *tpmWithPinEncryptWidget { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *tpmPinLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *tpmPinEdit { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *repeatPinLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *repeatPinEdit { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *tpmPinHintLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLineEdit *tpmPinHintEdit { Q_NULLPTR };
 
-    DTK_WIDGET_NAMESPACE::DPushButton *nextBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *errorLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DPushButton *nextBtn { Q_NULLPTR };
+    QGridLayout *gridLayout { Q_NULLPTR };
 
-    QGridLayout *gridLayout { nullptr };
+    int curTypeIndex { 0 };
+    QString tpmHashAlgo;
+    QString tpmKeyAlgo;
+    bool tmpAvailable { false };
 };
 }
 #endif   //! VAULTSETUNLOCKMETHODVIEW_H

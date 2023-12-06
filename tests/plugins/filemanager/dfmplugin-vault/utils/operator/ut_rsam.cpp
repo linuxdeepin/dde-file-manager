@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-DPVAULT_USE_NAMESPACE
-
 TEST(UT_RSAM, privateKey_encrypt_publicKey_decrypt)
 {
     QString publicKey, privateKey;

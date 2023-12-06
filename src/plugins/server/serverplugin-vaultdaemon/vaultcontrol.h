@@ -9,8 +9,10 @@
 
 #include <QObject>
 #include <QDBusMessage>
+#include <QThread>
 
 SERVERVAULT_BEGIN_NAMESPACE
+class TpmWork;
 class VaultControl : public QObject
 {
     Q_OBJECT
@@ -55,12 +57,15 @@ public:
     static VaultControl* instance();
     void connectLockScreenDBus();
     bool transparentUnlockVault();
+    UnlockState getUnlockCompletedState() const;
 
 private Q_SLOTS:
     void responseLockScreenDBus(const QDBusMessage &msg);
+    bool slotUnlockVault(TpmDecryptState state, const QString passwd);
 
 private:
     explicit VaultControl(QObject *parent = nullptr);
+     ~VaultControl();
     int lockVault(const QString &unlockFileDir, bool isForced);
     CryfsVersionInfo versionString();
     void runVaultProcessAndGetOutput(const QStringList &arguments, QString &standardError, QString &standardOutput);
@@ -71,6 +76,9 @@ private:
 
 private:
     CryfsVersionInfo cryfsVersion { CryfsVersionInfo(-1, -1, -1) };
+
+    UnlockState vaultUnlockState { kUnlocking };
+    TpmWork *work;
 };
 SERVERVAULT_END_NAMESPACE
 

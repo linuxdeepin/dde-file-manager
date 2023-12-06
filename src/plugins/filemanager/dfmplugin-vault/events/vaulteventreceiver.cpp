@@ -84,10 +84,10 @@ void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
             VaultHelper::instance()->openWidWindow(winId, VaultHelper::instance()->rootUrl());
         } break;
         case VaultState::kEncrypted: {
-            VaultHelper::instance()->unlockVaultDialog();
+            VaultHelper::instance()->showUnlockVaultDialog();
         } break;
         case VaultState::kNotExisted: {
-            VaultHelper::instance()->createVaultDialog();
+            VaultHelper::instance()->showCreateVaultDialog();
         } break;
         default:
             break;
@@ -190,10 +190,10 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
         VaultHelper::instance()->appendWinID(windowId);
         const VaultState &state = VaultHelper::instance()->state(PathManager::vaultLockPath());
         if (VaultState::kNotExisted == state) {
-            VaultHelper::instance()->createVaultDialog();
+            VaultHelper::instance()->showCreateVaultDialog();
             return true;
         } else if (VaultState::kEncrypted == state) {
-            VaultHelper::instance()->unlockVaultDialog();
+            VaultHelper::instance()->showUnlockVaultDialog();
             return true;
         } else if (VaultState::kUnlocked == state) {
             return false;

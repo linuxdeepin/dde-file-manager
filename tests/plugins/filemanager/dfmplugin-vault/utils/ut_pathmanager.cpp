@@ -4,7 +4,6 @@
 
 #include "stubext.h"
 #include "utils/pathmanager.h"
-#include "utils/vaultdefine.h"
 
 #include <gtest/gtest.h>
 

@@ -215,6 +215,42 @@ void VaultDBusUtils::restoreLeftoverErrorInputTimes()
     }
 }
 
+int VaultDBusUtils::getUnlockCompleteState(const QString &basePath)
+{
+    QDBusInterface VaultManagerdbus("org.deepin.filemanager.server",
+                                    "/org/deepin/filemanager/server/VaultManager",
+                                    "org.deepin.filemanager.server.VaultManager",
+                                    QDBusConnection::sessionBus());
+    if (!VaultManagerdbus.isValid())
+        return -1;
+
+    QDBusPendingReply<int> reply = VaultManagerdbus.call("GetUnlockCompletedState", QVariant::fromValue(basePath));
+    reply.waitForFinished();
+    if (reply.isError()) {
+        fmWarning() << "Vault: failed to get the number of minutes to wait! the error is: " << reply.error().message();
+        return -1;
+    }
+
+    return reply.value();
+}
+
+void VaultDBusUtils::transparentUnlockVault(const QString &basePath)
+{
+    QDBusInterface vaultManagerDbus("org.deepin.filemanager.server",
+                                    "/org/deepin/filemanager/server/VaultManager",
+                                    "org.deepin.filemanager.server.VaultManager",
+                                    QDBusConnection::sessionBus());
+
+    if (!vaultManagerDbus.isValid())
+        return;
+
+    QDBusPendingReply<int> reply = vaultManagerDbus.call("TransparentUnlockVault", QVariant::fromValue(basePath));
+    reply.waitForFinished();
+    if (reply.isError()) {
+        qCritical() << "call dbus TransparentUnlockVault failed!";
+    }
+}
+
 bool VaultDBusUtils::isServiceRegister(QDBusConnection::BusType type, const QString &serviceName)
 {
     QDBusConnectionInterface *interface { nullptr };
