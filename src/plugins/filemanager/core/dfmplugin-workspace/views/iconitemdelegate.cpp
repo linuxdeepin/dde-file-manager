@@ -413,7 +413,9 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
         }
     }
 
-    if ((isDropTarget && !isSelected) || option.state & QStyle::StateFlag::State_Selected) {
+    if (isDropTarget && !isSelected) {
+        backgroundColor.setAlpha(40); // DropTarg背景设置透明度为15% (40/255);
+    } else if (option.state & QStyle::StateFlag::State_Selected) {
         backgroundColor.setAlpha(backgroundColor.alpha() + 30);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
@@ -439,19 +441,14 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     QPainterPath path;
     path.addRoundedRect(backgroundRect, kIconModeBackRadius, kIconModeBackRadius);
 
-    if (isSelected || (option.state & QStyle::StateFlag::State_MouseOver)) {   // 只有选中和mouseover才绘制背景
+    if (isDropTarget || isSelected || (option.state & QStyle::StateFlag::State_MouseOver)) {   // 只有选中和mouseover才绘制背景
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, backgroundColor);
-        backgroundColor.setAlpha(40); // Hover背景边框设置透明度为16% (40/255);
-        painter->setPen(backgroundColor);
-        painter->drawPath(path);
-        painter->setRenderHint(QPainter::Antialiasing, false);
-    }
-
-    if (isDropTarget && !isSelected) {
-        painter->setPen(backgroundColor);
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->drawPath(path);
+        if (!isDropTarget) {
+            backgroundColor.setAlpha(40); // Hover背景边框设置透明度为16% (40/255);
+            painter->setPen(backgroundColor);
+            painter->drawPath(path);
+        }
         painter->setRenderHint(QPainter::Antialiasing, false);
     }
 
