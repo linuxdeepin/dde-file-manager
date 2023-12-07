@@ -56,6 +56,8 @@ public slots:
 protected:
     explicit ConfigPresenter(QObject *parent = nullptr);
     ~ConfigPresenter() override;
+private slots:
+    void onDConfigChanged(const QString &cfg, const QString &key);
 private:
     OrganizerConfig *conf = nullptr;
     bool enable = false;

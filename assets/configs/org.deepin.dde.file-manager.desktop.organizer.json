@@ -1,0 +1,17 @@
+{
+	"magic": "dsg.config.meta",
+	"version": "1.0",
+	"contents": {
+		"enableOrganizer": {
+			"value": -1,
+			"serial": 0,
+			"flags": [],
+			"name": "Enable Organizer",
+			"name[zh_CN]": "启用自动整理",
+			"description[zh_CN]": "用于开启/关闭自动整理",
+			"description": "It's used to control whether to enable the Organizer.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		}
+	}
+}
