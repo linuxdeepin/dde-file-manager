@@ -79,6 +79,37 @@ UsmSessionAPI *SessionBusiness::getAPI()
     return &sessionAPI;
 }
 
+void SessionBusiness::process(const QStringList &args)
+{
+    arguments = args;
+}
+
+int SessionBusiness::parseArguments(char **argv_new)
+{
+    if (arguments.isEmpty())
+        return 0;
+    int argc = arguments.count();
+    argv_new = new char *[argc];
+    for (int i = 0; i < argc; ++i) {
+        QByteArray ba = arguments.at(i).toLocal8Bit();
+        argv_new[i] = new char[ba.size() + 1];
+        memset(argv_new[i], 0, ba.size() + 1);
+        strncpy(argv_new[i], ba.data(), ba.size());
+    }
+    return argc;
+}
+
+void SessionBusiness::releaseArguments(int argc, char **argv_new)
+{
+    if (argc < 1 || argv_new == nullptr)
+        return;
+
+    for (int i = 0; i < argc; ++i) {
+        delete[] argv_new[i];
+    }
+    delete[] argv_new;
+}
+
 void SessionBusiness::savePath(unsigned long long wid, const QString &path)
 {
     if (!sessionAPI.isInitialized()) {
@@ -104,11 +135,6 @@ void SessionBusiness::savePath(unsigned long long wid, const QString &path)
 
 bool SessionBusiness::readPath(const QString &fileName, QString *data)
 {
-    if (!sessionAPI.isInitialized()) {
-        qCWarning(logAppFileManager) << "failed to read path caused no usm session api init";
-        return false;
-    }
-
     if (!data) {
         qCWarning(logAppFileManager) << "path is null";
         return false;
@@ -149,9 +175,15 @@ void SessionBusiness::onWindowOpened(quint64 windId)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
-    if (!window->isHidden() && getAPI()->isInitialized()) {
+    if (!window->isHidden() && SessionBusiness::instance()->getAPI()->init()) {
+        char **argv = nullptr;
+        int argc = parseArguments(argv);
+        getAPI()->parseArguments(argc, argv);
+        releaseArguments(argc, argv);
+
         getAPI()->connectSM(window->winId());
         getAPI()->setWindowProperty(window->winId());
+        qCInfo(logAppFileManager) << "update the arguments:" << arguments << ",to window:" << window->winId();
     }
 }
 
