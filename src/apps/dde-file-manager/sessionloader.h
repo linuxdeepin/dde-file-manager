@@ -56,7 +56,7 @@ private:
 
     void bindEvents();
     void savePath(unsigned long long wid, const QString &path);
-    int parseArguments(char **argv_new);
+    char **parseArguments(int &argc);
     void releaseArguments(int argc, char **argv_new);
 
 private slots:
