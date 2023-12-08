@@ -84,19 +84,19 @@ void SessionBusiness::process(const QStringList &args)
     arguments = args;
 }
 
-int SessionBusiness::parseArguments(char **argv_new)
+char **SessionBusiness::parseArguments(int &argc)
 {
     if (arguments.isEmpty())
-        return 0;
-    int argc = arguments.count();
-    argv_new = new char *[argc];
+        return nullptr;
+    argc = arguments.count();
+    char **argv_new = new char *[argc];
     for (int i = 0; i < argc; ++i) {
         QByteArray ba = arguments.at(i).toLocal8Bit();
         argv_new[i] = new char[ba.size() + 1];
         memset(argv_new[i], 0, ba.size() + 1);
         strncpy(argv_new[i], ba.data(), ba.size());
     }
-    return argc;
+    return argv_new;
 }
 
 void SessionBusiness::releaseArguments(int argc, char **argv_new)
@@ -176,8 +176,8 @@ void SessionBusiness::onWindowOpened(quint64 windId)
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
     if (!window->isHidden() && SessionBusiness::instance()->getAPI()->init()) {
-        char **argv = nullptr;
-        int argc = parseArguments(argv);
+        int argc = 0;
+        char **argv = parseArguments(argc);
         getAPI()->parseArguments(argc, argv);
         releaseArguments(argc, argv);
 
