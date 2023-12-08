@@ -5,7 +5,6 @@
 #include "config.h"   //cmake
 #include "singleapplication.h"
 #include "commandparser.h"
-#include "sessionloader.h"
 
 #include "tools/upgrade/builtininterface.h"
 
@@ -261,16 +260,6 @@ static void autoReleaseMemory()
     timer.start(kTimerInterval);
 }
 
-static void initSessionBusiness(int argc, char *argv[])
-{
-    //    if (!qApp->arguments().contains("sessionfile"))
-    //        return;
-
-    if (SessionBusiness::instance()->getAPI()->init()) {
-        SessionBusiness::instance()->getAPI()->parseArguments(argc, argv);
-    }
-}
-
 int main(int argc, char *argv[])
 {
     initEnv();
@@ -296,7 +285,6 @@ int main(int argc, char *argv[])
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
     autoReleaseMemory();
-    initSessionBusiness(argc, argv);
 
     CommandParser::instance().process();
     qCInfo(logAppFileManager) << "App version: " << BUILD_VERSION;
@@ -346,7 +334,7 @@ int main(int argc, char *argv[])
     bool isSigterm { qApp->property("SIGTERM").toBool() };
     if (!isSigterm && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
         a.closeServer();
-        QProcess::startDetached(QString(argv[0]), {"-d"});
+        QProcess::startDetached(QString(argv[0]), { "-d" });
     }
 
     return ret;
