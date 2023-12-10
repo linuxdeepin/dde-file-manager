@@ -64,4 +64,6 @@ install(TARGETS
     ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
 )
 
-
+# install dconfig files.
+include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+INSTALL_DCONFIG("org.deepin.dde.file-manager.desktop.organizer.json")

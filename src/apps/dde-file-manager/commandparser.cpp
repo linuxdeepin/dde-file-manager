@@ -131,7 +131,8 @@ void CommandParser::process()
 
 void CommandParser::process(const QStringList &arguments)
 {
-    qCDebug(logAppFileManager) << "App start args: " << arguments;
+    qCInfo(logAppFileManager) << "App start args: " << arguments;
+    SessionBusiness::instance()->process(arguments);
     commandParser->process(arguments);
 }
 

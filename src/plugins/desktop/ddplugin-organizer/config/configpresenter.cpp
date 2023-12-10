@@ -7,13 +7,19 @@
 #include "mode/canvasorganizer.h"
 #include "mode/normalized/fileclassifier.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #include <QDebug>
 #include <QApplication>
 
+DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
 class ConfigPresenterGlobal : public ConfigPresenter{};
 Q_GLOBAL_STATIC(ConfigPresenterGlobal, configPresenter)
+
+static constexpr char kConfName[] { "org.deepin.dde.file-manager.desktop.organizer" };
+static constexpr char kIsEnable[] { "enableOrganizer" };
 
 ConfigPresenter::ConfigPresenter(QObject *parent) : QObject(parent)
 {
@@ -27,6 +33,24 @@ ConfigPresenter::~ConfigPresenter()
     conf = nullptr;
 }
 
+void ConfigPresenter::onDConfigChanged(const QString &cfg, const QString &key)
+{
+    if (cfg != kConfName)
+        return;
+
+    if (key == kIsEnable) {
+        bool ok = false;
+        int value = DConfigManager::instance()->value(cfg, key).toInt(&ok);
+        if (!ok)
+            return;
+        if (value < 0)
+            return;
+        bool val = value == 0 ? false : true;
+        if (val != enable)
+            emit changeEnableState(val);
+    }
+}
+
 ConfigPresenter *ConfigPresenter::instance()
 {
     return configPresenter;
@@ -38,7 +62,15 @@ bool ConfigPresenter::initialize()
         return false;
 
     conf = new OrganizerConfig();
-    enable = conf->isEnable();
+    {
+        bool ok = false;
+        int value = DConfigManager::instance()->value(kConfName, kIsEnable).toInt(&ok);
+        if (ok && value >= 0) {
+            enable = value == 0 ? false : true;
+        } else {
+            enable = conf->isEnable();
+        }
+    }
 
     {
         int m = conf->mode();
@@ -60,12 +92,16 @@ bool ConfigPresenter::initialize()
         curClassifier = Classifier::kType; //static_cast<Classifier>(cf);
     }
 
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &ConfigPresenter::onDConfigChanged);
+
     return true;
 }
 
 void ConfigPresenter::setEnable(bool e)
 {
     enable = e;
+
+    DConfigManager::instance()->setValue(kConfName, kIsEnable, e ? 1 : 0);
     conf->setEnable(e);
     conf->sync();
 }

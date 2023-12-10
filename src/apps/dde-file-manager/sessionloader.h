@@ -47,6 +47,7 @@ class SessionBusiness final : public QObject
 public:
     static SessionBusiness *instance();
     UsmSessionAPI *getAPI();
+    void process(const QStringList &args);
     bool readPath(const QString &fileName, QString *path = nullptr);
 
 private:
@@ -55,6 +56,8 @@ private:
 
     void bindEvents();
     void savePath(unsigned long long wid, const QString &path);
+    char **parseArguments(int &argc);
+    void releaseArguments(int argc, char **argv_new);
 
 private slots:
     void onWindowOpened(quint64 windId);
@@ -62,6 +65,7 @@ private slots:
 
 private:
     UsmSessionAPI sessionAPI;
+    QStringList arguments;
 };
 
 #endif   // USMSESSIONLOADER_H
