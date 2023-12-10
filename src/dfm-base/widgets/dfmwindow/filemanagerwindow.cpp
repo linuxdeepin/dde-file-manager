@@ -289,7 +289,6 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
         d->workspace->setCurrentUrl(d->currentUrl);
         d->workspace->installEventFilter(this);
         emit this->workspaceInstallFinished();
-        emit currentUrlChanged(d->currentUrl);   // bug 233397
     });
 }
 
