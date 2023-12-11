@@ -618,6 +618,16 @@ QString DeviceUtils::fileSystemType(const QUrl &url)
 
 qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
 {
+    if (url.scheme() != Global::Scheme::kFile)
+        return DFMIO::DFMUtils::deviceBytesFree(url);
+    auto devicePath = bindPathTransform(url.path(), true);
+    auto map = DevProxyMng->queryDeviceInfoByPath(devicePath, true);
+    if (map.contains(kSizeFree))
+        return  map.value(kSizeFree).toLongLong();
+    if (map.contains(kSizeTotal) && map.contains(kSizeUsed))
+        return map.value(kSizeTotal).toLongLong() -
+                map.value(kSizeUsed).toLongLong();
+
     return DFMIO::DFMUtils::deviceBytesFree(url);
 }
 
@@ -627,6 +637,35 @@ bool DeviceUtils::isUnmountSamba(const QUrl &url)
         return false;
 
     return !DevProxyMng->isFileOfProtocolMounts(url.path());
+}
+
+QString DeviceUtils::bindPathTransform(const QString &path, bool toDevice)
+{
+    if (!path.startsWith("/") || path == "/")
+        return path;
+
+    const QMap<QString, QString> &table = DeviceUtils::fstabBindInfo();
+    if (table.isEmpty())
+        return path;
+
+    QString bindPath(path);
+    if (toDevice) {
+        for (const auto &mntPoint : table.values()) {
+            if (path.startsWith(mntPoint)) {
+                bindPath.replace(mntPoint, table.key(mntPoint));
+                break;
+            }
+        }
+    } else {
+        for (const auto &device : table.keys()) {
+            if (path.startsWith(device)) {
+                bindPath.replace(device, table[device]);
+                break;
+            }
+        }
+    }
+
+    return bindPath;
 }
 
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)

@@ -138,7 +138,7 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
 
-        qint64 freeBytes = DFMIO::DFMUtils::deviceBytesFree(targetOrgUrl);
+        qint64 freeBytes = DeviceUtils::deviceBytesFree(targetOrgUrl);
         action = AbstractJobHandler::SupportAction::kNoAction;
 
         if (FileOperationsUtils::isFilesSizeOutLimit(fromUrl, freeBytes))
@@ -192,6 +192,7 @@ bool FileOperateBaseWorker::checkTotalDiskSpaceAvailable(const QUrl &fromUrl, co
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         qint64 freeBytes = DeviceUtils::deviceBytesFree(toUrl);
+        qInfo() << "current free bytes = " << freeBytes << ", write size = " << sourceFilesTotalSize;
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (sourceFilesTotalSize >= freeBytes)
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
