@@ -151,6 +151,26 @@ bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
     return !id.isEmpty();
 }
 
+QVariantMap DeviceProxyManager::queryDeviceInfoByPath(const QString &path, bool reload)
+{
+    d->initMounts();
+    QString blkid, rootblkid;
+    for (auto it = d->allMounts.begin(); it != d->allMounts.end(); it++) {
+        if (it.value() == "/") {
+            rootblkid = it.key();
+            continue;
+        }
+        if (path.startsWith(it.value())
+                || (path + "/").startsWith(it.value())) {
+            blkid = it.key();
+            break;
+        }
+    }
+    if (blkid.isEmpty())
+        blkid = rootblkid;
+    return queryBlockInfo(blkid, reload);
+}
+
 DeviceProxyManager::DeviceProxyManager(QObject *parent)
     : QObject(parent), d(new DeviceProxyManagerPrivate(this, parent))
 {

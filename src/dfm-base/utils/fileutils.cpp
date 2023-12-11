@@ -1235,31 +1235,7 @@ QString FileUtils::nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer ta
 
 QString FileUtils::bindPathTransform(const QString &path, bool toDevice)
 {
-    if (!path.startsWith("/") || path == "/")
-        return path;
-
-    const QMap<QString, QString> &table = DeviceUtils::fstabBindInfo();
-    if (table.isEmpty())
-        return path;
-
-    QString bindPath(path);
-    if (toDevice) {
-        for (const auto &mntPoint : table.values()) {
-            if (path.startsWith(mntPoint)) {
-                bindPath.replace(mntPoint, table.key(mntPoint));
-                break;
-            }
-        }
-    } else {
-        for (const auto &device : table.keys()) {
-            if (path.startsWith(device)) {
-                bindPath.replace(device, table[device]);
-                break;
-            }
-        }
-    }
-
-    return bindPath;
+    return DeviceUtils::bindPathTransform(path, toDevice);
 }
 
 int FileUtils::dirFfileCount(const QUrl &url)

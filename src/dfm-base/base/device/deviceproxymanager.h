@@ -50,6 +50,7 @@ public:
     bool isFileOfExternalBlockMounts(const QString &filePath);
     bool isFileFromOptical(const QString &filePath);
     bool isMptOfDevice(const QString &filePath, QString &id);
+    QVariantMap queryDeviceInfoByPath(const QString &path, bool reload = false);
 
     // device signals
 Q_SIGNALS:

@@ -106,10 +106,12 @@ FileManagerWindow *CoreHelper::createNewWindow(const QUrl &url)
 
 FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
 {
-    fmInfo() << "Find exists window for: " << url;
     auto window { FMWindowsIns.createWindow(url, false) };
-    if (window)
+
+    if (window) {
+        fmInfo() << "Find exists window for: " << url <<",for window:"<< window->winId();
         return window;
+    }
 
     fmWarning() << "Cannot find exists window for:" << url;
     auto oldWindow { defaultWindow() };
