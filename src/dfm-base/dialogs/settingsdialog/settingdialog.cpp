@@ -40,35 +40,6 @@ inline constexpr char kItemKey[] { "key" };
 inline constexpr char kOptionsName[] { "options" };
 }
 
-static QByteArray removeQuickSearchIndex(const QByteArray &data)
-{
-    auto const &jdoc = QJsonDocument::fromJson(data);
-    QJsonObject RootObject = jdoc.object();
-    QJsonValueRef ArrayRef = RootObject.find(kGroupsName).value();
-    QJsonArray Array = ArrayRef.toArray();
-    QJsonArray::iterator ArrayIterator = Array.begin();
-    QJsonValueRef ElementOneValueRef = ArrayIterator[1];
-    QJsonObject ElementOneObject = ElementOneValueRef.toObject();
-    QJsonValueRef ArrayRef2 = ElementOneObject.find(kGroupsName).value();
-    QJsonArray Array2 = ArrayRef2.toArray();
-    QJsonArray::iterator ArrayIterator2 = Array2.begin();
-    QJsonValueRef ElementOneValueRef2 = ArrayIterator2[0];
-    QJsonObject ElementOneObject2 = ElementOneValueRef2.toObject();
-
-    QJsonValueRef indexArrayRef = ElementOneObject2.find(kOptionsName).value();
-    QJsonArray indexArray = indexArrayRef.toArray();
-    indexArray.removeFirst();
-    indexArray.removeFirst();
-    indexArrayRef = indexArray;
-
-    ElementOneValueRef2 = ElementOneObject2;
-    ArrayRef2 = Array2;
-    ElementOneValueRef = ElementOneObject;
-    ArrayRef = Array;
-    QByteArray arr = QJsonDocument(RootObject).toJson();
-    return arr;
-}
-
 int indexOfChar(const QByteArray &data, char ch, int from)
 {
     for (; from < data.size(); ++from) {
@@ -154,15 +125,7 @@ void SettingDialog::settingFilter(QByteArray &data)
 
 void SettingDialog::loadSettings(const QString & /*templateFile*/)
 {
-    //    QFile file(templateFile);
-    //    if (!file.open(QFile::ReadOnly))
-    //        return;
-    //    QByteArray data = file.readAll();
-    //    file.close();
-
     QByteArray configJson = SettingJsonGenerator::instance()->genSettingJson();
-    if (!QDBusConnection::systemBus().interface()->isServiceRegistered("com.deepin.anything"))
-        configJson = removeQuickSearchIndex(configJson);
 
     settingFilter(configJson);
     dtkSettings = DSettings::fromJson(configJson);
