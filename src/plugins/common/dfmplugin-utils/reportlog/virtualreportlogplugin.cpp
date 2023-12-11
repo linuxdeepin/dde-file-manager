@@ -24,7 +24,8 @@ bool VirtualReportLogPlugin::start()
     QTimer::singleShot(3000, this, [=]() {
         QVariantMap data;
         data.insert("type", true);
-        data.insert("TreeViewModeEnabled", Application::instance()->appAttribute(Application::kListItemExpandable).toBool());
+        if (qAppName() == "dde-file-manager")
+            data.insert("TreeViewModeEnabled", Application::instance()->appAttribute(Application::kListItemExpandable).toBool());
 
         ReportLogManager::instance()->commit("AppStartup", data);
     });
