@@ -11,5 +11,16 @@
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
         {"Name" : "dfmplugin-core", "Version": "1.0.0"}
-    ]
+    ],
+    "Custom": {
+        "SidebarDisplay": [{
+            "Url" : "computer:///",
+            "Name": "Computer",
+            "Icon": "computer-symbolic",
+            "Group": "Group_Device",
+            "VisiableControl" : "computer",
+            "ReportName" : "Computer",
+            "Pos": 0
+        }]
+    }
 }

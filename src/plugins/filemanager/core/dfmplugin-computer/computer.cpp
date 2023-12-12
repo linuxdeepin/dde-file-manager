@@ -99,11 +99,11 @@ void Computer::onWindowOpened(quint64 winId)
                 this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
 
     if (window->sideBar())
-        addComputerToSidebar();
+        updateComputerToSidebar();
     else
         connect(
                 window, &FileManagerWindow::sideBarInstallFinished,
-                this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
+                this, [this] { updateComputerToSidebar(); }, Qt::DirectConnection);
 
     auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
     if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
@@ -123,19 +123,17 @@ void Computer::onWindowOpened(quint64 winId)
                          func, QString(DFMBASE_NAMESPACE::Global::Scheme::kEntry));
 }
 
-void Computer::addComputerToSidebar()
+void Computer::updateComputerToSidebar()
 {
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
-    QVariantMap map {
-        { "Property_Key_Group", "Group_Device" },
-        { "Property_Key_DisplayName", tr("Computer") },
-        { "Property_Key_Icon", ComputerUtils::icon() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_VisiableControl", "computer" },
-        { "Property_Key_ReportName", "Computer" }
-    };
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+        QVariantMap map {
+            { "Property_Key_QtItemFlags", QVariant::fromValue(flags) }
+        };
 
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, ComputerUtils::rootUrl(), map);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", ComputerUtils::rootUrl(), map);
+    });
 }
 
 void Computer::regComputerCrumbToTitleBar()

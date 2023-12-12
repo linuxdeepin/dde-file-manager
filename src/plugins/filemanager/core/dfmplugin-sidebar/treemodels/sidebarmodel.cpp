@@ -194,7 +194,7 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
     return true;
 }
 
-int SideBarModel::appendRow(SideBarItem *item)
+int SideBarModel::appendRow(SideBarItem *item, bool direct)
 {
     if (!item)
         return -1;
@@ -223,7 +223,7 @@ int SideBarModel::appendRow(SideBarItem *item)
             SideBarItem *groupItem = this->itemFromIndex(i);
             bool itemInserted = false;
             int row = 0;
-            for (; row < groupItem->rowCount(); row++) {
+            for (; !direct && row < groupItem->rowCount(); row++) {
                 QStandardItem *childItem = groupItem->child(row);
                 auto tmpItem = dynamic_cast<SideBarItem *>(childItem);
                 if (!tmpItem)

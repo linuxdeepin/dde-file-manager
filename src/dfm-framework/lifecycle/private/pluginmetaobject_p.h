@@ -12,6 +12,7 @@
 #include <QString>
 #include <QStringList>
 #include <QSharedPointer>
+#include <QVariantMap>
 
 DPF_BEGIN_NAMESPACE
 
@@ -27,6 +28,8 @@ inline constexpr char kPluginDescription[] { "Description" };
 inline constexpr char kPluginUrlLink[] { "UrlLink" };
 /// \brief kPluginDepends 插件依赖
 inline constexpr char kPluginDepends[] { "Depends" };
+/// \brief kCustomData 插件自定义数据
+inline constexpr char kCustomData[] { "Custom" };
 /// \brief kPluginDepends virtual plugin meta info
 inline constexpr char kVirtualPluginMeta[] { "Meta" };
 /// \brief kPluginDepends virtual plugin info list
@@ -55,6 +58,7 @@ public:
     QList<PluginDepend> depends;
     QSharedPointer<Plugin> plugin;
     QSharedPointer<QPluginLoader> loader;
+    QVariantMap customData;
 
     explicit PluginMetaObjectPrivate(PluginMetaObject *q)
         : q(q), loader(new QPluginLoader(nullptr))

@@ -30,7 +30,7 @@ private slots:
 
 private:
     void addFileOperations();
-    void addRecentItem();
+    void updateRecentItemToSideBar();
 
     void followEvents();
     void bindWindows();

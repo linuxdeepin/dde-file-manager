@@ -146,7 +146,7 @@ TEST(UT_PolicyManager, slotVaultPolicy_five)
     });
     stub.set_lamda(&VaultVisibleManager::infoRegister, []{});
     stub.set_lamda(&VaultVisibleManager::pluginServiceRegister, []{});
-    stub.set_lamda(&VaultVisibleManager::addSideBarVaultItem, []{});
+    stub.set_lamda(&VaultVisibleManager::updateSideBarVaultItem, []{});
     stub.set_lamda(&VaultVisibleManager::addComputer, []{});
 
     PolicyManager::instance()->vaultVisiable = false;

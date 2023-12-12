@@ -50,6 +50,9 @@ private slots:
     void onWindowClosed(quint64 winId);
     void onConfigChanged(const QString &cfg, const QString &key);
     bool onAboutToShowSettingDialog(quint64 winId);
+
+private:
+    void initPreDefineItems();
 };
 
 }   // namespace dfmplugin_sidebar

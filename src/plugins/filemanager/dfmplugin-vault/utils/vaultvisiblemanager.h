@@ -26,7 +26,7 @@ public:
 
 public slots:
     void onWindowOpened(quint64 winID);
-    void addSideBarVaultItem();
+    void updateSideBarVaultItem();
     void addComputer();
     void removeSideBarVaultItem();
     void removeComputerVaultItem();

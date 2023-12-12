@@ -89,7 +89,7 @@ TEST_F(UT_Computer, OnWindowOpened)
     stub.set_lamda(&FileManagerWindow::sideBar, [] { __DBG_STUB_INVOKE__ return reinterpret_cast<AbstractFrame *>(1); });
     stub.set_lamda(&FileManagerWindow::titleBar, [] { __DBG_STUB_INVOKE__ return reinterpret_cast<AbstractFrame *>(1); });
     stub.set_lamda(&ComputerItemWatcher::startQueryItems, [] { __DBG_STUB_INVOKE__ });
-    stub.set_lamda(&Computer::addComputerToSidebar, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&Computer::updateComputerToSidebar, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&Computer::regComputerToSearch, [] { __DBG_STUB_INVOKE__ });
 
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(111));
@@ -97,12 +97,12 @@ TEST_F(UT_Computer, OnWindowOpened)
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(-111));
 }
 
-TEST_F(UT_Computer, AddComputerToSidebar)
+TEST_F(UT_Computer, UpdateComputerToSidebar)
 {
     typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, int, QUrl &&, QVariantMap &);
     auto push = static_cast<Push>(&dpf::EventChannelManager::push);
     stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return QVariant(); });
-    EXPECT_NO_FATAL_FAILURE(ins.addComputerToSidebar());
+    EXPECT_NO_FATAL_FAILURE(ins.updateComputerToSidebar());
 }
 
 TEST_F(UT_Computer, RegComputerCrumbToTitleBar)

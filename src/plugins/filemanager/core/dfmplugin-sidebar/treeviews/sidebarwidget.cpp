@@ -79,11 +79,11 @@ QAbstractItemView *SideBarWidget::view()
     return sidebarView;
 }
 
-int SideBarWidget::addItem(SideBarItem *item)
+int SideBarWidget::addItem(SideBarItem *item, bool direct)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
 
-    int r { kSidebarModelIns->appendRow(item) };
+    int r { kSidebarModelIns->appendRow(item, direct) };
     bool hidden { !SideBarHelper::hiddenRules().value(item->itemInfo().visiableControlKey, true).toBool() };
     if (r >= 0 && hidden)
         setItemVisiable(item->url(), false);
@@ -114,6 +114,9 @@ void SideBarWidget::updateItem(const QUrl &url, const ItemInfo &newInfo)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     kSidebarModelIns->updateRow(url, newInfo);
+    bool hidden { !SideBarHelper::hiddenRules().value(newInfo.visiableControlKey, true).toBool() };
+    if (hidden)
+        setItemVisiable(newInfo.url, false);
 }
 
 /*!
@@ -163,7 +166,7 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
     // find out the item index by url
     const QModelIndex index = this->findItemIndex(url);   // ps: currently,findItemIndex can only find the sub item
     if (!index.isValid()) {
-        fmInfo() << "index is invalid";
+        qWarning() << "setItemVisiable index is invalid:" << url;
         return;
     }
     SideBarItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);

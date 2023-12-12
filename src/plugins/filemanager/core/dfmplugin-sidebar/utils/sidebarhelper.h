@@ -19,20 +19,21 @@ class SideBarItemSeparator;
 class SideBarHelper
 {
 public:
+    // TODO: remove follow interfaces
     static QList<SideBarWidget *> allSideBar();
-    static SideBarWidget *findSideBarByWindowId(quint64 windowId);
     static void addSideBar(quint64 windowId, SideBarWidget *sideBar);
     static void removeSideBar(quint64 windowId);
+
+    // business
     static quint64 windowId(QWidget *sender);
+    static QMap<QUrl, QPair<int, QVariantMap>> preDefineItemProperties();
     static SideBarItem *createItemByInfo(const ItemInfo &info);
     static SideBarItemSeparator *createSeparatorItem(const QString &group);
     static QString makeItemIdentifier(const QString &group, const QUrl &url);
     static void defaultCdAction(quint64 windowId, const QUrl &url);
     static void defaultContextMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos);
-    static bool registerSortFunc(const QString &subGroup, SortFunc func);
-    static SortFunc sortFunc(const QString &subGroup);
-    static void updateSideBarSelection(quint64 winId);
 
+    // for settings
     static void bindSetting(const QString &itemVisiableSettingKey, const QString &itemVisiableControlKey);
     static void removebindingSetting(const QString &itemVisiableSettingKey);
     static void initDefaultSettingPanel();
@@ -50,7 +51,6 @@ public:
 private:
     static QMutex &mutex();
     static QMap<quint64, SideBarWidget *> kSideBarMap;
-    static QMap<QString, SortFunc> kSortFuncs;
 };
 
 DPSIDEBAR_END_NAMESPACE

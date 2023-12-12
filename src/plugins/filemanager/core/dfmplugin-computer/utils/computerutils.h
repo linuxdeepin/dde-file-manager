@@ -42,6 +42,7 @@ public:
         QUrl u;
         u.setScheme(scheme());
         u.setPath("/");
+        u.setHost("");
         return u;
     }
 

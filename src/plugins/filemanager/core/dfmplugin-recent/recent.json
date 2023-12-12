@@ -10,5 +10,19 @@
     "Description" : "The core plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-    ]
+    ],
+    "Custom": {
+        "QuickAccessDisplay" : [{
+            "MarkName" : "Recent",
+            "Url" : "recent:///",
+            "DefaultIndex" : 0,
+            "SidebarInfo" : {
+                "Name": "Recent",
+                "Icon": "document-open-recent-symbolic",
+                "Group": "Group_Common",
+                "VisiableControl" : "recent",
+                "ReportName" : "Recent"
+            }
+        }]
+    }
 }
