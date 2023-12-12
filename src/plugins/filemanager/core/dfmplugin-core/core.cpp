@@ -18,6 +18,7 @@
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
 
@@ -27,6 +28,7 @@
 #include <QApplication>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <DApplication>
 
 DFMBASE_USE_NAMESPACE
 
@@ -36,6 +38,10 @@ namespace GlobalPrivate {
 static Application *kDFMApp { nullptr };
 }   // namespace GlobalPrivate
 DFM_LOG_REISGER_CATEGORY(DPCORE_NAMESPACE)
+
+#define DAPP_ATT_WIDGETS 14
+#define DAPP_USING_ATT(VAL, dappVal) \
+    (DApplication::setAttribute(static_cast<Qt::ApplicationAttribute>(VAL), dappVal), "use dapp att")
 
 void Core::initialize()
 {
@@ -124,6 +130,8 @@ void Core::onAllPluginsStarted()
     fmInfo() << "All plugins started";
     // dde-select-dialog also uses the core plugin, don't start filemanger window
     QString &&curAppName { qApp->applicationName() };
+    if (!WindowUtils::isWayLand())
+        qDebug() << "start" << DAPP_USING_ATT(DAPP_ATT_WIDGETS, 122);
     if (curAppName == "dde-file-manager")
         dpfSignalDispatcher->publish(DPF_MACRO_TO_STR(DPCORE_NAMESPACE), "signal_StartApp");
     else
@@ -140,6 +148,11 @@ void Core::onWindowOpened(quint64 windd)
             // init all lazy plguis call once
             const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
+            qDebug() << "end" << DAPP_USING_ATT(DAPP_ATT_WIDGETS, 0);
+        });
+
+        // TODO: freeze 5s, fix it!
+        QTimer::singleShot(2000, []() {
             // init clipboard
             ClipBoard::instance()->onClipboardDataChanged();
         });
