@@ -117,6 +117,7 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevAutoPtr &dev)
     datas[kCleartextDevice] = getNullStrIfNotValid(Property::kEncryptedCleartextDevice);
     datas[kConnectionBus] = getNullStrIfNotValid(Property::kDriveConnectionBus);
     datas[kDriveModel] = getNullStrIfNotValid(Property::kDriveModel);
+    datas[kPreferredDevice] = getNullStrIfNotValid(Property::kBlockPreferredDevice);
 
     if (dev->optical())
         datas[kUDisks2Size] = dev->sizeTotal();
