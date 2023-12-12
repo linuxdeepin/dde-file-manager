@@ -80,7 +80,6 @@ Q_SIGNALS:
 private:
     void initializeUi();
     void updateUi();
-    void initConnect();
 
 private:
     QScopedPointer<FileManagerWindowPrivate> d;

@@ -197,7 +197,6 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
       d(new FileManagerWindowPrivate(url, this))
 {
     initializeUi();
-    initConnect();
 }
 
 FileManagerWindow::~FileManagerWindow()
@@ -422,13 +421,6 @@ void FileManagerWindow::updateUi()
         int splitterPos = state.value("sidebar", d->kDefaultLeftWidth).toInt();
         d->setSplitterPosition(splitterPos);
     }
-}
-
-void FileManagerWindow::initConnect()
-{
-    connect(this, &FileManagerWindow::currentUrlChanged, this, [this](const QUrl &url) {
-        emit FMWindowsIns.currentUrlChanged(this->winId(), url);
-    });
 }
 
 }

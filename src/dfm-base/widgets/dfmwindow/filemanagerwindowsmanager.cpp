@@ -189,14 +189,19 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         d->onWindowClosed(window);
     });
 
-    connect(window, &FileManagerWindow::aboutToOpen, this, [this, window]() {
+    connect(window, &FileManagerWindow::aboutToOpen, this, [this, window, url]() {
         auto &&id { window->internalWinId() };
         qCInfo(logDFMBase) << "Window showed" << id;
         emit windowOpened(id);
+        emit window->currentUrlChanged(url);   //The URL needs to notify the subscribers when the first window opened.
     });
 
     connect(window, &FileManagerWindow::reqShowHotkeyHelp, this, [this, window]() {
         d->onShowHotkeyHelp(window);
+    });
+
+    connect(window, &FileManagerWindow::currentUrlChanged, this, [this, window](const QUrl &url) {
+        emit currentUrlChanged(window->winId(), url);
     });
 
     // In order for the plugin to cache the current window (before the base frame is installed)
@@ -207,6 +212,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     if (d->windows.size() == 1)
         window->moveCenter();
     emit windowCreated(window->internalWinId());
+
     finally.dismiss();
     return window;
 }

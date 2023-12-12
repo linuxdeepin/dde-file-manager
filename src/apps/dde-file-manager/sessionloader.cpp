@@ -123,14 +123,14 @@ void SessionBusiness::savePath(unsigned long long wid, const QString &path)
     QJsonDocument doc(jsonObj);
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qCWarning(logAppFileManager) << "Failed to write data:" << path << " to file:" << filePath;
+        qCWarning(logAppFileManager) << "Failed to write data:" << path << " to file:" << filePath << ",for window:" << wid;
         return;
     }
 
     file.write(doc.toJson());
     file.close();
 
-    qCInfo(logAppFileManager) << "done to write data:" << path << " to file:" << filePath;
+    qCInfo(logAppFileManager) << "done to write data:" << path << " to file:" << filePath << ",for window:" << wid;
 }
 
 bool SessionBusiness::readPath(const QString &fileName, QString *data)
@@ -183,7 +183,7 @@ void SessionBusiness::onWindowOpened(quint64 windId)
 
         getAPI()->connectSM(window->winId());
         getAPI()->setWindowProperty(window->winId());
-        qCInfo(logAppFileManager) << "update the arguments:" << arguments << ",to window:" << window->winId();
+        qCInfo(logAppFileManager) << "update the arguments:" << arguments << ",for window:" << window->winId();
     }
 }
 
