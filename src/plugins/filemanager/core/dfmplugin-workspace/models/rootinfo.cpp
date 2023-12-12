@@ -92,6 +92,11 @@ void RootInfo::startWork(const QString &key, const bool getCache)
         return handleGetSourceData(key);
 
     traversaling = true;
+    {
+        QWriteLocker lk(&childrenLock);
+        childrenUrlList.clear();
+        sourceDataList.clear();
+    }
     traversalThreads.value(key)->traversalThread->start();
 }
 
@@ -275,7 +280,11 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
         if (!sortInfo)
             continue;
         sortInfos.append(sortInfo);
+
         infos.append(info);
+        QWriteLocker lk(&childrenLock);
+        this->childrenUrlList.append(info->fileUrl());
+        this->sourceDataList.append(sortInfo);
     }
 
     if (sortInfos.length() > 0)
