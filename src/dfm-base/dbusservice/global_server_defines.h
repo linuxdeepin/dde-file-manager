@@ -80,6 +80,7 @@ inline constexpr char kDeviceIcon[] { "DeviceIcon" };
 inline constexpr char kConnectionBus[] { "connectBus" };
 inline constexpr char kUDisks2Size[] { "UDisks2Size" };
 inline constexpr char kDriveModel[] { "DriveModel" };
+inline constexpr char kPreferredDevice[] { "PreferredDevice" };
 }   // namespace DeviceProperty
 
 /*!

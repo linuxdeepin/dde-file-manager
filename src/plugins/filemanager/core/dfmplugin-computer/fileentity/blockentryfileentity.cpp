@@ -182,15 +182,20 @@ AbstractEntryFileEntity::EntryOrder BlockEntryFileEntity::order() const
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
     if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
+    auto clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty, QVariantHash()).toHash();
+    if (clearInfo.value(DeviceProperty::kMountPoint, "").toString() == "/")
+        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
 
-    bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
-    if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_data") /* && !canPowerOff*/)
+    if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_data"))
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
+    if (clearInfo.value(DeviceProperty::kIdLabel, "").toString() == "_dde_data")
+        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
 
     if (datas.value(DeviceProperty::kOptical).toBool()
         || datas.value(DeviceProperty::kOpticalDrive).toBool())
         return AbstractEntryFileEntity::EntryOrder::kOrderOptical;
 
+    bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
     if (canPowerOff && !isSiblingOfRoot())
         return AbstractEntryFileEntity::EntryOrder::kOrderRemovableDisks;
 

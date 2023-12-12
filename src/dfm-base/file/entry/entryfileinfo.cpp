@@ -142,6 +142,16 @@ QString EntryFileInfo::nameOf(const NameInfoType type) const
     }
 }
 
+QString EntryFileInfo::displayOf(const DisplayInfoType type) const
+{
+    switch (type) {
+    case dfmbase::DisPlayInfoType::kFileDisplayName:
+        return displayName();
+    default:
+        return FileInfo::displayOf(type);
+    }
+}
+
 QString EntryFileInfo::pathOf(const PathInfoType type) const
 {
     QString path;
