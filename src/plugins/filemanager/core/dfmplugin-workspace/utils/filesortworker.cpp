@@ -567,6 +567,11 @@ void FileSortWorker::handleAddChildren(const QString &key,
     if (!handleAddChildren(key, children, childInfos))
         return;
 
+    if (children.isEmpty() && handleSource) {
+        setSourceHandleState(isFinished);
+        return;
+    }
+
     // In the home, it is necessary to sort by display name.
     // So, using `sortAllFiles` to reorder
     auto parentUrl = parantUrl(children.first()->fileUrl());
@@ -597,8 +602,10 @@ bool FileSortWorker::handleAddChildren(const QString &key,
                                        const QList<SortInfoPointer> &children,
                                        const QList<FileInfoPointer> &childInfos)
 {
-    if (currentKey != key || isCanceled || children.isEmpty())
+    if (currentKey != key || isCanceled)
         return false;
+    if (children.isEmpty())
+        return true;
 
     // 获取相对于已有的新增加的文件
     QList<QUrl> newChildren;
@@ -636,7 +643,7 @@ bool FileSortWorker::handleAddChildren(const QString &key,
     depthMap.remove(depth - 1, parentUrl);
     depthMap.insertMulti(depth - 1, parentUrl);
     if (newChildren.isEmpty())
-        return false;
+        return true;
     insertVisibleChildren(startPos + posOffset, newChildren);
 
     return true;
