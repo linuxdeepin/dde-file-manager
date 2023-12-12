@@ -106,11 +106,11 @@ void SmbBrowser::onWindowOpened(quint64 winId)
 
     ContextMenuCallback ctxMenuHandle = { SmbBrowser::contextMenuHandle };
     if (window->sideBar()) {
-        addNeighborToSidebar();
+        updateNeighborToSidebar();
     } else {
         connect(
                 window, &FileManagerWindow::sideBarInstallFinished,
-                this, [this] { addNeighborToSidebar(); },
+                this, [this] { updateNeighborToSidebar(); },
                 Qt::DirectConnection);
     }
 
@@ -154,21 +154,19 @@ void SmbBrowser::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
 }
 
-void SmbBrowser::addNeighborToSidebar()
+void SmbBrowser::updateNeighborToSidebar()
 {
-    ContextMenuCallback contextMenuCb { SmbBrowser::contextMenuHandle };
-    Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
-    QVariantMap map {
-        { "Property_Key_Group", "Group_Network" },
-        { "Property_Key_DisplayName", tr("Computers in LAN") },
-        { "Property_Key_Icon", smb_browser_utils::icon() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_VisiableControl", "computers_in_lan" },
-        { "Property_Key_ReportName", "Network" },
-        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
-    };
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        ContextMenuCallback contextMenuCb { SmbBrowser::contextMenuHandle };
+        Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
+        QVariantMap map {
+            { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+            { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+        };
 
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, smb_browser_utils::netNeighborRootUrl(), map);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", smb_browser_utils::netNeighborRootUrl(), map);
+    });
 }
 
 void SmbBrowser::registerNetworkAccessPrehandler()

@@ -33,7 +33,7 @@ public:
     QList<SideBarItem *> subItems(const QString &groupName) const;
 
     bool insertRow(int row, SideBarItem *item);
-    int appendRow(SideBarItem *item);
+    int appendRow(SideBarItem *item, bool direct = true);
     bool removeRow(const QUrl &url);
     void updateRow(const QUrl &url, const ItemInfo &newInfo);
     QModelIndex findRowByUrl(const QUrl &url) const;

@@ -91,7 +91,7 @@ TEST(UT_VaultVisibleManager, addSideBarVaultItem)
     });
 
     VaultVisibleManager::instance()->addVaultComputerMenu();
-    VaultVisibleManager::instance()->addSideBarVaultItem();
+    VaultVisibleManager::instance()->updateSideBarVaultItem();
 
     EXPECT_TRUE(isOk);
 }
@@ -139,7 +139,7 @@ TEST(UT_VaultVisibleManager, onWindowOpened_two)
     stub.set_lamda(&FileManagerWindowsManager::findWindowById, [ &window ]{
         return &window;
     });
-    stub.set_lamda(&VaultVisibleManager::addSideBarVaultItem, []{});
+    stub.set_lamda(&VaultVisibleManager::updateSideBarVaultItem, []{});
     stub.set_lamda(&VaultVisibleManager::addComputer, []{});
     stub.set_lamda(&VaultEventCaller::sendBookMarkDisabled, [ &isOk ]{
         isOk = true;

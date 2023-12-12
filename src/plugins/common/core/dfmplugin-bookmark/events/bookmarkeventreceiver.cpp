@@ -41,22 +41,7 @@ void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QStri
         return;
 
     auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_Group_UrlList", winId, group);
-    BookMarkManager::instance()->sortItemsByOrder(items.value<QList<QUrl>>());
-}
-
-bool BookMarkEventReceiver::handleItemSort(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b)
-{
-    Q_UNUSED(subGroup)
-
-    if (group != "Group_Common")
-        return false;
-
-    return BookMarkManager::instance()->handleItemSort(a, b);
-}
-
-void BookMarkEventReceiver::handlePluginItem(const QVariantMap &args)
-{
-    DefaultItemManager::instance()->addPluginItem(args);
+    BookMarkManager::instance()->saveSortedItemsToConfigFile(items.value<QList<QUrl>>());
 }
 
 BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent)

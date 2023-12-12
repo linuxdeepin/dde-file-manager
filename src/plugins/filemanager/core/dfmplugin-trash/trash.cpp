@@ -67,11 +67,18 @@ void Trash::onWindowOpened(quint64 windId)
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Trash::regTrashCrumbToTitleBar, Qt::DirectConnection);
 
-    if (window->sideBar())
-        installToSideBar();
-    else
+    auto bookmarkPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-bookmark") };
+    if (bookmarkPlugin && bookmarkPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        updateTrashItemToSideBar();
+    } else {
         connect(
-                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-bookmark")
+                        updateTrashItemToSideBar();
+                },
+                Qt::DirectConnection);
+    }
 }
 
 void Trash::regTrashCrumbToTitleBar()
@@ -82,33 +89,19 @@ void Trash::regTrashCrumbToTitleBar()
     });
 }
 
-void Trash::installToSideBar()
+void Trash::updateTrashItemToSideBar()
 {
-    ContextMenuCallback contextMenuCb { TrashHelper::contenxtMenuHandle };
-    const QString &nameKey = "Trash";
-    const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        ContextMenuCallback contextMenuCb { TrashHelper::contenxtMenuHandle };
+        Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
+        QVariantMap map {
+            { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+            { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        };
 
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
-    QVariantMap map {
-        { "Property_Key_Group", "Group_Common" },
-        { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Icon", TrashHelper::icon() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-        { "Property_Key_VisiableControl", "trash" },
-        { "Property_Key_ReportName", nameKey }
-    };
-
-    QVariantMap bookmarkMap {
-        { "Property_Key_NameKey", nameKey },
-        { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Url", TrashHelper::rootUrl() },
-        { "Property_Key_Index", 7 },   //7: the default index
-        { "Property_Key_IsDefaultItem", true },
-        { "Property_Key_PluginItemData", map }
-    };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);   //push item data to bookmark plugin as cache
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", TrashHelper::rootUrl(), map);
+    });
 }
 
 void Trash::addFileOperations()

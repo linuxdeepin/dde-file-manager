@@ -62,6 +62,7 @@ class PluginMetaObject final : public PluginMetaT1<Plugin>
     friend class PluginManager;
     friend class PluginManagerPrivate;
     friend Q_CORE_EXPORT QDebug operator<<(QDebug, const PluginMetaObject &);
+    Q_DISABLE_COPY(PluginMetaObject)
 
 public:
     enum State {
@@ -77,8 +78,6 @@ public:
     };
 
     PluginMetaObject();
-    PluginMetaObject(const PluginMetaObject &meta);
-    PluginMetaObject &operator=(const PluginMetaObject &meta);
 
     bool isVirtual() const;
     QString fileName() const;
@@ -89,6 +88,7 @@ public:
     QString description() const;
     QString urlLink() const;
     QList<PluginDepend> depends() const;
+    QVariantMap customData() const;
     State pluginState() const;
     QSharedPointer<Plugin> plugin() const;
     QString errorString() const;

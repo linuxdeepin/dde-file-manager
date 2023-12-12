@@ -243,6 +243,7 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
     metaObject->d->category = metaData.value(kPluginCategory).toString();
     metaObject->d->description = metaData.value(kPluginDescription).toString();
     metaObject->d->urlLink = metaData.value(kPluginUrlLink).toString();
+    metaObject->d->customData = metaData.value(kCustomData).toVariant().toMap();
 
     QJsonArray &&dependsArray = metaData.value(kPluginDepends).toArray();
     auto itera = dependsArray.begin();

@@ -89,20 +89,6 @@ TEST_F(UT_BookmarkManager, initDefaultItems)
     EXPECT_TRUE(list.count() == 7);   //默认项数据初始化完成后，应该有7个默认项。
 }
 
-TEST_F(UT_BookmarkManager, pluginItemDataToBookmark)
-{
-    BookmarkData data = DefaultItemManager::instance()->pluginItemDataToBookmark(map);
-    EXPECT_TRUE(data.name == "Recent");
-};
-TEST_F(UT_BookmarkManager, addPluginItem)
-{
-    DefaultItemManager::instance()->addPluginItem(map);
-    bool ret = DefaultItemManager::instance()->pluginItemData().count() > 0;
-    EXPECT_TRUE(ret);
-    if (ret)
-        EXPECT_TRUE(DefaultItemManager::instance()->pluginItemData().keys().first() == "Recent");
-};
-
 TEST_F(UT_BookmarkManager, addQuickAccess)
 {
     typedef bool (EventSequenceManager::*RunFunc)(const QString &, const QString &, QList<QUrl>, QList<QUrl> *&&);
@@ -132,7 +118,7 @@ TEST_F(UT_BookmarkManager, addQuickAccess)
 
 TEST_F(UT_BookmarkManager, removeQuickAccess)
 {
-    stub.set_lamda(&BookMarkManager::sortItemsByOrder, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&BookMarkManager::saveSortedItemsToConfigFile, [] { __DBG_STUB_INVOKE__ });
     typedef QVariant (EventChannelManager::*PushFunc2)(const QString &, const QString &, QVariantMap &);
     auto push2 = static_cast<PushFunc2>(&EventChannelManager::push);
     stub.set_lamda(push2, [] { __DBG_STUB_INVOKE__ return QVariant(); });
@@ -227,17 +213,11 @@ TEST_F(UT_BookmarkManager, sortItemsByOrder)
     stub.set_lamda(setValueFunc, [&isRun] {
         isRun = true;
     });
-    ins->sortItemsByOrder(QList<QUrl>() << testUrl);
+    ins->saveSortedItemsToConfigFile(QList<QUrl>() << testUrl);
     EXPECT_TRUE(isRun);
 };
 TEST_F(UT_BookmarkManager, addSchemeOfBookMarkDisabled)
 {
     ins->addSchemeOfBookMarkDisabled("666");
     EXPECT_TRUE(!ins->getBookmarkDisabledSchemes().isEmpty());
-};
-TEST_F(UT_BookmarkManager, handleItemSort)
-{
-    QUrl url("file://test");
-    ins->quickAccessDataMap.insert(url, BookmarkData());
-    EXPECT_TRUE(ins->handleItemSort(url, testUrl));
 };

@@ -48,6 +48,7 @@ QUrl TrashHelper::rootUrl()
     QUrl url;
     url.setScheme(scheme());
     url.setPath("/");
+    url.setHost("");
     return url;
 }
 

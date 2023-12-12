@@ -117,25 +117,27 @@ void VaultVisibleManager::addVaultComputerMenu()
     dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
 }
 
-void VaultVisibleManager::addSideBarVaultItem()
+void VaultVisibleManager::updateSideBarVaultItem()
 {
-    if (isVaultEnabled()) {
+    // It is not clear if this configuration still requires
+    // TODO: If it's still needed. maybe hide valut ?
+    if (!isVaultEnabled())
+        return;
+
+    static std::once_flag flag;
+    std::call_once(flag, []() {
         ItemClickedActionCallback cdCb { VaultHelper::siderItemClicked };
         ContextMenuCallback contextMenuCb { VaultHelper::contenxtMenuHandle };
         Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
         QVariantMap map {
-            { "Property_Key_Group", "Group_Device" },
             { "Property_Key_DisplayName", tr("File Vault") },
-            { "Property_Key_Icon", VaultHelper::instance()->icon() },
             { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
             { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
-            { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-            { "Property_Key_VisiableControl", "vault" },
-            { "Property_Key_ReportName", "Vault" }
+            { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
         };
 
-        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 1, VaultHelper::instance()->rootUrl(), map);
-    }
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", VaultHelper::instance()->rootUrl(), map);
+    });
 }
 
 void VaultVisibleManager::addComputer()
@@ -153,9 +155,9 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
         return;
 
     if (window->sideBar())
-        addSideBarVaultItem();
+        updateSideBarVaultItem();
     else
-        connect(window, &FileManagerWindow::sideBarInstallFinished, this, &VaultVisibleManager::addSideBarVaultItem, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, &VaultVisibleManager::updateSideBarVaultItem, Qt::DirectConnection);
 
     if (window->workSpace())
         addComputer();

@@ -127,3 +127,8 @@ QStringList PluginManager::lazyLoadList() const
 {
     return d->lazyLoadPluginsNames;
 }
+
+QQueue<PluginMetaObjectPointer> PluginManager::readQueue() const
+{
+    return d->readQueue;
+}

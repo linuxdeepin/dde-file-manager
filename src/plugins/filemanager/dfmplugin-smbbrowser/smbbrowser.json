@@ -10,5 +10,16 @@
     "Description" : "The trash plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-    ]
+    ],
+    "Custom": {
+        "SidebarDisplay": [{
+            "Url" : "network:///",
+            "Name": "Computers in LAN",
+            "Icon": "network-server-symbolic",
+            "Group": "Group_Network",
+            "VisiableControl" : "computers_in_lan",
+            "ReportName" : "Network",
+            "Pos": 0
+        }]
+    }
 }

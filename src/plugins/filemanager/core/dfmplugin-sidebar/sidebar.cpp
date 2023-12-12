@@ -59,9 +59,12 @@ void SideBar::onWindowOpened(quint64 windId)
                          qobject_cast<QWidget *>(sidebar), AcName::kAcDmSideBar);
 #endif
     SideBarHelper::addSideBar(windId, sidebar);
-
+    // just for first window
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        initPreDefineItems();
+    });
     window->installSideBar(sidebar);
-
     sidebar->updateItemVisiable(SideBarHelper::hiddenRules());
 }
 
@@ -125,5 +128,29 @@ bool SideBar::onAboutToShowSettingDialog(quint64 winId)
     widget->resetSettingPanel();
 
     return false;
+}
+
+void SideBar::initPreDefineItems()
+{
+    const auto &preDefineProperties { SideBarHelper::preDefineItemProperties() };
+    // add item later for sort
+    QList<QVariantMap> propertiesAdded;
+
+    for (auto begin = preDefineProperties.begin(); begin != preDefineProperties.end(); ++begin) {
+        int pos { begin.value().first };
+        const QVariantMap &property { begin.value().second };
+        if (pos < 0) {
+            propertiesAdded.append(property);
+            continue;
+        }
+
+        QUrl url { property.value(PropertyKey::kUrl).toUrl() };
+        SideBarEventReceiver::instance()->handleItemInsert(pos, url, property);
+    }
+
+    for (const auto &property : propertiesAdded) {
+        QUrl url { property.value(PropertyKey::kUrl).toUrl() };
+        SideBarEventReceiver::instance()->handleItemAdd(url, property);
+    }
 }
 }   // namespace dfmplugin_sidebar

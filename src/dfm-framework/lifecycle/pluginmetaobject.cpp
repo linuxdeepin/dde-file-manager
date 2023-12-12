@@ -60,6 +60,11 @@ QList<PluginDepend> PluginMetaObject::depends() const
     return d->depends;
 }
 
+QVariantMap PluginMetaObject::customData() const
+{
+    return d->customData;
+}
+
 /*!
  * \brief PluginMetaObject::pluginState
  * 获取插件当前状态
@@ -90,48 +95,9 @@ QString PluginMetaObject::errorString() const
     return d->error;
 }
 
-/*!
- * \brief 默认构造函数
- */
 PluginMetaObject::PluginMetaObject()
     : d(new PluginMetaObjectPrivate(this))
 {
-}
-
-/*!
- * \brief 拷贝构造函数
- */
-PluginMetaObject::PluginMetaObject(const PluginMetaObject &meta)
-{
-    d->isVirtual = meta.isVirtual();
-    d->iid = meta.iid();
-    d->name = meta.name();
-    d->version = meta.version();
-    d->category = meta.category();
-    d->description = meta.description();
-    d->urlLink = meta.urlLink();
-    d->depends = meta.depends();
-    d->state = pluginState();
-    d->plugin = plugin();
-    d->loader = meta.d->loader;
-}
-/*!
-  * \brief 赋值拷贝
-  */
-PluginMetaObject &PluginMetaObject::operator=(const PluginMetaObject &meta)
-{
-    d->isVirtual = meta.isVirtual();
-    d->iid = meta.iid();
-    d->name = meta.name();
-    d->version = meta.version();
-    d->category = meta.category();
-    d->description = meta.description();
-    d->urlLink = meta.urlLink();
-    d->depends = meta.depends();
-    d->state = pluginState();
-    d->plugin = plugin();
-    d->loader = meta.d->loader;
-    return *this;
 }
 
 bool PluginMetaObject::isVirtual() const
@@ -238,6 +204,7 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjec
     out << kPluginDescription << ":" << metaObj.description() << "; ";
     out << kPluginUrlLink << ":" << metaObj.urlLink() << "; ";
     out << kPluginDepends << ":" << metaObj.depends() << ";";
+    out << kCustomData << ":" << metaObj.customData();
     out << "isVirtual"
         << ":" << metaObj.isVirtual() << "; ";
     out << "}";

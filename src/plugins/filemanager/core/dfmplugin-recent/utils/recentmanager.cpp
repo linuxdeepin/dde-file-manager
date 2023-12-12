@@ -244,6 +244,7 @@ QUrl RecentHelper::rootUrl()
     QUrl url;
     url.setScheme(RecentHelper::scheme());
     url.setPath("/");
+    url.setHost("");
     return url;
 }
 

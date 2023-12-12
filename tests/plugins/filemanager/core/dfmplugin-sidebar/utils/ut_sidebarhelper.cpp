@@ -40,9 +40,7 @@ TEST_F(UT_SideBarHelper, CreateSeparatorItem) {}
 TEST_F(UT_SideBarHelper, MakeItemIdentifier) {}
 TEST_F(UT_SideBarHelper, DefaultCdAction) {}
 TEST_F(UT_SideBarHelper, DefaultContextMenu) {}
-TEST_F(UT_SideBarHelper, RegisterSortFunc) {}
 TEST_F(UT_SideBarHelper, SortFunc) {}
-TEST_F(UT_SideBarHelper, UpdateSidebarSelection) {}
 
 TEST_F(UT_SideBarHelper, HiddenRules)
 {

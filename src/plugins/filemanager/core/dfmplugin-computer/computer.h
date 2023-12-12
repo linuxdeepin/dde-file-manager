@@ -45,7 +45,7 @@ protected Q_SLOTS:
     void onWindowOpened(quint64 windd);
 
 private:
-    void addComputerToSidebar();
+    void updateComputerToSidebar();
     void regComputerCrumbToTitleBar();
     void regComputerToSearch();
     void addComputerSettingItem();

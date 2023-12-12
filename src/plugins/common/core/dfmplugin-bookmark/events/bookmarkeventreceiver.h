@@ -23,8 +23,6 @@ public Q_SLOTS:
     void handleRenameFile(quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool result, const QString &errorMsg);
     void handleAddSchemeOfBookMarkDisabled(const QString &scheme);
     void handleSidebarOrderChanged(quint64 winId, const QString &group);
-    bool handleItemSort(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b);
-    void handlePluginItem(const QVariantMap &args);
 
 private:
     explicit BookMarkEventReceiver(QObject *parent = nullptr);

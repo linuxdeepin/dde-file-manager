@@ -32,7 +32,7 @@ public:
 
     QAbstractItemView *view();
 
-    int addItem(SideBarItem *item);
+    int addItem(SideBarItem *item, bool direct = true);
     bool insertItem(const int index, SideBarItem *item);
     bool removeItem(const QUrl &url);
 
