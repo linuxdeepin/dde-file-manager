@@ -77,7 +77,6 @@ QIcon BlockEntryFileEntity::icon() const
     case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot:
         return QIcon::fromTheme(IconName::kRootBlock);
     case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData:
-        return QIcon::fromTheme(IconName::kInnerBlock);
     case DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSysDisks:
         return isEncrypted
                 ? QIcon::fromTheme(IconName::kEncryptedInnerBlock)
@@ -189,7 +188,7 @@ AbstractEntryFileEntity::EntryOrder BlockEntryFileEntity::order() const
     if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_data"))
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
     if (clearInfo.value(DeviceProperty::kIdLabel, "").toString() == "_dde_data")
-        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
+        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
 
     if (datas.value(DeviceProperty::kOptical).toBool()
         || datas.value(DeviceProperty::kOpticalDrive).toBool())
