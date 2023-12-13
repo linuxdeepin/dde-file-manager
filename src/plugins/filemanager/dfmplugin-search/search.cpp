@@ -20,7 +20,9 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
-#include <dfm-base/base/application/application.h>
+#include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
@@ -45,8 +47,8 @@ void Search::initialize()
     bindEvents();
     bindWindows();
 
-    connect(Application::instance(), &Application::indexFullTextSearchChanged,
-            SearchManager::instance(), &SearchManager::onIndexFullTextConfigChanged, Qt::DirectConnection);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged,
+            SearchManager::instance(), &SearchManager::onDConfigValueChanged, Qt::DirectConnection);
 }
 
 bool Search::start()
@@ -57,6 +59,7 @@ bool Search::start()
 
 void Search::onWindowOpened(quint64 windId)
 {
+    regSearchSettingConfig();
     auto window = FMWindowsIns.findWindowById(windId);
 
     if (window->workSpace())
@@ -99,6 +102,57 @@ void Search::regSearchToWorkspace()
     };
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
+}
+
+void Search::regSearchSettingConfig()
+{
+    QString err;
+    auto ret = DConfigManager::instance()->addConfig(DConfig::kSearchCfgPath, &err);
+    if (!ret)
+        fmWarning() << "cannot regist dconfig of search plugin:" << err;
+
+    if (SearchHelper::anythingInterface().isValid()) {
+        SettingJsonGenerator::instance()->addGroup(SearchSettings::kGroupSearch, tr("Search"));
+        SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kIndexInternal,
+                                                            tr("Auto index internal disk"),
+                                                            false);
+        SettingBackend::instance()->addSettingAccessor(
+                SearchSettings::kIndexInternal,
+                []() {
+                    return SearchHelper::anythingInterface().property("autoIndexInternal");
+                },
+                [](const QVariant &val) {
+                    SearchHelper::anythingInterface().setProperty("autoIndexInternal", val);
+                });
+
+        SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kIndexExternal,
+                                                            tr("Index external storage device after connected to computer"),
+                                                            false);
+        SettingBackend::instance()->addSettingAccessor(
+                SearchSettings::kIndexExternal,
+                []() {
+                    return SearchHelper::anythingInterface().property("autoIndexExternal");
+                },
+                [](const QVariant &val) {
+                    SearchHelper::anythingInterface().setProperty("autoIndexExternal", val);
+                });
+    }
+
+    SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kFulltextSearch,
+                                                        tr("Full-Text search"),
+                                                        false);
+    SettingBackend::instance()->addSettingAccessor(
+            SearchSettings::kFulltextSearch,
+            []() {
+                return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                                         DConfig::kEnableFullTextSearch,
+                                                         false);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
+                                                     DConfig::kEnableFullTextSearch,
+                                                     val);
+            });
 }
 
 void Search::bindEvents()

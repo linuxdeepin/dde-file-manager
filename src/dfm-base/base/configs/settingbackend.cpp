@@ -26,7 +26,6 @@ using namespace dfmbase;
 #define LV2_GROUP_COMPUTER_VIEW "02_workspace.02_computer"
 
 #define TOP_GROUP_ADVANCE "10_advance"
-#define LV2_GROUP_SEARCH "10_advance.00_search"
 #define LV2_GROUP_MOUNT "10_advance.01_mount"
 #define LV2_GROUP_DIALOG "10_advance.02_dialog"
 
@@ -44,9 +43,6 @@ BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivat
 BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::keyToGA {
     { LV2_GROUP_FILES_AND_FOLDERS ".00_show_hidden", Application::kShowedHiddenFiles },
     { LV2_GROUP_FILES_AND_FOLDERS ".01_show_suffix", Application::kShowedFileSuffix },
-    { LV2_GROUP_SEARCH ".00_index_internal", Application::kIndexInternal },
-    { LV2_GROUP_SEARCH ".01_index_external", Application::kIndexExternal },
-    { LV2_GROUP_SEARCH ".02_index_search", Application::kIndexFullTextSearch },
     { LV2_GROUP_PREVIEW ".00_compress_file_preview", Application::kPreviewCompressFile },
     { LV2_GROUP_PREVIEW ".01_text_file_preview", Application::kPreviewTextFile },
     { LV2_GROUP_PREVIEW ".02_document_file_preview", Application::kPreviewDocumentFile },
@@ -347,16 +343,6 @@ void SettingBackend::initAdvanceSettingConfig()
     auto ins = SettingJsonGenerator::instance();
 
     ins->addGroup(TOP_GROUP_ADVANCE, tr("Advanced"));
-
-    ins->addGroup(LV2_GROUP_SEARCH, tr("Search"));
-    ins->addCheckBoxConfig(LV2_GROUP_SEARCH ".00_index_internal",
-                           tr("Auto index internal disk"));
-    ins->addCheckBoxConfig(LV2_GROUP_SEARCH ".01_index_external",
-                           tr("Index external storage device after connected to computer"),
-                           false);
-    ins->addCheckBoxConfig(LV2_GROUP_SEARCH ".02_index_search",
-                           tr("Full-Text search"),
-                           false);
 
     ins->addGroup(LV2_GROUP_MOUNT, tr("Mount"));
     ins->addConfig(LV2_GROUP_MOUNT ".00_auto_mount",

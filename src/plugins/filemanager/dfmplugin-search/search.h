@@ -33,6 +33,7 @@ private slots:
     void onWindowOpened(quint64 windId);
     void regSearchCrumbToTitleBar();
     void regSearchToWorkspace();
+    void regSearchSettingConfig();
     void bindEvents();
     void bindWindows();
 };

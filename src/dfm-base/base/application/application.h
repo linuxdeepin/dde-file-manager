@@ -39,9 +39,6 @@ public:
 
     // Generic configuration, default in the ~/.config/deepin/dde-file-manager.json
     enum GenericAttribute {
-        kIndexInternal,
-        kIndexExternal,
-        kIndexFullTextSearch,   // full text search
         kPreviewCompressFile,   // open the zip as a directory
         kPreviewTextFile,   // generate thumbnails from plain text
         kPreviewDocumentFile,   // document generation thumbnails (pdf)

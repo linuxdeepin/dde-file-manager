@@ -10,7 +10,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/schemefactory.h>
 
 // Lucune++ headers
@@ -458,7 +458,9 @@ bool FullTextSearcher::isSupport(const QUrl &url)
     if (!url.isValid() || UrlRoute::isVirtual(url))
         return false;
 
-    return Application::genericAttribute(Application::kIndexFullTextSearch).toBool();
+    return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                             DConfig::kEnableFullTextSearch,
+                                             false).toBool();
 }
 
 bool FullTextSearcher::search()

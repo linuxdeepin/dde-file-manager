@@ -1,0 +1,18 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "enableFullTextSearch": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Enable Full-Text Search",
+            "name[zh_CN]":"开启全文搜索",
+            "description[zh_CN]":"用于判断是否开启全文搜索",
+            "description":"Used to determine whether to enable full-text search",
+            "permissions":"readwrite",
+            "visibility":"private"
+        }
+    }
+}
+

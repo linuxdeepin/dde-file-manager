@@ -28,7 +28,7 @@ public:
     void stop(quint64 winId);
 
 public Q_SLOTS:
-    void onIndexFullTextConfigChanged(bool enabled);
+    void onDConfigValueChanged(const QString &config, const QString &key);
 
 signals:
     void matched(const QString &taskId);

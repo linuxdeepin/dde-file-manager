@@ -11,6 +11,7 @@
 
 #include <QUrl>
 #include <QWidget>
+#include <QDBusInterface>
 
 namespace dfmplugin_search {
 
@@ -60,6 +61,7 @@ public:
     }
     bool isHiddenFile(const QString &fileName, QHash<QString, QSet<QString>> &filters, const QString &searchPath);
 
+    static QDBusInterface &anythingInterface();
 private:
     explicit SearchHelper(QObject *parent = nullptr);
     ~SearchHelper() override;
