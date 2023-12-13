@@ -117,9 +117,11 @@ QString DeviceUtils::convertSuitableDisplayName(const QVariantMap &devInfo)
     if (!alias.isEmpty())
         return alias;
 
+    QVariantMap clearInfo = devInfo.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
+    QString mpt = clearInfo.value(kMountPoint, devInfo.value(kMountPoint).toString()).toString();
+    QString idLabel = clearInfo.value(kIdLabel, devInfo.value(kIdLabel).toString()).toString();
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-    if (devInfo.value(kMountPoint).toString() == "/"
-        || devInfo.value(kIdLabel).toString().startsWith("_dde_")) {
+    if (mpt == "/" || idLabel.startsWith("_dde_")) {
         return nameOfSystemDisk(devInfo);
     } else if (devInfo.value(kIsEncrypted).toBool()) {
         return nameOfEncrypted(devInfo);
@@ -362,15 +364,16 @@ QMap<QString, QString> DeviceUtils::fstabBindInfo()
 
 QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
 {
-    QString label = datas.value(kIdLabel).toString();
+    QVariantMap clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
+
+    QString mountPoint = clearInfo.value(kMountPoint, datas.value(kMountPoint)).toString();
+    QString label = clearInfo.value(kIdLabel, datas.value(kIdLabel)).toString();
     qlonglong size = datas.value(kSizeTotal).toLongLong();
-    QString mountPoint = datas.value(kMountPoint).toString();
 
     // get system disk name if there is no alias
     if (mountPoint == "/")
         return QObject::tr("System Disk");
-    if (!mountPoint.startsWith("/media/"))
-    {
+    if (!mountPoint.startsWith("/media/")) {
         if (label.startsWith("_dde_data"))
             return QObject::tr("Data Disk");
         if (label.startsWith("_dde_"))
@@ -440,7 +443,8 @@ QString DeviceUtils::nameOfEncrypted(const QVariantMap &datas)
         qlonglong clearDevSize = clearDevData.value(kSizeTotal).toLongLong();
         return nameOfDefault(clearDevLabel, clearDevSize);
     } else {
-        return QObject::tr("%1 Encrypted").arg(nameOfSize(datas.value(kSizeTotal).toLongLong()));
+        return QObject::tr("%1 Encrypted")
+                .arg(nameOfSize(datas.value(kSizeTotal).toLongLong()));
     }
 }
 
