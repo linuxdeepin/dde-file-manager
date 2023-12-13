@@ -98,9 +98,6 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
         case Application::kShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
             break;
-        case Application::kIndexFullTextSearch:
-            Q_EMIT self->indexFullTextSearchChanged(value.toBool());
-            break;
         default:
             break;
         }
@@ -169,24 +166,8 @@ bool Application::syncAppAttribute()
     return appSetting()->sync();
 }
 
-static QDBusInterface &anythingInterface()
-{
-    static QDBusInterface interface("com.deepin.anything",
-                                    "/com/deepin/anything",
-                                    "com.deepin.anything",
-                                    QDBusConnection::systemBus());
-
-    return interface;
-}
-
 QVariant Application::genericAttribute(Application::GenericAttribute ga)
 {
-    if (ga == kIndexInternal && anythingInterface().isValid()) {
-        return anythingInterface().property("autoIndexInternal");
-    } else if (ga == kIndexExternal && anythingInterface().isValid()) {
-        return anythingInterface().property("autoIndexExternal");
-    }
-
     const QString group(QT_STRINGIFY(GenericAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
     const QString key = QString::fromLatin1(me.valueToKey(ga)).remove(0, 1);
@@ -196,14 +177,6 @@ QVariant Application::genericAttribute(Application::GenericAttribute ga)
 
 void Application::setGenericAttribute(Application::GenericAttribute ga, const QVariant &value)
 {
-    if (ga == kIndexInternal && anythingInterface().isValid()) {
-        anythingInterface().setProperty("autoIndexInternal", value);
-        return;
-    } else if (ga == kIndexExternal && anythingInterface().isValid()) {
-        anythingInterface().setProperty("autoIndexExternal", value);
-        return;
-    }
-
     const QString group(QT_STRINGIFY(GenericAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
     const QString key = QString::fromLatin1(me.valueToKey(ga)).remove(0, 1);

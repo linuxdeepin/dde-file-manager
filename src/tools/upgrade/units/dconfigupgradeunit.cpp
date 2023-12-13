@@ -43,6 +43,7 @@ bool DConfigUpgradeUnit::upgrade()
     ret &= upgradeMenuConfigs();
     ret &= upgradeSmbConfigs();
     ret &= upgradeRecentConfigs();
+    ret &= upgradeSearchConfigs();
     clearDiskHidden();
 
     return ret;
@@ -192,6 +193,24 @@ bool DConfigUpgradeUnit::upgradeRecentConfigs()
     qCInfo(logToolUpgrade) << "upgrade: the new dconfig sidebar visiable list:" << theSidebarVisiableList;
     theSidebarVisiableList["recent"] = showRecent;
     DConfigManager::instance()->setValue(configFile, "itemVisiable", theSidebarVisiableList);
+    return true;
+}
+
+bool DConfigUpgradeUnit::upgradeSearchConfigs()
+{
+    // 1. read main config value
+    auto oldValue = UpgradeUtils::genericAttribute("IndexFullTextSearch");
+    if (!oldValue.isValid())
+        return true;
+
+    const QString &configFile { "org.deepin.dde.file-manager.search" };
+    if (!DConfigManager::instance()->addConfig(configFile))
+        return false;
+
+    bool ftsEnabled = oldValue.toBool();
+    // 2. write to dconfig
+    DConfigManager::instance()->setValue(configFile, "enableFullTextSearch", ftsEnabled);
+    qCInfo(logToolUpgrade) << "upgrade: set search permanent to dconfig, value:" << ftsEnabled;
     return true;
 }
 

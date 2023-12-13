@@ -19,6 +19,8 @@
 DPSEARCH_BEGIN_NAMESPACE
 DFM_LOG_USE_CATEGORY(DPSEARCH_NAMESPACE)
 
+#define SEARCH_SETTING_GROUP "10_advance.00_search"
+
 namespace SearchActionId {
 inline constexpr char kOpenFileLocation[] { "open-file-location" };
 inline constexpr char kSrtPath[] { "sort-by-path" };
@@ -28,6 +30,19 @@ namespace CustomKey {
 inline constexpr char kDisableSearch[] { "Property_Key_DisableSearch" };
 inline constexpr char kRedirectedPath[] { "Property_Key_RedirectedPath" };
 }
+
+namespace SearchSettings {
+inline constexpr char kGroupSearch[] { SEARCH_SETTING_GROUP };
+inline constexpr char kIndexInternal[] { SEARCH_SETTING_GROUP ".00_index_internal" };
+inline constexpr char kIndexExternal[] { SEARCH_SETTING_GROUP ".01_index_external" };
+inline constexpr char kFulltextSearch[] { SEARCH_SETTING_GROUP ".02_fulltext_search" };
+}
+
+namespace DConfig {
+inline constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
+inline constexpr char kEnableFullTextSearch[] { "enableFullTextSearch" };
+}
+
 DPSEARCH_END_NAMESPACE
 
 #endif   // DFMPLUGIN_SEARCH_GLOBAL_H

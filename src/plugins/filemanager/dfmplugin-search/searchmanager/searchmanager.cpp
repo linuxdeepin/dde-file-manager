@@ -7,12 +7,14 @@
 #include "utils/searchhelper.h"
 
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include "plugins/common/dfmplugin-utils/reportlog/datas/searchreportdata.h"
 
 #include <dfm-framework/dpf.h>
 
 Q_DECLARE_METATYPE(const char *)
 
+DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_search;
 
 SearchManager *SearchManager::instance()
@@ -53,16 +55,20 @@ void SearchManager::stop(quint64 winId)
         stop(taskIdMap[winId]);
 }
 
-void SearchManager::onIndexFullTextConfigChanged(bool enabled)
+void SearchManager::onDConfigValueChanged(const QString &config, const QString &key)
 {
+    if (config != DConfig::kSearchCfgPath || key != DConfig::kEnableFullTextSearch)
+        return;
+
     using namespace dfmplugin_utils;
 
     QVariantMap data;
+    bool enabled = DConfigManager::instance()->value(config, key, false).toBool();
     data.insert("mode", enabled ? SearchReportData::kTurnOn : SearchReportData::kTurnOff);
-
     dpfSignalDispatcher->publish("dfmplugin_search", "signal_ReportLog_Commit", QString("Search"), data);
 
-    // TODO(liuzhangjian): impl createFullTextIndex logic
+    if (mainController)
+        mainController->onIndexFullTextSearchChanged(enabled);
 }
 
 SearchManager::SearchManager(QObject *parent)

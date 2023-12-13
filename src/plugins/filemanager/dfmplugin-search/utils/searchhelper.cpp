@@ -314,6 +314,16 @@ bool SearchHelper::isHiddenFile(const QString &fileName, QHash<QString, QSet<QSt
             : isHiddenFile(fileParentPath, filters, searchPath);
 }
 
+QDBusInterface &SearchHelper::anythingInterface()
+{
+    static QDBusInterface interface("com.deepin.anything",
+                                    "/com/deepin/anything",
+                                    "com.deepin.anything",
+                                    QDBusConnection::systemBus());
+
+    return interface;
+}
+
 SearchHelper::SearchHelper(QObject *parent)
     : QObject(parent)
 {

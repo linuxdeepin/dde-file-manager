@@ -24,6 +24,7 @@ private:
     bool upgradeMenuConfigs();
     bool upgradeSmbConfigs();
     bool upgradeRecentConfigs();
+    bool upgradeSearchConfigs();
     void clearDiskHidden();
 };
 }

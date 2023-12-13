@@ -45,13 +45,14 @@ TEST(SearchManagerTest, ut_stop)
     EXPECT_NO_FATAL_FAILURE(SearchManagerIns->stop(1));
 }
 
-TEST(SearchManagerTest, ut_onIndexFullTextConfigChanged)
+TEST(SearchManagerTest, ut_onDConfigValueChanged)
 {
     stub_ext::StubExt st;
-    typedef bool (EventDispatcherManager::*Publish)(const QString &, const QString &, QString, QVariantMap&);
+    typedef bool (EventDispatcherManager::*Publish)(const QString &, const QString &, QString, QVariantMap &);
 
     auto publish = static_cast<Publish>(&EventDispatcherManager::publish);
     st.set_lamda(publish, [] { return true; });
+    st.set_lamda(&MainController::onIndexFullTextSearchChanged, [] { return; });
 
-    EXPECT_NO_FATAL_FAILURE(SearchManagerIns->onIndexFullTextConfigChanged(true));
+    EXPECT_NO_FATAL_FAILURE(SearchManagerIns->onDConfigValueChanged("org.deepin.dde.file-manager.search", "enableFullTextSearch"));
 }

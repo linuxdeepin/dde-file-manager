@@ -19,7 +19,6 @@ class MainController : public QObject
 private:
     explicit MainController(QObject *parent = nullptr);
     ~MainController();
-    void init();
 
     void stop(QString taskId);
     bool doSearchTask(QString taskId, const QUrl &url, const QString &keyword);

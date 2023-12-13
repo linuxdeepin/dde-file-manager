@@ -20,7 +20,6 @@ DPSEARCH_USE_NAMESPACE
 MainController::MainController(QObject *parent)
     : QObject(parent)
 {
-    init();
 }
 
 MainController::~MainController()
@@ -31,12 +30,6 @@ MainController::~MainController()
         task = nullptr;
     }
     taskManager.clear();
-}
-
-void MainController::init()
-{
-    connect(Application::instance(), &Application::indexFullTextSearchChanged,
-            this, &MainController::onIndexFullTextSearchChanged);
 }
 
 void MainController::stop(QString taskId)
