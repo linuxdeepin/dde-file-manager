@@ -663,7 +663,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
     FileViewHelper *viewHelper = qobject_cast<FileViewHelper *>(parent());
     const int maxHeight = viewHelper ? (viewHelper->viewContentSize().height() - viewHelper->verticalOffset() - item->pos().y()) : INT_MAX;
-    item->setMaxHeight(maxHeight);
+    item->setMaxHeight(qMax(maxHeight, sizeHint(opt, index).height()));
 
     QLabel *icon = item->getIconLabel();
 
