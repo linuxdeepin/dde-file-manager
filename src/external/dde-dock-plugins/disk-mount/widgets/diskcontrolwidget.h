@@ -26,6 +26,9 @@ public:
 signals:
     void diskCountChanged(const int count) const;
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private slots:
     void onDiskListChanged();
     void onAskStopScanning(const QString &method, const QString &id);
@@ -51,6 +54,7 @@ private:
 private:
     QVBoxLayout *centralLayout { nullptr };
     QWidget *centralWidget { nullptr };
+    int popWidHeight { 0 };
 };
 
 #endif   // DISKCONTROLWIDGET_H

@@ -47,6 +47,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${DtkWidget_INCLUDE_DIRS}
     ${Gesttings_INCLUDE_DIRS}
     ${DdeDockInterface_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
