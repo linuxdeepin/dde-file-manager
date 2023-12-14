@@ -104,6 +104,12 @@ void DiskControlWidget::removeWidgets()
     }
 }
 
+void DiskControlWidget::showEvent(QShowEvent *event)
+{
+    setFixedHeight(popWidHeight);
+    QScrollArea::showEvent(event);
+}
+
 void DiskControlWidget::paintUi()
 {
     QVBoxLayout *headerLay = new QVBoxLayout(this);
@@ -142,6 +148,7 @@ void DiskControlWidget::paintUi()
     const int maxHeight = std::min(contentHeight, 70 * 6);
     centralWidget->setFixedHeight(contentHeight);
     setFixedHeight(maxHeight);
+    popWidHeight = maxHeight;
 
     verticalScrollBar()->setPageStep(maxHeight);
     verticalScrollBar()->setMaximum(contentHeight - maxHeight);
