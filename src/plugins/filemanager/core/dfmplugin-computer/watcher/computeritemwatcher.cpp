@@ -88,20 +88,6 @@ ComputerDataList ComputerItemWatcher::items()
     if (!hasInsertNewDisk)
         ret.pop_back();
 
-    QList<QUrl> computerItems;
-    for (const auto &item : ret)
-        computerItems << item.url;
-
-    fmDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
-    dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
-    fmDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
-    for (int i = ret.count() - 1; i >= 0; --i) {
-        if (!computerItems.contains(ret[i].url)) {
-            removeSidebarItem(ret[i].url);
-            ret.removeAt(i);
-        }
-    }
-
     return ret;
 }
 
@@ -218,7 +204,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
             insertUrlMapper(dev, info->targetUrl());
 
         if (!hiddenByDConfig.contains(devUrl))   // do not show item which hidden by dconfig
-            addSidebarItem(info);
+            sidebarInfos.insert(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
     }
     fmInfo() << "end querying block info";
 
@@ -253,7 +239,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         ret.push_back(data);
         hasNewItem = true;
 
-        addSidebarItem(info);
+        sidebarInfos.insert(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
     }
 
     fmInfo() << "end querying protocol devices info";
@@ -472,84 +458,12 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     if (!info)
         return;
+    addSidebarItem(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
+}
 
-    ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
-    ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
-    RenameCallback renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
-    FindMeCallback findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
-        if (this->routeMapper.contains(itemUrl))
-            return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
-
-        DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));
-        auto mntUrl = info->targetUrl();
-        return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
-    };
-
-    static const QStringList kItemVisiableControlKeys { "builtin_disks", "loop_dev", "other_disks", "mounted_share_dirs" };
-    static const QStringList kItemVisiableControlNames { QObject::tr("Built-in disks"), QObject::tr("Loop partitions"),
-                                                         QObject::tr("Mounted partitions and discs"), QObject::tr("Mounted sharing folders") };
-    QString visableKey;
-    QString visableName;
-    QString reportName = "Unknown Disk";
-    QString subGroup = Global::Scheme::kComputer;
-    if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
-        visableKey = kItemVisiableControlKeys[1];
-        visableName = kItemVisiableControlNames[1];
-    } else if (info->extraProperty(DeviceProperty::kHintSystem).toBool()) {
-        visableKey = kItemVisiableControlKeys[0];
-        visableName = kItemVisiableControlNames[0];
-        reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";
-    } else if (info->order() == AbstractEntryFileEntity::kOrderSmb || info->order() == AbstractEntryFileEntity::kOrderFtp) {
-        visableKey = kItemVisiableControlKeys[3];
-        visableName = kItemVisiableControlNames[3];
-        reportName = "Sharing Folders";
-        if (info->order() == AbstractEntryFileEntity::kOrderSmb)
-            subGroup = Global::Scheme::kSmb;
-        else if (info->order() == AbstractEntryFileEntity::kOrderFtp)
-            subGroup = Global::Scheme::kFtp;
-    } else {
-        visableKey = kItemVisiableControlKeys[2];
-        visableName = kItemVisiableControlNames[2];
-    }
-
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
-    if (info->renamable())
-        flags |= Qt::ItemIsEditable;
-    QString iconName { info->fileIcon().name() };
-    if (info->fileIcon().name().startsWith("media"))
-        iconName = "media-optical-symbolic";
-    else if (info->order() == AbstractEntryFileEntity::kOrderRemovableDisks)   // always display as USB icon for removable disks.
-        iconName = "drive-removable-media-symbolic";
-    else
-        iconName += "-symbolic";
-
-    static const QList<AbstractEntryFileEntity::EntryOrder> ejectableOrders {
-        AbstractEntryFileEntity::kOrderRemovableDisks,
-        AbstractEntryFileEntity::kOrderOptical,
-        AbstractEntryFileEntity::kOrderSmb,
-        AbstractEntryFileEntity::kOrderFtp,
-        AbstractEntryFileEntity::kOrderGPhoto2,
-        AbstractEntryFileEntity::kOrderMTP
-    };
-
-    QVariantMap map {
-        { "Property_Key_Group", visableKey == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
-        { "Property_Key_SubGroup", subGroup },
-        { "Property_Key_DisplayName", info->displayName() },
-        { "Property_Key_Icon", QIcon::fromTheme(iconName) },
-        { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) },
-        { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
-        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
-        { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) },
-        { "Property_Key_VisiableControl", visableKey },
-        { "Property_Key_VisiableDisplayName", visableName },
-        { "Property_Key_ReportName", reportName }
-    };
-
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->urlOf(UrlInfoType::kUrl), map);
+void ComputerItemWatcher::addSidebarItem(const QUrl &url, const QVariantMap &data)
+{
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, data);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
@@ -627,13 +541,112 @@ void ComputerItemWatcher::removeDevice(const QUrl &url)
         initedDatas.removeAt(ret - initedDatas.cbegin());
 }
 
+QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
+{
+    if (!info)
+        return {};
+
+    ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
+    ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
+    RenameCallback renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
+    FindMeCallback findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
+        if (this->routeMapper.contains(itemUrl))
+            return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
+
+        DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));
+        auto mntUrl = info->targetUrl();
+        return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
+    };
+
+    static const QStringList kItemVisiableControlKeys { "builtin_disks", "loop_dev", "other_disks", "mounted_share_dirs" };
+    QString key;
+    QString reportName = "Unknown Disk";
+    QString subGroup = Global::Scheme::kComputer;
+    if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
+        key = kItemVisiableControlKeys[1];
+    } else if (info->extraProperty(DeviceProperty::kHintSystem).toBool()) {
+        key = kItemVisiableControlKeys[0];
+        reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";
+    } else if (info->order() == AbstractEntryFileEntity::kOrderSmb || info->order() == AbstractEntryFileEntity::kOrderFtp) {
+        key = kItemVisiableControlKeys[3];
+        reportName = "Sharing Folders";
+        if (info->order() == AbstractEntryFileEntity::kOrderSmb)
+            subGroup = Global::Scheme::kSmb;
+        else if (info->order() == AbstractEntryFileEntity::kOrderFtp)
+            subGroup = Global::Scheme::kFtp;
+    } else {
+        key = kItemVisiableControlKeys[2];
+    }
+
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    if (info->renamable())
+        flags |= Qt::ItemIsEditable;
+    QString iconName { info->fileIcon().name() };
+    if (info->fileIcon().name().startsWith("media"))
+        iconName = "media-optical-symbolic";
+    else if (info->order() == AbstractEntryFileEntity::kOrderRemovableDisks)   // always display as USB icon for removable disks.
+        iconName = "drive-removable-media-symbolic";
+    else
+        iconName += "-symbolic";
+
+    static const QList<AbstractEntryFileEntity::EntryOrder> ejectableOrders {
+        AbstractEntryFileEntity::kOrderRemovableDisks,
+        AbstractEntryFileEntity::kOrderOptical,
+        AbstractEntryFileEntity::kOrderSmb,
+        AbstractEntryFileEntity::kOrderFtp,
+        AbstractEntryFileEntity::kOrderGPhoto2,
+        AbstractEntryFileEntity::kOrderMTP
+    };
+
+    return {
+        { "Property_Key_Group", key == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
+        { "Property_Key_SubGroup", subGroup },
+        { "Property_Key_DisplayName", info->displayName() },
+        { "Property_Key_Icon", QIcon::fromTheme(iconName) },
+        { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) },
+        { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
+        { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) },
+        { "Property_Key_VisiableControl", key },
+        { "Property_Key_ReportName", reportName }
+    };
+}
+
 void ComputerItemWatcher::startQueryItems()
 {
     // if computer view is not init view, no receiver to receive the signal, cause when cd to computer view, shows empty.
     // on initialize computer view/model, get the cached items in construction.
-    initedDatas = items();
-    Q_EMIT itemQueryFinished(initedDatas);
-    dpfSignalDispatcher->publish("dfmplugin_computer", "signal_View_Refreshed");
+    QFutureWatcher<ComputerDataList> *fw { new QFutureWatcher<ComputerDataList>() };
+    connect(fw, &QFutureWatcher<void>::finished, this, [fw, this]() {
+        initedDatas = fw->result();
+        QList<QUrl> computerItems;
+        for (const auto &item : initedDatas)
+            computerItems << item.url;
+
+        qDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
+        dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
+        qDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
+        for (int i = initedDatas.count() - 1; i >= 0; --i) {
+            if (!computerItems.contains(initedDatas[i].url)) {
+                removeSidebarItem(initedDatas[i].url);
+                initedDatas.removeAt(i);
+            }
+        }
+
+        for (const auto &key : sidebarInfos.keys()) {
+            const auto &value = sidebarInfos.value(key);
+            addSidebarItem(key, value);
+        }
+
+        Q_EMIT itemQueryFinished(initedDatas);
+        dpfSignalDispatcher->publish("dfmplugin_computer", "signal_View_Refreshed");
+        delete fw;
+    });
+    sidebarInfos.clear();
+    fw->setFuture(QtConcurrent::run(this, &ComputerItemWatcher::items));
 }
 
 /*!
@@ -683,7 +696,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
 
     cacheItem(data);
 
-    if (!disksHiddenByDConf().contains(devUrl) && needSidebarItem)
+    if (needSidebarItem && !disksHiddenByDConf().contains(devUrl))
         addSidebarItem(info);
 }
 
