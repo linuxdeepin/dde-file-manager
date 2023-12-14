@@ -144,7 +144,7 @@ void Core::onWindowOpened(quint64 windd)
 
     static std::once_flag flag;
     std::call_once(flag, []() {
-        QTimer::singleShot(0, []() {
+        QTimer::singleShot(200, []() {
             // init all lazy plguis call once
             const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);

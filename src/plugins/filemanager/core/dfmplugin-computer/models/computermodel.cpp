@@ -279,28 +279,28 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     } else {
         if (shape == ComputerItemData::kSplitterItem) {
             addGroup(data);
-        } else {
-            int row = 0;
-            for (; row < items.count(); row++) {
-                const auto &item = items.at(row);
-                if (item.groupId != data.groupId)
-                    continue;
-
-                if (ComputerItemWatcher::typeCompare(data, item))
-                    break;
-
-                int next = row + 1;
-                if (next >= items.count()   // when search at end OR search at end of the group, append item to last item of the group.
-                    || items.at(next).groupId != data.groupId) {
-                    row = next;
-                    break;
-                }
-            }
-
-            beginInsertRows(QModelIndex(), row, row);
-            items.insert(row, data);
-            endInsertRows();
+            return;
         }
+        int row = 0;
+        for (; row < items.count(); row++) {
+            const auto &item = items.at(row);
+            if (item.groupId != data.groupId)
+                continue;
+
+            if (ComputerItemWatcher::typeCompare(data, item))
+                break;
+
+            int next = row + 1;
+            if (next >= items.count()   // when search at end OR search at end of the group, append item to last item of the group.
+                || items.at(next).groupId != data.groupId) {
+                row = next;
+                break;
+            }
+        }
+
+        beginInsertRows(QModelIndex(), row, row);
+        items.insert(row, data);
+        endInsertRows();
     }
 
     // for filter the native disks hided by main setting panel
