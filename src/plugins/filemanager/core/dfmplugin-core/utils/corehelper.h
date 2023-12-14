@@ -26,6 +26,7 @@ public:
     void cd(quint64 windowId, const QUrl &url);
     void openWindow(const QUrl &url, const QVariant &opt = QVariant());
     void cacheDefaultWindow();
+    void loadPlugin(const QString &name);
 
 private:
     DFMBASE_NAMESPACE::FileManagerWindow *defaultWindow();

@@ -42,8 +42,10 @@ public:
     void addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar = false);
     void removeDevice(const QUrl &url);
 
+    QVariantMap makeSidebarItem(DFMEntryFileInfoPointer info);
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
     void addSidebarItem(DFMEntryFileInfoPointer info);
+    void addSidebarItem(const QUrl &url, const QVariantMap &data);
     void removeSidebarItem(const QUrl &url);
     void handleSidebarItemsVisiable();
 
@@ -112,6 +114,7 @@ private:
 
 private:
     ComputerDataList initedDatas;
+    QHash<QUrl, QVariantMap> sidebarInfos;
     QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };
     QMap<QString, int> groupIds;
 
