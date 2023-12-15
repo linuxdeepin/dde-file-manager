@@ -176,6 +176,9 @@ bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix
             const QString firstFilter = newNameFilters.first();
             suffix = mdb.suffixForFileName(firstFilter);
             if (suffix.isEmpty()) {
+                // check format is *. ?
+                if (!firstFilter.startsWith("*."))
+                    return false;
                 suffix = firstFilter.mid(2);
                 if (suffix.isEmpty())
                     return false;
