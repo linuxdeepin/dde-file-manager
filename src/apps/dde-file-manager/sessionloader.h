@@ -8,6 +8,7 @@
 #include <QLibrary>
 #include <QObject>
 #include <QUrl>
+#include <QMap>
 
 typedef int (*FnConnectSM)(unsigned long long wid);
 typedef void (*FnDisconnectSM)(void);
@@ -55,17 +56,20 @@ private:
     virtual ~SessionBusiness();
 
     void bindEvents();
-    void savePath(unsigned long long wid, const QString &path);
+    void connectToUsmSever(quint64 wid);
+    void savePath(quint64 wid, const QString &path);
     char **parseArguments(int &argc);
     void releaseArguments(int argc, char **argv_new);
 
 private slots:
     void onWindowOpened(quint64 windId);
+    void onWindowClosed(quint64 windId);
     void onCurrentUrlChanged(quint64 windId, const QUrl &url);
 
 private:
     UsmSessionAPI sessionAPI;
     QStringList arguments;
+    QMap<quint64, QString> windowStatus;
 };
 
 #endif   // USMSESSIONLOADER_H
