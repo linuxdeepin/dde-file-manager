@@ -193,7 +193,6 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         auto &&id { window->internalWinId() };
         qCInfo(logDFMBase) << "Window showed" << id;
         emit windowOpened(id);
-        emit window->currentUrlChanged(url);   //The URL needs to notify the subscribers when the first window opened.
     });
 
     connect(window, &FileManagerWindow::reqShowHotkeyHelp, this, [this, window]() {
@@ -222,6 +221,7 @@ void FileManagerWindowsManager::showWindow(FileManagerWindowsManager::FMWindow *
     Q_ASSERT(window);
     window->show();
     qApp->setActiveWindow(window);
+    emit window->currentUrlChanged(window->currentUrl());   //The URL needs to notify the subscribers when the first window opened.
 }
 
 /*!

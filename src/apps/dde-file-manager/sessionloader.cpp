@@ -110,7 +110,7 @@ void SessionBusiness::releaseArguments(int argc, char **argv_new)
     delete[] argv_new;
 }
 
-void SessionBusiness::savePath(unsigned long long wid, const QString &path)
+void SessionBusiness::savePath(quint64 wid, const QString &path)
 {
     if (!sessionAPI.isInitialized()) {
         qCWarning(logAppFileManager) << "failed to save path caused no usm session api init";
@@ -166,8 +166,29 @@ bool SessionBusiness::readPath(const QString &fileName, QString *data)
 
 void SessionBusiness::bindEvents()
 {
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &SessionBusiness::onWindowClosed, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SessionBusiness::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::currentUrlChanged, this, &SessionBusiness::onCurrentUrlChanged, Qt::DirectConnection);
+}
+
+const static QString windowInit = "inited";
+void SessionBusiness::connectToUsmSever(quint64 wid)
+{
+    auto inited = windowStatus.value(wid);
+    if (inited.contains(windowInit))
+        return;
+
+    if (SessionBusiness::instance()->getAPI()->init()) {
+        int argc = 0;
+        char **argv = parseArguments(argc);
+        getAPI()->parseArguments(argc, argv);
+        releaseArguments(argc, argv);
+
+        getAPI()->connectSM(wid);
+        getAPI()->setWindowProperty(wid);
+        windowStatus[wid] = windowInit;
+        qCInfo(logAppFileManager) << "update the arguments:" << arguments << ",for window:" << wid;
+    }
 }
 
 void SessionBusiness::onWindowOpened(quint64 windId)
@@ -175,16 +196,14 @@ void SessionBusiness::onWindowOpened(quint64 windId)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
-    if (!window->isHidden() && SessionBusiness::instance()->getAPI()->init()) {
-        int argc = 0;
-        char **argv = parseArguments(argc);
-        getAPI()->parseArguments(argc, argv);
-        releaseArguments(argc, argv);
-
-        getAPI()->connectSM(window->winId());
-        getAPI()->setWindowProperty(window->winId());
-        qCInfo(logAppFileManager) << "update the arguments:" << arguments << ",for window:" << window->winId();
+    if (!window->isHidden()) {
+        connectToUsmSever(window->winId());
     }
+}
+
+void SessionBusiness::onWindowClosed(quint64 windId)
+{
+    windowStatus.remove(windId);
 }
 
 void SessionBusiness::onCurrentUrlChanged(quint64 windId, const QUrl &url)
@@ -193,6 +212,7 @@ void SessionBusiness::onCurrentUrlChanged(quint64 windId, const QUrl &url)
     Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
 
     if (!window->isHidden()) {
+        connectToUsmSever(window->winId());
         savePath(window->winId(), url.toString());
     }
 }
