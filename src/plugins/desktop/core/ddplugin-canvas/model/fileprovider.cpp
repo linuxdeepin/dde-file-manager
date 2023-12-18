@@ -170,9 +170,18 @@ void FileProvider::preupdateData(const QUrl &url)
 {
     if (!url.isValid())
         return;
+
+    // check if there is cache
+    auto cachedInfo = InfoCacheController::instance().getCacheInfo(url);
+
     // file info that is slow at first using should be called there to cache it.
     auto info = InfoFactory::create<FileInfo>(url);
     if (updateing && info) {
+
+        // cached file need to refresh.
+        if (info == cachedInfo)
+            info->updateAttributes();
+
         // get file mime type for sorting.
         info->fileMimeType();
     }

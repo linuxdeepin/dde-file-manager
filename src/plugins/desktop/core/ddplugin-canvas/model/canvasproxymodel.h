@@ -57,8 +57,7 @@ signals:
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 public slots:
     bool sort();
-    void update();
-    void refresh(const QModelIndex &parent, bool global = false, int ms = 50, bool refreshFile = true);
+    void refresh(const QModelIndex &parent, bool global = false, int ms = 50, bool updateFile = true);
     void setShowHiddenFiles(bool show);
     bool fetch(const QUrl &url);   //show \a url if exsited
     bool take(const QUrl &url);   // hide \a url

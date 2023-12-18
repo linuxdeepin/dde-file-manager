@@ -56,9 +56,6 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
     QMap<QUrl, FileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
-            if (itemInfo->isAttributes(OptInfoType::kIsSymLink) &&
-                    !FileUtils::isLocalDevice(QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget))))
-                itemInfo->updateAttributes();
             fileUrls.append(itemInfo->urlOf(UrlInfoType::kUrl));
             fileMaps.insert(itemInfo->urlOf(UrlInfoType::kUrl), itemInfo);
         }
@@ -378,7 +375,7 @@ int FileInfoModel::modelState() const
 void FileInfoModel::update()
 {
     for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
-        itor.value()->refresh();
+        itor.value()->updateAttributes();
 
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
@@ -386,6 +383,14 @@ void FileInfoModel::update()
 void FileInfoModel::updateFile(const QUrl &url)
 {
     d->updateData(url);
+}
+
+void FileInfoModel::refreshAllFile()
+{
+    for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
+        itor.value()->refresh();
+
+    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
 
 QModelIndex FileInfoModel::parent(const QModelIndex &child) const

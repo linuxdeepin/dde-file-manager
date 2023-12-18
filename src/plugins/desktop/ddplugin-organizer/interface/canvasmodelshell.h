@@ -20,7 +20,7 @@ public:
     explicit CanvasModelShell(QObject *parent = nullptr);
     ~CanvasModelShell();
     bool initialize();
-    void refresh(int ms = 0);
+    void refresh(int ms = 0, bool updateFile = true);
     bool fetch(const QUrl &url);
     bool take(const QUrl &url);
 signals: // unqiue and direct signals

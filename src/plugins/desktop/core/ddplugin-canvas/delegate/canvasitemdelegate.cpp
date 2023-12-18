@@ -743,10 +743,10 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info)
 {
     // todo(zy) uing extend painter by registering.
-    if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {
+    if (dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, info).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {
-            fmWarning() << "publish `kPaintEmblems` event failed!";
+            fmInfo() << "publish `kPaintEmblems` event successfully!";
         });
     }
     return rect;

@@ -400,14 +400,14 @@ bool CanvasProxyModelPrivate::doSort(QList<QUrl> &files) const
     return true;
 }
 
-void CanvasProxyModelPrivate::doRefresh(bool global, bool refreshFile)
+void CanvasProxyModelPrivate::doRefresh(bool global, bool updateFile)
 {
     if (global) {
         srcModel->refresh(srcModel->rootIndex());
     } else {
-        // refresh all file info
-        if (refreshFile) {
-            // do not emit data changed signal, just refresh file info.
+        // update all file info
+        if (updateFile) {
+            // do not emit data changed signal, just update file info.
             QSignalBlocker blocker(srcModel);
             srcModel->update();
         }
@@ -415,13 +415,6 @@ void CanvasProxyModelPrivate::doRefresh(bool global, bool refreshFile)
         // reset model
         sourceAboutToBeReset();
         sourceReset();
-
-        // refresh file info in canvas model
-        {
-            // do not emit data changed signal, just refresh file info.
-            QSignalBlocker blocker(q);
-            q->update();
-        }
     }
 }
 
@@ -829,19 +822,7 @@ bool CanvasProxyModel::sort()
     return true;
 }
 
-void CanvasProxyModel::update()
-{
-    fmInfo() << "update file info in model." << d->fileMap.size();
-    if (d->fileMap.isEmpty())
-        return;
-
-    for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
-        itor.value()->refresh();
-
-    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
-}
-
-void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms, bool refreshFile)
+void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms, bool updateFile)
 {
     d->isNotMixDirAndFile = !Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
 
@@ -852,12 +833,12 @@ void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms, b
         d->refreshTimer->stop();
 
     if (ms < 1) {
-        d->doRefresh(global, refreshFile);
+        d->doRefresh(global, updateFile);
     } else {
         d->refreshTimer.reset(new QTimer);
         d->refreshTimer->setSingleShot(true);
-        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global, refreshFile]() {
-            d->doRefresh(global, refreshFile);
+        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global, updateFile]() {
+            d->doRefresh(global, updateFile);
         });
 
         d->refreshTimer->start(ms);

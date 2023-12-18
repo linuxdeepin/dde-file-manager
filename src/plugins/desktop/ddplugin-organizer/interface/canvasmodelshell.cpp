@@ -53,9 +53,9 @@ bool CanvasModelShell::initialize()
     return true;
 }
 
-void CanvasModelShell::refresh(int ms)
+void CanvasModelShell::refresh(int ms, bool updateFile)
 {
-    CanvasModelPush(slot_CanvasModel_Refresh, false, ms);
+    CanvasModelPush(slot_CanvasModel_Refresh, false, ms, updateFile);
 }
 
 bool CanvasModelShell::fetch(const QUrl &url)

@@ -432,8 +432,8 @@ void CanvasManagerPrivate::initSetting()
 {
     // setting changed.
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &CanvasManagerPrivate::onHiddenFlagsChanged);
-    connect(Application::instance(), &Application::previewAttributeChanged, canvasModel, &CanvasProxyModel::update);
-    connect(Application::instance(), &Application::showedFileSuffixChanged, canvasModel, &CanvasProxyModel::update);
+    connect(Application::instance(), &Application::previewAttributeChanged, sourceModel, &FileInfoModel::refreshAllFile);
+    connect(Application::instance(), &Application::showedFileSuffixChanged, sourceModel, &FileInfoModel::refreshAllFile);
 }
 
 CanvasViewPointer CanvasManagerPrivate::createView(QWidget *root, int index)
