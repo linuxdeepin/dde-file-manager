@@ -39,6 +39,8 @@ public:
         kGroupDisks,
     };
 
+    void startQueryItems(bool async = true);
+
     void addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar = false);
     void removeDevice(const QUrl &url);
 
@@ -62,7 +64,7 @@ public:
     static QList<QUrl> hiddenPartitions();
 
 public Q_SLOTS:
-    void startQueryItems();
+    void onViewRefresh();
 
 Q_SIGNALS:
     void itemQueryFinished(const ComputerDataList &results);
@@ -113,6 +115,7 @@ private:
     QString reportName(const QUrl &url);
 
 private:
+    bool isItemQueryFinished { false };
     ComputerDataList initedDatas;
     QHash<QUrl, QVariantMap> sidebarInfos;
     QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };

@@ -92,11 +92,11 @@ void Computer::onWindowOpened(quint64 winId)
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
     regComputerCrumbToTitleBar();
     if (window->workSpace())
-        ComputerItemWatcherInstance->startQueryItems();
+        initComputerItems();
     else
         connect(
                 window, &FileManagerWindow::workspaceInstallFinished,
-                this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
+                this, [this] { initComputerItems(); }, Qt::DirectConnection);
 
     if (window->sideBar())
         updateComputerToSidebar();
@@ -133,6 +133,14 @@ void Computer::updateComputerToSidebar()
         };
 
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", ComputerUtils::rootUrl(), map);
+    });
+}
+
+void Computer::initComputerItems()
+{
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        ComputerItemWatcherInstance->startQueryItems();
     });
 }
 
@@ -210,7 +218,7 @@ void Computer::bindEvents()
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ContextMenu_SetEnable", ComputerEventReceiver::instance(), &ComputerEventReceiver::setContextMenuEnable);
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_Item_Add", ComputerItemWatcherInstance, &ComputerItemWatcher::addDevice);
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_Item_Remove", ComputerItemWatcherInstance, &ComputerItemWatcher::removeDevice);
-    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_View_Refresh", ComputerItemWatcherInstance, &ComputerItemWatcher::startQueryItems);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_View_Refresh", ComputerItemWatcherInstance, &ComputerItemWatcher::onViewRefresh);
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_Passwd_Clear", RemotePasswdManagerInstance, &RemotePasswdManager::clearPasswd);
 }
 

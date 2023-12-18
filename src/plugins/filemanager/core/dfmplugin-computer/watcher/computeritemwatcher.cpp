@@ -115,6 +115,9 @@ void ComputerItemWatcher::initConn()
             return;
         removeDevice(appUrl);
     });
+    connect(this, &ComputerItemWatcher::itemQueryFinished, this, [this]() {
+        isItemQueryFinished = true;
+    });
 
     connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onGenAttributeChanged);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &ComputerItemWatcher::onDConfigChanged);
@@ -388,6 +391,12 @@ QList<QUrl> ComputerItemWatcher::hiddenPartitions()
     return hiddenUrls;
 }
 
+void ComputerItemWatcher::onViewRefresh()
+{
+    startQueryItems(false);
+    dpfSignalDispatcher->publish("dfmplugin_computer", "signal_View_Refreshed");
+}
+
 void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
 {
     int insertAt = 0;
@@ -523,8 +532,22 @@ void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newN
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar)
 {
-    int groupId = addGroup(groupName);
-    onDeviceAdded(url, groupId, static_cast<ComputerItemData::ShapeType>(shape), addToSidebar);
+    auto doAddFunc = [this, groupName, url, shape, addToSidebar]() {
+        int groupId = addGroup(groupName);
+        onDeviceAdded(url, groupId, static_cast<ComputerItemData::ShapeType>(shape), addToSidebar);
+    };
+    // 当一个设备被添加到计算机时，如果计算机的初始化本身没有完成，此次被添加的 item 将会被覆盖
+    // 因此这里需要等待计算机初始化完成才能添加 item
+    if (isItemQueryFinished) {
+        doAddFunc();
+    } else {
+        QMetaObject::Connection *connection = new QMetaObject::Connection;
+        *connection = connect(this, &ComputerItemWatcher::itemQueryFinished, this, [doAddFunc, connection]() {
+            doAddFunc();
+            disconnect(*connection);
+            delete connection;
+        });
+    }
 }
 
 void ComputerItemWatcher::removeDevice(const QUrl &url)
@@ -623,18 +646,12 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
     };
 }
 
-void ComputerItemWatcher::startQueryItems()
+void ComputerItemWatcher::startQueryItems(bool async)
 {
-    // if computer view is not init view, no receiver to receive the signal, cause when cd to computer view, shows empty.
-    // on initialize computer view/model, get the cached items in construction.
-    QFutureWatcher<ComputerDataList> *fw { new QFutureWatcher<ComputerDataList>() };
-    connect(fw, &QFutureWatcher<void>::finished, this, [fw, this]() {
-        for (const auto &key : sidebarInfos.keys()) {
-            const auto &value = sidebarInfos.value(key);
-            addSidebarItem(key, value);
-        }
+    isItemQueryFinished = false;
+    sidebarInfos.clear();
 
-        initedDatas = fw->result();
+    auto afterQueryFunc = [this]() {
         QList<QUrl> computerItems;
         for (const auto &item : initedDatas)
             computerItems << item.url;
@@ -643,18 +660,38 @@ void ComputerItemWatcher::startQueryItems()
         dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
         qDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
         for (int i = initedDatas.count() - 1; i >= 0; --i) {
-            if (!computerItems.contains(initedDatas[i].url)) {
-                removeSidebarItem(initedDatas[i].url);
+            const auto &url { initedDatas[i].url };
+            if (url.isValid() && !computerItems.contains(url)) {
+                removeSidebarItem(url);
+                sidebarInfos.remove(url);
                 initedDatas.removeAt(i);
             }
         }
 
+        for (const auto &key : sidebarInfos.keys()) {
+            const auto &value = sidebarInfos.value(key);
+            addSidebarItem(key, value);
+        }
+
         Q_EMIT itemQueryFinished(initedDatas);
-        dpfSignalDispatcher->publish("dfmplugin_computer", "signal_View_Refreshed");
-        delete fw;
-    });
-    sidebarInfos.clear();
-    fw->setFuture(QtConcurrent::run(this, &ComputerItemWatcher::items));
+    };
+
+    if (async) {
+        QFutureWatcher<ComputerDataList> *fw { new QFutureWatcher<ComputerDataList>() };
+        fw->setFuture(QtConcurrent::run(this, &ComputerItemWatcher::items));
+        // if computer view is not init view, no receiver to receive the signal, cause when cd to computer view, shows empty.
+        // on initialize computer view/model, get the cached items in construction.
+        connect(fw, &QFutureWatcher<void>::finished, this, [fw, afterQueryFunc, this]() {
+            initedDatas = fw->result();
+            afterQueryFunc();
+            delete fw;
+        });
+
+        return;
+    }
+
+    initedDatas = items();
+    afterQueryFunc();
 }
 
 /*!
