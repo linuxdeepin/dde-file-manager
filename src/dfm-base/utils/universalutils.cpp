@@ -387,6 +387,8 @@ QVariantHash UniversalUtils::convertFromQMap(const QVariantMap map)
 
 bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
 {
+    if (!url1.isValid() || !url2.isValid())
+        return false;
     if (url1 == url2)
         return true;
 

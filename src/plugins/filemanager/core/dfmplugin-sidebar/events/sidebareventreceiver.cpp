@@ -124,6 +124,8 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
 
 bool SideBarEventReceiver::handleItemRemove(const QUrl &url)
 {
+    if (!SideBarInfoCacheMananger::instance()->contains(url))
+        return false;
     SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
     if (SideBarWidget::kSidebarModelIns)
         return SideBarWidget::kSidebarModelIns->removeRow(url);

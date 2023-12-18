@@ -23,15 +23,16 @@ public:
     bool isVaultEnabled();
     void infoRegister();
     void pluginServiceRegister();
+    void addComputer();
 
 public slots:
     void onWindowOpened(quint64 winID);
     void updateSideBarVaultItem();
-    void addComputer();
     void removeSideBarVaultItem();
     void removeComputerVaultItem();
     void onComputerRefresh();
     void addVaultComputerMenu();
+    void addVaultComputerItem();
 
 public:
     static VaultVisibleManager *instance();

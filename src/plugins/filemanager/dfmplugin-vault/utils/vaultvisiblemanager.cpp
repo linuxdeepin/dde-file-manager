@@ -117,6 +117,14 @@ void VaultVisibleManager::addVaultComputerMenu()
     dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
 }
 
+void VaultVisibleManager::addVaultComputerItem()
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        addComputer();
+    });
+}
+
 void VaultVisibleManager::updateSideBarVaultItem()
 {
     // It is not clear if this configuration still requires
@@ -160,9 +168,9 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, &VaultVisibleManager::updateSideBarVaultItem, Qt::DirectConnection);
 
     if (window->workSpace())
-        addComputer();
+        addVaultComputerItem();
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &VaultVisibleManager::addComputer, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &VaultVisibleManager::addVaultComputerItem, Qt::DirectConnection);
 
     VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
 }

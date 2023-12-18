@@ -46,6 +46,7 @@ protected Q_SLOTS:
 
 private:
     void updateComputerToSidebar();
+    void initComputerItems();
     void regComputerCrumbToTitleBar();
     void regComputerToSearch();
     void addComputerSettingItem();
