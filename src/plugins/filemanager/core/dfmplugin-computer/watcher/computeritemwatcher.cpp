@@ -629,6 +629,11 @@ void ComputerItemWatcher::startQueryItems()
     // on initialize computer view/model, get the cached items in construction.
     QFutureWatcher<ComputerDataList> *fw { new QFutureWatcher<ComputerDataList>() };
     connect(fw, &QFutureWatcher<void>::finished, this, [fw, this]() {
+        for (const auto &key : sidebarInfos.keys()) {
+            const auto &value = sidebarInfos.value(key);
+            addSidebarItem(key, value);
+        }
+
         initedDatas = fw->result();
         QList<QUrl> computerItems;
         for (const auto &item : initedDatas)
@@ -642,11 +647,6 @@ void ComputerItemWatcher::startQueryItems()
                 removeSidebarItem(initedDatas[i].url);
                 initedDatas.removeAt(i);
             }
-        }
-
-        for (const auto &key : sidebarInfos.keys()) {
-            const auto &value = sidebarInfos.value(key);
-            addSidebarItem(key, value);
         }
 
         Q_EMIT itemQueryFinished(initedDatas);
