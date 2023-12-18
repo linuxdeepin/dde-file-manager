@@ -91,7 +91,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 const FileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
 {
     if (!parent()->isVerticalScrollBarSliderDragging())
-            index.data(kItemCreateFileInfoRole);
+        index.data(kItemCreateFileInfoRole);
 
     return parent()->model()->fileInfo(index);
 }
@@ -108,7 +108,11 @@ QWidget *FileViewHelper::indexWidget(const QModelIndex &index) const
 
 int FileViewHelper::selectedIndexsCount() const
 {
-    return parent()->selectionModel()->selectedIndexes().count();
+    //When using the FileView selection model
+    //please be careful not to call it directly.
+    //It needs to be strongly converted, otherwise it will call the QT native selection model
+    //causing data errors and affecting performance
+    return parent()->selectedIndexCount();
 }
 
 bool FileViewHelper::isSelected(const QModelIndex &index) const
@@ -273,7 +277,7 @@ int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &ite
 #endif
 
     int itemHeight = itemSize.height() + iconViewSpacing * 2;
-    if (pos.y()  % itemHeight < iconViewSpacing
+    if (pos.y() % itemHeight < iconViewSpacing
         || pos.y() % itemHeight > (itemHeight - iconViewSpacing))
         return -1;
 
