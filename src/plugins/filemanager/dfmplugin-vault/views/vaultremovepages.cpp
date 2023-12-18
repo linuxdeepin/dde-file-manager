@@ -110,16 +110,9 @@ void VaultRemovePages::showVerifyWidget()
 
     setCloseButtonVisible(true);
     clearButtons();
-    QStringList buttonTexts({ tr("Cancel", "button"), tr("Use Key", "button"), tr("Delete", "button") });
+    QStringList buttonTexts({ tr("Cancel", "button"), tr("Delete", "button") });
     addButton(buttonTexts[0], false);
-    //! 1050及以上版本无密钥验证
-    if (!VaultHelper::instance()->getVaultVersion())
-        addButton(buttonTexts[1], false);
-    addButton(buttonTexts[2], true, DDialog::ButtonWarning);
-    if (!VaultHelper::instance()->getVaultVersion())
-        setDefaultButton(2);
-    else
-        setDefaultButton(1);
+    addButton(buttonTexts[1], true, DDialog::ButtonWarning);
     stackedWidget->setCurrentIndex(0);
 
     //! 如果密码提示信息为空，则隐藏提示按钮
@@ -205,17 +198,6 @@ void VaultRemovePages::onButtonClicked(int index)
         connect(ins, &Authority::checkAuthorizationFinished,
                 this, &VaultRemovePages::slotCheckAuthorizationFinished);
 
-        QAbstractButton *btn;
-        //! 1050 and above version without key authentication
-        if (!VaultHelper::instance()->getVaultVersion()) {
-            btn = getButton(kPassWordDeleteBtn);
-        } else {
-            btn = getButton(kKeyVerifyDeleteBtn);
-        }
-
-        //! The button is grayed out to prevent users from operating indiscriminately
-        if (btn)
-            btn->setEnabled(false);
     } break;
     default:
         break;
