@@ -37,7 +37,7 @@ public slots:
     int rowCount();
     QVariant data(const QUrl &url, int itemRole);
     void sort();
-    void refresh(bool global, int ms);
+    void refresh(bool global, int ms, bool updateFile = true);
     bool fetch(const QUrl &url);
     bool take(const QUrl &url);
 private:

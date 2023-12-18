@@ -131,7 +131,7 @@ void FrameManagerPrivate::refeshCanvas()
 {
     // refresh immediately to prevent show the files which is move to collection view.
     if (canvas)
-        canvas->canvasModel()->refresh(0);
+        canvas->canvasModel()->refresh(0, false);
 }
 
 void FrameManagerPrivate::enableChanged(bool e)

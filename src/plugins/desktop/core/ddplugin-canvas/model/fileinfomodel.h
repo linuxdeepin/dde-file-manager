@@ -37,6 +37,7 @@ public:
     Q_INVOKABLE int modelState() const;   // 0 is uninitialized, 1 is ok, 2 is refreshing.
     Q_INVOKABLE void update();
     Q_INVOKABLE void updateFile(const QUrl &url);
+    Q_INVOKABLE void refreshAllFile();
 
 public:
     QModelIndex index(int row, int column = 0,

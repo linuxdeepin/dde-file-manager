@@ -28,7 +28,7 @@ public:
     bool doSort(QList<QUrl> &files) const;
     bool lessThan(const QUrl &left, const QUrl &right) const;
 public slots:
-    void doRefresh(bool global, bool refreshFile);
+    void doRefresh(bool global, bool updateFile);
     void sourceDataChanged(const QModelIndex &sourceTopleft,
                            const QModelIndex &sourceBottomright,
                            const QVector<int> &roles);

@@ -134,9 +134,9 @@ void CanvasModelBroker::sort()
     model->sort();
 }
 
-void CanvasModelBroker::refresh(bool global, int ms)
+void CanvasModelBroker::refresh(bool global, int ms, bool updateFile)
 {
-    model->refresh(model->rootIndex(), global, ms);
+    model->refresh(model->rootIndex(), global, ms, updateFile);
 }
 
 bool CanvasModelBroker::fetch(const QUrl &url)
