@@ -599,7 +599,7 @@ TEST(UT_VaultHelper, removeVaultDialog)
         return 0;
     });
 
-    VaultHelper::instance()->removeVaultDialog();
+    VaultHelper::instance()->showRemoveVaultDialog();
 
     EXPECT_TRUE(isOk);
 }

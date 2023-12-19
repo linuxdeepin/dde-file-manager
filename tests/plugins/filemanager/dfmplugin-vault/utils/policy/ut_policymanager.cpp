@@ -105,7 +105,9 @@ TEST(UT_PolicyManager, slotVaultPolicy_three)
     stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, []{
         return PolicyManager::VaultPageMark::kCopyFilePage;
     });
-    stub.set_lamda(&VaultHelper::lockVault, []{});
+    stub.set_lamda(&VaultHelper::lockVault, []{
+        return true;
+    });
     stub.set_lamda(&VaultVisibleManager::removeSideBarVaultItem, []{});
     stub.set_lamda(&VaultVisibleManager::removeComputerVaultItem, []{});
 

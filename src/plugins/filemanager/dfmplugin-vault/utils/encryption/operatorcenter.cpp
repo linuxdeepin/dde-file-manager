@@ -20,6 +20,7 @@
 #include <QTime>
 #include <QtGlobal>
 #include <QProcess>
+#include <QtConcurrent>
 
 #undef signals
 extern "C" {
@@ -96,6 +97,53 @@ bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, cons
     config.set(kConfigNodeName, kConfigKeyVersion, QVariant(vaultVersion));
 
     return true;
+}
+
+bool OperatorCenter::statisticsFilesInDir(const QString &dirPath, int *filesCount)
+{
+    QDir dir(dirPath);
+    if (!dir.exists())
+        return false;
+
+    dir.setSorting(QDir::DirsFirst);
+    QFileInfoList list = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
+    int count = list.size();
+    for (int i = 0; i < count; ++i) {
+        (*filesCount)++;
+        if (list.at(i).isDir()) {
+            statisticsFilesInDir(list.at(i).filePath(), filesCount);
+        }
+    }
+
+    return true;
+}
+
+void OperatorCenter::removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount)
+{
+    QDir dir(dirPath);
+    if (!dir.exists() || filesCount < 1)
+        return;
+
+    dir.setSorting(QDir::DirsFirst);
+    QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
+    int count = infoList.size();
+    for (int i = 0; i < count; ++i) {
+        if (infoList.at(i).isDir()) {
+            removeDir(infoList.at(i).absoluteFilePath(), filesCount, removedFileCount, removedDirCount);
+        } else if (infoList.at(i).isFile()) {
+            QFile file(infoList.at(i).absoluteFilePath());
+            file.remove();
+            (*removedFileCount)++;
+            int value = static_cast<int>(100 * static_cast<float>(*removedFileCount + *removedDirCount) / static_cast<float>(filesCount));
+            emit fileRemovedProgress(value);
+        }
+    }
+
+    QDir tempDir;
+    tempDir.rmdir(dirPath);
+    (*removedDirCount)++;
+    int value = static_cast<int>(100 * static_cast<float>(*removedFileCount + *removedDirCount) / static_cast<float>(filesCount));
+    emit fileRemovedProgress(value);
 }
 
 bool OperatorCenter::createKeyNew(const QString &password)
@@ -634,4 +682,20 @@ QString OperatorCenter::passwordFromKeyring()
     fmInfo() << "Vault: Read password end!";
 
     return result;
+}
+
+void OperatorCenter::removeVault(const QString &basePath)
+{
+    if (basePath.isEmpty())
+        return;
+
+    QtConcurrent::run([this, basePath](){
+        int filesCount { 0 };
+        int removedFileCount { 0 };
+        int removedDirCount { 0 };
+        if (statisticsFilesInDir(basePath, &filesCount)) {
+            filesCount++;   // the basePath dir
+            removeDir(basePath, filesCount, &removedFileCount, &removedDirCount);
+        }
+    });
 }

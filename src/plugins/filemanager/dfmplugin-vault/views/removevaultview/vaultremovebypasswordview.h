@@ -9,6 +9,8 @@
 
 #include <dtkwidget_global.h>
 
+#include <polkit-qt5-1/PolkitQt1/Authority>
+
 #include <QWidget>
 
 class QLineEdit;
@@ -26,43 +28,32 @@ class VaultRemoveByPasswordView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit VaultRemoveByPasswordView(QWidget *parent = nullptr);
-    ~VaultRemoveByPasswordView() override;
     enum EN_ToolTip {
         kWarning = 0,
         kInformation
     };
+    explicit VaultRemoveByPasswordView(QWidget *parent = nullptr);
+    ~VaultRemoveByPasswordView() override;
 
-    /*!
-    * /brief    获取密码
-    */
-    QString getPassword();
+    QStringList btnText() const;
+    QString titleText() const;
+    void buttonClicked(int index, const QString &text);
 
-    /*!
-    * /brief    清空密码
-    */
-    void clear();
-
-    /*!
-     * /brief showAlertMessage 显示密码输入框提示信息
-     * /param text  信息内容
-     * /param duration  显示时长
-     */
     void showAlertMessage(const QString &text, int duration = 3000);
     void showToolTip(const QString &text, int duration, EN_ToolTip enType);
-
-    /*!
-     * /brief setTipsButtonVisible 设置提示按钮是否可见
-     * /param visible
-     */
     void setTipsButtonVisible(bool visible);
-public slots:
+
+public Q_SLOTS:
     void onPasswordChanged(const QString &password);
+    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
+
+Q_SIGNALS:
+    void signalJump(const RemoveWidgetType &type);
+    void sigCloseDialog();
 
 private:
     DTK_WIDGET_NAMESPACE::DPasswordEdit *pwdEdit { nullptr };
     QPushButton *tipsBtn { nullptr };
-
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
 };

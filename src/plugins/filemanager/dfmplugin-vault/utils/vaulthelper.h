@@ -85,7 +85,7 @@ public slots:
 
     bool unlockVault(const QString &password);
 
-    void lockVault(bool isForced);
+    bool lockVault(bool isForced);
 
     void defaultCdAction(const quint64 windowId, const QUrl &url);
 
@@ -95,7 +95,7 @@ public slots:
 
     void unlockVaultDialog();
 
-    void removeVaultDialog();
+    void showRemoveVaultDialog();
 
     void openWindow();
 
