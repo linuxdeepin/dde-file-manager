@@ -25,6 +25,7 @@ public:
     QScreen *screen() const;
 
 private:
+    bool checkAvailableGeometry(const QRect &ava, const QRect &scr) const;
     QScreen *qscreen = nullptr;
 };
 
