@@ -20,7 +20,6 @@ public:
 
 private:
     ComputerView *q { nullptr };
-    ComputerModel *model { nullptr };
     ComputerStatusBar *statusBar { nullptr };
 };
 }

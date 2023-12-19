@@ -63,6 +63,11 @@ protected:
 
     void initConnect();
 
+Q_SIGNALS:
+    void requestClearSelection(const QUrl &url);
+    void requestHandleItemVisible();
+    void requestUpdateIndex(const QModelIndex &index);
+
 protected Q_SLOTS:
     void onItemAdded(const ComputerItemData &data);
     void onItemRemoved(const QUrl &url);
@@ -75,7 +80,6 @@ protected Q_SLOTS:
     void removeOrphanGroup();
 
 private:
-    ComputerView *view { nullptr };
     QList<ComputerItemData> items;
     //    QScopedPointer<ComputerItemWatcher> watcher { nullptr };
 };
