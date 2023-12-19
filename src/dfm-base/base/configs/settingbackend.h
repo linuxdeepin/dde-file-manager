@@ -38,6 +38,12 @@ public:
     void addToSerialDataKey(const QString &key);
     void removeSerialDataKey(const QString &key);
 
+Q_SIGNALS:
+    void optionSetted(const QString &key, const QVariant &value);
+
+public Q_SLOTS:
+    void onOptionSetted(const QString &key, const QVariant &value);
+
 protected:
     void doSetOption(const QString &key, const QVariant &value);
     void onValueChanged(int attribute, const QVariant &value);
