@@ -63,10 +63,10 @@ QRect ScreenQt::availableGeometry() const
     }
 
     DockRect dockrectI = DockInfoIns->frontendWindowRect(); //原始dock大小
-    QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());  //缩放处理
+    const QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());  //缩放处理
 
-    qreal ratio = qApp->primaryScreen()->devicePixelRatio();
-    QRect hRect = handleGeometry();
+    const qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+    const QRect hRect = handleGeometry();
 
     if (!hRect.contains(dockrectI)) { //使用原始大小判断的dock区所在的屏幕
         fmDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
@@ -74,7 +74,8 @@ QRect ScreenQt::availableGeometry() const
     }
 
     fmDebug() << "ScreenQt ret " << ret << name();
-    switch (DockInfoIns->position()) {
+    const int dockPos = DockInfoIns->position();
+    switch (dockPos) {
     case 0: //上
         ret.setY(dockrect.bottom());
         fmDebug() << "dock on top, availableGeometry" << ret;
@@ -109,6 +110,11 @@ QRect ScreenQt::availableGeometry() const
         fmCritical() << "dock postion error!" << "and  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
         break;
     }
+
+    if (!checkAvailableGeometry(ret, geometry())) {
+        fmCritical() << "available geometry may be wrong" << ret << "dock pos" << dockPos << dockrect
+                     << "screen" << geometry() << hRect;
+    }
     return ret;
 }
 
@@ -120,4 +126,13 @@ QRect ScreenQt::handleGeometry() const
 QScreen *ScreenQt::screen() const
 {
     return qscreen;
+}
+
+bool ScreenQt::checkAvailableGeometry(const QRect &ava, const QRect &scr) const
+{
+    const qreal min = 0.8;
+    if (((scr.height() * min) > ava.height())
+            || ((scr.width() * min) >  ava.width()))
+        return false;
+    return true;
 }
