@@ -1349,10 +1349,8 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
         QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
         for (int i = 0; i < nameFilters.size(); ++i) {
             re.setPattern(nameFilters.at(i));
-            if (re.match(item->data(kItemNameRole).toString()).hasMatch()/*re.hasMatch(item->data(kItemNameRole).toString())*/) {
+            if (re.match(item->data(kItemNameRole).toString()).hasMatch()) {
                 item->setAvailableState(true);
-            } else {
-                item->setAvailableState(false);
             }
         }
     }
