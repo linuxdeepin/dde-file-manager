@@ -53,13 +53,13 @@ void Search::initialize()
 
 bool Search::start()
 {
+    regSearchSettingConfig();
     dfmplugin_menu_util::menuSceneRegisterScene(SearchMenuCreator::name(), new SearchMenuCreator());
     return true;
 }
 
 void Search::onWindowOpened(quint64 windId)
 {
-    regSearchSettingConfig();
     auto window = FMWindowsIns.findWindowById(windId);
 
     if (window->workSpace())
