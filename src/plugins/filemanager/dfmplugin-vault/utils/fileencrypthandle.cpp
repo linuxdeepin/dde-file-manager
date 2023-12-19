@@ -161,21 +161,29 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
  *  调用runVaultProcess函数进行上锁保险箱并返回上锁状态标记。
  *  最后使用信号signalLockVault发送上锁状态标记。
  */
-void FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
+bool FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
 {
-    d->mutex->lock();
     d->activeState.insert(7, static_cast<int>(ErrorCode::kSuccess));
     int flg = d->lockVaultProcess(unlockFileDir, isForced);
+
+    if (-1 == flg) {
+        d->activeState.clear();
+        fmCritical() << "Lock vault failed, progress crash!";
+        return false;
+    }
+
     if (d->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalLockVault(d->activeState.value(7));
-        fmWarning() << "Vault: lock vault failed! ";
-    } else {
-        d->curState = kEncrypted;
-        emit signalLockVault(flg);
-        fmInfo() << "Vault: lock vault success!";
+        fmWarning() << "Lock vault failed! ";
+        d->activeState.clear();
+        return false;
     }
+
+    d->curState = kEncrypted;
+    emit signalLockVault(flg);
+    fmInfo() << "Lock vault success!";
     d->activeState.clear();
-    d->mutex->unlock();
+    return true;
 }
 
 bool FileEncryptHandle::createDirIfNotExist(QString path)

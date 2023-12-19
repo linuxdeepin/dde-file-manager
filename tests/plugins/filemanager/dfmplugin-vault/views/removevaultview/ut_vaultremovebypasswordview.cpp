@@ -16,21 +16,6 @@
 DPVAULT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
-TEST(UT_VaultRemoveByPasswordView, getPassword)
-{
-    VaultRemoveByPasswordView view;
-    view.pwdEdit->setText("Qwer@1234");
-    EXPECT_TRUE(view.getPassword() == "Qwer@1234");
-}
-
-TEST(UT_VaultRemoveByPasswordView, clear)
-{
-    VaultRemoveByPasswordView view;
-    view.pwdEdit->setText("Qwer@1234");
-    view.clear();
-    EXPECT_TRUE(view.pwdEdit->text().isEmpty());
-}
-
 TEST(UT_VaultRemoveByPasswordView, showAlertMessage)
 {
     stub_ext::StubExt stub;

@@ -98,6 +98,11 @@ public:
     bool savePasswordToKeyring(const QString &password);
     QString passwordFromKeyring();
 
+    void removeVault(const QString &basePath);
+
+Q_SIGNALS:
+    void fileRemovedProgress(int value);
+
 private:
     explicit OperatorCenter(QObject *parent = nullptr);
     // 组织保险箱本地文件路径
@@ -106,6 +111,8 @@ private:
     bool executeProcess(const QString &cmd);
     // 保存第二次加密后的密文,并更新保险箱版本信息
     bool secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt, const char *vaultVersion);
+    bool statisticsFilesInDir(const QString &dirPath, int *filesCount);
+    void removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount);
 
 public:
     /*!

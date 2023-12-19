@@ -206,6 +206,17 @@ inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
 inline constexpr char kAppSessionService[] { "com.deepin.SessionManager" };
 inline constexpr char kAppSessionPath[] { "/com/deepin/SessionManager" };
 #endif
+
+enum RemoveWidgetType : int {
+    kPasswordWidget = 0,
+    kRecoveryKeyWidget = 1,
+    kRemoveProgressWidget = 2,
+    kTpmPinWidget = 3,
+    kNoneWidget = 4,
+
+    kUserRemoveWidgetType = 100
+};
+
 }
 
 #endif   // DFMPLUGIN_VAULT_GLOBAL_H

@@ -131,6 +131,7 @@ TEST(UT_VaultAutoLock, processAutoLock_two)
     });
     stub.set_lamda(&VaultHelper::lockVault, [ &isOk ]{
         isOk = true;
+        return true;
     });
 
     VaultAutoLock::instance()->autoLockState = VaultAutoLock::kFiveMinutes;
@@ -176,6 +177,7 @@ TEST(UT_VaultAutoLock, processLockEvent)
     stub_ext::StubExt stub;
     stub.set_lamda(&VaultHelper::lockVault, [ &isOk ]{
         isOk = true;
+        return true;
     });
 
     VaultAutoLock::instance()->processLockEvent();

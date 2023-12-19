@@ -253,7 +253,7 @@ DMenu *VaultHelper::createMenu()
             menu->addSeparator();
         }
 
-        menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
+        menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::showRemoveVaultDialog);
 
         menu->addAction(QObject::tr("Properties"), []() {
             VaultEventCaller::sendVaultProperty(VaultHelper::instance()->rootUrl());
@@ -322,14 +322,14 @@ bool VaultHelper::unlockVault(const QString &password)
     return FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
-void VaultHelper::lockVault(bool isForced)
+bool VaultHelper::lockVault(bool isForced)
 {
     static bool flg = true;
     if (flg) {
         connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, VaultHelper::instance(), &VaultHelper::slotlockVault);
         flg = false;
     }
-    FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath(), isForced);
+    return FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath(), isForced);
 }
 
 void VaultHelper::createVaultDialog()
@@ -368,10 +368,19 @@ void VaultHelper::unlockVaultDialog()
     }
 }
 
-void VaultHelper::removeVaultDialog()
+void VaultHelper::showRemoveVaultDialog()
 {
-    VaultPageBase *page = new VaultRemovePages();
-    page->exec();
+    VaultConfig config;
+    QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+    if (kConfigValueMethodKey == encryptionMethod || kConfigKeyNotExist == encryptionMethod) {
+        VaultRemovePages *page = new VaultRemovePages(qApp->activeWindow());
+        page->pageSelect(kPasswordWidget);
+        page->exec();
+    } else if (kConfigValueMethodTransparent == encryptionMethod) {
+        VaultRemovePages *page = new VaultRemovePages(qApp->activeWindow());
+        page->pageSelect(kNoneWidget);
+        page->exec();
+    }
 }
 
 void VaultHelper::openWindow()

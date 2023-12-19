@@ -9,8 +9,6 @@
 
 #include "vaultpagebase.h"
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
-
 class QStackedWidget;
 
 namespace dfmplugin_vault {
@@ -18,47 +16,36 @@ namespace dfmplugin_vault {
 class VaultRemoveProgressView;
 class VaultRemoveByRecoverykeyView;
 class VaultRemoveByPasswordView;
+class VaultRemoveByNoneWidget;
 
-class VaultRemovePages : public VaultPageBase
+class VaultRemovePages : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
     explicit VaultRemovePages(QWidget *parent = nullptr);
     ~VaultRemovePages() override {}
 
-public slots:
-    void onButtonClicked(int index);
-
-    void onLockVault(int state);
-
-    void onVaultRemoveFinish(bool result);
-
-private slots:
-    //! 异步授权时，此函数接收授权完成的结果
-    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
-
-private:
-    void initConnect();
-
-    void showVerifyWidget();
-
-    void showRemoveWidget();
-
-    void setInfo(const QString &hintInfo);
+public Q_SLOTS:
+    void pageSelect(RemoveWidgetType type);
+    void onButtonClicked(int index, const QString &text);
+    void setBtnEnable(int index, bool enable);
 
 protected:
-    virtual void closeEvent(QCloseEvent *event) override;
     virtual void showEvent(QShowEvent *event) override;
 
 private:
-    VaultRemoveByPasswordView *passwordView { nullptr };
-    VaultRemoveByRecoverykeyView *recoverykeyView { nullptr };
-    VaultRemoveProgressView *progressView { nullptr };
+    void initUI();
+    void initConnect();
+    void showPasswordWidget();
+    void showRecoveryKeyWidget();
+    void showRemoveProgressWidget();
+    void showNodeWidget();
 
-    QStackedWidget *stackedWidget { nullptr };   //用于页面切换
+    VaultRemoveByPasswordView *passwordView { Q_NULLPTR };
+    VaultRemoveByRecoverykeyView *recoverykeyView { Q_NULLPTR };
+    VaultRemoveProgressView *progressView { Q_NULLPTR };
+    VaultRemoveByNoneWidget *noneWidget { Q_NULLPTR };
     bool removeVault { false };
-
-    QLabel *hintInfo { nullptr };
 };
 }
 #endif   // VAULTREMOVEPAGES_H
