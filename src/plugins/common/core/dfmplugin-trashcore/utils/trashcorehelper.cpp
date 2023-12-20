@@ -45,9 +45,13 @@ std::pair<qint64, int> TrashCoreHelper::calculateTrashRoot()
 {
     qint64 size = 0;
     int count = 0;
+    QList<QUrl> files;
     DFMIO::DEnumerator enumerator(FileUtils::trashRootUrl());
     while (enumerator.hasNext()) {
         const QUrl &urlNext = enumerator.next();
+        if (files.contains(FileUtils::bindUrlTransform(urlNext)))
+            continue;
+        files << FileUtils::bindUrlTransform(urlNext);
         ++count;
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(urlNext);
         if (!fileInfo)
