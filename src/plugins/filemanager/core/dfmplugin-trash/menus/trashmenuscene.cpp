@@ -276,8 +276,11 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
 
             if (actId == TrashActionId::kRestore
                 || actId == dfmplugin_menu::ActionID::kDelete
-                || actId == dfmplugin_menu::ActionID::kCut)
-                act->setEnabled(FileUtils::isTrashRootFile(curDir));
+                || actId == dfmplugin_menu::ActionID::kCut) {
+                // 这还应该判断当前文件的父目录
+                auto fileurl = focusFileInfo->urlOf(UrlInfoType::kParentUrl);
+                act->setEnabled(FileUtils::isTrashRootFile(curDir) || FileUtils::isTrashRootFile(fileurl));
+            }
 
             if (actId == TrashActionId::kRestore)
                 actionRestore = act;
