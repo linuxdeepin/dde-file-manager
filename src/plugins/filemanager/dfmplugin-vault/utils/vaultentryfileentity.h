@@ -7,30 +7,31 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <dfm-base/interfaces/abstractentryfileentity.h>
-#include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/utils/filestatisticsjob.h>
+#include <dfm-base/interfaces/abstractentryfileentity.h>
 
+// NOTE: the namespaceand classname cannot rename,
+// it's as a reflectionb object
 namespace dfmplugin_vault {
-class VaultEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
+class VaultEntryFileEntity : public QObject
 {
     Q_OBJECT
 public:
-    explicit VaultEntryFileEntity(const QUrl &url);
-    virtual ~VaultEntryFileEntity() override;
+    Q_INVOKABLE explicit VaultEntryFileEntity(QObject *parent = nullptr);
+    Q_INVOKABLE ~VaultEntryFileEntity() override;
 
-    virtual QString displayName() const override;
-    virtual QIcon icon() const override;
-    virtual bool exists() const override;
+    Q_INVOKABLE QString displayName() const;
+    Q_INVOKABLE QIcon icon() const;
+    Q_INVOKABLE bool exists() const;
 
-    virtual bool showProgress() const override;
-    virtual bool showTotalSize() const override;
-    virtual bool showUsageSize() const override;
-    virtual DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder order() const override;
+    Q_INVOKABLE bool showProgress() const;
+    Q_INVOKABLE bool showTotalSize() const;
+    Q_INVOKABLE bool showUsageSize() const;
+    Q_INVOKABLE DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder order() const;
 
-    virtual void refresh() override;
-    virtual quint64 sizeTotal() const override;
-    virtual QUrl targetUrl() const override;
+    Q_INVOKABLE void refresh();
+    Q_INVOKABLE quint64 sizeTotal() const;
+    Q_INVOKABLE QUrl targetUrl() const;
 
 public slots:
     void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);

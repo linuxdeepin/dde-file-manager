@@ -127,7 +127,6 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();
-    handleComputerItemVisible();
     DListView::showEvent(event);
 }
 

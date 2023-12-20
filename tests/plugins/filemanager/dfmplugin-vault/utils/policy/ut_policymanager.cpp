@@ -17,11 +17,11 @@ DPVAULT_USE_NAMESPACE
 TEST(UT_PolicyManager, getVaultPolicy)
 {
     stub_ext::StubExt stub;
-    typedef bool(QDBusConnection::*FuncType)(const QString &, const QString &, const QString &, const QString &, QObject *, const char *);
-    stub.set_lamda(static_cast<FuncType>(&QDBusConnection::connect), []{
+    typedef bool (QDBusConnection::*FuncType)(const QString &, const QString &, const QString &, const QString &, QObject *, const char *);
+    stub.set_lamda(static_cast<FuncType>(&QDBusConnection::connect), [] {
         return true;
     });
-    stub.set_lamda(&VaultDBusUtils::getVaultPolicy, []{
+    stub.set_lamda(&VaultDBusUtils::getVaultPolicy, [] {
         return VaultPolicyState::kNotEnable;
     });
 
@@ -33,7 +33,7 @@ TEST(UT_PolicyManager, getVaultPolicy)
 TEST(UT_PolicyManager, setVaultPolicyState)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&VaultDBusUtils::setVaultPolicyState, []{
+    stub.set_lamda(&VaultDBusUtils::setVaultPolicyState, [] {
         return true;
     });
 
@@ -66,10 +66,10 @@ TEST(UT_PolicyManager, isVaultVisiable)
 TEST(UT_PolicyManager, slotVaultPolicy_one)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::getVaultPolicy, []{
+    stub.set_lamda(&PolicyManager::getVaultPolicy, [] {
         return VaultPolicyState::kNotEnable;
     });
-    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, []{
+    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, [] {
         return PolicyManager::VaultPageMark::kUnknown;
     });
 
@@ -81,14 +81,14 @@ TEST(UT_PolicyManager, slotVaultPolicy_one)
 TEST(UT_PolicyManager, slotVaultPolicy_two)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::getVaultPolicy, []{
+    stub.set_lamda(&PolicyManager::getVaultPolicy, [] {
         return VaultPolicyState::kNotEnable;
     });
-    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, []{
+    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, [] {
         return PolicyManager::VaultPageMark::kClipboardPage;
     });
-    stub.set_lamda(&VaultVisibleManager::removeSideBarVaultItem, []{});
-    stub.set_lamda(&VaultVisibleManager::removeComputerVaultItem, []{});
+    stub.set_lamda(&VaultVisibleManager::removeSideBarVaultItem, [] {});
+    stub.set_lamda(&VaultVisibleManager::removeComputerVaultItem, [] {});
 
     PolicyManager::instance()->vaultVisiable = true;
     PolicyManager::instance()->slotVaultPolicy();
@@ -99,17 +99,16 @@ TEST(UT_PolicyManager, slotVaultPolicy_two)
 TEST(UT_PolicyManager, slotVaultPolicy_three)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::getVaultPolicy, []{
+    stub.set_lamda(&PolicyManager::getVaultPolicy, [] {
         return VaultPolicyState::kNotEnable;
     });
-    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, []{
+    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, [] {
         return PolicyManager::VaultPageMark::kCopyFilePage;
     });
-    stub.set_lamda(&VaultHelper::lockVault, []{
-        return true;
-    });
-    stub.set_lamda(&VaultVisibleManager::removeSideBarVaultItem, []{});
-    stub.set_lamda(&VaultVisibleManager::removeComputerVaultItem, []{});
+
+    stub.set_lamda(&VaultHelper::lockVault, [] { return true; });
+    stub.set_lamda(&VaultVisibleManager::removeSideBarVaultItem, [] {});
+    stub.set_lamda(&VaultVisibleManager::removeComputerVaultItem, [] {});
 
     PolicyManager::instance()->vaultVisiable = true;
     PolicyManager::instance()->slotVaultPolicy();
@@ -122,13 +121,13 @@ TEST(UT_PolicyManager, slotVaultPolicy_four)
     bool isOk { false };
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::getVaultPolicy, []{
+    stub.set_lamda(&PolicyManager::getVaultPolicy, [] {
         return VaultPolicyState::kNotEnable;
     });
-    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, []{
+    stub.set_lamda(&PolicyManager::getVaultCurrentPageMark, [] {
         return PolicyManager::VaultPageMark::kCreateVaultPage1;
     });
-    stub.set_lamda(&PolicyManager::setVaultPolicyState, [ &isOk ]{
+    stub.set_lamda(&PolicyManager::setVaultPolicyState, [&isOk] {
         isOk = true;
         return true;
     });
@@ -141,13 +140,12 @@ TEST(UT_PolicyManager, slotVaultPolicy_four)
 TEST(UT_PolicyManager, slotVaultPolicy_five)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::getVaultPolicy, []{
+    stub.set_lamda(&PolicyManager::getVaultPolicy, [] {
         return VaultPolicyState::kEnable;
     });
-    stub.set_lamda(&VaultVisibleManager::infoRegister, []{});
-    stub.set_lamda(&VaultVisibleManager::pluginServiceRegister, []{});
-    stub.set_lamda(&VaultVisibleManager::updateSideBarVaultItem, []{});
-    stub.set_lamda(&VaultVisibleManager::addComputer, []{});
+    stub.set_lamda(&VaultVisibleManager::infoRegister, [] {});
+    stub.set_lamda(&VaultVisibleManager::pluginServiceRegister, [] {});
+    stub.set_lamda(&VaultVisibleManager::updateSideBarVaultItem, [] {});
 
     PolicyManager::instance()->vaultVisiable = false;
     PolicyManager::instance()->slotVaultPolicy();
@@ -158,7 +156,7 @@ TEST(UT_PolicyManager, slotVaultPolicy_five)
 TEST(UT_PolicyManager, slotVaultPolicy_six)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::getVaultPolicy, []{
+    stub.set_lamda(&PolicyManager::getVaultPolicy, [] {
         return VaultPolicyState::kUnkonw;
     });
 

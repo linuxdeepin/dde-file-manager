@@ -23,7 +23,7 @@ DFMBASE_USE_NAMESPACE
 TEST(UT_VaultVisibleManager, isVaultEnabled)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::isVaultVisiable, []{
+    stub.set_lamda(&PolicyManager::isVaultVisiable, [] {
         return true;
     });
 
@@ -35,8 +35,8 @@ TEST(UT_VaultVisibleManager, isVaultEnabled)
 TEST(UT_VaultVisibleManager, infoRegister)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&PolicyManager::slotVaultPolicy, []{});
-    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, []{
+    stub.set_lamda(&PolicyManager::slotVaultPolicy, [] {});
+    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, [] {
         return true;
     });
 
@@ -51,7 +51,7 @@ TEST(UT_VaultVisibleManager, pluginServiceRegister_one)
     bool isOk { false };
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, [ &isOk ]{
+    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, [&isOk] {
         isOk = true;
         return false;
     });
@@ -66,7 +66,7 @@ TEST(UT_VaultVisibleManager, pluginServiceRegister_two)
     bool isOk { false };
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, [ &isOk ]{
+    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, [&isOk] {
         isOk = true;
         return true;
     });
@@ -81,11 +81,11 @@ TEST(UT_VaultVisibleManager, addSideBarVaultItem)
     bool isOk { false };
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, []{
+    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, [] {
         return true;
     });
-    typedef QVariant(EventChannelManager::*FuncType)(const QString &, const QString &, int, QUrl &&, QVariantMap &);
-    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [ &isOk ]{
+    typedef QVariant (EventChannelManager::*FuncType)(const QString &, const QString &, int, QUrl &&, QVariantMap &);
+    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [&isOk] {
         isOk = true;
         return QVariant();
     });
@@ -96,31 +96,12 @@ TEST(UT_VaultVisibleManager, addSideBarVaultItem)
     EXPECT_TRUE(isOk);
 }
 
-TEST(UT_VaultVisibleManager, addComputer)
-{
-    bool isOk { false };
-
-    stub_ext::StubExt stub;
-    stub.set_lamda(&VaultVisibleManager::isVaultEnabled, []{
-        return true;
-    });
-    typedef QVariant(EventChannelManager::*FuncType)(const QString &, const QString &, QString, QUrl &&, int &&, bool &&);
-    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [ &isOk ]{
-        isOk = true;
-        return QVariant();
-    });
-
-    VaultVisibleManager::instance()->addComputer();
-
-    EXPECT_TRUE(isOk);
-}
-
 TEST(UT_VaultVisibleManager, onWindowOpened_one)
 {
     bool isOk { false };
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&FileManagerWindowsManager::findWindowById, [ &isOk ]{
+    stub.set_lamda(&FileManagerWindowsManager::findWindowById, [&isOk] {
         isOk = true;
         return nullptr;
     });
@@ -136,12 +117,11 @@ TEST(UT_VaultVisibleManager, onWindowOpened_two)
     FileManagerWindow window(QUrl("file:///UT_TEST"));
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&FileManagerWindowsManager::findWindowById, [ &window ]{
+    stub.set_lamda(&FileManagerWindowsManager::findWindowById, [&window] {
         return &window;
     });
-    stub.set_lamda(&VaultVisibleManager::updateSideBarVaultItem, []{});
-    stub.set_lamda(&VaultVisibleManager::addComputer, []{});
-    stub.set_lamda(&VaultEventCaller::sendBookMarkDisabled, [ &isOk ]{
+    stub.set_lamda(&VaultVisibleManager::updateSideBarVaultItem, [] {});
+    stub.set_lamda(&VaultEventCaller::sendBookMarkDisabled, [&isOk] {
         isOk = true;
     });
 
@@ -155,8 +135,8 @@ TEST(UT_VaultVisibleManager, removeSideBarVaultItem)
     bool isOk { false };
 
     stub_ext::StubExt stub;
-    typedef QVariant(EventChannelManager::*FuncType)(const QString &, const QString &, QUrl);
-    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [ &isOk ]{
+    typedef QVariant (EventChannelManager::*FuncType)(const QString &, const QString &, QUrl);
+    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [&isOk] {
         isOk = true;
         return QVariant();
     });
@@ -171,27 +151,13 @@ TEST(UT_VaultVisibleManager, removeComputerVaultItem)
     bool isOk { false };
 
     stub_ext::StubExt stub;
-    typedef QVariant(EventChannelManager::*FuncType)(const QString &, const QString &, QUrl);
-    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [ &isOk ]{
+    typedef QVariant (EventChannelManager::*FuncType)(const QString &, const QString &, QUrl);
+    stub.set_lamda(static_cast<FuncType>(&EventChannelManager::push), [&isOk] {
         isOk = true;
         return QVariant();
     });
 
     VaultVisibleManager::instance()->removeComputerVaultItem();
-
-    EXPECT_TRUE(isOk);
-}
-
-TEST(UT_VaultVisibleManager, onComputerRefresh)
-{
-    bool isOk { false };
-
-    stub_ext::StubExt stub;
-    stub.set_lamda(&VaultVisibleManager::addComputer, [ &isOk ]{
-        isOk = true;
-    });
-
-    VaultVisibleManager::instance()->onComputerRefresh();
 
     EXPECT_TRUE(isOk);
 }

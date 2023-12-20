@@ -63,7 +63,6 @@ void VaultVisibleManager::infoRegister()
         InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());
         WatcherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme(), WatcherFactory::kNoCache);
         DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
-        EntryEntityFactor::registCreator<VaultEntryFileEntity>("vault");
         infoRegisterState = true;
     }
 }
@@ -104,8 +103,6 @@ void VaultVisibleManager::pluginServiceRegister()
                 },
                 Qt::DirectConnection);
     }
-    dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_View_Refreshed",
-                                   VaultVisibleManager::instance(), &VaultVisibleManager::onComputerRefresh);
 }
 
 void VaultVisibleManager::addVaultComputerMenu()
@@ -115,14 +112,6 @@ void VaultVisibleManager::addVaultComputerMenu()
     if (!ok)
         fmCritical() << "Vault: add vault computer menu failed";
     dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
-}
-
-void VaultVisibleManager::addVaultComputerItem()
-{
-    static std::once_flag flag;
-    std::call_once(flag, [this]() {
-        addComputer();
-    });
 }
 
 void VaultVisibleManager::updateSideBarVaultItem()
@@ -148,13 +137,6 @@ void VaultVisibleManager::updateSideBarVaultItem()
     });
 }
 
-void VaultVisibleManager::addComputer()
-{
-    if (isVaultEnabled()) {
-        dpfSlotChannel->push("dfmplugin_computer", "slot_Item_Add", tr("Vault"), QUrl("entry:///vault.vault"), 0, false);
-    }
-}
-
 void VaultVisibleManager::onWindowOpened(quint64 winID)
 {
     auto window = FMWindowsIns.findWindowById(winID);
@@ -167,11 +149,6 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
     else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, &VaultVisibleManager::updateSideBarVaultItem, Qt::DirectConnection);
 
-    if (window->workSpace())
-        addVaultComputerItem();
-    else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &VaultVisibleManager::addVaultComputerItem, Qt::DirectConnection);
-
     VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
 }
 
@@ -183,11 +160,6 @@ void VaultVisibleManager::removeSideBarVaultItem()
 void VaultVisibleManager::removeComputerVaultItem()
 {
     dpfSlotChannel->push("dfmplugin_computer", "slot_Item_Remove", QUrl("entry:///vault.vault"));
-}
-
-void VaultVisibleManager::onComputerRefresh()
-{
-    addComputer();
 }
 
 VaultVisibleManager *VaultVisibleManager::instance()

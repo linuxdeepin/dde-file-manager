@@ -6,6 +6,7 @@
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
 #include "fileentity/appentryfileentity.h"
+#include "fileentity/commonentryfileentity.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/configs/configsynchronizer.h>
@@ -79,9 +80,11 @@ ComputerDataList ComputerItemWatcher::items()
     ret.push_back(getGroup(kGroupDisks));
     int diskStartPos = ret.count();
 
-    ret.append(getBlockDeviceItems(hasInsertNewDisk));
-    ret.append(getProtocolDeviceItems(hasInsertNewDisk));
-    ret.append(getAppEntryItems(hasInsertNewDisk));
+    ret.append(getBlockDeviceItems(&hasInsertNewDisk));
+    ret.append(getProtocolDeviceItems(&hasInsertNewDisk));
+    ret.append(getAppEntryItems(&hasInsertNewDisk));
+    // 性能优化，读取插件配置，在插件被加载前预先绘制出插件在计算机的图标和名称
+    ret.append(getPreDefineItems());
 
     std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
 
@@ -179,7 +182,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
     return ret;
 }
 
-ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
+ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool *hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
@@ -201,7 +204,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         data.info = info;
         data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
-        hasNewItem = true;
+        *hasNewItem = true;
 
         if (info->targetUrl().isValid())
             insertUrlMapper(dev, info->targetUrl());
@@ -214,7 +217,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
     return ret;
 }
 
-ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
+ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool *hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
@@ -240,7 +243,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         data.info = info;
         data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
-        hasNewItem = true;
+        *hasNewItem = true;
 
         sidebarInfos.insert(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
     }
@@ -250,7 +253,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
     return ret;
 }
 
-ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
+ComputerDataList ComputerItemWatcher::getAppEntryItems(bool *hasNewItem)
 {
     static const QString appEntryPath = StandardPaths::location(StandardPaths::kExtensionsAppEntryPath);
     QDir appEntryDir(appEntryPath);
@@ -282,8 +285,52 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
         data.info = info;
         data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
-        hasNewItem = true;
+        *hasNewItem = true;
     }
+
+    return ret;
+}
+
+ComputerDataList ComputerItemWatcher::getPreDefineItems()
+{
+    ComputerDataList ret;
+    const auto &list { ComputerUtils::allPreDefineItemCustomDatas() };
+
+    std::for_each(list.begin(), list.end(), [&ret, this](const QVariantMap &map) {
+        const auto &entryUrl { map.value("Url").toUrl() };
+        if (!entryUrl.isValid()) {
+            qWarning() << "Cannot parse predefine data, invalid url" << entryUrl;
+            return;
+        }
+
+        // 如果预定义的 item 并不在默认的组中，那么需要添加该组
+        int groupID { -1 };
+        if (map.contains("GroupType"))
+            groupID = map.value("GroupType").toInt();
+        if (map.contains("GroupName")) {
+            const QString &groupName { QObject::tr(qPrintable(map.value("GroupName").toString())) };
+            ret.push_back(getGroup(ComputerItemWatcher::kOthers, groupName));
+            groupID = getGroupId(groupName);
+        }
+        if (groupID == -1) {
+            qWarning() << "The predefine data is not contain group: " << entryUrl;
+            return;
+        }
+
+        if (!map.contains("Shape")) {
+            qWarning() << "The predefine data is not contain shape: " << entryUrl;
+            return;
+        }
+        computerInfos.insert(entryUrl, map);
+        DFMEntryFileInfoPointer info { new EntryFileInfo(entryUrl) };
+        ComputerItemData data;
+        data.url = entryUrl;
+        data.shape = static_cast<ComputerItemData::ShapeType>(map.value("Shape").toInt());
+        data.info = info;
+        data.groupId = groupID;
+        data.itemName = info->displayName();
+        ret.append(data);
+    });
 
     return ret;
 }
@@ -293,16 +340,20 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
  * \param type
  * \return
  */
-ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType type)
+ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType type, const QString &defaultName)
 {
     ComputerItemData splitter;
     splitter.shape = ComputerItemData::kSplitterItem;
+
     switch (type) {
     case kGroupDirs:
         splitter.itemName = userDirGroup();
         break;
     case kGroupDisks:
         splitter.itemName = diskGroup();
+        break;
+    default:
+        splitter.itemName = defaultName;
         break;
     }
 
@@ -461,6 +512,11 @@ QString ComputerItemWatcher::reportName(const QUrl &url)
     //        }
     //    }
     return "unknow disk";
+}
+
+QHash<QUrl, QVariantMap> ComputerItemWatcher::getComputerInfos() const
+{
+    return computerInfos;
 }
 
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
