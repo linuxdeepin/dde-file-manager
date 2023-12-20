@@ -14,9 +14,6 @@ class VaultPageBase : public DTK_WIDGET_NAMESPACE::DDialog
     Q_OBJECT
 public:
     explicit VaultPageBase(QWidget *parent = nullptr);
-
-protected:
-    QWidget *wndptr { nullptr };   //! current window pointer.
 };
 }
 #endif   //VAULTPAGEBASE_H
