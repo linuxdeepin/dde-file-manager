@@ -11,8 +11,8 @@
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
-VaultEntryFileEntity::VaultEntryFileEntity(const QUrl &url)
-    : AbstractEntryFileEntity(url)
+VaultEntryFileEntity::VaultEntryFileEntity(QObject *parent)
+    : QObject(parent)
 {
     fileCalculationUtils = new FileStatisticsJob;
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &VaultEntryFileEntity::slotFileDirSizeChange);

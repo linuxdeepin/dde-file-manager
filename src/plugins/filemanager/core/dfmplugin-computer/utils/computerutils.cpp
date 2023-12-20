@@ -242,6 +242,32 @@ QList<QUrl> ComputerUtils::blkDevUrlByUUIDs(const QStringList &uuids)
     return ret;
 }
 
+/*!
+ * \brief 解析所有插件的配置文件，获取插件配置的计算机预定义数据，用于界面的预显示
+ * \return
+ */
+QList<QVariantMap> ComputerUtils::allPreDefineItemCustomDatas()
+{
+    DPF_USE_NAMESPACE
+    QList<QVariantMap> list;
+    LifeCycle::pluginMetaObjs([&list](PluginMetaObjectPointer ptr) {
+        Q_ASSERT(ptr);
+        const auto &data { ptr->customData() };
+        if (data.isEmpty())
+            return false;
+        const auto &array { ptr->customData().value("ComputerDisplay").toJsonArray() };
+        if (array.isEmpty())
+            return false;
+        for (int i = 0; i != array.count(); ++i) {
+            const auto &obj { array.at(i).toObject() };
+            list.append(obj.toVariantMap());
+        }
+        return true;
+    });
+
+    return list;
+}
+
 QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
 {
     DFMBASE_USE_NAMESPACE

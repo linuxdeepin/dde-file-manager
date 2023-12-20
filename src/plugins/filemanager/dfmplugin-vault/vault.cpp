@@ -5,8 +5,10 @@
 #include "vault.h"
 #include "utils/vaultvisiblemanager.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultentryfileentity.h"
 #include "events/vaulteventreceiver.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QUrl>
@@ -21,6 +23,8 @@ DFM_LOG_REISGER_CATEGORY(DPVAULT_NAMESPACE)
 
 void Vault::initialize()
 {
+    qRegisterMetaType<dfmplugin_vault::VaultEntryFileEntity *>();
+
     VaultVisibleManager::instance()->infoRegister();
     VaultEventReceiver::instance()->connectEvent();
     bindWindows();
@@ -28,6 +32,10 @@ void Vault::initialize()
 
 bool Vault::start()
 {
+    QString err;
+    if (!DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.vault", &err))
+        qWarning() << "Vault: create dconfig failed: " << err;
+
     VaultVisibleManager::instance()->pluginServiceRegister();
     return true;
 }

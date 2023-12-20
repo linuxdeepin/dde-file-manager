@@ -61,6 +61,7 @@ void Computer::initialize()
     UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
     InfoFactory::regClass<EntryFileInfo>(Global::Scheme::kEntry);
 
+    EntryEntityFactor::registCreator<CommonEntryFileEntity>(SuffixInfo::kCommon);
     EntryEntityFactor::registCreator<UserEntryFileEntity>(SuffixInfo::kUserDir);
     EntryEntityFactor::registCreator<BlockEntryFileEntity>(SuffixInfo::kBlock);
     EntryEntityFactor::registCreator<ProtocolEntryFileEntity>(SuffixInfo::kProtocol);
@@ -90,7 +91,10 @@ void Computer::onWindowOpened(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
+    // register to computer
     regComputerCrumbToTitleBar();
+
+    // init computer items
     if (window->workSpace())
         initComputerItems();
     else
@@ -105,6 +109,7 @@ void Computer::onWindowOpened(quint64 winId)
                 window, &FileManagerWindow::sideBarInstallFinished,
                 this, [this] { updateComputerToSidebar(); }, Qt::DirectConnection);
 
+    // register to search
     auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
     if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         regComputerToSearch();
@@ -118,6 +123,7 @@ void Computer::onWindowOpened(quint64 winId)
                 Qt::DirectConnection);
     }
 
+    // register to property
     CustomViewExtensionView func { ComputerUtils::devicePropertyDialog };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
                          func, QString(DFMBASE_NAMESPACE::Global::Scheme::kEntry));

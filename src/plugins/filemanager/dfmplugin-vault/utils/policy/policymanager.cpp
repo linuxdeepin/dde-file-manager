@@ -103,7 +103,6 @@ void PolicyManager::slotVaultPolicy()
             VaultVisibleManager::instance()->infoRegister();
             VaultVisibleManager::instance()->pluginServiceRegister();
             VaultVisibleManager::instance()->updateSideBarVaultItem();
-            VaultVisibleManager::instance()->addComputer();
         }
         break;
     default:

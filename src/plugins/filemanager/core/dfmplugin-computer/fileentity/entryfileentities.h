@@ -9,5 +9,6 @@
 #include "blockentryfileentity.h"
 #include "protocolentryfileentity.h"
 #include "userentryfileentity.h"
+#include "commonentryfileentity.h"
 
 #endif   // ENTRYFILEENTITIES_H
