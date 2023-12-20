@@ -418,7 +418,15 @@ bool FileUtils::isTrashFile(const QUrl &url)
 
 bool FileUtils::isTrashRootFile(const QUrl &url)
 {
-    return UniversalUtils::urlEquals(url, trashRootUrl());
+    if (UniversalUtils::urlEquals(url, trashRootUrl()))
+        return true;
+
+    if (UniversalUtils::urlEquals(url, QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashLocalFilesPath))))
+        return true;
+
+    const QString &rule = QString("/.Trash-%1/files").arg(getuid());
+
+    return url.toString().endsWith(rule);
 }
 
 bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
