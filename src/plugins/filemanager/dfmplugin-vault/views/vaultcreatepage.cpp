@@ -21,6 +21,8 @@
 #include <QMouseEvent>
 #include <QWindow>
 
+inline constexpr int kWidth { 472 };
+
 using namespace dfmplugin_vault;
 
 VaultActiveView::VaultActiveView(QWidget *parent)
@@ -59,6 +61,7 @@ VaultActiveView::VaultActiveView(QWidget *parent)
     stackedWidget->layout()->setMargin(0);
 
     this->addContent(stackedWidget);
+    setFixedWidth(kWidth);
 
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 }

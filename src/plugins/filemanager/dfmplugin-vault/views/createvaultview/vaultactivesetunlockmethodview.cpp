@@ -84,6 +84,7 @@ void VaultActiveSetUnlockMethodView::initUi()
 
     gridLayout = new QGridLayout();
     gridLayout->setMargin(0);
+    gridLayout->setVerticalSpacing(10);
 
     gridLayout->addWidget(pTypeLabel, 0, 0, 1, 1, Qt::AlignLeft);
     gridLayout->addWidget(typeCombo, 0, 1, 1, 5);
