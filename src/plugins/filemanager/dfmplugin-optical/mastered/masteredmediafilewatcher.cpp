@@ -113,11 +113,20 @@ void MasteredMediaFileWatcher::onFileRename(const QUrl &fromUrl, const QUrl &toU
 void MasteredMediaFileWatcher::onSubfileCreated(const QUrl &url)
 {
     if (!UniversalUtils::urlEquals(url, dptr->proxyStaging->url())) {
+        QFutureWatcher<bool> *fw { new QFutureWatcher<bool> };
         QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
-        if (OpticalHelper::isDupFileNameInPath(dptr->curMnt, realUrl)) {
-            fmWarning() << "Dup file: " << url;
-            return;
-        }
-        emit subfileCreated(realUrl);
+
+        // 一些光盘的数据访问可能非常缓慢，将阻塞主线程
+        fw->setFuture(QtConcurrent::run([this, realUrl]() {
+            return OpticalHelper::isDupFileNameInPath(dptr->curMnt, realUrl);
+        }));
+        connect(fw, &QFutureWatcher<void>::finished, this, [fw, realUrl, url, this]() {
+            bool ret { fw->result() };
+            if (ret)
+                fmWarning() << "Dup file: " << url;
+            else
+                emit subfileCreated(realUrl);
+            delete fw;
+        });
     }
 }
