@@ -154,7 +154,7 @@ void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
 {
     if (!fileInfo.isNull()) {
         ThumbnailHelper helper;
-        QUrl localUrl = fileInfo->urlOf(FileInfo::FileUrlInfoType::kRedirectedFileUrl);
+        QUrl localUrl = fileInfo->urlOf(FileInfo::FileUrlInfoType::kUrl);
         if (helper.checkThumbEnable(localUrl)) {
             QImage img = helper.thumbnailImage(localUrl, ThumbnailSize::kLarge);
             if (!img.isNull()) {
