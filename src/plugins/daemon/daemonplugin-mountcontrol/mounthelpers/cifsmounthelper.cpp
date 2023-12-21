@@ -298,7 +298,7 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
         const QString &passwd = opts.value(kPasswd).toString();
         param += QString("user=%1,pass=%2,").arg(user).arg(decryptPasswd(passwd));
     } else {
-        param += "guest,user=nobody,";   // user is necessary even for anonymous mount
+        param += "user=,";   // user is necessary even for anonymous mount
     }
 
     if (opts.contains(kDomain) && !opts.value(kDomain).toString().isEmpty())
