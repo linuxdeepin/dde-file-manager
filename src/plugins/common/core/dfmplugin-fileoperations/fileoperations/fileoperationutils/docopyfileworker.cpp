@@ -172,6 +172,8 @@ bool DoCopyFileWorker::doDfmioFileCopy(FileInfoPointer fromInfo, FileInfoPointer
 
     workData->everyFileWriteSize.remove(fromUrl);
     delete data;
+    if (toInfo->exists())
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->urlOf(UrlInfoType::kUrl));
 
     return ret;
 }
