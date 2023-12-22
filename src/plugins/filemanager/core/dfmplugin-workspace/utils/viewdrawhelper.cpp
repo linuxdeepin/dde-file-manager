@@ -59,7 +59,7 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
             drawDragText(&painter, topIndex, rect.width() - 2 * kIconModeTextPadding - 2 * kIconModeColumuPadding - kIconModeBackRadius);
 
         return pixmap;
-    } else if (mode == ViewMode::kListMode) {
+    } else if (mode == ViewMode::kListMode || mode == ViewMode::kTreeMode) {
         dragIconSize = kDragIconSize;
         int pixmapSize = dragIconSize + kDragIconOutline * 2;
         int textLineHeight = view->fontMetrics().height();

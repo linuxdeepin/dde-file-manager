@@ -5,7 +5,8 @@
 #include "virtualreportlogplugin.h"
 #include "reportlogmanager.h"
 
-#include "dfm-base/base/application/application.h"
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QTimer>
 
@@ -25,7 +26,7 @@ bool VirtualReportLogPlugin::start()
         QVariantMap data;
         data.insert("type", true);
         if (qAppName() == "dde-file-manager")
-            data.insert("TreeViewModeEnabled", Application::instance()->appAttribute(Application::kListItemExpandable).toBool());
+            data.insert("TreeViewModeEnabled", DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool());
 
         ReportLogManager::instance()->commit("AppStartup", data);
     });

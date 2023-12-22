@@ -87,15 +87,6 @@ public:
     void setFilterData(const QUrl &url, const QVariant &data);
     void setFilterCallback(const QUrl &url, const FileViewFilterCallback callback);
 
-    inline void setViewModeToList()
-    {
-        setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
-    }
-    inline void setViewModeToIcon()
-    {
-        setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
-    }
-
     void setAlwaysOpenInCurrentWindow(bool openInCurrentWindow);
 
     BaseItemDelegate *itemDelegate() const;
@@ -145,8 +136,6 @@ public slots:
     DirOpenMode currentDirOpenMode() const;
 
     void onWidgetUpdate();
-
-    void onAppAttributeChanged(DFMBASE_NAMESPACE::Application::ApplicationAttribute aa, const QVariant &value);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -205,6 +194,7 @@ private:
     void updateSelectedUrl();
     void updateListHeaderView();
     void setDefaultViewMode();
+    void setListViewMode();
     QUrl parseSelectedUrl(const QUrl &url);
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);
@@ -220,6 +210,7 @@ private:
 
     bool isIconViewMode() const;
     bool isListViewMode() const;
+    bool isTreeViewMode() const;
 
     void resetSelectionModes();
     QList<SelectionMode> fetchSupportSelectionModes();

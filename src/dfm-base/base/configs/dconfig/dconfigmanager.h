@@ -14,7 +14,9 @@ DFMBASE_BEGIN_NAMESPACE
 
 inline constexpr char kDefaultCfgPath[] { "org.deepin.dde.file-manager" };
 inline constexpr char kPluginsDConfName[] { "org.deepin.dde.file-manager.plugins" };
+inline constexpr char kViewDConfName[] { "org.deepin.dde.file-manager.view" };
 inline constexpr char kKeyHideDisk[] { "dfm.disk.hidden" };
+inline constexpr char kTreeViewEnable[] { "dfm.treeview.enable" };
 
 class DConfigManagerPrivate;
 class DConfigManager : public QObject

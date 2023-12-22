@@ -1,0 +1,18 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "dfm.treeview.enable": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Tree view enabled",
+            "name[zh_CN]":"启用树形视图模式",
+            "description[zh_CN]":"用于判断是否允许在视图中切换树形视图模式",
+            "description":"Used to determine if the view support tree view mode",
+            "permissions":"readwrite",
+            "visibility":"private"
+        }
+    }
+}
+
