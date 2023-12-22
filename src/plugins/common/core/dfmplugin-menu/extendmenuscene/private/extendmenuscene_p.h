@@ -20,7 +20,8 @@ public:
     QList<QAction *> childActions(QAction *action);
     int mayComboPostion(const DCustomActionData &acdata, DCustomActionDefines::ComboType combo);
     void getSubMenus(QMenu *currMenu, const QString &parentMenuName, QMap<QString, QMenu *> &subMenus);
-    bool insertIntoExistedMenu(QAction *act, const QMap<QString, QMenu *> &menus);
+    bool insertIntoExistedSubActions(QAction *act, QMap<QString, QList<QAction *> > &extSubActMap);
+    void mergeSubActions(const QMap<QString, QList<QAction *>> &extSubActMap, const QMap<QString, QMenu *> &subMenus);
 
 public:
     DCustomActionParser *customParser = nullptr;

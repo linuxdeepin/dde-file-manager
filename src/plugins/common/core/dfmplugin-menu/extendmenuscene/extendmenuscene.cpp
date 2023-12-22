@@ -85,55 +85,76 @@ void ExtendMenuScenePrivate::getSubMenus(QMenu *currMenu, const QString &parentM
     }
 }
 
-bool ExtendMenuScenePrivate::insertIntoExistedMenu(QAction *action, const QMap<QString, QMenu *> &menus)
+bool ExtendMenuScenePrivate::insertIntoExistedSubActions(QAction *action, QMap<QString, QList<QAction *>> &extSubActMap)
 {
     QString parentPath = action->property(DCustomActionDefines::kConfParentMenuPath).toString();
 
-    bool foundParent = !parentPath.isEmpty() && menus.contains(parentPath);
+    bool foundParent = !parentPath.isEmpty() && extSubActMap.contains(parentPath);
     if (!foundParent)
         return false;
 
-    QMenu *menu = menus.value(parentPath);
-    auto subActions = menu->actions();
-    std::for_each(subActions.cbegin(), subActions.cend(), [menu](QAction *act) {
-        menu->removeAction(act);
-    });
-
+    auto subActions = extSubActMap.value(parentPath);
     bool hasPos = false;
     int pos = action->property(kActionPosInMenu).toInt(&hasPos);
     if (!hasPos)
         pos = -1;
 
     int actPos = -1;
-    if (pos < 0 || pos >= subActions.count()) {
+    if (pos < 0 || subActions.isEmpty()) {
         actPos = subActions.count();
         subActions.append(action);
     } else {
-        actPos = pos;
-        subActions.insert(pos, action);
+        auto iter = std::find_if(subActions.begin(), subActions.end(), [actPos](const QAction *act) {
+            bool ok = false;
+            int p = act->property(kActionPosInMenu).toInt(&ok);
+            return !ok || p > actPos;
+        });
+
+        if (iter == subActions.end()) {
+            actPos = subActions.count();
+            subActions.append(action);
+        } else {
+            subActions.insert(iter, action);
+            actPos = subActions.indexOf(action);
+        }
     }
 
     auto separatPos = cacheActionsSeparator.value(action, DCustomActionDefines::kNone);
     if (separatPos & DCustomActionDefines::kTop) {
-        QAction *separator = new QAction(menu);
+        QAction *separator = new QAction;
         separator->setSeparator(true);
         subActions.insert(actPos, separator);
         actPos++;   // separator inserted before action, the pos grows.
     }
     if (separatPos & DCustomActionDefines::kBottom) {
-        QAction *separator = new QAction(menu);
+        QAction *separator = new QAction;
         separator->setSeparator(true);
         subActions.insert(actPos + 1, separator);
     }
 
     cacheActionsSeparator.remove(action);
-
-    menu->addActions(subActions);
-    auto holdingAct = menu->menuAction();
-    if (holdingAct)
-        holdingAct->setVisible(true);
+    extSubActMap.insert(parentPath, subActions);
 
     return true;
+}
+
+void ExtendMenuScenePrivate::mergeSubActions(const QMap<QString, QList<QAction *>> &extSubActMap, const QMap<QString, QMenu *> &subMenus)
+{
+    for (const auto &key : subMenus.keys()) {
+        if (extSubActMap.value(key).isEmpty())
+            continue;
+
+        auto menu = subMenus.value(key);
+        auto subActions = menu->actions();
+        auto extSubActs = extSubActMap.value(key);
+
+        // merge
+        extSubActs.append(subActions);
+        menu->addActions(extSubActs);
+        auto holdingAct = menu->menuAction();
+        if (holdingAct)
+            holdingAct->setVisible(true);
+    }
 }
 
 ExtendMenuScene::ExtendMenuScene(DCustomActionParser *parser, QObject *parent)
@@ -292,8 +313,12 @@ void ExtendMenuScene::updateState(QMenu *parent)
         parent->removeAction(*it);
     Q_ASSERT(parent->actions().isEmpty());
 
+    QMap<QString, QList<QAction *>> extendSubActions;
+    for (auto key : existedMenus.keys())
+        extendSubActions.insert(key, {});
+
     for (auto action : d->extendActions) {
-        bool handled = d->insertIntoExistedMenu(action, existedMenus);
+        bool handled = d->insertIntoExistedSubActions(action, extendSubActions);
 
         bool hasPos = false;
         for (auto pos : d->cacheLocateActions.keys()) {
@@ -315,6 +340,9 @@ void ExtendMenuScene::updateState(QMenu *parent)
         // 未配置位置的项，追加到已有菜单项之后
         systemActions << action;
     }
+
+    // 将配置菜单合并到子菜单项的前面
+    d->mergeSubActions(extendSubActions, existedMenus);
 
     //开始按顺序插入菜单
     DCustomActionDefines::sortFunc(
