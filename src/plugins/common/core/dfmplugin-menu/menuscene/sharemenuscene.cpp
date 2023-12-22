@@ -58,11 +58,6 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
     if (d->selectFiles.isEmpty())
         return false;
 
-    // create menu by focus fileinfo
-    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile);
-    if (d->focusFileInfo && d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
-        d->folderSelected = true;
-
     return AbstractMenuScene::initialize(params);
 }
 
@@ -81,7 +76,6 @@ bool ShareMenuScene::create(QMenu *parent)
             d->predicateAction[ActionID::kShare] = shareAct;
 
             QMenu *shareMenu = new QMenu(parent);
-            d->addSubActions(shareMenu);
             shareAct->setMenu(shareMenu);
 
             if (shareMenu->actions().isEmpty())
@@ -98,15 +92,6 @@ void ShareMenuScene::updateState(QMenu *parent)
 
 bool ShareMenuScene::triggered(QAction *action)
 {
-    if (!action)
-        return false;
-
-    if (!d->predicateAction.key(action).isEmpty()) {
-        d->handleActionTriggered(action);
-
-        return true;
-    }
-
     return AbstractMenuScene::triggered(action);
 }
 
@@ -130,37 +115,4 @@ ShareMenuScenePrivate::ShareMenuScenePrivate(AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
     predicateName[ActionID::kShare] = tr("Share");
-    predicateName[ActionID::kShareToBluetooth] = tr("Bluetooth");
-}
-
-void ShareMenuScenePrivate::addSubActions(QMenu *subMenu)
-{
-    if (!subMenu)
-        return;
-
-    bool bluetoothAvailable = dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_IsAvailable").toBool();
-    fmDebug() << "bluetooth: menu action can be added: " << bluetoothAvailable;
-    if (bluetoothAvailable) {
-        auto *act = subMenu->addAction(predicateName[ActionID::kShareToBluetooth]);
-        act->setProperty(ActionPropertyKey::kActionID, ActionID::kShareToBluetooth);
-        if (folderSelected)
-            act->setEnabled(false);
-        predicateAction[ActionID::kShareToBluetooth] = act;
-    }
-}
-
-void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
-{
-    if (!act)
-        return;
-
-    QStringList filePaths;
-    for (const auto &url : selectFiles) {
-        auto f = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url);
-        filePaths << f->pathOf(PathInfoType::kAbsoluteFilePath);
-    }
-    QString actId = act->property(ActionPropertyKey::kActionID).toString();
-    if (actId == ActionID::kShareToBluetooth) {
-        dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", filePaths, "");
-    }
 }

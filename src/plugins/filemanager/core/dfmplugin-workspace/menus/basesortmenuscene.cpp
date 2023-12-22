@@ -27,20 +27,29 @@ BaseSortMenuScenePrivate::BaseSortMenuScenePrivate(BaseSortMenuScene *qq)
 {
 }
 
-void BaseSortMenuScenePrivate::sortPrimaryMenu(QMenu *menu)
+void BaseSortMenuScenePrivate::sortMenuActions(QMenu *menu, const QStringList &sortRule, bool isFuzzy)
 {
-    const QStringList &sortRule = primaryMenuRule();
+    auto findIndex = [&isFuzzy, &sortRule](const QString &property) {
+        int index1 = -1;
+        for (int i = 0, nEnd = sortRule.size(); i < nEnd; ++i) {
+            if (property == sortRule[i] || (isFuzzy && property.startsWith(sortRule[i]))) {
+                index1 = i;
+                break;
+            }
+        }
+        return index1;
+    };
 
     auto actions = menu->actions();
     // sort
-    qSort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
+    qSort(actions.begin(), actions.end(), [findIndex](QAction *act1, QAction *act2) {
         const auto &property1 = act1->property(ActionID::kActionID).toString();
-        auto index1 = sortRule.indexOf(property1);
+        auto index1 = findIndex(property1);
         if (index1 == -1)
             return false;
 
         const auto &property2 = act2->property(ActionID::kActionID).toString();
-        auto index2 = sortRule.indexOf(property2);
+        auto index2 = findIndex(property2);
         if (index2 == -1)
             return true;
 
@@ -54,9 +63,9 @@ void BaseSortMenuScenePrivate::sortPrimaryMenu(QMenu *menu)
             return;
 
         auto rule = sortRule[index];
-        auto iter = std::find_if(actions.begin(), actions.end(), [&rule](const QAction *act) {
+        auto iter = std::find_if(actions.begin(), actions.end(), [&rule, &isFuzzy](const QAction *act) {
             auto p = act->property(ActionID::kActionID);
-            return p == rule;
+            return p == rule || (isFuzzy && p.toString().startsWith(rule));
         });
 
         if (iter != actions.end()) {
@@ -82,19 +91,14 @@ void BaseSortMenuScenePrivate::sortPrimaryMenu(QMenu *menu)
     menu->addActions(actions);
 }
 
+void BaseSortMenuScenePrivate::sortPrimaryMenu(QMenu *menu)
+{
+    const QStringList &sortRule = primaryMenuRule();
+    sortMenuActions(menu, sortRule, false);
+}
+
 void BaseSortMenuScenePrivate::sortSecondaryMenu(QMenu *menu)
 {
-    auto findIndex = [](const QStringList &sortRule, const QString &property) {
-        int index1 = -1;
-        for (int i = 0, nEnd = sortRule.size(); i < nEnd; ++i) {
-            if (property == sortRule[i] || property.startsWith(sortRule[i])) {
-                index1 = i;
-                break;
-            }
-        }
-        return index1;
-    };
-
     const QMap<QString, QStringList> &sortRuleMap = secondaryMenuRule();
 
     auto actions = menu->actions();
@@ -104,24 +108,7 @@ void BaseSortMenuScenePrivate::sortSecondaryMenu(QMenu *menu)
             const auto &key = action->property(ActionID::kActionID).toString();
             if (sortRuleMap.count(key) > 0) {
                 const QStringList &sortRule = sortRuleMap.value(key);
-                QList<QAction *> secondaryActions = secondaryMenu->actions();
-                qSort(secondaryActions.begin(), secondaryActions.end(), [sortRule, findIndex](QAction *act1, QAction *act2) {
-                    const auto &property1 = act1->property(ActionID::kActionID).toString();
-                    const auto &property2 = act2->property(ActionID::kActionID).toString();
-
-                    int index1 = findIndex(sortRule, property1);
-                    if (index1 == -1)
-                        return false;
-
-                    auto index2 = findIndex(sortRule, property2);
-                    ;
-                    if (index2 == -1)
-                        return true;
-
-                    return index1 < index2;
-                });
-
-                secondaryMenu->addActions(secondaryActions);
+                sortMenuActions(secondaryMenu, sortRule, true);
             }
         }
     }
@@ -271,15 +258,15 @@ QMap<QString, QStringList> BaseSortMenuScenePrivate::secondaryMenuRule()
                    stageToRule());   // 添加至光盘刻录
 
         QStringList sendToList;
-        sendToList << "create-system-link";
-        sendToList << "send-to-desktop";
-        sendToList << sendToRule();
+        sendToList << "send-to-bluetooth"
+                   << ActionID::kSeparatorLine
+                   << "send-to-desktop"
+                   << "create-system-link"
+                   << ActionID::kSeparatorLine
+                   << sendToRule();
 
         ret.insert("send-to",
                    sendToList);   // 发送到
-
-        ret.insert("share",
-                   QStringList { "share-to-bluetooth" });   // 共享
     });
 
     return ret;

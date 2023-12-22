@@ -8,6 +8,7 @@
 #include "action_defines.h"
 
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
@@ -49,8 +50,10 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->selectFiles.isEmpty())
+    if (!d->selectFiles.isEmpty()) {
         d->focusFile = d->selectFiles.first();
+        d->focusFileInfo = InfoFactory::create<FileInfo>(d->focusFile);
+    }
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
@@ -99,6 +102,18 @@ bool SendToMenuScene::create(QMenu *parent)
     }
 
     if (!d->isFocusOnDDEDesktopFile && !d->isSystemPathIncluded) {
+        // bluetooth
+        bool bluetoothAvailable = dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_IsAvailable").toBool();
+        fmDebug() << "bluetooth: menu action can be added: " << bluetoothAvailable;
+        if (bluetoothAvailable) {
+            auto *act = menuSendTo->addAction(d->predicateName[ActionID::kSendToBluetooth]);
+            act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
+            if (d->focusFileInfo && d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
+                act->setEnabled(false);
+            d->predicateAction[ActionID::kSendToBluetooth] = act;
+            hasTargetItem = true;
+        }
+
         // udisk
         using namespace GlobalServerDefines;
         auto devs = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
@@ -198,6 +213,14 @@ bool SendToMenuScene::triggered(QAction *action)
                 dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, d->windowId, url, linkUrl, false, true);
             }
             return true;
+        } else if (actId == ActionID::kSendToBluetooth) {
+            QStringList filePaths;
+            for (const auto &url : d->selectFiles) {
+                auto f = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url);
+                filePaths << f->pathOf(PathInfoType::kAbsoluteFilePath);
+            }
+
+            dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", filePaths, "");
         } else {
             if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
                 fmDebug() << "send files to: " << action->data().toUrl() << ", " << d->selectFiles;
@@ -227,6 +250,7 @@ SendToMenuScenePrivate::SendToMenuScenePrivate(SendToMenuScene *qq)
     : AbstractMenuScenePrivate(qq), q(qq)
 {
     predicateName[ActionID::kSendTo] = tr("Send to");
+    predicateName[ActionID::kSendToBluetooth] = tr("Bluetooth");
     predicateName[ActionID::kCreateSymlink] = tr("Create link");
     predicateName[ActionID::kSendToDesktop] = tr("Send to desktop");
 }

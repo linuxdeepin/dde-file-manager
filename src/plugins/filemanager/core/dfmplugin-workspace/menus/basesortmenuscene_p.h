@@ -20,6 +20,7 @@ class BaseSortMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePriv
 public:
     explicit BaseSortMenuScenePrivate(BaseSortMenuScene *qq);
 
+    void sortMenuActions(QMenu *menu, const QStringList &sortRule, bool isFuzzy);
     void sortPrimaryMenu(QMenu *menu);
     void sortSecondaryMenu(QMenu *menu);
 

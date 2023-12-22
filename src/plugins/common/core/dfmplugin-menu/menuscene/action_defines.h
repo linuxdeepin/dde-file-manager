@@ -46,12 +46,12 @@ inline constexpr char kDirShare[] = "dir-share";
 
 // ShareMenu
 inline constexpr char kShare[] = "share";
-inline constexpr char kShareToBluetooth[] = "share-to-bluetooth";
 
 // SendToMenu
 inline constexpr char kSendTo[] = "send-to";
 inline constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
 inline constexpr char kSendToDesktop[] = "send-to-desktop";
+inline constexpr char kSendToBluetooth[] = "send-to-bluetooth";
 
 // Separator
 inline constexpr char kSeparator[] = "separator-line";

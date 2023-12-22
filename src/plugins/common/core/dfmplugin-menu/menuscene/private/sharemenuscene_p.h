@@ -19,13 +19,6 @@ class ShareMenuScenePrivate : public AbstractMenuScenePrivate
 
 public:
     explicit ShareMenuScenePrivate(AbstractMenuScene *qq);
-
-private:
-    void addSubActions(QMenu *subMenu);
-    void handleActionTriggered(QAction *act);
-
-private:
-    bool folderSelected { false };
 };
 
 }
