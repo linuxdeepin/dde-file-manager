@@ -10,18 +10,20 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/event/event.h>
-#include <dfm-base/base/schemefactory.h>
 
 #include <DIconButton>
 #include <DListView>
 #include <DGuiApplicationHelper>
 #include <DComboBox>
+#include <DLineEdit>
 #include <DLabel>
 #include <DFrame>
 #include <dtkwidget_global.h>
@@ -39,7 +41,6 @@
 #include <QDir>
 #include <QCompleter>
 #include <QWindow>
-#include <QLineEdit>
 #include <QSpacerItem>
 #include <QIcon>
 
@@ -295,7 +296,15 @@ QStringList ConnectToServerDialog::updateCollections(const QString &newUrlStr, b
 
     // if only charset changed, remove old item
     bool needUpdate = false;
-    QUrl newUrl(newUrlStr);
+    QUrl newUrl = QUrl::fromUserInput(newUrlStr);
+
+    if (newUrl.host().isEmpty()) {
+        qWarning() << "invalid url" << newUrlStr << "refuse to collect.";
+        DialogManagerInstance->showErrorDialog(tr("Error"),
+                                               tr("Unable to favorite illegitimate url!"));
+        return collections;
+    }
+
     for (const auto &collection : collections) {
         QUrl old(collection);
 
