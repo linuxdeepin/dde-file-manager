@@ -465,7 +465,7 @@ void ShareControlWidget::shareFolder()
         }
     }
     ShareInfo info {
-        { ShareInfoKeys::kName, shareNameEditor->text().trimmed() },
+        { ShareInfoKeys::kName, shareNameEditor->text().trimmed().toLower() },
         { ShareInfoKeys::kPath, url.path() },
         { ShareInfoKeys::kComment, "" },
         { ShareInfoKeys::kWritable, writable },
