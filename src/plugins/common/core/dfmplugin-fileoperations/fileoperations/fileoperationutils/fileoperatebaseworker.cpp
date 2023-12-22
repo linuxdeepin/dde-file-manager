@@ -192,7 +192,7 @@ bool FileOperateBaseWorker::checkTotalDiskSpaceAvailable(const QUrl &fromUrl, co
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         qint64 freeBytes = DeviceUtils::deviceBytesFree(toUrl);
-        qInfo() << "current free bytes = " << freeBytes << ", write size = " << sourceFilesTotalSize;
+        fmInfo() << "current free bytes = " << freeBytes << ", write size = " << sourceFilesTotalSize;
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (sourceFilesTotalSize >= freeBytes)
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
@@ -904,8 +904,8 @@ bool FileOperateBaseWorker::doCopyLocalBigFileResize(const FileInfoPointer fromI
         if (-1 == ftruncate(toFd, length)) {
             auto lastError = strerror(errno);
             fmWarning() << "file resize error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                       << " url to: " << toInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << O_RDONLY
-                       << " error code: " << errno << " error msg: " << lastError;
+                        << " url to: " << toInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << O_RDONLY
+                        << " error code: " << errno << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
                                           AbstractJobHandler::JobErrorType::kResizeError, true, lastError);
@@ -931,8 +931,8 @@ char *FileOperateBaseWorker::doCopyLocalBigFileMap(const FileInfoPointer fromInf
         if (!point || point == MAP_FAILED) {
             auto lastError = strerror(errno);
             fmWarning() << "file mmap error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                       << " error code: " << errno << " error msg: " << lastError;
+                        << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                        << " error code: " << errno << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
                                           AbstractJobHandler::JobErrorType::kOpenError, fd == PROT_WRITE, lastError);
@@ -991,8 +991,8 @@ int FileOperateBaseWorker::doOpenFile(const FileInfoPointer fromInfo, const File
         if (fd < 0) {
             auto lastError = strerror(errno);
             fmWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << openFlag
-                       << " error code: " << errno << " error msg: " << lastError;
+                        << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << openFlag
+                        << " error code: " << errno << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
                                           AbstractJobHandler::JobErrorType::kOpenError, isTo, lastError);
@@ -1331,7 +1331,7 @@ void FileOperateBaseWorker::determineCountProcessType()
                         }
 
                         fmDebug("Block device path: \"%s\", Sys dev path: \"%s\", Is removable: %d, Log-Sec: %d",
-                               qPrintable(device), qPrintable(targetSysDevPath), bool(targetIsRemovable), targetLogSecionSize);
+                                qPrintable(device), qPrintable(targetSysDevPath), bool(targetIsRemovable), targetLogSecionSize);
                     } else {
                         fmWarning("Failed on parse the lsblk result data, data: \"%s\"", data.constData());
                     }
@@ -1360,7 +1360,7 @@ void FileOperateBaseWorker::syncFilesToDevice()
     sync();
     qint64 writeSize = getWriteDataSize();
     // 上面本来就自己阻塞调用了同步，这里不用计算写入是否是100%（这里统计的写入不一定准确）
-    while (!isStopped() && sourceFilesTotalSize > 0 && (static_cast<double>(writeSize)/sourceFilesTotalSize) < 0.98) {
+    while (!isStopped() && sourceFilesTotalSize > 0 && (static_cast<double>(writeSize) / sourceFilesTotalSize) < 0.98) {
         QThread::msleep(100);
         writeSize = getWriteDataSize();
     }

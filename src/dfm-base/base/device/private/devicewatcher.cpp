@@ -376,6 +376,7 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
 
             // NOTE: when device's mountpoints changed to empty, do not update the cache immediatly, update it in blockDeviceUnmounted function
             // to report the unmounted path to subscribers.
+            // Why? see TabBar:closeTabAndRemovecachedMnts
             if (name == DeviceProperty::kMountPoints)
                 item[DeviceProperty::kMountPoint] = var.toStringList().isEmpty() ? item[DeviceProperty::kMountPoint] : var.toStringList().first();
             if (name == DeviceProperty::kOptical && !var.toBool()) {

@@ -32,7 +32,8 @@ private:
     void bindFileOperations();
 
 private slots:
-    void onDeviceChanged(const QString &id);
+    void onDiscChanged(const QString &id);
+    void onDiscEjected(const QString &id);
 };
 
 }

@@ -17,7 +17,9 @@
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
@@ -51,12 +53,14 @@ void Optical::initialize()
     connect(
             DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this,
             [this](const QString &id, const QString &property, const QVariant &val) {
-                if (id.contains(QRegularExpression("/sr[0-9]*$"))
-                    && property == GlobalServerDefines::DeviceProperty::kOptical && !val.toBool()) {
-                    onDeviceChanged(id);
-                }
+                if (!id.contains(QRegularExpression("/sr[0-9]*$")))
+                    return;
+                if (property == GlobalServerDefines::DeviceProperty::kOptical && !val.toBool())
+                    onDiscChanged(id);
+                if (property == GlobalServerDefines::DeviceProperty::kMediaAvailable && !val.toBool())
+                    onDiscEjected(id);
             },
-            Qt::DirectConnection);
+            Qt::QueuedConnection);
 }
 
 bool Optical::start()
@@ -162,12 +166,25 @@ void Optical::bindWindows()
             Qt::DirectConnection);
 }
 
-void Optical::onDeviceChanged(const QString &id)
+void Optical::onDiscChanged(const QString &id)
 {
     const auto &discUrl { OpticalHelper::transDiscRootById(id) };
     if (discUrl.isValid()) {
         emit OpticalSignalManager::instance()->discUnmounted(discUrl);
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", discUrl);
+    }
+}
+
+void Optical::onDiscEjected(const QString &id)
+{
+    const auto &discUrl { OpticalHelper::transDiscRootById(id) };
+    if (!discUrl.isValid())
+        return;
+    const QString &devFile { OpticalHelper::burnDestDevice(discUrl) };
+    const QString &mnt { DeviceUtils::getMountInfo(devFile) };
+    if (!mnt.isEmpty()) {
+        fmWarning() << "The device" << id << "has been ejected, but it's still mounted";
+        DeviceManager::instance()->unmountBlockDevAsync(id);
     }
 }
 }   // namespace dfmplugin_optical
