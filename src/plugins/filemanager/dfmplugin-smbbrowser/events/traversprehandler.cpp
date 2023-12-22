@@ -51,6 +51,8 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+            // remove from history when mount failed.
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
         }
     });
 }
