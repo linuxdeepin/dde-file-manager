@@ -144,7 +144,7 @@ void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selectio
 {
     if (view->isIconViewMode()) {
         caculateIconViewSelection(rect, selection);
-    } else if (view->isListViewMode()) {
+    } else if (view->isListViewMode() || view->isTreeViewMode()) {
         caculateListViewSelection(rect, selection);
     }
 }

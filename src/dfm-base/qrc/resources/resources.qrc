@@ -69,5 +69,6 @@
         <file>icons/deepin/builtin/dark/icons/no_favorites_yet.svg</file>
         <file>icons/deepin/builtin/light/icons/no_favorites_yet.svg</file>
         <file>icons/deepin/builtin/texts/dfm_view_filter_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewlist_tree_16px.svg</file>
     </qresource>
 </RCC>

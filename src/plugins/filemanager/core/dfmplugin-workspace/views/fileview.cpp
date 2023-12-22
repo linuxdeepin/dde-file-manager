@@ -38,6 +38,8 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #    include <DGuiApplicationHelper>
@@ -106,15 +108,17 @@ void FileView::setViewMode(Global::ViewMode mode)
     if (itemDelegate())
         itemDelegate()->hideAllIIndexWidget();
 
-    int modeValue = static_cast<int>(mode);
-    if (d->delegates.keys().contains(modeValue)) {
+    int delegateModeIndex = mode == Global::ViewMode::kTreeMode ?
+                static_cast<int>(Global::ViewMode::kListMode) : static_cast<int>(mode);
+    if (d->delegates.keys().contains(delegateModeIndex)) {
         d->currentViewMode = mode;
     } else {
-        fmWarning() << QString("The view mode %1 is not support in this dir! This view will set default mode.").arg(modeValue);
+        fmWarning() << QString("The view mode %1 is not support in this dir! This view will set default mode.").arg(delegateModeIndex);
         d->currentViewMode = Global::ViewMode::kIconMode;
+        delegateModeIndex = static_cast<int>(Global::ViewMode::kIconMode);
     }
 
-    setItemDelegate(d->delegates[static_cast<int>(d->currentViewMode)]);
+    setItemDelegate(d->delegates[delegateModeIndex]);
     switch (d->currentViewMode) {
     case Global::ViewMode::kIconMode:
         setUniformItemSizes(false);
@@ -132,7 +136,16 @@ void FileView::setViewMode(Global::ViewMode mode)
     case Global::ViewMode::kListMode:
         setIconSize(QSize(kListViewIconSize, kListViewIconSize));
         viewport()->setContentsMargins(0,0,0,0);
-        if (d->itemsExpandable/*Application::instance()->appAttribute(Application::kListItemExpandable).toBool()*/) {
+        d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(new ListItemPaintProxy(this));
+        model()->setTreeView(false);
+        setListViewMode();
+        break;
+    case Global::ViewMode::kExtendMode:
+        break;
+    case Global::ViewMode::kTreeMode:
+        setIconSize(QSize(kListViewIconSize, kListViewIconSize));
+        viewport()->setContentsMargins(0,0,0,0);
+        if (d->itemsExpandable) {
             auto proxy = new TreeItemPaintProxy(this);
             proxy->setStyleProxy(style());
             d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(proxy);
@@ -142,21 +155,7 @@ void FileView::setViewMode(Global::ViewMode mode)
             model()->setTreeView(false);
         }
 
-        setUniformItemSizes(true);
-        setResizeMode(Fixed);
-        setOrientation(QListView::TopToBottom, false);
-        setSpacing(kListViewSpacing);
-
-        d->initListModeView();
-        if (d->allowedAdjustColumnSize) {
-            horizontalScrollBar()->parentWidget()->installEventFilter(this);
-
-            d->cachedViewWidth = this->width();
-            d->adjustFileNameColumn = true;
-            updateListHeaderView();
-        }
-        break;
-    case Global::ViewMode::kExtendMode:
+        setListViewMode();
         break;
     case Global::ViewMode::kAllViewMode:
         break;
@@ -196,7 +195,7 @@ bool FileView::setRootUrl(const QUrl &url)
 
     const QUrl &fileUrl = parseSelectedUrl(url);
     const QModelIndex &index = model()->setRootUrl(fileUrl);
-    d->itemsExpandable = Application::instance()->appAttribute(Application::kListItemExpandable).toBool()
+    d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->supportTreeView(fileUrl.scheme());
 
     setRootIndex(index);
@@ -498,10 +497,10 @@ void FileView::delayUpdateStatusBar()
 void FileView::viewModeChanged(quint64 windowId, int viewMode)
 {
     Global::ViewMode mode = static_cast<Global::ViewMode>(viewMode);
-    if (mode == Global::ViewMode::kIconMode) {
-        setViewModeToIcon();
-    } else if (mode == Global::ViewMode::kListMode) {
-        setViewModeToList();
+    if (mode == Global::ViewMode::kIconMode ||
+            mode == Global::ViewMode::kListMode ||
+            mode == Global::ViewMode::kTreeMode) {
+        setViewMode(mode);
     }
 
     setFocus();
@@ -520,7 +519,7 @@ FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
     int itemWidth = itemSize.width() + spacing * 2;
     int itemHeight = itemSize.height() + spacing * 2;
 
-    if (isListViewMode()) {
+    if (isListViewMode() || isTreeViewMode()) {
         int firstIndex = (rect.top() + spacing) / itemHeight;
         int lastIndex = (rect.bottom() - spacing) / itemHeight;
 
@@ -687,7 +686,7 @@ bool FileView::isVerticalScrollBarSliderDragging() const
 
 void FileView::updateViewportContentsMargins(const QSize &itemSize)
 {
-    if (isListViewMode() || itemSize.width() <= spacing())
+    if (isListViewMode() || isTreeViewMode() || itemSize.width() <= spacing())
         return;
     int itemWidth = itemSize.width() + 2 * spacing();
     int iconHorizontalMargin = kIconHorizontalMargin;
@@ -949,6 +948,11 @@ bool FileView::isListViewMode() const
     return d->currentViewMode == Global::ViewMode::kListMode;
 }
 
+bool FileView::isTreeViewMode() const
+{
+    return d->currentViewMode == Global::ViewMode::kTreeMode;
+}
+
 void FileView::resetSelectionModes()
 {
     const QList<SelectionMode> &supportSelectionModes = fetchSupportSelectionModes();
@@ -993,7 +997,7 @@ bool FileView::cdUp()
 
 QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) const
 {
-    if (isListViewMode())
+    if (isListViewMode() || isTreeViewMode())
         return QModelIndex();
 
     QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
@@ -1054,18 +1058,6 @@ DirOpenMode FileView::currentDirOpenMode() const
 void FileView::onWidgetUpdate()
 {
     this->update();
-}
-
-void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
-{
-    if (aa == Application::kListItemExpandable ) {
-        if (d->itemsExpandable ==
-                (value.toBool() && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme())))
-            return;
-        d->itemsExpandable = (value.toBool() && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()));
-        // todo: try to repaint the list
-        setViewMode(d->currentViewMode);
-    }
 }
 
 void FileView::onRowCountChanged()
@@ -1160,7 +1152,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
         if (itemDelegate())
             itemDelegate()->commitDataAndCloseActiveEditor();
 
-        if (d->currentViewMode == Global::ViewMode::kListMode && d->itemsExpandable) {
+        if (d->currentViewMode == Global::ViewMode::kTreeMode && d->itemsExpandable) {
             if (index.data(kItemTreeViewCanExpandRole).toBool() && expandOrCollapseItem(index, event->pos())) {
                 d->lastMousePressedIndex = QModelIndex();
                 d->pressedStartWithExpand = true;
@@ -1312,7 +1304,7 @@ QRect FileView::visualRect(const QModelIndex &index) const
 
     QSize itemSize = itemSizeHint();
 
-    if (isListViewMode()) {
+    if (isListViewMode() || isTreeViewMode()) {
         rect.setLeft(kListViewSpacing - horizontalScrollBar()->value());
         rect.setRight(viewport()->width() - kListViewSpacing - 1);
         rect.setTop(index.row() * (itemSize.height() + kListViewSpacing * 2) + kListViewSpacing);
@@ -1418,7 +1410,7 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey, dfmmimeData.toByteArray());
         data->setUrls(transformedUrls);
         // treeview set treeview select url
-        if (isListViewMode() && d->itemsExpandable) {
+        if (isTreeViewMode() && d->itemsExpandable) {
             auto treeSelectedUrl = selectedTreeViewUrlList();
             transformedUrls.clear();
             UniversalUtils::urlsTransformToLocal(treeSelectedUrl, &transformedUrls);
@@ -1777,7 +1769,7 @@ void FileView::initializeDelegate()
     setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(d->fileViewHelper));
     setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
 
-    d->itemsExpandable = Application::instance()->appAttribute(Application::kListItemExpandable).toBool()
+    d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme());
 }
 
@@ -1814,7 +1806,6 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
     connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
-    connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -1997,6 +1988,23 @@ void FileView::updateListHeaderView()
 void FileView::setDefaultViewMode()
 {
     setViewMode(d->currentViewMode);
+}
+
+void FileView::setListViewMode()
+{
+    setUniformItemSizes(true);
+    setResizeMode(Fixed);
+    setOrientation(QListView::TopToBottom, false);
+    setSpacing(kListViewSpacing);
+
+    d->initListModeView();
+    if (d->allowedAdjustColumnSize) {
+        horizontalScrollBar()->parentWidget()->installEventFilter(this);
+
+        d->cachedViewWidth = this->width();
+        d->adjustFileNameColumn = true;
+        updateListHeaderView();
+    }
 }
 
 QUrl FileView::parseSelectedUrl(const QUrl &url)

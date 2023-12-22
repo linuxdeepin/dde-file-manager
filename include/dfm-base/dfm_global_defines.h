@@ -22,6 +22,7 @@ enum class ViewMode {
     kIconMode = 0x01,
     kListMode = 0x02,
     kExtendMode = 0x04,
+    kTreeMode = 0x08,
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 

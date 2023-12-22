@@ -19,6 +19,7 @@ DConfigManager::DConfigManager(QObject *parent)
     : QObject(parent), d(new DConfigManagerPrivate(this))
 {
     addConfig(kDefaultCfgPath);
+    addConfig(kViewDConfName);
 }
 
 DConfigManager *DConfigManager::instance()

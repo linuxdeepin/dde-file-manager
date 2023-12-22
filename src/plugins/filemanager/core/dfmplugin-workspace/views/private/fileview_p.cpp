@@ -18,6 +18,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QScrollBar>
 
@@ -166,7 +167,7 @@ void FileViewPrivate::pureResizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
 
-    if (currentViewMode == Global::ViewMode::kListMode) {
+    if (currentViewMode == Global::ViewMode::kListMode || currentViewMode == Global::ViewMode::kTreeMode) {
         if (adjustFileNameColumn && headerView)
             headerView->doFileNameColumnResize(q->width());
     }
@@ -197,6 +198,9 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
     } else {
         currentViewMode = static_cast<Global::ViewMode>(defaultViewMode);
     }
+
+    if (currentViewMode == Global::ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
+        currentViewMode = Global::ViewMode::kListMode;
 }
 
 QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)

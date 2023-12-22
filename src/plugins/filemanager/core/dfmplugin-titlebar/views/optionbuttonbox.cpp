@@ -9,6 +9,7 @@
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -48,6 +49,8 @@ void OptionButtonBoxPrivate::loadViewMode(const QUrl &url)
     QUrl tmpUrl = url.adjusted(QUrl::RemoveQuery);
     auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefualtViewMode(tmpUrl.scheme()));
     auto viewMode = static_cast<ViewMode>(Application::appObtuselySetting()->value("FileViewState", tmpUrl).toMap().value("viewMode", defaultViewMode).toInt());
+    if (viewMode == ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
+        viewMode = ViewMode::kListMode;
 
     switchMode(viewMode);
 }
@@ -61,6 +64,9 @@ void OptionButtonBoxPrivate::switchMode(ViewMode mode)
         break;
     case ViewMode::kListMode:
         listViewButton->setChecked(true);
+        break;
+    case ViewMode::kTreeMode:
+        treeViewButton->setChecked(true);
         break;
     default:
         break;
@@ -144,6 +150,13 @@ void OptionButtonBox::initializeUi()
     d->buttonGroup->addButton(d->iconViewButton);
     d->buttonGroup->addButton(d->listViewButton);
 
+    if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
+        d->treeViewButton = new DToolButton;
+        d->treeViewButton->setCheckable(true);
+        d->treeViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
+        d->buttonGroup->addButton(d->treeViewButton);
+    }
+
     d->detailButton = new DToolButton;
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
@@ -170,6 +183,10 @@ void OptionButtonBox::initConnect()
         d->setViewMode(ViewMode::kListMode);
     });
 
+    connect(d->treeViewButton, &DToolButton::clicked, this, [this]() {
+        d->setViewMode(ViewMode::kTreeMode);
+    });
+
     connect(d->detailButton, &DToolButton::clicked, this, [this](bool checked) {
         TitleBarEventCaller::sendDetailViewState(this, checked);
     });
@@ -192,6 +209,8 @@ void OptionButtonBox::initUiForSizeMode()
     d->hBoxLayout = new QHBoxLayout;
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
+    if (d->treeViewButton)
+        d->hBoxLayout->addWidget(d->treeViewButton);
     d->hBoxLayout->addWidget(d->detailButton);
 #ifdef DTKWIDGET_CLASS_DSizeMode
     d->hBoxLayout->setSpacing(DSizeModeHelper::element(10, 18));

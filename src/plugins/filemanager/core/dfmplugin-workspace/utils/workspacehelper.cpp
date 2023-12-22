@@ -215,7 +215,7 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
 
     ViewMode mode = static_cast<ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
 
-    if (mode != ViewMode::kIconMode && mode != ViewMode::kListMode
+    if (mode != ViewMode::kIconMode && mode != ViewMode::kListMode && mode != ViewMode::kTreeMode
         && mode != ViewMode::kExtendMode && mode != ViewMode::kAllViewMode) {
         fmWarning() << "Config view mode is invalid, reset it to icon mode.";
         mode = Global::ViewMode::kIconMode;

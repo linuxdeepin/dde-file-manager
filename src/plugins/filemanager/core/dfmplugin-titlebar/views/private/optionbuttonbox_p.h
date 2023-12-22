@@ -43,6 +43,7 @@ private:
     QButtonGroup *buttonGroup { nullptr };
     DTK_WIDGET_NAMESPACE::DToolButton *iconViewButton { nullptr };
     DTK_WIDGET_NAMESPACE::DToolButton *listViewButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DToolButton *treeViewButton { nullptr };
     DTK_WIDGET_NAMESPACE::DToolButton *detailButton { nullptr };
     QHBoxLayout *hBoxLayout { nullptr };
 

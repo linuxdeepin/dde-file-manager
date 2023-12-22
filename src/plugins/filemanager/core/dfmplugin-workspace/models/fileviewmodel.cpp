@@ -880,7 +880,7 @@ void FileViewModel::initFilterSortWork()
     filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, InfoFactory::create<FileInfo>(dirRootUrl))));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
-    filterSortWorker->setTreeView(Application::instance()->appAttribute(Application::kListItemExpandable).toBool()
+    filterSortWorker->setTreeView(DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
                                   && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()));
     filterSortWorker->moveToThread(filterSortThread.data());
 
