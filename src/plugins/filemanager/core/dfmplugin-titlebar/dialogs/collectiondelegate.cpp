@@ -87,12 +87,13 @@ QVariant CollectionModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole) {
         QString text = QStringListModel::data(index, role).toString();
-        QUrl url(text);
-        QString displayText = QString("%1://%2").arg(url.scheme()).arg(url.host());
-        int port = url.port();
-        if (port != -1)
-            displayText += QString(":%1").arg(port);
-        return displayText;
+        return text;   // show full collection.
+        // QUrl url(text);
+        // QString displayText = QString("%1://%2").arg(url.scheme()).arg(url.host());
+        // int port = url.port();
+        // if (port != -1)
+        //     displayText += QString(":%1").arg(port);
+        // return displayText;
     } else if (role == kUrlRole) {
         return QStringListModel::data(index, Qt::DisplayRole);
     }

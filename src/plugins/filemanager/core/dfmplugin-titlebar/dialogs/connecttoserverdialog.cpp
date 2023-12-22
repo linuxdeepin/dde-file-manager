@@ -179,6 +179,7 @@ void ConnectToServerDialog::onCollectionViewClicked(const QModelIndex &index)
     QString urlStr = index.data(CollectionModel::kUrlRole).toString();
     QUrl url(urlStr);
     QString host = url.host();
+    QString path = url.path();
     const QString &scheme = url.scheme();
     const QString &params = url.query().toLower();
     int port = url.port();
@@ -190,7 +191,7 @@ void ConnectToServerDialog::onCollectionViewClicked(const QModelIndex &index)
 
     if (port != -1)
         host += QString(":%1").arg(port);
-    serverComboBox->setCurrentText(host);
+    serverComboBox->setCurrentText(host + path);
     schemeComboBox->setCurrentText(scheme + "://");
 
     CharsetOption opt = kDefault;
@@ -297,7 +298,12 @@ QStringList ConnectToServerDialog::updateCollections(const QString &newUrlStr, b
     QUrl newUrl(newUrlStr);
     for (const auto &collection : collections) {
         QUrl old(collection);
+
+        QString oldSharePath = old.path();
+        QString newSharePath = newUrl.path();
+
         if (old.scheme() == newUrl.scheme() && old.host() == newUrl.host()
+            && newSharePath == oldSharePath
             && collection != newUrlStr) {
             collections.removeAll(collection);
             needUpdate = true;
