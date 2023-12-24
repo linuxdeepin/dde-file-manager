@@ -20,7 +20,7 @@
 #include <dfm-burn/dburn_global.h>
 
 #include <DSysInfo>
-#include <QDir>
+#include <QDirIterator>
 
 using namespace dfmplugin_optical;
 DWIDGET_USE_NAMESPACE
@@ -226,26 +226,51 @@ void OpticalMediaWidget::onBurnButtonClicked()
         return;
     }
 
-    // If there are files or folders with the same name in the root directory
-    // of the disc and the root directory of the staging area,
+    // If there are files in the directories of the disc
+    // with the same name of
+    // files or folders in the directories of the staging area,
     // remove the relevant files or folders from the staging area
-    QFileInfoList &&listFilesOnDisc = curMnt.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(filter);
-    for (const auto &discFileInfo : listFilesOnDisc) {
-        for (const auto &stageInfo : listFilesInStage) {
-            if (stageInfo.fileName() != discFileInfo.fileName())
+    QDirIterator it = QDirIterator(dirStage.path(), filter, QDirIterator::Subdirectories);
+    QString *skipPath = nullptr;
+    auto skipPathLength = QString().length();
+    while (it.hasNext()) {
+        it.next();
+        auto stageInfo = it.fileInfo();
+        {
+            auto &it = stageInfo;
+            const auto stageFilePath = stageInfo.filePath();
+            const auto relativePath = dirStage.relativeFilePath(stageFilePath);
+            if (skipPath != nullptr &&
+                relativePath.mid(0, skipPathLength) == (*skipPath)) {
                 continue;
-            fmInfo() << "Remove file: " << stageInfo.fileName();
-            if (stageInfo.isFile()) {
-                dirStage.remove(stageInfo.fileName());
-            } else {
-                QDir(stageInfo.absoluteFilePath()).removeRecursively();
+            }
+            delete skipPath;
+            skipPath = nullptr;
+            QFileInfo discFileInfo(dirMnt.filePath(relativePath));
+            if (discFileInfo.exists()) {
+                if (discFileInfo.isFile()) {
+                    fmInfo() << "Remove file: " << stageInfo.fileName();
+                    if (stageInfo.isDir()) {
+                        QDir(stageFilePath).removeRecursively();
+                        skipPath = new QString(relativePath + "/");
+                        skipPathLength = (*skipPath).length();
+                    } else {
+                        QFile::remove(stageFilePath);
+                    }
+                }
             }
         }
     }
+    delete skipPath;
 
     // empty stage files folder
-    listFilesInStage = dirStage.entryInfoList(filter);
-    if (listFilesInStage.count() == 0) {
+    size_t fileCount = 0;
+    QDirIterator it2 = QDirIterator(dirStage.path(), filter, QDirIterator::Subdirectories);
+    while (it2.hasNext()) {
+        fileCount++;
+        it2.next();
+    }
+    if (fileCount == 0) {
         DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, errTitle);
         return;
     }
