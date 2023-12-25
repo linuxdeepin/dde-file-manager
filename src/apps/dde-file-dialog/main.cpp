@@ -86,6 +86,16 @@ static bool blackListFilter(const QString &name)
     static const auto &kAllNames {
         DFMBASE_NAMESPACE::Plugins::Utils::filemanagerAllPlugins()
     };
+
+    {
+        // FIXME(zhangsheng) FIXME(xust): find another way to solve this.
+        static const QStringList tmpWhiteList {
+            "dfmplugin-disk-encrypt", "dfmplugin-encrypt-manager"
+        };
+        if (tmpWhiteList.contains(name))
+            return false;
+    }
+
     if (!kAllNames.contains(name) && (name != kDialogCorePluginName))
         return true;
     return false;
