@@ -143,6 +143,7 @@ void Computer::regComputerCrumbToTitleBar()
     QVariantMap property;
     property["Property_Key_HideIconViewBtn"] = true;
     property["Property_Key_HideListViewBtn"] = true;
+    property["Property_Key_HideTreeViewBtn"] = true;
     property["Property_Key_HideDetailSpaceBtn"] = true;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", ComputerUtils::scheme(), property);
 }

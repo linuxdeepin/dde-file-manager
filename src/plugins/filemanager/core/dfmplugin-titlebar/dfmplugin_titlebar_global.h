@@ -31,6 +31,7 @@ inline constexpr char kIconName[] { "CrumbData_Key_IconName" };
 inline constexpr char kKeepAddressBar[] { "Property_Key_KeepAddressBar" };
 inline constexpr char kHideListViewBtn[] { "Property_Key_HideListViewBtn" };
 inline constexpr char kHideIconViewBtn[] { "Property_Key_HideIconViewBtn" };
+inline constexpr char kHideTreeViewBtn[] { "Property_Key_HideTreeViewBtn" };
 inline constexpr char kHideDetailSpaceBtn[] { "Property_Key_HideDetailSpaceBtn" };
 }   // namespace CustomKey
 

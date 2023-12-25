@@ -114,6 +114,11 @@ void SmbBrowser::onWindowOpened(quint64 winId)
                 Qt::DirectConnection);
     }
 
+    if (window->titleBar())
+        registerNetworkToTitleBar();
+    else
+        connect(window, &FileManagerWindow::titleBarInstallFinished, this, &SmbBrowser::registerNetworkToTitleBar, Qt::DirectConnection);
+
     auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
     if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         registerNetworkToSearch();
@@ -184,5 +189,12 @@ void SmbBrowser::registerNetworkToSearch()
     property["Property_Key_DisableSearch"] = true;
     dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", QString(Global::Scheme::kSmb), property);
     dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", QString(Global::Scheme::kNetwork), property);
+}
+
+void SmbBrowser::registerNetworkToTitleBar()
+{
+    QVariantMap property;
+    property["Property_Key_HideTreeViewBtn"] = true;
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kNetwork), property);
 }
 }   // namespace dfmplugin_smbbrowser
