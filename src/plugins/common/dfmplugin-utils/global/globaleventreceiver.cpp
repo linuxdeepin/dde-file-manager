@@ -37,19 +37,18 @@ void GlobalEventReceiver::handleOpenAsAdmin(const QUrl &url)
         return;
     }
 
-    QString localPath { url.toLocalFile() };
-    if (!QDir(localPath).exists()) {
-        fmWarning() << "Url path not exists: " << localPath;
-        return;
-    }
-
     auto fileInfo = InfoFactory::create<FileInfo>(url);
-    if (fileInfo) {
-        if (fileInfo->isAttributes(FileInfo::FileIsType::kIsDir)
-                && fileInfo->isAttributes(FileInfo::FileIsType::kIsSymLink)) {
-            localPath = fileInfo->urlOf(FileInfo::FileUrlInfoType::kRedirectedFileUrl).toLocalFile();
-        }
+    if (!fileInfo)
+        fmWarning() << "Cannot create fileinfo for url: " << url;
+
+    QString openPath { url.toLocalFile() };
+    if (fileInfo && fileInfo->isAttributes(FileInfo::FileIsType::kIsDir)
+        && fileInfo->isAttributes(FileInfo::FileIsType::kIsSymLink)) {
+        openPath = fileInfo->urlOf(FileInfo::FileUrlInfoType::kRedirectedFileUrl).toLocalFile();
     }
 
-    QProcess::startDetached("dde-file-manager-pkexec", { localPath });
+    if (openPath.isEmpty())
+        openPath = url.toString();
+
+    QProcess::startDetached("dde-file-manager-pkexec", { openPath });
 }
