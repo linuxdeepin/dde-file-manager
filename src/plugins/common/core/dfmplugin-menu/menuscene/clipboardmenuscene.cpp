@@ -53,6 +53,7 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
+    d->treeSelectedUrls = params.value(MenuParamKey::kTreeSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
@@ -147,7 +148,11 @@ bool ClipBoardMenuScene::triggered(QAction *action)
     QString id = d->predicateAction.key(action);
 
     // trans url to local
-    QList<QUrl> selectedUrlsTemp = d->selectFiles;
+    QList<QUrl> selectedUrlsTemp {};
+    if (!d->treeSelectedUrls.isEmpty() && d->selectFiles.count() != d->treeSelectedUrls.count())
+        selectedUrlsTemp = d->treeSelectedUrls;
+    else
+        selectedUrlsTemp = d->selectFiles;
     QList<QUrl> urls {};
 
     bool ok = UniversalUtils::urlsTransformToLocal(selectedUrlsTemp, &urls);

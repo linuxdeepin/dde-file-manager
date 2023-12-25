@@ -17,6 +17,7 @@ class ClipBoardMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     friend class ClipBoardMenuScene;
     explicit ClipBoardMenuScenePrivate(AbstractMenuScene *qq);
+    QList<QUrl> treeSelectedUrls;
 };
 
 }
