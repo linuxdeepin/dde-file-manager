@@ -151,7 +151,9 @@ void Recent::bindWindows()
 
 void Recent::regRecentCrumbToTitleBar()
 {
-    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentHelper::scheme(), QVariantMap {});
+    QVariantMap property;
+    property["Property_Key_HideTreeViewBtn"] = true;
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentHelper::scheme(), property);
 }
 
 void Recent::addFileOperations()

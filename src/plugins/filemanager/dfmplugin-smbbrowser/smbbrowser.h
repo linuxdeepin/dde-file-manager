@@ -38,6 +38,7 @@ private:
     void addNeighborToSidebar();
     void registerNetworkAccessPrehandler();
     void registerNetworkToSearch();
+    void registerNetworkToTitleBar();
 
 private:
     QSet<QString> waitToBind;

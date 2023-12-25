@@ -116,18 +116,17 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
     d->loadViewMode(url);
     if (OptionButtonManager::instance()->hasVsibleState(url.scheme())) {
         auto state = OptionButtonManager::instance()->optBtnVisibleState(url.scheme());
-        if (state & OptionButtonManager::kHideListViewBtn)
-            d->listViewButton->setHidden(true);
+        d->listViewButton->setHidden(state & OptionButtonManager::kHideListViewBtn);
+        d->iconViewButton->setHidden(state & OptionButtonManager::kHideIconViewBtn);
+        if (d->treeViewButton)
+            d->treeViewButton->setHidden(state & OptionButtonManager::kHideTreeViewBtn);
 
-        if (state & OptionButtonManager::kHideIconViewBtn)
-            d->iconViewButton->setHidden(true);
-
-        if (state & OptionButtonManager::kHideDetailSpaceBtn) {
-            d->detailButton->setHidden(true);
-            if (d->detailButton->isChecked())
-                d->detailButton->click();
-        }
+        d->detailButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
+        if (d->detailButton->isChecked())
+            d->detailButton->click();
     } else {
+        if (d->treeViewButton)
+            d->treeViewButton->setHidden(false);
         d->listViewButton->setHidden(false);
         d->iconViewButton->setHidden(false);
         d->detailButton->setHidden(false);
