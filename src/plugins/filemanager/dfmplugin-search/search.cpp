@@ -111,8 +111,8 @@ void Search::regSearchSettingConfig()
     if (!ret)
         fmWarning() << "cannot regist dconfig of search plugin:" << err;
 
+    SettingJsonGenerator::instance()->addGroup(SearchSettings::kGroupSearch, tr("Search"));
     if (SearchHelper::anythingInterface().isValid()) {
-        SettingJsonGenerator::instance()->addGroup(SearchSettings::kGroupSearch, tr("Search"));
         SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kIndexInternal,
                                                             tr("Auto index internal disk"),
                                                             false);
