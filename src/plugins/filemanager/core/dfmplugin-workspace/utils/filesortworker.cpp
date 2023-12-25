@@ -567,8 +567,10 @@ void FileSortWorker::handleAddChildren(const QString &key,
     if (!handleAddChildren(key, children, childInfos))
         return;
 
-    if (children.isEmpty() && handleSource) {
-        setSourceHandleState(isFinished);
+    if (children.isEmpty()) {
+        if (handleSource)
+            setSourceHandleState(isFinished);
+
         return;
     }
 
