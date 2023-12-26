@@ -25,6 +25,8 @@
 #include <QPropertyAnimation>
 #include <QGraphicsSceneMouseEvent>
 
+#include <unistd.h>
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -180,12 +182,12 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
         bool closeable { dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Closeable",
                                               curUrl, url) };
 
+        static const QUrl &kGotoWhenDevRemoved = QUrl("computer:///");
         if (closeable || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
                 if (isMountedDevPath(url) || url.scheme() != Global::Scheme::kFile) {
-                    redirectToWhenDelete.setScheme(Global::Scheme::kComputer);
-                    redirectToWhenDelete.setPath("/");
+                    redirectToWhenDelete = kGotoWhenDevRemoved;
                 } else {   // redirect to upper directory
                     QString localPath = url.path();
                     do {
@@ -195,6 +197,28 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
                     } while (!QDir(localPath).exists());
                     redirectToWhenDelete.setScheme(Global::Scheme::kFile);
                     redirectToWhenDelete.setPath(localPath);
+
+                    {
+                        /* NOTE(xust)
+                         * BUG-236625
+                         * this is a workaround.
+                         * when android phone mounted with MTP protocol, cd into the internal storage.
+                         * eject the phone by sidebar button or dock widget
+                         * the 'fileRemoved' signal with the internal storage path is emitted first
+                         * and then runs into current 'else' branch, and try to find it's parent path to cd to
+                         * and the gvfs mount root path was found
+                         * while cd to 'computer:///' is expected.
+                         * so if final cd path is gvfs root, then change it to computer root to solve this bug.
+                         *
+                         * but this solution would introduce another lower level bug.
+                         * */
+                        static const QStringList &kGvfsMpts {
+                            QString("/run/user/%1/gvfs").arg(getuid()),
+                            "/root/.gvfs"
+                        };
+                        if (kGvfsMpts.contains(localPath))
+                            redirectToWhenDelete = kGotoWhenDevRemoved;
+                    }
                 }
 
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
