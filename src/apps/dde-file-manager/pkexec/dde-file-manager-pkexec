@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# Reference:
+# https://wikidev.uniontech.com/%E8%BF%9B%E7%A8%8B%E8%BF%90%E8%A1%8C%E6%9D%83%E9%99%90%E4%B8%8E%E6%8F%90%E6%9D%83
+
 function run_pkexec() {
         xhost +SI:localuser:root
         echo "run in pkexec: $@"
@@ -23,7 +26,7 @@ function run_app() {
         export XDG_SESSION_TYPE=wayland
         export QT_QPA_PLATFORM=
         export GDK_BACKEND=x11
-        export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus
+        export $(dbus-launch)
 
         dde-file-manager $1 -w `pwd`
 }
