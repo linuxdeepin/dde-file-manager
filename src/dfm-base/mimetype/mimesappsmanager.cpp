@@ -483,6 +483,9 @@ void MimesAppsManager::initMimeTypeApps()
             it.next();
             const QString &filePath = it.filePath();
             DesktopFile desktopFile(filePath);
+            if (desktopFile.isNoShow())
+                continue;
+
             DesktopFiles.append(filePath);
             DesktopObjs.insert(filePath, desktopFile);
             QStringList mimeTypes = desktopFile.desktopMimeType();
