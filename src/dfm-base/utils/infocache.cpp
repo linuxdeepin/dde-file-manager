@@ -151,6 +151,7 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
                     &InfoCache::removeCache);
             connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,
                     &InfoCache::refreshFileInfo);
+            watcher->startWatcher();
         }
         watcher->addCacheInfoConnectSize();
     }
@@ -277,7 +278,7 @@ void InfoCache::refreshFileInfo(const QUrl &url)
 {
     FileInfoPointer info = getCacheInfo(url);
     if (info)
-        info->refresh();
+        info->updateAttributes();
 }
 /*!
  * \brief timeRemoveCache 定时检查哪些fileinfo要移除
