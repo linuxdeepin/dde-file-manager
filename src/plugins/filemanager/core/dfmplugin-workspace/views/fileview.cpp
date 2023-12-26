@@ -609,6 +609,11 @@ void FileView::selectFiles(const QList<QUrl> &files) const
     d->selectHelper->select(files);
 }
 
+void FileView::selectIndexes(const QList<QModelIndex> &indexes) const
+{
+    d->selectHelper->select(indexes);
+}
+
 void FileView::setSelectionMode(const QAbstractItemView::SelectionMode mode)
 {
     if (d->enabledSelectionModes.contains(mode))
@@ -1920,8 +1925,17 @@ void FileView::updateSelectedUrl()
     if (d->preSelectionUrls.isEmpty() || model()->currentState() != ModelState::kIdle)
         return;
 
-    selectFiles(d->preSelectionUrls);
-    d->preSelectionUrls.clear();
+    QList<QModelIndex> indexes {};
+    for (const QUrl &url : d->preSelectionUrls) {
+        const QModelIndex &index = model()->getIndexByUrl(url);
+        if (index.isValid())
+            indexes << index;
+    }
+
+    if (!indexes.isEmpty()) {
+        selectIndexes(indexes);
+        d->preSelectionUrls.clear();
+    }
 }
 
 void FileView::updateListHeaderView()
