@@ -77,7 +77,7 @@ inline constexpr char kMediaCompatibility[] { "MediaCompatibility" };
 inline constexpr char kCleartextDevice[] { "CleartextDevice" };
 inline constexpr char kDisplayName[] { "DisplayName" };
 inline constexpr char kDeviceIcon[] { "DeviceIcon" };
-inline constexpr char kConnectionBus[] { "connectBus" };
+inline constexpr char kConnectionBus[] { "ConnectionBus" };
 inline constexpr char kUDisks2Size[] { "UDisks2Size" };
 inline constexpr char kDriveModel[] { "DriveModel" };
 inline constexpr char kPreferredDevice[] { "PreferredDevice" };
