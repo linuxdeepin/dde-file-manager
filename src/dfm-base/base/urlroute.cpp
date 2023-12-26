@@ -168,7 +168,7 @@ QUrl UrlRoute::urlParent(const QUrl &url)
     for (QString p : paths)
         curPath += "/" + p;
 
-    if (curPath.isEmpty())
+    if (curPath.isEmpty() && url.host().isEmpty())
         curPath += "/";
 
     reUrl.setPath(curPath);
