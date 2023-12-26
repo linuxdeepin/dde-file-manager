@@ -743,10 +743,12 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
         app = apps.at(0);
     }
     ok = fileHandler.openFilesByApp(urls, app);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog("open file by app error", error);
-    }
+    if (!ok)
+        fmWarning() << "open file by app error: "
+                    << fileHandler.errorString()
+                    << " app name: "
+                    << app;
+
     // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
     return ok;
