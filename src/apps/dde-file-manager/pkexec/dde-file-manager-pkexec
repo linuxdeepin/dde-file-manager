@@ -17,7 +17,8 @@ function run_pkexec() {
 
 function run_app() {
         echo "param in run_app: $@"
-        uid=$2
+        user_name=$(logname)
+        uid=$(id -u "$user_name")
         echo "runner uid: $uid"
         export XDG_RUNTIME_DIR=/run/user/$uid
         export WAYLAND_DISPLAY=wayland-0
@@ -28,7 +29,7 @@ function run_app() {
         export GDK_BACKEND=x11
         export $(dbus-launch)
 
-        dde-file-manager $1 -w `pwd`
+        dde-file-manager "$1" -w "$(pwd)"
 }
 
 echo "run dde-file-manager in $XDG_SESSION_TYPE"
@@ -36,11 +37,11 @@ if [ "$XDG_SESSION_TYPE" == "x11" ];then
         pkexec dde-file-manager "$@" -w `pwd`
 else
         echo "current file: $0"
-        if [ x`id -u` != "x0" ];then
-                run_pkexec $0 $@
+        if [ x$(id -u) != "x0" ];then
+                run_pkexec "$0" "$@"
                 exit 0
         fi
 
         echo "run app: $@"
-        run_app $@
+        run_app "$@"
 fi
