@@ -67,14 +67,6 @@ TEST(UT_musicMessageView, updateElidedText)
     EXPECT_TRUE(isOk);
 }
 
-TEST(UT_musicMessageView, mediaStatusChanged)
-{
-    MusicMessageView view;
-    view.mediaStatusChanged(QMediaPlayer::BufferedMedia);
-
-    EXPECT_FALSE(view.fileArtist.isEmpty());
-}
-
 TEST(UT_musicMessageView, resizeEvent)
 {
     bool isOk { false };

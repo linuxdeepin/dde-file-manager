@@ -288,9 +288,7 @@ void FilePreviewDialog::switchToPage(int index)
                 return;
             }
         }
-
         view = FilePreviewFactory::create(key);
-
         if (!view && gKey != key) {
             if (!FileUtils::isDesktopFile(fileList.at(index))) {
                 view = FilePreviewFactory::create(gKey);

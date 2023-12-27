@@ -32,10 +32,8 @@ public:
     void initUI();
     void updateElidedText();
 
-signals:
-
 public slots:
-    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void getMessage(QMediaPlayer *player);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -77,8 +75,6 @@ private:
     Cover *imgLabel { nullptr };
     QLabel *artistValue { nullptr };
     QLabel *albumValue { nullptr };
-
-    QMediaPlayer *mediaPlayer { nullptr };
 
     QString fileTitle;
     QString fileArtist;

@@ -70,6 +70,7 @@ bool MusicPreview::setFileUrl(const QUrl &url)
 
     musicView = new MusicMessageView(url.toString());
     statusBarFrame = new ToolBarFrame(url.toString());
+    connect(statusBarFrame, &ToolBarFrame::canGetMessage, musicView, &MusicMessageView::getMessage);
 
     musicView->setFixedSize(600, 336);
     statusBarFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -120,5 +121,5 @@ bool MusicPreview::canPreview(const QUrl &url) const
         return false;
     QMimeType mimeType = DMimeDatabase().mimeTypeForUrl(url);
 
-    return QMediaPlayer::hasSupport(mimeType.name()) != QMultimedia::NotSupported;
+    return mimeType.name().startsWith("audio/");
 }
