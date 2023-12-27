@@ -407,7 +407,7 @@ void FileStatisticsJob::setSizeInfo()
 {
     d->sizeInfo->fileCount = static_cast<quint32>(d->filesCount);
     d->sizeInfo->totalSize = d->totalProgressSize;
-    d->sizeInfo->dirSize = d->sizeInfo->dirSize == 0 ? FileUtils::getMemoryPageSize() : d->sizeInfo->dirSize;
+    d->sizeInfo->dirSize = FileUtils::getMemoryPageSize();
 }
 
 void FileStatisticsJob::statistcsOtherFileSystem()
@@ -466,12 +466,6 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             }
 
             if (info->isAttributes(OptInfoType::kIsDir)) {
-                if (d->sizeInfo->dirSize == 0) {
-                    struct stat statInfo;
-
-                    if (0 == stat(info->urlOf(UrlInfoType::kUrl).path().toStdString().data(), &statInfo))
-                        d->sizeInfo->dirSize = statInfo.st_size == 0 ? FileUtils::getMemoryPageSize() : static_cast<quint16>(statInfo.st_size);
-                }
                 directory_queue << url;
             }
         }

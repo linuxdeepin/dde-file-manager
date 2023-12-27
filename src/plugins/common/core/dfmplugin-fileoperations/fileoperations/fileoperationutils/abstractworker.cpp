@@ -42,6 +42,7 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer handle, const QList<QUrl
     }
     connect(this, &AbstractWorker::startWork, this, &AbstractWorker::doWork);
     workData.reset(new WorkerData);
+    workData->dirSize = FileUtils::getMemoryPageSize();
     this->handle = handle;
     initHandleConnects(handle);
     this->sourceUrls = sources;
@@ -194,17 +195,21 @@ bool AbstractWorker::statisticsFilesSize()
 
     if (isSourceFileLocal) {
         const SizeInfoPointer &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
-
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         workData->dirSize = fileSizeInfo->dirSize;
         sourceFilesCount = fileSizeInfo->fileCount;
     } else {
         statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
-        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished,
-                this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
-        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::sizeChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
         statisticsFilesSizeJob->start(sourceUrls);
+        while(!statisticsFilesSizeJob->isFinished()) {
+            QThread::msleep(10);
+        }
+        const SizeInfoPointer &fileSizeInfo = statisticsFilesSizeJob->getFileSizeInfo();
+        allFilesList = fileSizeInfo->allFiles;
+        sourceFilesTotalSize = fileSizeInfo->totalSize;
+        workData->dirSize = fileSizeInfo->dirSize;
+        sourceFilesCount = fileSizeInfo->fileCount;
     }
     return true;
 }
