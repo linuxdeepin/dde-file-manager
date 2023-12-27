@@ -400,7 +400,7 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
     if (isCanceled)
         return;
 
-    auto opt = setSortAgruments(order, sortRole, istree ? false : isMixDirAndFile);
+    auto opt = setSortAgruments(order, sortRole, /*istree ? false :*/ isMixDirAndFile);
     switch (opt) {
     case FileSortWorker::SortOpt::kSortOptOtherChanged:
         return filterAndSortFiles(current);
@@ -712,7 +712,10 @@ void FileSortWorker::filterAndSortFiles(const QUrl &dir, const bool fileter, con
         removeDirs = filterFilesByParent(dir, true);
 
     // 执行排序
-    visibleList = sortAllTreeFilesByParent(dir, reverse);
+    if (istree)
+        visibleList = sortAllTreeFilesByParent(dir, reverse);
+    else
+        visibleList = sortTreeFiles(visibleChildren, reverse);
 
     // 执行界面刷新  设置过滤，当前的目录是当前树的根目录，反序。所有的显示url都要改变
     if (fileter || UniversalUtils::urlEquals(dir, current) || reverse) {
@@ -949,7 +952,13 @@ QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool
             if (!UniversalUtils::urlEquals(dir, parent) && !UniversalUtils::isParentUrl(parent, dir))
                 continue;
 
-            auto sortList = bSort ? sortTreeFiles(visibleTreeChildren.take(parent), reverse) : visibleTreeChildren.value(parent);
+            QList<QUrl> sortList {};
+            if (visibleTreeChildren.isEmpty() && UniversalUtils::urlEquals(parent, current)) {
+                sortList = sortTreeFiles(visibleChildren, reverse);
+            } else {
+                sortList = bSort ? sortTreeFiles(visibleTreeChildren.take(parent), reverse) : visibleTreeChildren.value(parent);
+            }
+
             if (sortList.isEmpty())
                 continue;
             auto startPos = findStartPos(visibleList, parent);
