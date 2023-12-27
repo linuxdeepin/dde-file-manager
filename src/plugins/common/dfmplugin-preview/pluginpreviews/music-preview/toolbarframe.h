@@ -36,6 +36,7 @@ private:
     void initConnections();
 
 signals:
+    void canGetMessage(QMediaPlayer *player);
 
 public slots:
     void onPlayStateChanged(const QMediaPlayer::State &state);

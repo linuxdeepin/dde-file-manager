@@ -79,11 +79,6 @@ void MusicMessageView::initUI()
     imgLabel = new Cover(this);
     imgLabel->setFixedSize(QSize(240, 240));
 
-    mediaPlayer = new QMediaPlayer(this);
-    connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &MusicMessageView::mediaStatusChanged);
-
-    mediaPlayer->setMedia(QUrl::fromUserInput(currentUrl));
-
     QHBoxLayout *artistLayout = new QHBoxLayout;
     artistLayout->addWidget(artistLabel);
     artistLayout->addSpacing(5);
@@ -125,54 +120,52 @@ void MusicMessageView::updateElidedText()
     albumValue->setText(fmAlbumValue.elidedText(fileAlbum, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
 }
 
-void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
+void MusicMessageView::getMessage(QMediaPlayer *player)
 {
-    if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia) {
-        MediaMeta meta = tagOpenMusicFile(currentUrl);
-        fileTitle = meta.title;
-        if (fileTitle.isEmpty()) {
-            QFileInfo file(currentUrl);
-            QString fileName = file.baseName();
-            fileTitle = fileName;
-        }
-        fileArtist = meta.artist;
-        if (fileArtist.isEmpty())
-            fileArtist = QString(tr("unknown artist"));
-
-        fileAlbum = meta.album;
-        if (fileAlbum.isEmpty())
-            fileAlbum = QString(tr("unknown album"));
-
-        QImage img = mediaPlayer->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
-
-        if (img.isNull()) {
-            QUrl url(currentUrl);
-            TagLib::MPEG::File f(url.toLocalFile().toLocal8Bit());
-            if (f.isValid()) {
-                if (f.ID3v2Tag()) {
-                    TagLib::ID3v2::FrameList frameList = f.ID3v2Tag()->frameListMap()["APIC"];
-                    if (!frameList.isEmpty()) {
-                        TagLib::ID3v2::AttachedPictureFrame *picFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList.front());
-                        QBuffer buffer;
-                        buffer.setData(picFrame->picture().data(), static_cast<int>(picFrame->picture().size()));
-                        QImageReader imageReader(&buffer);
-                        img = imageReader.read();
-                    }
-                }
-
-                f.clear();
-            }
-        }
-
-        if (img.isNull()) {
-            img = QImage(":/icons/icons/default_music_cover.png");
-        }
-        imgLabel->setCoverPixmap(QPixmap::fromImage(img).scaled(imgLabel->size(), Qt::KeepAspectRatio));
-
-        mediaPlayer->deleteLater();
-
-        updateElidedText();
+    MediaMeta meta = tagOpenMusicFile(currentUrl);
+    fileTitle = meta.title;
+    if (fileTitle.isEmpty()) {
+        QFileInfo file(currentUrl);
+        QString fileName = file.baseName();
+        fileTitle = fileName;
     }
+    fileArtist = meta.artist;
+    if (fileArtist.isEmpty())
+        fileArtist = QString(tr("unknown artist"));
+
+    fileAlbum = meta.album;
+    if (fileAlbum.isEmpty())
+        fileAlbum = QString(tr("unknown album"));
+
+    QImage img;
+    if (player)
+        img = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+
+    if (img.isNull()) {
+        QUrl url(currentUrl);
+        TagLib::MPEG::File f(url.toLocalFile().toLocal8Bit());
+        if (f.isValid()) {
+            if (f.ID3v2Tag()) {
+                TagLib::ID3v2::FrameList frameList = f.ID3v2Tag()->frameListMap()["APIC"];
+                if (!frameList.isEmpty()) {
+                    TagLib::ID3v2::AttachedPictureFrame *picFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList.front());
+                    QBuffer buffer;
+                    buffer.setData(picFrame->picture().data(), static_cast<int>(picFrame->picture().size()));
+                    QImageReader imageReader(&buffer);
+                    img = imageReader.read();
+                }
+            }
+
+            f.clear();
+        }
+    }
+
+    if (img.isNull()) {
+        img = QImage(":/icons/icons/default_music_cover.png");
+    }
+    imgLabel->setCoverPixmap(QPixmap::fromImage(img).scaled(imgLabel->size(), Qt::KeepAspectRatio));
+
+    updateElidedText();
 }
 
 void MusicMessageView::resizeEvent(QResizeEvent *event)

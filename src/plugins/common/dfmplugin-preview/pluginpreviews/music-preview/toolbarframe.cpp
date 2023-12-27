@@ -80,6 +80,9 @@ void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
 
 void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
 {
+    if (status == QMediaPlayer::BufferedMedia)
+        emit canGetMessage(mediaPlayer);
+
     if (status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia) {
         durationToLabel(mediaPlayer->duration());
     }
