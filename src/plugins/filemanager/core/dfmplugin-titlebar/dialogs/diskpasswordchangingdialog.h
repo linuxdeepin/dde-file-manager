@@ -30,7 +30,6 @@ public Q_SLOTS:
 private:
     void initUI();
     void initConnect();
-    void displayNextPage();
 
 private:
     DPCResultWidget *resultWidget { nullptr };
