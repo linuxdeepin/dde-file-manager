@@ -1152,7 +1152,7 @@ bool FileOperateBaseWorker::doCopyFile(const FileInfoPointer &fromInfo, const Fi
     } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
         if (result || skip)
-            workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
+            workData->zeroOrlinkOrDirWriteSize += workData->dirSize <= 0 ? FileUtils::getMemoryPageSize() : workData->dirSize;
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
@@ -1324,7 +1324,8 @@ void FileOperateBaseWorker::determineCountProcessType()
 
                         if (targetIsRemovable) {
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
-                            countWriteType = workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType : CountWriteSizeType::kWriteBlockType;
+                            countWriteType = workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType
+                                                                             : CountWriteSizeType::kCustomizeType;
                             targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
 
                             workData->isBlockDevice = true;
