@@ -104,10 +104,10 @@ bool ExtendMenuScenePrivate::insertIntoExistedSubActions(QAction *action, QMap<Q
         actPos = subActions.count();
         subActions.append(action);
     } else {
-        auto iter = std::find_if(subActions.begin(), subActions.end(), [actPos](const QAction *act) {
+        auto iter = std::find_if(subActions.begin(), subActions.end(), [pos](const QAction *act) {
             bool ok = false;
             int p = act->property(kActionPosInMenu).toInt(&ok);
-            return !ok || p > actPos;
+            return !ok || p > pos;
         });
 
         if (iter == subActions.end()) {

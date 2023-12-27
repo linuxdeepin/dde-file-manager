@@ -48,28 +48,16 @@ void DiskPasswordChangingDialog::initConnect()
     connect(resultWidget, &DPCResultWidget::sigCloseDialog, this, &DiskPasswordChangingDialog::close);
 }
 
-void DiskPasswordChangingDialog::displayNextPage()
-{
-    Q_ASSERT(switchPageWidget);
-
-    int nIndex = switchPageWidget->currentIndex();
-    int nCount = switchPageWidget->count();
-
-    if (nIndex < nCount - 1) {
-        switchPageWidget->setCurrentIndex(++nIndex);
-    }
-}
-
 void DiskPasswordChangingDialog::onConfirmed()
 {
     DWindowManagerHelper::instance()->setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
     progressWidget->start();
-    displayNextPage();
+    switchPageWidget->setCurrentWidget(progressWidget);
 }
 
 void DiskPasswordChangingDialog::onChangeCompleted(bool success, const QString &msg)
 {
     DWindowManagerHelper::instance()->setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, true);
     resultWidget->setResult(success, msg);
-    displayNextPage();
+    switchPageWidget->setCurrentWidget(resultWidget);
 }
