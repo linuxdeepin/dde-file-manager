@@ -9,6 +9,7 @@
 
 #include <DLabel>
 #include <DIconButton>
+#include <DArrowRectangle>
 
 #include <QStackedWidget>
 #include <QTextEdit>
@@ -34,6 +35,7 @@ signals:
 public slots:
     void setPlainText(const QString &text);
     void slotTextChanged();
+    void showAlertMessage(const QString &text, int duration = 3000);
 
 protected:
     void focusOutEvent(QFocusEvent *event) override;
@@ -44,8 +46,12 @@ protected:
     }
 
 private:
+    DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
+
     bool isCancel = false;
     bool useCharCount = false;
+
+    DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip { nullptr };
 };
 
 class EditStackedWidget : public QStackedWidget

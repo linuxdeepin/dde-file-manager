@@ -11,6 +11,7 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/elidetextlayout.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -46,6 +47,11 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent)
 
 NameTextEdit::~NameTextEdit()
 {
+    if (tooltip) {
+        tooltip->hide();
+        tooltip->deleteLater();
+        tooltip = nullptr;
+    }
 }
 
 bool NameTextEdit::isCanceled() const
@@ -105,6 +111,48 @@ void NameTextEdit::slotTextChanged()
 
     if (this->isReadOnly())
         this->setFixedHeight(static_cast<int>(this->document()->size().height()));
+
+    QString dstText = FileUtils::preprocessingFileName(text);
+
+    bool hasInvalidChar = text != dstText;
+
+    int endPos = this->textCursor().position() + (dstText.length() - text.length());
+
+    FileUtils::processLength(dstText, endPos, NAME_MAX, true, dstText, endPos);
+    if (text != dstText) {
+        this->setPlainText(dstText);
+        QTextCursor cursor = this->textCursor();
+        cursor.setPosition(endPos);
+        this->setTextCursor(cursor);
+        this->setAlignment(Qt::AlignHCenter);
+    }
+
+    if (hasInvalidChar) {
+        showAlertMessage(tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
+    }
+}
+
+void NameTextEdit::showAlertMessage(const QString &text, int duration)
+{
+    if (!tooltip) {
+        tooltip = createTooltip();
+        tooltip->setBackgroundColor(palette().color(backgroundRole()));
+        QTimer::singleShot(duration, this, [ = ] {
+            if (tooltip) {
+                tooltip->hide();
+                tooltip->deleteLater();
+                tooltip = nullptr;
+            }
+        });
+    }
+
+    if (QLabel *label = qobject_cast<QLabel *>(tooltip->getContent())) {
+        label->setText(text);
+        label->adjustSize();
+    }
+
+    QPoint pos = this->mapToGlobal(QPoint(this->width() / 2, this->height()));
+    tooltip->show(pos.x(), pos.y());
 }
 
 void NameTextEdit::focusOutEvent(QFocusEvent *event)
@@ -128,6 +176,21 @@ void NameTextEdit::keyPressEvent(QKeyEvent *event)
         emit editFinished();
     }
     QTextEdit::keyPressEvent(event);
+}
+
+DArrowRectangle *NameTextEdit::createTooltip()
+{
+    auto tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop);
+    tooltip->setObjectName("AlertTooltip");
+
+    QLabel *label = new QLabel(tooltip);
+
+    label->setWordWrap(true);
+    label->setMaximumWidth(500);
+    tooltip->setContent(label);
+    tooltip->setArrowX(15);
+    tooltip->setArrowHeight(5);
+    return tooltip;
 }
 
 EditStackedWidget::EditStackedWidget(QWidget *parent)
