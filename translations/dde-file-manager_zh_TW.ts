@@ -3791,32 +3791,32 @@
         <translation>電腦</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="165"/>
         <source>Computer display items</source>
         <translation>電腦顯示項目</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="167"/>
         <source>Hide built-in disks on the Computer page</source>
         <translation>電腦工作區隱藏內建磁碟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="170"/>
         <source>Hide loop partitions on the Computer page</source>
         <translation>電腦工作區隱藏迴環分區</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="172"/>
         <source>Show file system on disk icon</source>
         <translation>在磁碟圖示上顯示文件系統標籤</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="176"/>
         <source>Hide My Directories on the Computer page</source>
         <translation>電腦工作區隱藏我的目錄</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="192"/>
         <source>Hide 3rd party entries on the Computer page</source>
         <translation>電腦工作區隱藏第三方項</translation>
     </message>
@@ -4429,18 +4429,18 @@
         <translation>目錄建立失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="917"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="919"/>
         <source>Failed to create the file</source>
         <translation>建立文件失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="994"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="996"/>
         <source>link file error</source>
         <translation>連結文件錯誤</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1033"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1042"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1035"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1044"/>
         <source>Failed to modify file permissions</source>
         <translation>修改文件權限失敗</translation>
     </message>
@@ -4877,6 +4877,14 @@
     </message>
 </context>
 <context>
+    <name>dfmplugin_propertydialog::NameTextEdit</name>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/editstackedwidget.cpp" line="131"/>
+        <source>%1 are not allowed</source>
+        <translation type="unfinished">不得含有%1</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="93"/>
@@ -5081,7 +5089,7 @@
     <name>dfmplugin_search::Search</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="41"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="114"/>
         <source>Search</source>
         <translation>搜尋</translation>
     </message>
@@ -5163,7 +5171,7 @@
 <context>
     <name>dfmplugin_smbbrowser::SmbBrowser</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="158"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="163"/>
         <source>Computers in LAN</source>
         <translation>網路鄰居</translation>
     </message>
