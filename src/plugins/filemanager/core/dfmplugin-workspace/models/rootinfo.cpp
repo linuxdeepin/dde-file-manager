@@ -229,6 +229,9 @@ void RootInfo::doWatcherEvent()
                 emit InfoCacheController::instance().removeCacheFileInfo({ fileUrl });
                 WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
                 emit requestCloseTab(fileUrl);
+                QWriteLocker lk(&childrenLock);
+                childrenUrlList.clear();
+                sourceDataList.clear();
                 break;
             }
         }
@@ -282,9 +285,6 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
         sortInfos.append(sortInfo);
 
         infos.append(info);
-        QWriteLocker lk(&childrenLock);
-        this->childrenUrlList.append(info->fileUrl());
-        this->sourceDataList.append(sortInfo);
     }
 
     if (sortInfos.length() > 0)
