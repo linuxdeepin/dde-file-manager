@@ -103,35 +103,31 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
 
 void SelectHelper::select(const QList<QUrl> &urls)
 {
-    QList<QModelIndex> indexes {};
-    for (const QUrl &url : urls) {
-        const QModelIndex &index = view->model()->getIndexByUrl(url);
-        indexes << index;
-    }
+    if (urls.isEmpty())
+        return;
 
-    select(indexes);
-}
-
-void SelectHelper::select(const QList<QModelIndex> &indexes)
-{
     QModelIndex firstIndex;
     QModelIndex lastIndex;
-
     const QModelIndex &root = view->rootIndex();
     view->selectionModel()->clearSelection();
-    view->setCurrentIndex(QModelIndex());
-    for (const QModelIndex &index : indexes) {
+    QList<QModelIndex> indexes {};
+    QItemSelection selction;
+    for (const QUrl &url : urls) {
+        const QModelIndex &index = view->model()->getIndexByUrl(url);
+
         if (!index.isValid() || index == root) {
             continue;
         }
 
-        view->selectionModel()->select(index, QItemSelectionModel::Select);
+        selction.merge(QItemSelection(index,index), QItemSelectionModel::Select);
 
         if (!firstIndex.isValid())
             firstIndex = index;
 
         lastIndex = index;
     }
+
+    view->selectionModel()->select(selction, QItemSelectionModel::Select);
 
     if (lastIndex.isValid())
         view->selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);

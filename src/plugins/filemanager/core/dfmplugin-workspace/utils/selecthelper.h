@@ -29,7 +29,6 @@ public:
     void setSelection(const QItemSelection &selection);
     void selection(const QRect &rect, QItemSelectionModel::SelectionFlags flags);
     void select(const QList<QUrl> &urls);
-    void select(const QList<QModelIndex> &indexes);
 
 private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
