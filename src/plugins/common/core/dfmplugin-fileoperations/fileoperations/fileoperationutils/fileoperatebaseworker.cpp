@@ -642,10 +642,17 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
             action = AbstractJobHandler::SupportAction::kNoAction;
             if (localFileHandler->mkdir(toInfo->urlOf(UrlInfoType::kUrl)))
                 break;
+            // 特殊处理
+            auto errstr = localFileHandler->errorString();
+            auto fileUrl= toInfo->urlOf(UrlInfoType::kUrl);
+            if (localFileHandler->errorCode() == DFMIOErrorCode::DFM_IO_ERROR_FAILED
+                    && fileUrl.path().toLocal8Bit().size() > 255
+                    && FileUtils::isMtpFile(fileUrl))
+                errstr = tr("The file name or the path is too long!");
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
                                           AbstractJobHandler::JobErrorType::kMkdirError, true,
-                                          localFileHandler->errorString());
+                                          errstr);
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         checkRetry();
