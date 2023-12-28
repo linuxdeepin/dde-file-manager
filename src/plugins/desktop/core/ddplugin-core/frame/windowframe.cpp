@@ -48,9 +48,44 @@ BaseWindowPointer WindowFramePrivate::createWindow(ScreenPointer sp)
     ddplugin_desktop_util::setDesktopWindow(win.get());
     // the Desktop Window is opaque though it has been setted Qt::WA_TranslucentBackground
     // uing setOpacity to set opacity for Desktop Window to be transparent.
-    win->windowHandle()->setOpacity(0.99);
-    fmDebug() << "set desktop flag for window" << sp->name() << win->winId();
+    auto handle = win->windowHandle();
+    handle->setOpacity(0.99);
+    fmInfo() << "set desktop flag for window" << sp->name() << win->winId() << "handle" << handle;
+
+    traceWindow(handle);
+
     return win;
+}
+
+void WindowFramePrivate::traceWindow(QWindow *win) const
+{
+    if (!win)
+        return;
+
+    connect(win, &QWindow::xChanged, this, &WindowFramePrivate::xChanged);
+    connect(win, &QWindow::yChanged, this, &WindowFramePrivate::yChanged);
+    connect(win, &QWindow::widthChanged, this, &WindowFramePrivate::widthChanged);
+    connect(win, &QWindow::heightChanged, this, &WindowFramePrivate::heightChanged);
+}
+
+void WindowFramePrivate::xChanged(int arg) const
+{
+    fmInfo() << "root window" << sender() << "x change to" << arg;
+}
+
+void WindowFramePrivate::yChanged(int arg) const
+{
+    fmInfo() << "root window" << sender() << "y change to" << arg;
+}
+
+void WindowFramePrivate::widthChanged(int arg) const
+{
+    fmInfo() << "root window" << sender() << "width change to" << arg;
+}
+
+void WindowFramePrivate::heightChanged(int arg) const
+{
+    fmInfo() << "root window" << sender() << "height change to" << arg;
 }
 
 WindowFrame::WindowFrame(QObject *parent)
