@@ -14,10 +14,9 @@ Q_NAMESPACE
  * for 'Device Busy'-related messages sent to the Notification Center
  */
 namespace DeviceBusyAction {
-inline constexpr int kSafelyRemove { 0 };
-inline constexpr int kUnmount { 1 };
-inline constexpr int kRemove { 2 };
-inline constexpr int kEject { 3 };
+inline constexpr char kUnmount[] { "unmount" };
+inline constexpr char kPowerOff[] { "poweroff" };
+inline constexpr char kEject[] { "eject" };
 }   // namespace DeviceBusyAction
 
 /*!

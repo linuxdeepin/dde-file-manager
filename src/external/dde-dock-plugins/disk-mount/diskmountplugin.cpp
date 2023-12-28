@@ -5,13 +5,13 @@
 #include "diskmountplugin.h"
 #include "widgets/tipswidget.h"
 #include "widgets/diskpluginitem.h"
-#include "widgets/diskcontrolwidget.h"
-#include "device/devicewatcherlite.h"
+#include "widgets/devicelist.h"
+#include "device/dockitemdatamanager.h"
 
 #include <DApplication>
 #include <QGSettings>
 
-Q_LOGGING_CATEGORY(logAppDock, "log.dock.disk-mount")
+Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 static const char *const kOpen = "open";
 static const char *const kEjectAll = "eject_all";
@@ -109,7 +109,7 @@ void DiskMountPlugin::invokedMenuItem(const QString &, const QString &menuId, co
     if (menuId == kOpen)
         QProcess::startDetached("gio", QStringList { "open", "computer:///" });
     else if (menuId == kEjectAll)
-        DeviceWatcherLite::instance()->detachAllDevices();
+        DockItemDataManager::instance()->ejectAll();
 }
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
@@ -133,14 +133,9 @@ void DiskMountPlugin::refreshIcon(const QString &itemKey)
         diskPluginItem->updateIcon();
 }
 
-void DiskMountPlugin::diskCountChanged(const int count)
+void DiskMountPlugin::setDockEntryVisible(bool visible)
 {
-    if (pluginAdded == bool(count))
-        return;
-
-    pluginAdded = bool(count);
-
-    if (pluginAdded)
+    if (visible)
         proxyInter()->itemAdded(this, kDiskMountKey);
     else
         proxyInter()->itemRemoved(this, kDiskMountKey);
@@ -156,13 +151,11 @@ void DiskMountPlugin::loadTranslator()
 
 void DiskMountPlugin::initCompoments()
 {
-    diskControlApplet = new DiskControlWidget;
+    connect(DockItemDataManager::instance(), &DockItemDataManager::requesetSetDockVisible,
+            this, &DiskMountPlugin::setDockEntryVisible);
+    diskControlApplet = new DeviceList();
     diskControlApplet->setObjectName("disk-mount");
     diskControlApplet->setVisible(false);
-
-    connect(diskControlApplet, &DiskControlWidget::diskCountChanged, this, &DiskMountPlugin::diskCountChanged);
-    // auto mount and monitor work in service process
-    diskControlApplet->initListByMonitorState();
 }
 
 void DiskMountPlugin::displayModeChanged(const Dock::DisplayMode mode)

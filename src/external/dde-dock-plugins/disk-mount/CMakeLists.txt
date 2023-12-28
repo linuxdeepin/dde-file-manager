@@ -14,24 +14,27 @@ FILE (GLOB_RECURSE MOUNT_PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+    "${CMAKE_SOURCE_DIR}/src/dfm-base/dbusservice/global_server_defines.h"
 )
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5DBus REQUIRED)
-find_package(Qt5 COMPONENTS Concurrent REQUIRED)
+find_package(Qt5 COMPONENTS Concurrent Core REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
 pkg_check_modules(Gesttings REQUIRED  gsettings-qt)
-pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
-pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 
 set(QRC_FILE
     resources.qrc
     resources/theme-icons.qrc
     )
 qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
+
+qt5_add_dbus_interface(MOUNT_PLUGIN_FILES
+    "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.filemanager.server.DeviceManager.xml"
+    devicemanager_interface)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -47,17 +50,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${DtkWidget_INCLUDE_DIRS}
     ${Gesttings_INCLUDE_DIRS}
     ${DdeDockInterface_INCLUDE_DIRS}
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/dfm-base/dbusservice
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Qt5Widgets_LIBRARIES}
+    ${Qt5Core_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
     ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
-    PkgConfig::dfm-mount
-    PkgConfig::mount
     Qt5::Concurrent
 )
 
@@ -66,4 +68,3 @@ install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins/system-
 # schemas
 install(FILES com.deepin.dde.dock.module.disk-mount.gschema.xml DESTINATION share/glib-2.0/schemas)
 install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
-

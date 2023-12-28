@@ -7,7 +7,8 @@
       <arg name="free" type="x" direction="out"/>
     </signal>
     <signal name="NotifyDeviceBusy">
-      <arg name="action" type="i" direction="out"/>
+      <arg name="id" type="s" direction="out"/>
+      <arg name="action" type="s" direction="out"/>
     </signal>
     <signal name="BlockDriveAdded">
     </signal>

@@ -3,9 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dockutils.h"
+#include "global_server_defines.h"
 
 #include <QStringListIterator>
 #include <QRegularExpression>
+#include <QIcon>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(logAppDock, "log.dock.disk-mount")
 
 QString size_format::formatDiskSize(const quint64 num)
 {
@@ -48,14 +53,85 @@ QString size_format::sizeString(const QString &str)
     return size.left(size.count() - 1);
 }
 
-bool smb_utils::parseSmbInfo(const QString &smbPath, QString &host, QString &share)
+bool smb_utils::parseSmbInfo(const QString &smbPath, QString *host, QString *share, int *port)
 {
+    Q_ASSERT(host && share && port);
     static const QRegularExpression regx(R"(([:,]port=(?<port>\d*))?[,:]server=(?<host>[^/:,]+)(,share=(?<share>[^/:,]+))?)");
     auto match = regx.match(smbPath);
     if (!match.hasMatch())
         return false;
 
-    host = match.captured("host");
-    share = match.captured("share");
+    *host = match.captured("host");
+    *share = match.captured("share");
+    QString portStr = match.captured("port");
+    *port = portStr.isEmpty() ? -1 : portStr.toInt();
     return true;
+}
+
+QString device_utils::blockDeviceName(const QVariantMap &data)
+{
+    QString idLabel = data.value(GlobalServerDefines::DeviceProperty::kIdLabel).toString();
+    if (!idLabel.isEmpty())
+        return idLabel;
+    quint64 size = data.value(GlobalServerDefines::DeviceProperty::kSizeTotal).toULongLong();
+    return QObject::tr("%1 Volume").arg(size_format::formatDiskSize(size));
+}
+
+QString device_utils::protocolDeviceName(const QVariantMap &data)
+{
+    QString devName = data.value(GlobalServerDefines::DeviceProperty::kDisplayName).toString();
+    QString host, share;
+    int port;
+    if (smb_utils::parseSmbInfo(devName, &host, &share, &port))
+        devName = QObject::tr("%1 on %2").arg(share).arg(host);
+    return devName;
+}
+
+QString device_utils::blockDeviceIcon(const QVariantMap &data)
+{
+    if (data.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString() != "/")
+        return "drive-removable-media-encrypted";
+    if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
+        return "media-optical";
+    return "drive-removable-media-usb";
+}
+
+QString device_utils::protocolDeviceIcon(const QVariantMap &data)
+{
+    auto iconLst = data.value(GlobalServerDefines::DeviceProperty::kDeviceIcon).toStringList();
+    for (auto name : iconLst) {
+        auto icon = QIcon::fromTheme(name);
+        if (!icon.isNull())
+            return name;
+    }
+    return "drive-network";
+}
+
+QUrl device_utils::blockDeviceTarget(const QVariantMap &data)
+{
+    if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool()) {
+        QString device = data.value(GlobalServerDefines::DeviceProperty::kDevice).toString();
+        QUrl target;
+        target.setScheme("burn");
+        target.setPath(QString("%1/disc_files/").arg(device));
+        return target;
+    }
+    QString mpt = data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+    return QUrl::fromLocalFile(mpt);
+}
+
+QUrl device_utils::protocolDeviceTarget(const QVariantMap &data)
+{
+    QString mpt = data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+    QString host, share;
+    int port;
+    if (smb_utils::parseSmbInfo(mpt, &host, &share, &port)) {
+        QUrl target;
+        target.setScheme("smb");
+        target.setHost(host);
+        target.setPort(port);
+        target.setPath("/" + share);
+        return target;
+    }
+    return QUrl::fromLocalFile(mpt);
 }

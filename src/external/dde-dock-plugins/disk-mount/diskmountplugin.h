@@ -26,7 +26,7 @@
 
 class TipsWidget;
 class DiskPluginItem;
-class DiskControlWidget;
+class DeviceList;
 
 #ifdef USE_DOCK_NEW_INTERFACE
 class DiskMountPlugin : public QObject, PluginsItemInterfaceV2
@@ -70,7 +70,7 @@ public:
 #endif
 
 public slots:
-    void diskCountChanged(const int count);
+    void setDockEntryVisible(bool visible);
 
 private:
     void loadTranslator();
@@ -85,7 +85,7 @@ private:
 
     TipsWidget *tipsLabel { nullptr };
     DiskPluginItem *diskPluginItem { nullptr };
-    DiskControlWidget *diskControlApplet { nullptr };
+    DeviceList *diskControlApplet { nullptr };
 };
 
 #endif   // DISKMOUNTPLUGIN_H
