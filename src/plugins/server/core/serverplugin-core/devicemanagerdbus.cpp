@@ -55,20 +55,14 @@ void DeviceManagerDBus::initialize()
  */
 void DeviceManagerDBus::initConnection()
 {
-    connect(DevMngIns, &DeviceManager::blockDevUnmountAsyncFailed, this, [this](const QString &deviceId, DFMMOUNT::DeviceError err) {
-        Q_UNUSED(deviceId)
-        Q_UNUSED(err)
-        emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
+    connect(DevMngIns, &DeviceManager::blockDevUnmountAsyncFailed, this, [this](auto deviceId) {
+        emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kUnmount);
     });
-    connect(DevMngIns, &DeviceManager::blockDevEjectAsyncFailed, this, [this](const QString &deviceId, DFMMOUNT::DeviceError err) {
-        Q_UNUSED(deviceId)
-        Q_UNUSED(err)
-        emit NotifyDeviceBusy(DeviceBusyAction::kEject);
+    connect(DevMngIns, &DeviceManager::blockDevEjectAsyncFailed, this, [this](auto deviceId) {
+        emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kEject);
     });
-    connect(DevMngIns, &DeviceManager::blockDevPoweroffAysncFailed, this, [this](const QString &deviceId, DFMMOUNT::DeviceError err) {
-        Q_UNUSED(deviceId)
-        Q_UNUSED(err)
-        emit NotifyDeviceBusy(DeviceBusyAction::kRemove);
+    connect(DevMngIns, &DeviceManager::blockDevPoweroffAysncFailed, this, [this](auto deviceId) {
+        emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kPowerOff);
     });
 
     connect(DevMngIns, &DeviceManager::devSizeChanged, this, &DeviceManagerDBus::SizeUsedChanged);

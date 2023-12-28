@@ -1,0 +1,26 @@
+// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef TYPEDEFINES_H
+#define TYPEDEFINES_H
+
+#include <QObject>
+#include <QString>
+#include <QUrl>
+
+struct DockItemData
+{
+    QString id;
+    QString backingID;
+    QString displayName;
+    QUrl targetUrl;
+    QUrl targetFileUrl;
+    QString iconName;
+    quint64 totalSize;
+    quint64 usedSize;
+    QString sortKey;
+};
+Q_DECLARE_METATYPE(DockItemData)
+
+#endif   // TYPEDEFINES_H

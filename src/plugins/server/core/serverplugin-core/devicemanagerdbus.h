@@ -21,7 +21,7 @@ public:
 
 signals:
     void SizeUsedChanged(QString id, qint64 total, qint64 free);
-    void NotifyDeviceBusy(int action);   // see "dfm-base/dbusservice/global_server_defines.h"
+    void NotifyDeviceBusy(QString id, QString action);   // see "dfm-base/dbusservice/global_server_defines.h"
 
     void BlockDriveAdded();
     void BlockDriveRemoved();
