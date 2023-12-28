@@ -6,6 +6,7 @@
 #include "basicwidget.h"
 #include "permissionmanagerwidget.h"
 #include "utils/propertydialogmanager.h"
+#include "utils/propertydialogutil.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileinfohelper.h>
@@ -243,11 +244,8 @@ void FilePropertyDialog::closeDialog()
 
 void FilePropertyDialog::onSelectUrlRenamed(const QUrl &url)
 {
-    if (permissionManagerWidget)
-        permissionManagerWidget->updateFileUrl(url);
-
-    if (basicWidget)
-        basicWidget->updateFileUrl(url);
+    close();
+    PropertyDialogUtil::instance()->showPropertyDialog({ url }, QVariantHash());
 }
 
 void FilePropertyDialog::onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
