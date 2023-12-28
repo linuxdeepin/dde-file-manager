@@ -13,6 +13,9 @@
 #include <DPasswordEdit>
 #include <DLabel>
 #include <DComboBox>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 #include <QDebug>
 #include <QToolTip>
@@ -36,11 +39,8 @@ VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
 
 void VaultActiveSetUnlockMethodView::initUi()
 {
-    DLabel *pLabel = new DLabel(tr("Set Vault Password"), this);
-    QFont font = pLabel->font();
-    font.setPixelSize(18);
-    pLabel->setFont(font);
-    pLabel->setAlignment(Qt::AlignHCenter);
+    titleLabel = new DLabel(tr("Set Vault Password"), this);
+    titleLabel->setAlignment(Qt::AlignHCenter);
 
     DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
     typeCombo = new DComboBox(this);
@@ -100,14 +100,16 @@ void VaultActiveSetUnlockMethodView::initUi()
 
     QVBoxLayout *play = new QVBoxLayout(this);
     play->setMargin(0);
-    play->addWidget(pLabel);
+    play->addWidget(titleLabel);
     play->addSpacing(15);
     play->addLayout(gridLayout);
     play->addStretch();
     play->addWidget(nextBtn);
 
+    initUiForSizeMode();
+
 #ifdef ENABLE_TESTING
-    AddATTag(qobject_cast<QWidget *>(pLabel), AcName::kAcLabelVaultSetUnlockTitle);
+    AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultSetUnlockTitle);
     AddATTag(qobject_cast<QWidget *>(pTypeLabel), AcName::kAcLabelVaultSetUnlcokMethod);
     AddATTag(qobject_cast<QWidget *>(typeCombo), AcName::kAcComboVaultSetUnlockMethod);
     AddATTag(qobject_cast<QWidget *>(passwordLabel), AcName::kAcLabelVaultSetUnlockPassword);
@@ -118,6 +120,19 @@ void VaultActiveSetUnlockMethodView::initUi()
     AddATTag(qobject_cast<QWidget *>(tipsEdit), AcName::kAcEditVaultSetUnlockHint);
     AddATTag(qobject_cast<QWidget *>(transEncryptionText), AcName::kAcLabelVaultSetUnlockText);
     AddATTag(qobject_cast<QWidget *>(nextBtn), AcName::kAcBtnVaultSetUnlockNext);
+#endif
+}
+
+void VaultActiveSetUnlockMethodView::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QFont font = titleLabel->font();
+    font.setPixelSize(DSizeModeHelper::element(13, 16));
+    titleLabel->setFont(font);
+#else
+    QFont font = titleLabel->font();
+    font.setPixelSize(15);
+    titleLabel->setFont(font);
 #endif
 }
 
@@ -143,6 +158,12 @@ void VaultActiveSetUnlockMethodView::initConnect()
             this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged);
     connect(nextBtn, &DPushButton::clicked,
             this, &VaultActiveSetUnlockMethodView::slotNextBtnClicked);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        initUiForSizeMode();
+    });
+#endif
 }
 
 void VaultActiveSetUnlockMethodView::clearText()

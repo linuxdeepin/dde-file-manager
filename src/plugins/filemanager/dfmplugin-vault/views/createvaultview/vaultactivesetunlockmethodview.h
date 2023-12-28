@@ -61,6 +61,7 @@ private slots:
 
 private:
     void initUi();
+    void initUiForSizeMode();
     void initConnect();
     //! 校验密码是否符合规则
     bool checkPassword(const QString &passwordEdit);
@@ -71,6 +72,7 @@ private:
     void showEvent(QShowEvent *event) override;
 
 private:
+    DTK_WIDGET_NAMESPACE::DLabel *titleLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DComboBox *typeCombo { nullptr };
 
     DTK_WIDGET_NAMESPACE::DLabel *passwordLabel { nullptr };
