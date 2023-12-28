@@ -203,8 +203,10 @@ void BookMarkManager::addQuickAccessItemsFromConfig()
     sortedUrls.clear();
     initData();
     const QVariantList &list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
-    if (list.count() <= 0)
-        saveSortedItemsToConfigFile(sortedUrls);   //write the default items to config
+    if (list.count() <= 0 || !BookMarkHelper::instance()->isValidQuickAccessConf(list)) {
+        qWarning() << "Reset quick access list";
+        saveSortedItemsToConfigFile(sortedUrls);   // write the default items to config
+    }
 
     addQuickAccessDataFromConfig();
 

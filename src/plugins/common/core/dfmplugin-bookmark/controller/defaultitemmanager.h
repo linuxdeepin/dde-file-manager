@@ -27,6 +27,7 @@ public:
     void initPreDefineItems();
 
     QMap<QString, QUrl> defaultItemUrls();
+    QMap<QString, QUrl> preDefItemUrls();
     QList<BookmarkData> defaultItemInitOrder();
     QList<BookmarkData> defaultPreDefInitOrder();
 

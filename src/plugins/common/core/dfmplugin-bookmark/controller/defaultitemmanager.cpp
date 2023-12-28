@@ -43,7 +43,7 @@ void DefaultItemManager::initDefaultItems()
         BookmarkData bookmarkData;
         bookmarkData.name = nameKey;   //For default item, save the english name to config.
         QString path { SystemPathUtil::instance()->systemPath(nameKey) };
-        QUrl url = { UrlRoute::pathToReal(path) };
+        const QUrl &url { QUrl::fromLocalFile(path) };
         d->defaultItemUrls.insert(nameKey, url);
         bookmarkData.url = url;
         bookmarkData.isDefaultItem = true;
@@ -101,6 +101,7 @@ void DefaultItemManager::initPreDefineItems()
             properties.insert("Property_Key_QtItemFlags",
                               QVariant::fromValue(flags));
             quickAccessInfo.sidebarProperties = properties;
+            d->defaultPreDefItemUrls.insert(markName, url);
             d->defaultItemPreDefOrder.append(quickAccessInfo);
         }
     });
@@ -109,6 +110,11 @@ void DefaultItemManager::initPreDefineItems()
 QMap<QString, QUrl> DefaultItemManager::defaultItemUrls()
 {
     return d->defaultItemUrls;
+}
+
+QMap<QString, QUrl> DefaultItemManager::preDefItemUrls()
+{
+    return d->defaultPreDefItemUrls;
 }
 
 QList<BookmarkData> DefaultItemManager::defaultItemInitOrder()
