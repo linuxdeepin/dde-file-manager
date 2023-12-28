@@ -19,7 +19,10 @@ class DefaultItemManager : public QObject
 public:
     static DefaultItemManager *instance();
     void initDefaultItems();
+    void initPreDefineItems();
+
     QList<BookmarkData> defaultItemInitOrder();
+    QList<BookmarkData> defaultPreDefInitOrder();
 
 private:
     explicit DefaultItemManager(QObject *parent = nullptr);

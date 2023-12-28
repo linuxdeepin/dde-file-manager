@@ -22,6 +22,7 @@ class DefaultItemManagerPrivate : public QObject
     explicit DefaultItemManagerPrivate(DefaultItemManager *qq);
 
     QMap<QString, QUrl> defaultItemUrls;
+    QMap<QString, QUrl> defaultPreDefItemUrls;
     QList<BookmarkData> defaultItemInitOrder;
     QList<BookmarkData> defaultItemPreDefOrder;
 };

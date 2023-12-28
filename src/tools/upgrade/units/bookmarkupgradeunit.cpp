@@ -73,6 +73,7 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
         return false;
     } else {
         DefaultItemManager::instance()->initDefaultItems();
+        DefaultItemManager::instance()->initPreDefineItems();
         return true;
     }
 }
@@ -96,13 +97,21 @@ QVariantList BookMarkUpgradeUnit::initData() const
     QVariantList quickAccessItemList;
     QList<BookmarkData> defItemInitOrder = DefaultItemManager::instance()->defaultItemInitOrder();
     int index = 0;
-    foreach (const BookmarkData &data, defItemInitOrder) {
+    for (const BookmarkData &data : defItemInitOrder) {
         BookmarkData temData = data;
-        if (data.name.isEmpty())
-            continue;
         temData.index = index++;
         const QVariantMap &item = temData.serialize();
         quickAccessItemList.append(item);
+    }
+
+    const QList<BookmarkData> &defPreDefInitOrder { DefaultItemManager::instance()->defaultPreDefInitOrder() };
+    for (const BookmarkData &data : defPreDefInitOrder) {
+        BookmarkData temData = data;
+        const QVariantMap &item = temData.serialize();
+        if (data.index >= 0)
+            quickAccessItemList.insert(data.index, item);
+        else
+            quickAccessItemList.append(item);
     }
 
     const QVariant &bookmarkOrderFromConfig = configObject.value(kBookmarkOrder).toObject().value(kBookmark).toArray().toVariantList();
