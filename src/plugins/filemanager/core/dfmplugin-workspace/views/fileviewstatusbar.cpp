@@ -109,3 +109,11 @@ void FileViewStatusBar::clearLayoutAndAnchors()
 
     DAnchorsBase::clearAnchors(scaleSlider);
 }
+
+void FileViewStatusBar::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+    QStyleOption opt;
+    opt.initFrom(this);
+    style()->drawPrimitive(QStyle::PE_PanelStatusBar, &opt, &p, this);
+}
