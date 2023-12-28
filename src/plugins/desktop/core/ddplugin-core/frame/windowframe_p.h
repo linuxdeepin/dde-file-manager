@@ -22,7 +22,14 @@ public:
     explicit WindowFramePrivate(WindowFrame *parent);
     void updateProperty(BaseWindowPointer win, DFMBASE_NAMESPACE::ScreenPointer screen, bool primary);
     BaseWindowPointer createWindow(DFMBASE_NAMESPACE::ScreenPointer sp);
-public slots:
+
+    void traceWindow(QWindow *win) const;
+
+protected slots:
+    void xChanged(int arg) const;
+    void yChanged(int arg) const;
+    void widthChanged(int arg) const;
+    void heightChanged(int arg) const;
 public:
     QMap<QString, BaseWindowPointer> windows;
     QReadWriteLock locker;
