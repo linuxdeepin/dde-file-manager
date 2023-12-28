@@ -131,7 +131,7 @@ void VaultActiveSetUnlockMethodView::initUiForSizeMode()
     titleLabel->setFont(font);
 #else
     QFont font = titleLabel->font();
-    font.setPixelSize(15);
+    font.setPixelSize(16);
     titleLabel->setFont(font);
 #endif
 }

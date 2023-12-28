@@ -11,6 +11,9 @@
 
 #include <QVBoxLayout>
 #include <QSpacerItem>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
@@ -29,11 +32,8 @@ void VaultActiveStartView::slotStartBtnClicked()
 
 void VaultActiveStartView::initUi()
 {
-    DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
-    QFont font = pLabel1->font();
-    font.setPixelSize(18);
-    pLabel1->setFont(font);
-    pLabel1->setAlignment(Qt::AlignHCenter);
+    titleLabel = new DLabel(tr("File Vault"), this);
+    titleLabel->setAlignment(Qt::AlignHCenter);
 
     DLabel *pLabel2 = new DLabel(tr("Create your secure private space") + '\n' + tr("Advanced encryption technology") + '\n' + tr("Convenient and easy to use"), this);
     pLabel2->setAlignment(Qt::AlignHCenter);
@@ -46,7 +46,7 @@ void VaultActiveStartView::initUi()
 
     QVBoxLayout *play = new QVBoxLayout(this);
     play->setMargin(0);
-    play->addWidget(pLabel1);
+    play->addWidget(titleLabel);
     play->addSpacing(5);
     play->addWidget(pLabel2);
     play->addSpacing(15);
@@ -54,11 +54,26 @@ void VaultActiveStartView::initUi()
     play->addStretch();
     play->addWidget(startBtn);
 
+    initUiForSizeMode();
+
 #ifdef ENABLE_TESTING
-    AddATTag(qobject_cast<QWidget *>(pLabel1), AcName::kAcLabelVaultStartTitle);
+    AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultStartTitle);
     AddATTag(qobject_cast<QWidget *>(pLabel2), AcName::kAcLabelVaultStartContent);
     AddATTag(qobject_cast<QWidget *>(pLabel3), AcName::kAcLabelVaultStartImage);
     AddATTag(qobject_cast<QWidget *>(startBtn), AcName::kAcBtnVaultStartOk);
+#endif
+}
+
+void VaultActiveStartView::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode1
+    QFont font = titleLabel->font();
+    font.setPixelSize(DSizeModeHelper::element(13, 16));
+    titleLabel->setFont(font);
+#else
+    QFont font = titleLabel->font();
+    font.setPixelSize(16);
+    titleLabel->setFont(font);
 #endif
 }
 
@@ -66,4 +81,9 @@ void VaultActiveStartView::initConnect()
 {
     connect(startBtn, &DPushButton::clicked,
             this, &VaultActiveStartView::slotStartBtnClicked);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        initUiForSizeMode();
+    });
+#endif
 }
