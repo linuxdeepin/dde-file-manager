@@ -487,6 +487,7 @@ void TaskWidget::initUI()
 
     mainLayout->addLayout(normalLayout);
     mainLayout->setSpacing(0);
+    mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
     lbErrorMsg->setVisible(false);
     btnPause->setVisible(false);
