@@ -8,6 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <DPushButton>
+#include <DLabel>
 
 #include <QWidget>
 
@@ -26,9 +27,11 @@ private slots:
 
 private:
     void initUi();
+    void initUiForSizeMode();
     void initConnect();
 
 private:
+    DTK_WIDGET_NAMESPACE::DLabel *titleLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DPushButton *startBtn { nullptr };   //! 开启包厢按钮
 };
 }
