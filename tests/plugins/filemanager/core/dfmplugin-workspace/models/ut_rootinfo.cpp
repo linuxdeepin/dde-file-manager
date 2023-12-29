@@ -313,6 +313,7 @@ TEST_F(UT_RootInfo, DoWatcherEvent)
             [&removeUrls](RootInfo *, const QList<QUrl> &urlList) { removeUrls.append(urlList); });
     stub.set_lamda(ADDR(RootInfo, updateChild), [&updateUrls](RootInfo *, const QUrl &updateUrl) {
         updateUrls.append(updateUrl);
+        return nullptr;
     });
 
     rootInfoObj->doWatcherEvent();

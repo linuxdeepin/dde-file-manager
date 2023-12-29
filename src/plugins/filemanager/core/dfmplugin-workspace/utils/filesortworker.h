@@ -113,9 +113,10 @@ public slots:
     void onToggleHiddenFiles();
     void onShowHiddenFileChanged(bool isShow);
 
-    void handleWatcherAddChildren(const QList<SortInfoPointer> children);
+    void handleWatcherAddChildren(const QList<SortInfoPointer> &children);
     void handleWatcherRemoveChildren(const QList<SortInfoPointer> children);
     void handleWatcherUpdateFile(const SortInfoPointer child);
+    void handleWatcherUpdateFiles(const QList<SortInfoPointer> &children);
     void handleWatcherUpdateHideFile(const QUrl &hidUrl);
 
     void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);

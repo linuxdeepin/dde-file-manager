@@ -51,7 +51,6 @@ public:
     void reset();
 
 Q_SIGNALS:
-    void childrenUpdate(const QUrl &url);
 
     void itemAdded();
     void iteratorLocalFiles(const QString &key,
@@ -61,8 +60,8 @@ Q_SIGNALS:
                             const bool isMixDirAndFile);
     void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo, const FileInfoPointer info);
     void iteratorAddFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos);
-    void watcherAddFiles(const QList<SortInfoPointer> children);
-    void watcherRemoveFiles(const QList<SortInfoPointer> children);
+    void watcherAddFiles(const QList<SortInfoPointer> &children);
+    void watcherRemoveFiles(const QList<SortInfoPointer> &children);
     void traversalFinished(const QString &key);
     void sourceDatas(const QString &key,
                      const QList<SortInfoPointer> children,
@@ -71,6 +70,7 @@ Q_SIGNALS:
                      const bool isMixDirAndFile,
                      const bool isFinished);
     void watcherUpdateFile(const SortInfoPointer sortInfo);
+    void watcherUpdateFiles(const QList<SortInfoPointer> &sortInfos);
     void watcherUpdateHideFile(const QUrl &hidUrl);
     void requestSort(const QString &key, const QUrl &dirUrl);
     void requestCloseTab(const QUrl &url);
@@ -108,7 +108,8 @@ private:
     SortInfoPointer sortFileInfo(const FileInfoPointer &info);
     void removeChildren(const QList<QUrl> &urlList);
     bool containsChild(const QUrl &url);
-    void updateChild(const QUrl &url);
+    SortInfoPointer updateChild(const QUrl &url);
+    void updateChildren(const QList<QUrl> &urls);
 
     bool checkFileEventQueue();
     void enqueueEvent(const QPair<QUrl, EventType> &e);

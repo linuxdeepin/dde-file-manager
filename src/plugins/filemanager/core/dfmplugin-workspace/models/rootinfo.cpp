@@ -17,6 +17,7 @@
 
 #include <QApplication>
 #include <QtConcurrent>
+#include <QElapsedTimer>
 
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
@@ -212,7 +213,38 @@ void RootInfo::doWatcherEvent()
         return;
 
     processFileEventRuning = true;
-    while (checkFileEventQueue()) {
+    QElapsedTimer timer;
+    timer.start();
+    QList<QUrl> adds, updates, removes;
+    qint64 oldtime = 0;
+    while (checkFileEventQueue() || timer.elapsed() < 200) {
+        //检查超时，重新设置起始时间
+        if (timer.elapsed() - oldtime >= 200) {
+            // 处理添加文件
+            if (!adds.isEmpty())
+                addChildren(adds);
+            if (!updates.isEmpty())
+                updateChildren(updates); 
+            if (!removes.isEmpty())
+                removeChildren(removes);
+
+            adds.clear();
+            updates.clear();
+            removes.clear();
+
+            oldtime = timer.elapsed();
+        }
+
+        if (cancelWatcherEvent)
+            return;
+
+        if (!checkFileEventQueue()) {
+            QThread::msleep(10);
+            if (adds.isEmpty() && updates.isEmpty() && removes.isEmpty())
+                oldtime = timer.elapsed();
+            continue;
+        }
+
         QPair<QUrl, EventType> event = dequeueEvent();
         const QUrl &fileUrl = event.first;
 
@@ -240,18 +272,35 @@ void RootInfo::doWatcherEvent()
             return;
 
         if (event.second == kAddFile) {
-            addChildren({ fileUrl });
+            // 判断update和remove中是否存在存在就移除
+            updates.removeOne(fileUrl);
+            removes.removeOne(fileUrl);
+            if (adds.contains(fileUrl))
+                continue;
+
+            adds.append(fileUrl);
         } else if (event.second == kUpdateFile) {
-            updateChild(fileUrl);
+            // 如果在增加或者移除中就不添加
+            if (adds.contains(fileUrl) || removes.contains(fileUrl) || updates.contains(fileUrl))
+                continue;
+            updates.append(fileUrl);
         } else {
-            removeChildren({ fileUrl });
-            emit InfoCacheController::instance().removeCacheFileInfo({ fileUrl });
-            WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
-            emit requestCloseTab(fileUrl);
+            adds.removeOne(fileUrl);
+            updates.removeOne(fileUrl);
+            if (removes.contains(fileUrl))
+                continue;
+            removes.append(fileUrl);
         }
     }
 
-    Q_EMIT childrenUpdate(url);
+
+    // 处理添加文件
+    if (!adds.isEmpty())
+        addChildren(adds);
+    if (!updates.isEmpty())
+        updateChildren(updates);
+    if (!removes.isEmpty())
+        removeChildren(removes);
     processFileEventRuning = false;
 }
 
@@ -431,7 +480,10 @@ void RootInfo::removeChildren(const QList<QUrl> &urlList)
     QList<SortInfoPointer> removeChildren {};
     int childIndex = -1;
     QList<QUrl> removeUrls;
+    emit InfoCacheController::instance().removeCacheFileInfo(urlList);
     for (QUrl url : urlList) {
+        WatcherCache::instance().removeCacheWatcherByParent(url);
+        emit requestCloseTab(url);
         url.setPath(url.path());
         auto child = fileInfo(url);
         if (!child)
@@ -462,31 +514,43 @@ bool RootInfo::containsChild(const QUrl &url)
     return childrenUrlList.contains(url);
 }
 
-void RootInfo::updateChild(const QUrl &url)
+SortInfoPointer RootInfo::updateChild(const QUrl &url)
 {
     SortInfoPointer sort { nullptr };
 
     auto info = fileInfo(url);
     if (info.isNull())
-        return;
+        return nullptr;
 
     auto realUrl = info->urlOf(UrlInfoType::kUrl);
 
     QWriteLocker lk(&childrenLock);
     if (!childrenUrlList.contains(realUrl))
-        return;
+        return nullptr;
     sort = sortFileInfo(info);
     if (sort.isNull())
-        return;
+        return nullptr;
     sourceDataList.replace(childrenUrlList.indexOf(realUrl), sort);
-
-    if (sort)
-        emit watcherUpdateFile(sort);
 
     // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
     // when the file is modified in other way.
     if (UniversalUtils::urlEquals(hiddenFileUrl, url))
         Q_EMIT watcherUpdateHideFile(url);
+
+    return sort;
+}
+
+void RootInfo::updateChildren(const QList<QUrl> &urls)
+{
+    QList<SortInfoPointer> updates;
+    for (auto url : urls) {
+        auto sort = updateChild(url);
+        if (sort)
+            updates.append(sort);
+    }
+    if (updates.isEmpty())
+        return;
+    emit watcherUpdateFiles(updates);
 }
 
 bool RootInfo::checkFileEventQueue()
