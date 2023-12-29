@@ -34,7 +34,7 @@ bool Vault::start()
 {
     QString err;
     if (!DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.vault", &err))
-        qWarning() << "Vault: create dconfig failed: " << err;
+        fmWarning() << "Vault: create dconfig failed: " << err;
 
     VaultVisibleManager::instance()->pluginServiceRegister();
     return true;

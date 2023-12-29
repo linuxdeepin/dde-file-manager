@@ -88,12 +88,12 @@ void CoreHelper::cacheDefaultWindow()
 
 void CoreHelper::loadPlugin(const QString &name)
 {
-    qInfo() << "About to load plugin:" << name;
+    fmInfo() << "About to load plugin:" << name;
     auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
     if (plugin) {
         auto result { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
-        qInfo() << "Load result: " << result
-                << "State: " << plugin->pluginState();
+        fmInfo() << "Load result: " << result
+                 << "State: " << plugin->pluginState();
     }
 }
 
@@ -120,7 +120,7 @@ FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
     auto window { FMWindowsIns.createWindow(url, false) };
 
     if (window) {
-        fmInfo() << "Find exists window for: " << url <<",for window:"<< window->winId();
+        fmInfo() << "Find exists window for: " << url << ",for window:" << window->winId();
         return window;
     }
 

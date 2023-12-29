@@ -56,7 +56,7 @@ bool BookMarkHelper::isValidQuickAccessConf(const QVariantList &list)
         const auto &url { bookMarkMap.value("url").toUrl() };
         const auto &name { bookMarkMap.value("name").toString() };
         if (!url.isValid() || name.isEmpty()) {
-            qWarning() << "Invalid quick access data:" << bookMarkMap;
+            fmWarning() << "Invalid quick access data:" << bookMarkMap;
             return false;
         }
 

@@ -299,7 +299,7 @@ ComputerDataList ComputerItemWatcher::getPreDefineItems()
     std::for_each(list.begin(), list.end(), [&ret, this](const QVariantMap &map) {
         const auto &entryUrl { map.value("Url").toUrl() };
         if (!entryUrl.isValid()) {
-            qWarning() << "Cannot parse predefine data, invalid url" << entryUrl;
+            fmWarning() << "Cannot parse predefine data, invalid url" << entryUrl;
             return;
         }
 
@@ -313,12 +313,12 @@ ComputerDataList ComputerItemWatcher::getPreDefineItems()
             groupID = getGroupId(groupName);
         }
         if (groupID == -1) {
-            qWarning() << "The predefine data is not contain group: " << entryUrl;
+            fmWarning() << "The predefine data is not contain group: " << entryUrl;
             return;
         }
 
         if (!map.contains("Shape")) {
-            qWarning() << "The predefine data is not contain shape: " << entryUrl;
+            fmWarning() << "The predefine data is not contain shape: " << entryUrl;
             return;
         }
         computerInfos.insert(entryUrl, map);
@@ -712,9 +712,9 @@ void ComputerItemWatcher::startQueryItems(bool async)
         for (const auto &item : initedDatas)
             computerItems << item.url;
 
-        qDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
+        fmDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
         dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
-        qDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
+        fmDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
         for (int i = initedDatas.count() - 1; i >= 0; --i) {
             const auto &url { initedDatas[i].url };
             if (url.isValid() && !computerItems.contains(url)) {

@@ -204,7 +204,7 @@ void BookMarkManager::addQuickAccessItemsFromConfig()
     initData();
     const QVariantList &list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
     if (list.count() <= 0 || !BookMarkHelper::instance()->isValidQuickAccessConf(list)) {
-        qWarning() << "Reset quick access list";
+        fmWarning() << "Reset quick access list";
         saveSortedItemsToConfigFile(sortedUrls);   // write the default items to config
     }
 
@@ -464,7 +464,7 @@ void BookMarkManager::addQuickAccessDataFromConfig(const QVariantList &dataList)
             quickAccessDataMap[preDefUrl] = bookmarkData;
             continue;
         }
-        qWarning() << "QuickAccess hide item: " << bookmarkData.name;
+        fmWarning() << "QuickAccess hide item: " << bookmarkData.name;
     }
 
     sortedUrls = curSortedUrls;
