@@ -43,8 +43,8 @@ void KeyValueLabel::initUI()
     rightValueEdit->setMinimumWidth(130);
     glayout = new QGridLayout;
     glayout->setMargin(0);
-    glayout->addWidget(leftValueLabel, 0, 0, Qt::AlignLeft | Qt::AlignVCenter);
-    glayout->addWidget(rightValueEdit, 0, 1, Qt::AlignLeft);
+    glayout->addWidget(leftValueLabel, 0, 0);
+    glayout->addWidget(rightValueEdit, 0, 1);
     glayout->setColumnStretch(0, 1);
     glayout->setColumnStretch(1, 3);
     setLayout(glayout);
@@ -90,6 +90,7 @@ void KeyValueLabel::setLeftValue(QString value, Qt::TextElideMode elideMode, Qt:
 {
     QString elideNote = value;
     leftValueLabel->setAlignment(aligment);
+    leftValueLabel->setContentsMargins(0, 4, 0, 0);
     QFontMetrics fontWidth(leftValueLabel->font());
     int fontW = leftValueLabel->width();
     if (fontW > fontMinWidth)
