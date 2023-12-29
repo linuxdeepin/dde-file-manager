@@ -28,23 +28,6 @@
     </message>
 </context>
 <context>
-    <name>DAttachedProtocolDevice</name>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="55"/>
-        <source>%1 on %2</source>
-        <translation>%1 دىكى %2</translation>
-    </message>
-</context>
-<context>
-    <name>DeepinStorage</name>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="100"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="112"/>
-        <source>%1 Volume</source>
-        <translation>%1 رايۇن</translation>
-    </message>
-</context>
-<context>
     <name>DesktopMain</name>
     <message>
         <location filename="../src/apps/dde-desktop/main.cpp" line="223"/>
@@ -53,31 +36,11 @@
     </message>
 </context>
 <context>
-    <name>DiskControlWidget</name>
+    <name>DeviceList</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="120"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="138"/>
         <source>Disks</source>
-        <translation>دىسكا</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="316"/>
-        <source>The device was not safely removed</source>
-        <translation>ئۈسكۈنە نورمال ئۆچۈرۈلمىدى</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="317"/>
-        <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>«بىخەتەر ئۆچۈرۈش» نى باسقاندىن كېيىن ئۇلىنىشنى ئۈزۈڭ</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="320"/>
-        <source>Disk is busy, cannot unmount now</source>
-        <translation>دىسكا ھۆججىتى ئىگىلىۋېلىندى، ئۆچۈرگىلى بولمايدۇ</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="323"/>
-        <source>The device is busy, cannot eject now</source>
-        <translation>دىسكا ئالدىراش ، ھازىر چىقىرىۋېتەلمەيدۇ</translation>
+        <translation type="unfinished">دىسكا</translation>
     </message>
 </context>
 <context>
@@ -99,6 +62,40 @@
     </message>
 </context>
 <context>
+    <name>DockItemDataManager</name>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="116"/>
+        <source>The device has been safely removed</source>
+        <translation type="unfinished">ئۈسكۈنە بىخەتەر ئۆچۈرۈلدى</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="128"/>
+        <source>eject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="129"/>
+        <source>unmount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="130"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="135"/>
+        <source>remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="132"/>
+        <source>Operation failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="133"/>
+        <source>Device (%1) is busy, cannot %2 now.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FileDialogHandle</name>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="555"/>
@@ -107,9 +104,17 @@
     </message>
 </context>
 <context>
+    <name>FileOperateBaseWorker</name>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="651"/>
+        <source>The file name or the path is too long!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="763"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="764"/>
         <source>Unknown</source>
         <translation>نامەلۇم</translation>
     </message>
@@ -186,12 +191,12 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="454"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="77"/>
         <source>%1 Volume</source>
         <translation>%1 رايۇن</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="250"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="301"/>
         <source>Scanning the device, stop it?</source>
         <translation>ئۈسكۈنە سايىلىنىۋاتىدۇ، سايىلەشنى توختىتامسىز؟</translation>
     </message>
@@ -207,6 +212,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="387"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="86"/>
         <source>%1 on %2</source>
         <translation>%2 دىكى %1</translation>
     </message>
@@ -312,12 +318,12 @@
         <translation>%1 ۋەزىپە ئىجرا بولۇۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="770"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="771"/>
         <source>%1 item</source>
         <translation>%1تۈر</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="771"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="772"/>
         <source>%1 items</source>
         <translation>%1تۈر</translation>
     </message>
@@ -335,7 +341,6 @@
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="432"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="480"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="71"/>
         <source>You do not have permission to access this folder</source>
         <translation>بۇ ھۆججەتنى ئوقۇش ھوقۇقىڭىز يوق</translation>
     </message>
@@ -838,7 +843,6 @@
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="35"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="42"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="222"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="55"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
@@ -855,7 +859,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="223"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>توختىتىمەن</translation>
@@ -900,22 +903,15 @@
         <translation>بىت</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="71"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
         <source>Access denied</source>
         <translation>ئوقۇغىلى، يازغىلى بولمايدۇ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="36"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="76"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>جەزملەشتۈرۈش</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="81"/>
-        <source>The device has been safely removed</source>
-        <translation>ئۈسكۈنە بىخەتەر ئۆچۈرۈلدى</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="38"/>
@@ -3395,43 +3391,43 @@
         <translation>توقۇنۇش ئۇچۇرنى كۆرسىتىش ئىقتىدارىنى ئىشلىتىش جەريانىدا ئەسلى نىشاننىڭ %1 ئۇچۇرىنى قۇرۇش مەغلۇپ بولدى!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="760"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="761"/>
         <source>Time modified: %1</source>
         <translation>ئۆزگەرتىلگەن ۋاقىت: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="765"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="766"/>
         <source>Original folder</source>
         <translation>ئەسلى ھۆججەت قىسقۇچ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="772"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="773"/>
         <source>Contains: %1</source>
         <translation>دانە: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="775"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="776"/>
         <source>Original file</source>
         <translation>ئەسلى ھۆججەت</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="776"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="777"/>
         <source>Size: %1</source>
         <translation>چوڭلۇقى: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="765"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="766"/>
         <source>Target folder</source>
         <translation>نىشان ھۆججەت قىسقۇچ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="428"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="764"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="765"/>
         <source>In data statistics ...</source>
         <translation>سانلىق مەلۇمات ئىستاتىستىكىلىنىۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="775"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="776"/>
         <source>Target file</source>
         <translation>نىشان ھۆججەت</translation>
     </message>
@@ -3446,37 +3442,37 @@
         <translation>سەل ساقلاڭ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="581"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="582"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>تەڭ ساقلاش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="584"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="585"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>ئاتلاش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="589"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="646"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="590"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="647"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>ئالماشتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="614"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="615"/>
         <source>Do not ask again</source>
         <translation>قايتا سورىما</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="643"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="644"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>قايتا سىناڭ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="649"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="650"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>قوشۇۋېتىش</translation>
@@ -6082,7 +6078,7 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
         <source>Set Vault Password</source>
         <translation>ئېچىش ئۇسۇلىنى تەڭشەڭ</translation>
     </message>
@@ -6108,7 +6104,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="57"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="200"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>كەم دېگەندە 8 خانە بولۇشى، A-Z, a-z, 0-9 لارنى ۋە ھەرپنى ئۆز ئىچىگە ئېلىشى كېرەك</translation>
     </message>
@@ -6143,8 +6139,8 @@
         <translation>كىيىنكىسى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="202"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="223"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="239"/>
         <source>Passwords do not match</source>
         <translation>پارول بىردەك ئەمەس</translation>
     </message>
@@ -6152,7 +6148,7 @@
 <context>
     <name>dfmplugin_vault::VaultActiveStartView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>File Vault</source>
         <translation>بىخەتەرلىك ساندۇقى</translation>
     </message>
@@ -6664,12 +6660,12 @@
         <translation>پىلاستىنكا:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="140"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="134"/>
         <source>unknown artist</source>
         <translation>نامەلۇم ناخشىچى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="138"/>
         <source>unknown album</source>
         <translation>نامەلۇم پىلاستىنكا</translation>
     </message>
