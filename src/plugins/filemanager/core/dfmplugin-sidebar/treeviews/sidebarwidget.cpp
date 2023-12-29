@@ -166,7 +166,7 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
     // find out the item index by url
     const QModelIndex index = this->findItemIndex(url);   // ps: currently,findItemIndex can only find the sub item
     if (!index.isValid()) {
-        qWarning() << "setItemVisiable index is invalid:" << url;
+        fmWarning() << "setItemVisiable index is invalid:" << url;
         return;
     }
     SideBarItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
