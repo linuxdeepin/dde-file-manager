@@ -327,13 +327,20 @@ void OpenWithDialog::initData()
     } else if (!curUrl.isValid() && !urlList.isEmpty()) {
         QList<QUrl> openlist;
         bool bhide = true;
+        bool bfocuse = true;
         for (auto url : urlList) {
             const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
+            // 第一个是焦点文件，修改后都是以焦点文件作为判断依据
+            if (bfocuse) {
+                if (fileInfo)
+                    mimeType = fileInfo->fileMimeType();
+                bfocuse = false;
+            }
 
             if (!fileInfo) {
                 continue;
             }
-            mimeType = fileInfo->fileMimeType();
+
             if (!FileUtils::isDesktopFile(url)) {
                 bhide = false;
             }
