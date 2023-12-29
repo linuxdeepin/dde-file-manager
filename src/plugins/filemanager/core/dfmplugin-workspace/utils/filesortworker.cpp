@@ -271,7 +271,7 @@ void FileSortWorker::onShowHiddenFileChanged(bool isShow)
     handleFilters(newFilters);
 }
 
-void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> children)
+void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &children)
 {
     for (const auto &sortInfo : children) {
         if (isCanceled)
@@ -363,6 +363,15 @@ void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
     sortInfoUpdateByFileInfo(info);
 
     handleUpdateFile(child->fileUrl());
+}
+
+void FileSortWorker::handleWatcherUpdateFiles(const QList<SortInfoPointer> &children)
+{
+    for(auto sort : children) {
+        if (isCanceled)
+            return;
+        handleWatcherUpdateFile(sort);
+    }
 }
 
 void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)

@@ -29,7 +29,7 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
         return "";
 
     if (!thumbHelper.canGenerateThumbnail(url)) {
-        qCWarning(logDFMBase) << "thumbnail: the file does not support generate thumbnails: " << url;
+        qCDebug(logDFMBase) << "thumbnail: the file does not support generate thumbnails: " << url;
         return "";
     }
 
