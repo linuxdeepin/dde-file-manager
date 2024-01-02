@@ -11,6 +11,7 @@
 #include <QAbstractItemView>
 #include <QPainter>
 #include <QBitmap>
+#include <QPainterPath>
 
 static constexpr int kStretchWidth = 10;
 static constexpr int kStretchHeight = 10;
@@ -29,7 +30,6 @@ CollectionFramePrivate::CollectionFramePrivate(CollectionFrame *qq)
 
 CollectionFramePrivate::~CollectionFramePrivate()
 {
-
 }
 
 void CollectionFramePrivate::updateStretchRect()
@@ -239,15 +239,13 @@ int CollectionFramePrivate::calcBottomY()
 }
 
 CollectionFrame::CollectionFrame(QWidget *parent)
-    : DFrame(parent)
-    , d(new CollectionFramePrivate(this))
+    : DFrame(parent), d(new CollectionFramePrivate(this))
 {
     initUi();
 }
 
 CollectionFrame::~CollectionFrame()
 {
-
 }
 
 void CollectionFrame::setWidget(QWidget *w)
@@ -414,7 +412,8 @@ void CollectionFrame::paintEvent(QPaintEvent *event)
     p.setRenderHint(QPainter::Antialiasing);
     // dark :#000000 20%, light #000000 8%
     qreal alpha = Dtk::Gui::DGuiApplicationHelper::instance()->themeType() == Dtk::Gui::DGuiApplicationHelper::DarkType
-            ? 0.2 : 0.08;
+            ? 0.2
+            : 0.08;
 
     p.setPen(Qt::NoPen);
     p.setBrush(QColor(0, 0, 0, static_cast<int>(255 * alpha)));
@@ -444,7 +443,7 @@ void CollectionFrame::initUi()
     setAutoFillBackground(false);
 
     d->mainLayout = new QVBoxLayout(this);
-    d->mainLayout->setContentsMargins(1, 1, 1, 1); // 1px for border
+    d->mainLayout->setContentsMargins(1, 1, 1, 1);   // 1px for border
     this->setLayout(d->mainLayout);
     setContentsMargins(0, 0, 0, 0);
 }
