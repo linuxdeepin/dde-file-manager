@@ -207,6 +207,21 @@ bool FileOperatorMenuScene::triggered(QAction *action)
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, d->windowId, cdUrl);
             }
         } else {
+            // 如果是目录全部是用文管内部事件打开，因为一个目录就是这么处理的，保持一致，
+            // 这里开启了fileinfo的缓存，这里执行效率高
+            for ( auto it = d->selectFiles.begin(); it != d->selectFiles.end();) {
+                auto info = InfoFactory::create<FileInfo>(*it);
+                if (info.isNull() || !info->isAttributes(OptInfoType::kIsDir) ) {
+                    it++;
+                    continue;
+                }
+                QUrl cdUrl = *it;
+                if (info && info->isAttributes(OptInfoType::kIsSymLink))
+                    cdUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
+
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl);
+                it = d->selectFiles.erase(it);
+            }
             dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
         }
 
