@@ -113,7 +113,12 @@ QString DeviceUtils::errMessage(dfmmount::DeviceError err)
  */
 QString DeviceUtils::convertSuitableDisplayName(const QVariantMap &devInfo)
 {
-    QString alias = nameOfAlias(devInfo.value(kUUID).toString());
+    QString uuid = devInfo.value(kUUID).toString();
+    auto clearDevInfo = devInfo.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
+    if (!clearDevInfo.isEmpty())
+        uuid = clearDevInfo.value(kUUID, uuid).toString();
+
+    QString alias = nameOfAlias(uuid);
     if (!alias.isEmpty())
         return alias;
 
@@ -623,10 +628,9 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
     auto devicePath = bindPathTransform(url.path(), true);
     auto map = DevProxyMng->queryDeviceInfoByPath(devicePath, true);
     if (map.contains(kSizeFree))
-        return  map.value(kSizeFree).toLongLong();
+        return map.value(kSizeFree).toLongLong();
     if (map.contains(kSizeTotal) && map.contains(kSizeUsed))
-        return map.value(kSizeTotal).toLongLong() -
-                map.value(kSizeUsed).toLongLong();
+        return map.value(kSizeTotal).toLongLong() - map.value(kSizeUsed).toLongLong();
 
     return DFMIO::DFMUtils::deviceBytesFree(url);
 }

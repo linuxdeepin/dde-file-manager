@@ -177,6 +177,10 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
         return;
 
     QString uuid = info->extraProperty(DeviceProperty::kUUID).toString();
+    auto clearDevInfo = info->extraProperty(BlockAdditionalProperty::kClearBlockProperty).toMap();
+    if (!clearDevInfo.isEmpty())
+        uuid = clearDevInfo.value(DeviceProperty::kUUID, uuid).toString();
+
     if (uuid.isEmpty()) {
         fmWarning() << "params exception!" << info->urlOf(UrlInfoType::kUrl);
         return;
