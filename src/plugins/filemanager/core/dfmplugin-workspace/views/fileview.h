@@ -77,7 +77,7 @@ public:
     int getHeaderViewWidth() const;
     bool isSelected(const QModelIndex &index) const;
     int selectedIndexCount() const;
-    void selectFiles(const QList<QUrl> &files) const;
+    bool selectFiles(const QList<QUrl> &files) const;
     void setSelectionMode(const SelectionMode mode);
     void reverseSelect() const;
     void setEnabledSelectionModes(const QList<SelectionMode> &modes);
