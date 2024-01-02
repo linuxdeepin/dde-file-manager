@@ -4,6 +4,11 @@ cmake_minimum_required(VERSION 3.10)
 set(BIN_NAME test-libdfm-upgrade)
 
 set(UPGRADE_TOOL_DIR "${PROJECT_SOURCE_PATH}/tools/upgrade")
+configure_file(
+    "./config.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+    )
+
 
 FILE(GLOB_RECURSE SRCS
     "${UPGRADE_TOOL_DIR}/*.h"

@@ -148,9 +148,11 @@ add_subdirectory(src/external)
 add_subdirectory(src/tools)
 
 # docs
-find_package(Doxygen)
-if (BUILD_DOCS AND DOXYGEN_FOUND)
-    add_subdirectory(docs)
+if (BUILD_DOCS)
+    find_package(Doxygen)
+    if (DOXYGEN_FOUND)
+        add_subdirectory(docs)
+    endif()
 endif ()
 
 # test

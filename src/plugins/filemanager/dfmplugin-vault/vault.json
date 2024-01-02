@@ -10,5 +10,24 @@
     "Description" : "The vault plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-    ]
+    ],
+    "Custom": {
+        "SidebarDisplay": [{
+            "Url" : "dfmvault:///",
+            "Name": "Vault",
+            "Icon": "drive-harddisk-encrypted-symbolic",
+            "Group": "Group_Device",
+            "VisiableControl" : "vault",
+            "ReportName" : "Vault",
+            "Pos": 1
+        }],
+        "ComputerDisplay": [{
+            "Url" : "entry:///vault.vault",
+            "GroupName" : "Vault",
+            "Shape" : 0,
+            "ItemName" : "My Vault",
+            "ItemIcon" : "dfm_safebox",
+            "ReflectionObject" : "dfmplugin_vault::VaultEntryFileEntity*"
+        }]
+    }
 }

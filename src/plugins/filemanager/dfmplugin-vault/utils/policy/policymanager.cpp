@@ -102,8 +102,7 @@ void PolicyManager::slotVaultPolicy()
             vaultVisiable = true;
             VaultVisibleManager::instance()->infoRegister();
             VaultVisibleManager::instance()->pluginServiceRegister();
-            VaultVisibleManager::instance()->addSideBarVaultItem();
-            VaultVisibleManager::instance()->addComputer();
+            VaultVisibleManager::instance()->updateSideBarVaultItem();
         }
         break;
     default:

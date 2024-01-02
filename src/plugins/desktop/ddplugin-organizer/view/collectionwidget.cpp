@@ -15,6 +15,7 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QPainter>
+#include <QPainterPath>
 
 static constexpr int kTitleBarHeight = 24;
 static constexpr int kWidgetRoundRadius = 8;

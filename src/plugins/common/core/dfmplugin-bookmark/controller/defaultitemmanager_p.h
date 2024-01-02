@@ -22,9 +22,9 @@ class DefaultItemManagerPrivate : public QObject
     explicit DefaultItemManagerPrivate(DefaultItemManager *qq);
 
     QMap<QString, QUrl> defaultItemUrls;
+    QMap<QString, QUrl> defaultPreDefItemUrls;
     QList<BookmarkData> defaultItemInitOrder;
-    QMap<QString, QVariantMap> pluginItemData;
-    QStringList defaultPluginItem;
+    QList<BookmarkData> defaultItemPreDefOrder;
 };
 
 DPBOOKMARK_END_NAMESPACE

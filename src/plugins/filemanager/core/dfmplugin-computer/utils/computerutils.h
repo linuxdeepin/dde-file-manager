@@ -42,6 +42,7 @@ public:
         QUrl u;
         u.setScheme(scheme());
         u.setPath("/");
+        u.setHost("");
         return u;
     }
 
@@ -78,6 +79,7 @@ public:
 
     static QStringList allValidBlockUUIDs();
     static QList<QUrl> blkDevUrlByUUIDs(const QStringList &uuids);
+    static QList<QVariantMap> allPreDefineItemCustomDatas();
 
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.

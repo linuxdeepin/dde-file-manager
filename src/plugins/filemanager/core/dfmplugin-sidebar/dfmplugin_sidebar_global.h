@@ -115,7 +115,7 @@ struct ItemInfo
     FindMeCallback findMeCb { nullptr };
 
     ItemInfo() = default;
-    inline ItemInfo(const QUrl &u, const QVariantMap &map)
+    inline ItemInfo(const QUrl &u, const QVariantMap &map = {})
         : url { u },
           group { map[PropertyKey::kGroup].toString() },
           subGroup { map[PropertyKey::kSubGroup].toString() },

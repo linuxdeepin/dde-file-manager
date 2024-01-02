@@ -60,12 +60,13 @@ void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
     fmInfo("Start load plugins at runtime: ");
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
-        fmInfo() << "About to load plugin:" << name;
-        auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
-        if (plugin) {
-            auto result { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
-            fmInfo() << "Load result: " << result
-                     << "State: " << plugin->pluginState();
+        // TODO(zhangs): refactor search
+        if (name == "dfmplugin-search") {
+            QTimer::singleShot(2000, [name]() {
+                CoreHelper::instance().loadPlugin(name);
+            });
+        } else {
+            CoreHelper::instance().loadPlugin(name);
         }
     });
     fmInfo() << "End load plugins at runtime.";

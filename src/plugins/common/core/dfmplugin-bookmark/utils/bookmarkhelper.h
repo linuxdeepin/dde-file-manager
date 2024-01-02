@@ -21,6 +21,7 @@ public:
     QString scheme();
     QUrl rootUrl();
     QIcon icon();
+    bool isValidQuickAccessConf(const QVariantList &list);
 
 private:
     explicit BookMarkHelper(QObject *parent = nullptr);

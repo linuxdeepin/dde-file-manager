@@ -24,13 +24,11 @@ struct BookmarkData
     QString locateUrl;
     QString deviceUrl;
     QString name;
-    QString transName;
     QUrl url;
     bool isDefaultItem = false;
     int index = -1;
+    QVariantMap sidebarProperties;
 
-    QString udisksDBusPath;
-    QString udisksMountPoint;
     void resetData(const QVariantMap &map);
     QVariantMap serialize();
 };
@@ -53,7 +51,6 @@ public:
 
     void addSchemeOfBookMarkDisabled(const QString &scheme);
     QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
-    bool handleItemSort(const QUrl &a, const QUrl &b);
     void initData();
     bool isItemDuplicated(const BookmarkData &data);
     bool bookMarkRename(const QUrl &url, const QString &newName);
@@ -66,7 +63,7 @@ private:
     void removeAllBookMarkSidebarItems();
 
     void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
-    void sortItemsByOrder(const QList<QUrl> &order);
+    void saveSortedItemsToConfigFile(const QList<QUrl> &order);
 
     void addQuickAccessDataFromConfig(const QVariantList &dataList = QVariantList());
 

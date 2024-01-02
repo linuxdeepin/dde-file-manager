@@ -22,7 +22,6 @@ DFMBASE_USE_NAMESPACE
 void BookMark::initialize()
 {
     bindEvents();
-    followEvents();
     bindWindows();
 }
 
@@ -49,12 +48,11 @@ void BookMark::onWindowOpened(quint64 winId)
 
 void BookMark::onSideBarInstallFinished()
 {
+    // TODO(zhangs): call once,  use model direct (for dialog)
     // Workaround: Each process only needs to initialize the bookmark data once
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        DefaultItemManager::instance()->initDefaultItems();
-        BookMarkManager::instance()->addQuickAccessItemsFromConfig();
-    });
+    DefaultItemManager::instance()->initDefaultItems();
+    DefaultItemManager::instance()->initPreDefineItems();
+    BookMarkManager::instance()->addQuickAccessItemsFromConfig();
 }
 
 void BookMark::bindScene(const QString &parentScene)
@@ -90,8 +88,6 @@ void BookMark::bindEvents()
                                    BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPBOOKMARK_NAMESPACE), "slot_Scheme_Disable",
                             BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
-    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPBOOKMARK_NAMESPACE), "slot_AddPluginItem",
-                            BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handlePluginItem);
 }
 
 void BookMark::bindWindows()
@@ -104,8 +100,4 @@ void BookMark::bindWindows()
             &BookMark::onWindowOpened, Qt::DirectConnection);
 }
 
-void BookMark::followEvents()
-{
-    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Group_Sort", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleItemSort);
-}
 }   // namespace dfmplugin_bookmark

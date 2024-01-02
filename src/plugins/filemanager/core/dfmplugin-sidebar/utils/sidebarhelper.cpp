@@ -27,6 +27,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QLabel>
+#include <QJsonArray>
 
 #include <DMenu>
 #include <DSettingsOption>
@@ -38,7 +39,6 @@ DFMBASE_USE_NAMESPACE
 #define SETTING_GROUP_LV2 "01_sidebar.00_items_in_sidebar"
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
-QMap<QString, SortFunc> SideBarHelper::kSortFuncs {};
 bool SideBarHelper::contextMenuEnabled { true };
 
 QList<SideBarWidget *> SideBarHelper::allSideBar()
@@ -50,15 +50,6 @@ QList<SideBarWidget *> SideBarHelper::allSideBar()
         list.push_back(kSideBarMap[k]);
 
     return list;
-}
-
-SideBarWidget *SideBarHelper::findSideBarByWindowId(quint64 windowId)
-{
-    QMutexLocker locker(&SideBarHelper::mutex());
-    if (!kSideBarMap.contains(windowId))
-        return nullptr;
-
-    return kSideBarMap[windowId];
 }
 
 void SideBarHelper::addSideBar(quint64 windowId, SideBarWidget *sideBar)
@@ -78,6 +69,60 @@ void SideBarHelper::removeSideBar(quint64 windowId)
 quint64 SideBarHelper::windowId(QWidget *sender)
 {
     return FMWindowsIns.findWindowId(sender);
+}
+
+/*!
+ * \brief read plugins meta data for performance
+ * \return map->int : additem if < 0 , insert if >=0
+ */
+QMap<QUrl, QPair<int, QVariantMap>> SideBarHelper::preDefineItemProperties()
+{
+    DPF_USE_NAMESPACE
+    QMap<QUrl, QPair<int, QVariantMap>> properties;
+    const auto &ptrs = LifeCycle::pluginMetaObjs([](PluginMetaObjectPointer ptr) {
+        Q_ASSERT(ptr);
+        const auto &data { ptr->customData() };
+        if (data.isEmpty())
+            return false;
+        if (ptr->customData().value("SidebarDisplay").toJsonArray().isEmpty())
+            return false;
+        return true;
+    });
+
+    std::for_each(ptrs.begin(), ptrs.end(), [&properties](PluginMetaObjectPointer ptr) {
+        const auto &array { ptr->customData().value("SidebarDisplay").toJsonArray() };
+        for (int i = 0; i != array.count(); ++i) {
+            const auto &obj { array.at(i).toObject() };
+            QUrl url { obj.value("Url").toString() };
+            if (!url.isValid())
+                continue;
+            QVariantMap property;
+            // update later
+            Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
+            property.insert(PropertyKey::kUrl, url);
+            property.insert(PropertyKey::kDisplayName,
+                            QObject::tr(qPrintable(obj.value("Name").toString())));
+            property.insert(PropertyKey::kVisiableControlKey,
+                            obj.value("VisiableControl").toString());
+            property.insert(PropertyKey::kVisiableDisplayName,
+                            obj.value("Name").toString());
+            property.insert(PropertyKey::kReportName,
+                            obj.value("ReportName").toString());
+            property.insert(PropertyKey::kIcon,
+                            QIcon::fromTheme(obj.value("Icon").toString()));
+            property.insert(PropertyKey::kGroup,
+                            obj.value("Group").toString());
+            property.insert(PropertyKey::kQtItemFlags,
+                            QVariant::fromValue(flags));
+
+            int index { -1 };
+            if (obj.contains("Pos"))
+                index = obj.value("Pos").toInt();
+            properties.insert(url, { index, property });
+        }
+    });
+
+    return properties;
 }
 
 SideBarItem *SideBarHelper::createItemByInfo(const ItemInfo &info)
@@ -163,31 +208,6 @@ void SideBarHelper::defaultContextMenu(quint64 windowId, const QUrl &url, const 
         dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_ReportLog_MenuData", act->text(), urls);
     }
     delete menu;
-}
-
-bool SideBarHelper::registerSortFunc(const QString &subGroup, SortFunc func)
-{
-    if (kSortFuncs.contains(subGroup)) {
-        fmDebug() << subGroup << "has already been registered";
-        return false;
-    }
-    kSortFuncs.insert(subGroup, func);
-    return true;
-}
-
-SortFunc SideBarHelper::sortFunc(const QString &subGroup)
-{
-    return kSortFuncs.value(subGroup, nullptr);
-}
-
-void SideBarHelper::updateSideBarSelection(quint64 winId)
-{
-    auto all = SideBarHelper::allSideBar();
-    for (auto sb : all) {
-        if (!sb || SideBarHelper::windowId(sb) == winId)
-            continue;
-        sb->updateSelection();
-    }
 }
 
 void SideBarHelper::bindSetting(const QString &itemVisiableSettingKey, const QString &itemVisiableControlKey)

@@ -29,6 +29,8 @@
 #endif
 
 namespace dfmplugin_computer {
+static QSharedPointer<ComputerModel> kCptModelIns { nullptr };
+
 using namespace GlobalServerDefines;
 
 ComputerView::ComputerView(const QUrl &url, QWidget *parent)
@@ -36,6 +38,9 @@ ComputerView::ComputerView(const QUrl &url, QWidget *parent)
       dp(new ComputerViewPrivate(this))
 {
     Q_UNUSED(url);
+
+    if (!kCptModelIns)
+        kCptModelIns.reset(new ComputerModel);
 
     initView();
     initConnect();
@@ -122,7 +127,6 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();
-    handleComputerItemVisible();
     DListView::showEvent(event);
 }
 
@@ -135,14 +139,13 @@ void ComputerView::hideEvent(QHideEvent *event)
 
 ComputerModel *ComputerView::computerModel() const
 {
-    auto model = qobject_cast<ComputerModel *>(DListView::model());
-    return model;
+    return kCptModelIns.data();
 }
 
 void ComputerView::initView()
 {
-    dp->model = new ComputerModel(this);
-    this->setModel(dp->model);
+    Q_ASSERT(kCptModelIns.data());
+    this->setModel(kCptModelIns.data());
     this->setItemDelegate(new ComputerItemDelegate(this));
     qobject_cast<QListView *>(this)->setWrapping(true);
     qobject_cast<QListView *>(this)->setFlow(QListView::Flow::LeftToRight);
@@ -191,6 +194,17 @@ void ComputerView::initConnect()
 
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::updatePartitionsVisiable, this, &ComputerView::handleComputerItemVisible);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
+
+    connect(kCptModelIns.data(), &ComputerModel::requestHandleItemVisible, this, &ComputerView::handleComputerItemVisible);
+    connect(kCptModelIns.data(), &ComputerModel::requestUpdateIndex, this, [this](const QModelIndex &index) {
+        update(index);
+    });
+    connect(kCptModelIns.data(), &ComputerModel::requestClearSelection, this, [this](const QUrl &url) {
+        if (selectedUrlList().contains(url))
+            //        view->clearSelection(); // NOTE: this do not work, might be a bug in QT
+            setCurrentIndex(QModelIndex());   // NOTE: and this works good.
+    });
+    ;
 
     connectShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
         if (info)
@@ -406,10 +420,10 @@ ComputerViewPrivate::ComputerViewPrivate(ComputerView *qq)
 
 int ComputerViewPrivate::visibleItemCount()
 {
-    if (!model)
+    if (!kCptModelIns)
         return 0;
 
-    const int &total = model->rowCount();
+    const int &total = kCptModelIns->rowCount();
     int visibleCount = total;
 
     for (int i = 0; i < total; i++) {
@@ -418,7 +432,7 @@ int ComputerViewPrivate::visibleItemCount()
             continue;
         }
 
-        const int &rowShape = model->data(model->index(i, 0), ComputerModel::kItemShapeTypeRole).toInt();
+        const int &rowShape = kCptModelIns->data(kCptModelIns->index(i, 0), ComputerModel::kItemShapeTypeRole).toInt();
         if (rowShape == ComputerItemData::kSplitterItem) {
             visibleCount--;
             continue;

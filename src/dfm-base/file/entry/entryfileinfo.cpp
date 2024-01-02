@@ -18,8 +18,13 @@ EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
 
 void EntryFileInfoPrivate::init()
 {
-    const auto &&suffix = const_cast<EntryFileInfoPrivate *>(this)->suffix();
+    const auto &suffix = const_cast<EntryFileInfoPrivate *>(this)->suffix();
     entity.reset(EntryEntityFactor::create(suffix, q->urlOf(UrlInfoType::kUrl)));
+    // 当无法通过虚函数实现 Entity 类的多态时则创建一个通用的 Entity
+    // 通用的 Entity 的目的是通过插件的配置实现预配置信息来达到尽快显示界面元素的目的
+    // 当插件运行起来后，则通过元对象机制来实现多态
+    if (!entity)
+        entity.reset(EntryEntityFactor::create("_common_", q->urlOf(UrlInfoType::kUrl)));
 }
 
 QString EntryFileInfoPrivate::suffix() const
@@ -44,12 +49,18 @@ EntryFileInfo::EntryFileInfo(const QUrl &url)
     : FileInfo(url), d(new EntryFileInfoPrivate(this))
 {
     d->init();
+    Q_ASSERT_X(d->entity, __FUNCTION__, "CommonEntryFileEntity register faield");
     Q_ASSERT_X(url.scheme() == Global::Scheme::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
 }
 
 EntryFileInfo::~EntryFileInfo()
 {
     d = nullptr;
+}
+
+AbstractEntryFileEntity *EntryFileInfo::entity() const
+{
+    return d->entity.data();
 }
 
 AbstractEntryFileEntity::EntryOrder EntryFileInfo::order() const

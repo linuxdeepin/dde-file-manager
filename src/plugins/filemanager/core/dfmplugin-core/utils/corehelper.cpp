@@ -86,6 +86,17 @@ void CoreHelper::cacheDefaultWindow()
     QMetaObject::invokeMethod(window, "aboutToOpen", Qt::DirectConnection);
 }
 
+void CoreHelper::loadPlugin(const QString &name)
+{
+    fmInfo() << "About to load plugin:" << name;
+    auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
+    if (plugin) {
+        auto result { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
+        fmInfo() << "Load result: " << result
+                 << "State: " << plugin->pluginState();
+    }
+}
+
 FileManagerWindow *CoreHelper::defaultWindow()
 {
     const auto &idList { FMWindowsIns.windowIdList() };
@@ -109,7 +120,7 @@ FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
     auto window { FMWindowsIns.createWindow(url, false) };
 
     if (window) {
-        fmInfo() << "Find exists window for: " << url <<",for window:"<< window->winId();
+        fmInfo() << "Find exists window for: " << url << ",for window:" << window->winId();
         return window;
     }
 

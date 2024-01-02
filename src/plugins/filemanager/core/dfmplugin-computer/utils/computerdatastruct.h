@@ -40,6 +40,7 @@ struct ComputerItemData
 };
 
 namespace SuffixInfo {
+inline constexpr char kCommon[] { "_common_" };
 inline constexpr char kAppEntry[] { "appentry" };
 inline constexpr char kBlock[] { "blockdev" };
 inline constexpr char kProtocol[] { "protodev" };

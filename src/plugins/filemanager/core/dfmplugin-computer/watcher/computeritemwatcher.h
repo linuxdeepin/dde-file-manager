@@ -37,13 +37,18 @@ public:
     enum GroupType {
         kGroupDirs,
         kGroupDisks,
+        kOthers
     };
+
+    void startQueryItems(bool async = true);
 
     void addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar = false);
     void removeDevice(const QUrl &url);
 
+    QVariantMap makeSidebarItem(DFMEntryFileInfoPointer info);
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
     void addSidebarItem(DFMEntryFileInfoPointer info);
+    void addSidebarItem(const QUrl &url, const QVariantMap &data);
     void removeSidebarItem(const QUrl &url);
     void handleSidebarItemsVisiable();
 
@@ -59,8 +64,10 @@ public:
     static QList<QUrl> disksHiddenBySettingPanel();
     static QList<QUrl> hiddenPartitions();
 
+    QHash<QUrl, QVariantMap> getComputerInfos() const;
+
 public Q_SLOTS:
-    void startQueryItems();
+    void onViewRefresh();
 
 Q_SIGNALS:
     void itemQueryFinished(const ComputerDataList &results);
@@ -99,19 +106,23 @@ private:
     void initAppWatcher();
 
     ComputerDataList getUserDirItems();
-    ComputerDataList getBlockDeviceItems(bool &hasNewItem);
-    ComputerDataList getProtocolDeviceItems(bool &hasNewItem);
-    ComputerDataList getAppEntryItems(bool &hasNewItem);
+    ComputerDataList getBlockDeviceItems(bool *hasNewItem);
+    ComputerDataList getProtocolDeviceItems(bool *hasNewItem);
+    ComputerDataList getAppEntryItems(bool *hasNewItem);
+    ComputerDataList getPreDefineItems();
 
     int addGroup(const QString &name);
-    ComputerItemData getGroup(GroupType type);
+    ComputerItemData getGroup(GroupType type, const QString &defaultName = "");
 
     void cacheItem(const ComputerItemData &in);
 
     QString reportName(const QUrl &url);
 
 private:
+    bool isItemQueryFinished { false };
     ComputerDataList initedDatas;
+    QHash<QUrl, QVariantMap> sidebarInfos;
+    QHash<QUrl, QVariantMap> computerInfos;
     QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };
     QMap<QString, int> groupIds;
 

@@ -6,6 +6,7 @@
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
 #include "fileentity/appentryfileentity.h"
+#include "fileentity/commonentryfileentity.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/configs/configsynchronizer.h>
@@ -79,28 +80,16 @@ ComputerDataList ComputerItemWatcher::items()
     ret.push_back(getGroup(kGroupDisks));
     int diskStartPos = ret.count();
 
-    ret.append(getBlockDeviceItems(hasInsertNewDisk));
-    ret.append(getProtocolDeviceItems(hasInsertNewDisk));
-    ret.append(getAppEntryItems(hasInsertNewDisk));
+    ret.append(getBlockDeviceItems(&hasInsertNewDisk));
+    ret.append(getProtocolDeviceItems(&hasInsertNewDisk));
+    ret.append(getAppEntryItems(&hasInsertNewDisk));
+    // 性能优化，读取插件配置，在插件被加载前预先绘制出插件在计算机的图标和名称
+    ret.append(getPreDefineItems());
 
     std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
 
     if (!hasInsertNewDisk)
         ret.pop_back();
-
-    QList<QUrl> computerItems;
-    for (const auto &item : ret)
-        computerItems << item.url;
-
-    fmDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
-    dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
-    fmDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
-    for (int i = ret.count() - 1; i >= 0; --i) {
-        if (!computerItems.contains(ret[i].url)) {
-            removeSidebarItem(ret[i].url);
-            ret.removeAt(i);
-        }
-    }
 
     return ret;
 }
@@ -128,6 +117,9 @@ void ComputerItemWatcher::initConn()
         if (!appUrl.isValid())
             return;
         removeDevice(appUrl);
+    });
+    connect(this, &ComputerItemWatcher::itemQueryFinished, this, [this]() {
+        isItemQueryFinished = true;
     });
 
     connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onGenAttributeChanged);
@@ -190,7 +182,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
     return ret;
 }
 
-ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
+ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool *hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
@@ -212,20 +204,20 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         data.info = info;
         data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
-        hasNewItem = true;
+        *hasNewItem = true;
 
         if (info->targetUrl().isValid())
             insertUrlMapper(dev, info->targetUrl());
 
         if (!hiddenByDConfig.contains(devUrl))   // do not show item which hidden by dconfig
-            addSidebarItem(info);
+            sidebarInfos.insert(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
     }
     fmInfo() << "end querying block info";
 
     return ret;
 }
 
-ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
+ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool *hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
@@ -251,9 +243,9 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         data.info = info;
         data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
-        hasNewItem = true;
+        *hasNewItem = true;
 
-        addSidebarItem(info);
+        sidebarInfos.insert(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
     }
 
     fmInfo() << "end querying protocol devices info";
@@ -261,7 +253,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
     return ret;
 }
 
-ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
+ComputerDataList ComputerItemWatcher::getAppEntryItems(bool *hasNewItem)
 {
     static const QString appEntryPath = StandardPaths::location(StandardPaths::kExtensionsAppEntryPath);
     QDir appEntryDir(appEntryPath);
@@ -293,8 +285,52 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
         data.info = info;
         data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
-        hasNewItem = true;
+        *hasNewItem = true;
     }
+
+    return ret;
+}
+
+ComputerDataList ComputerItemWatcher::getPreDefineItems()
+{
+    ComputerDataList ret;
+    const auto &list { ComputerUtils::allPreDefineItemCustomDatas() };
+
+    std::for_each(list.begin(), list.end(), [&ret, this](const QVariantMap &map) {
+        const auto &entryUrl { map.value("Url").toUrl() };
+        if (!entryUrl.isValid()) {
+            fmWarning() << "Cannot parse predefine data, invalid url" << entryUrl;
+            return;
+        }
+
+        // 如果预定义的 item 并不在默认的组中，那么需要添加该组
+        int groupID { -1 };
+        if (map.contains("GroupType"))
+            groupID = map.value("GroupType").toInt();
+        if (map.contains("GroupName")) {
+            const QString &groupName { QObject::tr(qPrintable(map.value("GroupName").toString())) };
+            ret.push_back(getGroup(ComputerItemWatcher::kOthers, groupName));
+            groupID = getGroupId(groupName);
+        }
+        if (groupID == -1) {
+            fmWarning() << "The predefine data is not contain group: " << entryUrl;
+            return;
+        }
+
+        if (!map.contains("Shape")) {
+            fmWarning() << "The predefine data is not contain shape: " << entryUrl;
+            return;
+        }
+        computerInfos.insert(entryUrl, map);
+        DFMEntryFileInfoPointer info { new EntryFileInfo(entryUrl) };
+        ComputerItemData data;
+        data.url = entryUrl;
+        data.shape = static_cast<ComputerItemData::ShapeType>(map.value("Shape").toInt());
+        data.info = info;
+        data.groupId = groupID;
+        data.itemName = info->displayName();
+        ret.append(data);
+    });
 
     return ret;
 }
@@ -304,16 +340,20 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
  * \param type
  * \return
  */
-ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType type)
+ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType type, const QString &defaultName)
 {
     ComputerItemData splitter;
     splitter.shape = ComputerItemData::kSplitterItem;
+
     switch (type) {
     case kGroupDirs:
         splitter.itemName = userDirGroup();
         break;
     case kGroupDisks:
         splitter.itemName = diskGroup();
+        break;
+    default:
+        splitter.itemName = defaultName;
         break;
     }
 
@@ -402,6 +442,12 @@ QList<QUrl> ComputerItemWatcher::hiddenPartitions()
     return hiddenUrls;
 }
 
+void ComputerItemWatcher::onViewRefresh()
+{
+    startQueryItems(false);
+    dpfSignalDispatcher->publish("dfmplugin_computer", "signal_View_Refreshed");
+}
+
 void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
 {
     int insertAt = 0;
@@ -468,10 +514,116 @@ QString ComputerItemWatcher::reportName(const QUrl &url)
     return "unknow disk";
 }
 
+QHash<QUrl, QVariantMap> ComputerItemWatcher::getComputerInfos() const
+{
+    return computerInfos;
+}
+
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     if (!info)
         return;
+    addSidebarItem(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
+}
+
+void ComputerItemWatcher::addSidebarItem(const QUrl &url, const QVariantMap &data)
+{
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, data);
+}
+
+void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
+{
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
+}
+
+void ComputerItemWatcher::handleSidebarItemsVisiable()
+{
+    const auto &&hiddenByDconfig = disksHiddenByDConf();
+
+    QList<DFMEntryFileInfoPointer> visiableItems, invisiableItems;
+
+    fmInfo() << "start obtain the blocks when dconfig changed";
+    auto devs = DevProxyMng->getAllBlockIds();
+    fmInfo() << "end obtain the blocks when dconfig changed";
+    for (const auto &dev : devs) {
+        auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
+        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
+        if (!info->exists())
+            continue;
+
+        if (hiddenByDconfig.contains(devUrl))
+            invisiableItems.append(info);
+        else
+            visiableItems.append(info);
+    }
+    fmInfo() << "end querying if item should be show in sidebar";
+
+    for (const auto &info : invisiableItems)
+        removeSidebarItem(info->urlOf(UrlInfoType::kUrl));
+    for (const auto &info : visiableItems)
+        addSidebarItem(info);
+}
+
+void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
+{
+    QUrl devUrl;
+    if (devId.startsWith(DeviceId::kBlockDeviceIdPrefix))
+        devUrl = ComputerUtils::makeBlockDevUrl(devId);
+    else
+        devUrl = ComputerUtils::makeProtocolDevUrl(devId);
+    routeMapper.insert(devUrl, mntUrl);
+
+    if (devId.contains(QRegularExpression("sr[0-9]*$")))
+        routeMapper.insert(devUrl, ComputerUtils::makeBurnUrl(devId));
+}
+
+void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
+{
+    QVariantMap map {
+        { "Property_Key_DisplayName", newName },
+        { "Property_Key_Editable", editable }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
+}
+
+void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar)
+{
+    auto doAddFunc = [this, groupName, url, shape, addToSidebar]() {
+        int groupId = addGroup(groupName);
+        onDeviceAdded(url, groupId, static_cast<ComputerItemData::ShapeType>(shape), addToSidebar);
+    };
+    // 当一个设备被添加到计算机时，如果计算机的初始化本身没有完成，此次被添加的 item 将会被覆盖
+    // 因此这里需要等待计算机初始化完成才能添加 item
+    if (isItemQueryFinished) {
+        doAddFunc();
+    } else {
+        QMetaObject::Connection *connection = new QMetaObject::Connection;
+        *connection = connect(this, &ComputerItemWatcher::itemQueryFinished, this, [doAddFunc, connection]() {
+            doAddFunc();
+            disconnect(*connection);
+            delete connection;
+        });
+    }
+}
+
+void ComputerItemWatcher::removeDevice(const QUrl &url)
+{
+    if (dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemFilterOnRemove", url)) {
+        fmDebug() << "computer: [REMOVE] device is filtered by external plugin: " << url;
+        return;
+    }
+
+    Q_EMIT itemRemoved(url);
+    removeSidebarItem(url);
+    auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [url](const ComputerItemData &item) { return UniversalUtils::urlEquals(url, item.url); });
+    if (ret != initedDatas.cend())
+        initedDatas.removeAt(ret - initedDatas.cbegin());
+}
+
+QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
+{
+    if (!info)
+        return {};
 
     ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
@@ -532,7 +684,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         AbstractEntryFileEntity::kOrderMTP
     };
 
-    QVariantMap map {
+    return {
         { "Property_Key_Group", visableKey == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
         { "Property_Key_SubGroup", subGroup },
         { "Property_Key_DisplayName", info->displayName() },
@@ -548,92 +700,54 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_VisiableDisplayName", visableName },
         { "Property_Key_ReportName", reportName }
     };
-
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->urlOf(UrlInfoType::kUrl), map);
 }
 
-void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
+void ComputerItemWatcher::startQueryItems(bool async)
 {
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
-}
+    isItemQueryFinished = false;
+    sidebarInfos.clear();
 
-void ComputerItemWatcher::handleSidebarItemsVisiable()
-{
-    const auto &&hiddenByDconfig = disksHiddenByDConf();
+    auto afterQueryFunc = [this]() {
+        QList<QUrl> computerItems;
+        for (const auto &item : initedDatas)
+            computerItems << item.url;
 
-    QList<DFMEntryFileInfoPointer> visiableItems, invisiableItems;
+        fmDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
+        dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
+        fmDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
+        for (int i = initedDatas.count() - 1; i >= 0; --i) {
+            const auto &url { initedDatas[i].url };
+            if (url.isValid() && !computerItems.contains(url)) {
+                removeSidebarItem(url);
+                sidebarInfos.remove(url);
+                initedDatas.removeAt(i);
+            }
+        }
 
-    fmInfo() << "start obtain the blocks when dconfig changed";
-    auto devs = DevProxyMng->getAllBlockIds();
-    fmInfo() << "end obtain the blocks when dconfig changed";
-    for (const auto &dev : devs) {
-        auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
-        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
-        if (!info->exists())
-            continue;
+        for (const auto &key : sidebarInfos.keys()) {
+            const auto &value = sidebarInfos.value(key);
+            addSidebarItem(key, value);
+        }
 
-        if (hiddenByDconfig.contains(devUrl))
-            invisiableItems.append(info);
-        else
-            visiableItems.append(info);
-    }
-    fmInfo() << "end querying if item should be show in sidebar";
-
-    for (const auto &info : invisiableItems)
-        removeSidebarItem(info->urlOf(UrlInfoType::kUrl));
-    for (const auto &info : visiableItems)
-        addSidebarItem(info);
-}
-
-void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
-{
-    QUrl devUrl;
-    if (devId.startsWith(DeviceId::kBlockDeviceIdPrefix))
-        devUrl = ComputerUtils::makeBlockDevUrl(devId);
-    else
-        devUrl = ComputerUtils::makeProtocolDevUrl(devId);
-    routeMapper.insert(devUrl, mntUrl);
-
-    if (devId.contains(QRegularExpression("sr[0-9]*$")))
-        routeMapper.insert(devUrl, ComputerUtils::makeBurnUrl(devId));
-}
-
-void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
-{
-    QVariantMap map {
-        { "Property_Key_DisplayName", newName },
-        { "Property_Key_Editable", editable }
+        Q_EMIT itemQueryFinished(initedDatas);
     };
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
-}
 
-void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar)
-{
-    int groupId = addGroup(groupName);
-    onDeviceAdded(url, groupId, static_cast<ComputerItemData::ShapeType>(shape), addToSidebar);
-}
+    if (async) {
+        QFutureWatcher<ComputerDataList> *fw { new QFutureWatcher<ComputerDataList>() };
+        fw->setFuture(QtConcurrent::run(this, &ComputerItemWatcher::items));
+        // if computer view is not init view, no receiver to receive the signal, cause when cd to computer view, shows empty.
+        // on initialize computer view/model, get the cached items in construction.
+        connect(fw, &QFutureWatcher<void>::finished, this, [fw, afterQueryFunc, this]() {
+            initedDatas = fw->result();
+            afterQueryFunc();
+            delete fw;
+        });
 
-void ComputerItemWatcher::removeDevice(const QUrl &url)
-{
-    if (dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemFilterOnRemove", url)) {
-        fmDebug() << "computer: [REMOVE] device is filtered by external plugin: " << url;
         return;
     }
 
-    Q_EMIT itemRemoved(url);
-    removeSidebarItem(url);
-    auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [url](const ComputerItemData &item) { return UniversalUtils::urlEquals(url, item.url); });
-    if (ret != initedDatas.cend())
-        initedDatas.removeAt(ret - initedDatas.cbegin());
-}
-
-void ComputerItemWatcher::startQueryItems()
-{
-    // if computer view is not init view, no receiver to receive the signal, cause when cd to computer view, shows empty.
-    // on initialize computer view/model, get the cached items in construction.
     initedDatas = items();
-    Q_EMIT itemQueryFinished(initedDatas);
-    dpfSignalDispatcher->publish("dfmplugin_computer", "signal_View_Refreshed");
+    afterQueryFunc();
 }
 
 /*!
@@ -683,7 +797,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
 
     cacheItem(data);
 
-    if (!disksHiddenByDConf().contains(devUrl) && needSidebarItem)
+    if (needSidebarItem && !disksHiddenByDConf().contains(devUrl))
         addSidebarItem(info);
 }
 

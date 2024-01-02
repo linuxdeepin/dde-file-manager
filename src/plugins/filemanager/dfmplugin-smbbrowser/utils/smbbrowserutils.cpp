@@ -36,6 +36,7 @@ QUrl netNeighborRootUrl()
     QUrl u;
     u.setScheme(networkScheme());
     u.setPath("/");
+    u.setHost("");
     return u;
 }
 

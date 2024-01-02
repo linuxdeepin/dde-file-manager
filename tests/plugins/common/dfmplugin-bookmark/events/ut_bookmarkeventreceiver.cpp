@@ -49,23 +49,7 @@ TEST_F(BookMarkEventReceiverTest, handleAddSchemeOfBookMarkDisabled)
 TEST_F(BookMarkEventReceiverTest, handleSidebarOrderChanged)
 {
     bool isRun = false;
-    stub.set_lamda(&BookMarkManager::sortItemsByOrder, [&isRun]() { isRun = true; });
+    stub.set_lamda(&BookMarkManager::saveSortedItemsToConfigFile, [&isRun]() { isRun = true; });
     ins->handleSidebarOrderChanged(1, "Group_Common");
-    EXPECT_TRUE(isRun);
-}
-
-TEST_F(BookMarkEventReceiverTest, handleItemSort)
-{
-    bool isRun = false;
-    stub.set_lamda(&BookMarkManager::handleItemSort, [&isRun]() { isRun = true;  return true; });
-    ins->handleItemSort("Group_Common", "", QUrl("/hello"), QUrl("/hello"));
-    EXPECT_TRUE(isRun);
-}
-
-TEST_F(BookMarkEventReceiverTest, handlePluginItem)
-{
-    bool isRun = false;
-    stub.set_lamda(&DefaultItemManager::addPluginItem, [&isRun]() { isRun = true; });
-    ins->handlePluginItem(QVariantMap());
     EXPECT_TRUE(isRun);
 }

@@ -26,7 +26,6 @@ using namespace GlobalServerDefines;
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    view = qobject_cast<ComputerView *>(parent);
     items = ComputerItemWatcherInstance->getInitedItems();
     initConnect();
 }
@@ -252,7 +251,7 @@ void ComputerModel::initConnect()
         this->beginResetModel();
         items = datas;
         this->endResetModel();
-        view->handleComputerItemVisible();
+        emit requestHandleItemVisible();
     });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
@@ -279,35 +278,35 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     } else {
         if (shape == ComputerItemData::kSplitterItem) {
             addGroup(data);
-        } else {
-            int row = 0;
-            for (; row < items.count(); row++) {
-                const auto &item = items.at(row);
-                if (item.groupId != data.groupId)
-                    continue;
-
-                if (ComputerItemWatcher::typeCompare(data, item))
-                    break;
-
-                int next = row + 1;
-                if (next >= items.count()   // when search at end OR search at end of the group, append item to last item of the group.
-                    || items.at(next).groupId != data.groupId) {
-                    row = next;
-                    break;
-                }
-            }
-
-            beginInsertRows(QModelIndex(), row, row);
-            items.insert(row, data);
-            endInsertRows();
+            return;
         }
+        int row = 0;
+        for (; row < items.count(); row++) {
+            const auto &item = items.at(row);
+            if (item.groupId != data.groupId)
+                continue;
+
+            if (ComputerItemWatcher::typeCompare(data, item))
+                break;
+
+            int next = row + 1;
+            if (next >= items.count()   // when search at end OR search at end of the group, append item to last item of the group.
+                || items.at(next).groupId != data.groupId) {
+                row = next;
+                break;
+            }
+        }
+
+        beginInsertRows(QModelIndex(), row, row);
+        items.insert(row, data);
+        endInsertRows();
     }
 
     // for filter the native disks hided by main setting panel
     // and when disk-manager/partition-editor opened and closed,
     // the itemRemoved/Added signals are emitted
     // and these newcomming items should be filtered
-    view->handleComputerItemVisible();
+    emit requestHandleItemVisible();
 }
 
 void ComputerModel::onItemRemoved(const QUrl &url)
@@ -316,9 +315,7 @@ void ComputerModel::onItemRemoved(const QUrl &url)
     if (pos > 0) {
         fmInfo() << "item removed: " << url << ",pos = " << pos;   // log for bug:#224925
 
-        if (view->selectedUrlList().contains(url))
-            //        view->clearSelection(); // NOTE: this do not work, might be a bug in QT
-            view->setCurrentIndex(QModelIndex());   // NOTE: and this works good.
+        emit requestClearSelection(url);
 
         beginRemoveRows(QModelIndex(), pos, pos);
         items.removeAt(pos);
@@ -328,7 +325,7 @@ void ComputerModel::onItemRemoved(const QUrl &url)
         fmDebug() << "target item not found" << url;
     }
 
-    view->handleComputerItemVisible();
+    emit requestHandleItemVisible();
 }
 
 void ComputerModel::onItemUpdated(const QUrl &url)
@@ -353,7 +350,7 @@ void ComputerModel::updateItemInfo(int pos)
     auto &info = items.at(pos);
     QString oldName = info.info->displayName();
     info.info->refresh();
-    view->update(this->index(pos, 0));
+    emit requestUpdateIndex(this->index(pos, 0));
 }
 
 void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglong free)
@@ -383,7 +380,7 @@ void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglon
         entryInfo->setExtraProperty(DeviceProperty::kSizeFree, free);
         entryInfo->setExtraProperty(DeviceProperty::kSizeUsed, total - free);
     }
-    view->update(this->index(pos, 0));
+    emit requestUpdateIndex(this->index(pos, 0));
 }
 
 void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, const QVariant &val)
@@ -417,7 +414,7 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
             entryInfo->setExtraProperty(DeviceProperty::kMountPoint, mpts.isEmpty() ? "" : mpts.first());
         }
     }
-    view->update(this->index(pos, 0));
+    emit requestUpdateIndex(this->index(pos, 0));
 
     if (key == DeviceProperty::kIdLabel && !val.toString().isEmpty()) {
         QVariantMap map {

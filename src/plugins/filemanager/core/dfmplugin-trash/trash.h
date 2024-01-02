@@ -29,7 +29,7 @@ private slots:
     void onWindowOpened(quint64 windId);
 
 private:
-    void installToSideBar();
+    void updateTrashItemToSideBar();
     void addFileOperations();
     void addCustomTopWidget();
     void followEvents();

@@ -93,6 +93,7 @@ QList<QUrl> SideBarEventReceiver::handleGetGroupItems(quint64 winId, const QStri
 
 bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &properties)
 {
+    // TODO(zhangs): use model direct
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
@@ -103,7 +104,9 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         auto sidebar = allSideBar.first();
         if (item) {
-            if (sidebar->addItem(item) == -1)
+            // TODO(zhangs): refactor, register ?
+            bool direct = item->group() == DefaultGroup::kDevice ? false : true;
+            if (sidebar->addItem(item, direct) == -1)
                 return false;
             // for select to computer
             QUrl &&itemUrl = item->url();
@@ -121,6 +124,8 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
 
 bool SideBarEventReceiver::handleItemRemove(const QUrl &url)
 {
+    if (!SideBarInfoCacheMananger::instance()->contains(url))
+        return false;
     SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
     if (SideBarWidget::kSidebarModelIns)
         return SideBarWidget::kSidebarModelIns->removeRow(url);
@@ -166,6 +171,15 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
         info.visiableDisplayName = properties[PropertyKey::kVisiableDisplayName].toString();
     if (properties.contains(PropertyKey::kReportName))
         info.reportName = properties[PropertyKey::kReportName].toString();
+
+    if (properties.contains(PropertyKey::kCallbackItemClicked))
+        info.clickedCb = DPF_NAMESPACE::paramGenerator<ItemClickedActionCallback>(properties[PropertyKey::kCallbackItemClicked]);
+    if (properties.contains(PropertyKey::kCallbackContextMenu))
+        info.contextMenuCb = DPF_NAMESPACE::paramGenerator<ContextMenuCallback>(properties[PropertyKey::kCallbackContextMenu]);
+    if (properties.contains(PropertyKey::kCallbackRename))
+        info.renameCb = DPF_NAMESPACE::paramGenerator<RenameCallback>(properties[PropertyKey::kCallbackRename]);
+    if (properties.contains(PropertyKey::kCallbackFindMe))
+        info.findMeCb = DPF_NAMESPACE::paramGenerator<FindMeCallback>(properties[PropertyKey::kCallbackFindMe]);
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {

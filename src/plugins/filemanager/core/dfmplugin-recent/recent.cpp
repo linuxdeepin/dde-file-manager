@@ -80,39 +80,34 @@ void Recent::onWindowOpened(quint64 windId)
         regRecentCrumbToTitleBar();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Recent::regRecentCrumbToTitleBar, Qt::DirectConnection);
-    if (window->sideBar())
-        addRecentItem();
-    else
+
+    auto bookmarkPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-bookmark") };
+    if (bookmarkPlugin && bookmarkPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        updateRecentItemToSideBar();
+    } else {
         connect(
-                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addRecentItem(); }, Qt::DirectConnection);
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-bookmark")
+                        updateRecentItemToSideBar();
+                },
+                Qt::DirectConnection);
+    }
 }
 
-void Recent::addRecentItem()
+void Recent::updateRecentItemToSideBar()
 {
-    ContextMenuCallback contextMenuCb { RecentHelper::contenxtMenuHandle };
-    const QString &nameKey = "Recent";
-    const QString &displayName = tr("Recent");
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
-    QVariantMap map {
-        { "Property_Key_Group", "Group_Common" },
-        { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Icon", RecentHelper::icon() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-        { "Property_Key_VisiableControl", "recent" },
-        { "Property_Key_ReportName", nameKey }
-    };
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        ContextMenuCallback contextMenuCb { RecentHelper::contenxtMenuHandle };
+        Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
+        QVariantMap map {
+            { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+            { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        };
 
-    QVariantMap bookmarkMap {
-        { "Property_Key_NameKey", nameKey },
-        { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Url", RecentHelper::rootUrl() },
-        { "Property_Key_Index", -1 },
-        { "Property_Key_IsDefaultItem", true },
-        { "Property_Key_PluginItemData", map }
-    };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);   // push item data to bookmark plugin as cache
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentHelper::rootUrl(), map);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", RecentHelper::rootUrl(), map);
+    });
 }
 
 void Recent::followEvents()

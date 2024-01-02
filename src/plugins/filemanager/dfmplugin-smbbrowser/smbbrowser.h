@@ -35,7 +35,7 @@ private:
     void followEvents();
 
 private:
-    void addNeighborToSidebar();
+    void updateNeighborToSidebar();
     void registerNetworkAccessPrehandler();
     void registerNetworkToSearch();
     void registerNetworkToTitleBar();

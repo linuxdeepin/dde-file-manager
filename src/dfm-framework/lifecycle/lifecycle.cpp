@@ -74,6 +74,20 @@ PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
     return pluginManager->pluginMetaObj(pluginName, version);
 }
 
+QList<PluginMetaObjectPointer> pluginMetaObjs(const std::function<bool(PluginMetaObjectPointer)> &cond)
+{
+    const auto &queue { pluginManager->readQueue() };
+    if (!cond)
+        return queue;
+
+    QList<PluginMetaObjectPointer> ptrs;
+    std::copy_if(queue.begin(), queue.end(), std::back_inserter(ptrs),
+                 [cond](const PluginMetaObjectPointer &ptr) {
+                     return cond(ptr);
+                 });
+    return ptrs;
+}
+
 /*!
  * \brief LifeCycle::readPlugins read meta data of all plugins
  * \pre {

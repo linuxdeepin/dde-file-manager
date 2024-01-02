@@ -1137,6 +1137,10 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIcon, attribute(DFileInfo::AttributeID::kStandardIcon));
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice, FileUtils::isLocalDevice(q->fileUrl()));
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsCdRomDevice, FileUtils::isCdRomDevice(q->fileUrl()));
+    if (q->nameOf(NameInfoType::kIconName) != attribute(DFileInfo::AttributeID::kStandardIcon)) {
+        QWriteLocker rlk(&iconLock);
+        fileIcon = QIcon();
+    }
     if (cacheTmp.isEmpty()) {
         {
             QWriteLocker lk(&lock);

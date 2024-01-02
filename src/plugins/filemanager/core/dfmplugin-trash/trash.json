@@ -11,5 +11,19 @@
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
         {"Name" : "dfmplugin-trashcore", "Version": "1.0.0"}
-    ]
+    ],
+    "Custom": {
+        "QuickAccessDisplay" : [{
+            "MarkName" : "Trash",
+            "Url" : "trash:///",
+            "DefaultIndex" : 7,
+            "SidebarInfo" : {
+                "Name": "Trash",
+                "Icon": "user-trash-symbolic",
+                "Group": "Group_Common",
+                "VisiableControl" : "trash",
+                "ReportName" : "Trash"
+            }
+        }]
+    }
 }

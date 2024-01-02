@@ -22,17 +22,17 @@ class DefaultItemManager : public QObject
 
 public:
     static DefaultItemManager *instance();
+
     void initDefaultItems();
-    void addPluginItem(const QVariantMap &args);
+    void initPreDefineItems();
+
     QMap<QString, QUrl> defaultItemUrls();
+    QMap<QString, QUrl> preDefItemUrls();
     QList<BookmarkData> defaultItemInitOrder();
-    QMap<QString, QVariantMap> pluginItemData();
+    QList<BookmarkData> defaultPreDefInitOrder();
+
     bool isDefaultItem(const BookmarkData &data);
-    bool isDefaultUrl(const BookmarkData &data);
-    bool isDefaultPluginItem(const QString &name);
-    BookmarkData pluginItemDataToBookmark(const QVariantMap &data);
-Q_SIGNALS:
-    void pluginItemDataAdded(const QUrl &url, const QString &bookmarkName, bool isDefaultItem, int index);
+    bool isPreDefItem(const BookmarkData &data);
 
 private:
     explicit DefaultItemManager(QObject *parent = nullptr);

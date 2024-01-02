@@ -30,7 +30,7 @@ class RecentTest : public testing::Test
 {
 
 protected:
-    virtual void SetUp() override { }
+    virtual void SetUp() override {}
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -79,7 +79,7 @@ TEST_F(RecentTest, addRecentItem)
     typedef QVariant (EventChannelManager::*Push2)(const QString &, const QString &, const QUrl &, const QVariantMap &);
     auto push2 = static_cast<Push2>(&EventChannelManager::push);
     stub.set_lamda(push2, [] { __DBG_STUB_INVOKE__ return QVariant(); });
-    EXPECT_NO_FATAL_FAILURE(ins.addRecentItem());
+    EXPECT_NO_FATAL_FAILURE(ins.updateRecentItemToSideBar());
 }
 
 TEST_F(RecentTest, addFileOperations)
@@ -102,7 +102,7 @@ TEST_F(RecentTest, onWindowOpened)
     stub.set_lamda(push1, [] { __DBG_STUB_INVOKE__ return QVariant(); });
     EXPECT_NO_FATAL_FAILURE(ins.regRecentCrumbToTitleBar());
 
-    stub.set_lamda(&Recent::addRecentItem, [] {});
+    stub.set_lamda(&Recent::updateRecentItemToSideBar, [] {});
     stub.set_lamda(&Application::genericAttribute, []() -> bool {
         return true;
     });

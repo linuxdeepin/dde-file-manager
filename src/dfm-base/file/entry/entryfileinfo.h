@@ -17,6 +17,7 @@ class EntryFileInfo : public FileInfo
 public:
     explicit EntryFileInfo(const QUrl &url);
     virtual ~EntryFileInfo() override;
+    AbstractEntryFileEntity *entity() const;
 
     AbstractEntryFileEntity::EntryOrder order() const;
 

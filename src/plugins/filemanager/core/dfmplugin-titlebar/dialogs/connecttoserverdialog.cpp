@@ -299,7 +299,7 @@ QStringList ConnectToServerDialog::updateCollections(const QString &newUrlStr, b
     QUrl newUrl = QUrl::fromUserInput(newUrlStr);
 
     if (newUrl.host().isEmpty()) {
-        qWarning() << "invalid url" << newUrlStr << "refuse to collect.";
+        fmWarning() << "invalid url" << newUrlStr << "refuse to collect.";
         DialogManagerInstance->showErrorDialog(tr("Error"),
                                                tr("Unable to favorite illegitimate url!"));
         return collections;

@@ -432,6 +432,9 @@ QVariant TrashFileInfo::customData(int role) const
         return urlOf(UrlInfoType::kOriginalUrl).path();
     else if (role == kItemFileDeletionDate)
         return d->deletionTime().toString(FileUtils::dateTimeFormat());
+    else if (role == Global::ItemRoles::kItemFileRefreshIcon){
+        return ProxyFileInfo::customData(role);
+    }
     else
         return QVariant();
 }

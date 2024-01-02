@@ -82,7 +82,7 @@ TEST_F(UT_SmbBrowser, OnWindowOpened)
     FileManagerWindow *win = new FileManagerWindow(QUrl::fromLocalFile("/hello/world"));
     stub.set_lamda(&FileManagerWindowsManager::findWindowById, [win] { __DBG_STUB_INVOKE__ return win; });
     stub.set_lamda(&FileManagerWindow::sideBar, [] { __DBG_STUB_INVOKE__ return reinterpret_cast<AbstractFrame *>(1); });
-    stub.set_lamda(&SmbBrowser::addNeighborToSidebar, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&SmbBrowser::updateNeighborToSidebar, [] { __DBG_STUB_INVOKE__ });
 
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(1));
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(2));
@@ -97,12 +97,12 @@ TEST_F(UT_SmbBrowser, OnWindowOpened)
     delete win;
 }
 
-TEST_F(UT_SmbBrowser, AddNeighborToSidebar)
+TEST_F(UT_SmbBrowser, UpdateNeighborToSidebar)
 {
     typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, int, QUrl &&, QVariantMap &);
     auto push = static_cast<Push>(&EventChannelManager::push);
     stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return QVariant(); });
-    EXPECT_NO_FATAL_FAILURE(ins.addNeighborToSidebar());
+    EXPECT_NO_FATAL_FAILURE(ins.updateNeighborToSidebar());
 }
 
 TEST_F(UT_SmbBrowser, RegisterNetworkAccessPrehandler)

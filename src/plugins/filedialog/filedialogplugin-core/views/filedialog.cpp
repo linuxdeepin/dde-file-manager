@@ -522,6 +522,7 @@ void FileDialog::urlSchemeEnable(const QString &scheme, bool enable)
     QUrl url;
     url.setScheme(scheme);
     url.setPath("/");
+    url.setHost("");
     CoreEventsCaller::setSidebarItemVisible(url, enable);
 }
 

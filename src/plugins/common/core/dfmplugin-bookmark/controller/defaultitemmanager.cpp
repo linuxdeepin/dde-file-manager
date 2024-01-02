@@ -9,6 +9,9 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/universalutils.h>
+
+#include <dfm-framework/lifecycle/lifecycle.h>
 
 USING_IO_NAMESPACE
 
@@ -34,35 +37,74 @@ void DefaultItemManager::initDefaultItems()
 {
     d->defaultItemInitOrder.clear();
     static QStringList defOrder = { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
-    d->defaultPluginItem << "Trash"
-                         << "Recent";
+
     for (int i = 0; i < defOrder.count(); i++) {
         const QString &nameKey = defOrder.at(i);
-        const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);
         BookmarkData bookmarkData;
         bookmarkData.name = nameKey;   //For default item, save the english name to config.
         QString path { SystemPathUtil::instance()->systemPath(nameKey) };
-        QUrl url = { UrlRoute::pathToReal(path) };
+        const QUrl &url { QUrl::fromLocalFile(path) };
         d->defaultItemUrls.insert(nameKey, url);
         bookmarkData.url = url;
         bookmarkData.isDefaultItem = true;
         bookmarkData.index = i;
-        bookmarkData.transName = displayName;
         d->defaultItemInitOrder.append(bookmarkData);
     }
 }
 
-void DefaultItemManager::addPluginItem(const QVariantMap &args)
+void DefaultItemManager::initPreDefineItems()
 {
-    const QString &nameKey = args.value("Property_Key_NameKey").toString();
+    DPF_USE_NAMESPACE
+    d->defaultItemPreDefOrder.clear();
 
-    if (args.contains("Property_Key_PluginItemData")) {
-        d->pluginItemData.insert(nameKey, args);
-        Q_EMIT pluginItemDataAdded(args.value("Property_Key_Url").toString(),
-                                   nameKey,
-                                   args.value("Property_Key_IsDefaultItem").toBool(),
-                                   args.value("Property_Key_Index").toInt());
-    }
+    const auto &ptrs = LifeCycle::pluginMetaObjs([](PluginMetaObjectPointer ptr) {
+        Q_ASSERT(ptr);
+        const auto &data { ptr->customData() };
+        if (data.isEmpty())
+            return false;
+        if (ptr->customData().value("QuickAccessDisplay").toJsonArray().isEmpty())
+            return false;
+        return true;
+    });
+
+    std::for_each(ptrs.begin(), ptrs.end(), [this](PluginMetaObjectPointer ptr) {
+        const auto &array { ptr->customData().value("QuickAccessDisplay").toJsonArray() };
+        for (int i = 0; i != array.count(); ++i) {
+            const auto &obj { array.at(i).toObject() };
+            QString markName { obj.value("MarkName").toString() };
+            QUrl url { obj.value("Url").toString() };
+            if (!url.isValid() || markName.isEmpty())
+                continue;
+            BookmarkData quickAccessInfo;
+            quickAccessInfo.name = markName;
+            quickAccessInfo.url = url;
+            quickAccessInfo.isDefaultItem = true;
+            quickAccessInfo.index = obj.value("DefaultIndex").toInt();
+
+            // parse Sidebar info
+            QVariantMap properties;
+            Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
+            const auto &sidebarObj { obj.value("SidebarInfo").toObject() };
+            properties.insert("Property_Key_Url", url);
+            properties.insert("Property_Key_DisplayName",
+                              QObject::tr(qPrintable(sidebarObj.value("Name").toString())));
+            properties.insert("Property_Key_VisiableControl",
+                              sidebarObj.value("VisiableControl").toString());
+            properties.insert("Property_Key_VisiableDisplayName",
+                              sidebarObj.value("Name").toString());
+            properties.insert("Property_Key_ReportName",
+                              sidebarObj.value("ReportName").toString());
+            properties.insert("Property_Key_Icon",
+                              QIcon::fromTheme(sidebarObj.value("Icon").toString()));
+            properties.insert("Property_Key_Group",
+                              sidebarObj.value("Group").toString());
+            properties.insert("Property_Key_QtItemFlags",
+                              QVariant::fromValue(flags));
+            quickAccessInfo.sidebarProperties = properties;
+            d->defaultPreDefItemUrls.insert(markName, url);
+            d->defaultItemPreDefOrder.append(quickAccessInfo);
+        }
+    });
 }
 
 QMap<QString, QUrl> DefaultItemManager::defaultItemUrls()
@@ -70,14 +112,19 @@ QMap<QString, QUrl> DefaultItemManager::defaultItemUrls()
     return d->defaultItemUrls;
 }
 
+QMap<QString, QUrl> DefaultItemManager::preDefItemUrls()
+{
+    return d->defaultPreDefItemUrls;
+}
+
 QList<BookmarkData> DefaultItemManager::defaultItemInitOrder()
 {
     return d->defaultItemInitOrder;
 }
 
-QMap<QString, QVariantMap> DefaultItemManager::pluginItemData()
+QList<BookmarkData> DefaultItemManager::defaultPreDefInitOrder()
 {
-    return d->pluginItemData;
+    return d->defaultItemPreDefOrder;
 }
 
 bool DefaultItemManager::isDefaultItem(const BookmarkData &data)
@@ -94,31 +141,22 @@ bool DefaultItemManager::isDefaultItem(const BookmarkData &data)
     return isNameKeyEqual && isUrlEqual;
 }
 
-bool DefaultItemManager::isDefaultUrl(const BookmarkData &data)
+bool DefaultItemManager::isPreDefItem(const BookmarkData &data)
 {
-    return DefaultItemManager::instance()->defaultItemUrls().values().contains(data.url);
-}
+    bool ret { false };
+    if (!data.isDefaultItem)
+        return ret;
 
-bool DefaultItemManager::isDefaultPluginItem(const QString &name)
-{
-    return d->defaultPluginItem.contains(name);
-}
+    for (const auto &preDefItem : defaultPreDefInitOrder()) {
+        bool nameEqual { data.name == preDefItem.name };
+        bool urlEqual { UniversalUtils::urlEquals(data.url, preDefItem.url) };
+        if (nameEqual && urlEqual) {
+            ret = true;
+            break;
+        }
+    }
 
-BookmarkData DefaultItemManager::pluginItemDataToBookmark(const QVariantMap &data)
-{
-    const QString &nameKey = data.value("Property_Key_NameKey").toString();
-    const QString &displayName = data.value("Property_Key_DisplayName").toString();
-    const QUrl &url = data.value("Property_Key_Url").toUrl();
-    int index = data.value("Property_Key_Index").toInt();
-    bool isDefaultItem = data.value("Property_Key_IsDefaultItem").toBool();
-    BookmarkData bookmarkData;
-    bookmarkData.name = nameKey;
-    bookmarkData.transName = displayName;
-    bookmarkData.url = url;
-    bookmarkData.index = index;
-    bookmarkData.isDefaultItem = isDefaultItem;
-
-    return bookmarkData;
+    return ret;
 }
 
 DefaultItemManager::DefaultItemManager(QObject *parent)
