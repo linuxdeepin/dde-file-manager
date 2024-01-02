@@ -258,7 +258,6 @@ void AddressBarPrivate::doComplete()
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
     completerView->show();
-    completerView->activateWindow();
 
     return;
 }
@@ -512,7 +511,7 @@ void AddressBarPrivate::updateIndicatorIcon()
 void AddressBarPrivate::onCompletionModelCountChanged()
 {
     if (urlCompleter->completionCount() <= 0) {
-        completerView->hide();
+        completerView->resize(0, 0);
         q->setFocus();
         return;
     }
