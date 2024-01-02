@@ -15,6 +15,7 @@
 #include <QDir>
 
 #include <signal.h>
+#include <unistd.h>
 
 Q_LOGGING_CATEGORY(logAppServer, "log.app.dde-file-manager-server")
 
@@ -92,6 +93,14 @@ static void handleSIGTERM(int sig)
     }
 }
 
+[[noreturn]] static void handleSIGABRT(int sig)
+{
+    qCCritical(logAppServer) << "break with !SIGABRT! " << sig;
+    // WORKAROUND: cannot receive SIGTERM when shutdown or reboot
+    // see: bug-228373
+    ::_exit(1);
+}
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
@@ -107,6 +116,7 @@ int main(int argc, char *argv[])
     }
 
     signal(SIGTERM, handleSIGTERM);
+    signal(SIGABRT, handleSIGABRT);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
