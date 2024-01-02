@@ -200,6 +200,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     if (fileSize && fileSize->RightValue().isEmpty()) {
         fileSize->setVisible(true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->adjustHeight();
     }
     if (fileViewSize && fileViewSize->RightValue().isEmpty())
         fileViewSize->setVisible(false);
@@ -289,6 +290,7 @@ void FileBaseInfoView::slotImageExtenInfo(const QStringList &properties)
     if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
         fileViewSize->setVisible(true);
         fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
+        fileViewSize->adjustHeight();
     }
 }
 
@@ -297,11 +299,13 @@ void FileBaseInfoView::slotVideoExtenInfo(const QStringList &properties)
     if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
         fileViewSize->setVisible(true);
         fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
+        fileViewSize->adjustHeight();
     }
 
     if (fileDuration && fileDuration->RightValue().isEmpty()) {
         fileDuration->setVisible(true);
         fileDuration->setRightValue(properties.count() > 1 ? properties[1] : " ", Qt::ElideNone, Qt::AlignLeft, true);
+        fileDuration->adjustHeight();
     }
 }
 
@@ -310,6 +314,7 @@ void FileBaseInfoView::slotAudioExtenInfo(const QStringList &properties)
     if (fileDuration && fileDuration->RightValue().isEmpty()) {
         fileDuration->setVisible(true);
         fileDuration->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
+        fileDuration->adjustHeight();
     }
 }
 
