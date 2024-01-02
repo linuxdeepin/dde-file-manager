@@ -193,6 +193,7 @@ void SmbBrowser::registerNetworkToTitleBar()
 {
     QVariantMap property;
     property["Property_Key_HideTreeViewBtn"] = true;
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kSmb), property);
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kNetwork), property);
 }
 }   // namespace dfmplugin_smbbrowser
