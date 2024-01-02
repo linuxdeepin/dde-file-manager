@@ -101,17 +101,17 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
     }
 }
 
-void SelectHelper::select(const QList<QUrl> &urls)
+bool SelectHelper::select(const QList<QUrl> &urls)
 {
     if (urls.isEmpty())
-        return;
+        return false;
 
     QModelIndex firstIndex;
     QModelIndex lastIndex;
     const QModelIndex &root = view->rootIndex();
     view->selectionModel()->clearSelection();
     QList<QModelIndex> indexes {};
-    QItemSelection selction;
+    QItemSelection selection;
     for (const QUrl &url : urls) {
         const QModelIndex &index = view->model()->getIndexByUrl(url);
 
@@ -119,7 +119,7 @@ void SelectHelper::select(const QList<QUrl> &urls)
             continue;
         }
 
-        selction.merge(QItemSelection(index,index), QItemSelectionModel::Select);
+        selection.merge(QItemSelection(index, index), QItemSelectionModel::Select);
 
         if (!firstIndex.isValid())
             firstIndex = index;
@@ -127,13 +127,18 @@ void SelectHelper::select(const QList<QUrl> &urls)
         lastIndex = index;
     }
 
-    view->selectionModel()->select(selction, QItemSelectionModel::Select);
+    if (selection.indexes().isEmpty())
+        return false;
+
+    view->selectionModel()->select(selection, QItemSelectionModel::Select);
 
     if (lastIndex.isValid())
         view->selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
 
     if (firstIndex.isValid())
         view->scrollTo(firstIndex, QAbstractItemView::PositionAtTop);
+
+    return true;
 }
 
 void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selection)

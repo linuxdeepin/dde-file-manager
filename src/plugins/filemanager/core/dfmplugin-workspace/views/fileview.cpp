@@ -604,9 +604,9 @@ int FileView::selectedIndexCount() const
     return static_cast<FileSelectionModel *>(selectionModel())->selectedCount();
 }
 
-void FileView::selectFiles(const QList<QUrl> &files) const
+bool FileView::selectFiles(const QList<QUrl> &files) const
 {
-    d->selectHelper->select(files);
+    return d->selectHelper->select(files);
 }
 
 void FileView::setSelectionMode(const QAbstractItemView::SelectionMode mode)
@@ -1920,8 +1920,8 @@ void FileView::updateSelectedUrl()
     if (d->preSelectionUrls.isEmpty() || model()->currentState() != ModelState::kIdle)
         return;
 
-    selectFiles(d->preSelectionUrls);
-    d->preSelectionUrls.clear();
+    if (selectFiles(d->preSelectionUrls))
+        d->preSelectionUrls.clear();
 }
 
 void FileView::updateListHeaderView()
@@ -2017,6 +2017,7 @@ QUrl FileView::parseSelectedUrl(const QUrl &url)
 
     const QUrl &defaultSelectUrl = QUrl::fromUserInput(selectFile);
     if (defaultSelectUrl.isValid()) {
+        d->preSelectionUrls.clear();
         d->preSelectionUrls << defaultSelectUrl;
         urlQuery.removeQueryItem("selectUrl");
         fileUrl.setQuery(urlQuery);
@@ -2025,8 +2026,10 @@ QUrl FileView::parseSelectedUrl(const QUrl &url)
         // checkGvfsMountfileBusy
         QList<QUrl> ancestors;
         if (const FileInfoPointer &currentFileInfo = InfoFactory::create<FileInfo>(rootUrl())) {
-            if (UrlRoute::isAncestorsUrl(rootUrl(), fileUrl, &ancestors))
+            if (UrlRoute::isAncestorsUrl(rootUrl(), fileUrl, &ancestors)) {
+                d->preSelectionUrls.clear();
                 d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl());
+            }
         }
     }
 
