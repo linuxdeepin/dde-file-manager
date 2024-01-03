@@ -184,7 +184,9 @@ void Optical::onDiscEjected(const QString &id)
     const QString &mnt { DeviceUtils::getMountInfo(devFile) };
     if (!mnt.isEmpty()) {
         fmWarning() << "The device" << id << "has been ejected, but it's still mounted";
-        DeviceManager::instance()->unmountBlockDevAsync(id);
+        // cannot unmount if device is busy,
+        // so use { "force": GLib.Variant('b', True) }
+        DeviceManager::instance()->unmountBlockDevAsync(id, { { "force", true } });
     }
 }
 }   // namespace dfmplugin_optical
