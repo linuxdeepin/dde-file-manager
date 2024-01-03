@@ -84,6 +84,9 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
 
         bool isSystem = data.value(DeviceProperty::kHintSystem).toBool()
                 || data.value(DeviceProperty::kConnectionBus).toString() != "usb";
+        if (data.value(DeviceProperty::kOpticalDrive).toBool())
+            isSystem = false;
+
         if (opts.testFlag(DeviceQueryOption::kSystem)
             && !isSystem)
             continue;
