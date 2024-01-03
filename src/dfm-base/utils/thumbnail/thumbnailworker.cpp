@@ -78,17 +78,62 @@ bool ThumbnailWorkerPrivate::checkFileStable(const QUrl &url)
     // 修改时间稳定
     qint64 mtime = info->timeOf(TimeInfoType::kMetadataChangeTimeSecond).toLongLong();
     qint64 curTime = QDateTime::currentDateTime().toTime_t();
-    if (curTime - mtime < 2)
+    qint64 diffTime = curTime - mtime;
+    if (diffTime < 2 && diffTime > 0)
         return false;
 
     return true;
+}
+
+void ThumbnailWorkerPrivate::startDelayWork()
+{
+    if (!delayTimer) {
+        delayTimer = new QTimer(q);
+        delayTimer->setInterval(2 * 1000);
+        delayTimer->setSingleShot(true);
+        q->connect(delayTimer, &QTimer::timeout, q, [this] { q->onTaskAdded(delayTaskMap); }, Qt::QueuedConnection);
+    }
+
+    delayTimer->start();
+}
+
+QUrl ThumbnailWorkerPrivate::setCheckCount(const QUrl &url, int count)
+{
+    QUrl tmpUrl(url);
+    QUrlQuery query(url.query());
+    query.removeQueryItem("checkCount");
+    query.addQueryItem("checkCount", QString::number(count));
+    tmpUrl.setQuery(query);
+
+    return tmpUrl;
+}
+
+int ThumbnailWorkerPrivate::checkCount(const QUrl &url)
+{
+    if (!url.hasQuery())
+        return 0;
+
+    QUrlQuery query(url.query());
+    return query.queryItemValue("checkCount").toInt();
+}
+
+QUrl ThumbnailWorkerPrivate::clearCheckCount(const QUrl &url)
+{
+    if (!url.hasQuery())
+        return url;
+
+    QUrl tmpUrl(url);
+    QUrlQuery query(url.query());
+    query.removeQueryItem("checkCount");
+    tmpUrl.setQuery(query);
+
+    return tmpUrl;
 }
 
 ThumbnailWorker::ThumbnailWorker(QObject *parent)
     : QObject(parent),
       d(new ThumbnailWorkerPrivate(this))
 {
-    qRegisterMetaType<ThumbnailTaskMap>("ThumbnailTaskMap");
 }
 
 ThumbnailWorker::~ThumbnailWorker()
@@ -150,10 +195,23 @@ void ThumbnailWorker::createThumbnail(const QUrl &url, Global::ThumbnailSize siz
     // check whether the file is stable
     // if not, rejoin the event queue and create thumbnail later
     if (!d->checkFileStable(url)) {
-        ThumbnailTaskMap taskMap { { d->originalUrl, size } };
-        QMetaObject::invokeMethod(this, "onTaskAdded", Qt::QueuedConnection,
-                                  Q_ARG(ThumbnailTaskMap, taskMap));
+        if (!d->delayTaskMap.contains(d->originalUrl)) {
+            d->originalUrl = d->setCheckCount(d->originalUrl, 1);
+        } else {
+            d->delayTaskMap.remove(d->originalUrl);
+            // 超过10次，放弃生成
+            auto count = d->checkCount(d->originalUrl);
+            if (++count > 10)
+                return;
+
+            d->originalUrl = d->setCheckCount(d->originalUrl, count);
+        }
+
+        d->delayTaskMap.insert(d->originalUrl, size);
+        d->startDelayWork();
         return;
+    } else if (d->originalUrl.hasQuery()) {
+        d->originalUrl = d->clearCheckCount(d->originalUrl);
     }
 
     // create thumbnail
