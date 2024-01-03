@@ -12,6 +12,7 @@
 #include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <QFuture>
+#include <QTimer>
 
 namespace dfmbase {
 
@@ -21,6 +22,11 @@ public:
     explicit ThumbnailWorkerPrivate(ThumbnailWorker *qq);
     QString createThumbnail(const QUrl &url, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
     bool checkFileStable(const QUrl &url);
+    void startDelayWork();
+
+    QUrl setCheckCount(const QUrl &url, int count);
+    int checkCount(const QUrl &url);
+    QUrl clearCheckCount(const QUrl &url);
 
     ThumbnailWorker *q { nullptr };
     DMimeDatabase mimeDb;
@@ -28,6 +34,8 @@ public:
     QUrl originalUrl;
     ThumbnailHelper thumbHelper;
     std::atomic_bool isStoped = false;
+    QTimer *delayTimer { nullptr };
+    ThumbnailWorker::ThumbnailTaskMap delayTaskMap;
 };
 
 }   // namespace dfmbase
