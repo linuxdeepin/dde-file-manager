@@ -25,8 +25,12 @@ ShareFileInfo::~ShareFileInfo()
 
 QString ShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (DisPlayInfoType::kFileDisplayName == type)
-        return d->fileName();
+    if (DisPlayInfoType::kFileDisplayName == type) {
+        auto name = d->fileName();
+        if (name.isEmpty())
+            name = ProxyFileInfo::displayOf(type);
+        return name;
+    }
     return ProxyFileInfo::displayOf(type);
 }
 
@@ -56,12 +60,7 @@ QUrl ShareFileInfo::urlOf(const UrlInfoType type) const
 
 bool ShareFileInfo::isAttributes(const OptInfoType type) const
 {
-    switch (type) {
-    case FileIsType::kIsDir:
-        return true;
-    default:
-        return ProxyFileInfo::isAttributes(type);
-    }
+    return ProxyFileInfo::isAttributes(type);
 }
 
 bool ShareFileInfo::canAttributes(const CanableInfoType type) const

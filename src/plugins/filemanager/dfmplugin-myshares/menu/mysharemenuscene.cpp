@@ -7,6 +7,7 @@
 #include "events/shareeventscaller.h"
 
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/schemefactory.h>
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <QMenu>
@@ -126,18 +127,24 @@ void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
     predicateAction[MySharesActionId::kOpenShareFolder] = act;
 
     if (selectFiles.count() == 1) {
-        act = parent->addAction(predicateName[MySharesActionId::kOpenShareInNewWin]);
-        act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kOpenShareInNewWin);
-        predicateAction[MySharesActionId::kOpenShareInNewWin] = act;
+        auto info = InfoFactory::create<FileInfo>(selectFiles.first());
+        if (info && info->isAttributes(OptInfoType::kIsDir)) {
+            act = parent->addAction(predicateName[MySharesActionId::kOpenShareInNewWin]);
+            act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kOpenShareInNewWin);
+            predicateAction[MySharesActionId::kOpenShareInNewWin] = act;
 
-        act = parent->addAction(predicateName[MySharesActionId::kOpenShareInNewTab]);
-        act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kOpenShareInNewTab);
-        predicateAction[MySharesActionId::kOpenShareInNewTab] = act;
-        parent->addSeparator();
+            act = parent->addAction(predicateName[MySharesActionId::kOpenShareInNewTab]);
+            act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kOpenShareInNewTab);
+            predicateAction[MySharesActionId::kOpenShareInNewTab] = act;
+            parent->addSeparator();
 
-        act = parent->addAction(predicateName[MySharesActionId::kCancleSharing]);
-        act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kCancleSharing);
-        predicateAction[MySharesActionId::kCancleSharing] = act;
+            bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathOf(PathInfoType::kAbsoluteFilePath)).toBool();
+            if (shared) {
+                act = parent->addAction(predicateName[MySharesActionId::kCancleSharing]);
+                act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kCancleSharing);
+                predicateAction[MySharesActionId::kCancleSharing] = act;
+            }
+        }
     }
     parent->addSeparator();
 
