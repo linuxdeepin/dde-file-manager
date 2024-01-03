@@ -81,8 +81,11 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
         if (opts.testFlag(DeviceQueryOption::kOptical)
             && !data.value(DeviceProperty::kOptical).toBool())
             continue;
+
+        bool isSystem = data.value(DeviceProperty::kHintSystem).toBool()
+                || data.value(DeviceProperty::kConnectionBus).toString() != "usb";
         if (opts.testFlag(DeviceQueryOption::kSystem)
-            && (!data.value(DeviceProperty::kHintSystem).toBool() || data.value(DeviceProperty::kConnectionBus).toString() == "usb"))
+            && !isSystem)
             continue;
         if (opts.testFlag(DeviceQueryOption::kLoop)
             && !data.value(DeviceProperty::kIsLoopDevice).toBool())
