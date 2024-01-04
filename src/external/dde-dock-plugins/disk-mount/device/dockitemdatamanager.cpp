@@ -6,9 +6,14 @@
 #include "dockitemdatamanager.h"
 #include "utils/dockutils.h"
 
+#include <dtkgui_global.h>
+#include <dtkwidget_global.h>
 #include <DDesktopServices>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
+
+DGUI_BEGIN_NAMESPACE
+DGUI_END_NAMESPACE
 
 static constexpr char kDeviceService[] { "org.deepin.filemanager.server" };
 static constexpr char kDevMngPath[] { "/org/deepin/filemanager/server/DeviceManager" };
@@ -109,7 +114,8 @@ bool DockItemDataManager::protoDeviceFilter(const QVariantMap &data)
 
 void DockItemDataManager::playSoundOnDevPlugInOut(bool in)
 {
-    using namespace Dtk::Widget;
+    DGUI_USE_NAMESPACE
+    DWIDGET_USE_NAMESPACE
     DDesktopServices::playSystemSoundEffect(in ? DDesktopServices::SSE_DeviceAdded
                                                : DDesktopServices::SSE_DeviceRemoved);
     if (!in)

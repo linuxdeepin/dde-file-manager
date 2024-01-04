@@ -20,7 +20,7 @@ FILE (GLOB_RECURSE MOUNT_PLUGIN_FILES
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent Core REQUIRED)
-find_package(DtkWidget REQUIRED)
+find_package(Dtk COMPONENTS Widget Gui REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
@@ -48,6 +48,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5DBus_INCLUDE_DIRS}
     ${DtkWidget_INCLUDE_DIRS}
+    ${DtkGui_INCLUDE_DIRS}
     ${Gesttings_INCLUDE_DIRS}
     ${DdeDockInterface_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/src/dfm-base/dbusservice
@@ -58,6 +59,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Qt5Core_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    ${DtkGui_LIBRARIES}
     ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
     Qt5::Concurrent
