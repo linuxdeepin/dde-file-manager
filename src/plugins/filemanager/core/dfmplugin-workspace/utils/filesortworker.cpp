@@ -723,8 +723,9 @@ void FileSortWorker::filterAndSortFiles(const QUrl &dir, const bool fileter, con
     // 执行排序
     if (istree)
         visibleList = sortAllTreeFilesByParent(dir, reverse);
-    else
-        visibleList = sortTreeFiles(visibleChildren, reverse);
+    else {
+        visibleList = sortTreeFiles(visibleTreeChildren.contains(current)? visibleTreeChildren[current] : visibleChildren, reverse);
+    }
 
     // 执行界面刷新  设置过滤，当前的目录是当前树的根目录，反序。所有的显示url都要改变
     if (fileter || UniversalUtils::urlEquals(dir, current) || reverse) {
