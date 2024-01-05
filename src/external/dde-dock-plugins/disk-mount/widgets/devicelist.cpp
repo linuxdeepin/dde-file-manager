@@ -16,8 +16,6 @@ Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 using namespace Dtk::Gui;
 
-static const int kWidth = 300;
-
 DeviceList::DeviceList(QWidget *parent)
     : QScrollArea(parent)
 {
@@ -87,7 +85,7 @@ void DeviceList::initUI()
     content->setLayout(mainLay);
     setWidget(content);
 
-    setFixedWidth(kWidth);
+    setFixedWidth(kDockPluginWidth);
     setFrameShape(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -116,7 +114,7 @@ void DeviceList::initConnect()
 
 void DeviceList::updateHeight()
 {
-    int contentHeight = 50 + 70 * deviceItems.count();
+    int contentHeight = 50 + kDeviceItemHeight * deviceItems.count();
     if (contentHeight > 420)
         contentHeight = 420;
     setFixedHeight(contentHeight);
@@ -125,7 +123,7 @@ void DeviceList::updateHeight()
 QWidget *DeviceList::createHeader()
 {
     QWidget *header = new QWidget(this);
-    header->setFixedWidth(kWidth);
+    header->setFixedWidth(kDockPluginWidth);
     QVBoxLayout *lay = new QVBoxLayout();
     lay->setSpacing(0);
     lay->setContentsMargins(20, 9, 0, 8);

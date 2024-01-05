@@ -59,7 +59,8 @@ void DeviceItem::updateUsage(quint64 usedSize)
 
 void DeviceItem::initUI()
 {
-    setFixedHeight(70);
+    setFixedSize(kDockPluginWidth, kDeviceItemHeight);
+
     QLabel *labName = new QLabel(data.displayName, this);
     labName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     labName->setTextFormat(Qt::PlainText);
