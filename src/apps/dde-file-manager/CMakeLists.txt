@@ -64,5 +64,3 @@ install(DIRECTORY assets/dde-file-manager DESTINATION share/deepin-manual/manual
 # translation
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/translations DESTINATION share/${PROJECT_NAME} FILES_MATCHING PATTERN "*.qm")
 
-# log config
-install(FILES log/${PROJECT_NAME}.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)

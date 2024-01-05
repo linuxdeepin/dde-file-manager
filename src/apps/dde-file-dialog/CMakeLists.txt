@@ -27,5 +27,3 @@ target_link_libraries(
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(FILES data/com.deepin.filemanager.filedialog.service DESTINATION share/dbus-1/services)
 
-# log config
-install(FILES log/${PROJECT_NAME}.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)

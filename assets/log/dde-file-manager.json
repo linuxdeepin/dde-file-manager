@@ -1,0 +1,56 @@
+{
+	"name": "dde-file-manager",
+	"group": "",
+	"submodules": [{
+			"name": "dde-file-manager",
+			"filter": "",
+			"exec": "/usr/bin/dde-file-manager",
+			"logType": "journal",
+			"logPath": ""
+		},
+		{
+			"name": "dde-desktop",
+			"filter": "",
+			"exec": "/usr/bin/dde-desktop",
+			"logType": "journal",
+			"logPath": ""
+		},
+		{
+			"name": "dde-select-dialog-wayland",
+			"filter": "",
+			"exec": "/usr/bin/dde-select-dialog-wayland",
+			"logType": "journal",
+			"logPath": ""
+		},
+		{
+			"name": "dde-select-dialog-x11",
+			"filter": "",
+			"exec": "/usr/bin/dde-select-dialog-x11",
+			"logType": "journal",
+			"logPath": ""
+		},
+		{
+			"name": "dde-file-dialog",
+			"filter": "",
+			"exec": "/usr/bin/dde-file-dialog",
+			"logType": "journal",
+			"logPath": ""
+		},
+		{
+			"name": "dde-file-manager-daemon",
+			"filter": "",
+			"exec": "/usr/bin/dde-file-manager-daemon",
+			"logType": "journal",
+			"logPath": ""
+		},
+		{
+			"name": "dde-file-manager-server",
+			"filter": "",
+			"exec": "/usr/bin/dde-file-manager-server",
+			"logType": "journal",
+			"logPath": ""
+		}
+	],
+	"visible": true,
+	"version": "V2.0"
+}
