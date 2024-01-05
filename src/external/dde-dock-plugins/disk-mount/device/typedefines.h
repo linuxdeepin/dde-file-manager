@@ -9,6 +9,9 @@
 #include <QString>
 #include <QUrl>
 
+inline int kDockPluginWidth = 300;
+inline int kDeviceItemHeight = 70;
+
 struct DockItemData
 {
     QString id;
