@@ -34,11 +34,8 @@ private:
     QSharedPointer<dfmio::DEnumerator> stagingIterator { nullptr };
     QString mntPoint;
     QString devFile;
-    QSet<QString> seen;
-    QSet<QUrl> skip;
     QUrl currentUrl;   // 当前迭代器所在位置文件的url
     QUrl changeScheme(const QUrl &in) const;
-    QUrl changeSchemeUpdate(const QUrl &in);
 };
 
 }

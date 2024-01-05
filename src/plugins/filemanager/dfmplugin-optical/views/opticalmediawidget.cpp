@@ -226,30 +226,6 @@ void OpticalMediaWidget::onBurnButtonClicked()
         return;
     }
 
-    // If there are files or folders with the same name in the root directory
-    // of the disc and the root directory of the staging area,
-    // remove the relevant files or folders from the staging area
-    QFileInfoList &&listFilesOnDisc = curMnt.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(filter);
-    for (const auto &discFileInfo : listFilesOnDisc) {
-        for (const auto &stageInfo : listFilesInStage) {
-            if (stageInfo.fileName() != discFileInfo.fileName())
-                continue;
-            fmInfo() << "Remove file: " << stageInfo.fileName();
-            if (stageInfo.isFile()) {
-                dirStage.remove(stageInfo.fileName());
-            } else {
-                QDir(stageInfo.absoluteFilePath()).removeRecursively();
-            }
-        }
-    }
-
-    // empty stage files folder
-    listFilesInStage = dirStage.entryInfoList(filter);
-    if (listFilesInStage.count() == 0) {
-        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, errTitle);
-        return;
-    }
-
     statisticWorker->start({ urlOfStage });
 }
 
