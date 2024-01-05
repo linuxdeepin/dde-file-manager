@@ -187,6 +187,11 @@ install(FILES ${AssetsPath}/.readme DESTINATION ${OemMenuDir})
 set(ContexMenuDir "${CMAKE_INSTALL_PREFIX}/share/applications/context-menus")
 install(FILES ${AssetsPath}/.readme DESTINATION ${ContexMenuDir})
 
+# log config
+set(LogConfDir "${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d")
+install(FILES ${AssetsPath}/log/dde-file-manager.json DESTINATION ${LogConfDir})
+
 include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
+

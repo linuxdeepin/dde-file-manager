@@ -1,8 +1,0 @@
-{
-	"name": "dde-desktop",
-	"exec": "/usr/bin/dde-desktop",
-	"logType": "journal",
-	"logPath": "~/.cache/deepin/dde-desktop",
-    "visible": "1",
-    "version": "V1.0"
-}
