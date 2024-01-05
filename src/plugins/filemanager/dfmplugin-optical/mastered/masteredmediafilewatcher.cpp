@@ -124,8 +124,7 @@ void MasteredMediaFileWatcher::onSubfileCreated(const QUrl &url)
             bool ret { fw->result() };
             if (ret)
                 fmWarning() << "Dup file: " << url;
-            else
-                emit subfileCreated(realUrl);
+            emit subfileCreated(realUrl);
             delete fw;
         });
     }

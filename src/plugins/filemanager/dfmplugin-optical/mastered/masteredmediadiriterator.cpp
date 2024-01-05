@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -49,9 +49,8 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     QString realpath { mntPoint + OpticalHelper::burnFilePath(url) };
     if (realpath != "/")
         discIterator.reset(new dfmio::DEnumerator(QUrl::fromLocalFile(realpath), nameFilters,
-                                                 static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
-                                                 static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
-
+                                                  static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                                  static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
 }
 
 QUrl MasteredMediaDirIterator::next()
@@ -62,7 +61,7 @@ QUrl MasteredMediaDirIterator::next()
         discIterator = nullptr;
         currentUrl = stagingIterator->next();
     }
-    return changeSchemeUpdate(currentUrl);
+    return changeScheme(currentUrl);
 }
 
 bool MasteredMediaDirIterator::hasNext() const
@@ -113,7 +112,7 @@ const FileInfoPointer MasteredMediaDirIterator::fileInfo() const
         infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, false);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, false);
-        emit InfoCacheController::instance().removeCacheFileInfo({url});
+        emit InfoCacheController::instance().removeCacheFileInfo({ url });
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     } else {
         fmWarning() << "MasteredMediaFileInfo: info is nullptr, url = " << url;
@@ -125,7 +124,6 @@ const FileInfoPointer MasteredMediaDirIterator::fileInfo() const
     //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
     FileInfoPointer fileinfo = FileInfoPointer(new MasteredMediaFileInfo(fileUrl(), infoTrans));
     return fileinfo->exists() ? fileinfo : FileInfoPointer();
-
 }
 
 QUrl MasteredMediaDirIterator::url() const
@@ -147,19 +145,6 @@ QUrl MasteredMediaDirIterator::changeScheme(const QUrl &in) const
     }
     ret.setScheme(Global::Scheme::kBurn);
     ret.setPath(path);
-    if (skip.contains(ret)) {
-        ret.setFragment("dup");
-    }
-    return ret;
-}
 
-QUrl MasteredMediaDirIterator::changeSchemeUpdate(const QUrl &in)
-{
-    QUrl ret = changeScheme(in);
-    if (seen.contains(OpticalHelper::burnFilePath(ret))) {
-        skip.insert(ret);
-        return QUrl();
-    }
-    seen.insert(OpticalHelper::burnFilePath(ret));
     return ret;
 }

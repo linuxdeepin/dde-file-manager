@@ -40,9 +40,6 @@ bool MasteredMediaFileInfo::exists() const
     if (url.isEmpty())
         return false;
 
-    if (url.fragment() == "dup")
-        return false;
-
     if (!d->backerUrl.isValid() || d->backerUrl.isEmpty()) {
         const QString &dev { OpticalHelper::burnDestDevice(url) };
         const QUrl &discRoot { OpticalHelper::discRoot(dev) };
