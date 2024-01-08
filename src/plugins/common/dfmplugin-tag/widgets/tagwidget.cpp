@@ -78,9 +78,9 @@ bool TagWidget::shouldShow(const QUrl &url)
 
 void TagWidget::onCrumbListChanged()
 {
-    if (!d->crumbEdit->property("updateCrumbsColor").toBool()) {
+    if (!d->crumbEdit->isEditing() && !d->crumbEdit->property("updateCrumbsColor").toBool()) {
         updateCrumbsColor(TagManager::instance()->assignColorToTags((d->crumbEdit->crumbList())));
-        if (!d->crumbEdit->isEditing() && !d->crumbEdit->property("LoadFileTags").toBool()) {
+        if (!d->crumbEdit->property("LoadFileTags").toBool()) {
             bool ret = TagManager::instance()->setTagsForFiles(d->crumbEdit->crumbList(), { d->url });
 
             if (!ret) {
