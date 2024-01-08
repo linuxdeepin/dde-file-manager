@@ -11,6 +11,8 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include <dfm-base/utils/universalutils.h>
+
+#include <QProcess>
 #else
 #include <QDBusMessage>
 #include <QDBusPendingCall>
@@ -87,15 +89,30 @@ bool EventHandle::init()
 }
 
 #ifndef COMPILE_ON_V20
+void EventHandle::startTreeland()
+{
+    fmInfo() << "call treeland-wallpaper";
+    QProcess::startDetached("/usr/libexec/treeland-wallpaper");
+}
+
 bool EventHandle::wallpaperSetting(const QString &name)
 {
-    show(name, (int)WallpaperSettings::Mode::WallpaperMode);
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITER") == "TreeLand") {
+        startTreeland();
+    } else {
+        show(name, (int)WallpaperSettings::Mode::WallpaperMode);
+    }
+
     return true;
 }
 
 bool EventHandle::screenSaverSetting(const QString &name)
 {
-    show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITER") == "TreeLand") {
+        startTreeland();
+    } else {
+        show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
+    }
     return true;
 }
 

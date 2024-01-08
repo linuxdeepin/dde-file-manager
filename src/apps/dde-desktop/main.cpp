@@ -90,6 +90,14 @@ static bool pluginsLoad()
                                                     "dfmplugin-filepreview" };
 
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
+#ifdef COMPILE_ON_V23
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITER") == "TreeLand") {
+        qCInfo(logAppDesktop) << "disable background by TreeLand";
+        if (!blackNames.contains("ddplugin-background")) {
+            blackNames.append("ddplugin-background");
+        }
+    }
+#endif
     DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames, kLazyLoadPluginNames);
 
     qCInfo(logAppDesktop) << "Depend library paths:" << DApplication::libraryPaths();
@@ -245,9 +253,6 @@ int main(int argc, char *argv[])
             qCCritical(logAppDesktop) << "registerObject Failed" << conn.lastError();
             exit(0x0003);
         }
-
-        // Notify dde-desktop start up
-        registerDDESession();
     }
 
     if (isDesktopEnable()) {
@@ -266,6 +271,9 @@ int main(int argc, char *argv[])
     Application::instance()->dataPersistence()->setValue(DFMGLOBAL_NAMESPACE::DataPersistence::kReportGroup,
                                                          DFMGLOBAL_NAMESPACE::DataPersistence::kDesktopStartUpReportKey,
                                                          startUpData);
+
+    // Notify dde-desktop start up
+    registerDDESession();
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();

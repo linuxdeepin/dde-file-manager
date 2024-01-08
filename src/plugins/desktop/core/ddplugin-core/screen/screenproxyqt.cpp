@@ -129,6 +129,12 @@ qreal ScreenProxyQt::devicePixelRatio() const
 
 DisplayMode ScreenProxyQt::displayMode() const
 {
+#ifdef COMPILE_ON_V23
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITER") == "TreeLand") {
+        return DisplayMode::kShowonly;
+    }
+#endif
+
     QList<ScreenPointer> allScreen = screens();
     if (allScreen.isEmpty())
         return DisplayMode::kCustom;
