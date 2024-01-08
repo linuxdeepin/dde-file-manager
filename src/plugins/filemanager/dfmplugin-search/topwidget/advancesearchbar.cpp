@@ -25,6 +25,7 @@
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
+#include <QGraphicsEffect>
 #endif
 
 DFMBASE_USE_NAMESPACE
@@ -141,8 +142,12 @@ void AdvanceSearchBarPrivate::initUI()
     formLayout->setSpacing(6);
     formLayout->setMargin(6);
 
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    vLayout->addSpacing(10);
+    vLayout->addLayout(formLayout);
+
     mainLayout->addSpacing(20);
-    mainLayout->addLayout(formLayout);
+    mainLayout->addLayout(vLayout);
     mainLayout->addSpacing(20);
 
     q->setWidget(this);
@@ -445,8 +450,13 @@ AdvanceSearchBar::AdvanceSearchBar(QWidget *parent)
     : QScrollArea(parent),
       d(new AdvanceSearchBarPrivate(this))
 {
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
+    effect->setColor(QColor(0, 0, 0, 5));
+    effect->setOffset(0, 4);
+    effect->setBlurRadius(20);
+    setGraphicsEffect(effect);
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    setFixedHeight(DSizeModeHelper::element(73, QWIDGETSIZE_MAX));
+    setFixedHeight(DSizeModeHelper::element(83, 110));
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &AdvanceSearchBar::initUiForSizeMode);
 #endif
 }
@@ -454,8 +464,7 @@ AdvanceSearchBar::AdvanceSearchBar(QWidget *parent)
 void AdvanceSearchBar::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    this->setFixedHeight(QWIDGETSIZE_MAX);
-    disconnect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &AdvanceSearchBar::initUiForSizeMode);
+    setFixedHeight(DSizeModeHelper::element(83, 110));
 #endif
 }
 
