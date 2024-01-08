@@ -81,14 +81,8 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
         if (opts.testFlag(DeviceQueryOption::kOptical)
             && !data.value(DeviceProperty::kOptical).toBool())
             continue;
-
-        bool isSystem = data.value(DeviceProperty::kHintSystem).toBool()
-                || data.value(DeviceProperty::kConnectionBus).toString() != "usb";
-        if (data.value(DeviceProperty::kOpticalDrive).toBool())
-            isSystem = false;
-
         if (opts.testFlag(DeviceQueryOption::kSystem)
-            && !isSystem)
+            && !DeviceUtils::isSystemDisk(data))
             continue;
         if (opts.testFlag(DeviceQueryOption::kLoop)
             && !data.value(DeviceProperty::kIsLoopDevice).toBool())

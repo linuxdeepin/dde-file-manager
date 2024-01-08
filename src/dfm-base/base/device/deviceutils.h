@@ -81,6 +81,9 @@ public:
     // otherwise convert the path to the mount point name
     static QString bindPathTransform(const QString &path, bool toDevice);
 
+    static bool isSystemDisk(const QVariantHash &devInfo);
+    static bool isSystemDisk(const QVariantMap &devInfo);
+
 private:
     static bool hasMatch(const QString &txt, const QString &rex);
     using Compare = std::function<bool(const QString &, const QString &)>;
