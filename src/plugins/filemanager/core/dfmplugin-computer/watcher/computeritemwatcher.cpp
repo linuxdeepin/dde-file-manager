@@ -644,10 +644,11 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
     QString visableName;
     QString reportName = "Unknown Disk";
     QString subGroup = Global::Scheme::kComputer;
+
     if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
         visableKey = kItemVisiableControlKeys[1];
         visableName = kItemVisiableControlNames[1];
-    } else if (info->extraProperty(DeviceProperty::kHintSystem).toBool()) {
+    } else if (DeviceUtils::isSystemDisk(info->extraProperties())) {
         visableKey = kItemVisiableControlKeys[0];
         visableName = kItemVisiableControlNames[0];
         reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";

@@ -672,6 +672,26 @@ QString DeviceUtils::bindPathTransform(const QString &path, bool toDevice)
     return bindPath;
 }
 
+bool DeviceUtils::isSystemDisk(const QVariantHash &devInfo)
+{
+    bool isSystem = devInfo.value(GlobalServerDefines::DeviceProperty::kHintSystem).toBool()
+            || devInfo.value(GlobalServerDefines::DeviceProperty::kConnectionBus).toString() != "usb";
+    if (devInfo.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
+        isSystem = false;
+    return isSystem;
+}
+
+bool DeviceUtils::isSystemDisk(const QVariantMap &devInfo)
+{
+    QVariantHash hash;
+    QMapIterator<QString, QVariant> iter(devInfo);
+    while (iter.hasNext()) {
+        iter.next();
+        hash.insert(iter.key(), iter.value());
+    }
+    return isSystemDisk(hash);
+}
+
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 {
     Q_ASSERT(func);
