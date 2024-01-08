@@ -597,14 +597,6 @@ void AddressBar::showOnFocusLostOnce()
 
 bool AddressBar::event(QEvent *e)
 {
-    // blumia: When window lost focus and then get activated, we should hide
-    //         addressbar if it's visiable.
-    if (e->type() == QEvent::WindowActivate) {
-        if (!hasFocus() && isVisible()) {
-            Q_EMIT lostFocus();
-        }
-    }
-
     if (e->type() == QEvent::KeyPress) {
         keyPressEvent(static_cast<QKeyEvent *>(e));
         return true;
