@@ -40,6 +40,11 @@ FileSortWorker::~FileSortWorker()
     childrenDataMap.clear();
     visibleChildren.clear();
     children.clear();
+    if (updateRefresh) {
+        updateRefresh->stop();
+        updateRefresh->deleteLater();
+        updateRefresh = nullptr;
+    }
 }
 
 FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile)
@@ -273,16 +278,22 @@ void FileSortWorker::onShowHiddenFileChanged(bool isShow)
 
 void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &children)
 {
+    bool added = false;
     for (const auto &sortInfo : children) {
         if (isCanceled)
             return;
         if (this->children.value(parantUrl(sortInfo->fileUrl())).contains(sortInfo->fileUrl()))
             continue;
-        addChild(sortInfo, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
+        auto suc = addChild(sortInfo, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
+        if (!added)
+            added = suc;
     }
+
+    if (added)
+        Q_EMIT insertFinish();
 }
 
-void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> children)
+void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &children)
 {
     if (children.isEmpty())
         return;
@@ -303,6 +314,7 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> ch
 
     auto subChildren = this->children.take(parentUrl);
     auto subVisibleList = visibleTreeChildren.take(parentUrl);
+    bool removed = false;
     for (const auto &sortInfo : children) {
         if (isCanceled)
             return;
@@ -327,51 +339,59 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> ch
         }
 
         Q_EMIT removeRows(showIndex, 1);
+        removed = true;
         {
             QWriteLocker lk(&locker);
             visibleChildren.removeAt(showIndex);
         }
-        Q_EMIT removeFinish();
     }
+    if (removed)
+        Q_EMIT removeFinish();
     this->children.insert(parentUrl, subChildren);
     visibleTreeChildren.insert(parentUrl, subVisibleList);
 }
 
-void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
+bool FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 {
     if (isCanceled)
-        return;
+        return false;
 
     if (!child)
-        return;
+        return false;
 
     if (!child->fileUrl().isValid() || !this->children.value(parantUrl(child->fileUrl())).contains(child->fileUrl()))
-        return;
+        return false;
 
     FileInfoPointer info;
 
     auto item = childData(child->fileUrl());
     if (item.isNull())
-        return;
+        return false;
     info = item->fileInfo();
 
     if (!info)
-        return;
+        return false;
 
     info->updateAttributes();
 
     sortInfoUpdateByFileInfo(info);
 
-    handleUpdateFile(child->fileUrl());
+    return handleUpdateFile(child->fileUrl());
 }
 
 void FileSortWorker::handleWatcherUpdateFiles(const QList<SortInfoPointer> &children)
 {
+    bool added = false;
     for(auto sort : children) {
         if (isCanceled)
             return;
-        handleWatcherUpdateFile(sort);
+        auto suc = handleWatcherUpdateFile(sort);
+        if (!added)
+            added = suc;
     }
+
+    if (added)
+        Q_EMIT insertFinish();
 }
 
 void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
@@ -429,17 +449,17 @@ void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa,
         handleResort(sortOrder, orgSortRole, value.toBool());
 }
 
-void FileSortWorker::handleUpdateFile(const QUrl &url)
+bool FileSortWorker::handleUpdateFile(const QUrl &url)
 {
     if (isCanceled)
-        return;
+        return false;
 
     if (!url.isValid())
-        return;
+        return false;
 
     SortInfoPointer sortInfo = children.value(parantUrl(url)).value(url);
     if (!sortInfo)
-        return;
+        return false;
 
     bool childVisible = false;
     int childIndex = -1;
@@ -457,12 +477,13 @@ void FileSortWorker::handleUpdateFile(const QUrl &url)
                 visibleChildren.removeAt(childIndex);
             }
             Q_EMIT removeFinish();
-            return;
+            return false;
         }
         Q_EMIT updateRow(childIndex);
-        return;
+        return false;
     }
 
+    bool added = false;
     if (checkFilters(sortInfo, true)) {
         int showIndex = visibleChildren.length();
         // kItemDisplayRole 是不进行排序的
@@ -470,18 +491,34 @@ void FileSortWorker::handleUpdateFile(const QUrl &url)
             showIndex = insertSortList(sortInfo->fileUrl(), visibleChildren, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
 
         if (isCanceled)
-            return;
+            return false;
 
         Q_EMIT insertRows(showIndex, 1);
         {
             QWriteLocker lk(&locker);
             visibleChildren.insert(showIndex, sortInfo->fileUrl());
         }
-        Q_EMIT insertFinish();
+        added = true;
 
         // async create file will add to view while file info updated.
         Q_EMIT selectAndEditFile(sortInfo->fileUrl());
     }
+
+    return added;
+}
+
+void FileSortWorker::handleUpdateFiles(const QList<QUrl> &urls)
+{
+    bool added = false;
+    for (auto const &url : urls) {
+        if (isCanceled)
+            return;
+        auto suc = handleUpdateFile(url);
+        if (!added)
+            added = suc;
+    }
+    if (added)
+        emit insertFinish();
 }
 
 void FileSortWorker::handleRefresh()
@@ -539,7 +576,29 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
 
     sortInfoUpdateByFileInfo(fileInfo);
 
-    handleUpdateFile(url);
+    if (fileInfoRefresh.contains(url))
+        return;
+
+    fileInfoRefresh.append(url);
+
+    if (updateRefresh && updateRefresh->isActive())
+        return;
+
+    if (!updateRefresh) {
+        updateRefresh = new QTimer;
+        connect(updateRefresh, &QTimer::timeout, this, &FileSortWorker::handleUpdateRefreshFiles, Qt::QueuedConnection);
+    }
+    updateRefresh->setSingleShot(true);
+    updateRefresh->setInterval(200);
+    updateRefresh->start();
+}
+
+void FileSortWorker::handleUpdateRefreshFiles()
+{
+    if (fileInfoRefresh.isEmpty())
+        return;
+    handleUpdateFiles(fileInfoRefresh);
+    fileInfoRefresh.clear();
 }
 
 void FileSortWorker::handleCloseExpand(const QString &key, const QUrl &parent)
@@ -795,19 +854,19 @@ void FileSortWorker::filterTreeDirFiles(const QUrl &parent, const bool byInfo)
     visibleTreeChildren.insert(parent, filterUrls);
 }
 
-void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
+bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
                               const AbstractSortFilter::SortScenarios sort)
 {
     if (isCanceled || sortInfo.isNull())
-        return;
+        return false;
 
     auto parentUrl = parantUrl(sortInfo->fileUrl());
     auto depth = findDepth(parentUrl);
     if (depth < 0)
-        return;
+        return false;
 
     if (children.value(parentUrl).contains(sortInfo->fileUrl()))
-        return;
+        return false;
 
     auto childList = children.take(parentUrl);
     childList.insert(sortInfo->fileUrl(), sortInfo);
@@ -820,10 +879,10 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     }
 
     if (!checkFilters(sortInfo, true))
-        return;
+        return false;
 
     if (isCanceled)
-        return;
+        return false;
 
     int showIndex = findStartPos(parentUrl);
 
@@ -858,17 +917,18 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     }
 
     if (isCanceled)
-        return;
+        return false;
 
     Q_EMIT insertRows(showIndex, 1);
     {
         QWriteLocker lk(&locker);
         visibleChildren.insert(showIndex, sortInfo->fileUrl());
     }
-    Q_EMIT insertFinish();
 
     if (sort == AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile)
         Q_EMIT selectAndEditFile(sortInfo->fileUrl());
+
+    return true;
 }
 
 bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)

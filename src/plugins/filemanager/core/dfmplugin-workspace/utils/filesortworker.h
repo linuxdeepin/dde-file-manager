@@ -86,6 +86,9 @@ signals:
     // Note that the slot functions here are executed in asynchronous threads,
     // so the link can only be Qt:: QueuedConnection,
     // which cannot be directly called elsewhere, but can only be triggered by signals
+signals:
+    void requestUpdateTimerStart();
+
 public slots:
     // Receive all local files of iteration of iterator thread, perform filtering and sorting
     void handleIteratorLocalChildren(const QString &key,
@@ -114,19 +117,21 @@ public slots:
     void onShowHiddenFileChanged(bool isShow);
 
     void handleWatcherAddChildren(const QList<SortInfoPointer> &children);
-    void handleWatcherRemoveChildren(const QList<SortInfoPointer> children);
-    void handleWatcherUpdateFile(const SortInfoPointer child);
+    void handleWatcherRemoveChildren(const QList<SortInfoPointer> &children);
+    bool handleWatcherUpdateFile(const SortInfoPointer child);
     void handleWatcherUpdateFiles(const QList<SortInfoPointer> &children);
     void handleWatcherUpdateHideFile(const QUrl &hidUrl);
 
     void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
     void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
 
-    void handleUpdateFile(const QUrl &url);
+    bool handleUpdateFile(const QUrl &url);
+    void handleUpdateFiles(const QList<QUrl> &urls);
 
     void handleRefresh();
     void handleClearThumbnail();
     void handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
+    void handleUpdateRefreshFiles();
 
     // treeview solts
 public slots:
@@ -156,7 +161,7 @@ private:
     QList<QUrl> filterFilesByParent(const QUrl &dir, const bool byInfo = false);
     void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false);
 
-    void addChild(const SortInfoPointer &sortInfo,
+    bool addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortFilter::SortScenarios sort);
     bool sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo);
 
@@ -218,6 +223,8 @@ private:
     QMultiMap<int8_t, QUrl> depthMap;
     std::atomic_bool istree;
     std::atomic_bool currentSupportTreeView {false};
+    QList<QUrl> fileInfoRefresh;
+    QTimer *updateRefresh {nullptr};
 };
 
 }
