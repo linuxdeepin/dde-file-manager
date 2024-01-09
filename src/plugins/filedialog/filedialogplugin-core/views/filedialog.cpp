@@ -14,6 +14,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -423,7 +424,8 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
     if (mode == QFileDialog::AcceptOpen) {
         statusBar()->setMode(FileDialogStatusBar::kOpen);
         setFileMode(d->fileMode);
-        urlSchemeEnable("recent", true);
+        QVariantMap vMap = DConfigManager::instance()->value("org.deepin.dde.file-manager.sidebar", "itemVisiable").toMap();
+        urlSchemeEnable("recent", vMap.value("recent", true).toBool());
 
         disconnect(statusBar()->lineEdit(), &DLineEdit::textChanged,
                    this, &FileDialog::onCurrentInputNameChanged);
