@@ -945,8 +945,13 @@ void DeviceManagerPrivate::mountAllBlockDev()
     const QStringList &devs { q->getAllBlockDevID(DeviceQueryOption::kMountable | DeviceQueryOption::kNotIgnored
                                                   | DeviceQueryOption::kNotMounted) };
     qCInfo(logDFMBase) << "start to mount block devs: " << devs;
-    for (const auto &dev : devs)
+    for (const auto &dev : devs) {
+        if (dev.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
+            qCInfo(logDFMBase) << "no auto mount for optical devices." << dev;
+            continue;
+        }
         q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
+    }
 }
 
 bool DeviceManagerPrivate::isDaemonMountRunning()
