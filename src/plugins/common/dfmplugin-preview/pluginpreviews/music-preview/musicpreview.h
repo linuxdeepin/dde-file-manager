@@ -35,6 +35,7 @@ public:
     void play() override;
     void pause() override;
     void stop() override;
+    void handleBeforDestroy() override;
 
     bool canPreview(const QUrl &url) const;
 

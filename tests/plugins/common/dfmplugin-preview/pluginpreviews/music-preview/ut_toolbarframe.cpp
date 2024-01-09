@@ -19,7 +19,7 @@ TEST(UT_toolBarFrame, init)
 {
     ToolBarFrame bar("/UT_TEST");
 
-    EXPECT_TRUE(bar.mediaPlayer);
+    EXPECT_TRUE(bar.playControlButton);
 }
 
 TEST(UT_toolBarFrame, onPlayDurationChanged)
@@ -132,21 +132,6 @@ TEST(UT_toolBarFrame, onPlayControlButtonClicked_three)
 
     ToolBarFrame bar("/UT_TEST");
     bar.onPlayControlButtonClicked();
-
-    EXPECT_TRUE(isOk);
-}
-
-TEST(UT_toolBarFrame, updateProgress)
-{
-    bool isOk { false };
-
-    stub_ext::StubExt stub;
-    stub.set_lamda(&DSlider::setValue, [ &isOk ]{
-        isOk = true;
-    });
-
-    ToolBarFrame bar("/UT_TEST");
-    bar.updateProgress();
 
     EXPECT_TRUE(isOk);
 }

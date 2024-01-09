@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "toolbarframe.h"
+#include "cusmediaplayer.h"
 
 #include <DSlider>
 
@@ -18,15 +19,11 @@ DWIDGET_USE_NAMESPACE
 ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent)
     : QFrame(parent)
 {
-    mediaPlayer = new QMediaPlayer(this);
-
-    updateProgressTimer = new QTimer(this);
-    updateProgressTimer->setInterval(1000);
-
     initUI();
     initConnections();
 
-    mediaPlayer->setMedia(QUrl::fromUserInput(uri));
+    CusMediaPlayer::instance()->createMediaPlayer();
+    CusMediaPlayer::instance()->setMedia(QUrl::fromUserInput(uri));
 }
 
 void ToolBarFrame::initUI()
@@ -52,11 +49,11 @@ void ToolBarFrame::initUI()
 
 void ToolBarFrame::initConnections()
 {
-    connect(mediaPlayer, &QMediaPlayer::stateChanged, this, &ToolBarFrame::onPlayStateChanged);
-    connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &ToolBarFrame::onPlayStatusChanged);
-    connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &ToolBarFrame::onPlayDurationChanged);
+    connect(CusMediaPlayer::instance(), &CusMediaPlayer::sigStateChanged, this, &ToolBarFrame::onPlayStateChanged);
+    connect(CusMediaPlayer::instance(), &CusMediaPlayer::sigStatusChanged, this, &ToolBarFrame::onPlayStatusChanged);
+    connect(CusMediaPlayer::instance(), &CusMediaPlayer::sigDurationChanged, this, &ToolBarFrame::onPlayDurationChanged);
+    connect(CusMediaPlayer::instance(), &CusMediaPlayer::sigPositionChanged, this, &ToolBarFrame::onPlayPositionChanged);
     connect(playControlButton, &QPushButton::clicked, this, &ToolBarFrame::onPlayControlButtonClicked);
-    connect(updateProgressTimer, &QTimer::timeout, this, &ToolBarFrame::updateProgress);
     connect(progressSlider, &DSlider::valueChanged, this, &ToolBarFrame::seekPosition);
 }
 
@@ -65,10 +62,19 @@ void ToolBarFrame::onPlayDurationChanged(qint64 duration)
     durationToLabel(duration);
 }
 
+void ToolBarFrame::onPlayPositionChanged(qint64 pos)
+{
+    if (pos == lastPos || curState == QMediaPlayer::State::StoppedState)
+        return;
+    lastPos = pos;
+    progressSlider->setValue(static_cast<int>(pos));
+}
+
 void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
 {
     if (state == QMediaPlayer::StoppedState) {
-        stop();
+        curState = QMediaPlayer::State::StoppedState;
+        progressSlider->setValue(0);
     }
 
     if (state == QMediaPlayer::StoppedState || state == QMediaPlayer::PausedState) {
@@ -80,19 +86,16 @@ void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
 
 void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
 {
-    if (status == QMediaPlayer::BufferedMedia)
-        emit canGetMessage(mediaPlayer);
-
-    if (status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia) {
-        durationToLabel(mediaPlayer->duration());
-    }
+    if (status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia)
+        durationToLabel(CusMediaPlayer::instance()->duration());
 }
 
 void ToolBarFrame::onPlayControlButtonClicked()
 {
-    if (mediaPlayer->state() == QMediaPlayer::PlayingState) {
+    QMediaPlayer::State sta = CusMediaPlayer::instance()->state();
+    if (sta == QMediaPlayer::PlayingState) {
         pause();
-    } else if (mediaPlayer->state() == QMediaPlayer::StoppedState) {
+    } else if (sta == QMediaPlayer::StoppedState) {
         progressSlider->setValue(0);
         play();
     } else {
@@ -100,35 +103,30 @@ void ToolBarFrame::onPlayControlButtonClicked()
     }
 }
 
-void ToolBarFrame::updateProgress()
-{
-    progressSlider->setValue(static_cast<int>(mediaPlayer->position()));
-}
-
 void ToolBarFrame::seekPosition(const int &pos)
 {
-    if (qAbs(pos - mediaPlayer->position()) > 3) {
-        mediaPlayer->setPosition(pos);
+    if (qAbs(pos - CusMediaPlayer::instance()->position()) > 3) {
+        emit CusMediaPlayer::instance()->sigSetPosition(pos);
     }
 }
 
 void ToolBarFrame::play()
 {
-    mediaPlayer->play();
-    updateProgressTimer->start();
+    curState = QMediaPlayer::State::PlayingState;
+    emit CusMediaPlayer::instance()->sigPlay();
 }
 
 void ToolBarFrame::pause()
 {
-    mediaPlayer->pause();
-    updateProgressTimer->stop();
+    curState = QMediaPlayer::State::PausedState;
+    emit CusMediaPlayer::instance()->sigPause();
 }
 
 void ToolBarFrame::stop()
 {
+    curState = QMediaPlayer::State::StoppedState;
     progressSlider->setValue(0);
-    mediaPlayer->stop();
-    updateProgressTimer->stop();
+    emit CusMediaPlayer::instance()->sigStop();
 }
 
 void ToolBarFrame::durationToLabel(qint64 duration)

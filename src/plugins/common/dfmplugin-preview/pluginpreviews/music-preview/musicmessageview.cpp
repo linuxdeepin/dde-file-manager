@@ -36,6 +36,7 @@ MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent)
       currentUrl(uri)
 {
     initUI();
+    setMediaInfo();
     localeCodes.insert("zh_CN", "GB18030");
 }
 
@@ -120,7 +121,7 @@ void MusicMessageView::updateElidedText()
     albumValue->setText(fmAlbumValue.elidedText(fileAlbum, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
 }
 
-void MusicMessageView::getMessage(QMediaPlayer *player)
+void MusicMessageView::setMediaInfo()
 {
     MediaMeta meta = tagOpenMusicFile(currentUrl);
     fileTitle = meta.title;
@@ -138,26 +139,21 @@ void MusicMessageView::getMessage(QMediaPlayer *player)
         fileAlbum = QString(tr("unknown album"));
 
     QImage img;
-    if (player)
-        img = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
-
-    if (img.isNull()) {
-        QUrl url(currentUrl);
-        TagLib::MPEG::File f(url.toLocalFile().toLocal8Bit());
-        if (f.isValid()) {
-            if (f.ID3v2Tag()) {
-                TagLib::ID3v2::FrameList frameList = f.ID3v2Tag()->frameListMap()["APIC"];
-                if (!frameList.isEmpty()) {
-                    TagLib::ID3v2::AttachedPictureFrame *picFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList.front());
-                    QBuffer buffer;
-                    buffer.setData(picFrame->picture().data(), static_cast<int>(picFrame->picture().size()));
-                    QImageReader imageReader(&buffer);
-                    img = imageReader.read();
-                }
+    QUrl url(currentUrl);
+    TagLib::MPEG::File f(url.toLocalFile().toLocal8Bit());
+    if (f.isValid()) {
+        if (f.ID3v2Tag()) {
+            TagLib::ID3v2::FrameList frameList = f.ID3v2Tag()->frameListMap()["APIC"];
+            if (!frameList.isEmpty()) {
+                TagLib::ID3v2::AttachedPictureFrame *picFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList.front());
+                QBuffer buffer;
+                buffer.setData(picFrame->picture().data(), static_cast<int>(picFrame->picture().size()));
+                QImageReader imageReader(&buffer);
+                img = imageReader.read();
             }
-
-            f.clear();
         }
+
+        f.clear();
     }
 
     if (img.isNull()) {

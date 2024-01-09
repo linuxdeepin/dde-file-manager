@@ -328,6 +328,7 @@ void FilePreviewDialog::switchToPage(int index)
         preview->contentWidget()->setVisible(false);
         static_cast<QHBoxLayout *>(statusBar->layout())->removeWidget(preview->statusBarWidget());
         static_cast<QVBoxLayout *>(layout())->removeWidget(preview->contentWidget());
+        preview->handleBeforDestroy();
         preview->deleteLater();
     }
 
