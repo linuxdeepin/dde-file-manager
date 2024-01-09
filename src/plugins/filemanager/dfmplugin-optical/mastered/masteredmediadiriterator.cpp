@@ -70,7 +70,7 @@ bool MasteredMediaDirIterator::hasNext() const
     if (discIterator && discIterator->hasNext())
         return true;
     if (discIterator)
-        discIterator.reset(nullptr);
+        discIterator.clear();
     return stagingIterator && stagingIterator->hasNext();
 }
 
