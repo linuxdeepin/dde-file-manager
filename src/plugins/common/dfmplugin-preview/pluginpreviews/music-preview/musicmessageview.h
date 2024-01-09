@@ -30,10 +30,8 @@ class MusicMessageView : public QFrame
 public:
     explicit MusicMessageView(const QString &uri = "", QWidget *parent = nullptr);
     void initUI();
+    void setMediaInfo();
     void updateElidedText();
-
-public slots:
-    void getMessage(QMediaPlayer *player);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

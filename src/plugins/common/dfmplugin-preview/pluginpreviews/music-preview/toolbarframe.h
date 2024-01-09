@@ -35,15 +35,12 @@ private:
     void initUI();
     void initConnections();
 
-signals:
-    void canGetMessage(QMediaPlayer *player);
-
 public slots:
     void onPlayStateChanged(const QMediaPlayer::State &state);
     void onPlayStatusChanged(const QMediaPlayer::MediaStatus &status);
     void onPlayDurationChanged(qint64 duration);
+    void onPlayPositionChanged(qint64 pos);
     void onPlayControlButtonClicked();
-    void updateProgress();
     void seekPosition(const int &pos);
     void play();
     void pause();
@@ -53,11 +50,12 @@ private:
     void durationToLabel(qint64 duration);
 
 private:
-    QMediaPlayer *mediaPlayer { nullptr };
     QPushButton *playControlButton { nullptr };
     DTK_WIDGET_NAMESPACE::DSlider *progressSlider { nullptr };
     QLabel *durationLabel { nullptr };
     QTimer *updateProgressTimer { nullptr };
+    qint64 lastPos { -1 };
+    QMediaPlayer::State curState { QMediaPlayer::State::StoppedState };
 };
 }
 #endif   // TOOLBARFRAME_H

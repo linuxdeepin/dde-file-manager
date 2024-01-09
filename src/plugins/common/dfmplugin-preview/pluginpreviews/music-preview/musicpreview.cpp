@@ -5,6 +5,7 @@
 #include "musicpreview.h"
 #include "musicmessageview.h"
 #include "toolbarframe.h"
+#include "cusmediaplayer.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
@@ -70,8 +71,6 @@ bool MusicPreview::setFileUrl(const QUrl &url)
 
     musicView = new MusicMessageView(url.toString());
     statusBarFrame = new ToolBarFrame(url.toString());
-    connect(statusBarFrame, &ToolBarFrame::canGetMessage, musicView, &MusicMessageView::getMessage);
-
     musicView->setFixedSize(600, 336);
     statusBarFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -111,6 +110,11 @@ void MusicPreview::pause()
 void MusicPreview::stop()
 {
     statusBarFrame->stop();
+}
+
+void MusicPreview::handleBeforDestroy()
+{
+    emit CusMediaPlayer::instance()->sigStop();
 }
 
 bool MusicPreview::canPreview(const QUrl &url) const

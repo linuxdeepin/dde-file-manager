@@ -46,3 +46,7 @@ void AbstractBasePreview::pause()
 void AbstractBasePreview::stop()
 {
 }
+
+void AbstractBasePreview::handleBeforDestroy()
+{
+}
