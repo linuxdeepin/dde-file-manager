@@ -34,9 +34,12 @@ void BasicStatusBarPrivate::initFormatStrings()
 
 void BasicStatusBarPrivate::initTipLabel()
 {
-    tip = new QLabel(counted.arg("0"), q);
+    tip = new DTK_WIDGET_NAMESPACE::DTipLabel(counted.arg("0"), q);
     tip->setAlignment(Qt::AlignCenter);
     tip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    QPalette pal = tip->palette();
+//    pal.setColor(QPalette::Active, QPalette::WindowText, QColor(Qt::red));
+//    tip->setPalette(pal);
     tip->show();
 }
 
