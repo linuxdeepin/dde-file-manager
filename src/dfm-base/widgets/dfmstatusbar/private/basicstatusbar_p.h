@@ -9,6 +9,7 @@
 #include <dfm-base/utils/filestatisticsjob.h>
 
 #include <DAnchors>
+#include <DTipLabel>
 
 #include <QObject>
 #include <QString>
@@ -56,7 +57,7 @@ public:
     int folderContains = 0;
 
     QHBoxLayout *layout = nullptr;
-    QLabel *tip = nullptr;
+    DTK_WIDGET_NAMESPACE::DTipLabel *tip = nullptr;
 
 
     QSharedPointer<FileStatisticsJob> fileStatisticsJog;
