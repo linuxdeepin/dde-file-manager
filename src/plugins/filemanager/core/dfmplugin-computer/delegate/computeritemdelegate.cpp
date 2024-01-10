@@ -29,7 +29,7 @@ const int kContentRightMargin { 20 };
 
 const char *const kRegPattern { "^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*" };
 
-const int kSplitterLineHeight { 39 };
+const int kSplitterLineHeight { 36 };
 const int kSmallItemWidth { 108 };
 const int kSmallItemHeight { 138 };
 
