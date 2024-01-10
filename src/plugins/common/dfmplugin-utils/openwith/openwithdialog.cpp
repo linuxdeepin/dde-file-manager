@@ -297,6 +297,11 @@ void OpenWithDialog::initUI()
     bottomLayout->addLayout(buttonLayout);
     bottomLayout->setContentsMargins(10, 0, 10, 0);
 
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    mainLayout->addSpacing(DSizeModeHelper::element(6, 15));
+#else
+    mainLayout->addSpacing(15);
+#endif
     mainLayout->addWidget(scrollArea);
     mainLayout->addLayout(bottomLayout);
     mainLayout->setContentsMargins(0, 35, 0, 10);
