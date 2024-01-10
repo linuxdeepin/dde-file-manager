@@ -9,6 +9,7 @@
 
 #include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -79,6 +80,9 @@ void TitleBarWidget::handleHotketSwitchViewMode(int mode)
     // Press ctrl+2
     if (mode == 1)
         TitleBarEventCaller::sendViewMode(this, ViewMode::kListMode);
+    // Press ctrl+3
+    if (mode == 2 && DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
+        TitleBarEventCaller::sendViewMode(this, ViewMode::kTreeMode);
 }
 
 void TitleBarWidget::initializeUi()
