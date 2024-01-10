@@ -44,7 +44,8 @@ Shortcut::Shortcut(QObject *parent)
     group4.groupItems << ShortcutItem(tr("Hide item"), "Ctrl + H ")
                       << ShortcutItem(tr("Input in address bar"), "Ctrl + L ")
                       << ShortcutItem(tr("Switch to icon view"), "Ctrl + 1 ")
-                      << ShortcutItem(tr("Switch to list view"), "Ctrl + 2 ");
+                      << ShortcutItem(tr("Switch to list view"), "Ctrl + 2 ")
+                      << ShortcutItem(tr("Switch to tree view"), "Ctrl + 3 ");
     group5.groupName = tr("Others");
     group5.groupItems << ShortcutItem(tr("Close"), "Alt + F4 ")
                       << ShortcutItem(tr("Close current tab"), "Ctrl + W")
