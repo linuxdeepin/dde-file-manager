@@ -21,7 +21,7 @@ ComputerViewContainer::ComputerViewContainer(const QUrl &url, QWidget *parent)
     view = new ComputerView(url, parent);
     auto lay = new QHBoxLayout(this);
     lay->addWidget(view);
-    lay->setContentsMargins(10, 0, 0, 0);
+    lay->setContentsMargins(11, 0, 0, 0);
 }
 
 QWidget *ComputerViewContainer::widget() const
