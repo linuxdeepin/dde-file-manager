@@ -56,7 +56,7 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
       label(new DLabel(this))
 
 {
-    checkButton->setFixedSize(10, 10);
+    checkButton->setFixedSize(15, 15);
     checkButton->setFlat(true);
     label->setText(text);
     iconLabel->setAlignment(Qt::AlignCenter);
