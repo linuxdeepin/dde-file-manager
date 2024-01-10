@@ -194,4 +194,5 @@ install(FILES ${AssetsPath}/log/dde-file-manager.json DESTINATION ${LogConfDir})
 include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
+INSTALL_DCONFIG("org.deepin.dde.file-manager.view.json")
 
