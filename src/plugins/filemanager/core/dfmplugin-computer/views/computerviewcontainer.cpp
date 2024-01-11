@@ -4,6 +4,7 @@
 
 #include "computerviewcontainer.h"
 #include "computerview.h"
+#include "computerstatusbar.h"
 
 #include <QHBoxLayout>
 
@@ -18,10 +19,19 @@ using namespace dfmplugin_computer;
 ComputerViewContainer::ComputerViewContainer(const QUrl &url, QWidget *parent)
     : QWidget(parent)
 {
+    auto mainLay = new QVBoxLayout(this);
+    mainLay->setSpacing(0);
+    mainLay->setContentsMargins(0, 0, 0, 0);
+
     view = new ComputerView(url, parent);
-    auto lay = new QHBoxLayout(this);
+    auto lay = new QHBoxLayout();
     lay->addWidget(view);
     lay->setContentsMargins(11, 0, 0, 0);
+
+    mainLay->addLayout(lay, 1);
+    auto sb = new ComputerStatusBar(this);
+    mainLay->addWidget(sb);
+    view->setStatusBarHandler(sb);
 }
 
 QWidget *ComputerViewContainer::widget() const
