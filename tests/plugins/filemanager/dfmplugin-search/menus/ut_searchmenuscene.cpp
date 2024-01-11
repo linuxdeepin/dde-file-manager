@@ -37,8 +37,8 @@ class TestScene : public AbstractMenuScene
 {
 public:
     explicit TestScene(QObject *parent = nullptr)
-        : AbstractMenuScene(parent) {}
-    ~TestScene() override {}
+        : AbstractMenuScene(parent) { }
+    ~TestScene() override { }
 
     QString name() const override
     {
@@ -216,8 +216,7 @@ TEST(SearchMenuScenePrivateTest, ut_openFileLocation)
     st.reset(SysInfoUtils::isRootUser);
     st.set_lamda(SysInfoUtils::isRootUser, [] { return false; });
 
-    typedef bool (*ShowItemFunc)(QString, const QString &);
-    auto func2 = static_cast<ShowItemFunc>(DDesktopServices::showFileItem);
+    auto func2 = qOverload<const QString &, const QString &>(&DDesktopServices::showFileItem);
     st.set_lamda(func2, [] { return true; });
     EXPECT_TRUE(scene.d->openFileLocation("/home"));
 }

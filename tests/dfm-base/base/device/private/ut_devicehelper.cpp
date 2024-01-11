@@ -94,7 +94,7 @@ TEST_F(UT_DeviceHelper, LoadBlockInfo)
     EXPECT_FALSE(DeviceHelper::loadBlockInfo(kBlockDevCase2).isEmpty());
 }
 
-TEST_F(UT_DeviceHelper, LoadProtocolInfo) {}
+TEST_F(UT_DeviceHelper, LoadProtocolInfo) { }
 
 TEST_F(UT_DeviceHelper, IsMountableBlockDev)
 {
@@ -211,7 +211,7 @@ TEST_F(UT_DeviceHelper, OpenFileManagerToDevice)
     stub.set_lamda(startDetached_QString_QStringList, [&] { __DBG_STUB_INVOKE__ dfmStarted = true;  return true; });
 
     bool showFolder_invoked = false;
-    auto showFolder_QUrl_QString = static_cast<bool (*)(QUrl, const QString &)>(DDesktopServices::showFolder);
+    auto showFolder_QUrl_QString = qOverload<const QUrl &, const QString &>(&DDesktopServices::showFolder);
     stub.set_lamda(showFolder_QUrl_QString, [&] { __DBG_STUB_INVOKE__ showFolder_invoked = true; return true; });
 
     // test dfm bin not found
