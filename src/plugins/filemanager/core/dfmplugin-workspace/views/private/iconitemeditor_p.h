@@ -9,7 +9,10 @@
 #include <QStack>
 #include <QGraphicsOpacityEffect>
 
+QT_BEGIN_NAMESPACE
 class QTextEdit;
+class QGraphicsOpacityEffect;
+QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 namespace dfmplugin_workspace {
