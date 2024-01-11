@@ -1,6 +1,6 @@
 [Unit]
 Description=DDE File Manager Daemon
-After=local-fs.target udisks2.service
+After=local-fs.target udisks2.service usec-boot-unlock.service
 
 [Service]
 Type=dbus
