@@ -22,6 +22,7 @@ class EntryFileInfo;
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_computer {
 
+class ComputerStatusBar;
 class ComputerModel;
 class ComputerViewPrivate;
 class ComputerView : public Dtk::Widget::DListView, public DFMBASE_NAMESPACE::AbstractBaseView
@@ -43,6 +44,8 @@ public:
 
     // QObject interface
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
+
+    void setStatusBarHandler(ComputerStatusBar *sb);
 
 public Q_SLOTS:
     void handleComputerItemVisible();

@@ -124,6 +124,11 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
     return DListView::eventFilter(watched, event);
 }
 
+void ComputerView::setStatusBarHandler(ComputerStatusBar *sb)
+{
+    dp->statusBar = sb;
+}
+
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();
@@ -165,9 +170,6 @@ void ComputerView::initView()
 
     this->installEventFilter(this);
     this->viewport()->installEventFilter(this);
-
-    dp->statusBar = new ComputerStatusBar(this);
-    addFooterWidget(dp->statusBar);
 }
 
 void ComputerView::initConnect()
