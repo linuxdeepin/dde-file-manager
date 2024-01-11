@@ -60,6 +60,17 @@ void SideBarViewPrivate::currentChanged(const QModelIndex &curIndex)
     sidebarUrl = curIndex.data(SideBarItem::kItemUrlRole).toUrl();
 }
 
+void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
+{
+    if (!index.isValid())
+        return;
+    SideBarItem *item = q->model()->itemFromIndex(index);
+    if (!dynamic_cast<SideBarItemSeparator *>(item))
+        return;
+
+    q->onChangeExpandState(index, !q->isExpanded(index));
+}
+
 void SideBarViewPrivate::notifyOrderChanged()
 {
     if (draggedGroup.isEmpty())
@@ -188,13 +199,13 @@ SideBarView::SideBarView(QWidget *parent)
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
     setHeaderHidden(true);
-    setExpandsOnDoubleClick(false);
     setMouseTracking(true);   // sp3 feature 35，解除注释以便鼠标在移动时就能触发 mousemoveevent
 
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
 
     connect(this, &DTreeView::clicked, d, &SideBarViewPrivate::currentChanged);
+    connect(this, &DTreeView::doubleClicked, d, &SideBarViewPrivate::onItemDoubleClicked);
 
     d->lastOpTime = 0;
 

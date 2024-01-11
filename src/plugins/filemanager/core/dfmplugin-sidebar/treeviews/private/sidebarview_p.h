@@ -40,12 +40,15 @@ class SideBarViewPrivate : public QObject
 
     explicit SideBarViewPrivate(SideBarView *qq);
     bool checkOpTime();   //检查当前操作与上次操作的时间间隔
-    void currentChanged(const QModelIndex &curIndex);
     void notifyOrderChanged();
     void updateDFMMimeData(const QDropEvent *event);
     bool checkTargetEnable(const QUrl &targetUrl);
     bool canEnter(QDragEnterEvent *event);
     bool canMove(QDragMoveEvent *event);
+
+private Q_SLOTS:
+    void currentChanged(const QModelIndex &curIndex);
+    void onItemDoubleClicked(const QModelIndex &index);
 };
 
 DPSIDEBAR_END_NAMESPACE
