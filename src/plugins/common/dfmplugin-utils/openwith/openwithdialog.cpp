@@ -302,6 +302,7 @@ void OpenWithDialog::initUI()
 #else
     mainLayout->addSpacing(15);
 #endif
+    mainLayout->setSpacing(0);
     mainLayout->addWidget(scrollArea);
     mainLayout->addLayout(bottomLayout);
     mainLayout->setContentsMargins(0, 35, 0, 10);
