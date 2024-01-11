@@ -8,6 +8,8 @@
 
 #include <denhancedwidget.h>
 
+#include <QPalette>
+
 static constexpr int kArrowExpandSpacing { 10 };
 static constexpr int kDialogWidth { 350 };
 static constexpr int kForecastDisplayHeight { 680 };
