@@ -11,6 +11,7 @@
 #include <DTextEdit>
 #include <QMenu>
 #include <QApplication>
+#include <QGraphicsOpacityEffect>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;

@@ -6,6 +6,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 
+#include <QPalette>
 #include <denhancedwidget.h>
 
 static constexpr int kArrowExpandSpacing { 10 };

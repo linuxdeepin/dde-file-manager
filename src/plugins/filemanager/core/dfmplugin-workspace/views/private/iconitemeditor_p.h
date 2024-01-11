@@ -7,6 +7,7 @@
 #include <DArrowRectangle>
 
 #include <QStack>
+#include <QGraphicsOpacityEffect>
 
 class QTextEdit;
 
