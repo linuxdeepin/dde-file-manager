@@ -49,6 +49,7 @@ public:
     static bool isNetworkRoot(const QUrl &url);
 
     static bool isParentUrl(const QUrl &child, const QUrl &parent);
+    static bool isParentOnly(const QUrl &child, const QUrl &parent);
 
     static QString covertUrlToLocalPath(const QString &url);
 };
