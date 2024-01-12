@@ -503,6 +503,16 @@ bool UniversalUtils::isParentUrl(const QUrl &child, const QUrl &parent)
     return child.toString().startsWith(parentStr);
 }
 
+bool UniversalUtils::isParentOnly(const QUrl &child, const QUrl &parent)
+{
+    auto childPath = child.path();
+    childPath.chop(childPath.length() - childPath.lastIndexOf(QDir::separator()));
+    auto parentUrl = child;
+    parentUrl.setPath(childPath);
+
+    return urlEquals(parent, parentUrl);
+}
+
 QString UniversalUtils::covertUrlToLocalPath(const QString &url)
 {
     if (url.startsWith("/"))

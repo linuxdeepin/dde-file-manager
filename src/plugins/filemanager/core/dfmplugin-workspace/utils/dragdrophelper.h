@@ -50,6 +50,7 @@ private:
     QList<QUrl> currentDragUrls;
     QList<QUrl> currentDragSourceUrls;
     QUrl currentHoverIndexUrl;
+    bool dragFileFromCurrent { false };
     DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };
 
