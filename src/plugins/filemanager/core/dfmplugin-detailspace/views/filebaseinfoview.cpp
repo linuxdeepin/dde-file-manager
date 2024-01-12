@@ -198,7 +198,8 @@ void FileBaseInfoView::basicFill(const QUrl &url)
         lastModified.isValid() ? fileChangeTime->setRightValue(lastModified.toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
                                : fileChangeTime->setVisible(false);
     }
-    if (fileSize && fileSize->RightValue().isEmpty()) {
+    fileSize->setVisible(false);
+    if (fileSize && fileSize->RightValue().isEmpty() && !info->isAttributes(OptInfoType::kIsDir)) {
         fileSize->setVisible(true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->adjustHeight();
