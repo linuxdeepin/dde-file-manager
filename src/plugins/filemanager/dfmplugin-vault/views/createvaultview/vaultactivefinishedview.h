@@ -51,9 +51,11 @@ protected:
 
 private:
     void initUi();
+    void initUiForSizeMode();
     void initConnect();
 
 private:
+    DTK_WIDGET_NAMESPACE::DLabel *titleLabel { Q_NULLPTR };
     QWidget *widgetOne { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *tipsLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *encryVaultImageLabel { nullptr };

@@ -20,6 +20,9 @@
 #include <DDialog>
 #include <DWaterProgress>
 #include <DIconButton>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 #include <QGridLayout>
 #include <QDebug>
@@ -44,11 +47,8 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
 void VaultActiveFinishedView::initUi()
 {
     // 标题
-    DLabel *pLabelTitle = new DLabel(tr("Encrypt File Vault"), this);
-    QFont font = pLabelTitle->font();
-    font.setPixelSize(18);
-    pLabelTitle->setFont(font);
-    pLabelTitle->setAlignment(Qt::AlignHCenter);
+    titleLabel = new DLabel(tr("Encrypt File Vault"), this);
+    titleLabel->setAlignment(Qt::AlignHCenter);
 
     // 加密提示
     tipsLabel = new DLabel(tr("Click 'Encrypt' and input the user password."), this);
@@ -101,7 +101,7 @@ void VaultActiveFinishedView::initUi()
 
     QVBoxLayout *m_pLay = new QVBoxLayout(this);
     m_pLay->setMargin(0);
-    m_pLay->addWidget(pLabelTitle);
+    m_pLay->addWidget(titleLabel);
     m_pLay->addSpacing(10);
     m_pLay->addWidget(widgetOne);
     m_pLay->addWidget(widgetTow, 0, Qt::AlignHCenter);
@@ -112,11 +112,13 @@ void VaultActiveFinishedView::initUi()
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
+    initUiForSizeMode();
+
     // 初始化定时器
     timer = new QTimer(this);
 
 #ifdef ENABLE_TESTING
-    AddATTag(qobject_cast<QWidget *>(pLabelTitle), AcName::kAcLabelVaultFinishTitle);
+    AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultFinishTitle);
     AddATTag(qobject_cast<QWidget *>(tipsLabel), AcName::kAcLabelVaultFinishContent);
     AddATTag(qobject_cast<QWidget *>(encryVaultImageLabel), AcName::kAcLabelVaultFinishVaultImage);
     AddATTag(qobject_cast<QWidget *>(waterProgress), AcName::kAcProgressVaultFinishProgress);
@@ -124,6 +126,19 @@ void VaultActiveFinishedView::initUi()
     AddATTag(qobject_cast<QWidget *>(encryptFinishedImageLabel), AcName::kAcLabelVaultFinishConfirmImage);
     AddATTag(qobject_cast<QWidget *>(tipsThree), AcName::kAcLabelVaultFinishConfirmHint);
     AddATTag(qobject_cast<QWidget *>(finishedBtn), AcName::kAcBtnVaultFinishNext);
+#endif
+}
+
+void VaultActiveFinishedView::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QFont font = titleLabel->font();
+    font.setPixelSize(DSizeModeHelper::element(13, 16));
+    titleLabel->setFont(font);
+#else
+    QFont font = titleLabel->font();
+    font.setPixelSize(16);
+    titleLabel->setFont(font);
 #endif
 }
 
@@ -135,6 +150,12 @@ void VaultActiveFinishedView::initConnect()
             this, &VaultActiveFinishedView::slotEncryptComplete);
     connect(timer, &QTimer::timeout,
             this, &VaultActiveFinishedView::slotTimeout);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        initUiForSizeMode();
+    });
+#endif
 }
 
 void VaultActiveFinishedView::setFinishedBtnEnabled(bool b)
