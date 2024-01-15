@@ -21,6 +21,7 @@ inline constexpr char kSrtType[] = "sort-by-type";
 // display by
 inline constexpr char kDisplayIcon[] = "display-as-icon";
 inline constexpr char kDisplayList[] = "display-as-list";
+inline constexpr char kDisplayTree[] = "display-as-tree";
 }
 
 }
