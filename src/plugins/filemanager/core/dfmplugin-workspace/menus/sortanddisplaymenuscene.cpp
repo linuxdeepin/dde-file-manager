@@ -11,6 +11,7 @@
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -39,6 +40,7 @@ SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
     // 显示子菜单
     d->predicateName[ActionID::kDisplayIcon] = tr("Icon");
     d->predicateName[ActionID::kDisplayList] = tr("List");
+    d->predicateName[ActionID::kDisplayTree] = tr("Tree");
 }
 
 SortAndDisplayMenuScene::~SortAndDisplayMenuScene()
@@ -101,6 +103,12 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
             // display as list
             if (actionId == ActionID::kDisplayList) {
                 dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kListMode));
+                return true;
+            }
+
+            // display as tree
+            if (actionId == ActionID::kDisplayTree) {
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kTreeMode));
                 return true;
             }
         }
@@ -197,6 +205,13 @@ QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
     predicateAction[ActionID::kDisplayList] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayList));
 
+    if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
+        tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplayTree));
+        tempAction->setCheckable(true);
+        predicateAction[ActionID::kDisplayTree] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayTree));
+    }
+
     return subMenu;
 }
 
@@ -238,6 +253,9 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
         break;
     case Global::ViewMode::kListMode:
         predicateAction[ActionID::kDisplayList]->setChecked(true);
+        break;
+    case Global::ViewMode::kTreeMode:
+        predicateAction[ActionID::kDisplayTree]->setChecked(true);
         break;
     default:
         break;
