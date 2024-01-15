@@ -13,13 +13,16 @@ You can run, close and create a shortcut for File Manager by the following ways.
 ### Run File Manager
 
 1. Click ![Launcher](../common/deepin_launcher.svg) on dock to enter Launcher interface.
-2. Locate ![FileManager](../common/deepin_file_manager.svg) by scrolling mouse wheel or searching by "File Manager" in Launcher interface.
-3. Right-click ![FileManager](../common/deepin_file_manager.svg), you can
- - Click **Send to desktop** to create a desktop shortcut.
- - Click **Send to dock** to fix the application on dock.
- - Click **Add to startup** to add the application to startup, it will automatically run when the system starts up.
 
-   >![tips](../common/tips.svg) Tips: You can also press **Super** + **E** to start File Manager.
+2. Locate ![FileManager](../common/deepin_file_manager.svg) by scrolling mouse wheel or searching by "File Manager" in Launcher interface.
+
+3. Right-click ![FileManager](../common/deepin_file_manager.svg), you can
+   
+   - Click **Send to desktop** to create a desktop shortcut.
+   - Click **Send to dock** to fix the application on dock.
+   - Click **Add to startup** to add the application to startup, it will automatically run when the system starts up.
+   
+   > ![tips](../common/tips.svg) Tips: You can also press **Super** + **E** to start File Manager.
 
 ### Exit File Manager
 
@@ -39,25 +42,22 @@ On File Manager interface, you can execute many operations with the functional b
 
 ![1|maininterface](fig/p_maininterface.png)
 
-| No. | Name          | Description                                                         |
-| ---- | ------------- | ------------------------------------------------------------ |
-| 1    | Left panel        | Click icons in left panel to quickly visit local files, disks, computers in LAN, bookmarks and tags. |
-| 2    | Address bar        | You can quickly switch visiting history, switch among directory levels, search and input address in address bar. |
-| 3    | View | Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view.svg) to switch view modes. |
-| 4    | Info column        | Click ![fileinfo](../common/fileinfo.svg) to view basic information and tags of files(folders). |
-| 5    | Main menu        | You can create new window, switch themes, set share password, make settings, view manual and application information, and exit the application in Main menu. |
-| 6    | Status bar        | You can view the number of files or selected files.                            |
-
+| No. | Name        | Description                                                                                                                                                  |
+| --- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Left panel  | Click icons in left panel to quickly visit local files, disks, computers in LAN, bookmarks and tags.                                                         |
+| 2   | Address bar | You can quickly switch visiting history, switch among directory levels, search and input address in address bar.                                             |
+| 3   | View        | Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view.svg) to switch view modes.                                                  |
+| 4   | Info column | Click ![fileinfo](../common/fileinfo.svg) to view basic information and tags of files(folders).                                                              |
+| 5   | Main menu   | You can create new window, switch themes, set share password, make settings, view manual and application information, and exit the application in Main menu. |
+| 6   | Status bar  | You can view the number of files or selected files.                                                                                                          |
 
 > ![tips](../common/tips.svg) Tips: you can drag the dividing line on the right of left panel to change its width.
-
 
 ## Basic Functions
 
 File Manager is featured with the basic functions as a file manager, you can easily create, copy, rename or delete files/folders with it.
 
 ### New Document/Folder
-
 
 #### New Document
 
@@ -90,9 +90,9 @@ File Manager is featured with the basic functions as a file manager, you can eas
 
 ![1|batch_rename](fig/p_rename.png)
 
-### View Files
+### ==View Files==
 
-Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view.svg) on the interface to switch icon view and list view.
+==Click the icon on the menu bar![icon_view](../common/icon_view.svg),![list_view](../common/list_view.svg) ,![list_view](../common/treelist_view.svg)or use the shortcut keys **Ctrl + 1**, **Ctrl + 2** and **Ctrl + 3** to switch between icon view, list view, and tree list view.==
 
 - Icon view: displaying filenames, icons or thumbnails.
 
@@ -102,9 +102,13 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 
 ![1|listview](fig/p_listview.png)
 
+* ==Tree list view: Expand the file directory in a tree shape and display file icons, thumbnails, name, modification time, size, type and other information.==
+
+==（图片待更新）==
+
 > ![tips](../common/tips.svg) Tips:
->
-> -  In list view, place the cursor on the dividing line between any two columns and drag it to change the width of the current column. Double-click the dividing line to adjust to the biggest width of the current column automatically. 
+> 
+> - In list view, place the cursor on the dividing line between any two columns and drag it to change the width of the current column. Double-click the dividing line to adjust to the biggest width of the current column automatically. 
 > - Press  **Ctrl**+**1**  or  **Ctrl**+ **2**  to switch icon view and list view. 
 
 ### Sorting
@@ -115,7 +119,6 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 You can check **Mix sorting of files and folders** in **Main menu** > **Settings > Basic settings**, and then sort the files and folders by the following steps.
 
 > ![tips](../common/tips.svg) Tips: you can click the head of the columns in the list view to change the sort order.
-
 
 ### Open Files
 
@@ -149,15 +152,18 @@ You can check **Mix sorting of files and folders** in **Main menu** > **Settings
 ### Delete File/Folder
 
 1. Right-click the file/folder in the interface of File Manager.
-2. Select **Delete**. 
 
+2. Select **Delete**. 
+   
    - You can find the deleted files in Trash. Right-click files in Trash, you can choose **Restore** or **Delete**. File/folder in external device will be permanently deleted and can not be restored when you select **Delete**.
    - The shortcut of the deleted files will become invalid.
 
 > ![notes](../common/notes.svg) Notes: You can check **Ask for my confirmation when deleting files** in **Main Menu > Settings > Advanced**, and a prompt box to confirm deletion will pop up each time you delete a file.
 
 ### Undo Operation
+
 In file manager,  use **Ctrl + Z** to undo the previous steps, including:
+
 - Delete the newly created file/folder.
 - Resume the renamed file/folder to the previous name.
 - Restore the deleted file/folder from trash.
@@ -177,19 +183,20 @@ In Properties of files, you can view the basic info, open with list, and permiss
 
 ![0|info](fig/info.png)
 
-
 > ![notes](../common/notes.svg) Notes: If you check the properties of multiple files at a time, the total size and quantities will be displayed. If you check the properties of a shortcut, the source file location will be displayed in addition. You can use shortcuts **Ctrl + I** to view the properties as well.
 
 ### Virus Scan
 
 1. On File Manager interface, right-click a file(folder). 
+
 2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///deepin-defender#Virus Scan) of Security Center for detailed operations.
-
-   >![notes](../common/notes.svg) Notes: 
-   >- If there is a scanning task in Security Center currently, click **View** in the pop-up dialog box to enter the virus scanning interface of Security Center.
-   >- **Add "Virus scan" to the context menu** is enabled by default in Security Center. You can also enter Security Center setting interface and uncheck this function. After unchecking, "Virus Scan" will not be displayed in the context menu.
-
-
+   
+   > ![notes](../common/notes.svg) Notes: 
+   > 
+   > - If there is a scanning task in Security Center currently, click **View** in the pop-up dialog box to enter the virus scanning interface of Security Center.
+   > - **Add "Virus scan" to the context menu** is enabled by default in Security Center. You can also enter Security Center setting interface and uncheck this function. After unchecking, "Virus Scan" will not be displayed in the context menu.
+   
+   
 
 ## Common Operations
 
@@ -221,6 +228,7 @@ File Manager supports multiple search methods, including both general search by 
 #### Full-Text Search
 
 You can search a file by keywords in its content.
+
 1. In File Manager, click ![icon_menu](../common/icon_menu.svg) > **Settings**.
 2. Check **Full-Text search** under **Index** of **Advanced**.
 3. Press **Ctrl + F** or click the searching button in the address bar to start searching. Enter the keywords and press **Enter**.
@@ -234,8 +242,8 @@ When there are many files and the search is slow, you can enable advanced search
 
 ![0|filter](fig/p_filter.png)
 
-
 ### Recent Files
+
 By default, there is a **Recent** entry on left panel. Click it to view the recently used files. Files are sorted by default in reverse order of access time.
 
 > ![notes](../common/notes.svg) Notes: If you want to hide "Recent", you can uncheck "Display recent file entry in left panel" in Settings > Basic > Hidden files. To hide the access record of a specific file, right-click the file and select **Remove** which will not delete the file.
@@ -247,8 +255,8 @@ File Manager supports multi-tab view.
 1. On File Manager, right-click the folder.
 2. In the pop-up context menu, select **Open in new tab**.
 3. When the window has multi-tabs, you can:
- - Click + in tab bar to add a new tab.
- - Place the cursor onto the tab, click × on the tab or middle-click to close it.
+   - Click + in tab bar to add a new tab.
+   - Place the cursor onto the tab, click × on the tab or middle-click to close it.
 
 ![1|tab](fig/p_tab.png)
 
@@ -282,9 +290,7 @@ You can add tag to multiple files/folders at a time, or add multiple tags to a s
 
 > ![notes](../common/notes.svg) Notes: The tag color is randomly assigned from eight default colors.
 
-
 ![1|taginfo](fig/p_taginfo.png)
-
 
 ##### By Color Tag
 
@@ -317,6 +323,7 @@ Right-click a tag in  the left panel,  select a "Color button" to change the cur
 Drag and drop the tag upwards or downwards to change its order.
 
 #### Delete Tag
+
 Right-click a tag in left panel,  select **Remove** to delete the tag.
 
 
@@ -334,9 +341,10 @@ File Manager supports file preview by pressing space bar. Select a file and pres
 
 ![1|videopreview](fig/videopreview.png)
 
->![notes](../common/notes.svg) Notes: You can select multiple files and press space bar to preview them at a time.
+> ![notes](../common/notes.svg) Notes: You can select multiple files and press space bar to preview them at a time.
 
 ### Permission Management
+
 In file/folder properties, click **Permissions** to set **Owner**, **Group** and **Others**. 
 
 ![0|permission](fig/permission.png)
@@ -363,17 +371,17 @@ If you have set the share password, the interface will display **Change password
 
 ![0|share](fig/share1.png)
 
-#### Visit Shared Folders 
+#### Visit Shared Folders
 
 Users on the LAN can access the shared files through the network path provided by the sharer.
 
 1. Visit shared folders by one of the following methods.
-
+   
    - Input the server address, e.g. smb://10.0.2.15 directly in the address bar and press **Enter**.
    - Click ![icon_menu](../common/icon_menu.svg) > **Connect to Server** and input the server address, and click **Connect**.
-   
-2. Select the shared folder you need to visit, and the "Password required for share XX on 10.0.2.15" window will pop up.
 
+2. Select the shared folder you need to visit, and the "Password required for share XX on 10.0.2.15" window will pop up.
+   
    - If the folder is set to not allow anonymous access, enter the system user name and share password of the sharer in the "Registered Users" tab.
    - If the folder is set to allow anonymous access, you can select the "Anonymous" tab and visit the shared folder without entering a username and password.
 
@@ -387,7 +395,6 @@ When all shared files are cancelled, "My Shares" is removed from the left panel,
 
 - Right-click the shared folder and select **Cancel sharing**.
 - Right-click the shared folder and select **Properties**, uncheck **Share this folder** in the "sharing" part of the properties window.
-
 
 ### Open as Admin
 
@@ -435,7 +442,6 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 <td>Adding files afterwards is not supported</td></tr>   
 </table>
 
-
 #### Duplicate Local Files
 
 1. Open File Manager and click the CD Icon in the left panel to enter the burning interface.
@@ -473,7 +479,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 ### Create Link
 
 1. On File Manager interface, right-click the item to create a link for.
-2.  Select **Create link**.
+2. Select **Create link**.
 3. In the pop-up window, select a location and input the name of the link.
 4. Click **Save** to finish creating the link.
 
@@ -489,6 +495,7 @@ When there is an external device inserted, you can directly send file/folder to 
 4. File/folder will be copied to the device.
 
 ### Send to Bluetooth
+
 If your computer is equipped with Bluetooth module, you can transfer files in short distance through Bluetooth.
 
 Prerequisite: The Bluetooth devices of sender and receiver have been paired and connected successfully. Refer to [Connect to a Bluetooth Device](dman:///dde#Connect to a Bluetooth Device) for details.
@@ -497,14 +504,14 @@ Prerequisite: The Bluetooth devices of sender and receiver have been paired and 
 2. Select **Send to** > **Send to Bluetooth**.
 3. Select the receiver in the pop-up window, and click **Next**.  
 4. A file receiving request will pop up on the receiving device. After the receiver agrees the request, the sender starts to transfer the file.
-
-
+   
+   
 
 ## UnionTech OS Assistant
 
 UnionTech OS Assistant is a practical tool to realize cross terminal cooperation, efficient transmission, and real-time synchronization. It only needs to connect the mobile phone and PC, or use wireless delivery to easily transfer pictures, videos, files, etc.
 
->![notes](../common/notes.svg)Notes: Only Android phones are supported.
+> ![notes](../common/notes.svg)Notes: Only Android phones are supported.
 
 ### Preparation
 
@@ -513,7 +520,7 @@ UnionTech OS Assistant is a practical tool to realize cross terminal cooperation
 1. Click ![icon](../common/found.svg) in the system tray or open File Manager and click **My Phone** in the left panel.
 
 2. Click **Install UnionTech OS Assistant**, a window with a QR code inside pops up.
-
+   
    - Scan the QR code with your WeChat or browser to download and install UnionTech OS Assistant.
    - Click **Download APK** to download it locally and import it into your phone for installation.
 
@@ -531,9 +538,8 @@ Use the "Discovery Settings" function to set how your phone and computer are dis
 - **Discoverable for the same UOS ID only**: Within the LAN, only devices logged into the same UOS ID are allowed to discover this phone or computer.
 - **Undiscoverable**: All devices are not allowed to discover this phone or computer.
 - **Discoverable for remote devices with the same UOS ID** (computer side): Remote devices logged into the same UOS ID are allowed to discover this computer.
-
- 
-
+  
+  
 
 ### Connect PC with Phone
 
@@ -558,57 +564,58 @@ Prerequisite: The phone and the computer are on the same wireless network and in
 
 If you need to disconnect, you can:
 
-   - Click ![icon](../common/exit.svg) in UnionTech OS Assistant on your phone.
-   - Right-click ![icon](../common/found.svg) in the system tray on PC, select your phone and click **Disconnect**.
+- Click ![icon](../common/exit.svg) in UnionTech OS Assistant on your phone.
+- Right-click ![icon](../common/found.svg) in the system tray on PC, select your phone and click **Disconnect**.
 
 ### Manage Files
+
 After the connection between the mobile phone and PC is successful, files can be transfered, viewed and managed easily.
 
 #### Transfer Files
 
 - **In UnionTech OS Assistant interface**
-
    Send files from your phone to your computer: In the UnionTech OS Assistant interface, click **Transfer Assistant** and send files to your computer in the transfer window.
 
 - **In File Manager interface**
-
    Send files from your computer to your phone: In the **File Manager > My Phone** interface, in the transfer window on the right side, you can select a computer file to transfer it in this window; or right-click a file on your computer and select **Send to My Phone**.
 
 - **By wireless delivery**
-
    When the devices are logged into the same UOS ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
-   1. On the computer, right-click the file you want to deliver and select **Wireless Deliver**. 
-
-   2. In the pop-up window, select the phone or computer you want to deliver to.
-
-   >![icon](../common/notes.svg) Notes:
-   >- You need to install UnionTech OS Assistant on the cell phone and log in to your account to receive the files delivered from the computer.
-   >- After logging in to the same UOS ID, you can perform the remote delivery.
-
+  
+  1. On the computer, right-click the file you want to deliver and select **Wireless Deliver**. 
+  
+  2. In the pop-up window, select the phone or computer you want to deliver to.
+     
+     > ![icon](../common/notes.svg) Notes:
+     > 
+     > - You need to install UnionTech OS Assistant on the cell phone and log in to your account to receive the files delivered from the computer.
+     > - After logging in to the same UOS ID, you can perform the remote delivery.
 
 #### View/Edit Files
 
 - View computer files on your phone: In the interface of UnionTech OS Assistant, click **My Computer**, you can open, download or share computer files.
 - View/edit phone files from computer side: In the interface of **File Manager > My Phone**, the folders of photo albums, videos, documents, etc. are categorized and displayed, you can open and edit the files in the folders, and the files will be synced to your phone after being edited and saved.
-
-
+  
+  
 
 ## Add Corner Marker to Files/Folders
 
 You can assign an icon file to a file or folder icon through the command line and display it as a corner marker.
->![notes](../common/notes.svg) Notes: 
->- The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
->- The corner marker could not be added to files in USB disks and CD-ROM disks.
+
+> ![notes](../common/notes.svg) Notes: 
+> 
+> - The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
+> - The corner marker could not be added to files in USB disks and CD-ROM disks.
 
 ### Add a Single Corner Marker
 
 1. Open Terminal, input **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path)"**, which means to add a corner marker in the lower right corner of the file/folder icon by default.
 
->![attention](../common/attention.svg) Attention: the special corner markers defined by the system could not be replaced.
+> ![attention](../common/attention.svg) Attention: the special corner markers defined by the system could not be replaced.
 
 2. You can add position codes into the above command to add a corner marker to the upper left corner(lu), lower left corner(ld), upper right corner(ru) or lower right corner(rd).
-For example, to add a corner marker to the upper left corner, you have to input:
-**gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu"**
+   For example, to add a corner marker to the upper left corner, you have to input:
+   **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu"**
 
 ![mark](fig/single.png)
 
@@ -638,7 +645,6 @@ You have to encrypt File Vault when you use it for the first time. File Vault pr
 1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
 
 2. Set the "Encryption method" to **Transparent encryption**, click **Next** to encrypt the File Vault directly.
-
    ![0|encrypt](fig/transparent_encryption.png)
 
 #### Key Encryption
@@ -710,7 +716,7 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
             <td>External disks</td>
             <td>Including mobile hard disks, CDs/DVDs and USB flash disks.</td>
         </tr>
-    	<tr>
+        <tr>
             <td>Mobile devices</td>
             <td>Including mobile phone storage, storage cards, SD cards and so on.</td>
         </tr>
@@ -725,7 +731,6 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
 1. Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of File Manager.
 2. In the **Advanced**, check **Hide built-in disks on the Computer page**. Uncheck **Built-in disks** in **Advanced> Items on sidebar pane**.
-
 
 #### Rename Local Disks
 
@@ -747,7 +752,6 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
 3. The disk will be removed from the disk list, and so will all partition of it .
 
-
 ![0|disk](fig/disk1.png)
 
 > ![tips](../common/tips.svg) Tips: you can also select **Eject** or click ![unmount](../common/unmount_normal.svg) in the left panel to unmount the disk.
@@ -767,16 +771,68 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 3. In the pop-up window, choose the type and volume label for the disk.
 
 4. Click **Format**.
-
    ![0|disk](fig/disk2.png)
 
 > ![notes](../common/notes.svg) Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
+## ==Partition encryption==
+
+#### ==Turn on partition encryption==
+
+1. In the computer interface, right-click the disk that needs to be encrypted and select **Turn on partition encryption**
+
+==（图片需更新）==
+
+2. Setting the unlocking method in the pop-up window, click **Next**. It is recommended to select "Use TPM+PIN to unlock on this computer (recommended)"
+
+3. Selecting the recovery key file export path, click **Next**. You can only choose a non-encrypted partition to export the recovery key, and you can export it to a local disk or USB flash drive and other peripherals.
+
+4. Clicking **Confirm Encryption**, input the user password and restart the computer. Then enter the initialization interface for encryption configuration.
+
+==（图片需更新）==
+
+5. In the system initialization interface, input the password and repeat the password. Type in "y" to confirm encryption.
+6. After re-entering the desktop interface, wait for the encryption progress to be completed.
+
+==（图片需更新）==
+
+> ![notes](../common/notes.svg)NOTE：
+> 
+> Be sure to keep the recovery key properly. You can use the recovery key to unlock the encrypted partition in special scenarios such as forgetting the password or damaging the encryption hardware.
+> 
+> The encryption process may cause system lag, so please minimize system operations.
+
+#### ==Decrypt partition==
+
+1. ==When using the "Use TPM+PIN code to unlock on this computer (recommended)" unlocking method, enter the partition password on the system initialization interface to unlock.==
+2. ==When using the "Use TPM automatic unlocking on this computer" unlocking method, the system will automatically verify the unlocking.==
+3. ==When using the "unlock by password" unlocking method, enter the password to unlock while opening the partition on the computer interface.==
+
+#### ==Change Password==
+
+1. ==In the computer interface, right-click the encrypted disk and select **Modify encryption password** or **Modify encryption PIN code.**==
+
+==（图片需更新）==
+
+2. ==You can click to switch between **Use password verification** and **Use recovery key verification**==
+
+3. ==Enter the old password or recovery key, enter and re-enter the new password, click **Modify**, enter the user password to verify and complete the password change.==
+
+==（图片需更新）==
+
+#### ==Cancel partition encryption==
+
+1. ==In the computer interface, right-click the encrypted disk and select **Cancel Partition Encryption**.==
+
+2. ==Enter the password for verification, select **Restart now** or **Restart later** in the cancel encryption pop-up window to restart the computer and enter the initialization interface.==
+
+3. ==In the system initialization interface, enter the partition password in sequence, and enter "y" to confirm the cancellation of encryption.==
+
+==（图片需更新）==
 
 ## Main Menu
 
 You can create new window, switch themes, connect to server, set share password (see [Share Local Files](#Share Local Files)), make settings, view manual and version information in Main Menu.
-
 
 ### New Window
 
@@ -818,8 +874,8 @@ You can set up the **Default size**, **Default view** and **Mix sorting of files
 
 **Hidden files**
 
-   - Check **Show hidden files** to show all hidden files.
-   - Check **Show file extensions** to display file extensions.
+- Check **Show hidden files** to show all hidden files.
+- Check **Show file extensions** to display file extensions.
 
 ![setting](fig/basic_setting.png)
 
@@ -827,9 +883,9 @@ You can set up the **Default size**, **Default view** and **Mix sorting of files
 
 **Index**
 
-   - You can check **Auto index internal disk**, when you search files, the files in internal disks would be searched.
-   - You can check **Index external storage device after connected to computer**, In **Index**, when you search files, the files in the external disks would be searched as well.
-   - You can check **Full-Text search** to search by content.
+- You can check **Auto index internal disk**, when you search files, the files in internal disks would be searched.
+- You can check **Index external storage device after connected to computer**, In **Index**, when you search files, the files in the external disks would be searched as well.
+- You can check **Full-Text search** to search by content.
 
 **Preview**
 
@@ -837,21 +893,21 @@ You can select which types of files can be previewed.
 
 **Mount** 
 
-   - You can check **Auto mount**, when any external disks connect to the computer, they would be mounted automatically. 
-   - You can check **Open after auto mount**, when any external disks connect to the computer, they would be mounted automatically and opened. 
-   - Check **Show item counts and sizes in the path of  mounted MTP devices** to display the status bar information at the bottom of the MTP device's path after it is mounted.
-   - Check **Keep showing the mounted Samba shares** to show the remote mount link always in the left panel.
+- You can check **Auto mount**, when any external disks connect to the computer, they would be mounted automatically. 
+- You can check **Open after auto mount**, when any external disks connect to the computer, they would be mounted automatically and opened. 
+- Check **Show item counts and sizes in the path of  mounted MTP devices** to display the status bar information at the bottom of the MTP device's path after it is mounted.
+- Check **Keep showing the mounted Samba shares** to show the remote mount link always in the left panel.
 
 **Dialog**
 
-   - You can check **Use the file chooser dialog of File Manager**, when selecting files, File Manager window would be opened.
-   - You can check **Ask for my confirmation when deleting files**, when deleting files, a hint dialog would pop up.
+- You can check **Use the file chooser dialog of File Manager**, when selecting files, File Manager window would be opened.
+- You can check **Ask for my confirmation when deleting files**, when deleting files, a hint dialog would pop up.
 
 **Others**
 
-   - Check **Hide built-in disks on the Computer page**, and the computer interface will not display the local disk. 
-   - Check **Hide loop partitions on the Computer page**, and the computer interface will not display the loop device. 
-   - You can check **Show file system on disk icon**.
+- Check **Hide built-in disks on the Computer page**, and the computer interface will not display the local disk. 
+- Check **Hide loop partitions on the Computer page**, and the computer interface will not display the loop device. 
+- You can check **Show file system on disk icon**.
 
 ![setting](fig/advanced_setting.png)
 
@@ -861,22 +917,22 @@ The window theme includes Light Theme, Dark Theme and System Theme.
 
 1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
 2. Click **Theme** to select one.
-
-
+   
+   
 
 ### Help
 
 1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
 2. Click **Help** to view the manual.
-
-
+   
+   
 
 ### About
 
 1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
 2. Click **About** to view version information and introduction about File Manager.
-
-
+   
+   
 
 ### Exit
 
