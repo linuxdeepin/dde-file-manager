@@ -60,7 +60,8 @@ bool WatermaskSystem::showLicenseState()
 
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 7, 0))
     // 教育版
-    ret = ret || DSysInfo::UosEdition::UosEducation == uosEdition;
+    ret = ret || (DSysInfo::UosEdition::UosEducation == uosEdition ||
+                  DSysInfo::UosEdition::UosMilitary == uosEdition);
     fmInfo() << "check uos Edition" << ret;
 #endif
 
