@@ -135,16 +135,19 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
 
 void OptionButtonBox::initializeUi()
 {
+    setContentsMargins(0, 0, 0, 0);
     d->buttonGroup = new QButtonGroup(this);
 
     d->iconViewButton = new DToolButton;
     d->iconViewButton->setCheckable(true);
     d->iconViewButton->setChecked(true);
     d->iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
+    d->iconViewButton->setFixedSize(36, 36);
 
     d->listViewButton = new DToolButton;
     d->listViewButton->setCheckable(true);
     d->listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
+    d->listViewButton->setFixedSize(36, 36);
 
     d->buttonGroup->addButton(d->iconViewButton);
     d->buttonGroup->addButton(d->listViewButton);
@@ -153,6 +156,7 @@ void OptionButtonBox::initializeUi()
         d->treeViewButton = new DToolButton;
         d->treeViewButton->setCheckable(true);
         d->treeViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
+        d->treeViewButton->setFixedSize(36, 36);
         d->buttonGroup->addButton(d->treeViewButton);
     }
 
@@ -168,6 +172,7 @@ void OptionButtonBox::initializeUi()
     d->detailButton->setCheckable(true);
     d->detailButton->setFocusPolicy(Qt::NoFocus);
     d->detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
+    d->detailButton->setFixedSize(36, 36);
 
     initUiForSizeMode();
 }
@@ -206,16 +211,13 @@ void OptionButtonBox::initUiForSizeMode()
         d->hBoxLayout = nullptr;
     }
     d->hBoxLayout = new QHBoxLayout;
+    d->hBoxLayout->setMargin(0);
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
     if (d->treeViewButton)
         d->hBoxLayout->addWidget(d->treeViewButton);
     d->hBoxLayout->addWidget(d->detailButton);
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    d->hBoxLayout->setSpacing(DSizeModeHelper::element(10, 18));
-#else
-    d->hBoxLayout->setSpacing(18);
-#endif
+    d->hBoxLayout->setSpacing(0);
     setLayout(d->hBoxLayout);
 }
 
