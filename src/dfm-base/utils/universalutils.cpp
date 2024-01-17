@@ -20,11 +20,12 @@
 #include <QProcess>
 #include <QDBusConnectionInterface>
 #include <QRegularExpression>
+#include <DUtil>
 
 #ifdef COMPILE_ON_V23
-#    define APP_MANAGER_SERVICE "org.deepin.dde.Application1.Manager"
-#    define APP_MANAGER_PATH "/org/deepin/dde/Application1/Manager"
-#    define APP_MANAGER_INTERFACE "org.deepin.dde.Application1.Manager"
+#    define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager1"
+#    define APP_MANAGER_PATH_PREFIX "/org/desktopspec/ApplicationManager1"
+#    define APP_INTERFACE "org.desktopspec.ApplicationManager1.Application"
 
 #    define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
 #    define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
@@ -260,6 +261,7 @@ bool UniversalUtils::checkLaunchAppInterface()
             initStatus = false;
             return;
         }
+#ifndef COMPILE_ON_V23
         QDBusInterface introspect(APP_MANAGER_SERVICE,
                                   APP_MANAGER_PATH,
                                   "org.freedesktop.DBus.Introspectable",
@@ -283,12 +285,38 @@ bool UniversalUtils::checkLaunchAppInterface()
         } else {
             initStatus = false;
         }
+#endif
     });
     return initStatus;
 }
 
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
+#ifdef COMPILE_ON_V23
+    const auto& components = desktopFile.split('/',Qt::SkipEmptyParts);
+    const auto& file = components.last();
+    constexpr decltype(auto) desktopSuffix{u8".desktop"};
+
+    if(!file.endsWith(desktopSuffix)) {
+        qCDebug(logDFMBase) << "invalid desktop file:" << desktopFile << file;
+        return false;
+    }
+
+    const auto& desktopId = file.chopped(sizeof(desktopSuffix) - 1);
+    const auto& DBusAppId = DUtil::escapeToObjectPath(desktopId);
+    const auto& currentAppPath = QString{APP_MANAGER_PATH_PREFIX} + "/" + DBusAppId;
+    qCDebug(logDFMBase) << "app object path:" << currentAppPath;
+    QDBusInterface appManager(APP_MANAGER_SERVICE,
+                              currentAppPath,
+                              APP_INTERFACE,
+                              QDBusConnection::sessionBus());
+
+    auto reply = appManager.callWithArgumentList(QDBus::Block, QStringLiteral("Launch"),{
+                            QVariant::fromValue(QString{}), QVariant::fromValue(filePaths), QVariant::fromValue(QVariantMap{})});
+
+    return reply.type() == QDBusMessage::ReplyMessage;
+
+#else
     QDBusInterface appManager(APP_MANAGER_SERVICE,
                               APP_MANAGER_PATH,
                               APP_MANAGER_INTERFACE,
@@ -298,10 +326,15 @@ bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringLi
     argumentList << QVariant::fromValue(desktopFile) << QVariant::fromValue(static_cast<uint>(QX11Info::getTimestamp())) << QVariant::fromValue(filePaths);
     appManager.asyncCallWithArgumentList(QStringLiteral("LaunchApp"), argumentList);
     return true;
+#endif
 }
 
 bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
 {
+#ifdef COMPILE_ON_V23
+    qCDebug(logDFMBase) << "new AM wouldn't provide any method to run Command, so launch cmd by qt:" << cmd << args;
+    return QProcess::startDetached(cmd, args, wd);
+#else
     if (checkLaunchAppInterface()) {
         qCDebug(logDFMBase) << "launch cmd by dbus:" << cmd << args;
         QDBusInterface appManager(APP_MANAGER_SERVICE,
@@ -327,6 +360,7 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
     }
 
     return false;
+#endif
 }
 
 int UniversalUtils::dockHeight()
