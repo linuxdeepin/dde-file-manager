@@ -258,6 +258,10 @@ bool BlockEntryFileEntity::showSizeAndProgress() const
     if (getProperty(DeviceProperty::kMountPoint).toString().isEmpty())
         return false;
 
+    if (getProperty(DeviceProperty::kOpticalDrive).toBool()
+        && !getProperty(DeviceProperty::kMediaAvailable).toBool())
+        return false;
+
     if (datas.value(DeviceProperty::kIsEncrypted).toBool()) {
         if (datas.contains(BlockAdditionalProperty::kClearBlockProperty))
             return true;
