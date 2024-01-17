@@ -7,6 +7,7 @@
 #include "workspacemenu_defines.h"
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
+#include "utils/workspacehelper.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -205,7 +206,8 @@ QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
     predicateAction[ActionID::kDisplayList] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayList));
 
-    if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
+    if (WorkspaceHelper::instance()->supportTreeView(view->rootUrl().scheme())
+            && DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplayTree));
         tempAction->setCheckable(true);
         predicateAction[ActionID::kDisplayTree] = tempAction;
