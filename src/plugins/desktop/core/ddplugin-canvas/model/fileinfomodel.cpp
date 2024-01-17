@@ -134,6 +134,8 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
         return;
     }
 
+    // check the newUrl whether has been in cache.
+    auto cachedInfo = InfoCacheController::instance().getCacheInfo(newUrl);
     auto newInfo = FileCreator->createFileInfo(newUrl);
     if (Q_UNLIKELY(newInfo.isNull())) {
         fmWarning() << "fail to create new file info:" << newUrl << "old" << oldUrl;
@@ -172,6 +174,11 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
                 fileMap.remove(oldUrl);
                 fileMap.insert(newUrl, newInfo);
                 lk.unlock();
+
+                // refresh file because an old info cahe may exist.
+                if (cachedInfo == newInfo)
+                    newInfo->refresh();
+
                 emit q->dataReplaced(oldUrl, newUrl);
             }
 
