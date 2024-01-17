@@ -5,6 +5,7 @@
 #include "config.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/loggerrules.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -17,7 +18,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-Q_LOGGING_CATEGORY(logAppServer, "log.app.dde-file-manager-server")
+Q_LOGGING_CATEGORY(logAppServer, "org.deepin.dde.filemanager.server")
 
 static constexpr char kServerInterface[] { "org.deepin.plugin.server" };
 static constexpr char kPluginCore[] { "serverplugin-core" };
@@ -37,6 +38,9 @@ DCORE_USE_NAMESPACE
 static void initLog()
 {
     dpfLogManager->applySuggestedLogSettings();
+#ifdef DTKCORE_CLASS_DConfigFile
+    LoggerRules::instance().initLoggerRules();
+#endif
 }
 
 static bool pluginsLoad()
@@ -105,6 +109,7 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+    initLog();
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
     {
@@ -119,7 +124,6 @@ int main(int argc, char *argv[])
     signal(SIGABRT, handleSIGABRT);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
-    initLog();
 
     if (!pluginsLoad()) {
         qCCritical(logAppServer) << "Load pugin failed!";

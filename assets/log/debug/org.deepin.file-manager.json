@@ -1,0 +1,12 @@
+{
+  "name": "dde-file-manager",
+  "group": "",
+  "submodules": [
+    {
+      "name": "dde-file-manager",
+      "exec": "dde-file-manager_debug.sh"
+    }
+  ],
+  "reboot": 0,
+  "version": "V1.0"
+}

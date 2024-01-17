@@ -9,6 +9,7 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/loggerrules.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -35,7 +36,7 @@
 #include <unistd.h>
 #include <malloc.h>
 
-Q_LOGGING_CATEGORY(logAppDesktop, "log.app.dde-desktop")
+Q_LOGGING_CATEGORY(logAppDesktop, "org.deepin.dde.filemanager.desktop")
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -153,6 +154,9 @@ static void registerDDESession()
 static void initLog()
 {
     dpfLogManager->applySuggestedLogSettings();
+#ifdef DTKCORE_CLASS_DConfigFile
+    LoggerRules::instance().initLoggerRules();
+#endif
 }
 
 static void checkUpgrade(DApplication *app)
@@ -215,6 +219,7 @@ static void autoReleaseMemory()
 
 int main(int argc, char *argv[])
 {
+    initLog();
     QString mainTime = QDateTime::currentDateTime().toString();
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
@@ -233,7 +238,6 @@ int main(int argc, char *argv[])
     }
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
-    initLog();
     autoReleaseMemory();
 
     qCInfo(logAppDesktop) << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()

@@ -8,7 +8,7 @@
 
 #include <mutex>
 
-Q_LOGGING_CATEGORY(logDPF, "log.lib.dpf")
+Q_LOGGING_CATEGORY(logDPF, "org.deepin.dde.filemanager.lib.framework")
 
 DCORE_USE_NAMESPACE
 DPF_USE_NAMESPACE

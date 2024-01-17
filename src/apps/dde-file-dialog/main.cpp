@@ -11,12 +11,13 @@
 
 #include <dfm-base/dfm_plugin_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/loggerrules.h>
 
 #include <dfm-framework/dpf.h>
 
 #include <signal.h>
 
-Q_LOGGING_CATEGORY(logAppDialog, "log.app.dde-file-dialog")
+Q_LOGGING_CATEGORY(logAppDialog, "org.deepin.dde.filemanager.filedialog")
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -40,6 +41,9 @@ static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
 static void initLog()
 {
     dpfLogManager->applySuggestedLogSettings();
+#ifdef DTKCORE_CLASS_DConfigFile
+    LoggerRules::instance().initLoggerRules();
+#endif
 }
 
 static void initEnv()
@@ -165,6 +169,7 @@ static void handleSIGTERM(int sig)
 int main(int argc, char *argv[])
 {
     initEnv();
+    initLog();
 
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
@@ -186,7 +191,6 @@ int main(int argc, char *argv[])
     signal(SIGTERM, handleSIGTERM);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
-    initLog();
 
     if (!pluginsLoad()) {
         qCCritical(logAppDialog) << "Load pugin failed!";
