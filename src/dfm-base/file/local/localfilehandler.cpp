@@ -149,7 +149,7 @@ bool LocalFileHandler::rmdir(const QUrl &url)
         return false;
     }
 
-    qCInfo(logDFMBase, "rmdir source file : %s, successed by dfmio function trashFile!", url.path().toStdString().c_str());
+    qCWarning(logDFMBase, "rmdir source file : %s, successed by dfmio function trashFile!", url.path().toStdString().c_str());
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
 
@@ -583,7 +583,7 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
         return false;
     }
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
-    qCInfo(logDFMBase) << "delete file success: " << url;
+    qCWarning(logDFMBase) << "delete file success: " << url;
 
     return true;
 }
