@@ -10,6 +10,7 @@
 
 #include <dfm-base/dfm_plugin_defines.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/loggerrules.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
@@ -26,7 +27,7 @@
 #include <signal.h>
 #include <malloc.h>
 
-Q_LOGGING_CATEGORY(logAppFileManager, "log.app.dde-file-manager")
+Q_LOGGING_CATEGORY(logAppFileManager, "org.deepin.dde.filemanager.filemanager")
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -209,6 +210,9 @@ static void initEnv()
 static void initLog()
 {
     dpfLogManager->applySuggestedLogSettings();
+#ifdef DTKCORE_CLASS_DConfigFile
+    LoggerRules::instance().initLoggerRules();
+#endif
 }
 
 static void checkUpgrade(SingleApplication *app)
@@ -264,6 +268,9 @@ int main(int argc, char *argv[])
 {
     initEnv();
 
+    // Warning: set log filter must before QApplication inited
+    initLog();
+
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
@@ -281,9 +288,7 @@ int main(int argc, char *argv[])
                                                            "trash, compression/decompression, file property "
                                                            "and other useful functions."));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
-    initLog();
     autoReleaseMemory();
 
     CommandParser::instance().process();

@@ -37,13 +37,6 @@
 			"logPath": ""
 		},
 		{
-			"name": "dde-file-manager-daemon",
-			"filter": "",
-			"exec": "/usr/bin/dde-file-manager-daemon",
-			"logType": "journal",
-			"logPath": ""
-		},
-		{
 			"name": "dde-file-manager-server",
 			"filter": "",
 			"exec": "/usr/bin/dde-file-manager-server",

@@ -40,11 +40,11 @@
 // Wrap qCDebug for all plugins
 // Note: Used in the plugin's namespace!!!
 #undef DFM_LOG_REISGER_CATEGORY
-#define DFM_LOG_REISGER_CATEGORY2(name)                              \
-    const QLoggingCategory &__log##name()                            \
-    {                                                                \
-        static const QLoggingCategory category("log.plugin." #name); \
-        return category;                                             \
+#define DFM_LOG_REISGER_CATEGORY2(name)                                                     \
+    const QLoggingCategory &__log##name()                                                   \
+    {                                                                                       \
+        static const QLoggingCategory category("org.deepin.dde.filemanager.plugin." #name); \
+        return category;                                                                    \
     }
 #define DFM_LOG_REISGER_CATEGORY(nameMacro) DFM_LOG_REISGER_CATEGORY2(nameMacro)
 

@@ -4,13 +4,16 @@
 
 #include "config.h"   // cmake
 
-#include <QCoreApplication>
-#include <QDebug>
-#include <QDir>
-
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
+
+#include <dtkcore_config.h>
+#include <dfm-base/utils/loggerrules.h>
+
+#include <QCoreApplication>
+#include <QDebug>
+#include <QDir>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -19,7 +22,7 @@
 #include <sys/types.h>
 #include <signal.h>
 
-Q_LOGGING_CATEGORY(logAppDaemon, "log.app.dde-file-manager-daemon")
+Q_LOGGING_CATEGORY(logAppDaemon, "org.deepin.dde.filemanager.daemon")
 
 static constexpr char kDaemonInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemonplugin-core" };
@@ -57,6 +60,9 @@ static void initEnv()
 static void initLog()
 {
     dpfLogManager->applySuggestedLogSettings();
+#ifdef DTKCORE_CLASS_DConfigFile
+    LoggerRules::instance().initLoggerRules();
+#endif
 }
 
 static bool pluginsLoad()
@@ -112,12 +118,13 @@ static bool pluginsLoad()
 int main(int argc, char *argv[])
 {
     initEnv();
+    initLog();
+
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
 
-    initLog();
     if (!pluginsLoad()) {
         qCCritical(logAppDaemon) << "Load plugin failed!";
         abort();

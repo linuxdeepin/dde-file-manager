@@ -188,6 +188,17 @@
             "description":"Used to determine if all directories use async iteration to load files",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "log_rules": {
+            "value": "*.debug=false;*.info=false;*.warning=true",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "log rules",
+            "name[zh_CN]": "日志规则",
+            "description": "log rules",
+            "description[zh_CN]": "日志规则",
+            "permissions": "readwrite",
+            "visibility": "public"
         }
     }
 }

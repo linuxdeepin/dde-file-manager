@@ -43,10 +43,12 @@ bool Core::start()
 {
     QDBusConnection connection = QDBusConnection::systemBus();
     if (!connection.interface()->isServiceRegistered(kDaemonServicePath)) {
-        fmInfo() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "success";
+        connection.registerService(kDaemonServicePath);
+        fmInfo() << "register" << kDaemonServicePath << "success";
         qputenv(kEnvNameOfDaemonRegistered, "TRUE");
     } else {
-        fmWarning() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "failed";
+        connection.registerService(kDaemonServicePath);
+        fmWarning() << "register" << kDaemonServicePath << "failed";
         qputenv(kEnvNameOfDaemonRegistered, "FALSE");
     }
 

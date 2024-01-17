@@ -12,7 +12,7 @@
 #include <QtConcurrent>
 #include <QDBusInterface>
 
-Q_LOGGING_CATEGORY(logDFMBase, "log.lib.dfmbase")
+Q_LOGGING_CATEGORY(logDFMBase, "org.deepin.dde.filemanager.lib.base")
 
 namespace dfmbase {
 
