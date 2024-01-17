@@ -221,6 +221,28 @@ bool OpticalHelper::isBurnEnabled()
     return ret.isValid() ? ret.toBool() : true;
 }
 
+bool OpticalHelper::isPacketWrtingMedia(const QString &dev, QString *media)
+{
+    using namespace GlobalServerDefines;
+    if (dev.isEmpty())
+        return false;
+    const QString &id { DeviceUtils::getBlockDeviceId(dev) };
+    const auto &map { DevProxyMng->queryBlockInfo(id) };
+
+    auto fs { qvariant_cast<QString>(map[DeviceProperty::kFileSystem]) };
+    if (fs != "udf")
+        return false;
+    auto fsVersion { qvariant_cast<QString>(map[DeviceProperty::kFsVersion]) };
+    if (fsVersion != "2.01")
+        return false;
+    auto mediaType { DeviceUtils::formatOpticalMediaType(map.value(DeviceProperty::kMedia).toString()) };
+    if (media)
+        *media = mediaType;
+    if (mediaType != "DVD+RW" && mediaType != "DVD-RW")
+        return false;
+    return true;
+}
+
 bool OpticalHelper::isTransparent(const QUrl &url, Global::TransparentStatus *status)
 {
     if (url.scheme() == OpticalHelper::scheme()) {

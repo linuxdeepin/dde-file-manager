@@ -44,6 +44,7 @@ public:
     static void createStagingFolder(const QString &path);
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
     static bool isBurnEnabled();
+    static bool isPacketWrtingMedia(const QString &dev, QString *media = nullptr);
 
     bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
 
