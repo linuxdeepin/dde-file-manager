@@ -90,7 +90,7 @@ bool Burn::changeUrlEventFilter(quint64 windowId, const QUrl &url)
 {
     Q_UNUSED(windowId);
     if (url.scheme() == Global::Scheme::kBurn) {
-        auto &&dev { BurnHelper::burnDestDevice(url) };
+        const auto &dev { BurnHelper::burnDestDevice(url) };
         if (DeviceUtils::isWorkingOpticalDiscDev(dev)) {
             emit BurnSignalManager::instance()->activeTaskDialog();
             return true;

@@ -25,15 +25,16 @@ private:
     void addCustomTopWidget();
     void addDelegateSettings();
     void addPropertySettings();
-
-private:
     void bindEvents();
     void bindWindows();
     void bindFileOperations();
+    bool packetWritingUrl(const QUrl &srcUrl, QUrl *url);
 
 private slots:
     void onDiscChanged(const QString &id);
     void onDiscEjected(const QString &id);
+    bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
+    bool openNewWindowEventFilter(const QUrl &url);
 };
 
 }
