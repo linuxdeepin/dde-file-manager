@@ -27,6 +27,8 @@ QString protocolDeviceIcon(const QVariantMap &data);
 
 QUrl blockDeviceTarget(const QVariantMap &data);
 QUrl protocolDeviceTarget(const QVariantMap &data);
+
+bool isDlnfsMount(const QString &mpt);
 }
 
 #endif   // DOCKUTILS_H

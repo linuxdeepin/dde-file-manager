@@ -34,6 +34,7 @@ DockItemDataManager::DockItemDataManager(QObject *parent)
                                    QDBusConnection::sessionBus(),
                                    this));
     connectDeviceManger();
+    watchService();
 }
 
 void DockItemDataManager::onBlockMounted(const QString &id)
@@ -109,6 +110,8 @@ bool DockItemDataManager::blockDeviceFilter(const QVariantMap &data)
 
 bool DockItemDataManager::protoDeviceFilter(const QVariantMap &data)
 {
+    if (device_utils::isDlnfsMount(data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString()))
+        return kIgnore;
     return kDisplay;
 }
 
@@ -141,6 +144,31 @@ void DockItemDataManager::sendNotification(const QString &id, const QString &ope
                           .arg(texts.value(operation, tr("remove")));
 
     notify(title, msg);
+}
+
+void DockItemDataManager::onServiceRegistered()
+{
+    devMng.reset(new DeviceManager(kDeviceService,
+                                   kDevMngPath,
+                                   QDBusConnection::sessionBus(),
+                                   this));
+    connectDeviceManger();
+    initialize();
+}
+
+void DockItemDataManager::onServiceUnregistered()
+{
+    QStringList blkIDs = blocks.keys();
+    for (auto id : blkIDs)
+        Q_EMIT mountRemoved(id);
+    QStringList protoIDs = protocols.keys();
+    for (auto id : protoIDs)
+        Q_EMIT mountRemoved(id);
+
+    Q_EMIT requesetSetDockVisible(false);
+
+    blocks.clear();
+    protocols.clear();
 }
 
 void DockItemDataManager::updateDockVisible()
@@ -284,4 +312,20 @@ void DockItemDataManager::connectDeviceManger()
             });
     connect(devMng.data(), &DeviceManager::NotifyDeviceBusy,
             this, &DockItemDataManager::sendNotification);
+}
+
+void DockItemDataManager::watchService()
+{
+    auto watcher = new QDBusServiceWatcher(kDeviceService, QDBusConnection::sessionBus(),
+                                           QDBusServiceWatcher::WatchForOwnerChange, this);
+    connect(watcher, &QDBusServiceWatcher::serviceUnregistered,
+            this, [this](auto serv) {
+                qCInfo(logAppDock) << serv << "unregistered.";
+                onServiceUnregistered();
+            });
+    connect(watcher, &QDBusServiceWatcher::serviceRegistered,
+            this, [this](auto serv) {
+                qCInfo(logAppDock) << serv << "registered.";
+                onServiceRegistered();
+            });
 }

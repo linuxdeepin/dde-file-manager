@@ -24,23 +24,25 @@ find_package(Dtk COMPONENTS Widget Gui REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
-pkg_check_modules(Gesttings REQUIRED  gsettings-qt)
+pkg_check_modules(Gesttings REQUIRED gsettings-qt)
+pkg_search_module(LibMount REQUIRED mount IMPORTED_TARGET)
 
 set(QRC_FILE
     resources.qrc
     resources/theme-icons.qrc
-    )
+)
 qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
 qt5_add_dbus_interface(MOUNT_PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.filemanager.server.DeviceManager.xml"
-    devicemanager_interface)
+    devicemanager_interface
+)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${MOUNT_PLUGIN_FILES}
     ${QRC_RESOURCES}
-    )
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./)
 
@@ -62,6 +64,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${DtkGui_LIBRARIES}
     ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
+    PkgConfig::LibMount
     Qt5::Concurrent
 )
 

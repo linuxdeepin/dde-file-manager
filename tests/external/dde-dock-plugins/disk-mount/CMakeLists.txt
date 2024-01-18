@@ -28,6 +28,9 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent Core REQUIRED)
 find_package(DtkWidget REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_search_module(LibMount REQUIRED mount IMPORTED_TARGET)
 
 set(QRC_FILE
     ${DOCK_SRC_PATH}/resources.qrc
@@ -56,5 +59,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Qt5Core_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    PkgConfig::LibMount
     Qt5::Concurrent
 )
