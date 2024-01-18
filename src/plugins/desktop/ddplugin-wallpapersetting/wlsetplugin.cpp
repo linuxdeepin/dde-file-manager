@@ -97,7 +97,7 @@ void EventHandle::startTreeland()
 
 bool EventHandle::wallpaperSetting(const QString &name)
 {
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITER") == "TreeLand") {
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
         startTreeland();
     } else {
         show(name, (int)WallpaperSettings::Mode::WallpaperMode);
@@ -108,7 +108,7 @@ bool EventHandle::wallpaperSetting(const QString &name)
 
 bool EventHandle::screenSaverSetting(const QString &name)
 {
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITER") == "TreeLand") {
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
         startTreeland();
     } else {
         show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
