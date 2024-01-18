@@ -130,7 +130,7 @@ qreal ScreenProxyQt::devicePixelRatio() const
 DisplayMode ScreenProxyQt::displayMode() const
 {
 #ifdef COMPILE_ON_V23
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITER") == "TreeLand") {
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
         return DisplayMode::kShowonly;
     }
 #endif
