@@ -27,7 +27,7 @@ QSize BasicStatusBar::sizeHint() const
 {
     QSize size = QFrame::sizeHint();
 
-    size.setHeight(qMax(25, size.height()));
+    size.setHeight(qMax(32, size.height()));
 
     return size;
 }

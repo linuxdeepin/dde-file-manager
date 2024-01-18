@@ -35,10 +35,13 @@ void FileViewStatusBar::setScalingVisible(const bool visible)
     if (!scaleSlider)
         return;
 
-    if (visible)
+    if (visible) {
+        stretchWidget->show();
         scaleSlider->show();
-    else
+    } else {
+        stretchWidget->hide();
         scaleSlider->hide();
+    }
 }
 
 int FileViewStatusBar::scalingValue()
@@ -100,6 +103,12 @@ void FileViewStatusBar::initLoadingIndicator()
 void FileViewStatusBar::setCustomLayout()
 {
     insertWidget(0, loadingIndicator);
+
+    stretchWidget = new QWidget(this);
+    stretchWidget->setFixedSize(120, 30);
+    stretchWidget->hide();
+    insertWidget(1, stretchWidget);
+
     addWidget(scaleSlider, 0, Qt::AlignRight);
 }
 
