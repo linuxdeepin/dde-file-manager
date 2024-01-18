@@ -40,6 +40,7 @@ private:
 
     DPictureSequenceView *loadingIndicator { nullptr };
     DSlider *scaleSlider { nullptr };
+    QWidget *stretchWidget { nullptr };
 };
 
 }
