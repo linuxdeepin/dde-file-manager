@@ -10,6 +10,8 @@
 #include <QIcon>
 #include <QLoggingCategory>
 
+#include <libmount/libmount.h>
+
 Q_LOGGING_CATEGORY(logAppDock, "log.dock.disk-mount")
 
 QString size_format::formatDiskSize(const quint64 num)
@@ -134,4 +136,40 @@ QUrl device_utils::protocolDeviceTarget(const QVariantMap &data)
         return target;
     }
     return QUrl::fromLocalFile(mpt);
+}
+
+bool device_utils::isDlnfsMount(const QString &mpt)
+{
+    auto unifyPath = [](const QString &path) {
+        return path.endsWith("/") ? path : path + "/";
+    };
+
+    const QString &_mpt = unifyPath(mpt);
+
+    libmnt_table *tab = mnt_new_table();
+    libmnt_iter *iter = mnt_new_iter(MNT_ITER_BACKWARD);
+
+    int ret = mnt_table_parse_mtab(tab, nullptr);
+    if (ret != 0) {
+        qCWarning(logAppDock) << "device: cannot parse mtab" << ret;
+        mnt_free_table(tab);
+        mnt_free_iter(iter);
+        return false;
+    }
+
+    libmnt_fs *fs = nullptr;
+    while (mnt_table_next_fs(tab, iter, &fs) == 0) {
+        if (fs && strcmp("dlnfs", mnt_fs_get_source(fs)) == 0) {
+            QString target = unifyPath(mnt_fs_get_target(fs));
+            if (target == _mpt) {
+                mnt_free_table(tab);
+                mnt_free_iter(iter);
+                return true;
+            }
+        }
+    }
+
+    mnt_free_table(tab);
+    mnt_free_iter(iter);
+    return false;
 }

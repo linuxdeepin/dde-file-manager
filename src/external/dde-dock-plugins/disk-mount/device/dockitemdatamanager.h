@@ -38,6 +38,9 @@ private Q_SLOTS:
     void onProtocolUnmounted(const QString &id);
     void sendNotification(const QString &id, const QString &operation);
 
+    void onServiceRegistered();
+    void onServiceUnregistered();
+
 private:
     explicit DockItemDataManager(QObject *parent = nullptr);
 
@@ -51,6 +54,7 @@ private:
     DockItemData buildProtocolItem(const QVariantMap &data);
 
     void connectDeviceManger();
+    void watchService();
 
 private:
     ItemContainer blocks;
