@@ -88,7 +88,7 @@ const FileInfoPointer VaultFileIterator::fileInfo() const
 
     FileInfoPointer vaultInfo(new VaultFileInfo(fileUrl(), infoTrans));
     emit InfoCacheController::instance().removeCacheFileInfo({fileUrl()});
-    emit InfoCacheController::instance().cacheFileInfo(fileUrl(), infoTrans);
+    emit InfoCacheController::instance().cacheFileInfo(fileUrl(), vaultInfo);
     return vaultInfo;
 }
 
