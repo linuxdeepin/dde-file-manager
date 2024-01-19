@@ -57,10 +57,10 @@ void ExpandedItem::paintEvent(QPaintEvent *)
 
     const QMargins &margins = contentsMargins();
 
-    QRectF labelRect(kIconModeTextPadding + margins.left(),
-                     margins.top() + iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing,
-                     width() - kIconModeTextPadding * 2 - margins.left() - margins.right(),
-                     INT_MAX);
+    QRect labelRect(kIconModeRectRadius + margins.left(),
+                    iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing + margins.top(),
+                    width() - kIconModeRectRadius * 2,
+                    INT_MAX);
 
     QString str = delegate->displayFileName(index);
 
@@ -174,7 +174,7 @@ QRectF ExpandedItem::textGeometry(int width) const
 
         QRect labelRect(kIconModeTextPadding + margins.left(),
                         iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing + margins.top(),
-                        width - kIconModeTextPadding * 2,
+                        width - kIconModeRectRadius * 2,
                         INT_MAX);
 
         QString str = delegate->displayFileName(index);
