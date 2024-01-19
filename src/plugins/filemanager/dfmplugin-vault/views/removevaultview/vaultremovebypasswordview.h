@@ -20,6 +20,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
 class DToolTip;
 class DFloatingWidget;
+class DLabel;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_vault {
@@ -51,11 +52,15 @@ Q_SIGNALS:
     void signalJump(const RemoveWidgetType &type);
     void sigCloseDialog();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *evt) override;
+
 private:
     DTK_WIDGET_NAMESPACE::DPasswordEdit *pwdEdit { nullptr };
     QPushButton *tipsBtn { nullptr };
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *keyDeleteLabel { Q_NULLPTR };
 };
 }
 #endif   // VAULTREMOVEBYPASSWORDVIEW_H

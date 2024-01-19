@@ -9,6 +9,8 @@
 
 #include <dtkwidget_global.h>
 
+#include <polkit-qt5-1/PolkitQt1/Authority>
+
 #include <QWidget>
 
 class QPlainTextEdit;
@@ -26,19 +28,22 @@ public:
     explicit VaultRemoveByRecoverykeyView(QWidget *parent = nullptr);
     ~VaultRemoveByRecoverykeyView() override;
 
-    /*!
-    * /brief    获取凭证
-    */
     QString getRecoverykey();
-
-    /*!
-    * /brief    清空凭证
-    */
     void clear();
 
     void showAlertMessage(const QString &text, int duration = 3000);
+
+    QStringList btnText() const;
+    QString titleText() const;
+    void buttonClicked(int index, const QString &text);
+
 public slots:
     void onRecoveryKeyChanged();
+    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
+
+Q_SIGNALS:
+    void signalJump(const RemoveWidgetType &type);
+    void sigCloseDialog();
 
 private:
     //! 输入凭证后，对凭证添加“-”

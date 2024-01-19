@@ -164,7 +164,7 @@ void VaultHelper::openNewWindow(const QUrl &url)
     VaultEventCaller::sendOpenWindow(url);
 }
 
-bool VaultHelper::getVaultVersion()
+bool VaultHelper::getVaultVersion() const
 {
     VaultConfig config;
     QString strVersion = config.get(kConfigNodeName, kConfigKeyVersion).toString();

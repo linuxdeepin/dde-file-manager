@@ -14,10 +14,12 @@
 #include <DPasswordEdit>
 #include <DFloatingWidget>
 #include <DDialog>
+#include <DFontSizeManager>
 
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QTimer>
+#include <QMouseEvent>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
@@ -42,9 +44,18 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     layout->addWidget(tipsBtn);
     layout->setContentsMargins(0, 0, 0, 0);
 
+    if (!VaultHelper::instance()->getVaultVersion()) {
+        keyDeleteLabel = new DLabel(tr("Key delete"));
+        DFontSizeManager::instance()->bind(keyDeleteLabel, DFontSizeManager::T8, QFont::Medium);
+        keyDeleteLabel->installEventFilter(this);
+        keyDeleteLabel->setForegroundRole(DPalette::ColorType::LightLively);
+    }
+
     QVBoxLayout *mainLay = new QVBoxLayout;
     mainLay->addWidget(hintInfo);
     mainLay->addItem(layout);
+    if (keyDeleteLabel)
+        mainLay->addWidget(keyDeleteLabel, 0, Qt::AlignRight);
     setLayout(mainLay);
 
     connect(pwdEdit->lineEdit(), &QLineEdit::textChanged, this, &VaultRemoveByPasswordView::onPasswordChanged);
@@ -188,4 +199,18 @@ void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(PolkitQt1::Author
     }
 
     emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
+}
+
+bool VaultRemoveByPasswordView::eventFilter(QObject *obj, QEvent *evt)
+{
+    if (obj && obj == keyDeleteLabel) {
+        if (evt->type() == QEvent::MouseButtonPress) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evt);
+            if (mouseEvent->button() == Qt::LeftButton) {
+                emit signalJump(RemoveWidgetType::kRecoveryKeyWidget);
+                return true;
+            }
+        }
+    }
+    return QWidget::eventFilter(obj, evt);
 }
