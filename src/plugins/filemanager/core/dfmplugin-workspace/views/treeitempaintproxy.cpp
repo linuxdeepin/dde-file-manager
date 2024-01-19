@@ -51,10 +51,8 @@ QRectF TreeItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex &in
 
 QList<QRect> TreeItemPaintProxy::allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    Q_UNUSED(option)
-
     QList<QRect> rects {};
-    QRect itemRect = view()->visualRect(index);
+    QRect itemRect = option.rect;
     QRectF icon = iconRect(index, itemRect);
 
     rects.append(icon.toRect());

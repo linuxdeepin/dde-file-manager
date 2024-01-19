@@ -216,6 +216,7 @@ void OptionButtonBox::initUiForSizeMode()
     d->hBoxLayout->addWidget(d->listViewButton);
     if (d->treeViewButton)
         d->hBoxLayout->addWidget(d->treeViewButton);
+    d->hBoxLayout->addSpacing(10);
     d->hBoxLayout->addWidget(d->detailButton);
     d->hBoxLayout->setSpacing(0);
     setLayout(d->hBoxLayout);

@@ -87,7 +87,7 @@ void FileViewPrivate::initListModeView()
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
 
         headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        headerView->setFixedHeight(kListViewIconSize);
+        headerView->setFixedHeight(kListViewHeaderHeight);
         headerView->setMinimumSectionSize(GlobalPrivate::kListViewMinimumWidth);
 
         headerView->setModel(q->model());

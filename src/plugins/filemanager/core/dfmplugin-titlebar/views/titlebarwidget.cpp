@@ -126,6 +126,7 @@ void TitleBarWidget::initializeUi()
     titleBarLayout->addWidget(searchButton);
     titleBarLayout->addSpacing(10);
     titleBarLayout->addWidget(optionButtonBox, 0, Qt::AlignRight);
+    titleBarLayout->addSpacing(20);
     setLayout(titleBarLayout);
 
     initUiForSizeMode();
