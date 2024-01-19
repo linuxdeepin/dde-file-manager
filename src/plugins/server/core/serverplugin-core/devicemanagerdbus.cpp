@@ -78,10 +78,19 @@ void DeviceManagerDBus::initConnection()
             emit this->BlockDevicePropertyChanged(id, property, QDBusVariant(val));
     });
 
-    connect(DevMngIns, &DeviceManager::protocolDevMounted, this, &DeviceManagerDBus::ProtocolDeviceMounted);
-    connect(DevMngIns, &DeviceManager::protocolDevUnmounted, this, &DeviceManagerDBus::ProtocolDeviceUnmounted);
-    connect(DevMngIns, &DeviceManager::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
     connect(DevMngIns, &DeviceManager::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
+    connect(DevMngIns, &DeviceManager::protocolDevMounted, this, [this](const QString &id, const QString &mpt) {
+        emit ProtocolDeviceMounted(id, mpt);
+        requestRefreshDesktopAsNeeded(mpt, "onMount");
+    });
+    connect(DevMngIns, &DeviceManager::protocolDevUnmounted, this, [this](const QString &id, const QString &oldMpt) {
+        emit ProtocolDeviceUnmounted(id, oldMpt);
+        requestRefreshDesktopAsNeeded(oldMpt, "onUnmount");
+    });
+    connect(DevMngIns, &DeviceManager::protocolDevRemoved, this, [this](const QString &id, const QString &oldMpt) {
+        emit ProtocolDeviceRemoved(id, oldMpt);
+        requestRefreshDesktopAsNeeded(oldMpt, "onRemove");
+    });
 
     connect(DevMngIns, &DeviceManager::blockDevMounted, this, [this](const QString &id, const QString &mpt) {
         emit BlockDeviceMounted(id, mpt);
