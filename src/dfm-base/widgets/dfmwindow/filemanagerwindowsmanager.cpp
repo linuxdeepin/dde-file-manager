@@ -99,7 +99,7 @@ void FileManagerWindowsManagerPrivate::onWindowClosed(FileManagerWindow *window)
         if (window->saveClosedSate() && (!isDefaultWindow.isValid() || !isDefaultWindow.toBool()))
             window->saveState();
         qCInfo(logDFMBase) << "Last window deletelater" << window->internalWinId();
-        emit manager->lastWindowClosed();
+        emit manager->lastWindowClosed(window->internalWinId());
         window->deleteLater();
     } else {
         qCInfo(logDFMBase) << "Window deletelater !";

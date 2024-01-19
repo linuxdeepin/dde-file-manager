@@ -10,6 +10,7 @@
 // dfm-extension
 #include <dfm-extension/menu/dfmextmenuplugin.h>
 #include <dfm-extension/emblemicon/dfmextemblemiconplugin.h>
+#include <dfm-extension/window/dfmextwindowplugin.h>
 
 #include <QObject>
 #include <QLibrary>
@@ -26,6 +27,7 @@ public:
     using ExtShutdownFuncType = void (*)();
     using ExtMenuFuncType = DFMEXT::DFMExtMenuPlugin *(*)();
     using ExtEmblemFuncType = DFMEXT::DFMExtEmblemIconPlugin *(*)();
+    using ExtWindowFuncType = DFMEXT::DFMExtWindowPlugin *(*)();
 
 public:
     explicit ExtensionPluginLoader(const QString &filaName, QObject *parent = nullptr);
@@ -40,6 +42,7 @@ public:
 
     [[nodiscard]] DFMEXT::DFMExtMenuPlugin *resolveMenuPlugin();
     [[nodiscard]] DFMEXT::DFMExtEmblemIconPlugin *resolveEmblemPlugin();
+    [[nodiscard]] DFMEXT::DFMExtWindowPlugin *resolveWindowPlugin();
 
 private:
     QLibrary loader;
@@ -49,6 +52,7 @@ private:
     ExtShutdownFuncType shutdownFunc { nullptr };
     ExtMenuFuncType menuFunc { nullptr };
     ExtEmblemFuncType emblemFunc { nullptr };
+    ExtWindowFuncType windowFunc { nullptr };
 };
 
 using ExtPluginLoaderPointer = QSharedPointer<ExtensionPluginLoader>;

@@ -31,6 +31,7 @@ Q_SIGNALS:
 
     void newMenuPluginResolved(const QString &name, DFMEXT::DFMExtMenuPlugin *menu);
     void newEmblemPluginResolved(const QString &name, DFMEXT::DFMExtEmblemIconPlugin *emblem);
+    void newWindowPluginResolved(const QString &name, DFMEXT::DFMExtWindowPlugin *emblem);
 
 private:
     std::map<QString, ExtPluginLoaderPointer> allLoaders;
@@ -45,6 +46,7 @@ class ExtensionPluginManagerPrivate : public QObject
 public:
     using DFMExtMenuPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtMenuPlugin>>;
     using DFMExtEmblemPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>>;
+    using DFMExtWindowPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtWindowPlugin>>;
 
     explicit ExtensionPluginManagerPrivate(ExtensionPluginManager *qq);
     ~ExtensionPluginManagerPrivate() override {}
@@ -63,6 +65,8 @@ public:
     QString defaultPluginPath;
     DFMExtMenuPluginMap menuMap;
     DFMExtEmblemPluginMap emblemMap;
+    DFMExtWindowPluginMap windowMap;
+
     QScopedPointer<DFMEXT::DFMExtMenuProxy> proxy { new DFMExtMenuImplProxy };
 };
 

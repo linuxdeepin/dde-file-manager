@@ -69,6 +69,10 @@ void ExtensionPluginInitWorker::doAppendExt(const QString &name, ExtPluginLoader
     DFMEXT::DFMExtEmblemIconPlugin *emblem { loader->resolveEmblemPlugin() };
     if (emblem)
         emit newEmblemPluginResolved(name, emblem);
+
+    DFMEXT::DFMExtWindowPlugin *window { loader->resolveWindowPlugin() };
+    if (window)
+        emit newWindowPluginResolved(name, window);
 }
 
 ExtensionPluginManagerPrivate::ExtensionPluginManagerPrivate(ExtensionPluginManager *qq)
@@ -109,6 +113,9 @@ void ExtensionPluginManagerPrivate::startInitializePlugins()
     connect(worker, &ExtensionPluginInitWorker::newEmblemPluginResolved, this, [this](const QString &name, DFMEXT::DFMExtEmblemIconPlugin *emblem) {
         emblemMap.insert(name, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>(emblem));
     });
+    connect(worker, &ExtensionPluginInitWorker::newWindowPluginResolved, this, [this](const QString &name, DFMEXT::DFMExtWindowPlugin *window) {
+        windowMap.insert(name, QSharedPointer<DFMEXT::DFMExtWindowPlugin>(window));
+    });
 
     workerThread.start();
     emit startInitialize({ defaultPluginPath });
@@ -130,6 +137,13 @@ ExtensionPluginManager::InitState ExtensionPluginManager::currentState() const
     Q_D(const ExtensionPluginManager);
 
     return d->curState;
+}
+
+bool ExtensionPluginManager::initialized() const
+{
+    Q_D(const ExtensionPluginManager);
+
+    return d->curState == kInitialized;
 }
 
 bool ExtensionPluginManager::exists(ExtensionPluginManager::ExtensionType type) const
@@ -158,6 +172,13 @@ QList<QSharedPointer<dfmext::DFMExtEmblemIconPlugin>> ExtensionPluginManager::em
     Q_D(const ExtensionPluginManager);
 
     return d->emblemMap.values();
+}
+
+QList<QSharedPointer<dfmext::DFMExtWindowPlugin>> ExtensionPluginManager::windowPlugins() const
+{
+    Q_D(const ExtensionPluginManager);
+
+    return d->windowMap.values();
 }
 
 DFMEXT::DFMExtMenuProxy *ExtensionPluginManager::pluginMenuProxy() const
