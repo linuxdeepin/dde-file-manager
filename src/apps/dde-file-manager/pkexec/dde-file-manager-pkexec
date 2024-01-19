@@ -6,6 +6,17 @@
 
 # Reference:
 # https://wikidev.uniontech.com/%E8%BF%9B%E7%A8%8B%E8%BF%90%E8%A1%8C%E6%9D%83%E9%99%90%E4%B8%8E%E6%8F%90%E6%9D%83
+function get_scale_factor() {
+    user_name=$(logname)
+    scaling=$(sudo -u "$user_name" dbus-launch gsettings get com.deepin.xsettings scale-factor)
+
+    if (( $(bc <<< "$scaling >= 1 && $scaling <= 10") )); then
+        echo $scaling
+    else
+        echo "Error: Invalid scaling factor: $scaling" >&2
+        echo 1
+    fi
+}
 
 function run_pkexec() {
         xhost +SI:localuser:root
@@ -28,6 +39,12 @@ function run_app() {
         export QT_QPA_PLATFORM=
         export GDK_BACKEND=x11
         export $(dbus-launch)
+
+        scale_factor=$(get_scale_factor)
+        if [ "$scale_factor" != "1" ]; then
+            echo "export scaling: $scale_factor"
+            export QT_SCALE_FACTOR=$scale_factor
+        fi
 
         dde-file-manager "$1" -w "$(pwd)"
 }
