@@ -40,7 +40,7 @@ Q_SIGNALS:
     void windowCreated(quint64 windId);
     void windowOpened(quint64 windId);
     void windowClosed(quint64 windId);
-    void lastWindowClosed();
+    void lastWindowClosed(quint64 winId);
 
     void currentUrlChanged(quint64 windId, const QUrl &url);
 

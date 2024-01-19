@@ -138,9 +138,9 @@ void Core::onAllPluginsStarted()
         fmInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
 }
 
-void Core::onWindowOpened(quint64 windd)
+void Core::onWindowOpened(quint64 winid)
 {
-    Q_UNUSED(windd)
+    Q_UNUSED(winid)
 
     static std::once_flag flag;
     std::call_once(flag, []() {

@@ -6,7 +6,7 @@
 
 #include <dfm-extension/menu/dfmextmenu.h>
 
-#include <assert.h>
+#include <cassert>
 
 USING_DFMEXT_NAMESPACE
 

@@ -22,4 +22,17 @@
     Class(const Class &) = delete; \
     Class &operator=(const Class &) = delete;
 
+#define DFMEXT_VERSION_MAJOR 6
+#define DFMEXT_VERSION_MINOR 0
+#define DFMEXT_VERSION_PATCH 0
+
+/*
+   DFMEXT_VERSION is (major << 16) + (minor << 8) + patch.
+*/
+#define DFMEXT_VERSION DFMEXT_VERSION_CHECK(DFMEXT_VERSION_MAJOR, DFMEXT_VERSION_MINOR, DFMEXT_VERSION_PATCH)
+/*
+   can be used like #if (DFMEXT_VERSION >= DFMEXT_VERSION_CHECK(6, 0, 0))
+*/
+#define DFMEXT_VERSION_CHECK(major, minor, patch) ((major << 16) | (minor << 8) | (patch))
+
 #endif   // DDEFILEMANAGEREXTENSION_GLOBAL_H

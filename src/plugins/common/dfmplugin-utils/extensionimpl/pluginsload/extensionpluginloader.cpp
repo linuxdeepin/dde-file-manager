@@ -112,4 +112,21 @@ DFMEXT::DFMExtEmblemIconPlugin *ExtensionPluginLoader::resolveEmblemPlugin()
     return emblemFunc();
 }
 
+DFMEXT::DFMExtWindowPlugin *ExtensionPluginLoader::resolveWindowPlugin()
+{
+    if (!loader.isLoaded()) {
+        errorMessage = "Failed, called 'resolveWindowPlugin' get interface, "
+                       "need call 'initialize' function befor that";
+        return {};
+    }
+
+    windowFunc = reinterpret_cast<ExtWindowFuncType>(loader.resolve("dfm_extension_window"));
+    if (!windowFunc) {
+        errorMessage = "Failed, get 'dfm_extension_window' import function";
+        return {};
+    }
+
+    return windowFunc();
+}
+
 DPUTILS_END_NAMESPACE

@@ -5,18 +5,23 @@
 #include "virtualextensionimplplugin.h"
 #include "menuimpl/extensionlibmenuscene.h"
 #include "emblemimpl/extensionemblemmanager.h"
+#include "windowimpl/extensionwindowsmanager.h"
 #include "pluginsload/extensionpluginmanager.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+
 Q_DECLARE_METATYPE(QList<QIcon> *)
 
 namespace dfmplugin_utils {
+DFMBASE_USE_NAMESPACE
 
 void VirtualExtensionImplPlugin::initialize()
 {
     auto manager = &ExtensionPluginManager::instance();   // run in main thread
     connect(manager, &ExtensionPluginManager::requestInitlaizePlugins, manager, &ExtensionPluginManager::onLoadingPlugins);
+    ExtensionWindowsManager::instance().initialize();
 
     followEvents();
 }
