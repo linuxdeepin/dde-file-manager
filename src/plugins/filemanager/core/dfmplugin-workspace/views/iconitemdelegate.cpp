@@ -559,12 +559,13 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
             : QBrush(Qt::NoBrush);
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
+
+    labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
     labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
     const FileInfoPointer &info = parent()->fileInfo(index);
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
     if (!singleSelected && isSelectedOpt) {
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
-        labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
     }
 
     layout->layout(labelRect, opt.textElideMode, painter, background);
@@ -653,7 +654,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
         //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
         d->expandedItem->show();
         d->expandedItem->setTextBounding(QRect());
-        editor->setFixedWidth(option.rect.width() - kIconModeRectRadius);
+        editor->setFixedWidth(option.rect.width());
         d->expandedItem->setIconHeight(iconSize.height());
         editor->adjustSize();
 
