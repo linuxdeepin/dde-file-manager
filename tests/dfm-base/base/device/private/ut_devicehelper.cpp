@@ -211,7 +211,11 @@ TEST_F(UT_DeviceHelper, OpenFileManagerToDevice)
     stub.set_lamda(startDetached_QString_QStringList, [&] { __DBG_STUB_INVOKE__ dfmStarted = true;  return true; });
 
     bool showFolder_invoked = false;
+#ifdef COMPILE_ON_V23
+    auto showFolder_QUrl_QString = qOverload<const QUrl &, const QString &>(&DDesktopServices::showFolder);
+#else
     auto showFolder_QUrl_QString = qOverload<QUrl, const QString &>(&DDesktopServices::showFolder);
+#endif
     stub.set_lamda(showFolder_QUrl_QString, [&] { __DBG_STUB_INVOKE__ showFolder_invoked = true; return true; });
 
     // test dfm bin not found

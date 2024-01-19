@@ -215,8 +215,11 @@ TEST(SearchMenuScenePrivateTest, ut_openFileLocation)
 
     st.reset(SysInfoUtils::isRootUser);
     st.set_lamda(SysInfoUtils::isRootUser, [] { return false; });
-
+#ifdef COMPILE_ON_V23
+    auto func2 = qOverload<const QString &, const QString &>(&DDesktopServices::showFileItem);
+#else
     auto func2 = qOverload<QString, const QString &>(&DDesktopServices::showFileItem);
+#endif
     st.set_lamda(func2, [] { return true; });
     EXPECT_TRUE(scene.d->openFileLocation("/home"));
 }
