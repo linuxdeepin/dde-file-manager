@@ -3,10 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultremovebyrecoverykeyview.h"
+#include "utils/vaulthelper.h"
+#include "utils/encryption/operatorcenter.h"
 
 #include <DToolTip>
 #include <DThemeManager>
 #include <DFloatingWidget>
+#include <DDialog>
 
 #include <QVBoxLayout>
 #include <QTimer>
@@ -16,6 +19,7 @@
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
+using namespace PolkitQt1;
 
 VaultRemoveByRecoverykeyView::VaultRemoveByRecoverykeyView(QWidget *parent)
     : QWidget(parent)
@@ -53,7 +57,6 @@ void VaultRemoveByRecoverykeyView::clear()
 
 void VaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int duration)
 {
-
     if (!tooltip) {
         tooltip = new DToolTip(text);
         tooltip->setObjectName("AlertTooltip");
@@ -83,6 +86,44 @@ void VaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int dur
     QTimer::singleShot(duration, floatWidget, [=] {
         floatWidget->close();
     });
+}
+
+QStringList VaultRemoveByRecoverykeyView::btnText() const
+{
+    return { tr("Cancel"), tr("Delete") };
+}
+
+QString VaultRemoveByRecoverykeyView::titleText() const
+{
+    return tr("Delete File Vault");
+}
+
+void VaultRemoveByRecoverykeyView::buttonClicked(int index, const QString &text)
+{
+    Q_UNUSED(text)
+
+    switch (index) {
+    case 0: {   // cancel
+        emit sigCloseDialog();
+    } break;
+    case 1: {   // ok
+        const QString key = getRecoverykey();
+        QString cipher;
+        if (!OperatorCenter::getInstance()->checkUserKey(key, cipher)) {
+            showAlertMessage(tr("Wrong recovery key"));
+            return;
+        }
+
+        auto ins = Authority::instance();
+        ins->checkAuthorization(kPolkitVaultRemove,
+                                UnixProcessSubject(getpid()),
+                                Authority::AllowUserInteraction);
+        connect(ins, &Authority::checkAuthorizationFinished,
+                this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
+    } break;
+    default:
+        break;
+    }
 }
 
 void VaultRemoveByRecoverykeyView::onRecoveryKeyChanged()
@@ -122,6 +163,27 @@ void VaultRemoveByRecoverykeyView::onRecoveryKeyChanged()
     textCursor.setPosition(position);
     keyEdit->setTextCursor(textCursor);
     keyEdit->blockSignals(false);
+}
+
+void VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+{
+    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+               this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
+
+    if (Authority::Yes != result)
+        return;
+
+    if (!VaultHelper::instance()->lockVault(false)) {
+        QString errMsg = tr("Failed to delete file vault");
+        DDialog dialog(this);
+        dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+        dialog.setTitle(errMsg);
+        dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+        dialog.exec();
+        return;
+    }
+
+    emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
 }
 
 int VaultRemoveByRecoverykeyView::afterRecoveryKeyChanged(QString &str)

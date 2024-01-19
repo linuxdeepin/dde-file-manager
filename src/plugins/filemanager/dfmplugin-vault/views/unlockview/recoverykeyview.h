@@ -42,16 +42,12 @@ signals:
     void sigCloseDialog();
 
 private slots:
-
     void recoveryKeyChanged();
 
-    void onUnlockVault(int state);
-
 private:
+    void handleUnlockVault(bool result);
     bool eventFilter(QObject *watched, QEvent *event) override;
-
     int afterRecoveryKeyChanged(QString &str);
-
     void showEvent(QShowEvent *event) override;
 
 private:

@@ -91,7 +91,19 @@ void VaultRemovePages::showPasswordWidget()
 
 void VaultRemovePages::showRecoveryKeyWidget()
 {
+    clearContents(true);
+    clearButtons();
+
     recoverykeyView = new VaultRemoveByRecoverykeyView(this);
+    setTitle(recoverykeyView->titleText());
+    addContent(recoverykeyView);
+    QStringList btns = recoverykeyView->btnText();
+    if (btns.size() > 1) {
+        addButton(btns[0], false);
+        addButton(btns[1], true, ButtonType::ButtonRecommend);
+    }
+    connect(recoverykeyView, &VaultRemoveByRecoverykeyView::signalJump, this, &VaultRemovePages::pageSelect);
+    connect(recoverykeyView, &VaultRemoveByRecoverykeyView::sigCloseDialog, this, &VaultRemovePages::close);
 }
 
 void VaultRemovePages::showRemoveProgressWidget()
@@ -148,7 +160,7 @@ void VaultRemovePages::onButtonClicked(int index, const QString &text)
     if (getContent(0) == passwordView) {
         passwordView->buttonClicked(index, text);
     } else if (getContent(0) == recoverykeyView) {
-
+        recoverykeyView->buttonClicked(index, text);
     } else if (getContent(0) == progressView) {
         progressView->buttonClicked(index, text);
     } else if (getContent(0) == noneWidget) {

@@ -54,7 +54,7 @@ QString UnlockView::titleText()
 void UnlockView::initUI()
 {
     //! Set font.
-    forgetPassword = new DLabel(tr("Forgot password?"));
+    forgetPassword = new DLabel(VaultHelper::instance()->getVaultVersion() ? tr("Forgot password?") : tr("Key unlock"));
     DFontSizeManager::instance()->bind(forgetPassword, DFontSizeManager::T8, QFont::Medium);
     forgetPassword->installEventFilter(this);
     forgetPassword->setForegroundRole(DPalette::ColorType::LightLively);
@@ -312,7 +312,11 @@ bool UnlockView::eventFilter(QObject *obj, QEvent *evt)
         if (evt->type() == QEvent::MouseButtonPress) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evt);
             if (mouseEvent->button() == Qt::LeftButton) {
-                emit signalJump(PageType::kRetrievePage);
+                if (VaultHelper::instance()->getVaultVersion())
+                    emit signalJump(PageType::kRetrievePage);
+                else
+                    emit signalJump(PageType::kRecoverPage);
+                return true;
             }
         }
     }
