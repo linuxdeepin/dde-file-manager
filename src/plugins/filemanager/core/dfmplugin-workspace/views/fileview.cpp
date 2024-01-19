@@ -132,6 +132,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         d->initIconModeView();
         setMinimumWidth(0);
         model()->setTreeView(false);
+        verticalScrollBar()->setFixedHeight(rect().height() - d->statusBar->height());
         break;
     case Global::ViewMode::kListMode:
         setIconSize(QSize(kListViewIconSize, kListViewIconSize));
@@ -358,7 +359,8 @@ void FileView::onSectionHandleDoubleClicked(int logicalIndex)
         int width = 0;
 
         if (logicalIndex == 0) {
-            width = list.at(1).right() + kColumnPadding / 2;
+            // 树形视图多绘制一个扩展标识，名称是第三列
+            width = list.at(currentViewMode() == Global::ViewMode::kTreeMode ? 2 : 1).right() + kColumnPadding / 2;
         } else {
             width = list.at(logicalIndex + 1).width() + kColumnPadding * 2;
         }
@@ -2005,6 +2007,8 @@ void FileView::setListViewMode()
         d->adjustFileNameColumn = true;
         updateListHeaderView();
     }
+
+    verticalScrollBar()->setFixedHeight(rect().height() - d->statusBar->height() - d->headerView->height());
 }
 
 QUrl FileView::parseSelectedUrl(const QUrl &url)
