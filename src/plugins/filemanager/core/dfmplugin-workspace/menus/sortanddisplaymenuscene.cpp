@@ -257,7 +257,8 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
         predicateAction[ActionID::kDisplayList]->setChecked(true);
         break;
     case Global::ViewMode::kTreeMode:
-        predicateAction[ActionID::kDisplayTree]->setChecked(true);
+        if (predicateAction.contains(ActionID::kDisplayTree))
+            predicateAction[ActionID::kDisplayTree]->setChecked(true);
         break;
     default:
         break;

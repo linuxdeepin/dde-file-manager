@@ -80,6 +80,7 @@ void TreeItemPaintProxy::drawExpandArrow(QPainter *painter, const QRectF &rect, 
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::Text));
     }
 
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
     if (index.data(kItemTreeViewExpandedRole).toBool()) {
         style->drawPrimitive(QStyle::PE_IndicatorArrowDown, &opt, painter, nullptr);
     } else {
