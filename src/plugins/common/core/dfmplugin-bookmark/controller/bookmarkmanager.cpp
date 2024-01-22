@@ -205,6 +205,7 @@ void BookMarkManager::addQuickAccessItemsFromConfig()
     const QVariantList &list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
     if (list.count() <= 0 || !BookMarkHelper::instance()->isValidQuickAccessConf(list)) {
         fmWarning() << "Reset quick access list";
+        saveQuickAccessToSortedItems(list);
         saveSortedItemsToConfigFile(sortedUrls);   // write the default items to config
     }
 
@@ -416,6 +417,24 @@ void BookMarkManager::saveSortedItemsToConfigFile(const QList<QUrl> &order)
     }
 
     Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, sorted);
+}
+
+void BookMarkManager::saveQuickAccessToSortedItems(const QVariantList &list)
+{
+    // 数据异常时，防止用户的书签丢失
+    for (const QVariant &data : list) {
+        const auto &bookMarkMap { data.toMap() };
+        BookmarkData bookmarkData;
+        bookmarkData.resetData(bookMarkMap);
+        if (!bookmarkData.isDefaultItem) {
+            if (!bookmarkData.url.isValid()) {
+                fmWarning() << "Ignore invalid url quickaccess:" << bookMarkMap;
+                continue;
+            }
+            quickAccessDataMap[bookmarkData.url] = bookmarkData;
+            sortedUrls.append(bookmarkData.url);
+        }
+    }
 }
 
 void BookMarkManager::addQuickAccessDataFromConfig(const QVariantList &dataList)

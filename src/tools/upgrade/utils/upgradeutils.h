@@ -11,6 +11,7 @@ namespace dfm_upgrade {
 namespace UpgradeUtils {
 QVariant genericAttribute(const QString &key);
 QVariant applicationAttribute(const QString &key);
+bool backupFile(const QString &sourceFile, const QString &backupDirPath);
 }
 }
 

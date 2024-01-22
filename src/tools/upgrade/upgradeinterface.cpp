@@ -13,7 +13,7 @@
 #include <QCoreApplication>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(logToolUpgrade, "log.tool.upgrade")
+Q_LOGGING_CATEGORY(logToolUpgrade, "org.deepin.dde.filemanager.tool.upgrade")
 
 using namespace dfm_upgrade;
 

@@ -12,7 +12,7 @@
 
 #include <libmount/libmount.h>
 
-Q_LOGGING_CATEGORY(logAppDock, "log.dock.disk-mount")
+Q_LOGGING_CATEGORY(logAppDock, "org.deepin.dde.dock.plugin.disk-mount")
 
 QString size_format::formatDiskSize(const quint64 num)
 {

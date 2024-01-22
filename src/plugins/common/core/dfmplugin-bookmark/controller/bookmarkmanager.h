@@ -64,6 +64,7 @@ private:
 
     void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
     void saveSortedItemsToConfigFile(const QList<QUrl> &order);
+    void saveQuickAccessToSortedItems(const QVariantList &list);
 
     void addQuickAccessDataFromConfig(const QVariantList &dataList = QVariantList());
 
