@@ -928,6 +928,9 @@ void FileView::onDefaultViewModeChanged(int mode)
 {
     Global::ViewMode newMode = static_cast<Global::ViewMode>(mode);
 
+    if (newMode == Global::ViewMode::kTreeMode && !WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()))
+        return;
+
     if (newMode == d->currentViewMode)
         return;
 
@@ -1123,6 +1126,8 @@ void FileView::resizeEvent(QResizeEvent *event)
 
     if (isIconViewMode())
         updateViewportContentsMargins(itemSizeHint());
+
+    verticalScrollBar()->setFixedHeight(rect().height() - d->statusBar->height() - (d->headerView ? d->headerView->height() : 0));
 }
 
 void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)

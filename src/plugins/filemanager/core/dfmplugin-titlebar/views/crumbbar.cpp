@@ -60,6 +60,7 @@ void IconItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 {
     QStyleOptionViewItem opt = option;
     opt.decorationAlignment = Qt::AlignCenter;
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
     DStyledItemDelegate::paint(painter, opt, index);
 }
 
