@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QLabel>
+#include <DTipLabel>
 
 CheckBoxWithMessage::CheckBoxWithMessage(QWidget *parent)
     : QWidget(parent)
@@ -24,11 +25,7 @@ CheckBoxWithMessage::CheckBoxWithMessage(QWidget *parent)
     hLayout->setContentsMargins(30, 0, 0, 0);
     layout->addLayout(hLayout);
 
-    QPalette paletteText;
-    QColor color("#526A7F");
-    paletteText.setColor(QPalette::Text, color);
-    msgLabel = new QLabel(widget);
-    msgLabel->setPalette(paletteText);
+    msgLabel = new Dtk::Widget::DTipLabel("", widget);
     msgLabel->setWordWrap(true);
     hLayout->addWidget(msgLabel);
 
