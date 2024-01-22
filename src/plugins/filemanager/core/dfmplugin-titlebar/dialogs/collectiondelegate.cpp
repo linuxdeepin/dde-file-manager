@@ -11,12 +11,11 @@
 #include <QDebug>
 
 #include <DListView>
+#include <DPaletteHelper>
 #include <dtkwidget_global.h>
 
-DGUI_USE_NAMESPACE
-
-CollectionDelegate::CollectionDelegate(QObject *parent)
-    : QStyledItemDelegate(parent)
+CollectionDelegate::CollectionDelegate(QAbstractItemView *parent)
+    : DStyledItemDelegate(parent)
 {
 }
 
@@ -31,37 +30,37 @@ QSize CollectionDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInd
 
 void CollectionDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QColor color;
-    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-        color.setRgb(0, 0, 0);
-    else
-        color.setRgb(240, 240, 255);
-    if (index.row() % 2 == 0) {
-        painter->setRenderHints(QPainter::Antialiasing
-                                | QPainter::TextAntialiasing
-                                | QPainter::SmoothPixmapTransform);
-        color.setAlphaF(0.05);
-        painter->setBrush(color);
-        painter->setPen(Qt::NoPen);
-        painter->drawRoundedRect(option.rect, 8, 8);
-    }
-    QStyledItemDelegate::paint(painter, option, index);
-    if (option.state.testFlag(QStyle::State_Selected)) {
-        QRect deleteButton(option.rect.width() - 30, option.rect.topRight().y() + 6, 24, 24);
-        QPixmap px = QIcon(":icons/deepin/builtin/icons/dfm_close_round_normal_24px.svg").pixmap(QSize(24, 24));
-        painter->drawPixmap(deleteButton, px);
-    } else if (option.state.testFlag(QStyle::State_MouseOver)) {
-        painter->setRenderHints(QPainter::Antialiasing
-                                | QPainter::TextAntialiasing
-                                | QPainter::SmoothPixmapTransform);
-        color.setAlphaF(0.1);
-        painter->setBrush(color);
-        painter->setPen(Qt::NoPen);
-        painter->drawRoundedRect(option.rect, 8, 8);
+    DStyledItemDelegate::paint(painter, option, index);
 
-        QRect deleteButton(option.rect.width() - 30, option.rect.topRight().y() + 6, 24, 24);
-        QPixmap px = QIcon(":icons/deepin/builtin/icons/dfm_close_round_normal_24px.svg").pixmap(QSize(24, 24));
-        painter->drawPixmap(deleteButton, px);
+    painter->setRenderHints(QPainter::Antialiasing
+                            | QPainter::TextAntialiasing
+                            | QPainter::SmoothPixmapTransform);
+
+    {   // draw background.
+        QColor color(240, 240, 255);
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+            color.setRgb(0, 0, 0);
+        if (index.row() % 2 == 0) {
+            color.setAlphaF(0.05);
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawRoundedRect(option.rect, 8, 8);
+        }
+        if (option.state.testFlag(QStyle::State_MouseOver)) {
+            color.setAlphaF(0.1);
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawRoundedRect(option.rect, 8, 8);
+        }
+    }
+
+    {   // draw delete button.
+        if (option.state.testFlag(QStyle::State_MouseOver)
+            || option.state.testFlag(QStyle::State_Selected)) {
+            QRect deleteButton(option.rect.width() - 30, option.rect.topRight().y() + 6, 24, 24);
+            static const QPixmap px = QIcon::fromTheme("dfm_close_round_normal").pixmap(QSize(24, 24));
+            painter->drawPixmap(deleteButton, px);
+        }
     }
 }
 
@@ -80,7 +79,7 @@ bool CollectionDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
             }
         }
     }
-    return QStyledItemDelegate::editorEvent(event, model, option, index);
+    return DStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
 QVariant CollectionModel::data(const QModelIndex &index, int role) const

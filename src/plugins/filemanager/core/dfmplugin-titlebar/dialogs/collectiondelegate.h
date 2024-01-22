@@ -7,12 +7,16 @@
 
 #include <QStyledItemDelegate>
 #include <QStringListModel>
+#include <DStyledItemDelegate>
 
-class CollectionDelegate : public QStyledItemDelegate
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
+
+class CollectionDelegate : public DStyledItemDelegate
 {
     Q_OBJECT
 public:
-    CollectionDelegate(QObject *parent = nullptr);
+    CollectionDelegate(QAbstractItemView *parent = nullptr);
     virtual ~CollectionDelegate() override;
     virtual QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override;
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
@@ -30,7 +34,7 @@ class CollectionModel : public QStringListModel
     // QAbstractItemModel interface
 public:
     explicit CollectionModel(QObject *parent)
-        : QStringListModel(parent) { }
+        : QStringListModel(parent) {}
 
     enum {
         kUrlRole = Qt::UserRole + 1,

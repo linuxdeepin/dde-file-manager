@@ -231,13 +231,8 @@ void ConnectToServerDialog::initIfWayland()
 
 void ConnectToServerDialog::updateAddButtonState(bool collected)
 {
-    const QString &theme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType
-            ? "dark"
-            : "light";
-    const QString &iconName = collected ? "collect_cancel" : "collect";
-
-    const QString &iconPath = QString(":icons/deepin/builtin/%1/icons/%2.svg").arg(theme).arg(iconName);
-    theAddButton->setIcon(QIcon(iconPath));
+    const QString &iconName = collected ? "dfm_server_uncollect" : "dfm_server_collect";
+    theAddButton->setIcon(QIcon::fromTheme(iconName));
     theAddButton->setIconSize({ 16, 16 });
     theAddButton->setToolTip(collected ? tr("Unfavorite") : tr("Favorite"));
     isAddState = !collected;
@@ -367,7 +362,7 @@ void ConnectToServerDialog::initializeUi()
     QGridLayout *addressLayout = new QGridLayout();
     // init address area
     {
-        schemeComboBox = new DComboBox();
+        schemeComboBox = new DComboBox(this);
         supportedSchemes << QString("%1://").arg(Scheme::kSmb)
                          << QString("%1://").arg(Scheme::kFtp)
                          << QString("%1://").arg(Scheme::kSFtp);
@@ -380,16 +375,15 @@ void ConnectToServerDialog::initializeUi()
         completer->setCompletionMode(QCompleter::PopupCompletion);
         completer->setMaxVisibleItems(kMaxHistoryItems);
 
-        serverComboBox = new DComboBox();
+        serverComboBox = new DComboBox(this);
         serverComboBox->addItem(tr("Clear History"));
         serverComboBox->setEditable(true);
         serverComboBox->setMaxVisibleItems(kMaxHistoryItems);
         serverComboBox->clearEditText();
         serverComboBox->setCompleter(completer);
 
-        theAddButton = new DIconButton(nullptr);
+        theAddButton = new DIconButton(this);
         theAddButton->setMaximumSize(38, 38);
-        theAddButton->setIcon(QIcon::fromTheme("dfm_add_server"));
         theAddButton->setFlat(false);
         theAddButton->setIconSize({ 16, 16 });
 
