@@ -9,6 +9,8 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QLoggingCategory>
+#include <QDir>
+#include <QDateTime>
 
 Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
@@ -66,6 +68,28 @@ QVariant applicationAttribute(const QString &key)
         }
     }
     return QVariant();
+}
+
+bool backupFile(const QString &sourceFile, const QString &backupDirPath)
+{
+    // 创建备份目录
+    QDir backupDir(backupDirPath);
+    if (!backupDir.exists()) {
+        if (!backupDir.mkpath("."))
+            return false;
+    }
+
+    // 获取源文件名
+    QFileInfo sourceFileInfo(sourceFile);
+    QString sourceFileName { sourceFileInfo.fileName() };
+    QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
+    // 构建备份文件路径
+    QString backupFilePath { backupDirPath + "/" + sourceFileName + "." + timestamp };
+
+    // 备份文件
+    if (!QFile::copy(sourceFile, backupFilePath))
+        return false;
+    return true;
 }
 
 }   // namespace UpgradeUtils

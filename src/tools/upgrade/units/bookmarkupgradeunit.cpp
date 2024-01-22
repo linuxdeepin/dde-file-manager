@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "bookmarkupgradeunit.h"
+#include "utils/upgradeutils.h"
 #include "bookmarkupgrade/defaultitemmanager.h"
+
 #include <dfm-base/base/urlroute.h>
 
 #include <QJsonArray>
@@ -32,6 +34,7 @@ static constexpr char kKeyLocateUrl[] { "locateUrl" };
 static constexpr char kKeyMountPoint[] { "mountPoint" };
 
 static QString kConfigurationPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager.json";
+static QString kBackupDirPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager/old";
 
 QVariantMap BookmarkData::serialize()
 {
@@ -60,6 +63,11 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
 {
     Q_UNUSED(args)
     qCInfo(logToolUpgrade) << "begin upgrade";
+    if (!UpgradeUtils::backupFile(kConfigurationPath, kBackupDirPath))
+        qCWarning(logToolUpgrade) << "backup file" << kConfigurationPath << "to dir: " << kBackupDirPath << "failed";
+    else
+        qCInfo(logToolUpgrade) << "backup file" << kConfigurationPath << "to dir: " << kBackupDirPath << "success";
+
     QFile file(kConfigurationPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;
