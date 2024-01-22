@@ -35,15 +35,39 @@ QString SmbShareFileInfo::nameOf(const NameInfoType type) const
 
 QString SmbShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (url.toString() == QString("%1:/").arg(Global::Scheme::kNetwork))
-        return QObject::tr("Computers in LAN");
-    if (DisPlayInfoType::kFileDisplayName == type)
+    bool isNetworkRoot = url.scheme() == Global::Scheme::kNetwork
+            && url.path() == "/";
+    bool isSmbRoot = url.scheme() == Global::Scheme::kSmb
+            && url.path().isEmpty();
+
+    if (DisPlayInfoType::kFileDisplayName == type) {
+        if (isNetworkRoot)
+            return QObject::tr("Computers in LAN");
+
+        if (isSmbRoot)
+            return QObject::tr("Shared directories on %1").arg(url.host());
+
         return d->fileName();
+    }
+
+    if (DisPlayInfoType::kMimeTypeDisplayName == type)
+        return QObject::tr("Network shared directory");
+
     return FileInfo::displayOf(type);
 }
 
 QIcon SmbShareFileInfo::fileIcon()
 {
+    bool isNetworkRoot = url.scheme() == Global::Scheme::kNetwork
+            && url.path() == "/";
+    bool isSmbRoot = url.scheme() == Global::Scheme::kSmb
+            && url.path().isEmpty();
+
+    if (isNetworkRoot)
+        return QIcon::fromTheme("network-workgroup");
+    if (isSmbRoot)
+        return QIcon::fromTheme("network-server");
+
     return QIcon::fromTheme(d->node.iconType);
 }
 
