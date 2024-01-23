@@ -75,8 +75,12 @@ void OptionButtonBoxPrivate::switchMode(ViewMode mode)
 
 void OptionButtonBoxPrivate::onViewModeChanged(int mode)
 {
-    auto viewMode = static_cast<ViewMode>(mode);
-    switchMode(viewMode);
+    if (Application::appObtuselySetting()->value("FileViewState", currentUrl).toMap().contains("viewMode")) {
+        loadViewMode(currentUrl);
+    } else {
+        auto viewMode = static_cast<ViewMode>(mode);
+        switchMode(viewMode);
+    }
 }
 
 DToolButton *OptionButtonBox::detailButton() const
@@ -131,6 +135,8 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->iconViewButton->setHidden(false);
         d->detailButton->setHidden(false);
     }
+
+    d->currentUrl = url;
 }
 
 void OptionButtonBox::initializeUi()
