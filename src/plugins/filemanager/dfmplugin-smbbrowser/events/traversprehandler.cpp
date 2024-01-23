@@ -43,6 +43,26 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
         isSmb = true;
     }
 
+    // fix 237183
+    QString origUrl;
+    auto host = url.host();
+    if (host.contains("xn--")) {   // xn--0zwm56d (测试)
+        int dotAppended = 0;
+        if (!host.endsWith("."))
+            host += ".", dotAppended = 1;   // without this dot, cannot decoded by punycode. qurlidna.cpp::qt_ACE_do()
+        QUrl u = QUrl::fromUserInput(host);   // 'http://' is auto prepended. (http://xn--0zwm56d.)
+        auto punyDecodedHost = u.host().chopped(dotAppended);
+        origUrl = url.toString().replace(url.host(), punyDecodedHost);   // got the original url (smb://测试/)
+    }
+
+    auto onMountFailed = [url, origUrl](const dfmmount::OperationErrorInfo &err) {
+        DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+        // remove from history when mount failed.
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
+        if (!origUrl.isEmpty())
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", origUrl);
+    };
+
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
         fmInfo() << "mount done: " << url << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
@@ -50,9 +70,7 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
-            DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
-            // remove from history when mount failed.
-            dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
+            onMountFailed(err);
         }
     });
 }
