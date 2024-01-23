@@ -8,6 +8,7 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
@@ -45,13 +46,13 @@ QString SmbShareFileInfo::displayOf(const DisPlayInfoType type) const
             return QObject::tr("Computers in LAN");
 
         if (isSmbRoot)
-            return QObject::tr("Shared directories on %1").arg(url.host());
+            return url.host();
 
         return d->fileName();
     }
 
     if (DisPlayInfoType::kMimeTypeDisplayName == type)
-        return QObject::tr("Network shared directory");
+        return MimeTypeDisplayManager::instance()->displayName("inode/directory");
 
     return FileInfo::displayOf(type);
 }
