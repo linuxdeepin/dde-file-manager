@@ -19,6 +19,8 @@ public:
 
 protected:
     void setProxy(const FileInfoPointer &proxy);
+    void setNotifyUrl(const QUrl &url, const QString &token);
+    void removeNotifyUrl(const QUrl &url, const QString &token);
     FileInfoPointer proxy { nullptr };
 
     // AbstractFileInfo interface
