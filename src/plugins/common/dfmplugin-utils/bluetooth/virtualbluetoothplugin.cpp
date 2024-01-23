@@ -8,11 +8,17 @@
 
 #include <dfm-base/utils/dialogmanager.h>
 
+#include <QTimer>
+
 using namespace dfmplugin_utils;
 
 void VirtualBluetoothPlugin::initialize()
 {
-    //    BluetoothManager::instance();
+    QTimer::singleShot(1000, this, [] {
+        fmInfo() << "start initialize bluetooth manager";
+        BluetoothManager::instance();
+        fmInfo() << "end initialize bluetooth manager";
+    });
 
     dpfSlotChannel->connect("dfmplugin_utils", "slot_Bluetooth_IsAvailable", this, &VirtualBluetoothPlugin::bluetoothAvailable);
     dpfSlotChannel->connect("dfmplugin_utils", "slot_Bluetooth_SendFiles", this, &VirtualBluetoothPlugin::sendFiles);
