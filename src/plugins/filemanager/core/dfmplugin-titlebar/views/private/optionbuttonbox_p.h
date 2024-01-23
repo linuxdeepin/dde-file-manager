@@ -48,6 +48,7 @@ private:
     QHBoxLayout *hBoxLayout { nullptr };
 
     ViewMode currentMode { ViewMode::kIconMode };
+    QUrl currentUrl;
 };
 }   // namespace dfmplugin_titlebar
 
