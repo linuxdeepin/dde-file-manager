@@ -17,9 +17,7 @@ ProxyFileInfo::ProxyFileInfo(const QUrl &url)
 
 ProxyFileInfo::~ProxyFileInfo()
 {
-    auto asyncInfo = this->proxy.dynamicCast<AsyncFileInfo>();
-    if (asyncInfo)
-        asyncInfo->removeNotifyUrl(url, QString::number(quintptr(this), 16));
+    removeNotifyUrl(url, QString::number(quintptr(this), 16));
 }
 
 QUrl ProxyFileInfo::fileUrl() const
@@ -43,10 +41,40 @@ void ProxyFileInfo::refresh()
 
 void ProxyFileInfo::setProxy(const FileInfoPointer &proxy)
 {
+    if (proxy.isNull())
+        return;
     this->proxy = proxy;
-    auto asyncInfo = this->proxy.dynamicCast<AsyncFileInfo>();
-    if (asyncInfo)
-        asyncInfo->setNotifyUrl(url, QString::number(quintptr(this), 16));
+    setNotifyUrl(url, QString::number(quintptr(this), 16));
+}
+
+void ProxyFileInfo::setNotifyUrl(const QUrl &url, const QString &token)
+{
+    if (proxy.isNull())
+        return;
+    auto tproxy = proxy.dynamicCast<ProxyFileInfo>();
+    if (!tproxy.isNull()) {
+        tproxy->setNotifyUrl(url, token);
+        return;
+    }
+    auto async = proxy.dynamicCast<AsyncFileInfo>();
+    if (async.isNull())
+        return;
+    async->setNotifyUrl(url, token);
+}
+
+void ProxyFileInfo::removeNotifyUrl(const QUrl &url, const QString &token)
+{
+    if (proxy.isNull())
+        return;
+    auto tproxy = proxy.dynamicCast<ProxyFileInfo>();
+    if (!tproxy.isNull()) {
+        tproxy->removeNotifyUrl(url, token);
+        return;
+    }
+    auto async = proxy.dynamicCast<AsyncFileInfo>();
+    if (async.isNull())
+        return;
+    async->removeNotifyUrl(url, token);
 }
 
 QString dfmbase::ProxyFileInfo::filePath() const
