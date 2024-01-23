@@ -83,7 +83,7 @@ void VaultRemovePages::showPasswordWidget()
     QStringList btns = passwordView->btnText();
     if (btns.size() > 1) {
         addButton(btns[0], false);
-        addButton(btns[1], true, ButtonType::ButtonRecommend);
+        addButton(btns[1], true, ButtonType::ButtonWarning);
     }
     connect(passwordView, &VaultRemoveByPasswordView::signalJump, this, &VaultRemovePages::pageSelect);
     connect(passwordView, &VaultRemoveByPasswordView::sigCloseDialog, this, &VaultRemovePages::close);
@@ -100,7 +100,7 @@ void VaultRemovePages::showRecoveryKeyWidget()
     QStringList btns = recoverykeyView->btnText();
     if (btns.size() > 1) {
         addButton(btns[0], false);
-        addButton(btns[1], true, ButtonType::ButtonRecommend);
+        addButton(btns[1], true, ButtonType::ButtonWarning);
     }
     connect(recoverykeyView, &VaultRemoveByRecoverykeyView::signalJump, this, &VaultRemovePages::pageSelect);
     connect(recoverykeyView, &VaultRemoveByRecoverykeyView::sigCloseDialog, this, &VaultRemovePages::close);
@@ -139,7 +139,7 @@ void VaultRemovePages::showNodeWidget()
     QStringList btns = noneWidget->btnText();
     if (btns.size() > 1) {
         addButton(btns[0], false);
-        addButton(btns[1], true, ButtonType::ButtonRecommend);
+        addButton(btns[1], true, ButtonType::ButtonWarning);
     }
 
     connect(noneWidget, &VaultRemoveByNoneWidget::closeDialog, this, &VaultRemovePages::close);
