@@ -221,14 +221,25 @@ QByteArray ThumbnailHelper::dataToMd5Hex(const QByteArray &data)
 
 bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
 {
-    bool isLocalDevice = FileUtils::isLocalDevice(url);
-    bool isCdRomDevice = FileUtils::isCdRomDevice(url);
+    QUrl fileUrl { url };
+    if (UrlRoute::isVirtual(fileUrl)) {
+        auto info { InfoFactory::create<FileInfo>(fileUrl) };
+        if (!info || !info->exists())
+            return false;
+
+        fileUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kAbsoluteFilePath));
+        if (!fileUrl.isLocalFile())
+            return false;
+    }
+
+    bool isLocalDevice = FileUtils::isLocalDevice(fileUrl);
+    bool isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
     bool enable = isLocalDevice && !isCdRomDevice;
 
     if (!enable) {
-        if (FileUtils::isMtpFile(url)) {
+        if (FileUtils::isMtpFile(fileUrl)) {
             enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
-        } else if (DevProxyMng->isFileOfExternalBlockMounts(url.path())) {
+        } else if (DevProxyMng->isFileOfExternalBlockMounts(fileUrl.path())) {
             enable = true;
         } else {
             enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
@@ -238,6 +249,6 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
     if (!enable)
         return false;
 
-    const QMimeType &mime = mimeDatabase.mimeTypeForFile(url);
+    const QMimeType &mime = mimeDatabase.mimeTypeForFile(fileUrl);
     return checkMimeTypeSupport(mime);
 }
