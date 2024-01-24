@@ -22,6 +22,7 @@ public:
 
 private:
     SendToMenuScene *q;
+    bool dirSelected { false };
 
     QMultiHash<QString, QString> selectSupportActions;
 };

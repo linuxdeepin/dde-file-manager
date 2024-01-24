@@ -58,6 +58,12 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
+    d->dirSelected = std::any_of(d->selectFiles.cbegin(), d->selectFiles.cend(),
+                                 [](auto url) {
+                                     auto file = InfoFactory::create<FileInfo>(url);
+                                     return file && file->isAttributes(OptInfoType::kIsDir);
+                                 });
+
     const QVariantHash &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
     d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
@@ -108,7 +114,7 @@ bool SendToMenuScene::create(QMenu *parent)
         if (bluetoothAvailable) {
             auto *act = menuSendTo->addAction(d->predicateName[ActionID::kSendToBluetooth]);
             act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
-            if (d->focusFileInfo && d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
+            if (d->dirSelected)
                 act->setEnabled(false);
             d->predicateAction[ActionID::kSendToBluetooth] = act;
             hasTargetItem = true;
