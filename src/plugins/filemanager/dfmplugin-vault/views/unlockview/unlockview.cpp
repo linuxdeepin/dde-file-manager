@@ -211,7 +211,7 @@ void UnlockView::onVaultUlocked(int state)
             dialog.exec();
         } else {
             //! error tips
-            QString errMsg = tr("Failed to unlock file vault");
+            QString errMsg = tr("Failed to unlock file vault, error code is %1").arg(state);
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.setTitle(errMsg);
