@@ -182,10 +182,16 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
                                                 const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    bool ok = false;
+    bool ok = false, renameDesktop = true;
     switch (type) {
     case RenameTypes::kBatchRepalce: {
-        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchReplaceText(urls, pair);
+        auto tmpurls = urls;
+        QMap<QUrl, QUrl> needDealUrls;
+        renameDesktop = doRenameDesktopFiles(tmpurls, pair, needDealUrls, successUrls);
+        QMap<QUrl, QUrl> needDealUrls1 = FileUtils::fileBatchReplaceText(tmpurls, pair);
+        for (auto it = needDealUrls1.begin(); it != needDealUrls1.end();++it) {
+            needDealUrls.insert(it.key(), it.value());
+        }
         if (callback) {
             AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
             args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
@@ -194,7 +200,10 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
             args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callback(args);
         }
-        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
+
+        if (needDealUrls1.isEmpty() || !renameDesktop)
+            return false;
+        ok = fileHandler.renameFilesBatch(needDealUrls1, successUrls);
         break;
     }
     case RenameTypes::kBatchCustom: {
@@ -280,6 +289,57 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
     }
 
     return false;
+}
+
+bool FileOperationsEventReceiver::doRenameDesktopFiles(QList<QUrl> &urls, const QPair<QString, QString> pair, QMap<QUrl, QUrl> &needDealUrls, QMap<QUrl, QUrl> &successUrls)
+{
+    for (auto it = urls.begin(); it != urls.end();) {
+        auto oldUrl = *it;
+        if (!FileUtils::isDesktopFile(oldUrl)) {
+            it++;
+            continue;
+        }
+        const QString &desktopPath = oldUrl.toLocalFile();
+        Properties desktop(desktopPath, "Desktop Entry");
+        static const QString kLocale = QLocale::system().name();
+        static const QString kLocaleNameTemplate = QString("Name[%1]");
+
+        auto localeName = kLocaleNameTemplate.arg(kLocale);
+
+        QString key;   // to find the present displaying Name
+        if (desktop.contains(localeName)) {
+            key = localeName;
+        } else {
+            auto splittedLocale = kLocale.trimmed().split("_");
+            if (splittedLocale.isEmpty()) {
+                key = "Name";
+            } else {
+                localeName = kLocaleNameTemplate.arg(splittedLocale.first());
+                key = desktop.contains(localeName) ? localeName : "Name";
+            }
+        }
+        FileInfoPointer oldFileInfo = InfoFactory::create<FileInfo>(oldUrl);
+        const QString &oldName = oldFileInfo->displayOf(DisPlayInfoType::kFileDisplayName);
+        auto newUrl = oldUrl;
+        auto newName = oldName;
+        newName = newName.replace(pair.first, pair.second);
+        newUrl.setPath(UrlRoute::urlParent(oldUrl).path() + QDir::separator() + newName);
+        needDealUrls.insert(oldUrl, newUrl);
+        if (newName == oldName) {
+            it = urls.erase(it);
+            continue;
+        }
+
+        desktop.set(key, newName);
+        desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
+        if (!desktop.save(desktopPath, "Desktop Entry")) {
+            return false;
+        }
+        successUrls.insert(oldUrl, newUrl);
+        it = urls.erase(it);
+    }
+
+    return true;
 }
 
 JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,

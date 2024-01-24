@@ -43,7 +43,7 @@ public:
     QMutex mutex;
     QReadWriteLock iconLock;
     QIcon fileIcon;
-    QVariant isLocalDevice;
+    QVariant isLocalDevice = true;
     QVariant isCdRomDevice;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };

@@ -213,6 +213,10 @@ private:
                              const QUrl oldUrl,
                              const QUrl newUrl,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool doRenameDesktopFiles(QList<QUrl> &urls,
+                              const QPair<QString, QString> pair,
+                              QMap<QUrl, QUrl> &needDealUrls,
+                              QMap<QUrl, QUrl> &successUrls);
 
     JobHandlePointer doCopyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback callbaskHandle);

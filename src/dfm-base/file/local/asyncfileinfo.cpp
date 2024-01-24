@@ -218,8 +218,10 @@ bool AsyncFileInfo::canAttributes(const CanableInfoType type) const
 QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
-    case FileExtendedInfoType::kFileLocalDevice:
-        return d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice).toBool();
+    case FileExtendedInfoType::kFileLocalDevice: {
+        auto local = d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice);
+        return local.isValid() ? local : false;
+    }
     case FileExtendedInfoType::kFileCdRomDevice:
         return d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsCdRomDevice).toBool();
     case FileExtendedInfoType::kSizeFormat:
