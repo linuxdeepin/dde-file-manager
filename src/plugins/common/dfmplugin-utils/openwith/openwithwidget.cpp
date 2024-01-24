@@ -7,6 +7,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
 
+#include <DRadioButton>
+
 #include <QCheckBox>
 #include <QVBoxLayout>
 
@@ -78,7 +80,7 @@ void OpenWithWidget::slotExpandChange(bool state)
 
             QListWidgetItem *item = new QListWidgetItem;
 
-            QCheckBox *itemBox = new QCheckBox(desktopInfo.desktopDisplayName());
+            DRadioButton *itemBox = new DRadioButton(desktopInfo.desktopDisplayName());
             itemBox->setObjectName("OpenWithItem");
             itemBox->setIcon(QIcon::fromTheme(desktopInfo.desktopIcon()));
             itemBox->setIconSize(QSize(16, 16));
