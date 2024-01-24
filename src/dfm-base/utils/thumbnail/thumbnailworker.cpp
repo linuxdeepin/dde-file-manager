@@ -167,16 +167,6 @@ void ThumbnailWorker::onTaskAdded(const ThumbnailTaskMap &taskMap)
     while (iter.hasNext()) {
         iter.next();
         QUrl fileUrl = d->originalUrl = iter.key();
-        if (UrlRoute::isVirtual(fileUrl)) {
-            auto info { InfoFactory::create<FileInfo>(fileUrl) };
-            if (!info || !info->exists())
-                continue;
-
-            fileUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kAbsoluteFilePath));
-            if (!fileUrl.isLocalFile())
-                continue;
-        }
-
         if (!d->thumbHelper.checkThumbEnable(fileUrl))
             continue;
 
