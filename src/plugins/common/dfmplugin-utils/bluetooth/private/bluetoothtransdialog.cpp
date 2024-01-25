@@ -47,6 +47,7 @@
 #define TXT_FILE_OVERSIZ dfmplugin_utils::BluetoothTransDialog::tr("Unable to send the file more than 2 GB")
 #define TXT_FILE_ZEROSIZ dfmplugin_utils::BluetoothTransDialog::tr("Unable to send 0 KB files")
 #define TXT_FILE_NOEXIST dfmplugin_utils::BluetoothTransDialog::tr("File doesn't exist")
+#define TXT_DIR_SELECTED dfmplugin_utils::BluetoothTransDialog::tr("Transferring folders is not supported")
 
 #define TXT_NEXT dfmplugin_utils::BluetoothTransDialog::tr("Next", "button")
 #define TXT_CANC dfmplugin_utils::BluetoothTransDialog::tr("Cancel", "button")
@@ -324,7 +325,7 @@ void BluetoothTransDialog::initConn()
         stackedWidget->setCurrentIndex(kFailedPage);
         BluetoothManagerInstance->cancelTransfer(sessionPath);
         fmDebug() << "filePath: " << filePath
-                 << "\nerrorMsg: " << errMsg;
+                  << "\nerrorMsg: " << errMsg;
     });
 
     connect(BluetoothManagerInstance, &BluetoothManager::fileTransferFinished, this, [this](const QString &sessionPath, const QString &filePath) {
@@ -708,14 +709,18 @@ void BluetoothTransDialog::sendFiles()
         }
 
         if (!info->exists()) {
-            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgErr, TXT_FILE_NOEXIST, "", TXT_OKAY);
             close();   // 与产品经理沟通后，为避免文件不存在时的retry可能引起的一系列问题，当用户点击retry的确认时，直接终止流程
+            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgErr, TXT_FILE_NOEXIST, "", TXT_OKAY);
             return;
         } else if (info->size() > kFileTransferSizeLimits) {
             DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgInfo, TXT_FILE_OVERSIZ, "", TXT_OKAY);
             return;
         } else if (info->size() == 0) {
             DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgInfo, TXT_FILE_ZEROSIZ, "", TXT_OKAY);
+            return;
+        } else if (info->isAttributes(dfmbase::OptInfoType::kIsDir)) {
+            close();   // 与产品经理沟通后，为避免文件不存在时的retry可能引起的一系列问题，当用户点击retry的确认时，直接终止流程
+            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgErr, TXT_DIR_SELECTED, "", TXT_OKAY);
             return;
         }
     }
