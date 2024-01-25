@@ -76,7 +76,7 @@ inline constexpr int kMinMoveLenght { 3 };
 inline constexpr int kIconHorizontalMargin { 15 };   // 水平Margin的宽度
 inline constexpr int kCompactIconHorizontalMargin { 10 };
 inline constexpr int kIconVerticalTopMargin { 15 };   // 水平Margin的宽度
-inline constexpr int kCompactIconVerticalTopMargin { 0 };
+inline constexpr int kCompactIconVerticalTopMargin { 10 };
 inline constexpr int kTreeItemIndent { 17 };
 inline constexpr int kTreeExpandArrowWidth { 20 };
 inline constexpr int kTreeExpandArrowHeight { 20 };
