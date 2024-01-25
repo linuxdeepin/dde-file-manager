@@ -33,7 +33,7 @@ void SmbBrowser::initialize()
     UrlRoute::regScheme(Global::Scheme::kSmb, "/", smb_browser_utils::icon(), true);
     UrlRoute::regScheme(Global::Scheme::kFtp, "/", smb_browser_utils::icon(), true);
     UrlRoute::regScheme(Global::Scheme::kSFtp, "/", smb_browser_utils::icon(), true);
-    UrlRoute::regScheme(smb_browser_utils::networkScheme(), "/", smb_browser_utils::icon(), true, tr("Computer in LAN"));
+    UrlRoute::regScheme(smb_browser_utils::networkScheme(), "/", smb_browser_utils::icon(), true);
 
     InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kSmb);
     DirIteratorFactory::regClass<SmbShareIterator>(Global::Scheme::kSmb);
