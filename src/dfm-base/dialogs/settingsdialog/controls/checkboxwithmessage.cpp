@@ -26,6 +26,7 @@ CheckBoxWithMessage::CheckBoxWithMessage(QWidget *parent)
     layout->addLayout(hLayout);
 
     msgLabel = new Dtk::Widget::DTipLabel("", widget);
+    msgLabel->setAlignment(Qt::AlignLeft);
     msgLabel->setWordWrap(true);
     hLayout->addWidget(msgLabel);
 
