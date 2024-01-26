@@ -9,6 +9,7 @@
 
 #include <dtkwidget_global.h>
 #include <dcrumbedit.h>
+#include <DFrame>
 
 #include <QFrame>
 #include <QSharedPointer>
@@ -21,7 +22,7 @@ namespace dfmplugin_tag {
 
 class TagColorListWidget;
 class TagWidgetPrivate;
-class TagWidget : public QFrame
+class TagWidget : public DTK_WIDGET_NAMESPACE::DFrame
 {
     Q_OBJECT
 public:

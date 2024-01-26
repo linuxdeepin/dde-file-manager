@@ -17,7 +17,7 @@
 using namespace dfmplugin_tag;
 
 TagWidget::TagWidget(QUrl url, QWidget *parent)
-    : QFrame(parent),
+    : DFrame(parent),
       d(new TagWidgetPrivate(this, url))
 {
     d->initializeUI();
