@@ -68,7 +68,6 @@ void FilePropertyDialog::initInfoUI()
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
     scrollWidgetLayout->setContentsMargins(10, 0, 10, 30);
     scrollWidgetLayout->setSpacing(kArrowExpandSpacing);
-    scrollWidgetLayout->addStretch();
     mainWidget->setLayout(scrollWidgetLayout);
 
     scrollArea->setWidget(mainWidget);
@@ -114,6 +113,11 @@ void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url)
     permissionManagerWidget->selectFileUrl(url);
 
     insertExtendedControl(INT_MAX, permissionManagerWidget);
+
+    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
+    if (vlayout) {
+        vlayout->addStretch();
+    }
 }
 
 void FilePropertyDialog::filterControlView()
@@ -128,7 +132,9 @@ void FilePropertyDialog::filterControlView()
     }
 
     if ((controlFilter & PropertyFilterType::kPermission) < 1) {
-        createPermissionManagerWidget(currentFileUrl);
+        showPermission = true;
+    } else {
+        showPermission = false;
     }
 }
 
@@ -275,6 +281,10 @@ void FilePropertyDialog::resizeEvent(QResizeEvent *event)
 
 void FilePropertyDialog::showEvent(QShowEvent *event)
 {
+    if (showPermission) {
+        createPermissionManagerWidget(currentFileUrl);
+    }
+
     DDialog::showEvent(event);
 }
 

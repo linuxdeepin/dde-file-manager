@@ -80,6 +80,7 @@ private:
     int extendedHeight { 0 };
     DTK_WIDGET_NAMESPACE::DPlatformWindowHandle *platformWindowHandle { nullptr };
     FileInfoPointer currentInfo{ nullptr };
+    bool showPermission { true };
 };
 }
 #endif   // FILEPROPERTYVIEW_H
