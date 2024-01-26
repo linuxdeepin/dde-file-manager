@@ -116,10 +116,20 @@ bool WindowFrame::init()
 QList<QWidget *> WindowFrame::rootWindows() const
 {
     QList<QWidget *> ret;
+    QList<QString> appended;
+    auto scs = ddplugin_desktop_util::screenProxyLogicScreens();
+
     QReadLocker lk(&d->locker);
-    for (ScreenPointer s : ddplugin_desktop_util::screenProxyLogicScreens()) {
-        if (auto win = d->windows.value(s->name()))
+    for (ScreenPointer s : scs) {
+        if (appended.contains(s->name())) {
+            fmCritical() << "Duplicate name screen" << s->name()
+                        << s->geometry() << "appended" << appended;
+            continue;
+        }
+        if (auto win = d->windows.value(s->name())) {
             ret << win.get();
+            appended << s->name();
+        }
     }
 
     return ret;
