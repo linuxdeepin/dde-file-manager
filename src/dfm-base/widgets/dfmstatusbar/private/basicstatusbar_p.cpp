@@ -5,6 +5,7 @@
 #include "basicstatusbar_p.h"
 #include "widgets/dfmstatusbar/basicstatusbar.h"
 
+#include <DHorizontalLine>
 #include <DAnchors>
 
 #include <QLabel>
@@ -42,8 +43,17 @@ void BasicStatusBarPrivate::initTipLabel()
 
 void BasicStatusBarPrivate::initLayout()
 {
-    layout = new QHBoxLayout(q);
-    q->setLayout(layout);
+    q->setContentsMargins(0, 0, 0, 0);
+    auto vLayout = new QVBoxLayout(q);
+    vLayout->setMargin(0);
+    vLayout->setSpacing(0);
+    auto line = new DTK_WIDGET_NAMESPACE::DHorizontalLine(q);
+    line->setContentsMargins(0, 0, 0, 0);
+    line->setFixedHeight(1);
+    vLayout->addWidget(line);
+
+    layout = new QHBoxLayout;
+    vLayout->addLayout(layout);
 
     q->clearLayoutAndAnchors();
     layout->addWidget(tip);

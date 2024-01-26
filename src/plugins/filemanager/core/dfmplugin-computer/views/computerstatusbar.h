@@ -16,9 +16,6 @@ public:
         : DFMBASE_NAMESPACE::BasicStatusBar(parent) {}
 
     void showSingleSelectionMessage();
-
-protected:
-    void paintEvent(QPaintEvent *);
 };
 }
 
