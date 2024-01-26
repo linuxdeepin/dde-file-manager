@@ -31,7 +31,6 @@ public:
 
 protected:
     void clearLayoutAndAnchors() override;
-    void paintEvent(QPaintEvent *) override;
 
 private:
     void initScalingSlider();
