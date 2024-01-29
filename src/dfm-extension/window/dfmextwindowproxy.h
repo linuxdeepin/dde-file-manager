@@ -6,8 +6,10 @@
 #define DFMEXTWINDOWPROXY_H
 
 #include <dfm-extension/dfm-extension-global.h>
+
 #include <string>
 #include <vector>
+#include <cstdint>
 
 BEGEN_DFMEXT_NAMESPACE
 
