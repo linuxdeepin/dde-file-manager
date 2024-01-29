@@ -40,10 +40,10 @@ static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
 
 static void initLog()
 {
-    dpfLogManager->applySuggestedLogSettings();
 #ifdef DTKCORE_CLASS_DConfigFile
     LoggerRules::instance().initLoggerRules();
 #endif
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static void initEnv()
