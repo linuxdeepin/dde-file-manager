@@ -232,18 +232,11 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
             return false;
     }
 
-    bool isLocalDevice = FileUtils::isLocalDevice(fileUrl);
-    bool isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
-    bool enable = isLocalDevice && !isCdRomDevice;
-
-    if (!enable) {
-        if (FileUtils::isMtpFile(fileUrl)) {
-            enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
-        } else if (DevProxyMng->isFileOfExternalBlockMounts(fileUrl.path())) {
-            enable = true;
-        } else {
-            enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
-        }
+    bool enable{ true };
+    if (FileUtils::isMtpFile(fileUrl)) { // 是否是mtpfile
+        enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
+    } else if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) { // 是否是协议设备
+        enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
     }
 
     if (!enable)
