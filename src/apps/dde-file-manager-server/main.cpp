@@ -37,10 +37,10 @@ DCORE_USE_NAMESPACE
 
 static void initLog()
 {
-    dpfLogManager->applySuggestedLogSettings();
 #ifdef DTKCORE_CLASS_DConfigFile
     LoggerRules::instance().initLoggerRules();
 #endif
+    dpfLogManager->applySuggestedLogSettings();
 }
 
 static bool pluginsLoad()
