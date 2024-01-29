@@ -55,6 +55,7 @@ public:
 
     void startInitializePlugins();
     void startMonitorPlugins();
+    void restartDesktop(const QUrl &url);
 
 Q_SIGNALS:
     void startInitialize(const QStringList &paths);

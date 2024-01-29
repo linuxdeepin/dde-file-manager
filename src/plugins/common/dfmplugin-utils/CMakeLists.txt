@@ -4,6 +4,11 @@ project(dfmplugin-utils)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+configure_file(
+    "./config.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+    )
+
 FILE(GLOB_RECURSE UTILS_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"

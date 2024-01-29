@@ -11,6 +11,10 @@ file(GLOB_RECURSE UT_CXX_FILE
 file(GLOB_RECURSE SRC_FILES
     FILES_MATCHING PATTERN "${PluginPath}/*.cpp" "${PluginPath}/*.h"
     )
+configure_file(
+    "./config.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+    )
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
