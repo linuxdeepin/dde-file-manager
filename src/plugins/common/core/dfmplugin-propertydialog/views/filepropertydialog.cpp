@@ -74,6 +74,8 @@ void FilePropertyDialog::initInfoUI()
 
     QVBoxLayout *vlayout1 = new QVBoxLayout;
     vlayout1->addWidget(scrollArea);
+    vlayout1->setContentsMargins(0, 0, 0, 0);
+    vlayout1->setMargin(0);
     QVBoxLayout *widgetlayout = qobject_cast<QVBoxLayout *>(this->layout());
     widgetlayout->addLayout(vlayout1, 1);
 }
@@ -90,13 +92,12 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
     connect(editStackWidget, &EditStackedWidget::selectUrlRenamed, this, &FilePropertyDialog::onSelectUrlRenamed);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(10, 0, 10, 0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->addWidget(fileIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout->addWidget(editStackWidget, 1, Qt::AlignHCenter | Qt::AlignTop);
 
     QFrame *frame = new QFrame(this);
     frame->setLayout(vlayout);
-
     addContent(frame);
 }
 
