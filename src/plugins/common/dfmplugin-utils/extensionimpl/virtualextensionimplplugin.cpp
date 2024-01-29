@@ -21,6 +21,7 @@ void VirtualExtensionImplPlugin::initialize()
 {
     auto manager = &ExtensionPluginManager::instance();   // run in main thread
     connect(manager, &ExtensionPluginManager::requestInitlaizePlugins, manager, &ExtensionPluginManager::onLoadingPlugins);
+    ExtensionEmblemManager::instance().initialize();
     ExtensionWindowsManager::instance().initialize();
 
     followEvents();

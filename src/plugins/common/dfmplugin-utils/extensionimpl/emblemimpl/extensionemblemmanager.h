@@ -20,6 +20,7 @@ class ExtensionEmblemManager : public QObject
 
 public:
     static ExtensionEmblemManager &instance();
+    void initialize();
 
 Q_SIGNALS:
     void requestFetchEmblemIcon(const QList<QPair<QString, int>> &localPaths);

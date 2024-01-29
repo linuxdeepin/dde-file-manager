@@ -248,6 +248,22 @@ ExtensionEmblemManager &ExtensionEmblemManager::instance()
     return ins;
 }
 
+void ExtensionEmblemManager::initialize()
+{
+    Q_D(ExtensionEmblemManager);
+
+    qRegisterMetaType<QList<QPair<QString, int>>>();
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &ExtensionEmblemManager::onUrlChanged);
+
+    connect(&ExtensionPluginManager::instance(), &ExtensionPluginManager::allPluginsInitialized, this, &ExtensionEmblemManager::onAllPluginsInitialized);
+    connect(&d->readyTimer, &QTimer::timeout, this, [this, d]() {
+        if (d->readyFlag) {
+            emit requestFetchEmblemIcon(d->readyLocalPaths);
+            d->clearReadyLocalPath();   // for update
+        }
+    });
+}
+
 bool ExtensionEmblemManager::onFetchCustomEmblems(const QUrl &url, QList<QIcon> *emblems)
 {
     Q_ASSERT(emblems);
@@ -350,18 +366,6 @@ bool ExtensionEmblemManager::onUrlChanged(quint64 windowId, const QUrl &url)
 ExtensionEmblemManager::ExtensionEmblemManager(QObject *parent)
     : QObject(parent), d_ptr(new ExtensionEmblemManagerPrivate(this))
 {
-    Q_D(ExtensionEmblemManager);
-
-    qRegisterMetaType<QList<QPair<QString, int>>>();
-    dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &ExtensionEmblemManager::onUrlChanged);
-
-    connect(&ExtensionPluginManager::instance(), &ExtensionPluginManager::allPluginsInitialized, this, &ExtensionEmblemManager::onAllPluginsInitialized);
-    connect(&d->readyTimer, &QTimer::timeout, this, [this, d]() {
-        if (d->readyFlag) {
-            emit requestFetchEmblemIcon(d->readyLocalPaths);
-            d->clearReadyLocalPath();   // for update
-        }
-    });
 }
 
 ExtensionEmblemManager::~ExtensionEmblemManager()
