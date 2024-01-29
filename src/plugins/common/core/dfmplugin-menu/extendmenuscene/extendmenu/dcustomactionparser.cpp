@@ -7,7 +7,6 @@
 #include <QDir>
 #include <QDebug>
 #include <QSettings>
-#include <QFileSystemWatcher>
 #include <QApplication>
 #include <QThread>
 

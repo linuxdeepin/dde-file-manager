@@ -13,6 +13,7 @@
 #include <mutex>
 
 DPUTILS_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 void ExtensionPluginInitWorker::doWork(const QStringList &paths)
 {
@@ -123,7 +124,28 @@ void ExtensionPluginManagerPrivate::startInitializePlugins()
 
 void ExtensionPluginManagerPrivate::startMonitorPlugins()
 {
-    // TODO(zhangs): load plugin when running
+    // Watcher must init in main thread!
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    if (qApp->applicationName() != "dde-desktop")
+        return;
+    extPluginsPathWatcher = WatcherFactory::create<AbstractFileWatcher>(
+            QUrl::fromLocalFile(defaultPluginPath));
+    if (!extPluginsPathWatcher)
+        return;
+    connect(extPluginsPathWatcher.data(), &AbstractFileWatcher::subfileCreated,
+            this, [](const QUrl &url) {
+                fmWarning() << "Extension plugins path add: " << url;
+            });
+    connect(extPluginsPathWatcher.data(), &AbstractFileWatcher::fileRename,
+            this, [](const QUrl &oldUrl, const QUrl &newUrl) {
+                fmWarning() << "Extension plugins path rename: " << oldUrl << newUrl;
+            });
+    connect(extPluginsPathWatcher.data(), &AbstractFileWatcher::fileDeleted,
+            this, [](const QUrl &url) {
+                fmWarning() << "Extension plugins path remove: " << url;
+            });
+    fmInfo() << "Monitor extension plugins path: " << defaultPluginPath;
+    extPluginsPathWatcher->startWatcher();
 }
 
 ExtensionPluginManager &ExtensionPluginManager::instance()

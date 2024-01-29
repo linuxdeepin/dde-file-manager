@@ -9,6 +9,8 @@
 
 #include "extensionimpl/menuimpl/dfmextmenuimplproxy.h"
 
+#include <dfm-base/base/schemefactory.h>
+
 #include <QThread>
 #include <QMap>
 
@@ -68,6 +70,7 @@ public:
     DFMExtWindowPluginMap windowMap;
 
     QScopedPointer<DFMEXT::DFMExtMenuProxy> proxy { new DFMExtMenuImplProxy };
+    AbstractFileWatcherPointer extPluginsPathWatcher;
 };
 
 DPUTILS_END_NAMESPACE
