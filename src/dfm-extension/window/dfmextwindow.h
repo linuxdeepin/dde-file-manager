@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 - 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DFMEXTWINDOW_H
 #define DFMEXTWINDOW_H
 
@@ -8,8 +12,7 @@
 
 BEGEN_DFMEXT_NAMESPACE
 
-
-class DFMExtWindowPrivate;// TODO: impl me
+class DFMExtWindowPrivate;   // TODO: impl me
 
 class DFMExtWindow
 {
