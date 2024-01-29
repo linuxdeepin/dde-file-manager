@@ -4,11 +4,15 @@
 
 #include "extensionpluginmanager_p.h"
 
+#include "config.h"   //cmake
+#include "tools/upgrade/builtininterface.h"
+
 #include <QDebug>
 #include <QCoreApplication>
 #include <QThread>
 #include <QDir>
 #include <QDirIterator>
+#include <QDBusConnection>
 
 #include <mutex>
 
@@ -133,19 +137,60 @@ void ExtensionPluginManagerPrivate::startMonitorPlugins()
     if (!extPluginsPathWatcher)
         return;
     connect(extPluginsPathWatcher.data(), &AbstractFileWatcher::subfileCreated,
-            this, [](const QUrl &url) {
+            this, [this](const QUrl &url) {
                 fmWarning() << "Extension plugins path add: " << url;
+                restartDesktop(url);
             });
     connect(extPluginsPathWatcher.data(), &AbstractFileWatcher::fileRename,
-            this, [](const QUrl &oldUrl, const QUrl &newUrl) {
+            this, [this](const QUrl &oldUrl, const QUrl &newUrl) {
                 fmWarning() << "Extension plugins path rename: " << oldUrl << newUrl;
+                restartDesktop(oldUrl);
             });
     connect(extPluginsPathWatcher.data(), &AbstractFileWatcher::fileDeleted,
-            this, [](const QUrl &url) {
+            this, [this](const QUrl &url) {
                 fmWarning() << "Extension plugins path remove: " << url;
+                restartDesktop(url);
             });
     fmInfo() << "Monitor extension plugins path: " << defaultPluginPath;
     extPluginsPathWatcher->startWatcher();
+}
+
+void ExtensionPluginManagerPrivate::restartDesktop(const QUrl &url)
+{
+    using namespace dfm_upgrade;
+    if (!url.toLocalFile().endsWith(".so"))
+        return;
+
+    QString libPath { QString(DFM_TOOLS_DIR) + "/libdfm-upgrade.so" };
+    QLibrary lib(libPath);
+    if (!lib.load()) {
+        fmWarning() << "fail to load upgrade library:" << lib.errorString();
+        return;
+    }
+
+    auto func = reinterpret_cast<UpgradeFunc>(lib.resolve("dfm_tools_upgrade_doRestart"));
+    if (!func) {
+        fmWarning() << "no upgrade function in :" << lib.fileName();
+        return;
+    }
+
+    QMap<QString, QString> args;
+    args.insert(dfm_upgrade::kArgDesktop, "dde-desktop");
+
+    int ret = func(args);
+
+    if (ret < 0) {
+        fmWarning() << "something error, exit current process.";
+    } else {
+        auto arguments = qApp->arguments();
+        // remove first
+        if (!arguments.isEmpty())
+            arguments.pop_front();
+        QDBusConnection::sessionBus().unregisterService("com.deepin.dde.desktop");
+        fmInfo() << "restart self " << qApp->applicationFilePath() << arguments;
+        QProcess::startDetached(qApp->applicationFilePath(), arguments);
+        _Exit(-1);
+    }
 }
 
 ExtensionPluginManager &ExtensionPluginManager::instance()

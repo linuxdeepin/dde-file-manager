@@ -8,9 +8,8 @@
 #include <QMap>
 
 extern "C" {
-
 int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args);
-
+int dfm_tools_upgrade_doRestart(const QMap<QString, QString> &args);
 }
 
-#endif // UPGRADEINTERFACE_H
+#endif   // UPGRADEINTERFACE_H

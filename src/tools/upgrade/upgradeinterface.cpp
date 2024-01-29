@@ -74,3 +74,27 @@ int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
     dlg.restart();
     return 0;
 }
+
+int dfm_tools_upgrade_doRestart(const QMap<QString, QString> &args)
+{
+    qCInfo(logToolUpgrade) << "upgrade args" << args;
+
+    // is desktop or file manager?
+    bool isDesktop = args.contains(kArgDesktop);
+    if (!isDesktop && !args.contains(kArgFileManger))
+        return -1;
+
+    // show dialog
+    ProcessDialog dlg;
+    dlg.initialize(isDesktop);
+    if (!dlg.execDialog()) {
+        qCInfo(logToolUpgrade) << "break by user";
+        return -1;
+    }
+
+    // just restart
+    qCInfo(logToolUpgrade) << "the upgrader has done.";
+    dlg.restart();
+
+    return 0;
+}
