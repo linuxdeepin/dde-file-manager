@@ -10,14 +10,14 @@
 #include <DLabel>
 #include <DIconButton>
 #include <DArrowRectangle>
+#include <DTextEdit>
 
 #include <QStackedWidget>
-#include <QTextEdit>
 #include <QTextLayout>
 #include <QTextDocument>
 
 namespace dfmplugin_propertydialog {
-class NameTextEdit : public QTextEdit
+class NameTextEdit : public DTK_WIDGET_NAMESPACE::DTextEdit
 {
     Q_OBJECT
 

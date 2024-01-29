@@ -29,17 +29,18 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
-const int kTextLineHeight = 18;
+static constexpr int kTextLineHeight { 18 };
+static constexpr int kExtendedWidgetWidth { 360 };
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent)
-    : QTextEdit(text, parent)
+    : DTextEdit(text, parent)
 {
     setObjectName("NameTextEdit");
     setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFrameShape(QFrame::NoFrame);
-    setFixedSize(200, 60);
+    setFixedSize(kExtendedWidgetWidth, 60);
     setContextMenuPolicy(Qt::NoContextMenu);
 
     connect(this, &QTextEdit::textChanged, this, &NameTextEdit::slotTextChanged);
