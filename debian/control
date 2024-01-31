@@ -74,7 +74,9 @@ Depends:
  dde-device-formatter,
  dde-file-manager-plugins, 
  dde-file-manager-daemon-plugins,
- dde-file-manager-server-plugins
+ dde-file-manager-server-plugins,
+ dde-file-manager-common-plugins, 
+ dde-file-manager-preview-plugins
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
@@ -88,9 +90,7 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
  cryptsetup,
- libdfm-extension( =${binary:Version}),
- dde-file-manager-common-plugins, 
- dde-file-manager-preview-plugins
+ libdfm-extension( =${binary:Version})
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
