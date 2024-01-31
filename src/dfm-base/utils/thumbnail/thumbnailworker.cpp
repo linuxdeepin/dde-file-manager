@@ -79,7 +79,8 @@ bool ThumbnailWorkerPrivate::checkFileStable(const QUrl &url)
     qint64 mtime = info->timeOf(TimeInfoType::kMetadataChangeTimeSecond).toLongLong();
     qint64 curTime = QDateTime::currentDateTime().toTime_t();
     qint64 diffTime = curTime - mtime;
-    if (diffTime < 2 && diffTime > 0)
+
+    if (diffTime < 2 && diffTime >= 0)
         return false;
 
     return true;
