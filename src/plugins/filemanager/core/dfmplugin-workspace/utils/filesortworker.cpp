@@ -848,8 +848,15 @@ void FileSortWorker::filterTreeDirFiles(const QUrl &parent, const bool byInfo)
     }
 
     visibleTreeChildren.remove(parent);
-    if (filterUrls.isEmpty())
+    if (filterUrls.isEmpty()) {
+        if (UniversalUtils::urlEquals(parent, current)) {
+            Q_EMIT removeRows(0, visibleChildren.count());
+            QWriteLocker lk(&locker);
+            visibleChildren.clear();
+            Q_EMIT removeFinish();
+        }
         return;
+    }
 
     visibleTreeChildren.insert(parent, filterUrls);
 }
