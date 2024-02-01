@@ -83,8 +83,7 @@ ClipBoard::ClipBoard(QObject *parent)
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this]() {
         onClipboardDataChanged();
         emit clipboardDataChanged();
-    },
-            Qt::QueuedConnection);
+    });
 }
 
 ClipBoard *ClipBoard::instance()
