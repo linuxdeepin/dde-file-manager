@@ -573,8 +573,9 @@ void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntU
         devUrl = ComputerUtils::makeProtocolDevUrl(devId);
     routeMapper.insert(devUrl, mntUrl);
 
+    // 期望挂载点和光驱虚拟目录都能被侧边栏匹配选中
     if (devId.contains(QRegularExpression("sr[0-9]*$")))
-        routeMapper.insert(devUrl, ComputerUtils::makeBurnUrl(devId));
+        routeMapper.insertMulti(devUrl, ComputerUtils::makeBurnUrl(devId));
 }
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
@@ -629,9 +630,13 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
     ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
     RenameCallback renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
     FindMeCallback findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
-        if (this->routeMapper.contains(itemUrl))
-            return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
-
+        // 光驱的url对应挂载点和虚拟url两个值
+        if (routeMapper.contains(itemUrl)) {
+            const QList<QUrl> &urls { routeMapper.values(itemUrl) };
+            return std::any_of(urls.begin(), urls.end(), [&targetUrl](const QUrl &url) {
+                return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, targetUrl);
+            });
+        }
         DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));
         auto mntUrl = info->targetUrl();
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);

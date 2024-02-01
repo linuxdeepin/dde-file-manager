@@ -358,7 +358,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
             this->waitUDisks2DataReady(id);
 
         QUrl u = isOpticalDevice ? ComputerUtils::makeBurnUrl(id) : ComputerUtils::makeLocalUrl(mpt);
-        ComputerItemWatcherInstance->insertUrlMapper(id, u);
+        ComputerItemWatcherInstance->insertUrlMapper(id, ComputerUtils::makeLocalUrl(mpt));
         if (!shellId.isEmpty())
             ComputerItemWatcherInstance->insertUrlMapper(shellId, QUrl::fromLocalFile(mpt));
 
