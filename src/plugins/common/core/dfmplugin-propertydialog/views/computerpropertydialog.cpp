@@ -8,6 +8,7 @@
 #include <DSysInfo>
 #include <DFontSizeManager>
 #include <DFrame>
+#include <DGuiApplicationHelper>
 
 #include <QVBoxLayout>
 #include <QFile>
@@ -50,7 +51,10 @@ ComputerPropertyDialog::~ComputerPropertyDialog()
 
 void ComputerPropertyDialog::iniUI()
 {
-    setTitle(tr("Computer"));
+    DLabel *titleLabel = new DLabel(tr("Computer"), this);
+    titleLabel->setAlignment(Qt::AlignCenter);
+    DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::T5, QFont::DemiBold);
+    titleLabel->setForegroundRole(DPalette::TextTitle);
 
     computerIcon = new DLabel(this);
     QString distributerLogoPath = DSysInfo::distributionOrgLogo();
@@ -113,7 +117,8 @@ void ComputerPropertyDialog::iniUI()
     QFrame *contentFrame = new QFrame(this);
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addSpacing(25);
+    mainLayout->addWidget(titleLabel);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(computerIcon, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(15);
     mainLayout->addWidget(basicInfoFrame);
