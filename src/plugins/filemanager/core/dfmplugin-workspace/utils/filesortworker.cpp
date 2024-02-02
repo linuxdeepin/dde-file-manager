@@ -282,8 +282,12 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
     for (const auto &sortInfo : children) {
         if (isCanceled)
             return;
-        if (this->children.value(parantUrl(sortInfo->fileUrl())).contains(sortInfo->fileUrl()))
+        if (this->children.value(parantUrl(sortInfo->fileUrl())).contains(sortInfo->fileUrl())) {
+            auto data = childData(sortInfo->fileUrl());
+            if (data && data->fileInfo())
+                data->fileInfo()->updateAttributes();
             continue;
+        }
         auto suc = addChild(sortInfo, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
         if (!added)
             added = suc;
