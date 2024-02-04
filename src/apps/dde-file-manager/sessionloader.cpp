@@ -37,6 +37,8 @@ bool UsmSessionAPI::isInitialized() const
 
 bool UsmSessionAPI::init()
 {
+    return false;   // seesion bussion is needless this time
+
     if (initialized)
         return true;
     libUsm.setFileName("usm");
