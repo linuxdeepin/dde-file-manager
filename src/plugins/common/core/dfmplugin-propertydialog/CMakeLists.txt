@@ -4,6 +4,12 @@ project(dfmplugin-propertydialog)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(QRC_FILES
+    qrc/images.qrc
+    )
+
+qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
+
 FILE(GLOB DETAILSPCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
@@ -19,6 +25,7 @@ find_package(Dtk COMPONENTS Widget REQUIRED)
 add_library(${PROJECT_NAME}
     SHARED
     ${DETAILSPCE_FILES}
+    ${QRC_RESOURCES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
