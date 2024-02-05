@@ -51,6 +51,7 @@ public:
 
     bool doOpenFile(const QUrl &url, const QString &desktopFile = QString());
     bool doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile = QString());
+    bool doOpenFiles(const QMultiMap<QString, QString> &infos, const QMap<QString, QString> &mimeTypes);
 
     void setError(DFMIOError error);
 

@@ -1025,77 +1025,88 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
     if (transUrls.isEmpty())
         return ret;
 
-    const QUrl &fileUrl = transUrls.first();
-    const QString &filePath = fileUrl.path();
+    // 找出所有可以打开的文件的信息，这里比较耗时，需要优化
+    QMultiMap<QString, QString> openInfos, mountOpenInfos, cmdOpenInfos;
+    QMap<QString, QString> openMineTypes, mountMineTypes, cmdMineTypes;
+    for (auto url : transUrls) {
+        const QUrl &fileUrl = url;
+        const QString &filePath = fileUrl.path();
 
-    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
 
-    QString mimeType;
-    if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
-        mimeType = fileInfo->nameOf(NameInfoType::kMimeTypeName);
-    } else {
-        mimeType = getFileMimetype(fileUrl);
-    }
-    QAtomicInteger<bool> isOpenNow = false;
-    QString defaultDesktopFile;
+        QString mimeType;
+        if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
+            mimeType = fileInfo->nameOf(NameInfoType::kMimeTypeName);
+        } else {
+            mimeType = getFileMimetype(fileUrl);
+        }
 
-    if (!desktopFile.isEmpty() && isFileManagerSelf(desktopFile)) {
-        defaultDesktopFile = desktopFile;
-    } else {
-        defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
-        if (defaultDesktopFile.isEmpty()) {
-            if (DeviceUtils::isUnmountSamba(fileUrl)) {
-                mimeType = QString("inode/directory");
-                defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
-                isOpenNow = true;
-                mimeType = QString();
-                transUrls.replace(transUrls.indexOf(fileUrl), DeviceUtils::getSambaFileUriFromNative(fileUrl));
-            } else {
-                qCWarning(logDFMBase) << "no default application for" << fileUrl;
-                return false;
+        QString defaultDesktopFile;
+
+        if (!desktopFile.isEmpty() && isFileManagerSelf(desktopFile)) {
+            defaultDesktopFile = desktopFile;
+            openInfos.insertMulti(defaultDesktopFile, url.toString());
+            openMineTypes.insert(url.toString(), mimeType);
+        } else {
+            defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
+            QAtomicInteger<bool> isOpenNow = false;
+            if (defaultDesktopFile.isEmpty() || !dfmio::DFile(fileUrl).exists()) {
+                if (DeviceUtils::isUnmountSamba(fileUrl)) {
+                    mimeType = QString("inode/directory");
+                    defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
+                    isOpenNow = true;
+                    mimeType = QString();
+                    mountOpenInfos.insertMulti(defaultDesktopFile,
+                                              DeviceUtils::getSambaFileUriFromNative(fileUrl).toString());
+                    mountMineTypes.insertMulti(DeviceUtils::getSambaFileUriFromNative(fileUrl).toString(),
+                                              QString("inode/directory"));
+                } else {
+                    qCWarning(logDFMBase) << "no default application for" << fileUrl;
+                    continue;
+                }
             }
-        }
 
-        if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimeType != "inode/directory") {
-            QStringList recommendApps = MimesAppsManager::getRecommendedApps(fileUrl);
-            recommendApps.removeOne(defaultDesktopFile);
-            if (recommendApps.count() > 0) {
-                defaultDesktopFile = recommendApps.first();
-            } else {
-                qCWarning(logDFMBase) << "no default application for" << transUrls;
-                return false;
+            if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimeType != "inode/directory") {
+                QStringList recommendApps = MimesAppsManager::getRecommendedApps(fileUrl);
+                recommendApps.removeOne(defaultDesktopFile);
+                if (recommendApps.count() > 0) {
+                    defaultDesktopFile = recommendApps.first();
+                    cmdOpenInfos.insertMulti(defaultDesktopFile, url.toString());
+                    cmdMineTypes.insertMulti(url.toString(), mimeType);
+                } else {
+                    qCWarning(logDFMBase) << "no default application for" << transUrls;
+                    continue;
+                }
             }
+
+            openInfos.insertMulti(defaultDesktopFile, url.toString());
+            openMineTypes.insert(url.toString(), mimeType);
         }
     }
 
-    QStringList appArgs;
-    for (const QUrl &url : transUrls) {
-        appArgs << url.toString();
-    }
-
-    bool result = launchApp(defaultDesktopFile, appArgs);
-    if (result) {
-        // workaround since DTK apps doesn't support the recent file spec.
-        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
-        // the correct approach: let the app add it to the recent list.
-        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-        for (const QUrl &url : transUrls) {
-            QString filePath = url.toLocalFile();
-
-            DesktopFile df(defaultDesktopFile);
-            addRecentFile(filePath, df, mimeType);
-        }
-        return result;
-    } else if (DeviceUtils::isSamba(transUrls[0])) {
+    // 打开所有的文件
+    if (openInfos.isEmpty() && mountOpenInfos.isEmpty() && cmdOpenInfos.isEmpty())
         return false;
-    }
+
+    bool openResult = doOpenFiles(openInfos, openMineTypes);
+
+    bool openMount = doOpenFiles(mountOpenInfos, openMineTypes);
+
+    bool openCmd = doOpenFiles(cmdOpenInfos, cmdOpenInfos);
+
+    if (openResult || openMount || openCmd)
+        return true;
+
+    if (DeviceUtils::isSamba(transUrls[0]))
+        return false;
 
     QStringList paths;
     for (const QUrl &url : transUrls) {
         paths << url.path();
     }
 
-    if (MimesAppsManager::getDefaultAppByFileName(fileUrl.path()) == "org.gnome.font-viewer.desktop") {
+
+    if (MimesAppsManager::getDefaultAppByFileName(transUrls.first().path()) == "org.gnome.font-viewer.desktop") {
         QProcess::startDetached("gio", QStringList() << "open" << paths);
         QTimer::singleShot(200, [=] {
             QProcess::startDetached("gio", QStringList() << "open" << paths);
@@ -1103,13 +1114,40 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         return true;
     }
 
-    result = QProcess::startDetached("gio", QStringList() << "open" << paths);
+    bool result = QProcess::startDetached("gio", QStringList() << "open" << paths);
 
     if (!result) {
         result = false;
         for (const QUrl &url : transUrls)
             result = QDesktopServices::openUrl(url) || result;   //有一个成功就成功
     }
+    return result;
+}
+
+bool LocalFileHandlerPrivate::doOpenFiles(const QMultiMap<QString, QString> &infos, const QMap<QString, QString> &mimeTypes)
+{
+    if (infos.isEmpty())
+        return false;
+
+    bool result { false };
+    for (const auto &key :  infos.keys()) {
+        bool tmp = launchApp(key, infos.values(key));
+        result = result ? result : tmp;
+        if (tmp) {
+            // workaround since DTK apps doesn't support the recent file spec.
+            // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+            // the correct approach: let the app add it to the recent list.
+            // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+            for (const auto &tmp : infos.values(key)) {
+                QUrl url(tmp);
+                QString filePath = url.toLocalFile();
+
+                DesktopFile df(key);
+                addRecentFile(filePath, df, mimeTypes.value(tmp));
+            }
+        }
+    }
+
     return result;
 }
 
