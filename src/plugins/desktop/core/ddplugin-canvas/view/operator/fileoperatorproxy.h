@@ -28,6 +28,7 @@ public:
     void cutFiles(const CanvasView *view);
     void pasteFiles(const CanvasView *view, const QPoint pos = QPoint(0, 0));
     void openFiles(const CanvasView *view);
+    void openFilesByShortCut(const CanvasView *view);
     void openFiles(const CanvasView *view, const QList<QUrl> &urls);
     Q_INVOKABLE void renameFile(int wid, const QUrl &oldUrl, const QUrl &newUrl);
     void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace);

@@ -85,7 +85,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         switch (key) {
         case Qt::Key_Return:
         case Qt::Key_Enter:
-            FileOperatorProxyIns->openFiles(view);
+            FileOperatorProxyIns->openFilesByShortCut(view);
             return true;
         case Qt::Key_Space:
             if (!event->isAutoRepeat())

@@ -237,6 +237,13 @@ void FileOperatorProxy::openFiles(const CanvasView *view)
         openFiles(view, urls);
 }
 
+void FileOperatorProxy::openFilesByShortCut(const CanvasView *view)
+{
+    auto urls = view->selectionModel()->selectedUrls();
+    for(const auto &url : urls)
+        openFiles(view, { url });
+}
+
 void FileOperatorProxy::openFiles(const CanvasView *view, const QList<QUrl> &urls)
 {
     dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, view->winId(), urls);

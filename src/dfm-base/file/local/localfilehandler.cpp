@@ -1043,7 +1043,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         defaultDesktopFile = desktopFile;
     } else {
         defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
-        if (defaultDesktopFile.isEmpty()) {
+        if (defaultDesktopFile.isEmpty() || !dfmio::DFile(fileUrl).exists()) {
             if (DeviceUtils::isUnmountSamba(fileUrl)) {
                 mimeType = QString("inode/directory");
                 defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
