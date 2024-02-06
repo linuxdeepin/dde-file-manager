@@ -123,7 +123,7 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
     Q_UNUSED(errMsg)
     Q_UNUSED(ok)
 
-    if (srcUrls.isEmpty())
+    if (srcUrls.isEmpty() || destUrls.isEmpty())
         return;
 
     QList<QUrl> discUrls;
@@ -150,8 +150,44 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
         BurnJobManager::instance()->startAuditLogForCopyFromDisc(srcUrls, discUrls);
 
     // staging map (from native to disc)
-    if (!destUrls.isEmpty() && BurnHelper::burnIsOnLocalStaging(destUrls.at(0)))
+    if (BurnHelper::burnIsOnLocalStaging(destUrls.at(0)))
         BurnHelper::mapStagingFilesPath(srcUrls, destUrls);
+
+    // packet writing
+    QUrl directoryUrl { destUrls.at(0).adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash) };
+    QString dev { DeviceUtils::getMountInfo(directoryUrl.toLocalFile(), false) };
+    if (!dev.isEmpty() && dev.startsWith("/dev/sr") && DeviceUtils::isPWUserspaceOpticalDiscDev(dev))
+        BurnJobManager::instance()->startPutFilesToDisc(dev, destUrls);
+}
+
+void BurnEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(errMsg)
+    Q_UNUSED(ok)
+
+    if (srcUrls.isEmpty() || destUrls.isEmpty())
+        return;
+
+    // packet writing
+    QUrl directoryUrl { destUrls.at(0).adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash) };
+    QString dev { DeviceUtils::getMountInfo(directoryUrl.toLocalFile(), false) };
+    if (!dev.isEmpty() && dev.startsWith("/dev/sr") && DeviceUtils::isPWUserspaceOpticalDiscDev(dev))
+        BurnJobManager::instance()->startPutFilesToDisc(dev, destUrls);
+}
+
+void BurnEventReceiver::handleFileRemoveResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(errMsg)
+    Q_UNUSED(ok)
+
+    if (srcUrls.isEmpty())
+        return;
+
+    // packet writing
+    QUrl directoryUrl { srcUrls.at(0).adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash) };
+    QString dev { DeviceUtils::getMountInfo(directoryUrl.toLocalFile(), false) };
+    if (!dev.isEmpty() && dev.startsWith("/dev/sr") && DeviceUtils::isPWUserspaceOpticalDiscDev(dev))
+        BurnJobManager::instance()->startRemoveFilesFromDisc(dev, srcUrls);
 }
 
 void BurnEventReceiver::handleMountImage(quint64 winId, const QUrl &isoUrl)

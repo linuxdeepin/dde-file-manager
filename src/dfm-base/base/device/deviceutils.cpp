@@ -233,6 +233,38 @@ bool DeviceUtils::isBlankOpticalDisc(const QString &id)
     return isBlank;
 }
 
+bool DeviceUtils::isPWOpticalDiscDev(const QString &dev)
+{
+    // PW = packet writing
+    using namespace GlobalServerDefines;
+    if (dev.isEmpty())
+        return false;
+    const QString &id { DeviceUtils::getBlockDeviceId(dev) };
+    const auto &map { DevProxyMng->queryBlockInfo(id) };
+
+    auto fs { qvariant_cast<QString>(map[DeviceProperty::kFileSystem]) };
+    if (fs != "udf")
+        return false;
+    auto fsVersion { qvariant_cast<QString>(map[DeviceProperty::kFsVersion]) };
+    if (fsVersion != "2.01")
+        return false;
+    auto mediaType { DeviceUtils::formatOpticalMediaType(map.value(DeviceProperty::kMedia).toString()) };
+    if (mediaType != "DVD+RW" && mediaType != "DVD-RW")
+        return false;
+    return true;
+}
+
+bool DeviceUtils::isPWUserspaceOpticalDiscDev(const QString &dev)
+{
+    using namespace GlobalServerDefines;
+    const QString &id { DeviceUtils::getBlockDeviceId(dev) };
+    const auto &map { DevProxyMng->queryBlockInfo(id) };
+    auto mediaType { DeviceUtils::formatOpticalMediaType(map.value(DeviceProperty::kMedia).toString()) };
+    if (mediaType != "DVD-RW")
+        return false;
+    return isPWOpticalDiscDev(dev);
+}
+
 bool DeviceUtils::isSamba(const QUrl &url)
 {
     if (url.scheme() == Global::Scheme::kSmb)

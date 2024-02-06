@@ -41,6 +41,9 @@ public:
     void startAuditLogForBurnFiles(const QVariantMap &info, const QUrl &stagingUrl, bool result);
     void startAuditLogForEraseDisc(const QVariantMap &info, bool result);
 
+    void startPutFilesToDisc(const QString &dev, const QList<QUrl> &urls);
+    void startRemoveFilesFromDisc(const QString &dev, const QList<QUrl> &urls);
+
 private:
     void initBurnJobConnect(AbstractBurnJob *job);
     void initDumpJobConnect(DumpISOImageJob *job);

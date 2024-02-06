@@ -62,7 +62,7 @@ public:
     static bool isVirtual(const QString &scheme);
     static bool isVirtual(const QUrl &url);
     static bool isRootUrl(const QUrl &url);
-    static QUrl urlParent(const QUrl &url);
+    [[deprecated("Use QUrl::RemoveFilename | QUrl::StripTrailingSlash instead.")]] static QUrl urlParent(const QUrl &url);
     static bool isAncestorsUrl(QUrl url, const QUrl &ancestorsUrl, QList<QUrl> *list);
     static void urlParentList(QUrl url, QList<QUrl> *list);
     static QString rootDisplayName(const QString &scheme);

@@ -21,6 +21,7 @@ public:
     explicit SendToDiscMenuScenePrivate(AbstractMenuScene *qq);
 
     void actionStageFileForBurning(const QString &dev);
+    void actionPacketWriting(const QString &dev);
     void actionMountImage();
 
     void initDestDevices();
