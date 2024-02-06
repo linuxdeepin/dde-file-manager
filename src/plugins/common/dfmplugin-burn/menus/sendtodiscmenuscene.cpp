@@ -6,6 +6,7 @@
 #include "sendtodiscmenuscene_p.h"
 #include "utils/burnhelper.h"
 #include "events/burneventreceiver.h"
+#include "events/burneventcaller.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -43,6 +44,25 @@ void SendToDiscMenuScenePrivate::actionStageFileForBurning(const QString &dev)
         srcUrls = urls;
 
     BurnEventReceiver::instance()->handlePasteTo(srcUrls, dest, true);
+}
+
+void SendToDiscMenuScenePrivate::actionPacketWriting(const QString &dev)
+{
+    if (dev.isEmpty())
+        return;
+
+    const QString &mntPoint { DeviceUtils::getMountInfo(dev) };
+    if (mntPoint.isEmpty())
+        return;
+
+    QUrl dest { QUrl::fromLocalFile(mntPoint) };
+    QList<QUrl> srcUrls { selectFiles };
+    QList<QUrl> urls {};
+    bool ok = UniversalUtils::urlsTransformToLocal(srcUrls, &urls);
+    if (ok && !urls.isEmpty())
+        srcUrls = urls;
+
+    BurnEventCaller::sendPasteFiles(srcUrls, dest, true);
 }
 
 void SendToDiscMenuScenePrivate::actionMountImage()
@@ -237,6 +257,10 @@ bool SendToDiscMenuScene::triggered(QAction *action)
     if (key == ActionId::kStageKey || key.startsWith(ActionId::kStagePrex)
         || key.startsWith(ActionId::kSendToOptical)) {
         QString dev { action->data().toString() };
+        if (DeviceUtils::isPWOpticalDiscDev(dev)) {
+            d->actionPacketWriting(dev);
+            return true;
+        }
         d->actionStageFileForBurning(dev);
         return true;
     }

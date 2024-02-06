@@ -5,6 +5,7 @@
 #include "burnjobmanager.h"
 #include "utils/burnjob.h"
 #include "utils/auditlogjob.h"
+#include "utils/packetwritingjob.h"
 
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/utils/dialogmanager.h>
@@ -125,6 +126,24 @@ void BurnJobManager::startAuditLogForEraseDisc(const QVariantMap &info, bool res
     job->setProperty(DeviceProperty::kMedia, info.value(DeviceProperty::kMedia));
     connect(job, &AbstractAuditLogJob::finished, job, &QObject::deleteLater);
     job->start();
+}
+
+void BurnJobManager::startPutFilesToDisc(const QString &dev, const QList<QUrl> &urls)
+{
+    AbstractPacketWritingJob *job { new PutPacketWritingJob(dev) };
+    job->setProperty("pendingUrls", QVariant::fromValue(urls));
+
+    fmDebug() << "Add new put packet writing job: " << job;
+    PacketWritingScheduler::instance().addJob(job);
+}
+
+void BurnJobManager::startRemoveFilesFromDisc(const QString &dev, const QList<QUrl> &urls)
+{
+    AbstractPacketWritingJob *job { new RemovePacketWritingJob(dev) };
+    job->setProperty("pendingUrls", QVariant::fromValue(urls));
+
+    fmDebug() << "Add new remove packet writing job: " << job;
+    PacketWritingScheduler::instance().addJob(job);
 }
 
 void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)

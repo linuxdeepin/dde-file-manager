@@ -24,11 +24,16 @@ public slots:
     void handleShowDumpISODlg(const QString &devId);
     void handleErase(const QString &dev);
     void handlePasteTo(const QList<QUrl> &urls, const QUrl &dest, bool isCopy);
+    void handleMountImage(quint64 winId, const QUrl &isoUrl);
     void handleCopyFilesResult(const QList<QUrl> &srcUrls,
                                const QList<QUrl> &destUrls,
                                bool ok,
                                const QString &errMsg);
-    void handleMountImage(quint64 winId, const QUrl &isoUrl);
+    void handleFileCutResult(const QList<QUrl> &srcUrls,
+                             const QList<QUrl> &destUrls,
+                             bool ok,
+                             const QString &errMsg);
+    void handleFileRemoveResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
 
 private:
     explicit BurnEventReceiver(QObject *parent = nullptr);

@@ -32,6 +32,7 @@ static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPBURN_NAMESPACE) 
 void Burn::initialize()
 {
     bindEvents();
+
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &Burn::changeUrlEventFilter);
 }
 
@@ -84,6 +85,8 @@ void Burn::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_MountImage", BurnEventReceiver::instance(), &BurnEventReceiver::handleMountImage);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleCopyFilesResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleFileCutResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleFileRemoveResult);
 }
 
 bool Burn::changeUrlEventFilter(quint64 windowId, const QUrl &url)

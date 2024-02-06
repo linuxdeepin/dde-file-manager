@@ -104,7 +104,7 @@ bool Optical::packetWritingUrl(const QUrl &srcUrl, QUrl *url)
     if (srcUrl.scheme() == Global::Scheme::kBurn) {
         Q_ASSERT(url);
         const auto &dev { OpticalHelper::burnDestDevice(srcUrl) };
-        if (OpticalHelper::isPacketWrtingMedia(dev)) {
+        if (DeviceUtils::isPWOpticalDiscDev(dev)) {
             const auto &mntUrl { OpticalHelper::localDiscFile(srcUrl) };
             if (mntUrl.isValid() && mntUrl.isLocalFile()) {
                 fmWarning() << "current media is packet writing: " << srcUrl;

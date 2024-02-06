@@ -41,9 +41,12 @@ public:
     static QString formatOpticalMediaType(const QString &media);
     static bool isAutoMountEnable();
     static bool isAutoMountAndOpenEnable();
+
     static bool isWorkingOpticalDiscDev(const QString &dev);
     static bool isWorkingOpticalDiscId(const QString &id);
     static bool isBlankOpticalDisc(const QString &id);
+    static bool isPWOpticalDiscDev(const QString &dev);
+    static bool isPWUserspaceOpticalDiscDev(const QString &dev);
 
     static bool isSamba(const QUrl &url);
     static bool isFtp(const QUrl &url);
