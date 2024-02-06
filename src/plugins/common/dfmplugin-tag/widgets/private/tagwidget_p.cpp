@@ -55,6 +55,7 @@ void TagWidgetPrivate::initializeUI()
     crumbEdit->setObjectName("tagCrumbEdit");
     crumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     crumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
+    crumbEdit->setFocusPolicy(Qt::ClickFocus);
 
     tagColorListLayout = new QHBoxLayout;
     tagColorListLayout->addWidget(tagLable);
