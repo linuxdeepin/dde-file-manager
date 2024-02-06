@@ -86,8 +86,10 @@ void OpenWithWidget::slotExpandChange(bool state)
             itemBox->setIconSize(QSize(16, 16));
             itemBox->setProperty("appPath", appFile);
             itemBox->setProperty("mimeTypeName", mimeType.name());
+            itemBox->setFocusPolicy(Qt::NoFocus);
             openWithBtnGroup->addButton(itemBox);
             item->setData(Qt::UserRole, desktopInfo.desktopName());
+            item->setFlags(Qt::NoItemFlags);
             openWithListWidget->addItem(item);
             openWithListWidget->setItemWidget(item, itemBox);
 
@@ -100,7 +102,6 @@ void OpenWithWidget::slotExpandChange(bool state)
         int count = openWithListWidget->count();
         for (int i = 0; i < count; i++) {
             QListWidgetItem *item = openWithListWidget->item(i);
-            item->setFlags(Qt::NoItemFlags);
             int h = openWithListWidget->itemWidget(item)->height();
             item->setSizeHint(QSize(item->sizeHint().width(), h));
             // 乘以2是因为item与item之间有两个spacing
