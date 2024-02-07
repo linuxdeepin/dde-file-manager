@@ -33,7 +33,13 @@ public slots:
                              const QList<QUrl> &destUrls,
                              bool ok,
                              const QString &errMsg);
-    void handleFileRemoveResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
+    void handleFileRemoveResult(const QList<QUrl> &srcUrls,
+                                bool ok,
+                                const QString &errMsg);
+    void handleFileRenameResult(quint64 winId,
+                                const QMap<QUrl, QUrl> &renamedUrls,
+                                bool ok,
+                                const QString &errMsg);
 
 private:
     explicit BurnEventReceiver(QObject *parent = nullptr);

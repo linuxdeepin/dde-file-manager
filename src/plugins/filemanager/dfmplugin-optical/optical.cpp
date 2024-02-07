@@ -11,6 +11,7 @@
 #include "mastered/masteredmediadiriterator.h"
 #include "views/opticalmediawidget.h"
 #include "menus/opticalmenuscene.h"
+#include "menus/packetwritingmenuscene.h"
 #include "events/opticaleventreceiver.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -63,6 +64,11 @@ void Optical::initialize()
                     onDiscEjected(id);
             },
             Qt::QueuedConnection);
+
+    if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted())
+        onAllPluginsStarted();
+    else
+        connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Optical::onAllPluginsStarted, Qt::DirectConnection);
 }
 
 bool Optical::start()
@@ -237,5 +243,17 @@ bool Optical::openNewWindowEventFilter(const QUrl &url)
         return true;
     }
     return false;
+}
+
+void Optical::onAllPluginsStarted()
+{
+    static constexpr auto kParentMenu { "WorkspaceMenu" };
+    if (!dfmplugin_menu_util::menuSceneContains(kParentMenu)) {
+        fmWarning() << "WorkspaceMenu is contained, register packet writing menu failed";
+        return;
+    }
+
+    dfmplugin_menu_util::menuSceneRegisterScene(PacketWritingMenuCreator::name(), new PacketWritingMenuCreator);
+    dfmplugin_menu_util::menuSceneBind(PacketWritingMenuCreator::name(), kParentMenu);
 }
 }   // namespace dfmplugin_optical

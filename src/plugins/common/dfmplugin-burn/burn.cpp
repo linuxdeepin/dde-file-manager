@@ -87,6 +87,7 @@ void Burn::bindEvents()
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleCopyFilesResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleFileCutResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleFileRemoveResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleFileRenameResult);
 }
 
 bool Burn::changeUrlEventFilter(quint64 windowId, const QUrl &url)

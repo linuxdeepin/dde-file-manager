@@ -81,7 +81,7 @@ void AbstractPacketWritingJob::run()
         return;
     }
 
-    // TODO: fork
+    // REFACTOR: fork?
     fmInfo() << "Start packet writing for device: " << curDevice;
     pwController.reset(new DPacketWritingController { curDevice, mnt });
     FinallyUtil finally { [this]() {
@@ -158,6 +158,41 @@ bool RemovePacketWritingJob::work()
     return std::all_of(names.begin(), names.end(), [this](const QString &name) {
         return pwController->rm(name);
     });
+}
+
+RenamePacketWritingJob::RenamePacketWritingJob(const QString &device, QObject *parent)
+    : AbstractPacketWritingJob(device, parent)
+
+{
+}
+
+QUrl RenamePacketWritingJob::getSrcUrl() const
+{
+    return srcUrl;
+}
+
+void RenamePacketWritingJob::setSrcUrl(const QUrl &value)
+{
+    srcUrl = value;
+}
+
+QUrl RenamePacketWritingJob::getDestUrl() const
+{
+    return destUrl;
+}
+
+void RenamePacketWritingJob::setDestUrl(const QUrl &value)
+{
+    destUrl = value;
+}
+
+bool RenamePacketWritingJob::work()
+{
+    QString srcName { urls2Names({ srcUrl }).at(0) };
+    QString destName { urls2Names({ destUrl }).at(0) };
+
+    fmInfo() << "Start rename " << srcName << "to" << destName;
+    return pwController->mv(srcName, destName);
 }
 
 DPBURN_END_NAMESPACE

@@ -146,6 +146,16 @@ void BurnJobManager::startRemoveFilesFromDisc(const QString &dev, const QList<QU
     PacketWritingScheduler::instance().addJob(job);
 }
 
+void BurnJobManager::startRenameFileFromDisc(const QString &dev, const QUrl &src, const QUrl &dest)
+{
+    AbstractPacketWritingJob *job { new RenamePacketWritingJob(dev) };
+    job->setProperty("srcUrl", QVariant::fromValue(src));
+    job->setProperty("destUrl", QVariant::fromValue(dest));
+
+    fmDebug() << "Add new rename packet writing job: " << job;
+    PacketWritingScheduler::instance().addJob(job);
+}
+
 void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)
 {
     Q_ASSERT(job);

@@ -43,6 +43,7 @@ public:
 
     void startPutFilesToDisc(const QString &dev, const QList<QUrl> &urls);
     void startRemoveFilesFromDisc(const QString &dev, const QList<QUrl> &urls);
+    void startRenameFileFromDisc(const QString &dev, const QUrl &src, const QUrl &dest);
 
 private:
     void initBurnJobConnect(AbstractBurnJob *job);
