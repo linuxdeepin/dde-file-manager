@@ -92,6 +92,29 @@ private:
     QList<QUrl> pendingUrls;
 };
 
+class RenamePacketWritingJob : public AbstractPacketWritingJob
+{
+    Q_OBJECT
+    Q_PROPERTY(QUrl srcUrl READ getSrcUrl WRITE setSrcUrl)
+    Q_PROPERTY(QUrl destUrl READ getDestUrl WRITE setDestUrl)
+
+public:
+    explicit RenamePacketWritingJob(const QString &device, QObject *parent = nullptr);
+
+    QUrl getSrcUrl() const;
+    void setSrcUrl(const QUrl &value);
+
+    QUrl getDestUrl() const;
+    void setDestUrl(const QUrl &value);
+
+protected:
+    bool work() override;
+
+private:
+    QUrl srcUrl;
+    QUrl destUrl;
+};
+
 DPBURN_END_NAMESPACE
 
 #endif   // PACKETWRITINGJOB_H

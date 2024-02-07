@@ -168,6 +168,9 @@ void BurnEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QL
     if (srcUrls.isEmpty() || destUrls.isEmpty())
         return;
 
+    if (!destUrls.at(0).isLocalFile())
+        return;
+
     // packet writing
     QUrl directoryUrl { destUrls.at(0).adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash) };
     QString dev { DeviceUtils::getMountInfo(directoryUrl.toLocalFile(), false) };
@@ -183,11 +186,37 @@ void BurnEventReceiver::handleFileRemoveResult(const QList<QUrl> &srcUrls, bool 
     if (srcUrls.isEmpty())
         return;
 
+    if (!srcUrls.at(0).isLocalFile())
+        return;
+
     // packet writing
     QUrl directoryUrl { srcUrls.at(0).adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash) };
     QString dev { DeviceUtils::getMountInfo(directoryUrl.toLocalFile(), false) };
     if (!dev.isEmpty() && dev.startsWith("/dev/sr") && DeviceUtils::isPWUserspaceOpticalDiscDev(dev))
         BurnJobManager::instance()->startRemoveFilesFromDisc(dev, srcUrls);
+}
+
+void BurnEventReceiver::handleFileRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(errMsg)
+    Q_UNUSED(winId);
+
+    if (!ok || renamedUrls.isEmpty())
+        return;
+
+    for (const auto &src : renamedUrls.keys()) {
+        if (!src.isLocalFile())
+            return;
+        QUrl srcDirUrl { src.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash) };
+        QString dev { DeviceUtils::getMountInfo(srcDirUrl.toLocalFile(), false) };
+        if (dev.isEmpty() || !dev.startsWith("/dev/sr"))
+            return;
+
+        const auto &dest { renamedUrls.value(src) };
+        QUrl destDirUrl { dest.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash) };
+        if ((srcDirUrl == destDirUrl) && DeviceUtils::isPWUserspaceOpticalDiscDev(dev))
+            BurnJobManager::instance()->startRenameFileFromDisc(dev, src, dest);
+    }
 }
 
 void BurnEventReceiver::handleMountImage(quint64 winId, const QUrl &isoUrl)

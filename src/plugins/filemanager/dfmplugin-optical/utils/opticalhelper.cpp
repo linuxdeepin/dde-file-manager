@@ -221,6 +221,22 @@ bool OpticalHelper::isBurnEnabled()
     return ret.isValid() ? ret.toBool() : true;
 }
 
+QStringList OpticalHelper::allOpticalDiscMountPoints()
+{
+    using namespace GlobalServerDefines;
+    QStringList mnts;
+    const auto &discIdGroup { DevProxyMng->getAllBlockIds(
+            DeviceQueryOption::kOptical | DeviceQueryOption::kMounted) };
+
+    std::transform(discIdGroup.begin(), discIdGroup.end(), std::back_inserter(mnts),
+                   [](const auto &id) {
+                       const auto &map { DevProxyMng->queryBlockInfo(id) };
+                       return map.value(DeviceProperty::kMountPoints).toString();
+                   });
+
+    return mnts;
+}
+
 bool OpticalHelper::isTransparent(const QUrl &url, Global::TransparentStatus *status)
 {
     if (url.scheme() == OpticalHelper::scheme()) {
