@@ -52,6 +52,7 @@ void Optical::initialize()
     bindFileOperations();
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &Optical::changeUrlEventFilter);
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kOpenNewWindow, this, &Optical::openNewWindowEventFilter);
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kOpenNewWindow, this, &Optical::openNewWindowWithArgsEventFilter);
     // for blank disc
     connect(
             DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this,
@@ -243,6 +244,12 @@ bool Optical::openNewWindowEventFilter(const QUrl &url)
         return true;
     }
     return false;
+}
+
+bool Optical::openNewWindowWithArgsEventFilter(const QUrl &url, bool isNewWindow)
+{
+    Q_UNUSED(isNewWindow);
+    return openNewWindowEventFilter(url);
 }
 
 void Optical::onAllPluginsStarted()
