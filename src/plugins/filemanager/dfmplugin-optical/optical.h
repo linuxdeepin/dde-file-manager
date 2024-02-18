@@ -35,6 +35,7 @@ private slots:
     void onDiscEjected(const QString &id);
     bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
     bool openNewWindowEventFilter(const QUrl &url);
+    bool openNewWindowWithArgsEventFilter(const QUrl &url, bool isNewWindow);
     void onAllPluginsStarted();
 };
 
