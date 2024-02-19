@@ -425,7 +425,9 @@ void OpenWithDialog::checkItem(OpenWithDialogListItem *item)
 
 void OpenWithDialog::useOtherApplication()
 {
-    const QString &filePath = QFileDialog::getOpenFileName(this);
+    const QString &filePath = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                           "/usr/share/applications",
+                                                           tr("Applications (*.desktop);;All files (*)"));
 
     if (filePath.isEmpty())
         return;
