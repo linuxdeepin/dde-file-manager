@@ -237,6 +237,17 @@ QStringList OpticalHelper::allOpticalDiscMountPoints()
     return mnts;
 }
 
+QString OpticalHelper::findMountPoint(const QString &path)
+{
+    const auto &mnts { OpticalHelper::allOpticalDiscMountPoints() };
+    for (const auto &mnt : mnts) {
+        if (path.startsWith(mnt))
+            return mnt;
+    }
+
+    return {};
+}
+
 bool OpticalHelper::isTransparent(const QUrl &url, Global::TransparentStatus *status)
 {
     if (url.scheme() == OpticalHelper::scheme()) {

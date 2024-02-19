@@ -48,6 +48,8 @@ QString DeviceUtils::getBlockDeviceId(const QString &deviceDesc)
  */
 QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
 {
+    if (in.isEmpty())
+        return {};
     libmnt_table *tab { mnt_new_table() };
     if (!tab)
         return {};
@@ -237,7 +239,7 @@ bool DeviceUtils::isPWOpticalDiscDev(const QString &dev)
 {
     // PW = packet writing
     using namespace GlobalServerDefines;
-    if (dev.isEmpty())
+    if (!dev.startsWith("/dev/sr"))
         return false;
     const QString &id { DeviceUtils::getBlockDeviceId(dev) };
     const auto &map { DevProxyMng->queryBlockInfo(id) };
@@ -256,6 +258,8 @@ bool DeviceUtils::isPWOpticalDiscDev(const QString &dev)
 
 bool DeviceUtils::isPWUserspaceOpticalDiscDev(const QString &dev)
 {
+    if (!dev.startsWith("/dev/sr"))
+        return false;
     using namespace GlobalServerDefines;
     const QString &id { DeviceUtils::getBlockDeviceId(dev) };
     const auto &map { DevProxyMng->queryBlockInfo(id) };

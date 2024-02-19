@@ -19,7 +19,6 @@ class PacketWritingMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScen
 public:
     explicit PacketWritingMenuScenePrivate(PacketWritingMenuScene *qq);
     QString findSceneName(QAction *act) const;
-    QString findMountPoint(const QString &path);
     bool isContainSubDirFile(const QString &mnt) const;
 
 private:
