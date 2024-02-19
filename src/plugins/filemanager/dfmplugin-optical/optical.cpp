@@ -165,6 +165,13 @@ void Optical::bindEvents()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleDeleteFilesShortcut);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_MoveToTrash", &OpticalEventReceiver::instance(),
+                            &OpticalEventReceiver::handleMoveToTrashShortcut);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CutFiles", &OpticalEventReceiver::instance(),
+                            &OpticalEventReceiver::handleCutFilesShortcut);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", &OpticalEventReceiver::instance(),
+                            &OpticalEventReceiver::handlePasteFilesShortcut);
+
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleCheckDragDropAction);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDragMove", &OpticalEventReceiver::instance(),
@@ -248,8 +255,16 @@ bool Optical::openNewWindowEventFilter(const QUrl &url)
 
 bool Optical::openNewWindowWithArgsEventFilter(const QUrl &url, bool isNewWindow)
 {
-    Q_UNUSED(isNewWindow);
-    return openNewWindowEventFilter(url);
+    QUrl mntUrl;
+    // 对于 UDF 2.01 的 DVD+/-W 的光盘刻录的方式是 packet writing
+    // 因此直接跳转到挂载点即可
+    if (packetWritingUrl(url, &mntUrl)) {
+        QTimer::singleShot(0, this, [mntUrl, isNewWindow]() {
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, mntUrl, isNewWindow);
+        });
+        return true;
+    }
+    return false;
 }
 
 void Optical::onAllPluginsStarted()

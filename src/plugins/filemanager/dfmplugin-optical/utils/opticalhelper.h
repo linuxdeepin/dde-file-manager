@@ -45,6 +45,7 @@ public:
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
     static bool isBurnEnabled();
     static QStringList allOpticalDiscMountPoints();
+    static QString findMountPoint(const QString &path);
 
     bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
 

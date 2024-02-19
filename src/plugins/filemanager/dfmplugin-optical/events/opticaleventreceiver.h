@@ -22,11 +22,17 @@ public:
 public slots:
     bool handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls, const QUrl &);
     bool handleCheckDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
+    bool handleMoveToTrashShortcut(quint64 winId, const QList<QUrl> &urls, const QUrl &rootUrl);
+    bool handleCutFilesShortcut(quint64 winId, const QList<QUrl> &urls, const QUrl &rootUrl);
+    bool handlePasteFilesShortcut(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool handleBlockShortcutPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool handleTabClosable(const QUrl &currentUrl, const QUrl &rootUrl);
+
+private:
+    bool isContainPWSubDirFile(const QList<QUrl> &urls);
 
 public:
     explicit OpticalEventReceiver(QObject *parent = nullptr);

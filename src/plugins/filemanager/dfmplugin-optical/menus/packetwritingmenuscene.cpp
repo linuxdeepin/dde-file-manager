@@ -32,17 +32,6 @@ QString PacketWritingMenuScenePrivate::findSceneName(QAction *act) const
     return name;
 }
 
-QString PacketWritingMenuScenePrivate::findMountPoint(const QString &path)
-{
-    const auto &mnts { OpticalHelper::allOpticalDiscMountPoints() };
-    for (const auto &mnt : mnts) {
-        if (path.startsWith(mnt))
-            return mnt;
-    }
-
-    return {};
-}
-
 bool PacketWritingMenuScenePrivate::isContainSubDirFile(const QString &mnt) const
 {
     if (selectFiles.isEmpty() || mnt.isEmpty())
@@ -90,7 +79,7 @@ bool PacketWritingMenuScene::initialize(const QVariantHash &params)
 
     // currentdir is not mountpoint
     QString dev { DeviceUtils::getMountInfo(currentPath, false) };
-    QString curMnt { d->findMountPoint(currentPath) };
+    QString curMnt { OpticalHelper::findMountPoint(currentPath) };
     if (dev.isEmpty()) {
         dev = DeviceUtils::getMountInfo(curMnt, false);
         d->isWorkingSubDir = true;
@@ -100,7 +89,7 @@ bool PacketWritingMenuScene::initialize(const QVariantHash &params)
     if (!d->isWorkingSubDir && d->isContainSubDirFile(curMnt))
         d->isWorkingSubDir = true;
 
-    if (!dev.isEmpty() && dev.startsWith("/dev/sr") && DeviceUtils::isPWUserspaceOpticalDiscDev(dev)) {
+    if (DeviceUtils::isPWUserspaceOpticalDiscDev(dev)) {
         d->isPackeWritingDir = true;
         d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     }

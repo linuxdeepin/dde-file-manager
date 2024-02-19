@@ -6,6 +6,7 @@
 #include "utils/opticalhelper.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/universalutils.h>
@@ -22,8 +23,11 @@ OpticalEventReceiver &OpticalEventReceiver::instance()
     return ins;
 }
 
-bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls, const QUrl &)
+bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls, const QUrl &rootUrl)
 {
+    if (!rootUrl.toLocalFile().startsWith("/media"))
+        return false;
+
     auto iter = std::find_if(urls.cbegin(), urls.cend(), [](const QUrl &url) {
         return OpticalHelper::burnIsOnDisc(url);
     });
@@ -31,6 +35,11 @@ bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> 
         fmInfo() << "delete event is blocked, trying to delete disc burn:///*";
         return true;
     }
+
+    // 仅 PW 光盘根目录支持
+    if (isContainPWSubDirFile(urls))
+        return true;
+
     return false;
 }
 
@@ -50,6 +59,57 @@ bool OpticalEventReceiver::handleCheckDragDropAction(const QList<QUrl> &urls, co
             *action = Qt::CopyAction;
             return true;
         }
+    }
+
+    return false;
+}
+
+bool OpticalEventReceiver::handleMoveToTrashShortcut(quint64 winId, const QList<QUrl> &urls, const QUrl &rootUrl)
+{
+    Q_UNUSED(winId);
+
+    // 树形结构中，如果在根目录展开进行操作将导致 BUG，但是这是一个corner case，
+    // 考虑到性能问题这里直接简单判断
+    if (!rootUrl.toLocalFile().startsWith("/media"))
+        return false;
+
+    if (isContainPWSubDirFile(urls))
+        return true;
+
+    return false;
+}
+
+bool OpticalEventReceiver::handleCutFilesShortcut(quint64 winId, const QList<QUrl> &urls, const QUrl &rootUrl)
+{
+    Q_UNUSED(winId);
+
+    if (!rootUrl.toLocalFile().startsWith("/media"))
+        return false;
+
+    // 仅 PW 光盘根目录支持
+    if (isContainPWSubDirFile(urls))
+        return true;
+
+    return false;
+}
+
+bool OpticalEventReceiver::handlePasteFilesShortcut(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to)
+{
+    Q_UNUSED(winId);
+    Q_UNUSED(fromUrls);
+
+    const QString &path { to.toLocalFile() };
+    if (!path.startsWith("/media"))
+        return false;
+
+    QString dev { DeviceUtils::getMountInfo(path, false) };
+
+    // 仅根目录支持 paste
+    if (dev.isEmpty()) {
+        QString curMnt { OpticalHelper::findMountPoint(path) };
+        dev = DeviceUtils::getMountInfo(curMnt, false);
+        if (DeviceUtils::isPWUserspaceOpticalDiscDev(dev))
+            return true;
     }
 
     return false;
@@ -143,6 +203,26 @@ bool OpticalEventReceiver::handleTabClosable(const QUrl &currentUrl, const QUrl 
             return true;
         }
     }
+
+    return false;
+}
+
+bool OpticalEventReceiver::isContainPWSubDirFile(const QList<QUrl> &urls)
+{
+    // 仅 PW 光盘根目录支持
+    if (std::any_of(urls.begin(), urls.end(), [](const QUrl &url) {
+            const QString &directory {
+                url.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash).toLocalFile()
+            };
+            const QString &curMnt { OpticalHelper::findMountPoint(directory) };
+            if (curMnt == directory)
+                return false;
+            const QString &dev { DeviceUtils::getMountInfo(curMnt, false) };
+            if (directory.startsWith(curMnt) && DeviceUtils::isPWUserspaceOpticalDiscDev(dev))
+                return true;
+            return false;
+        }))
+        return true;
 
     return false;
 }
