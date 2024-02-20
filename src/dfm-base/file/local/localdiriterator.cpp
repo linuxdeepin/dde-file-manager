@@ -247,7 +247,7 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
 bool LocalDirIterator::oneByOne()
 {
     // all dir iterator will in async proccess if this func return true directly.
-    if (DConfigManager::instance()->value(kDefaultCfgPath, DConfigKeys::kAllAsync, true).toBool())
+    if (DConfigManager::instance()->value(kDefaultCfgPath, DConfigKeys::kAllAsync, false).toBool())
         return true;
 
     // local dir will iterator in sync proccess and others in aysnc proccess

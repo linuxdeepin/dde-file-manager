@@ -179,7 +179,7 @@
             "visibility":"private"
         },
         "dfm.iterator.allasync": {
-            "value":true,
+            "value":false,
             "serial":0,
             "flags":[],
             "name":"Async Iteration",
