@@ -107,8 +107,10 @@ void TraversalDirThreadManager::run()
 
     int count = 0;
     if (!dirIterator->oneByOne()) {
-        count = iteratorAll();
+        const QList<SortInfoPointer> &fileList = iteratorAll();
+        count = fileList.count();
         fmInfo() << "local dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+        createFileInfo(fileList);
     } else {
         count = iteratorOneByOne(timer);
         fmInfo() << "dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
@@ -174,7 +176,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     return childrenList.count();
 }
 
-int TraversalDirThreadManager::iteratorAll()
+QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
 {
     QVariantMap args;
     args.insert("sortRole",
@@ -185,7 +187,7 @@ int TraversalDirThreadManager::iteratorAll()
     if (!dirIterator->initIterator()) {
         fmWarning() << "dir iterator init failed !! url : " << dirUrl;
         emit traversalFinished(traversalToken);
-        return 0;
+        return {};
     }
     Q_EMIT iteratorInitFinished();
     auto fileList = dirIterator->sortFileInfoList();
@@ -193,5 +195,13 @@ int TraversalDirThreadManager::iteratorAll()
     emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile, traversalToken);
     emit traversalFinished(traversalToken);
 
-    return fileList.count();
+    return fileList;
+}
+
+void TraversalDirThreadManager::createFileInfo(const QList<SortInfoPointer> &list)
+{
+    for (const SortInfoPointer &sortInfo : list) {
+        const QUrl &url = sortInfo->fileUrl();
+        InfoFactory::create<FileInfo>(url);
+    }
 }
