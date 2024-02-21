@@ -211,13 +211,17 @@ void ShareControlWidget::setupNetworkPath()
     hBoxLine1->setContentsMargins(0, 0, 2, 0);
     networkAddrLabel->setFixedWidth(ConstDef::kWidgetFixedWidth);
     mainLay->addRow(new SectionKeyLabel(tr("Network path"), this), hBoxLine1);
-    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-        copyNetAddr = new QPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
-    else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-        copyNetAddr = new QPushButton(QIcon(":dark/icons/property_bt_copy.svg"), "");
-    else
-        copyNetAddr = new QPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
 
+    copyNetAddr = new QPushButton(this);
+    auto setBtnIcon = [=]{
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+            copyNetAddr->setIcon(QIcon(":light/icons/property_bt_copy.svg"));
+        else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+            copyNetAddr->setIcon(QIcon(":dark/icons/property_bt_copy.svg"));
+    };
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            this, setBtnIcon);
+    setBtnIcon();
     copyNetAddr->setFlat(true);
     copyNetAddr->setToolTip(tr("Copy"));
     QObject::connect(copyNetAddr, &QPushButton::clicked, [=]() {
@@ -238,13 +242,16 @@ void ShareControlWidget::setupUserName()
     hBoxLine2->setContentsMargins(0, 0, 2, 0);
     mainLay->addRow(new SectionKeyLabel(tr("Username"), this), hBoxLine2);
 
-    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-        copyUserNameBt = new QPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
-    else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-        copyUserNameBt = new QPushButton(QIcon(":dark/icons/property_bt_copy.svg"), "");
-    else
-        copyUserNameBt = new QPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
-
+    copyUserNameBt = new QPushButton(this);
+    auto setBtnIcon = [=]{
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+            copyUserNameBt->setIcon(QIcon(":light/icons/property_bt_copy.svg"));
+        else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+            copyUserNameBt->setIcon(QIcon(":dark/icons/property_bt_copy.svg"));
+    };
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            this, setBtnIcon);
+    setBtnIcon();
     copyUserNameBt->setFlat(true);
     copyUserNameBt->setToolTip(tr("Copy"));
     QObject::connect(copyUserNameBt, &QPushButton::clicked, [=]() {
@@ -257,7 +264,6 @@ void ShareControlWidget::setupUserName()
 void ShareControlWidget::setupSharePassword()
 {
     sharePassword = new DLabel(this);
-    sharePassword->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");   // just clear the background
     QFont font = this->font();
     int defaultFontSize = font.pointSize();
     font.setLetterSpacing(QFont::AbsoluteSpacing, 5);
