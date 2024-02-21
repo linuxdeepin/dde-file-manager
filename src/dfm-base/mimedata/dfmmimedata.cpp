@@ -7,6 +7,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QJsonDocument>
 
@@ -20,6 +21,7 @@ inline constexpr char kVersionKey[] { "version" };
 // attritubes
 inline constexpr char kCanTrashAttr[] { "canTrash" };
 inline constexpr char kCanDeleteAttr[] { "canDelete" };
+inline constexpr char kIsTrashAttr[] { "isTrashFile" };
 
 DFMMimeDataPrivate::DFMMimeDataPrivate()
     : QSharedData(),
@@ -42,6 +44,7 @@ void DFMMimeDataPrivate::parseUrls(const QList<QUrl> &urls)
     urlList = urls;
     bool canTrash = true;
     bool canDelete = true;
+    bool isTrashUrl = false;
 
     for (const auto &url : urls) {
         auto info = InfoFactory::create<FileInfo>(url);
@@ -53,9 +56,11 @@ void DFMMimeDataPrivate::parseUrls(const QList<QUrl> &urls)
         if (!canTrash && !canDelete)
             break;
     }
-
+    isTrashUrl = urls.isEmpty() ?
+                false : FileUtils::isTrashFile(urls.first()) && !FileUtils::isTrashRootFile(urls.first());
     attributes.insert(kCanTrashAttr, canTrash);
     attributes.insert(kCanDeleteAttr, canDelete);
+    attributes.insert(kIsTrashAttr, isTrashUrl);
 }
 
 DFMMimeData::DFMMimeData()
@@ -90,6 +95,11 @@ bool DFMMimeData::canTrash() const
 bool DFMMimeData::canDelete() const
 {
     return attritube(kCanDeleteAttr, false).toBool();
+}
+
+bool DFMMimeData::isTrashFile() const
+{
+    return attritube(kIsTrashAttr, false).toBool();
 }
 
 QString DFMMimeData::version() const
