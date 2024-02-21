@@ -333,9 +333,13 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
             parentPath += '/';
 
         QString filePath = info->pathOf(PathInfoType::kFilePath);
-        filePath = filePath.mid(filePath.indexOf(parentPath) + 1);
-        if (filePath.contains('/'))
-            return false;
+        int index = filePath.indexOf(parentPath);
+        if (index != -1) {
+            int indexWithoutParent = index + parentPath.length();
+            filePath = filePath.mid(indexWithoutParent);
+            if (filePath.contains('/'))
+                return false;
+        }
     }
 
     if (filter.comboValid[kFileType]) {
