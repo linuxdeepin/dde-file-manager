@@ -67,6 +67,7 @@ private:
     void initializeUi();
     void initializeConnect();
     void updateLayout();
+    void updateComboxViewWidth();
 
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
