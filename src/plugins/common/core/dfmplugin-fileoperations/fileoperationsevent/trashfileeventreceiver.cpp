@@ -58,9 +58,11 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
 {
     Q_UNUSED(windowId);
 
-    if (sources.isEmpty())
+    // 源文件是空或者源文件是回收站文件
+    if (sources.isEmpty() || FileUtils::isTrashFile(sources.first()))
         return nullptr;
 
+    // 其他插件处理了相应的操作，直接返回
     if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", windowId, sources, flags)) {
         return nullptr;
     }

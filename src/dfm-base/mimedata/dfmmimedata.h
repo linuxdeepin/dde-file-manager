@@ -35,6 +35,7 @@ public:
 
     bool canTrash() const;
     bool canDelete() const;
+    bool isTrashFile() const;
 
     void setAttritube(const QString &name, const QVariant &value);
     QVariant attritube(const QString &name, const QVariant &defaultValue = {}) const;

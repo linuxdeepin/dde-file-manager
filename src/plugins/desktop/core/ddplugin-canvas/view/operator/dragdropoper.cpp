@@ -104,7 +104,6 @@ bool DragDropOper::move(QDragMoveEvent *event)
             bool canDrop = !fileInfo->canAttributes(CanableInfoType::kCanDrop) || (fileInfo->isAttributes(OptInfoType::kIsDir) && !fileInfo->isAttributes(OptInfoType::kIsWritable)) || !fileInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 handleMoveMimeData(event, curUrl);
-
                 return true;
             } else {
                 // not support drop
@@ -551,8 +550,11 @@ bool DragDropOper::checkTargetEnable(const QUrl &targetUrl)
     if (!dfmmimeData.isValid())
         return true;
 
-    if (FileUtils::isTrashDesktopFile(targetUrl))
+    if (FileUtils::isTrashDesktopFile(targetUrl)) {
+        if (dfmmimeData.isTrashFile())
+            return false;
         return dfmmimeData.canTrash() || dfmmimeData.canDelete();
+    }
 
     return true;
 }
