@@ -885,7 +885,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     {
         auto info = InfoFactory::create<FileInfo>(sortInfo->fileUrl());
         if (info)
-            info->refresh();
+            info->updateAttributes();
         createAndInsertItemData(depth, sortInfo, info);
     }
 

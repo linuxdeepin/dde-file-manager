@@ -35,7 +35,7 @@ public:
 
     bool isFileManagerSelf(const QString &desktopFile);
     bool isInvalidSymlinkFile(const QUrl &url);
-    void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
+
     QString getFileMimetype(const QUrl &url);
 
     bool isExecutableScript(const QString &path);
@@ -54,6 +54,10 @@ public:
     bool doOpenFiles(const QMultiMap<QString, QString> &infos, const QMap<QString, QString> &mimeTypes);
 
     void setError(DFMIOError error);
+
+    static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
+    static void asyncAddRecentFile(const QString &desktop, const QList<QString> urls,
+                                   const QMap<QString, QString> &mimeTypes);
 
 public:
     LocalFileHandler *q { nullptr };

@@ -1045,7 +1045,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
 
         if (!desktopFile.isEmpty() && isFileManagerSelf(desktopFile)) {
             defaultDesktopFile = desktopFile;
-            openInfos.insertMulti(defaultDesktopFile, url.toString());
+            openInfos.insert(defaultDesktopFile, url.toString());
             openMineTypes.insert(url.toString(), mimeType);
         } else {
             defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
@@ -1056,9 +1056,9 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
                     defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
                     isOpenNow = true;
                     mimeType = QString();
-                    mountOpenInfos.insertMulti(defaultDesktopFile,
+                    mountOpenInfos.insert(defaultDesktopFile,
                                               DeviceUtils::getSambaFileUriFromNative(fileUrl).toString());
-                    mountMineTypes.insertMulti(DeviceUtils::getSambaFileUriFromNative(fileUrl).toString(),
+                    mountMineTypes.insert(DeviceUtils::getSambaFileUriFromNative(fileUrl).toString(),
                                               QString("inode/directory"));
                 } else {
                     qCWarning(logDFMBase) << "no default application for" << fileUrl;
@@ -1071,15 +1071,15 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
                 recommendApps.removeOne(defaultDesktopFile);
                 if (recommendApps.count() > 0) {
                     defaultDesktopFile = recommendApps.first();
-                    cmdOpenInfos.insertMulti(defaultDesktopFile, url.toString());
-                    cmdMineTypes.insertMulti(url.toString(), mimeType);
+                    cmdOpenInfos.insert(defaultDesktopFile, url.toString());
+                    cmdMineTypes.insert(url.toString(), mimeType);
                 } else {
                     qCWarning(logDFMBase) << "no default application for" << transUrls;
                     continue;
                 }
             }
 
-            openInfos.insertMulti(defaultDesktopFile, url.toString());
+            openInfos.insert(defaultDesktopFile, url.toString());
             openMineTypes.insert(url.toString(), mimeType);
         }
     }
@@ -1128,23 +1128,20 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QMultiMap<QString, QString> &inf
 {
     if (infos.isEmpty())
         return false;
-
     bool result { false };
-    for (const auto &key :  infos.keys()) {
-        bool tmp = launchApp(key, infos.values(key));
+    for (const auto &key :  infos.uniqueKeys()) {
+        auto urls = infos.values(key);
+        bool tmp = launchApp(key, urls);
         result = result ? result : tmp;
         if (tmp) {
             // workaround since DTK apps doesn't support the recent file spec.
             // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
             // the correct approach: let the app add it to the recent list.
             // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-            for (const auto &tmp : infos.values(key)) {
-                QUrl url(tmp);
-                QString filePath = url.toLocalFile();
+            QtConcurrent::run([urls, key, mimeTypes](){
+                asyncAddRecentFile(key, urls, mimeTypes);
+            });
 
-                DesktopFile df(key);
-                addRecentFile(filePath, df, mimeTypes.value(tmp));
-            }
         }
     }
 
@@ -1229,6 +1226,19 @@ GlobalEventType LocalFileHandler::lastEventType()
 void LocalFileHandlerPrivate::setError(DFMIOError error)
 {
     lastError = error;
+}
+
+void LocalFileHandlerPrivate::asyncAddRecentFile(const QString &desktop, const QList<QString> urls, const QMap<QString, QString> &mimeTypes)
+{
+    static QMutex lock;
+    QMutexLocker lk(&lock);
+    for (const auto &tmpUrl : urls) {
+        QUrl url(tmpUrl);
+        QString filePath = url.toLocalFile();
+
+        DesktopFile df(desktop);
+        addRecentFile(filePath, df, mimeTypes.value(tmpUrl));
+    }
 }
 
 LocalFileHandlerPrivate::LocalFileHandlerPrivate(LocalFileHandler *handler)

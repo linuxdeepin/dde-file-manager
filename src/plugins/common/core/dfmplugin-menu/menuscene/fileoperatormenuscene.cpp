@@ -221,6 +221,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
                 if (info && info->isAttributes(OptInfoType::kIsSymLink))
                     cdUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
 
+                qApp->processEvents();
                 if (dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl)) {
                     it = d->selectFiles.erase(it);
                 } else {

@@ -993,7 +993,8 @@ QString SyncFileInfoPrivate::sizeFormat() const
 
 QVariant SyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
-    if (dfmFileInfo) {
+    auto tmp = dfmFileInfo;
+    if (tmp) {
         {
             QReadLocker locker(&const_cast<SyncFileInfoPrivate *>(this)->lock);
             if (cacheAttributes.count(key) > 0) {
@@ -1003,7 +1004,7 @@ QVariant SyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) co
             }
         }
 
-        auto value = dfmFileInfo->attribute(key, ok);
+        auto value = tmp->attribute(key, ok);
         return value;
     }
     return QVariant();
