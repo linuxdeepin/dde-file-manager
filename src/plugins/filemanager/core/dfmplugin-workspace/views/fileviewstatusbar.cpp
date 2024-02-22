@@ -105,7 +105,10 @@ void FileViewStatusBar::setCustomLayout()
     insertWidget(0, loadingIndicator);
 
     stretchWidget = new QWidget(this);
-    stretchWidget->setFixedSize(120, 30);
+    stretchWidget->setMinimumWidth(0);
+    stretchWidget->setMaximumWidth(120);
+    stretchWidget->setFixedHeight(30);
+    stretchWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     stretchWidget->hide();
     insertWidget(1, stretchWidget);
 

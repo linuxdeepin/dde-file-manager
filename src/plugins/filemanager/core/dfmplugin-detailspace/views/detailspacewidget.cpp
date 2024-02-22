@@ -31,10 +31,10 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 void DetailSpaceWidget::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    setFixedWidth(DSizeModeHelper::element(260, 320));
-    setFixedWidth(DSizeModeHelper::element(260, 320));
+    setFixedWidth(DSizeModeHelper::element(260, 290));
+    setFixedWidth(DSizeModeHelper::element(260, 290));
 #else
-    setFixedWidth(320);
+    setFixedWidth(290);
 #endif
 }
 

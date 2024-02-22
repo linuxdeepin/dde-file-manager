@@ -36,8 +36,10 @@ void BasicStatusBarPrivate::initFormatStrings()
 void BasicStatusBarPrivate::initTipLabel()
 {
     tip = new DTK_WIDGET_NAMESPACE::DTipLabel(counted.arg("0"), q);
+    tip->setMinimumWidth(30);
+    tip->setContentsMargins(0, 0, 0, 0);
     tip->setAlignment(Qt::AlignCenter);
-    tip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    tip->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
     tip->show();
 }
 
@@ -57,7 +59,7 @@ void BasicStatusBarPrivate::initLayout()
 
     q->clearLayoutAndAnchors();
     layout->addWidget(tip);
-    layout->setSpacing(14);
+    layout->setSpacing(0);
     layout->setContentsMargins(0, 0, 4, 0);
 }
 
