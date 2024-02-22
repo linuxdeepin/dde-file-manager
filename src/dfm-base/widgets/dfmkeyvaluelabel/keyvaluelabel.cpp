@@ -97,8 +97,10 @@ void KeyValueLabel::setLeftValue(QString value, Qt::TextElideMode elideMode, Qt:
         fontW = fontMinWidth;
     elideNote = fontWidth.elidedText(value, elideMode, fontW);
     leftValueLabel->setText(elideNote);
-    if (toolTipVisibility)
-        leftValueLabel->setToolTip(value);
+    if (toolTipVisibility) {
+        if (elideNote != value)
+            leftValueLabel->setToolTip(value);
+    }
     propertyMap[kLeftValue] = QVariant::fromValue(value);
     propertyMap[kLeftElideMode] = QVariant::fromValue(elideMode);
     propertyMap[kLeftTipVisible] = QVariant::fromValue(toolTipVisibility);
@@ -123,8 +125,10 @@ void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt
     QString elideNote = fontM.elidedText(value, elideMode, fontW);
     rightValueEdit->setCompleteText(value);
     rightValueEdit->setText(elideNote);
-    if (toolTipVisibility)
-        rightValueEdit->setToolTip(value);
+    if (toolTipVisibility) {
+        if (elideNote != value)
+            rightValueEdit->setToolTip(value);
+    }
 
     propertyMap[kRightValue] = QVariant::fromValue(value);
     propertyMap[kRightElideMode] = QVariant::fromValue(elideMode);
