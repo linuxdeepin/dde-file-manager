@@ -19,6 +19,7 @@
 #endif
 
 #include <QCompleter>
+#include <QFontMetrics>
 
 using namespace dfmplugin_titlebar;
 
@@ -732,11 +733,22 @@ void AddressBar::paintEvent(QPaintEvent *e)
     if (text().isEmpty()) {
         QPen oldpen = painter.pen();
         QColor phColor = palette().text().color();
-        const int flags = static_cast<int>(QStyle::visualAlignment(Qt::LeftToRight, QFlag(Qt::AlignCenter)));
 
         phColor.setAlpha(128);
         painter.setPen(phColor);
-        painter.drawText(rect(), flags, d->placeholderText);
+
+        auto textRect = rect();
+        QFontMetrics fm(painter.font());
+        int width = fm.boundingRect(d->placeholderText).width();
+
+        textRect.setLeft(textRect.left() + 36);
+        textRect.setRight(textRect.right() - 6);
+
+        const int flags = static_cast<int>(QStyle::visualAlignment(Qt::LeftToRight,
+                                                                   textRect.width() > width ? QFlag(Qt::AlignCenter) : QFlag(Qt::AlignLeft | Qt::AlignVCenter)));
+
+        painter.drawText(textRect, flags, d->placeholderText);
+
         painter.setPen(oldpen);
     }
     //绘制波纹效果
