@@ -218,7 +218,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
                 if (cb)
                     cb(ok, err, mpt);
 
-                if (mpt.isEmpty()) {
+                if (mpt.isEmpty() && err.code != DeviceError::kUDisksErrorAlreadyMounted) {
                     qCWarning(logDFMBase) << "mount err:" << err.code << " : " << err.message;
                     retryMount(id, DeviceType::kBlockDevice, timeout + 1);   // if device not mounted, mount it again
                 }
