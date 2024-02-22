@@ -45,6 +45,10 @@ bool Core::start()
 
     initServiceDBusInterfaces(&connection);
 
+    // FIXME(XUST) server should directly use DeviceManager instance,
+    // the DBus methods are provided by server, the DeviceManager is intanced in
+    // DeviceManagerDBus class, so this code seems useless.
+    // but now it doesn't bring me any issue, left now and remove it later.
     if (!DevProxyMng->initService()) {
         fmCritical() << "device manager cannot connect to server!";
         DevMngIns->startMonitor();

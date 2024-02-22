@@ -42,6 +42,7 @@ private:
     DeviceWatcher *watcher { nullptr };
     DiscDeviceScanner *discScanner { nullptr };
     bool isWatching { false };
+    bool autoMountBlock { false };
     QAtomicInteger<bool> isMountingOptical { false };
 
     DeviceManager *q { nullptr };
