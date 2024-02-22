@@ -107,9 +107,9 @@ void BasicWidget::initUI()
 KeyValueLabel *BasicWidget::createValueLabel(QFrame *frame, QString leftValue)
 {
     KeyValueLabel *res = new KeyValueLabel(frame);
-    res->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
+    res->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::Medium);
     res->setLeftValue(leftValue, Qt::ElideMiddle, Qt::AlignLeft, true);
-    res->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
+    res->setRightFontSizeWeight(DFontSizeManager::SizeType::T8, QFont::Light);
     return res;
 }
 
@@ -149,19 +149,18 @@ void BasicWidget::basicExpand(const QUrl &url)
 
     DLabel *label = new DLabel(frameMain);
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    label->setFixedWidth(DSizeModeHelper::element(60, 100));
+    label->setFixedWidth(DSizeModeHelper::element(80, 80));
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [label, this]() {
-        label->setFixedWidth(DSizeModeHelper::element(60, 100));
+        label->setFixedWidth(DSizeModeHelper::element(80, 80));
     });
 #else
-    label->setFixedWidth(100);
+    label->setFixedWidth(80);
 #endif
-    QGridLayout *gl = new QGridLayout;
+    QHBoxLayout *gl = new QHBoxLayout;
     gl->setMargin(0);
     gl->addWidget(label);
-    gl->addWidget(hideFile, 0, Qt::AlignLeft);
-    gl->setColumnStretch(0, 2);
-    gl->setColumnStretch(1, 3);
+    gl->addWidget(hideFile, Qt::AlignLeft);
+
     QFrame *tempFrame = new QFrame(frameMain);
     tempFrame->setLayout(gl);
     tempFrame->setFixedWidth(kItemWidth);

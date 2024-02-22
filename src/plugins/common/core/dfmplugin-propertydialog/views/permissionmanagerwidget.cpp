@@ -33,6 +33,7 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
+static constexpr int kLabelWidth { 80 };
 constexpr int kOwerAll = QFile::ExeOwner | QFile::WriteOwner | QFile::ReadOwner;
 constexpr int kGroupAll = QFile::ExeGroup | QFile::WriteGroup | QFile::ReadGroup;
 constexpr int kOtherAll = QFile::ExeOther | QFile::WriteOther | QFile::ReadOther;
@@ -158,43 +159,39 @@ void PermissionManagerWidget::initUI()
 
     ownerComboBox = new QComboBox(this);
     ownerComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    ownerComboBox->setFixedWidth(196);
 
     groupComboBox = new QComboBox(this);
     groupComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    groupComboBox->setFixedWidth(196);
 
     otherComboBox = new QComboBox(this);
     otherComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    otherComboBox->setFixedWidth(196);
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
-    executableCheckBox->setFixedWidth(196);
     executableCheckBox->setToolTip(executableCheckBox->text());
 
     layout->setLabelAlignment(Qt::AlignLeft);
 
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
-    DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
     DLabel *group = new DLabel(QObject::tr("Group"), this);
-    DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
     DLabel *other = new DLabel(QObject::tr("Others"), this);
-    DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    owner->setFixedWidth(DSizeModeHelper::element(60, 107));
-    group->setFixedWidth(DSizeModeHelper::element(60, 107));
-    other->setFixedWidth(DSizeModeHelper::element(60, 107));
+    owner->setFixedWidth(DSizeModeHelper::element(kLabelWidth, kLabelWidth));
+    group->setFixedWidth(DSizeModeHelper::element(kLabelWidth, kLabelWidth));
+    other->setFixedWidth(DSizeModeHelper::element(kLabelWidth, kLabelWidth));
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [owner, group, other]() {
-        owner->setFixedWidth(DSizeModeHelper::element(60, 107));
-        group->setFixedWidth(DSizeModeHelper::element(60, 107));
-        other->setFixedWidth(DSizeModeHelper::element(60, 107));
+        owner->setFixedWidth(DSizeModeHelper::element(kLabelWidth, kLabelWidth));
+        group->setFixedWidth(DSizeModeHelper::element(kLabelWidth, kLabelWidth));
+        other->setFixedWidth(DSizeModeHelper::element(kLabelWidth, kLabelWidth));
     });
 #else
-    owner->setFixedWidth(107);
-    group->setFixedWidth(107);
-    other->setFixedWidth(107);
+    owner->setFixedWidth(kLabelWidth);
+    group->setFixedWidth(kLabelWidth);
+    other->setFixedWidth(kLabelWidth);
 #endif
 
     layout->addRow(owner, ownerComboBox);
