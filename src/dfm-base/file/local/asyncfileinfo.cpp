@@ -218,10 +218,8 @@ bool AsyncFileInfo::canAttributes(const CanableInfoType type) const
 QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
-    case FileExtendedInfoType::kFileLocalDevice: {
-        auto local = d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice);
-        return local.isValid() ? local : false;
-    }
+    case FileExtendedInfoType::kFileLocalDevice:
+        return false;
     case FileExtendedInfoType::kFileCdRomDevice:
         return d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsCdRomDevice).toBool();
     case FileExtendedInfoType::kSizeFormat:
@@ -1145,7 +1143,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardContentType, attribute(DFileInfo::AttributeID::kStandardContentType));
     // iconname
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIcon, attribute(DFileInfo::AttributeID::kStandardIcon));
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice, FileUtils::isLocalDevice(q->fileUrl()));
+    tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice, false);
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsCdRomDevice, FileUtils::isCdRomDevice(q->fileUrl()));
     if (q->nameOf(NameInfoType::kIconName) != attribute(DFileInfo::AttributeID::kStandardIcon)) {
         QWriteLocker rlk(&iconLock);

@@ -133,7 +133,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
 
         // target is not local device, origin is dir and can not write, prohibit drop
         const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
-        if (!FileUtils::isLocalDevice(targetUrl)) {
+        if (!hoverFileInfo->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
             if (!info->isAttributes(OptInfoType::kIsWritable)) {
                 view->setViewSelectState(false);
                 event->ignore();
