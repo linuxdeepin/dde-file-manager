@@ -166,7 +166,9 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         if (icon.isNull())
             icon = info->fileIcon();
 
-        iconLabel->setPixmap(icon.pixmap(targetSize));
+        QPixmap px = icon.pixmap(targetSize);
+        px.setDevicePixelRatio(qApp->devicePixelRatio());
+        iconLabel->setPixmap(px);
         iconLabel->setAlignment(Qt::AlignCenter);
         iconLabel->setContentsMargins(0, 0, 0, 15);
         vLayout->insertWidget(0, iconLabel, 0, Qt::AlignHCenter);
