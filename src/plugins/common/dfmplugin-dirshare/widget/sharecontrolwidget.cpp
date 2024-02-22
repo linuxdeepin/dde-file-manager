@@ -45,6 +45,7 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 namespace ConstDef {
+static constexpr int kKeyWidth { 85 };
 static const int kWidgetFixedWidth { 196 };
 static constexpr char kShareNameRegx[] { "^[^\\[\\]\"'/\\\\:|<>+=;,?*\r\n\t]*$" };
 static constexpr char kShareFileDir[] { "/var/lib/samba/usershares" };
@@ -62,14 +63,14 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
 {
     setObjectName("SectionKeyLabel");
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    setFixedWidth(DSizeModeHelper::element(65, 112));
+    setFixedWidth(DSizeModeHelper::element(ConstDef::kKeyWidth, ConstDef::kKeyWidth));
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
-        this->setFixedWidth(DSizeModeHelper::element(65, 112));
+        this->setFixedWidth(DSizeModeHelper::element(ConstDef::kKeyWidth, ConstDef::kKeyWidth));
     });
 #else
-    setFixedWidth(112);
+    setFixedWidth(ConstDef::kKeyWidth);
 #endif
-    DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T7, QFont::Medium);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
 
@@ -117,10 +118,7 @@ void ShareControlWidget::setupUi(bool disableState)
     gridLayout->setContentsMargins(0, 0, 0, 0);
     setContent(frame);
     mainLay = new QFormLayout(this);
-    mainLay->setLabelAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    mainLay->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-    mainLay->setFormAlignment(Qt::AlignVCenter | Qt::AlignCenter);
-    mainLay->setContentsMargins(15, 10, 5, 10);
+    mainLay->setContentsMargins(15, 10, 10, 10);
     mainLay->setVerticalSpacing(6);
     gridLayout->addLayout(mainLay, 0, 0);
     gridLayout->setVerticalSpacing(0);
@@ -128,20 +126,7 @@ void ShareControlWidget::setupUi(bool disableState)
 
     setupShareSwitcher();
 
-    QWidget *switcherContainer = new QWidget(this);
-    QHBoxLayout *lay = new QHBoxLayout(this);
-    switcherContainer->setLayout(lay);
-    lay->addWidget(shareSwitcher);
-    lay->setAlignment(Qt::AlignLeft);
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    lay->setContentsMargins(DSizeModeHelper::element(60, 107), 0, 0, 0);
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [lay]() {
-        lay->setContentsMargins(DSizeModeHelper::element(60, 107), 0, 0, 0);
-    });
-#else
-    lay->setContentsMargins(107, 0, 0, 0);
-#endif
-    mainLay->addRow(switcherContainer);
+    mainLay->addRow(" ", shareSwitcher);
 
     QPalette peMenuBg;
     QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
@@ -157,15 +142,12 @@ void ShareControlWidget::setupUi(bool disableState)
             newText.chop(1);
         shareNameEditor->setText(newText);
     });
-    shareNameEditor->setFixedWidth(ConstDef::kWidgetFixedWidth);
     mainLay->addRow(new SectionKeyLabel(tr("Share name"), this), shareNameEditor);
     sharePermissionSelector = new QComboBox(this);
     sharePermissionSelector->setPalette(peMenuBg);
-    sharePermissionSelector->setFixedWidth(ConstDef::kWidgetFixedWidth);
     mainLay->addRow(new SectionKeyLabel(tr("Permission"), this), sharePermissionSelector);
     shareAnonymousSelector = new QComboBox(this);
     shareAnonymousSelector->setPalette(peMenuBg);
-    shareAnonymousSelector->setFixedWidth(ConstDef::kWidgetFixedWidth);
     mainLay->addRow(new SectionKeyLabel(tr("Anonymous"), this), shareAnonymousSelector);
 
     QValidator *validator = new QRegularExpressionValidator(QRegularExpression(ConstDef::kShareNameRegx), this);

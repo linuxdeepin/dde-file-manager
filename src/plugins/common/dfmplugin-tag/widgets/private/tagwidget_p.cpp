@@ -40,7 +40,7 @@ void TagWidgetPrivate::initializeUI()
     q->setLayout(mainLayout);
     QString name = tr("Tag");
     tagLable = new DLabel(name, q);
-    DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T5, QFont::DemiBold);
     tagLable->setObjectName(name);
     tagLeftLable = new DLabel(name, q);
     tagLeftLable->setObjectName(name);
