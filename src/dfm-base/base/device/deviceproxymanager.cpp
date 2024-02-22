@@ -161,7 +161,7 @@ QVariantMap DeviceProxyManager::queryDeviceInfoByPath(const QString &path, bool 
             continue;
         }
         if (path.startsWith(it.value())
-                || (path + "/").startsWith(it.value())) {
+            || (path + "/").startsWith(it.value())) {
             blkid = it.key();
             break;
         }
@@ -200,10 +200,12 @@ void DeviceProxyManagerPrivate::initConnection()
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
         connectToDBus();
         emit q->devMngDBusRegistered();
+        qCInfo(logDFMBase) << "connected to DBus...";
     });
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [this] {
         connectToAPI();
         emit q->devMngDBusUnregistered();
+        qCInfo(logDFMBase) << "connected to API...";
     });
 
     if (isDBusRuning())

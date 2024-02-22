@@ -48,6 +48,7 @@ void DeviceManagerDBus::initialize()
 {
     DevMngIns->startMonitor();
     DevMngIns->startPollingDeviceUsage();
+    DevMngIns->enableBlockAutoMount();
 }
 
 /*!

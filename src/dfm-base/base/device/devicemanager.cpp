@@ -52,6 +52,15 @@ DeviceManager *DeviceManager::instance()
     return &ins;
 }
 
+// DeviceManager instance might be used in different process,
+// but auto mount should not be enabled in different process
+// enable auto mount explicitly
+void DeviceManager::enableBlockAutoMount()
+{
+    d->autoMountBlock = true;
+    qCInfo(logDFMBase) << "block device auto mount is enabled.";
+}
+
 QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
 {
     auto ret { d->watcher->getDevIds(DeviceType::kBlockDevice) };
@@ -218,7 +227,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
                 if (cb)
                     cb(ok, err, mpt);
 
-                if (mpt.isEmpty()) {
+                if (mpt.isEmpty() && err.code != DeviceError::kUDisksErrorAlreadyMounted) {
                     qCWarning(logDFMBase) << "mount err:" << err.code << " : " << err.message;
                     retryMount(id, DeviceType::kBlockDevice, timeout + 1);   // if device not mounted, mount it again
                 }
@@ -880,6 +889,11 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 {
     if (type == DeviceType::kProtocolDevice) {   // alwasy auto mount protocol device
         mountProtocolDevAsync(id);
+        return;
+    }
+
+    if (!d->autoMountBlock) {
+        qCInfo(logDFMBase) << "auto mount block device is not allowed in current application";
         return;
     }
 

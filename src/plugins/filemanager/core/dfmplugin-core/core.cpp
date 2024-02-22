@@ -98,6 +98,7 @@ void Core::connectToServer()
         fmCritical() << "device manager cannot connect to service!";
         DevMngIns->startMonitor();
         DevMngIns->startPollingDeviceUsage();
+        DevMngIns->enableBlockAutoMount();
     }
 }
 
