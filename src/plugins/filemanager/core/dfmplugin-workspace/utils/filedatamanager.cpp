@@ -8,6 +8,7 @@
 
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/watchercache.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QApplication>
 
@@ -119,7 +120,8 @@ bool FileDataManager::checkNeedCache(const QUrl &url)
         return true;
 
     // mounted dir should cache files in FileDataManager
-    if (!FileUtils::isLocalDevice(url))
+    auto info = InfoFactory::create<FileInfo>(url);
+    if ((info ? !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !FileUtils::isLocalDevice(url)))
         return true;
 
     return false;

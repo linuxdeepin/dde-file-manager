@@ -72,7 +72,6 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
 
     if (infoTrans) {
         infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
         emit InfoCacheController::instance().removeCacheFileInfo({url});
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
@@ -254,7 +253,9 @@ bool LocalDirIterator::oneByOne()
     if (!url().isValid())
         return true;
 
-    return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
+    auto info = InfoFactory::create<FileInfo>(url());
+
+    return (info ? info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !FileUtils::isLocalDevice(url())) || !d->dfmioDirIterator;
 }
 
 bool LocalDirIterator::initIterator()

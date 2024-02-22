@@ -371,12 +371,11 @@ bool FileUtils::isLocalDevice(const QUrl &url)
     if (isGvfsFile(url))
         return false;
 
-    if (DFMIO::DFMUtils::fileIsRemovable(url)) {
-        if (DeviceUtils::isSubpathOfDlnfs(url.path())) {
-            return !(DevProxyMng->isFileOfExternalBlockMounts(url.path()));
-        }
+    if (DeviceUtils::isExternalBlock(url))
         return false;
-    }
+
+    if (DevProxyMng->isFileOfProtocolMounts(url.path()))
+        return false;
 
     return true;
 }
@@ -1258,9 +1257,9 @@ int FileUtils::dirFfileCount(const QUrl &url)
 bool FileUtils::fileCanTrash(const QUrl &url)
 {
     // gio does not support root user to move ordinary user files to trash
+    auto info = InfoFactory::create<FileInfo>(url);
     if (SysInfoUtils::isRootUser()) {
-        auto info = InfoFactory::create<FileInfo>(url);
-        int ownerId = info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
+        int ownerId = info.isNull() ? -1 : info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
         if (ownerId != 0)
             return false;
     }
@@ -1268,7 +1267,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     // 获取当前配置
     bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
     if (!alltotrash)
-        return isLocalDevice(url);
+        return info ? info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool(): isLocalDevice(url);
     if (!url.isValid())
         return false;
 

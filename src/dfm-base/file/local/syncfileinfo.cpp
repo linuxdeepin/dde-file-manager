@@ -246,7 +246,7 @@ QVariant SyncFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kFileLocalDevice:
-        return d->isLocalDevice;
+        return true;
     case FileExtendedInfoType::kFileCdRomDevice:
         return d->isCdRomDevice;
     case FileExtendedInfoType::kSizeFormat:
