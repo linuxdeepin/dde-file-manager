@@ -46,6 +46,7 @@ private:
 
     bool blockDeviceFilter(const QVariantMap &data);
     bool protoDeviceFilter(const QVariantMap &data);
+    bool isRootDrive(const QString &drivePath);
     void playSoundOnDevPlugInOut(bool in);
     void updateDockVisible();
     void notify(const QString &title, const QString &msg);

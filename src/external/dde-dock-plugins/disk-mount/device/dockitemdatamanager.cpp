@@ -93,6 +93,10 @@ bool DockItemDataManager::blockDeviceFilter(const QVariantMap &data)
     if (data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString().isEmpty())
         return kIgnore;
 
+    // partitions should not be displayed in dock if they are siblings of root partition.
+    if (isRootDrive(data.value(GlobalServerDefines::DeviceProperty::kDrive).toString()))
+        return kIgnore;
+
     QString backingDevID = data.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
     if (backingDevID != "/") {
         auto reply = devMng->QueryBlockDeviceInfo(backingDevID, false);
@@ -110,9 +114,24 @@ bool DockItemDataManager::blockDeviceFilter(const QVariantMap &data)
 
 bool DockItemDataManager::protoDeviceFilter(const QVariantMap &data)
 {
+    // dlnfs mounts will be captured by gvfs, ignore them.
     if (device_utils::isDlnfsMount(data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString()))
         return kIgnore;
     return kDisplay;
+}
+
+bool DockItemDataManager::isRootDrive(const QString &drivePath)
+{
+    static std::once_flag flg;
+    static QString rootDrive;
+    std::call_once(flg, [this] {
+        const QString &rootDev = device_utils::queryDevice("/");
+        QString rootBlkPath = QString("/org/freedesktop/UDisks2/block_devices/") + rootDev.mid(5);
+        qCInfo(logAppDock) << "the root object path is:" << rootBlkPath;
+        const auto &rootDevData = devMng->QueryBlockDeviceInfo(rootBlkPath, false);
+        rootDrive = rootDevData.value().value(GlobalServerDefines::DeviceProperty::kDrive).toString();
+    });
+    return rootDrive == drivePath;
 }
 
 void DockItemDataManager::playSoundOnDevPlugInOut(bool in)

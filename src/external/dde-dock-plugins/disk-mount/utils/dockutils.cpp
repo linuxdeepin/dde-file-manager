@@ -173,3 +173,40 @@ bool device_utils::isDlnfsMount(const QString &mpt)
     mnt_free_iter(iter);
     return false;
 }
+
+QString device_utils::queryDevice(const QString &mpt)
+{
+    auto unifyPath = [](const QString &path) {
+        QString _path = path;
+        while (_path.endsWith("/") && _path.length() > 1)
+            _path.chop(1);
+        return _path;
+    };
+
+    const QString &_mpt = unifyPath(mpt);
+
+    libmnt_table *tab = mnt_new_table();
+    libmnt_iter *iter = mnt_new_iter(MNT_ITER_BACKWARD);
+
+    int ret = mnt_table_parse_mtab(tab, nullptr);
+    if (ret != 0) {
+        qCWarning(logAppDock) << "device: cannot parse mtab" << ret;
+        mnt_free_table(tab);
+        mnt_free_iter(iter);
+        return "";
+    }
+
+    libmnt_fs *fs = nullptr;
+    while (mnt_table_next_fs(tab, iter, &fs) == 0) {
+        if (fs && strcmp(_mpt.toStdString().c_str(), mnt_fs_get_target(fs)) == 0) {
+            QString source = mnt_fs_get_source(fs);
+            mnt_free_table(tab);
+            mnt_free_iter(iter);
+            return source;
+        }
+    }
+
+    mnt_free_table(tab);
+    mnt_free_iter(iter);
+    return "";
+}
