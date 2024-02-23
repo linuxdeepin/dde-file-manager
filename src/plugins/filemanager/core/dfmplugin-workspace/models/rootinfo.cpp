@@ -370,7 +370,13 @@ void RootInfo::handleGetSourceData(const QString &currentToken)
 {
     if (needStartWatcher)
         startWatcher();
-    QList<SortInfoPointer> newDatas = sourceDataList;
+
+    QList<SortInfoPointer> newDatas;
+    {
+        QWriteLocker wlk(&childrenLock);
+        newDatas = sourceDataList;
+    }
+
     emit sourceDatas(currentToken, newDatas, originSortRole, originSortOrder, originMixSort, !traversaling);
     if (!traversaling)
         emit traversalFinished(currentToken);
