@@ -87,16 +87,10 @@ QString CommandParser::value(const QString &name) const
 void CommandParser::processCommand()
 {
     if (isSet("d")) {
-        bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
-        if (enableHeadless) {
-            qCInfo(logAppFileManager) << "Start headless";
-            dpfSignalDispatcher->publish(GlobalEventType::kHeadlessStarted);
-            // whether to add setQuitOnLastWindowClosed
-            return;
-        }
-        qCWarning(logAppFileManager) << "Cannot start dde-file-manager in no window mode "
-                                        "unless you can set the value of `dfm.headless` in DConfig to `true`!";
-        ::exit(0);
+        qCInfo(logAppFileManager) << "Start headless";
+        dpfSignalDispatcher->publish(GlobalEventType::kHeadlessStarted);
+        // whether to add setQuitOnLastWindowClosed
+        return;
     }
 
     if (isSet("e")) {
