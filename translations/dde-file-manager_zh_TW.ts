@@ -28,34 +28,6 @@
     </message>
 </context>
 <context>
-    <name>ComputerEventReceiver</name>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
-        <source>Computer</source>
-        <translation>電腦</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
-        <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
-        <translation>%1為唯讀權限，是否開啟讀寫權限？</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="228"/>
-        <source>Once enabled, read/write permission will be granted permanently</source>
-        <translation>開啟後將永久獲得讀寫權限</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
-        <source>Enable Now</source>
-        <translation>確認開啟</translation>
-    </message>
-</context>
-<context>
     <name>DesktopMain</name>
     <message>
         <location filename="../src/apps/dde-desktop/main.cpp" line="236"/>
@@ -92,33 +64,33 @@
 <context>
     <name>DockItemDataManager</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="125"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="144"/>
         <source>The device has been safely removed</source>
         <translation>裝置已被安全移除</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="137"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="156"/>
         <source>eject</source>
         <translation>彈出</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="138"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="157"/>
         <source>unmount</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="139"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="144"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="158"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="163"/>
         <source>remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="141"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="160"/>
         <source>Operation failed</source>
         <translation>操作失敗</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="142"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="161"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
         <translation>裝置（%1）正忙，無法%2。</translation>
     </message>
@@ -140,35 +112,6 @@
     </message>
 </context>
 <context>
-    <name>FileOperationsEventReceiver</name>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="238"/>
-        <source>Rename file error</source>
-        <translation>文件重新命名錯誤</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="493"/>
-        <source>Failed to create the directory</source>
-        <translation>目錄建立失敗</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="979"/>
-        <source>Failed to create the file</source>
-        <translation>建立文件失敗</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1056"/>
-        <source>link file error</source>
-        <translation>連結文件錯誤</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1095"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1104"/>
-        <source>Failed to modify file permissions</source>
-        <translation>修改文件權限失敗</translation>
-    </message>
-</context>
-<context>
     <name>MimeTypeDisplayManager</name>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="764"/>
@@ -187,27 +130,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1030"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1044"/>
         <source>need authorization to access</source>
         <translation>需要授權來訪問</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1096"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1110"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>無法確認%1的身份。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1097"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1111"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>當您首次登入時會看到這個提示。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1098"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1112"/>
         <source>The identity sent by the remote computer is</source>
         <translation>遠端電腦發送的身份訊息為</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1100"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1114"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想確認繼續操作是否安全，請聯絡系統管理員。</translation>
     </message>
@@ -1110,6 +1053,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="193"/>
         <source>Maximum</source>
         <translation>最大速度</translation>
     </message>
@@ -1765,125 +1709,6 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
         <source>Sidebar</source>
         <translation>側邊欄</translation>
-    </message>
-</context>
-<context>
-    <name>RecentManager</name>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="94"/>
-        <source>Path</source>
-        <translation>路徑</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="99"/>
-        <source>Last access</source>
-        <translation>最近訪問時間</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="123"/>
-        <source>Recent</source>
-        <translation>最近使用</translation>
-    </message>
-</context>
-<context>
-    <name>SearchHelper</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="161"/>
-        <source>Path</source>
-        <translation>路徑</translation>
-    </message>
-</context>
-<context>
-    <name>SystemPathUtil</name>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="121"/>
-        <source>Home</source>
-        <translation>主目錄</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="122"/>
-        <source>Desktop</source>
-        <translation>桌面</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="123"/>
-        <source>Videos</source>
-        <translation>影片</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="124"/>
-        <source>Music</source>
-        <translation>音樂</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="125"/>
-        <source>Pictures</source>
-        <translation>圖片</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="126"/>
-        <source>Documents</source>
-        <translation>文件</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="127"/>
-        <source>Downloads</source>
-        <translation>下載</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="128"/>
-        <source>Trash</source>
-        <translation>回收站</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="129"/>
-        <source>System Disk</source>
-        <translation>系統盤</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="130"/>
-        <source>Recent</source>
-        <translation>最近使用</translation>
-    </message>
-</context>
-<context>
-    <name>TagEditor</name>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="95"/>
-        <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>輸入標記訊息，如“工作”、“家人”等。多個標記訊息之間用英文半形逗號分隔。</translation>
-    </message>
-</context>
-<context>
-    <name>TrashHelper</name>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
-        <source>Source Path</source>
-        <translation>原始路徑</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="284"/>
-        <source>Time deleted</source>
-        <translation>刪除時間</translation>
-    </message>
-</context>
-<context>
-    <name>VaultHelper</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
-        <source>Vault</source>
-        <translation>保險箱</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
-        <source>Vault not available because cryfs not installed!</source>
-        <translation>因未安裝cryfs，保險箱不可用</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
-        <source>A task is in progress, so it cannot perform your operation</source>
-        <translation>目前有任務正在進行，無法執行此操作</translation>
     </message>
 </context>
 <context>
@@ -3506,6 +3331,59 @@
     </message>
 </context>
 <context>
+    <name>dfmbase::SystemPathUtil</name>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="121"/>
+        <source>Home</source>
+        <translation>主目錄</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="122"/>
+        <source>Desktop</source>
+        <translation>桌面</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="123"/>
+        <source>Videos</source>
+        <translation>影片</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="124"/>
+        <source>Music</source>
+        <translation>音樂</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="125"/>
+        <source>Pictures</source>
+        <translation>圖片</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="126"/>
+        <source>Documents</source>
+        <translation>文件</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="127"/>
+        <source>Downloads</source>
+        <translation>下載</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="128"/>
+        <source>Trash</source>
+        <translation>回收站</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="129"/>
+        <source>System Disk</source>
+        <translation>系統盤</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="130"/>
+        <source>Recent</source>
+        <translation>最近使用</translation>
+    </message>
+</context>
+<context>
     <name>dfmbase::TaskWidget</name>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="202"/>
@@ -3984,6 +3862,34 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
         <source>Cannot access %1</source>
         <translation>無法訪問%1</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_computer::ComputerEventReceiver</name>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
+        <source>Computer</source>
+        <translation>電腦</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
+        <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
+        <translation>%1為唯讀權限，是否開啟讀寫權限？</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="228"/>
+        <source>Once enabled, read/write permission will be granted permanently</source>
+        <translation>開啟後將永久獲得讀寫權限</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
+        <source>Cancel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
+        <source>Enable Now</source>
+        <translation>確認開啟</translation>
     </message>
 </context>
 <context>
@@ -4511,6 +4417,35 @@
     </message>
 </context>
 <context>
+    <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="238"/>
+        <source>Rename file error</source>
+        <translation>文件重新命名錯誤</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="493"/>
+        <source>Failed to create the directory</source>
+        <translation>目錄建立失敗</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="979"/>
+        <source>Failed to create the file</source>
+        <translation>建立文件失敗</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1056"/>
+        <source>link file error</source>
+        <translation>連結文件錯誤</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1095"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1104"/>
+        <source>Failed to modify file permissions</source>
+        <translation>修改文件權限失敗</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_filepreview::PreviewDialogManager</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/utils/previewdialogmanager.cpp" line="64"/>
@@ -4981,6 +4916,24 @@
     </message>
 </context>
 <context>
+    <name>dfmplugin_recent::RecentManager</name>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="94"/>
+        <source>Path</source>
+        <translation>路徑</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="99"/>
+        <source>Last access</source>
+        <translation>最近訪問時間</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="123"/>
+        <source>Recent</source>
+        <translation>最近使用</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_recent::RecentMenuScenePrivate</name>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="174"/>
@@ -5156,6 +5109,14 @@
     </message>
 </context>
 <context>
+    <name>dfmplugin_search::SearchHelper</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="161"/>
+        <source>Path</source>
+        <translation>路徑</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_search::SearchMenuScene</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="164"/>
@@ -5271,6 +5232,14 @@
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagdirmenuscene.cpp" line="88"/>
         <source>Open file location</source>
         <translation>打開文件所在位置</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_tag::TagEditor</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="95"/>
+        <source>Input tag info, such as work, family. A comma is used between two tags.</source>
+        <translation>輸入標記訊息，如“工作”、“家人”等。多個標記訊息之間用英文半形逗號分隔。</translation>
     </message>
 </context>
 <context>
@@ -5504,6 +5473,19 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/views/emptyTrashWidget.cpp" line="34"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_trash::TrashHelper</name>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
+        <source>Source Path</source>
+        <translation>原始路徑</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="284"/>
+        <source>Time deleted</source>
+        <translation>刪除時間</translation>
     </message>
 </context>
 <context>
@@ -6224,6 +6206,25 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="201"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation>因未安裝cryfs，保險箱不可用</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_vault::VaultHelper</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <source>Vault</source>
+        <translation>保險箱</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
+        <source>Vault not available because cryfs not installed!</source>
+        <translation>因未安裝cryfs，保險箱不可用！</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <source>A task is in progress, so it cannot perform your operation</source>
+        <translation>目前有任務正在進行，無法執行此操作</translation>
     </message>
 </context>
 <context>
