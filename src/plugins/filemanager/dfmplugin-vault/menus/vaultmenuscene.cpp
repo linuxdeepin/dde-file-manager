@@ -82,15 +82,19 @@ void VaultMenuScenePrivate::filterMenuAction(QMenu *menu, const QStringList &act
         if (actionStr == dfmplugin_menu::ActionID::kSendTo) {
             auto subMenu = act->menu();
             if (subMenu) {
-                int invisibleNum { 0 };
+                int invisibleActionNum { 0 };
+                int numOfSeparator { 0 };
                 for (QAction *action : subMenu->actions()) {
                     const QString &actionID = action->property(ActionPropertyKey::kActionID).toString();
-                    if (actionID == dfmplugin_menu::ActionID::kSendToDesktop || actionID == dfmplugin_menu::ActionID::kCreateSymlink) {
+                    if (actionID == dfmplugin_menu::ActionID::kSeparator) {
+                        numOfSeparator++;
+                    } else if (actionID == dfmplugin_menu::ActionID::kSendToDesktop
+                               || actionID == dfmplugin_menu::ActionID::kCreateSymlink) {
                         action->setVisible(false);
-                        invisibleNum++;
+                        invisibleActionNum++;
                     }
                 }
-                if (invisibleNum == subMenu->actions().count())
+                if ((invisibleActionNum + numOfSeparator) == subMenu->actions().count())
                     act->setVisible(false);
             }
         }
