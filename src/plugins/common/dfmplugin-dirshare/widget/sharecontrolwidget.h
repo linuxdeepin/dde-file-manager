@@ -11,6 +11,7 @@
 #include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <DLabel>
+#include <DTipLabel>
 #include <DCommandLinkButton>
 #include <DArrowLineDrawer>
 #include <QUrl>
@@ -71,7 +72,7 @@ private:
     QLabel *networkAddrLabel { nullptr };
     QLabel *userNamelineLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *sharePassword { nullptr };
-    QTextBrowser *m_shareNotes { nullptr };
+    DTK_WIDGET_NAMESPACE::DTipLabel *m_shareNotes { nullptr };
     QPushButton *splitLineGray { nullptr };
     QPushButton *copyNetAddr { nullptr };
     QPushButton *copyUserNameBt { nullptr };

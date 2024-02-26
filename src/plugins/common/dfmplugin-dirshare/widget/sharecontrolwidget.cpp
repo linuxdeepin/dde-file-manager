@@ -195,7 +195,7 @@ void ShareControlWidget::setupNetworkPath()
     mainLay->addRow(new SectionKeyLabel(tr("Network path"), this), hBoxLine1);
 
     copyNetAddr = new QPushButton(this);
-    auto setBtnIcon = [=]{
+    auto setBtnIcon = [=] {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             copyNetAddr->setIcon(QIcon(":light/icons/property_bt_copy.svg"));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
@@ -225,7 +225,7 @@ void ShareControlWidget::setupUserName()
     mainLay->addRow(new SectionKeyLabel(tr("Username"), this), hBoxLine2);
 
     copyUserNameBt = new QPushButton(this);
-    auto setBtnIcon = [=]{
+    auto setBtnIcon = [=] {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             copyUserNameBt->setIcon(QIcon(":light/icons/property_bt_copy.svg"));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
@@ -272,29 +272,33 @@ void ShareControlWidget::setupSharePassword()
 
 void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
 {
-    QPalette pe;
-    pe.setColor(QPalette::Text, QColor("#526A7F"));
-    m_shareNotes = new QTextBrowser(this);
-    m_shareNotes->setContentsMargins(0, 0, 0, 0);
-    m_shareNotes->setPalette(pe);
-
     static QString notice = tr("This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. ");
-    m_shareNotes->setPlainText(notice);
-    DFontSizeManager::instance()->bind(m_shareNotes, DFontSizeManager::SizeType::T7, QFont::Normal);
-    m_shareNotes->setFixedHeight(50);
-    m_shareNotes->setReadOnly(true);
-    m_shareNotes->setFrameStyle(QFrame::NoFrame);
-    connect(m_shareNotes, &QTextBrowser::copyAvailable, this, [=](bool yesCopy) {
-        if (yesCopy) {
-            QTextCursor textCursor = m_shareNotes->textCursor();
-            if (textCursor.hasSelection()) {
-                textCursor.clearSelection();
-                m_shareNotes->setTextCursor(textCursor);
-            }
+    m_shareNotes = new DTipLabel(notice, this);
+    m_shareNotes->setWordWrap(true);
+    m_shareNotes->setAlignment(Qt::AlignLeft);
+
+    // from chenke, any application changes the palette, then they should
+    // be responsibility for the styles.
+    // the parent of shareNotes is changed outside: FilePropertyDialog::initInfoUI()
+    auto setTextColor = [this](DGuiApplicationHelper::ColorType type) {
+        QPalette pal = m_shareNotes->palette();
+        if (type == DGuiApplicationHelper::LightType) {
+            pal.setColor(QPalette::Active, QPalette::Text, QColor(0, 0, 0, 0.6 * 255));
+            pal.setColor(QPalette::Inactive, QPalette::Text, QColor(0, 0, 0, 0.3 * 255));
+        } else {
+            pal.setColor(QPalette::Active, QPalette::Text, QColor(255, 255, 255, 0.7 * 255));
+            pal.setColor(QPalette::Inactive, QPalette::Text, QColor(255, 255, 255, 0.2 * 255));
         }
-    });
+        m_shareNotes->setPalette(pal);
+        dynamic_cast<DLabel *>(m_shareNotes)->setForegroundRole(QPalette::Text);
+    };
+
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            this, setTextColor);
+    setTextColor(DGuiApplicationHelper::instance()->themeType());
+
     QGridLayout *notesLayout = new QGridLayout;
-    notesLayout->setContentsMargins(9, 0, 9, 9);
+    notesLayout->setContentsMargins(15, 0, 9, 9);
     notesLayout->addWidget(m_shareNotes, 0, 0);
     gridLayout->addLayout(notesLayout, 1, 0);
 }
