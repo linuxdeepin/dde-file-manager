@@ -12,6 +12,7 @@ TagCrumbEdit::TagCrumbEdit(QWidget *parent)
 {
     auto doc = QTextEdit::document();
     doc->setDocumentMargin(doc->documentMargin() + 5);
+    setViewportMargins(0, 0, 0, 0);
 }
 
 bool TagCrumbEdit::isEditing()
