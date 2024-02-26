@@ -86,6 +86,8 @@ public:
 
     static bool isSystemDisk(const QVariantHash &devInfo);
     static bool isSystemDisk(const QVariantMap &devInfo);
+    static bool isSiblingOfRoot(const QVariantHash &devInfo);
+    static bool isSiblingOfRoot(const QVariantMap &devInfo);
 
 private:
     static bool hasMatch(const QString &txt, const QString &rex);

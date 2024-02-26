@@ -359,15 +359,5 @@ void BlockEntryFileEntity::resetWindowsVolTag()
 
 bool BlockEntryFileEntity::isSiblingOfRoot() const
 {
-    static QString rootDrive;
-    static std::once_flag flg;
-    std::call_once(flg, [&rootDrive] {
-        const QString &rootDev = DeviceUtils::getMountInfo("/", false);
-        const QString &rootDevId = DeviceUtils::getBlockDeviceId(rootDev);
-        const auto &data = DevProxyMng->queryBlockInfo(rootDevId);
-        rootDrive = data.value(DeviceProperty::kDrive).toString();
-        fmInfo() << "got root drive:" << rootDrive << rootDev;
-    });
-
-    return rootDrive == this->datas.value(DeviceProperty::kDrive);
+    return DeviceUtils::isSiblingOfRoot(this->datas);
 }

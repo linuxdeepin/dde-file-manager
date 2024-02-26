@@ -714,6 +714,8 @@ bool DeviceUtils::isSystemDisk(const QVariantHash &devInfo)
             || devInfo.value(GlobalServerDefines::DeviceProperty::kConnectionBus).toString() != "usb";
     if (devInfo.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
         isSystem = false;
+    // treat the siblings of root(/) device as System devices.
+    isSystem |= isSiblingOfRoot(devInfo);
     return isSystem;
 }
 
@@ -726,6 +728,32 @@ bool DeviceUtils::isSystemDisk(const QVariantMap &devInfo)
         hash.insert(iter.key(), iter.value());
     }
     return isSystemDisk(hash);
+}
+
+bool DeviceUtils::isSiblingOfRoot(const QVariantHash &devInfo)
+{
+    static QString rootDrive;
+    static std::once_flag flg;
+    std::call_once(flg, [] {
+        const QString &rootDev = DeviceUtils::getMountInfo("/", false);
+        const QString &rootDevId = DeviceUtils::getBlockDeviceId(rootDev);
+        const auto &data = DevProxyMng->queryBlockInfo(rootDevId);
+        rootDrive = data.value(GlobalServerDefines::DeviceProperty::kDrive).toString();
+        qCInfo(logDFMBase) << "got root drive:" << rootDrive << rootDev;
+    });
+
+    return rootDrive == devInfo.value(GlobalServerDefines::DeviceProperty::kDrive).toString();
+}
+
+bool DeviceUtils::isSiblingOfRoot(const QVariantMap &devInfo)
+{
+    QVariantHash hash;
+    QMapIterator<QString, QVariant> iter(devInfo);
+    while (iter.hasNext()) {
+        iter.next();
+        hash.insert(iter.key(), iter.value());
+    }
+    return isSiblingOfRoot(hash);
 }
 
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
