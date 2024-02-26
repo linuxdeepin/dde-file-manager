@@ -767,7 +767,11 @@ void DeviceManager::detachAllRemovableBlockDevs()
         if (!info.value(DeviceProperty::kCanPowerOff).toBool()
             && !info.value(DeviceProperty::kOptical).toBool())
             filteredDevs.removeAll(id);
+        if (DeviceUtils::isSiblingOfRoot(info))
+            filteredDevs.removeAll(id);
     }
+
+    qCInfo(logDFMBase) << "about to detaching" << filteredDevs;
 
     QStringList operated;
     for (const auto &id : filteredDevs) {
