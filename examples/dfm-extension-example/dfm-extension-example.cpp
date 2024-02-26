@@ -33,7 +33,9 @@ extern "C" void dfm_extension_shutdown()
 {
     delete myMenu;
     delete myEmblemIcon;
+#ifdef NEW_VERSION
     delete myWindow;
+#endif
 }
 
 extern "C" DFMEXT::DFMExtMenuPlugin *dfm_extension_menu()
