@@ -18,9 +18,7 @@ bool AccessControl::start()
     if (!isDaemonServiceRegistered())
         return false;
 
-    watcher.reset(new DFMIO::DWatcher(QUrl::fromLocalFile("/home")));
-
-    onFileCreatedInHomePath();
+    createUserMountDirs();
     initConnect();
     initDBusInterce();
     return true;
@@ -51,41 +49,50 @@ void AccessControl::initDBusInterce()
 
 void AccessControl::initConnect()
 {
-    if (Q_UNLIKELY((watcher.isNull()))) {
-        fmWarning() << "Wathcer is invliad";
-        return;
-    }
-
-    connect(watcher.data(), &DFMIO::DWatcher::fileAdded, this, [this](const QUrl &url) {
-        fmInfo() << "/home/userpath has been created";
-        onFileCreatedInHomePath();
-    });
-    watcher->start();
+    QDBusConnection::systemBus().connect("com.deepin.daemon.Accounts",
+                                         "/com/deepin/daemon/Accounts",
+                                         "com.deepin.daemon.Accounts",
+                                         "UserAdded",
+                                         this,
+                                         SLOT(createUserMountDir(const QString &)));
 }
 
-void AccessControl::onFileCreatedInHomePath()
+void AccessControl::createUserMountDir(const QString &objPath)
 {
-    QDir homeDir("/home");
-    QStringList dirNames = homeDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs);
-    dirNames.append("root");   // root 用户不在/home下，但设备会挂载到/media/root
-    for (const QString &dirName : dirNames) {
-        // /media/[UserName] 为默认挂载的基路径，预先从创建此目录，目的是为了确保该路径其他用户能够访问
-        QString mountBaseName = QString("/media/%1").arg(dirName);
-        QDir mountDir(mountBaseName);
-        if (!mountDir.exists()) {
-            if (QDir().mkpath(mountBaseName)) {
-                fmInfo() << "done to create /media/anyuser folder";
-                struct stat fileStat;
-                QByteArray nameBytes(mountBaseName.toUtf8());
-                stat(nameBytes.data(), &fileStat);
-                chmod(nameBytes.data(), (fileStat.st_mode | S_IRUSR | S_IRGRP | S_IROTH));
-            }
+    QDBusInterface userIface("com.deepin.daemon.Accounts",
+                             objPath,
+                             "com.deepin.daemon.Accounts.User",
+                             QDBusConnection::systemBus());
+    const QString &userName = userIface.property("UserName").toString();
+    fmInfo() << "about to create mount dir of user" << userName;
+
+    const QString &userMountRoot = QString("/media/%1").arg(userName);
+    if (!QDir(userMountRoot).exists()) {
+        if (QDir().mkpath(userMountRoot)) {
+            fmInfo() << userMountRoot << "created.";
+            struct stat fileStat;
+            QByteArray nameBytes(userMountRoot.toUtf8());
+            stat(nameBytes.data(), &fileStat);
+            chmod(nameBytes.data(), (fileStat.st_mode | S_IRUSR | S_IRGRP | S_IROTH));
         }
-        // ACL
-        QString aclCmd = QString("setfacl -m o:rx %1").arg(mountBaseName);
-        QProcess::execute(aclCmd);
-        fmInfo() << "acl the /media/anyuser folder";
     }
+    // ACL
+    QString aclCmd = QString("setfacl -m o:rx %1").arg(userMountRoot);
+    QProcess::execute(aclCmd);
+    fmInfo() << "acl the /media/anyuser folder";
+}
+
+void AccessControl::createUserMountDirs()
+{
+    // get user list by com.deepin.daemon.Accounts
+    QDBusInterface iface("com.deepin.daemon.Accounts",
+                         "/com/deepin/daemon/Accounts",
+                         "com.deepin.daemon.Accounts",
+                         QDBusConnection::systemBus());
+    QStringList userNames;
+    const QStringList &userList = iface.property("UserList").toStringList();
+    for (const auto &objPath : userList)
+        createUserMountDir(objPath);
 }
 
 }   // namespace daemonplugin_accesscontrol
