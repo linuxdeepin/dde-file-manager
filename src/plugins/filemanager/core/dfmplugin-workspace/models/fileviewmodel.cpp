@@ -851,6 +851,8 @@ void FileViewModel::connectRootAndFilterSortWork(const RootInfo *root)
     connect(root, &RootInfo::watcherUpdateHideFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateHideFile, Qt::QueuedConnection);
     connect(root, &RootInfo::traversalFinished, filterSortWorker.data(), &FileSortWorker::handleTraversalFinish, Qt::QueuedConnection);
     connect(root, &RootInfo::requestSort, filterSortWorker.data(), &FileSortWorker::handleSortDir, Qt::QueuedConnection);
+
+    connect(root, &RootInfo::renameFileProcessStarted, this, &FileViewModel::renameFileProcessStarted);
 }
 
 void FileViewModel::initFilterSortWork()

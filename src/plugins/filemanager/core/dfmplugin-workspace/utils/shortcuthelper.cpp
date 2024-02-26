@@ -36,6 +36,8 @@ ShortcutHelper::ShortcutHelper(FileView *parent)
       view(parent)
 {
     registerShortcut();
+
+    initRenameProcessTimer();
 }
 
 void ShortcutHelper::registerShortcut()
@@ -61,23 +63,12 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter: {
-        // Todo(yanghao):editingIndex handle
-        const auto &urls = view->selectedUrlList();
-        quint64 winId = WorkspaceHelper::instance()->windowId(view);
-        if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_EnterPressed", winId, urls))
-            return true;
-
-        int dirCount = 0;
-        for (const QUrl &url : urls) {
-            FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-            if (info->isAttributes(OptInfoType::kIsDir))
-                ++dirCount;
-            if (dirCount > 1)
-                break;
+        if (renameProcessTimer->isActive()) {
+            enterTriggerFlag = true;
+            return false;
         }
 
-        openAction(urls, view->currentDirOpenMode());
-        return true;
+        return doEnterPressed();
     }
     case Qt::Key_Backspace: {
         cdUp();
@@ -113,6 +104,41 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     }
 
     return false;
+}
+
+bool ShortcutHelper::doEnterPressed()
+{
+    const auto &urls = view->selectedUrlList();
+    quint64 winId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_EnterPressed", winId, urls))
+        return true;
+
+    int dirCount = 0;
+    for (const QUrl &url : urls) {
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+        if (info->isAttributes(OptInfoType::kIsDir))
+            ++dirCount;
+        if (dirCount > 1)
+            break;
+    }
+
+    openAction(urls, view->currentDirOpenMode());
+    return true;
+}
+
+void ShortcutHelper::initRenameProcessTimer()
+{
+    renameProcessTimer = new QTimer(this);
+    renameProcessTimer->setSingleShot(true);
+    renameProcessTimer->setInterval(500);
+
+    connect(renameProcessTimer, &QTimer::timeout, this, [ = ]{
+        if (enterTriggerFlag) {
+            enterTriggerFlag = false;
+
+            doEnterPressed();
+        }
+    });
 }
 
 bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
@@ -368,4 +394,9 @@ bool ShortcutHelper::reverseSelect()
 
     view->selectFiles(list);
     return true;
+}
+
+void ShortcutHelper::renameProcessing()
+{
+    renameProcessTimer->start();
 }

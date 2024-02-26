@@ -179,6 +179,7 @@ void RootInfo::doFileDeleted(const QUrl &url)
 
 void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
 {
+    Q_EMIT renameFileProcessStarted();
     doFileDeleted(fromUrl);
 
     AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);

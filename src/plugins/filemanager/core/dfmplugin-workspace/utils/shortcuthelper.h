@@ -24,6 +24,7 @@ public:
     bool processKeyPressEvent(QKeyEvent *event);
 
     bool reverseSelect();
+    void renameProcessing();
 
 protected slots:
     void acitonTriggered();
@@ -43,9 +44,13 @@ protected slots:
 
 private:
     bool normalKeyPressEventHandle(const QKeyEvent *event);
+    bool doEnterPressed();
+    void initRenameProcessTimer();
 
 private:
     FileView *view { nullptr };
+    QTimer *renameProcessTimer { nullptr };
+    bool enterTriggerFlag { false };
 };
 
 }

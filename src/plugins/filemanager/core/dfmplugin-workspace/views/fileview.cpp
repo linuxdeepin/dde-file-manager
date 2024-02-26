@@ -1065,6 +1065,13 @@ void FileView::onWidgetUpdate()
     this->update();
 }
 
+void FileView::onRenameProcessStarted()
+{
+    if (d->shortcutHelper) {
+        d->shortcutHelper->renameProcessing();
+    }
+}
+
 void FileView::onRowCountChanged()
 {
     // clean selected indexes
@@ -1801,6 +1808,7 @@ void FileView::initializeConnect()
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(model(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(model(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
+    connect(model(), &FileViewModel::renameFileProcessStarted, this, &FileView::onRenameProcessStarted);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
