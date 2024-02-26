@@ -53,7 +53,8 @@ static QString getIconName(const CrumbData &c)
 IconItemDelegate::IconItemDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {
-    setItemSpacing(10);
+    setItemSpacing(6);
+    setMargins(QMargins(4, 0, 4, 0));
 }
 
 void IconItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -188,7 +189,7 @@ void CrumbBarPrivate::initUI()
     // Crumb List Layout
     crumbView.setObjectName("DCrumbListScrollArea");
 
-    crumbView.setItemSpacing(10);
+    crumbView.setItemSpacing(6);
     crumbView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbView.setFocusPolicy(Qt::NoFocus);
@@ -207,6 +208,7 @@ void CrumbBarPrivate::initUI()
     // 点击listview空白可拖动窗口
     crumbView.viewport()->installEventFilter(q);
     crumbView.setItemDelegateForRow(0, new IconItemDelegate(&crumbView));
+    crumbView.setItemMargins(QMargins(0, 0, 0, 0));
 
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout(q);
