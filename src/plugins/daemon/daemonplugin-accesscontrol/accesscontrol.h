@@ -29,11 +29,11 @@ private:
     void initConnect();
 
 private slots:
-    void onFileCreatedInHomePath();
+    void createUserMountDirs();
+    void createUserMountDir(const QString &objPath);
 
 private:
     QScopedPointer<AccessControlDBus> accessControlManager;
-    QScopedPointer<DFMIO::DWatcher> watcher;
 };
 
 DAEMONPAC_END_NAMESPACE
