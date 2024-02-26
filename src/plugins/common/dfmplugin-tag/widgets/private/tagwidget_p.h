@@ -42,7 +42,7 @@ private:
     DLabel *tagLeftLable { nullptr };
     QVBoxLayout *mainLayout { nullptr };
     TagCrumbEdit *crumbEdit { nullptr };
-    QHBoxLayout *tagColorListLayout { nullptr };
+    QVBoxLayout *tagColorListLayout { nullptr };
     TagColorListWidget *colorListWidget { nullptr };
 
     QMap<QString, QString> currentTagWithColorMap;

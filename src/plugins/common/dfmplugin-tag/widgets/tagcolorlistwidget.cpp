@@ -16,8 +16,9 @@
 using namespace dfmplugin_tag;
 DWIDGET_USE_NAMESPACE
 
-TagColorListWidget::TagColorListWidget(QWidget *parent)
+TagColorListWidget::TagColorListWidget(QWidget *parent, UseType type)
     : QFrame(parent)
+    , useType(type)
 {
     setObjectName("tagActionWidget");
     setFocusPolicy(Qt::StrongFocus);
@@ -81,11 +82,17 @@ void TagColorListWidget::initUiElement()
     }
 
     buttonLayout = new QHBoxLayout;
+    buttonLayout->setMargin(0);
+    buttonLayout->setSpacing(0);
 
-    buttonLayout->addSpacing(21);
+    if (useType == kAction)
+        buttonLayout->addSpacing(21);
     for (int index = 0; index < tagButtons.length(); ++index) {
         tagButtons[index]->setContentsMargins(0, 0, 0, 0);
-        tagButtons[index]->setRadius(20);
+        if (useType == kAction)
+            tagButtons[index]->setRadius(20);
+        else
+            tagButtons[index]->setRadius(30);
 
         QString objMark = QString("Color%1").arg(index + 1);
         tagButtons[index]->setObjectName(objMark);
@@ -93,9 +100,8 @@ void TagColorListWidget::initUiElement()
         buttonLayout->addWidget(tagButtons[index], Qt::AlignCenter);
     }
 
-    buttonLayout->addSpacing(21);
-    buttonLayout->setMargin(0);
-    buttonLayout->setSpacing(0);
+    if (useType == kAction)
+        buttonLayout->addSpacing(21);
 
     mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);

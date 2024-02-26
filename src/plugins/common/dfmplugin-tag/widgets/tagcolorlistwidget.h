@@ -24,7 +24,13 @@ class TagColorListWidget final : public QFrame
     Q_PROPERTY(QList<QColor> checkedColorList READ checkedColorList WRITE setCheckedColorList)
     Q_PROPERTY(bool exclusive READ exclusive WRITE setExclusive)
 public:
-    explicit TagColorListWidget(QWidget *parent = nullptr);
+    enum UseType {
+        kAction = 0,
+        kProperty
+    };
+    Q_ENUM(UseType)
+
+    explicit TagColorListWidget(QWidget *parent = nullptr, UseType type = kAction);
 
     QList<QColor> checkedColorList() const;
     void setCheckedColorList(const QList<QColor> &colorNames);
@@ -54,6 +60,7 @@ private:
 
     bool currentExclusive = false;
     QStringList currentCheckedColorList;
+    UseType useType { kAction };
 };
 
 }

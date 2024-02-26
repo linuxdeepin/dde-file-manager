@@ -40,14 +40,11 @@ void TagWidgetPrivate::initializeUI()
     q->setLayout(mainLayout);
     QString name = tr("Tag");
     tagLable = new DLabel(name, q);
-    DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T5, QFont::DemiBold);
     tagLable->setObjectName(name);
-    tagLeftLable = new DLabel(name, q);
-    tagLeftLable->setObjectName(name);
-    tagLeftLable->setHidden(true);
 
-    colorListWidget = new TagColorListWidget(q);
-    colorListWidget->setMaximumHeight(20);
+    colorListWidget = new TagColorListWidget(q, TagColorListWidget::kProperty);
+    colorListWidget->setMaximumHeight(30);
     colorListWidget->setObjectName("tagActionWidget");
     colorListWidget->setToolTipVisible(false);
 
@@ -57,10 +54,9 @@ void TagWidgetPrivate::initializeUI()
     crumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
     crumbEdit->setFocusPolicy(Qt::ClickFocus);
 
-    tagColorListLayout = new QHBoxLayout;
-    tagColorListLayout->addWidget(tagLable);
-    tagColorListLayout->addWidget(tagLeftLable);
-    tagColorListLayout->addWidget(colorListWidget);
+    tagColorListLayout = new QVBoxLayout;
+    tagColorListLayout->addWidget(tagLable, 0, Qt::AlignLeft);
+    tagColorListLayout->addWidget(colorListWidget, 0, Qt::AlignVCenter);
 
     mainLayout->addLayout(tagColorListLayout);
 
@@ -81,7 +77,7 @@ void TagWidgetPrivate::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 10, 10, 10);
-    crumbEdit->setMaximumHeight(DSizeModeHelper::element(50, 100));
-    q->setFixedHeight(DSizeModeHelper::element(90, kTagWidgetHeight));
+    crumbEdit->setMaximumHeight(DSizeModeHelper::element(50, 50));
+    q->setFixedHeight(DSizeModeHelper::element(150, kTagWidgetHeight));
 #endif
 }
