@@ -97,6 +97,7 @@ public:
 
 Q_SIGNALS:
     void stateChanged();
+    void renameFileProcessStarted();
     void selectAndEditFile(const QUrl &url);
     void traverPrehandle(const QUrl &url, const QModelIndex &index, FileView *view);
 
