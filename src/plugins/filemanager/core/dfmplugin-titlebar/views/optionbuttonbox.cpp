@@ -16,7 +16,7 @@
 #include <DGuiApplicationHelper>
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
+#    include <DSizeMode>
 #endif
 
 #include <QDebug>
@@ -128,12 +128,18 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->detailButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
         if (d->detailButton->isChecked())
             d->detailButton->click();
+
+        if (state & OptionButtonManager::kHideAllBtn)
+            setContentsMargins(0, 0, 0, 0);
+        else
+            setContentsMargins(5, 0, 15, 0);
     } else {
         if (d->treeViewButton)
             d->treeViewButton->setHidden(false);
         d->listViewButton->setHidden(false);
         d->iconViewButton->setHidden(false);
         d->detailButton->setHidden(false);
+        setContentsMargins(5, 0, 15, 0);
     }
 
     d->currentUrl = url;
@@ -141,7 +147,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
 
 void OptionButtonBox::initializeUi()
 {
-    setContentsMargins(0, 0, 0, 0);
+    setContentsMargins(5, 0, 15, 0);
     d->buttonGroup = new QButtonGroup(this);
 
     d->iconViewButton = new DToolButton;
@@ -204,7 +210,7 @@ void OptionButtonBox::initConnect()
     connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         initUiForSizeMode();
     });
 #endif
