@@ -65,6 +65,7 @@ class FileViewPrivate
     bool isShowViewSelectBox { false };
 
     QList<QUrl> preSelectionUrls;
+    QTimer *preSelectTimer { nullptr };
 
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> columnRoles;
     QMap<QString, bool> columnForRoleHiddenMap;
