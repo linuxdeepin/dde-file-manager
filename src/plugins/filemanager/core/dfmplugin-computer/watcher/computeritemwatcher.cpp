@@ -678,6 +678,10 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         iconName = "media-optical-symbolic";
     else if (info->order() == AbstractEntryFileEntity::kOrderRemovableDisks)   // always display as USB icon for removable disks.
         iconName = "drive-removable-media-symbolic";
+    else if (iconName == "android-device")
+        iconName = "phone-symbolic";
+    else if (iconName == "ios-device")
+        iconName = "phone-apple-iphone-symbolic";
     else
         iconName += "-symbolic";
 
