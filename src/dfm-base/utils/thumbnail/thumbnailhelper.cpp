@@ -67,7 +67,7 @@ const QStringList &ThumbnailHelper::defaultThumbnailDirs()
 
 bool ThumbnailHelper::canGenerateThumbnail(const QUrl &url)
 {
-    const auto &info = InfoFactory::create<FileInfo>(url);
+    const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!info || !info->isAttributes(FileInfo::FileIsType::kIsReadable) || !info->isAttributes(FileInfo::FileIsType::kIsFile))
         return false;
 
