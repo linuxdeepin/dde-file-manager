@@ -242,6 +242,11 @@ DockItemData DockItemDataManager::buildProtocolItem(const QVariantMap &data)
     QString iconName = device_utils::protocolDeviceIcon(data);
     QString id = data.value(GlobalServerDefines::DeviceProperty::kId).toString();
 
+    if (iconName == "phone" && (id.startsWith("gphoto") || id.startsWith("mtp")))
+        iconName = "android-device";
+    if (id.contains("Apple_Inc") || id.startsWith("afc"))
+        iconName = "ios-device";
+
     return {
         .id = id,
         .backingID = id,

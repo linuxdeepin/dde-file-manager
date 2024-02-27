@@ -50,8 +50,13 @@ QString ProtocolEntryFileEntity::displayName() const
 QIcon ProtocolEntryFileEntity::icon() const
 {
     auto icons = datas.value(DeviceProperty::kDeviceIcon).toStringList();
-    for (const auto &icon : icons) {
-        auto iconObj = QIcon::fromTheme(icon);
+    for (auto iconName : icons) {
+        QString devId = datas.value(DeviceProperty::kId).toString();
+        if (iconName == "phone" && (devId.startsWith("gphoto") || devId.startsWith("mtp")))
+            iconName = "android-device";
+        if (devId.contains("Apple_Inc") || devId.startsWith("afc"))
+            iconName = "ios-device";
+        auto iconObj = QIcon::fromTheme(iconName);
         if (iconObj.isNull())
             continue;
         return iconObj;
