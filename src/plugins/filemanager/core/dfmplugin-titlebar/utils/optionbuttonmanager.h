@@ -23,7 +23,9 @@ public:
         kHideListViewBtn = 0x01,
         kHideIconViewBtn = 0x02,
         kHideDetailSpaceBtn = 0x04,
-        kHideTreeViewBtn = 0x08
+        kHideTreeViewBtn = 0x08,
+
+        kHideAllBtn = kHideListViewBtn | kHideIconViewBtn | kHideDetailSpaceBtn | kHideTreeViewBtn,
     };
 
     using Scheme = QString;
