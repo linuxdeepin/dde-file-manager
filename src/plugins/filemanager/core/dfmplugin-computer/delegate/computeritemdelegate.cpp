@@ -242,9 +242,11 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
     fnt.setWeight(QFont::Medium);
     painter->setFont(fnt);
 
+    QFontMetrics fm(fnt);
+
     const int TextMaxWidth = option.rect.width() - 20;
-    const QString &ElidedText = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, TextMaxWidth);
-    const int LabelWidth = QFontMetrics(fnt).horizontalAdvance(ElidedText);
+    const QString &ElidedText = fm.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, TextMaxWidth);
+    const int LabelWidth = fm.horizontalAdvance(ElidedText);
     const int LabelTopMargin = 10;
     auto labelRect = QRect(option.rect.x() + (option.rect.width() - LabelWidth) / 2, option.rect.y() + TopMargin + IconSize + LabelTopMargin, LabelWidth, 40);
     painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
@@ -343,12 +345,12 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     if (showFsTag) {
         fnt.setWeight(12);
         painter->setFont(fnt);
+        QFontMetrics fm(fnt);
 
         // sets the paint rect
         auto fsTagRect = realPaintedRectForDevName;
         fsTagRect.setWidth(fsLabelWidth - 2);   // 2 pixel spacing is added above, so remove it.
-        const int FontPixSize = view->fontInfo().pixelSize();
-        fsTagRect.setHeight(FontPixSize + 4);
+        fsTagRect.setHeight(fm.height() - 4);
         fsTagRect.moveLeft(realPaintedRectForDevName.right() + 12);   // 12 pixel spacing behind real painted rect for device name
         fsTagRect.moveBottom(realPaintedRectForDevName.bottom() - (realPaintedRectForDevName.height() - fsTagRect.height()) / 2);   // keep vertical center with label
         fsTagRect.adjust(-5, 0, 5, 0);
