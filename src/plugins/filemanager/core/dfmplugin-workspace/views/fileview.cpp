@@ -80,6 +80,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeStatusBar();
     initializeConnect();
     initializeScrollBarWatcher();
+    initializePreSelectTimer();
 
     viewport()->installEventFilter(this);
 }
@@ -1860,6 +1861,18 @@ void FileView::initializeScrollBarWatcher()
     });
 }
 
+void FileView::initializePreSelectTimer()
+{
+    d->preSelectTimer = new QTimer(this);
+
+    d->preSelectTimer->setInterval(100);
+    d->preSelectTimer->setSingleShot(true);
+    connect(d->preSelectTimer, &QTimer::timeout, this, [ = ] {
+        if (selectFiles(d->preSelectionUrls))
+            d->preSelectionUrls.clear();
+    });
+}
+
 void FileView::updateStatusBar()
 {
     if (model()->currentState() != ModelState::kIdle)
@@ -1935,8 +1948,7 @@ void FileView::updateSelectedUrl()
     if (d->preSelectionUrls.isEmpty() || model()->currentState() != ModelState::kIdle)
         return;
 
-    if (selectFiles(d->preSelectionUrls))
-        d->preSelectionUrls.clear();
+    d->preSelectTimer->start();
 }
 
 void FileView::updateListHeaderView()

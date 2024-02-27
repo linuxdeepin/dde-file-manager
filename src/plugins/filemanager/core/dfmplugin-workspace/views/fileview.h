@@ -188,6 +188,7 @@ private:
     void initializeStatusBar();
     void initializeConnect();
     void initializeScrollBarWatcher();
+    void initializePreSelectTimer();
 
     void delayUpdateStatusBar();
     void updateStatusBar();
