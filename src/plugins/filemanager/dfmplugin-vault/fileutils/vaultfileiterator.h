@@ -39,6 +39,7 @@ public:
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator { Q_NULLPTR };
     QUrl currentUrl;
+    QSet<QString> hideFileList;
 };
 }
 #endif   // VAULTFILEDIRITERATOR_H

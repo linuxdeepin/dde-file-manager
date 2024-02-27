@@ -28,6 +28,9 @@ VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFil
                                                   static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
     if (!dfmioDirIterator)
         fmCritical("Vault: create DEnumerator failed!");
+
+    const QUrl &hidUrl = DFMIO::DFMUtils::buildFilePath(localUrl.toString().toStdString().c_str(), ".hidden", nullptr);
+    hideFileList = DFMIO::DFMUtils::hideListFromUrl(hidUrl);
 }
 
 VaultFileIterator::~VaultFileIterator()
@@ -68,6 +71,8 @@ const FileInfoPointer VaultFileIterator::fileInfo() const
     bool isHidden = false;
     if (fileName.startsWith(".")) {
         isHidden = true;
+    } else {
+        isHidden = hideFileList.contains(fileName);
     }
 
     QSharedPointer<FileInfo> info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, fileinfo));
