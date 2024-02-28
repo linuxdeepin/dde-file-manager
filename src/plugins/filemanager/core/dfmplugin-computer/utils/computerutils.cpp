@@ -219,7 +219,7 @@ void ComputerUtils::setCursorState(bool busy)
 
 QStringList ComputerUtils::allValidBlockUUIDs()
 {
-    const auto &allBlocks = DevProxyMng->getAllBlockIds().toSet();
+    const auto &allBlocks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kNotIgnored).toSet();
     QSet<QString> uuids;
     std::for_each(allBlocks.cbegin(), allBlocks.cend(), [&](const QString &devId) {
         const auto &&data = DevProxyMng->queryBlockInfo(devId);
