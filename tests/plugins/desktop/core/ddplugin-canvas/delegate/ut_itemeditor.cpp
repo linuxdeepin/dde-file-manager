@@ -13,6 +13,7 @@
 #include <darrowrectangle.h>
 #include <QAction>
 #include <QMenu>
+#include <QGraphicsOpacityEffect>
 #include <gtest/gtest.h>
 
 DWIDGET_USE_NAMESPACE

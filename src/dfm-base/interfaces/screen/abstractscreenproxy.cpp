@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractscreenproxy.h"
+#include <dfm-base/interfaces/screen/abstractscreenproxy.h>
 
 #include <QTimer>
 #include <QDebug>
