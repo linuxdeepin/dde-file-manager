@@ -165,6 +165,7 @@ static void handleSIGTERM(int sig)
     qCCritical(logAppDialogX11) << "break with !SIGTERM! " << sig;
 
     if (qApp) {
+        qApp->setProperty("SIGTERM", true);
         qApp->quit();
     }
 }
@@ -203,5 +204,10 @@ int main(int argc, char *argv[])
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    if (qApp->property("SIGTERM").toBool()) {
+        qWarning() << "Exit app by SIGTERM, reuturn: " << ret;
+        _Exit(ret);
+    }
+
     return ret;
 }

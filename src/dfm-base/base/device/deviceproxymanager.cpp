@@ -247,6 +247,11 @@ void DeviceProxyManagerPrivate::connectToDBus()
 {
     if (currentConnectionType == kDBusConnecting)
         return;
+    if (qApp->property("SIGTERM").toBool()) {
+        qWarning() << "Current app state is SIGTERM";
+        return;
+    }
+
     disconnCurrentConnections();
 
     auto ptr = devMngDBus.data();
