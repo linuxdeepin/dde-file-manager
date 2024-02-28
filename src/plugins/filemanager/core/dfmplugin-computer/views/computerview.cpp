@@ -132,6 +132,10 @@ void ComputerView::setStatusBarHandler(ComputerStatusBar *sb)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();
+    // items in computer are hidden in view, they still exist in model.
+    fmInfo() << "start update item visible in computerview.";
+    handleComputerItemVisible();
+    fmInfo() << "end update item visible in computerview.";
     DListView::showEvent(event);
 }
 
