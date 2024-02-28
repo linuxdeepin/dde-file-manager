@@ -41,12 +41,16 @@ bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLO
 
 void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh, const bool self)
 {
+    QString rootPath = rootUrl.path();
+    if (!rootPath.endsWith("/"))
+        rootPath.append("/");
+
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
         if (!self && rootUrl == rootInfo)
             continue;
 
-        if (rootInfo.path().startsWith(rootUrl.path())) {
+        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
             auto count = rootInfoMap.value(rootInfo)->clearTraversalThread(key);
             if (count > 0)
                 continue;
@@ -60,9 +64,13 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
 
 void FileDataManager::cleanRoot(const QUrl &rootUrl)
 {
+    QString rootPath = rootUrl.path();
+    if (!rootPath.endsWith("/"))
+        rootPath.append("/");
+
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
-        if (rootInfo.path().startsWith(rootUrl.path())) {
+        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
             rootInfoMap.value(rootInfo)->disconnect();
             rootInfoMap.remove(rootInfo);
         }
