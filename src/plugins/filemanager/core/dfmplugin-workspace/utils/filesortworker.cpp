@@ -889,6 +889,9 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
         createAndInsertItemData(depth, sortInfo, info);
     }
 
+    depthMap.remove(depth - 1, parentUrl);
+    depthMap.insertMulti(depth - 1, parentUrl);
+
     if (!checkFilters(sortInfo, true))
         return false;
 
