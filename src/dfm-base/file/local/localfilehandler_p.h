@@ -58,6 +58,8 @@ public:
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     static void asyncAddRecentFile(const QString &desktop, const QList<QString> urls,
                                    const QMap<QString, QString> &mimeTypes);
+    static void asyncAddRecentFile(const QString &desktop, const QList<QUrl> urls,
+                                   const QString &mimeType);
 
 public:
     LocalFileHandler *q { nullptr };
