@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "abstractscreen.h"
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 namespace dfmbase {
 
