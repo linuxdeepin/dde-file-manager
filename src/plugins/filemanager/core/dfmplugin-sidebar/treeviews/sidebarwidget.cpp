@@ -296,7 +296,15 @@ void SideBarWidget::initializeUi()
     effect->setBlurRadius(20);
     setGraphicsEffect(effect);
 
-    QVBoxLayout *vlayout = new QVBoxLayout(this);
+    QHBoxLayout *hlayout = new QHBoxLayout(this);
+    hlayout->setMargin(0);
+    hlayout->setSpacing(0);
+    QWidget *leftSpacer = new QWidget(this);
+    leftSpacer->setAutoFillBackground(true);
+    leftSpacer->setFixedWidth(2);
+    leftSpacer->setBackgroundRole(QPalette::Base);
+
+    QVBoxLayout *vlayout = new QVBoxLayout();
 
     QWidget *spacer = new QWidget(this);
     spacer->setAutoFillBackground(true);
@@ -307,6 +315,9 @@ void SideBarWidget::initializeUi()
     vlayout->setMargin(0);
     vlayout->setSpacing(0);
     vlayout->addWidget(spacer);
+
+    hlayout->addWidget(leftSpacer);
+    hlayout->addLayout(vlayout);
 
     sidebarView->setModel(kSidebarModelIns.data());
     sidebarView->setItemDelegate(new SideBarItemDelegate(sidebarView));
