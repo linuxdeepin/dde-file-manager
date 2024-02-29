@@ -313,15 +313,17 @@ void FileView::onHeaderViewMouseReleased()
         d->adjustFileNameColumn = false;
     }
 
-    QList<ItemRoles> roleList = d->columnRoles;
-    QVariantMap state;
-    for (const ItemRoles role : roleList) {
-        int colWidth = getColumnWidth(model()->getColumnByRole(role));
+    if (d->headerView->length() != d->oldHeaderViewLenght) {
+        QList<ItemRoles> roleList = d->columnRoles;
+        QVariantMap state;
+        for (const ItemRoles role : roleList) {
+            int colWidth = getColumnWidth(model()->getColumnByRole(role));
 
-        if (colWidth > 0)
-            state[QString::number(role)] = colWidth;
+            if (colWidth > 0)
+                state[QString::number(role)] = colWidth;
+        }
+        Application::appObtuselySetting()->setValue("WindowManager", "ViewColumnState", state);
     }
-    Application::appObtuselySetting()->setValue("WindowManager", "ViewColumnState", state);
 }
 
 void FileView::onHeaderSectionResized(int logicalIndex, int oldSize, int newSize)
@@ -819,6 +821,11 @@ void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &t
     }
 
     return;
+}
+
+void FileView::onHeaderViewMousePressed()
+{
+    d->oldHeaderViewLenght = d->headerView->length();
 }
 
 void FileView::onSelectAndEdit(const QUrl &url)

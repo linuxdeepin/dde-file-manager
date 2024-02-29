@@ -104,6 +104,7 @@ void FileViewPrivate::initListModeView()
 
         q->addHeaderWidget(emptyInteractionArea);
 
+        QObject::connect(headerView, &HeaderView::mousePressed, q, &FileView::onHeaderViewMousePressed);
         QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
         QObject::connect(headerView, &HeaderView::sectionResized, q, &FileView::onHeaderSectionResized);
         QObject::connect(headerView, &HeaderView::sortIndicatorChanged, q, &FileView::onSortIndicatorChanged);

@@ -39,6 +39,7 @@ class FileViewPrivate
     QHash<int, BaseItemDelegate *> delegates;
     FileViewStatusBar *statusBar { nullptr };
     HeaderView *headerView { nullptr };
+    int oldHeaderViewLenght { 0 };
     DAnchors<QLabel> contentLabel { nullptr };
     QTimer *updateStatusBarTimer { nullptr };
     QUrl url;
