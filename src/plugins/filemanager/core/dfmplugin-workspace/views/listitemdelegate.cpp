@@ -259,20 +259,12 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     int columnX = 0;
 
     QStyleOptionViewItem opt = option;
-    /// draw icon
-    const QRect &optRect = opt.rect + QMargins(-kListModeLeftMargin - kLeftPadding, 0, -kListModeRightMargin - kRightPadding, 0);
-    opt.rect = optRect;
 
     geomertys.append(d->paintProxy->allPaintRect(opt, index));
 
-    //    QRect iconRect = optRect;
-    //    iconRect.setSize(parent()->parent()->iconSize());
-
-    //    geomertys << iconRect;
-
     columnX = geomertys.first().right() + GlobalPrivate::kIconSpacing;
 
-    QRect rect = optRect;
+    QRect rect = opt.rect;
     rect.setLeft(columnX);
 
     int role = columnRoleList.at(0);
@@ -283,7 +275,7 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     } else {
         columnX = parent()->parent()->getColumnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
 
-        rect.setRight(qMin(columnX, optRect.right()));
+        rect.setRight(qMin(columnX, opt.rect.right()));
         /// draw file name label
         rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
     }
@@ -291,11 +283,11 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     geomertys << rect;
 
     for (int i = 1; i < columnRoleList.count(); ++i) {
-        QRect rec = optRect;
+        QRect rec = opt.rect;
 
         rec.setLeft(columnX + kColumnPadding);
 
-        if (rec.left() >= optRect.right()) {
+        if (rec.left() >= opt.rect.right()) {
             return geomertys;
         }
 
@@ -307,7 +299,7 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
         } else {
             columnX += parent()->parent()->getColumnWidth(i) - 1;
 
-            rec.setRight(qMin(columnX, optRect.right()));
+            rec.setRight(qMin(columnX, opt.rect.right()));
             rec.setWidth(qMin(rec.width(), dataWidth(option, index, rol)));
         }
 
