@@ -142,8 +142,8 @@ void VaultRemoveByPasswordView::showToolTip(const QString &text, int duration, V
         tooltip->setForegroundRole(DPalette::TextTitle);
     }
 
-    if (parentWidget() && parentWidget()->parentWidget() && parentWidget()->parentWidget()->parentWidget()) {
-        floatWidget->setParent(parentWidget()->parentWidget()->parentWidget());
+    if (parentWidget() && parentWidget()->parentWidget()) {
+        floatWidget->setParent(parentWidget()->parentWidget());
     }
 
     tooltip->setText(text);
