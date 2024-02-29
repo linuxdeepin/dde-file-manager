@@ -115,6 +115,7 @@ public:
     using DListView::viewportMargins;
 
 public slots:
+    void onHeaderViewMousePressed();
     void onHeaderViewMouseReleased();
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
     void onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);

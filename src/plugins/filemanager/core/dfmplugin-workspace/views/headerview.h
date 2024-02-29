@@ -31,6 +31,7 @@ public slots:
     void onActionClicked(const int column, QAction *action);
 
 protected:
+    void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
@@ -39,6 +40,7 @@ protected:
     void paintEvent(QPaintEvent *e) override;
 
 Q_SIGNALS:
+    void mousePressed();
     void mouseReleased();
     void viewResized();
     void hiddenSectionChanged(const QString &roleName, const bool checked);

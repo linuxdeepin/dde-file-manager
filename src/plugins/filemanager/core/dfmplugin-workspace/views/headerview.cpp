@@ -116,6 +116,13 @@ void HeaderView::onActionClicked(const int column, QAction *action)
     emit hiddenSectionChanged(action->text(), action->isChecked());
 }
 
+void HeaderView::mousePressEvent(QMouseEvent *e)
+{
+    Q_EMIT mousePressed();
+
+    QHeaderView::mousePressEvent(e);
+}
+
 void HeaderView::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_EMIT mouseReleased();
