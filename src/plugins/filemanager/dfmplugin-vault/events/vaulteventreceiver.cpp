@@ -46,7 +46,6 @@ void VaultEventReceiver::connectEvent()
 {
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, VaultEventReceiver::instance(), &VaultEventReceiver::handleCurrentUrlChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", this, &VaultEventReceiver::computerOpenItem);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kHideFilesResult, VaultEventReceiver::instance(), &VaultEventReceiver::handleHideFilesResult);
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &VaultEventReceiver::changeUrlEventFilter);
 
     dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit", VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
@@ -162,26 +161,6 @@ bool VaultEventReceiver::handleShortCutPasteFiles(const quint64 &winId, const QL
     if (VaultHelper::isVaultFile(fromUrls.first()) && FileUtils::isTrashFile(to))
         return true;
     return false;
-}
-
-void VaultEventReceiver::handleHideFilesResult(const quint64 &winId, const QList<QUrl> &urls, bool ok)
-{
-    Q_UNUSED(winId)
-    if (ok && !urls.isEmpty()) {
-        const QUrl &url = urls.first();
-        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (info) {
-            const QUrl &parentUrlVirtual = VaultHelper::instance()->pathToVaultVirtualUrl(
-                    info->pathOf(PathInfoType::kPath));
-            QSharedPointer<AbstractFileWatcher> watcher = WatcherFactory::create<AbstractFileWatcher>(parentUrlVirtual);
-            if (!watcher.isNull()) {
-                QUrl hiddenFileUrl;
-                hiddenFileUrl.setScheme(url.scheme());
-                hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
-                emit watcher->fileAttributeChanged(hiddenFileUrl);
-            }
-        }
-    }
 }
 
 bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
