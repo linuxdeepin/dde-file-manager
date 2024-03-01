@@ -392,6 +392,9 @@ bool ShortcutHelper::reverseSelect()
         list.removeAll(url);
     }
 
+    if (list.isEmpty())
+        view->selectionModel()->clear();
+
     view->selectFiles(list);
     return true;
 }
