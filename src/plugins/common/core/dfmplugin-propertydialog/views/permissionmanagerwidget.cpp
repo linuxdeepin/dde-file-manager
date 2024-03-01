@@ -33,7 +33,8 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
-static constexpr int kLabelWidth { 80 };
+static constexpr int kLabelWidth { 75 };
+static constexpr int kWidgetFixedWidth { 195 };
 constexpr int kOwerAll = QFile::ExeOwner | QFile::WriteOwner | QFile::ReadOwner;
 constexpr int kGroupAll = QFile::ExeGroup | QFile::WriteGroup | QFile::ReadGroup;
 constexpr int kOtherAll = QFile::ExeOther | QFile::WriteOther | QFile::ReadOther;
@@ -76,7 +77,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
         // folder: read is read and executable, read-write is read-write and executable
         readOnlyIndex = readOnlyWithXFlag;
         readWriteIndex = readWriteWithXFlag;
-        executableCheckBox->hide();
+        executableFrame->hide();
     }
 
     ownerComboBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner));
@@ -135,14 +136,8 @@ void PermissionManagerWidget::initUI()
 {
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
-
     setTitle(QString(tr("Permissions")));
-
     setExpand(false);
-
-    QFormLayout *layout = new QFormLayout;
-
-    QFrame *frame = new QFrame(this);
 
     authorityList << QObject::tr("Access denied")   // 0
                   << QObject::tr("Executable")   // 1
@@ -157,27 +152,24 @@ void PermissionManagerWidget::initUI()
                       << "fuseblk"
                       << "cifs";
 
+    DLabel *owner = new DLabel(QObject::tr("Owner"), this);
+    DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
     ownerComboBox = new QComboBox(this);
     ownerComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
+    DLabel *group = new DLabel(QObject::tr("Group"), this);
+    DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
     groupComboBox = new QComboBox(this);
     groupComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
+    DLabel *other = new DLabel(QObject::tr("Others"), this);
+    DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
     otherComboBox = new QComboBox(this);
     otherComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
     executableCheckBox->setToolTip(executableCheckBox->text());
-
-    layout->setLabelAlignment(Qt::AlignLeft);
-
-    DLabel *owner = new DLabel(QObject::tr("Owner"), this);
-    DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
-    DLabel *group = new DLabel(QObject::tr("Group"), this);
-    DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
-    DLabel *other = new DLabel(QObject::tr("Others"), this);
-    DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     owner->setFixedWidth(DSizeModeHelper::element(kLabelWidth, kLabelWidth));
@@ -194,15 +186,35 @@ void PermissionManagerWidget::initUI()
     other->setFixedWidth(kLabelWidth);
 #endif
 
-    layout->addRow(owner, ownerComboBox);
-    layout->addRow(group, groupComboBox);
-    layout->addRow(other, otherComboBox);
-    layout->addRow(" ", executableCheckBox);
+    QFrame *mainFrame = new QFrame(this);
 
-    layout->setContentsMargins(15, 10, 10, 10);
+    QVBoxLayout *mainFrameLay = new QVBoxLayout(mainFrame);
+    mainFrameLay->setMargin(0);
+    mainFrameLay->setContentsMargins(0, 0, 0, 10);
 
-    frame->setLayout(layout);
-    setContent(frame);
+    QFormLayout *formLay = new QFormLayout;
+    formLay->setMargin(0);
+    formLay->setContentsMargins(20, 10, 10, 0);
+    formLay->setLabelAlignment(Qt::AlignLeft);
+    formLay->addRow(owner, ownerComboBox);
+    formLay->addRow(group, groupComboBox);
+    formLay->addRow(other, otherComboBox);
+
+    executableFrame = new QFrame(mainFrame);
+    executableFrame->setFixedWidth(kWidgetFixedWidth);
+    QHBoxLayout *exeLay = new QHBoxLayout;
+    exeLay->setMargin(0);
+    exeLay->setContentsMargins(0, 0, 0, 0);
+    exeLay->setSpacing(0);
+    exeLay->addSpacing(102);
+    exeLay->addWidget(executableCheckBox);
+    executableFrame->setLayout(exeLay);
+
+    mainFrameLay->addLayout(formLay);
+    mainFrameLay->addWidget(executableFrame);
+
+    mainFrame->setLayout(mainFrameLay);
+    setContent(mainFrame);
 }
 
 QString PermissionManagerWidget::getPermissionString(int enumFlag)
