@@ -52,6 +52,8 @@ extern "C" {
 
 using namespace dfmbase;
 
+static QMutex lock;
+
 LocalFileHandler::LocalFileHandler()
     : d(new LocalFileHandlerPrivate(this))
 {
@@ -403,11 +405,9 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
         QString mimetype = d->getFileMimetype(fileUrls.first());
-        for (const QUrl &tmp : fileUrls) {
-            QString temFilePath = tmp.path();
-            DesktopFile df(desktopFile);
-            d->addRecentFile(temFilePath, df, mimetype);
-        }
+        QtConcurrent::run([this, fileUrls, desktopFile, mimetype](){
+            d->asyncAddRecentFile(desktopFile, fileUrls, mimetype);
+        });
     }
 
     return ok;
@@ -1230,7 +1230,6 @@ void LocalFileHandlerPrivate::setError(DFMIOError error)
 
 void LocalFileHandlerPrivate::asyncAddRecentFile(const QString &desktop, const QList<QString> urls, const QMap<QString, QString> &mimeTypes)
 {
-    static QMutex lock;
     QMutexLocker lk(&lock);
     for (const auto &tmpUrl : urls) {
         QUrl url(tmpUrl);
@@ -1238,6 +1237,18 @@ void LocalFileHandlerPrivate::asyncAddRecentFile(const QString &desktop, const Q
 
         DesktopFile df(desktop);
         addRecentFile(filePath, df, mimeTypes.value(tmpUrl));
+    }
+}
+
+void LocalFileHandlerPrivate::asyncAddRecentFile(const QString &desktop, const QList<QUrl> urls, const QString &mimeType)
+{
+    QMutexLocker lk(&lock);
+    for (const auto &tmpUrl : urls) {
+        QUrl url(tmpUrl);
+        QString filePath = url.toLocalFile();
+
+        DesktopFile df(desktop);
+        addRecentFile(filePath, df, mimeType);
     }
 }
 

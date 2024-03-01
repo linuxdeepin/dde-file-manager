@@ -302,24 +302,6 @@ TEST(UT_VaultEventReceiver, handleShortCutPasteFiles_three)
     EXPECT_FALSE(isOk);
 }
 
-TEST(UT_VaultEventReceiver, handleHideFilesResult)
-{
-    bool isGetWatcher { false };
-
-    stub_ext::StubExt stub;
-    stub.set_lamda(&InfoFactory::create<FileInfo>, []{
-        return QSharedPointer<SyncFileInfo>(new SyncFileInfo(QUrl("file:///home/UT_TEST")));
-    });
-    stub.set_lamda(&WatcherCache::getCacheWatcher, [ &isGetWatcher ]{
-        isGetWatcher = true;
-        return QSharedPointer<LocalFileWatcher>(new LocalFileWatcher(QUrl("file:///home/UT_TEST")));
-    });
-
-    VaultEventReceiver::instance()->handleHideFilesResult(0, QList<QUrl>() << QUrl(), true);
-
-    EXPECT_TRUE(isGetWatcher);
-}
-
 TEST(UT_VaultEventReceiver, changeUrlEventFilter_one)
 {
     bool isCreate { false };

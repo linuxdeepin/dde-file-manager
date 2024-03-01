@@ -53,7 +53,10 @@ void VaultFileWatcher::onFileRename(const QUrl &fromUrl, const QUrl &toUrl)
 
 void VaultFileWatcher::onSubfileCreated(const QUrl &url)
 {
-    QUrl furl = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
-    fmDebug() << url;
-    emit subfileCreated(furl);
+    QUrl vurl = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    if (vurl.toString().endsWith(QString(QDir::separator()) + ".hidden")) {
+        emit fileRename(QUrl(), vurl);
+    } else {
+        emit subfileCreated(vurl);
+    }
 }

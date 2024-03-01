@@ -90,9 +90,9 @@ File Manager is featured with the basic functions as a file manager, you can eas
 
 ![1|batch_rename](fig/p_rename.png)
 
-### ==View Files==
+### View Files
 
-==Click the icon on the menu bar![icon_view](../common/icon_view.svg),![list_view](../common/list_view.svg) ,![list_view](../common/treelist_view.svg)or use the shortcut keys **Ctrl + 1**, **Ctrl + 2** and **Ctrl + 3** to switch between icon view, list view, and tree list view.==
+Click the icon on the menu bar![icon_view](../common/icon_view.svg),![list_view](../common/list_view.svg) ,![list_view](../common/treelist_view.svg)or use the shortcut keys **Ctrl + 1**, **Ctrl + 2** and **Ctrl + 3** to switch between icon view, list view, and tree list view.
 
 - Icon view: displaying filenames, icons or thumbnails.
 
@@ -102,9 +102,9 @@ File Manager is featured with the basic functions as a file manager, you can eas
 
 ![1|listview](fig/p_listview.png)
 
-* ==Tree list view: Expand the file directory in a tree shape and display file icons, thumbnails, name, modification time, size, type and other information.==
+* Tree list view: Expand the file directory in a tree shape and display file icons, thumbnails, name, modification time, size, type and other information.
 
-==（图片待更新）==
+
 
 > ![tips](../common/tips.svg) Tips:
 > 
@@ -775,13 +775,11 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
 > ![notes](../common/notes.svg) Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
-## ==Partition encryption==
+## Partition encryption
 
-#### ==Turn on partition encryption==
+#### Turn on partition encryption
 
 1. In the computer interface, right-click the disk that needs to be encrypted and select **Turn on partition encryption**
-
-==（图片需更新）==
 
 2. Setting the unlocking method in the pop-up window, click **Next**. It is recommended to select "Use TPM+PIN to unlock on this computer (recommended)"
 
@@ -789,12 +787,10 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
 4. Clicking **Confirm Encryption**, input the user password and restart the computer. Then enter the initialization interface for encryption configuration.
 
-==（图片需更新）==
-
 5. In the system initialization interface, input the password and repeat the password. Type in "y" to confirm encryption.
 6. After re-entering the desktop interface, wait for the encryption progress to be completed.
 
-==（图片需更新）==
+
 
 > ![notes](../common/notes.svg)NOTE：
 > 
@@ -802,33 +798,27 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 > 
 > The encryption process may cause system lag, so please minimize system operations.
 
-#### ==Decrypt partition==
+#### Decrypt partition
 
-1. ==When using the "Use TPM+PIN code to unlock on this computer (recommended)" unlocking method, enter the partition password on the system initialization interface to unlock.==
-2. ==When using the "Use TPM automatic unlocking on this computer" unlocking method, the system will automatically verify the unlocking.==
-3. ==When using the "unlock by password" unlocking method, enter the password to unlock while opening the partition on the computer interface.==
+1. When using the "Use TPM+PIN code to unlock on this computer (recommended)" unlocking method, enter the partition password on the system initialization interface to unlock.
+2. When using the "Use TPM automatic unlocking on this computer" unlocking method, the system will automatically verify the unlocking.
+3. When using the "unlock by password" unlocking method, enter the password to unlock while opening the partition on the computer interface.
 
-#### ==Change Password==
+#### Change Password
 
-1. ==In the computer interface, right-click the encrypted disk and select **Modify encryption password** or **Modify encryption PIN code.**==
+1. In the computer interface, right-click the encrypted disk and select **Modify encryption password** or **Modify encryption PIN code.**
 
-==（图片需更新）==
+2. You can click to switch between **Use password verification** and **Use recovery key verification**
 
-2. ==You can click to switch between **Use password verification** and **Use recovery key verification**==
+3. Enter the old password or recovery key, enter and re-enter the new password, click **Modify**, enter the user password to verify and complete the password change.
 
-3. ==Enter the old password or recovery key, enter and re-enter the new password, click **Modify**, enter the user password to verify and complete the password change.==
+#### Cancel partition encryption
 
-==（图片需更新）==
+1. In the computer interface, right-click the encrypted disk and select **Cancel Partition Encryption**.
 
-#### ==Cancel partition encryption==
+2. Enter the password for verification, select **Restart now** or **Restart later** in the cancel encryption pop-up window to restart the computer and enter the initialization interface.
 
-1. ==In the computer interface, right-click the encrypted disk and select **Cancel Partition Encryption**.==
-
-2. ==Enter the password for verification, select **Restart now** or **Restart later** in the cancel encryption pop-up window to restart the computer and enter the initialization interface.==
-
-3. ==In the system initialization interface, enter the partition password in sequence, and enter "y" to confirm the cancellation of encryption.==
-
-==（图片需更新）==
+3. In the system initialization interface, enter the partition password in sequence, and enter "y" to confirm the cancellation of encryption.
 
 ## Main Menu
 

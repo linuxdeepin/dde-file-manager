@@ -12,6 +12,7 @@
 #include <QScopedPointer>
 #include <QList>
 #include <QtCore/qobjectdefs.h>
+#include <QReadWriteLock>
 
 using DeviceManagerInterface = OrgDeepinFilemanagerServerDeviceManagerInterface;
 class QDBusServiceWatcher;
@@ -45,6 +46,7 @@ private:
     QScopedPointer<QDBusServiceWatcher> dbusWatcher;
     QList<QMetaObject::Connection> connections;
     int currentConnectionType = kNoneConnection;   // 0 for API connection and 1 for DBus connection
+    QReadWriteLock lock;
     QMap<QString, QString> externalMounts;
     QMap<QString, QString> allMounts;
 

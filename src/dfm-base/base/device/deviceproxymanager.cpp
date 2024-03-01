@@ -114,6 +114,7 @@ bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 {
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
+    QReadLocker lk(&d->lock);
     for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
         if (!iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
             return true;
@@ -125,6 +126,7 @@ bool DeviceProxyManager::isFileOfExternalBlockMounts(const QString &filePath)
 {
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
+    QReadLocker lk(&d->lock);
     for (auto iter = d->externalMounts.constKeyValueBegin(); iter != d->externalMounts.constKeyValueEnd(); ++iter) {
         if (iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
             return true;
@@ -136,6 +138,7 @@ bool DeviceProxyManager::isFileFromOptical(const QString &filePath)
 {
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
+    QReadLocker lk(&d->lock);
     for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
         if (iter.base().key().startsWith(QString(kBlockDeviceIdPrefix) + "sr") && path.startsWith(iter.base().value()))
             return true;
@@ -147,6 +150,7 @@ bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
 {
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
+    QReadLocker lk(&d->lock);
     id = d->allMounts.key(path, "");
     return !id.isEmpty();
 }
@@ -155,6 +159,7 @@ QVariantMap DeviceProxyManager::queryDeviceInfoByPath(const QString &path, bool 
 {
     d->initMounts();
     QString blkid, rootblkid;
+    QReadLocker lk(&d->lock);
     for (auto it = d->allMounts.begin(); it != d->allMounts.end(); it++) {
         if (it.value() == "/") {
             rootblkid = it.key();
@@ -229,6 +234,7 @@ void DeviceProxyManagerPrivate::initMounts()
                         continue;
                     mpt = mpt.endsWith("/") ? mpt : mpt + "/";
                     // FIXME(xust): fix later, the kRemovable is not always correct.
+                    QWriteLocker lk(&lock);
                     if (info.value(DeviceProperty::kRemovable).toBool())
                         externalMounts.insert(dev, mpt);
                     allMounts.insert(dev, mpt);
@@ -247,6 +253,11 @@ void DeviceProxyManagerPrivate::connectToDBus()
 {
     if (currentConnectionType == kDBusConnecting)
         return;
+    if (qApp->property("SIGTERM").toBool()) {
+        qWarning() << "Current app state is SIGTERM";
+        return;
+    }
+
     disconnCurrentConnections();
 
     auto ptr = devMngDBus.data();
@@ -339,6 +350,7 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
     if (!id.startsWith(kBlockDeviceIdPrefix) && DeviceUtils::isMountPointOfDlnfs(p))
         return;
 
+    QWriteLocker lk(&lock);
     if (id.startsWith(kBlockDeviceIdPrefix)) {
         auto &&info = q->queryBlockInfo(id);
         if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool())
@@ -351,6 +363,7 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 
 void DeviceProxyManagerPrivate::removeMounts(const QString &id)
 {
+    QWriteLocker lk(&lock);
     externalMounts.remove(id);
     allMounts.remove(id);
 }

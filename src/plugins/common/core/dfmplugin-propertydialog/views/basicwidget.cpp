@@ -78,26 +78,12 @@ void BasicWidget::initUI()
     frameMain->setFixedWidth(kFrameWidth);
 
     fileSize = createValueLabel(frameMain, tr("Size"));
-    fileSize->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    fileSize->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileCount = createValueLabel(frameMain, tr("Contains"));
-    fileCount->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    fileCount->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileType = createValueLabel(frameMain, tr("Type"));
-    fileType->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    fileType->rightWidget()->setFixedWidth(kRightWidgetWidth);
     filePosition = createValueLabel(frameMain, tr("Location"));
-    filePosition->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    filePosition->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileCreated = createValueLabel(frameMain, tr("Time created"));
-    fileCreated->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    fileCreated->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileAccessed = createValueLabel(frameMain, tr("Time accessed"));
-    fileAccessed->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    fileAccessed->rightWidget()->setFixedWidth(kRightWidgetWidth);
     fileModified = createValueLabel(frameMain, tr("Time modified"));
-    fileModified->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    fileModified->rightWidget()->setFixedWidth(kRightWidgetWidth);
 
     hideFile = new DCheckBox(frameMain);
     hideFile->setText(tr("Hide this file"));
@@ -110,6 +96,8 @@ KeyValueLabel *BasicWidget::createValueLabel(QFrame *frame, QString leftValue)
     res->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::Medium);
     res->setLeftValue(leftValue, Qt::ElideMiddle, Qt::AlignLeft, true);
     res->setRightFontSizeWeight(DFontSizeManager::SizeType::T8, QFont::Light);
+    res->leftWidget()->setFixedWidth(kLeftWidgetWidth);
+    res->rightWidget()->setFixedWidth(kRightWidgetWidth);
     return res;
 }
 
@@ -126,12 +114,7 @@ void BasicWidget::basicExpand(const QUrl &url)
             for (BasicFieldExpandEnum k : filterEnumList) {
                 QList<QPair<QString, QString>> fieldlist = expand.values(k);
                 for (QPair<QString, QString> field : fieldlist) {
-                    KeyValueLabel *expandLabel = new KeyValueLabel(this);
-                    expandLabel->setLeftValue(field.first, Qt::ElideMiddle, Qt::AlignLeft, true);
-                    expandLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
-                    expandLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-                    expandLabel->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-                    expandLabel->rightWidget()->setFixedWidth(kRightWidgetWidth);
+                    KeyValueLabel *expandLabel = createValueLabel(this, field.first);
                     expandLabel->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
                     fieldMap.insert(k, expandLabel);
                 }
