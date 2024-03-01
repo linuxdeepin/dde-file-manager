@@ -128,8 +128,7 @@ bool FileDataManager::checkNeedCache(const QUrl &url)
         return true;
 
     // mounted dir should cache files in FileDataManager
-    auto info = InfoFactory::create<FileInfo>(url);
-    if ((info ? !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !FileUtils::isLocalDevice(url)))
+    if ((!FileUtils::isLocalDevice(url)))
         return true;
 
     return false;
