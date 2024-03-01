@@ -489,10 +489,38 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
 
     bool added = false;
     if (checkFilters(sortInfo, true)) {
-        int showIndex = visibleChildren.length();
-        // kItemDisplayRole 是不进行排序的
+        auto parentUrl = parantUrl(sortInfo->fileUrl());
+        int showIndex = findStartPos(parentUrl);
+
+        // 插入到每个目录下的显示目录
+        auto subVisibleList = visibleTreeChildren.take(parentUrl);
+        auto offset = subVisibleList.length();
         if (orgSortRole != Global::ItemRoles::kItemDisplayRole)
-            showIndex = insertSortList(sortInfo->fileUrl(), visibleChildren, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
+            offset = insertSortList(sortInfo->fileUrl(), subVisibleList, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
+        auto subIndex = offset;
+        // 根目录下的offset计算不一样
+        if (UniversalUtils::urlEquals(parentUrl, current)) {
+            if (offset >= subVisibleList.length() || offset == 0) {
+                offset = offset >= subVisibleList.length() ? childrenCount() : 0;
+            } else {
+                auto tmpUrl = offset >= subVisibleList.length() ? QUrl() : subVisibleList.at(offset);
+                offset = getChildShowIndex(tmpUrl);
+                if (offset < 0)
+                    offset = childrenCount();
+            }
+        }
+        subVisibleList.insert(subIndex, sortInfo->fileUrl());
+        visibleTreeChildren.insert(parentUrl, subVisibleList);
+
+        // kItemDisplayRole 是不进行排序的
+        showIndex += offset;
+
+        // 不为子目录中第一项的情况下，需要判断前面的项是否有展开
+        if (subIndex != 0) {
+            QUrl preItemUrl = subVisibleList.at(subIndex - 1);
+            // 前一项展开的情况下，实际插入的位置应该在所有展开子项之后
+            showIndex = findRealShowIndex(preItemUrl);
+        }
 
         if (isCanceled)
             return false;
