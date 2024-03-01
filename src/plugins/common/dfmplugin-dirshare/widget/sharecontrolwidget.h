@@ -17,6 +17,7 @@
 #include <QUrl>
 #include <QPointer>
 
+QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QLineEdit;
 class QComboBox;
@@ -25,6 +26,9 @@ class QTextBrowser;
 class QPushButton;
 class QFormLayout;
 class QGridLayout;
+class QVBoxLayout;
+class QHBoxLayout;
+QT_END_NAMESPACE
 
 namespace dfmplugin_dirshare {
 
@@ -39,10 +43,13 @@ public:
 protected:
     void setupUi(bool disableState = false);
     void setupShareSwitcher();
-    void setupNetworkPath();
-    void setupUserName();
-    void setupSharePassword();
-    void setupShareNotes(QGridLayout *gridLayout);
+    void setupShareNameEditor();
+    void setupSharePermissionSelector();
+    void setupShareAnonymousSelector();
+    QHBoxLayout* setupNetworkPath();
+    QHBoxLayout *setupUserName();
+    QHBoxLayout *setupSharePassword();
+    void setupShareNotes();
     void init();
     void initConnection();
     bool validateShareName();
@@ -61,33 +68,34 @@ private:
     void showSharePasswordSettingsDialog();
 
 private:
-    QFormLayout *mainLay { nullptr };
-    QCheckBox *shareSwitcher { nullptr };
-    QLineEdit *shareNameEditor { nullptr };
-    QComboBox *sharePermissionSelector { nullptr };
-    QComboBox *shareAnonymousSelector { nullptr };
+    QVBoxLayout *mainLayout { Q_NULLPTR };
+    QFrame *moreInfoFrame { Q_NULLPTR };
+    QCheckBox *shareSwitcher { Q_NULLPTR };
+    QLineEdit *shareNameEditor { Q_NULLPTR };
+    QComboBox *sharePermissionSelector { Q_NULLPTR };
+    QComboBox *shareAnonymousSelector { Q_NULLPTR };
 
     // network area
-    QLabel *netScheme { nullptr };
-    QLabel *networkAddrLabel { nullptr };
-    QLabel *userNamelineLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DLabel *sharePassword { nullptr };
-    DTK_WIDGET_NAMESPACE::DTipLabel *m_shareNotes { nullptr };
-    QPushButton *splitLineGray { nullptr };
-    QPushButton *copyNetAddr { nullptr };
-    QPushButton *copyUserNameBt { nullptr };
-    DTK_WIDGET_NAMESPACE::DCommandLinkButton *setPasswordBt { nullptr };
+    QLabel *netScheme { Q_NULLPTR };
+    QLabel *networkAddrLabel { Q_NULLPTR };
+    QLabel *userNamelineLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *sharePassword { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DTipLabel *m_shareNotes { Q_NULLPTR };
+    QPushButton *splitLineGray { Q_NULLPTR };
+    QPushButton *copyNetAddr { Q_NULLPTR };
+    QPushButton *copyUserNameBt { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *setPasswordBt { Q_NULLPTR };
     bool isSharePasswordSet { false };
-    QTimer *refreshIp { nullptr };
+    QTimer *refreshIp { Q_NULLPTR };
 
     //QTimer *m_jobTimer;
     QString selfIp;
 
-    QTimer *timer { nullptr };
+    QTimer *timer { Q_NULLPTR };
 
     QUrl url;
-    FileInfoPointer info { nullptr };
-    AbstractFileWatcherPointer watcher { nullptr };
+    FileInfoPointer info { Q_NULLPTR };
+    AbstractFileWatcherPointer watcher { Q_NULLPTR };
 };
 }
 

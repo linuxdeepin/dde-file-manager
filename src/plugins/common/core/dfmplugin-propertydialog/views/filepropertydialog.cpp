@@ -66,7 +66,7 @@ void FilePropertyDialog::initInfoUI()
 
     QFrame *mainWidget = new QFrame(this);
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
-    scrollWidgetLayout->setContentsMargins(10, 0, 10, 30);
+    scrollWidgetLayout->setContentsMargins(10, 0, 10, 10);
     scrollWidgetLayout->setSpacing(kArrowExpandSpacing);
     mainWidget->setLayout(scrollWidgetLayout);
 
@@ -92,6 +92,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
     connect(editStackWidget, &EditStackedWidget::selectUrlRenamed, this, &FilePropertyDialog::onSelectUrlRenamed);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->setMargin(0);
     vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->addWidget(fileIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout->addWidget(editStackWidget, 1, Qt::AlignHCenter | Qt::AlignTop);
@@ -153,9 +154,7 @@ int FilePropertyDialog::contentHeight()
     return (DIALOG_TITLEBAR_HEIGHT
             + h
             + expandsHeight
-            + contentsMargins().top()
-            + contentsMargins().bottom()
-            + 40);
+            + kArrowExpandSpacing * extendedControl.size());
 }
 
 void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
@@ -224,7 +223,7 @@ void FilePropertyDialog::processHeight(int height)
     Q_UNUSED(height)
 
     QRect rect = geometry();
-    rect.setHeight(contentHeight() + kArrowExpandSpacing * 2);
+    rect.setHeight(contentHeight() + kArrowExpandSpacing);
     setGeometry(rect);
 }
 

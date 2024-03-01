@@ -53,13 +53,14 @@ private slots:
     void onComboBoxChanged();
 
 private:
-    DTK_WIDGET_NAMESPACE::DLabel *ownerLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DLabel *groupLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DLabel *otherLabel { nullptr };
-    QComboBox *ownerComboBox { nullptr };
-    QComboBox *groupComboBox { nullptr };
-    QComboBox *otherComboBox { nullptr };
-    QCheckBox *executableCheckBox { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *ownerLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *groupLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *otherLabel { Q_NULLPTR };
+    QComboBox *ownerComboBox { Q_NULLPTR };
+    QComboBox *groupComboBox { Q_NULLPTR };
+    QComboBox *otherComboBox { Q_NULLPTR };
+    QFrame *executableFrame { Q_NULLPTR };
+    QCheckBox *executableCheckBox { Q_NULLPTR };
     QStringList authorityList {};
     QStringList cannotChmodFsType {};
     QUrl selectUrl;

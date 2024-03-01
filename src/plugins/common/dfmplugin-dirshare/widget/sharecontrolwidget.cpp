@@ -45,8 +45,8 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 namespace ConstDef {
-static constexpr int kKeyWidth { 85 };
-static const int kWidgetFixedWidth { 196 };
+static constexpr int kKeyWidth { 80 };
+static constexpr int kWidgetFixedWidth { 195 };
 static constexpr char kShareNameRegx[] { "^[^\\[\\]\"'/\\\\:|<>+=;,?*\r\n\t]*$" };
 static constexpr char kShareFileDir[] { "/var/lib/samba/usershares" };
 }
@@ -112,56 +112,49 @@ void ShareControlWidget::setupUi(bool disableState)
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
 
-    QFrame *frame = new QFrame(this);
-    frame->setDisabled(disableState);
-    QGridLayout *gridLayout = new QGridLayout(frame);
-    gridLayout->setContentsMargins(0, 0, 0, 0);
-    setContent(frame);
-    mainLay = new QFormLayout(this);
-    mainLay->setContentsMargins(15, 10, 10, 10);
-    mainLay->setVerticalSpacing(6);
-    gridLayout->addLayout(mainLay, 0, 0);
-    gridLayout->setVerticalSpacing(0);
-    frame->setLayout(gridLayout);
+    QFrame *mainFrame = new QFrame(this);
+    mainFrame->setDisabled(disableState);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
+    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 10);
+    mainLayout->setSpacing(0);
+
+    QFormLayout *basicInfoFrameLay = new QFormLayout(mainFrame);
+    basicInfoFrameLay->setMargin(0);
+    basicInfoFrameLay->setContentsMargins(20, 0, 10, 0);
+    basicInfoFrameLay->setVerticalSpacing(6);
 
     setupShareSwitcher();
-
-    mainLay->addRow(" ", shareSwitcher);
-
-    QPalette peMenuBg;
-    QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
-    peMenuBg.setColor(QPalette::Window, color);
-
-    shareNameEditor = new QLineEdit(this);
-    connect(shareNameEditor, &QLineEdit::textChanged, this, [=](const QString &text) {
-        QString newText(text);
-        // daemon create the mountpoint of share: <name> on <host>, which occupied 255 bytes at most.
-        // and only 255 - 20 bytes for share name.
-        // the max length of folder name limited to 255 bytes in nativa file system.
-        while (newText.toLocal8Bit().length() > (NAME_MAX - 20))
-            newText.chop(1);
-        shareNameEditor->setText(newText);
-    });
-    mainLay->addRow(new SectionKeyLabel(tr("Share name"), this), shareNameEditor);
-    sharePermissionSelector = new QComboBox(this);
-    sharePermissionSelector->setPalette(peMenuBg);
-    mainLay->addRow(new SectionKeyLabel(tr("Permission"), this), sharePermissionSelector);
-    shareAnonymousSelector = new QComboBox(this);
-    shareAnonymousSelector->setPalette(peMenuBg);
-    mainLay->addRow(new SectionKeyLabel(tr("Anonymous"), this), shareAnonymousSelector);
-
-    QValidator *validator = new QRegularExpressionValidator(QRegularExpression(ConstDef::kShareNameRegx), this);
-    shareNameEditor->setValidator(validator);
-    QStringList permissions { tr("Read and write"), tr("Read only") };
-    sharePermissionSelector->addItems(permissions);
-    QStringList anonymousSelections { tr("Not allow"), tr("Allow") };
-    shareAnonymousSelector->addItems(anonymousSelections);
+    basicInfoFrameLay->addRow(" ", shareSwitcher);
+    setupShareNameEditor();
+    basicInfoFrameLay->addRow(new SectionKeyLabel(tr("Share name"), this), shareNameEditor);
+    setupSharePermissionSelector();
+    basicInfoFrameLay->addRow(new SectionKeyLabel(tr("Permission"), this), sharePermissionSelector);
+    setupShareAnonymousSelector();
+    basicInfoFrameLay->addRow(new SectionKeyLabel(tr("Anonymous"), this), shareAnonymousSelector);
 
     // More share info
-    setupNetworkPath();
-    setupUserName();
-    setupSharePassword();
-    setupShareNotes(gridLayout);
+    moreInfoFrame = new QFrame(mainFrame);
+    QVBoxLayout *moreInfoFrameLay = new QVBoxLayout(moreInfoFrame);
+    moreInfoFrameLay->setMargin(0);
+    moreInfoFrameLay->setContentsMargins(20, 10, 10, 0);
+    moreInfoFrame->setLayout(moreInfoFrameLay);
+
+    QFormLayout *formLay = new QFormLayout(moreInfoFrame);
+    formLay->setMargin(0);
+    formLay->setContentsMargins(0, 0, 0, 0);
+    formLay->addRow(new SectionKeyLabel(tr("Network path"), this), setupNetworkPath());
+    formLay->addRow(new SectionKeyLabel(tr("Username"), this), setupUserName());
+    formLay->addRow(new SectionKeyLabel(tr("Share password"), this), setupSharePassword());
+    moreInfoFrameLay->addLayout(formLay);
+    setupShareNotes();
+    moreInfoFrameLay->addWidget(m_shareNotes);
+
+    mainLayout->addLayout(basicInfoFrameLay);
+    mainLayout->addWidget(moreInfoFrame);
+    mainFrame->setLayout(mainLayout);
+    setContent(mainFrame);
 
     timer = new QTimer(this);
     timer->setInterval(500);
@@ -175,26 +168,68 @@ void ShareControlWidget::setupShareSwitcher()
     shareSwitcher->setToolTip(text);
     QFontMetrics fontWidth(shareSwitcher->font());
     int fontSize = fontWidth.horizontalAdvance(text);
-    int fontW = shareSwitcher->width() - mainLay->contentsMargins().right() - shareSwitcher->iconSize().width();
+    int fontW = shareSwitcher->width() - 10 - shareSwitcher->iconSize().width();
     if (fontSize > fontW) {
         text = fontWidth.elidedText(text, Qt::ElideMiddle, fontW);
     }
     shareSwitcher->setText(text);
 }
 
-void ShareControlWidget::setupNetworkPath()
+void ShareControlWidget::setupShareNameEditor()
+{
+    shareNameEditor = new QLineEdit(this);
+
+    QValidator *validator = new QRegularExpressionValidator(QRegularExpression(ConstDef::kShareNameRegx), this);
+    shareNameEditor->setValidator(validator);
+
+    connect(shareNameEditor, &QLineEdit::textChanged, this, [=](const QString &text) {
+        QString newText(text);
+        // daemon create the mountpoint of share: <name> on <host>, which occupied 255 bytes at most.
+        // and only 255 - 20 bytes for share name.
+        // the max length of folder name limited to 255 bytes in nativa file system.
+        while (newText.toLocal8Bit().length() > (NAME_MAX - 20))
+            newText.chop(1);
+        shareNameEditor->setText(newText);
+    });
+}
+
+void ShareControlWidget::setupSharePermissionSelector()
+{
+    sharePermissionSelector = new QComboBox(this);
+
+    QPalette peMenuBg;
+    QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
+    peMenuBg.setColor(QPalette::Window, color);
+    sharePermissionSelector->setPalette(peMenuBg);
+
+    QStringList permissions { tr("Read and write"), tr("Read only") };
+    sharePermissionSelector->addItems(permissions);
+}
+
+void ShareControlWidget::setupShareAnonymousSelector()
+{
+    shareAnonymousSelector = new QComboBox(this);
+
+    QPalette peMenuBg;
+    QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
+    peMenuBg.setColor(QPalette::Window, color);
+    shareAnonymousSelector->setPalette(peMenuBg);
+
+    QStringList anonymousSelections { tr("Not allow"), tr("Allow") };
+    shareAnonymousSelector->addItems(anonymousSelections);
+}
+
+QHBoxLayout* ShareControlWidget::setupNetworkPath()
 {
     netScheme = new QLabel("smb://", this);
+
     networkAddrLabel = new QLabel("127.0.0.1", this);
     networkAddrLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    QHBoxLayout *hBoxLine1 = new QHBoxLayout(this);
-    hBoxLine1->addWidget(netScheme);
-    hBoxLine1->addWidget(networkAddrLabel);
-    hBoxLine1->setContentsMargins(0, 0, 2, 0);
     networkAddrLabel->setFixedWidth(ConstDef::kWidgetFixedWidth);
-    mainLay->addRow(new SectionKeyLabel(tr("Network path"), this), hBoxLine1);
 
     copyNetAddr = new QPushButton(this);
+    copyNetAddr->setFlat(true);
+    copyNetAddr->setToolTip(tr("Copy"));
     auto setBtnIcon = [=] {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             copyNetAddr->setIcon(QIcon(":light/icons/property_bt_copy.svg"));
@@ -204,27 +239,30 @@ void ShareControlWidget::setupNetworkPath()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             this, setBtnIcon);
     setBtnIcon();
-    copyNetAddr->setFlat(true);
-    copyNetAddr->setToolTip(tr("Copy"));
     QObject::connect(copyNetAddr, &QPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(netScheme->text() + networkAddrLabel->text());
     });
-    hBoxLine1->addWidget(copyNetAddr);
+
+    QHBoxLayout *hBoxLine = new QHBoxLayout(this);
+    hBoxLine->setContentsMargins(0, 0, 2, 0);
+    hBoxLine->addWidget(netScheme);
+    hBoxLine->addWidget(networkAddrLabel);
+    hBoxLine->addWidget(copyNetAddr);
+
+    return hBoxLine;
 }
 
-void ShareControlWidget::setupUserName()
+QHBoxLayout *ShareControlWidget::setupUserName()
 {
     userNamelineLabel = new QLabel(this);
     userNamelineLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     userNamelineLabel->setText(getpwuid(getuid())->pw_name);
     userNamelineLabel->setFixedWidth(ConstDef::kWidgetFixedWidth);
-    QHBoxLayout *hBoxLine2 = new QHBoxLayout(this);
-    hBoxLine2->addWidget(userNamelineLabel);
-    hBoxLine2->setContentsMargins(0, 0, 2, 0);
-    mainLay->addRow(new SectionKeyLabel(tr("Username"), this), hBoxLine2);
 
     copyUserNameBt = new QPushButton(this);
+    copyUserNameBt->setFlat(true);
+    copyUserNameBt->setToolTip(tr("Copy"));
     auto setBtnIcon = [=] {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             copyUserNameBt->setIcon(QIcon(":light/icons/property_bt_copy.svg"));
@@ -234,16 +272,20 @@ void ShareControlWidget::setupUserName()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             this, setBtnIcon);
     setBtnIcon();
-    copyUserNameBt->setFlat(true);
-    copyUserNameBt->setToolTip(tr("Copy"));
     QObject::connect(copyUserNameBt, &QPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(userNamelineLabel->text());
     });
-    hBoxLine2->addWidget(copyUserNameBt);
+
+    QHBoxLayout *hBoxLine = new QHBoxLayout(this);
+    hBoxLine->setContentsMargins(0, 0, 2, 0);
+    hBoxLine->addWidget(userNamelineLabel);
+    hBoxLine->addWidget(copyUserNameBt);
+
+    return hBoxLine;
 }
 
-void ShareControlWidget::setupSharePassword()
+QHBoxLayout *ShareControlWidget::setupSharePassword()
 {
     sharePassword = new DLabel(this);
     QFont font = this->font();
@@ -254,10 +296,6 @@ void ShareControlWidget::setupSharePassword()
     sharePassword->setAlignment(Qt::AlignJustify | Qt::AlignLeft | Qt::AlignVCenter);
     sharePassword->setText(isSharePasswordSet ? "●●●●●" : tr("None"));
 
-    QHBoxLayout *hBoxLine3 = new QHBoxLayout(this);
-    hBoxLine3->addWidget(sharePassword);
-    hBoxLine3->setContentsMargins(0, 0, 0, 0);
-
     setPasswordBt = new DCommandLinkButton(tr("Set password"));
     setPasswordBt->setText(isSharePasswordSet ? tr("Change password") : tr("Set password"));
     setPasswordBt->setContentsMargins(0, 0, 0, 0);
@@ -265,12 +303,17 @@ void ShareControlWidget::setupSharePassword()
     QObject::connect(setPasswordBt, &QPushButton::clicked, [this]() {
         showSharePasswordSettingsDialog();
     });
-    hBoxLine3->addWidget(setPasswordBt);
-    hBoxLine3->setStretch(0, 1);
-    mainLay->addRow(new SectionKeyLabel(tr("Share password"), this), hBoxLine3);
+
+    QHBoxLayout *hBoxLine = new QHBoxLayout(this);
+    hBoxLine->setMargin(0);
+    hBoxLine->setStretch(0, 1);
+    hBoxLine->addWidget(sharePassword);
+    hBoxLine->addWidget(setPasswordBt);
+
+    return hBoxLine;
 }
 
-void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
+void ShareControlWidget::setupShareNotes()
 {
     static QString notice = tr("This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. ");
     m_shareNotes = new DTipLabel(notice, this);
@@ -296,11 +339,6 @@ void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             this, setTextColor);
     setTextColor(DGuiApplicationHelper::instance()->themeType());
-
-    QGridLayout *notesLayout = new QGridLayout;
-    notesLayout->setContentsMargins(15, 0, 9, 9);
-    notesLayout->addWidget(m_shareNotes, 0, 0);
-    gridLayout->addLayout(notesLayout, 1, 0);
 }
 
 void ShareControlWidget::init()
@@ -533,25 +571,7 @@ void ShareControlWidget::onSambaPasswordSet(bool result)
 
 void ShareControlWidget::showMoreInfo(bool showMore)
 {
-    // line 4: Network path
-    mainLay->itemAt(4, QFormLayout::LabelRole)->widget()->setHidden(!showMore);
-    // line 5: Username
-    mainLay->itemAt(5, QFormLayout::LabelRole)->widget()->setHidden(!showMore);
-    // line 6: Share password
-    mainLay->itemAt(6, QFormLayout::LabelRole)->widget()->setHidden(!showMore);
-    // The bottom notice
-    m_shareNotes->setHidden(!showMore);
-    auto visibleControl = [this](int row, bool visible) {
-        QLayoutItem *layoutItem = mainLay->itemAt(row, QFormLayout::FieldRole);
-        QHBoxLayout *hBoxLayout = dynamic_cast<QHBoxLayout *>(layoutItem);
-        int count = hBoxLayout->count();
-        for (int i = 0; i < count; i++) {
-            hBoxLayout->itemAt(i)->widget()->setHidden(visible);
-        }
-    };
-    visibleControl(4, !showMore);
-    visibleControl(5, !showMore);
-    visibleControl(6, !showMore);
+    moreInfoFrame->setHidden(!showMore);
 
     if (refreshIp) {
         if (showMore)
