@@ -58,8 +58,8 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
 {
     Q_UNUSED(windowId);
 
-    // 源文件是空或者源文件是回收站文件
-    if (sources.isEmpty() || FileUtils::isTrashFile(sources.first()))
+    // 源文件是空
+    if (sources.isEmpty())
         return nullptr;
 
     // 其他插件处理了相应的操作，直接返回
