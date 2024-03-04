@@ -13,6 +13,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -367,7 +368,8 @@ void CommandParser::processEvent()
         break;
     }
     case GlobalEventType::kMoveToTrash: {
-        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)
+                || FileUtils::isTrashFile(srcUrls.first()))
             return;
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
