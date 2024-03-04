@@ -83,10 +83,11 @@ ComputerDataList ComputerItemWatcher::items()
     ret.append(getBlockDeviceItems(&hasInsertNewDisk));
     ret.append(getProtocolDeviceItems(&hasInsertNewDisk));
     ret.append(getAppEntryItems(&hasInsertNewDisk));
+    // only sort disk area.
+    std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
+
     // 性能优化，读取插件配置，在插件被加载前预先绘制出插件在计算机的图标和名称
     ret.append(getPreDefineItems());
-
-    std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
 
     if (!hasInsertNewDisk)
         ret.pop_back();
