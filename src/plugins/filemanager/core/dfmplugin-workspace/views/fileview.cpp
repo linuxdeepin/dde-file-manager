@@ -1773,6 +1773,9 @@ void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int en
         }
     }
 
+    if (itemDelegate())
+        itemDelegate()->hideNotEditingIndexWidget();
+
     DListView::rowsAboutToBeRemoved(parent, start, end);
 }
 
