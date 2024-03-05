@@ -204,7 +204,7 @@ void ComputerItemDelegate::closeEditor(ComputerView *view)
 void ComputerItemDelegate::paintSplitter(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QFont fnt(view->font());
-    fnt.setPixelSize(20);
+    fnt.setPixelSize(QFontInfo(fnt).pixelSize() + 6);
     fnt.setWeight(QFont::Medium);
     painter->setFont(fnt);
     painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
@@ -238,7 +238,7 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
     painter->drawPixmap(tl, pm);
 
     QFont fnt(view->font());
-    fnt.setPixelSize(14);
+    fnt.setPixelSize(QFontInfo(fnt).pixelSize());
     fnt.setWeight(QFont::Medium);
     painter->setFont(fnt);
 
@@ -308,7 +308,7 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
 {
     painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
     auto fnt = view->font();
-    fnt.setPixelSize(16);
+    fnt.setPixelSize(QFontInfo(fnt).pixelSize() + 2);
     fnt.setWeight(QFont::Medium);
     painter->setFont(fnt);
     QFontMetrics fm(fnt);
@@ -384,7 +384,7 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
 void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     auto fnt = view->font();
-    fnt.setPixelSize(12);
+    fnt.setPixelSize(QFontInfo(fnt).pixelSize() - 2);
     fnt.setWeight(QFont::Normal);
     painter->setFont(fnt);
     painter->setPen(DPaletteHelper::instance()->palette(option.widget).color(DPalette::TextTips));

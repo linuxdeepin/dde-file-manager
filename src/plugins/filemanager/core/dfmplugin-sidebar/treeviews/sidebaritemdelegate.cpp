@@ -378,8 +378,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter 
     qreal iconDx = 2 * kItemMargin;
     qreal iconDy = (itemRect.height() - iconSize.height()) / 2;
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
-    QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
-    QRect iconRect(iconTopLeft.toPoint(), iconBottomRight.toPoint());
+    QRect iconRect(iconTopLeft.toPoint(), iconSize);
 
     QIcon::State state = (option.state & QStyle::State_Open) ? QIcon::On : QIcon::Off;
     option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
