@@ -3,7 +3,7 @@
 #dfm-upgrade
 
 function createUpgradeFlag(){
-echo "File manager is ready to upgratde configuration."
+echo "File manager is ready to upgrade configuration."
 homeDir="/home"
 for user in `ls $homeDir`
 do
