@@ -34,7 +34,6 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
 static constexpr int kLabelWidth { 75 };
-static constexpr int kWidgetFixedWidth { 195 };
 constexpr int kOwerAll = QFile::ExeOwner | QFile::WriteOwner | QFile::ReadOwner;
 constexpr int kGroupAll = QFile::ExeGroup | QFile::WriteGroup | QFile::ReadGroup;
 constexpr int kOtherAll = QFile::ExeOther | QFile::WriteOther | QFile::ReadOther;
@@ -201,7 +200,6 @@ void PermissionManagerWidget::initUI()
     formLay->addRow(other, otherComboBox);
 
     executableFrame = new QFrame(mainFrame);
-    executableFrame->setFixedWidth(kWidgetFixedWidth);
     QHBoxLayout *exeLay = new QHBoxLayout;
     exeLay->setMargin(0);
     exeLay->setContentsMargins(0, 0, 0, 0);
