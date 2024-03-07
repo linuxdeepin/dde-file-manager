@@ -57,6 +57,8 @@ public:
     void appendWinID(const quint64 &winId);
     void removeWinID(const quint64 &winId);
 
+    bool enableUnlockVault();
+
 public:
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
 

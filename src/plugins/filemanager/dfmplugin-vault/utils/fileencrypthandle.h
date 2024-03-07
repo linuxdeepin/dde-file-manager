@@ -39,12 +39,10 @@ signals:
 public slots:
     void slotReadError();
     void slotReadOutput();
-    void responseLockScreenDBus(const QDBusMessage &msg);
 
 private:
     explicit FileEncryptHandle(QObject *parent = nullptr);
     virtual ~FileEncryptHandle() override;
-    void connectLockScreenToUpdateVaultState();
 
 private:
     FileEncryptHandlerPrivate *d = nullptr;

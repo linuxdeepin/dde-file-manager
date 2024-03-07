@@ -1,0 +1,18 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "enableUnlockVaultInNetwork": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "支持联网下解锁保险箱",
+            "name[zh_CN]": "支持联网下解锁保险箱",
+            "description": "联网环境下，是否可以解锁保险箱。默认值(true)，可选值(true, false)",
+            "description[zh_CN]": "联网环境下，是否可以解锁保险箱。默认值(true)，可选值(true, false)",
+            "permissions": "readwrite",
+            "visibility": "private"
+        }
+    }
+}
+

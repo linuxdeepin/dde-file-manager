@@ -7,8 +7,11 @@
 #include "dbus/vaultmanagerdbus.h"
 #include "vaultmanageradaptor.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #include <QDBusConnection>
 
+DFMBASE_USE_NAMESPACE
 namespace serverplugin_vaultdaemon {
 DFM_LOG_REISGER_CATEGORY(SERVERVAULT_NAMESPCE)
 
@@ -35,19 +38,35 @@ void VaultManagerDBusWorker::launchService()
     fmInfo() << "Vault Daemon: Init DBus VaultManager end";
 }
 
+void VaultManagerDBusWorker::sendChangedVaultStateSig(const QVariantMap &map)
+{
+    Q_EMIT vaultManager->ChangedVaultState(map);
+}
+
 void VaultDaemon::initialize()
 {
     VaultManagerDBusWorker *worker { new VaultManagerDBusWorker };
     worker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
     connect(this, &VaultDaemon::requesLaunch, worker, &VaultManagerDBusWorker::launchService);
+    connect(VaultControl::instance(), &VaultControl::changedVaultState, worker, &VaultManagerDBusWorker::sendChangedVaultStateSig);
     workerThread.start();
 }
 
 bool VaultDaemon::start()
 {
+    QString err;
+    if (!DConfigManager::instance()->addConfig(kVaultDConfigName, &err))
+        fmWarning() << "Vault: create dconfig failed: " << err;
+
     VaultControl::instance()->connectLockScreenDBus();
     VaultControl::instance()->transparentUnlockVault();
+
+    const QVariant vRe = DConfigManager::instance()->value(kVaultDConfigName, "enableUnlockVaultInNetwork");
+    if (vRe.isValid() && !vRe.toBool()) {
+        VaultControl::instance()->MonitorNetworkStatus();
+    }
+
     Q_EMIT requesLaunch();
     return true;
 }

@@ -4,6 +4,10 @@
     <signal name="LockEventTriggered">
       <arg name="user" type="s" direction="out"/>
     </signal>
+    <signal name="ChangedVaultState">
+      <arg name="map" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
     <method name="SysUserChanged">
       <arg name="curUser" type="s" direction="in"/>
     </method>

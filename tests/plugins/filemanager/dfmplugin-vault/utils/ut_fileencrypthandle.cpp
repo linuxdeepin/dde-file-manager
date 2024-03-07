@@ -37,40 +37,6 @@ TEST(UT_FileEncryptHandle, init)
     FileEncryptHandle::instance();
 }
 
-TEST(UT_FileEncryptHandle, connectLockScreenToUpdateVaultState_one)
-{
-    bool isOk { false };
-
-    stub_ext::StubExt stub;
-    stub.set_lamda(&QDBusConnection::isConnected, [ &isOk ]{
-        isOk = true;
-        return false;
-    });
-
-    FileEncryptHandle::instance()->connectLockScreenToUpdateVaultState();
-
-    EXPECT_TRUE(isOk);
-}
-
-TEST(UT_FileEncryptHandle, connectLockScreenToUpdateVaultState_two)
-{
-    bool isOk { false };
-
-    stub_ext::StubExt stub;
-    stub.set_lamda(&QDBusConnection::isConnected, []{
-        return true;
-    });
-    stub.set_lamda(&QDBusConnectionInterface::isServiceRegistered, [ &isOk ]{
-        isOk = true;
-        QDBusMessage me;
-        return QDBusReply<bool>(me);
-    });
-
-    FileEncryptHandle::instance()->connectLockScreenToUpdateVaultState();
-
-    EXPECT_TRUE(isOk);
-}
-
 TEST(UT_FileEncryptHandle, createVault_one)
 {
     bool isOk { false };
@@ -465,22 +431,6 @@ TEST(UT_FileEncryptHandle, slotReadOutput)
     stub.set_lamda(&DialogManager::showErrorDialog, []{});
 
     FileEncryptHandle::instance()->slotReadOutput();
-
-    EXPECT_TRUE(isOk);
-}
-
-TEST(UT_FileEncryptHandle, responseLockScreenDBus)
-{
-    bool isOk {false };
-
-    stub_ext::StubExt stub;
-    stub.set_lamda(&QDBusMessage::arguments, [ &isOk ]{
-        isOk = true;
-        return QList<QVariant> {QVariant(1)};
-    });
-
-    QDBusMessage msg;
-    FileEncryptHandle::instance()->responseLockScreenDBus(msg);
 
     EXPECT_TRUE(isOk);
 }

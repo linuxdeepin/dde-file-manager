@@ -21,6 +21,7 @@ class VaultManagerDBusWorker : public QObject
 
 public Q_SLOTS:
     void launchService();
+    void sendChangedVaultStateSig(const QVariantMap &map);
 
 private:
     QScopedPointer<VaultManagerDBus> vaultManager;

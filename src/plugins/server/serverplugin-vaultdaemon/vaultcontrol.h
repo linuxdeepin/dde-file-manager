@@ -15,15 +15,6 @@ class VaultControl : public QObject
 {
     Q_OBJECT
 public:
-    enum VaultState {
-        kNotExisted = 0,
-        kEncrypted,
-        kUnlocked,
-        kUnderProcess,
-        kBroken,
-        kNotAvailable
-    };
-
     enum VersionIndex {
         kMajorIndex = 0,
         kMinorIndex,
@@ -55,9 +46,14 @@ public:
     static VaultControl* instance();
     void connectLockScreenDBus();
     bool transparentUnlockVault();
+    void MonitorNetworkStatus();
 
 private Q_SLOTS:
     void responseLockScreenDBus(const QDBusMessage &msg);
+    void responseNetworkStateChaneDBus(int st);
+
+Q_SIGNALS:
+    void changedVaultState(const QVariantMap &map);
 
 private:
     explicit VaultControl(QObject *parent = nullptr);

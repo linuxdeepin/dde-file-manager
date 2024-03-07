@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultdbusutils.h"
+#include "utils/pathmanager.h"
+#include "utils/vaulthelper.h"
 
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusUnixFileDescriptor>
@@ -12,14 +14,22 @@
 
 #include <unistd.h>
 
+inline constexpr int kArgumentsNum { 3 };
+
 using namespace dfmplugin_vault;
+
+VaultDBusUtils *VaultDBusUtils::instance()
+{
+    static VaultDBusUtils ins;
+    return &ins;
+}
 
 QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &vaule)
 {
     QVariant value;
-    QDBusInterface sessionManagerIface("org.deepin.filemanager.server",
-                                       "/org/deepin/filemanager/server/VaultManager",
-                                       "org.deepin.filemanager.server.VaultManager",
+    QDBusInterface sessionManagerIface(kFileManagerDBusServiceName,
+                                       kFileManagerVaultDBusPath,
+                                       kFileManagerVaultDBusInterfaces,
                                        QDBusConnection::sessionBus());
 
     if (sessionManagerIface.isValid()) {
@@ -106,9 +116,9 @@ bool VaultDBusUtils::setVaultPolicyState(int policyState)
 void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)
 {
     QDBusConnection::sessionBus().connect(
-            "org.deepin.filemanager.server",
-            "/org/deepin/filemanager/server/VaultManager",
-            "org.deepin.filemanager.server.VaultManager",
+            kFileManagerDBusServiceName,
+            kFileManagerVaultDBusPath,
+            kFileManagerVaultDBusInterfaces,
             "LockEventTriggered",
             obj,
             cslot);
@@ -116,9 +126,9 @@ void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)
 
 int VaultDBusUtils::getLeftoverErrorInputTimes()
 {
-    QDBusInterface VaultManagerdbus("org.deepin.filemanager.server",
-                                    "/org/deepin/filemanager/server/VaultManager",
-                                    "org.deepin.filemanager.server.VaultManager",
+    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+                                    kFileManagerVaultDBusPath,
+                                    kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
 
     int leftChance = -1;
@@ -137,9 +147,9 @@ int VaultDBusUtils::getLeftoverErrorInputTimes()
 
 void VaultDBusUtils::leftoverErrorInputTimesMinusOne()
 {
-    QDBusInterface VaultManagerdbus("org.deepin.filemanager.server",
-                                    "/org/deepin/filemanager/server/VaultManager",
-                                    "org.deepin.filemanager.server.VaultManager",
+    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+                                    kFileManagerVaultDBusPath,
+                                    kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
@@ -152,9 +162,9 @@ void VaultDBusUtils::leftoverErrorInputTimesMinusOne()
 
 void VaultDBusUtils::startTimerOfRestorePasswordInput()
 {
-    QDBusInterface VaultManagerdbus("org.deepin.filemanager.server",
-                                    "/org/deepin/filemanager/server/VaultManager",
-                                    "org.deepin.filemanager.server.VaultManager",
+    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+                                    kFileManagerVaultDBusPath,
+                                    kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
@@ -167,9 +177,9 @@ void VaultDBusUtils::startTimerOfRestorePasswordInput()
 
 int VaultDBusUtils::getNeedWaitMinutes()
 {
-    QDBusInterface VaultManagerdbus("org.deepin.filemanager.server",
-                                    "/org/deepin/filemanager/server/VaultManager",
-                                    "org.deepin.filemanager.server.VaultManager",
+    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+                                    kFileManagerVaultDBusPath,
+                                    kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
 
     int result = 100;
@@ -187,9 +197,9 @@ int VaultDBusUtils::getNeedWaitMinutes()
 
 void VaultDBusUtils::restoreNeedWaitMinutes()
 {
-    QDBusInterface VaultManagerdbus("org.deepin.filemanager.server",
-                                    "/org/deepin/filemanager/server/VaultManager",
-                                    "org.deepin.filemanager.server.VaultManager",
+    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+                                    kFileManagerVaultDBusPath,
+                                    kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
@@ -202,9 +212,9 @@ void VaultDBusUtils::restoreNeedWaitMinutes()
 
 void VaultDBusUtils::restoreLeftoverErrorInputTimes()
 {
-    QDBusInterface VaultManagerdbus("org.deepin.filemanager.server",
-                                    "/org/deepin/filemanager/server/VaultManager",
-                                    "org.deepin.filemanager.server.VaultManager",
+    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+                                    kFileManagerVaultDBusPath,
+                                    kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
@@ -239,4 +249,77 @@ bool VaultDBusUtils::isServiceRegister(QDBusConnection::BusType type, const QStr
     }
 
     return true;
+}
+
+bool VaultDBusUtils::isFullConnectInternet()
+{
+    QDBusInterface netWorkInfo(kNetWorkDBusServiceName,
+                               kNetWorkDBusPath,
+                               kNetWorkDBusInterfaces,
+                               QDBusConnection::systemBus());
+
+    Connectivity netState { Connectivity::Unknownconnectivity };
+
+    QVariant reply = netWorkInfo.property("Connectivity");
+    if (reply.isValid()) {
+        int replyVault = reply.toInt();
+        fmInfo() << "Get network value from dbus, the value is " << replyVault;
+        netState = static_cast<Connectivity>(replyVault);
+    } else {
+        fmWarning() << "Dbus call failed, the dbus interfaces is " << kNetWorkDBusInterfaces;
+    }
+
+    if (netState == Connectivity::Full)
+        return true;
+
+    return false;
+}
+
+void VaultDBusUtils::handleChangedVaultState(const QVariantMap &map)
+{
+    QVariantMap::const_iterator it = map.constBegin();
+    for (; it != map.constEnd(); ++it) {
+        if (it.key() == PathManager::vaultUnlockPath() && it.value().toInt() == static_cast<int>(VaultState::kEncrypted)) {
+            VaultHelper::instance()->updateState(VaultState::kEncrypted);
+        }
+    }
+}
+
+void VaultDBusUtils::handleLockScreenDBus(const QDBusMessage &msg)
+{
+    const QList<QVariant> &arguments = msg.arguments();
+    if (kArgumentsNum != arguments.count()) {
+        fmCritical() << "Vault: arguments of lock screen dbus error!";
+        return;
+    }
+
+    const QString &interfaceName = msg.arguments().at(0).toString();
+    if (interfaceName != kAppSessionService)
+        return;
+
+    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+    QStringList keys = changedProps.keys();
+    Q_FOREACH (const QString &prop, keys) {
+        if (prop == "Locked") {   // screen signal property
+            VaultHelper::instance()->updateState(VaultState::kUnknow);
+        }
+    }
+}
+
+VaultDBusUtils::VaultDBusUtils()
+{
+    QDBusConnection::sessionBus().connect(kFileManagerDBusServiceName,
+                                          kFileManagerVaultDBusPath,
+                                          kFileManagerVaultDBusInterfaces,
+                                          "ChangedVaultState",
+                                          this,
+                                          SLOT(handleChangedVaultState(const QVariantMap &)));
+
+    QDBusConnection::sessionBus().connect(kAppSessionService,
+                                          kAppSessionPath,
+                                          "org.freedesktop.DBus.Properties",
+                                          "PropertiesChanged",
+                                          "sa{sv}as",
+                                          this,
+                                          SLOT(handleLockScreenDBus(const QDBusMessage &)));
 }
