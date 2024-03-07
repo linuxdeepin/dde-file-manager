@@ -105,6 +105,7 @@ Q_SIGNALS:
      * @param user
      */
     void LockEventTriggered(QString user);
+    void ChangedVaultState(const QVariantMap &map);
 
 protected:
     void timerEvent(QTimerEvent *event) override;

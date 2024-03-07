@@ -36,7 +36,6 @@ FileEncryptHandle::FileEncryptHandle(QObject *parent)
 {
     connect(d->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
     connect(d->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
-    connectLockScreenToUpdateVaultState();
 
 }
 
@@ -47,25 +46,6 @@ FileEncryptHandle::~FileEncryptHandle()
 
     delete d;
     d = nullptr;
-}
-
-void FileEncryptHandle::connectLockScreenToUpdateVaultState()
-{
-    QDBusConnection connection = QDBusConnection::sessionBus();
-    if (!connection.isConnected()) {
-        fmCritical() << "Vault: Cannot connect to the D-Bus session bus.";
-        return;
-    }
-
-    if (!connection.interface()->isServiceRegistered(kAppSessionService)) {
-        fmCritical("Vault: Cannot register the \"org.deepin.filemanager.server\" service!!!\n");
-        return;
-    }
-
-    if (!QDBusConnection::sessionBus().connect(kAppSessionService, kAppSessionPath, "org.freedesktop.DBus.Properties",
-                                               "PropertiesChanged", "sa{sv}as", this, SLOT(responseLockScreenDBus(QDBusMessage)))) {
-        fmCritical() << "Vault: connect lock screen dbus error!";
-    }
 }
 
 FileEncryptHandle *FileEncryptHandle::instance()
@@ -282,26 +262,6 @@ void FileEncryptHandle::slotReadOutput()
 {
     QString msg = d->process->readAllStandardOutput().data();
     emit signalReadOutput(msg);
-}
-
-void FileEncryptHandle::responseLockScreenDBus(const QDBusMessage &msg)
-{
-    const QList<QVariant> &arguments = msg.arguments();
-    if (kArgumentsNum != arguments.count()) {
-        fmCritical() << "Vault: arguments of lock screen dbus error!";
-        return;
-    }
-
-    const QString &interfaceName = msg.arguments().at(0).toString();
-    if (interfaceName != kAppSessionService)
-        return;
-
-    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
-    QStringList keys = changedProps.keys();
-    Q_FOREACH (const QString &prop, keys) {
-        if (prop == "Locked")   // screen signal property
-            d->curState = kUnknow;
-    }
 }
 
 FileEncryptHandlerPrivate::FileEncryptHandlerPrivate(FileEncryptHandle *qq)

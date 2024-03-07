@@ -206,6 +206,13 @@ inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
 inline constexpr char kAppSessionService[] { "com.deepin.SessionManager" };
 inline constexpr char kAppSessionPath[] { "/com/deepin/SessionManager" };
 #endif
+inline constexpr char kNetWorkDBusServiceName[] { "org.deepin.service.SystemNetwork" };
+inline constexpr char kNetWorkDBusPath[] { "/org/deepin/service/SystemNetwork" };
+inline constexpr char kNetWorkDBusInterfaces[] { "org.deepin.service.SystemNetwork" };
+
+inline constexpr char kFileManagerDBusServiceName[] { "org.deepin.filemanager.server" };
+inline constexpr char kFileManagerVaultDBusPath[] { "/org/deepin/filemanager/server/VaultManager" };
+inline constexpr char kFileManagerVaultDBusInterfaces[] { "org.deepin.filemanager.server.VaultManager" };
 
 enum RemoveWidgetType : int {
     kPasswordWidget = 0,
@@ -217,6 +224,15 @@ enum RemoveWidgetType : int {
     kUserRemoveWidgetType = 100
 };
 
+enum class Connectivity {
+    Unknownconnectivity = 0,
+    Noconnectivity,
+    Portal,
+    Limited,
+    Full        // 主机已连接到网络，并且似乎能够访问完整的Internet
+};
+
+inline constexpr char kVaultDConfigName[] { "org.deepin.dde.file-manager.vault" };
 }
 
 #endif   // DFMPLUGIN_VAULT_GLOBAL_H

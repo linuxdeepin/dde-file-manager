@@ -36,6 +36,30 @@ inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
 inline constexpr char kGroupPolicyKeyVaultAlgoName[] { "dfm.vault.algo.name" };
 inline constexpr char kVaultTimeConfigFilePath[] { "/../dde-file-manager/vaultTimeConfig" };
 
+inline constexpr char kNetWorkDBusServiceName[] { "org.deepin.service.SystemNetwork" };
+inline constexpr char kNetWorkDBusPath[] { "/org/deepin/service/SystemNetwork" };
+inline constexpr char kNetWorkDBusInterfaces[] { "org.deepin.service.SystemNetwork" };
+
+enum class Connectivity {
+    Unknownconnectivity = 0,
+    Noconnectivity,
+    Portal,
+    Limited,
+    Full        // 主机已连接到网络，并且似乎能够访问完整的Internet
+};
+
+enum VaultState {
+    kUnknow = 0,
+    kNotExisted,
+    kEncrypted,
+    kUnlocked,
+    kUnderProcess,
+    kBroken,
+    kNotAvailable
+};
+
+inline constexpr char kVaultDConfigName[] { "org.deepin.dde.file-manager.vault" };
+
 SERVERVAULT_END_NAMESPACE
 
 #endif   // SERVERPLUGIN_VAULTDAEMON_GLOBAL_H

@@ -91,7 +91,7 @@ void UnlockView::initUI()
     this->setLayout(mainLayout);
 
     connect(passwordEdit, &DPasswordEdit::textChanged, this, &UnlockView::onPasswordChanged);
-    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, this, &UnlockView::onVaultUlocked);
+    connect(VaultHelper::instance(), &VaultHelper::sigUnlocked, this, &UnlockView::onVaultUlocked);
     connect(tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
@@ -114,6 +114,12 @@ void UnlockView::buttonClicked(int index, const QString &text)
 {
     if (index == 1) {
         emit sigBtnEnabled(1, false);
+
+        if (!VaultHelper::instance()->enableUnlockVault()) {
+            showToolTip(tr("Can't unlock the vault under the networking!"), kToolTipShowDuration, ENToolTip::kInformation);
+            emit sigBtnEnabled(1, true);
+            return;
+        }
 
         int nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
 
@@ -176,13 +182,13 @@ void UnlockView::onPasswordChanged(const QString &pwd)
 void UnlockView::onVaultUlocked(int state)
 {
     if (unlockByPwd) {
-        if (state == 0) {
+        if (state == static_cast<int>(ErrorCode::kSuccess)) {
             VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
                                                      VaultHelper::instance()->rootUrl());
             VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
             VaultAutoLock::instance()->slotUnlockVault(state);
             emit sigCloseDialog();
-        } else if (state == 1) {   //! cryfs没有成功卸载挂载目录
+        } else if (state == static_cast<int>(ErrorCode::kUnspecifiedError)) {   //! cryfs没有成功卸载挂载目录
             //! cryfs卸载挂载目录会概率性失败
             //! 卸载挂载目录
             QProcess process;
@@ -196,7 +202,6 @@ void UnlockView::onVaultUlocked(int state)
                 QString strCipher("");
                 //! 判断密码是否正确
                 if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
-                    //                    VaultController::ins()->unlockVault(strCipher);
                     return;
                 } else {   //! 密码不正确
                     //! 设置密码输入框颜色,并弹出tooltip

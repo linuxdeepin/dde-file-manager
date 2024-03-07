@@ -146,7 +146,7 @@ void VaultActiveFinishedView::initConnect()
 {
     connect(finishedBtn, &DPushButton::clicked,
             this, &VaultActiveFinishedView::slotEncryptVault);
-    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault,
+    connect(VaultHelper::instance(), &VaultHelper::sigCreateVault,
             this, &VaultActiveFinishedView::slotEncryptComplete);
     connect(timer, &QTimer::timeout,
             this, &VaultActiveFinishedView::slotTimeout);

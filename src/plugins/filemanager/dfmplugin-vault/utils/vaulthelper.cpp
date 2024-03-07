@@ -18,12 +18,13 @@
 #include "events/vaulteventcaller.h"
 #include "dbus/vaultdbusutils.h"
 
-#include <dfm-base/base/urlroute.h>
-#include <dfm-base/utils/universalutils.h>
-#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -190,6 +191,21 @@ void VaultHelper::removeWinID(const quint64 &winId)
     }
 }
 
+bool VaultHelper::enableUnlockVault()
+{
+    const QVariant vRe = DConfigManager::instance()->value(kVaultDConfigName, "enableUnlockVaultInNetwork");
+    if (!vRe.isValid())
+        return true;
+
+    bool bRe = vRe.toBool();
+    if (bRe)
+        return true;
+
+    if (VaultDBusUtils::isFullConnectInternet())
+        return false;
+    return true;
+}
+
 void VaultHelper::appendWinID(const quint64 &winId)
 {
     currentWinID = winId;
@@ -303,32 +319,17 @@ QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
 
 void VaultHelper::createVault(QString &password)
 {
-    static bool flg = true;
-    if (flg) {
-        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault, VaultHelper::instance(), &VaultHelper::sigCreateVault);
-        flg = false;
-    }
     const EncryptType &type = FileEncryptHandle::instance()->encryptAlgoTypeOfGroupPolicy();
     FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password, type);
 }
 
 bool VaultHelper::unlockVault(const QString &password)
 {
-    static bool flg = true;
-    if (flg) {
-        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, VaultHelper::instance(), &VaultHelper::sigUnlocked);
-        flg = false;
-    }
     return FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
 bool VaultHelper::lockVault(bool isForced)
 {
-    static bool flg = true;
-    if (flg) {
-        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, VaultHelper::instance(), &VaultHelper::slotlockVault);
-        flg = false;
-    }
     return FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath(), isForced);
 }
 
@@ -461,6 +462,9 @@ void VaultHelper::showInProgressDailog(QString msg)
 
 VaultHelper::VaultHelper()
 {
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault, this, &VaultHelper::sigCreateVault);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, this, &VaultHelper::sigUnlocked);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, this, &VaultHelper::slotlockVault);
     connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalReadError, this, &VaultHelper::showInProgressDailog);
     connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalReadOutput, this, &VaultHelper::showInProgressDailog);
 }
