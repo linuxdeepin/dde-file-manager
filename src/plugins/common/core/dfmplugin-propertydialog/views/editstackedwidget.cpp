@@ -287,7 +287,7 @@ void EditStackedWidget::renameFile()
 {
     QFileInfo info(fileUrl.path());
 
-    if (DeviceUtils::isSubpathOfDlnfs(fileUrl.path()))
+    if (FileUtils::supportLongName(fileUrl))
         fileNameEdit->setCharCountLimit();
 
     fileNameEdit->setPlainText(info.fileName());

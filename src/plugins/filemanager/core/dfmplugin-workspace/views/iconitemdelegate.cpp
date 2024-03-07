@@ -700,11 +700,11 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
         return;
 
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
-    const QString &filePath = index.data(kItemFilePathRole).toString();
+    const QUrl &fileUrl = index.data(kItemUrlRole).toUrl();
     const QString &filename = index.data(kItemNameRole).toString();
 
     // if file is in dlnfs' path, use char count rather than byte count to limit the filename length
-    if (DeviceUtils::isSubpathOfDlnfs(filePath) || filename.toLocal8Bit().length() > NAME_MAX)
+    if (FileUtils::supportLongName(fileUrl) || filename.toLocal8Bit().length() > NAME_MAX)
         item->setCharCountLimit();
 
     QString suffix = index.data(kItemFileSuffixOfRenameRole).toString();

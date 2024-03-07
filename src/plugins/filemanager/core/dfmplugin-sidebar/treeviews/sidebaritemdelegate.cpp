@@ -348,7 +348,7 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInf
         if (FileUtils::isLocalFile(url)) {
             maxLen = NAME_MAX;
             const auto &path = url.path();
-            useCharCount = path.isEmpty() ? false : DeviceUtils::isSubpathOfDlnfs(path);
+            useCharCount = path.isEmpty() ? false : FileUtils::supportLongName(url);
         }
     } else {
         maxLen = FileUtils::supportedMaxLength(fs);

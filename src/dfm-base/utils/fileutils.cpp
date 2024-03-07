@@ -215,6 +215,9 @@ bool FileUtils::processLength(const QString &srcText, int srcPos, int maxLen, bo
         QString rightText = srcText.mid(srcPos);
 
         while (textLength(leftText + rightText) > maxLen) {
+            if (leftText.isEmpty())
+                return false;
+
             auto list = leftText.toUcs4();
             list.removeLast();
             leftText = QString::fromUcs4(list.data(), list.size());
@@ -464,7 +467,7 @@ bool FileUtils::isLocalFile(const QUrl &url)
  */
 int FileUtils::getFileNameLength(const QUrl &url, const QString &name)
 {
-    return DeviceUtils::isSubpathOfDlnfs(url.path()) ? name.length() : name.toLocal8Bit().length();
+    return FileUtils::supportLongName(url) ? name.length() : name.toLocal8Bit().length();
 }
 
 QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
@@ -503,7 +506,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         }
 
         int maxLength = NAME_MAX - suffix.toLocal8Bit().size();
-        fileBaseName = cutFileName(fileBaseName, maxLength, DeviceUtils::isSubpathOfDlnfs(url.path()));
+        fileBaseName = cutFileName(fileBaseName, maxLength, FileUtils::supportLongName(url));
 
         if (!isDesktopApp) {
             fileBaseName += suffix;
@@ -544,7 +547,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
                 : QString(".") + info->nameOf(NameInfoType::kSuffix);
 
         int maxLength = NAME_MAX - getFileNameLength(url, info->nameOf(NameInfoType::kFileName));
-        addText = cutFileName(addText, maxLength, DeviceUtils::isSubpathOfDlnfs(url.path()));
+        addText = cutFileName(addText, maxLength, FileUtils::supportLongName(url));
 
         if (pair.second == AbstractJobHandler::FileNameAddFlag::kPrefix) {
             fileBaseName.insert(0, addText);
@@ -604,7 +607,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
                 ? QString()
                 : QString(".") + info->nameOf(NameInfoType::kSuffix);
         int maxLength = NAME_MAX - getFileNameLength(url, indexString) - suffix.toLocal8Bit().size();
-        fileBaseName = cutFileName(fileBaseName, maxLength, DeviceUtils::isSubpathOfDlnfs(url.path()));
+        fileBaseName = cutFileName(fileBaseName, maxLength, FileUtils::supportLongName(url));
 
         fileBaseName = isDesktopApp ? (fileBaseName + indexString) : (fileBaseName + indexString + suffix);
         QUrl beModifieddUrl = { info->getUrlByType(UrlInfoType::kGetUrlByNewFileName, fileBaseName) };
@@ -1319,6 +1322,19 @@ QString FileUtils::normalPathToTrash(const QString &normal)
     trash = trash.replace("/", "\\");
     trash.push_front("/");
     return trash;
+}
+
+bool FileUtils::supportLongName(const QUrl &url)
+{
+    if (!DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs", false).toBool())
+        return false;
+
+    const static QList<QString> datas {
+        "vfat", "exfat", "ntfs", "fuseblk"
+    };
+
+    const QString &fileSystem = dfmio::DFMUtils::fsTypeFromUrl(url);
+    return datas.contains(fileSystem) || DeviceUtils::isSubpathOfDlnfs(url.path());
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()
