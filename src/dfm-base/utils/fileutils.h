@@ -90,6 +90,7 @@ public:
     static QUrl bindUrlTransform(const QUrl &url);
     static QString trashPathToNormal(const QString &trash);
     static QString normalPathToTrash(const QString &normal);
+    static bool supportLongName(const QUrl &url);
 
 private:
     static QMutex cacheCopyingMutex;

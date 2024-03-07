@@ -151,7 +151,7 @@ QWidget *CanvasItemDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 {
     Q_UNUSED(index);
     auto editor = new ItemEditor(parent);
-    if (DeviceUtils::isSubpathOfDlnfs(this->parent()->model()->rootUrl().path()))
+    if (FileUtils::supportLongName(index.data(Global::ItemRoles::kItemUrlRole).toUrl()))
         editor->setCharCountLimit();
     connect(editor, &ItemEditor::inputFocusOut, this, &CanvasItemDelegate::commitDataAndCloseEditor);
     editor->setOpacity(isTransparent(index) ? 0.3 : 1);

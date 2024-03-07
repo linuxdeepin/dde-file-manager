@@ -561,10 +561,10 @@ bool ListItemDelegate::setEditorData(ListItemEditor *editor)
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
     const QString &suffix = d->editingIndex.data(kItemFileSuffixOfRenameRole).toString();
-    const QString &filePath = d->editingIndex.data(kItemFilePathRole).toString();
+    const QUrl &fileUrl = d->editingIndex.data(kItemUrlRole).toUrl();
 
     // if file is in dlnfs' path, use char count rather than byte count to limit the filename length
-    if (DeviceUtils::isSubpathOfDlnfs(filePath))
+    if (FileUtils::supportLongName(fileUrl))
         editor->setCharCountLimit();
 
     if (showSuffix) {
