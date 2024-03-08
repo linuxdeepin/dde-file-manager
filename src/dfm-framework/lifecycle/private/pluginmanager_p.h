@@ -31,7 +31,7 @@ class PluginManagerPrivate : public QSharedData
     PluginManager *const q;
     QStringList pluginLoadIIDs;
     QStringList pluginLoadPaths;
-    QStringList blackPlguinNames;
+    QStringList blackPluginNames;
     QStringList lazyLoadPluginsNames;
     QStringList loadedVirtualPlugins;
     QStringList unloadedVirtualPlugins;

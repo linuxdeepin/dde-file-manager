@@ -192,7 +192,7 @@ void PluginManagerPrivate::scanfVirtualPlugin(const QString &fileName,
 
 bool PluginManagerPrivate::isBlackListed(const QString &name)
 {
-    if (blackPlguinNames.contains(name)) {
+    if (blackPluginNames.contains(name)) {
         qCWarning(logDPF) << "Black plugin: " << name << "don't load!";
         return true;
     }

@@ -22,8 +22,8 @@ void PluginManager::addPluginIID(const QString &pluginIID)
 
 void PluginManager::addBlackPluginName(const QString &name)
 {
-    if (!d->blackPlguinNames.contains(name))
-        d->blackPlguinNames.push_back(name);
+    if (!d->blackPluginNames.contains(name))
+        d->blackPluginNames.push_back(name);
 }
 
 void PluginManager::addLazyLoadPluginName(const QString &name)
@@ -120,7 +120,7 @@ QStringList PluginManager::pluginPaths() const
 
 QStringList PluginManager::blackList() const
 {
-    return d->blackPlguinNames;
+    return d->blackPluginNames;
 }
 
 QStringList PluginManager::lazyLoadList() const
