@@ -484,8 +484,11 @@ QString DeviceUtils::nameOfEncrypted(const QVariantMap &datas)
         qlonglong clearDevSize = clearDevData.value(kSizeTotal).toLongLong();
         return nameOfDefault(clearDevLabel, clearDevSize);
     } else {
+        QString bacDevName = datas.value(kIdLabel, "").toString();
+        if (bacDevName.isEmpty())
+            bacDevName = nameOfSize(datas.value(kSizeTotal).toLongLong());
         return QObject::tr("%1 Encrypted")
-                .arg(nameOfSize(datas.value(kSizeTotal).toLongLong()));
+                .arg(bacDevName);
     }
 }
 
