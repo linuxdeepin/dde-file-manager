@@ -46,6 +46,7 @@ void TemplateMenuPrivate::loadTemplatePaths()
     if (templateFilePaths.isEmpty())
         return;
 
+    templateFileNames.clear();
     for (const QString &oneFolderPath : templateFilePaths) {
         if (oneFolderPath.isEmpty())
             continue;
@@ -70,12 +71,16 @@ void TemplateMenuPrivate::createActionByNormalFile(const QString &path)
         fmInfo() << "createActionByDesktopFile create FileInfo error: " << errString << path;
         return;
     }
+    const QString fileName = fileInfo->nameOf(FileInfo::FileNameInfoType::kFileName);
+    if (templateFileNames.contains(fileName))
+        return;
 
     const QString &entryText = fileInfo->nameOf(FileInfo::FileNameInfoType::kCompleteBaseName);
     const QIcon &icon = fileInfo->fileIcon();
     QAction *action = new QAction(icon, entryText, Q_NULLPTR);
     action->setData(QVariant::fromValue(path));
     templateActions << action;
+    templateFileNames.push_back(fileName);
 }
 
 void TemplateMenuPrivate::createActionByDesktopFile(const QDir &dir, const QString &path)
@@ -95,11 +100,14 @@ void TemplateMenuPrivate::createActionByDesktopFile(const QDir &dir, const QStri
         return;
     }
 
-    fmDebug() << "desktop path: " << path << "URL: " << entrySourcePath;
+    const QString fileName = itemInfo->nameOf(FileInfo::FileNameInfoType::kFileName);
+    if (templateFileNames.contains(fileName))
+        return;
     const QIcon &icon = QIcon::fromTheme(desktopFile.stringValue("Icon"));
     QAction *action = new QAction(icon, entryText, Q_NULLPTR);
     action->setData(QVariant::fromValue(entrySourcePath));
     templateActions << action;
+    templateFileNames.push_back(fileName);
 }
 
 void TemplateMenuPrivate::traverseFolderToCreateActions(const QString &path, bool val)

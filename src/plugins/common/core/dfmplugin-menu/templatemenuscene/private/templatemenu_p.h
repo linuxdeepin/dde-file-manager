@@ -30,6 +30,7 @@ public:
     TemplateMenu *q;
     QList<QAction *> templateActions;
     QString templateFolderPath;
+    QStringList templateFileNames;
 };
 
 }
