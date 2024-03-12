@@ -8,6 +8,7 @@
 #include <dfm-base/mimetype/mimesappsmanager.h>
 
 #include <DRadioButton>
+#include <DFontSizeManager>
 
 #include <QCheckBox>
 #include <QVBoxLayout>
@@ -33,6 +34,7 @@ void OpenWithWidget::initUI()
     setSeparatorVisible(false);
 
     setTitle(QString(tr("Open with")));
+    DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T6, QFont::DemiBold);
 
     setExpand(false);
 
@@ -43,6 +45,7 @@ void OpenWithWidget::initUI()
     openWithListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     openWithListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     openWithListWidget->setFixedWidth(300);
+    DFontSizeManager::instance()->bind(openWithListWidget, DFontSizeManager::SizeType::T7, QFont::Normal);
 
     openWithBtnGroup = new QButtonGroup(openWithListWidget);
 

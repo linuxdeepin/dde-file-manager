@@ -38,6 +38,8 @@ public:
     void updateRow(const QUrl &url, const ItemInfo &newInfo);
     QModelIndex findRowByUrl(const QUrl &url) const;
 
+    void addEmptyItem();
+
 private:
     QMutex locker;
     mutable SideBarItem *curDragItem { nullptr };

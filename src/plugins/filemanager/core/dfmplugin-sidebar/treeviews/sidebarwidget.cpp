@@ -305,21 +305,15 @@ void SideBarWidget::initializeUi()
     leftSpacer->setBackgroundRole(QPalette::Base);
 
     QVBoxLayout *vlayout = new QVBoxLayout();
-
-    QWidget *spacer = new QWidget(this);
-    spacer->setAutoFillBackground(true);
-    spacer->setFixedHeight(10);
-    spacer->setBackgroundRole(QPalette::Base);
-
     vlayout->addWidget(sidebarView);
     vlayout->setMargin(0);
     vlayout->setSpacing(0);
-    vlayout->addWidget(spacer);
 
     hlayout->addWidget(leftSpacer);
     hlayout->addLayout(vlayout);
 
     sidebarView->setModel(kSidebarModelIns.data());
+    kSidebarModelIns->addEmptyItem();
     sidebarView->setItemDelegate(new SideBarItemDelegate(sidebarView));
     sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
     sidebarView->setFrameShape(QFrame::Shape::NoFrame);

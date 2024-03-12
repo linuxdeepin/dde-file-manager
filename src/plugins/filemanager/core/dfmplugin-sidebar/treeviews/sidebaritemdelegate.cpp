@@ -49,6 +49,7 @@ static constexpr int kExpandIconSize = 12;
 static constexpr int kItemMargin = 10;
 static constexpr int kItemIconSize = 16;
 static constexpr int kEjectIconSize = 16;
+static constexpr int kEmptyItemSize = 10;
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 static constexpr int kCompactExpandIconSize = 10;
@@ -139,7 +140,8 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         painter->setPen(Qt::NoPen);
         painter->drawRoundedRect(r, kRadius, kRadius);
     } else if (!isDragedItem && (opt.state.testFlag(QStyle::State_MouseOver) || isDropTarget)) {   // Draw mouse over background
-        drawMouseHoverBackground(painter, palette, r, widgetColor);
+        if (item->sizeHint() != QSize(kEmptyItemSize, kEmptyItemSize))
+            drawMouseHoverBackground(painter, palette, r, widgetColor);
         if (separatorItem)
             drawMouseHoverExpandButton(painter, r, separatorItem->isExpanded());
     }

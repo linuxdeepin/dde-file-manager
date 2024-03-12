@@ -71,6 +71,7 @@ void BasicWidget::initUI()
     setSeparatorVisible(false);
 
     setTitle(QString(tr("Basic info")));
+    DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T6, QFont::DemiBold);
 
     setExpand(true);
 
@@ -86,6 +87,7 @@ void BasicWidget::initUI()
     fileModified = createValueLabel(frameMain, tr("Time modified"));
 
     hideFile = new DCheckBox(frameMain);
+    DFontSizeManager::instance()->bind(hideFile, DFontSizeManager::SizeType::T7, QFont::Normal);
     hideFile->setText(tr("Hide this file"));
     hideFile->setToolTip(hideFile->text());
 }
