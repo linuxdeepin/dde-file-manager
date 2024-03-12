@@ -345,3 +345,26 @@ QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
 
     return retIndex;
 }
+
+void SideBarModel::addEmptyItem()
+{
+    //Attention!
+    //The current sidebar does not support external plugins to add groups.
+    //If this feature is implemented in the future, it is necessary to move the emptyItem item appropriately
+    int count = rowCount();
+    QSize emptyItemsize = QSize(10, 10);
+    if (count > 0) {
+        QStandardItem *lastItem = item(count - 1);
+        if (lastItem && lastItem->sizeHint() == emptyItemsize)
+            return;
+    }
+
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+
+    auto emptyItem = new QStandardItem("");
+    emptyItem->setFlags(Qt::NoItemFlags);
+    emptyItem->setSizeHint(emptyItemsize);
+
+    QStandardItemModel::appendRow(emptyItem);
+    endInsertRows();
+}

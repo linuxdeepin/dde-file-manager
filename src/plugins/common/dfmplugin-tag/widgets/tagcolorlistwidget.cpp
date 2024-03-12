@@ -92,7 +92,7 @@ void TagColorListWidget::initUiElement()
         if (useType == kAction)
             tagButtons[index]->setRadius(20);
         else
-            tagButtons[index]->setRadius(30);
+            tagButtons[index]->setRadius(20);
 
         QString objMark = QString("Color%1").arg(index + 1);
         tagButtons[index]->setObjectName(objMark);

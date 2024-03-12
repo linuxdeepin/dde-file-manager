@@ -109,6 +109,7 @@ void ShareControlWidget::setupUi(bool disableState)
     const QString &userName = getpwuid(getuid())->pw_name;
     isSharePasswordSet = UserShareHelperInstance->isUserSharePasswordSet(userName);
     setTitle(tr("Sharing"));
+    DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T6, QFont::DemiBold);
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
 
@@ -154,6 +155,7 @@ void ShareControlWidget::setupUi(bool disableState)
     mainLayout->addLayout(basicInfoFrameLay);
     mainLayout->addWidget(moreInfoFrame);
     mainFrame->setLayout(mainLayout);
+    DFontSizeManager::instance()->bind(mainFrame, DFontSizeManager::SizeType::T7, QFont::Normal);
     setContent(mainFrame);
 
     timer = new QTimer(this);
@@ -219,7 +221,7 @@ void ShareControlWidget::setupShareAnonymousSelector()
     shareAnonymousSelector->addItems(anonymousSelections);
 }
 
-QHBoxLayout* ShareControlWidget::setupNetworkPath()
+QHBoxLayout *ShareControlWidget::setupNetworkPath()
 {
     netScheme = new QLabel("smb://", this);
 

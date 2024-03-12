@@ -136,6 +136,7 @@ void PermissionManagerWidget::initUI()
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
     setTitle(QString(tr("Permissions")));
+    DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T6, QFont::DemiBold);
     setExpand(false);
 
     authorityList << QObject::tr("Access denied")   // 0
@@ -210,6 +211,7 @@ void PermissionManagerWidget::initUI()
 
     mainFrameLay->addLayout(formLay);
     mainFrameLay->addWidget(executableFrame);
+    DFontSizeManager::instance()->bind(mainFrame, DFontSizeManager::SizeType::T7, QFont::Normal);
 
     mainFrame->setLayout(mainFrameLay);
     setContent(mainFrame);

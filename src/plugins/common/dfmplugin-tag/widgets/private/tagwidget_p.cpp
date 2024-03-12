@@ -17,7 +17,7 @@
 
 #include <QVBoxLayout>
 
-static constexpr int kTagWidgetHeight { 150 };
+static constexpr int kTagWidgetHeight { 114 };
 
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE
@@ -40,7 +40,7 @@ void TagWidgetPrivate::initializeUI()
     q->setLayout(mainLayout);
     QString name = tr("Tag");
     tagLable = new DLabel(name, q);
-    DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T5, QFont::DemiBold);
+    DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T6, QFont::DemiBold);
     tagLable->setObjectName(name);
 
     colorListWidget = new TagColorListWidget(q, TagColorListWidget::kProperty);
@@ -56,7 +56,8 @@ void TagWidgetPrivate::initializeUI()
 
     tagColorListLayout = new QVBoxLayout;
     tagColorListLayout->addWidget(tagLable, 0, Qt::AlignLeft);
-    tagColorListLayout->addWidget(colorListWidget, 0, Qt::AlignVCenter);
+    tagColorListLayout->addWidget(colorListWidget, 0, Qt::AlignLeft);
+    tagColorListLayout->setContentsMargins(0, 0, 0, 0);
 
     mainLayout->addLayout(tagColorListLayout);
 
@@ -76,8 +77,9 @@ void TagWidgetPrivate::initializeUI()
 void TagWidgetPrivate::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 10, 10, 10);
+    mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 6, 10, 10);
     crumbEdit->setMaximumHeight(DSizeModeHelper::element(50, 50));
+    colorListWidget->setFixedWidth(214);
     q->setFixedHeight(DSizeModeHelper::element(150, kTagWidgetHeight));
 #endif
 }
