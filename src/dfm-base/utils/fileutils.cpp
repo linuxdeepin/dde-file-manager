@@ -1162,6 +1162,15 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
         return false;
     }
 
+    QDBusMessage message = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
+                                                      APPEARANCE_PATH,
+                                                      APPEARANCE_SERVICE,
+                                                      "Set");
+    message.setArguments({ "greeterbackground", pictureFilePath });
+    QDBusConnection::sessionBus().asyncCall(message);
+    qCInfo(logDFMBase) << "setgreeterbackground calls Appearance Set";
+
+
     QDBusMessage msgIntrospect = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
                                                                 APPEARANCE_PATH,
                                                                 "org.freedesktop.DBus.Introspectable",
