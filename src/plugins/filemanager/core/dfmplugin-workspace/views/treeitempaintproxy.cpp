@@ -61,6 +61,11 @@ QList<QRect> TreeItemPaintProxy::allPaintRect(const QStyleOptionViewItem &option
     return rects;
 }
 
+int TreeItemPaintProxy::iconRectIndex()
+{
+    return 1;
+}
+
 void TreeItemPaintProxy::drawExpandArrow(QPainter *painter, const QRectF &rect, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     QStyleOptionViewItem opt = option;

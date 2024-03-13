@@ -27,6 +27,8 @@ public:
     virtual QRectF rectByType(RectOfItemType type, const QModelIndex &index);
     virtual QList<QRect> allPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index);
 
+    virtual int iconRectIndex();
+
     void setStyleProxy(QStyle *style);
 
 protected:
