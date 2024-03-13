@@ -14,7 +14,7 @@
             "visibility":"private"
         },
         "file.operation.blockeverysync": {
-            "value":false,
+            "value":true,
             "serial":0,
             "flags":[],
             "name":"Safe synchronization mode",
