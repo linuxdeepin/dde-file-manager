@@ -201,15 +201,10 @@ bool AbstractWorker::statisticsFilesSize()
         sourceFilesCount = fileSizeInfo->fileCount;
     } else {
         statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
+        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished,
+                this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
+        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::sizeChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
         statisticsFilesSizeJob->start(sourceUrls);
-        while(!statisticsFilesSizeJob->isFinished()) {
-            QThread::msleep(10);
-        }
-        const SizeInfoPointer &fileSizeInfo = statisticsFilesSizeJob->getFileSizeInfo();
-        allFilesList = fileSizeInfo->allFiles;
-        sourceFilesTotalSize = fileSizeInfo->totalSize;
-        workData->dirSize = fileSizeInfo->dirSize;
-        sourceFilesCount = fileSizeInfo->fileCount;
     }
     return true;
 }

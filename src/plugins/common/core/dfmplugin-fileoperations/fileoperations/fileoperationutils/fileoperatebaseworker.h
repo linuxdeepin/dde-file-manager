@@ -133,6 +133,7 @@ protected:
     DirPermissonList dirPermissonList;   // dir set Permisson list
     QFuture<void> syncResult;
     QString blocakTargetRootPath;
+    QList<QUrl> syncFiles;
 
     std::atomic_int threadCopyFileCount { 0 };
     QList<FileInfoPointer> cutAndDeleteFiles;
