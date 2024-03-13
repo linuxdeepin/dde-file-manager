@@ -155,11 +155,13 @@ void OptionButtonBox::initializeUi()
     d->iconViewButton->setChecked(true);
     d->iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
     d->iconViewButton->setFixedSize(36, 36);
+    d->iconViewButton->setToolTip(tr("icons mode"));
 
     d->listViewButton = new DToolButton;
     d->listViewButton->setCheckable(true);
     d->listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
     d->listViewButton->setFixedSize(36, 36);
+    d->listViewButton->setToolTip(tr("list mode"));
 
     d->buttonGroup->addButton(d->iconViewButton);
     d->buttonGroup->addButton(d->listViewButton);
@@ -169,6 +171,7 @@ void OptionButtonBox::initializeUi()
         d->treeViewButton->setCheckable(true);
         d->treeViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
         d->treeViewButton->setFixedSize(36, 36);
+        d->treeViewButton->setToolTip(tr("tree mode"));
         d->buttonGroup->addButton(d->treeViewButton);
     }
 
@@ -185,6 +188,7 @@ void OptionButtonBox::initializeUi()
     d->detailButton->setFocusPolicy(Qt::NoFocus);
     d->detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
     d->detailButton->setFixedSize(36, 36);
+    d->detailButton->setToolTip(tr("detail view"));
 
     initUiForSizeMode();
 }

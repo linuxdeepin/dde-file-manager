@@ -103,6 +103,7 @@ void TitleBarWidget::initializeUi()
     searchButton->setIcon(QIcon::fromTheme("dfm_search_button"));
     searchButton->setFixedSize(36, 36);
     searchButton->setFocusPolicy(Qt::NoFocus);
+    searchButton->setToolTip(tr("search"));
     // option button
     optionButtonBox = new OptionButtonBox;
 #ifdef ENABLE_TESTING
@@ -274,12 +275,14 @@ void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
         searchButton->setObjectName("filterButton");
         searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
         searchButton->setCheckable(true);
+        searchButton->setToolTip(tr("advanced search"));
         searchButtonSwitchState = true;
     } else {
         if (searchButton->isChecked())
             TitleBarEventCaller::sendShowFilterView(this, false);
         searchButton->setIcon(QIcon::fromTheme("dfm_search_button"));
         searchButton->setCheckable(false);
+        searchButton->setToolTip(tr("search"));
         searchButtonSwitchState = false;
     }
 }
