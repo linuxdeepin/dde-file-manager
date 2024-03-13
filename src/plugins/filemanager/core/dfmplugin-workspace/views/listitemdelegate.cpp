@@ -202,11 +202,11 @@ bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
 
         QString tooltip {};
         // 从1开始是为了排除掉icon区域
-        for (int i = 1; i < geometries.length() && i <= columnRoleList.length(); ++i) {
+        for (int i = d->paintProxy->iconRectIndex() + 1; i < geometries.length() && i <= columnRoleList.length(); ++i) {
             const QRect &rect = geometries.at(i);
 
             if (rect.left() <= event->x() && rect.right() >= event->x()) {
-                const QString &tipStr = index.data(columnRoleList[i - 1]).toString();
+                const QString &tipStr = index.data(columnRoleList[i - d->paintProxy->iconRectIndex() - 1]).toString();
 
                 if (option.fontMetrics.horizontalAdvance(tipStr) > rect.width()) {
                     tooltip = tipStr;

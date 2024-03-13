@@ -50,6 +50,11 @@ QList<QRect> AbstractItemPaintProxy::allPaintRect(const QStyleOptionViewItem &op
     return QList<QRect>();
 }
 
+int AbstractItemPaintProxy::iconRectIndex()
+{
+    return 0;
+}
+
 void AbstractItemPaintProxy::setStyleProxy(QStyle *style)
 {
     this->style = style;
