@@ -33,7 +33,9 @@
 
 static constexpr char kFilterFolders[] = "^/(boot|dev|proc|sys|run|lib|usr).*$";
 static constexpr char kSupportFiles[] = "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
-                                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)";
+                                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)|"
+                                        "(sh)|(html)|(xml)|(xhtml)|(json)|(css)|(yaml)|(ini)|(bat)|"
+                                        "(js)|(sql)|(uof)";
 static int kMaxResultNum = 100000;   // 最大搜索结果数
 static int kEmitInterval = 50;   // 推送时间间隔
 
@@ -211,7 +213,7 @@ bool FullTextSearcherPrivate::checkUpdate(const IndexReaderPtr &reader, const QS
     } catch (const std::exception &e) {
         fmWarning() << QString(e.what()) << " file: " << file;
     } catch (...) {
-         fmWarning() << "The file checked failed!" << file;
+        fmWarning() << "The file checked failed!" << file;
     }
 
     return false;
@@ -460,7 +462,8 @@ bool FullTextSearcher::isSupport(const QUrl &url)
 
     return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
                                              DConfig::kEnableFullTextSearch,
-                                             false).toBool();
+                                             false)
+            .toBool();
 }
 
 bool FullTextSearcher::search()
