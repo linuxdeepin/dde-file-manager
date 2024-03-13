@@ -112,6 +112,7 @@ public:
     void updateThumbnail(const QUrl &url);
     QIcon updateIcon();
     void updateMediaInfo(const DFileInfo::MediaType type, const QList<DFileInfo::AttributeExtendID> &ids);
+    bool hasAsyncAttribute(FileInfo::FileInfoAttributeID key);
 };
 
 AsyncFileInfoPrivate::AsyncFileInfoPrivate(AsyncFileInfo *qq)
