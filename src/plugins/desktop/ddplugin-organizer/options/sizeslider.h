@@ -20,13 +20,13 @@ public:
     explicit SizeSlider(QWidget *parent = nullptr);
     ~SizeSlider();
     void init();
+    void resetToIcon();
 protected slots:
     void setIconLevel(int);
     void syncIconLevel(int);
     void iconClicked(DTK_WIDGET_NAMESPACE::DSlider::SliderIcons icon, bool checked);
 protected:
     void setValue(int);
-    void resetToIcon();
     int iconLevel();
     static QStringList ticks(int count);
 private:
@@ -34,6 +34,7 @@ private:
     QLabel *label = nullptr;
 };
 
+#define CfgPresenter ConfigPresenter::instance()
 }
 
 #endif // SIZESLIDER_H

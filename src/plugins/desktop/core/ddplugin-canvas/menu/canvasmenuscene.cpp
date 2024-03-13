@@ -21,6 +21,7 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -490,11 +491,21 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
                              ActionID::kIconSizeLarge, ActionID::kIconSizeSuperLarge };
     Q_ASSERT(maxinum == keys.size() - 1);
 
+    // organizer dose not support large and super large icon size
+    bool organizerEnable = DConfigManager::instance()->value("org.deepin.dde.file-manager.desktop.organizer", "enableOrganizer").toBool();
+    QStringList unsupportIconSizeList {};
+    if (organizerEnable) {
+        unsupportIconSizeList << ActionID::kIconSizeLarge
+                              << ActionID::kIconSizeSuperLarge;
+    }
+
     QMenu *subMenu = new QMenu(menu);
     d->iconSizeAction.clear();
     int current = d->view->itemDelegate()->iconLevel();
     for (int i = mininum; i <= maxinum; ++i) {
         const QString &key = keys.at(i);
+        if (unsupportIconSizeList.contains(key))
+            continue;
         QAction *tempAction = subMenu->addAction(d->predicateName.value(key));
         tempAction->setCheckable(true);
         tempAction->setChecked(i == current);
