@@ -225,7 +225,7 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->urlOf(UrlInfoType::kUrl));
         if (workData->exBlockSyncEveryWrite)
-            sync();
+            syncBlockFile(toInfo);
         return true;
     }
     // resize target file

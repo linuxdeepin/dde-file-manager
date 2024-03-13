@@ -1029,6 +1029,8 @@ bool FileOperateBaseWorker::doCopyOtherFile(const FileInfoPointer fromInfo, cons
     } else {
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
     }
+    if (ok)
+        syncFiles.append(targetUrl);
     FileUtils::removeCopyingFileUrl(targetUrl);
 
     return ok;
@@ -1332,7 +1334,7 @@ void FileOperateBaseWorker::determineCountProcessType()
                         if (targetIsRemovable) {
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
                             countWriteType = workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType
-                                                                             : CountWriteSizeType::kCustomizeType;
+                                                                             : CountWriteSizeType::kWriteBlockType;
                             targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
 
                             workData->isBlockDevice = true;
@@ -1359,18 +1361,14 @@ void FileOperateBaseWorker::syncFilesToDevice()
         return;
 
     fmInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
-    sync();
+    for (const auto &url : syncFiles) {
+        std::string stdStr = url.path().toUtf8().toStdString();
+        int tofd = open(stdStr.data(), O_RDONLY);
+        if (-1 != tofd) {
+            syncfs(tofd);
+            close(tofd);
+        }
+    }
     fmInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
     // 这里本来是拷贝到了手动分区的盘，不需要后面去等待同步计算进度结果
-    if (CountWriteSizeType::kWriteBlockType != countWriteType)
-        return;
-    fmDebug() << "syncFilesToDevice begin";
-    sync();
-    qint64 writeSize = getWriteDataSize();
-    // 上面本来就自己阻塞调用了同步，这里不用计算写入是否是100%（这里统计的写入不一定准确）
-    while (!isStopped() && sourceFilesTotalSize > 0 && (static_cast<double>(writeSize) / sourceFilesTotalSize) < 0.98) {
-        QThread::msleep(100);
-        writeSize = getWriteDataSize();
-    }
-    fmDebug() << "syncFilesToDevice end";
 }
