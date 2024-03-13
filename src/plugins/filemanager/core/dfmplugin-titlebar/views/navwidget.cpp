@@ -158,8 +158,10 @@ void NavWidget::initializeUi()
 {
     d->navBackButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
     d->navBackButton->setDisabled(true);
+    d->navBackButton->setToolTip(tr("back"));
     d->navForwardButton = new DButtonBoxButton(QStyle::SP_ArrowForward);
     d->navForwardButton->setDisabled(true);
+    d->navForwardButton->setToolTip(tr("forward"));
     d->buttonBox = new DButtonBox;
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
