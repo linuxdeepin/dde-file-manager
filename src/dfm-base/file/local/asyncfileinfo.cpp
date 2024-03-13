@@ -427,9 +427,14 @@ QString AsyncFileInfo::viewOfTip(const ViewType type) const
 {
     if (type == ViewType::kEmptyDir) {
         if (!exists()) {
-            return QObject::tr("File has been moved or deleted");
+            if (d->hasAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardFileExists))
+                return QObject::tr("File has been moved or deleted");
+            dfmio::DFile file(fileUrl());
+            if (!file.exists())
+                return QObject::tr("File has been moved or deleted");
         } else if (!isAttributes(FileIsType::kIsReadable)) {
-            return QObject::tr("You do not have permission to access this folder");
+            if (d->hasAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanRead))
+                return QObject::tr("You do not have permission to access this folder");
         } else if (isAttributes(FileIsType::kIsDir)) {
             if (!isAttributes(FileIsType::kIsExecutable))
                 return QObject::tr("You do not have permission to traverse files in it");
@@ -1242,6 +1247,12 @@ void AsyncFileInfoPrivate::updateMediaInfo(const DFileInfo::MediaType type, cons
         attributesExtend = mediaFuture->mediaInfo();
         mediaFuture.reset(nullptr);
     }
+}
+
+bool AsyncFileInfoPrivate::hasAsyncAttribute(FileInfo::FileInfoAttributeID key)
+{
+    QReadLocker lk(&lock);
+    return cacheAsyncAttributes.contains(key);
 }
 
 }
