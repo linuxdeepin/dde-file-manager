@@ -20,6 +20,8 @@ public:
     explicit CanvasInterface(QObject *parent = nullptr);
     ~CanvasInterface();
     bool initialize();
+    int iconLevel();
+    void setIconLevel(int);
     class FileInfoModelShell *fileInfoModel();
     class CanvasModelShell *canvasModel();
     class CanvasViewShell *canvasView();

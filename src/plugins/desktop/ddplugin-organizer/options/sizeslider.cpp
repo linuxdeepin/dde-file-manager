@@ -79,6 +79,14 @@ void SizeSlider::resetToIcon()
 {
     int min = CollectionItemDelegate::minimumIconLevel();
     int max = CollectionItemDelegate::maximumIconLevel();
+    int cur = iconLevel();
+
+    if (CfgPresenter->isEnable()) {
+        max -= 2;
+        if (cur > max)
+            cur = max;
+    }
+
     Q_ASSERT(max >= min && min > -1);
 
     label->setText(tr("Icon size"));
@@ -89,7 +97,6 @@ void SizeSlider::resetToIcon()
     slider->blockSignals(false);
     slider->setBelowTicks(ticks(max - min + 1));
 
-    int cur = iconLevel();
     if (min > cur || max < cur) {
         fmCritical() << QString("canvas icon level %0 is out of range %1 ~ %2.")
                        .arg(cur).arg(min).arg(max);

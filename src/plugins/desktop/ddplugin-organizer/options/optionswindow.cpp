@@ -57,6 +57,8 @@ void OptionsWindowPrivate::enableChanged(bool enable)
         // adjust size when subwidgets size changed.
         contentWidget->adjustSize();
         q->adjustSize();
+
+        sizeSlider->resetToIcon();
     }
 }
 

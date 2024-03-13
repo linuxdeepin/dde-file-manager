@@ -59,6 +59,7 @@ CollectionWidget::CollectionWidget(const QString &uuid, ddplugin_organizer::Coll
     d->view->viewport()->installEventFilter(this);
     d->mainLayout = new QVBoxLayout(this);
     d->mainLayout->setContentsMargins(1, 1, 1, 1); //for inner border
+    d->mainLayout->addSpacing(16);
     d->mainLayout->addWidget(d->view);
 
     d->titleBar = new CollectionTitleBar(uuid, this);
