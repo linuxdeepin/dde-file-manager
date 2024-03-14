@@ -33,6 +33,7 @@
 #include <QStyledItemDelegate>
 #include <QDrag>
 #include <QTextLayout>
+#include <QScrollBar>
 
 #include <unistd.h>
 
@@ -196,6 +197,11 @@ SideBarView::SideBarView(QWidget *parent)
 {
     setRootIsDecorated(false);
     setIndentation(0);
+#ifdef QT_SCROLL_WHEEL_ANI
+    QScrollBar *bar = verticalScrollBar();
+    bar->setSingleStep(1);
+    setVerticalScrollBarPolicy(Qt::ScrollBarSlideAnimationOn);
+#endif
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
     setHeaderHidden(true);
