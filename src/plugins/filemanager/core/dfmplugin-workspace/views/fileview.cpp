@@ -73,6 +73,12 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setDefaultDropAction(Qt::CopyAction);
     setDragDropOverwriteMode(true);
     setDragEnabled(true);
+#ifdef QT_SCROLL_WHEEL_ANI
+    QScrollBar *bar = verticalScrollBar();
+    bar->setSingleStep(1);
+    setVerticalScrollBarPolicy(Qt::ScrollBarSlideAnimationOn);
+#endif
+    setVerticalScrollMode(ScrollPerPixel);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     initializeModel();
@@ -461,12 +467,12 @@ void FileView::wheelEvent(QWheelEvent *event)
             emit viewStateChanged();
             event->accept();
         } else {
-            verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+            DListView::wheelEvent(event);
         }
     } else if (event->modifiers() == Qt::AltModifier || event->orientation() == Qt::Horizontal) {
         horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
     } else {
-        verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+        DListView::wheelEvent(event);
     }
 }
 
