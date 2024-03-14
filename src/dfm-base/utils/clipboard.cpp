@@ -40,9 +40,10 @@ static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
 
 void onClipboardDataChanged()
 {
-
-    QMutexLocker lk(&clipboardFileUrlsMutex);
-    clipboardFileUrls.clear();
+    {
+        QMutexLocker lk(&clipboardFileUrlsMutex);
+        clipboardFileUrls.clear();
+    }
 
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
     if (!mimeData || mimeData->formats().isEmpty()) {
@@ -70,6 +71,8 @@ void onClipboardDataChanged()
     } else {
         clipboardAction = ClipBoard::kUnknownAction;
     }
+
+    QMutexLocker lk(&clipboardFileUrlsMutex);
     clipboardFileUrls << mimeData->urls();
 }
 }   // namespace GlobalData
@@ -241,7 +244,6 @@ QList<QUrl> ClipBoard::getRemoteUrls()
  */
 QList<QUrl> ClipBoard::clipboardFileUrlList() const
 {
-    QMutexLocker lk(&GlobalData::clipboardFileUrlsMutex);
     return GlobalData::clipboardFileUrls;
 }
 /*!

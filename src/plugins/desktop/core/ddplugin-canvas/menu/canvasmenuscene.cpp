@@ -355,12 +355,6 @@ bool CanvasMenuScene::triggered(QAction *action)
             // paste
             if (actionId == dfmplugin_menu::ActionID::kPaste) {
                 FileOperatorProxyIns->pasteFiles(d->view, d->gridPos);
-                auto point = d->gridPos;
-                QPointer<ddplugin_canvas::CanvasView> viewptr = d->view;
-                QTimer::singleShot(100, [viewptr, point](){
-                    if (!viewptr.isNull())
-                        FileOperatorProxyIns->pasteFiles(viewptr, point);
-                });
                 return true;
             }
         }
@@ -412,11 +406,7 @@ bool CanvasMenuScene::triggered(QAction *action)
                     auto index = d->view->model()->index(d->focusFile);
                     if (Q_UNLIKELY(!index.isValid()))
                         return false;
-                    QPointer<ddplugin_canvas::CanvasView> view = d->view;
-                    QTimer::singleShot(80, [view, index](){
-                        if (!view.isNull())
-                            view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
-                    });
+                    d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
                 } else {
                     RenameDialog renameDlg(d->selectFiles.count());
                     renameDlg.moveToCenter();
