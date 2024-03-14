@@ -205,11 +205,7 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
     if (sceneName == kClipBoardMenuSceneName) {
         // paste
         if (actionId == dfmplugin_menu::ActionID::kPaste) {
-            QPointer<dfmplugin_workspace::FileView> view = d->view;
-            QTimer::singleShot(100, [view](){
-                if (!view.isNull())
-                    FileOperatorHelperIns->pasteFiles(view);
-            });
+            FileOperatorHelperIns->pasteFiles(d->view);
             return true;
         }
     }
@@ -281,11 +277,6 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                 const QModelIndex &index = d->view->selectionModel()->currentIndex();
                 if (Q_UNLIKELY(!index.isValid()))
                     return false;
-                QPointer<dfmplugin_workspace::FileView> view = d->view;
-                QTimer::singleShot(80, [view, index](){
-                    if (!view.isNull())
-                        view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
-                });
                 d->view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
             } else {
                 WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::Scheme::kFile, true);
