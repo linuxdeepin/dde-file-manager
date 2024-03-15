@@ -208,8 +208,11 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
 
     d->windows.insert(window->internalWinId(), window);
 
-    if (d->windows.size() == 1)
-        window->moveCenter();
+    if (d->windows.size() == 1) {
+        if (!(window->windowState() & Qt::WindowMaximized)) {
+            window->moveCenter();
+        }
+    }
     emit windowCreated(window->internalWinId());
 
     finally.dismiss();

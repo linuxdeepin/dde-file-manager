@@ -161,8 +161,15 @@ void FileManagerWindowPrivate::loadWindowState()
 
 void FileManagerWindowPrivate::saveWindowState()
 {
-    /// The power by dxcb platform plugin
-    NetWmStates states = static_cast<NetWmStates>(q->window()->windowHandle()->property("_d_netWmStates").toInt());
+    NetWmStates states { 0 };
+    if (WindowUtils::isWayLand()) {
+        if (q->isMaximized())
+            states = static_cast<NetWmState>(kNetWmStateMaximizedHorz | kNetWmStateMaximizedVert);
+    } else {
+        /// The power by dxcb platform plugin
+        states = static_cast<NetWmStates>(q->window()->windowHandle()->property("_d_netWmStates").toInt());
+    }
+
     QVariantMap state;
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏属性都满足，才判断是全屏
     if ((states & kNetWmStateMaximizedHorz) == 0 || (states & kNetWmStateMaximizedVert) == 0) {
