@@ -1326,9 +1326,6 @@ QString FileUtils::normalPathToTrash(const QString &normal)
 
 bool FileUtils::supportLongName(const QUrl &url)
 {
-    if (!DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs", false).toBool())
-        return false;
-
     const static QList<QString> datas {
         "vfat", "exfat", "ntfs", "fuseblk"
     };

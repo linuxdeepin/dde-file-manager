@@ -335,18 +335,23 @@ void CommandParser::processEvent()
         return;
 
     const auto &&argsInfo = d->parseEventArgs(argumets.first().toLocal8Bit());
+    const auto &srcUrls = UrlRoute::fromStringList(argsInfo.params.value("sources").toStringList());
+
+    if (argsInfo.action == "refresh") {
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_RefreshDir", srcUrls);
+        return;
+    }
+
     static QMap<QString, GlobalEventType> eventMap {
         { "copy", GlobalEventType::kCopy },
         { "move", GlobalEventType::kCutFile },
         { "delete", GlobalEventType::kDeleteFiles },
-        { "trash", GlobalEventType::kMoveToTrash },
-        { "refresh", GlobalEventType::kRefreshDir }
+        { "trash", GlobalEventType::kMoveToTrash }
     };
 
     if (!eventMap.contains(argsInfo.action))
         return;
 
-    const auto &srcUrls = UrlRoute::fromStringList(argsInfo.params.value("sources").toStringList());
     switch (eventMap[argsInfo.action]) {
     case GlobalEventType::kCopy: {
         const auto &targetUrl = UrlRoute::fromUserInput(argsInfo.params.value("target").toString());
@@ -373,10 +378,6 @@ void CommandParser::processEvent()
                 || FileUtils::isTrashFile(srcUrls.first()))
             return;
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
-        break;
-    }
-    case GlobalEventType::kRefreshDir: {
-        dpfSignalDispatcher->publish(GlobalEventType::kRefreshDir, srcUrls);
         break;
     }
     default:
