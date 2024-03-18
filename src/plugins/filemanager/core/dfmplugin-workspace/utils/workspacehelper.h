@@ -102,6 +102,7 @@ public:
 
 public Q_SLOTS:
     void installWorkspaceWidgetToWindow(const quint64 windowID);
+    void handleRefreshDir(const QList<QUrl> &urls);
 
 signals:
     void openNewTab(quint64 windowId, const QUrl &url);

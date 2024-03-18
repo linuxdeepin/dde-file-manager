@@ -32,6 +32,8 @@ WorkspaceEventReceiver::~WorkspaceEventReceiver()
 {
     dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
                                      WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
+    dpfSignalDispatcher->unsubscribe(GlobalEventType::kRefreshDir,
+                                     WorkspaceHelper::instance(), &WorkspaceHelper::handleRefreshDir);
 }
 
 WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
@@ -45,6 +47,8 @@ void WorkspaceEventReceiver::initConnection()
     // signal event
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
                                    WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRefreshDir,
+                                   WorkspaceHelper::instance(), &WorkspaceHelper::handleRefreshDir);
 
     // slot event
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterFileView",

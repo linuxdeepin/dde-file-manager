@@ -13,6 +13,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -422,6 +423,17 @@ void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
     connect(window, &FileManagerWindow::reqCreateWindow, widget, &WorkspaceWidget::onCreateNewWindow);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, widget, &WorkspaceWidget::onSetCurrentTabIndex);
     connect(window, &FileManagerWindow::reqRefresh, widget, &WorkspaceWidget::onRefreshCurrentView);
+}
+
+void WorkspaceHelper::handleRefreshDir(const QList<QUrl> &urls)
+{
+    for (auto url : urls) {
+        for (auto workspace : kWorkspaceMap) {
+            if (UniversalUtils::urlEquals(url, workspace->currentUrl())) {
+                workspace->onRefreshCurrentView();
+            }
+        }
+    }
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)
