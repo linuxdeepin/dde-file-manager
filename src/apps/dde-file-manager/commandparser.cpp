@@ -339,7 +339,8 @@ void CommandParser::processEvent()
         { "copy", GlobalEventType::kCopy },
         { "move", GlobalEventType::kCutFile },
         { "delete", GlobalEventType::kDeleteFiles },
-        { "trash", GlobalEventType::kMoveToTrash }
+        { "trash", GlobalEventType::kMoveToTrash },
+        { "refresh", GlobalEventType::kRefreshDir }
     };
 
     if (!eventMap.contains(argsInfo.action))
@@ -372,6 +373,10 @@ void CommandParser::processEvent()
                 || FileUtils::isTrashFile(srcUrls.first()))
             return;
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        break;
+    }
+    case GlobalEventType::kRefreshDir: {
+        dpfSignalDispatcher->publish(GlobalEventType::kRefreshDir, srcUrls);
         break;
     }
     default:
