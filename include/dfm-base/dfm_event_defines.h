@@ -50,7 +50,6 @@ enum GlobalEventType {
     kCleanTrash,
     kWriteCustomToClipboard,
     kHideFiles,
-    kRefreshDir,
 
     // file operations finieshed!
     kOpenFilesResult = 1000,
