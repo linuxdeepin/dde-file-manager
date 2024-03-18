@@ -105,6 +105,10 @@ void DefaultItemManager::initPreDefineItems()
             d->defaultItemPreDefOrder.append(quickAccessInfo);
         }
     });
+    // 排序使得顺序为 index 的从大到小，为了使后续为尾插法，防止乱序
+    std::sort(d->defaultItemPreDefOrder.begin(), d->defaultItemPreDefOrder.end(), [](const BookmarkData &a, const BookmarkData &b) {
+        return a.index > b.index;
+    });
 }
 
 QMap<QString, QUrl> DefaultItemManager::defaultItemUrls()
