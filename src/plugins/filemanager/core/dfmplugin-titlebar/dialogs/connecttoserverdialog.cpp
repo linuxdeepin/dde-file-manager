@@ -396,12 +396,13 @@ void ConnectToServerDialog::initializeUi()
     {
         charsetLabel = new DLabel(tr("Charset Encoding"));
         charsetLabel->setVisible(false);
+        charsetLabel->setContentsMargins(8, 0, 0, 0);
 
         charsetComboBox = new DComboBox();
         charsetComboBox->addItems({ tr("Default"), "UTF-8", "GBK" });
         charsetComboBox->setVisible(false);
 
-        addressLayout->addWidget(charsetLabel, 1, 0, Qt::AlignCenter);
+        addressLayout->addWidget(charsetLabel, 1, 0, Qt::AlignLeft);
         addressLayout->addWidget(charsetComboBox, 1, 1);
     }
 
