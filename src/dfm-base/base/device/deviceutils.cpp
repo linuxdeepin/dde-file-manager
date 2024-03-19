@@ -666,10 +666,10 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
         return DFMIO::DFMUtils::deviceBytesFree(url);
     auto devicePath = bindPathTransform(url.path(), true);
     auto map = DevProxyMng->queryDeviceInfoByPath(devicePath, true);
-    if (map.contains(kSizeFree))
-        return map.value(kSizeFree).toLongLong();
+    if (map.contains(kSizeFree) && map.value(kSizeFree, 0).toLongLong() > 0)
+        return map.value(kSizeFree, 0).toLongLong();
     if (map.contains(kSizeTotal) && map.contains(kSizeUsed))
-        return map.value(kSizeTotal).toLongLong() - map.value(kSizeUsed).toLongLong();
+        return map.value(kSizeTotal, 0).toLongLong() - map.value(kSizeUsed, 0).toLongLong();
 
     return DFMIO::DFMUtils::deviceBytesFree(url);
 }
