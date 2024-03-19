@@ -30,7 +30,8 @@ QSize CollectionDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInd
 
 void CollectionDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    DStyledItemDelegate::paint(painter, option, index);
+    // use QStyle avoid backgrounds overwrited by DTK.
+    QStyledItemDelegate::paint(painter, option, index);
 
     painter->setRenderHints(QPainter::Antialiasing
                             | QPainter::TextAntialiasing
