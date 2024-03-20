@@ -853,6 +853,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
                 else
                     removeDevice(url);
             }
+            onUpdateBlockItem(id);
         }
     }
 }
