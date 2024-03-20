@@ -200,10 +200,10 @@ bool FullTextSearcherPrivate::checkUpdate(const IndexReaderPtr &reader, const QS
             if (!info)
                 return false;
 
-            QString modifyTime = QString::number(info->timeOf(TimeInfoType::kLastModified).toLongLong());
-            String storeTime = doc->get(L"modified");
-
-            if (modifyTime.toStdWString() != storeTime) {
+            const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
+            const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
+            const String &storeTime { doc->get(L"modified") };
+            if (modifyEpoch.toStdWString() != storeTime) {
                 type = kUpdateIndex;
                 return true;
             }
@@ -237,8 +237,9 @@ DocumentPtr FullTextSearcherPrivate::fileDocument(const QString &file)
 
     // file last modified time
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file));
-    QString modifyTime = QString::number(info->timeOf(TimeInfoType::kLastModified).toLongLong());
-    doc->add(newLucene<Field>(L"modified", modifyTime.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
+    const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
+    doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file contents
     QString contents = DocParser::convertFile(file.toStdString()).c_str();
@@ -366,9 +367,10 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                     continue;
                 }
 
-                QString modifyTime = QString::number(info->timeOf(TimeInfoType::kLastModified).toLongLong());
-                String storeTime = doc->get(L"modified");
-                if (modifyTime.toStdWString() != storeTime) {
+                const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
+                const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
+                const String &storeTime { doc->get(L"modified") };
+                if (modifyEpoch.toStdWString() != storeTime) {
                     continue;
                 } else {
                     if (!SearchHelper::instance()->isHiddenFile(StringUtils::toUTF8(resultPath).c_str(), hiddenFileHash, searchPath)) {
