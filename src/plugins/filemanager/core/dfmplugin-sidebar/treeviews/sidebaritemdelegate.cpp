@@ -34,6 +34,7 @@
 #include <QSignalBlocker>
 #include <QStyle>
 #include <QToolTip>
+#include <QPixmap>
 
 #include <linux/limits.h>
 
@@ -432,28 +433,28 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
 #ifdef DTKWIDGET_CLASS_DSizeMode
     iconSize = DSizeModeHelper::element(kCompactExpandIconSize, kExpandIconSize);
     itemMargin = DSizeModeHelper::element(kCompactItemMargin, kItemMargin);
-    QPoint tl = r.topRight() + QPoint(0 - itemMargin - iconSize - 4, itemMargin);
-    QPoint br = r.topRight() + QPoint(0 - itemMargin, itemMargin + iconSize + 5);
-#else
-    QPoint tl = r.topRight() + QPoint(-26, itemMargin);
-    QPoint br = r.topRight() + QPoint(0 - itemMargin, 27);
 #endif
+
+    int x = r.right() - 10 - iconSize;
+    int y = r.top() + (r.height() / 2) - (iconSize / 2);
+    QRect iconRect(QPoint(x, y), QSize(iconSize, iconSize));
+    iconRect.moveTop(iconRect.top() - 1);
 
     bool isDarkType = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
     QColor c(isDarkType ? qRgb(255, 255, 255) : qRgb(0, 0, 0));
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(c);
-    QRect gRect(tl, br);
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
-    if (gRect.contains(sidebarView->mapFromGlobal(QCursor::pos()))) {
+    QRect bgRect = iconRect.marginsAdded(QMargins(3, 3, 3, 3));
+    if (bgRect.contains(sidebarView->mapFromGlobal(QCursor::pos()))) {
         painter->setOpacity(0.1);
-        painter->drawRoundedRect(gRect, kRadius, kRadius);
+        painter->drawRoundedRect(bgRect, kRadius, kRadius);
     }
 
     painter->setOpacity(1);
     painter->setPen(Qt::gray);
     QIcon icon = QIcon::fromTheme(isExpanded ? "go-up" : "go-down");
-    icon.paint(painter, QRect(gRect.topLeft() + QPoint(2, 3), QSize(iconSize, iconSize)), Qt::AlignmentFlag::AlignCenter);
+    icon.paint(painter, iconRect, Qt::AlignmentFlag::AlignCenter);
     painter->restore();
 }
