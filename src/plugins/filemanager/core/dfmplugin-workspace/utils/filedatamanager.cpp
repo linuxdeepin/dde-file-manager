@@ -72,7 +72,9 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
     for (const auto &rootInfo : rootInfoKeys) {
         if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
             rootInfoMap.value(rootInfo)->disconnect();
-            rootInfoMap.remove(rootInfo);
+            auto root = rootInfoMap.take(rootInfo);
+            if (root)
+                delete root;
         }
     }
 }
