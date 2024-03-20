@@ -173,7 +173,14 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     // Draw item text
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
     QFontMetrics metricsLabel(option.widget->font());
-    painter->setPen(separatorItem ? Qt::gray : qApp->palette().color(QPalette::ColorRole::Text));
+
+    QColor separatorTextColor;
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+        separatorTextColor = QColor(255, 255, 255, 102); // alpha 40%
+    } else {
+        separatorTextColor = QColor(0, 0, 0, 76); // alpha 30%
+    }
+    painter->setPen(separatorItem ? separatorTextColor : qApp->palette().color(QPalette::ColorRole::Text));
     if (iconMode == QIcon::Selected)
         painter->setPen(opt.widget->isActiveWindow() ? Qt::white : opt.palette.color(cg, QPalette::HighlightedText));
     if (iconMode != QIcon::Selected && !opt.widget->isActiveWindow())
