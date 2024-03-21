@@ -127,11 +127,18 @@ bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
 {
     if (event->type() == QEvent::ToolTip) {
         const QString tooltip = index.data(kItemFileIconModelToolTipRole).toString();
-
         const QList<QRect> &geometries = paintGeomertys(option, index);
 
-        if (tooltip.isEmpty() || index == view->rootIndex() || geometries.count() < 3
-                || option.fontMetrics.horizontalAdvance(tooltip) <= geometries[1].width() * 2) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
+        bool hideTips = geometries.count() < 3;
+        if (!hideTips) {
+            int displayTextWidth = 0;
+            for (int i = 1; i < geometries.count() - 1; ++i) {
+                displayTextWidth += geometries[i].width();
+            }
+            displayTextWidth += 1; // 误差
+            hideTips = option.fontMetrics.horizontalAdvance(tooltip) <= displayTextWidth;
+        }
+        if (tooltip.isEmpty() || index == view->rootIndex() || hideTips) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
             ItemDelegateHelper::hideTooltipImmediately();
         } else {
             int tooltipsize = tooltip.size();
@@ -193,6 +200,8 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     // init file name geometry
     QRect labelRect = option.rect;
     labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
+    labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
+    labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
 
     QStyleOptionViewItem opt = option;
 
@@ -202,11 +211,11 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 
     bool elide = (!isSelected || !singleSelected);
 
-    QList<QRectF> lines = calFileNameRect(fileName, labelRect.adjusted(0, 0, 0, 99999), elide ? opt.textElideMode : Qt::ElideNone);
+    QList<QRectF> lines = calFileNameRect(fileName, labelRect, elide ? opt.textElideMode : Qt::ElideNone);
 
-    labelRect = GlobalPrivate::boundingRect(lines).toRect();
-    labelRect.setTop(iconRect.bottom() + kIconModeTextPadding + kIconModeIconSpacing);
-    geometries << labelRect;
+    for (const QRectF &line : lines) {
+        geometries << line.toRect();
+    }
 
     // background rect
     QRectF backgroundRect = itemIconRectf;
@@ -331,8 +340,10 @@ QList<QRect> IconItemDelegate::itemGeomertys(const QStyleOptionViewItem &opt, co
     // init file name geometry
     QRect labelRect = opt.rect;
     labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
+    labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
+    labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
 
-    QList<QRectF> lines = calFileNameRect(fileName, labelRect.adjusted(0, 0, 0, 99999), opt.textElideMode);
+    QList<QRectF> lines = calFileNameRect(fileName, labelRect, opt.textElideMode);
     for (const auto &line : lines) {
         geometries.append(line.toRect());
     }
