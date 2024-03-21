@@ -1019,8 +1019,14 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     if (isListViewMode() || isTreeViewMode())
         return QModelIndex();
 
-    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
+    int iconVerticalTopMargin = 0;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+#endif
+
+    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset() - iconVerticalTopMargin);
     auto index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
+
     if (index == -1 || index >= model()->rowCount(rootIndex()))
         return QModelIndex();
 
