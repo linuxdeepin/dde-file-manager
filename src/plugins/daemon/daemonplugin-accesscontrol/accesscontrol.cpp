@@ -9,6 +9,18 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef COMPILE_ON_V23
+#    define ACCOUNTS_BUS_NAME "org.deepin.dde.Accounts1"
+#    define ACCOUNTS_OBJ_PATH "/org/deepin/dde/Accounts1"
+#    define ACCOUNTS_INTERFACE "org.deepin.dde.Accounts1"
+#    define ACCOUNTS_USER_INTERFACE "org.deepin.dde.Accounts1.User"
+#else
+#    define ACCOUNTS_BUS_NAME "com.deepin.daemon.Accounts"
+#    define ACCOUNTS_OBJ_PATH "/com/deepin/daemon/Accounts"
+#    define ACCOUNTS_INTERFACE "com.deepin.daemon.Accounts"
+#    define ACCOUNTS_USER_INTERFACE "com.deepin.daemon.Accounts.User"
+#endif
+
 namespace daemonplugin_accesscontrol {
 
 DFM_LOG_REISGER_CATEGORY(DAEMONPAC_NAMESPACE)
@@ -49,9 +61,9 @@ void AccessControl::initDBusInterce()
 
 void AccessControl::initConnect()
 {
-    QDBusConnection::systemBus().connect("com.deepin.daemon.Accounts",
-                                         "/com/deepin/daemon/Accounts",
-                                         "com.deepin.daemon.Accounts",
+    QDBusConnection::systemBus().connect(ACCOUNTS_BUS_NAME,
+                                         ACCOUNTS_OBJ_PATH,
+                                         ACCOUNTS_INTERFACE,
                                          "UserAdded",
                                          this,
                                          SLOT(createUserMountDir(const QString &)));
@@ -59,12 +71,12 @@ void AccessControl::initConnect()
 
 void AccessControl::createUserMountDir(const QString &objPath)
 {
-    QDBusInterface userIface("com.deepin.daemon.Accounts",
+    QDBusInterface userIface(ACCOUNTS_BUS_NAME,
                              objPath,
-                             "com.deepin.daemon.Accounts.User",
+                             ACCOUNTS_USER_INTERFACE,
                              QDBusConnection::systemBus());
     const QString &userName = userIface.property("UserName").toString();
-    fmInfo() << "about to create mount dir of user" << userName;
+    fmInfo() << "about to create mount dir of user" << userName << objPath;
 
     const QString &userMountRoot = QString("/media/%1").arg(userName);
     if (!QDir(userMountRoot).exists()) {
@@ -85,9 +97,9 @@ void AccessControl::createUserMountDir(const QString &objPath)
 void AccessControl::createUserMountDirs()
 {
     // get user list by com.deepin.daemon.Accounts
-    QDBusInterface iface("com.deepin.daemon.Accounts",
-                         "/com/deepin/daemon/Accounts",
-                         "com.deepin.daemon.Accounts",
+    QDBusInterface iface(ACCOUNTS_BUS_NAME,
+                         ACCOUNTS_OBJ_PATH,
+                         ACCOUNTS_INTERFACE,
                          QDBusConnection::systemBus());
     QStringList userNames;
     const QStringList &userList = iface.property("UserList").toStringList();
