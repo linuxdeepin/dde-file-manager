@@ -254,8 +254,10 @@ bool LocalDirIterator::oneByOne()
         return true;
 
     auto info = InfoFactory::create<FileInfo>(url());
+    if (info)
+        return !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() || !d->dfmioDirIterator;
 
-    return (info ? info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !FileUtils::isLocalDevice(url())) || !d->dfmioDirIterator;
+    return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
 }
 
 bool LocalDirIterator::initIterator()
