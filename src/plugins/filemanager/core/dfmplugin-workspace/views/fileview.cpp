@@ -109,7 +109,8 @@ void FileView::setViewMode(Global::ViewMode mode)
 {
     // itemDelegate 未设置时为未初始化状态，此时调用setViewMode需要执行设置流程
     // itemDelegate 已设置时，若view不可见，则暂不执行viewMode设置逻辑
-    if (!isVisible() && itemDelegate())
+    if (!isVisible() && itemDelegate()
+            && d->delegates[static_cast<int>(mode)] == itemDelegate())
         return;
 
     if (itemDelegate())
