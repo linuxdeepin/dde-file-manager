@@ -348,7 +348,7 @@ QStringList WorkspaceHelper::getNameFilter(const quint64 windowId)
 
 void WorkspaceHelper::laterRequestSelectFiles(const QList<QUrl> &urls)
 {
-    QTimer::singleShot(qMin(800, qMax(urls.count() * (10 + urls.count() / 150), 300)), this, [=] {
+    QTimer::singleShot(qMin(800 + (urls.count() / 100) * 50, qMax(urls.count() * (10 + urls.count() / 150), 500)), this, [=] {
         emit requestSelectFiles(urls);
     });
 }
