@@ -10,6 +10,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
 #include <DFontSizeManager>
@@ -25,6 +26,7 @@
 #include <QLayout>
 #include <QVBoxLayout>
 #include <QFrame>
+#include <QScreen>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -223,7 +225,15 @@ void FilePropertyDialog::processHeight(int height)
     Q_UNUSED(height)
 
     QRect rect = geometry();
-    rect.setHeight(contentHeight() + kArrowExpandSpacing);
+    if (WindowUtils::isWayLand()) {
+        int logicHeight = contentHeight() + kArrowExpandSpacing;
+        int screenHeight = WindowUtils::cursorScreen()->availableSize().height();
+        int realHeight = logicHeight > screenHeight ? screenHeight : logicHeight;
+        rect.setHeight(realHeight);
+    } else {
+        rect.setHeight(contentHeight() + kArrowExpandSpacing);
+    }
+
     setGeometry(rect);
 }
 
