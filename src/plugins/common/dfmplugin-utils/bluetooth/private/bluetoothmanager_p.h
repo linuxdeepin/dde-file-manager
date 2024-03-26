@@ -26,7 +26,7 @@ public:
     BluetoothManagerPrivate &operator=(BluetoothManagerPrivate &) = delete;
 
     void resolve(const QDBusReply<QString> &req);
-    void init();
+    void initInterface();
     void initConnects();
     bool connectBluetoothDBusSignals(const QString &signal, const char *slot);
     void inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj);
