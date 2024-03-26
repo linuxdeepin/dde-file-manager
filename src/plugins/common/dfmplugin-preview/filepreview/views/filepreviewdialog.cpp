@@ -209,7 +209,7 @@ void FilePreviewDialog::initUI()
     statusBar = new FilePreviewDialogStatusBar(this);
     statusBar->setObjectName("StatusBar");
     statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    statusBar->openButton()->setFocus();
+    // statusBar->openButton()->setFocus();
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -278,7 +278,7 @@ void FilePreviewDialog::switchToPage(int index)
             if (preview->setFileUrl(fileList.at(index))) {
                 preview->contentWidget()->updateGeometry();
                 updateTitle();
-                statusBar->openButton()->setFocus();
+                // statusBar->openButton()->setFocus();
                 preview->contentWidget()->adjustSize();
                 int newPerviewWidth = preview->contentWidget()->size().width();
                 int newPerviewHeight = preview->contentWidget()->size().height();
@@ -310,7 +310,7 @@ void FilePreviewDialog::switchToPage(int index)
     if (!view) {
         if (qobject_cast<UnknowFilePreview *>(preview)) {
             preview->setFileUrl(fileList.at(index));
-            statusBar->openButton()->setFocus();
+            // statusBar->openButton()->setFocus();
             return;
         } else {
             view = new UnknowFilePreview(this);
@@ -341,7 +341,7 @@ void FilePreviewDialog::switchToPage(int index)
     preview = view;
 
     playCurrentPreviewFile();
-    statusBar->openButton()->setFocus();
+    // statusBar->openButton()->setFocus();
     this->adjustSize();
     preview->contentWidget()->adjustSize();
     int newPerviewWidth = preview->contentWidget()->size().width();
