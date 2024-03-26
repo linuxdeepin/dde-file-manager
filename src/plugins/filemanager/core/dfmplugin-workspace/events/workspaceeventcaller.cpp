@@ -101,3 +101,8 @@ void WorkspaceEventCaller::sendEnterDirReportLog(const QVariantMap &data)
 {
     dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_Commit", QString("EnterDirectory"), data);
 }
+
+void WorkspaceEventCaller::sendModelFilesEmpty()
+{
+    dpfSignalDispatcher->publish(kEventNS, "signal_Model_EmptyDir");
+}

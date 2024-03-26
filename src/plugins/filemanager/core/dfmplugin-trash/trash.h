@@ -23,6 +23,7 @@ class Trash : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
+    ~Trash() override;
 
 private slots:
     void regTrashCrumbToTitleBar();
