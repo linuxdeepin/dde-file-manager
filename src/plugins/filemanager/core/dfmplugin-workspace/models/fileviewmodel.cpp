@@ -766,6 +766,9 @@ void FileViewModel::onRemove(int firstIndex, int count)
 void FileViewModel::onRemoveFinish()
 {
     endRemoveRows();
+
+    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
+        WorkspaceEventCaller::sendModelFilesEmpty();
 }
 
 void FileViewModel::onUpdateView()

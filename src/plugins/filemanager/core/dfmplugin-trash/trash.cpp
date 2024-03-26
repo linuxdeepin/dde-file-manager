@@ -58,6 +58,11 @@ bool Trash::start()
     return true;
 }
 
+Trash::~Trash()
+{
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_Model_EmptyDir", TrashHelper::instance(), &TrashHelper::onTrashEmptyState);
+}
+
 void Trash::onWindowOpened(quint64 windId)
 {
     auto window = FMWindowsIns.findWindowById(windId);
@@ -140,6 +145,7 @@ void Trash::addCustomTopWidget()
 
 void Trash::followEvents()
 {
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_Model_EmptyDir", TrashHelper::instance(), &TrashHelper::onTrashEmptyState);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileCanMove", TrashHelper::instance(), &TrashHelper::checkCanMove);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);

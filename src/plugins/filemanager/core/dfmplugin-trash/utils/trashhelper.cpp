@@ -295,6 +295,24 @@ void TrashHelper::onTrashStateChanged()
 
     isTrashEmpty = !isTrashEmpty;
 
+    if (isTrashEmpty)
+        return;
+
+    const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
+    for (const quint64 winId : windowIds) {
+        auto window = FMWindowsIns.findWindowById(winId);
+        if (window) {
+            const QUrl &url = window->currentUrl();
+            if (url.scheme() == scheme())
+                TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+        }
+    }
+}
+
+void TrashHelper::onTrashEmptyState() {
+    isTrashEmpty = FileUtils::trashIsEmpty();
+    if (!isTrashEmpty)
+        return;
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
         auto window = FMWindowsIns.findWindowById(winId);

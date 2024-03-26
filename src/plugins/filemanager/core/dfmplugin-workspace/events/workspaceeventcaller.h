@@ -42,6 +42,7 @@ public:
     static bool sendRenameEndEdit(const quint64 &winId, const QUrl &url);
     static bool sendViewItemClicked(const QVariantMap &data);
     static void sendEnterDirReportLog(const QVariantMap &data);
+    static void sendModelFilesEmpty();
 };
 
 }

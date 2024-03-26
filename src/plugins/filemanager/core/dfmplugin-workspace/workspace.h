@@ -29,6 +29,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_View_RenameEndEdit)
     DPF_EVENT_REG_SIGNAL(signal_View_ItemClicked)
     DPF_EVENT_REG_SIGNAL(signal_View_HeaderViewSectionChanged)
+    DPF_EVENT_REG_SIGNAL(signal_Model_EmptyDir)
 
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
