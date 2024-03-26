@@ -33,7 +33,7 @@ BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
       q_ptr(qq),
       model(new BluetoothModel(qq))
 {
-    init();
+    initInterface();
     initConnects();
 }
 
@@ -66,10 +66,12 @@ void BluetoothManagerPrivate::resolve(const QDBusReply<QString> &req)
     }
 }
 
-void BluetoothManagerPrivate::init()
+void BluetoothManagerPrivate::initInterface()
 {
     Q_Q(BluetoothManager);
     // initialize dbus interface
+    if (bluetoothInter)
+        delete bluetoothInter;
     bluetoothInter = new QDBusInterface(BluetoothService, BluetoothPath, BluetoothInterface,
                                         QDBusConnection::sessionBus(), q);
 }
@@ -225,6 +227,7 @@ void BluetoothManagerPrivate::onServiceValidChanged(bool valid)
     Q_Q(BluetoothManager);
     if (valid) {
         fmInfo() << "bluetooth service is valid now...";
+        initInterface();
         QTimer::singleShot(1000, q, [q] { q->refresh(); });
     }
 }
@@ -402,6 +405,7 @@ bool BluetoothManager::hasAdapter()
 bool BluetoothManager::bluetoothSendEnable()
 {
     Q_D(BluetoothManager);
+
     if (!d->bluetoothInter->isValid()) {
         fmWarning() << "bluetooth interface is not valid";
         return false;
@@ -409,7 +413,7 @@ bool BluetoothManager::bluetoothSendEnable()
     auto canSendFile = d->bluetoothInter->property("CanSendFile");
     if (!canSendFile.isValid()) {
         fmWarning() << "bluetooth interface has no 'CanSendFile' property";
-        return true;   // if there is no this property, then we do not disable bluetooth transfer.
+        return false;
     }
     return canSendFile.toBool();
 }
