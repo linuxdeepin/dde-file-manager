@@ -26,11 +26,13 @@ Shortcut::Shortcut(QObject *parent)
                       << ShortcutItem(tr("To parent directory"), "Ctrl + Up ")
                       << ShortcutItem(tr("Permanently delete"), "Shift + Delete ")
                       << ShortcutItem(tr("Delete file"), "Delete")
+                      << ShortcutItem(tr("Delete file"), "Ctrl + D ")
                       << ShortcutItem(tr("Select all"), "Ctrl + A ")
                       << ShortcutItem(tr("Copy"), "Ctrl + C ")
                       << ShortcutItem(tr("Cut"), "Ctrl + X ")
                       << ShortcutItem(tr("Paste"), "Ctrl + V ")
-                      << ShortcutItem(tr("Rename"), "F2 ");
+                      << ShortcutItem(tr("Rename"), "F2 ")
+                      << ShortcutItem(tr("Open in terminal"), "Shift + T ");
     group2.groupName = tr("New/Search");
     group2.groupItems << ShortcutItem(tr("New window"), "Ctrl + N ")
                       << ShortcutItem(tr("New folder"), "Ctrl + Shift + N ")
