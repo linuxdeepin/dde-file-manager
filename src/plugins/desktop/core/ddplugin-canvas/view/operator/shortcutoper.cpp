@@ -140,6 +140,9 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         case Qt::Key_Z:
             FileOperatorProxyIns->undoFiles(view);
             return true;
+        case Qt::Key_D:
+            FileOperatorProxyIns->moveToTrash(view);
+            return true;
         default:
             break;
         }
@@ -151,6 +154,9 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
     } else if (modifiers == (Qt::ControlModifier | Qt::ShiftModifier)) {
         if (key == Qt::Key_I) {
             view->d->keySelector->toggleSelect();
+            return true;
+        } else if (key == Qt::Key_N) {
+            FileOperatorProxyIns->touchFolder(view, view->d->gridAt(QCursor::pos()));
             return true;
         }
     }

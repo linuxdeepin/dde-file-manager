@@ -177,6 +177,11 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
             openAction(view->selectedUrlList());
             return true;
         }
+        case Qt::Key_D:
+        {
+            moveToTrash();
+            return true;
+        }
         default:
             break;
         }
