@@ -39,7 +39,7 @@ VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
 
     vaultRmProgressBar->setFixedSize(80, 80);
 
-    deleteFinishedImageLabel->setPixmap(QIcon::fromTheme("dfm_vault_active_finish").pixmap(90, 90));
+    deleteFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(90, 90));
     deleteFinishedImageLabel->setAlignment(Qt::AlignHCenter);
     deleteFinishedImageLabel->hide();
 

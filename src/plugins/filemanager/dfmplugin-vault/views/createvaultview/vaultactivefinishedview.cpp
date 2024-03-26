@@ -68,7 +68,7 @@ void VaultActiveFinishedView::initUi()
 
     // 加密完成完成图片
     encryptFinishedImageLabel = new DLabel(this);
-    encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dfm_vault_active_finish").pixmap(128, 128));
+    encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(128, 128));
     encryptFinishedImageLabel->setAlignment(Qt::AlignHCenter);
     // 加密完成提示
     tipsThree = new DLabel(tr("The setup is complete"), this);
