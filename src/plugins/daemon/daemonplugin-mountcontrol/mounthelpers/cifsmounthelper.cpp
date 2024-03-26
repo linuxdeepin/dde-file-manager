@@ -31,7 +31,7 @@ DAEMONPMOUNTCONTROL_USE_NAMESPACE
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
 
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
-    : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
+    : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) {}
 
 QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
 {
@@ -101,11 +101,12 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     int errNum = 0;
     QString errMsg;
     while (true) {
-        auto arg = convertArgs(params);
+        char sep = ',';
+        auto arg = convertArgs(params, &sep);
 
         QString args(arg.c_str());
-        static QRegularExpression regxCheckPasswd(",pass=.*,dom");
-        args.replace(regxCheckPasswd, ",pass=******,dom");
+        static QRegularExpression regxCheckPasswd(QString("%1pass=.*%1dom").arg(sep));
+        args.replace(regxCheckPasswd, QString("%1pass=******%1dom").arg(sep));
         fmInfo() << "mount: trying mount" << aPath << "on" << mntPath << "with opts:" << args;
 
         ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", 0,
@@ -287,52 +288,78 @@ uint CifsMountHelper::invokerUid()
     return uid;
 }
 
-std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
+std::string CifsMountHelper::convertArgs(const QVariantMap &opts, char *sep)
 {
-    QString param;
     using namespace MountOptionsField;
+    QStringList params;
+
+    // `sep` is an implicit param in cifs, which value is a char,
+    // and will be used to seperate params that API passed in.
+    // and must be at the FIRST position.
+    params.append("sep=");
 
     if (opts.contains(kUser) && opts.contains(kPasswd) && !opts.value(kUser).toString().isEmpty()
         && !opts.value(kPasswd).toString().isEmpty()) {
         const QString &user = opts.value(kUser).toString();
         const QString &passwd = opts.value(kPasswd).toString();
-        param += QString("user=%1,pass=%2,").arg(user).arg(decryptPasswd(passwd));
+        params.append(QString("user=%1").arg(user));
+        params.append(QString("pass=%1").arg(decryptPasswd(passwd)));
     } else {
-        param += "user=,";   // user is necessary even for anonymous mount
+        // user is necessary even for anonymous mount
+        params.append("user=");
     }
 
     if (opts.contains(kDomain) && !opts.value(kDomain).toString().isEmpty())
-        param += QString("dom=%1,").arg(opts.value(kDomain).toString());
+        params.append(QString("dom=%1").arg(opts.value(kDomain).toString()));
 
     if (opts.value(kPort, -1).toInt() != -1)
-        param += QString("port=%1,").arg(opts.value(kPort).toInt());
+        params.append(QString("port=%1").arg(opts.value(kPort).toInt()));
 
     // this param is supported by cifs only.
     if (opts.contains(kTimeout)) {
-        param += QString("echo_interval=1,");
+        params.append(QString("echo_interval=1"));
         if (opts.contains(kTryWaitReconn))
-            param += QString("wait_reconnect_timeout=%1,").arg(/*opts.value(kTimeout).toString()*/ 0);   // w_r_t = ?? s
+            params.append(QString("wait_reconnect_timeout=%1").arg(/*opts.value(kTimeout).toString()*/ 0));   // w_r_t = ?? s
         else
-            param += QString("handletimeout=%1,").arg(opts.value(kTimeout).toInt() * 1000);   // handletimeout = ?? ms
+            params.append(QString("handletimeout=%1").arg(opts.value(kTimeout).toInt() * 1000));   // handletimeout = ?? ms
     }
 
     if (opts.contains(kIp))
-        param += QString("ip=%1,").arg(opts.value(kIp).toString());
+        params.append(QString("ip=%1").arg(opts.value(kIp).toString()));
 
     auto user = getpwuid(invokerUid());
     if (user) {
-        param += QString("uid=%1,").arg(user->pw_uid);
-        param += QString("gid=%1,").arg(user->pw_gid);
+        params.append(QString("uid=%1").arg(user->pw_uid));
+        params.append(QString("gid=%1").arg(user->pw_gid));
     }
-    param += "iocharset=utf8";
-    param += ",actimeo=5";   // bug 211337
+    params.append("iocharset=utf8");
+    params.append("actimeo=5");   // bug 211337
 
     if (opts.contains(MountOptionsField::kVersion))
-        param += QString(",vers=%1").arg(opts.value(MountOptionsField::kVersion).toString());
+        params.append(QString("vers=%1").arg(opts.value(MountOptionsField::kVersion).toString()));
     else
-        param += ",vers=default";
+        params.append("vers=default");
 
-    return param.toStdString();
+    return joinWithUniqueSep(params, sep).toStdString();
+}
+
+QString CifsMountHelper::joinWithUniqueSep(const QStringList &params, char *sep)
+{
+    Q_ASSERT(sep);
+    // some user may have a password which contains the comma,
+    // comma is the default seperator when cifs parse params.
+    // must find an unique char in all param string as the seperator.
+    // see https://elixir.bootlin.com/linux/v5.10.213/C/ident/cifs_parse_mount_options
+    const static QList<char> kSeps { ',', ' ', '#', '$', '^', '~', '*', '+', '@', '_' };
+    QString chars = params.join("");
+    *sep = kSeps[0];
+    for (const auto _sep : kSeps) {
+        if (chars.contains(_sep))
+            continue;
+        *sep = _sep;
+        break;
+    }
+    return params.join(*sep);
 }
 
 bool CifsMountHelper::checkAuth()
