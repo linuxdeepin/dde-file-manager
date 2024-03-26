@@ -618,7 +618,16 @@ int FileView::selectedIndexCount() const
 
 bool FileView::selectFiles(const QList<QUrl> &files) const
 {
-    return d->selectHelper->select(files);
+    if (isTreeViewMode())
+        return d->selectHelper->select(files);
+
+    if (files.isEmpty())
+        return false;
+
+    if (UniversalUtils::urlEquals(files.first().adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash), rootUrl()))
+        return d->selectHelper->select(files);
+
+    return false;
 }
 
 void FileView::setSelectionMode(const QAbstractItemView::SelectionMode mode)

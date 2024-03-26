@@ -348,7 +348,7 @@ void FileViewHelper::selectFiles(const QList<QUrl> &files)
         parent()->selectFiles(vitualFiles);
         return;
     }
-    if (files.count() > 0 && UniversalUtils::urlEquals(UrlRoute::urlParent(files.first()), parent()->rootUrl()))
+    if (files.count() > 0)
         parent()->selectFiles(files);
 }
 
