@@ -31,22 +31,31 @@ using namespace dfmplugin_utils;
 
 VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
     : QWidget(parent)
-    , vaultRmProgressBar(new DWaterProgress(this))
-    , deleteFinishedImageLabel(new DLabel(this))
     , layout(new QVBoxLayout())
 {
-    hintLabel = new DLabel(tr("Removing..."), this);
-
+    deletingWidget = new QWidget(this);
+    QVBoxLayout *deletingLay = new QVBoxLayout;
+    vaultRmProgressBar = new DWaterProgress(deletingWidget);
     vaultRmProgressBar->setFixedSize(80, 80);
+    hintLabel = new DLabel(tr("Removing..."), deletingWidget);
+    deletingLay->addWidget(vaultRmProgressBar, 0, Qt::AlignHCenter);
+    deletingLay->addWidget(hintLabel, 0, Qt::AlignHCenter);
+    deletingWidget->setLayout(deletingLay);
 
-    deleteFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(90, 90));
+    deletedWidget = new QWidget(this);
+    QVBoxLayout *deletedLay = new QVBoxLayout;
+    deleteFinishedImageLabel = new DLabel(deletedWidget);
+    deleteFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(100, 100));
     deleteFinishedImageLabel->setAlignment(Qt::AlignHCenter);
-    deleteFinishedImageLabel->hide();
+    finishedLabel = new DLabel(tr("Deleted successfully"), deletedWidget);
+    deletedLay->addWidget(deleteFinishedImageLabel, 0, Qt::AlignHCenter);
+    deletedLay->addWidget(finishedLabel, 0, Qt::AlignHCenter);
+    deletedWidget->setLayout(deletedLay);
+    deletedWidget->setHidden(true);
+
 
     layout->setMargin(0);
-    layout->addSpacing(10);
-    layout->addWidget(hintLabel, 1, Qt::AlignHCenter);
-    layout->addWidget(vaultRmProgressBar, 1, Qt::AlignCenter);
+    layout->addWidget(deletingWidget, 0, Qt::AlignCenter);
     this->setLayout(layout);
 
     connect(OperatorCenter::getInstance(), &OperatorCenter::fileRemovedProgress,
@@ -98,10 +107,10 @@ void VaultRemoveProgressView::handleVaultRemovedProgress(int value)
     if (value == 100) {
         if (!isExecuted) {
             vaultRmProgressBar->setValue(value);
-            layout->removeWidget(vaultRmProgressBar);
-            vaultRmProgressBar->hide();
-            layout->addWidget(deleteFinishedImageLabel);
-            deleteFinishedImageLabel->show();
+            layout->removeWidget(deletingWidget);
+            deletingWidget->setHidden(true);
+            layout->addWidget(deletedWidget, 0, Qt::AlignCenter);
+            deletedWidget->setHidden(false);
 
             Settings setting(kVaultTimeConfigFile);
             setting.removeGroup(QString("VaultTime"));
@@ -112,7 +121,6 @@ void VaultRemoveProgressView::handleVaultRemovedProgress(int value)
             QVariantMap data;
             data.insert("mode", VaultReportData::kDeleted);
             dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
-            hintLabel->setText(tr("Deleted successfully"));
 
             isExecuted = true;
             emit setBtnEnable(0, true);

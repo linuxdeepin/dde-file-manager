@@ -38,10 +38,16 @@ private Q_SLOTS:
     void handleVaultRemovedProgress(int value);
 
 private:
-    DTK_WIDGET_NAMESPACE::DWaterProgress *vaultRmProgressBar { nullptr };
-    DTK_WIDGET_NAMESPACE::DLabel *deleteFinishedImageLabel { nullptr };
-    QVBoxLayout *layout { nullptr };
+    QWidget *deletingWidget { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DWaterProgress *vaultRmProgressBar { Q_NULLPTR };
     DTK_WIDGET_NAMESPACE::DLabel *hintLabel { Q_NULLPTR };
+
+    QWidget *deletedWidget { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *deleteFinishedImageLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLabel *finishedLabel { Q_NULLPTR };
+
+    QVBoxLayout *layout { Q_NULLPTR };
+
     bool isExecuted { false };
 };
 }
