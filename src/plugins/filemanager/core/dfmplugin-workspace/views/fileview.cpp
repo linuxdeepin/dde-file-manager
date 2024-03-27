@@ -1034,6 +1034,10 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
         iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
 #endif
 
+    if (itemDelegate()->itemExpanded() && itemDelegate()->expandItemRect().contains(pos)) {
+        return itemDelegate()->expandedIndex();
+    }
+
     QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset() - iconVerticalTopMargin);
     auto index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
 

@@ -350,6 +350,34 @@ QList<QRect> IconItemDelegate::itemGeomertys(const QStyleOptionViewItem &opt, co
     return geometries;
 }
 
+bool IconItemDelegate::itemExpanded()
+{
+    Q_D(IconItemDelegate);
+
+    return d->expandedIndex.isValid() && d->expandedItem->isVisible();
+}
+
+QRect IconItemDelegate::expandItemRect()
+{
+    Q_D(IconItemDelegate);
+
+    if (d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
+        QRect itemRect = d->expandedItem->getOption().rect;
+        QRect textRect = d->expandedItem->textGeometry().toRect();
+        textRect.moveTopLeft(itemRect.topLeft() + textRect.topLeft());
+        return textRect;
+    }
+
+    return QRect();
+}
+
+QModelIndex IconItemDelegate::expandedIndex()
+{
+    Q_D(IconItemDelegate);
+
+    return d->expandedIndex;
+}
+
 QString IconItemDelegate::displayFileName(const QModelIndex &index) const
 {
     bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };

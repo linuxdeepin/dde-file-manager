@@ -161,6 +161,21 @@ QRect BaseItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &in
     return QRect();
 }
 
+bool BaseItemDelegate::itemExpanded()
+{
+    return false;
+}
+
+QRect BaseItemDelegate::expandItemRect()
+{
+    return QRect();
+}
+
+QModelIndex BaseItemDelegate::expandedIndex()
+{
+    return QModelIndex();
+}
+
 FileViewHelper *BaseItemDelegate::parent() const
 {
     return dynamic_cast<FileViewHelper *>(QStyledItemDelegate::parent());
