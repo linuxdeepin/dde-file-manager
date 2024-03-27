@@ -287,7 +287,7 @@ bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
     const QString &suffix = info->nameOf(NameInfoType::kSuffix);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
         || info->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)
-            || info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
+        || info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
         const QUrl &url = info->urlOf(UrlInfoType::kUrl);
         QMimeType type = info->fileMimeType();
         if (!type.isValid())
@@ -1166,13 +1166,12 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
     }
 
     QDBusMessage message = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
-                                                      APPEARANCE_PATH,
-                                                      APPEARANCE_SERVICE,
-                                                      "Set");
+                                                          APPEARANCE_PATH,
+                                                          APPEARANCE_SERVICE,
+                                                          "Set");
     message.setArguments({ "greeterbackground", pictureFilePath });
     QDBusConnection::sessionBus().asyncCall(message);
     qCInfo(logDFMBase) << "setgreeterbackground calls Appearance Set";
-
 
     QDBusMessage msgIntrospect = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
                                                                 APPEARANCE_PATH,
@@ -1279,7 +1278,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     // 获取当前配置
     bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
     if (!alltotrash)
-        return info ? info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool(): isLocalDevice(url);
+        return info ? info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : isLocalDevice(url);
     if (!url.isValid())
         return false;
 
@@ -1327,7 +1326,7 @@ QString FileUtils::normalPathToTrash(const QString &normal)
 bool FileUtils::supportLongName(const QUrl &url)
 {
     const static QList<QString> datas {
-        "vfat", "exfat", "ntfs", "fuseblk"
+        "vfat", "exfat", "ntfs", "fuseblk", "fuse.dlnfs"
     };
 
     const QString &fileSystem = dfmio::DFMUtils::fsTypeFromUrl(url);

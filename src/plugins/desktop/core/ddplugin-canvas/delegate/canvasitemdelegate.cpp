@@ -151,7 +151,7 @@ QWidget *CanvasItemDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 {
     Q_UNUSED(index);
     auto editor = new ItemEditor(parent);
-    if (FileUtils::supportLongName(index.data(Global::ItemRoles::kItemUrlRole).toUrl()))
+    if (FileUtils::supportLongName(this->parent()->model()->rootUrl()))
         editor->setCharCountLimit();
     connect(editor, &ItemEditor::inputFocusOut, this, &CanvasItemDelegate::commitDataAndCloseEditor);
     editor->setOpacity(isTransparent(index) ? 0.3 : 1);
@@ -198,12 +198,12 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 
     QString suffix = index.data(Global::ItemRoles::kItemFileSuffixOfRenameRole).toString();
     fmDebug() << "Display" << index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
-             << "FileName" << index.data(Global::ItemRoles::kItemNameRole).toString()
-             << "FileNameofrenmae" << index.data(Global::ItemRoles::kItemFileNameOfRenameRole).toString()
-             << "BaseName" << index.data(Global::ItemRoles::kItemFileBaseNameRole).toString()
-             << "BaseNameofrename" << index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString()
-             << "suffix" << index.data(Global::ItemRoles::kItemFileSuffixRole).toString()
-             << "suffixofrename" << suffix;
+              << "FileName" << index.data(Global::ItemRoles::kItemNameRole).toString()
+              << "FileNameofrenmae" << index.data(Global::ItemRoles::kItemFileNameOfRenameRole).toString()
+              << "BaseName" << index.data(Global::ItemRoles::kItemFileBaseNameRole).toString()
+              << "BaseNameofrename" << index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString()
+              << "suffix" << index.data(Global::ItemRoles::kItemFileSuffixRole).toString()
+              << "suffixofrename" << suffix;
     if (showSuffix) {
         QString name = index.data(Global::ItemRoles::kItemFileNameOfRenameRole).toString();
         itemEditor->setMaximumLength(NAME_MAX);
