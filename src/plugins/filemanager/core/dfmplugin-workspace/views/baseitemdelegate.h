@@ -108,6 +108,10 @@ public:
 
     virtual QRect getRectOfItem(RectOfItemType type, const QModelIndex &index) const;
 
+    virtual bool itemExpanded();
+    virtual QRect expandItemRect();
+    virtual QModelIndex expandedIndex();
+
     QModelIndex editingIndex() const;
 
     QWidget *editingIndexWidget() const;
