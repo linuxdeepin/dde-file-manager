@@ -39,6 +39,7 @@ public:
 
 private:
     void initUI();
+    void initUiForSizeMode();
     void initConnect();
 
 signals:

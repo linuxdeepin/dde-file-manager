@@ -6,14 +6,15 @@
 
 #include <dfm-framework/event/event.h>
 
-#include <DIconButton>
-#include <DLabel>
-
-#include <QVBoxLayout>
-#include <QSpacerItem>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
+#include <DIconButton>
+#include <DLabel>
+#include <DFontSizeManager>
+
+#include <QVBoxLayout>
+#include <QSpacerItem>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
@@ -66,14 +67,10 @@ void VaultActiveStartView::initUi()
 
 void VaultActiveStartView::initUiForSizeMode()
 {
-#ifdef DTKWIDGET_CLASS_DSizeMode1
-    QFont font = titleLabel->font();
-    font.setPixelSize(DSizeModeHelper::element(13, 16));
-    titleLabel->setFont(font);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    DFontSizeManager::instance()->bind(titleLabel, DSizeModeHelper::element(DFontSizeManager::SizeType::T7, DFontSizeManager::SizeType::T5), QFont::Medium);
 #else
-    QFont font = titleLabel->font();
-    font.setPixelSize(16);
-    titleLabel->setFont(font);
+    DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::SizeType::T5, QFont::Medium);
 #endif
 }
 
