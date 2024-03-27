@@ -96,7 +96,6 @@ void VaultActiveFinishedView::initUi()
     QVBoxLayout *play3 = new QVBoxLayout(widgetThree);
     play3->setContentsMargins(0, 15, 0, 0);
     play3->addWidget(encryptFinishedImageLabel);
-    play3->addSpacing(10);
     play3->addWidget(tipsThree);
 
     QVBoxLayout *m_pLay = new QVBoxLayout(this);
