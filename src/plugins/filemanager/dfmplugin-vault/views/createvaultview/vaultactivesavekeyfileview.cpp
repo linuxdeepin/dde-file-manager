@@ -20,6 +20,7 @@
 #    include <DSizeMode>
 #endif
 #include <DFontSizeManager>
+#include <DPushButton>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -85,7 +86,8 @@ void VaultActiveSaveKeyFileView::initUI()
     group->addButton(otherPathRadioBtn, 2);
 
     // 下一步按钮
-    nextBtn = new DPushButton(tr("Next"), this);
+    nextBtn = new DSuggestButton(tr("Next"), this);
+    nextBtn->setFixedWidth(200);
 
     RadioFrame *frame = new RadioFrame;
 
@@ -152,7 +154,7 @@ void VaultActiveSaveKeyFileView::initUI()
     vlayout1->addStretch(2);
     vlayout1->addLayout(vlayout3);
     vlayout1->addStretch(2);
-    vlayout1->addWidget(nextBtn);
+    vlayout1->addWidget(nextBtn, 0, Qt::AlignCenter);
 
     setLayout(vlayout1);
     initUiForSizeMode();

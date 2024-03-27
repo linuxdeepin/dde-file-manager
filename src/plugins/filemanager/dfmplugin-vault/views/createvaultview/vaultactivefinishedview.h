@@ -8,7 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dtkwidget_global.h>
-#include <DPushButton>
+#include <DSuggestButton>
 
 #include <polkit-qt5-1/PolkitQt1/Authority>
 
@@ -68,7 +68,7 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *encryptFinishedImageLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *tipsThree { nullptr };
 
-    DTK_WIDGET_NAMESPACE::DPushButton *finishedBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DSuggestButton *finishedBtn { nullptr };
 
     QVBoxLayout *vLayout { nullptr };
 

@@ -43,17 +43,18 @@ void VaultActiveStartView::initUi()
     pLabel3->setPixmap(QIcon::fromTheme("dfm_vault_active_start").pixmap(88, 100));
     pLabel3->setAlignment(Qt::AlignHCenter);
 
-    startBtn = new DPushButton(tr("Create"), this);
+    startBtn = new DSuggestButton(tr("Create"), this);
+    startBtn->setFixedWidth(200);
 
     QVBoxLayout *play = new QVBoxLayout(this);
     play->setMargin(0);
     play->addWidget(titleLabel);
     play->addSpacing(5);
-    play->addWidget(pLabel2);
-    play->addSpacing(15);
     play->addWidget(pLabel3);
+    play->addSpacing(15);
+    play->addWidget(pLabel2);
     play->addStretch();
-    play->addWidget(startBtn);
+    play->addWidget(startBtn, 0, Qt::AlignCenter);
 
     initUiForSizeMode();
 
