@@ -258,7 +258,10 @@ void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, c
     Q_UNUSED(ok)
     Q_UNUSED(errMsg)
 
-    if (!destUrls.isEmpty())
+    // if paste files from revocation operate, these files should not be selected.
+    QList<QUrl> filterUrls = WorkspaceHelper::instance()->filterUndoFiles(destUrls);
+
+    if (!filterUrls.isEmpty())
         WorkspaceHelper::instance()->laterRequestSelectFiles(destUrls);
 }
 
