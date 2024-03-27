@@ -777,9 +777,10 @@ void FileDialog::selectNameFilterByIndex(int index)
     QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
 
     if (d->acceptMode == QFileDialog::AcceptSave && !newNameFilters.isEmpty()) {
-        DFMBASE_NAMESPACE::DMimeDatabase db;
         QString fileName = statusBar()->lineEdit()->text();
-        const QString fileNameExtension = db.suffixForFileName(fileName);
+        DFMBASE_NAMESPACE::DMimeDatabase db;
+        int dotIndex = fileName.lastIndexOf(".");
+        const QString &fileNameExtension = dotIndex > 0 ? fileName.mid(dotIndex + 1) : db.suffixForFileName(fileName);
         QString newNameFilterExtension { CoreHelper::findExtensioName(fileName, newNameFilters, &db) };
 
         if (!newNameFilters.isEmpty())
