@@ -97,6 +97,9 @@ public:
     void setNotSupportTreeView(const QString &scheme);
     bool supportTreeView(const QString &scheme) const;
 
+    void setUndoFiles(const QList<QUrl> &files);
+    QList<QUrl> filterUndoFiles(const QList<QUrl> &urlList) const;
+
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
@@ -124,6 +127,8 @@ private:
 
     QList<QString> registeredFileViewScheme {};
     QList<QString> notSupportTreeView{};
+
+    QList<QUrl> undoFiles {};
 
     Q_DISABLE_COPY(WorkspaceHelper)
 };

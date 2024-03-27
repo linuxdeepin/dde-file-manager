@@ -402,6 +402,26 @@ bool WorkspaceHelper::supportTreeView(const QString &scheme) const
     return !notSupportTreeView.contains(scheme);
 }
 
+void WorkspaceHelper::setUndoFiles(const QList<QUrl> &files)
+{
+    undoFiles = files;
+}
+
+QList<QUrl> WorkspaceHelper::filterUndoFiles(const QList<QUrl> &urlList) const
+{
+    QList<QUrl> urls(urlList);
+    for (auto url : urlList) {
+        for (auto undoFile : undoFiles) {
+            if (UniversalUtils::urlEquals(url, undoFile)) {
+                urls.removeAll(url);
+                break;
+            }
+        }
+    }
+
+    return urls;
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;

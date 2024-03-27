@@ -241,7 +241,7 @@ void FileOperatorHelper::undoFiles(const FileView *view)
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     dpfSignalDispatcher->publish(GlobalEventType::kRevocation,
-                                 windowId, nullptr);
+                                 windowId, undoCallBack);
 }
 
 void FileOperatorHelper::moveToTrash(const FileView *view)
@@ -415,6 +415,7 @@ FileOperatorHelper::FileOperatorHelper(QObject *parent)
     : QObject(parent)
 {
     callBack = std::bind(&FileOperatorHelper::callBackFunction, this, std::placeholders::_1);
+    undoCallBack = std::bind(&FileOperatorHelper::undoCallBackFunction, this, std::placeholders::_1);
 }
 
 void FileOperatorHelper::callBackFunction(const AbstractJobHandler::CallbackArgus args)
@@ -456,4 +457,19 @@ void FileOperatorHelper::callBackFunction(const AbstractJobHandler::CallbackArgu
     default:
         break;
     }
+}
+
+void FileOperatorHelper::undoCallBackFunction(QSharedPointer<AbstractJobHandler> handler)
+{
+    connect(handler.data(), &AbstractJobHandler::finishedNotify, this, [ = ](const JobInfoPointer jobInfo){
+        AbstractJobHandler::JobType type = static_cast<AbstractJobHandler::JobType>(jobInfo->value(AbstractJobHandler::kJobtypeKey).toInt());
+        if (type == AbstractJobHandler::JobType::kCutType) {
+            QList<QUrl> targetUrls(jobInfo->value(AbstractJobHandler::kCompleteTargetFilesKey).value<QList<QUrl>>());
+            WorkspaceHelper::instance()->setUndoFiles(targetUrls);
+        }
+    });
+
+    connect(handler.data(), &AbstractJobHandler::workerFinish, this, [ = ](){
+        WorkspaceHelper::instance()->setUndoFiles({});
+    });
 }
