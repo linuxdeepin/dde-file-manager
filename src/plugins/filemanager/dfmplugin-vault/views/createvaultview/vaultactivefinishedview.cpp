@@ -69,7 +69,7 @@ void VaultActiveFinishedView::initUi()
 
     // 加密完成完成图片
     encryptFinishedImageLabel = new DLabel(this);
-    encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(128, 128));
+    encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(100, 100));
     encryptFinishedImageLabel->setAlignment(Qt::AlignHCenter);
     // 加密完成提示
     tipsThree = new DLabel(tr("The setup is complete"), this);
@@ -103,11 +103,10 @@ void VaultActiveFinishedView::initUi()
     QVBoxLayout *m_pLay = new QVBoxLayout(this);
     m_pLay->setMargin(0);
     m_pLay->addWidget(titleLabel);
-    m_pLay->addSpacing(10);
     m_pLay->addWidget(widgetOne);
     m_pLay->addWidget(widgetTow, 0, Qt::AlignHCenter);
     m_pLay->addWidget(widgetThree);
-    m_pLay->addStretch();
+    m_pLay->addSpacing(40);
     m_pLay->addWidget(finishedBtn, 0, Qt::AlignCenter);
 
     widgetTow->setVisible(false);
