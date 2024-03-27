@@ -8,7 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dtkwidget_global.h>
-#include <DPushButton>
+#include <DSuggestButton>
 
 #include <QWidget>
 
@@ -87,7 +87,7 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *transEncryptionText { nullptr };
     QVBoxLayout *transEncryptTextLay { nullptr };
 
-    DTK_WIDGET_NAMESPACE::DPushButton *nextBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DSuggestButton *nextBtn { nullptr };
 
     QGridLayout *gridLayout { nullptr };
 };

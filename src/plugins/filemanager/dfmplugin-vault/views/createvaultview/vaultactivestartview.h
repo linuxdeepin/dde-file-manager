@@ -9,6 +9,7 @@
 
 #include <DPushButton>
 #include <DLabel>
+#include <DSuggestButton>
 
 #include <QWidget>
 
@@ -32,7 +33,7 @@ private:
 
 private:
     DTK_WIDGET_NAMESPACE::DLabel *titleLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DPushButton *startBtn { nullptr };   //! 开启包厢按钮
+    DTK_WIDGET_NAMESPACE::DSuggestButton *startBtn { nullptr };   //! 开启包厢按钮
 };
 }
 #endif   // VAULTACTIVESTARTVIEW_H

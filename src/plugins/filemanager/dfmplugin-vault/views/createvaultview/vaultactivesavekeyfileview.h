@@ -8,7 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dtkwidget_global.h>
-#include <DPushButton>
+#include <DSuggestButton>
 
 #include <QFrame>
 #include <QPushButton>
@@ -85,7 +85,7 @@ private:
     //! 用户自定义保存路径编辑框
     DTK_WIDGET_NAMESPACE::DFileChooserEdit *selectfileSavePathEdit { nullptr };
     //! 保存密钥文件并进行下一步操作的按钮
-    DTK_WIDGET_NAMESPACE::DPushButton *nextBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DSuggestButton *nextBtn { nullptr };
     //! 保存密钥权限提示
     DTK_WIDGET_NAMESPACE::DLabel *otherRadioBtnHitMsg { nullptr };
     QButtonGroup *group { nullptr };

@@ -76,7 +76,8 @@ void VaultActiveFinishedView::initUi()
     tipsThree->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱按钮
-    finishedBtn = new DPushButton(tr("Encrypt"), this);
+    finishedBtn = new DSuggestButton(tr("Encrypt"), this);
+    finishedBtn->setFixedWidth(200);
 
     // 布局
     widgetOne = new QWidget(this);
@@ -107,7 +108,7 @@ void VaultActiveFinishedView::initUi()
     m_pLay->addWidget(widgetTow, 0, Qt::AlignHCenter);
     m_pLay->addWidget(widgetThree);
     m_pLay->addStretch();
-    m_pLay->addWidget(finishedBtn);
+    m_pLay->addWidget(finishedBtn, 0, Qt::AlignCenter);
 
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);

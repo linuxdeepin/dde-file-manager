@@ -119,8 +119,10 @@ void VaultRemovePages::showRemoveProgressWidget()
     setTitle(progressView->titleText());
     addContent(progressView);
     QStringList btns = progressView->btnText();
-    if (btns.size() > 0)
+    if (btns.size() > 0) {
         addButton(btns[0], true, ButtonType::ButtonRecommend);
+        getButton(0)->setFixedWidth(200);
+    }
 
     connect(progressView, &VaultRemoveProgressView::sigCloseDialog, this, &VaultRemovePages::close);
     connect(progressView, &VaultRemoveProgressView::setBtnEnable, this, &VaultRemovePages::setBtnEnable);

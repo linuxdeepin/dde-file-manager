@@ -80,7 +80,8 @@ void VaultActiveSetUnlockMethodView::initUi()
     transEncryptTextLay->setContentsMargins(10, 0, 0, 0);
     transEncryptTextLay->addWidget(transEncryptionText);
 
-    nextBtn = new DPushButton(tr("Next"), this);
+    nextBtn = new DSuggestButton(tr("Next"), this);
+    nextBtn->setFixedWidth(200);
     nextBtn->setEnabled(false);
 
     gridLayout = new QGridLayout();
@@ -105,7 +106,7 @@ void VaultActiveSetUnlockMethodView::initUi()
     play->addSpacing(15);
     play->addLayout(gridLayout);
     play->addStretch();
-    play->addWidget(nextBtn);
+    play->addWidget(nextBtn, 0, Qt::AlignCenter);
 
     initUiForSizeMode();
 
