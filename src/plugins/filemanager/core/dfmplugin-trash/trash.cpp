@@ -60,7 +60,6 @@ bool Trash::start()
 
 Trash::~Trash()
 {
-    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_Model_EmptyDir", TrashHelper::instance(), &TrashHelper::onTrashEmptyState);
 }
 
 void Trash::onWindowOpened(quint64 windId)
