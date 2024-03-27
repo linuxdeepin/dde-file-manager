@@ -63,11 +63,11 @@
         <file>icons/deepin/builtin/light/icons/no_favorites_yet.svg</file>
         <file>icons/deepin/builtin/texts/dfm_rightview_detail_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_search_button_16px.svg</file>
-        <file>icons/deepin/builtin/texts/dfm_view_filter_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_viewlist_details_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_viewlist_icons_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_viewlist_tree_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_server_collect_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_server_uncollect_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_view_filter_16px.svg</file>
     </qresource>
 </RCC>
