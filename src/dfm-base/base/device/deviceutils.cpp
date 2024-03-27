@@ -713,6 +713,9 @@ QString DeviceUtils::bindPathTransform(const QString &path, bool toDevice)
 
 bool DeviceUtils::isSystemDisk(const QVariantHash &devInfo)
 {
+    if (!devInfo.contains(GlobalServerDefines::DeviceProperty::kHintSystem))
+        return false;
+
     bool isSystem = devInfo.value(GlobalServerDefines::DeviceProperty::kHintSystem).toBool()
             || devInfo.value(GlobalServerDefines::DeviceProperty::kConnectionBus).toString() != "usb";
     if (devInfo.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
