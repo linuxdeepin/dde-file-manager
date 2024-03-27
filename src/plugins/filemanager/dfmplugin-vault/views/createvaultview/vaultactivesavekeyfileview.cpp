@@ -16,6 +16,10 @@
 #include <DLabel>
 #include <DFileChooserEdit>
 #include <DFrame>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
+#include <DFontSizeManager>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -36,7 +40,6 @@ VaultActiveSaveKeyFileView::VaultActiveSaveKeyFileView(QWidget *parent)
 void VaultActiveSaveKeyFileView::initUI()
 {
     titleLabel = new DLabel(this);
-    DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::T7, QFont::Medium);
     titleLabel->setForegroundRole(DPalette::TextTitle);
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setText(tr("Save Recovery Key"));
@@ -152,6 +155,7 @@ void VaultActiveSaveKeyFileView::initUI()
     vlayout1->addWidget(nextBtn);
 
     setLayout(vlayout1);
+    initUiForSizeMode();
 
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultSaveKeyTitle);
@@ -164,6 +168,15 @@ void VaultActiveSaveKeyFileView::initUI()
 #endif
 }
 
+void VaultActiveSaveKeyFileView::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    DFontSizeManager::instance()->bind(titleLabel, DSizeModeHelper::element(DFontSizeManager::SizeType::T7, DFontSizeManager::SizeType::T5), QFont::Medium);
+#else
+    DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::SizeType::T5, QFont::Medium);
+#endif
+}
+
 void VaultActiveSaveKeyFileView::initConnect()
 {
     connect(group, SIGNAL(buttonClicked(QAbstractButton *)), this, SLOT(slotSelectRadioBtn(QAbstractButton *)));
@@ -171,6 +184,12 @@ void VaultActiveSaveKeyFileView::initConnect()
     connect(filedialog, &DFileDialog::fileSelected, this, &VaultActiveSaveKeyFileView::slotSelectCurrentFile);
     connect(nextBtn, &DPushButton::clicked,
             this, &VaultActiveSaveKeyFileView::slotNextBtnClicked);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        initUiForSizeMode();
+    });
+#endif
 }
 
 void VaultActiveSaveKeyFileView::slotNextBtnClicked()

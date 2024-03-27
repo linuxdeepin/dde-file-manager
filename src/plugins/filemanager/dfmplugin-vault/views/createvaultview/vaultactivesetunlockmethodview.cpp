@@ -16,6 +16,7 @@
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
+#include <DFontSizeManager>
 
 #include <QDebug>
 #include <QToolTip>
@@ -126,13 +127,9 @@ void VaultActiveSetUnlockMethodView::initUi()
 void VaultActiveSetUnlockMethodView::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    QFont font = titleLabel->font();
-    font.setPixelSize(DSizeModeHelper::element(13, 16));
-    titleLabel->setFont(font);
+    DFontSizeManager::instance()->bind(titleLabel, DSizeModeHelper::element(DFontSizeManager::SizeType::T7, DFontSizeManager::SizeType::T5), QFont::Medium);
 #else
-    QFont font = titleLabel->font();
-    font.setPixelSize(16);
-    titleLabel->setFont(font);
+    DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::SizeType::T5, QFont::Medium);
 #endif
 }
 
