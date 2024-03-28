@@ -23,9 +23,10 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &DetailSpaceWidget::initUiForSizeMode);
 #endif
+
+    initUiForSizeMode();
     initializeUi();
     initConnect();
-    initUiForSizeMode();
 }
 
 void DetailSpaceWidget::initUiForSizeMode()

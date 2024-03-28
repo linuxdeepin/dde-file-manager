@@ -30,6 +30,9 @@ public:
 public slots:
     void setUrl(const QUrl &url, int widgetFilter);
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     void initInfoUI();
 
