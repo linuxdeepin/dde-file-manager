@@ -1034,7 +1034,7 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
         iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
 #endif
 
-    if (itemDelegate()->itemExpanded() && itemDelegate()->expandItemRect().contains(pos)) {
+    if (itemDelegate() && itemDelegate()->itemExpanded() && itemDelegate()->expandItemRect().contains(pos)) {
         return itemDelegate()->expandedIndex();
     }
 
