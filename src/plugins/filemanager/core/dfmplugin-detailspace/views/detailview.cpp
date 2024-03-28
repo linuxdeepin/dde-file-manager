@@ -30,7 +30,11 @@ static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPDETAILSPACE_NAME
 DetailView::DetailView(QWidget *parent)
     : DFrame(parent)
 {
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &DetailView::initUiForSizeMode);
+#endif
     initInfoUI();
+    initUiForSizeMode();
 }
 
 DetailView::~DetailView()
@@ -100,6 +104,19 @@ void DetailView::setUrl(const QUrl &url, int widgetFilter)
     createBasicWidget(url, widgetFilter);
 }
 
+void DetailView::initUiForSizeMode()
+{
+    if (!scrollArea)
+        return;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    scrollArea->setFixedWidth(DSizeModeHelper::element(254, 282));
+    scrollArea->setContentsMargins(DSizeModeHelper::element(2, 0),0,DSizeModeHelper::element(0, 6),0);
+#else
+    scrollArea->setFixedWidth(282);
+    scrollArea->setContentsMargins(0,0,6,0);
+#endif
+}
+
 void DetailView::initInfoUI()
 {
     scrollArea = new QScrollArea(this);
@@ -115,6 +132,7 @@ void DetailView::initInfoUI()
     vLayout = new QVBoxLayout(this);
     vLayout->addStretch();
     expandFrame->setLayout(vLayout);
+    vLayout->setContentsMargins(0,0,8,0);
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(scrollArea, Qt::AlignCenter);
