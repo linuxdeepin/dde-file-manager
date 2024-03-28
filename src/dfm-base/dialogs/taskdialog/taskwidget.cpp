@@ -24,7 +24,8 @@
 DWIDGET_USE_NAMESPACE
 using namespace dfmbase;
 
-static constexpr int kMsgLabelWidth { 350 };
+static constexpr int kMsgLabelWidth { 390 };
+static constexpr int kMsgLabelHoverWidth { 452 };
 static constexpr int kSpeedLabelWidth { 100 };
 static constexpr uint8_t kVirtualValue { 30 };
 static constexpr char kBtnPropertyActionName[] { "btnType" };
@@ -690,8 +691,9 @@ void TaskWidget::onMouseHover(const bool hover)
 
     lbSpeed->setHidden(hover);
     lbRmTime->setHidden(hover);
-
-    update(rect());
+    lbSrcPath->setFixedWidth(hover ? kMsgLabelHoverWidth : kMsgLabelWidth);
+    lbDstPath->setFixedWidth(hover ? kMsgLabelHoverWidth : kMsgLabelWidth);
+    adjustSize();
 }
 
 QString TaskWidget::formatTime(qint64 second) const
