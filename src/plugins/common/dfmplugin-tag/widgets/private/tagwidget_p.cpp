@@ -36,6 +36,7 @@ TagWidgetPrivate::~TagWidgetPrivate()
 
 void TagWidgetPrivate::initializeUI()
 {
+    q->setFrameShape(QFrame::NoFrame);
     mainLayout = new QVBoxLayout(q);
     q->setLayout(mainLayout);
     QString name = tr("Tag");

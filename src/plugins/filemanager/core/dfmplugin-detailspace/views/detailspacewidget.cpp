@@ -86,10 +86,8 @@ void DetailSpaceWidget::initializeUi()
     QHBoxLayout *rvLayout = new QHBoxLayout(this);
     rvLayout->setMargin(0);
     detailView = new DetailView(this);
-    DFrame *rightDetailVLine = new DFrame(this);
-    rightDetailVLine->setFrameShape(QFrame::VLine);
-    rvLayout->addWidget(rightDetailVLine);
-    rvLayout->addWidget(detailView, 1);
+    rvLayout->addWidget(detailView);
+    setLayout(rvLayout);
 }
 
 void DetailSpaceWidget::initConnect()
