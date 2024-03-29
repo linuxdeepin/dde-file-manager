@@ -25,13 +25,21 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <linux/version.h>
 
 DAEMONPMOUNTCONTROL_USE_NAMESPACE
+
+#define ENABLE_CIFS_SEP (LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 1))
 
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
 
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
-    : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) {}
+    : AbstractMountHelper(context), d(new CifsMountHelperPrivate())
+{
+#if !ENABLE_CIFS_SEP
+    fmWarning() << "sep param is not supported in current kernel.";
+#endif
+}
 
 QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
 {
@@ -293,10 +301,12 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts, char *sep)
     using namespace MountOptionsField;
     QStringList params;
 
+#if ENABLE_CIFS_SEP
     // `sep` is an implicit param in cifs, which value is a char,
     // and will be used to seperate params that API passed in.
     // and must be at the FIRST position.
     params.append("sep=");
+#endif
 
     if (opts.contains(kUser) && opts.contains(kPasswd) && !opts.value(kUser).toString().isEmpty()
         && !opts.value(kPasswd).toString().isEmpty()) {
@@ -346,6 +356,8 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts, char *sep)
 QString CifsMountHelper::joinWithUniqueSep(const QStringList &params, char *sep)
 {
     Q_ASSERT(sep);
+
+#if ENABLE_CIFS_SEP
     // some user may have a password which contains the comma,
     // comma is the default seperator when cifs parse params.
     // must find an unique char in all param string as the seperator.
@@ -359,6 +371,10 @@ QString CifsMountHelper::joinWithUniqueSep(const QStringList &params, char *sep)
         *sep = _sep;
         break;
     }
+#else
+    *sep = ',';
+#endif
+
     return params.join(*sep);
 }
 
