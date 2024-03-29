@@ -93,8 +93,9 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     //  /root/.gvfs/smb-share...../helloworld.txt
     //  /media/user/smbmounts/smb-share...../helloworld.txt
     //  ======>  helloworld.txt
-    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/.*/|^/root/.gvfs/.*/|^/media/.*/smbmounts/.*/)");
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*/|^/root/.gvfs/[^/]*/|^/media/.*/smbmounts/[^/]*/)");
     QString fileName = fullPath.remove(prefix);
+    fileName.chop(1);   // remove last '/'.
 
     smbUrl.setHost(host);
     fileName.isEmpty() ? smbUrl.setPath("/" + share) : smbUrl.setPath("/" + share + "/" + fileName);

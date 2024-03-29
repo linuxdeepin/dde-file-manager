@@ -405,7 +405,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
         QString mimetype = d->getFileMimetype(fileUrls.first());
-        QtConcurrent::run([this, fileUrls, desktopFile, mimetype](){
+        QtConcurrent::run([this, fileUrls, desktopFile, mimetype]() {
             d->asyncAddRecentFile(desktopFile, fileUrls, mimetype);
         });
     }
@@ -1057,13 +1057,13 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
                     isOpenNow = true;
                     mimeType = QString();
                     mountOpenInfos.insert(defaultDesktopFile,
-                                              DeviceUtils::getSambaFileUriFromNative(fileUrl).toString());
+                                          DeviceUtils::getSambaFileUriFromNative(fileUrl).toString());
                     mountMineTypes.insert(DeviceUtils::getSambaFileUriFromNative(fileUrl).toString(),
-                                              QString("inode/directory"));
+                                          QString("inode/directory"));
                 } else {
                     qCWarning(logDFMBase) << "no default application for" << fileUrl;
-                    continue;
                 }
+                continue;
             }
 
             if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimeType != "inode/directory") {
@@ -1105,7 +1105,6 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         paths << url.path();
     }
 
-
     if (MimesAppsManager::getDefaultAppByFileName(transUrls.first().path()) == "org.gnome.font-viewer.desktop") {
         QProcess::startDetached("gio", QStringList() << "open" << paths);
         QTimer::singleShot(200, [=] {
@@ -1138,10 +1137,9 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QMultiMap<QString, QString> &inf
             // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
             // the correct approach: let the app add it to the recent list.
             // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-            QtConcurrent::run([urls, key, mimeTypes](){
+            QtConcurrent::run([urls, key, mimeTypes]() {
                 asyncAddRecentFile(key, urls, mimeTypes);
             });
-
         }
     }
 
