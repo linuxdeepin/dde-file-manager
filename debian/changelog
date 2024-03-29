@@ -1,3 +1,10 @@
+dde-file-manager (6.0.44) unstable; urgency=medium
+
+  * fix cifs mount error.
+  * 
+
+ -- xushitong <xushitong@uniontech.com>  Fri, 29 Mar 2024 13:22:35 +0800
+
 dde-file-manager (6.0.43) unstable; urgency=medium
 
   * update file manager baseline version to V6.0.43
