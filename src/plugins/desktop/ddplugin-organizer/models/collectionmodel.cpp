@@ -22,6 +22,8 @@
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
+inline constexpr char kDdeDesktopOrganizer[] { "dde-desktop-organizer" };
+
 CollectionModelPrivate::CollectionModelPrivate(CollectionModel *qq)
     : QObject(qq), q(qq)
 {
@@ -482,9 +484,8 @@ QMimeData *CollectionModel::mimeData(const QModelIndexList &indexes) const
 
     for (const QModelIndex &idx : indexes)
         urls << fileUrl(idx);
-
+    mm->setText(kDdeDesktopOrganizer);
     mm->setUrls(urls);
-
     // set user id
     SysInfoUtils::setMimeDataUserId(mm);
 

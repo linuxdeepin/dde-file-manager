@@ -37,6 +37,8 @@ DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
+inline constexpr char kDdeFileManager[] { "dde-fileManager" };
+
 FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel(parent)
 
@@ -452,7 +454,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
     }
 
     QMimeData *data = new QMimeData();
-
+    data->setText(kDdeFileManager);
     data->setUrls(urls);
     SysInfoUtils::setMimeDataUserId(data);
 
