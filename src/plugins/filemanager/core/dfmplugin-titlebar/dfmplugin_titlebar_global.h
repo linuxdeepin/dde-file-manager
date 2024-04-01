@@ -23,6 +23,14 @@
 DPTITLEBAR_BEGIN_NAMESPACE
 DFM_LOG_USE_CATEGORY(DPTITLEBAR_NAMESPACE)
 
+inline constexpr int kIconLeftPadding { 9 };
+inline constexpr int kTextLeftPadding { 32 };
+inline constexpr int kIconWidth { 14 };
+inline constexpr int kIconHeight { 14 };
+inline constexpr int kItemHeight { 30 };
+inline constexpr int kItemMargin { 8 };
+inline constexpr int kCompleterMaxHeight { 260 };
+
 namespace CustomKey {
 inline constexpr char kUrl[] { "CrumbData_Key_Url" };
 inline constexpr char kDisplayText[] { "CrumbData_Key_DisplayText" };

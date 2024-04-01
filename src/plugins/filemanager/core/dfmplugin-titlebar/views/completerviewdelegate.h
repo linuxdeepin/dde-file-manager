@@ -7,15 +7,15 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <QStyledItemDelegate>
+#include <DStyledItemDelegate>
 
 namespace dfmplugin_titlebar {
 
-class CompleterViewDelegate : public QStyledItemDelegate
+class CompleterViewDelegate : public DTK_WIDGET_NAMESPACE::DStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit CompleterViewDelegate(QObject *parent = nullptr);
+    explicit CompleterViewDelegate(QAbstractItemView *parent = nullptr);
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
                const QModelIndex &index) const override;

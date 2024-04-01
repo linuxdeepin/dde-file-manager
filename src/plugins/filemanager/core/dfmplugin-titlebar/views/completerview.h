@@ -7,11 +7,11 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <QListView>
-#include <QFileSystemModel>
+#include <DListView>
+#include <QCompleter>
 
 namespace dfmplugin_titlebar {
-class CompleterView : public QListView
+class CompleterView : public DTK_WIDGET_NAMESPACE::DListView
 {
     Q_OBJECT
 public:
