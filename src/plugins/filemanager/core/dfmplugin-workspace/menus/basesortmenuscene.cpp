@@ -225,13 +225,6 @@ QMap<QString, QStringList> BaseSortMenuScenePrivate::secondaryMenuRule()
                    QStringList { "open-with-app",
                                  "open-with-custom" });   // 打开方式
 
-        // empty
-        ret.insert("new-document",
-                   QStringList { "new-office-text",
-                                 "new-spreadsheets",
-                                 "new-presentation",
-                                 "new-plain-text" });
-
         // empty trash
         ret.insert("display-as",
                    QStringList { "display-as-icon",
