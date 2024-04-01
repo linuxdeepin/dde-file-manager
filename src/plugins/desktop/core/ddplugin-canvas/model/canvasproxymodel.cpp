@@ -20,6 +20,8 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
+inline constexpr char kDdeDestop[] { "dde-desktop" };
+
 CanvasProxyModelPrivate::CanvasProxyModelPrivate(CanvasProxyModel *qq)
     : QObject(qq), q(qq)
 {
@@ -715,7 +717,7 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
     } else {
         mimedt->setUrls(urls);
     }
-
+    mimedt->setText(kDdeDestop);
     // set user id
     SysInfoUtils::setMimeDataUserId(mimedt);
 
