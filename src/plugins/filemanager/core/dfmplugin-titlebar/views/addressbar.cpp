@@ -56,6 +56,7 @@ void AddressBarPrivate::initializeUi()
 
     // Completer List
     completerView = new CompleterView(q);
+    cpItemDelegate = new CompleterViewDelegate(completerView);
 
     timer.setInterval(200);
     timer.setSingleShot(true);
@@ -189,7 +190,7 @@ void AddressBarPrivate::setCompleter(QCompleter *c)
     urlCompleter->setCompletionMode(QCompleter::PopupCompletion);
     urlCompleter->setCaseSensitivity(Qt::CaseSensitive);
     urlCompleter->setMaxVisibleItems(10);
-    completerView->setItemDelegate(&cpItemDelegate);
+    completerView->setItemDelegate(cpItemDelegate);
     completerView->setAttribute(Qt::WA_InputMethodEnabled);
 
     connect(urlCompleter, QOverload<const QString &>::of(&QCompleter::activated),
@@ -257,6 +258,11 @@ void AddressBarPrivate::doComplete()
         && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control)   //键盘剪切事件
         && q->cursorPosition() == q->text().length()) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
+    }
+    // bug: 247167
+    if (urlCompleter->completionCount() > 0) {
+        int h { urlCompleter->completionCount() * kItemHeight + kItemMargin * 2 };
+        completerView->setFixedHeight(h < kCompleterMaxHeight ? h : kCompleterMaxHeight);
     }
     completerView->show();
     completerView->activateWindow();
@@ -475,7 +481,6 @@ void AddressBarPrivate::insertCompletion(const QString &completion)
     if (urlCompleter->widget() != q) {
         return;
     }
-
     if (inputIsIpAddress) {
         q->setText(completion);
     } else {

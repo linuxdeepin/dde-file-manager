@@ -8,14 +8,13 @@
 
 using namespace dfmplugin_titlebar;
 CompleterView::CompleterView(QWidget *parent)
-    : QListView(parent)
+    : DListView(parent)
 {
     overrideWindowFlags(Qt::Tool /*| Qt::WindowDoesNotAcceptFocus*/);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
+    setViewportMargins(0, kItemMargin, -verticalScrollBar()->sizeHint().width(), kItemMargin);
     setMouseTracking(true);
-
     //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复，设置这个属性listview就可以拥有地址兰的输入法
     setAttribute(Qt::WA_InputMethodEnabled);
 }

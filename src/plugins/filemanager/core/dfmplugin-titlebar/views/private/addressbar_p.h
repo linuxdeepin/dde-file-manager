@@ -60,7 +60,7 @@ class AddressBarPrivate : public QObject
     CompleterViewModel completerModel;
     CompleterView *completerView { nullptr };
     QCompleter *urlCompleter { nullptr };
-    CompleterViewDelegate cpItemDelegate;
+    CompleterViewDelegate *cpItemDelegate { nullptr };
     // inputMethodEvent中获取不到选中的内容，故缓存光标开始位置以及选中长度
     int selectPosStart { 0 };
     int selectLength { 0 };

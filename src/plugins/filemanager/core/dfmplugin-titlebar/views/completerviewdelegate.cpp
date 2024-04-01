@@ -3,24 +3,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "completerviewdelegate.h"
+#include "models/completerviewmodel.h"
+#include "completerview.h"
 
 #include <QPainter>
-
-inline constexpr int kIconLeftPadding = { 9 };
-inline constexpr int kTextLeftPadding = { 32 };
-inline constexpr int kIconWidth = { 14 };
-inline constexpr int kIconHeight = { 14 };
-inline constexpr int kItemHeight = { 30 };
+#include <QCompleter>
 
 using namespace dfmplugin_titlebar;
+DWIDGET_USE_NAMESPACE
 
-CompleterViewDelegate::CompleterViewDelegate(QObject *parent)
-    : QStyledItemDelegate(parent)
+CompleterViewDelegate::CompleterViewDelegate(QAbstractItemView *parent)
+    : DStyledItemDelegate(parent)
 {
 }
 
 void CompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    if (!index.isValid())
+        return DStyledItemDelegate::paint(painter, option, index);
+    QStyleOptionViewItem opt = option;
+    DStyledItemDelegate::initStyleOption(&opt, index);
+    painter->setRenderHint(QPainter::Antialiasing);
+
     // prepare
     QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled)
             ? QPalette::Normal
