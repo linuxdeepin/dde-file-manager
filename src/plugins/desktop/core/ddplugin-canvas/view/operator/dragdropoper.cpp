@@ -78,7 +78,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
     updateDragHover(event->pos());
 
     auto pos = event->pos();
-    auto hoverIdx = view->indexAt(pos);
+    auto hoverIdx = view->baseIndexAt(pos);
     // extend
     if (hoverIdx.isValid() && view->d->hookIfs) {
         QUrl hoverUrl = view->model()->fileUrl(hoverIdx);
@@ -132,7 +132,7 @@ bool DragDropOper::drop(QDropEvent *event)
         QVariantHash ext;
         ext.insert("QDropEvent", reinterpret_cast<qlonglong>(event));
         QUrl dropUrl;
-        QModelIndex dropIndex = view->indexAt(event->pos());
+        QModelIndex dropIndex = view->baseIndexAt(event->pos());
         if (dropIndex.isValid())
             dropUrl = view->model()->fileUrl(dropIndex);
         else
@@ -302,7 +302,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
 {
     //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
     {
-        QModelIndex index = view->indexAt(event->pos());
+        QModelIndex index = view->baseIndexAt(event->pos());
         if (index.isValid()) {
             QUrl targetItem = view->model()->fileUrl(index);
             auto itemInfo = FileCreator->createFileInfo(targetItem);
@@ -364,9 +364,9 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
 
     auto dropGridPos = view->d->gridAt(event->pos());
     auto dropRect = view->d->itemRect(dropGridPos);
-    auto dropIndex = view->indexAt(dropRect.center());
+    auto dropIndex = view->baseIndexAt(dropRect.center());
 
-    auto targetIndex = view->indexAt(event->pos());
+    auto targetIndex = view->baseIndexAt(event->pos());
     bool dropOnSelf = targetIndex.isValid() ? view->selectionModel()->selectedIndexesCache().contains(targetIndex) : false;
 
     // process this case in other drop function(e.g. move) if targetGridPos is used and it is not drop-needed.
@@ -449,7 +449,7 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
     // The purpose is to support dragging a file from a archive to extract it to the dde-filemanager
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
         event->setDropAction(Qt::CopyAction);
-        const QModelIndex &index = view->indexAt(event->pos());
+        const QModelIndex &index = view->baseIndexAt(event->pos());
         auto fileInfo = view->model()->fileInfo(index.isValid() ? index : view->rootIndex());
 
         if (fileInfo && dfmbase::FileUtils::isLocalFile(fileInfo->urlOf(UrlInfoType::kUrl))) {
@@ -469,7 +469,7 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
 bool DragDropOper::dropMimeData(QDropEvent *event) const
 {
     auto model = view->model();
-    auto targetIndex = view->indexAt(event->pos());
+    auto targetIndex = view->baseIndexAt(event->pos());
     bool enableDrop = targetIndex.isValid() ? model->flags(targetIndex) & Qt::ItemIsDropEnabled : model->flags(model->rootIndex()) & Qt::ItemIsDropEnabled;
     if (model->supportedDropActions() & event->dropAction() && enableDrop) {
         preproccessDropEvent(event, event->mimeData()->urls(), targetIndex.isValid() ? model->fileUrl(targetIndex) : model->rootUrl());
@@ -526,7 +526,7 @@ void DragDropOper::updateDragHover(const QPoint &pos)
     //update the old one
     view->update(dragHoverIndex);
 
-    dragHoverIndex = view->indexAt(pos);
+    dragHoverIndex = view->baseIndexAt(pos);
     // update the new one
     view->update(dragHoverIndex);
     return;
