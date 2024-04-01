@@ -36,7 +36,6 @@ TagWidgetPrivate::~TagWidgetPrivate()
 
 void TagWidgetPrivate::initializeUI()
 {
-    q->setFrameShape(QFrame::NoFrame);
     mainLayout = new QVBoxLayout(q);
     q->setLayout(mainLayout);
     QString name = tr("Tag");
@@ -81,6 +80,6 @@ void TagWidgetPrivate::initUiForSizeMode()
     mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 6, 10, 10);
     crumbEdit->setMaximumHeight(DSizeModeHelper::element(50, 50));
     colorListWidget->setFixedWidth(214);
-    q->setFixedHeight(DSizeModeHelper::element(150, kTagWidgetHeight));
+    q->setFixedHeight(DSizeModeHelper::element(kTagWidgetHeight, kTagWidgetHeight));
 #endif
 }

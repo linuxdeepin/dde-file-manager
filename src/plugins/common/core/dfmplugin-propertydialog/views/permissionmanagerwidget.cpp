@@ -194,8 +194,9 @@ void PermissionManagerWidget::initUI()
 
     QFormLayout *formLay = new QFormLayout;
     formLay->setMargin(0);
-    formLay->setContentsMargins(20, 10, 10, 0);
+    formLay->setContentsMargins(10, 10, 10, 0);
     formLay->setLabelAlignment(Qt::AlignLeft);
+    formLay->setSpacing(11);
     formLay->addRow(owner, ownerComboBox);
     formLay->addRow(group, groupComboBox);
     formLay->addRow(other, otherComboBox);
@@ -205,7 +206,7 @@ void PermissionManagerWidget::initUI()
     exeLay->setMargin(0);
     exeLay->setContentsMargins(0, 0, 0, 0);
     exeLay->setSpacing(0);
-    exeLay->addSpacing(102);
+    exeLay->addSpacing(95);
     exeLay->addWidget(executableCheckBox);
     executableFrame->setLayout(exeLay);
 

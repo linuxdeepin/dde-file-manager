@@ -74,7 +74,8 @@ bool Tag::start()
     emit FileTagCacheIns.initLoadTagInfos();
 
     CustomViewExtensionView func { Tag::createTagWidget };
-    dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
+    CustomViewExtensionView func2 { Tag::createTagWidgetForDetailView };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func2, -1);
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "Tag", 0);
 
     QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
@@ -122,6 +123,15 @@ QWidget *Tag::createTagWidget(const QUrl &url)
         return nullptr;
 
     return new TagWidget(url);
+}
+
+QWidget *Tag::createTagWidgetForDetailView(const QUrl &url)
+{
+    if (!TagManager::instance()->canTagFile(url))
+        return nullptr;
+    TagWidget *tagWidget = new TagWidget(url);
+    tagWidget->setFrameShape(QFrame::NoFrame);
+    return tagWidget;
 }
 
 void Tag::installToSideBar()

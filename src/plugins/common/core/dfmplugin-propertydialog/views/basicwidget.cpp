@@ -22,8 +22,8 @@
 #include <QSet>
 #include <QDBusInterface>
 
-static constexpr int kSpacingHeight { 16 };
-static constexpr int kLeftContentsMargins { 15 };
+static constexpr int kSpacingHeight { 2 };
+static constexpr int kLeftContentsMargins { 0 };
 static constexpr int kRightContentsMargins { 5 };
 static constexpr int kFrameWidth { 360 };
 static constexpr int kItemWidth { 340 };
@@ -134,9 +134,9 @@ void BasicWidget::basicExpand(const QUrl &url)
 
     DLabel *label = new DLabel(frameMain);
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    label->setFixedWidth(DSizeModeHelper::element(80, 80));
+    label->setFixedWidth(DSizeModeHelper::element(90, 90));
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [label, this]() {
-        label->setFixedWidth(DSizeModeHelper::element(80, 80));
+        label->setFixedWidth(DSizeModeHelper::element(90, 90));
     });
 #else
     label->setFixedWidth(80);
@@ -151,7 +151,7 @@ void BasicWidget::basicExpand(const QUrl &url)
     tempFrame->setFixedWidth(kItemWidth);
 
     layoutMain = new QGridLayout;
-    layoutMain->setContentsMargins(kLeftContentsMargins, 15, 0, kRightContentsMargins);
+    layoutMain->setContentsMargins(kLeftContentsMargins, 0, 0, kRightContentsMargins);
     layoutMain->setSpacing(kSpacingHeight);
     int row = 0;
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
