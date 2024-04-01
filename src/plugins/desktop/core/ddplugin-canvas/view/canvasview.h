@@ -56,6 +56,8 @@ public:
     QVariant inputMethodQuery(Qt::InputMethodQuery query) const override;
     WId winId() const;
 
+    QModelIndex baseIndexAt(const QPoint &point) const;
+
 public:
     void setScreenNum(const int screenNum);
     int screenNum() const;

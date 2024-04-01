@@ -86,21 +86,7 @@ QModelIndex CanvasView::indexAt(const QPoint &point) const
         }
     }
 
-    // then check the item on the point.
-    {
-        QString item = d->visualItem(d->gridAt(point));
-        rowIndex = model()->index(item, 0);
-        if (!rowIndex.isValid())
-            return rowIndex;
-
-        auto listRect = itemPaintGeomertys(rowIndex);
-        if (checkRect(listRect, point)) {
-            //fmDebug() << "pressed on" << item << rowIndex;
-            return rowIndex;
-        }
-    }
-
-    return QModelIndex();
+    return baseIndexAt(point);
 }
 
 QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -300,6 +286,36 @@ WId CanvasView::winId() const
     } else {
         return topLevelWidget()->winId();
     }
+}
+
+QModelIndex CanvasView::baseIndexAt(const QPoint &point) const
+{
+    auto checkRect = [](const QList<QRect> &listRect, const QPoint &point) -> bool {
+        // icon rect
+        if (listRect.size() > 0 && listRect.at(0).contains(point))
+            return true;
+
+        if (listRect.size() > 1) {
+            QRect identify = listRect.at(1);
+            if (identify.contains(point))
+                return true;
+        }
+        return false;
+    };
+
+    // then check the item on the point.
+    QString item = d->visualItem(d->gridAt(point));
+    auto rowIndex = model()->index(item, 0);
+    if (!rowIndex.isValid())
+        return rowIndex;
+
+    auto listRect = itemPaintGeomertys(rowIndex);
+    if (checkRect(listRect, point)) {
+        //fmDebug() << "pressed on" << item << rowIndex;
+        return rowIndex;
+    }
+
+    return QModelIndex();
 }
 
 void CanvasView::paintEvent(QPaintEvent *event)
