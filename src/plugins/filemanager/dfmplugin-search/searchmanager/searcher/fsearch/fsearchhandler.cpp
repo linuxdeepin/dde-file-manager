@@ -191,7 +191,7 @@ void FSearchHandler::reveiceResultsCallback(void *data, void *sender)
                 return;
             }
 
-            std::string file_name { "" };
+            QString file_name { "" };
             auto *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results->results, i));
             if (entry && entry->node) {
                 auto *node = entry->node;
@@ -212,7 +212,7 @@ void FSearchHandler::reveiceResultsCallback(void *data, void *sender)
                 }
             }
 
-            self->callbackFunc(file_name.c_str(), false);
+            self->callbackFunc(file_name.replace("//", "/"), false);
         }
     }
 
