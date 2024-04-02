@@ -156,7 +156,9 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         }
 
         iconLabel = new DLabel(this);
-        iconLabel->setFixedSize(240, 240);
+        int labelHeight = static_cast<int>(qApp->devicePixelRatio() * 240);
+        int labelWidth = qMin(260, labelHeight);
+        iconLabel->setFixedSize(labelWidth, labelHeight);
         QSize targetSize(240, 240);
         auto findPluginIcon = [](const QUrl &url) -> QString {
             QString iconName;
