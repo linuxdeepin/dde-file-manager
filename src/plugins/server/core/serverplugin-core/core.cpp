@@ -54,6 +54,14 @@ bool Core::start()
         DevMngIns->startMonitor();
     }
 
+    bool connected = QDBusConnection::systemBus().connect("org.freedesktop.login1",
+                                                          "/org/freedesktop/login1",
+                                                          "org.freedesktop.login1.Manager",
+                                                          "PrepareForShutdown",
+                                                          this,
+                                                          SLOT(exitOnShutdown(bool)));
+    fmDebug() << "login1::PrepareForShutdown connected:" << connected;
+
     return true;
 }
 
@@ -99,6 +107,14 @@ void Core::initOperationsDBus(QDBusConnection *connection)
                                     operationsStackManager.data())) {
         fmWarning("Cannot register the \"/org/deepin/filemanager/server/OperationsStackManager\" object.\n");
         operationsStackManager.reset(nullptr);
+    }
+}
+
+void Core::exitOnShutdown(bool shutdown)
+{
+    if (shutdown) {
+        fmInfo() << "PrepareForShutdown is emitted, exit...";
+        qApp->exit(0);
     }
 }
 
