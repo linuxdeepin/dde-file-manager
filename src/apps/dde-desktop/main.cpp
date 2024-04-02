@@ -30,6 +30,7 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include <iostream>
 #include <algorithm>
@@ -217,6 +218,23 @@ static void autoReleaseMemory()
     timer.start(kTimerInterval);
 }
 
+static QString getCompositingType()
+{
+    QDBusInterface kwinInterface("org.kde.KWin", "/Compositor", "org.kde.kwin.Compositing", QDBusConnection::sessionBus());
+
+    if (!kwinInterface.isValid()) {
+        qWarning() << "Failed to get compositingType property";
+    }
+
+    QVariant compositingType = kwinInterface.property("compositingType");
+    if (compositingType.isValid()) {
+        return compositingType.toString();
+    } else {
+        qWarning() << "Failed to get compositingType property, Waitfing for kwin";
+        return QString();
+    }
+}
+
 int main(int argc, char *argv[])
 {
     initLog();
@@ -278,6 +296,20 @@ int main(int argc, char *argv[])
 
     // Notify dde-desktop start up
     registerDDESession();
+
+    QElapsedTimer timer;
+    timer.start();
+
+    int maxTime = 2000;
+    while (maxTime > 0) {
+        QString type = getCompositingType();
+        if (!type.isEmpty())
+            break;
+        QThread::msleep(50);
+        maxTime -= 50;
+    }
+    qint64 elapsed = timer.nsecsElapsed() / 1000000;
+    qWarning() << "waiting for kwin ready cost" << elapsed << "ms";
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
