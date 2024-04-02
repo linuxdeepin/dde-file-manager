@@ -29,6 +29,9 @@ private:
     void initDeviceDBus(QDBusConnection *connection);
     void initOperationsDBus(QDBusConnection *connection);
 
+private Q_SLOTS:
+    void exitOnShutdown(bool);
+
 private:
     QScopedPointer<DeviceManagerDBus> deviceManager;
     QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
