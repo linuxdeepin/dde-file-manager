@@ -72,10 +72,9 @@ void ToolBarFrame::onPlayPositionChanged(qint64 pos)
 
 void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
 {
-    if (state == QMediaPlayer::StoppedState) {
-        curState = QMediaPlayer::State::StoppedState;
+    curState = state;
+    if (state == QMediaPlayer::StoppedState)
         progressSlider->setValue(0);
-    }
 
     if (state == QMediaPlayer::StoppedState || state == QMediaPlayer::PausedState) {
         playControlButton->setIcon(QIcon::fromTheme(":/icons/icons/start_normal.png"));
