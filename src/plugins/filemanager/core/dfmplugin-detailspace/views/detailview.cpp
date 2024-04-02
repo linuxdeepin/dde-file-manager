@@ -78,7 +78,6 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
         vlayout->addWidget(btn);
         vlayout->addWidget(widget);
         frame->setLayout(vlayout);
-
         QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(expandFrame->layout());
         layout->insertWidget(index, frame, 0, Qt::AlignTop);
 
@@ -110,10 +109,10 @@ void DetailView::initUiForSizeMode()
         return;
 #ifdef DTKWIDGET_CLASS_DSizeMode
     scrollArea->setFixedWidth(DSizeModeHelper::element(254, 282));
-    scrollArea->setContentsMargins(DSizeModeHelper::element(2, 0),0,DSizeModeHelper::element(0, 6),0);
+    scrollArea->setContentsMargins(DSizeModeHelper::element(2, 0), 0, DSizeModeHelper::element(0, 6), 0);
 #else
     scrollArea->setFixedWidth(282);
-    scrollArea->setContentsMargins(0,0,6,0);
+    scrollArea->setContentsMargins(0, 0, 6, 0);
 #endif
 }
 
@@ -132,7 +131,7 @@ void DetailView::initInfoUI()
     vLayout = new QVBoxLayout(this);
     vLayout->addStretch();
     expandFrame->setLayout(vLayout);
-    vLayout->setContentsMargins(0,0,8,0);
+    vLayout->setContentsMargins(0, 0, 8, 0);
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(scrollArea, Qt::AlignCenter);
