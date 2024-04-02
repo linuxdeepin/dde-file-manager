@@ -110,7 +110,7 @@ void DeviceManagerDBus::initConnection()
 void DeviceManagerDBus::requestRefreshDesktopAsNeeded(const QString &path, const QString &operation)
 {
     QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
-    if (desktopPath.isEmpty())
+    if (desktopPath.isEmpty() || path.isEmpty())
         return;
 
     fmDebug() << "looking for link files from" << desktopPath;
@@ -123,10 +123,13 @@ void DeviceManagerDBus::requestRefreshDesktopAsNeeded(const QString &path, const
         return target.startsWith(path);
     });
     if (hasFileLinkToTarget) {
-        QDBusInterface ifs("com.deepin.dde.desktop",
-                           "/com/deepin/dde/desktop",
-                           "com.deepin.dde.desktop");
-        ifs.asyncCall("Refresh");
+        // send refresh request delay 3s which walkaround the device is moounting,such as ntfs.
+        QTimer::singleShot(3 * 1000, []() {
+            QDBusInterface ifs("com.deepin.dde.desktop",
+                               "/com/deepin/dde/desktop",
+                               "com.deepin.dde.desktop");
+            ifs.asyncCall("Refresh");
+        });
         fmInfo() << "refresh desktop async finished..." << operation << path;
     }
 }
