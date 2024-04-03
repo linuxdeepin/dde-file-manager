@@ -40,7 +40,13 @@ QIcon LocalFileIconProviderPrivate::fileSystemIcon(const QString &path) const
 
 QIcon LocalFileIconProviderPrivate::fromTheme(QString iconName) const
 {
-    QIcon icon = QIcon::fromTheme(iconName);
+    QIcon icon;
+    {
+        static QMutex mut;
+        QMutexLocker lk(&mut);
+        icon = QIcon::fromTheme(iconName);
+    }
+
 
     if (Q_LIKELY(!icon.isNull()))
         return icon;
