@@ -293,13 +293,13 @@ bool CanvasMenuScene::triggered(QAction *action)
             fmDebug() << "call ControlCenter serivce by dbus.";
 #ifdef COMPILE_ON_V23
             QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
-                                           "org.deepin.dde.ControlCenter1", "ShowPage");
+                                                              "org.deepin.dde.ControlCenter1", "ShowPage");
 #else
             QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                           "com.deepin.dde.ControlCenter", "ShowModule");
+                                                              "com.deepin.dde.ControlCenter", "ShowModule");
 
 #endif
-            msg.setArguments({QVariant::fromValue(QString("display"))});
+            msg.setArguments({ QVariant::fromValue(QString("display")) });
             QDBusConnection::sessionBus().asyncCall(msg, 5);
             fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
             return true;
@@ -356,7 +356,7 @@ bool CanvasMenuScene::triggered(QAction *action)
             if (actionId == dfmplugin_menu::ActionID::kPaste) {
                 auto point = d->gridPos;
                 QPointer<ddplugin_canvas::CanvasView> viewptr = d->view;
-                QTimer::singleShot(200, [viewptr, point](){
+                QTimer::singleShot(200, [viewptr, point]() {
                     if (!viewptr.isNull())
                         FileOperatorProxyIns->pasteFiles(viewptr, point);
                 });
@@ -412,7 +412,7 @@ bool CanvasMenuScene::triggered(QAction *action)
                     if (Q_UNLIKELY(!index.isValid()))
                         return false;
                     QPointer<ddplugin_canvas::CanvasView> view = d->view;
-                    QTimer::singleShot(80, [view, index](){
+                    QTimer::singleShot(80, [view, index]() {
                         if (!view.isNull())
                             view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
                     });
@@ -491,9 +491,12 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
     Q_ASSERT(maxinum == keys.size() - 1);
 
     // organizer dose not support large and super large icon size
-    bool organizerEnable = DConfigManager::instance()->value("org.deepin.dde.file-manager.desktop.organizer", "enableOrganizer").toBool();
+    bool ok = false;
+    int value = DConfigManager::instance()->value("org.deepin.dde.file-manager.desktop.organizer",
+                                                  "enableOrganizer")
+                        .toInt(&ok);
     QStringList unsupportIconSizeList {};
-    if (organizerEnable) {
+    if (ok && value > 0) {
         unsupportIconSizeList << ActionID::kIconSizeLarge
                               << ActionID::kIconSizeSuperLarge;
     }
