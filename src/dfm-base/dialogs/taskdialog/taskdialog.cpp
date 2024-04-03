@@ -75,7 +75,7 @@ void TaskDialog::initUI()
     titlebar->layout()->setContentsMargins(0, 0, 0, 0);
     titlebar->setMenuVisible(false);
     titlebar->setIcon(QIcon::fromTheme("dde-file-manager"));
-    titlebar->setStyleSheet("background-color:rgba(0, 0, 0, 0)");
+    titlebar->setAutoFillBackground(false);
 
     taskListWidget = new QListWidget(this);
     taskListWidget->setSelectionMode(QListWidget::NoSelection);
