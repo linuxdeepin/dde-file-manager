@@ -4,6 +4,7 @@
 
 #include "extensionlibmenuscene.h"
 #include "dfmextmenuimpl.h"
+#include "dfmextmenuutil.h"
 #include "private/extensionlibmenuscene_p.h"
 #include "extensionimpl/pluginsload/extensionpluginmanager.h"
 
@@ -44,6 +45,8 @@ QString ExtensionLibMenuScene::name() const
 
 bool ExtensionLibMenuScene::initialize(const QVariantHash &params)
 {
+    DFMExtMenuUtils::instance();
+
     // request load extension plugins
     if (ExtensionPluginManager::instance().currentState() != ExtensionPluginManager::kInitialized)
         emit ExtensionPluginManager::instance().requestInitlaizePlugins();
@@ -84,6 +87,7 @@ bool ExtensionLibMenuScene::create(QMenu *parent)
     const std::string &newCurrentPath { d->transformedCurrentDir.toLocalFile().toStdString() };
     const std::string &newFocusPath { d->transformedFocusFile.toLocalFile().toStdString() };
 
+    DFMExtMenuUtils::instance()->extensionMenuSortRules()->clear();
     for (auto menu : ExtensionPluginManager::instance().menuPlugins()) {
         menu->initialize(ExtensionPluginManager::instance().pluginMenuProxy());
         if (d->isEmptyArea) {
@@ -104,6 +108,24 @@ void ExtensionLibMenuScene::updateState(QMenu *parent)
 {
     if (!parent)
         return;
+
+    QList<QPair<QAction *, QAction *>> *rules = DFMExtMenuUtils::instance()->extensionMenuSortRules();
+    if (!rules->isEmpty()) {
+        QList<QPair<QAction *, QAction *>>::const_iterator itr = rules->begin();
+        QList<QAction*> actions = parent->actions();
+        for (; itr != rules->end(); ++itr) {
+            QAction *befor { (*itr).first };
+            QAction *after { (*itr).second };
+            int afterIndex { actions.indexOf(after) };
+            if (actions.contains(befor) && afterIndex != -1) {
+                actions.removeAt(afterIndex);
+                int beforIndex { actions.indexOf(befor) };
+                actions.insert(beforIndex + 1, after);
+            }
+        }
+        parent->addActions(actions);
+        rules->clear();
+    }
 
     return AbstractMenuScene::updateState(parent);
 }

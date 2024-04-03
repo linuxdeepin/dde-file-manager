@@ -7,6 +7,7 @@
 #include "private/dfmextactionimpl_p.h"
 #include "dfmextactionimpl.h"
 #include "dfmextmendefine.h"
+#include "dfmextmenuutil.h"
 
 #include <QMetaObject>
 #include <QFile>
@@ -143,6 +144,13 @@ bool DFMExtMenuImplPrivate::insertAction(DFMExtAction *before, DFMExtAction *act
         QAction *ac = impl_d->qaction();
         ac->setParent(menu);
         menu->insertAction(beforeAc, ac);
+
+        // Record sorting rules
+        QPair<QAction *, QAction*> pair(beforeAc, ac);
+        QList<QPair<QAction *, QAction *>> *rules = DFMExtMenuUtils::instance()->extensionMenuSortRules();
+        if (!rules->contains(pair))
+            rules->push_back(pair);
+
         return true;
     }
 
