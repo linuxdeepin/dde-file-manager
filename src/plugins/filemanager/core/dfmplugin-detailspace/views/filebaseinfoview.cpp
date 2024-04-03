@@ -403,7 +403,7 @@ void FileBaseInfoView::setFileUrl(const QUrl &url)
     basicExpand(url);
 
     basicFill(url);
-
     // bug-245717: 提前show，防止界面抖动
+    adjustSize();
     show();
 }
