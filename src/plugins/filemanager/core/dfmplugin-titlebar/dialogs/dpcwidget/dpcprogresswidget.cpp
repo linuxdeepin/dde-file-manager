@@ -48,7 +48,6 @@ void DPCProgressWidget::initUI()
 
     titleLabel = new DLabel(tr("Changing disk password..."), this);
     titleLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-    titleLabel->setWordWrap(true);
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     DFontSizeManager *fontManager = DFontSizeManager::instance();

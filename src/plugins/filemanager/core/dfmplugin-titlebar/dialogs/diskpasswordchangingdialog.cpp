@@ -10,6 +10,7 @@
 #include <DWindowManagerHelper>
 
 #include <QStackedWidget>
+#include <QCloseEvent>
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -60,4 +61,12 @@ void DiskPasswordChangingDialog::onChangeCompleted(bool success, const QString &
     DWindowManagerHelper::instance()->setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, true);
     resultWidget->setResult(success, msg);
     switchPageWidget->setCurrentWidget(resultWidget);
+}
+
+void DiskPasswordChangingDialog::closeEvent(QCloseEvent *e)
+{
+    if (switchPageWidget && progressWidget == switchPageWidget->currentWidget())
+        return e->ignore();
+
+    DDialog::closeEvent(e);
 }
