@@ -259,6 +259,13 @@ QString UserShareHelper::sharedIP() const
     return selfIp;
 }
 
+int UserShareHelper::getSharePort() const
+{
+    QSettings smbConf("/etc/samba/smb.conf", QSettings::IniFormat);
+    auto ports = smbConf.value("global/smb ports").toString().split(" ");
+    return ports.isEmpty() ? -1 : ports.first().toInt();
+}
+
 UserShareHelper::~UserShareHelper()
 {
 }
