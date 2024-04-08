@@ -399,6 +399,9 @@ void ShareControlWidget::initConnection()
     refreshIp->setInterval(0);
     connect(refreshIp, &QTimer::timeout, this, [this]() {
         selfIp = UserShareHelper::instance()->sharedIP();
+        int port = UserShareHelper::instance()->getSharePort();
+        if (port != -1)
+            selfIp += QString(":%1").arg(port);
         if (networkAddrLabel->text() != selfIp) {
             networkAddrLabel->setText(selfIp);
         }
