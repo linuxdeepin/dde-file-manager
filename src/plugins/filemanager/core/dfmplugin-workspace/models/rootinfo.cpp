@@ -218,6 +218,7 @@ void RootInfo::doWatcherEvent()
     timer.start();
     QList<QUrl> adds, updates, removes;
     qint64 oldtime = 0;
+    int emptyLoopCount = 0;
     while (checkFileEventQueue() || timer.elapsed() < 200) {
         //检查超时，重新设置起始时间
         if (timer.elapsed() - oldtime >= 200) {
@@ -240,12 +241,18 @@ void RootInfo::doWatcherEvent()
             return;
 
         if (!checkFileEventQueue()) {
+            if (emptyLoopCount >= 5)
+                break;
+
             QThread::msleep(10);
             if (adds.isEmpty() && updates.isEmpty() && removes.isEmpty())
                 oldtime = timer.elapsed();
+
+            ++emptyLoopCount;
             continue;
         }
 
+        emptyLoopCount = 0;
         QPair<QUrl, EventType> event = dequeueEvent();
         const QUrl &fileUrl = event.first;
 
@@ -294,14 +301,13 @@ void RootInfo::doWatcherEvent()
         }
     }
 
-
     // 处理添加文件
+    if (!removes.isEmpty())
+        removeChildren(removes);
     if (!adds.isEmpty())
         addChildren(adds);
     if (!updates.isEmpty())
         updateChildren(updates);
-    if (!removes.isEmpty())
-        removeChildren(removes);
     processFileEventRuning = false;
 }
 
