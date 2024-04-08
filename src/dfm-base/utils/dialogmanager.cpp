@@ -490,6 +490,50 @@ void DialogManager::showRestoreFailedDialog(const int count)
     d.exec();
 }
 
+int DialogManager::showRestoreDeleteFilesDialog(const QList<QUrl> &urlList)
+{
+    if (urlList.isEmpty())
+        return QDialog::Rejected;
+
+    QString alertText {
+        tr("After revocation, it will be completely deleted %1, do you want to delete it completely?")
+    };
+
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Cancel", "button"));
+    buttonTexts.append(tr("Delete", "button"));
+
+    QString title;
+    bool isLocalFile { dfmbase::FileUtils::isLocalFile(urlList.first()) };
+    if (isLocalFile && urlList.size() == 1) {
+        SyncFileInfo file(urlList.first());
+        const QString &fileName { file.displayOf(DisPlayInfoType::kFileDisplayName) };
+        if (!fileName.isEmpty())
+            title = alertText.arg(fileName);
+    }
+
+    if (title.isEmpty())
+        title = alertText.arg(urlList.size());
+
+    DDialog d(qApp->activeWindow());
+    if (!d.parentWidget())
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+
+    QFontMetrics fm(d.font());
+    d.setIcon(QIcon::fromTheme(kUserTrashFullOpened));
+    d.setTitle(title);
+    d.setMessage(tr("This operation cannot be reversed."));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
+    d.setFixedWidth(480);
+
+    int code = d.exec();
+    return code;
+}
+
 int DialogManager::showRenameNameSameErrorDialog(const QString &name)
 {
     DDialog d(qApp->activeWindow());

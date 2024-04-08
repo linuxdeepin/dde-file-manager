@@ -189,7 +189,7 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
         QMap<QUrl, QUrl> needDealUrls;
         renameDesktop = doRenameDesktopFiles(tmpurls, pair, needDealUrls, successUrls);
         QMap<QUrl, QUrl> needDealUrls1 = FileUtils::fileBatchReplaceText(tmpurls, pair);
-        for (auto it = needDealUrls1.begin(); it != needDealUrls1.end();++it) {
+        for (auto it = needDealUrls1.begin(); it != needDealUrls1.end(); ++it) {
             needDealUrls.insert(it.key(), it.value());
         }
         if (callback) {
@@ -424,8 +424,13 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
         return nullptr;
     }
 
+    if (flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)
+        && DialogManagerInstance->showRestoreDeleteFilesDialog(sources) != QDialog::Accepted)
+        return nullptr;
+
     // Delete local file with shift+delete, show a confirm dialog.
-    if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)
+        && DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
         return nullptr;
 
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
@@ -1106,7 +1111,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     info->refresh();
     fmInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
-          static_cast<int>(permissions));
+           static_cast<int>(permissions));
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
                                  windowId, QList<QUrl>() << url, ok, error);
@@ -1252,7 +1257,7 @@ bool FileOperationsEventReceiver::handleShortCut(quint64, const QList<QUrl> &url
     const auto &currentFileInfo = InfoFactory::create<FileInfo>(rootUrl);
     // v5功能 判断当前目录是否有写权限，没有就提示权限错误
     if (urls.first().scheme() == Global::Scheme::kFile
-            && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
+        && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
         DialogManager::instance()->showNoPermissionDialog(urls);
         return true;
     }
