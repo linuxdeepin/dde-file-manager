@@ -27,6 +27,9 @@ public Q_SLOTS:
     void onConfirmed();
     void onChangeCompleted(bool success, const QString &msg);
 
+protected:
+    void closeEvent(QCloseEvent *e) override;
+
 private:
     void initUI();
     void initConnect();
