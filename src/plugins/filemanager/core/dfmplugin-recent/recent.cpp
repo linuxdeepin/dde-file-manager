@@ -81,18 +81,10 @@ void Recent::onWindowOpened(quint64 windId)
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Recent::regRecentCrumbToTitleBar, Qt::DirectConnection);
 
-    auto bookmarkPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-bookmark") };
-    if (bookmarkPlugin && bookmarkPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
-        updateRecentItemToSideBar();
-    } else {
-        connect(
-                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
-                    Q_UNUSED(iid)
-                    if (name == "dfmplugin-bookmark")
-                        updateRecentItemToSideBar();
-                },
-                Qt::DirectConnection);
-    }
+    if (window->sideBar())
+        regRecentItemToSideBar();
+    else
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, &Recent::regRecentItemToSideBar, Qt::DirectConnection);
 }
 
 void Recent::updateRecentItemToSideBar()
@@ -149,6 +141,22 @@ void Recent::regRecentCrumbToTitleBar()
     QVariantMap property;
     property["Property_Key_HideTreeViewBtn"] = true;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentHelper::scheme(), property);
+}
+
+void Recent::regRecentItemToSideBar()
+{
+    auto bookmarkPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-bookmark") };
+    if (bookmarkPlugin && bookmarkPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        updateRecentItemToSideBar();
+    } else {
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-bookmark")
+                        updateRecentItemToSideBar();
+                },
+                Qt::DirectConnection);
+    }
 }
 
 void Recent::addFileOperations()
