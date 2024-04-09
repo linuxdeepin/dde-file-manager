@@ -628,7 +628,8 @@ void AddressBar::focusOutEvent(QFocusEvent *e)
     //         out event, so we comment out this case for now and see if it still happens.
     // fix bug#38455 文管启动后第一次点击搜索，再点击筛选按钮，会导致搜索框隐藏
     // 第一次点击筛选按钮，会发出Qt::OtherFocusReason信号导致搜索框隐藏，所以将其屏蔽
-    if (/*e->reason() == Qt::ActiveWindowFocusReason || */ e->reason() == Qt::PopupFocusReason || e->reason() == Qt::OtherFocusReason) {
+    // zhangs: 2024/04/09：On wayland `Qt::ActiveWindowFocusReason` is triggered again! （bug-249081）
+    if (e->reason() == Qt::ActiveWindowFocusReason || e->reason() == Qt::PopupFocusReason || e->reason() == Qt::OtherFocusReason) {
         e->accept();
         setFocus();
         return;
