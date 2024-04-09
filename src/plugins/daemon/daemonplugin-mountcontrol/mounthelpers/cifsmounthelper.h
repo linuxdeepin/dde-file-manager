@@ -34,8 +34,7 @@ private:
     QString mountRoot();
     QString decryptPasswd(const QString &passwd);
     uint invokerUid();
-    std::string convertArgs(const QVariantMap &opts, char *sep);
-    QString joinWithUniqueSep(const QStringList &params, char *sep);
+    std::string convertArgs(const QVariantMap &opts);
     bool checkAuth();
     bool mkdir(const QString &path);
     bool rmdir(const QString &path);
