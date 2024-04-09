@@ -71,6 +71,22 @@ void Trash::onWindowOpened(quint64 windId)
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Trash::regTrashCrumbToTitleBar, Qt::DirectConnection);
 
+    if (window->sideBar())
+        regTrashItemToSideBar();
+    else
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, &Trash::regTrashItemToSideBar, Qt::DirectConnection);
+}
+
+void Trash::regTrashCrumbToTitleBar()
+{
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", TrashHelper::scheme(), QVariantMap {});
+    });
+}
+
+void Trash::regTrashItemToSideBar()
+{
     auto bookmarkPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-bookmark") };
     if (bookmarkPlugin && bookmarkPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         updateTrashItemToSideBar();
@@ -83,14 +99,6 @@ void Trash::onWindowOpened(quint64 windId)
                 },
                 Qt::DirectConnection);
     }
-}
-
-void Trash::regTrashCrumbToTitleBar()
-{
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", TrashHelper::scheme(), QVariantMap {});
-    });
 }
 
 void Trash::updateTrashItemToSideBar()

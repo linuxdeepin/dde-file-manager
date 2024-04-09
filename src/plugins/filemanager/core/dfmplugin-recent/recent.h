@@ -27,6 +27,7 @@ public:
 private slots:
     void onWindowOpened(quint64 windId);
     void regRecentCrumbToTitleBar();
+    void regRecentItemToSideBar();
 
 private:
     void addFileOperations();

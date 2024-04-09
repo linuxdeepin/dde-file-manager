@@ -27,6 +27,7 @@ public:
 
 private slots:
     void regTrashCrumbToTitleBar();
+    void regTrashItemToSideBar();
     void onWindowOpened(quint64 windId);
 
 private:
