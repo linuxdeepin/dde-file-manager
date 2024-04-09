@@ -263,7 +263,10 @@ void ExtensionPluginManager::onLoadingPlugins()
     std::call_once(flag, [this]() {
         Q_D(ExtensionPluginManager);
         d->startInitializePlugins();
+        // 插件监控功能提示框可能误导用户，暂时去除
+#if 0
         d->startMonitorPlugins();
+#endif
     });
 }
 
