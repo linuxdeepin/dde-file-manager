@@ -495,8 +495,11 @@ int DialogManager::showRestoreDeleteFilesDialog(const QList<QUrl> &urlList)
     if (urlList.isEmpty())
         return QDialog::Rejected;
 
-    QString alertText {
+    QString alertSingleFile {
         tr("After revocation, it will be completely deleted %1, do you want to delete it completely?")
+    };
+    QString alertMultiFiles {
+        tr("These %1 contents will be completely deleted after revocation. Do you want to delete them completely?")
     };
 
     QStringList buttonTexts;
@@ -504,16 +507,15 @@ int DialogManager::showRestoreDeleteFilesDialog(const QList<QUrl> &urlList)
     buttonTexts.append(tr("Delete", "button"));
 
     QString title;
-    bool isLocalFile { dfmbase::FileUtils::isLocalFile(urlList.first()) };
-    if (isLocalFile && urlList.size() == 1) {
+    if (urlList.size() == 1) {
         SyncFileInfo file(urlList.first());
         const QString &fileName { file.displayOf(DisPlayInfoType::kFileDisplayName) };
         if (!fileName.isEmpty())
-            title = alertText.arg(fileName);
+            title = alertSingleFile.arg(fileName);
     }
 
     if (title.isEmpty())
-        title = alertText.arg(urlList.size());
+        title = alertMultiFiles.arg(urlList.size());
 
     DDialog d(qApp->activeWindow());
     if (!d.parentWidget())
