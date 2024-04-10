@@ -169,10 +169,8 @@ QIcon DesktopFileInfo::fileIcon()
             d->icon = QIcon();
     }
 
-    // QIcon::fromTheme 不能够转入全路径iconname，产生的icon有效性无法被isnull判断
     if (d->icon.isNull()) {
-        if (!QDir::isAbsolutePath(iconName))
-            d->icon = QIcon::fromTheme(iconName);
+        d->icon = QIcon::fromTheme(iconName);
 
         if (d->icon.isNull())
             return ProxyFileInfo::fileIcon();
