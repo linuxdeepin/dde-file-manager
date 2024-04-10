@@ -51,12 +51,13 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
             continue;
 
         if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
-            auto count = rootInfoMap.value(rootInfo)->clearTraversalThread(key);
+            auto count = rootInfoMap.value(rootInfo)->clearTraversalThread(key, refresh);
             if (count > 0)
                 continue;
             if (!checkNeedCache(rootInfo) || refresh) {
-                rootInfoMap.value(rootInfo)->disconnect();
-                rootInfoMap.value(rootInfo)->reset();
+                auto root = rootInfoMap.take(rootInfo);
+                if (root)
+                    delete root;
             }
         }
     }
