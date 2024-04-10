@@ -46,9 +46,16 @@ public:
     bool initThreadOfFileData(const QString &key,
                               DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder);
     void startWork(const QString &key, const bool getCache = false);
-    int clearTraversalThread(const QString &key);
+    int clearTraversalThread(const QString &key, const bool isRefresh = false);
 
     void reset();
+
+    void addConnectToken(const QString &token) {
+        if (connectedTokens.contains(token))
+            return;
+        connectedTokens << token;
+    }
+    QStringList connectTokens() const { return connectedTokens; }
 
 Q_SIGNALS:
 
@@ -147,6 +154,8 @@ private:
     QList<TraversalThreadPointer> discardedThread {};
     QList<QSharedPointer<QThread>> threads {};
     std::atomic_bool needStartWatcher { true };
+    std::atomic_bool isRefresh { false };
+    QStringList connectedTokens;
 };
 }
 

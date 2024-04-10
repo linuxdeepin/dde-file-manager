@@ -135,7 +135,7 @@ public Q_SLOTS:
     void onWorkFinish(int visiableCount, int totalCount);
 
 private:
-    void connectRootAndFilterSortWork(const RootInfo *root);
+    void connectRootAndFilterSortWork(RootInfo *root);
     void initFilterSortWork();
     void quitFilterSortWork();
     void discardFilterSortObjects();

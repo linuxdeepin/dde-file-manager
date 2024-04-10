@@ -840,10 +840,14 @@ void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
     closeCursorTimer();
 }
 
-void FileViewModel::connectRootAndFilterSortWork(const RootInfo *root)
+void FileViewModel::connectRootAndFilterSortWork(RootInfo *root)
 {
     if (filterSortWorker.isNull())
         return;
+    auto token = QString::number(quintptr(filterSortWorker.data()), 16);
+    if (root->connectTokens().contains(token))
+        return;
+    root->addConnectToken(token);
     connect(root, &RootInfo::requestCloseTab, this, [](const QUrl &url) { WorkspaceHelper::instance()->closeTab(url); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::getSourceData, root, &RootInfo::handleGetSourceData, Qt::QueuedConnection);
     connect(root, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);

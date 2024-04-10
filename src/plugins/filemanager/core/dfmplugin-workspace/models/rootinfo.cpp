@@ -51,6 +51,8 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
         traversalThread->traversalThread->disconnect();
     } else {
         isGetCache = (canCache && traversalFinish) || traversaling;
+        if (canCache && traversalFinish && isRefresh)
+            isGetCache = false;
     }
 
     traversalThread.reset(new DirIteratorThread);
@@ -130,7 +132,7 @@ void RootInfo::startWatcher()
     watcher->restartWatcher();
 }
 
-int RootInfo::clearTraversalThread(const QString &key)
+int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
 {
     if (!traversalThreads.contains(key))
         return traversalThreads.count();
@@ -153,6 +155,7 @@ int RootInfo::clearTraversalThread(const QString &key)
     if (traversalThreads.isEmpty())
         needStartWatcher = true;
 
+    this->isRefresh = isRefresh;
     return traversalThreads.count();
 }
 
@@ -366,6 +369,9 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
     traversaling = false;
     emit traversalFinished(travseToken);
     traversalFinish = true;
+    if (isRefresh) {
+        isRefresh = false;
+    }
 }
 
 void RootInfo::handleTraversalSort(const QString &travseToken)
