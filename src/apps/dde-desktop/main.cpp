@@ -30,6 +30,8 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QTimer>
+#include <QElapsedTimer>
+#include <QDBusConnectionInterface>
 
 #include <iostream>
 #include <algorithm>
@@ -217,6 +219,23 @@ static void autoReleaseMemory()
     timer.start(kTimerInterval);
 }
 
+static void waitingForKwin()
+{
+    qCWarning(logAppDesktop) << "start waiting kwin ";
+    QElapsedTimer timer;
+    timer.start();
+    int maxTime = 2000;
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
+    while (maxTime > 0) {
+        if (sessionBus.interface()->isServiceRegistered("org.kde.KWin"))
+            break;
+        QThread::msleep(50);
+        maxTime -= 50;
+    }
+    qint64 elapsed = timer.nsecsElapsed() / 1000000;
+    qCWarning(logAppDesktop) << "waiting for kwin ready cost" << elapsed << "ms";
+}
+
 int main(int argc, char *argv[])
 {
     initLog();
@@ -278,6 +297,9 @@ int main(int argc, char *argv[])
 
     // Notify dde-desktop start up
     registerDDESession();
+
+    // bug 236971 need to wait for kwin
+    waitingForKwin();
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
