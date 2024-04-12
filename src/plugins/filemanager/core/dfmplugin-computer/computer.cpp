@@ -164,6 +164,7 @@ void Computer::regComputerToSearch()
 {
     QVariantMap property;
     property["Property_Key_RedirectedPath"] = "/";
+    property["Property_Key_UseNormalMenu"] = true;
     dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", ComputerUtils::scheme(), property);
 }
 
