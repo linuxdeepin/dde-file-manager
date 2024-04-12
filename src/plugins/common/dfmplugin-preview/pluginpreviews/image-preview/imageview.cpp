@@ -63,6 +63,12 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
 
     QImageReader reader(fileName, format);
     sourceImageSize = reader.size();
+
+    if (!sourceImageSize.isValid()) {
+        setPixmap(QPixmap());
+        return;
+    }
+
     QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(QSize(qMin(static_cast<int>(dsize.width() * 0.7 * device_pixel_ratio), sourceImageSize.width()),
                                                                     qMin(static_cast<int>(dsize.height() * 0.7 * device_pixel_ratio), sourceImageSize.height())),
                                                               Qt::KeepAspectRatio, Qt::SmoothTransformation);
