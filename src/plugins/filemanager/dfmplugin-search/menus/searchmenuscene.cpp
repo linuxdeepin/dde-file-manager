@@ -5,6 +5,7 @@
 #include "searchmenuscene.h"
 #include "searchmenuscene_p.h"
 #include "utils/searchhelper.h"
+#include "utils/custommanager.h"
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -190,7 +191,13 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     QVariantHash tmpParams = params;
     QList<AbstractMenuScene *> currentScene;
     const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
-    auto menuScene = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", targetUrl.scheme()).toString();
+
+    QString menuScene {};
+    if (CustomManager::instance()->isUseNormalMenu(targetUrl.scheme())) {
+        menuScene = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", Global::Scheme::kFile).toString();
+    } else {
+        menuScene = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", targetUrl.scheme()).toString();
+    }
     if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(menuScene)) {
         currentScene.append(scene);
         tmpParams[MenuParamKey::kCurrentDir] = targetUrl;

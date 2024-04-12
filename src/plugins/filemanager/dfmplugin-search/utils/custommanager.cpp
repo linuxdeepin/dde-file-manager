@@ -70,3 +70,12 @@ QString CustomManager::redirectedPath(const QUrl &url)
 
     return (path + targetPath);
 }
+
+bool CustomManager::isUseNormalMenu(const QString &scheme)
+{
+    const auto &property = customInfos[scheme];
+    if (property.contains(CustomKey::kUseNormalMenu) && property.value(CustomKey::kUseNormalMenu).toBool())
+        return true;
+
+    return false;
+}

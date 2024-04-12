@@ -29,6 +29,7 @@ inline constexpr char kSrtPath[] { "sort-by-path" };
 namespace CustomKey {
 inline constexpr char kDisableSearch[] { "Property_Key_DisableSearch" };
 inline constexpr char kRedirectedPath[] { "Property_Key_RedirectedPath" };
+inline constexpr char kUseNormalMenu[] { "Property_Key_UseNormalMenu" };
 }
 
 namespace SearchSettings {

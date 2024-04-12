@@ -21,6 +21,7 @@ public:
     bool isRegisted(const QString &scheme) const;
     bool isDisableSearch(const QUrl &url);
     QString redirectedPath(const QUrl &url);
+    bool isUseNormalMenu(const QString &scheme);
 
 private:
     explicit CustomManager();
