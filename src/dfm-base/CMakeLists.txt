@@ -43,6 +43,7 @@ find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
 find_package(Qt5 COMPONENTS Sql REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(KF5Codecs REQUIRED)
@@ -103,6 +104,7 @@ target_link_libraries(${BIN_NAME} PUBLIC
     Qt5::DBus
     Qt5::Sql
     Qt5::X11Extras
+    Qt5::Network
     PkgConfig::dfm-burn
     PkgConfig::dfm-mount
     PkgConfig::dfm-io

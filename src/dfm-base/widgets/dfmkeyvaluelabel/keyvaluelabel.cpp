@@ -7,6 +7,7 @@
 #include <QFontMetrics>
 #include <QMenu>
 #include <QClipboard>
+#include <QApplication>
 
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -278,7 +279,7 @@ void RightValueWidget::customContextMenuEvent(const QPoint &pos)
     QAction *copyComplete { nullptr };
     if (text != completeText) {
         copyComplete = new QAction(tr("Copy complete info"), menu);
-        connect(copyComplete, &QAction::triggered, this, [this](){
+        connect(copyComplete, &QAction::triggered, this, [this]() {
             QApplication::clipboard()->setText(completeText);
         });
         if (acts.size() > 0)
