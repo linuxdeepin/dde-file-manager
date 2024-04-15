@@ -9,6 +9,7 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/networkutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -126,6 +127,7 @@ bool UserShareHelper::share(const ShareInfo &info)
         QString err;
         int code = runNetCmd(netArgs, -1, &err);
         if (code != 0) {
+            fmWarning() << "Share dir and run net cmd error: " << err;
             handleErrorWhenShareFailed(code, err);
             return false;
         }
@@ -490,6 +492,21 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
         QString errorDisc = err.split("Error was ").last();
         errorDisc = errorDisc.remove("\n");
         DialogManagerInstance->showErrorDialog(errorDisc, "");
+        return;
+    }
+
+    // 端口被禁用
+    if (err.contains("net usershare add: cannot convert name") && err.contains("{Device Timeout}")) {
+        NetworkUtils::instance()->doAfterCheckNet("127.0.0.1", { "139", "445" },
+                                                  [](bool result) {
+                                                      if (result) {
+                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"), tr(""));
+                                                      } else {
+                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
+                                                                                                 tr("The SMB port is disabled. Please check the firewall policy."));
+                                                      }
+                                                  },
+                                                  500);
         return;
     }
 

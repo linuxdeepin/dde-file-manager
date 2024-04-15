@@ -21,8 +21,9 @@ class NetworkUtils : public QObject
 public:
     static NetworkUtils *instance();
 
-    bool checkNetConnection(const QString &host, const QString &port);
-    void doAfterCheckNet(const QString &host, const QStringList &ports, std::function<void(bool)> callback = nullptr);
+    bool checkNetConnection(const QString &host, const QString &port, int msecs = 3000);
+    void doAfterCheckNet(const QString &host, const QStringList &ports,
+                         std::function<void(bool)> callback = nullptr, int msecs = 3000);
     bool parseIp(const QString &mpt, QString &ip, QString &port);
     bool checkFtpOrSmbBusy(const QUrl &url);
 
