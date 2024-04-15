@@ -20,21 +20,21 @@ NetworkUtils *NetworkUtils::instance()
     return &s;
 }
 
-bool NetworkUtils::checkNetConnection(const QString &host, const QString &port)
+bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, int msecs)
 {
     if (host.isEmpty())
         return true;
 
     QTcpSocket conn;
     conn.connectToHost(host, port.toInt());
-    bool connected = conn.waitForConnected(3000);
+    bool connected = conn.waitForConnected(msecs);
     qCInfo(logDFMBase) << "connect to host" << host
-            << "at port" << port
-            << "result:" << connected << conn.error();
+                       << "at port" << port
+                       << "result:" << connected << conn.error();
     return connected;
 }
 
-void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports, std::function<void(bool)> callback)
+void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports, std::function<void(bool)> callback, int msecs)
 {
     QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
     QObject::connect(watcher, &QFutureWatcher<bool>::finished, [callback, watcher]() {
@@ -42,10 +42,10 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports
             callback(watcher->result());
         watcher->deleteLater();
     });
-    watcher->setFuture(QtConcurrent::run([host, ports, this]() {
+    watcher->setFuture(QtConcurrent::run([host, ports, msecs]() {
         for (const auto &port : ports) {
             qApp->processEvents();
-            if (NetworkUtils::instance()->checkNetConnection(host, port))
+            if (NetworkUtils::instance()->checkNetConnection(host, port, msecs))
                 return true;
         }
         return false;
