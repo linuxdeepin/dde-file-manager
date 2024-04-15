@@ -15,6 +15,7 @@
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>
+#include <dtkgui_config.h>
 
 #include <QDateTime>
 #include <QKeyEvent>
@@ -49,6 +50,9 @@ FilePropertyDialog::FilePropertyDialog(QWidget *parent)
     this->setAttribute(Qt::WA_DeleteOnClose, true);
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FilePropertyDialog::onFileInfoUpdated, Qt::QueuedConnection);
+#ifdef DTKGUI_VERSION_STR
+    platformWindowHandle->setWindowEffect(DPlatformWindowHandle::EffectScene::EffectNoStart);
+#endif
 }
 
 FilePropertyDialog::~FilePropertyDialog()
