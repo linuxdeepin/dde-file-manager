@@ -500,10 +500,10 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
         NetworkUtils::instance()->doAfterCheckNet("127.0.0.1", { "139", "445" },
                                                   [](bool result) {
                                                       if (result) {
-                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"), tr(""));
+                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"), "");
                                                       } else {
                                                           DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
-                                                                                                 tr("The SMB port is disabled. Please check the firewall policy."));
+                                                                                                 tr("SMB port is banned, please check the firewall strategy."));
                                                       }
                                                   },
                                                   500);
