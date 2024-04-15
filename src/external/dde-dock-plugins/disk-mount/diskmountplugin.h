@@ -51,6 +51,8 @@ public:
     {
         return Dock::Type_Tray | Dock::Attribute_CanDrag | Dock::Attribute_CanInsert;
     }
+
+    virtual void setMessageCallback(MessageCallbackFunc cb) override { messageCallback = cb; }
 #endif
 
     const QString pluginName() const override;
@@ -72,6 +74,9 @@ public:
 public slots:
     void setDockEntryVisible(bool visible);
 
+private slots:
+    void onAppletVisibilityChanged(bool visible);
+
 private:
     void loadTranslator();
     void initCompoments();
@@ -86,6 +91,10 @@ private:
     TipsWidget *tipsLabel { nullptr };
     DiskPluginItem *diskPluginItem { nullptr };
     DeviceList *diskControlApplet { nullptr };
+
+#ifdef USE_DOCK_NEW_INTERFACE
+    MessageCallbackFunc messageCallback = nullptr;
+#endif
 };
 
 #endif   // DISKMOUNTPLUGIN_H

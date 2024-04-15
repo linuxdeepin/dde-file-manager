@@ -20,8 +20,12 @@ class DeviceList : public QScrollArea
 public:
     explicit DeviceList(QWidget *parent = nullptr);
 
+Q_SIGNALS:
+    void visibilityChanged(bool visible);
+
 protected:
     void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private Q_SLOTS:
     void addDevice(const DockItemData &item);

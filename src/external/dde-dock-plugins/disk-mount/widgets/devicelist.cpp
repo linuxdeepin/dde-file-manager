@@ -28,6 +28,15 @@ void DeviceList::showEvent(QShowEvent *event)
 {
     updateHeight();
     QScrollArea::showEvent(event);
+    Q_EMIT visibilityChanged(true);
+    qWarning() << ">>>>> dfm plugin show";
+}
+
+void DeviceList::hideEvent(QHideEvent *event)
+{
+    qWarning() << ">>>>> dfm plugin hide";
+    Q_EMIT visibilityChanged(false);
+    QScrollArea::hideEvent(event);
 }
 
 void DeviceList::addDevice(const DockItemData &item)
