@@ -840,14 +840,16 @@ void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
     closeCursorTimer();
 }
 
-void FileViewModel::connectRootAndFilterSortWork(RootInfo *root)
+void FileViewModel::connectRootAndFilterSortWork(RootInfo *root, const bool refresh)
 {
     if (filterSortWorker.isNull())
         return;
-    auto token = QString::number(quintptr(filterSortWorker.data()), 16);
-    if (root->connectTokens().contains(token))
-        return;
-    root->addConnectToken(token);
+    if (refresh) {
+        auto token = QString::number(quintptr(filterSortWorker.data()), 16);
+        if (root->connectTokens().contains(token))
+            return;
+        root->addConnectToken(token);
+    }
     connect(root, &RootInfo::requestCloseTab, this, [](const QUrl &url) { WorkspaceHelper::instance()->closeTab(url); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::getSourceData, root, &RootInfo::handleGetSourceData, Qt::QueuedConnection);
     connect(root, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);
@@ -909,7 +911,7 @@ void FileViewModel::initFilterSortWork()
         canFetchFiles = true;
         fetchingUrl = rootUrl();
         RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
-        connectRootAndFilterSortWork(root);
+        connectRootAndFilterSortWork(root, true);
         fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
