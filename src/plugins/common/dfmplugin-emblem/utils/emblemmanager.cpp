@@ -43,7 +43,7 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
 
     //  only paitn system emblem icons if url is prohibited
     const QUrl &url = info->urlOf(UrlInfoType::kUrl);
-    if (!helper->isExtEmblemProhibited(url)) {
+    if (!helper->isExtEmblemProhibited(info, url)) {
         // add gio embelm icons
         helper->pending(info);
         emblems.append(helper->gioEmblemIcons(url));

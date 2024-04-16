@@ -266,7 +266,7 @@ void EmblemHelper::pending(const FileInfoPointer &info)
     emit requestProduce(info);
 }
 
-bool EmblemHelper::isExtEmblemProhibited(const QUrl &url)
+bool EmblemHelper::isExtEmblemProhibited(const FileInfoPointer &info, const QUrl &url)
 {
     // SMB mounted by cifs (v6), so mountpoint is native path
     if (FileUtils::isGvfsFile(url))
@@ -275,7 +275,6 @@ bool EmblemHelper::isExtEmblemProhibited(const QUrl &url)
     // In the block device, all file extension emblem icons are displayed by default,
     // When configuring emblem icons display, all file extension corners are displayed in the block device
     // When emblem icons hiding is configured, all file extension corners are hidden in the block device
-    auto info = InfoFactory::create<FileInfo>(url);
     if ((info ? !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !FileUtils::isLocalDevice(url))) {
         bool enable { DConfigManager::instance()->value("org.deepin.dde.file-manager.emblem", "blockExtEnable", true).toBool() };
         if (enable)

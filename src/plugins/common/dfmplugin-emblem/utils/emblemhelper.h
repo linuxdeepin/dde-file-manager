@@ -57,7 +57,7 @@ public:
     QList<QRectF> emblemRects(const QRectF &paintArea) const;
     QList<QIcon> gioEmblemIcons(const QUrl &url) const;
     void pending(const FileInfoPointer &info);
-    bool isExtEmblemProhibited(const QUrl &url);
+    bool isExtEmblemProhibited(const FileInfoPointer &info, const QUrl &url);
 
 Q_SIGNALS:
     void requestProduce(const FileInfoPointer &info);
