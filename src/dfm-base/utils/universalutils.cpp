@@ -293,17 +293,15 @@ bool UniversalUtils::checkLaunchAppInterface()
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
 #ifdef COMPILE_ON_V23
-    const auto &components = desktopFile.split('/', Qt::SkipEmptyParts);
-    const auto &file = components.last();
-    constexpr auto kDesktopSuffix { u8".desktop" };
+    const auto &file = QFileInfo{desktopFile};
+    constexpr auto kDesktopSuffix { u8"desktop" };
 
-    if (!file.endsWith(kDesktopSuffix)) {
+    if (file.suffix() != kDesktopSuffix) {
         qCDebug(logDFMBase) << "invalid desktop file:" << desktopFile << file;
         return false;
     }
 
-    const auto &desktopId = file.chopped(sizeof(kDesktopSuffix) - 1);
-    const auto &DBusAppId = DUtil::escapeToObjectPath(desktopId);
+    const auto &DBusAppId = DUtil::escapeToObjectPath(file.completeBaseName());
     const auto &currentAppPath = QString { APP_MANAGER_PATH_PREFIX } + "/" + DBusAppId;
     qCDebug(logDFMBase) << "app object path:" << currentAppPath;
     QDBusInterface appManager(APP_MANAGER_SERVICE,
