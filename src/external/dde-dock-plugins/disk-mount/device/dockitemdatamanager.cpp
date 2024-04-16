@@ -88,10 +88,10 @@ bool DockItemDataManager::blockDeviceFilter(const QVariantMap &data)
 {
     if (data.value(GlobalServerDefines::DeviceProperty::kHintIgnore).toBool())
         return kIgnore;
-    if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
-        return kDisplay;
     if (data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString().isEmpty())
         return kIgnore;
+    if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
+        return kDisplay;
 
     // partitions should not be displayed in dock if they are siblings of root partition.
     if (isRootDrive(data.value(GlobalServerDefines::DeviceProperty::kDrive).toString()))
