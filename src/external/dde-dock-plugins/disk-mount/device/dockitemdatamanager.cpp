@@ -50,6 +50,8 @@ void DockItemDataManager::onBlockMounted(const QString &id)
 
 void DockItemDataManager::onBlockUnmounted(const QString &id)
 {
+    if (!blocks.contains(id))
+        return;
     blocks.remove(id);
     Q_EMIT mountRemoved(id);
     updateDockVisible();
@@ -63,6 +65,13 @@ void DockItemDataManager::onBlockPropertyChanged(const QString &id, const QStrin
             onBlockUnmounted(id);
         else
             onBlockMounted(id);
+    }
+
+    // 光盘被物理弹出
+    if (id.contains(QRegularExpression("/sr[0-9]*$"))
+        && property == GlobalServerDefines::DeviceProperty::kMediaAvailable
+        && !value.variant().toBool()) {
+        onBlockUnmounted(id);
     }
 }
 
