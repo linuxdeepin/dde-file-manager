@@ -775,50 +775,7 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
 > ![notes](../common/notes.svg) Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
-## Partition encryption
 
-#### Turn on partition encryption
-
-1. In the computer interface, right-click the disk that needs to be encrypted and select **Turn on partition encryption**
-
-2. Setting the unlocking method in the pop-up window, click **Next**. It is recommended to select "Use TPM+PIN to unlock on this computer (recommended)"
-
-3. Selecting the recovery key file export path, click **Next**. You can only choose a non-encrypted partition to export the recovery key, and you can export it to a local disk or USB flash drive and other peripherals.
-
-4. Clicking **Confirm Encryption**, input the user password and restart the computer. Then enter the initialization interface for encryption configuration.
-
-5. In the system initialization interface, input the password and repeat the password. Type in "y" to confirm encryption.
-6. After re-entering the desktop interface, wait for the encryption progress to be completed.
-
-
-
-> ![notes](../common/notes.svg)NOTE：
-> 
-> Be sure to keep the recovery key properly. You can use the recovery key to unlock the encrypted partition in special scenarios such as forgetting the password or damaging the encryption hardware.
-> 
-> The encryption process may cause system lag, so please minimize system operations.
-
-#### Decrypt partition
-
-1. When using the "Use TPM+PIN code to unlock on this computer (recommended)" unlocking method, enter the partition password on the system initialization interface to unlock.
-2. When using the "Use TPM automatic unlocking on this computer" unlocking method, the system will automatically verify the unlocking.
-3. When using the "unlock by password" unlocking method, enter the password to unlock while opening the partition on the computer interface.
-
-#### Change Password
-
-1. In the computer interface, right-click the encrypted disk and select **Modify encryption password** or **Modify encryption PIN code.**
-
-2. You can click to switch between **Use password verification** and **Use recovery key verification**
-
-3. Enter the old password or recovery key, enter and re-enter the new password, click **Modify**, enter the user password to verify and complete the password change.
-
-#### Cancel partition encryption
-
-1. In the computer interface, right-click the encrypted disk and select **Cancel Partition Encryption**.
-
-2. Enter the password for verification, select **Restart now** or **Restart later** in the cancel encryption pop-up window to restart the computer and enter the initialization interface.
-
-3. In the system initialization interface, enter the partition password in sequence, and enter "y" to confirm the cancellation of encryption.
 
 ## Main Menu
 
