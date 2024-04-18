@@ -264,7 +264,7 @@ QString UserShareHelper::sharedIP() const
 int UserShareHelper::getSharePort() const
 {
     QSettings smbConf("/etc/samba/smb.conf", QSettings::IniFormat);
-    auto ports = smbConf.value("global/smb ports").toString().split(" ");
+    auto ports = smbConf.value("global/smb ports").toString().split(" ", QString::SkipEmptyParts);
     return ports.isEmpty() ? -1 : ports.first().toInt();
 }
 
