@@ -479,20 +479,18 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     backgroundRect.moveLeft(backgroundRect.left() + backgroundx); // x坐标居中
     // draw background
     QPainterPath path;
-    path.addRoundedRect(backgroundRect, kIconModeBackRadius, kIconModeBackRadius);
+    QRectF outLineRect = backgroundRect;
+    outLineRect.setSize(outLineRect.size() - QSizeF(2, 2));
+    outLineRect.moveCenter(backgroundRect.center());
+    path.addRoundedRect(outLineRect, kIconModeBackRadius, kIconModeBackRadius);
 
     if (isDropTarget || isSelected || isHover) {   // 只有选中和mouseover才绘制背景
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, backgroundColor);
         if (isHover) {
-            QRectF outLineRect = backgroundRect;
-            outLineRect.setSize(outLineRect.size() - QSizeF(1.5, 1.5));
-            outLineRect.moveCenter(backgroundRect.center());
-            QPainterPath outLinePath;
-            outLinePath.addRoundedRect(outLineRect, kIconModeBackRadius, kIconModeBackRadius);
             backgroundColor.setAlpha(40); // Hover背景边框设置透明度为16% (40/255);
             painter->setPen(backgroundColor);
-            painter->drawPath(outLinePath);
+            painter->drawPath(path);
         }
         painter->setRenderHint(QPainter::Antialiasing, false);
     }
