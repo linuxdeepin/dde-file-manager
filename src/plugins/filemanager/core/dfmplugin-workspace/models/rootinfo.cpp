@@ -272,6 +272,7 @@ void RootInfo::doWatcherEvent()
                 emit InfoCacheController::instance().removeCacheFileInfo({ fileUrl });
                 WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
                 emit requestCloseTab(fileUrl);
+                emit requestClearRoot(fileUrl);
                 QWriteLocker lk(&childrenLock);
                 childrenUrlList.clear();
                 sourceDataList.clear();

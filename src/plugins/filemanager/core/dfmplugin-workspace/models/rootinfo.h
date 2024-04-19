@@ -84,6 +84,7 @@ Q_SIGNALS:
 
     void requestTreeSortDir(const QString &key, const QUrl &parent);
     void renameFileProcessStarted();
+    void requestClearRoot(const QUrl &url);
 
 public Q_SLOTS:
     void doFileDeleted(const QUrl &url);

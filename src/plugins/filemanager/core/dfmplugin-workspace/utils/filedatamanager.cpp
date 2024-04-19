@@ -57,7 +57,7 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
             if (!checkNeedCache(rootInfo) || refresh) {
                 auto root = rootInfoMap.take(rootInfo);
                 if (root)
-                    delete root;
+                    root->deleteLater();
             }
         }
     }
@@ -75,7 +75,7 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
             rootInfoMap.value(rootInfo)->disconnect();
             auto root = rootInfoMap.take(rootInfo);
             if (root)
-                delete root;
+                root->deleteLater();
         }
     }
 }
@@ -103,8 +103,7 @@ FileDataManager::FileDataManager(QObject *parent)
 {
     isMixFileAndFolder = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     connect(Application::instance(), &Application::appAttributeChanged, this, &FileDataManager::onAppAttributeChanged);
-    connect(&WatcherCache::instance(), &WatcherCache::fileDelete, this, &FileDataManager::onHandleFileDeleted,
-            Qt::QueuedConnection);
+
 }
 
 FileDataManager::~FileDataManager()
@@ -121,6 +120,8 @@ RootInfo *FileDataManager::createRoot(const QUrl &url)
 
     // insert it to rootInfoMap
     rootInfoMap.insert(url, root);
+    connect(root, &RootInfo::requestClearRoot, this, &FileDataManager::onHandleFileDeleted,
+            Qt::QueuedConnection);
 
     return root;
 }
