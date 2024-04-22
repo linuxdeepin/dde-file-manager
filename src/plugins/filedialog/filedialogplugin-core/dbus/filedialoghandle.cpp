@@ -561,10 +561,15 @@ void FileDialogHandle::setWindowStayOnTop()
 {
     D_D(FileDialogHandle);
     QVariant isGtk = qApp->property("GTK");
-    if (WindowUtils::isWayLand() && isGtk.isValid() && isGtk.toBool()) {
-        QFunctionPointer setWindowProperty = qApp->platformFunction("_d_setWindowProperty");
-        // set window stay on top
-        if (setWindowProperty && d->dialog)
-            reinterpret_cast<void (*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
+    if (isGtk.isValid() && isGtk.toBool()) {
+        if (WindowUtils::isWayLand()) {
+            QFunctionPointer setWindowProperty = qApp->platformFunction("_d_setWindowProperty");
+            // set window stay on top
+            if (setWindowProperty && d->dialog)
+                reinterpret_cast<void (*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
+        } else {
+            if (d->dialog)
+                d->dialog->setWindowFlag(Qt::WindowStaysOnTopHint, true);
+        }
     }
 }
