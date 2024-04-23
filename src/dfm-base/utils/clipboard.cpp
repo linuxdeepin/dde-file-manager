@@ -191,6 +191,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
         return;
     QMimeData *mimeData = new QMimeData();
     mimeData->setData(GlobalData::kRemoteAssistanceCopyKey, localPath);
+    mimeData->setText(curUrl.toString());
     qApp->clipboard()->setMimeData(mimeData);
 }
 /*!
