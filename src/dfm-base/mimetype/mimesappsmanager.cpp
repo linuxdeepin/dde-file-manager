@@ -419,9 +419,13 @@ QStringList MimesAppsManager::getApplicationsFolders()
     desktopFolders << QString("/usr/share/applications")
                    << QString("/usr/local/share/applications")
                    << QString("/usr/share/gnome/applications");
+
+    // Exclude directory for desktop files patched by deepin-deb-fix
+    QStringList desktopFoldersExclude;
+    desktopFoldersExclude << "/usr/share/deepin-desktop-fix/applications";
     // env for XDG_DATA_DIRS
     for (const QString &path : QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation)) {
-        if (desktopFolders.contains(path))
+        if (desktopFolders.contains(path) || desktopFoldersExclude.contains(path))
             continue;
         desktopFolders.append(path);
     }
