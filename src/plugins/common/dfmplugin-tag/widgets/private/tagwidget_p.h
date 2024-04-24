@@ -10,6 +10,7 @@
 
 #include <QUrl>
 #include <QMap>
+#include <QBoxLayout>
 #include <DLabel>
 
 class QVBoxLayout;
@@ -42,8 +43,9 @@ private:
     DLabel *tagLeftLable { nullptr };
     QVBoxLayout *mainLayout { nullptr };
     TagCrumbEdit *crumbEdit { nullptr };
-    QVBoxLayout *tagColorListLayout { nullptr };
+    QBoxLayout *tagColorListLayout { nullptr };
     TagColorListWidget *colorListWidget { nullptr };
+    bool horizontalLayout { false };
 
     QMap<QString, QString> currentTagWithColorMap;
 

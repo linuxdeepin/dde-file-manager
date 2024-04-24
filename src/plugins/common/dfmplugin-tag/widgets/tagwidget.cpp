@@ -20,6 +20,14 @@ TagWidget::TagWidget(QUrl url, QWidget *parent)
     : DFrame(parent),
       d(new TagWidgetPrivate(this, url))
 {
+}
+
+TagWidget::~TagWidget()
+{
+}
+
+void TagWidget::initialize()
+{
     d->initializeUI();
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
@@ -33,11 +41,12 @@ TagWidget::TagWidget(QUrl url, QWidget *parent)
 #endif
     initConnection();
 
-    loadTags(url);
+    loadTags(d->url);
 }
 
-TagWidget::~TagWidget()
+void TagWidget::setLayoutHorizontally(bool horizontal)
 {
+    d->horizontalLayout = horizontal;
 }
 
 void TagWidget::loadTags(const QUrl &url)

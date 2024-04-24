@@ -29,6 +29,8 @@ public:
     TagWidget(QUrl url, QWidget *parent = nullptr);
     ~TagWidget();
 
+    void initialize();
+    void setLayoutHorizontally(bool horizontal);
     void loadTags(const QUrl &url);
     QWidget *tagTitle();
     QWidget *tagLeftTitle();
