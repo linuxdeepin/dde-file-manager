@@ -106,7 +106,7 @@ void FileBaseInfoView::basicExpand(const QUrl &url)
     }
 
     QGridLayout *glayout = new QGridLayout;
-    glayout->setSpacing(10);
+    glayout->setSpacing(0);
     int row = 0;
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
     QSet<BasicFieldExpandEnum> fieldset = QSet<BasicFieldExpandEnum>::fromList(fields);

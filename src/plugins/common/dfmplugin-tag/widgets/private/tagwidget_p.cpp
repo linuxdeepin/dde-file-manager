@@ -42,6 +42,9 @@ void TagWidgetPrivate::initializeUI()
     tagLable = new DLabel(name, q);
     DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T6, QFont::DemiBold);
     tagLable->setObjectName(name);
+    tagLeftLable = new DLabel(name, q);
+    tagLeftLable->setObjectName(name);
+    tagLeftLable->setHidden(true);
 
     colorListWidget = new TagColorListWidget(q, TagColorListWidget::kProperty);
     colorListWidget->setMaximumHeight(30);
@@ -54,9 +57,17 @@ void TagWidgetPrivate::initializeUI()
     crumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
     crumbEdit->setFocusPolicy(Qt::ClickFocus);
 
-    tagColorListLayout = new QVBoxLayout;
-    tagColorListLayout->addWidget(tagLable, 0, Qt::AlignLeft);
-    tagColorListLayout->addWidget(colorListWidget, 0, Qt::AlignLeft);
+    if (horizontalLayout) {
+        tagColorListLayout = new QHBoxLayout;
+        tagColorListLayout->addWidget(tagLable);
+        tagColorListLayout->addWidget(tagLeftLable);
+        tagColorListLayout->addWidget(colorListWidget);
+    } else {
+        tagColorListLayout = new QVBoxLayout;
+        tagColorListLayout->addWidget(tagLable, 0, Qt::AlignLeft);
+        tagColorListLayout->addWidget(colorListWidget, 0, Qt::AlignLeft);
+    }
+
     tagColorListLayout->setContentsMargins(0, 0, 0, 0);
 
     mainLayout->addLayout(tagColorListLayout);

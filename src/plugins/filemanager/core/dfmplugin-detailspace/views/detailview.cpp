@@ -155,10 +155,9 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         }
 
         iconLabel = new DLabel(this);
-        int labelHeight = static_cast<int>(qApp->devicePixelRatio() * 240);
-        int labelWidth = qMin(260, labelHeight);
-        iconLabel->setFixedSize(labelWidth, labelHeight);
-        QSize targetSize(240, 240);
+        iconLabel->setFixedSize(200, 200);
+        //iconLabel->setStyleSheet("border: 1px solid red;");
+        QSize targetSize(200, 160);
         auto findPluginIcon = [](const QUrl &url) -> QString {
             QString iconName;
             bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
@@ -181,7 +180,6 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
                 icon = QPixmap::fromImage(img);
             }
         }
-
         if (icon.isNull())
             icon = info->fileIcon();
 
@@ -189,7 +187,6 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         px.setDevicePixelRatio(qApp->devicePixelRatio());
         iconLabel->setPixmap(px);
         iconLabel->setAlignment(Qt::AlignCenter);
-        iconLabel->setContentsMargins(-15, 0, 0, 15);
         vLayout->insertWidget(0, iconLabel, 0, Qt::AlignHCenter);
     }
 }

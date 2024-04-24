@@ -78,7 +78,7 @@ TEST_F(TagTest, createTagWidget)
         __DBG_STUB_INVOKE__
         return QStringList();
     });
-    EXPECT_TRUE(ins.createTagWidget(QUrl("file://hello/world")));
+    EXPECT_TRUE(ins.createTagWidgetForPropertyDialog(QUrl("file://hello/world")));
 }
 
 TEST_F(TagTest, initialize)

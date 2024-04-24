@@ -38,7 +38,7 @@ private slots:
     void onAllPluginsStarted();
 
 private:
-    static QWidget *createTagWidget(const QUrl &url);
+    static QWidget *createTagWidgetForPropertyDialog(const QUrl &url);
     static QWidget *createTagWidgetForDetailView(const QUrl &url);
     void followEvents();
     void bindScene(const QString &parentScene);
