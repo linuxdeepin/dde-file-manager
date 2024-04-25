@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "smbbrowsereventreceiver.h"
+#include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dpf.h>
@@ -80,5 +82,53 @@ bool SmbBrowserEventReceiver::hookSetTabName(const QUrl &url, QString *tabName)
     return false;
 }
 
+bool SmbBrowserEventReceiver::hookTitleBarAddrHandle(QUrl *url)
+{
+    Q_ASSERT(url);
+    QUrl in(*url), out;
+    if (getOriginalUri(in, &out)) {
+        *url = out;
+        return true;
+    }
+    return false;
+}
+
+bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
+{
+    QString path = in.path();
+
+    // is cifs
+    static const QRegularExpression kCifsPrefix { R"(^/media/[^/]*/smbmounts/smb-share:[^/]*)" };
+    if (path.contains(kCifsPrefix)) {
+        QString host, share, port;
+        if (!DeviceUtils::parseSmbInfo(path, host, share, &port))
+            return false;
+
+        if (out) {
+            out->setScheme("smb");
+            out->setHost(host);
+            if (!port.isEmpty())
+                out->setPort(port.toInt());
+            QString subPath = "/" + share;
+            subPath += path.remove(kCifsPrefix);
+            out->setPath(subPath);
+            return true;
+        }
+    }
+
+    // is gvfs: since mtp/gphoto... scheme are not supported path lookup, only handle ftp/sftp/smb
+    // use GIO to obtain the original URI
+    if (path.contains(QRegularExpression(R"(((^/run/user/[0-9]*/gvfs)|(^/root/.gvfs))/(ftp|sftp|smb))"))) {
+        SyncFileInfo f(in);
+        QUrl u = f.urlOf(dfmbase::FileInfo::FileUrlInfoType::kOriginalUrl);
+        if (u.isValid() && out) {
+            *out = u;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 SmbBrowserEventReceiver::SmbBrowserEventReceiver(QObject *parent)
-    : QObject(parent) { }
+    : QObject(parent) {}

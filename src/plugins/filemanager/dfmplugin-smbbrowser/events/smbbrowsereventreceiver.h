@@ -21,10 +21,15 @@ public:
 
 public Q_SLOTS:
     bool detailViewIcon(const QUrl &url, QString *iconName);
-    bool cancelDelete(quint64, const QList<QUrl> &urls, const QUrl&rootUrl);
-    bool cancelMoveToTrash(quint64, const QList<QUrl> &, const QUrl&rootUrl);
+    bool cancelDelete(quint64, const QList<QUrl> &urls, const QUrl &rootUrl);
+    bool cancelMoveToTrash(quint64, const QList<QUrl> &, const QUrl &rootUrl);
 
     bool hookSetTabName(const QUrl &url, QString *tabName);
+
+    bool hookTitleBarAddrHandle(QUrl *url);
+
+private:
+    bool getOriginalUri(const QUrl &in, QUrl *out);
 
 private:
     explicit SmbBrowserEventReceiver(QObject *parent = nullptr);

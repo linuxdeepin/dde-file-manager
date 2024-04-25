@@ -140,5 +140,6 @@ inline constexpr char kAcComputerCrumbBarListView[] { "crumb_list_view" };
 
 DPTITLEBAR_END_NAMESPACE
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
+Q_DECLARE_METATYPE(QUrl *);
 
 #endif   // DFMPLUGIN_TITLEBAR_GLOBAL_H
