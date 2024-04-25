@@ -244,13 +244,13 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
 
     QFontMetrics fm(fnt);
 
-    const int TextMaxWidth = option.rect.width() - 20;
-    const QString &ElidedText = fm.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, TextMaxWidth);
-    const int LabelWidth = fm.horizontalAdvance(ElidedText);
-    const int LabelTopMargin = 10;
-    auto labelRect = QRect(option.rect.x() + (option.rect.width() - LabelWidth) / 2, option.rect.y() + TopMargin + IconSize + LabelTopMargin, LabelWidth, 40);
+    const int kTextMaxWidth = option.rect.width();
+    const QString &kElidedText = fm.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, kTextMaxWidth);
+    const int kLabelWidth = fm.horizontalAdvance(kElidedText);
+    const int kLabelTopMargin = 10;
+    auto labelRect = QRect(option.rect.x() + (option.rect.width() - kLabelWidth) / 2, option.rect.y() + TopMargin + IconSize + kLabelTopMargin, kLabelWidth, 40);
     painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
-    painter->drawText(labelRect, Qt::AlignTop, ElidedText);
+    painter->drawText(labelRect, Qt::AlignTop, kElidedText);
 }
 
 void ComputerItemDelegate::paintLargeItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
