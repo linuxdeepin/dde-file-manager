@@ -396,7 +396,11 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
     }
 
     menu->addAction(copyIcon, QObject::tr("Copy path"), [this, url]() {
-        d->writeUrlToClipboard(url);
+        QUrl u(url);
+        if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Copy_Addr", &u))
+            d->writeUrlToClipboard(u);
+        else
+            d->writeUrlToClipboard(url);
     });
 
     if (displayNewWindowAndTab) {

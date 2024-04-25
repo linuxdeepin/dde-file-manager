@@ -13,6 +13,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 
+#include <dfm-framework/event/event.h>
+
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
@@ -583,8 +585,13 @@ bool AddressBar::completerViewVisible()
 
 void AddressBar::setCurrentUrl(const QUrl &url)
 {
-    QString text = dfmbase::FileUtils::isLocalFile(url) ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
-    this->setText(text);
+    QUrl u(url);
+    if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Show_Addr", &u)) {
+        this->setText(u.toString());
+    } else {
+        QString text = dfmbase::FileUtils::isLocalFile(url) ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
+        this->setText(text);
+    }
 }
 
 QUrl AddressBar::currentUrl()
