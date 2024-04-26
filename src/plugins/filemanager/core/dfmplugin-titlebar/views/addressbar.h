@@ -29,6 +29,8 @@ public:
     void setCurrentUrl(const QUrl &url);
     QUrl currentUrl();
     void showOnFocusLostOnce();
+    QString text() const;
+    void clearSearchHistory();
 
 protected:
     bool event(QEvent *e) override;

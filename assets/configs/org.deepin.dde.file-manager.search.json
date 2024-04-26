@@ -12,6 +12,17 @@
             "description":"Used to determine whether to enable full-text search",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "displaySearchHistory": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Display search history",
+            "name[zh_CN]":"显示搜索记录",
+            "description[zh_CN]":"用于判断是否显示搜索记录",
+            "description":"Used to determine whether to enable display search history",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

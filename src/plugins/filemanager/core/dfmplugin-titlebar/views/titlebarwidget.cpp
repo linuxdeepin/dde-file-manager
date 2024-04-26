@@ -162,6 +162,7 @@ void TitleBarWidget::initConnect()
     connect(addressBar, &AddressBar::escKeyPressed, this, [this]() {
         if (crumbBar->controller())
             crumbBar->controller()->processAction(CrumbInterface::kEscKeyPressed);
+        addressBar->stopSpinner();
     });
     connect(addressBar, &AddressBar::lostFocus, this, [this]() {
         if (crumbBar->controller())
