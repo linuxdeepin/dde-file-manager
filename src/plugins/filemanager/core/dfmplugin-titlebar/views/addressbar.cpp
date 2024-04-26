@@ -12,6 +12,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -19,6 +20,7 @@
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
+#include <DDialog>
 
 #include <QCompleter>
 #include <QFontMetrics>
@@ -115,6 +117,8 @@ void AddressBarPrivate::initConnect()
     });
 
     connect(pauseButton, &DIconButton::clicked, q, &AddressBar::pauseButtonClicked);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged,
+                this, &AddressBarPrivate::onDConfigValueChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -151,12 +155,15 @@ void AddressBarPrivate::initData()
 
 void AddressBarPrivate::updateHistory()
 {
+    ipHistroyList.clear();
+    ipHistroyList = SearchHistroyManager::instance()->getIPHistory();
+
+    if (!DConfigManager::instance()->value(DConfigSearch::kSearchCfgPath,
+                                           DConfigSearch::kDisplaySearchHistory, true).toBool())
+        return;
     historyList.clear();
     historyList.append(SearchHistroyManager::instance()->getSearchHistroy());
     isHistoryInCompleterModel = false;
-
-    ipHistroyList.clear();
-    ipHistroyList = SearchHistroyManager::instance()->getIPHistory();
 }
 
 /*!
@@ -213,6 +220,7 @@ void AddressBarPrivate::clearCompleterModel()
 
 void AddressBarPrivate::updateCompletionState(const QString &text)
 {
+    isClearSearch = false;
     if (ipRegExp.exactMatch(text)) {
         inputIsIpAddress = true;
         completeIpAddress(text);
@@ -290,6 +298,7 @@ void AddressBarPrivate::onTravelCompletionListFinished()
         if (urlCompleter->popup()->isHidden() && q->isVisible())
             doComplete();
     } else {
+        completionPrefix.clear();
         completerView->hide();
         q->setFocus();   // Hide will cause lost focus (weird..), so setFocus() here.
     }
@@ -299,6 +308,60 @@ void AddressBarPrivate::onIndicatorTriggerd()
 {
     onReturnPressed();
 }
+
+void AddressBarPrivate::onDConfigValueChanged(const QString &config, const QString &key)
+{
+    if (config != DConfigSearch::kSearchCfgPath || key != DConfigSearch::kDisplaySearchHistory)
+        return;
+
+    bool show = DConfigManager::instance()->value(config, key, false).toBool();
+    if (show) {
+        historyList.clear();
+        historyList.append(SearchHistroyManager::instance()->getSearchHistroy());
+    } else {
+        historyList.clear();
+        showHistoryList.clear();
+        completerModel.setStringList(showHistoryList);
+    }
+    isHistoryInCompleterModel = false;
+}
+
+void AddressBarPrivate::filterHistory(const QString &text)
+{
+    completionPrefix = text;
+    showHistoryList.clear();
+    for (const auto &str : historyList) {
+        if (str.startsWith(text))
+            showHistoryList.push_back(str);
+    }
+    if (showHistoryList.count() > 0)
+        showHistoryList.append(QObject::tr("Clear search history"));
+    completerModel.setStringList(showHistoryList);
+}
+
+int AddressBarPrivate::showClearSearchHistory()
+{
+    QString clearSearch = tr("Are you sure clear search histories?");
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Confirm","button"));
+
+    DDialog d;
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+    d.setIcon(QIcon::fromTheme("dialog-warning"));
+    d.setTitle(clearSearch);
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
+    int code = d.exec();
+    return code;
+}
+
 
 void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
 {
@@ -329,7 +392,8 @@ void AddressBarPrivate::completeSearchHistory(const QString &text)
     setIndicator(AddressBar::IndicatorType::Search);
 
     // set completion prefix.
-    urlCompleter->setCompletionPrefix(text);
+    urlCompleter->setCompletionPrefix("");
+    filterHistory(text);
 
     // Check if we already loaded history list in model
     if (isHistoryInCompleterModel)
@@ -340,7 +404,7 @@ void AddressBarPrivate::completeSearchHistory(const QString &text)
 
     // History completion.
     isHistoryInCompleterModel = true;
-    completerModel.setStringList(historyList);
+    completerModel.setStringList(showHistoryList);
 }
 
 void AddressBarPrivate::completeIpAddress(const QString &text)
@@ -450,9 +514,13 @@ void AddressBarPrivate::onReturnPressed()
 
     // add search history list
     if (!dfmbase::FileUtils::isLocalFile(UrlRoute::fromUserInput(text))) {
-        if (!historyList.contains(text))
-            historyList.removeAll(text);
-        historyList.append(text);
+        if (DConfigManager::instance()->value(DConfigSearch::kSearchCfgPath,
+                                              DConfigSearch::kDisplaySearchHistory, true).toBool()) {
+            if (!historyList.contains(text))
+                historyList.removeAll(text);
+            historyList.append(text);
+            isHistoryInCompleterModel = false;
+        }
         SearchHistroyManager::instance()->writeIntoSearchHistory(text);
 
         if (protocolIPRegExp.exactMatch(text)) {
@@ -469,6 +537,13 @@ void AddressBarPrivate::onReturnPressed()
     }
 
     bool isSearch { false };
+    if (text == QObject::tr("Clear search history")) {
+        emit q->escKeyPressed();;
+        auto result = showClearSearchHistory();
+        if (result == DDialog::Accepted)
+            q->clearSearchHistory();
+        return;
+    }
     TitleBarHelper::handlePressed(q, text, &isSearch);
 
     if (isSearch) {
@@ -486,12 +561,20 @@ void AddressBarPrivate::insertCompletion(const QString &completion)
     if (inputIsIpAddress) {
         q->setText(completion);
     } else {
+        if (completion == QObject::tr("Clear search history")) {
+            isClearSearch = true;
+            emit q->returnPressed();
+            return;
+        }
+
+        isClearSearch = false;
         q->setText(completerBaseString + completion);
     }
 }
 
 void AddressBarPrivate::onCompletionHighlighted(const QString &highlightedCompletion)
 {
+    isClearSearch = false;
     if (inputIsIpAddress) {
         if (highlightedCompletion.isEmpty()) {
             q->setText(completerBaseString);
@@ -502,9 +585,16 @@ void AddressBarPrivate::onCompletionHighlighted(const QString &highlightedComple
         q->setText(highlightedCompletion);
         q->setSelection(0, selectLength);
     } else {
-        int completionPrefixLen = urlCompleter->completionPrefix().length();
+        int completionPrefixLen = indicatorType == AddressBar::IndicatorType::Search
+                ? completionPrefix.length() : urlCompleter->completionPrefix().length();
         int selectBeginPos = highlightedCompletion.length() - completionPrefixLen;
-        q->setText(completerBaseString + highlightedCompletion);
+        if (highlightedCompletion == QObject::tr("Clear search history")) {
+            q->setText(completerBaseString + lastEditedString);
+            isClearSearch = true;
+        } else {
+            q->setText(completerBaseString + highlightedCompletion);
+            isClearSearch = false;
+        }
         q->setSelection(q->text().length() - selectBeginPos, q->text().length());
     }
 }
@@ -608,6 +698,20 @@ void AddressBar::showOnFocusLostOnce()
     d->isKeepVisible = true;
 }
 
+QString AddressBar::text() const
+{
+    if (d->isClearSearch && Search == d->indicatorType)
+        return QObject::tr("Clear search history");
+    return QLineEdit::text();
+}
+
+void AddressBar::clearSearchHistory()
+{
+    d->historyList.clear();
+    SearchHistroyManager::instance()->clearHistory();
+    d->isHistoryInCompleterModel = false;
+}
+
 bool AddressBar::event(QEvent *e)
 {
     if (e->type() == QEvent::KeyPress) {
@@ -641,6 +745,7 @@ void AddressBar::focusOutEvent(QFocusEvent *e)
         setFocus();
         return;
     }
+    d->completionPrefix.clear();
     d->completerView->hide();
     if (d->isKeepVisible) {
         d->isKeepVisible = false;
@@ -672,7 +777,8 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
         if (d->isHistoryInCompleterModel && e->modifiers() == Qt::ShiftModifier && e->key() == Qt::Key_Delete) {
             QString completeResult = d->completerView->currentIndex().data().toString();
             bool ret = SearchHistroyManager::instance()->removeSearchHistory(completeResult);
-            if (ret) {
+            if (ret && DConfigManager::instance()->value(DConfigSearch::kSearchCfgPath,
+                                                         DConfigSearch::kDisplaySearchHistory, true).toBool()) {
                 d->historyList.clear();
                 d->historyList.append(SearchHistroyManager::instance()->getSearchHistroy());
                 d->completerModel.setStringList(d->historyList);
@@ -688,6 +794,7 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Return:
             e->accept();
             d->completerView->hide();
+            d->completionPrefix.clear();
             emit returnPressed();
             return;
         case Qt::Key_Tab:

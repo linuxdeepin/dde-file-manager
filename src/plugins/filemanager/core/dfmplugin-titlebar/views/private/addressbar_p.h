@@ -33,6 +33,11 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
+namespace DConfigSearch {
+inline constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
+inline constexpr char kDisplaySearchHistory[] = "displaySearchHistory";
+}
+
 namespace dfmplugin_titlebar {
 class CrumbInterface;
 class AddressBarPrivate : public QObject
@@ -41,6 +46,7 @@ class AddressBarPrivate : public QObject
     friend class AddressBar;
     AddressBar *const q;
     QStringList historyList;
+    QStringList showHistoryList;
     QList<IPHistroyData> ipHistroyList;
     QTimer timer;
     DSpinner spinner;
@@ -52,22 +58,24 @@ class AddressBarPrivate : public QObject
     QString completerBaseString;
     QString lastEditedString;
     AddressBar::IndicatorType indicatorType { AddressBar::IndicatorType::Search };
-    bool isHistoryInCompleterModel { false };
     int lastPressedKey { Qt::Key_D };   // just an init value
     int lastPreviousKey { Qt::Key_Control };   //记录上前一个按钮
-    bool isKeyPressed { false };
+    int selectPosStart { 0 };
     CrumbInterface *crumbController { nullptr };
     CompleterViewModel completerModel;
     CompleterView *completerView { nullptr };
     QCompleter *urlCompleter { nullptr };
     CompleterViewDelegate *cpItemDelegate { nullptr };
     // inputMethodEvent中获取不到选中的内容，故缓存光标开始位置以及选中长度
-    int selectPosStart { 0 };
     int selectLength { 0 };
+    bool isKeepVisible { false };
+    bool isClearSearch { false };
+    bool isKeyPressed { false };
+    bool isHistoryInCompleterModel { false };
     QRegExp ipRegExp;   // 0.0.0.0-255.255.255.255
     QRegExp protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
+    QString completionPrefix;
     bool inputIsIpAddress { false };
-    bool isKeepVisible { false };
 
 public:
     explicit AddressBarPrivate(AddressBar *qq);
@@ -99,6 +107,9 @@ public Q_SLOTS:
     void appendToCompleterModel(const QStringList &stringList);
     void onTravelCompletionListFinished();
     void onIndicatorTriggerd();
+    void onDConfigValueChanged(const QString &config, const QString &key);
+    void filterHistory(const QString &text);
+    int showClearSearchHistory();
 
 protected:
     virtual bool eventFilterResize(AddressBar *addressbar, QResizeEvent *event);

@@ -141,6 +141,9 @@ void Search::regSearchSettingConfig()
     SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kFulltextSearch,
                                                         tr("Full-Text search"),
                                                         false);
+    SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kDisplaySearchHistory,
+                                                        tr("Display search history"),
+                                                        true);
     SettingBackend::instance()->addSettingAccessor(
             SearchSettings::kFulltextSearch,
             []() {
@@ -151,6 +154,19 @@ void Search::regSearchSettingConfig()
             [](const QVariant &val) {
                 DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
                                                      DConfig::kEnableFullTextSearch,
+                                                     val);
+            });
+
+    SettingBackend::instance()->addSettingAccessor(
+            SearchSettings::kDisplaySearchHistory,
+            []() {
+                return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                                         DConfig::kDisplaySearchHistory,
+                                                         true);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
+                                                     DConfig::kDisplaySearchHistory,
                                                      val);
             });
 }
