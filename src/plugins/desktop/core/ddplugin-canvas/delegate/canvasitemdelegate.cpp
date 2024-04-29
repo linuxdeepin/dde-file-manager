@@ -14,6 +14,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/iconutils.h>
 #include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-framework/dpf.h>
@@ -22,6 +23,7 @@
 #include <DApplicationHelper>
 
 #include <QPainter>
+#include <QPainterPath>
 
 #include <cmath>
 #include <mutex>
@@ -131,8 +133,12 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     {
         // draw icon
         const QRect rIcon = iconRect(option.rect);
-        paintIcon(painter, indexOption.icon, rIcon, Qt::AlignCenter,
-                  (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   // why Enabled?
+        paintIcon(painter, indexOption.icon,
+                  { rIcon,
+                    Qt::AlignCenter,
+                    (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
+                    QIcon::Off,
+                    isThumnailIconIndex(index) });   // why Enabled?
 
         // paint emblems to icon
         paintEmblems(painter, rIcon, parent()->model()->fileInfo(index));
@@ -297,7 +303,10 @@ QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionVie
     initStyleOption(&indexOption, index);
 
     painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
-    return paintIcon(painter, indexOption.icon, indexOption.rect, Qt::AlignCenter, QIcon::Normal).size();
+    return paintIcon(painter, indexOption.icon,
+                     { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
+                       QIcon::Off, isThumnailIconIndex(index) })
+            .size();
 }
 
 int CanvasItemDelegate::textLineHeight() const
@@ -408,6 +417,20 @@ bool CanvasItemDelegate::isTransparent(const QModelIndex &index) const
             return false;
 
         if (ClipBoard::instance()->clipboardFileUrlList().contains(file->urlOf(UrlInfoType::kUrl)))
+            return true;
+    }
+    return false;
+}
+
+bool CanvasItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
+{
+    if (!index.isValid() || !parent() || !parent()->model())
+        return false;
+
+    FileInfoPointer info { parent()->model()->fileInfo(index) };
+    if (info) {
+        const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
+        if (attribute.isValid() && !attribute.value<QIcon>().isNull())
             return true;
     }
     return false;
@@ -713,29 +736,44 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
  * \param mode: icon mode (Normal, Disabled, Active, Selected )
  * \param state: The state for which a pixmap is intended to be used. (On, Off)
  */
-QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
-                                    const QRectF &rect, Qt::Alignment alignment,
-                                    QIcon::Mode mode, QIcon::State state)
+QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
 {
     // Copy of QStyle::alignedRect
-    alignment = visualAlignment(painter->layoutDirection(), alignment);
+    Qt::Alignment alignment { visualAlignment(painter->layoutDirection(), opts.alignment) };
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
-    const QPixmap &px = getIconPixmap(icon, rect.size().toSize(), pixelRatio, mode, state);
-    qreal x = rect.x();
-    qreal y = rect.y();
+    const QPixmap &px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
+    qreal x = opts.rect.x();
+    qreal y = opts.rect.y();
     qreal w = px.width() / px.devicePixelRatio();
     qreal h = px.height() / px.devicePixelRatio();
     if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
-        y += (rect.size().height() - h) / 2.0;
+        y += (opts.rect.size().height() - h) / 2.0;
     else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
-        y += rect.size().height() - h;
+        y += opts.rect.size().height() - h;
     if ((alignment & Qt::AlignRight) == Qt::AlignRight)
-        x += rect.size().width() - w;
+        x += opts.rect.size().width() - w;
     else if ((alignment & Qt::AlignHCenter) == Qt::AlignHCenter)
-        x += (rect.size().width() - w) / 2.0;
+        x += (opts.rect.size().width() - w) / 2.0;
 
+    if (opts.isThumb) {
+        painter->save();
+        painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
+
+        QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
+        QRect imageRect { backgroundRect };
+        // 绘制带有阴影的背景
+        painter->drawPixmap(backgroundRect, IconUtils::renderIconBackground(backgroundRect.size()));
+
+        // 绘制缩略图(上下左右各缩小2px)
+        imageRect.adjust(4, 4, -4, -4);
+        QPainterPath clipPath;
+        clipPath.addRoundedRect(imageRect, 4, 4);
+        painter->setClipPath(clipPath);
+        painter->drawPixmap(imageRect, px);
+        painter->restore();
+        return backgroundRect;
+    }
     painter->drawPixmap(qRound(x), qRound(y), px);
-
     // return rect before scale
     return QRect(qRound(x), qRound(y), w, h);
 }
