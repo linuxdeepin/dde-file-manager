@@ -11,9 +11,12 @@
 #include "events/workspaceeventcaller.h"
 #include "models/fileviewmodel.h"
 
+#include <dfm-base/dfm_base_global.h>
+
 #include <QTextLayout>
 #include <QPainter>
 
+DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
 BaseItemDelegate::BaseItemDelegate(FileViewHelper *parent)
@@ -55,6 +58,20 @@ void BaseItemDelegate::paintEmblems(QPainter *painter, const QRectF &iconRect, c
     const FileInfoPointer &info = parent()->parent()->model()->fileInfo(index);
     if (info)
         WorkspaceEventCaller::sendPaintEmblems(painter, iconRect, info);
+}
+
+bool BaseItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return false;
+
+    const FileInfoPointer &info { parent()->fileInfo(index) };
+    if (info) {
+        const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
+        if (attribute.isValid() && !attribute.value<QIcon>().isNull())
+            return true;
+    }
+    return false;
 }
 
 BaseItemDelegate::~BaseItemDelegate()
@@ -191,7 +208,10 @@ void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewIt
 
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, QIcon::Normal);
+    ItemDelegateHelper::paintIcon(painter, opt.icon,
+                                  { iconRect, Qt::AlignCenter,
+                                    QIcon::Normal, QIcon::Off,
+                                    ViewMode::kIconMode, isThumnailIconIndex(index) });
 }
 
 QSize BaseItemDelegate::getIndexIconSize(const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const

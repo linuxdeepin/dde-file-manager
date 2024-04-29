@@ -16,7 +16,6 @@ using namespace dfmplugin_workspace;
 TreeItemPaintProxy::TreeItemPaintProxy(QObject *parent)
     : AbstractItemPaintProxy(parent)
 {
-
 }
 
 void TreeItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -28,7 +27,7 @@ void TreeItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
 
     if (rect->right() <= firstColumnRightBoundary) {
         bool isEnabled = option.state & QStyle::State_Enabled;
-        ItemDelegateHelper::paintIcon(painter, option.icon, *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+        ItemDelegateHelper::paintIcon(painter, option.icon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled });
     }
 
     if (index.data(kItemTreeViewCanExpandRole).toBool())

@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "itemdelegatehelper.h"
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <QPainter>
 #include <QApplication>
@@ -42,26 +43,46 @@ QPixmap ItemDelegateHelper::getIconPixmap(const QIcon &icon, const QSize &size, 
  *
  * \return void
  **/
-void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
+void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
 {
     // Copy of QStyle::alignedRect
-    alignment = visualAlignment(painter->layoutDirection(), alignment);
+    Qt::Alignment alignment = visualAlignment(painter->layoutDirection(), opts.alignment);
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
-    const QPixmap &px = getIconPixmap(icon, rect.size().toSize(), pixelRatio, mode, state);
-    qreal x = rect.x();
-    qreal y = rect.y();
+    const QPixmap &px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
+    qreal x = opts.rect.x();
+    qreal y = opts.rect.y();
     qreal w = px.width() / px.devicePixelRatio();
     qreal h = px.height() / px.devicePixelRatio();
     if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
-        y += (rect.size().height() - h) / 2.0;
+        y += (opts.rect.size().height() - h) / 2.0;
     else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
-        y += rect.size().height() - h;
+        y += opts.rect.size().height() - h;
     if ((alignment & Qt::AlignRight) == Qt::AlignRight)
-        x += rect.size().width() - w;
+        x += opts.rect.size().width() - w;
     else if ((alignment & Qt::AlignHCenter) == Qt::AlignHCenter)
-        x += (rect.size().width() - w) / 2.0;
+        x += (opts.rect.size().width() - w) / 2.0;
 
-    painter->drawPixmap(qRound(x), qRound(y), px);
+    // Task: 337513
+    if (opts.viewMode == ViewMode::kIconMode && opts.isThumb) {
+        painter->save();
+        painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
+
+        QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
+        QRect imageRect { backgroundRect };
+        // 绘制带有阴影的背景
+        painter->drawPixmap(backgroundRect, IconUtils::renderIconBackground(backgroundRect.size()));
+
+        // 绘制缩略图(上下左右各缩小2px)
+        imageRect.adjust(4, 4, -4, -4);
+        QPainterPath clipPath;
+        clipPath.addRoundedRect(imageRect, 4, 4);
+        painter->setClipPath(clipPath);
+        painter->drawPixmap(imageRect, px);
+        painter->restore();
+
+    } else {
+        painter->drawPixmap(qRound(x), qRound(y), px);
+    }
 }
 
 void ItemDelegateHelper::drawBackground(const qreal &backgroundRadius, const QRectF &rect, QRectF &lastLineRect, const QBrush &backgroundBrush, QPainter *painter)
