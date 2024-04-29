@@ -8,6 +8,7 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QStyledItemDelegate>
 #include <QTextLayout>
@@ -34,6 +35,17 @@ inline constexpr int kListModeColumnPadding = { 10 };
 class ItemDelegateHelper
 {
 public:
+    using ViewMode = DFMBASE_NAMESPACE::Global::ViewMode;
+    struct PaintIconOpts
+    {
+        QRectF rect;
+        Qt::Alignment alignment { Qt::AlignCenter };
+        QIcon::Mode mode { QIcon::Normal };
+        QIcon::State state { QIcon::Off };
+        ViewMode viewMode { ViewMode::kNoneMode };
+        bool isThumb { false };
+    };
+
     static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
     {
         if (!(alignment & Qt::AlignHorizontal_Mask))
@@ -47,9 +59,7 @@ public:
     }
     static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio,
                                  QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
-    static void paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect,
-                          Qt::Alignment alignment = Qt::AlignCenter,
-                          QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
+    static void paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts);
 
     static void hideTooltipImmediately();
 
