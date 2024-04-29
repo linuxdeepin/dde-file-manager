@@ -24,9 +24,9 @@ void SideBarEventCaller::sendEject(const QUrl &url)
     dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Item_EjectClicked", url);
 }
 
-void SideBarEventCaller::sendOpenWindow(const QUrl &url)
+void SideBarEventCaller::sendOpenWindow(const QUrl &url, const bool isNew)
 {
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isNew);
 }
 
 void SideBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)

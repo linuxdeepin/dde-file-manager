@@ -15,17 +15,17 @@ DFMBASE_USE_NAMESPACE
 
 static constexpr char kEventNS[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
 
-void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls)
+void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls, const bool isNew)
 {
     bool hooked = dpfHookSequence->run(kEventNS, "hook_SendOpenWindow", urls);
     if (hooked)
         return;
 
     if (urls.isEmpty()) {
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl());
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), isNew);
     } else {
         for (const QUrl &url : urls)
-            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isNew);
     }
 }
 

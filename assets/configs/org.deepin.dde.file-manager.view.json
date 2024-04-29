@@ -12,6 +12,17 @@
             "description":"Used to determine if the view support tree view mode",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.open.in.single.process": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Open folder windows in a separate process",
+            "name[zh_CN]":"在单独的进程中打开文件夹窗口",
+            "description[zh_CN]":"用于判断是否在单独的进程中打开文件夹窗口",
+            "description":"Used to determine whether to enable Open folder windows in a separate process",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

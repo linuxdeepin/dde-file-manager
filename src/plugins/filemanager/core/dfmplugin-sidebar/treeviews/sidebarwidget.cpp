@@ -17,8 +17,9 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>
-#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/dialogmanager.h>
 
 #include <QApplication>
@@ -261,6 +262,36 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
     }
 
     QApplication::restoreOverrideCursor();
+    auto flag = DConfigManager::instance()->
+            value(kViewDConfName,
+                  kOpenFolderWindowsInASeparateProcess, false).toBool();
+
+    auto target = item->targetUrl();
+    if (flag && FileManagerWindowsManager::instance().containsCurrentUrl(target, window())) {
+
+        // run Open folder windows in a separate process
+        SideBarManager::instance()->openFolderInASeparateProcess(target);
+        auto preIndex = sidebarView->previousIndex();
+        if (!preIndex.isValid()) {
+            sidebarView->setPreviousIndex(preIndex);
+            return;
+        }
+        SideBarItem *preItem = kSidebarModelIns->itemFromIndex(preIndex);
+        if (!preItem || dynamic_cast<SideBarItemSeparator *>(preItem))
+            return;
+        auto win = qobject_cast<FileManagerWindow *>(window());
+        QUrl cur;
+        if (win)
+            cur = win->currentUrl();
+        auto preUrl = preItem->data(SideBarItem::Roles::kItemUrlRole).toUrl();
+        if (cur.isValid() && cur != preUrl) {
+            setCurrentUrl(cur);
+            return;
+        }
+        setCurrentUrl(qvariant_cast<QUrl>(preItem->data(SideBarItem::Roles::kItemUrlRole)));
+        sidebarView->setPreviousIndex(preIndex);
+        return;
+    }
     SideBarManager::instance()->runCd(item, SideBarHelper::windowId(this));
     sidebarView->update(sidebarView->previousIndex());
     sidebarView->update(sidebarView->currentIndex());

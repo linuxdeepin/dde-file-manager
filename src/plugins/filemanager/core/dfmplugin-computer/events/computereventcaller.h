@@ -23,7 +23,7 @@ public:
     static void cdTo(quint64 winId, const QUrl &url);
     static void cdTo(quint64 winId, const QString &path);
 
-    static void sendEnterInNewWindow(const QUrl &url);
+    static void sendEnterInNewWindow(const QUrl &url, const bool isNew = true);
     static void sendEnterInNewTab(quint64 winId, const QUrl &url);
 
     static void sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action);

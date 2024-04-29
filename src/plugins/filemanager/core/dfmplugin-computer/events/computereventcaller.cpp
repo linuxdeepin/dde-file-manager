@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
@@ -54,8 +55,12 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
     }
 
     DFMBASE_USE_NAMESPACE
-    if (Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
-        sendEnterInNewWindow(url);
+    auto flag = DConfigManager::instance()->
+            value(kViewDConfName,
+                  kOpenFolderWindowsInASeparateProcess, false).toBool();
+    if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(url))
+            || Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
+        sendEnterInNewWindow(url, !flag);
     else
         dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 }
@@ -67,14 +72,14 @@ void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
     cdTo(winId, ComputerUtils::makeLocalUrl(path));
 }
 
-void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url)
+void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url, const bool isNew)
 {
     if (!ComputerUtils::checkGvfsMountExist(url)) {
         fmInfo() << "gvfs url not exists" << url;
         return;
     }
 
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url, isNew);
 }
 
 void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)

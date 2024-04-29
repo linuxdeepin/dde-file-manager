@@ -14,6 +14,8 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -103,8 +105,12 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                 if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink))
                     dirUrl = QUrl::fromLocalFile(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
-                if (mode == DirOpenMode::kOpenNewWindow) {
-                    WorkspaceEventCaller::sendOpenWindow({ dirUrl });
+                auto flag = DConfigManager::instance()->
+                        value(kViewDConfName,
+                              kOpenFolderWindowsInASeparateProcess, false).toBool();
+                if (mode == DirOpenMode::kOpenNewWindow ||
+                        (flag && FileManagerWindowsManager::instance().containsCurrentUrl(dirUrl, view->window()))) {
+                    WorkspaceEventCaller::sendOpenWindow({ dirUrl }, !flag);
                 } else {
                     WorkspaceEventCaller::sendChangeCurrentUrl(windowId, dirUrl);
                 }

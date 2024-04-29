@@ -62,6 +62,11 @@ void SideBarManager::runRename(SideBarItem *item, quint64 windowId, const QStrin
     }
 }
 
+void SideBarManager::openFolderInASeparateProcess(const QUrl &url)
+{
+    SideBarHelper::openFolderInASeparateProcess(url);
+}
+
 SideBarManager::SideBarManager(QObject *parent)
     : QObject(parent)
 {

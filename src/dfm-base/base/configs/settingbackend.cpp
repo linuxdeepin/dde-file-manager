@@ -7,6 +7,7 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <DSettings>
 
@@ -322,6 +323,21 @@ void SettingBackend::initWorkspaceSettingConfig()
                      { "text", tr("Restore default view mode") },
                      { "type", "pushButton" },
                      { "trigger", QVariant(Application::kRestoreViewMode) } });
+    ins->addCheckBoxConfig(LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
+                           tr("Open folder windows in a separate process"),
+                           false);
+    addSettingAccessor(
+            LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
+            []() {
+                return DConfigManager::instance()->value(kViewDConfName,
+                                                         kOpenFolderWindowsInASeparateProcess,
+                                                         false);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(kViewDConfName,
+                                                     kOpenFolderWindowsInASeparateProcess,
+                                                     val);
+            });
 
     ins->addGroup(LV2_GROUP_PREVIEW, tr("Thumbnail preview"));
 
