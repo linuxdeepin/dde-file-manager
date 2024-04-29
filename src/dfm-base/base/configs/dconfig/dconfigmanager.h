@@ -17,6 +17,7 @@ inline constexpr char kPluginsDConfName[] { "org.deepin.dde.file-manager.plugins
 inline constexpr char kViewDConfName[] { "org.deepin.dde.file-manager.view" };
 inline constexpr char kKeyHideDisk[] { "dfm.disk.hidden" };
 inline constexpr char kTreeViewEnable[] { "dfm.treeview.enable" };
+inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.single.process" };
 
 class DConfigManagerPrivate;
 class DConfigManager : public QObject

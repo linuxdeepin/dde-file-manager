@@ -15,6 +15,8 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -201,8 +203,13 @@ bool FileOperatorMenuScene::triggered(QAction *action)
             if (infoPtr && infoPtr->isAttributes(OptInfoType::kIsSymLink))
                 cdUrl = QUrl::fromLocalFile(infoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
-            if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
-                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl);
+            auto flag = DConfigManager::instance()->
+                    value(kViewDConfName,
+                          kOpenFolderWindowsInASeparateProcess, false).toBool();
+
+            if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(cdUrl)) ||
+                    Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl, !flag);
             } else {
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, d->windowId, cdUrl);
             }

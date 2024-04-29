@@ -44,6 +44,7 @@ public:
     static QVariantMap groupExpandRules();
 
     static void saveGroupsStateToConfig(const QVariant &var);
+    static void openFolderInASeparateProcess(const QUrl &url);
 
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.

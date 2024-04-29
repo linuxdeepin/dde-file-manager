@@ -18,7 +18,7 @@ class SideBarEventCaller
 public:
     static void sendItemActived(quint64 windowId, const QUrl &url);
     static void sendEject(const QUrl &url);
-    static void sendOpenWindow(const QUrl &url);
+    static void sendOpenWindow(const QUrl &url, const bool isNew = true);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendShowFilePropertyDialog(const QUrl &url);
     static bool sendCheckTabAddable(quint64 windowId);

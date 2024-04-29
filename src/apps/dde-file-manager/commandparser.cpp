@@ -255,7 +255,10 @@ void CommandParser::openInHomeDirectory()
 {
     QString homePath = StandardPaths::location(StandardPaths::StandardLocation::kHomePath);
     QUrl url = QUrl::fromUserInput(homePath);
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+    auto flag = !DConfigManager::instance()->
+            value(kViewDConfName,
+                  kOpenFolderWindowsInASeparateProcess, false).toBool();
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
 
 void CommandParser::openInUrls()
@@ -294,8 +297,12 @@ void CommandParser::openInUrls()
         }
         argumentUrls.append(url);
     }
-    if (argumentUrls.isEmpty())
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), true);
+    if (argumentUrls.isEmpty()) {
+        auto flag = !DConfigManager::instance()->
+                value(kViewDConfName,
+                      kOpenFolderWindowsInASeparateProcess, false).toBool();
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), flag);
+    }
     for (const QUrl &url : argumentUrls)
         openWindowWithUrl(url);
 }
@@ -314,7 +321,11 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, QStringList() << name);
         });
     }
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n") || isSet("s") || isSet("sessionfile"));
+    auto flag = DConfigManager::instance()->
+            value(kViewDConfName,
+                  kOpenFolderWindowsInASeparateProcess, false).toBool();
+    flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile");
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
 
 void CommandParser::openSession()

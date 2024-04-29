@@ -11,6 +11,7 @@
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/shortcut/shortcut.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QDebug>
 #include <QEvent>
@@ -50,7 +51,10 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
     for (int i = 0; i != count; ++i) {
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
-        if (window && UniversalUtils::urlEquals(window->currentUrl(), url)) {
+        auto cur = window->currentUrl();
+        if (window && (UniversalUtils::urlEquals(url, cur) ||
+                UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur)) ||
+                UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url)))) {
             qCInfo(logDFMBase) << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
@@ -307,6 +311,21 @@ void FileManagerWindowsManager::resetPreviousActivedWindowId()
 quint64 FileManagerWindowsManager::previousActivedWindowId()
 {
     return d->previousActivedWindowId;
+}
+
+bool FileManagerWindowsManager::containsCurrentUrl(const QUrl &url, const QWidget *win)
+{
+    auto windows = d->windows.values();
+    for (auto w : windows) {
+        if (win == w || !w)
+            continue;
+        auto cur = w->currentUrl();
+        if (UniversalUtils::urlEquals(url, cur) ||
+                UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur)) ||
+                UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url)))
+            return true;
+    }
+    return false;
 }
 
 FileManagerWindowsManager::FileManagerWindowsManager(QObject *parent)

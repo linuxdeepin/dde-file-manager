@@ -341,6 +341,11 @@ void SideBarHelper::saveGroupsStateToConfig(const QVariant &var)
     DConfigManager::instance()->setValue(ConfigInfos::kConfName, ConfigInfos::kGroupExpandedKey, rule);
 }
 
+void SideBarHelper::openFolderInASeparateProcess(const QUrl &url)
+{
+    SideBarEventCaller::sendOpenWindow(url, false);
+}
+
 QMutex &SideBarHelper::mutex()
 {
     static QMutex m;

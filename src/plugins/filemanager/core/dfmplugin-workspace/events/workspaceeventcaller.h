@@ -23,7 +23,7 @@ class WorkspaceEventCaller
     WorkspaceEventCaller() = delete;
 
 public:
-    static void sendOpenWindow(const QList<QUrl> &urls);
+    static void sendOpenWindow(const QList<QUrl> &urls, const bool isNew = true);
     static void sendChangeCurrentUrl(const quint64 windowId, const QUrl &url);
     static void sendOpenAsAdmin(const QUrl &url);
 

@@ -24,6 +24,7 @@ public:
     void runCd(SideBarItem *item, quint64 windowId);
     void runContextMenu(SideBarItem *item, quint64 windowId, const QPoint &globalPos);
     void runRename(SideBarItem *item, quint64 windowId, const QString &name);
+    void openFolderInASeparateProcess(const QUrl &url);
 
 private:
     explicit SideBarManager(QObject *parent = nullptr);
