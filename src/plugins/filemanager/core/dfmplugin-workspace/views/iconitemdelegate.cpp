@@ -114,7 +114,7 @@ void IconItemDelegate::paint(QPainter *painter,
 
     oldFont = opt.font;
 
-    const QPainterPath &path  = paintItemBackgroundAndGeomerty(painter, opt, index, 0);
+    const QPainterPath &path = paintItemBackgroundAndGeomerty(painter, opt, index, 0);
 
     const QRectF &iconRect = paintItemIcon(painter, opt, index);
 
@@ -135,7 +135,7 @@ bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
             for (int i = 1; i < geometries.count() - 1; ++i) {
                 displayTextWidth += geometries[i].width();
             }
-            displayTextWidth += 1; // 误差
+            displayTextWidth += 1;   // 误差
             hideTips = option.fontMetrics.horizontalAdvance(tooltip) <= displayTextWidth;
         }
         if (tooltip.isEmpty() || index == view->rootIndex() || hideTips) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
@@ -454,7 +454,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
 
     bool isHover = option.state & QStyle::StateFlag::State_MouseOver;
     if (isDropTarget && !isSelected) {
-        backgroundColor.setAlpha(40); // DropTarg背景设置透明度为15% (40/255);
+        backgroundColor.setAlpha(40);   // DropTarg背景设置透明度为15% (40/255);
     } else if (option.state & QStyle::StateFlag::State_Selected) {
         backgroundColor.setAlpha(backgroundColor.alpha() + 40);
     } else if (isHover) {
@@ -464,7 +464,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
             backgroundColor = baseColor;
         } else {
             backgroundColor = backgroundColor.lighter();
-            backgroundColor.setAlpha(22); // Hover背景设置透明度为8% (22/255);
+            backgroundColor.setAlpha(22);   // Hover背景设置透明度为8% (22/255);
         }
     } else {
         backgroundColor = baseColor;
@@ -476,7 +476,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     backgroundRect.setSize(iconSize + QSizeF(2 * kIconModeIconSpacing, 2 * kIconModeIconSpacing));
     // for checkmark
     qreal backgroundx = (option.rect.width() - backgroundRect.width()) / 2.0;
-    backgroundRect.moveLeft(backgroundRect.left() + backgroundx); // x坐标居中
+    backgroundRect.moveLeft(backgroundRect.left() + backgroundx);   // x坐标居中
     // draw background
     QPainterPath path;
     QRectF outLineRect = backgroundRect;
@@ -488,7 +488,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, backgroundColor);
         if (isHover) {
-            backgroundColor.setAlpha(40); // Hover背景边框设置透明度为16% (40/255);
+            backgroundColor.setAlpha(40);   // Hover背景边框设置透明度为16% (40/255);
             painter->setPen(backgroundColor);
             painter->drawPath(path);
         }
@@ -517,7 +517,13 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     } else {
         bool isEnabled = opt.state & QStyle::State_Enabled;
         // draw icon
-        ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+        ItemDelegateHelper::paintIcon(painter, opt.icon,
+                                      { iconRect,
+                                        Qt::AlignCenter,
+                                        isEnabled ? QIcon::Normal : QIcon::Disabled,
+                                        QIcon::Off,
+                                        ViewMode::kIconMode,
+                                        isThumnailIconIndex(index) });
     }
 
     paintEmblems(painter, iconRect, index);
@@ -746,12 +752,12 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
     QString suffix = index.data(kItemFileSuffixOfRenameRole).toString();
     fmDebug() << "Display" << index.data(kItemFileDisplayNameRole).toString()
-             << "FileName" << index.data(kItemNameRole).toString()
-             << "FileNameofrenmae" << index.data(kItemFileNameOfRenameRole).toString()
-             << "BaseName" << index.data(kItemFileBaseNameRole).toString()
-             << "BaseNameofrename" << index.data(kItemFileBaseNameOfRenameRole).toString()
-             << "suffix" << index.data(kItemFileSuffixRole).toString()
-             << "suffixofrename" << suffix;
+              << "FileName" << index.data(kItemNameRole).toString()
+              << "FileNameofrenmae" << index.data(kItemFileNameOfRenameRole).toString()
+              << "BaseName" << index.data(kItemFileBaseNameRole).toString()
+              << "BaseNameofrename" << index.data(kItemFileBaseNameOfRenameRole).toString()
+              << "suffix" << index.data(kItemFileSuffixRole).toString()
+              << "suffixofrename" << suffix;
     if (showSuffix) {
         QString name = index.data(kItemFileNameOfRenameRole).toString();
         name = FileUtils::preprocessingFileName(name);

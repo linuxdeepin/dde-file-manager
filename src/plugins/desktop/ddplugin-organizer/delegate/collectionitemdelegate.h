@@ -23,6 +23,15 @@ class CollectionItemDelegate : public QStyledItemDelegate
     friend class CollectionItemDelegatePrivate;
 
 public:
+    struct PaintIconOpts
+    {
+        QRectF rect;
+        Qt::Alignment alignment { Qt::AlignCenter };
+        QIcon::Mode mode { QIcon::Normal };
+        QIcon::State state { QIcon::Off };
+        bool isThumb { false };
+    };
+
     explicit CollectionItemDelegate(QAbstractItemView *parentPtr = nullptr);
     ~CollectionItemDelegate() override;
 
@@ -50,9 +59,9 @@ public:
 
 protected:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
-    static QRect paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
-                           QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
+    static QRect paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts);
     static QRectF paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info);
+
     void paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const;
     void drawNormlText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rText) const;
     void drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText) const;
@@ -63,6 +72,8 @@ protected:
     static Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment);
     QList<QRectF> elideTextRect(const QModelIndex &index, const QRect &rect, const Qt::TextElideMode &elideMode) const;
     bool isTransparent(const QModelIndex &index) const;
+    bool isThumnailIconIndex(const QModelIndex &index) const;
+
 public slots:
     void updateItemSizeHint() const;
     void commitDataAndCloseEditor();
