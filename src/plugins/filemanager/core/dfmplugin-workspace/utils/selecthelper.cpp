@@ -141,6 +141,25 @@ bool SelectHelper::select(const QList<QUrl> &urls)
     return true;
 }
 
+void SelectHelper::saveSelectedFilesList(const QUrl &current, const QList<QUrl> &urls)
+{
+    currentSelectedFile = current;
+    selectedFiles = urls;
+}
+
+void SelectHelper::resortSelectFiles()
+{
+    if (selectedFiles.isEmpty() || !currentSelectedFile.isValid())
+            return;
+
+    select(selectedFiles);
+    view->selectionModel()->setCurrentIndex(view->model()->getIndexByUrl(currentSelectedFile), QItemSelectionModel::Select);
+
+    /// Clean
+    currentSelectedFile = QUrl();
+    selectedFiles.clear();
+}
+
 void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selection)
 {
     if (view->isIconViewMode()) {
