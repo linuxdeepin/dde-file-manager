@@ -840,6 +840,14 @@ void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
     closeCursorTimer();
 }
 
+void FileViewModel::onDataChanged(int first, int last)
+{
+    QModelIndex firstIndex = index(first, 0, rootIndex());
+    QModelIndex lastIndex = index(last, 0, rootIndex());
+
+    Q_EMIT dataChanged(firstIndex, lastIndex);
+}
+
 void FileViewModel::connectRootAndFilterSortWork(RootInfo *root, const bool refresh)
 {
     if (filterSortWorker.isNull())
@@ -907,6 +915,7 @@ void FileViewModel::initFilterSortWork()
     connect(filterSortWorker.data(), &FileSortWorker::insertFinish, this, &FileViewModel::onInsertFinish, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeRows, this, &FileViewModel::onRemove, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeFinish, this, &FileViewModel::onRemoveFinish, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::dataChanged, this, &FileViewModel::onDataChanged, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() {
         canFetchFiles = true;
         fetchingUrl = rootUrl();

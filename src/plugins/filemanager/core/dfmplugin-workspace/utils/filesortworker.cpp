@@ -436,9 +436,9 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
     auto opt = setSortAgruments(order, sortRole, /*istree ? false :*/ isMixDirAndFile);
     switch (opt) {
     case FileSortWorker::SortOpt::kSortOptOtherChanged:
-        return filterAndSortFiles(current);
+        return resortCurrent(false);
     case FileSortWorker::SortOpt::kSortOptOnlyOrderChanged:
-        return filterAndSortFiles(current, false, true);
+        return resortCurrent(true);
     default:
         return;
     }
@@ -831,6 +831,23 @@ void FileSortWorker::filterAndSortFiles(const QUrl &dir, const bool fileter, con
         if (!removeItemList.isEmpty())
             removeFileItems(removeItemList);
     }
+}
+
+void FileSortWorker::resortCurrent(const bool reverse)
+{
+    if (isCanceled)
+        return;
+
+    QList<QUrl> visibleList;
+
+    // 执行排序
+    if (istree)
+        visibleList = sortAllTreeFilesByParent(current, reverse);
+    else {
+        visibleList = sortTreeFiles(visibleTreeChildren.contains(current)? visibleTreeChildren[current] : visibleChildren, reverse);
+    }
+
+    resortVisibleChildren(visibleList);
 }
 
 QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byInfo)
@@ -1237,6 +1254,16 @@ int FileSortWorker::findStartPos(const QList<QUrl> &list, const QUrl &parent)
     return pos < 0 ? pos : pos + 1;
 }
 
+void FileSortWorker::resortVisibleChildren(const QList<QUrl> &fileUrls)
+{
+    if (isCanceled)
+        return;
+
+    int count = setVisibleChildren(0, fileUrls, InsertOpt::kInsertOptForce, -1);
+    if (count > 0)
+        Q_EMIT dataChanged(0, count - 1);
+}
+
 void FileSortWorker::insertVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
                                            const InsertOpt opt, const int endPos)
 {
@@ -1244,27 +1271,7 @@ void FileSortWorker::insertVisibleChildren(const int startPos, const QList<QUrl>
         return;
 
     Q_EMIT insertRows(startPos, filterUrls.length());
-    {
-        QList<QUrl> visibleList;
-        if (opt == InsertOpt::kInsertOptForce) {
-            visibleList = filterUrls;
-        } else {
-            auto tmp = getChildrenUrls();
-            visibleList.append(tmp.mid(0, startPos));
-            visibleList.append(filterUrls);
-            if (opt == InsertOpt::kInsertOptReplace) {
-                visibleList.append(tmp.mid(endPos != -1 ? endPos : startPos + filterUrls.length()));
-            } else if (opt == InsertOpt::kInsertOptAppend) {
-                visibleList.append(tmp.mid(startPos));
-            }
-        }
-
-        if (isCanceled)
-            return;
-
-        QWriteLocker lk(&locker);
-        visibleChildren = visibleList;
-    }
+    setVisibleChildren(startPos, filterUrls, opt, endPos);
     Q_EMIT insertFinish();
 }
 
@@ -1631,4 +1638,29 @@ int FileSortWorker::indexOfVisibleChild(const QUrl &itemUrl)
 {
     QReadLocker lk(&locker);
     return visibleChildren.indexOf(itemUrl);
+}
+
+int FileSortWorker::setVisibleChildren(const int startPos, const QList<QUrl> &filterUrls, const FileSortWorker::InsertOpt opt, const int endPos)
+{
+    QList<QUrl> visibleList;
+    if (opt == InsertOpt::kInsertOptForce) {
+        visibleList = filterUrls;
+    } else {
+        auto tmp = getChildrenUrls();
+        visibleList.append(tmp.mid(0, startPos));
+        visibleList.append(filterUrls);
+        if (opt == InsertOpt::kInsertOptReplace) {
+            visibleList.append(tmp.mid(endPos != -1 ? endPos : startPos + filterUrls.length()));
+        } else if (opt == InsertOpt::kInsertOptAppend) {
+            visibleList.append(tmp.mid(startPos));
+        }
+    }
+
+    if (isCanceled)
+        return -1;
+
+    QWriteLocker lk(&locker);
+    visibleChildren = visibleList;
+
+    return visibleList.length();
 }

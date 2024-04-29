@@ -74,6 +74,7 @@ signals:
     void removeFinish();
     void requestFetchMore();
     void selectAndEditFile(const QUrl &url);
+    void dataChanged(int first, int last);
 
     void requestSetIdel(int visiableCount, int totalCount);
     void updateRow(int row);
@@ -158,6 +159,7 @@ private:
     void filterAllFilesOrdered();
     void filterAndSortFiles(const QUrl &dir, const bool fileter = false,
                             const bool reverse = false);
+    void resortCurrent(const bool reverse);
     QList<QUrl> filterFilesByParent(const QUrl &dir, const bool byInfo = false);
     void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false);
 
@@ -179,6 +181,7 @@ private:
     int findStartPos(const QUrl &parent);
     int findStartPos(const QList<QUrl> &list, const QUrl &parent);
 
+    void resortVisibleChildren(const QList<QUrl> &fileUrls);
     void insertVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
                                const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
     void removeVisibleChildren(const int startPos, const int size);
@@ -196,6 +199,8 @@ private:
     int8_t getDepth(const QUrl &url);
     int findRealShowIndex(const QUrl &preItemUrl);
     int indexOfVisibleChild(const QUrl &itemUrl);
+    int setVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
+                            const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
 
 private:
     QUrl current;
