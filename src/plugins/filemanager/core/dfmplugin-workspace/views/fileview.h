@@ -66,6 +66,8 @@ public:
     void setModel(QAbstractItemModel *model) override;
     void stopWork();
 
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
+                         const QVector<int> &roles = QVector<int>()) override;
     QModelIndex indexAt(const QPoint &pos) const override;
     virtual QRect visualRect(const QModelIndex &index) const override;
     void setIconSize(const QSize &size);

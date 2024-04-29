@@ -30,6 +30,8 @@ public:
     void selection(const QRect &rect, QItemSelectionModel::SelectionFlags flags);
     bool select(const QList<QUrl> &urls);
 
+    void saveSelectedFilesList(const QUrl &current, const QList<QUrl> &urls);
+    void resortSelectFiles();
 private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
@@ -46,6 +48,9 @@ private:
     QModelIndex currentPressedIndex;
     QItemSelection currentSelection;
     QItemSelection lastSelection;
+
+    QList<QUrl> selectedFiles {};
+    QUrl currentSelectedFile {};
 };
 
 }

@@ -292,6 +292,13 @@ void FileView::stopWork()
     model()->stopTraversWork();
 }
 
+void FileView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    DListView::dataChanged(topLeft, bottomRight, roles);
+
+    d->selectHelper->resortSelectFiles();
+}
+
 int FileView::getColumnWidth(const int &column) const
 {
     if (d->headerView)
@@ -429,6 +436,15 @@ void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidde
 
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
+    auto selectedUrls = selectedUrlList();
+
+    if (!selectedUrls.isEmpty()) {
+        const QUrl curFile = model()->data(currentIndex(), ItemRoles::kItemUrlRole).toUrl();
+        d->selectHelper->saveSelectedFilesList(curFile, selectedUrlList());
+    }
+
+    clearSelection();
+
     model()->sort(logicalIndex, order);
 
     const QUrl &url = rootUrl();

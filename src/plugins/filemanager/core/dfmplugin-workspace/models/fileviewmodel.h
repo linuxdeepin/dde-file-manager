@@ -133,6 +133,7 @@ public Q_SLOTS:
     void onSetCursorWait();
     void onHiddenSettingChanged(bool value);
     void onWorkFinish(int visiableCount, int totalCount);
+    void onDataChanged(int first, int last);
 
 private:
     void connectRootAndFilterSortWork(RootInfo *root, const bool refresh = false);
