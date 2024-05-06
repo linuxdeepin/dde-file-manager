@@ -248,6 +248,7 @@ public:
         kStandardIsLocalDevice = 21,   // bool
         kStandardIsCdRomDevice = 22,   // bool
         kStandardFileType = 22,   // FileInfo::FileType
+        kOriginalUri = 23, // original uri
 
         kEtagValue = 40,   // string
 

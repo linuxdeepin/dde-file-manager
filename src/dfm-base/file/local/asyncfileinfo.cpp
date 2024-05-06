@@ -168,6 +168,17 @@ QUrl AsyncFileInfo::urlOf(const UrlInfoType type) const
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
         return d->redirectedFileUrl();
+    case FileUrlInfoType::kOriginalUrl:{
+        auto originalUri = d->asyncAttribute(FileInfo::FileInfoAttributeID::kOriginalUri);
+        if (originalUri.isValid())
+            return QUrl(originalUri.toString());
+        auto tmp = d->dfmFileInfo;
+        if (tmp) {
+            return QUrl(tmp->attribute(DFileInfo::AttributeID::kOriginalUri).toString());
+        } else {
+            return FileInfo::urlOf(type);
+        }
+    }
     default:
         return FileInfo::urlOf(type);
     }
@@ -1088,6 +1099,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardCompleteBaseName, completeBaseName());
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardCompleteSuffix, completeSuffix());
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardDisplayName, fileDisplayName());
+    tmp.insert(FileInfo::FileInfoAttributeID::kOriginalUri, attribute(DFileInfo::AttributeID::kOriginalUri));
     if (q->size() > 0 && attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0) {
         DFileInfo checkInfo(q->fileUrl());
         tmp.insert(FileInfo::FileInfoAttributeID::kStandardSize, checkInfo.attribute(DFileInfo::AttributeID::kStandardSize));
