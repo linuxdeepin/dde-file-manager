@@ -49,7 +49,7 @@ if (COMPLIE_ON_V23)
         install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION ${SYSTEMD_USER_UNIT_DIR}/${wantsdir}/)
     endmacro(install_symlink)
 
-    install_symlink(dde-filemanager-server.service dde-session-initialized.target.wants)
+    install_symlink(dde-file-manager.service dde-session-initialized.target.wants)
 endif()
 
 # binary
@@ -60,6 +60,6 @@ install(FILES dbusservice/org.deepin.filemanager.server.service
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services)
 
 # systemd service
-install(FILES dbusservice/dde-filemanager-server.service
+install(FILES dbusservice/dde-file-manager.service
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
 
