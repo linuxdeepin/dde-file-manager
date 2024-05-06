@@ -189,6 +189,8 @@ QUrl SyncFileInfo::urlOf(const UrlInfoType type) const
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
         return d->redirectedFileUrl();
+    case FileUrlInfoType::kOriginalUrl:
+        return d->attribute(DFileInfo::AttributeID::kOriginalUri).toUrl();
     default:
         return FileInfo::urlOf(type);
     }
