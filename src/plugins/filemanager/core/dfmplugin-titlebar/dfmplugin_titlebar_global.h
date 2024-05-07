@@ -49,7 +49,8 @@ enum MenuAction {
     kConnectToServer,
     kSetUserSharePassword,
     kChangeDiskPassword,
-    kSettings
+    kSettings,
+    kOpenInNewTab
 };
 
 // error code of change disk password
