@@ -29,6 +29,7 @@ public:
     static bool displayIcon();
     static void handlePressed(QWidget *sender, const QString &text, bool *isSearch = nullptr);
 
+    static void openCurrentUrlInNewTab(quint64 windowId);
     static void showSettingsDialog(quint64 windowId);
     static void showConnectToServerDialog(quint64 windowId);
     static void showUserSharePasswordSettingDialog(quint64 windowId);

@@ -69,6 +69,10 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
     action->setData(MenuAction::kNewWindow);
     menu->addAction(action);
 
+    action = new QAction(QObject::tr("Open in new tab"), menu);
+    action->setData(MenuAction::kOpenInNewTab);
+    menu->addAction(action);
+
     menu->addSeparator();
 
     action = new QAction(QObject::tr("Connect to Server"), menu);
@@ -240,6 +244,15 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
     }
 }
 
+void TitleBarHelper::openCurrentUrlInNewTab(quint64 windowId)
+{
+    FileManagerWindowsManager::FMWindow *window = FMWindowsIns.findWindowById(windowId);
+    if (!window)
+        return;
+
+    TitleBarEventCaller::sendOpenTab(windowId, window->currentUrl());
+}
+
 void TitleBarHelper::showSettingsDialog(quint64 windowId)
 {
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kShowSettingDialog, windowId);
@@ -309,6 +322,9 @@ void TitleBarHelper::handleSettingMenuTriggered(quint64 windowId, int action)
     switch (static_cast<MenuAction>(action)) {
     case MenuAction::kNewWindow:
         TitleBarEventCaller::sendOpenWindow(QUrl());
+        break;
+    case MenuAction::kOpenInNewTab:
+        TitleBarHelper::openCurrentUrlInNewTab(windowId);
         break;
     case MenuAction::kSettings:
         TitleBarHelper::showSettingsDialog(windowId);
