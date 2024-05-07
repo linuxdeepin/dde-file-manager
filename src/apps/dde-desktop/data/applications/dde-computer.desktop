@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=System;
 Comment=Show basic info of the computer.
-Exec=gio open computer:///
+Exec=dfm-open.sh computer:///
 GenericName=Computer
 Icon=computer
 Name=Computer
