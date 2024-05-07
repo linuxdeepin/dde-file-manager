@@ -157,33 +157,49 @@ void FileDialogPrivate::handleOpenNewWindow(const QUrl &url)
 
 bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix)
 {
-    for (QString nameFilterList : nameFilters) {
-        for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) {
-            QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
-            if (re.exactMatch(filename)) {
+    if (nameFilters.isEmpty())
+        return false;
+
+    for (const QString &nameFilterList : nameFilters) {
+        for (const QString &nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) {
+            QString realFilter = nameFilter;
+            realFilter.replace(".", "\\.");
+            realFilter.replace("*", ".*");
+            realFilter.append('$');
+            QRegularExpression re(realFilter);
+            if (re.match(filename).hasMatch())
                 return false;
-            }
         }
     }
 
-    // query matched suffix
-    if (!nameFilters.isEmpty()) {
-        QMimeDatabase mdb;
-        // get current selected suffix
-        int index = q->selectedNameFilterIndex();
-        QString filter = nameFilters[index];
-        QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(filter);
-        if (!newNameFilters.isEmpty()) {
-            const QString firstFilter = newNameFilters.first();
-            suffix = mdb.suffixForFileName(firstFilter);
-            if (suffix.isEmpty()) {
-                // check format is *. ?
-                if (!firstFilter.startsWith("*."))
-                    return false;
-                suffix = firstFilter.mid(2);
-                if (suffix.isEmpty())
-                    return false;
+    QMimeDatabase mdb;
+    // get current selected suffix
+    int index = q->selectedNameFilterIndex();
+    QString filter = nameFilters[index];
+    QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(filter);
+    if (newNameFilters.isEmpty())
+        return false;
+
+    for (const QString &newFilter : newNameFilters) {
+        suffix = mdb.suffixForFileName(newFilter);
+        if (suffix.isEmpty()) {
+            if (!newFilter.startsWith("*."))
+                continue;
+            QString realFilter = newFilter.mid(2);
+            if (realFilter.isEmpty())
+                continue;
+            realFilter.prepend('^');
+            realFilter.append('$');
+            QRegularExpression regExp(realFilter);
+            for (const QMimeType &m : mdb.allMimeTypes()) {
+                for (const QString &suffixe : m.suffixes()) {
+                    if (regExp.match(suffixe).hasMatch()) {
+                        suffix = suffixe;
+                        return true;
+                    }
+                }
             }
+        } else {
             return true;
         }
     }
