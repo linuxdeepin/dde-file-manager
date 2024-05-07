@@ -26,7 +26,7 @@ const OrgDeepinFilemanagerServerDeviceManagerInterface *DeviceProxyManager::getD
 
 QStringList DeviceProxyManager::getAllBlockIds(GlobalServerDefines::DeviceQueryOptions opts)
 {
-    if (d->isDBusRuning()) {
+    if (d->isDBusRuning() && d->devMngDBus) {
         auto &&reply = d->devMngDBus->GetBlockDevicesIdList(opts);
         reply.waitForFinished();
         return reply.value();
@@ -49,7 +49,7 @@ QStringList DeviceProxyManager::getAllBlockIdsByUUID(const QStringList &uuids, G
 
 QStringList DeviceProxyManager::getAllProtocolIds()
 {
-    if (d->isDBusRuning()) {
+    if (d->isDBusRuning() && d->devMngDBus) {
         auto &&reply = d->devMngDBus->GetProtocolDevicesIdList();
         reply.waitForFinished();
         return reply.value();
@@ -60,7 +60,7 @@ QStringList DeviceProxyManager::getAllProtocolIds()
 
 QVariantMap DeviceProxyManager::queryBlockInfo(const QString &id, bool reload)
 {
-    if (d->isDBusRuning()) {
+    if (d->isDBusRuning() && d->devMngDBus) {
         auto &&reply = d->devMngDBus->QueryBlockDeviceInfo(id, reload);
         reply.waitForFinished();
         return reply.value();
@@ -71,7 +71,7 @@ QVariantMap DeviceProxyManager::queryBlockInfo(const QString &id, bool reload)
 
 QVariantMap DeviceProxyManager::queryProtocolInfo(const QString &id, bool reload)
 {
-    if (d->isDBusRuning()) {
+    if (d->isDBusRuning() && d->devMngDBus) {
         auto &&reply = d->devMngDBus->QueryProtocolDeviceInfo(id, reload);
         reply.waitForFinished();
         return reply.value();
@@ -82,7 +82,7 @@ QVariantMap DeviceProxyManager::queryProtocolInfo(const QString &id, bool reload
 
 void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 {
-    if (d->isDBusRuning())
+    if (d->isDBusRuning() && d->devMngDBus)
         queryBlockInfo(id, true);
     else
         DevMngIns->getBlockDevInfo(id, true);
@@ -90,10 +90,8 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 
 bool DeviceProxyManager::initService()
 {
-    qCInfo(logDFMBase) << "Start initilize dbus: `DeviceManagerInterface`";
-    d->devMngDBus.reset(new DeviceManagerInterface(kDeviceService, kDevMngPath, QDBusConnection::sessionBus(), this));
     d->initConnection();
-    return d->isDBusRuning();
+    return true;
 }
 
 bool DeviceProxyManager::isDBusRuning()
@@ -196,7 +194,7 @@ DeviceProxyManagerPrivate::~DeviceProxyManagerPrivate()
 
 bool DeviceProxyManagerPrivate::isDBusRuning()
 {
-    return devMngDBus && devMngDBus->isValid();
+    return QDBusConnection::sessionBus().interface()->isServiceRegistered(kDeviceService);
 }
 
 void DeviceProxyManagerPrivate::initConnection()
@@ -205,12 +203,13 @@ void DeviceProxyManagerPrivate::initConnection()
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
         connectToDBus();
         emit q->devMngDBusRegistered();
-        qCInfo(logDFMBase) << "connected to DBus...";
+        qCWarning(logDFMBase) << "server dbus registered, connected to DBus...";
     });
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [this] {
+        devMngDBus.reset();
         connectToAPI();
         emit q->devMngDBusUnregistered();
-        qCInfo(logDFMBase) << "connected to API...";
+        qCWarning(logDFMBase) << "server dbus unregistered, connected to API...";
     });
 
     if (isDBusRuning())
@@ -260,6 +259,7 @@ void DeviceProxyManagerPrivate::connectToDBus()
 
     disconnCurrentConnections();
 
+    devMngDBus.reset(new DeviceManagerInterface(kDeviceService, kDevMngPath, QDBusConnection::sessionBus(), this));
     auto ptr = devMngDBus.data();
     connections << q->connect(ptr, &DeviceManagerInterface::BlockDriveAdded, q, &DeviceProxyManager::blockDriveAdded);
     connections << q->connect(ptr, &DeviceManagerInterface::BlockDriveRemoved, q, &DeviceProxyManager::blockDriveRemoved);
@@ -301,6 +301,7 @@ void DeviceProxyManagerPrivate::connectToAPI()
         return;
     disconnCurrentConnections();
 
+    devMngDBus.reset();
     auto ptr = DevMngIns;
     connections << q->connect(ptr, &DeviceManager::blockDriveAdded, q, &DeviceProxyManager::blockDriveAdded);
     connections << q->connect(ptr, &DeviceManager::blockDriveRemoved, q, &DeviceProxyManager::blockDriveRemoved);
