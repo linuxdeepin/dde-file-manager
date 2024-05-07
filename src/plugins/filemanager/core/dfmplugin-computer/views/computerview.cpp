@@ -301,6 +301,23 @@ void ComputerView::handleDisksVisible()
     }
 
     const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
+    QFutureWatcher<QList<QUrl>> *fw { new QFutureWatcher<QList<QUrl>>() };
+    connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
+        QList<QUrl> diskHiddenList;
+        diskHiddenList = fw->result();
+        if (!diskHiddenList.isEmpty()) {
+            for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
+                QString currSuffix = model->data(model->index(i, 0), ComputerModel::kSuffixRole).toString();
+                if (currSuffix != SuffixInfo::kBlock)
+                    continue;
+                auto item = model->items.at(i);
+                this->setRowHidden(i, diskHiddenList.contains(item.url));
+            }
+            handleDiskSplitterVisible();
+        }
+        delete fw;
+    });
+    fw->setFuture(QtConcurrent::run(ComputerItemWatcher::disksHiddenByDConf));
 
     fmInfo() << "ignored/hidden disks:" << hiddenPartitions;
     for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.

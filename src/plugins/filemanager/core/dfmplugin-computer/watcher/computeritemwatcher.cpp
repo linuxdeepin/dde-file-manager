@@ -437,7 +437,6 @@ QList<QUrl> ComputerItemWatcher::disksHiddenBySettingPanel()
 QList<QUrl> ComputerItemWatcher::hiddenPartitions()
 {
     QList<QUrl> hiddenUrls;
-    hiddenUrls += disksHiddenByDConf();
     hiddenUrls += disksHiddenBySettingPanel();
     hiddenUrls = QList<QUrl>::fromSet(hiddenUrls.toSet());
     return hiddenUrls;
