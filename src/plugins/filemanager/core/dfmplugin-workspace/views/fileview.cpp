@@ -484,12 +484,20 @@ void FileView::wheelEvent(QWheelEvent *event)
             emit viewStateChanged();
             event->accept();
         } else {
+#ifdef QT_SCROLL_WHEEL_ANI
             DListView::wheelEvent(event);
+#else
+            verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+#endif
         }
     } else if (event->modifiers() == Qt::AltModifier || event->orientation() == Qt::Horizontal) {
         horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
     } else {
+#ifdef QT_SCROLL_WHEEL_ANI
         DListView::wheelEvent(event);
+#else
+        verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+#endif
     }
 }
 
