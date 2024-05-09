@@ -149,6 +149,9 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
             errMsg = tr("Permission denied");
         else if (static_cast<int>(err.code) == ENOENT)
             errMsg = tr("No such file or directory");
+        else if (err.code >= DeviceError::kGIOError
+                 && err.code <= DeviceError::kGIOErrorMessageTooLarge)
+            errMsg = err.message;
         else
             errMsg = tr("Error occured while mounting device");
 
