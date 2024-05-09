@@ -10,6 +10,8 @@
 
 #include <DApplication>
 #include <QGSettings>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
@@ -141,6 +143,25 @@ void DiskMountPlugin::setDockEntryVisible(bool visible)
         proxyInter()->itemRemoved(this, kDiskMountKey);
 }
 
+void DiskMountPlugin::onAppletVisibilityChanged(bool visible)
+{
+#ifdef USE_DOCK_NEW_INTERFACE
+    qWarning() << ">>>>> callback is valid? " << messageCallback;
+    if (!messageCallback)
+        return;
+
+    QJsonObject msg;
+    msg[Dock::MSG_TYPE] = Dock::MSG_ITEM_ACTIVE_STATE;
+    msg[Dock::MSG_DATA] = visible;
+    QJsonDocument doc;
+    doc.setObject(msg);
+
+    qWarning() << ">>>>> plugin to dock message:   " << doc.toJson(QJsonDocument::Compact);
+
+    qWarning() << "<<<<< ret:" << messageCallback(this, doc.toJson());
+#endif
+}
+
 void DiskMountPlugin::loadTranslator()
 {
     QString &&applicationName = qApp->applicationName();
@@ -156,6 +177,9 @@ void DiskMountPlugin::initCompoments()
     diskControlApplet = new DeviceList();
     diskControlApplet->setObjectName("disk-mount");
     diskControlApplet->setVisible(false);
+
+    connect(diskControlApplet, &DeviceList::visibilityChanged,
+            this, &DiskMountPlugin::onAppletVisibilityChanged);
 }
 
 void DiskMountPlugin::displayModeChanged(const Dock::DisplayMode mode)
