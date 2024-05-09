@@ -35,4 +35,9 @@
 */
 #define DFMEXT_VERSION_CHECK(major, minor, patch) ((major << 16) | (minor << 8) | (patch))
 
+// TODO:  auto-generate
+#define DFMEXT_INTERFACE_Menu
+#define DFMEXT_INTERFACE_Emblem
+#define DFMEXT_INTERFACE_Window
+
 #endif   // DDEFILEMANAGEREXTENSION_GLOBAL_H
