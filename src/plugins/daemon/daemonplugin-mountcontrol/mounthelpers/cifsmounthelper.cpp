@@ -31,7 +31,7 @@ DAEMONPMOUNTCONTROL_USE_NAMESPACE
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
 
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
-    : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
+    : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) {}
 
 QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
 {
@@ -311,7 +311,7 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
     if (opts.contains(kTimeout)) {
         param += QString("echo_interval=1,");
         if (opts.contains(kTryWaitReconn))
-            param += QString("wait_reconnect_timeout=%1,").arg(/*opts.value(kTimeout).toString()*/ 0);   // w_r_t = ?? s
+            param += QString("wait_reconnect_timeout=%1,").arg(/*opts.value(kTimeout).toString()*/ 1);   // w_r_t = ?? s
         else
             param += QString("handletimeout=%1,").arg(opts.value(kTimeout).toInt() * 1000);   // handletimeout = ?? ms
     }
