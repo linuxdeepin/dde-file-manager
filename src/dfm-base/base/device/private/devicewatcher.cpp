@@ -97,7 +97,7 @@ void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, dfmmoun
             ? queryUsageOfBlock(itemData)
             : queryUsageOfProtocol(itemData);
 
-    if (old != newStorage && newStorage.isValid()) {
+    if (/*old != newStorage && */ newStorage.isValid()) {
         const QString &devId = itemData.value(DeviceProperty::kId).toString();
         emit DevMngIns->devSizeChanged(devId,
                                        itemData.value(DeviceProperty::kSizeTotal).toULongLong(),
@@ -120,7 +120,8 @@ DevStorage DeviceWatcherPrivate::queryUsageOfBlock(const QVariantMap &itemData)
         QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
         quint64 total = itemData.value(DeviceProperty::kSizeTotal).toULongLong();
         qint64 avai = si.bytesAvailable();
-        if (avai < 0) avai = 0;
+        if (avai < 0)   // if nagative value returned, error occured.
+            return {};
         return { total, static_cast<quint64>(avai), total - avai };
     }
 }
