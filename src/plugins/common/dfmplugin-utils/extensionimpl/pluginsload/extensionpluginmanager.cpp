@@ -50,34 +50,10 @@ void ExtensionPluginInitWorker::doWork(const QStringList &paths)
 
     // do init plugins
     fmInfo() << "Start init extension plugins";
-    for (const auto &[k, v] : loadedLoaders) {
-        if (!v->initialize()) {
-            fmWarning() << "init failed: " << v->fileName() << v->lastError();
-            continue;
-        }
-        fmInfo() << "Inited extension plugin:" << v->fileName();
-        doAppendExt(v->fileName(), v);
-    }
-    // TODO(zhangs): record plugin state
+    for (const auto &[k, v] : loadedLoaders)
+        emit requestInitPlugin(v);
 
     emit initPluginsFinished();
-}
-
-void ExtensionPluginInitWorker::doAppendExt(const QString &name, ExtPluginLoaderPointer loader)
-{
-    Q_ASSERT(loader);
-
-    DFMEXT::DFMExtMenuPlugin *menu { loader->resolveMenuPlugin() };
-    if (menu)
-        emit newMenuPluginResolved(name, menu);
-
-    DFMEXT::DFMExtEmblemIconPlugin *emblem { loader->resolveEmblemPlugin() };
-    if (emblem)
-        emit newEmblemPluginResolved(name, emblem);
-
-    DFMEXT::DFMExtWindowPlugin *window { loader->resolveWindowPlugin() };
-    if (window)
-        emit newWindowPluginResolved(name, window);
 }
 
 ExtensionPluginManagerPrivate::ExtensionPluginManagerPrivate(ExtensionPluginManager *qq)
@@ -94,6 +70,7 @@ ExtensionPluginManagerPrivate::ExtensionPluginManagerPrivate(ExtensionPluginMana
 void ExtensionPluginManagerPrivate::startInitializePlugins()
 {
     Q_Q(ExtensionPluginManager);
+    qRegisterMetaType<ExtPluginLoaderPointer>("ExtPluginLoaderPointer");
 
     ExtensionPluginInitWorker *worker { new ExtensionPluginInitWorker };
     worker->moveToThread(&workerThread);
@@ -112,14 +89,17 @@ void ExtensionPluginManagerPrivate::startInitializePlugins()
         workerThread.quit();
         workerThread.wait();
     });
-    connect(worker, &ExtensionPluginInitWorker::newMenuPluginResolved, this, [this](const QString &name, DFMEXT::DFMExtMenuPlugin *menu) {
-        menuMap.insert(name, QSharedPointer<DFMEXT::DFMExtMenuPlugin>(menu));
-    });
-    connect(worker, &ExtensionPluginInitWorker::newEmblemPluginResolved, this, [this](const QString &name, DFMEXT::DFMExtEmblemIconPlugin *emblem) {
-        emblemMap.insert(name, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>(emblem));
-    });
-    connect(worker, &ExtensionPluginInitWorker::newWindowPluginResolved, this, [this](const QString &name, DFMEXT::DFMExtWindowPlugin *window) {
-        windowMap.insert(name, QSharedPointer<DFMEXT::DFMExtWindowPlugin>(window));
+    connect(worker, &ExtensionPluginInitWorker::requestInitPlugin, this, [this](ExtPluginLoaderPointer loader) {
+        // Some plugins construct GUI object in `initialize`,
+        // so must invoke `initialize` int the main thread here.
+        Q_ASSERT(loader);
+        Q_ASSERT(qApp->thread() == QThread::currentThread());
+        if (!loader->initialize()) {
+            fmWarning() << "init failed: " << loader->fileName() << loader->lastError();
+            return;
+        }
+        fmInfo() << "Inited extension plugin:" << loader->fileName();
+        doAppendExt(loader->fileName(), loader);
     });
 
     workerThread.start();
@@ -191,6 +171,23 @@ void ExtensionPluginManagerPrivate::restartDesktop(const QUrl &url)
         QProcess::startDetached(qApp->applicationFilePath(), arguments);
         _Exit(-1);
     }
+}
+
+void ExtensionPluginManagerPrivate::doAppendExt(const QString &name, ExtPluginLoaderPointer loader)
+{
+    Q_ASSERT(loader);
+
+    DFMEXT::DFMExtMenuPlugin *menu { loader->resolveMenuPlugin() };
+    if (menu)
+        menuMap.insert(name, QSharedPointer<DFMEXT::DFMExtMenuPlugin>(menu));
+
+    DFMEXT::DFMExtEmblemIconPlugin *emblem { loader->resolveEmblemPlugin() };
+    if (emblem)
+        emblemMap.insert(name, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>(emblem));
+
+    DFMEXT::DFMExtWindowPlugin *window { loader->resolveWindowPlugin() };
+    if (window)
+        windowMap.insert(name, QSharedPointer<DFMEXT::DFMExtWindowPlugin>(window));
 }
 
 ExtensionPluginManager &ExtensionPluginManager::instance()
