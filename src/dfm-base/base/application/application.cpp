@@ -279,7 +279,7 @@ Settings *Application::dataPersistence()
 void Application::appAttributeTrigger(TriggerAttribute ta)
 {
     switch (ta) {
-    case kRestoreViewMode:
+    case kRestoreViewMode: {
         auto defaultViewMode = appAttribute(Application::kViewMode).toInt();
         auto settings = appObtuselySetting();
 
@@ -304,6 +304,11 @@ void Application::appAttributeTrigger(TriggerAttribute ta)
 
         if (instance())
             Q_EMIT instance()->viewModeChanged(defaultViewMode);
+        break;
+        }
+    case kClearSearchHistory:
+        Q_EMIT instance()->clearSearchHistory();
+        break;
     }
 }
 
