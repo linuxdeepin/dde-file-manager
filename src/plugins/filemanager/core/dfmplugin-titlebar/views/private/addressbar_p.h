@@ -110,6 +110,7 @@ public Q_SLOTS:
     void onDConfigValueChanged(const QString &config, const QString &key);
     void filterHistory(const QString &text);
     int showClearSearchHistory();
+    void onClearSearchHistory();
 
 protected:
     virtual bool eventFilterResize(AddressBar *addressbar, QResizeEvent *event);

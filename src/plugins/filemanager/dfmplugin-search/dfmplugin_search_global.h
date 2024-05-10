@@ -38,6 +38,7 @@ inline constexpr char kIndexInternal[] { SEARCH_SETTING_GROUP ".00_index_interna
 inline constexpr char kIndexExternal[] { SEARCH_SETTING_GROUP ".01_index_external" };
 inline constexpr char kFulltextSearch[] { SEARCH_SETTING_GROUP ".02_fulltext_search" };
 inline constexpr char kDisplaySearchHistory[] { SEARCH_SETTING_GROUP ".03_display_search_history" };
+inline constexpr char kClearSearchHistory[] { SEARCH_SETTING_GROUP ".04_clear_search_history" };
 }
 
 namespace DConfig {
