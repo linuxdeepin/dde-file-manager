@@ -169,6 +169,12 @@ void Search::regSearchSettingConfig()
                                                      DConfig::kDisplaySearchHistory,
                                                      val);
             });
+    SettingJsonGenerator::instance()->addConfig(SearchSettings::kClearSearchHistory,
+                   { { "key", "04_clear_search_history" },
+                     { "desc", tr("Clear dde-file-manager Search Records") },
+                     { "text", tr("Clean up") },
+                     { "type", "pushButton" },
+                     { "trigger", QVariant(Application::kClearSearchHistory) } });
 }
 
 void Search::bindEvents()
