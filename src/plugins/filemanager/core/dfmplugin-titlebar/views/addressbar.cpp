@@ -13,6 +13,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/application/application.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -125,6 +126,8 @@ void AddressBarPrivate::initConnect()
         initUiForSizeMode();
     });
 #endif
+    connect(Application::instance(), &Application::clearSearchHistory, this,
+            &AddressBarPrivate::onClearSearchHistory);
 }
 
 void AddressBarPrivate::initUiForSizeMode()
@@ -360,6 +363,13 @@ int AddressBarPrivate::showClearSearchHistory()
     d.moveToCenter();
     int code = d.exec();
     return code;
+}
+
+void AddressBarPrivate::onClearSearchHistory()
+{
+    auto result = showClearSearchHistory();
+    if (result == DDialog::Accepted)
+        q->clearSearchHistory();
 }
 
 
