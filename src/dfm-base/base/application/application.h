@@ -65,7 +65,8 @@ public:
     Q_ENUM(GenericAttribute)
 
     enum TriggerAttribute {
-        kRestoreViewMode    // restore defualt view mode to all dir
+        kRestoreViewMode,    // restore defualt view mode to all dir
+        kClearSearchHistory     // clear search history
     };
 
     Q_ENUM(TriggerAttribute)
@@ -110,6 +111,7 @@ Q_SIGNALS:
 
     void genericSettingCreated(Settings *settings);
     void appSettingCreated(Settings *settings);
+    void clearSearchHistory();
 
 protected:
     Application(ApplicationPrivate *dd, QObject *parent = nullptr);
