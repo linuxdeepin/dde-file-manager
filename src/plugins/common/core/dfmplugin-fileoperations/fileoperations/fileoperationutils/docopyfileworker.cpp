@@ -244,12 +244,16 @@ bool DoCopyFileWorker::doCopyFilePractically(const FileInfoPointer fromInfo, con
         if (!doReadFile(fromInfo, toInfo, fromDevice, data, blockSize, sizeRead, skip)) {
             delete[] data;
             data = nullptr;
+            if (toFd > 0)
+                close(toFd);
             return false;
         }
 
         if (!doWriteFile(fromInfo, toInfo, toDevice, data, sizeRead, skip)) {
             delete[] data;
             data = nullptr;
+            if (toFd > 0)
+                close(toFd);
             return false;
         }
 
