@@ -23,17 +23,12 @@ class ExtensionPluginInitWorker : public QObject
 public Q_SLOTS:
     void doWork(const QStringList &paths);
 
-private:
-    void doAppendExt(const QString &name, ExtPluginLoaderPointer loader);
-
 Q_SIGNALS:
+    void requestInitPlugin(ExtPluginLoaderPointer);
+
     void scanPluginsFinished();
     void loadPluginsFinished();
     void initPluginsFinished();
-
-    void newMenuPluginResolved(const QString &name, DFMEXT::DFMExtMenuPlugin *menu);
-    void newEmblemPluginResolved(const QString &name, DFMEXT::DFMExtEmblemIconPlugin *emblem);
-    void newWindowPluginResolved(const QString &name, DFMEXT::DFMExtWindowPlugin *emblem);
 
 private:
     std::map<QString, ExtPluginLoaderPointer> allLoaders;
@@ -56,6 +51,7 @@ public:
     void startInitializePlugins();
     void startMonitorPlugins();
     void restartDesktop(const QUrl &url);
+    void doAppendExt(const QString &name, ExtPluginLoaderPointer loader);
 
 Q_SIGNALS:
     void startInitialize(const QStringList &paths);
