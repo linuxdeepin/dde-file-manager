@@ -20,9 +20,6 @@ class DeviceList : public QScrollArea
 public:
     explicit DeviceList(QWidget *parent = nullptr);
 
-protected:
-    void showEvent(QShowEvent *event) override;
-
 private Q_SLOTS:
     void addDevice(const DockItemData &item);
     void removeDevice(const QString &id);
