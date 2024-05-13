@@ -24,12 +24,6 @@ DeviceList::DeviceList(QWidget *parent)
     initConnect();
 }
 
-void DeviceList::showEvent(QShowEvent *event)
-{
-    updateHeight();
-    QScrollArea::showEvent(event);
-}
-
 void DeviceList::addDevice(const DockItemData &item)
 {
     if (deviceItems.contains(item.id))
@@ -117,7 +111,7 @@ void DeviceList::updateHeight()
     int contentHeight = 50 + kDeviceItemHeight * deviceItems.count();
     if (contentHeight > 420)
         contentHeight = 420;
-    setFixedHeight(contentHeight);
+    resize(width(), contentHeight);
 }
 
 QWidget *DeviceList::createHeader()
