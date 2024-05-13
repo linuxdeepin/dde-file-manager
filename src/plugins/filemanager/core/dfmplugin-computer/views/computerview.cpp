@@ -48,6 +48,7 @@ ComputerView::ComputerView(const QUrl &url, QWidget *parent)
 
 ComputerView::~ComputerView()
 {
+    dp->exit = true;
 }
 
 QWidget *ComputerView::widget() const
@@ -301,6 +302,8 @@ void ComputerView::handleDisksVisible()
     }
 
     const auto &&hiddenPartitions = ComputerItemWatcher::hiddenPartitions();
+    if (dp->exit)
+        return;
 
     fmInfo() << "ignored/hidden disks:" << hiddenPartitions;
     for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
@@ -399,6 +402,8 @@ void ComputerView::handleComputerItemVisible()
     handleUserDirVisible();
     handle3rdEntriesVisible();
     handleDisksVisible();
+    if (dp->exit)
+        return;
 
     dp->statusBar->itemCounted(dp->visibleItemCount());
 }
