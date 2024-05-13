@@ -21,6 +21,7 @@ public:
 private:
     ComputerView *q { nullptr };
     ComputerStatusBar *statusBar { nullptr };
+    bool exit { false };
 };
 }
 #endif   // COMPUTERVIEW_P_H
