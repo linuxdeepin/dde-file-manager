@@ -359,6 +359,9 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
         if (!info)
             return;
 
+        if (event->mimeData() && !event->mimeData()->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey))
+            return;
+
         Qt::DropAction defaultAction = Qt::CopyAction;
         if (WindowUtils::keyAltIsPressed()) {
             defaultAction = Qt::MoveAction;

@@ -718,6 +718,7 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
         mimedt->setUrls(urls);
     }
     mimedt->setText(kDdeDestop);
+    mimedt->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey, QByteArray(kDdeDestop));
     // set user id
     SysInfoUtils::setMimeDataUserId(mimedt);
 

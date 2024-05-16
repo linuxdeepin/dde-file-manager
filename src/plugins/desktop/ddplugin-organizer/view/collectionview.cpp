@@ -463,6 +463,9 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
         return;
     }
 
+    if (event->mimeData() && !event->mimeData()->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey))
+        return;
+
     auto defaultAction = Qt::CopyAction;
     const QUrl from = urls.first();
 

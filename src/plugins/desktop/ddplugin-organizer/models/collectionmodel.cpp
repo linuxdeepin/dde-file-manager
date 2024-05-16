@@ -486,6 +486,7 @@ QMimeData *CollectionModel::mimeData(const QModelIndexList &indexes) const
         urls << fileUrl(idx);
     mm->setText(kDdeDesktopOrganizer);
     mm->setUrls(urls);
+    mm->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey, QByteArray(kDdeDesktopOrganizer));
     // set user id
     SysInfoUtils::setMimeDataUserId(mm);
 
