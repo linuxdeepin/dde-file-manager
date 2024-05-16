@@ -181,6 +181,9 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
         if (Q_UNLIKELY(!itemInfo))
             return;
 
+        if (event->mimeData() && !event->mimeData()->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey))
+            return;
+
         Qt::DropAction defaultAction = Qt::CopyAction;
         const QUrl from = urls.first();
 

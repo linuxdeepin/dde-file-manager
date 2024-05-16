@@ -151,6 +151,7 @@ inline constexpr char kTypeAudioFlac[] { "audio/flac" };
 inline constexpr char kDataUserIDKey[] { "userid_for_drag" };
 inline constexpr char kDFMMimeDataKey[] { "dfm_mimedata_for_drag" };
 inline constexpr char kDFMTreeUrlsKey[] { "dfm_tree_urls_for_drag" };
+inline constexpr char kDFMAppTypeKey[] { "dfm_app_type_for_drag" };
 }   // namespace Mime
 
 namespace Scheme {

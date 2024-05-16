@@ -457,6 +457,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
     data->setText(kDdeFileManager);
     data->setUrls(urls);
     SysInfoUtils::setMimeDataUserId(data);
+    data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey, QByteArray(kDdeFileManager));
 
     return data;
 }
