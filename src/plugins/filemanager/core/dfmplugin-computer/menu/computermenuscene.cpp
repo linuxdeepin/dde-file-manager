@@ -144,6 +144,9 @@ void ComputerMenuScene::updateState(QMenu *parent)
             disabled.removeAll(kEject);
         }
 
+        if (d->info->extraProperty(DeviceProperty::kOpticalBlank).toBool())
+            disabled << kErase << kMount;
+
         if (DeviceUtils::isWorkingOpticalDiscDev(d->info->extraProperty(DeviceProperty::kDevice).toString()))
             disabled = keeped;
     } break;
