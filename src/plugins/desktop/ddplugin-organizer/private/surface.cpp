@@ -26,6 +26,34 @@ QSize Surface::gridSize()
              (height() - 2 * kMargin) / gridWidth() };
 }
 
+QRect Surface::mapToScreenGeo(const QRect &gridGeo)
+{
+    int gridOffsetX = gridOffset().x();
+    int gridOffsetY = gridOffset().y();
+
+    auto screenPos = QPoint { gridGeo.x() * gridWidth() + gridOffsetX,
+                              gridGeo.y() * gridWidth() + gridOffsetY };
+    auto screenSize = QSize { gridGeo.width() * gridWidth(),
+                              gridGeo.height() * gridWidth() };
+    return { screenPos, screenSize };
+}
+
+QRect Surface::mapToGridGeo(const QRect &screenGeo)
+{
+    int gridX = (screenGeo.left() - gridOffset().x()) / gridWidth();
+    int gridY = (screenGeo.top() - gridOffset().y()) / gridWidth();
+    int gridW = screenGeo.width() / gridWidth() + 1;
+    int gridH = screenGeo.height() / gridWidth() + 1;
+    return { gridX, gridY, gridW, gridH };
+}
+
+QPoint Surface::gridOffset()
+{
+    int gridOffsetX = kMargin + (width() - 2 * kMargin) % gridWidth();
+    int gridOffsetY = kMargin;
+    return { gridOffsetX, gridOffsetY };
+}
+
 #ifdef QT_DEBUG
 void Surface::paintEvent(QPaintEvent *e)
 {

@@ -44,8 +44,10 @@ enum ItemCategory {
 Q_DECLARE_FLAGS(ItemCategories, ItemCategory)
 
 enum CollectionFrameSize {
-    kSmall = 0,
-    kLarge
+    kMiddle = 0,
+    kLarge,
+    kSmall,
+    kFree
 };
 
 class CollectionBaseData
@@ -64,9 +66,10 @@ struct CollectionStyle
     QString key;
     QRect rect;
     CollectionFrameSize sizeMode = CollectionFrameSize::kSmall;
+    bool customGeo = false;
 };
 }
 
 Q_DECLARE_METATYPE(ddplugin_organizer::CollectionFrameSize);
 
-#endif // ORGANIZER_DEFINES_H
+#endif   // ORGANIZER_DEFINES_H
