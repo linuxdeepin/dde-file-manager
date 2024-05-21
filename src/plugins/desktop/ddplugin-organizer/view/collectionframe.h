@@ -17,6 +17,7 @@ class CollectionFrame : public Dtk::Widget::DFrame
 {
     Q_OBJECT
     friend class CollectionFramePrivate;
+
 public:
     enum CollectionFrameFeature {
         NoCollectionFrameFeatures = 0x00,
@@ -54,6 +55,9 @@ public:
 
 signals:
     void geometryChanged();
+    void dragStarted();
+    void dragStopped();
+
 protected:
     bool event(QEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -68,10 +72,11 @@ protected:
 
 private:
     void initUi();
+
 private:
     QSharedPointer<CollectionFramePrivate> d = nullptr;
 };
 
 }
 
-#endif // COLLECTIONFRAME_H
+#endif   // COLLECTIONFRAME_H
