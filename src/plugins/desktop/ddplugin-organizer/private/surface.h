@@ -16,6 +16,8 @@ class Surface : public QWidget
     Q_OBJECT
 public:
     explicit Surface(QWidget *parent = nullptr);
+    static int gridWidth() { return 20; };
+    QSize gridSize();
 
 signals:
 
@@ -30,4 +32,4 @@ typedef QSharedPointer<Surface> SurfacePointer;
 
 }
 
-#endif // SURFACE_H
+#endif   // SURFACE_H
