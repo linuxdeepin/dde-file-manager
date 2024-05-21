@@ -19,11 +19,6 @@
 
 using namespace ddplugin_organizer;
 
-static constexpr int kCollectionGridColumnCount = 4;
-static constexpr int kSmallCollectionGridRowCount = 2;
-static constexpr int kLargeCollectionGridRowCount = 4;
-static constexpr int kCollectionGridMargin = 2;
-
 NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
     : QObject(qq), q(qq)
 {
@@ -40,24 +35,24 @@ NormalizedModePrivate::~NormalizedModePrivate()
 
 QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height)
 {
-    auto gridSize = q->canvasViewShell->gridSize(currentIndex);
-    if (!gridSize.isValid()) {
-        // fix to last screen,and use overlap pos
+    if (currentIndex > q->surfaces.count())
         currentIndex = q->surfaces.count();
-        gridSize = q->canvasViewShell->gridSize(currentIndex);
-    }
+
+    auto gridSize = q->surfaces.at(currentIndex - 1)->gridSize();
+
+    if (nextPos.x() == INT_MAX)
+        nextPos.setX(gridSize.width() - width);
 
     if (nextPos.y() + height > gridSize.height()) {
         // fix to first row
         nextPos.setY(0);
-        nextPos.setX(nextPos.x() + width);
+        nextPos.setX(nextPos.x() - width);
     }
 
-    if (nextPos.x() + width > gridSize.width()) {
-
+    if (nextPos.x() - width < 0) {
         if (currentIndex == q->surfaces.count()) {
             // overlap pos
-            nextPos.setX(gridSize.width() - width);
+            nextPos.setX(0);
             nextPos.setY(gridSize.height() - height);
             fmDebug() << "stack collection:" << gridSize << width << height << nextPos;
 
@@ -72,7 +67,7 @@ QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, C
         currentIndex += 1;
 
         // restart find valid pos, in the first position of the next screen
-        nextPos.setX(0);
+        nextPos.setX(INT_MAX);
         nextPos.setY(0);
 
         return findValidPos(nextPos, currentIndex, style, width, height);
@@ -387,7 +382,7 @@ void NormalizedMode::layout()
     // screen num is start with 1
     int screenIdx = 1;
     QList<CollectionStyle> toSave;
-    QPoint nextPos(0, 0);
+    QPoint nextPos(INT_MAX, 0);
 
     for (const CollectionHolderPointer &holder : holders) {
         auto style = CfgPresenter->normalStyle(holder->id());
@@ -397,20 +392,21 @@ void NormalizedMode::layout()
             style.key = holder->id();
         }
 
-        int currentHeightTime = style.sizeMode == CollectionFrameSize::kSmall ? kSmallCollectionGridRowCount : kLargeCollectionGridRowCount;
-        auto pos = d->findValidPos(nextPos, screenIdx, style, kCollectionGridColumnCount, currentHeightTime);
+        auto size = kDefaultGridSize.value(style.sizeMode);
+        auto gridPos = d->findValidPos(nextPos, screenIdx, style, size.width(), size.height());
 
         Q_ASSERT(screenIdx > 0);
         Q_ASSERT(screenIdx <= surfaces.count());
-
         style.screenIndex = screenIdx;
         holder->setSurface(surfaces.at(screenIdx - 1).data());
 
-        if (!style.rect.isValid()) {
-            auto rect = canvasViewShell->gridVisualRect(style.screenIndex, pos);
-
-            style.rect = QRect(rect.topLeft(), QSize(rect.width() * kCollectionGridColumnCount, rect.height() * currentHeightTime))
-                                 .marginsRemoved(QMargins(kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin));
+        QRect gridGeo = { gridPos, size };
+        auto rect = holder->surface()->mapToScreenGeo(gridGeo);
+        if (!style.customGeo) {
+            style.rect = rect.marginsRemoved({ kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin });
         }
         holder->setStyle(style);
 

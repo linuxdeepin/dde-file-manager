@@ -6,6 +6,7 @@
 #define COLLECTIONFRAME_P_H
 
 #include "collectionframe.h"
+#include "private/surface.h"
 
 #include <QVBoxLayout>
 
@@ -44,6 +45,10 @@ public:
     void updateMouseTrackingState();
     void updateFrameGeometry();
 
+    void alignToGrid();
+    void stretchToGrid();
+    Surface *surface();
+
     inline bool canMove();
     bool canStretch();
 
@@ -77,4 +82,4 @@ public:
 
 }
 
-#endif // COLLECTIONFRAME_P_H
+#endif   // COLLECTIONFRAME_P_H

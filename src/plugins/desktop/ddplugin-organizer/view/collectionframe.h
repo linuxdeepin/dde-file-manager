@@ -6,10 +6,20 @@
 #define COLLECTIONFRAME_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <DFrame>
 
 namespace ddplugin_organizer {
+
+static constexpr int kCollectionGridMargin = 4;
+
+static const QMap<CollectionFrameSize, QSize> kDefaultGridSize {
+    { kSmall, { 12, 16 } },
+    { kMiddle, { 24, 16 } },
+    { kLarge, { 24, 32 } },
+    { kFree, { 0, 0 } }
+};
 
 class CollectionFramePrivate;
 
@@ -52,6 +62,9 @@ public:
 
     void setStretchStep(const int step);
     int stretchStep() const;
+
+public Q_SLOTS:
+    void onSizeModeChanged(const CollectionFrameSize &size);
 
 signals:
     void geometryChanged();
