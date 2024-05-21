@@ -29,12 +29,18 @@ public:
     void openEditor(const QUrl &url);
     void checkTouchFile(const QUrl &url);
     void checkPastedFiles(const QList<QUrl> &urls);
+    void connectCollectionSignals(CollectionHolderPointer collection);
+
 public slots:
     void onSelectFile(QList<QUrl> &urls, int flag);
     void onClearSelection();
     void onDropFile(const QString &collection, QList<QUrl> &urls);
     void onIconSizeChanged();
     void onFontChanged();
+    void onColGeometryChanged(const QString &id, const QRect &geo);
+    void onDragStarted(const QString &id, const QRect &geo);
+    void onDragStopped(const QString &id);
+
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);
     FileClassifier *classifier = nullptr;
@@ -42,10 +48,11 @@ public:
     NormalizedModeBroker *broker = nullptr;
     ItemSelectionModel *selectionModel = nullptr;
     SelectionSyncHelper *selectionHelper = nullptr;
+
 private:
     NormalizedMode *q;
 };
 
 }
 
-#endif // NORMALIZEDMODE_P_H
+#endif   // NORMALIZEDMODE_P_H

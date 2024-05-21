@@ -6,10 +6,20 @@
 #define COLLECTIONFRAME_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <DFrame>
 
 namespace ddplugin_organizer {
+
+static constexpr int kCollectionGridMargin = 4;
+
+static const QMap<CollectionFrameSize, QSize> kDefaultGridSize {
+    { kSmall, { 12, 16 } },
+    { kMiddle, { 24, 16 } },
+    { kLarge, { 24, 32 } },
+    { kFree, { 0, 0 } }
+};
 
 class CollectionFramePrivate;
 
@@ -17,6 +27,7 @@ class CollectionFrame : public Dtk::Widget::DFrame
 {
     Q_OBJECT
     friend class CollectionFramePrivate;
+
 public:
     enum CollectionFrameFeature {
         NoCollectionFrameFeatures = 0x00,
@@ -52,8 +63,14 @@ public:
     void setStretchStep(const int step);
     int stretchStep() const;
 
+public Q_SLOTS:
+    void onSizeModeChanged(const CollectionFrameSize &size);
+
 signals:
     void geometryChanged();
+    void dragStarted();
+    void dragStopped();
+
 protected:
     bool event(QEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -68,10 +85,11 @@ protected:
 
 private:
     void initUi();
+
 private:
     QSharedPointer<CollectionFramePrivate> d = nullptr;
 };
 
 }
 
-#endif // COLLECTIONFRAME_H
+#endif   // COLLECTIONFRAME_H

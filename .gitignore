@@ -72,6 +72,9 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 # vscode
 .vscode
 
+# deepin-IDE
+.unioncode
+
 # debhelper-build-stamp
 
 .debhelper

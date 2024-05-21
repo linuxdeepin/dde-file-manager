@@ -794,7 +794,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     viewSetting = new ViewSettingUtil(q);
 
 #ifdef QT_DEBUG
-    showGrid = true;
+    // showGrid = true;
 #endif
 }
 

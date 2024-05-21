@@ -9,6 +9,7 @@
 #include "interface/canvasmanagershell.h"
 #include "utils/fileoperator.h"
 #include "view/collectionview.h"
+#include "view/collectionframe.h"
 #include "delegate/collectionitemdelegate.h"
 
 #include <dfm-base/utils/windowutils.h>
@@ -18,14 +19,8 @@
 
 using namespace ddplugin_organizer;
 
-static constexpr int kCollectionGridColumnCount = 4;
-static constexpr int kSmallCollectionGridRowCount = 2;
-static constexpr int kLargeCollectionGridRowCount = 4;
-static constexpr int kCollectionGridMargin = 2;
-
 NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
     broker = new NormalizedModeBroker(qq);
     broker->init();
@@ -36,29 +31,28 @@ NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
 
 NormalizedModePrivate::~NormalizedModePrivate()
 {
-
 }
 
 QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height)
 {
-    auto gridSize = q->canvasViewShell->gridSize(currentIndex);
-    if (!gridSize.isValid()) {
-        // fix to last screen,and use overlap pos
+    if (currentIndex > q->surfaces.count())
         currentIndex = q->surfaces.count();
-        gridSize = q->canvasViewShell->gridSize(currentIndex);
-    }
+
+    auto gridSize = q->surfaces.at(currentIndex - 1)->gridSize();
+
+    if (nextPos.x() == INT_MAX)
+        nextPos.setX(gridSize.width() - width);
 
     if (nextPos.y() + height > gridSize.height()) {
         // fix to first row
         nextPos.setY(0);
-        nextPos.setX(nextPos.x() + width);
+        nextPos.setX(nextPos.x() - width);
     }
 
-    if (nextPos.x() + width > gridSize.width()) {
-
+    if (nextPos.x() - width < 0) {
         if (currentIndex == q->surfaces.count()) {
             // overlap pos
-            nextPos.setX(gridSize.width() - width);
+            nextPos.setX(0);
             nextPos.setY(gridSize.height() - height);
             fmDebug() << "stack collection:" << gridSize << width << height << nextPos;
 
@@ -73,7 +67,7 @@ QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, C
         currentIndex += 1;
 
         // restart find valid pos, in the first position of the next screen
-        nextPos.setX(0);
+        nextPos.setX(INT_MAX);
         nextPos.setY(0);
 
         return findValidPos(nextPos, currentIndex, style, width, height);
@@ -116,10 +110,10 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
     holder->setName(name);
     // disable rename,move,file shift,close,stretch
     holder->setRenamable(false);
-    holder->setMovable(false);
+    holder->setMovable(true);
     holder->setFileShiftable(false);
     holder->setClosable(false);
-    holder->setStretchable(false);
+    holder->setStretchable(true);
 
     // enable adjust
     holder->setAdjustable(true);
@@ -142,7 +136,8 @@ void NormalizedModePrivate::switchCollection()
                 // create new collection.
                 fmDebug() << "Collection " << base->key << "isn't existed, create it.";
                 CollectionHolderPointer collectionHolder(createCollection(base->key));
-                connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, &NormalizedModePrivate::collectionStyleChanged);
+                connectCollectionSignals(collectionHolder);
+
                 holders.insert(base->key, collectionHolder);
                 changed = true;
             }
@@ -187,6 +182,18 @@ void NormalizedModePrivate::checkPastedFiles(const QList<QUrl> &urls)
                 selectionModel->select(idx, QItemSelectionModel::Select);
         }
     }
+}
+
+void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer collection)
+{
+    connect(collection.data(), &CollectionHolder::styleChanged,
+            this, &NormalizedModePrivate::collectionStyleChanged);
+    connect(collection.data(), &CollectionHolder::geometryChanged,
+            this, &NormalizedModePrivate::onColGeometryChanged);
+    connect(collection.data(), &CollectionHolder::dragStarted,
+            this, &NormalizedModePrivate::onDragStarted);
+    connect(collection.data(), &CollectionHolder::dragStopped,
+            this, &NormalizedModePrivate::onDragStopped);
 }
 
 void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
@@ -249,6 +256,21 @@ void NormalizedModePrivate::onFontChanged()
     q->layout();
 }
 
+void NormalizedModePrivate::onColGeometryChanged(const QString &id, const QRect &geo)
+{
+    fmDebug() << "item geo changed..." << id << geo;
+}
+
+void NormalizedModePrivate::onDragStarted(const QString &id, const QRect &geo)
+{
+    fmDebug() << "item start moving..." << id << "from" << geo.topLeft();
+}
+
+void NormalizedModePrivate::onDragStopped(const QString &id)
+{
+    fmDebug() << "item stop moving..." << id;
+}
+
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
 {
     // order by config
@@ -270,10 +292,8 @@ void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
 }
 
 NormalizedMode::NormalizedMode(QObject *parent)
-    : CanvasOrganizer(parent)
-    , d(new NormalizedModePrivate(this))
+    : CanvasOrganizer(parent), d(new NormalizedModePrivate(this))
 {
-
 }
 
 NormalizedMode::~NormalizedMode()
@@ -346,10 +366,9 @@ void NormalizedMode::layout()
 {
     auto holders = d->holders.values();
     {
-        const QStringList &ordered =  d->classifier->classes();
+        const QStringList &ordered = d->classifier->classes();
         const int max = ordered.size();
-        std::sort(holders.begin(), holders.end(), [&ordered, max](const CollectionHolderPointer &t1,
-                  const CollectionHolderPointer &t2) {
+        std::sort(holders.begin(), holders.end(), [&ordered, max](const CollectionHolderPointer &t1, const CollectionHolderPointer &t2) {
             int i1 = ordered.indexOf(t1->id());
             if (i1 < 0)
                 i1 = max;
@@ -363,7 +382,7 @@ void NormalizedMode::layout()
     // screen num is start with 1
     int screenIdx = 1;
     QList<CollectionStyle> toSave;
-    QPoint nextPos(0, 0);
+    QPoint nextPos(INT_MAX, 0);
 
     for (const CollectionHolderPointer &holder : holders) {
         auto style = CfgPresenter->normalStyle(holder->id());
@@ -373,21 +392,26 @@ void NormalizedMode::layout()
             style.key = holder->id();
         }
 
-        int currentHeightTime = style.sizeMode == CollectionFrameSize::kSmall ? kSmallCollectionGridRowCount : kLargeCollectionGridRowCount;
-        auto pos = d->findValidPos(nextPos, screenIdx, style, kCollectionGridColumnCount, currentHeightTime);
+        auto size = kDefaultGridSize.value(style.sizeMode);
+        auto gridPos = d->findValidPos(nextPos, screenIdx, style, size.width(), size.height());
 
         Q_ASSERT(screenIdx > 0);
         Q_ASSERT(screenIdx <= surfaces.count());
-
         style.screenIndex = screenIdx;
         holder->setSurface(surfaces.at(screenIdx - 1).data());
 
-        auto rect = canvasViewShell->gridVisualRect(style.screenIndex, pos);
-
-        style.rect = QRect(rect.topLeft(), QSize(rect.width() * kCollectionGridColumnCount, rect.height() * currentHeightTime))
-                .marginsRemoved(QMargins(kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin));
+        QRect gridGeo = { gridPos, size };
+        auto rect = holder->surface()->mapToScreenGeo(gridGeo);
+        if (!style.customGeo) {
+            style.rect = rect.marginsRemoved({ kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin });
+        }
         holder->setStyle(style);
-        holder->show();
+
+        if (!holder->frame()->isVisible())
+            holder->show();
 
         toSave << style;
     }
@@ -441,7 +465,7 @@ void NormalizedMode::rebuild()
             // 创建没有的组
             if (collectionHolder.isNull()) {
                 collectionHolder = d->createCollection(key);
-                connect(collectionHolder.data(), &CollectionHolder::styleChanged, d, &NormalizedModePrivate::collectionStyleChanged);
+                d->connectCollectionSignals(collectionHolder);
                 d->holders.insert(key, collectionHolder);
             }
         }
@@ -487,7 +511,7 @@ void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int la
         auto url = model->fileUrl(index);
         d->classifier->prepend(url);
         urls.append(url);
-   }
+    }
 
     d->switchCollection();
 
@@ -542,7 +566,7 @@ bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
 {
-    if (modifiers == Qt::ControlModifier && key == Qt::Key_A) // select all
+    if (modifiers == Qt::ControlModifier && key == Qt::Key_A)   // select all
         return d->broker->selectAllItems();
 
     return CanvasOrganizer::filterShortcutkeyPress(viewIndex, key, modifiers);
@@ -578,8 +602,7 @@ void NormalizedMode::removeClassifier()
         if (model && model->handler() == d->classifier->dataHandler())
             model->setHandler(nullptr);
 
-       delete d->classifier;
-       d->classifier = nullptr;
+        delete d->classifier;
+        d->classifier = nullptr;
     }
 }
-
