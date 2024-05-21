@@ -36,6 +36,7 @@ inline constexpr char kKeyY[] = "Y";
 inline constexpr char kKeyWidth[] = "Width";
 inline constexpr char kKeyHeight[] = "Height";
 inline constexpr char kKeySizeMode[] = "SizeMode";
+inline constexpr char kKeyCustomGeo[] = "CustomGeometry";
 
 inline constexpr char kGroupClassifierType[] = "Classifier_Type";
 inline constexpr char kKeyEnabledItems[] = "EnabledItems";
@@ -272,6 +273,7 @@ CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key
     }
 
     style.sizeMode = d->settings->value(kKeySizeMode).value<CollectionFrameSize>();
+    style.customGeo = d->settings->value(kKeyCustomGeo).toBool();
 
     d->settings->endGroup();
     d->settings->endGroup();
@@ -295,6 +297,7 @@ void OrganizerConfig::updateCollectionStyle(bool custom, const CollectionStyle &
     d->settings->setValue(kKeyWidth, style.rect.width());
     d->settings->setValue(kKeyHeight, style.rect.height());
     d->settings->setValue(kKeySizeMode, static_cast<int>(style.sizeMode));
+    d->settings->setValue(kKeyCustomGeo, style.customGeo);
 
     d->settings->endGroup();
     d->settings->endGroup();
@@ -321,6 +324,7 @@ void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionSt
         d->settings->setValue(kKeyWidth, iter->rect.width());
         d->settings->setValue(kKeyHeight, iter->rect.height());
         d->settings->setValue(kKeySizeMode, static_cast<int>(iter->sizeMode));
+        d->settings->setValue(kKeyCustomGeo, iter->customGeo);
 
         d->settings->endGroup();
     }

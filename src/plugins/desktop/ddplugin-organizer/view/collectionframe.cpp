@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "collectionframe_p.h"
+#include "private/surface.h"
 
 #include <DMenu>
 #include <DGuiApplicationHelper>
@@ -182,6 +183,58 @@ void CollectionFramePrivate::updateFrameGeometry()
     titleBarRect.setWidth(rect.width());
 }
 
+void CollectionFramePrivate::alignToGrid()
+{
+    QPoint pos = q->pos();
+    Surface *sur = surface();
+    if (!sur)
+        return;
+
+    auto gridGeo = sur->mapToGridGeo(q->geometry());
+    auto gridSize = sur->gridSize();
+
+    if (gridGeo.x() < 0)
+        gridGeo.setX(0);
+    else if (gridGeo.right() >= gridSize.width())
+        gridGeo.setX(gridSize.width() - gridGeo.width());
+
+    if (gridGeo.y() < 0)
+        gridGeo.setY(0);
+    else if (gridGeo.bottom() >= gridSize.height())
+        gridGeo.setY(gridSize.height() - gridGeo.height());
+
+    auto rect = sur->mapToScreenGeo(gridGeo);
+    pos = rect.topLeft();
+    pos += { 5, 5 };   // margin around collection.
+    q->move(pos);
+}
+
+void CollectionFramePrivate::stretchToGrid()
+{
+    Surface *sur = surface();
+    if (!sur)
+        return;
+
+    auto geo = q->geometry();
+    int gridL = (geo.left() - sur->gridOffset().x()) / Surface::gridWidth();
+    int gridR = 1 + (geo.right() - sur->gridOffset().x()) / Surface::gridWidth();
+    int gridT = (geo.top() - sur->gridOffset().y()) / Surface::gridWidth();
+    int gridB = 1 + (geo.bottom() - sur->gridOffset().y()) / Surface::gridWidth();
+
+    auto rect = sur->mapToScreenGeo(QRect(gridL, gridT, gridR - gridL, gridB - gridT));
+    rect = rect.marginsRemoved({ kCollectionGridMargin,
+                                 kCollectionGridMargin,
+                                 kCollectionGridMargin,
+                                 kCollectionGridMargin });
+    q->setGeometry(rect);
+}
+
+Surface *CollectionFramePrivate::surface()
+{
+    auto w = dynamic_cast<Surface *>(q->parent());
+    return w;
+}
+
 bool CollectionFramePrivate::canMove()
 {
     return frameFeatures.testFlag(CollectionFrame::CollectionFrameMovable);
@@ -303,6 +356,25 @@ int CollectionFrame::stretchStep() const
     return 0;
 }
 
+void CollectionFrame::onSizeModeChanged(const CollectionFrameSize &size)
+{
+    if (!d->surface())
+        return;
+    // top right as anchor
+    auto newSize = kDefaultGridSize.value(size);
+    QRect newGeo = { QPoint { 0, 0 },
+                     QSize { newSize.width() * Surface::gridWidth(),
+                             newSize.height() * Surface::gridWidth() } };
+    newGeo = newGeo.marginsRemoved({ kCollectionGridMargin,
+                                     kCollectionGridMargin,
+                                     kCollectionGridMargin,
+                                     kCollectionGridMargin });
+    newGeo.moveTopRight(geometry().topRight());
+    // do intersects.
+
+    setGeometry(newGeo);
+}
+
 bool CollectionFrame::event(QEvent *event)
 {
 
@@ -345,9 +417,12 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
             // handle move
             d->moveStartPoint = this->mapToParent(event->pos());
             d->frameState = CollectionFramePrivate::MoveState;
+            Q_EMIT dragStarted();
         } else {
             d->frameState = CollectionFramePrivate::NormalShowState;
         }
+
+        raise();
     }
     DFrame::mousePressEvent(event);
     event->accept();
@@ -357,12 +432,15 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
 {
     if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
         d->frameState = CollectionFramePrivate::NormalShowState;
+        d->stretchToGrid();
         d->updateStretchRect();
     }
 
     if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
         d->frameState = CollectionFramePrivate::NormalShowState;
+        d->alignToGrid();
         d->updateMoveRect();
+        Q_EMIT dragStopped();
     }
 
     DFrame::mouseReleaseEvent(event);

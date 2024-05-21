@@ -27,6 +27,7 @@ class CollectionHolder : public QObject
 {
     Q_OBJECT
     friend class CollectionHolderPrivate;
+
 public:
     explicit CollectionHolder(const QString &uuid, CollectionDataProvider *dataProvider, QObject *parent = nullptr);
     ~CollectionHolder() override;
@@ -69,6 +70,10 @@ public:
 signals:
     void styleChanged(const QString &id);
     void sigRequestClose(const QString &id);
+    void geometryChanged(const QString &id, const QRect &geo);
+    void dragStarted(const QString &id, const QRect &geo);
+    void dragStopped(const QString &id);
+
 private:
     QSharedPointer<CollectionHolderPrivate> d = nullptr;
 };
@@ -77,4 +82,4 @@ typedef QSharedPointer<CollectionHolder> CollectionHolderPointer;
 
 }
 
-#endif // COLLECTIONHOLDER_H
+#endif   // COLLECTIONHOLDER_H
