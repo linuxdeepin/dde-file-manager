@@ -345,9 +345,12 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
             // handle move
             d->moveStartPoint = this->mapToParent(event->pos());
             d->frameState = CollectionFramePrivate::MoveState;
+            Q_EMIT dragStarted();
         } else {
             d->frameState = CollectionFramePrivate::NormalShowState;
         }
+
+        raise();
     }
     DFrame::mousePressEvent(event);
     event->accept();
@@ -363,6 +366,7 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
     if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
         d->frameState = CollectionFramePrivate::NormalShowState;
         d->updateMoveRect();
+        Q_EMIT dragStopped();
     }
 
     DFrame::mouseReleaseEvent(event);
