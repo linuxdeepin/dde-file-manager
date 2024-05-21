@@ -34,8 +34,8 @@
 static constexpr char kFilterFolders[] = "^/(boot|dev|proc|sys|run|lib|usr).*$";
 static constexpr char kSupportFiles[] = "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
                                         "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)|"
-                                        "(sh)|(html)|(xml)|(xhtml)|(json)|(css)|(yaml)|(ini)|(bat)|"
-                                        "(js)|(sql)|(uof)|(ofd)";
+                                        "(sh)|(html)|(htm)|(xml)|(xhtml)|(dhtml)|(shtm)|(shtml)|"
+                                        "(json)|(css)|(yaml)|(ini)|(bat)|(js)|(sql)|(uof)|(ofd)";
 static int kMaxResultNum = 100000;   // 最大搜索结果数
 static int kEmitInterval = 50;   // 推送时间间隔
 
