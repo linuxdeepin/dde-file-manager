@@ -161,8 +161,8 @@ TEST(TypeMethodGroup, onChenged)
     TypeMethodGroup type;
     CheckBoxWidget *check = new CheckBoxWidget("temp_check");
     check->setProperty("CheckboxID",1);
-    QObject::connect(check,&CheckBoxWidget::chenged,&type,&TypeMethodGroup::onChenged);
-    check->chenged(true);
+    QObject::connect(check,&CheckBoxWidget::changed,&type,&TypeMethodGroup::onChanged);
+    check->changed(true);
 
     EXPECT_FALSE(connect);
 

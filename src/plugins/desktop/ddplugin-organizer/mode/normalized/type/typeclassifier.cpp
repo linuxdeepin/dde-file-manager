@@ -21,7 +21,9 @@ inline const char kTypeKeyMuz[] = "Type_Music";
 inline const char kTypeKeyFld[] = "Type_Folders";
 inline const char kTypeKeyOth[] = "Type_Other";
 
-inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,md,latex";
+inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,"
+                                     "pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,"
+                                     "md,latex,et,dps,wdb,wks,csv,dpt,ofd,uof,xml";
 inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff,webp";
 inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape";
 inline const char kTypeSuffixVid[] = "avi,mov,mp4,mp2,mpa,mpg,mpeg,mpe,qt,rm,rmvb,mkv,asx,asf,flv,3gp";
@@ -72,7 +74,8 @@ TypeClassifier::TypeClassifier(QObject *parent)
             { kCatPicture, kTypeKeyPic },
             { kCatVideo, kTypeKeyVid },
             { kCatMusic, kTypeKeyMuz },
-            { kCatFloder, kTypeKeyFld }
+            { kCatFloder, kTypeKeyFld },
+            { kCatOther, kTypeKeyOth }
         };
     }
     // all datas shoud be accepted.
@@ -116,11 +119,13 @@ QStringList TypeClassifier::classes() const
         usedKey.append(kTypeKeyVid);
         usedKey.append(kTypeKeyMuz);
         usedKey.append(kTypeKeyFld);
+        // not others default
     } else {
         // test enabled category.
         for (int i = kCatApplication; i <= kCatEnd; i = i << 1) {
             auto cat = static_cast<ItemCategory>(i);
             if (d->categories.testFlag(cat)) {
+                Q_ASSERT(d->categoryKey.contains(cat));
                 auto key = d->categoryKey.value(cat);
                 if (d->keyNames.contains(key)) {
                     Q_ASSERT(!usedKey.contains(key));
@@ -130,8 +135,6 @@ QStringList TypeClassifier::classes() const
         }
     }
 
-    // the `other` is a fixed item.
-    usedKey.append(kTypeKeyOth);
     return usedKey;
 }
 
@@ -169,8 +172,9 @@ QString TypeClassifier::classify(const QUrl &url) const
             key = kTypeKeyMuz;
     }
 
-    // set it to other if it not belong to any category or its category is disabled.
-    if (key.isEmpty() || !d->categories.testFlag(d->categoryKey.key(key)))
+    // set it to other if it not belong to any category
+    // if its category is disabled. use: `d->categories.testFlag(d->categoryKey.key(key)`
+    if (key.isEmpty())
         key = kTypeKeyOth;
     return key;
 }
@@ -178,4 +182,39 @@ QString TypeClassifier::classify(const QUrl &url) const
 QString TypeClassifier::className(const QString &key) const
 {
     return d->keyNames.value(key);
+}
+
+QString TypeClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    if (!classes().contains(classify(newUrl)))
+        return classify(newUrl);
+    return FileClassifier::replace(oldUrl, newUrl);
+}
+
+QString TypeClassifier::append(const QUrl &url)
+{
+    if (!classes().contains(classify(url)))
+        return classify(url);
+    return FileClassifier::append(url);
+}
+
+QString TypeClassifier::prepend(const QUrl &url)
+{
+    if (!classes().contains(classify(url)))
+        return classify(url);
+    return FileClassifier::prepend(url);
+}
+
+QString TypeClassifier::remove(const QUrl &url)
+{
+    if (!classes().contains(classify(url)))
+        return classify(url);
+    return FileClassifier::remove(url);
+}
+
+QString TypeClassifier::change(const QUrl &url)
+{
+    if (!classes().contains(classify(url)))
+        return classify(url);
+    return FileClassifier::change(url);
 }

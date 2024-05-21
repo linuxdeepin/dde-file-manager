@@ -546,22 +546,43 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
 
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)
 {
-    // All datas are not displayed on the desktop.
+    bool filter { false };
+    // remove urls that not contained in collections
     if (urls && d->classifier) {
-        urls->clear();
-        return true;
+        for (auto iter = urls->begin(); iter != urls->end();) {
+            bool contained { false };
+            for (const auto &key : d->classifier->keys()) {
+                if (d->classifier->contains(key, *iter)) {
+                    contained = true;
+                    break;
+                }
+            }
+            if (contained) {
+                iter = urls->erase(iter);
+                filter = true;
+            } else {
+                iter++;
+            }
+        }
     }
-    return false;
+    return filter;
 }
 
 bool NormalizedMode::filterDataInserted(const QUrl &url)
 {
-    return d->classifier;
+    if (d->classifier)
+        return d->classifier->acceptInsert(url);
+
+    return false;
 }
 
 bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    return d->classifier;
+    Q_UNUSED(oldUrl);
+    if (d->classifier)
+        return d->classifier->acceptRename(oldUrl, newUrl);
+
+    return false;
 }
 
 bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
