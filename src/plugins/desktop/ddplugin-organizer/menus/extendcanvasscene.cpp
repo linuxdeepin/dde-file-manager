@@ -144,7 +144,7 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 
         if (actionIter == actions.end()) {
             fmWarning() << "can not find action:"
-                       << "display-settings";
+                        << "display-settings";
         } else {
             QAction *indexAction = *actionIter;
             parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeDesktop]);
@@ -187,30 +187,32 @@ QMenu *ExtendCanvasScenePrivate::organizeBySubActions(QMenu *menu)
 {
     QMenu *subMenu = new QMenu(menu);
 
-    //    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByCustom));
-    //    predicateAction[ActionID::kOrganizeByCustom] = tempAction;
-    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByCustom));
-    //    tempAction->setCheckable(true);
+#ifdef EnableCollectionModeMenu
+    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByCustom));
+    predicateAction[ActionID::kOrganizeByCustom] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByCustom));
+    tempAction->setCheckable(true);
 
-    //    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
-    //    predicateAction[ActionID::kOrganizeByType] = tempAction;
-    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByType));
-    //    tempAction->setCheckable(true);
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
+    predicateAction[ActionID::kOrganizeByType] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByType));
+    tempAction->setCheckable(true);
 
-    //    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeAccessed));
-    //    predicateAction[ActionID::kOrganizeByTimeAccessed] = tempAction;
-    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeAccessed));
-    //    tempAction->setCheckable(true);
+//        tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeAccessed));
+//        predicateAction[ActionID::kOrganizeByTimeAccessed] = tempAction;
+//        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeAccessed));
+//        tempAction->setCheckable(true);
 
-    //    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeModified));
-    //    predicateAction[ActionID::kOrganizeByTimeModified] = tempAction;
-    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeModified));
-    //    tempAction->setCheckable(true);
+//        tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeModified));
+//        predicateAction[ActionID::kOrganizeByTimeModified] = tempAction;
+//        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeModified));
+//        tempAction->setCheckable(true);
 
-    //    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeCreated));
-    //    predicateAction[ActionID::kOrganizeByTimeCreated] = tempAction;
-    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeCreated));
-    //    tempAction->setCheckable(true);
+//        tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeCreated));
+//        predicateAction[ActionID::kOrganizeByTimeCreated] = tempAction;
+//        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeCreated));
+//        tempAction->setCheckable(true);
+#endif
 
     return subMenu;
 }

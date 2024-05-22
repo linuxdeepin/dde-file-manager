@@ -150,7 +150,6 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
         if (!fileMap.contains(url) && handler->acceptInsert(url))
             files << url;
     }
-
     if (files.isEmpty())
         return;
 
@@ -248,8 +247,8 @@ void CollectionModelPrivate::doRefresh(bool global, bool file)
     } else {
         if (file) {
             // do not emit data changed signal, just refresh file info.
-           QSignalBlocker blocker(q);
-           q->update();
+            QSignalBlocker blocker(q);
+            q->update();
         }
 
         sourceAboutToBeReset();
