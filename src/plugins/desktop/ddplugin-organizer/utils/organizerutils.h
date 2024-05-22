@@ -13,9 +13,11 @@ class OrganizerUtils
 {
 public:
     static bool isAllItemCategory(const ItemCategories &flags);
+    static ItemCategories buildBitwiseEnabledCategory(const ItemCategories &flags);
+
 private:
     OrganizerUtils();
 };
 
 }
-#endif // ORGANIZERUTILS_H
+#endif   // ORGANIZERUTILS_H
