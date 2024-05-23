@@ -41,6 +41,7 @@ protected slots:
     void openAction(const QList<QUrl> &urls, const DirOpenMode openMode = DirOpenMode::kOpenInCurrentWindow);
     void openInTerminal();
     void cdUp();
+    void redoFiles();
 
 private:
     bool normalKeyPressEventHandle(const QKeyEvent *event);

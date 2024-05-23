@@ -31,6 +31,7 @@ void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &s
     connect(doWorker.data(), &AbstractWorker::errorNotify, this, &AbstractJob::handleError, Qt::QueuedConnection);
     connect(this, &AbstractJob::errorNotify, handle.get(), &AbstractJobHandler::onError);
     connect(doWorker.data(), &AbstractWorker::workerFinish, handle.get(), &AbstractJobHandler::workerFinish, Qt::QueuedConnection);
+    connect(doWorker.data(), &AbstractWorker::requestSaveRedoOperation, handle.get(), &AbstractJobHandler::requestSaveRedoOperation, Qt::QueuedConnection);
     doWorker->setWorkArgs(handle, sources, target, flags);
 }
 

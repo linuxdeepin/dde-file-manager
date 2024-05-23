@@ -86,8 +86,9 @@ signals:
 
     void removeTaskWidget();
 
-    void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
+    void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> &list);
     void workerFinish();
+    void requestSaveRedoOperation(const QString &token, const bool moreThanZero);
 signals:   // update proccess timer use
     void startUpdateProgressTimer();
     void startWork();
@@ -186,6 +187,7 @@ public:
     QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
     QElapsedTimer *time{ nullptr };   // time eslape
     std::atomic_int64_t elapsed { 0 };
+    std::atomic_bool moreThanZero{ false };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

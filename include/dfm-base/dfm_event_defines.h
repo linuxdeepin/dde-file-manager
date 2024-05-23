@@ -29,6 +29,9 @@ enum GlobalEventType {
     kLoadPlugins,
     kHeadlessStarted,
     kShowSettingDialog,
+    kSaveRedoOperator,   // save  Ctrl+Z operator
+    kCleanSaveOperatorByUrls, // if file delete,clear all ops which contains url
+    kRedo,    // Ctrl+Y
 
     // request file operations
     kOpenFiles = 200,

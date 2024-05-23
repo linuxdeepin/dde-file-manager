@@ -46,6 +46,7 @@ public:
     void renameFilesByReplace(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair);
     void renameFilesByAdd(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> &addPair);
     void renameFilesByCustom(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair);
+    void redoFiles(const FileView *view);
 
 private:
     explicit FileOperatorHelper(QObject *parent = nullptr);
@@ -54,6 +55,7 @@ private:
 
     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack;
     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback undoCallBack;
+    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback redoCallBack;
 };
 
 #define FileOperatorHelperIns            \

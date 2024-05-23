@@ -30,18 +30,26 @@ public:
     JobHandlePointer copyFromTrash(const QList<QUrl> &sources, const QUrl &target,
                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer moveToTrash(const QList<QUrl> &sources,
-                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags
+                                 = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint,
+                                 const bool isInit = true);
     JobHandlePointer restoreFromTrash(const QList<QUrl> &sources, const QUrl &target,
-                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint,
+                                      const bool isInit = true);
     JobHandlePointer deletes(const QList<QUrl> &sources,
-                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags
+                             &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint,
+                             const bool isInit = true);
     JobHandlePointer cut(const QList<QUrl> &sources, const QUrl &target,
-                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags
+                         = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint,
+                         const bool isInit = true);
     JobHandlePointer cleanTrash(const QList<QUrl> &sources);
+    void initArguments(const JobHandlePointer handler);
 
 private:
     bool getOperationsAndDialogService();
-    void initArguments(const JobHandlePointer handler);
+
 private slots:
     void onHandleAddTask();
     void onHandleAddTaskWithArgs(const JobInfoPointer info);
