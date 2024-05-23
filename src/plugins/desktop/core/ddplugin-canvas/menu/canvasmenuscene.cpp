@@ -490,24 +490,11 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
                              ActionID::kIconSizeLarge, ActionID::kIconSizeSuperLarge };
     Q_ASSERT(maxinum == keys.size() - 1);
 
-    // organizer dose not support large and super large icon size
-    bool ok = false;
-    int value = DConfigManager::instance()->value("org.deepin.dde.file-manager.desktop.organizer",
-                                                  "enableOrganizer")
-                        .toInt(&ok);
-    QStringList unsupportIconSizeList {};
-    if (ok && value > 0) {
-        unsupportIconSizeList << ActionID::kIconSizeLarge
-                              << ActionID::kIconSizeSuperLarge;
-    }
-
     QMenu *subMenu = new QMenu(menu);
     d->iconSizeAction.clear();
     int current = d->view->itemDelegate()->iconLevel();
     for (int i = mininum; i <= maxinum; ++i) {
         const QString &key = keys.at(i);
-        if (unsupportIconSizeList.contains(key))
-            continue;
         QAction *tempAction = subMenu->addAction(d->predicateName.value(key));
         tempAction->setCheckable(true);
         tempAction->setChecked(i == current);

@@ -80,26 +80,8 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
             bool hide = false;
             if (CfgPresenter->mode() == OrganizerMode::kCustom) {
                 hide = onCollection;   // don't show on colletion.
-            } else if (CfgPresenter->mode() == OrganizerMode::kNormalized) {
-                hide = true;   // don't show in normal mode.
             }
             if (hide)
-                (*actionIter)->setVisible(false);
-        }
-    }
-
-    // sort by
-    {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
-            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kSortBy;
-        });
-
-        // normal mode
-        if (actionIter != actions.end()
-            && turnOn
-            && CfgPresenter->mode() == OrganizerMode::kNormalized) {
-            // on desktop
-            if (!onCollection)
                 (*actionIter)->setVisible(false);
         }
     }

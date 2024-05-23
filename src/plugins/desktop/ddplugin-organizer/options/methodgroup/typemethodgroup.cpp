@@ -23,7 +23,7 @@ TypeMethodGroup::TypeMethodGroup(QObject *parent)
         { kCatVideo, tr("Videos") },
         { kCatMusic, tr("Music") },
         { kCatFloder, tr("Folders") },
-        { kCatOther, tr("Others") }
+        { kCatOther, QObject::tr("Others") }
     };
 }
 
