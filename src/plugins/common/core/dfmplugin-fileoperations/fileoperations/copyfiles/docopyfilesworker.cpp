@@ -83,7 +83,10 @@ void DoCopyFilesWorker::stop()
 
 bool DoCopyFilesWorker::initArgs()
 {
-    time.start();
+    if (!time) {
+        time = new QElapsedTimer();
+        time->start();
+    }
 
     AbstractWorker::initArgs();
 

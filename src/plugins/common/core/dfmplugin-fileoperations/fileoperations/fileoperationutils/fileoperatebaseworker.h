@@ -122,7 +122,6 @@ private:
     QVariant doActionMerge(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize);
 
 protected:
-    QTime time;   // time eslape
     FileInfoPointer targetInfo { nullptr };   // target file infor pointer
     CountWriteSizeType countWriteType { CountWriteSizeType::kCustomizeType };   // get write size type
     long copyTid = { -1 };   // 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据

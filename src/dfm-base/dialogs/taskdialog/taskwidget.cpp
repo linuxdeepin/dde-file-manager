@@ -375,7 +375,7 @@ void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
     if (speedValue.isValid()) {
         QString speedStr = QString();
         bool ok = false;
-        qint64 speed = speedValue.toInt(&ok);
+        qint64 speed = speedValue.toLongLong(&ok);
         if (ok)
             speedStr = FileUtils::formatSize(speed) + "/s";
         else
@@ -391,6 +391,8 @@ void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
             rmTimeStr = formatTime(rmTime);
         else
             rmTimeStr = remindValue.toString();
+        if (rmTime < 0)
+            rmTimeStr = "";
         lbRmTime->setText(rmTimeStr);
     }
 }
