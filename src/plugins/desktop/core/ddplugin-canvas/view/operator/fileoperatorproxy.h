@@ -38,6 +38,7 @@ public:
     void showFilesProperty(const CanvasView *view);
     void sendFilesToBluetooth(const CanvasView *view);
     void undoFiles(const CanvasView *view);
+    void redoFiles(const CanvasView *view);
 
     void dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
     void dropToTrash(const QList<QUrl> &urls);

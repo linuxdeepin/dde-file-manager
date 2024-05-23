@@ -143,6 +143,9 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         case Qt::Key_D:
             FileOperatorProxyIns->moveToTrash(view);
             return true;
+        case Qt::Key_Y:
+            FileOperatorProxyIns->redoFiles(view);
+            return true;
         default:
             break;
         }
