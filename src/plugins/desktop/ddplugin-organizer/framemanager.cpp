@@ -14,6 +14,7 @@
 #include <dfm-base/dfm_desktop_defines.h>
 
 #include <QAbstractItemView>
+#include <QDBusInterface>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
@@ -25,10 +26,8 @@ using namespace ddplugin_organizer;
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
 FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
-
 }
 
 FrameManagerPrivate::~FrameManagerPrivate()
@@ -98,7 +97,7 @@ void FrameManagerPrivate::layoutSurface(QWidget *root, SurfacePointer surface, b
     Q_ASSERT(surface);
     Q_ASSERT(root);
 
-    auto view = dynamic_cast< QAbstractItemView *>(findView(root));
+    auto view = dynamic_cast<QAbstractItemView *>(findView(root));
     // check hidden flags
     if (view && !hidden) {
         surface->setParent(view->viewport());
@@ -184,9 +183,10 @@ void FrameManagerPrivate::showOptionWindow()
     options = new OptionsWindow();
     options->setAttribute(Qt::WA_DeleteOnClose);
     options->initialize();
-    connect(options, &OptionsWindow::destroyed, this, [this](){
+    connect(options, &OptionsWindow::destroyed, this, [this]() {
         options = nullptr;
-    }, Qt::DirectConnection);
+    },
+            Qt::DirectConnection);
 
     options->moveToCenter(QCursor::pos());
     options->show();
@@ -209,10 +209,8 @@ QWidget *FrameManagerPrivate::findView(QWidget *root) const
 }
 
 FrameManager::FrameManager(QObject *parent)
-    : QObject(parent)
-    , d(new FrameManagerPrivate(this))
+    : QObject(parent), d(new FrameManagerPrivate(this))
 {
-
 }
 
 FrameManager::~FrameManager()
@@ -238,7 +236,7 @@ bool FrameManager::initialize()
     bool enable = CfgPresenter->isEnable();
     fmInfo() << "Organizer enable:" << enable;
     if (enable)
-        turnOn(false); // builded by signal.
+        turnOn(false);   // builded by signal.
 
     connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized, Qt::QueuedConnection);
@@ -280,6 +278,12 @@ void FrameManager::switchMode(OrganizerMode mode)
 
 void FrameManager::turnOn(bool build)
 {
+#ifdef QT_DEBUG
+    QDBusInterface ifs("com.deepin.dde.desktop",
+                       "/org/deepin/dde/desktop/canvas",
+                       "org.deepin.dde.desktop.canvas");
+    ifs.call("EnableUIDebug", QVariant::fromValue(false));
+#endif
     Q_ASSERT(!d->canvas);
     Q_ASSERT(!d->model);
     Q_ASSERT(!d->organizer);
@@ -312,6 +316,12 @@ void FrameManager::turnOn(bool build)
 
 void FrameManager::turnOff()
 {
+#ifdef QT_DEBUG
+    QDBusInterface ifs("com.deepin.dde.desktop",
+                       "/org/deepin/dde/desktop/canvas",
+                       "org.deepin.dde.desktop.canvas");
+    ifs.call("EnableUIDebug", QVariant::fromValue(true));
+#endif
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
@@ -379,4 +389,3 @@ void FrameManager::onGeometryChanged()
     if (d->organizer)
         d->organizer->layout();
 }
-
