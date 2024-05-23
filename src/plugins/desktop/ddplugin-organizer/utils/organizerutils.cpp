@@ -17,6 +17,7 @@ ItemCategories OrganizerUtils::buildBitwiseEnabledCategory(const ItemCategories 
     if (flags == kCatDefault || flags < 0) {
         result = kCatAll;
         result &= ~kCatOther;
+        result &= ~kCatApplication;
     }
 
     return result;
