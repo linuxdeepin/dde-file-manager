@@ -86,8 +86,9 @@ signals:
 
     void removeTaskWidget();
 
-    void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
+    void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> &list);
     void workerFinish();
+    void requestSaveRedoOperation(const QString &token, const bool moreThanZero);
 signals:   // update proccess timer use
     void startUpdateProgressTimer();
     void startWork();
@@ -184,6 +185,7 @@ public:
     QSharedPointer<QThreadPool> threadPool { nullptr };
     static std::atomic_bool bigFileCopy;
     QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
+    std::atomic_bool moreThanZero{ false };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

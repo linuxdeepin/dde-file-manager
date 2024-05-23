@@ -3249,126 +3249,136 @@
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
         <source>New/Search</source>
         <translation>新建/搜索</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
         <source>New window</source>
         <translation>新建窗口</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
         <source>New folder</source>
         <translation>新建文件夾</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
         <source>New tab</source>
         <translation>新建標籤</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
         <source>View</source>
         <translation>視圖</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
         <source>Item information</source>
         <translation>文件訊息</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
         <source>Help</source>
         <translation>幫助手冊</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
         <source>Keyboard shortcuts</source>
         <translation>所有快捷鍵</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
         <source>Switch display status</source>
         <translation>切換顯示狀態</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
         <source>Hide item</source>
         <translation>隱藏文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
         <source>Input in address bar</source>
         <translation>地址欄輸入</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
         <source>Switch to icon view</source>
         <translation>切換到圖標視圖</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
         <source>Switch to list view</source>
         <translation>切換到列表視圖</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
         <translation>切換到樹形視圖</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
         <source>Others</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
         <source>Close</source>
         <translation>關 閉</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
         <source>Close current tab</source>
         <translation>關閉當前標籤</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
         <source>Back</source>
         <translation>後退</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
         <source>Forward</source>
         <translation>前進</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
         <source>Switch to next tab</source>
         <translation>切換到下一個標籤</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="59"/>
         <source>Switch to previous tab</source>
         <translation>切換到上一個標籤</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="60"/>
         <source>Next file</source>
         <translation>下一個文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="61"/>
         <source>Previous file</source>
         <translation>上一個文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="59"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="62"/>
         <source>Switch tab by specified number between 1 to 8</source>
         <translation>在1-8之間切換標籤到指定序號</translation>
     </message>
@@ -4469,28 +4479,28 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="238"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="336"/>
         <source>Rename file error</source>
         <translation>文件重命名錯誤</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="498"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="611"/>
         <source>Failed to create the directory</source>
         <translation>目錄創建失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="984"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1117"/>
         <source>Failed to create the file</source>
         <translation>創建文件失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1061"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1194"/>
         <source>link file error</source>
         <translation>鏈接文件錯誤</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1100"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1109"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1233"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1242"/>
         <source>Failed to modify file permissions</source>
         <translation>修改文件權限失敗</translation>
     </message>

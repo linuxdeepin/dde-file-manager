@@ -3249,126 +3249,136 @@
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
         <source>New/Search</source>
         <translation>قۇرۇش/ئىزدەش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
         <source>New window</source>
         <translation>يېڭى كۆزنەك</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
         <source>New folder</source>
         <translation>مۇندەرىجە قۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
         <source>Search</source>
         <translation>ئىزدەش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
         <source>New tab</source>
         <translation>يىڭى بەت</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
         <source>View</source>
         <translation>كۆرۈش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
         <source>Item information</source>
         <translation>تەپسىلاتى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
         <source>Help</source>
         <translation>ياردەم قوللانمىسى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
         <source>Keyboard shortcuts</source>
         <translation>تىز كونۇپكا</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
         <source>Switch display status</source>
         <translation>كۆرسىتىش ھالىتىنى ئالماشتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
         <source>Hide item</source>
         <translation>يوشۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
         <source>Input in address bar</source>
         <translation>ئادرېس ئىستونىغا كىرگۈزۈش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
         <source>Switch to icon view</source>
         <translation>سىنبەلگە كۆرۈنۈشىگە ئالماشتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
         <source>Switch to list view</source>
         <translation>تىزىملىك كۆرۈنۈشىگە ئالماشتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
         <translation>دەرەخسىمان كۆرۈنۈشكە ئالماشتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
         <source>Others</source>
         <translation>باشقىلىرى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
         <source>Close</source>
         <translation>تاقاش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
         <source>Close current tab</source>
         <translation>نۆۋەتتىكى بەتكۈچى تاقاش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
         <source>Back</source>
         <translation>قايتىش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
         <source>Forward</source>
         <translation>ئالدىغا</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
         <source>Switch to next tab</source>
         <translation>كېيىنكى بەتكۈچكە ئالماشتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="59"/>
         <source>Switch to previous tab</source>
         <translation>ئالدىنقى بەتكە ئالمىشىش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="60"/>
         <source>Next file</source>
         <translation>كىيىنكى ھۆججەت</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="61"/>
         <source>Previous file</source>
         <translation>ئالدىنقى ھۆججەت</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="59"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="62"/>
         <source>Switch tab by specified number between 1 to 8</source>
         <translation>1-8 ئارىلىقىدا  بەلگىلەنگەن تەرتىپنى تاللاپ بەتكۈچ ئالماشتۇرۇڭ</translation>
     </message>
@@ -4469,28 +4479,28 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="238"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="336"/>
         <source>Rename file error</source>
         <translation>ھۆججەتنى قايتا ناملاشتا خاتالىق كۆرۈلدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="498"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="611"/>
         <source>Failed to create the directory</source>
         <translation>مۇندەرىجە قۇرغىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="984"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1117"/>
         <source>Failed to create the file</source>
         <translation>ھۆججەت قۇرۇلمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1061"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1194"/>
         <source>link file error</source>
         <translation>ئۇلانما ھۆججەتتە خاتالىق كۆرۈلدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1100"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1109"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1233"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1242"/>
         <source>Failed to modify file permissions</source>
         <translation>ھۆججەت ھوقۇقىنى ئۆزگەرتكىلى بولمىدى</translation>
     </message>

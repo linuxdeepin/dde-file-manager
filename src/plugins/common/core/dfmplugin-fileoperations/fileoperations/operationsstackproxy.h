@@ -25,6 +25,9 @@ public:
     void saveOperations(const QVariantMap &values);
     void cleanOperations();
     QVariantMap revocationOperations();
+    void SaveRedoOperations(const QVariantMap &values);
+    QVariantMap RevocationRedoOperations();
+    void CleanOperationsByUrl(const QStringList &urls);
 
 private:
     explicit OperationsStackProxy(QObject *parent = nullptr);
@@ -34,6 +37,7 @@ private:
     bool dbusValid { false };
     std::unique_ptr<OperationsStackManagerInterface> operationsStackDbus;
     QStack<QVariantMap> fileOperations;
+    QStack<QVariantMap> redoFileOperations;
 };
 
 DPFILEOPERATIONS_END_NAMESPACE

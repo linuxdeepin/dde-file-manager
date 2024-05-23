@@ -33,6 +33,7 @@ public:
         kDontFormatFileName = 0x100,   // 拷贝时不处理文件名称
         kRevocation = 0x200,   // 拷贝时不处理文件名称
         kCopyRemote = 0x400,   // 深信服远程拷贝
+        kRedo = 0x800,   // 重新执行（ctrl + Y）
         kCountProgressCustomize = 0x800,   // 强制使用自己统计进度
     };
     Q_ENUM(JobFlag)
@@ -244,6 +245,7 @@ Q_SIGNALS:   // 发送给任务调用者使用的信号
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
     void workerFinish();
     void requestRemoveTaskWidget();
+    void requestSaveRedoOperation(const QString &token, const bool moreThanZero);
 Q_SIGNALS:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作
