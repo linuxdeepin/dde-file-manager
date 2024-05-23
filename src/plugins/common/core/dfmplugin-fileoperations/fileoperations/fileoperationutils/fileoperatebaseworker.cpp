@@ -75,8 +75,8 @@ void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
 {
     JobInfoPointer info(new QMap<quint8, QVariant>);
     qint64 elTime = 1;
-    if (time) {
-        elTime = time->elapsed() == 0 ? 1 : time->elapsed();
+    if (speedtimer) {
+        elTime = speedtimer->elapsed() == 0 ? 1 : speedtimer->elapsed();
         elTime += elapsed;
     }
 
