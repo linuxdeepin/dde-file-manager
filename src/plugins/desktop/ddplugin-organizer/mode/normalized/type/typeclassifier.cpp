@@ -206,8 +206,8 @@ QString TypeClassifier::prepend(const QUrl &url)
 
 QString TypeClassifier::remove(const QUrl &url)
 {
-    if (!classes().contains(classify(url)))
-        return classify(url);
+    // 当此接口被调用时，文件可能已经被真正的移除了
+    // 因此无法通过创建文件信息判断类型
     return FileClassifier::remove(url);
 }
 
