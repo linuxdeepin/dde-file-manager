@@ -65,9 +65,9 @@ void DoCutFilesWorker::stop()
 
 bool DoCutFilesWorker::initArgs()
 {
-    if (!time) {
-        time = new QElapsedTimer();
-        time->start();
+    if (!speedtimer) {
+        speedtimer = new QElapsedTimer();
+        speedtimer->start();
     }
 
     AbstractWorker::initArgs();
