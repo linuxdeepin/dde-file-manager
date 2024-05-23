@@ -89,6 +89,7 @@ public:
 
     void updateDFMMimeData(QDropEvent *event);
     bool checkTargetEnable(const QUrl &targetUrl);
+    void redoFiles();
 
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);

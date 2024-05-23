@@ -417,6 +417,15 @@ void FileOperatorHelper::renameFilesByCustom(const QWidget *sender, const QList<
                                  false);
 }
 
+void FileOperatorHelper::redoFiles(const FileView *view)
+{
+    fmInfo() << "Undo files in the directory: " << view->rootUrl();
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kRedo,
+                                 windowId, undoCallBack);
+}
+
 FileOperatorHelper::FileOperatorHelper(QObject *parent)
     : QObject(parent)
 {

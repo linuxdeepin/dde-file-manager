@@ -1030,6 +1030,11 @@ bool CollectionViewPrivate::checkTargetEnable(const QUrl &targetUrl)
     return true;
 }
 
+void CollectionViewPrivate::redoFiles()
+{
+    FileOperatorIns->undoFiles(q);
+}
+
 void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &itemHeight)
 {
     const int availableHeight = viewHeight - viewMargins.top() - viewMargins.bottom();
@@ -1904,6 +1909,10 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             return;
         case Qt::Key_Z:
             d->undoFiles();
+            return;
+        case Qt::Key_Y:
+            // redo
+            d->redoFiles();
             return;
         default:
             break;

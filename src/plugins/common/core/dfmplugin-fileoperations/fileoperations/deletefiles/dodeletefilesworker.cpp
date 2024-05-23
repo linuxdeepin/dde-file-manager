@@ -63,11 +63,18 @@ bool DoDeleteFilesWorker::deleteAllFiles()
  */
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
+    if (allFilesList.count() == 1) {
+        auto info = InfoFactory::create<FileInfo>(allFilesList.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
+        if (info && info->isAttributes(OptInfoType::kIsFile) && info->size() > 0)
+            moreThanZero = true;
+    }
+
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     for (QList<QUrl>::iterator it = --allFilesList.end(); it != --allFilesList.begin(); --it) {
         if (!stateCheck())
             return false;
         const QUrl &url = *it;
+        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         emitCurrentTaskNotify(url, QUrl());
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
@@ -78,8 +85,10 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (sourceUrls.contains(url)) {
-            if (action == AbstractJobHandler::SupportAction::kNoAction)
+            if (action == AbstractJobHandler::SupportAction::kNoAction) {
                 completeSourceFiles.append(url);
+                completeTargetFiles.append(url);
+            }
         }
 
         deleteFilesCount++;
@@ -99,6 +108,11 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     bool ok = true;
+    if (sourceUrls.count() == 1) {
+        auto info = InfoFactory::create<FileInfo>(sourceUrls.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
+        if (info && info->isAttributes(OptInfoType::kIsFile) && info->size() > 0)
+            moreThanZero = true;
+    }
     for (auto &url : sourceUrls) {
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info) {
@@ -116,7 +130,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 
         if (!ok)
             return false;
-
+        completeTargetFiles.append(url);
         completeSourceFiles.append(url);
     }
     return true;
