@@ -6,7 +6,7 @@
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 
-static constexpr uint8_t kMaxStep { 2 };   // BUG: 116699
+static constexpr uint8_t kMaxStep { 100 };
 static const char *kOperationsStackService { "org.deepin.filemanager.server" };
 static const char *kOperationsStackPath { "/org/deepin/filemanager/server/OperationsStackManager" };
 
@@ -67,6 +67,57 @@ QVariantMap OperationsStackProxy::revocationOperations()
         return fileOperations.pop();
 
     return {};
+}
+
+void OperationsStackProxy::SaveRedoOperations(const QVariantMap &values)
+{
+    if (dbusValid) {
+        fmInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = operationsStackDbus->SaveRedoOperations(values);
+        reply.waitForFinished();
+        if (!reply.isValid()) {
+            fmCritical() << "D-Bus reply is invalid " << reply.error();
+            return;
+        }
+        fmInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return;
+    }
+
+    while (redoFileOperations.size() >= kMaxStep)
+        redoFileOperations.pop_front();
+    redoFileOperations.push(values);
+}
+
+QVariantMap OperationsStackProxy::RevocationRedoOperations()
+{
+    if (dbusValid) {
+        fmInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = operationsStackDbus->RevocationRedoOperations();
+        reply.waitForFinished();
+        if (!reply.isValid()) {
+            fmCritical() << "D-Bus reply is invalid " << reply.error();
+            return {};
+        }
+        fmInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+
+        return reply.value();
+    }
+
+    if (redoFileOperations.count() > 0)
+        return redoFileOperations.pop();
+
+    return {};
+}
+
+void OperationsStackProxy::CleanOperationsByUrl(const QStringList &urls)
+{
+    if (dbusValid) {
+        fmInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        operationsStackDbus->CleanOperationsByUrl(urls);
+        fmInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return;
+    }
+
 }
 
 OperationsStackProxy::OperationsStackProxy(QObject *parent)

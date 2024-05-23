@@ -560,37 +560,50 @@ void AbstractWorker::saveOperations()
             || jobType == AbstractJobHandler::JobType::kCutType
             || jobType == AbstractJobHandler::JobType::kMoveToTrashType
             || jobType == AbstractJobHandler::JobType::kRestoreType) {
-            GlobalEventType operatorType = GlobalEventType::kDeleteFiles;
-            QList<QUrl> targetUrls;
+            GlobalEventType operatorType = GlobalEventType::kDeleteFiles, redoType = GlobalEventType::kUnknowType;
+            QList<QUrl> targetUrls, redoSources, redoTargets;
+            redoSources = completeSourceFiles;
+            redoTargets.append(targetUrl);
             switch (jobType) {
             case AbstractJobHandler::JobType::kCopyType:
                 operatorType = GlobalEventType::kDeleteFiles;
                 targetUrls.append(UrlRoute::urlParent(completeSourceFiles.first()));
+                redoType = GlobalEventType::kCopy;
                 break;
             case AbstractJobHandler::JobType::kCutType:
                 operatorType = GlobalEventType::kCutFile;
-                if (!sourceUrls.isEmpty() && FileUtils::isTrashFile(sourceUrls.first()))
+                if (!sourceUrls.isEmpty() && FileUtils::isTrashFile(sourceUrls.first())) {
                     operatorType = GlobalEventType::kMoveToTrash;
-                for (auto url : completeSourceFiles)
-                    targetUrls.append(UrlRoute::urlParent(url));
+                } else {
+                    targetUrls.append(UrlRoute::urlParent(completeSourceFiles.first()));
+                }
+                redoType = GlobalEventType::kCutFile;
                 break;
             case AbstractJobHandler::JobType::kMoveToTrashType:
                 operatorType = GlobalEventType::kRestoreFromTrash;
+                redoType = GlobalEventType::kMoveToTrash;
                 break;
             case AbstractJobHandler::JobType::kRestoreType:
                 operatorType = GlobalEventType::kMoveToTrash;
+                redoType = GlobalEventType::kRestoreFromTrash;
                 break;
             default:
-                operatorType = GlobalEventType::kDeleteFiles;
+                operatorType = GlobalEventType::kUnknowType;
                 break;
             }
             QVariantMap values;
-            values.insert("event", QVariant::fromValue(static_cast<uint16_t>(operatorType)));
-            values.insert("sources", QUrl::toStringList(completeTargetFiles));
-            values.insert("targets", QUrl::toStringList(targetUrls));
-            if (jobType != AbstractJobHandler::JobType::kDeleteType)
-                dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
+            values.insert("undoevent", QVariant::fromValue(static_cast<uint16_t>(operatorType)));
+            values.insert("undosources", QUrl::toStringList(completeTargetFiles));
+            values.insert("undotargets", QUrl::toStringList(targetUrls));
+            values.insert("redoevent", QVariant::fromValue(static_cast<uint16_t>(redoType)));
+            values.insert("redosources", QUrl::toStringList(completeSourceFiles));
+            values.insert("redotargets", QUrl::toStringList(redoTargets));
+            dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
         }
+    }
+
+    if (handle && isConvert && !completeSourceFiles.isEmpty()) {
+        emit requestSaveRedoOperation(QString::number(quintptr(handle.data()),16), moreThanZero);
     }
 }
 
