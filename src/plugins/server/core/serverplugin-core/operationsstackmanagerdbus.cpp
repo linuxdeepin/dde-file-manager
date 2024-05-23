@@ -8,9 +8,7 @@
 #include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-framework/dpf.h>
-
-static constexpr uint8_t kMaxStep { 2 };
-
+static constexpr uint8_t kMaxStep { 100 };
 OperationsStackManagerDbus::OperationsStackManagerDbus(QObject *parent)
     : QObject(parent)
 {
@@ -35,4 +33,25 @@ QVariantMap OperationsStackManagerDbus::RevocationOperations()
         return fileOperations.pop();
 
     return QVariantMap();
+}
+
+void OperationsStackManagerDbus::SaveRedoOperations(const QVariantMap &values)
+{
+    while (redoFileOperations.size() >= kMaxStep)
+        redoFileOperations.pop_front();
+
+    redoFileOperations.push(values);
+}
+
+QVariantMap OperationsStackManagerDbus::RevocationRedoOperations()
+{
+    if (redoFileOperations.count() > 0)
+        return redoFileOperations.pop();
+
+    return QVariantMap();
+}
+
+void OperationsStackManagerDbus::CleanOperationsByUrl(const QStringList &urls)
+{
+
 }

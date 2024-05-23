@@ -301,6 +301,12 @@ void FileOperatorProxy::undoFiles(const CanvasView *view)
                                  view->winId(), nullptr);
 }
 
+void FileOperatorProxy::redoFiles(const CanvasView *view)
+{
+    dpfSignalDispatcher->publish(GlobalEventType::kRedo,
+                                 view->winId(), nullptr);
+}
+
 void FileOperatorProxy::dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
 {
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackPasteFiles, QVariant());

@@ -22,9 +22,13 @@ public slots:
     void SaveOperations(const QVariantMap &values);
     void CleanOperations();
     QVariantMap RevocationOperations();
+    void SaveRedoOperations(const QVariantMap &values);
+    QVariantMap RevocationRedoOperations();
+    void CleanOperationsByUrl(const QStringList &urls);
 
 private:
     QStack<QVariantMap> fileOperations;
+    QStack<QVariantMap> redoFileOperations;
 };
 
 #endif   // OPERATIONSSTACKMANAGERDBUS_H

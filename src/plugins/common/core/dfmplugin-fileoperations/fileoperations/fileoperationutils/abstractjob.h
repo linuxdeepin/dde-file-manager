@@ -6,6 +6,7 @@
 #define ABSTRACTJOB_H
 
 #include "dfmplugin_fileoperations_global.h"
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>

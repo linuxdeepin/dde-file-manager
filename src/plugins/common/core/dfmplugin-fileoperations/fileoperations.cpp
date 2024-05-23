@@ -59,12 +59,12 @@ void FileOperations::initEventHandle()
                                                                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationRestoreFromTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyFromTrash,
                                    TrashFileEventReceiver::instance(),
-                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>, const QUrl,
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>&, const QUrl&,
                                                                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
                                                                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationCopyFromTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyFromTrash,
                                    TrashFileEventReceiver::instance(),
-                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>, const QUrl,
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>&, const QUrl&,
                                                                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
                                                                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback, const QVariant,
                                                                                 AbstractJobHandler::OperatorCallback)>(&TrashFileEventReceiver::handleOperationCopyFromTrash));
@@ -282,6 +282,15 @@ void FileOperations::initEventHandle()
                                                                                      const QList<QUrl>,
                                                                                      const QVariant,
                                                                                      AbstractJobHandler::OperatorCallback)>(&FileOperationsEventReceiver::handleOperationHideFiles));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kSaveRedoOperator,
+                                   FileOperationsEventReceiver::instance(),
+                                   &FileOperationsEventReceiver::handleOperationSaveRedoOperations);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCleanSaveOperatorByUrls,
+                                   FileOperationsEventReceiver::instance(),
+                                   &FileOperationsEventReceiver::handleOperationCleanByUrls);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRedo,
+                                   FileOperationsEventReceiver::instance(),
+                                   &FileOperationsEventReceiver::handleRecoveryOperationRedoRecovery);
 }
 
 void FileOperations::followEvents()

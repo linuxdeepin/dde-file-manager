@@ -182,6 +182,12 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
             moveToTrash();
             return true;
         }
+        case Qt::Key_Y:
+        {
+            // redo
+            redoFiles();
+            return true;
+        }
         default:
             break;
         }
@@ -381,6 +387,11 @@ void ShortcutHelper::openInTerminal()
 void ShortcutHelper::cdUp()
 {
     view->cdUp();
+}
+
+void ShortcutHelper::redoFiles()
+{
+    FileOperatorHelperIns->redoFiles(view);
 }
 
 bool ShortcutHelper::reverseSelect()

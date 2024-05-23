@@ -7,6 +7,7 @@
 
 #include "dfmplugin_fileoperations_global.h"
 #include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -31,7 +32,8 @@ public:
     JobHandlePointer restoreFromTrash(const QList<QUrl> &sources, const QUrl &target,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer deletes(const QList<QUrl> &sources,
-                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags
+                             &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer cut(const QList<QUrl> &sources, const QUrl &target,
                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer cleanTrash(const QList<QUrl> &sources);

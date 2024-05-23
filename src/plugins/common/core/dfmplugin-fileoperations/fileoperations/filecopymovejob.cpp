@@ -129,7 +129,7 @@ JobHandlePointer FileCopyMoveJob::copyFromTrash(const QList<QUrl> &sources, cons
  * \return JobHandlePointer 任务控制器
  */
 JobHandlePointer FileCopyMoveJob::moveToTrash(const QList<QUrl> &sources,
-                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags, const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
         fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -137,7 +137,8 @@ JobHandlePointer FileCopyMoveJob::moveToTrash(const QList<QUrl> &sources,
     }
 
     JobHandlePointer jobHandle = operationsService->moveToTrash(sources, flags);
-    initArguments(jobHandle);
+    if (isInit)
+        initArguments(jobHandle);
 
     return jobHandle;
 }
@@ -148,7 +149,7 @@ JobHandlePointer FileCopyMoveJob::moveToTrash(const QList<QUrl> &sources,
  * \return JobHandlePointer 任务控制器
  */
 JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources, const QUrl &target,
-                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags, const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
         fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -156,7 +157,8 @@ JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources, c
     }
 
     JobHandlePointer jobHandle = operationsService->restoreFromTrash(sources, target, flags);
-    initArguments(jobHandle);
+    if (isInit)
+        initArguments(jobHandle);
 
     return jobHandle;
 }
@@ -167,7 +169,7 @@ JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources, c
  * \return JobHandlePointer 任务控制器
  */
 JobHandlePointer FileCopyMoveJob::deletes(const QList<QUrl> &sources,
-                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags, const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
         fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -175,7 +177,9 @@ JobHandlePointer FileCopyMoveJob::deletes(const QList<QUrl> &sources,
     }
 
     JobHandlePointer jobHandle = operationsService->deletes(sources, flags);
-    initArguments(jobHandle);
+
+    if (isInit)
+        initArguments(jobHandle);
 
     return jobHandle;
 }
@@ -188,7 +192,8 @@ JobHandlePointer FileCopyMoveJob::deletes(const QList<QUrl> &sources,
  * \return JobHandlePointer 任务控制器
  */
 JobHandlePointer FileCopyMoveJob::cut(const QList<QUrl> &sources, const QUrl &target,
-                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags,
+                                      const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
         fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -196,7 +201,8 @@ JobHandlePointer FileCopyMoveJob::cut(const QList<QUrl> &sources, const QUrl &ta
     }
 
     JobHandlePointer jobHandle = operationsService->cut(sources, target, flags);
-    initArguments(jobHandle);
+    if (isInit)
+        initArguments(jobHandle);
 
     return jobHandle;
 }
