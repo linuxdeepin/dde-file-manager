@@ -184,6 +184,8 @@ public:
     QSharedPointer<QThreadPool> threadPool { nullptr };
     static std::atomic_bool bigFileCopy;
     QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
+    QElapsedTimer *time{ nullptr };   // time eslape
+    std::atomic_int64_t elapsed { 0 };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

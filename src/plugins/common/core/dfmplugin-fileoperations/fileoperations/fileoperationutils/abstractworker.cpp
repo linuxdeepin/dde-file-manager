@@ -117,6 +117,20 @@ void AbstractWorker::pause()
 {
     if (currentState == AbstractJobHandler::JobState::kPauseState)
         return;
+    if (time) {
+        elapsed += time->elapsed();
+        delete time;
+        time = nullptr;
+        JobInfoPointer info(new QMap<quint8, QVariant>);
+        info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
+        info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateKey, QVariant::fromValue(currentState));
+        info->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, QVariant::fromValue(0));
+        info->insert(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey, QVariant::fromValue(-1));
+
+        emit stateChangedNotify(info);
+        emit speedUpdatedNotify(info);
+    }
+
     setStat(AbstractJobHandler::JobState::kPauseState);
 }
 /*!
@@ -125,6 +139,10 @@ void AbstractWorker::pause()
 void AbstractWorker::resume()
 {
     setStat(AbstractJobHandler::JobState::kRunningState);
+    if (!time) {
+        time = new QElapsedTimer;
+        time->start();
+    }
 
     waitCondition.wakeAll();
 }
@@ -581,6 +599,10 @@ AbstractWorker::~AbstractWorker()
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
+    }
+    if (time) {
+        delete  time;
+        time = nullptr;
     }
 }
 

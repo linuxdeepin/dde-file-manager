@@ -74,11 +74,18 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
 void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
 {
     JobInfoPointer info(new QMap<quint8, QVariant>);
-    qint64 speed = writSize * 1000 / (time.elapsed() == 0 ? 1 : time.elapsed());
+    qint64 elTime = 1;
+    if (time) {
+        elTime = time->elapsed() == 0 ? 1 : time->elapsed();
+        elTime += elapsed;
+    }
+
+    qint64 speed = currentState == AbstractJobHandler::JobState::kRunningState
+            ? writSize * 1000 / (elTime) : 0;
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateKey, QVariant::fromValue(currentState));
     info->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, QVariant::fromValue(speed));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey, QVariant::fromValue(speed == 0 ? 0 : (sourceFilesTotalSize - writSize) / speed));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey, QVariant::fromValue(speed == 0 ? -1 : (sourceFilesTotalSize - writSize) / speed));
 
     emit stateChangedNotify(info);
     emit speedUpdatedNotify(info);
