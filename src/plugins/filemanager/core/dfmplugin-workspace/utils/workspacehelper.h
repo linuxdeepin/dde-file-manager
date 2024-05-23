@@ -100,6 +100,8 @@ public:
     void setUndoFiles(const QList<QUrl> &files);
     QList<QUrl> filterUndoFiles(const QList<QUrl> &urlList) const;
 
+    void setAlwaysOpenInCurrentWindow(const quint64 windowID);
+
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
