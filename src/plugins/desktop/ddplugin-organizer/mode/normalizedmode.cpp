@@ -84,7 +84,7 @@ void NormalizedModePrivate::collectionStyleChanged(const QString &id)
 {
     if (auto holder = holders.value(id)) {
         CfgPresenter->updateNormalStyle(holder->style());
-        q->layout();
+        // q->layout();
     }
 }
 
@@ -188,12 +188,6 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
 {
     connect(collection.data(), &CollectionHolder::styleChanged,
             this, &NormalizedModePrivate::collectionStyleChanged);
-    connect(collection.data(), &CollectionHolder::geometryChanged,
-            this, &NormalizedModePrivate::onColGeometryChanged);
-    connect(collection.data(), &CollectionHolder::dragStarted,
-            this, &NormalizedModePrivate::onDragStarted);
-    connect(collection.data(), &CollectionHolder::dragStopped,
-            this, &NormalizedModePrivate::onDragStopped);
 }
 
 void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
@@ -242,8 +236,8 @@ void NormalizedModePrivate::onIconSizeChanged()
         }
     }
 
-    if (lay)
-        q->layout();
+    // if (lay)
+    //     q->layout();
 }
 
 void NormalizedModePrivate::onFontChanged()
@@ -253,22 +247,7 @@ void NormalizedModePrivate::onFontChanged()
         view->updateRegionView();
     }
 
-    q->layout();
-}
-
-void NormalizedModePrivate::onColGeometryChanged(const QString &id, const QRect &geo)
-{
-    fmDebug() << "item geo changed..." << id << geo;
-}
-
-void NormalizedModePrivate::onDragStarted(const QString &id, const QRect &geo)
-{
-    fmDebug() << "item start moving..." << id << "from" << geo.topLeft();
-}
-
-void NormalizedModePrivate::onDragStopped(const QString &id)
-{
-    fmDebug() << "item stop moving..." << id;
+    // q->layout();
 }
 
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
@@ -392,27 +371,28 @@ void NormalizedMode::layout()
             style.key = holder->id();
         }
 
-        auto size = kDefaultGridSize.value(style.sizeMode);
-        auto gridPos = d->findValidPos(nextPos, screenIdx, style, size.width(), size.height());
+        if (style.screenIndex == -1) {   // new collection coming.
+            // need to find a preffered place to place this item.
+            auto size = kDefaultGridSize.value(style.sizeMode);
+            auto gridPos = d->findValidPos(nextPos, screenIdx, style, size.width(), size.height());
+            Q_ASSERT(screenIdx > 0);
+            Q_ASSERT(screenIdx <= surfaces.count());
+            style.screenIndex = screenIdx;
+            holder->setSurface(surfaces.at(screenIdx - 1).data());
 
-        Q_ASSERT(screenIdx > 0);
-        Q_ASSERT(screenIdx <= surfaces.count());
-        style.screenIndex = screenIdx;
-        holder->setSurface(surfaces.at(screenIdx - 1).data());
-
-        QRect gridGeo = { gridPos, size };
-        auto rect = holder->surface()->mapToScreenGeo(gridGeo);
-        if (!style.customGeo) {
+            QRect gridGeo = { gridPos, size };
+            auto rect = holder->surface()->mapToScreenGeo(gridGeo);
             style.rect = rect.marginsRemoved({ kCollectionGridMargin,
                                                kCollectionGridMargin,
                                                kCollectionGridMargin,
                                                kCollectionGridMargin });
         }
+        // TODO
+        // screen count reduced. this item should be re-layout.
+        // or screen resolution changed, items out of screen should be re-layout.
+
         holder->setStyle(style);
-
-        if (!holder->frame()->isVisible())
-            holder->show();
-
+        holder->show();
         toSave << style;
     }
 
