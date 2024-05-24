@@ -106,6 +106,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetViewFilter);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_ClosePersistentEditor",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleClosePersistentEditor);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SetAlwaysOpenInCurrentWindow",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetAlwaysOpenInCurrentWindow);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetCustomFilterData",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetCustomFilterData);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetCustomFilterCallback",
@@ -416,5 +418,10 @@ bool WorkspaceEventReceiver::handleRegisterRoutePrehandle(const QString &scheme,
 void WorkspaceEventReceiver::handleRegisterDataCache(const QString &scheme)
 {
     //    FileModelManager::instance()->registerDataCache(scheme);
+}
+
+void WorkspaceEventReceiver::handleSetAlwaysOpenInCurrentWindow(const quint64 windowID)
+{
+    WorkspaceHelper::instance()->setAlwaysOpenInCurrentWindow(windowID);
 }
 
