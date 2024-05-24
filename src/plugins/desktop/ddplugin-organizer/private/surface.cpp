@@ -22,8 +22,8 @@ Surface::Surface(QWidget *parent)
 
 QSize Surface::gridSize()
 {
-    return { (width() - 2 * kMargin) / gridWidth(),
-             (height() - 2 * kMargin) / gridWidth() };
+    return { (width() - 2 * kMargin) / cellWidth(),
+             (height() - 2 * kMargin) / cellWidth() };
 }
 
 QRect Surface::mapToScreenGeo(const QRect &gridGeo)
@@ -31,25 +31,25 @@ QRect Surface::mapToScreenGeo(const QRect &gridGeo)
     int gridOffsetX = gridOffset().x();
     int gridOffsetY = gridOffset().y();
 
-    auto screenPos = QPoint { gridGeo.x() * gridWidth() + gridOffsetX,
-                              gridGeo.y() * gridWidth() + gridOffsetY };
-    auto screenSize = QSize { gridGeo.width() * gridWidth(),
-                              gridGeo.height() * gridWidth() };
+    auto screenPos = QPoint { gridGeo.x() * cellWidth() + gridOffsetX,
+                              gridGeo.y() * cellWidth() + gridOffsetY };
+    auto screenSize = QSize { gridGeo.width() * cellWidth(),
+                              gridGeo.height() * cellWidth() };
     return { screenPos, screenSize };
 }
 
 QRect Surface::mapToGridGeo(const QRect &screenGeo)
 {
-    int gridX = (screenGeo.left() - gridOffset().x()) / gridWidth();
-    int gridY = (screenGeo.top() - gridOffset().y()) / gridWidth();
-    int gridW = screenGeo.width() / gridWidth() + 1;
-    int gridH = screenGeo.height() / gridWidth() + 1;
+    int gridX = (screenGeo.left() - gridOffset().x()) / cellWidth();
+    int gridY = (screenGeo.top() - gridOffset().y()) / cellWidth();
+    int gridW = screenGeo.width() / cellWidth() + 1;
+    int gridH = screenGeo.height() / cellWidth() + 1;
     return { gridX, gridY, gridW, gridH };
 }
 
 QPoint Surface::gridOffset()
 {
-    int gridOffsetX = kMargin + (width() - 2 * kMargin) % gridWidth();
+    int gridOffsetX = kMargin + (width() - 2 * kMargin) % cellWidth();
     int gridOffsetY = kMargin;
     return { gridOffsetX, gridOffsetY };
 }
@@ -77,13 +77,13 @@ void Surface::paintEvent(QPaintEvent *e)
             pen.setColor(QColor(180, 180, 180, 128));
         p.setPen(pen);
     };
-    for (int x = w - kMargin, i = 0; x > 0; x -= gridWidth(), ++i) {
+    for (int x = w - kMargin, i = 0; x > 0; x -= cellWidth(), ++i) {
         setPen(i);
-        p.drawLine(QPoint { x, kMargin }, { x, (h - ((h - 2 * kMargin) % gridWidth()) - kMargin) });
+        p.drawLine(QPoint { x, kMargin }, { x, (h - ((h - 2 * kMargin) % cellWidth()) - kMargin) });
     }
-    for (int y = kMargin, i = 0; y < h; y += gridWidth(), ++i) {
+    for (int y = kMargin, i = 0; y < h; y += cellWidth(), ++i) {
         setPen(i);
-        p.drawLine(QPoint { kMargin + (w - 2 * kMargin) % gridWidth(), y }, { w - kMargin, y });
+        p.drawLine(QPoint { kMargin + (w - 2 * kMargin) % cellWidth(), y }, { w - kMargin, y });
     }
 }
 #endif

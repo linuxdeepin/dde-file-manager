@@ -14,8 +14,10 @@ namespace ddplugin_organizer {
 
 static constexpr int kCollectionGridMargin = 4;
 
+static const int kMinCellWidth = 12;
+static const int kMinCellHeight = 16;
 static const QMap<CollectionFrameSize, QSize> kDefaultGridSize {
-    { kSmall, { 12, 16 } },
+    { kSmall, { kMinCellWidth, kMinCellHeight } },
     { kMiddle, { 24, 16 } },
     { kLarge, { 24, 32 } },
     { kFree, { 0, 0 } }
