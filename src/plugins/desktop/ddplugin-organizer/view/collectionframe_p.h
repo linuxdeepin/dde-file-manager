@@ -17,15 +17,15 @@ class CollectionFramePrivate
 public:
     enum ResponseArea {
         UnKnowRect = -1,
-        LeftTopRect,
-        TopRect,
-        RightTopRect,
-        RightRect,
-        RightBottomRect,
-        BottomRect,
-        LeftBottomRect,
-        LeftRect,
-        TitleBarRect
+        TitleBarRect = 0,
+        LeftRect = 1,
+        TopRect = 1 << 1,
+        RightRect = 1 << 2,
+        BottomRect = 1 << 3,
+        LeftTopRect = LeftRect | TopRect,
+        LeftBottomRect = LeftRect | BottomRect,
+        RightTopRect = RightRect | TopRect,
+        RightBottomRect = RightRect | BottomRect,
     };
 
     enum CollectionFrameState {
@@ -72,8 +72,6 @@ public:
 
     QVBoxLayout *mainLayout = nullptr;
     QRect titleBarRect;
-    int minWidth = 20;
-    int minHeight = 20;
     QList<QRect> stretchRects;
     QPoint stretchEndPoint;
     QRect stretchBeforRect;
