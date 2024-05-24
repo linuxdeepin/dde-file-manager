@@ -191,9 +191,11 @@ bool SendToMenuScene::triggered(QAction *action)
             const QString &linkName = FileUtils::nonExistSymlinkFileName(localUrl, QUrl::fromLocalFile(QDir::currentPath()));
             QString linkPath { QFileDialog::getSaveFileName(nullptr, QObject::tr("Create symlink"), linkName) };
             if (!linkPath.isEmpty()) {
+                const QString &bindPath = FileUtils::bindPathTransform(localUrl.path(), false);
+                const QUrl &sourceUrl = QUrl::fromLocalFile(bindPath);
                 dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
                                              d->windowId,
-                                             d->focusFile,
+                                             sourceUrl,
                                              QUrl::fromLocalFile(linkPath),
                                              true,
                                              false);
@@ -210,7 +212,9 @@ bool SendToMenuScene::triggered(QAction *action)
             for (const QUrl &url : urlsTrans) {
                 QString linkName = FileUtils::nonExistSymlinkFileName(url, QUrl::fromLocalFile(desktopPath));
                 QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
-                dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, d->windowId, url, linkUrl, false, true);
+                const QString &bindPath = FileUtils::bindPathTransform(url.path(), false);
+                const QUrl &sourceUrl = QUrl::fromLocalFile(bindPath);
+                dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, d->windowId, sourceUrl, linkUrl, false, true);
             }
             return true;
         } else if (actId == ActionID::kSendToBluetooth) {
