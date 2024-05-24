@@ -422,6 +422,13 @@ QList<QUrl> WorkspaceHelper::filterUndoFiles(const QList<QUrl> &urlList) const
     return urls;
 }
 
+void WorkspaceHelper::setAlwaysOpenInCurrentWindow(const quint64 windowID)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setAlwaysOpenInCurrentWindow(true);
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;
