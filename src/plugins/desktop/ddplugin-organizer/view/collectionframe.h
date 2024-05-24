@@ -14,8 +14,10 @@ namespace ddplugin_organizer {
 
 static constexpr int kCollectionGridMargin = 4;
 
+static const int kMinCellWidth = 12;
+static const int kMinCellHeight = 16;
 static const QMap<CollectionFrameSize, QSize> kDefaultGridSize {
-    { kSmall, { 12, 16 } },
+    { kSmall, { kMinCellWidth, kMinCellHeight } },
     { kMiddle, { 24, 16 } },
     { kLarge, { 24, 32 } },
     { kFree, { 0, 0 } }
@@ -64,12 +66,11 @@ public:
     int stretchStep() const;
 
 public Q_SLOTS:
-    void onSizeModeChanged(const CollectionFrameSize &size);
+    void adjustSizeMode(const CollectionFrameSize &size);
 
 signals:
+    void sizeModeChanged(const CollectionFrameSize &size);
     void geometryChanged();
-    void dragStarted();
-    void dragStopped();
 
 protected:
     bool event(QEvent *event) override;

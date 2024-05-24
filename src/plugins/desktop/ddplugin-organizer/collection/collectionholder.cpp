@@ -28,6 +28,7 @@ CollectionHolderPrivate::~CollectionHolderPrivate()
 void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSize &size)
 {
     sizeMode = size;
+    widget->setCollectionSize(size);
     emit q->styleChanged(id);
 }
 
@@ -90,18 +91,10 @@ void CollectionHolder::createFrame(Surface *surface, CollectionModel *model)
     d->frame->setWidget(d->widget);
 
     connect(d->widget, &CollectionWidget::sigRequestClose, this, &CollectionHolder::sigRequestClose);
-    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d->frame, &CollectionFrame::onSizeModeChanged);
-    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
+    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d->frame, &CollectionFrame::adjustSizeMode);
+    connect(d->frame, &CollectionFrame::sizeModeChanged, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
     connect(d->frame, &CollectionFrame::geometryChanged, this, [this]() {
         d->styleTimer.start();
-        d->customGeo = true;
-        Q_EMIT geometryChanged(d->id, d->frame->geometry());
-    });
-    connect(d->frame, &CollectionFrame::dragStarted, this, [this]() {
-        Q_EMIT dragStarted(d->id, d->frame->geometry());
-    });
-    connect(d->frame, &CollectionFrame::dragStopped, this, [this]() {
-        Q_EMIT dragStopped(d->id);
     });
 }
 
@@ -284,7 +277,6 @@ void CollectionHolder::setStyle(const CollectionStyle &style)
     d->widget->setCollectionSize(style.sizeMode);
     d->screenIndex = style.screenIndex;
     d->sizeMode = style.sizeMode;
-    d->customGeo = style.customGeo;
 }
 
 CollectionStyle CollectionHolder::style() const
@@ -296,6 +288,5 @@ CollectionStyle CollectionHolder::style() const
 
     style.rect = d->frame->geometry();
     style.sizeMode = d->sizeMode;
-    style.customGeo = d->customGeo;
     return style;
 }
