@@ -912,6 +912,7 @@ void FileDialog::handleUrlChanged(const QUrl &url)
     }
     emit initialized();
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), curNameFilters);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetAlwaysOpenInCurrentWindow", internalWinId());
 }
 
 void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)
