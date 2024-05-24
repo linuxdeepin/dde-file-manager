@@ -66,6 +66,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_View_SetReadOnly)
     DPF_EVENT_REG_SLOT(slot_View_SetFilter)
     DPF_EVENT_REG_SLOT(slot_View_GetFilter)
+    DPF_EVENT_REG_SLOT(slot_View_SetAlwaysOpenInCurrentWindow)
 
     DPF_EVENT_REG_SLOT(slot_Model_SetCustomFilterData)
     DPF_EVENT_REG_SLOT(slot_Model_SetCustomFilterCallback)
