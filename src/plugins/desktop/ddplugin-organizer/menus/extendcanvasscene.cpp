@@ -70,65 +70,20 @@ void ExtendCanvasScenePrivate::normalMenu(QMenu *parent)
 void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 {
     auto actions = parent->actions();
-    // auto arrage
-    {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
-            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kAutoArrange;
-        });
-
-        if (actionIter != actions.end() && turnOn) {
-            bool hide = false;
-            if (CfgPresenter->mode() == OrganizerMode::kCustom) {
-                hide = onCollection;   // don't show on colletion.
-            }
-            if (hide)
-                (*actionIter)->setVisible(false);
-        }
-    }
-
-    // select all
-    {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
-            return ac->property(ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kSelectAll;
-        });
-
-        // normal mode
-        if (actionIter != actions.end()
-            && turnOn
-            && CfgPresenter->mode() == OrganizerMode::kNormalized) {
-            // on desktop
-            if (!onCollection)
-                (*actionIter)->setVisible(false);
-        }
-    }
-
-    // wallpager
-    {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
-            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kWallpaperSettings;
-        });
-
-        // normal mode
-        if (actionIter != actions.end()
-            && turnOn
-            && CfgPresenter->mode() == OrganizerMode::kNormalized) {
-            // on onCollection
-            if (onCollection)
-                (*actionIter)->setVisible(false);
-        }
-    }
 
     // Organize Desktop
     {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
-            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kDisplaySettings;
+        auto it = std::find_if(actions.begin(), actions.end(), [](QAction *action) {
+            return action->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kSortBy;
         });
 
-        if (actionIter == actions.end()) {
+        // net one
+        int pos { (it != actions.end()) ? int(std::distance(actions.begin(), it)) + 1 : -1 };
+        if (pos == -1 || pos >= actions.size()) {
             fmWarning() << "can not find action:"
                         << "display-settings";
         } else {
-            QAction *indexAction = *actionIter;
+            QAction *indexAction = actions[pos];
             parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeDesktop]);
             if (turnOn) {
                 parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeBy]);
@@ -252,7 +207,7 @@ ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
     : AbstractMenuScene(parent), d(new ExtendCanvasScenePrivate(this))
 {
     d->predicateName[ActionID::kOrganizeDesktop] = tr("Organize desktop");
-    d->predicateName[ActionID::kOrganizeOptions] = tr("Desktop options");
+    d->predicateName[ActionID::kOrganizeOptions] = tr("View options");
     d->predicateName[ActionID::kOrganizeBy] = tr("Organize by");
 
     // organize by subactions
@@ -353,8 +308,11 @@ bool ExtendCanvasScene::triggered(QAction *action)
 
 bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
 {
-    if (d->onCollection && caller && action) {
-        auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (!caller || !action)
+        return false;
+
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (d->onCollection) {
         bool isCanvas = caller->name() == "CanvasMenu";
         Q_ASSERT_X(isCanvas, "ExtendCanvasScene", "parent scene is not CanvasMenu");
         if (isCanvas) {
@@ -404,6 +362,10 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
         } else {
             fmCritical() << "ExtendCanvasScene's parent is not CanvasMenu";
         }
+    } else {
+        // 为了能够选中所有集合中的文件
+        if (dfmplugin_menu::ActionID::kSelectAll == actionId)
+            /*d->view->selectAll()*/;
     }
 
     return false;

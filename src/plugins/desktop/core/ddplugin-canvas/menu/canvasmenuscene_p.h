@@ -25,46 +25,7 @@ public:
     explicit CanvasMenuScenePrivate(CanvasMenuScene *qq);
 
     void filterDisableAction(QMenu *menu);
-
-    inline QStringList emptyMenuActionRules()
-    {
-        static QStringList actionRule {
-            dfmplugin_menu::ActionID::kNewFolder,
-            dfmplugin_menu::ActionID::kNewDoc,
-            ActionID::kSortBy,
-            ActionID::kIconSize,
-            ActionID::kAutoArrange,
-            dfmplugin_menu::ActionID::kPaste,
-            dfmplugin_menu::ActionID::kSelectAll,
-            dfmplugin_menu::ActionID::kOpenInTerminal,
-            ActionID::kRefresh,
-            dfmplugin_menu::ActionID::kSeparator,
-            ActionID::kDisplaySettings,
-            ActionID::kWallpaperSettings,
-        };
-        return actionRule;
-    }
-    inline QStringList normalMenuActionRules()
-    {
-        static QStringList actionRule {
-            dfmplugin_menu::ActionID::kOpen,
-            dfmplugin_menu::ActionID::kOpenWith,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kOpenAsAdmin,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kEmptyTrash,
-            dfmplugin_menu::ActionID::kCut,
-            dfmplugin_menu::ActionID::kCopy,
-            dfmplugin_menu::ActionID::kRename,
-            dfmplugin_menu::ActionID::kDelete,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kCreateSymlink,
-            dfmplugin_menu::ActionID::kSetAsWallpaper,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kOpenInTerminal
-        };
-        return actionRule;
-    }
+    bool checkOrganizerPlugin();
 
 public:
     QMap<QAction *, int> iconSizeAction;

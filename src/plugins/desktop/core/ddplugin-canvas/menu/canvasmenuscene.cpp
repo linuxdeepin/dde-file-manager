@@ -98,18 +98,25 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
     }
 }
 
+bool CanvasMenuScenePrivate::checkOrganizerPlugin()
+{
+    return !DPF_NAMESPACE::LifeCycle::blackList().contains("ddplugin-organizer");
+}
+
 CanvasMenuScene::CanvasMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new CanvasMenuScenePrivate(this))
 {
     d->predicateName[ActionID::kSortBy] = tr("Sort by");
-    d->predicateName[ActionID::kIconSize] = tr("Icon size");
-    d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
     d->predicateName[ActionID::kDisplaySettings] = tr("Display Settings");
     d->predicateName[ActionID::kRefresh] = tr("Refresh");
 
+    // 1071: removed
+    d->predicateName[ActionID::kIconSize] = tr("Icon size");
+    d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
+
     if (ddplugin_desktop_util::enableScreensaver())
-        d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
+        d->predicateName[ActionID::kWallpaperSettings] = tr("Personalization");
     else
         d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
 
@@ -119,6 +126,7 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     d->predicateName[ActionID::kSrtSize] = tr("Size");
     d->predicateName[ActionID::kSrtType] = tr("Type");
 
+    // 1071: removed
     // subactions of icon size
     d->predicateName[ActionID::kIconSizeTiny] = tr("Tiny");
     d->predicateName[ActionID::kIconSizeSmall] = tr("Small");
@@ -282,6 +290,7 @@ bool CanvasMenuScene::triggered(QAction *action)
             }
         }
 
+        // 1071: removed
         // icon size
         if (d->iconSizeAction.contains(action)) {
             CanvasIns->setIconLevel(d->iconSizeAction.value(action));
@@ -317,6 +326,7 @@ bool CanvasMenuScene::triggered(QAction *action)
             return true;
         }
 
+        // 1071: removed
         // Auto arrange
         if (actionId == ActionID::kAutoArrange) {
             bool align = action->isChecked();
@@ -450,16 +460,21 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     d->predicateAction[ActionID::kSortBy] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSortBy));
 
-    tempAction = parent->addAction(d->predicateName.value(ActionID::kIconSize));
-    tempAction->setMenu(iconSizeSubActions(parent));
-    d->predicateAction[ActionID::kIconSize] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kIconSize));
+    ///////////
+    // 1071: removed
+    if (!d->checkOrganizerPlugin()) {
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kIconSize));
+        tempAction->setMenu(iconSizeSubActions(parent));
+        d->predicateAction[ActionID::kIconSize] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kIconSize));
 
-    tempAction = parent->addAction(d->predicateName.value(ActionID::kAutoArrange));
-    tempAction->setCheckable(true);
-    tempAction->setChecked(DispalyIns->autoAlign());
-    d->predicateAction[ActionID::kAutoArrange] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kAutoArrange));
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kAutoArrange));
+        tempAction->setCheckable(true);
+        tempAction->setChecked(DispalyIns->autoAlign());
+        d->predicateAction[ActionID::kAutoArrange] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kAutoArrange));
+    }
+    ///////////
 
     tempAction = parent->addAction(d->predicateName.value(ActionID::kDisplaySettings));
     d->predicateAction[ActionID::kDisplaySettings] = tempAction;
@@ -477,9 +492,7 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
 
 void CanvasMenuScene::normalMenu(QMenu *parent) {
     Q_UNUSED(parent)
-}
-
-QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
+} QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
 {
     int mininum = d->view->itemDelegate()->minimumIconLevel();
     int maxinum = d->view->itemDelegate()->maximumIconLevel();

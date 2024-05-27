@@ -114,7 +114,6 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
     holder->setFileShiftable(false);
     holder->setClosable(false);
     holder->setStretchable(true);
-
     // enable adjust
     holder->setAdjustable(true);
 
@@ -390,7 +389,6 @@ void NormalizedMode::layout()
         // TODO
         // screen count reduced. this item should be re-layout.
         // or screen resolution changed, items out of screen should be re-layout.
-
         holder->setStyle(style);
         holder->show();
         toSave << style;
@@ -567,8 +565,9 @@ bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
 {
-    if (modifiers == Qt::ControlModifier && key == Qt::Key_A)   // select all
-        return d->broker->selectAllItems();
+    // select all
+    if (modifiers == Qt::ControlModifier && key == Qt::Key_A)
+        d->broker->selectAllItems();
 
     return CanvasOrganizer::filterShortcutkeyPress(viewIndex, key, modifiers);
 }

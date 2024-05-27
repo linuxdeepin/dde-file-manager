@@ -16,27 +16,28 @@ Q_DECLARE_METATYPE(const QMimeData *)
 using namespace ddplugin_organizer;
 
 #define CanvasViewPush(topic) \
-        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic))
+    dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic))
 
 #define CanvasViewPush2(topic, args...) \
-        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
+    dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
 
 #define CanvasViewFollow(topic, args...) \
-        dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
 #define CanvasViewUnfollow(topic, args...) \
-        dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
-#define CheckFilterConnected(sig) {\
-        if (!isSignalConnected(QMetaMethod::fromSignal(&sig))) {\
-            fmWarning() << "filter signal was not connected to any object" << #sig;\
-            return false; \
-        }}
+#define CheckFilterConnected(sig)                                                   \
+    {                                                                               \
+        if (!isSignalConnected(QMetaMethod::fromSignal(&sig))) {                    \
+            fmWarning() << "filter signal was not connected to any object" << #sig; \
+            return false;                                                           \
+        }                                                                           \
+    }
 
 CanvasViewShell::CanvasViewShell(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 CanvasViewShell::~CanvasViewShell()
@@ -79,25 +80,29 @@ QSize CanvasViewShell::gridSize(int viewIndex)
     return CanvasViewPush2(slot_CanvasView_GridSize, viewIndex).toSize();
 }
 
+QAbstractItemView *CanvasViewShell::canvasView(int viewIndex)
+{
+    return CanvasViewPush2(slot_CanvasManager_View, viewIndex).value<QAbstractItemView *>();
+}
+
 bool CanvasViewShell::eventDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     Q_UNUSED(extData)
-    CheckFilterConnected(CanvasViewShell::filterDropData)
-    return filterDropData(viewIndex, mimeData, viewPoint);
+    CheckFilterConnected(CanvasViewShell::filterDropData) return filterDropData(viewIndex, mimeData, viewPoint);
 }
 
 bool CanvasViewShell::eventShortcutkeyPress(int viewIndex, int key, int modifiers, void *extData)
 {
     Q_UNUSED(extData)
-    CheckFilterConnected(CanvasViewShell::filterShortcutkeyPress)
-    return filterShortcutkeyPress(viewIndex, key, modifiers);
+    CheckFilterConnected(CanvasViewShell::filterShortcutkeyPress) return filterShortcutkeyPress(viewIndex, key, modifiers);
 }
 
 bool CanvasViewShell::eventWheel(int viewIndex, const QPoint &angleDelta, void *extData)
 {
     CheckFilterConnected(CanvasViewShell::filterWheel)
 
-    if (extData) {
+            if (extData)
+    {
         QVariantHash *ext = reinterpret_cast<QVariantHash *>(extData);
         bool ctrl = ext->value("CtrlPressed").toBool();
         return filterWheel(viewIndex, angleDelta, ctrl);
@@ -107,8 +112,7 @@ bool CanvasViewShell::eventWheel(int viewIndex, const QPoint &angleDelta, void *
 
 bool CanvasViewShell::eventContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos, void *extData)
 {
-    CheckFilterConnected(CanvasViewShell::filterContextMenu)
-    return filterContextMenu(viewIndex, dir, files, viewPos);
+    CheckFilterConnected(CanvasViewShell::filterContextMenu) return filterContextMenu(viewIndex, dir, files, viewPos);
 }
 
 //bool CanvasViewShell::eventMousePress(int viewIndex, int button, const QPoint &viewPos, void *extData)
@@ -116,5 +120,3 @@ bool CanvasViewShell::eventContextMenu(int viewIndex, const QUrl &dir, const QLi
 //    CheckFilterConnected(CanvasViewShell::filterMousePress)
 //    return filterMousePress(viewIndex, button, viewPos);
 //}
-
-
