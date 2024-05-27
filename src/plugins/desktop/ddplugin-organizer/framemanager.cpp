@@ -133,6 +133,35 @@ void FrameManagerPrivate::refeshCanvas()
         canvas->canvasModel()->refresh(0, false);
 }
 
+void FrameManagerPrivate::onHideAllKeyPressed()
+{
+    const auto &surfaces { organizer->getSurfaces() };
+    if (surfaces.count() <= 0)
+        return;
+
+    fmDebug() << "Hide/Show all collections!";
+    bool hide { surfaces.first()->isVisible() };
+    bool acceptHide { true };
+    bool initliazed { false };
+    AlertHideAllDialog dialog;
+    if (hide && !CfgPresenter->isRepeatNoMore()) {
+        dialog.initialize();
+        dialog.moveToCenter();
+        int retCode { dialog.exec() };
+        if (dialog.confirmBtnIndex() < 0 || dialog.confirmBtnIndex() != retCode)
+            acceptHide = false;
+        initliazed = true;
+    }
+
+    if (!acceptHide)
+        return;
+    if (hide && initliazed)
+        CfgPresenter->setRepeatNoMore(dialog.isRepeatNoMore());
+    std::for_each(surfaces.begin(), surfaces.end(), [](SurfacePointer surface) {
+        surface->setVisible(!surface->isVisible());
+    });
+}
+
 void FrameManagerPrivate::enableChanged(bool e)
 {
     if (e == CfgPresenter->isEnable())
@@ -144,6 +173,16 @@ void FrameManagerPrivate::enableChanged(bool e)
         q->turnOn();
     else
         q->turnOff();
+}
+
+void FrameManagerPrivate::enableVisibility(bool e)
+{
+    CfgPresenter->setEnableVisibility(e);
+}
+
+void FrameManagerPrivate::saveHideAllSequence(const QKeySequence &seq)
+{
+    CfgPresenter->setHideAllKeySequence(seq);
 }
 
 void FrameManagerPrivate::switchToCustom()
@@ -239,6 +278,8 @@ bool FrameManager::initialize()
         turnOn(false);   // builded by signal.
 
     connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::changeEnableVisibilityState, d, &FrameManagerPrivate::enableVisibility, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::changeHideAllKeySequence, d, &FrameManagerPrivate::saveHideAllSequence, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::showOptionWindow, d, &FrameManagerPrivate::showOptionWindow, Qt::QueuedConnection);
@@ -263,6 +304,7 @@ void FrameManager::switchMode(OrganizerMode mode)
     Q_ASSERT(d->organizer);
 
     connect(d->organizer, &CanvasOrganizer::collectionChanged, d, &FrameManagerPrivate::refeshCanvas);
+    connect(d->organizer, &CanvasOrganizer::hideAllKeyPressed, d, &FrameManagerPrivate::onHideAllKeyPressed);
 
     // initialize to create collection widgets
     if (!d->surfaceWidgets.isEmpty())
@@ -350,6 +392,9 @@ bool FrameManager::organizerEnabled()
 
 void FrameManager::onBuild()
 {
+    // 1071 added, tag config file changed
+    if (CfgPresenter->version() != "2.0.0")
+        CfgPresenter->setVersion("2.0.0");
     d->buildSurface();
 
     if (d->organizer) {
