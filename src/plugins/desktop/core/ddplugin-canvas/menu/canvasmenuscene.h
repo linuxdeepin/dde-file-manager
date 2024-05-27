@@ -38,8 +38,8 @@ public:
 private:
     void emptyMenu(QMenu *parent);
     void normalMenu(QMenu *parent);
-    QMenu *iconSizeSubActions(QMenu *menu);
     QMenu *sortBySubActions(QMenu *menu);
+    QMenu *iconSizeSubActions(QMenu *menu);
 
 private:
     CanvasMenuScenePrivate *const d = nullptr;

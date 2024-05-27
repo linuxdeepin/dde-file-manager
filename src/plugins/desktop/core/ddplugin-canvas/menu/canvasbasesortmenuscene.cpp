@@ -173,14 +173,17 @@ QStringList CanvasBaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("empty-trash");
 
         ret.append(ActionID::kSeparatorLine);
+        ret.append("select-all");
+        ret.append("paste");
+        ret.append("refresh");
+        ret.append(ActionID::kSeparatorLine);
 
         ret.append("auto-arrange");
         ret.append("display-as");   // 显示方式
 
         ret.append("sort-by");   // 排序方式
-
         ret.append("icon-size");   // icon size
-        ret.append("refresh");
+
         ret.append(ActionID::kSeparatorLine);
 
         ret.append("stage-file-to-burning");   // 添加至光盘刻录
@@ -196,8 +199,6 @@ QStringList CanvasBaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("remove");   // 移除
         ret.append("rename");   // 重命名
         ret.append("delete");   // 删除
-        ret.append("paste");
-        ret.append("select-all");
         ret.append("reverse-select");
         ret.append(ActionID::kSeparatorLine);
 
@@ -209,8 +210,6 @@ QStringList CanvasBaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("add-bookmark");   // 添加书签
         ret.append("remove-bookmark");   // 移除书签
         ret.append("set-as-wallpaper");   // 设置壁纸
-        ret.append("display-settings");   // 显示设置
-        ret.append("wallpaper-settings");   // 壁纸与屏保
         ret.append(ActionID::kSeparatorLine);
 
         ret.append("tag-add");   // 标记信息
@@ -220,6 +219,8 @@ QStringList CanvasBaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("open-as-administrator");
         ret.append("open-in-terminal");
         ret.append(ActionID::kSeparatorLine);
+        ret.append("display-settings");   // 显示设置
+        ret.append("wallpaper-settings");   // 壁纸与屏保 （个性化）
 
         ret.append("property");
     });

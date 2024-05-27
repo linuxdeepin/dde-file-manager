@@ -11,6 +11,7 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QSpacerItem>
 
 namespace ddplugin_organizer {
 class OrganizationGroup : public QWidget
@@ -25,12 +26,14 @@ signals:
 public slots:
 protected slots:
     void checkedChanged(bool);
+
 private:
     SwitchWidget *organizationSwitch = nullptr;
     MethodComBox *methodCombox = nullptr;
     MethodGroupHelper *currentClass = nullptr;
     QVBoxLayout *contentLayout = nullptr;
+    QSpacerItem *spacer = nullptr;
 };
 }
 
-#endif // ORGANIZATIONGROUP_H
+#endif   // ORGANIZATIONGROUP_H
