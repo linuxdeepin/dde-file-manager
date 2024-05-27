@@ -147,7 +147,6 @@ void CollectionTitleBarPrivate::showMenu()
                     this, [=]() {
                         auto size = static_cast<CollectionFrameSize>(action->property(kPropertySize).toInt());
                         emit q->sigRequestAdjustSizeMode(size);
-                        action->setChecked(true);
                     });
         };
 

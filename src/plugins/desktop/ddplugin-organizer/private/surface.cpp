@@ -49,9 +49,17 @@ QRect Surface::mapToGridGeo(const QRect &screenGeo)
 
 QPoint Surface::gridOffset()
 {
-    int gridOffsetX = kMargin + (width() - 2 * kMargin) % cellWidth();
-    int gridOffsetY = kMargin;
-    return { gridOffsetX, gridOffsetY };
+    auto margins = gridMargins();
+    return { margins.left(), margins.top() };
+}
+
+QMargins Surface::gridMargins()
+{
+    int l = width() - gridSize().width() * cellWidth() - kMargin;
+    int t = kMargin;
+    int r = kMargin;
+    int b = height() - gridSize().height() * cellWidth() - kMargin;
+    return { l, t, r, b };
 }
 
 #ifdef QT_DEBUG

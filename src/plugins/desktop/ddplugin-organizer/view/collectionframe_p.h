@@ -45,8 +45,8 @@ public:
     void updateMouseTrackingState();
     void updateFrameGeometry();
 
-    void alignToGrid();
-    void stretchToGrid();
+    QPoint moveResultRectPos();
+    QRect stretchResultRect();
     Surface *surface();
 
     inline bool canMove();
@@ -74,7 +74,7 @@ public:
     QRect titleBarRect;
     QList<QRect> stretchRects;
     QPoint stretchEndPoint;
-    QRect stretchBeforRect;
+    QRect oldGeometry;
     ResponseArea responseArea = UnKnowRect;
     QPoint moveStartPoint;
     QList<ResponseArea> stretchArea;

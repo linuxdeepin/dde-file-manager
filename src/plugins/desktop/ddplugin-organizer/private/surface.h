@@ -31,6 +31,7 @@ public:
     QRect mapToScreenGeo(const QRect &gridGeo);
     QRect mapToGridGeo(const QRect &screenGeo);
     QPoint gridOffset();
+    QMargins gridMargins();
 
 signals:
 

@@ -28,6 +28,7 @@ CollectionHolderPrivate::~CollectionHolderPrivate()
 void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSize &size)
 {
     sizeMode = size;
+    widget->setCollectionSize(size);
     emit q->styleChanged(id);
 }
 
@@ -90,8 +91,8 @@ void CollectionHolder::createFrame(Surface *surface, CollectionModel *model)
     d->frame->setWidget(d->widget);
 
     connect(d->widget, &CollectionWidget::sigRequestClose, this, &CollectionHolder::sigRequestClose);
-    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d->frame, &CollectionFrame::onSizeModeChanged);
-    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
+    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d->frame, &CollectionFrame::adjustSizeMode);
+    connect(d->frame, &CollectionFrame::sizeModeChanged, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
     connect(d->frame, &CollectionFrame::geometryChanged, this, [this]() {
         d->styleTimer.start();
         d->customGeo = true;
