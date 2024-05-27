@@ -130,7 +130,7 @@ void CollectionFramePrivate::updateMouseTrackingState()
 
 void CollectionFramePrivate::updateFrameGeometry()
 {
-    QRect rect = stretchBeforRect;
+    QRect rect = oldGeometry;
 
     switch (responseArea) {
     case LeftTopRect: {
@@ -188,14 +188,15 @@ void CollectionFramePrivate::updateFrameGeometry()
     titleBarRect.setWidth(rect.width());
 }
 
-void CollectionFramePrivate::alignToGrid()
+QPoint CollectionFramePrivate::moveResultRectPos()
 {
     QPoint pos = q->pos();
     Surface *sur = surface();
     if (!sur)
-        return;
+        return oldGeometry.topLeft();
 
-    auto gridGeo = sur->mapToGridGeo(q->geometry());
+    auto validRect = findValidArea();
+    auto gridGeo = sur->mapToGridGeo(validRect);
     auto gridSize = sur->gridSize();
 
     if (gridGeo.x() < 0)
@@ -211,22 +212,27 @@ void CollectionFramePrivate::alignToGrid()
     auto rect = sur->mapToScreenGeo(gridGeo);
     pos = rect.topLeft();
     pos += { kCollectionGridMargin, kCollectionGridMargin };   // margin around collection.
-    q->move(pos);
+
+    return pos;
 }
 
-void CollectionFramePrivate::stretchToGrid()
+QRect CollectionFramePrivate::stretchResultRect()
 {
     Surface *sur = surface();
     if (!sur)
-        return;
+        return oldGeometry;
 
     auto normalizeRect = [=](const QRect &screenRect) {
-        int gridL = (screenRect.left() - sur->gridOffset().x()) / Surface::cellWidth();
-        int gridR = 1 + (screenRect.right() - sur->gridOffset().x()) / Surface::cellWidth();
-        int gridT = (screenRect.top() - sur->gridOffset().y()) / Surface::cellWidth();
-        int gridB = 1 + (screenRect.bottom() - sur->gridOffset().y()) / Surface::cellWidth();
-
-        QRect r = sur->mapToScreenGeo(QRect(gridL, gridT, gridR - gridL, gridB - gridT));
+        auto r = sur->mapToGridGeo(screenRect);
+        if (r.left() < 0)
+            r.setLeft(0);
+        if (r.top() < 0)
+            r.setTop(0);
+        if (r.right() >= sur->gridSize().width())
+            r.setRight(sur->gridSize().width() - 1);
+        if (r.bottom() >= sur->gridSize().height())
+            r.setBottom(sur->gridSize().height() - 1);
+        r = sur->mapToScreenGeo(r);
         r = r.marginsRemoved({ kCollectionGridMargin,
                                kCollectionGridMargin,
                                kCollectionGridMargin,
@@ -236,15 +242,13 @@ void CollectionFramePrivate::stretchToGrid()
 
     auto geo = q->geometry();
     geo = normalizeRect(geo);
-    if (!isIntersected(geo)) {
-        q->setGeometry(geo);
-        return;
-    }
+    if (!isIntersected(geo))
+        return geo;
 
-    int dx = 1 + Surface::toCellLen(geo.width() - stretchBeforRect.width());
-    int dy = 1 + Surface::toCellLen(geo.height() - stretchBeforRect.height());
+    int dx = 1 + Surface::toCellLen(geo.width() - oldGeometry.width());
+    int dy = 1 + Surface::toCellLen(geo.height() - oldGeometry.height());
 
-    auto baseRect = stretchBeforRect;
+    auto baseRect = oldGeometry;
     // convert shrink to expand.
     if (dx < 0) {   // make baseRect width minimum.
 
@@ -271,7 +275,7 @@ void CollectionFramePrivate::stretchToGrid()
                                              Surface::toPixelLen(bool(responseArea & TopRect) * -1 * j),
                                              Surface::toPixelLen(bool(responseArea & RightRect) * 1 * i),
                                              Surface::toPixelLen(bool(responseArea & BottomRect) * 1 * j));
-            if (!isIntersected(newRect)) {
+            if (!isIntersected(newRect) && newRect.right() < (surface()->width() - surface()->gridMargins().right())) {
                 auto newSquare = i + j;
                 if (newSquare >= maxDistance) {
                     maxDistance = newSquare;
@@ -284,8 +288,7 @@ void CollectionFramePrivate::stretchToGrid()
         }
     }
     geo = maxRect;
-
-    q->setGeometry(geo);
+    return geo;
 }
 
 Surface *CollectionFramePrivate::surface()
@@ -381,7 +384,7 @@ QRect CollectionFramePrivate::findValidArea()
         if (pos.isValid())
             return pos;
     }
-    return stretchBeforRect;
+    return oldGeometry;
 }
 
 QRect CollectionFramePrivate::findValidAreaAroundRect(const QRect &centerRect)
@@ -401,6 +404,11 @@ QRect CollectionFramePrivate::findValidAreaAroundRect(const QRect &centerRect)
     QRect closestRect(myGridRect);
     auto isValidPos = [this, &closestRect](const QPoint &p) {
         closestRect.moveTo(p);
+        if (closestRect.left() < 0
+            || closestRect.right() >= surface()->gridSize().width()
+            || closestRect.top() < 0
+            || closestRect.bottom() >= surface()->gridSize().height())
+            return false;
         auto r = surface()->mapToScreenGeo(closestRect);
         return !isIntersected(r);
     };
@@ -492,7 +500,7 @@ QRect CollectionFramePrivate::findValidAreaAroundRect(const QRect &centerRect)
 int CollectionFramePrivate::calcLeftX()
 {
     int minLimitX = 0;
-    int maxLimitX = stretchBeforRect.bottomRight().x() - Surface::toPixelLen(kMinCellWidth - 1);
+    int maxLimitX = oldGeometry.bottomRight().x() - Surface::toPixelLen(kMinCellWidth - 1);
     int afterX = stretchEndPoint.x() > maxLimitX ? maxLimitX : (stretchEndPoint.x() > minLimitX ? stretchEndPoint.x() : minLimitX);
 
     return afterX;
@@ -500,7 +508,7 @@ int CollectionFramePrivate::calcLeftX()
 
 int CollectionFramePrivate::calcRightX()
 {
-    int minLimitX = stretchBeforRect.bottomLeft().x() + Surface::toPixelLen(kMinCellWidth - 1);
+    int minLimitX = oldGeometry.bottomLeft().x() + Surface::toPixelLen(kMinCellWidth - 1);
     int afterX = stretchEndPoint.x() > minLimitX ? stretchEndPoint.x() : minLimitX;
 
     QWidget *parentWidget = qobject_cast<QWidget *>(q->parent());
@@ -515,7 +523,7 @@ int CollectionFramePrivate::calcRightX()
 int CollectionFramePrivate::calcTopY()
 {
     int minLimitY = 0;
-    int maxLimitY = stretchBeforRect.bottomLeft().y() - Surface::toPixelLen(kMinCellHeight - 1);
+    int maxLimitY = oldGeometry.bottomLeft().y() - Surface::toPixelLen(kMinCellHeight - 1);
     int afterY = stretchEndPoint.y() > maxLimitY ? maxLimitY : (stretchEndPoint.y() > minLimitY ? stretchEndPoint.y() : minLimitY);
 
     return afterY;
@@ -523,7 +531,7 @@ int CollectionFramePrivate::calcTopY()
 
 int CollectionFramePrivate::calcBottomY()
 {
-    int minLimitY = stretchBeforRect.topLeft().y() + Surface::toPixelLen(kMinCellHeight - 1);
+    int minLimitY = oldGeometry.topLeft().y() + Surface::toPixelLen(kMinCellHeight - 1);
     int afterY = stretchEndPoint.y() > minLimitY ? stretchEndPoint.y() : minLimitY;
 
     QWidget *parentWidget = qobject_cast<QWidget *>(q->parent());
@@ -599,7 +607,7 @@ int CollectionFrame::stretchStep() const
     return 0;
 }
 
-void CollectionFrame::onSizeModeChanged(const CollectionFrameSize &size)
+void CollectionFrame::adjustSizeMode(const CollectionFrameSize &size)
 {
     if (!d->surface())
         return;
@@ -613,9 +621,14 @@ void CollectionFrame::onSizeModeChanged(const CollectionFrameSize &size)
                                      kCollectionGridMargin,
                                      kCollectionGridMargin });
     newGeo.moveTopRight(geometry().topRight());
+
     // do intersects.
+    if (d->isIntersected(newGeo))
+        return;
 
     setGeometry(newGeo);
+
+    Q_EMIT sizeModeChanged(size);
 }
 
 bool CollectionFrame::event(QEvent *event)
@@ -651,7 +664,7 @@ void CollectionFrame::showEvent(QShowEvent *event)
 void CollectionFrame::mousePressEvent(QMouseEvent *event)
 {
     if (Qt::LeftButton == event->button()) {
-        d->stretchBeforRect = this->geometry();
+        d->oldGeometry = this->geometry();
 
         if (d->canStretch() && d->stretchArea.contains(d->responseArea)) {
             // handle stretch
@@ -675,17 +688,20 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
 {
     if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
         d->frameState = CollectionFramePrivate::NormalShowState;
-        d->stretchToGrid();
+        auto result = d->stretchResultRect();
+        if (result != d->oldGeometry) {
+        }
+        setGeometry(result);
         d->updateStretchRect();
     }
 
     if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
         d->frameState = CollectionFramePrivate::NormalShowState;
 
-        auto pos = d->findValidArea();
-        setGeometry(pos);
-
-        d->alignToGrid();
+        auto pos = d->moveResultRectPos();
+        if (pos != d->oldGeometry.topLeft()) {
+        }
+        move(pos);
         d->updateMoveRect();
         Q_EMIT dragStopped();
     }

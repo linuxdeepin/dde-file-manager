@@ -66,9 +66,10 @@ public:
     int stretchStep() const;
 
 public Q_SLOTS:
-    void onSizeModeChanged(const CollectionFrameSize &size);
+    void adjustSizeMode(const CollectionFrameSize &size);
 
 signals:
+    void sizeModeChanged(const CollectionFrameSize &size);
     void geometryChanged();
     void dragStarted();
     void dragStopped();
