@@ -68,7 +68,7 @@ TEST(ExtendCanvasScene, initialize_normal)
     params[MenuParamKey::kIsEmptyArea] = false;
     params[CollectionMenuParams::kOnColletion] = true;
     params[CollectionMenuParams::kColletionView] = 2;
-    QList<QUrl> selectUrls {QUrl("file://etc"), QUrl("file://usr")};
+    QList<QUrl> selectUrls { QUrl("file://etc"), QUrl("file://usr") };
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
 
     stub_ext::StubExt stub;
@@ -122,93 +122,88 @@ TEST(ExtendCanvasScenePrivate, triggerSortby)
 TEST(ExtendCanvasScenePrivate, Menu)
 {
     QMenu parent;
-    ExtendCanvasScene scene ;
+    ExtendCanvasScene scene;
     scene.d->selectFiles.push_back(QUrl("temp_file"));
     scene.d->emptyMenu(&parent);
     scene.d->turnOn = true;
     CfgPresenter->curMode = OrganizerMode::kCustom;
     scene.d->normalMenu(&parent);
     {
-        QAction action1 ;
-        QAction action2 ;
-        QAction action3 ;
-        QAction action4 ;
-        QAction action5 ;
-        QAction action6 ;
-        action1.setProperty(ActionPropertyKey::kActionID, ddplugin_canvas::ActionID::kAutoArrange);
+        QAction action2;
+        QAction action3;
+        QAction action4;
+        QAction action5;
         action2.setProperty(ActionPropertyKey::kActionID, ddplugin_canvas::ActionID::kSortBy);
         action3.setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kSelectAll);
         action4.setProperty(ActionPropertyKey::kActionID, ddplugin_canvas::ActionID::kWallpaperSettings);
         action5.setProperty(ActionPropertyKey::kActionID, ddplugin_canvas::ActionID::kDisplaySettings);
-        action6.setProperty(ActionPropertyKey::kActionID, ddplugin_canvas::ActionID::kIconSize);
-        QList<QAction*> actions {&action1,&action2,&action3,&action4,&action5,&action6} ;
+        QList<QAction *> actions { &action2, &action3, &action4, &action5 };
 
         parent.addActions(actions);
         {
-           CfgPresenter->curMode = OrganizerMode::kNormalized;
-           scene.d->updateEmptyMenu(&parent);
-           EXPECT_FALSE(action1.isVisible());
-           EXPECT_FALSE(action2.isVisible());
-           EXPECT_FALSE(action3.isVisible());
-           EXPECT_TRUE(action4.isVisible());
-           EXPECT_TRUE(action5.isVisible());
-           EXPECT_FALSE(action6.isVisible());
+            CfgPresenter->curMode = OrganizerMode::kNormalized;
+            scene.d->updateEmptyMenu(&parent);
+            EXPECT_FALSE(action2.isVisible());
+            EXPECT_FALSE(action3.isVisible());
+            EXPECT_TRUE(action4.isVisible());
+            EXPECT_TRUE(action5.isVisible());
         }
     }
     EXPECT_NO_FATAL_FAILURE(scene.d->updateNormalMenu(&parent));
 }
 TEST(ExtendCanvasScenePrivate, classifierToActionID)
 {
-    Classifier cf ;
-    ExtendCanvasScene scene ;
+    Classifier cf;
+    ExtendCanvasScene scene;
     {
         cf = kType;
         QString ret = scene.d->classifierToActionID(cf);
-        EXPECT_EQ(ret,ActionID::kOrganizeByType);
+        EXPECT_EQ(ret, ActionID::kOrganizeByType);
     }
     {
         cf = kTimeCreated;
         QString ret = scene.d->classifierToActionID(cf);
-        EXPECT_EQ(ret,ActionID::kOrganizeByTimeCreated);
+        EXPECT_EQ(ret, ActionID::kOrganizeByTimeCreated);
     }
     {
         cf = kTimeModified;
         QString ret = scene.d->classifierToActionID(cf);
-        EXPECT_EQ(ret,ActionID::kOrganizeByTimeModified);
+        EXPECT_EQ(ret, ActionID::kOrganizeByTimeModified);
     }
     {
         cf = kLabel;
         QString ret = scene.d->classifierToActionID(cf);
-        EXPECT_EQ(ret,"");
+        EXPECT_EQ(ret, "");
     }
     {
         cf = kName;
         QString ret = scene.d->classifierToActionID(cf);
-        EXPECT_EQ(ret,"");
+        EXPECT_EQ(ret, "");
     }
     {
         cf = kSize;
         QString ret = scene.d->classifierToActionID(cf);
-        EXPECT_EQ(ret,"");
+        EXPECT_EQ(ret, "");
     }
 }
 class testMenuScene : public AbstractMenuScene
 {
 public:
-    QString name() const{ return "CanvasMenu"; }
+    QString name() const { return "CanvasMenu"; }
 };
 TEST(ExtendCanvasScene, scene)
 {
-   stub_ext::StubExt stub;
-   bool call = true;
-   typedef AbstractMenuScene*(*fun_type)( QAction *);
-   stub.set_lamda((fun_type)&AbstractMenuScene::scene,[&call]( QAction *){
-       call = true;return nullptr;
-   });
-   ExtendCanvasScene scene;
-   QAction action ;
-   EXPECT_NO_FATAL_FAILURE(scene.scene(&action));
-   EXPECT_TRUE(call);
+    stub_ext::StubExt stub;
+    bool call = true;
+    typedef AbstractMenuScene *(*fun_type)(QAction *);
+    stub.set_lamda((fun_type)&AbstractMenuScene::scene, [&call](QAction *) {
+        call = true;
+        return nullptr;
+    });
+    ExtendCanvasScene scene;
+    QAction action;
+    EXPECT_NO_FATAL_FAILURE(scene.scene(&action));
+    EXPECT_TRUE(call);
 }
 TEST(ExtendCanvasScene, create)
 {
@@ -216,9 +211,10 @@ TEST(ExtendCanvasScene, create)
     QMenu parent;
     ExtendCanvasScene scene;
     bool call = true;
-    typedef AbstractMenuScene*(*fun_type)( QMenu *);
-    stub.set_lamda((fun_type)&AbstractMenuScene::create,[&call]( QMenu *){
-        call = true;return nullptr;
+    typedef AbstractMenuScene *(*fun_type)(QMenu *);
+    stub.set_lamda((fun_type)&AbstractMenuScene::create, [&call](QMenu *) {
+        call = true;
+        return nullptr;
     });
     EXPECT_NO_FATAL_FAILURE(scene.create(&parent));
     EXPECT_TRUE(call);
@@ -229,46 +225,47 @@ TEST(ExtendCanvasScene, updateState)
     QMenu parent;
     ExtendCanvasScene scene;
     bool call = true;
-    typedef AbstractMenuScene*(*fun_type)( QMenu *);
-    stub.set_lamda((fun_type)&AbstractMenuScene::updateState,[&call]( QMenu *){
-        call = true;return nullptr;
+    typedef AbstractMenuScene *(*fun_type)(QMenu *);
+    stub.set_lamda((fun_type)&AbstractMenuScene::updateState, [&call](QMenu *) {
+        call = true;
+        return nullptr;
     });
     EXPECT_NO_FATAL_FAILURE(scene.updateState(&parent));
     EXPECT_TRUE(call);
 }
 TEST(ExtendCanvasScene, actionFilter)
 {
-     stub_ext::StubExt stub;
-     bool isShowError { false };
-     stub.set_lamda(VADDR(DDialog, exec), [ &isShowError ]{
+    stub_ext::StubExt stub;
+    bool isShowError { false };
+    stub.set_lamda(VADDR(DDialog, exec), [&isShowError] {
         isShowError = true;
         return 1;
-     });
+    });
 
-     RenameDialog::ModifyMode mode = RenameDialog::kReplace;
-     stub.set_lamda(&RenameDialog::modifyMode,[&mode](){
-         return mode;
-     });
-     ExtendCanvasScene scene;
-     testMenuScene testScene;
-     QAction tempAction;
-     tempAction.setProperty("actionID","rename");
-     EXPECT_FALSE(scene.actionFilter(&testScene,&tempAction));
+    RenameDialog::ModifyMode mode = RenameDialog::kReplace;
+    stub.set_lamda(&RenameDialog::modifyMode, [&mode]() {
+        return mode;
+    });
+    ExtendCanvasScene scene;
+    testMenuScene testScene;
+    QAction tempAction;
+    tempAction.setProperty("actionID", "rename");
+    EXPECT_FALSE(scene.actionFilter(&testScene, &tempAction));
 
-     scene.d->onCollection = true;
-     CollectionView v("uuid",nullptr);
-     scene.d->view = &v;
+    scene.d->onCollection = true;
+    CollectionView v("uuid", nullptr);
+    scene.d->view = &v;
 
-     {
-        mode = RenameDialog::kReplace ;
-        EXPECT_TRUE(scene.actionFilter(&testScene,&tempAction));
-     }
-     {
-        mode = RenameDialog::kAdd ;
-        EXPECT_TRUE(scene.actionFilter(&testScene,&tempAction));
-     }
-     {
-        mode = RenameDialog::kCustom ;
-        EXPECT_TRUE(scene.actionFilter(&testScene,&tempAction));
-     }
+    {
+        mode = RenameDialog::kReplace;
+        EXPECT_TRUE(scene.actionFilter(&testScene, &tempAction));
+    }
+    {
+        mode = RenameDialog::kAdd;
+        EXPECT_TRUE(scene.actionFilter(&testScene, &tempAction));
+    }
+    {
+        mode = RenameDialog::kCustom;
+        EXPECT_TRUE(scene.actionFilter(&testScene, &tempAction));
+    }
 }

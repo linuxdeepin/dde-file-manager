@@ -19,8 +19,7 @@ using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 
 OptionsWindowPrivate::OptionsWindowPrivate(OptionsWindow *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
     dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasManager_AutoArrangeChanged", this, &OptionsWindowPrivate::autoArrangeChanged);
 }
@@ -51,7 +50,6 @@ void OptionsWindowPrivate::autoArrangeChanged(bool on)
 void OptionsWindowPrivate::enableChanged(bool enable)
 {
     if (organization) {
-        autoArrange->setVisible(!enable);
         organization->reset();
 
         // adjust size when subwidgets size changed.
@@ -63,15 +61,12 @@ void OptionsWindowPrivate::enableChanged(bool enable)
 }
 
 OptionsWindow::OptionsWindow(QWidget *parent)
-    : DAbstractDialog(parent)
-    , d(new OptionsWindowPrivate(this))
+    : DAbstractDialog(parent), d(new OptionsWindowPrivate(this))
 {
-
 }
 
 OptionsWindow::~OptionsWindow()
 {
-
 }
 
 bool OptionsWindow::initialize()
@@ -83,7 +78,7 @@ bool OptionsWindow::initialize()
     auto mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize); // update size when subwidget is removed.
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);   // update size when subwidget is removed.
     setLayout(mainLayout);
     d->mainLayout = mainLayout;
 
@@ -105,26 +100,21 @@ bool OptionsWindow::initialize()
     d->contentLayout = contentLayout;
     d->contentWidget->setLayout(contentLayout);
 
-    // organization
-    d->organization = new OrganizationGroup(d->contentWidget);
-    d->organization->reset();
-    contentLayout->addWidget(d->organization);
-
-    contentLayout->addSpacing(10);
-
     // auto arrange
     d->autoArrange = new SwitchWidget(tr("Auto arrange icons"), this);
     d->autoArrange->setChecked(d->isAutoArrange());
     d->autoArrange->setFixedSize(400, 48);
     d->autoArrange->setRoundEdge(SwitchWidget::kBoth);
     contentLayout->addWidget(d->autoArrange);
-    connect(d->autoArrange, &SwitchWidget::checkedChanged, this, [this](bool check){
+    connect(d->autoArrange, &SwitchWidget::checkedChanged, this, [this](bool check) {
         d->setAutoArrange(check);
     });
-    // hide auto arrange if organizer is on.
-    d->autoArrange->setVisible(!CfgPresenter->isEnable());
-
     contentLayout->addSpacing(10);
+
+    // organization
+    d->organization = new OrganizationGroup(d->contentWidget);
+    d->organization->reset();
+    contentLayout->addWidget(d->organization);
 
     // size slider
     d->sizeSlider = new SizeSlider(this);

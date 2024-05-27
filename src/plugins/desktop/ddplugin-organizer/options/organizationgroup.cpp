@@ -13,7 +13,8 @@ static constexpr int kCheckEntryHeight = 36;
 static constexpr int kCheckEntryWidget = 400;
 
 using namespace ddplugin_organizer;
-OrganizationGroup::OrganizationGroup(QWidget *parent) : QWidget(parent)
+OrganizationGroup::OrganizationGroup(QWidget *parent)
+    : QWidget(parent)
 {
     contentLayout = new QVBoxLayout(this);
     contentLayout->setContentsMargins(0, 0, 0, 0);
@@ -34,6 +35,7 @@ void OrganizationGroup::reset()
     // add switch
     if (!organizationSwitch) {
         organizationSwitch = new SwitchWidget(tr("Organize desktop"), this);
+        organizationSwitch->hide();   // 1071: 移除此选项
         organizationSwitch->setFixedSize(kContentWidght, kContentHeight);
         contentLayout->insertWidget(0, organizationSwitch, 0, Qt::AlignTop);
         connect(organizationSwitch, &SwitchWidget::checkedChanged, this, &OrganizationGroup::checkedChanged);
@@ -90,6 +92,10 @@ void OrganizationGroup::reset()
             methodCombox->setCurrentMethod(-1);
             methodCombox->setRoundEdge(MethodComBox::kBottom);
         }
+
+        if (!spacer)
+            spacer = new QSpacerItem(1, 10, QSizePolicy::Fixed);
+        contentLayout->addItem(spacer);
     } else {
         organizationSwitch->setRoundEdge(ContentBackgroundWidget::kBoth);
 
@@ -102,6 +108,11 @@ void OrganizationGroup::reset()
             currentClass->release();
             delete currentClass;
             currentClass = nullptr;
+        }
+        contentLayout->removeItem(spacer);
+        if (spacer) {
+            delete spacer;
+            spacer = nullptr;
         }
     }
 
