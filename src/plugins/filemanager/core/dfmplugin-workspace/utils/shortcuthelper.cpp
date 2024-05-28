@@ -217,7 +217,7 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
             cdUp();
             return true;
         case Qt::Key_Down: {
-            showFilesProperty();
+            openAction(view->selectedUrlList());
             return true;
         }
         case Qt::Key_Home:
