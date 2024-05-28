@@ -156,7 +156,7 @@ void CrumbBarPrivate::writeUrlToClipboard(const QUrl &url)
     if (copyPath.isEmpty())
         return;
 
-    QGuiApplication::clipboard()->setText(copyPath);
+    QGuiApplication::clipboard()->setText(copyPath.replace(QString(Global::Scheme::kFile) + "://", ""));
 }
 
 void CrumbBarPrivate::initUI()
