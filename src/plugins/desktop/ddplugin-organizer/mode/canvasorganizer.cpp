@@ -10,6 +10,7 @@
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmanagershell.h"
 #include "interface/canvasselectionshell.h"
+#include "config/configpresenter.h"
 
 #include <QMimeData>
 
@@ -31,24 +32,21 @@ CanvasOrganizer *OrganizerCreator::createOrganizer(OrganizerMode mode)
     return ret;
 }
 
-CanvasOrganizer::CanvasOrganizer(QObject *parent) : QObject(parent)
+CanvasOrganizer::CanvasOrganizer(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
 CanvasOrganizer::~CanvasOrganizer()
 {
-
 }
 
 void CanvasOrganizer::layout()
 {
-
 }
 
 void CanvasOrganizer::detachLayout()
 {
-
 }
 
 void CanvasOrganizer::setCanvasModelShell(CanvasModelShell *sh)
@@ -135,7 +133,6 @@ void CanvasOrganizer::setSurfaces(const QList<SurfacePointer> &surface)
 
 void CanvasOrganizer::reset()
 {
-
 }
 
 bool CanvasOrganizer::filterDataRested(QList<QUrl> *urls)
@@ -164,11 +161,20 @@ bool CanvasOrganizer::filterShortcutkeyPress(int viewIndex, int key, int modifie
 
     if (Qt::ControlModifier == modifiers) {
         static const QList<int> filterKeys {
-                                            Qt::Key_Equal       // disbale ctrl + = to zooom out
-                                            , Qt::Key_Minus     // disbale ctrl + - to zooom in
-                                            };
-        return filterKeys.contains(key);
+            Qt::Key_Equal   // disbale ctrl + = to zooom out
+            ,
+            Qt::Key_Minus   // disbale ctrl + - to zooom in
+        };
+        if (filterKeys.contains(key))
+            return true;
     }
+
+    const QKeySequence &seq { modifiers | key };
+    if (CfgPresenter->isEnableVisibility() && CfgPresenter->hideAllKeySequence() == seq) {
+        emit hideAllKeyPressed();
+        return true;
+    }
+
     return false;
 }
 
@@ -182,4 +188,3 @@ bool CanvasOrganizer::filterWheel(int viewIndex, const QPoint &angleDelta, bool 
 //{
 //    return false;
 //}
-

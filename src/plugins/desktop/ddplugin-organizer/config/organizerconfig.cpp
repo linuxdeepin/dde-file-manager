@@ -16,30 +16,31 @@
 using namespace ddplugin_organizer;
 
 namespace {
-inline constexpr char kGroupGeneral[] = "";   // "General" is default group in QSetting, so using empty string to access 'General' group.
-inline constexpr char kKeyEnable[] = "Enable";
-inline constexpr char kKeyMode[] = "Mode";
+inline constexpr char kGroupGeneral[] { "" };   // "General" is default group in QSetting, so using empty string to access 'General' group.
+inline constexpr char kKeyEnable[] { "Enable" };
+inline constexpr char kKeyMode[] { "Mode" };
+inline constexpr char kKeyVersion[] { "Version" };
 
-inline constexpr char kGroupCollectionNormalized[] = "Collection_Normalized";
-inline constexpr char kKeyClassification[] = "Classification";
+inline constexpr char kGroupCollectionNormalized[] { "Collection_Normalized" };
+inline constexpr char kKeyClassification[] { "Classification" };
 
-inline constexpr char kGroupCollectionCustomed[] = "Collection_Customed";
-inline constexpr char kGroupCollectionBase[] = "CollectionBase";
-inline constexpr char kKeyName[] = "Name";
-inline constexpr char kKeyKey[] = "Key";
-inline constexpr char kGroupItems[] = "Items";
+inline constexpr char kGroupCollectionCustomed[] { "Collection_Customed" };
+inline constexpr char kGroupCollectionBase[] { "CollectionBase" };
+inline constexpr char kKeyName[] { "Name" };
+inline constexpr char kKeyKey[] { "Key" };
+inline constexpr char kGroupItems[] { "Items" };
 
-inline constexpr char kGroupCollectionStyle[] = "CollectionStyle";
-inline constexpr char kKeyScreen[] = "screen";
-inline constexpr char kKeyX[] = "X";
-inline constexpr char kKeyY[] = "Y";
-inline constexpr char kKeyWidth[] = "Width";
-inline constexpr char kKeyHeight[] = "Height";
-inline constexpr char kKeySizeMode[] = "SizeMode";
-inline constexpr char kKeyCustomGeo[] = "CustomGeometry";
+inline constexpr char kGroupCollectionStyle[] { "CollectionStyle" };
+inline constexpr char kKeyScreen[] { "screen" };
+inline constexpr char kKeyX[] { "X" };
+inline constexpr char kKeyY[] { "Y" };
+inline constexpr char kKeyWidth[] { "Width" };
+inline constexpr char kKeyHeight[] { "Height" };
+inline constexpr char kKeySizeMode[] { "SizeMode" };
+inline constexpr char kKeyCustomGeo[] { "CustomGeometry" };
 
-inline constexpr char kGroupClassifierType[] = "Classifier_Type";
-inline constexpr char kKeyEnabledItems[] = "EnabledItems";
+inline constexpr char kGroupClassifierType[] { "Classifier_Type" };
+inline constexpr char kKeyEnabledItems[] { "EnabledItems" };
 
 }   // namepace
 
@@ -119,6 +120,11 @@ int OrganizerConfig::mode() const
 void OrganizerConfig::setMode(int m)
 {
     d->setValue(kGroupGeneral, kKeyMode, m);
+}
+
+void OrganizerConfig::setVersion(const QString &v)
+{
+    d->setValue(kGroupGeneral, kKeyVersion, v);
 }
 
 void OrganizerConfig::sync(int ms)

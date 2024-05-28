@@ -94,7 +94,7 @@ bool OptionsWindow::initialize()
     mainLayout->addWidget(d->contentWidget);
 
     auto contentLayout = new QVBoxLayout(d->contentWidget);
-    contentLayout->setContentsMargins(10, 0, 10, 10);
+    contentLayout->setContentsMargins(10, 0, 10, 0);
     contentLayout->setSpacing(0);
     contentLayout->setSizeConstraint(QLayout::SetFixedSize);
     d->contentLayout = contentLayout;
@@ -111,17 +111,18 @@ bool OptionsWindow::initialize()
     });
     contentLayout->addSpacing(10);
 
-    // organization
-    d->organization = new OrganizationGroup(d->contentWidget);
-    d->organization->reset();
-    contentLayout->addWidget(d->organization);
-
     // size slider
     d->sizeSlider = new SizeSlider(this);
     d->sizeSlider->setRoundEdge(SwitchWidget::kBoth);
     d->sizeSlider->setFixedSize(400, 94);
     d->sizeSlider->init();
     contentLayout->addWidget(d->sizeSlider);
+    contentLayout->addSpacing(10);
+
+    // organization
+    d->organization = new OrganizationGroup(d->contentWidget);
+    d->organization->reset();
+    contentLayout->addWidget(d->organization);
 
     adjustSize();
 

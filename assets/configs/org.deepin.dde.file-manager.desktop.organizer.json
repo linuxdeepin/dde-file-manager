@@ -12,6 +12,39 @@
 			"description": "It's used to control whether to enable the Organizer.",
 			"permissions": "readwrite",
 			"visibility": "public"
+		}, 
+		"enableVisibility" : {
+			"value": true,
+			"serial": 0,
+			"flags": [],
+			"name": "Enable Visibility",
+			"name[zh_CN]": "启用集合可见性",
+			"description[zh_CN]": "用于开启/关闭启用集合可见性",
+			"description": "Used to turn on/off enabling collection visibility.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		}, 
+		"hideAllKeySeq" : {
+			"value": "Meta+O",
+			"serial": 0,
+			"flags": [],
+			"name": "Hide All KeySeq",
+			"name[zh_CN]": "隐藏集合快捷键",
+			"description[zh_CN]": "集合隐藏的快捷键字符串",
+			"description": "Collections of hidden shortcut strings.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"hideAllDialogRepeatNoMore": {
+			"value": false,
+			"serial": 0,
+			"flags": [],
+			"name": "Repeat No More",
+			"name[zh_CN]": "不重复提示集合隐藏",
+			"description[zh_CN]": "用于开启/关闭隐藏集合的提示对话框",
+			"description": "Prompt dialog for turning on/off hidden collections.",
+			"permissions": "readwrite",
+			"visibility": "public"
 		}
 	}
 }

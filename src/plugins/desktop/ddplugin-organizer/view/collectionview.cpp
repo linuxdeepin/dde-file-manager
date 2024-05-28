@@ -37,7 +37,7 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
 // no need view margin, this 2px used to draw inner and out order.
-static constexpr int kCollectionViewMargin = 0; //2
+static constexpr int kCollectionViewMargin = 0;   //2
 
 static constexpr int kCollectionItemVerticalMargin = 2;
 static constexpr int kIconOffset = 10;
@@ -939,7 +939,7 @@ void CollectionViewPrivate::continuousSelection(const QPersistentModelIndex &new
     auto &&currentSelectionStartNode = provider->items(id).indexOf(currentSelectionStartFile);
     if (Q_UNLIKELY(-1 == currentSelectionStartNode)) {
         fmWarning() << "warning:can not find file:" << currentSelectionStartFile << " in collection:" << id
-                   << ".Or no file is selected.So fix to 0.";
+                    << ".Or no file is selected.So fix to 0.";
         currentSelectionStartNode = 0;
     }
 
@@ -947,7 +947,7 @@ void CollectionViewPrivate::continuousSelection(const QPersistentModelIndex &new
     auto &&currentSelectionEndNode = provider->items(id).indexOf(currentSelectionEndFile);
     if (Q_UNLIKELY(-1 == currentSelectionEndNode)) {
         fmWarning() << "warning:can not find file:" << currentSelectionEndFile << " in collection:" << id
-                   << ".Give up switch selection!";
+                    << ".Give up switch selection!";
         return;
     }
 
@@ -1903,7 +1903,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             d->cutFiles();
             return;
         case Qt::Key_V:
-            d->pasteFiles(); // paste files to canvas not collection
+            d->pasteFiles();   // paste files to canvas not collection
             return;
         case Qt::Key_Z:
             d->undoFiles();
@@ -1968,7 +1968,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
                 d->currentSelectionStartIndex = newCurrent;
                 selectionModel()->select(newCurrent, QItemSelectionModel::ClearAndSelect);
                 setCurrentIndex(newCurrent);
-            } else if (event->modifiers() == Qt::ShiftModifier){
+            } else if (event->modifiers() == Qt::ShiftModifier) {
                 d->continuousSelection(newCurrent);
             }
             event->accept();
@@ -2224,10 +2224,8 @@ void CollectionView::currentChanged(const QModelIndex &current, const QModelInde
 }
 
 GraphicsEffect::GraphicsEffect(CollectionView *parent)
-    : QGraphicsEffect(parent)
-    , view(parent)
+    : QGraphicsEffect(parent), view(parent)
 {
-
 }
 
 void GraphicsEffect::draw(QPainter *painter)
@@ -2275,7 +2273,7 @@ void GraphicsEffect::draw(QPainter *painter)
     int begin = 0;
     if (drawTop) {
         pixmapPainter.save();
-        for (; begin < opacity; ++begin ) {
+        for (; begin < opacity; ++begin) {
             QRect rect(0, begin, size.width(), 1);
             pixmapPainter.setOpacity((begin) / qreal(opacity));
             pixmapPainter.drawPixmap(rect, source, rect);
@@ -2290,7 +2288,7 @@ void GraphicsEffect::draw(QPainter *painter)
         pixmapPainter.drawPixmap(content, source, content);
 
         int bottom = size.height() - opacity;
-        for (int i = 0; i < opacity; ++i ) {
+        for (int i = 0; i < opacity; ++i) {
             QRect rect(0, bottom + i, size.width(), 1);
             pixmapPainter.setOpacity((opacity - i) / qreal(opacity));
             pixmapPainter.drawPixmap(rect, source, rect);
