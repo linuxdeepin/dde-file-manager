@@ -188,12 +188,6 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
 {
     connect(collection.data(), &CollectionHolder::styleChanged,
             this, &NormalizedModePrivate::collectionStyleChanged);
-    connect(collection.data(), &CollectionHolder::geometryChanged,
-            this, &NormalizedModePrivate::onColGeometryChanged);
-    connect(collection.data(), &CollectionHolder::dragStarted,
-            this, &NormalizedModePrivate::onDragStarted);
-    connect(collection.data(), &CollectionHolder::dragStopped,
-            this, &NormalizedModePrivate::onDragStopped);
 }
 
 void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
@@ -254,21 +248,6 @@ void NormalizedModePrivate::onFontChanged()
     }
 
     // q->layout();
-}
-
-void NormalizedModePrivate::onColGeometryChanged(const QString &id, const QRect &geo)
-{
-    fmDebug() << "item geo changed..." << id << geo;
-}
-
-void NormalizedModePrivate::onDragStarted(const QString &id, const QRect &geo)
-{
-    fmDebug() << "item start moving..." << id << "from" << geo.topLeft();
-}
-
-void NormalizedModePrivate::onDragStopped(const QString &id)
-{
-    fmDebug() << "item stop moving..." << id;
 }
 
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
@@ -403,12 +382,10 @@ void NormalizedMode::layout()
 
             QRect gridGeo = { gridPos, size };
             auto rect = holder->surface()->mapToScreenGeo(gridGeo);
-            if (!style.customGeo) {
-                style.rect = rect.marginsRemoved({ kCollectionGridMargin,
-                                                   kCollectionGridMargin,
-                                                   kCollectionGridMargin,
-                                                   kCollectionGridMargin });
-            }
+            style.rect = rect.marginsRemoved({ kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin });
         }
         // TODO
         // screen count reduced. this item should be re-layout.
