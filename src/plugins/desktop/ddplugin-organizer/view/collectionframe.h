@@ -71,8 +71,6 @@ public Q_SLOTS:
 signals:
     void sizeModeChanged(const CollectionFrameSize &size);
     void geometryChanged();
-    void dragStarted();
-    void dragStopped();
 
 protected:
     bool event(QEvent *event) override;

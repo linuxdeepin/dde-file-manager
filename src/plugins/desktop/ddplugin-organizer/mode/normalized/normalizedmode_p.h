@@ -37,9 +37,6 @@ public slots:
     void onDropFile(const QString &collection, QList<QUrl> &urls);
     void onIconSizeChanged();
     void onFontChanged();
-    void onColGeometryChanged(const QString &id, const QRect &geo);
-    void onDragStarted(const QString &id, const QRect &geo);
-    void onDragStopped(const QString &id);
 
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);

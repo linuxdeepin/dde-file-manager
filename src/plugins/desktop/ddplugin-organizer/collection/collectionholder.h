@@ -70,9 +70,6 @@ public:
 signals:
     void styleChanged(const QString &id);
     void sigRequestClose(const QString &id);
-    void geometryChanged(const QString &id, const QRect &geo);
-    void dragStarted(const QString &id, const QRect &geo);
-    void dragStopped(const QString &id);
 
 private:
     QSharedPointer<CollectionHolderPrivate> d = nullptr;
