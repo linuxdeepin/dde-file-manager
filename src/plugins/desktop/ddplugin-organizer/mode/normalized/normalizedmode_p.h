@@ -21,7 +21,7 @@ public:
     explicit NormalizedModePrivate(NormalizedMode *qq);
     ~NormalizedModePrivate();
 
-    QPoint findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height);
+    QPoint findValidPos(int &currentIndex, const int width, const int height);
 
     void collectionStyleChanged(const QString &id);
     CollectionHolderPointer createCollection(const QString &id);
