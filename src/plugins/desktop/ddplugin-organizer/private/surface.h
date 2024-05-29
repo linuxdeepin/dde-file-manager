@@ -14,6 +14,7 @@
 
 #include <functional>
 
+static constexpr int kCollectionGridMargin = 4;
 namespace ddplugin_organizer {
 
 class ItemIndicator : public Dtk::Widget::DBlurEffectWidget
@@ -63,6 +64,11 @@ public:
     void activatePosIndicator(const QRect &r);
     void deactivatePosIndicator();
 
+    static int pointsDistance(const QPoint &p1, const QPoint &p2);
+    QList<QRect> intersectedRects(QWidget *wid);
+    bool isIntersected(const QRect &screenRect, QWidget *wid);
+    QRect findValidAreaAroundRect(const QRect &centerRect, QWidget *wid);
+    QRect findValidArea(QWidget *wid);
 signals:
 
 public slots:

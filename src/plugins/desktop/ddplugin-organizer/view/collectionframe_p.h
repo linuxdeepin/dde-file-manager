@@ -52,13 +52,6 @@ public:
     inline bool canMove();
     bool canStretch();
 
-    int pointsDistance(const QPoint &p1, const QPoint &p2);
-    QList<QRect> intersectedRects();
-    bool isIntersected(const QRect &screenRect);
-
-    QRect findValidArea();
-    QRect findValidAreaAroundRect(const QRect &centerRect);
-
 private:
     int calcLeftX();
     int calcRightX();
