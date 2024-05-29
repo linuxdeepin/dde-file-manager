@@ -196,7 +196,9 @@ QPoint CollectionFramePrivate::moveResultRectPos()
     if (!sur)
         return oldGeometry.topLeft();
 
-    auto validRect = findValidArea();
+    auto validRect = sur->findValidArea(q);
+    if (!validRect.isValid())
+        return oldGeometry.topLeft();
     auto gridGeo = sur->mapToGridGeo(validRect);
     auto gridSize = sur->gridSize();
 
@@ -223,16 +225,16 @@ QRect CollectionFramePrivate::stretchResultRect()
     if (!sur)
         return oldGeometry;
 
-    auto normalizeRect = [=](const QRect &screenRect) {
+    auto normalizeRect = [=](QRect screenRect) {
+        if (screenRect.left() < sur->gridMargins().left())
+            screenRect.setLeft(sur->gridMargins().left());
+        if (screenRect.top() < sur->gridMargins().top())
+            screenRect.setTop(sur->gridMargins().top());
+        if (screenRect.right() > sur->width() - sur->gridMargins().right())
+            screenRect.setRight(sur->width() - sur->gridMargins().right());
+        if (screenRect.bottom() > sur->height() - sur->gridMargins().bottom())
+            screenRect.setBottom(sur->height() - sur->gridMargins().bottom());
         auto r = sur->mapToGridGeo(screenRect);
-        if (r.left() < 0)
-            r.setLeft(0);
-        if (r.top() < 0)
-            r.setTop(0);
-        if (r.right() >= sur->gridSize().width())
-            r.setRight(sur->gridSize().width() - 1);
-        if (r.bottom() >= sur->gridSize().height())
-            r.setBottom(sur->gridSize().height() - 1);
         r = sur->mapToScreenGeo(r);
         r = r.marginsRemoved({ kCollectionGridMargin,
                                kCollectionGridMargin,
@@ -243,8 +245,12 @@ QRect CollectionFramePrivate::stretchResultRect()
 
     auto geo = q->geometry();
     geo = normalizeRect(geo);
-    if (!isIntersected(geo))
+    if (!sur->isIntersected(geo, q)) {
+        // size not changed but pos changed may happen, do not change position in this kind of case.
+        if (geo.size() == oldGeometry.size())
+            return oldGeometry;
         return geo;
+    }
 
     int dx = 1 + Surface::toCellLen(geo.width() - oldGeometry.width());
     int dy = 1 + Surface::toCellLen(geo.height() - oldGeometry.height());
@@ -276,7 +282,7 @@ QRect CollectionFramePrivate::stretchResultRect()
                                              Surface::toPixelLen(bool(responseArea & TopRect) * -1 * j),
                                              Surface::toPixelLen(bool(responseArea & RightRect) * 1 * i),
                                              Surface::toPixelLen(bool(responseArea & BottomRect) * 1 * j));
-            if (!isIntersected(newRect) && newRect.right() < (surface()->width() - surface()->gridMargins().right())) {
+            if (!sur->isIntersected(newRect, q) && newRect.right() < (surface()->width() - surface()->gridMargins().right())) {
                 auto newSquare = i + j;
                 if (newSquare >= maxDistance) {
                     maxDistance = newSquare;
@@ -308,199 +314,10 @@ bool CollectionFramePrivate::canStretch()
     return frameFeatures.testFlag(CollectionFrame::CollectionFrameStretchable);
 }
 
-int CollectionFramePrivate::pointsDistance(const QPoint &p1, const QPoint &p2)
-{
-    QPoint delta = p1 - p2;
-    return delta.manhattanLength();
-    return qSqrt(qPow(delta.x(), 2) + qPow(delta.y(), 2));
-    // maybe try manhattan length.
-}
-
-QList<QRect> CollectionFramePrivate::intersectedRects()
-{
-    if (!surface())
-        return {};
-
-    auto boundingRect = [](const QRect &rect) {
-        return rect.marginsAdded({ kCollectionGridMargin,
-                                   kCollectionGridMargin,
-                                   kCollectionGridMargin,
-                                   kCollectionGridMargin });
-    };
-    auto myRect = q->geometry();
-    // make sure the rect is fully in surface.
-    if (myRect.left() < surface()->gridMargins().left())
-        myRect.moveLeft(surface()->gridMargins().left());
-    if (myRect.top() < surface()->gridMargins().top())
-        myRect.moveTop(surface()->gridMargins().top());
-    if (myRect.right() > surface()->width() - surface()->gridMargins().right())
-        myRect.moveRight(surface()->width() - surface()->gridMargins().right());
-    if (myRect.bottom() > surface()->height() - surface()->gridMargins().bottom())
-        myRect.moveBottom(surface()->height() - surface()->gridMargins().bottom());
-
-    QMap<int, QRect> sortedRects;
-    auto children = surface()->children();
-    for (auto child : children) {
-        CollectionFrame *frame = dynamic_cast<CollectionFrame *>(child);
-        if (!frame || q == frame)
-            continue;
-
-        auto currRect = boundingRect(frame->geometry());
-        if (myRect.intersects(currRect)) {
-            int d = pointsDistance(myRect.center(), currRect.center());
-            sortedRects.insert(d, frame->geometry());
-        }
-    }
-
-    return sortedRects.values();
-}
-
-bool CollectionFramePrivate::isIntersected(const QRect &screenRect)
-{
-    if (!surface())
-        return false;
-
-    auto children = surface()->children();
-    for (auto child : children) {
-        CollectionFrame *frame = dynamic_cast<CollectionFrame *>(child);
-        if (!frame || q == frame)
-            continue;
-
-        auto currRect = frame->geometry();
-        if (screenRect.intersects(currRect))
-            return true;
-    }
-
-    return false;
-}
-
-QRect CollectionFramePrivate::findValidArea()
-{
-    auto rects = intersectedRects();
-    if (rects.isEmpty())
-        return q->geometry();
-
-    for (const auto &rect : rects) {
-        auto pos = findValidAreaAroundRect(rect);
-        if (pos.isValid())
-            return pos;
-    }
-    return oldGeometry;
-}
-
-QRect CollectionFramePrivate::findValidAreaAroundRect(const QRect &centerRect)
-{
-    if (!surface())
-        return {};
-
-    auto myGridRect = surface()->mapToGridGeo(q->geometry());
-    auto centerGridRect = surface()->mapToGridGeo(centerRect);
-
-    int minX = centerGridRect.left() - myGridRect.width();
-    int maxX = centerGridRect.right() + 1;
-    int minY = centerGridRect.top() - myGridRect.height();
-    int maxY = centerGridRect.bottom() + 1;
-
-    QPoint closest(-10000, -10000);
-    QRect closestRect(myGridRect);
-    auto isValidPos = [this, &closestRect](const QPoint &p) {
-        closestRect.moveTo(p);
-        if (closestRect.left() < 0
-            || closestRect.right() >= surface()->gridSize().width()
-            || closestRect.top() < 0
-            || closestRect.bottom() >= surface()->gridSize().height())
-            return false;
-        auto r = surface()->mapToScreenGeo(closestRect);
-        return !isIntersected(r);
-    };
-    // find a closest position by every edge.
-    // left. if minX != left then no valid position on left side.
-    if (minX >= 0) {
-        int y1, y2;
-        y1 = y2 = myGridRect.topLeft().y();
-        for (; !(y1 < minY && y2 > maxY); y1 -= 1, y2 += 1) {
-            QPoint p1(minX, y1), p2(minX, y2);
-            if (y1 >= minY && isValidPos(p1)) {
-                closest = p1;
-                break;
-            }
-            if (y2 <= maxY && isValidPos(p2)) {
-                closest = p2;
-                break;
-            }
-        }
-    }
-
-    auto closer = [this, myGridRect](const QPoint &p1, const QPoint &p2) {
-        int d1 = pointsDistance(myGridRect.topLeft(), p1);
-        int d2 = pointsDistance(myGridRect.topLeft(), p2);
-        return d1 < d2 ? p1 : p2;
-    };
-    // top
-    if (minY >= 0) {
-        int x1, x2;
-        x1 = x2 = myGridRect.topLeft().x();
-        for (; !(x1 < minX && x2 > maxX); x1 -= 1, x2 += 1) {
-            QPoint p1(x1, minY), p2(x2, minY);
-            if (x1 >= minX && isValidPos(p1)) {
-                closest = closer(closest, p1);
-                break;
-            }
-            if (x2 <= maxX && isValidPos(p2)) {
-                closest = closer(closest, p2);
-                break;
-            }
-        }
-    }
-
-    // right
-    if (maxX + myGridRect.width() <= surface()->gridSize().width()) {
-        int y1, y2;
-        y1 = y2 = myGridRect.topLeft().y();
-        for (; !(y1 < minY && y2 > maxY); y1 -= 1, y2 += 1) {
-            QPoint p1(maxX, y1), p2(maxX, y2);
-            if (y1 >= minY && isValidPos(p1)) {
-                closest = closer(closest, p1);
-                break;
-            }
-            if (y2 <= maxY && isValidPos(p2)) {
-                closest = closer(closest, p2);
-                break;
-            }
-        }
-    }
-
-    // bottom
-    if (maxY + myGridRect.height() <= surface()->gridSize().height()) {
-        int x1, x2;
-        x1 = x2 = myGridRect.topLeft().x();
-        for (; !(x1 < minX && x2 > maxX); x1 -= 1, x2 += 1) {
-            QPoint p1(x1, maxY), p2(x2, maxY);
-            if (x1 >= minX && isValidPos(p1)) {
-                closest = closer(closest, p1);
-                break;
-            }
-            if (x2 <= maxX && isValidPos(p2)) {
-                closest = closer(closest, p2);
-                break;
-            }
-        }
-    }
-
-    if (closest.x() >= 0 && closest.y() >= 0) {
-        closestRect.moveTo(closest);
-        closestRect = surface()->mapToScreenGeo(closestRect);
-        QRect r = q->geometry();
-        r.moveTo(closestRect.topLeft());
-        return r;
-    }
-
-    return {};
-}
-
 int CollectionFramePrivate::calcLeftX()
 {
     int minLimitX = 0;
+    // int maxLimitX = oldGeometry.bottomRight().x() - Surface::toPixelLen(kMinCellWidth) + 2 * kCollectionGridMargin + 1;
     int maxLimitX = oldGeometry.bottomRight().x() - Surface::toPixelLen(kMinCellWidth - 1);
     int afterX = stretchEndPoint.x() > maxLimitX ? maxLimitX : (stretchEndPoint.x() > minLimitX ? stretchEndPoint.x() : minLimitX);
 
@@ -509,6 +326,7 @@ int CollectionFramePrivate::calcLeftX()
 
 int CollectionFramePrivate::calcRightX()
 {
+    // int minLimitX = oldGeometry.bottomLeft().x() + Surface::toPixelLen(kMinCellWidth) - 2 * kCollectionGridMargin - 1;
     int minLimitX = oldGeometry.bottomLeft().x() + Surface::toPixelLen(kMinCellWidth - 1);
     int afterX = stretchEndPoint.x() > minLimitX ? stretchEndPoint.x() : minLimitX;
 
@@ -524,6 +342,7 @@ int CollectionFramePrivate::calcRightX()
 int CollectionFramePrivate::calcTopY()
 {
     int minLimitY = 0;
+    // int maxLimitY = oldGeometry.bottomLeft().y() - Surface::toPixelLen(kMinCellHeight) + 2 * kCollectionGridMargin + 1;
     int maxLimitY = oldGeometry.bottomLeft().y() - Surface::toPixelLen(kMinCellHeight - 1);
     int afterY = stretchEndPoint.y() > maxLimitY ? maxLimitY : (stretchEndPoint.y() > minLimitY ? stretchEndPoint.y() : minLimitY);
 
@@ -532,6 +351,7 @@ int CollectionFramePrivate::calcTopY()
 
 int CollectionFramePrivate::calcBottomY()
 {
+    // int minLimitY = oldGeometry.topLeft().y() + Surface::toPixelLen(kMinCellHeight) - 2 * kCollectionGridMargin - 1;
     int minLimitY = oldGeometry.topLeft().y() + Surface::toPixelLen(kMinCellHeight - 1);
     int afterY = stretchEndPoint.y() > minLimitY ? stretchEndPoint.y() : minLimitY;
 
@@ -624,19 +444,21 @@ void CollectionFrame::adjustSizeMode(const CollectionFrameSize &size)
     newGeo.moveTopRight(geometry().topRight());
 
     // do intersects.
-    if (d->isIntersected(newGeo)) {
+    if (d->surface()->isIntersected(newGeo, this)
+        || newGeo.x() < d->surface()->gridMargins().left()
+        || newGeo.bottom() > d->surface()->height() - d->surface()->gridMargins().bottom()) {
         if (Surface::animationEnabled()) {
             int leftExpand = newGeo.width() - this->width() > 0;
             int bottomExpand = newGeo.height() - this->height() > 0;
             Surface::animate({ this,
                                "geometry",
-                               300,
+                               500,
                                QEasingCurve::Linear,
                                this->geometry(),
                                this->geometry(),
-                               QPropertyAnimation::KeyValues { { 0.25, this->geometry().marginsAdded({ 20 * leftExpand, 0, 0, 20 * bottomExpand }) },
+                               QPropertyAnimation::KeyValues { { 0.25, this->geometry().marginsAdded({ 5 * leftExpand, 0, 0, 5 * bottomExpand }) },
                                                                { 0.5, this->geometry() },
-                                                               { 0.75, this->geometry().marginsAdded({ 20 * leftExpand, 0, 0, 20 * bottomExpand }) } } });
+                                                               { 0.75, this->geometry().marginsAdded({ 5 * leftExpand, 0, 0, 5 * bottomExpand }) } } });
         }
         return;
     }
@@ -644,7 +466,7 @@ void CollectionFrame::adjustSizeMode(const CollectionFrameSize &size)
     if (Surface::animationEnabled()) {
         Surface::animate({ this,
                            "geometry",
-                           100,
+                           300,
                            QEasingCurve::BezierSpline,
                            this->geometry(),
                            newGeo,
@@ -721,7 +543,7 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
             // animation here.
             Surface::animate({ this,
                                "geometry",
-                               100,
+                               200,
                                QEasingCurve::BezierSpline,
                                this->geometry(),
                                result,
@@ -759,7 +581,7 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
         if (Surface::animationEnabled()) {
             Surface::animate({ this,
                                "pos",
-                               100,
+                               200,
                                QEasingCurve::BezierSpline,
                                this->pos(),
                                pos,
@@ -802,7 +624,11 @@ void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
                 auto predicate = d->moveResultRectPos();
                 auto rect = this->rect();
                 rect.moveTopLeft(predicate);
-                d->surface()->activatePosIndicator(rect);
+                if (qAbs(predicate.x() - this->pos().x()) < Surface::cellWidth()
+                    && qAbs(predicate.y() - this->pos().y()) < Surface::cellWidth())
+                    d->surface()->deactivatePosIndicator();
+                else
+                    d->surface()->activatePosIndicator(rect);
             }
 
             emit geometryChanged();

@@ -6,6 +6,7 @@
 
 #include <QPainter>
 #include <QPaintEvent>
+#include <QtMath>
 
 #include <DGuiApplicationHelper>
 
@@ -91,20 +92,230 @@ void Surface::activatePosIndicator(const QRect &r)
 {
     if (!indicator)
         indicator = new ItemIndicator(this);
-    indicator->setGeometry(r);
     if (indicator->isHidden()) {
         indicator->lower();
         indicator->show();
     }
+
+    if (r.center() == indicator->geometry().center())
+        return;
+    indicator->setGeometry(r);
+
+    if (!animationEnabled())
+        return;
+    static QPropertyAnimation *ani = nullptr;
+    if (ani)
+        ani->stop();   // will be automatically deleted.
+    ani = new QPropertyAnimation(indicator, "geometry");
+    ani->setStartValue(r);
+    ani->setEndValue(r);
+    ani->setKeyValueAt(0.5, r);
+    ani->setKeyValueAt(0.6, r.marginsAdded({ 5, 5, 5, 5 }));
+    ani->setKeyValueAt(0.7, r);
+    ani->setKeyValueAt(0.8, r.marginsAdded({ 5, 5, 5, 5 }));
+    ani->setKeyValueAt(1, r);
+    ani->setEasingCurve(QEasingCurve::Linear);
+    ani->setLoopCount(-1);
+    ani->setDuration(1500);
+    ani->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
 void Surface::deactivatePosIndicator()
 {
+    if (!indicator)
+        return;
     if (0 && animationEnabled()) {
 
     } else {
         indicator->hide();
     }
+}
+
+int Surface::pointsDistance(const QPoint &p1, const QPoint &p2)
+{
+    QPoint delta = p1 - p2;
+    return delta.manhattanLength();
+    return qSqrt(qPow(delta.x(), 2) + qPow(delta.y(), 2));
+    // maybe try manhattan length.
+}
+
+QList<QRect> Surface::intersectedRects(QWidget *wid)
+{
+    Q_ASSERT(wid);
+
+    auto boundingRect = [](const QRect &rect) {
+        return rect.marginsAdded({ kCollectionGridMargin,
+                                   kCollectionGridMargin,
+                                   kCollectionGridMargin,
+                                   kCollectionGridMargin });
+    };
+    auto myRect = wid->geometry();
+    // make sure the rect is fully in surface.
+    if (myRect.left() < gridMargins().left())
+        myRect.moveLeft(gridMargins().left());
+    if (myRect.top() < gridMargins().top())
+        myRect.moveTop(gridMargins().top());
+    if (myRect.right() > width() - gridMargins().right())
+        myRect.moveRight(width() - gridMargins().right());
+    if (myRect.bottom() > height() - gridMargins().bottom())
+        myRect.moveBottom(height() - gridMargins().bottom());
+
+    QMap<int, QRect> sortedRects;
+    auto children = this->children();
+    for (auto child : children) {
+        auto *frame = dynamic_cast<QWidget *>(child);
+        if (!frame || wid == frame || frame->property("ignore_collision").toBool())
+            continue;
+
+        auto currRect = boundingRect(frame->geometry());
+        if (myRect.intersects(currRect)) {
+            int d = pointsDistance(myRect.center(), currRect.center());
+            sortedRects.insert(d, frame->geometry());
+        }
+    }
+
+    return sortedRects.values();
+}
+
+bool Surface::isIntersected(const QRect &screenRect, QWidget *wid)
+{
+    auto children = this->children();
+    for (auto child : children) {
+        auto *frame = dynamic_cast<QWidget *>(child);
+        if (!frame || wid == frame || frame->property("ignore_collision").toBool())
+            continue;
+
+        auto currRect = frame->geometry();
+        if (screenRect.intersects(currRect))
+            return true;
+    }
+
+    return false;
+}
+
+QRect Surface::findValidAreaAroundRect(const QRect &centerRect, QWidget *wid)
+{
+    Q_ASSERT(wid);
+
+    auto myGridRect = mapToGridGeo(wid->geometry());
+    auto centerGridRect = mapToGridGeo(centerRect);
+
+    int minX = centerGridRect.left() - myGridRect.width();
+    int maxX = centerGridRect.right() + 1;
+    int minY = centerGridRect.top() - myGridRect.height();
+    int maxY = centerGridRect.bottom() + 1;
+
+    QPoint closest(-10000, -10000);
+    QRect closestRect(myGridRect);
+    auto isValidPos = [this, &closestRect, wid](const QPoint &p) {
+        closestRect.moveTo(p);
+        if (closestRect.left() < 0
+            || closestRect.right() >= gridSize().width()
+            || closestRect.top() < 0
+            || closestRect.bottom() >= gridSize().height())
+            return false;
+        auto r = mapToScreenGeo(closestRect);
+        return !isIntersected(r, wid);
+    };
+    // find a closest position by every edge.
+    // left. if minX != left then no valid position on left side.
+    if (minX >= 0) {
+        int y1, y2;
+        y1 = y2 = myGridRect.topLeft().y();
+        for (; !(y1 < minY && y2 > maxY); y1 -= 1, y2 += 1) {
+            QPoint p1(minX, y1), p2(minX, y2);
+            if (y1 >= minY && isValidPos(p1)) {
+                closest = p1;
+                break;
+            }
+            if (y2 <= maxY && isValidPos(p2)) {
+                closest = p2;
+                break;
+            }
+        }
+    }
+
+    auto closer = [myGridRect](const QPoint &p1, const QPoint &p2) {
+        int d1 = pointsDistance(myGridRect.topLeft(), p1);
+        int d2 = pointsDistance(myGridRect.topLeft(), p2);
+        return d1 < d2 ? p1 : p2;
+    };
+    // top
+    if (minY >= 0) {
+        int x1, x2;
+        x1 = x2 = myGridRect.topLeft().x();
+        for (; !(x1 < minX && x2 > maxX); x1 -= 1, x2 += 1) {
+            QPoint p1(x1, minY), p2(x2, minY);
+            if (x1 >= minX && isValidPos(p1)) {
+                closest = closer(closest, p1);
+                break;
+            }
+            if (x2 <= maxX && isValidPos(p2)) {
+                closest = closer(closest, p2);
+                break;
+            }
+        }
+    }
+
+    // right
+    if (maxX + myGridRect.width() <= gridSize().width()) {
+        int y1, y2;
+        y1 = y2 = myGridRect.topLeft().y();
+        for (; !(y1 < minY && y2 > maxY); y1 -= 1, y2 += 1) {
+            QPoint p1(maxX, y1), p2(maxX, y2);
+            if (y1 >= minY && isValidPos(p1)) {
+                closest = closer(closest, p1);
+                break;
+            }
+            if (y2 <= maxY && isValidPos(p2)) {
+                closest = closer(closest, p2);
+                break;
+            }
+        }
+    }
+
+    // bottom
+    if (maxY + myGridRect.height() <= gridSize().height()) {
+        int x1, x2;
+        x1 = x2 = myGridRect.topLeft().x();
+        for (; !(x1 < minX && x2 > maxX); x1 -= 1, x2 += 1) {
+            QPoint p1(x1, maxY), p2(x2, maxY);
+            if (x1 >= minX && isValidPos(p1)) {
+                closest = closer(closest, p1);
+                break;
+            }
+            if (x2 <= maxX && isValidPos(p2)) {
+                closest = closer(closest, p2);
+                break;
+            }
+        }
+    }
+
+    if (closest.x() >= 0 && closest.y() >= 0) {
+        closestRect.moveTo(closest);
+        closestRect = mapToScreenGeo(closestRect);
+        QRect r = wid->geometry();
+        r.moveTo(closestRect.topLeft());
+        return r;
+    }
+
+    return {};
+}
+
+QRect Surface::findValidArea(QWidget *wid)
+{
+    Q_ASSERT(wid);
+
+    auto rects = intersectedRects(wid);
+    if (rects.isEmpty())
+        return wid->geometry();
+
+    for (const auto &rect : rects) {
+        auto pos = findValidAreaAroundRect(rect, wid);
+        if (pos.isValid())
+            return pos;
+    }
+    return {};
 }
 
 void Surface::paintEvent(QPaintEvent *e)
@@ -153,6 +364,7 @@ void Surface::paintEvent(QPaintEvent *e)
 ItemIndicator::ItemIndicator(QWidget *parent)
     : Dtk::Widget::DBlurEffectWidget(parent)
 {
+    setProperty("ignore_collision", true);
     setBlendMode(DBlurEffectWidget::InWindowBlend);
     setBlurRectXRadius(8);
     setBlurRectYRadius(8);
