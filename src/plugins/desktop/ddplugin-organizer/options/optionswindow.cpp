@@ -73,6 +73,7 @@ bool OptionsWindow::initialize()
 {
     Q_ASSERT(!layout());
     Q_ASSERT(!d->mainLayout);
+    setFocusPolicy(Qt::FocusPolicy::StrongFocus);   // 为了单击widget时，清除其他控件上的焦点
 
     // main layout
     auto mainLayout = new QVBoxLayout(this);
@@ -103,7 +104,7 @@ bool OptionsWindow::initialize()
     // auto arrange
     d->autoArrange = new SwitchWidget(tr("Auto arrange icons"), this);
     d->autoArrange->setChecked(d->isAutoArrange());
-    d->autoArrange->setFixedSize(400, 48);
+    d->autoArrange->setFixedHeight(48);
     d->autoArrange->setRoundEdge(SwitchWidget::kBoth);
     contentLayout->addWidget(d->autoArrange);
     connect(d->autoArrange, &SwitchWidget::checkedChanged, this, [this](bool check) {
@@ -114,7 +115,7 @@ bool OptionsWindow::initialize()
     // size slider
     d->sizeSlider = new SizeSlider(this);
     d->sizeSlider->setRoundEdge(SwitchWidget::kBoth);
-    d->sizeSlider->setFixedSize(400, 94);
+    d->sizeSlider->setFixedHeight(94);
     d->sizeSlider->init();
     contentLayout->addWidget(d->sizeSlider);
     contentLayout->addSpacing(10);
@@ -123,7 +124,7 @@ bool OptionsWindow::initialize()
     d->organization = new OrganizationGroup(d->contentWidget);
     d->organization->reset();
     contentLayout->addWidget(d->organization);
-
+    setMinimumWidth(420);
     adjustSize();
 
     // must be queued

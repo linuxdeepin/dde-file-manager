@@ -15,11 +15,10 @@ ShortcutWidget::ShortcutWidget(const QString &title, QWidget *parent)
     label = qobject_cast<QLabel *>(leftWidget);
     label->setParent(this);
     label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
     keyEdit = qobject_cast<DKeySequenceEdit *>(rightWidget);
     keyEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    keyEdit->setFixedWidth(150);
     connect(keyEdit, &DKeySequenceEdit::editingFinished, this, [this](const QKeySequence &seq) {
+        keyEdit->clearFocus();
         if (!modifierMatched(seq)) {
             emit keySequenceUpdateFailed(seq);
         } else {

@@ -5,11 +5,11 @@
 #ifndef ALERTHIDEALLDIALOG_H
 #define ALERTHIDEALLDIALOG_H
 
-#include <DAbstractDialog>
+#include <DDialog>
 
 namespace ddplugin_organizer {
 
-class AlertHideAllDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
+class AlertHideAllDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
@@ -17,9 +17,14 @@ public:
 
     void initialize();
     bool isRepeatNoMore() const;
+    int confirmBtnIndex() const;
+
+protected:
+    bool eventFilter(QObject *o, QEvent *e) override;
 
 private:
     bool repeatNoMore { false };
+    int btnIndex { -1 };
 };
 
 }   // namespace ddplugin_organizer

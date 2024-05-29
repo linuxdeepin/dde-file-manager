@@ -9,10 +9,10 @@
 #include <QShortcut>
 #include <QTimer>
 
-static constexpr int kContentWidght = 400;
+static constexpr int kContentWith = 400;
 static constexpr int kContentHeight = 48;
 static constexpr int kCheckEntryHeight = 36;
-static constexpr int kCheckEntryWidget = 400;
+static constexpr int kCheckEntryWidth = 400;
 
 using namespace ddplugin_organizer;
 
@@ -22,7 +22,6 @@ OrganizationGroup::OrganizationGroup(QWidget *parent)
     contentLayout = new QVBoxLayout(this);
     contentLayout->setContentsMargins(0, 0, 0, 0);
     contentLayout->setSpacing(1);
-    contentLayout->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(contentLayout);
 }
 
@@ -39,7 +38,7 @@ void OrganizationGroup::reset()
     if (!organizationSwitch) {
         organizationSwitch = new SwitchWidget(tr("Organize desktop"), this);
         organizationSwitch->hide();   // 1071: 移除此选项
-        organizationSwitch->setFixedSize(kContentWidght, kContentHeight);
+        organizationSwitch->setFixedHeight(kContentHeight);
         contentLayout->insertWidget(0, organizationSwitch, 0, Qt::AlignTop);
         connect(organizationSwitch, &SwitchWidget::checkedChanged, this, &OrganizationGroup::enableOrganizeChanged);
         first = true;
@@ -115,7 +114,9 @@ void OrganizationGroup::initAll()
     if (!methodCombox) {
         methodCombox = new MethodComBox(tr("Organize by"), this);
         methodCombox->initCheckBox();
-        methodCombox->setFixedSize(kContentWidght, kCheckEntryHeight);
+        methodCombox->setFixedHeight(kCheckEntryHeight);
+        methodCombox->setMinimumWidth(kCheckEntryWidth);
+        ;
         contentLayout->insertWidget(1, methodCombox, 0, Qt::AlignTop);
         // requiring widget to be visible when layout calculates sizehint.
         methodCombox->setVisible(true);
@@ -137,7 +138,8 @@ void OrganizationGroup::initAll()
 
         contentLayout->insertLayout(pos++, buildTypeLayout());
         QWidget *last = currentClass->subWidgets().last();
-        last->setFixedSize(kCheckEntryWidget, kCheckEntryHeight);
+        last->setFixedHeight(kCheckEntryHeight);
+        last->setMinimumWidth(kCheckEntryWidth);
         contentLayout->insertWidget(pos++, last, 0, Qt::AlignTop);
         last->setVisible(true);
         if (ContentBackgroundWidget *bk = qobject_cast<ContentBackgroundWidget *>(last)) {
@@ -154,7 +156,8 @@ void OrganizationGroup::initAll()
         contentLayout->insertItem(pos++, spacer1);
         if (!hideAllSwitch) {
             hideAllSwitch = new SwitchWidget(tr("Hide all collections with one click"), this);
-            hideAllSwitch->setFixedSize(kContentWidght, kContentHeight);
+            hideAllSwitch->setFixedHeight(kContentHeight);
+            hideAllSwitch->setMinimumWidth(kContentWith);
             hideAllSwitch->setChecked(CfgPresenter->isEnableVisibility());
             hideAllSwitch->setRoundEdge(CfgPresenter->isEnableVisibility()
                                                 ? SwitchWidget::kTop
