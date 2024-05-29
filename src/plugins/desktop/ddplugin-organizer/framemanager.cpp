@@ -147,7 +147,7 @@ void FrameManagerPrivate::onHideAllKeyPressed()
     if (hide && !CfgPresenter->isRepeatNoMore()) {
         dialog.initialize();
         dialog.moveToCenter();
-        acceptHide = (dialog.exec() == QDialog::Accepted);
+        acceptHide = (dialog.exec() == dialog.confirmBtnIndex());
         initliazed = true;
     }
 

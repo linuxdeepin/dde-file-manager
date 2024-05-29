@@ -18,39 +18,31 @@ namespace ddplugin_organizer {
 DWIDGET_USE_NAMESPACE
 
 AlertHideAllDialog::AlertHideAllDialog(QWidget *parent)
-    : DAbstractDialog(parent)
+    : DDialog(parent)
 {
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    installEventFilter(this);
 }
 
 void AlertHideAllDialog::initialize()
 {
     // setStyleSheet("border: 1px solid red");
-    // TODO: update UI
-    setFixedSize(500, 250);
+    setFixedWidth(420);
+    setSpacing(0);
+    setContentLayoutContentsMargins(QMargins(0, 0, 0, 0));
+    setWordWrapMessage(true);
+    setWordWrapTitle(true);
+
     const auto &keySeq { CfgPresenter->hideAllKeySequence().toString() };
-    const QString &content { tr("You can use the shortcut key \"%1\" to display all collections.").arg(keySeq) };
+    const QString &content { tr("The hortcut key \"%1\" to show collection").arg(keySeq) };
 
-    auto titleBar = new DTitlebar(this);
-    titleBar->setMenuVisible(false);
-    titleBar->setBackgroundTransparent(true);
+    setTitle(content);
+    setMessage("To disable the One-Click Hide feature, "
+               "turn off the One-Click Hide Collection by "
+               "invoking the View Options window in the desktop context menu.");
+    setIcon(QIcon::fromTheme("deepin-toggle-desktop"));
 
-    QVBoxLayout *mainLayout { new QVBoxLayout() };
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
-
-    QVBoxLayout *contentLayout { new QVBoxLayout() };
-    contentLayout->setContentsMargins(10, 5, 10, 5);
-    contentLayout->setSpacing(0);
-
-    DLabel *titleLabel { new DLabel(tr("How do I retrieve the collection?")) };
-    DLabel *contentLabel { new DLabel(content) };
-    DLabel *tipLabel { new DLabel(tr("If you want to disable the One-Click Hide feature, you can turn off the One-Click"
-                                     " Hide Collection by invoking the \"View Options\" window in the desktop context menu.")) };
-
-    tipLabel->setWordWrap(true);
-
-    DCheckBox *checkBox { new DCheckBox(tr("Do not repeat this message")) };
+    DCheckBox *checkBox { new DCheckBox(tr("No prompt")) };
     connect(checkBox, &DCheckBox::stateChanged, this, [this](int state) {
         if (state == Qt::CheckState::Checked)
             repeatNoMore = true;
@@ -58,28 +50,41 @@ void AlertHideAllDialog::initialize()
             repeatNoMore = false;
     });
 
-    DPushButton *button { new DPushButton(tr("Confirm", "button")) };
-    button->setFixedWidth(80);
-    connect(button, &DPushButton::clicked, this, [this]() {
-        accept();
+    addSpacing(20);
+    addContent(checkBox, Qt::AlignHCenter);
+    btnIndex = addButton(QObject::tr("Confirm", "button"), true);
+    connect(this, &AlertHideAllDialog::buttonClicked, this, [this](int index, const QString &) {
+        if (btnIndex == index)
+            accept();
     });
 
-    contentLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
-    contentLayout->addWidget(contentLabel);
-    contentLayout->addWidget(tipLabel);
-    contentLayout->addWidget(checkBox);
-    contentLayout->addWidget(button, 0, Qt::AlignHCenter);
-
-    mainLayout->addWidget(titleBar, 0, Qt::AlignTop);
-    mainLayout->addLayout(contentLayout, 1);
-
-    setLayout(mainLayout);
     adjustSize();
 }
 
 bool AlertHideAllDialog::isRepeatNoMore() const
 {
     return repeatNoMore;
+}
+
+int AlertHideAllDialog::confirmBtnIndex() const
+{
+    return btnIndex;
+}
+
+bool AlertHideAllDialog::eventFilter(QObject *o, QEvent *e)
+{
+    if (e->type() == QEvent::FontChange || e->type() == QEvent::Show) {
+        QLabel *label = qobject_cast<QLabel *>(o);
+
+        if (label && !label->text().isEmpty() && label->wordWrap()) {
+            QSize sz = style()->itemTextRect(label->fontMetrics(), label->rect(), Qt::TextWordWrap, false, label->text()).size();
+
+            label->setMinimumHeight(qMax(sz.height(), label->sizeHint().height()));
+        }
+        adjustSize();
+        return true;
+    }
+    return DDialog::eventFilter(o, e);
 }
 
 }   // namespace ddplugin_organizer
