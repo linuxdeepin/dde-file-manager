@@ -33,51 +33,36 @@ NormalizedModePrivate::~NormalizedModePrivate()
 {
 }
 
-QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height)
+QPoint NormalizedModePrivate::findValidPos(int &currentIndex, const int width, const int height)
 {
     if (currentIndex > q->surfaces.count())
         currentIndex = q->surfaces.count();
 
-    auto gridSize = q->surfaces.at(currentIndex - 1)->gridSize();
+    auto sur = q->surfaces.at(currentIndex - 1);
+    Q_ASSERT(sur);
 
-    if (nextPos.x() == INT_MAX)
-        nextPos.setX(gridSize.width() - width);
+    auto gridSize = sur->gridSize();
 
-    if (nextPos.y() + height > gridSize.height()) {
-        // fix to first row
-        nextPos.setY(0);
-        nextPos.setX(nextPos.x() - width);
-    }
-
-    if (nextPos.x() - width < 0) {
-        if (currentIndex == q->surfaces.count()) {
-            // overlap pos
-            nextPos.setX(0);
-            nextPos.setY(gridSize.height() - height);
-            fmDebug() << "stack collection:" << gridSize << width << height << nextPos;
-
-            QPoint validPos(nextPos);
-            // update next pos
-            nextPos.setY(nextPos.y() + height);
-
-            return validPos;
+    QPoint pos(-1, -1);
+    // from UP to DOWN, RIGHT to LEFT, search an area to place the collection
+    for (int x = gridSize.width() - width; x >= 0; --x) {
+        for (int y = 0; y < gridSize.height() - height; ++y) {
+            QRect gridR { x, y, width, height };
+            auto screenR = sur->mapToScreenGeo(gridR);
+            if (sur->isIntersected(screenR, nullptr))
+                continue;
+            pos = { x, y };
+            x = -1;   // break outside loop.
+            break;
         }
-
-        // fix to next screen
-        currentIndex += 1;
-
-        // restart find valid pos, in the first position of the next screen
-        nextPos.setX(INT_MAX);
-        nextPos.setY(0);
-
-        return findValidPos(nextPos, currentIndex, style, width, height);
     }
 
-    QPoint validPos(nextPos);
-    // update next pos
-    nextPos.setY(nextPos.y() + height);
+    if (pos.x() >= 0 && pos.y() >= 0)
+        return pos;
+    if (currentIndex == q->surfaces.count())
+        return { 0, gridSize.height() - height };
 
-    return validPos;
+    return findValidPos(currentIndex, width, height);
 }
 
 void NormalizedModePrivate::collectionStyleChanged(const QString &id)
@@ -360,9 +345,9 @@ void NormalizedMode::layout()
     // screen num is start with 1
     int screenIdx = 1;
     QList<CollectionStyle> toSave;
-    QPoint nextPos(INT_MAX, 0);
 
-    for (const CollectionHolderPointer &holder : holders) {
+    for (int i = 0; i < holders.count(); ++i) {
+        const CollectionHolderPointer &holder = holders.at(i);
         auto style = CfgPresenter->normalStyle(holder->id());
         if (Q_UNLIKELY(style.key != holder->id())) {
             if (!style.key.isEmpty())
@@ -371,9 +356,15 @@ void NormalizedMode::layout()
         }
 
         if (style.screenIndex == -1) {   // new collection coming.
+            // layout those old items first.
+            if (!holder->property("delayed").toBool()) {
+                holder->setProperty("delayed", true);
+                holders.append(holder);
+                continue;
+            }
             // need to find a preffered place to place this item.
             auto size = kDefaultGridSize.value(style.sizeMode);
-            auto gridPos = d->findValidPos(nextPos, screenIdx, style, size.width(), size.height());
+            auto gridPos = d->findValidPos(screenIdx, size.width(), size.height());
             Q_ASSERT(screenIdx > 0);
             Q_ASSERT(screenIdx <= surfaces.count());
             style.screenIndex = screenIdx;
