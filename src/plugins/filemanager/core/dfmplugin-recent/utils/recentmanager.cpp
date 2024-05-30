@@ -176,8 +176,10 @@ RecentManager::RecentManager(QObject *parent)
 
 RecentManager::~RecentManager()
 {
-    if (watcher)
+    if (watcher) {
+        watcher->disconnect(this);
         watcher->stopWatcher();
+    }
     iteratorWorker->stop();
     workerThread.quit();
     workerThread.wait(15000);
@@ -185,6 +187,15 @@ RecentManager::~RecentManager()
 
 void RecentManager::init()
 {
+    connect(qApp, &QApplication::aboutToQuit, this, [this](){
+        if (watcher) {
+            watcher->disconnect(this);
+            watcher->stopWatcher();
+        }
+        iteratorWorker->stop();
+        workerThread.quit();
+        workerThread.wait(150);
+    });
     iteratorWorker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, iteratorWorker, &QObject::deleteLater);
     connect(this, &RecentManager::asyncHandleFileChanged,
