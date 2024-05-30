@@ -61,7 +61,8 @@ void onClipboardDataChanged()
         clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
-    const QByteArray &data = mimeData->data(kGnomeCopyKey);
+    QByteArray data = mimeData->data(kGnomeCopyKey);
+    data = data.replace(QString(kGnomeCopyKey) + "\n", "");
 
     if (data.startsWith("cut")) {
         clipboardAction = ClipBoard::kCutAction;
@@ -70,7 +71,11 @@ void onClipboardDataChanged()
     } else {
         clipboardAction = ClipBoard::kUnknownAction;
     }
-    clipboardFileUrls << mimeData->urls();
+
+    for (const auto &url : mimeData->urls()) {
+        if (url.isValid() && !url.scheme().isEmpty())
+            clipboardFileUrls << url;
+    }
 }
 }   // namespace GlobalData
 
