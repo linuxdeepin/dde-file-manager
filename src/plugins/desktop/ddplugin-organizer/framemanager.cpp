@@ -147,7 +147,9 @@ void FrameManagerPrivate::onHideAllKeyPressed()
     if (hide && !CfgPresenter->isRepeatNoMore()) {
         dialog.initialize();
         dialog.moveToCenter();
-        acceptHide = (dialog.exec() == dialog.confirmBtnIndex());
+        int retCode { dialog.exec() };
+        if (dialog.confirmBtnIndex() < 0 || dialog.confirmBtnIndex() != retCode)
+            acceptHide = false;
         initliazed = true;
     }
 
