@@ -52,10 +52,10 @@ void AlertHideAllDialog::initialize()
 
     addSpacing(20);
     addContent(checkBox, Qt::AlignHCenter);
-    btnIndex = addButton(QObject::tr("Confirm", "button"), true);
+    addButton(QObject::tr("Confirm", "button"), true);
     connect(this, &AlertHideAllDialog::buttonClicked, this, [this](int index, const QString &) {
-        if (btnIndex == index)
-            accept();
+        btnIndex = index;
+        accept();
     });
 
     adjustSize();
