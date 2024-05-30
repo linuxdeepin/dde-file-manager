@@ -13,6 +13,7 @@
 #include "utils/fileoperator.h"
 #include "broker/collectionhookinterface.h"
 #include "models/itemselectionmodel.h"
+#include "config/configpresenter.h"
 
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/schemefactory.h>
@@ -1920,6 +1921,12 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     } break;
     default:
         break;
+    }
+
+    {
+        const QKeySequence &seq { static_cast<int>(event->modifiers()) | event->key() };
+        if (CfgPresenter->isEnableVisibility() && CfgPresenter->hideAllKeySequence() == seq)
+            emit hideAllPressed();
     }
 
     {

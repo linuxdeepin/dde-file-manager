@@ -105,6 +105,9 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
         view->setCanvasGridShell(q->canvasGridShell);
         view->setCanvasManagerShell(q->canvasManagerShell);
         view->setSelectionModel(selectionModel);
+        connect(view, &CollectionView::hideAllPressed, this, [this]() {
+            emit q->hideAllKeyPressed();
+        });
     }
 
     holder->setName(name);
