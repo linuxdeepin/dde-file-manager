@@ -1,3 +1,10 @@
+dde-file-manager (6.0.52) unstable; urgency=medium
+
+  * 6.0.52,to support am show-item
+  * 
+
+ -- lvwujun <lvwujun@uniontech.com>  Fri, 31 May 2024 15:26:50 +0800
+
 dde-file-manager (6.0.51) unstable; urgency=medium
 
   * 6.0.51
