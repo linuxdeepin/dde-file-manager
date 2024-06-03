@@ -189,7 +189,7 @@ public slots:
     void handleOperationCleanByUrls(const QList<QUrl> &urls);
     void handleRecoveryOperationRedoRecovery(const quint64 windowId,
                                                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
-    void handleSaveRedoOpt(const QString &token, const bool moreThanZero);
+    void handleSaveRedoOpt(const QString &token, const qint64 fileSize);
     void handleOperationUndoDeletes(const quint64 windowId,
                                     const QList<QUrl> &sources,
                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
@@ -266,7 +266,7 @@ private:
                            DFMBASE_NAMESPACE::GlobalEventType type,
                            const QList<QUrl> &redoSourcesUrls, const QList<QUrl> &redoTargetUrls,
                            const dfmbase::GlobalEventType redo,
-                           const bool isUndo = false);
+                           const bool isUndo = false, const QUrl &templateUrl = QUrl());
     QUrl checkTargetUrl(const QUrl &url);
 
 private:

@@ -88,7 +88,7 @@ signals:
 
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> &list);
     void workerFinish();
-    void requestSaveRedoOperation(const QString &token, const bool moreThanZero);
+    void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);
 signals:   // update proccess timer use
     void startUpdateProgressTimer();
     void startWork();
@@ -187,7 +187,7 @@ public:
     QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
     QElapsedTimer *speedtimer{ nullptr };   // time eslape
     std::atomic_int64_t elapsed { 0 };
-    std::atomic_bool moreThanZero{ false };
+    std::atomic_int64_t deleteFirstFileSize{ false };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

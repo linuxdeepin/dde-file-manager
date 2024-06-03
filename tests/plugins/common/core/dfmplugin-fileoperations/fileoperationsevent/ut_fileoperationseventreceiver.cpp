@@ -222,7 +222,7 @@ TEST_F(UT_FileOperationsEventReceiver, testHandleOperationTouchFile)
 
     stub_ext::StubExt stub;
     stub.set_lamda(&DialogManager::showErrorDialog,[]{});
-    stub.set_lamda(&LocalFileHandler::touchFile, []{return false;});
+    stub.set_lamda(&LocalFileHandler::touchFile, []{return QUrl();});
     typedef bool (EventDispatcherManager::*PublishFun)(dpf::EventType, quint64, const QList<QUrl> &, bool &,QString &);
     auto publishFun = static_cast<PublishFun>(&EventDispatcherManager::publish);
     stub.set_lamda(publishFun, [] {return true;});
@@ -595,7 +595,7 @@ TEST_F(UT_FileOperationsEventReceiver, testDoTouchFilePractically)
     EXPECT_TRUE(op != nullptr);
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     stub_ext::StubExt stub;
-    stub.set_lamda(&LocalFileHandler::touchFile, []{return false;});
+    stub.set_lamda(&LocalFileHandler::touchFile, []{return QUrl();});
     stub.set_lamda(&DialogManager::showErrorDialog, []{});
     typedef bool (EventDispatcherManager::*PublishFun)(dpf::EventType, quint64, QList<QUrl> &, bool &, QString &);
     auto publishFun = static_cast<PublishFun>(&EventDispatcherManager::publish);

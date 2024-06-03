@@ -603,7 +603,7 @@ void AbstractWorker::saveOperations()
     }
 
     if (handle && isConvert && !completeSourceFiles.isEmpty()) {
-        emit requestSaveRedoOperation(QString::number(quintptr(handle.data()),16), moreThanZero);
+        emit requestSaveRedoOperation(QString::number(quintptr(handle.data()),16), deleteFirstFileSize.load());
     }
 }
 
