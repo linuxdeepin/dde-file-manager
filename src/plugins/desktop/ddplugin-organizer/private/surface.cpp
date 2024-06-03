@@ -100,24 +100,6 @@ void Surface::activatePosIndicator(const QRect &r)
     if (r.center() == indicator->geometry().center())
         return;
     indicator->setGeometry(r);
-
-    if (!animationEnabled())
-        return;
-    static QPropertyAnimation *ani = nullptr;
-    if (ani)
-        ani->stop();   // will be automatically deleted.
-    ani = new QPropertyAnimation(indicator, "geometry");
-    ani->setStartValue(r);
-    ani->setEndValue(r);
-    ani->setKeyValueAt(0.5, r);
-    ani->setKeyValueAt(0.6, r.marginsAdded({ 5, 5, 5, 5 }));
-    ani->setKeyValueAt(0.7, r);
-    ani->setKeyValueAt(0.8, r.marginsAdded({ 5, 5, 5, 5 }));
-    ani->setKeyValueAt(1, r);
-    ani->setEasingCurve(QEasingCurve::Linear);
-    ani->setLoopCount(-1);
-    ani->setDuration(1500);
-    ani->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
 void Surface::deactivatePosIndicator()
