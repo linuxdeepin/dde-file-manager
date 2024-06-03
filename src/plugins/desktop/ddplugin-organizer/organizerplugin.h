@@ -36,6 +36,7 @@ private:
     DPF_EVENT_REG_SLOT(slot_CollectionView_GridPoint)
     DPF_EVENT_REG_SLOT(slot_CollectionView_VisualRect)
     DPF_EVENT_REG_SLOT(slot_CollectionView_View)
+    DPF_EVENT_REG_SLOT(slot_CollectionModel_SelectAll)
 
     DPF_EVENT_REG_SIGNAL(signal_CollectionView_ReportMenuData)
 
