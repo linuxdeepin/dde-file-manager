@@ -9,6 +9,7 @@
 
 #include <dfm-framework/dpf.h>
 #include <QProcess>
+#include <QSemaphore>
 
 DAEMONPANYTHING_BEGIN_NAMESPACE
 
@@ -35,16 +36,23 @@ class AnythingMonitorThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit AnythingMonitorThread(QProcess *server, bool *stopped) : QThread(nullptr)
+    explicit AnythingMonitorThread(bool *stopped) : QThread(nullptr)
     {
-        this->server = server;
         this->stopped = stopped;
     }
 
     void run() override;
 
+    bool waitStartResult()
+    {
+        start();
+        sem.acquire();
+        return started;
+    }
+
 private:
-    QProcess *server;
+    QSemaphore sem;
+    bool started;
     bool *stopped;
 };
 
