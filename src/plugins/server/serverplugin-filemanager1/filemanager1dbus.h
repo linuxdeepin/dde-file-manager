@@ -24,6 +24,7 @@ public slots:
     void ShowItemProperties(const QStringList &URIs, const QString &StartupId);
     void ShowItems(const QStringList &URIs, const QString &StartupId);
     void Trash(const QStringList &URIs);
+    void Open(const QStringList &Args);
 };
 
 #endif   // FILEMANAGER1DBUS_H

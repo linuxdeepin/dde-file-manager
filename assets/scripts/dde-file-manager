@@ -4,15 +4,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-f="${1#file://}"
+args=""
+for arg in "$@"; do
+    args+="$arg,"
+done
 
-# dde-file-manager --show-item xxx
-if [[ "$1" == "--show-item" ]]; then
-    dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems "array:string:${@:2}" "string:"
-# dde-file-manager /path/to/xxx or file:///path/to/xxx
-elif [ -e "$f" ]; then
-    dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems "array:string:$f" "string:"
-else
-    exec /usr/libexec/dde-file-manager "$@"
+args=${args%,}
+
+dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.Open array:string:"$args"
+
+if [ $? -ne 0 ]; then
+    echo "dbus call failed"
+    exec file-manager.sh "$@"
 fi
-
