@@ -41,7 +41,7 @@ FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
 }
 
 QString FileOperationsEventReceiver::newDocmentName(const QUrl &url,
-                                                    const QString suffix,
+                                                    const QString &suffix,
                                                     const CreateFileType fileType)
 {
     QString suffixex;
@@ -519,10 +519,14 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
 JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowId,
                                                            const QList<QUrl> &sources,
                                                            const AbstractJobHandler::JobFlags flags,
-                                                           AbstractJobHandler::OperatorHandleCallback handleCallback, const bool isInit)
+                                                           AbstractJobHandler::OperatorHandleCallback handleCallback,
+                                                           const bool isInit,
+                                                           DoDeleteErrorType &errorType)
 {
-    if (sources.isEmpty())
+    if (sources.isEmpty()) {
+        errorType = DoDeleteErrorType::kSourceEmpty;
         return nullptr;
+    }
 
     // hook events
     if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_DeleteFile", windowId, sources, flags)) {
@@ -531,17 +535,24 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
 
     if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
         DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
+        errorType = DoDeleteErrorType::kNullPtr;
         return nullptr;
     }
 
     if (flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)
-        && DialogManagerInstance->showRestoreDeleteFilesDialog(sources) != QDialog::Accepted)
+            && DialogManagerInstance->showRestoreDeleteFilesDialog(sources) != QDialog::Accepted) {
+        errorType = DoDeleteErrorType::kNullPtr;
         return nullptr;
+    }
+
 
     // Delete local file with shift+delete, show a confirm dialog.
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)
-        && DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
+        && DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted) {
+        errorType = DoDeleteErrorType::kNullPtr;
         return nullptr;
+    }
+
 
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags, isInit);
     if (!isInit)
@@ -765,7 +776,8 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
-    auto handle = doDeleteFile(windowId, sources, flags, handleCallback);
+    DoDeleteErrorType erType { DoDeleteErrorType::kNoErrror };
+    auto handle = doDeleteFile(windowId, sources, flags, handleCallback, true, erType);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteType, handle);
 }
 
@@ -817,7 +829,8 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QVariant custom,
                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
-    JobHandlePointer handle = doDeleteFile(windowId, sources, flags, handleCallback);
+    DoDeleteErrorType erType { DoDeleteErrorType::kNoErrror };
+    JobHandlePointer handle = doDeleteFile(windowId, sources, flags, handleCallback, true, erType);
     if (callback) {
         AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
         args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
@@ -1459,9 +1472,14 @@ void FileOperationsEventReceiver::handleSaveRedoOpt(const QString &token, const 
 
 void FileOperationsEventReceiver::handleOperationUndoDeletes(const quint64 windowId, const QList<QUrl> &sources, const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
 {
-    auto handle = doDeleteFile(windowId, sources, flags, handleCallback, false);
-    if (!handle)
+    DoDeleteErrorType erType { DoDeleteErrorType::kNoErrror };
+    auto handle = doDeleteFile(windowId, sources, flags, handleCallback, false, erType);
+    if (!handle && erType == DoDeleteErrorType::kNullPtr) {
+        auto re = op;
+        re.insert("stackBack", false);
+        dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, re);
         return;
+    }
     connect(handle.get(), &AbstractJobHandler::requestSaveRedoOperation, this,
             &FileOperationsEventReceiver::handleSaveRedoOpt, Qt::QueuedConnection);
     {
