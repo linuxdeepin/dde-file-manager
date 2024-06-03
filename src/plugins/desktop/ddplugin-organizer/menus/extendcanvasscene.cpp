@@ -365,7 +365,7 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
     } else {
         // 为了能够选中所有集合中的文件
         if (dfmplugin_menu::ActionID::kSelectAll == actionId)
-            /*d->view->selectAll()*/;
+            dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionModel_SelectAll");
     }
 
     return false;
