@@ -30,6 +30,11 @@ class FileOperationsEventReceiver final : public QObject
     Q_DISABLE_COPY(FileOperationsEventReceiver)
 
 public:
+    enum class DoDeleteErrorType {
+        kNoErrror,
+        kSourceEmpty,
+        kNullPtr,
+    };
     static FileOperationsEventReceiver *instance();
 
 public slots:
@@ -207,9 +212,10 @@ private:
         kBatchCustom,
         kBatchAppend
     };
+
     explicit FileOperationsEventReceiver(QObject *parent = nullptr);
     QString newDocmentName(const QUrl &url,
-                           const QString suffix,
+                           const QString &suffix,
                            const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
     QString newDocmentName(const QUrl &url,
                            const QString &baseName,
@@ -245,7 +251,8 @@ private:
     JobHandlePointer doDeleteFile(const quint64 windowId, const QList<QUrl> &sources,
                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
-                                  const bool isInit = true);
+                                  const bool isInit,
+                                  DoDeleteErrorType &errorType);
     JobHandlePointer doCleanTrash(const quint64 windowId, const QList<QUrl> &sources,
                                   const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback);
