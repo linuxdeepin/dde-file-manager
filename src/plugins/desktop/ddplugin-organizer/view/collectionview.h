@@ -61,9 +61,6 @@ public:
     void toggleSelect();
     using QAbstractItemView::selectedIndexes;
 
-signals:
-    void hideAllPressed();
-
 protected Q_SLOTS:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 

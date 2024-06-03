@@ -1892,8 +1892,8 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier: {
         switch (event->key()) {
         case Qt::Key_A:
-            dynamic_cast<ItemSelectionModel *>(selectionModel())->selectAll();
-            return;
+            //  dynamic_cast<ItemSelectionModel *>(selectionModel())->selectAll();
+            return QAbstractItemView::keyPressEvent(event);
         case Qt::Key_C:
             d->copyFiles();
             return;
@@ -1926,7 +1926,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     {
         const QKeySequence &seq { static_cast<int>(event->modifiers()) | event->key() };
         if (CfgPresenter->isEnableVisibility() && CfgPresenter->hideAllKeySequence() == seq)
-            emit hideAllPressed();
+            return QAbstractItemView::keyPressEvent(event);
     }
 
     {

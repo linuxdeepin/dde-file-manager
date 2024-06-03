@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QRect>
 #include <QUrl>
+#include <QAbstractItemView>
 
 class QMimeData;
 
@@ -29,7 +30,8 @@ public:
     QRect visualRect(int viewIndex, const QUrl &url);
     QRect gridVisualRect(int viewIndex, const QPoint &gridPos);
     QSize gridSize(int viewIndex);
-signals: // unqiue and direct signals
+    QAbstractItemView *canvasView(int viewIndex);
+signals:   // unqiue and direct signals
     bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPos);
     bool filterShortcutkeyPress(int viewIndex, int key, int modifiers);
     bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl);
@@ -46,4 +48,4 @@ private slots:
 
 }
 
-#endif // CANVASVIEWSHELL_H
+#endif   // CANVASVIEWSHELL_H

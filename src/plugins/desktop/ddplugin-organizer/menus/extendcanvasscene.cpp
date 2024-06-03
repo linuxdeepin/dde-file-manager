@@ -308,8 +308,11 @@ bool ExtendCanvasScene::triggered(QAction *action)
 
 bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
 {
-    if (d->onCollection && caller && action) {
-        auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (!caller || !action)
+        return false;
+
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (d->onCollection) {
         bool isCanvas = caller->name() == "CanvasMenu";
         Q_ASSERT_X(isCanvas, "ExtendCanvasScene", "parent scene is not CanvasMenu");
         if (isCanvas) {
@@ -359,6 +362,10 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
         } else {
             fmCritical() << "ExtendCanvasScene's parent is not CanvasMenu";
         }
+    } else {
+        // 为了能够选中所有集合中的文件
+        if (dfmplugin_menu::ActionID::kSelectAll == actionId)
+            /*d->view->selectAll()*/;
     }
 
     return false;

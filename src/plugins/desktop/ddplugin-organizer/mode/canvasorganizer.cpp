@@ -159,16 +159,6 @@ bool CanvasOrganizer::filterShortcutkeyPress(int viewIndex, int key, int modifie
 {
     Q_UNUSED(viewIndex)
 
-    if (Qt::ControlModifier == modifiers) {
-        static const QList<int> filterKeys {
-            Qt::Key_Equal   // disbale ctrl + = to zooom out
-            ,
-            Qt::Key_Minus   // disbale ctrl + - to zooom in
-        };
-        if (filterKeys.contains(key))
-            return true;
-    }
-
     const QKeySequence &seq { modifiers | key };
     if (CfgPresenter->isEnableVisibility() && CfgPresenter->hideAllKeySequence() == seq) {
         emit hideAllKeyPressed();
