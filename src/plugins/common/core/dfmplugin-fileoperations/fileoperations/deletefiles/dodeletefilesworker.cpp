@@ -63,10 +63,10 @@ bool DoDeleteFilesWorker::deleteAllFiles()
  */
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
-    if (allFilesList.count() == 1) {
+    if (allFilesList.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(allFilesList.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (info && info->isAttributes(OptInfoType::kIsFile) && info->size() > 0)
-            moreThanZero = true;
+        if (info)
+            deleteFirstFileSize = info->size();
     }
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
@@ -108,10 +108,10 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     bool ok = true;
-    if (sourceUrls.count() == 1) {
+    if (sourceUrls.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(sourceUrls.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (info && info->isAttributes(OptInfoType::kIsFile) && info->size() > 0)
-            moreThanZero = true;
+        if (info)
+            deleteFirstFileSize = info->size();
     }
     for (auto &url : sourceUrls) {
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);

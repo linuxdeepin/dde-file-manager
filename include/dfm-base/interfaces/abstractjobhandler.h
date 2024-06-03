@@ -245,7 +245,7 @@ Q_SIGNALS:   // 发送给任务调用者使用的信号
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
     void workerFinish();
     void requestRemoveTaskWidget();
-    void requestSaveRedoOperation(const QString &token, const bool moreThanZero);
+    void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);
 Q_SIGNALS:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作
