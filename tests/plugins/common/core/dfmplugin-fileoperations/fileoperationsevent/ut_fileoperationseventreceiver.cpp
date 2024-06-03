@@ -519,25 +519,27 @@ TEST_F(UT_FileOperationsEventReceiver, testDoDeleteFile)
     EXPECT_TRUE(op != nullptr);
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     AbstractJobHandler::OperatorHandleCallback handle = [](JobHandlePointer){};
-    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle).isNull());
+    FileOperationsEventReceiver::DoDeleteErrorType errtp;
+    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle, true, errtp).isNull());
 
     stub_ext::StubExt stub;
     stub.set_lamda(&SystemPathUtil::checkContainsSystemPath, []{return true;});
     stub.set_lamda(&DialogManager::showDeleteSystemPathWarnDialog, []{});
-    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle).isNull());
+    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle, true, errtp).isNull());
 
     stub.clear();
     stub.set_lamda(&FileCopyMoveJob::deletes, []{return nullptr;});
-    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle).isNull());
+
+    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle, true, errtp).isNull());
 
     stub.set_lamda(&FileUtils::isLocalFile, []{return false;});
     typedef bool (EventSequenceManager::*RunFunc)(const QString &, const QString &, quint64, const QList<QUrl> &, const AbstractJobHandler::JobFlags &);
     auto runFunc = static_cast<RunFunc>(&EventSequenceManager::run);
     stub.set_lamda(runFunc, [] {return false;});
-    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle).isNull());
+    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle, true, errtp).isNull());
 
     stub.set_lamda(runFunc, [] {return true;});
-    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle).isNull());
+    EXPECT_TRUE(op->doDeleteFile(0, {}, AbstractJobHandler::JobFlag::kNoHint, handle, true, errtp).isNull());
 }
 
 TEST_F(UT_FileOperationsEventReceiver, testDoCleanTrash)

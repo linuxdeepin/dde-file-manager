@@ -19,7 +19,17 @@ void OperationsStackManagerDbus::SaveOperations(const QVariantMap &values)
     while (fileOperations.size() >= kMaxStep)
         fileOperations.pop_front();
 
-    fileOperations.push(values);
+    bool back = true;
+    auto op = values;
+    if (op.contains("stackBack")) {
+        back = values.value("stackBack", true).toBool();
+        op.remove("stackBack");
+    }
+    if (back) {
+        fileOperations.push(op);
+    } else {
+        fileOperations.push_front(op);
+    }
 }
 
 void OperationsStackManagerDbus::CleanOperations()
@@ -40,7 +50,17 @@ void OperationsStackManagerDbus::SaveRedoOperations(const QVariantMap &values)
     while (redoFileOperations.size() >= kMaxStep)
         redoFileOperations.pop_front();
 
-    redoFileOperations.push(values);
+    bool back = true;
+    auto op = values;
+    if (op.contains("stackBack")) {
+        back = values.value("stackBack", true).toBool();
+        op.remove("stackBack");
+    }
+    if (back) {
+        redoFileOperations.push(op);
+    } else {
+        redoFileOperations.push_front(op);
+    }
 }
 
 QVariantMap OperationsStackManagerDbus::RevocationRedoOperations()
