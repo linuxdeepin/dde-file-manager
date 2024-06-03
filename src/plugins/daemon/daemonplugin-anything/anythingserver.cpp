@@ -16,9 +16,12 @@ static bool loadKernelModule()
     process.start("modprobe", { "vfs_monitor" }, QIODevice::ReadOnly);
     if (process.waitForFinished(1000)) {
         ret = process.exitCode() == 0;
-        fmInfo() << "load kernel module vfs_monitor" << (ret ? "succeeded." : "failed.") << "exitcode(" << process.exitCode() << ")";
+        if (ret)
+            fmInfo() << "load kernel module vfs_monitor succeeded.";
+        else
+            fmWarning() << "load kernel module vfs_monitor failed." << " exitcode(" << process.exitCode() << ")";
     } else {
-        fmInfo() << "load kernel module vfs_monitor timed out.";
+        fmWarning() << "load kernel module vfs_monitor timed out.";
     }
 
     return ret;
@@ -32,9 +35,12 @@ static bool unloadKernelModule()
     process.start("rmmod", { "vfs_monitor" }, QIODevice::ReadOnly);
     if (process.waitForFinished(1000)) {
         ret = process.exitCode() == 0;
-        fmInfo() << "unload kernel module vfs_monitor" << (ret ? "succeeded." : "failed.") << "exitcode(" << process.exitCode() << ")";
+        if (ret)
+            fmInfo() << "unload kernel module vfs_monitor succeeded.";
+        else
+            fmWarning() << "unload kernel module vfs_monitor failed." << " exitcode(" << process.exitCode() << ")";
     } else {
-        fmInfo() << "unload kernel module vfs_monitor timed out.";
+        fmWarning() << "unload kernel module vfs_monitor timed out.";
     }
 
     return ret;
@@ -43,7 +49,7 @@ static bool unloadKernelModule()
 static bool startAnythingByProcess(QProcess **server)
 {
     if (QStandardPaths::findExecutable("deepin-anything-server").isEmpty()) {
-        fmInfo() << "deepin-anything-server do not exist, maybe the deepin-anything-server has not been installed.";
+        fmWarning() << "deepin-anything-server do not exist, maybe the deepin-anything-server has not been installed.";
         return false;
     }
 
@@ -53,7 +59,7 @@ static bool startAnythingByProcess(QProcess **server)
     *server = new QProcess();
     (*server)->start("deepin-anything-server", QStringList(), QIODevice::NotOpen);
     if (!(*server)->waitForStarted(3 * 1000)) {
-        fmInfo() << "start deepin-anything-server fail.";
+        fmWarning() << "start deepin-anything-server fail.";
         unloadKernelModule();
         delete *server;
         *server = nullptr;
@@ -67,11 +73,17 @@ static bool startAnythingByProcess(QProcess **server)
 void AnythingMonitorThread::run()
 {
     unsigned long restart_cycle = 10;
+    QProcess *server = nullptr;
 
-    fmInfo() << "started deepin-anything-server monitor thread.";
+    started = startAnythingByProcess(&server);
+    sem.release();
+    if (!started)
+        return;
+
+    fmInfo() << "start monitoring deepin-anything-server.";
     while (true) {
         if (!server->waitForFinished(-1)) {
-            fmInfo() << "wait deepin-anything-server quit fail.";
+            fmWarning() << "wait deepin-anything-server quit fail.";
             break;
         }
         fmInfo() << "found deepin-anything-server quit.";
@@ -96,21 +108,16 @@ void AnythingPlugin::initialize()
 
 bool AnythingPlugin::start()
 {
-    QProcess *server;
-    bool ret;
+    bool ret = true;
     AnythingMonitorThread *thread;
 
     if (!stopped)
         return true;
 
-    if (startAnythingByProcess(&server)) {
-        thread = new AnythingMonitorThread(server, &stopped);
-        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-        thread->start();
-        ret = true;
-    } else {
+    thread = new AnythingMonitorThread(&stopped);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    if (!thread->waitStartResult())
         ret = startAnythingByLib();
-    }
 
     stopped = !ret;
     return ret;
@@ -134,7 +141,7 @@ bool AnythingPlugin::startAnythingByLib()
     // load share library and check status.
     backendLib->load();
     if (!backendLib->isLoaded()) {
-        fmInfo() << "load deepin-anything-server-lib.so failed!!, maybe the deepin-anything-server has not been installed.";
+        fmWarning() << "load deepin-anything-server-lib.so failed!!, maybe the deepin-anything-server has not been installed.";
         delete backendLib;
         backendLib = nullptr;
         return false;
@@ -155,7 +162,7 @@ bool AnythingPlugin::startAnythingByLib()
         ins();
         fmInfo() << "found export func 'fireAnything' and load anything backend OK!!";
     } else {
-        fmInfo() << "Did not find export func 'fireAnything', please check deepin-anything-server lib version(>=6.0.1)";
+        fmWarning() << "Did not find export func 'fireAnything', please check deepin-anything-server lib version(>=6.0.1)";
     }
 
     return true;
