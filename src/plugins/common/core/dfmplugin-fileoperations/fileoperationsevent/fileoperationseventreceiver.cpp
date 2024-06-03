@@ -263,10 +263,13 @@ bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap
             return true;
         return doMkdir(windowId, sources.first(), QVariant(), nullptr, true);
     case kTouchFile:
+    {
         if (sources.isEmpty())
             return true;
-        doTouchFilePractically(windowId, sources.first());
+        QUrl templateUrl = ret.value("templateurl", QUrl()).toUrl();
+        doTouchFilePractically(windowId, sources.first(), templateUrl);
         break;
+    }
     default:
         return false;
     }
@@ -717,7 +720,7 @@ void FileOperationsEventReceiver::saveFileOperation(const QList<QUrl> &sourcesUr
                                                     const QList<QUrl> &redoSourcesUrls,
                                                     const QList<QUrl> &redoTargetUrls,
                                                     const GlobalEventType redo,
-                                                    const bool isUndo)
+                                                    const bool isUndo, const QUrl &templateUrl)
 {
     // save operation by dbus
     QVariantMap values;
@@ -727,6 +730,8 @@ void FileOperationsEventReceiver::saveFileOperation(const QList<QUrl> &sourcesUr
     values.insert("redoevent", QVariant::fromValue(static_cast<uint16_t>(redo)));
     values.insert("redosources", QUrl::toStringList(redoSourcesUrls));
     values.insert("redotargets", QUrl::toStringList(redoTargetUrls));
+    if (templateUrl.isValid() && !UniversalUtils::urlEquals(templateUrl, sourcesUrls.first()) )
+        values.insert("templateurl", templateUrl.toString());
     if (!isUndo) {
         dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
     } else {
@@ -1124,16 +1129,17 @@ bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId,
     QString error;
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    bool ok = fileHandler.touchFile(url, tempUrl);
-    if (!ok) {
+    auto templateUrl = fileHandler.touchFile(url, tempUrl);
+    if (!templateUrl.isValid()) {
         error = fileHandler.errorString();
         dialogManager->showErrorDialog(tr("Failed to create the file"), error);
     }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                 windowId, QList<QUrl>() << url, ok, error);
-    saveFileOperation({ url }, {}, GlobalEventType::kDeleteFiles, { url }, {}, GlobalEventType::kTouchFile);
+                                 windowId, QList<QUrl>() << url, templateUrl.isValid(), error);
+    if (templateUrl.isValid())
+        saveFileOperation({ url }, {}, GlobalEventType::kDeleteFiles, { url }, {}, GlobalEventType::kTouchFile, false, templateUrl);
 
-    return ok;
+    return templateUrl.isValid();
 }
 
 QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
@@ -1449,7 +1455,7 @@ void FileOperationsEventReceiver::handleRecoveryOperationRedoRecovery(const quin
 }
 
 // ctrl + z 执行后保存当前的redo操作
-void FileOperationsEventReceiver::handleSaveRedoOpt(const QString &token, const bool moreThanZero)
+void FileOperationsEventReceiver::handleSaveRedoOpt(const QString &token, const qint64 fileSize)
 {
     QVariantMap ret;
     {
@@ -1466,8 +1472,15 @@ void FileOperationsEventReceiver::handleSaveRedoOpt(const QString &token, const 
     GlobalEventType redoEventType = static_cast<GlobalEventType>(ret.value("redoevent").value<uint16_t>());
     QList<QUrl> redoSources = QUrl::fromStringList(ret.value("redosources").toStringList());
     QList<QUrl> redoTargets = QUrl::fromStringList(ret.value("redotargets").toStringList());
-    if (redoEventType != GlobalEventType::kTouchFile || !moreThanZero)
-        saveFileOperation(redoSources, redoTargets, redoEventType, undoSources, undoTargets, undoEventType, true);
+    QUrl templateUrl = ret.value("templateurl", QUrl()).toUrl();
+    qint64 compare = 0;
+    if (templateUrl.isValid()) {
+        auto info = InfoFactory::create<FileInfo>(templateUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+        if (info)
+            compare = info->size();
+    }
+    if (redoEventType != GlobalEventType::kTouchFile || fileSize == compare)
+        saveFileOperation(redoSources, redoTargets, redoEventType, undoSources, undoTargets, undoEventType, true, templateUrl);
 }
 
 void FileOperationsEventReceiver::handleOperationUndoDeletes(const quint64 windowId, const QList<QUrl> &sources, const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
