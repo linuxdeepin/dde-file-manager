@@ -84,3 +84,11 @@ void FileManager1DBus::Trash(const QStringList &URIs)
     QJsonDocument doc(argsObj);
     QProcess::startDetached("dde-file-manager", QStringList() << "--event" << doc.toJson());
 }
+
+void FileManager1DBus::Open(const QStringList &Args)
+{
+    if (QProcess::startDetached("file-manager.sh", QStringList() << Args))
+        return;
+
+    QProcess::startDetached("dde-file-manager", QStringList() << Args);
+}

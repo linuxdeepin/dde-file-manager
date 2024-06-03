@@ -16,5 +16,8 @@
     <method name="Trash">
       <arg name="URIs" type="as" direction="in"/>
     </method>
+    <method name="Open">
+      <arg name="Args" type="as" direction="in"/>
+    </method>
   </interface>
 </node>
