@@ -84,6 +84,7 @@ void MainController::onFinished(QString taskId)
 
 void MainController::onIndexFullTextSearchChanged(bool enable)
 {
+    return;
     if (enable && !indexFuture.isRunning()) {
         indexFuture = QtConcurrent::run([]() {
             FullTextSearcher searcher(QUrl(), "");
