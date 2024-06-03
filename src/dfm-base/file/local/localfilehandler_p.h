@@ -47,13 +47,14 @@ public:
     bool addExecutableFlagAndExecuse(const QString &path, int flag);
     bool isFileWindowsUrlShortcut(const QString &path);
     QString getInternetShortcutUrl(const QString &path);
-    void loadTemplateInfo(const QUrl &url, const QUrl &templateUrl = QUrl());
+    QUrl loadTemplateInfo(const QUrl &url, const QUrl &templateUrl = QUrl());
 
     bool doOpenFile(const QUrl &url, const QString &desktopFile = QString());
     bool doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile = QString());
     bool doOpenFiles(const QMultiMap<QString, QString> &infos, const QMap<QString, QString> &mimeTypes);
 
     void setError(DFMIOError error);
+    QUrl loadTemplateUrl(const QString &suffix);
 
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     static void asyncAddRecentFile(const QString &desktop, const QList<QString> urls,

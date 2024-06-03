@@ -68,12 +68,12 @@ LocalFileHandler::~LocalFileHandler()
  * \param url 新文件的url
  * \return bool 创建文件是否成功
  */
-bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()*/)
+QUrl LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()*/)
 {
     QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
     if (!oper) {
         qCWarning(logDFMBase) << "create operator failed, url: " << url;
-        return false;
+        return QUrl();
     }
 
     bool success = oper->touchFile();
@@ -82,21 +82,21 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
 
         d->setError(oper->lastError());
 
-        return false;
+        return QUrl();
     } else {   // fix bug 189699 When the iPhone creates a file, the gio is created successfully, but there is no file
         auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info || !info->exists()) {
             d->lastError.setCode(DFMIOErrorCode::DFM_IO_ERROR_NOT_SUPPORTED);
-            return false;
+            return QUrl();
         }
     }
 
-    d->loadTemplateInfo(url, tempUrl);
+    auto templateUrl = d->loadTemplateInfo(url, tempUrl);
     qCInfo(logDFMBase, "touchFile source file : %s, Template file %s, successed by dfmio function touchFile!",
            url.path().toStdString().c_str(), tempUrl.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, url);
 
-    return true;
+    return templateUrl;
 }
 /*!
  * \brief LocalFileHandler::mkdir 创建目录
@@ -970,24 +970,14 @@ QString LocalFileHandlerPrivate::getInternetShortcutUrl(const QString &path)
     return url;
 }
 
-void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &templateUrl /*= QUrl()*/)
+QUrl LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &templateUrl /*= QUrl()*/)
 {
     QUrl templateFile = templateUrl;
     if (!templateFile.isValid()) {
+
         FileInfoPointer targetFileInfo { InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync) };
         const QString &suffix = targetFileInfo->suffix();
-
-        const QUrl &trashUrl { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTemplatesPath)) };
-        DFMIO::DEnumerator enumerator(trashUrl,
-                                      {},
-                                      static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)),
-                                      DFMIO::DEnumerator::IteratorFlag::kNoIteratorFlags);
-        while (enumerator.hasNext()) {
-            if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
-                templateFile = enumerator.next();
-                break;
-            }
-        }
+        templateFile = loadTemplateUrl(suffix);
     }
 
     if (templateFile.isValid()) {
@@ -1001,7 +991,10 @@ void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &temp
 
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
         fileInfo->refresh();
+    } else {
+        templateFile = url;
     }
+    return templateFile;
 }
 
 bool LocalFileHandlerPrivate::doOpenFile(const QUrl &url, const QString &desktopFile /*= QString()*/)
@@ -1224,6 +1217,23 @@ GlobalEventType LocalFileHandler::lastEventType()
 void LocalFileHandlerPrivate::setError(DFMIOError error)
 {
     lastError = error;
+}
+
+QUrl LocalFileHandlerPrivate::loadTemplateUrl(const QString &suffix)
+{
+    QUrl templateFile;
+    const QUrl &tempdir { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTemplatesPath)) };
+    DFMIO::DEnumerator enumerator(tempdir,
+                                  {},
+                                  static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)),
+                                  DFMIO::DEnumerator::IteratorFlag::kNoIteratorFlags);
+    while (enumerator.hasNext()) {
+        if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
+            templateFile = enumerator.next();
+            break;
+        }
+    }
+    return templateFile;
 }
 
 void LocalFileHandlerPrivate::asyncAddRecentFile(const QString &desktop, const QList<QString> urls, const QMap<QString, QString> &mimeTypes)
