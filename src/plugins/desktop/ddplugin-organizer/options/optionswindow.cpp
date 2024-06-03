@@ -114,6 +114,7 @@ bool OptionsWindow::initialize()
 
     // size slider
     d->sizeSlider = new SizeSlider(this);
+    d->sizeSlider->setMinimumWidth(400);
     d->sizeSlider->setRoundEdge(SwitchWidget::kBoth);
     d->sizeSlider->setFixedHeight(94);
     d->sizeSlider->init();
@@ -124,7 +125,6 @@ bool OptionsWindow::initialize()
     d->organization = new OrganizationGroup(d->contentWidget);
     d->organization->reset();
     contentLayout->addWidget(d->organization);
-    setMinimumWidth(420);
     adjustSize();
 
     // must be queued

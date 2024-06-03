@@ -105,9 +105,6 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
         view->setCanvasGridShell(q->canvasGridShell);
         view->setCanvasManagerShell(q->canvasManagerShell);
         view->setSelectionModel(selectionModel);
-        connect(view, &CollectionView::hideAllPressed, this, [this]() {
-            emit q->hideAllKeyPressed();
-        });
     }
 
     holder->setName(name);
@@ -568,8 +565,9 @@ bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
 {
-    if (modifiers == Qt::ControlModifier && key == Qt::Key_A)   // select all
-        return d->broker->selectAllItems();
+    // select all
+    if (modifiers == Qt::ControlModifier && key == Qt::Key_A)
+        d->broker->selectAllItems();
 
     return CanvasOrganizer::filterShortcutkeyPress(viewIndex, key, modifiers);
 }
