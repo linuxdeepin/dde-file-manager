@@ -250,10 +250,6 @@ DocumentPtr FullTextSearcherPrivate::fileDocument(const QString &file)
 
 bool FullTextSearcherPrivate::createIndex(const QString &path)
 {
-    //准备状态切运行中，否则直接返回
-    if (!status.testAndSetRelease(AbstractSearcher::kReady, AbstractSearcher::kRuning))
-        return false;
-
     QDir dir;
     if (!dir.exists(path)) {
         fmWarning() << "Source directory doesn't exist: " << path;
@@ -484,8 +480,14 @@ bool FullTextSearcher::search()
         return false;
     }
 
+    bool indexExists = IndexReader::indexExists(FSDirectory::open(d->indexStorePath().toStdWString()));
+    if (indexExists) {
     // 先更新索引再搜索
-    d->updateIndex(path);
+        d->updateIndex(path);
+    } else {
+        QString bindPath = FileUtils::bindPathTransform(path, false);
+        d->createIndex(bindPath);
+    }
     d->doSearch(path, key);
     //检查是否还有数据
     if (d->status.testAndSetRelease(kRuning, kCompleted)) {
