@@ -817,7 +817,7 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QVariant custom,
                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
-    JobHandlePointer handle = doDeleteFile(windowId, sources, flags, handleCallback, false);
+    JobHandlePointer handle = doDeleteFile(windowId, sources, flags, handleCallback);
     if (callback) {
         AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
         args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
