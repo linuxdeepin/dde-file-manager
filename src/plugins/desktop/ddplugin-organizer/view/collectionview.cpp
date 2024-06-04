@@ -60,6 +60,12 @@ void CollectionViewPrivate::initUI()
     q->setAttribute(Qt::WA_TranslucentBackground);
     q->setAttribute(Qt::WA_InputMethodEnabled);
 
+#ifdef QT_SCROLL_WHEEL_ANI
+    QScrollBar *bar = q->verticalScrollBar();
+    bar->setSingleStep(1);
+    q->setVerticalScrollBarPolicy(Qt::ScrollBarSlideAnimationOn);
+#endif
+
     q->viewport()->setAttribute(Qt::WA_TranslucentBackground);
     q->viewport()->setAutoFillBackground(false);
 
@@ -1718,10 +1724,14 @@ void CollectionView::paintEvent(QPaintEvent *event)
 
 void CollectionView::wheelEvent(QWheelEvent *event)
 {
+#ifdef QT_SCROLL_WHEEL_ANI
+    return QAbstractItemView::wheelEvent(event);
+#else
     int currentPosition = verticalScrollBar()->sliderPosition();
     int scrollValue = event->angleDelta().y();
     int targetValue = currentPosition - scrollValue;
     verticalScrollBar()->setSliderPosition(targetValue);
+#endif
 }
 
 void CollectionView::mousePressEvent(QMouseEvent *event)
@@ -1948,6 +1958,10 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             // redo
             d->redoFiles();
             return;
+        case Qt::Key_Minus:
+            [[fallthrough]];
+        case Qt::Key_Equal:
+            return QAbstractItemView::keyPressEvent(event);
         default:
             break;
         }

@@ -349,11 +349,6 @@ void FrameManager::turnOn(bool build)
         for (const SurfacePointer &sur : d->surfaceWidgets.values())
             sur->setVisible(true);
     }
-
-    // adjust canvas icon level
-    int viewIconLevel = d->canvas->iconLevel();
-    if (viewIconLevel > 2)
-        d->canvas->setIconLevel(2);
 }
 
 void FrameManager::turnOff()
