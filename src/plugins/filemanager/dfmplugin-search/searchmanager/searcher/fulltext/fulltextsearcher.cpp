@@ -278,7 +278,6 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
         writer->close();
 
         fmInfo() << "create index spending: " << timer.elapsed();
-        status.storeRelease(AbstractSearcher::kCompleted);
         return true;
     } catch (const LuceneException &e) {
         fmWarning() << QString::fromStdWString(e.getError());
