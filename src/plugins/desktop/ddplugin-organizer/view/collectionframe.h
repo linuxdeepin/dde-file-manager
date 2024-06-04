@@ -12,9 +12,10 @@
 
 namespace ddplugin_organizer {
 
+// Use `tiny grid` as unit instead of pixel
 static const int kMinCellWidth = 12;
 static const int kMinCellHeight = 16;
-static const QMap<CollectionFrameSize, QSize> kDefaultGridSize {
+static const QMap<CollectionFrameSize, QSize> kDefaultCollectionSize {
     { kSmall, { kMinCellWidth, kMinCellHeight } },
     { kMiddle, { 24, 16 } },
     { kLarge, { 24, 32 } },

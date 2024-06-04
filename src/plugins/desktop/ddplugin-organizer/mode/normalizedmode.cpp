@@ -224,8 +224,8 @@ void NormalizedModePrivate::onIconSizeChanged()
         view->updateRegionView();
     }
 
-    // if (lay)
-    //     q->layout();
+    //    if (lay)
+    //        q->layout();
 }
 
 void NormalizedModePrivate::onFontChanged()
@@ -367,7 +367,7 @@ void NormalizedMode::layout()
                 continue;
             }
             // need to find a preffered place to place this item.
-            auto size = kDefaultGridSize.value(style.sizeMode);
+            auto size = kDefaultCollectionSize.value(style.sizeMode);
             auto gridPos = d->findValidPos(screenIdx, size.width(), size.height());
             Q_ASSERT(screenIdx > 0);
             Q_ASSERT(screenIdx <= surfaces.count());

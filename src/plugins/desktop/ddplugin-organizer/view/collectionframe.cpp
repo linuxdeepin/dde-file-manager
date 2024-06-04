@@ -437,7 +437,7 @@ void CollectionFrame::adjustSizeMode(const CollectionFrameSize &size)
     if (!d->surface())
         return;
     // top right as anchor
-    auto newSize = kDefaultGridSize.value(size);
+    auto newSize = kDefaultCollectionSize.value(size);
     QRect newGeo = { QPoint { 0, 0 },
                      QSize { newSize.width() * Surface::cellWidth(),
                              newSize.height() * Surface::cellWidth() } };
@@ -574,54 +574,54 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
                     return;
                 auto gridSize = d->surface()->mapToGridGeo(result);
                 bool foundDefault = false;
-                for (auto iter = kDefaultGridSize.cbegin(); iter != kDefaultGridSize.cend(); ++iter) {
+                for (auto iter = kDefaultCollectionSize.cbegin(); iter != kDefaultCollectionSize.cend(); ++iter) {
                     if (iter.value() == gridSize.size()) {
                         Q_EMIT sizeModeChanged(iter.key());
                         foundDefault = true;
                         break;
                     }
+                    if (!foundDefault)
+                        Q_EMIT sizeModeChanged(kFree);
                 }
-                if (!foundDefault)
-                    Q_EMIT sizeModeChanged(kFree);
             }
+
+            if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
+                d->frameState = CollectionFramePrivate::NormalShowState;
+
+                auto pos = d->moveResultRectPos();
+                // animation here.
+                if (Surface::animationEnabled()) {
+                    Surface::animate({ this,
+                                       "pos",
+                                       200,
+                                       QEasingCurve::BezierSpline,
+                                       this->pos(),
+                                       pos,
+                                       {},
+                                       [this] {
+                                           d->updateMoveRect();
+                                           Q_EMIT geometryChanged();
+                                       } });
+                } else {
+                    move(pos);
+                }
+                if (d->surface())
+                    d->surface()->deactivatePosIndicator();
+                d->updateMoveRect();
+
+                if (pos != d->oldGeometry.topLeft()) {
+                }
+            }
+            emit geometryChanged();
+            Q_EMIT editingStatusChanged(false);
+
+            if (d->collView)
+                d->collView->setProperty(kCollectionPropertyEditing, false);
         }
 
-        if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
-            d->frameState = CollectionFramePrivate::NormalShowState;
-
-            auto pos = d->moveResultRectPos();
-            // animation here.
-            if (Surface::animationEnabled()) {
-                Surface::animate({ this,
-                                   "pos",
-                                   200,
-                                   QEasingCurve::BezierSpline,
-                                   this->pos(),
-                                   pos,
-                                   {},
-                                   [this] {
-                                       d->updateMoveRect();
-                                       Q_EMIT geometryChanged();
-                                   } });
-            } else {
-                move(pos);
-            }
-            if (d->surface())
-                d->surface()->deactivatePosIndicator();
-            d->updateMoveRect();
-
-            if (pos != d->oldGeometry.topLeft()) {
-            }
-        }
-        emit geometryChanged();
-        Q_EMIT editingStatusChanged(false);
-
-        if (d->collView)
-            d->collView->setProperty(kCollectionPropertyEditing, false);
+        DFrame::mouseReleaseEvent(event);
+        event->accept();
     }
-
-    DFrame::mouseReleaseEvent(event);
-    event->accept();
 }
 
 void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
