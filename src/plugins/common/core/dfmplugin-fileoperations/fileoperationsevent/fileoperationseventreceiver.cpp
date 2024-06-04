@@ -1488,9 +1488,8 @@ void FileOperationsEventReceiver::handleOperationUndoDeletes(const quint64 windo
     DoDeleteErrorType erType { DoDeleteErrorType::kNoErrror };
     auto handle = doDeleteFile(windowId, sources, flags, handleCallback, false, erType);
     if (!handle && erType == DoDeleteErrorType::kNullPtr) {
-        auto re = op;
-        re.insert("stackBack", false);
-        dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, re);
+        // 此次ctrl+z回撤失败，重新保存这次操作
+        dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, op);
         return;
     }
     connect(handle.get(), &AbstractJobHandler::requestSaveRedoOperation, this,
