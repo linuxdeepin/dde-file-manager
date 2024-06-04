@@ -46,6 +46,7 @@ public:
     virtual void setCanvasSelectionShell(CanvasSelectionShell *sh);
     virtual void setSurfaces(const QList<SurfacePointer> &surfaces);
     virtual void reset();
+    virtual bool isEditing();
 
 signals:
     void collectionChanged();
@@ -67,6 +68,7 @@ protected:
     CanvasManagerShell *canvasManagerShell = nullptr;
     CanvasSelectionShell *canvasSelectionShell = nullptr;
     QList<SurfacePointer> surfaces;
+    bool editing = false;
 };
 
 }

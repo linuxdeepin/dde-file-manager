@@ -289,6 +289,11 @@ void CollectionTitleBar::resizeEvent(QResizeEvent *e)
     rounded();
 }
 
+void CollectionTitleBar::contextMenuEvent(QContextMenuEvent *)
+{
+    return;
+}
+
 void CollectionTitleBar::rounded()
 {
     QPainterPath path;

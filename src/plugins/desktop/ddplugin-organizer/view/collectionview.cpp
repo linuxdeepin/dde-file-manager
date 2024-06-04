@@ -138,7 +138,7 @@ void CollectionViewPrivate::updateVerticalBarRange()
     q->verticalScrollBar()->setRange(0, qMax(0, height));
     q->verticalScrollBar()->setPageStep(q->viewport()->height());
     q->verticalScrollBar()->setSingleStep(1);
-    fmDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
+    // fmDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
 }
 
 int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const
@@ -1152,11 +1152,13 @@ CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *data
     : QAbstractItemView(parent), d(new CollectionViewPrivate(uuid, dataProvider, this))
 {
 #ifdef QT_DEBUG
-    d->showGrid = true;
+    // d->showGrid = true;
 #endif
 
     d->initUI();
     d->initConnect();
+
+    setObjectName("dd_collection_view");
 }
 
 CollectionView::~CollectionView()
@@ -1719,14 +1721,25 @@ void CollectionView::wheelEvent(QWheelEvent *event)
 
 void CollectionView::mousePressEvent(QMouseEvent *event)
 {
+    auto pos = event->pos();
     bool leftButtonPressed = event->buttons().testFlag(Qt::LeftButton);
+
+    if (pos.x() < kCollectionStretchThreshold
+        || pos.x() > this->width() - kCollectionStretchThreshold
+        || pos.y() < kCollectionStretchThreshold
+        || pos.y() > this->height() - kCollectionStretchThreshold) {
+        if (leftButtonPressed) {
+            d->ignoreMouseEvent = true;
+            return;
+        }
+    }
+
     if (leftButtonPressed) {
         d->canUpdateVerticalBarRange = false;
     }
 
     d->checkTouchDarg(event);
 
-    auto pos = event->pos();
     auto index = indexAt(pos);
     if (index.isValid() && isPersistentEditorOpen(index))
         return;
@@ -1761,6 +1774,8 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
 
 void CollectionView::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::LeftButton)
+        d->ignoreMouseEvent = false;
     if (d->elasticBand.isValid()) {
         // clear elasticBand
         d->elasticBand = QRect();
@@ -1784,6 +1799,8 @@ void CollectionView::mouseReleaseEvent(QMouseEvent *event)
 
 void CollectionView::mouseMoveEvent(QMouseEvent *event)
 {
+    if (d->ignoreMouseEvent)
+        return;
     QAbstractItemView::mouseMoveEvent(event);
 
     // left button pressed on empty area.
@@ -2004,6 +2021,8 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
 
 void CollectionView::contextMenuEvent(QContextMenuEvent *event)
 {
+    if (this->property(kCollectionPropertyEditing).toBool())
+        return;
     if (CollectionViewMenu::disableMenu())
         return;
 
