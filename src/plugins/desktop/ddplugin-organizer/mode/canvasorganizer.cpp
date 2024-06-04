@@ -135,6 +135,11 @@ void CanvasOrganizer::reset()
 {
 }
 
+bool CanvasOrganizer::isEditing()
+{
+    return editing;
+}
+
 bool CanvasOrganizer::filterDataRested(QList<QUrl> *urls)
 {
     return false;

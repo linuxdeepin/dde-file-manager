@@ -172,6 +172,9 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
 {
     connect(collection.data(), &CollectionHolder::styleChanged,
             this, &NormalizedModePrivate::collectionStyleChanged);
+    auto frame = dynamic_cast<CollectionFrame *>(collection->frame());
+    connect(frame, &CollectionFrame::editingStatusChanged,
+            q, &NormalizedMode::onCollectionEditStatusChanged);
 }
 
 void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
@@ -218,6 +221,7 @@ void NormalizedModePrivate::onIconSizeChanged()
             int ret = del->setIconLevel(lv);
             lay |= ret > -1;
         }
+        view->updateRegionView();
     }
 
     // if (lay)
@@ -511,6 +515,11 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
         QModelIndex index = model->index(i, 0);
         d->classifier->change(model->fileUrl(index));
     }
+}
+
+void NormalizedMode::onCollectionEditStatusChanged(bool editing)
+{
+    this->editing = editing;
 }
 
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)

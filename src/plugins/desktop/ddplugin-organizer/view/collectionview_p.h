@@ -26,10 +26,12 @@ class GraphicsEffect : public QGraphicsEffect
     Q_OBJECT
 public:
     explicit GraphicsEffect(CollectionView *parent);
+
 protected:
     void draw(QPainter *painter) override;
     void sourceChanged(ChangeFlags flags) override;
     QRectF boundingRectFor(const QRectF &sourceRect) const override;
+
 private:
     CollectionView *view;
 };
@@ -146,6 +148,7 @@ public:
     QPoint pressedPosition;
     QRect elasticBand;
     bool pressedAlreadySelected = false;
+    bool ignoreMouseEvent = false;
 
     Qt::SortOrder sortOrder = Qt::DescendingOrder;
     int sortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;

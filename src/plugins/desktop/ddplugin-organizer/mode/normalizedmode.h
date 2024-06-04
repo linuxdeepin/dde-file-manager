@@ -16,32 +16,37 @@ class NormalizedMode : public CanvasOrganizer
     Q_OBJECT
     friend class NormalizedModePrivate;
     friend class NormalizedModeBroker;
+
 public:
-   explicit NormalizedMode(QObject *parent = nullptr);
-   ~NormalizedMode() override;
-   OrganizerMode mode() const override;
-   bool initialize(CollectionModel *) override;
-   void reset() override;
-   void layout() override;
-   void detachLayout() override;
+    explicit NormalizedMode(QObject *parent = nullptr);
+    ~NormalizedMode() override;
+    OrganizerMode mode() const override;
+    bool initialize(CollectionModel *) override;
+    void reset() override;
+    void layout() override;
+    void detachLayout() override;
+
 public slots:
-   void rebuild();
-   void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-   void onFileInserted(const QModelIndex &parent, int first, int last);
-   void onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last);
-   void onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles );
+    void rebuild();
+    void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
+    void onFileInserted(const QModelIndex &parent, int first, int last);
+    void onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last);
+    void onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+    void onCollectionEditStatusChanged(bool editing);
 protected slots:
     bool filterDataRested(QList<QUrl> *urls) override;
     bool filterDataInserted(const QUrl &url) override;
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;
     bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const override;
+
 protected:
     bool setClassifier(Classifier id);
     void removeClassifier();
+
 private:
     NormalizedModePrivate *d = nullptr;
 };
 
 }
 
-#endif // NORMALIZEDMODE_H
+#endif   // NORMALIZEDMODE_H

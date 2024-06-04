@@ -17,6 +17,7 @@ class FrameManager : public QObject
 {
     Q_OBJECT
     friend class FrameManagerPrivate;
+
 public:
     explicit FrameManager(QObject *parent = nullptr);
     ~FrameManager() override;
@@ -26,6 +27,8 @@ public:
     void turnOff();
 
     bool organizerEnabled();
+    bool hookCanvasMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData);
+
 signals:
 
 public slots:
@@ -33,12 +36,14 @@ public slots:
     void onWindowShowed();
     void onDetachWindows();
     void onGeometryChanged();
+
 protected:
     void switchMode(OrganizerMode mode);
+
 private:
     FrameManagerPrivate *d = nullptr;
 };
 
 }
 
-#endif // FRAMEMANAGER_H
+#endif   // FRAMEMANAGER_H
