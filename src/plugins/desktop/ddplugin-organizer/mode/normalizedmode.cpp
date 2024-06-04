@@ -355,7 +355,7 @@ void NormalizedMode::layout()
             style.key = holder->id();
         }
 
-        if (style.screenIndex == -1) {   // new collection coming.
+        if (style.screenIndex == -1 || !holder->surface()) {   // new collection coming.
             // layout those old items first.
             if (!holder->property("delayed").toBool()) {
                 holder->setProperty("delayed", true);
