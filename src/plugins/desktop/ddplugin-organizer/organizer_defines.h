@@ -14,6 +14,9 @@
 
 namespace ddplugin_organizer {
 
+inline const int kCollectionStretchThreshold = 10;
+inline constexpr char kCollectionPropertyEditing[] { "collection_editing" };
+
 enum OrganizerMode {
     kNormalized = 0,
     kCustom

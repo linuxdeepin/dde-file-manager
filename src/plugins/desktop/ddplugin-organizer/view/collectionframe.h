@@ -69,6 +69,7 @@ public Q_SLOTS:
 signals:
     void sizeModeChanged(const CollectionFrameSize &size);
     void geometryChanged();
+    void editingStatusChanged(bool editing);
 
 protected:
     bool event(QEvent *event) override;

@@ -16,8 +16,6 @@
 #include <QtMath>
 #include <QPropertyAnimation>
 
-static constexpr int kStretchWidth = 10;
-static constexpr int kStretchHeight = 10;
 static constexpr int kWidgetRoundRadius = 8;
 
 DWIDGET_USE_NAMESPACE
@@ -39,10 +37,10 @@ void CollectionFramePrivate::updateStretchRect()
 {
     stretchRects.clear();
     // NOTE: do not change the order!
-    stretchRects << QRect(0, 0, kStretchWidth, q->height());   // leftRect
-    stretchRects << QRect(0, 0, q->width(), kStretchHeight);   // topRect
-    stretchRects << QRect(q->width() - kStretchWidth, 0, kStretchWidth, q->height());   // rightRect
-    stretchRects << QRect(0, q->height() - kStretchHeight, q->width(), kStretchHeight);   // bottomRect
+    stretchRects << QRect(0, 0, kCollectionStretchThreshold, q->height());   // leftRect
+    stretchRects << QRect(0, 0, q->width(), kCollectionStretchThreshold);   // topRect
+    stretchRects << QRect(q->width() - kCollectionStretchThreshold, 0, kCollectionStretchThreshold, q->height());   // rightRect
+    stretchRects << QRect(0, q->height() - kCollectionStretchThreshold, q->width(), kCollectionStretchThreshold);   // bottomRect
 }
 
 void CollectionFramePrivate::updateMoveRect()
@@ -247,9 +245,14 @@ QRect CollectionFramePrivate::stretchResultRect()
     geo = normalizeRect(geo);
     if (!sur->isIntersected(geo, q)) {
         // size not changed but pos changed may happen, do not change position in this kind of case.
-        if (geo.size() == oldGeometry.size())
-            return oldGeometry;
-        return geo;
+        int dw = geo.width() - oldGeometry.width();
+        int dh = geo.height() - oldGeometry.height();
+
+        auto newRect = oldGeometry.adjusted(bool(responseArea & LeftRect) * -1 * dw,
+                                            bool(responseArea & TopRect) * -1 * dh,
+                                            bool(responseArea & RightRect) * 1 * dw,
+                                            bool(responseArea & BottomRect) * 1 * dh);
+        return newRect;
     }
 
     int dx = 1 + Surface::toCellLen(geo.width() - oldGeometry.width());
@@ -385,6 +388,7 @@ void CollectionFrame::setWidget(QWidget *w)
         d->titleBarRect = d->titleBarWidget->geometry();
         d->titleBarWidget->installEventFilter(this);
     }
+    d->collView = w->findChild<QWidget *>(QStringLiteral("dd_collection_view"));
 
     d->mainLayout->addWidget(d->widget);
 }
@@ -519,10 +523,18 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
         if (d->canStretch() && d->stretchArea.contains(d->responseArea)) {
             // handle stretch
             d->frameState = CollectionFramePrivate::StretchState;
+
+            if (d->collView)
+                d->collView->setProperty(kCollectionPropertyEditing, true);
+            Q_EMIT editingStatusChanged(true);
         } else if (d->canMove() && d->moveArea.contains(d->responseArea)) {
             // handle move
             d->moveStartPoint = this->mapToParent(event->pos());
             d->frameState = CollectionFramePrivate::MoveState;
+
+            if (d->collView)
+                d->collView->setProperty(kCollectionPropertyEditing, true);
+            Q_EMIT editingStatusChanged(true);
         } else {
             d->frameState = CollectionFramePrivate::NormalShowState;
         }
@@ -535,73 +547,78 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
 
 void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
-        d->frameState = CollectionFramePrivate::NormalShowState;
-        auto result = d->stretchResultRect();
+    if (Qt::LeftButton == event->button()) {
+        if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
+            d->frameState = CollectionFramePrivate::NormalShowState;
+            auto result = d->stretchResultRect();
 
-        if (Surface::animationEnabled()) {
-            // animation here.
-            Surface::animate({ this,
-                               "geometry",
-                               200,
-                               QEasingCurve::BezierSpline,
-                               this->geometry(),
-                               result,
-                               {},
-                               [this] {
-                                   d->updateStretchRect();
-                                   Q_EMIT geometryChanged();
-                               } });
-        } else {
-            setGeometry(result);
-        }
-        d->updateStretchRect();
-        if (result != d->oldGeometry) {
-            if (!d->surface())
-                return;
-            auto gridSize = d->surface()->mapToGridGeo(result);
-            bool foundDefault = false;
-            for (auto iter = kDefaultGridSize.cbegin(); iter != kDefaultGridSize.cend(); ++iter) {
-                if (iter.value() == gridSize.size()) {
-                    Q_EMIT sizeModeChanged(iter.key());
-                    foundDefault = true;
-                    break;
-                }
+            if (Surface::animationEnabled()) {
+                // animation here.
+                Surface::animate({ this,
+                                   "geometry",
+                                   200,
+                                   QEasingCurve::BezierSpline,
+                                   this->geometry(),
+                                   result,
+                                   {},
+                                   [this] {
+                                       d->updateStretchRect();
+                                       Q_EMIT geometryChanged();
+                                   } });
+            } else {
+                setGeometry(result);
             }
-            if (!foundDefault)
-                Q_EMIT sizeModeChanged(kFree);
+            d->updateStretchRect();
+            if (result != d->oldGeometry) {
+                if (!d->surface())
+                    return;
+                auto gridSize = d->surface()->mapToGridGeo(result);
+                bool foundDefault = false;
+                for (auto iter = kDefaultGridSize.cbegin(); iter != kDefaultGridSize.cend(); ++iter) {
+                    if (iter.value() == gridSize.size()) {
+                        Q_EMIT sizeModeChanged(iter.key());
+                        foundDefault = true;
+                        break;
+                    }
+                }
+                if (!foundDefault)
+                    Q_EMIT sizeModeChanged(kFree);
+            }
         }
+
+        if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
+            d->frameState = CollectionFramePrivate::NormalShowState;
+
+            auto pos = d->moveResultRectPos();
+            // animation here.
+            if (Surface::animationEnabled()) {
+                Surface::animate({ this,
+                                   "pos",
+                                   200,
+                                   QEasingCurve::BezierSpline,
+                                   this->pos(),
+                                   pos,
+                                   {},
+                                   [this] {
+                                       d->updateMoveRect();
+                                       Q_EMIT geometryChanged();
+                                   } });
+            } else {
+                move(pos);
+            }
+            if (d->surface())
+                d->surface()->deactivatePosIndicator();
+            d->updateMoveRect();
+
+            if (pos != d->oldGeometry.topLeft()) {
+            }
+        }
+        emit geometryChanged();
+        Q_EMIT editingStatusChanged(false);
+
+        if (d->collView)
+            d->collView->setProperty(kCollectionPropertyEditing, false);
     }
-
-    if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
-        d->frameState = CollectionFramePrivate::NormalShowState;
-
-        auto pos = d->moveResultRectPos();
-        // animation here.
-        if (Surface::animationEnabled()) {
-            Surface::animate({ this,
-                               "pos",
-                               200,
-                               QEasingCurve::BezierSpline,
-                               this->pos(),
-                               pos,
-                               {},
-                               [this] {
-                                   d->updateMoveRect();
-                                   Q_EMIT geometryChanged();
-                               } });
-        } else {
-            move(pos);
-        }
-        if (d->surface())
-            d->surface()->deactivatePosIndicator();
-        d->updateMoveRect();
-
-        if (pos != d->oldGeometry.topLeft()) {
-        }
-    }
-
-    emit geometryChanged();
 
     DFrame::mouseReleaseEvent(event);
     event->accept();
