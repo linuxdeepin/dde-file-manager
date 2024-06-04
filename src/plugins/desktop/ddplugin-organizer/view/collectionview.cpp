@@ -1246,6 +1246,7 @@ void CollectionView::updateRegionView()
 
     const QMargins viewMargin(kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin);
     d->updateViewSizeData(geometry().size(), viewMargin, itemSize);
+    d->updateVerticalBarRange();
 }
 
 void CollectionView::openEditor(const QUrl &url)
@@ -1649,6 +1650,18 @@ void CollectionView::paintEvent(QPaintEvent *event)
             painter.drawText(rect, QString("%1-%2").arg(d->nodeToPos(node + startNode).x()).arg(d->nodeToPos(node + startNode).y()));
         }
         painter.restore();
+    }
+
+    {
+#ifdef QT_DEBUG
+        painter.save();
+        auto rect = viewport()->geometry();
+        rect = rect.marginsAdded({ 0, 20, 0, 0 });
+        painter.drawLine(rect.topLeft(), rect.bottomRight());
+        painter.drawLine(rect.topRight(), rect.bottomLeft());
+
+        painter.restore();
+#endif
     }
 
     // draw files

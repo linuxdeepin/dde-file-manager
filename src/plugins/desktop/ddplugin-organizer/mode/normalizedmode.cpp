@@ -218,6 +218,7 @@ void NormalizedModePrivate::onIconSizeChanged()
             int ret = del->setIconLevel(lv);
             lay |= ret > -1;
         }
+        view->updateRegionView();
     }
 
     // if (lay)
