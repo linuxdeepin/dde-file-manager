@@ -100,13 +100,14 @@ bool CanvasViewShell::eventShortcutkeyPress(int viewIndex, int key, int modifier
 bool CanvasViewShell::eventWheel(int viewIndex, const QPoint &angleDelta, void *extData)
 {
     CheckFilterConnected(CanvasViewShell::filterWheel)
-
+#ifdef DFM_DISABLE_CHANGE_ICON_BY_WHEEL
             if (extData)
     {
         QVariantHash *ext = reinterpret_cast<QVariantHash *>(extData);
         bool ctrl = ext->value("CtrlPressed").toBool();
         return filterWheel(viewIndex, angleDelta, ctrl);
     }
+#endif
     return false;
 }
 

@@ -506,7 +506,7 @@ void CanvasManagerPrivate::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, int last)
 {
-    auto fileInsertByTouch = [this ](const QUrl &url)-> bool {
+    auto fileInsertByTouch = [this](const QUrl &url) -> bool {
         const QString path = url.toString();
         auto touchFileData = FileOperatorProxyIns->touchFileData();
         if (path == touchFileData.first) {
@@ -526,7 +526,7 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
         return false;
     };
 
-    auto fileInsertByPasted = [this ](const QUrl &url, const QModelIndex &index)-> bool {
+    auto fileInsertByPasted = [this](const QUrl &url, const QModelIndex &index) -> bool {
         auto pasteFileData = FileOperatorProxyIns->pasteFileData();
         if (pasteFileData.contains(url)) {
             FileOperatorProxyIns->removePasteFileData(url);
@@ -536,7 +536,7 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
         return false;
     };
 
-    auto fileInsertToGrid = [this ](const QUrl &url) {
+    auto fileInsertToGrid = [this](const QUrl &url) {
         const QString path = url.toString();
         QPair<int, QPoint> pos;
 
