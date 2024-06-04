@@ -62,6 +62,7 @@ public:
     CollectionFrame *const q = nullptr;
     QWidget *widget = nullptr;
     QWidget *titleBarWidget = nullptr;
+    QWidget *collView = nullptr;
 
     QVBoxLayout *mainLayout = nullptr;
     QRect titleBarRect;
