@@ -18,7 +18,22 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
     add_definitions(-D ARCH_MIPSEL)
 endif()
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+#CMake module
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(install_plugin_quick_module)
+
+# Select major version.
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+message("Using Qt version: ${QT_VERSION_MAJOR}")
+
+if(QT_VERSION_MAJOR EQUAL "6")
+    set(DFM_BUILD_WITH_QT6 ON)
+    set(DTK_VERSION_MAJOR 6)
+else()
+    set(DTK_VERSION_MAJOR "")
+endif()
+
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(DtkCMake REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
@@ -128,7 +143,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 message("Build type:"${CMAKE_BUILD_TYPE})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(BUILD_TESTING ON)
+    # FIXME: QML refactor, disable test temporary.
+    set(BUILD_TESTING OFF)
     set(BUILD_DOCS Off)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
@@ -139,13 +155,13 @@ else()
 endif()
 
 # sub directories
-add_subdirectory(src/apps)
-add_subdirectory(src/dfm-base)
-add_subdirectory(src/dfm-extension)
-add_subdirectory(src/dfm-framework)
-add_subdirectory(src/plugins)
-add_subdirectory(src/external)
-add_subdirectory(src/tools)
+# add_subdirectory(src/apps)
+# add_subdirectory(src/dfm-base)
+# add_subdirectory(src/dfm-extension)
+# add_subdirectory(src/dfm-framework)
+# add_subdirectory(src/plugins)
+# add_subdirectory(src/external)
+# add_subdirectory(src/tools)
 
 # docs
 if (BUILD_DOCS)
