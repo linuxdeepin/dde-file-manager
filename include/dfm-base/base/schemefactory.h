@@ -500,6 +500,7 @@ private:
     static SortFilterFactory &instance();   // 获取全局实例
     explicit SortFilterFactory() {}
 };
+
 }   // namespace dfmbase
 
 #endif   // SCHEMEFACTORY_H

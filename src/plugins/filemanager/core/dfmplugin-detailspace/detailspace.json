@@ -11,5 +11,12 @@
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
         {"Name" : "dfmplugin-core", "Version": "1.0.0"}
+    ],
+    "Quick": [
+        {
+            "Url" : "DetailSpace.qml",
+            "Id" : "detailspace",
+            "Parent" : "dfmplugin-core.filewindow"
+        }
     ]
 }

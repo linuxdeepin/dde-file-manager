@@ -16,12 +16,12 @@ set(SRCS
 )
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 COMPONENTS
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
     Widgets
     DBus
     REQUIRED)
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
@@ -36,8 +36,8 @@ target_link_libraries(
     ${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt5::Widgets
-    Qt5::DBus
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::DBus
     ${DtkWidget_LIBRARIES}
 )
 

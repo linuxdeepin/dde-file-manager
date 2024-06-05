@@ -11,7 +11,7 @@
 #include <QModelIndex>
 #include <QItemSelectionModel>
 
-QT_BEGIN_HEADER
+QT_BEGIN_NAMESPACE
 class QItemSelection;
 QT_END_NAMESPACE
 

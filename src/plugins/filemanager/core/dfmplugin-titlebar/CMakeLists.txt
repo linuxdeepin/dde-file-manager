@@ -24,11 +24,13 @@ FILE(GLOB TITLEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/dpcwidget/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${TITLEBAR_FILES}
+    Titlebar.qml
+    LineSearch.qml
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
@@ -51,3 +53,6 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
 )
+
+#install qml file
+INSTALL_PLUGIN_QUICK_MODULE(${DFM_PLUGIN_FILEMANAGER_CORE_DIR})

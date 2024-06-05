@@ -5,7 +5,8 @@
 #include "gsettingmanager.h"
 #include "private/gsettingmanager_p.h"
 
-#include <QGSettings>
+/// FIXME: ? qgsettings 不再使用
+// #include <QGSettings>
 
 DFMBASE_USE_NAMESPACE
 
@@ -25,7 +26,8 @@ GSettingManager::~GSettingManager()
 
 bool GSettingManager::isSchemaInstalled(const QString &schemaId)
 {
-    return QGSettings::isSchemaInstalled(schemaId.toLocal8Bit());
+    // return QGSettings::isSchemaInstalled(schemaId.toLocal8Bit());
+    return false;
 }
 
 bool GSettingManager::addSettings(const QString &schemaId, const QString &path, QString *err)
@@ -37,10 +39,10 @@ bool GSettingManager::addSettings(const QString &schemaId, const QString &path, 
         return false;
     }
 
-    auto gset = new QGSettings(schemaId.toLocal8Bit(), path.toLocal8Bit(), this);
-    d->settings.insert(schemaId, gset);
-    locker.unlock();
-    connect(gset, &QGSettings::changed, this, [=](const QString &key) { Q_EMIT valueChanged(schemaId, key); });
+    // auto gset = new QGSettings(schemaId.toLocal8Bit(), path.toLocal8Bit(), this);
+    // d->settings.insert(schemaId, gset);
+    // locker.unlock();
+    // connect(gset, &QGSettings::changed, this, [=](const QString &key) { Q_EMIT valueChanged(schemaId, key); });
     return true;
 }
 
@@ -48,7 +50,7 @@ bool GSettingManager::removeSettings(const QString &schemaId, QString *err)
 {
     QWriteLocker locker(&d->lock);
     if (d->settings.contains(schemaId)) {
-        delete d->settings[schemaId];
+        // delete d->settings[schemaId];
         d->settings.remove(schemaId);
     }
     return true;
@@ -65,7 +67,8 @@ QVariant GSettingManager::get(const QString &schemaId, const QString &key) const
     QReadLocker locker(&d->lock);
     if (!d->settings.contains(schemaId))
         return QVariant();
-    return d->settings.value(schemaId)->get(key);
+    // return d->settings.value(schemaId)->get(key);
+    return {};
 }
 
 void GSettingManager::set(const QString &schemaId, const QString &key, const QVariant &value)
@@ -73,7 +76,7 @@ void GSettingManager::set(const QString &schemaId, const QString &key, const QVa
     QReadLocker locker(&d->lock);
     if (!d->settings.contains(schemaId))
         return;
-    d->settings.value(schemaId)->set(key, value);
+    // d->settings.value(schemaId)->set(key, value);
 }
 
 bool GSettingManager::trySet(const QString &schemaId, const QString &key, const QVariant &value)
@@ -81,26 +84,29 @@ bool GSettingManager::trySet(const QString &schemaId, const QString &key, const 
     QReadLocker locker(&d->lock);
     if (!d->settings.contains(schemaId))
         return false;
-    return d->settings.value(schemaId)->trySet(key, value);
+    // return d->settings.value(schemaId)->trySet(key, value);
+    return {};
 }
 
 QStringList GSettingManager::keys(const QString &schemaId) const
 {
     QReadLocker locker(&d->lock);
-    return d->settings.contains(schemaId) ? d->settings.value(schemaId)->keys() : QStringList();
+    // return d->settings.contains(schemaId) ? d->settings.value(schemaId)->keys() : QStringList();
+    return {};
 }
 
 QVariantList GSettingManager::choices(const QString &schemaId, const QString &key) const
 {
     QReadLocker locker(&d->lock);
-    return d->settings.contains(schemaId) ? d->settings.value(schemaId)->choices(key) : QVariantList();
+    // return d->settings.contains(schemaId) ? d->settings.value(schemaId)->choices(key) : QVariantList();
+    return {};
 }
 
 void GSettingManager::reset(const QString &schemaId, const QString &key)
 {
     QReadLocker locker(&d->lock);
-    if (d->settings.contains(schemaId))
-        d->settings.value(schemaId)->reset(key);
+    // if (d->settings.contains(schemaId))
+    // d->settings.value(schemaId)->reset(key);
 }
 
 GSettingManager::GSettingManager(QObject *parent)

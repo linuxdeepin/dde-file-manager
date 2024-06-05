@@ -86,7 +86,7 @@ void SearchHistroyManager::writeIntoIPHistory(const QString &ipAddr)
     auto history = getIPHistory();
     IPHistroyData data(ipAddr, QDateTime::currentDateTime());
     if (history.contains(data)) {
-        int index = history.indexOf(data);
+        int index = history.indexOf(data);      
         history.replace(index, data);
     } else {
         history << data;

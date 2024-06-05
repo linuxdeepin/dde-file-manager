@@ -20,6 +20,7 @@
 #include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QRegularExpression>
 #include <QDebug>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
@@ -269,7 +270,7 @@ void CommandParser::openInUrls()
             //路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
             if (!QDir().exists(path) && !path.startsWith("./") && !path.startsWith("../") && !path.startsWith("/")) {
                 // 路径中包含特殊字符的全部uri编码
-                QRegExp regexp("[#&@\\!\\?]");
+                QRegularExpression regexp("[#&@\\!\\?]");
                 if (path.contains(regexp)) {
                     QString left, right, encode;
                     int idx = path.indexOf(regexp);

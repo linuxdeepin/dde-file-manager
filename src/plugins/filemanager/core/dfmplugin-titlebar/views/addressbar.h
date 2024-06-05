@@ -40,7 +40,7 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     void showEvent(QShowEvent *event) override;
     void inputMethodEvent(QInputMethodEvent *e) override;
-    void enterEvent(QEvent *e) override;
+    void enterEvent(QEnterEvent *e) override;
     void leaveEvent(QEvent *e) override;
 
 Q_SIGNALS:

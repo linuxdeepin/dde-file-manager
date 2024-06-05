@@ -13,16 +13,20 @@
 #include <dfm-base/utils/loggerrules.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
+#include <dfm-gui/sharedqmlengine.h>
+#include <dfm-gui/windowmanager.h>
+
 #include <dfm-framework/dpf.h>
 
-#include <DApplicationSettings>
+// #include <DApplicationSettings>
 #include <DSysInfo>
 
 #include <QIcon>
 #include <QDir>
-#include <QTextCodec>
+// #include <QTextCodec>
 #include <QProcess>
 #include <QTimer>
+#include <QQmlEngine>
 
 #include <signal.h>
 #include <malloc.h>
@@ -120,6 +124,23 @@ static QStringList buildBlackNames()
     return blackNames;
 }
 
+static bool initQmlEngine()
+{
+    QSharedPointer<QQmlEngine> globalEngine = dfmgui::WindowManager::instance()->engine();
+    if (!globalEngine) {
+        return false;
+    }
+
+#ifdef QT_DEBUG
+    const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
+    globalEngine->addImportPath(pluginsDir + "/qml");
+#else
+    globalEngine->addImportPath(DFM_QML_MODULE);
+#endif
+
+    return true;
+}
+
 static bool pluginsLoad()
 {
     QString msg;
@@ -150,7 +171,7 @@ static bool pluginsLoad()
     else
         DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
 
-    qCInfo(logAppFileManager) << "Depend library paths:" << DApplication::libraryPaths();
+    // qCInfo(logAppFileManager) << "Depend library paths:" << DApplication::libraryPaths();
     qCInfo(logAppFileManager) << "Load plugin paths: " << DPF_NAMESPACE::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
@@ -272,7 +293,7 @@ int main(int argc, char *argv[])
     initLog();
 
     // Fixed the locale codec to utf-8
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+    // QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     SingleApplication a(argc, argv);
 
@@ -320,10 +341,16 @@ int main(int argc, char *argv[])
         // check upgrade
         checkUpgrade(&a);
 
+        if (!initQmlEngine()) {
+            qCCritical(logAppFileManager) << "init QQmlEngine failed!";
+            abort();
+        }
+
         if (!pluginsLoad()) {
             qCCritical(logAppFileManager) << "Load pugin failed!";
             abort();
         }
+
         signal(SIGTERM, handleSIGTERM);
         signal(SIGPIPE, handleSIGPIPE);
     } else {

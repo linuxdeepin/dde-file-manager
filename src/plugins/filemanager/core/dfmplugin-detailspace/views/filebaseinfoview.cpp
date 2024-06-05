@@ -109,9 +109,9 @@ void FileBaseInfoView::basicExpand(const QUrl &url)
     glayout->setSpacing(0);
     int row = 0;
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
-    QSet<BasicFieldExpandEnum> fieldset = QSet<BasicFieldExpandEnum>::fromList(fields);
-    fields = fieldset.toList();
-    qSort(fields.begin(), fields.end());
+    QSet<BasicFieldExpandEnum> fieldset {fields.begin(), fields.end()};
+    fields = {fieldset.begin(), fieldset.end()};
+    std::sort(fields.begin(), fields.end());
     for (BasicFieldExpandEnum &key : fields) {
         QList<KeyValueLabel *> kvls = fieldMap.values(key);
         for (int i = kvls.count() - 1; i >= 0; --i) {

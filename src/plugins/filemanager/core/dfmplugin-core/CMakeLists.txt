@@ -15,11 +15,12 @@ FILE(GLOB CORE_FILES
     )
 
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Dtk6 COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${CORE_FILES}
+    FileWindow.qml
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
@@ -31,8 +32,9 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
+    DFM::gui
     DFM::framework
-    ${DtkWidget_LIBRARIES}
+    Dtk6::Widget
 )
 
 #install library file
@@ -42,3 +44,6 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
 )
+
+#install qml file
+INSTALL_PLUGIN_QUICK_MODULE(${DFM_PLUGIN_FILEMANAGER_CORE_DIR})

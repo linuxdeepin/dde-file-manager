@@ -40,7 +40,11 @@ DPCProgressWidget::DPCProgressWidget(QWidget *parent)
 void DPCProgressWidget::initUI()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     mainLayout->setMargin(0);
+#else
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+#endif
     setLayout(mainLayout);
 
     progressTimer = new QTimer(this);

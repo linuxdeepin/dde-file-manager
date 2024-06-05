@@ -227,7 +227,11 @@ void OptionButtonBox::initUiForSizeMode()
         d->hBoxLayout = nullptr;
     }
     d->hBoxLayout = new QHBoxLayout;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     d->hBoxLayout->setMargin(0);
+#else
+    d->hBoxLayout->setContentsMargins(0, 0, 0, 0);
+#endif
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
     if (d->treeViewButton)

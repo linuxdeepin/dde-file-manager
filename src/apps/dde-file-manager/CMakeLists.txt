@@ -24,25 +24,25 @@ set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/sessionloader.cpp
     )
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt5 COMPONENTS Network REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME} 
     PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${DtkWidget_INCLUDE_DIRS}
     )
 
 target_link_libraries(
     ${PROJECT_NAME}
-    Qt5::Widgets
-    Qt5::Network
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network
     DFM::base
+    DFM::gui
     DFM::framework
-    ${DtkWidget_LIBRARIES}
+    Dtk${DTK_VERSION_MAJOR}::Widget
     )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
