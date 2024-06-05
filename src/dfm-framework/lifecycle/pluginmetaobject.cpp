@@ -5,6 +5,7 @@
 #include "private/pluginmetaobject_p.h"
 
 #include <dfm-framework/lifecycle/pluginmetaobject.h>
+#include <dfm-framework/lifecycle/pluginquickmetadata.h>
 
 #include <QDebug>
 
@@ -93,6 +94,14 @@ QSharedPointer<Plugin> PluginMetaObject::plugin() const
 QString PluginMetaObject::errorString() const
 {
     return d->error;
+}
+
+/*!
+ * \return 返回 QML Applet 组件元信息列表
+ */
+QList<PluginQuickMetaPtr> PluginMetaObject::quickMetaData() const
+{
+    return d->quickMetaList;
 }
 
 PluginMetaObject::PluginMetaObject()
@@ -207,6 +216,22 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjec
     out << kCustomData << ":" << metaObj.customData();
     out << "isVirtual"
         << ":" << metaObj.isVirtual() << "; ";
+    out << "}";
+    return out;
+}
+
+/*!
+ * \brief 重定向全局Debug打印 PluginQuickInfo 对象的函数
+ */
+Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginQuickMetaData &quickMeta)
+{
+    DPF_USE_NAMESPACE
+    out << "PluginQuickInfo(" << QString("0x%0").arg(qint64(&quickMeta), 0, 16) << "){";
+    out << kQuickUrl << " : " << quickMeta.url() << "; ";
+    out << kQuickId << " : " << quickMeta.id() << "; ";
+    out << kQuickType << " : " << quickMeta.type() << "; ";
+    out << kQuickParent << " : " << quickMeta.parent() << "; ";
+    out << kQuickApplet << " : " << quickMeta.applet() << "; ";
     out << "}";
     return out;
 }

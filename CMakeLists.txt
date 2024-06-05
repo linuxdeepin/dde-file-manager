@@ -134,6 +134,15 @@ if(NOT DEFINED DFM_THUMBNAIL_TOOL)
     set(DFM_THUMBNAIL_TOOL ${LIB_INSTALL_DIR}/dde-file-manager/tools)
 endif()
 
+# qml module
+if(NOT DEFINED DFM_QML_MODULE)
+    set(DFM_QML_MODULE ${DFM_PLUGIN_DIR}/qml)
+endif()
+
+# qml import path for qt creator
+list(APPEND QML_DIRS ${DFM_BUILD_PLUGIN_DIR}/qml)
+set(QML_IMPORT_PATH ${QML_DIRS} CACHE STRING "Import local module" FORCE)
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
@@ -155,13 +164,15 @@ else()
 endif()
 
 # sub directories
-# add_subdirectory(src/apps)
+add_subdirectory(src/apps)
 add_subdirectory(src/dfm-base)
-# add_subdirectory(src/dfm-extension)
-# add_subdirectory(src/dfm-framework)
-# add_subdirectory(src/plugins)
+add_subdirectory(src/dfm-extension)
+add_subdirectory(src/dfm-framework)
+add_subdirectory(src/dfm-gui)
+add_subdirectory(src/plugins)
 # add_subdirectory(src/external)
 # add_subdirectory(src/tools)
+add_subdirectory(src/dfm-declarative)
 
 # docs
 if (BUILD_DOCS)

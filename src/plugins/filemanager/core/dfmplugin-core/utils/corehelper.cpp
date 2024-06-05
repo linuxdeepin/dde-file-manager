@@ -6,9 +6,9 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-gui/windowmanager.h>
 
 #include <dfm-framework/event/event.h>
-
 #include <dfm-framework/lifecycle/lifecycle.h>
 
 #include <QDir>
@@ -71,7 +71,15 @@ void CoreHelper::openWindow(const QUrl &url, const QVariant &opt)
         return;
     }
 
-    FMWindowsIns.showWindow(window);
+    // TODO
+    // FMWindowsIns.showWindow(window);
+
+    auto handlePtr = DFMGUI_NAMESPACE::WindowManager::instance()->createWindow("dfmplugin-core", "filewindow");
+    if (!handlePtr || !handlePtr->isValid()) {
+        fmCritical() << "Create dfmplugin-core filewindow failed";
+        return;
+    }
+    DFMGUI_NAMESPACE::WindowManager::instance()->showWindow(handlePtr);
 }
 
 void CoreHelper::cacheDefaultWindow()
@@ -157,8 +165,8 @@ bool CoreHelper::eventFilter(QObject *watched, QEvent *event)
     // we need all components to be displayed at the same time
     // when the window is showed
     if (type == QEvent::Show) {
-        int windowCount { FMWindowsIns.windowIdList().size() };
-        int lazyCount { DPF_NAMESPACE::LifeCycle::lazyLoadList().size() };
+        qsizetype windowCount { FMWindowsIns.windowIdList().size() };
+        qsizetype lazyCount { DPF_NAMESPACE::LifeCycle::lazyLoadList().size() };
         if (windowCount > 1 || lazyCount == 0) {
             fmDebug("Show full window, win count %d, lazy count %d", windowCount, lazyCount);
             window->removeEventFilter(this);

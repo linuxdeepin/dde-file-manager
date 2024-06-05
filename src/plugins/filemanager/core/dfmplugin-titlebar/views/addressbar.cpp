@@ -142,7 +142,11 @@ void AddressBarPrivate::initData()
 {
     ipRegExp.setPattern(R"(((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})");
     protocolIPRegExp.setPattern(R"(((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     protocolIPRegExp.setCaseSensitivity(Qt::CaseInsensitive);
+#else
+    protocolIPRegExp.setPatternOptions(protocolIPRegExp.patternOptions() | QRegularExpression::CaseInsensitiveOption);
+#endif
     // 设置补全组件
     urlCompleter = new QCompleter(this);
     setCompleter(urlCompleter);
@@ -221,7 +225,11 @@ void AddressBarPrivate::clearCompleterModel()
 void AddressBarPrivate::updateCompletionState(const QString &text)
 {
     isClearSearch = false;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (ipRegExp.exactMatch(text)) {
+#else
+    if (ipRegExp.match(text).hasMatch()) {
+#endif
         inputIsIpAddress = true;
         completeIpAddress(text);
     } else {
@@ -523,7 +531,11 @@ void AddressBarPrivate::onReturnPressed()
         }
         SearchHistroyManager::instance()->writeIntoSearchHistory(text);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         if (protocolIPRegExp.exactMatch(text)) {
+#else
+        if (protocolIPRegExp.match(text).hasMatch()) {
+#endif
             IPHistroyData data(text, QDateTime::currentDateTime());
             if (ipHistroyList.contains(data)) {
                 // update
@@ -907,7 +919,7 @@ void AddressBar::inputMethodEvent(QInputMethodEvent *e)
     QLineEdit::inputMethodEvent(e);
 }
 
-void AddressBar::enterEvent(QEvent *e)
+void AddressBar::enterEvent(QEnterEvent *e)
 {
     if (d->indicatorType == AddressBar::Search && d->spinner.isPlaying()) {
         d->spinner.hide();

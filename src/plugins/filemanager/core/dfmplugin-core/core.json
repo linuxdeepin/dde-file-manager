@@ -10,5 +10,12 @@
     "Description" : "The core plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
+    ],
+    "Quick": [
+        {
+            "Url": "FileWindow.qml",
+            "Id": "filewindow",
+            "Type": "Panel"
+        }
     ]
 }

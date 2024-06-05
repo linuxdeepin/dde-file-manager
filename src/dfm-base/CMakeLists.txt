@@ -48,10 +48,11 @@ find_package(PkgConfig REQUIRED)
 
 message("Current Qt Version ${QT_VERSION}")
 
-pkg_search_module(dfm-burn REQUIRED dfm-burn IMPORTED_TARGET)
-pkg_search_module(dfm-io REQUIRED dfm-io IMPORTED_TARGET)
-pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
-pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
+pkg_search_module(dfm-burn REQUIRED dfm6-burn IMPORTED_TARGET)
+pkg_search_module(dfm-io REQUIRED dfm6-io IMPORTED_TARGET)
+pkg_search_module(dfm-mount REQUIRED dfm6-mount IMPORTED_TARGET)
+# FIXME: ? qgsettings 不再使用
+# pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 pkg_search_module(Dtk6Core REQUIRED dtk6core IMPORTED_TARGET)
 
@@ -107,7 +108,7 @@ target_link_libraries(${BIN_NAME} PUBLIC
     PkgConfig::dfm-burn
     PkgConfig::dfm-mount
     PkgConfig::dfm-io
-    PkgConfig::gsettings
+    # PkgConfig::gsettings
     PkgConfig::mount
     poppler-cpp
     Dtk6::Core

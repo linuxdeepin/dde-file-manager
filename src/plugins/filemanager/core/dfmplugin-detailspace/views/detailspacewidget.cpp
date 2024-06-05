@@ -84,7 +84,7 @@ void DetailSpaceWidget::initializeUi()
     setBackgroundRole(QPalette::ColorRole::Base);
 
     QHBoxLayout *rvLayout = new QHBoxLayout(this);
-    rvLayout->setMargin(0);
+    rvLayout->setContentsMargins(0, 0, 0, 0);
     detailView = new DetailView(this);
     rvLayout->addWidget(detailView);
     setLayout(rvLayout);

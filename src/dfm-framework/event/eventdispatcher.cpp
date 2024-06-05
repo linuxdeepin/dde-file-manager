@@ -63,8 +63,8 @@ bool EventDispatcherManager::globalFiltered(EventType type, const QVariantList &
 {
     QReadLocker lk(&rwLock);
 
-    int size { globalFilterMap.size() };
-    for (int i = 0; i != size; ++i) {
+    qsizetype size { globalFilterMap.size() };
+    for (qsizetype i = 0; i != size; ++i) {
         auto key { globalFilterMap.keys()[i] };
         if (key) {
             auto func { globalFilterMap.value(key) };

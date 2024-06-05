@@ -18,7 +18,7 @@
 
 #include <DListView>
 
-#include <QGSettings>
+// #include <QGSettings>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QScrollBar>

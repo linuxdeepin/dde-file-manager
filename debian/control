@@ -96,7 +96,13 @@ Depends:
  dde-file-manager-daemon-plugins,
  dde-file-manager-server-plugins,
  dde-file-manager-common-plugins, 
- dde-file-manager-preview-plugins
+ dde-file-manager-preview-plugins,
+# qml required
+ qml6-module-qtqml,
+ qml6-module-qtquick,
+ qml6-module-qtquick-controls,
+ qml6-module-qtquick-layouts,
+ qml6-module-qtquick-window
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
