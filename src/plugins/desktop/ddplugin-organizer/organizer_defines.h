@@ -22,6 +22,11 @@ enum OrganizerMode {
     kCustom
 };
 
+enum OrganizeAction {
+    kOnTrigger,
+    kAlways
+};
+
 enum Classifier {
     kType = 0,
     kTimeCreated,

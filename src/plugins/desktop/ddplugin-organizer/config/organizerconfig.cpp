@@ -21,6 +21,8 @@ inline constexpr char kKeyEnable[] { "Enable" };
 inline constexpr char kKeyMode[] { "Mode" };
 inline constexpr char kKeyVersion[] { "Version" };
 
+inline constexpr char kGroupScreen[] { "Screen_Resolution" };
+
 inline constexpr char kGroupCollectionNormalized[] { "Collection_Normalized" };
 inline constexpr char kKeyClassification[] { "Classification" };
 
@@ -125,6 +127,31 @@ void OrganizerConfig::setMode(int m)
 void OrganizerConfig::setVersion(const QString &v)
 {
     d->setValue(kGroupGeneral, kKeyVersion, v);
+}
+
+QList<QSize> OrganizerConfig::surfaceSizes()
+{
+    QList<QSize> ret;
+    d->settings->beginGroup(kGroupScreen);
+    for (auto key : d->settings->allKeys()) {
+        auto val = d->settings->value(key).toString();
+        QStringList vals = val.split(":");
+        if (vals.count() < 2)
+            continue;
+        ret.append({ vals.at(0).toInt(), vals.at(1).toInt() });
+    }
+    d->settings->endGroup();
+    return ret;
+}
+
+void OrganizerConfig::setScreenInfo(const QMap<QString, QString> info)
+{
+    d->settings->remove(kGroupScreen);
+    d->settings->beginGroup(kGroupScreen);
+
+    for (auto iter = info.cbegin(); iter != info.cend(); ++iter)
+        d->settings->setValue(iter.key(), iter.value());
+    d->settings->endGroup();
 }
 
 void OrganizerConfig::sync(int ms)

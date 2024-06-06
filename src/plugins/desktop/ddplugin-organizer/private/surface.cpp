@@ -27,7 +27,7 @@ QSize Surface::gridSize()
              (height() - 2 * kMargin) / cellWidth() };
 }
 
-QRect Surface::mapToScreenGeo(const QRect &gridGeo)
+QRect Surface::mapToPixelSize(const QRect &gridGeo)
 {
     int gridOffsetX = gridOffset().x();
     int gridOffsetY = gridOffset().y();
@@ -39,13 +39,18 @@ QRect Surface::mapToScreenGeo(const QRect &gridGeo)
     return { screenPos, screenSize };
 }
 
-QRect Surface::mapToGridGeo(const QRect &screenGeo)
+QRect Surface::mapToGridGeo(const QRect &pixelGeo)
 {
-    int gridX = (screenGeo.left() - gridOffset().x()) / cellWidth();
-    int gridY = (screenGeo.top() - gridOffset().y()) / cellWidth();
-    int gridW = screenGeo.width() / cellWidth() + 1;
-    int gridH = screenGeo.height() / cellWidth() + 1;
+    int gridX = (pixelGeo.left() - gridOffset().x()) / cellWidth();
+    int gridY = (pixelGeo.top() - gridOffset().y()) / cellWidth();
+    int gridW = pixelGeo.width() / cellWidth() + 1;
+    int gridH = pixelGeo.height() / cellWidth() + 1;
     return { gridX, gridY, gridW, gridH };
+}
+
+QSize Surface::mapToGridSize(const QSize &pixelSize)
+{
+    return { pixelSize.width() / cellWidth() + 1, pixelSize.height() / cellWidth() + 1 };
 }
 
 QPoint Surface::gridOffset()
@@ -196,7 +201,7 @@ QRect Surface::findValidAreaAroundRect(const QRect &centerRect, QWidget *wid)
             || closestRect.top() < 0
             || closestRect.bottom() >= gridSize().height())
             return false;
-        auto r = mapToScreenGeo(closestRect);
+        auto r = mapToPixelSize(closestRect);
         return !isIntersected(r, wid);
     };
     // find a closest position by every edge.
@@ -275,7 +280,7 @@ QRect Surface::findValidAreaAroundRect(const QRect &centerRect, QWidget *wid)
 
     if (closest.x() >= 0 && closest.y() >= 0) {
         closestRect.moveTo(closest);
-        closestRect = mapToScreenGeo(closestRect);
+        closestRect = mapToPixelSize(closestRect);
         QRect r = wid->geometry();
         r.moveTo(closestRect.topLeft());
         return r;
@@ -287,6 +292,10 @@ QRect Surface::findValidAreaAroundRect(const QRect &centerRect, QWidget *wid)
 QRect Surface::findValidArea(QWidget *wid)
 {
     Q_ASSERT(wid);
+
+    if (wid->width() >= width()
+        || wid->height() >= height())
+        return {};
 
     auto rects = intersectedRects(wid);
     if (rects.isEmpty())

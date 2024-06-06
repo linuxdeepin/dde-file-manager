@@ -114,6 +114,24 @@ void ConfigPresenter::setVersion(const QString &v)
     conf->sync();
 }
 
+QList<QSize> ConfigPresenter::surfaceSizes()
+{
+    return conf->surfaceSizes();
+}
+
+void ConfigPresenter::setSurfaceInfo(const QList<QWidget *> surfaces)
+{
+    QMap<QString, QString> resolutions;
+    QString keyTemp = QString("Screen_%1");
+    for (int i = 0; i < surfaces.count(); ++i) {
+        auto surface = surfaces.at(i);
+        Q_ASSERT(surface);
+        resolutions.insert(keyTemp.arg(i + 1), QString("%1:%2").arg(surface->width()).arg(surface->height()));
+    }
+    conf->setScreenInfo(resolutions);
+    conf->sync();
+}
+
 void ConfigPresenter::setEnable(bool e)
 {
     enable = e;
@@ -218,6 +236,17 @@ void ConfigPresenter::setEnabledTypeCategories(ItemCategories flags)
 {
     conf->setEnabledTypeCategories(flags);
     conf->sync();
+}
+
+OrganizeAction ConfigPresenter::organizeAction() const
+{
+    int val = DConfigManager::instance()->value(kConfName, "organizeAction", 0).toInt();
+    return val == 0 ? kOnTrigger : kAlways;
+}
+
+bool ConfigPresenter::organizeOnTriggered() const
+{
+    return OrganizeAction() == kOnTrigger;
 }
 
 CollectionStyle ConfigPresenter::normalStyle(const QString &key) const

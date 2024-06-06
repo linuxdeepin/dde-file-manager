@@ -37,17 +37,18 @@ inline const char kTypeSuffixApp[] = "desktop";
         *tablePtr = tablePtr->fromList(QString(suffix).split(','));    \
     }
 TypeClassifierPrivate::TypeClassifierPrivate(TypeClassifier *qq)
-    : q(qq) {
-          //todo(zy) 类型后缀支持可配置
-          InitSuffixTable(docSuffix, kTypeSuffixDoc)
-                  InitSuffixTable(picSuffix, kTypeSuffixPic)
-                          InitSuffixTable(muzSuffix, kTypeSuffixMuz)
-                                  InitSuffixTable(vidSuffix, kTypeSuffixVid)
-                                          InitSuffixTable(appSuffix, kTypeSuffixApp)
-          //InitSuffixTable(appMimeType, kTypeMimeApp)
-      }
+    : q(qq)
+{
+    //todo(zy) 类型后缀支持可配置
+    InitSuffixTable(docSuffix, kTypeSuffixDoc);
+    InitSuffixTable(picSuffix, kTypeSuffixPic);
+    InitSuffixTable(muzSuffix, kTypeSuffixMuz);
+    InitSuffixTable(vidSuffix, kTypeSuffixVid);
+    InitSuffixTable(appSuffix, kTypeSuffixApp);
+    //InitSuffixTable(appMimeType, kTypeMimeApp);
+}
 
-      TypeClassifierPrivate::~TypeClassifierPrivate()
+TypeClassifierPrivate::~TypeClassifierPrivate()
 {
 }
 

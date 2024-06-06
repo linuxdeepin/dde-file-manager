@@ -55,8 +55,9 @@ public:
         return cellLen * cellWidth();
     }
     QSize gridSize();
-    QRect mapToScreenGeo(const QRect &gridGeo);
-    QRect mapToGridGeo(const QRect &screenGeo);
+    QRect mapToPixelSize(const QRect &gridGeo);
+    QRect mapToGridGeo(const QRect &pixelGeo);
+    static QSize mapToGridSize(const QSize &pixelSize);
     QPoint gridOffset();
     QMargins gridMargins();
 

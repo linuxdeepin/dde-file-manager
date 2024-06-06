@@ -70,6 +70,7 @@ public:
 signals:
     void styleChanged(const QString &id);
     void sigRequestClose(const QString &id);
+    void frameSurfaceChanged(QWidget *surface);
 
 private:
     QSharedPointer<CollectionHolderPrivate> d = nullptr;
