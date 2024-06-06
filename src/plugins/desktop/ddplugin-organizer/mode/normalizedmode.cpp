@@ -346,10 +346,44 @@ void NormalizedMode::layout()
         });
     }
 
+    // see if collections should be re-layout
+    //      1. calc the bounding rect of all collections which in same screen.
+    QMap<int, QRect> boundingRects;
+    for (int i = 0; i < holders.count(); ++i) {
+        const CollectionHolderPointer &holder = holders.at(i);
+        auto style = CfgPresenter->normalStyle(holder->id());
+        if (style.key.isEmpty()) continue;
+        int sIdx = style.screenIndex - 1;
+        boundingRects[sIdx] = boundingRects.value(sIdx).united(style.rect);
+    }
+    //      2. see if the bounding rect in screen is widther or higher than screen rect
+    QMap<int, bool> surfaceRelayout;
+    for (auto iter = boundingRects.cbegin(); iter != boundingRects.cend(); ++iter) {
+        int idx = iter.key();
+        Q_ASSERT(idx < surfaces.count());
+        auto surface = surfaces.at(idx);
+        auto boundingRect = iter.value();
+        if (boundingRect.width() > surface->width()
+            || boundingRect.height() > surface->height())
+            surfaceRelayout.insert(idx, true);
+    }
+    //      3. see if screen resolution was changed, if so the collections should be re-layout or move.
+    //         since only horizontal axis is reversed, only screen width should be concerned
+    QMap<int, int> surfaceMove;   // key: surface/screen index, val: the delta x value that collections should move.
+    auto savedScreenSizes = CfgPresenter->surfaceSizes();
+    for (int i = 0; i < surfaces.count(); ++i) {
+        auto sur = surfaces.at(i);
+        if (!sur) continue;
+        if (i >= savedScreenSizes.count()) continue;
+        int newWidth = sur->width();
+        int oldWidth = savedScreenSizes.at(i).width();
+        surfaceMove.insert(i, newWidth - oldWidth);
+    }
+
     // screen num is start with 1
+    static constexpr char kPropertyReLayout[] = "re-layout";
     int screenIdx = 1;
     QList<CollectionStyle> toSave;
-
     for (int i = 0; i < holders.count(); ++i) {
         const CollectionHolderPointer &holder = holders.at(i);
         auto style = CfgPresenter->normalStyle(holder->id());
@@ -359,37 +393,54 @@ void NormalizedMode::layout()
             style.key = holder->id();
         }
 
-        if (style.screenIndex == -1 || !holder->surface()) {   // new collection coming.
-            // layout those old items first.
-            if (!holder->property("delayed").toBool()) {
-                holder->setProperty("delayed", true);
-                holders.append(holder);
+        if (style.screenIndex > surfaces.count()   // maybe screen count reduced, screenIndex starts at 1
+            || surfaceRelayout.contains(style.screenIndex - 1)   // if current surface cannot cover the boundingrect, re-layout items
+            || style.screenIndex == -1   // new coming items.
+        ) {
+            if (!holder->property(kPropertyReLayout).toBool()) {
+                holder->setProperty(kPropertyReLayout, true);
+                holder->setSurface(nullptr);   // take off it's parent surface so when do re-layout on it, the position can be correctly calculated.
+                holders.append(holder);   // add to end of the list so items can be handle later.
                 continue;
             }
+        }
+
+        if (holder->property(kPropertyReLayout).toBool()) {
+            holder->setProperty(kPropertyReLayout, false);
             // need to find a preffered place to place this item.
-            auto size = kDefaultCollectionSize.value(style.sizeMode);
+            auto size = kDefaultCollectionSize.value(kMiddle);
             auto gridPos = d->findValidPos(screenIdx, size.width(), size.height());
             Q_ASSERT(screenIdx > 0);
             Q_ASSERT(screenIdx <= surfaces.count());
             style.screenIndex = screenIdx;
-            holder->setSurface(surfaces.at(screenIdx - 1).data());
+            style.sizeMode = kMiddle;
 
             QRect gridGeo = { gridPos, size };
-            auto rect = holder->surface()->mapToScreenGeo(gridGeo);
+            auto rect = surfaces.at(screenIdx - 1)->mapToScreenGeo(gridGeo);
             style.rect = rect.marginsRemoved({ kCollectionGridMargin,
                                                kCollectionGridMargin,
                                                kCollectionGridMargin,
                                                kCollectionGridMargin });
+        } else {
+            if (surfaceMove.value(style.screenIndex - 1, 0) != 0) {   // surface size changed. x coordinate should be changed.
+                int dx = surfaceMove.value(style.screenIndex - 1);
+                style.rect.adjust(dx, 0, dx, 0);
+            }
         }
-        // TODO
-        // screen count reduced. this item should be re-layout.
-        // or screen resolution changed, items out of screen should be re-layout.
+
+        holder->setSurface(surfaces.at(style.screenIndex - 1).data());
         holder->setStyle(style);
         holder->show();
         toSave << style;
     }
 
     CfgPresenter->writeNormalStyle(toSave);
+
+    // save new screen resolutions.
+    QList<QWidget *> surfaceList;
+    for (auto s : surfaces)
+        surfaceList.append(s.data());
+    CfgPresenter->setSurfaceInfo(surfaceList);
 }
 
 void NormalizedMode::detachLayout()

@@ -114,6 +114,24 @@ void ConfigPresenter::setVersion(const QString &v)
     conf->sync();
 }
 
+QList<QSize> ConfigPresenter::surfaceSizes()
+{
+    return conf->surfaceSizes();
+}
+
+void ConfigPresenter::setSurfaceInfo(const QList<QWidget *> surfaces)
+{
+    QMap<QString, QString> resolutions;
+    QString keyTemp = QString("Screen_%1");
+    for (int i = 0; i < surfaces.count(); ++i) {
+        auto surface = surfaces.at(i);
+        Q_ASSERT(surface);
+        resolutions.insert(keyTemp.arg(i + 1), QString("%1:%2").arg(surface->width()).arg(surface->height()));
+    }
+    conf->setScreenInfo(resolutions);
+    conf->sync();
+}
+
 void ConfigPresenter::setEnable(bool e)
 {
     enable = e;
