@@ -23,6 +23,9 @@ public:
     inline QString version() const { return confVersion; }
     void setVersion(const QString &v);
 
+    QList<QSize> surfaceSizes();
+    void setSurfaceInfo(const QList<QWidget *> surfaces);
+
     inline bool isEnable() const { return enable; }
     void setEnable(bool e);
 
@@ -58,6 +61,10 @@ public:
 public:
     ItemCategories enabledTypeCategories() const;
     void setEnabledTypeCategories(ItemCategories flags);
+
+    OrganizeAction organizeAction() const;
+    bool organizeOnTriggered() const;
+
 signals:
     // use Qt::QueuedConnection
     void changeEnableState(bool e);
@@ -68,6 +75,8 @@ signals:
     void changeDisplaySize(int);
     void newCollection(const QList<QUrl> &);
     void showOptionWindow();
+    void reorganizeDesktop();
+
 public slots:
 protected:
     explicit ConfigPresenter(QObject *parent = nullptr);

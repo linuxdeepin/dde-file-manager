@@ -12,7 +12,7 @@
 			"description": "It's used to control whether the auto align on desktop is enabled.",
 			"permissions": "readwrite",
 			"visibility": "public"
-		},
+                },
 		"maskLogoUri": {
 			"value": "",
 			"serial": 0,

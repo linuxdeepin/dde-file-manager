@@ -93,6 +93,7 @@ void CollectionHolder::createFrame(Surface *surface, CollectionModel *model)
     connect(d->widget, &CollectionWidget::sigRequestClose, this, &CollectionHolder::sigRequestClose);
     connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d->frame, &CollectionFrame::adjustSizeMode);
     connect(d->frame, &CollectionFrame::sizeModeChanged, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
+    connect(d->frame, &CollectionFrame::surfaceChanged, this, &CollectionHolder::frameSurfaceChanged);
     connect(d->frame, &CollectionFrame::geometryChanged, this, [this]() {
         d->styleTimer.start();
     });
