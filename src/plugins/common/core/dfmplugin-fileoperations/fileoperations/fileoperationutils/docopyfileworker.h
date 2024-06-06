@@ -34,6 +34,14 @@ public:
         kStoped,
     };
 
+    enum class NextDo: u_int8_t {
+        kDoCopyCurrentOp, // 继续执行当前的写或者读操作
+        kDoCopyCurrentFile, // 继续执行当前文件拷贝
+        kDoCopyReDoCurrentFile, // 重新执行当前文件的拷贝
+        kDoCopyNext, // 继续执行下一个文件的拷贝
+        kDoCopyErrorAddCancel, // 当前拷贝出错，退出拷贝
+    };
+
     struct ProgressData {
         QUrl copyFile;
         QSharedPointer<WorkerData> data{ nullptr };
@@ -49,8 +57,8 @@ public:
     void skipMemcpyBigFile(const QUrl url);
     void operateAction(const AbstractJobHandler::SupportAction action);
     // normal copy
-    bool doCopyFilePractically(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
-                               bool *skip);
+    NextDo doCopyFilePractically(const FileInfoPointer fromInfo, const FileInfoPointer toInfo,
+                                 bool *skip);
     // small file copy
     void doFileCopy(FileInfoPointer fromInfo, FileInfoPointer toInfo);
     // big file copy in system device
@@ -91,12 +99,16 @@ private:   // file copy
                   bool *skip);
     bool resizeTargetFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
                           const QSharedPointer<DFMIO::DFile> &file, bool *skip);
-    bool doReadFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
-                    const QSharedPointer<DFMIO::DFile> &fromDevice,
-                    char *data, const qint64 &blockSize, qint64 &readSize, bool *skip);
-    bool doWriteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
-                     const QSharedPointer<DFMIO::DFile> &toDevice,
-                     const char *data, const qint64 readSize, bool *skip);
+    NextDo doReadFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+                      const QSharedPointer<DFMIO::DFile> &fromDevice,
+                      char *data, const qint64 &blockSize, qint64 &readSize, bool *skip);
+    NextDo doWriteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+                       const QSharedPointer<DFMIO::DFile> &toDevice, const QSharedPointer<DFMIO::DFile> &fromDevice,
+                       const char *data, const qint64 readSize, bool *skip);
+    NextDo doWriteFileErrorRetry(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+                                 const QSharedPointer<DFMIO::DFile> &toDevice, const QSharedPointer<DFMIO::DFile> &fromDevice, const qint64 readSize, bool *skip,
+                                 const qint64 currentPos,
+                                 const qint64 &surplusSize, qint64 &curWrite);
     void setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo);
     bool verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
                              const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
