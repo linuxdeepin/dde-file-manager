@@ -294,7 +294,7 @@ TEST_F(UT_FileOperateBaseWorker, testCopyAndDeleteFile)
     EXPECT_FALSE(worker.copyAndDeleteFile(fromInfo, fromInfo, fromInfo, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::checkFileSize, []{ __DBG_STUB_INVOKE__ return true;});
-    stub.set_lamda(&DoCopyFileWorker::doCopyFilePractically, []{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&DoCopyFileWorker::doCopyFilePractically, []{ __DBG_STUB_INVOKE__ return DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;});
     stub.set_lamda(&DoCopyFileWorker::doDfmioFileCopy, []{ __DBG_STUB_INVOKE__ return true;});
     EXPECT_TRUE(worker.copyAndDeleteFile(fromInfo, fromInfo, fromInfo, &skip));
 
