@@ -69,7 +69,7 @@ TEST_F(UT_DoCopyFileWorker, testDoCopyFilePractically)
     DoCopyFileWorker worker(data);
 
     worker.stop();
-    EXPECT_FALSE(worker.doCopyFilePractically(nullptr, nullptr, nullptr));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doCopyFilePractically(nullptr, nullptr, nullptr));
 
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
@@ -80,14 +80,14 @@ TEST_F(UT_DoCopyFileWorker, testDoCopyFilePractically)
     worker.resume();
     stub_ext::StubExt stub;
     stub.set_lamda(&DoCopyFileWorker::createFileDevices, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     stub.clear();
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[]{
         __DBG_STUB_INVOKE__
         return AbstractJobHandler::SupportAction::kSkipAction;
     });
-    EXPECT_FALSE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     int index = 0;
     stub.set_lamda(&DoCopyFileWorker::openFile,[&index]{
@@ -95,42 +95,42 @@ TEST_F(UT_DoCopyFileWorker, testDoCopyFilePractically)
         index++;
         return index %2;
     });
-    EXPECT_FALSE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     stub.clear();
     QProcess::execute("touch sourceUrl.txt");
     sorceInfo->refresh();
-    EXPECT_TRUE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyNext, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     data->jobFlags |= AbstractJobHandler::JobFlag::kCopyResizeDestinationFile;
     stub.set_lamda(&DoCopyFileWorker::resizeTargetFile,[]{ __DBG_STUB_INVOKE__ return false; });
     stub.set_lamda(VADDR(SyncFileInfo, size),[]{ __DBG_STUB_INVOKE__ return 10; });
-    EXPECT_FALSE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     data->jobFlags &= AbstractJobHandler::JobFlag::kNoHint;
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[]{
         __DBG_STUB_INVOKE__
         return AbstractJobHandler::SupportAction::kSkipAction;
     });
-    EXPECT_FALSE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(&DoCopyFileWorker::doReadFile,[]{
         __DBG_STUB_INVOKE__
-        return true;
+        return DoCopyFileWorker::NextDo::kDoCopyNext;
     });
     stub.set_lamda(&DoCopyFileWorker::doWriteFile,[]{
         __DBG_STUB_INVOKE__
-        return false;
+        return DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
     });
-    EXPECT_FALSE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(&DoCopyFileWorker::doWriteFile,[]{
         __DBG_STUB_INVOKE__
-        return true;
+        return DoCopyFileWorker::NextDo::kDoCopyNext;
     });
     data->jobFlags |= AbstractJobHandler::JobFlag::kCopyIntegrityChecking;
     stub.set_lamda(&DFMIO::DFile::pos,[]{ __DBG_STUB_INVOKE__ return 10;});
-    EXPECT_TRUE(worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyNext, worker.doCopyFilePractically(sorceInfo, targetInfo, &skip));
 
     QProcess::execute("rm sourceUrl.txt targetUrl.txt");
 }
@@ -298,30 +298,30 @@ TEST_F(UT_DoCopyFileWorker, testDoReadFile)
     char buffer[512];
     stub_ext::StubExt stub;
     stub.set_lamda(&DFile::pos, []{ __DBG_STUB_INVOKE__ return 0; });
-    EXPECT_FALSE(worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
 
     worker.resume();
     int index{0};
     typedef qint64 (DFile::*readFunc)(char *, qint64);
     stub.set_lamda(static_cast<readFunc>(&DFile::read),[]{ __DBG_STUB_INVOKE__ return 0;});
     stub.set_lamda(&DoCopyFileWorker::stateCheck,[&index]{ __DBG_STUB_INVOKE__ index++; return index % 2;});
-    EXPECT_FALSE(worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
 
     stub.reset(&DoCopyFileWorker::stateCheck);
-    EXPECT_TRUE(worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyNext, worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
 
     stub.set_lamda(static_cast<readFunc>(&DFile::read),[]{ __DBG_STUB_INVOKE__ return -1;});
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[]{
         __DBG_STUB_INVOKE__
         return AbstractJobHandler::SupportAction::kSkipAction;
     });
-    EXPECT_FALSE(worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
 
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[]{
         __DBG_STUB_INVOKE__
         return AbstractJobHandler::SupportAction::kNoAction;
     });
-    EXPECT_TRUE(worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyNext, worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
 
     index = 0;
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[&index]{
@@ -332,11 +332,11 @@ TEST_F(UT_DoCopyFileWorker, testDoReadFile)
         return AbstractJobHandler::SupportAction::kNoAction;
     });
     stub.set_lamda(&DFile::seek, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
 
     index = 0;
     stub.set_lamda(&DoCopyFileWorker::actionOperating,[]{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doReadFile(sorceInfo, targetInfo, file, buffer, blocksize, readsize, &skip));
 }
 
 TEST_F(UT_DoCopyFileWorker, testDoWriteFile)
@@ -350,17 +350,18 @@ TEST_F(UT_DoCopyFileWorker, testDoWriteFile)
     bool skip{false};
     worker.stop();
     QSharedPointer<DFMIO::DFile> file{new DFile(sorceUrl)};
+    QSharedPointer<DFMIO::DFile> tofile{new DFile(targetUrl)};
     qint64 blocksize = 512, readsize = 0;
     char buffer[512];
     stub_ext::StubExt stub;
-    EXPECT_FALSE(worker.doWriteFile(sorceInfo, targetInfo, file, buffer, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doWriteFile(sorceInfo, targetInfo, tofile, file, buffer, readsize, &skip));
 
     worker.resume();
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[]{
         __DBG_STUB_INVOKE__
         return AbstractJobHandler::SupportAction::kSkipAction;
     });
-    EXPECT_FALSE(worker.doWriteFile(sorceInfo, targetInfo, file, buffer, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doWriteFile(sorceInfo, targetInfo, tofile, file, buffer, readsize, &skip));
 
     int index = 0;
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[&index]{
@@ -371,22 +372,22 @@ TEST_F(UT_DoCopyFileWorker, testDoWriteFile)
         return AbstractJobHandler::SupportAction::kNoAction;
     });
     stub.set_lamda(&DFile::seek, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.doWriteFile(sorceInfo, targetInfo, file, buffer, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doWriteFile(sorceInfo, targetInfo, tofile, file, buffer, readsize, &skip));
 
     stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait,[]{
         __DBG_STUB_INVOKE__
         return AbstractJobHandler::SupportAction::kNoAction;
     });
-    EXPECT_TRUE(worker.doWriteFile(sorceInfo, targetInfo, file, buffer, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyNext, worker.doWriteFile(sorceInfo, targetInfo, tofile, file, buffer, readsize, &skip));
 
     typedef qint64 (DFile::*writeFunc)(const char *, qint64);
     stub.set_lamda(static_cast<writeFunc>(&DFile::write), []{ __DBG_STUB_INVOKE__ return 1;});
     data->needSyncEveryRW = true;
-    EXPECT_TRUE(worker.doWriteFile(sorceInfo, targetInfo, file, buffer, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyNext, worker.doWriteFile(sorceInfo, targetInfo, tofile, file, buffer, readsize, &skip));
 
     data->isFsTypeVfat = true;
     stub.set_lamda(&DoCopyFileWorker::openFile, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.doWriteFile(sorceInfo, targetInfo, file, buffer, readsize, &skip));
+    EXPECT_EQ(DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel, worker.doWriteFile(sorceInfo, targetInfo, tofile, file, buffer, readsize, &skip));
 }
 
 TEST_F(UT_DoCopyFileWorker, testVerifyFileIntegrity)

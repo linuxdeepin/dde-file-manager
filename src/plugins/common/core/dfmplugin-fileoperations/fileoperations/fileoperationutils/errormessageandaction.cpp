@@ -79,6 +79,8 @@ AbstractJobHandler::SupportActions ErrorMessageAndAction::supportActions(const A
     case AbstractJobHandler::JobErrorType::kCreateParentDirError:
     case AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash:
     case AbstractJobHandler::JobErrorType::kUnknowError:
+    case AbstractJobHandler::JobErrorType::kRetryReadOrWriteFailed:
+    case AbstractJobHandler::JobErrorType::kCanNotAccessFile:
         return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
     case AbstractJobHandler::JobErrorType::kSpecialFileError:
         return AbstractJobHandler::SupportAction::kSkipAction;
@@ -157,7 +159,10 @@ QString ErrorMessageAndAction::errorToString(const QUrl &url, const AbstractJobH
     case AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile:
         return tr("Restore failed: the original file does not exist");
     case AbstractJobHandler::JobErrorType::kDfmIoError:
-        return tr("Copy or Cut File failed!");
+    case AbstractJobHandler::JobErrorType::kRetryReadOrWriteFailed:
+        return tr("Copy or Cut File failed! Retry copy this file again!");
+    case AbstractJobHandler::JobErrorType::kCanNotAccessFile:
+        return tr("Can't access file!");
     default:
         break;
     }
@@ -213,6 +218,10 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
         return tr("Failed to create symlink, cause: %1").arg(errorMsg);
     case AbstractJobHandler::JobErrorType::kDfmIoError:
         return tr("Copy or Cut File failed, cause: %1").arg(errorMsg);
+    case AbstractJobHandler::JobErrorType::kRetryReadOrWriteFailed:
+        return tr("Copy or Cut File failed, cause: %1. Retry copy this file again!").arg(errorMsg);
+    case AbstractJobHandler::JobErrorType::kCanNotAccessFile:
+        return tr("Copy or Cut File failed, cause: %1.").arg(errorMsg);
     default:
         break;
     }
