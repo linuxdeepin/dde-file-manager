@@ -128,6 +128,8 @@ void TaskWidget::onButtonClicked()
     AbstractJobHandler::SupportActions actions = obj->property(kBtnPropertyActionName).value<AbstractJobHandler::SupportAction>();
     showConflictButtons(actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction));
     actions = chkboxNotAskAgain && chkboxNotAskAgain->isChecked() ? actions | AbstractJobHandler::SupportAction::kRememberAction : actions;
+    lbErrorMsg->setText("");
+    lbErrorMsg->hide();
     emit buttonClicked(actions);
 }
 void TaskWidget::parentClose()

@@ -358,8 +358,12 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
 
         FileUtils::cacheCopyingFileUrl(url);
         initSignalCopyWorker();
+        DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
         if (fromInfo->size() > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
-            ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+            do {
+                nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+            } while( nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
+            ok = nextDo != DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
         } else {
             ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
         }
@@ -1031,8 +1035,12 @@ bool FileOperateBaseWorker::doCopyOtherFile(const FileInfoPointer fromInfo, cons
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     bool ok { false };
+    DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
     if (fromInfo->size() > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
-        ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+        do {
+            nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+        } while( nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
+        ok = nextDo != DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
     } else {
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
     }

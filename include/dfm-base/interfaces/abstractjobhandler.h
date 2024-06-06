@@ -90,6 +90,8 @@ public:
         kFailedParseUrlOfTrash = 34,   // 解析trash的url失败 Failed to parse the url of trash
         kFailedObtainTrashOriginalFile = 35,   // 获取trash中原文件失败 Failed to obtain the trash original file
         kFileMoveToTrashError = 36,   // 文件移动到回收站错误
+        kRetryReadOrWriteFailed = 37, // 重试失败
+        kCanNotAccessFile = 38, // 无法访问远程文件
         kUnknowError = 255,   // 未知错误
     };
     Q_ENUM(JobErrorType)
