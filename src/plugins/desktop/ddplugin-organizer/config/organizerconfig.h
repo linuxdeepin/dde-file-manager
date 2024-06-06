@@ -26,6 +26,8 @@ public:
     int mode() const;
     void setMode(int m);
     void setVersion(const QString &v);
+    QList<QSize> surfaceSizes();
+    void setScreenInfo(const QMap<QString, QString> info);
     void sync(int ms = 1000);
     int classification() const;
     void setClassification(int cf);

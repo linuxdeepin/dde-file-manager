@@ -584,44 +584,44 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
                         Q_EMIT sizeModeChanged(kFree);
                 }
             }
-
-            if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
-                d->frameState = CollectionFramePrivate::NormalShowState;
-
-                auto pos = d->moveResultRectPos();
-                // animation here.
-                if (Surface::animationEnabled()) {
-                    Surface::animate({ this,
-                                       "pos",
-                                       200,
-                                       QEasingCurve::BezierSpline,
-                                       this->pos(),
-                                       pos,
-                                       {},
-                                       [this] {
-                                           d->updateMoveRect();
-                                           Q_EMIT geometryChanged();
-                                       } });
-                } else {
-                    move(pos);
-                }
-                if (d->surface())
-                    d->surface()->deactivatePosIndicator();
-                d->updateMoveRect();
-
-                if (pos != d->oldGeometry.topLeft()) {
-                }
-            }
-            emit geometryChanged();
-            Q_EMIT editingStatusChanged(false);
-
-            if (d->collView)
-                d->collView->setProperty(kCollectionPropertyEditing, false);
         }
 
-        DFrame::mouseReleaseEvent(event);
-        event->accept();
+        if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
+            d->frameState = CollectionFramePrivate::NormalShowState;
+
+            auto pos = d->moveResultRectPos();
+            // animation here.
+            if (Surface::animationEnabled()) {
+                Surface::animate({ this,
+                                   "pos",
+                                   200,
+                                   QEasingCurve::BezierSpline,
+                                   this->pos(),
+                                   pos,
+                                   {},
+                                   [this] {
+                                       d->updateMoveRect();
+                                       Q_EMIT geometryChanged();
+                                   } });
+            } else {
+                move(pos);
+            }
+            if (d->surface())
+                d->surface()->deactivatePosIndicator();
+            d->updateMoveRect();
+
+            if (pos != d->oldGeometry.topLeft()) {
+            }
+        }
+        emit geometryChanged();
+        Q_EMIT editingStatusChanged(false);
+
+        if (d->collView)
+            d->collView->setProperty(kCollectionPropertyEditing, false);
     }
+
+    DFrame::mouseReleaseEvent(event);
+    event->accept();
 }
 
 void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
