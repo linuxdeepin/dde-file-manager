@@ -12,6 +12,7 @@
 #include "view/collectionframe.h"
 #include "delegate/collectionitemdelegate.h"
 
+#include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/windowutils.h>
 
 #include <QDebug>
@@ -48,7 +49,7 @@ QPoint NormalizedModePrivate::findValidPos(int &currentIndex, const int width, c
     for (int x = gridSize.width() - width; x >= 0; --x) {
         for (int y = 0; y < gridSize.height() - height; ++y) {
             QRect gridR { x, y, width, height };
-            auto screenR = sur->mapToScreenGeo(gridR);
+            auto screenR = sur->mapToPixelSize(gridR);
             if (sur->isIntersected(screenR, nullptr))
                 continue;
             pos = { x, y };
@@ -62,6 +63,7 @@ QPoint NormalizedModePrivate::findValidPos(int &currentIndex, const int width, c
     if (currentIndex == q->surfaces.count())
         return { 0, gridSize.height() - height };
 
+    currentIndex += 1;
     return findValidPos(currentIndex, width, height);
 }
 
@@ -172,9 +174,15 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
 {
     connect(collection.data(), &CollectionHolder::styleChanged,
             this, &NormalizedModePrivate::collectionStyleChanged);
+    connect(collection.data(), &CollectionHolder::frameSurfaceChanged,
+            this, &NormalizedModePrivate::updateHolderSurfaceIndex);
     auto frame = dynamic_cast<CollectionFrame *>(collection->frame());
     connect(frame, &CollectionFrame::editingStatusChanged,
             q, &NormalizedMode::onCollectionEditStatusChanged);
+    connect(frame, &CollectionFrame::requestChangeSurface,
+            q, &NormalizedMode::changeCollectionSurface);
+    connect(frame, &CollectionFrame::requestDeactiveAllPredictors,
+            q, &NormalizedMode::deactiveAllPredictors);
 }
 
 void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
@@ -236,6 +244,21 @@ void NormalizedModePrivate::onFontChanged()
     }
 
     // q->layout();
+}
+
+void NormalizedModePrivate::updateHolderSurfaceIndex(QWidget *surface)
+{
+    auto holder = dynamic_cast<CollectionHolder *>(sender());
+    if (!holder) return;
+
+    for (int i = 0; i < q->surfaces.count(); ++i) {
+        if (surface == q->surfaces.at(i).data()) {
+            auto style = holder->style();
+            style.screenIndex = i + 1;
+            holder->setStyle(style);
+            break;
+        }
+    }
 }
 
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
@@ -348,6 +371,7 @@ void NormalizedMode::layout()
 
     // see if collections should be re-layout
     //      1. calc the bounding rect of all collections which in same screen.
+    QList<QSize> collectionGridSizes;
     QMap<int, QRect> boundingRects;
     for (int i = 0; i < holders.count(); ++i) {
         const CollectionHolderPointer &holder = holders.at(i);
@@ -355,19 +379,22 @@ void NormalizedMode::layout()
         if (style.key.isEmpty()) continue;
         int sIdx = style.screenIndex - 1;
         boundingRects[sIdx] = boundingRects.value(sIdx).united(style.rect);
+        collectionGridSizes.append(Surface::mapToGridSize(style.rect.size()));
     }
-    //      2. see if the bounding rect in screen is widther or higher than screen rect
+    //      1.1 see if the bounding rect in screen is widther or higher than screen rect
     QMap<int, bool> surfaceRelayout;
     for (auto iter = boundingRects.cbegin(); iter != boundingRects.cend(); ++iter) {
         int idx = iter.key();
-        Q_ASSERT(idx < surfaces.count());
+        if (idx >= surfaces.count())
+            continue;
         auto surface = surfaces.at(idx);
         auto boundingRect = iter.value();
         if (boundingRect.width() > surface->width()
             || boundingRect.height() > surface->height())
             surfaceRelayout.insert(idx, true);
     }
-    //      3. see if screen resolution was changed, if so the collections should be re-layout or move.
+
+    //      2. see if screen resolution was changed, if so the collections should be re-layout or move.
     //         since only horizontal axis is reversed, only screen width should be concerned
     QMap<int, int> surfaceMove;   // key: surface/screen index, val: the delta x value that collections should move.
     auto savedScreenSizes = CfgPresenter->surfaceSizes();
@@ -378,6 +405,17 @@ void NormalizedMode::layout()
         int newWidth = sur->width();
         int oldWidth = savedScreenSizes.at(i).width();
         surfaceMove.insert(i, newWidth - oldWidth);
+    }
+
+    //      3. if screen count == 1, make sure that all of the collections can be placed without overlap
+    auto prefferDefaultSize = kMiddle;
+    if (surfaces.count() == 1 && surfaceRelayout.contains(0)) {   // if re-layout is already decided, only need to decided the default size.
+        auto surSize = surfaces.at(0)->gridSize();
+        // see if current size can hold all collections with middle size
+        auto rows = surSize.height() / kDefaultCollectionSize[kMiddle].height();
+        auto cols = surSize.width() / kDefaultCollectionSize[kMiddle].width();
+        if (rows * cols < holders.count())
+            prefferDefaultSize = kSmall;
     }
 
     // screen num is start with 1
@@ -408,15 +446,15 @@ void NormalizedMode::layout()
         if (holder->property(kPropertyReLayout).toBool()) {
             holder->setProperty(kPropertyReLayout, false);
             // need to find a preffered place to place this item.
-            auto size = kDefaultCollectionSize.value(kMiddle);
+            auto size = kDefaultCollectionSize.value(prefferDefaultSize);
             auto gridPos = d->findValidPos(screenIdx, size.width(), size.height());
             Q_ASSERT(screenIdx > 0);
             Q_ASSERT(screenIdx <= surfaces.count());
             style.screenIndex = screenIdx;
-            style.sizeMode = kMiddle;
+            style.sizeMode = prefferDefaultSize;
 
             QRect gridGeo = { gridPos, size };
-            auto rect = surfaces.at(screenIdx - 1)->mapToScreenGeo(gridGeo);
+            auto rect = surfaces.at(screenIdx - 1)->mapToPixelSize(gridGeo);
             style.rect = rect.marginsRemoved({ kCollectionGridMargin,
                                                kCollectionGridMargin,
                                                kCollectionGridMargin,
@@ -571,6 +609,29 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
 void NormalizedMode::onCollectionEditStatusChanged(bool editing)
 {
     this->editing = editing;
+}
+
+void NormalizedMode::changeCollectionSurface(const QString &screenName)
+{
+    auto frame = dynamic_cast<QWidget *>(sender());
+    if (!frame) return;
+
+    for (auto surface : surfaces) {
+        auto surfaceScreenName = surface->property(dfmbase::DesktopFrameProperty::kPropScreenName).toString();
+        if (surfaceScreenName == screenName) {
+            frame->setParent(surface.data());
+            frame->show();
+            break;
+        }
+    }
+}
+
+void NormalizedMode::deactiveAllPredictors()
+{
+    for (auto surface : surfaces) {
+        if (surface)
+            surface->deactivatePosIndicator();
+    }
 }
 
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)

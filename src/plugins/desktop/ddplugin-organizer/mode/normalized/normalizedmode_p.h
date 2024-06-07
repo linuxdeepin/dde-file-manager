@@ -37,6 +37,7 @@ public slots:
     void onDropFile(const QString &collection, QList<QUrl> &urls);
     void onIconSizeChanged();
     void onFontChanged();
+    void updateHolderSurfaceIndex(QWidget *surface);
 
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);
