@@ -45,7 +45,7 @@ public:
     void updateMouseTrackingState();
     void updateFrameGeometry();
 
-    QPoint moveResultRectPos();
+    QPoint moveResultRectPos(bool *validPos = nullptr);
     QRect stretchResultRect();
     Surface *surface();
 
@@ -71,9 +71,11 @@ public:
     QRect oldGeometry;
     ResponseArea responseArea = UnKnowRect;
     QPoint moveStartPoint;
+    QPoint dragPos;
     QList<ResponseArea> stretchArea;
     QList<ResponseArea> moveArea;
     CollectionFrameState frameState = NormalShowState;
+    Surface *oldSurface { nullptr };
 
     CollectionFrame::CollectionFrameFeatures frameFeatures = CollectionFrame::NoCollectionFrameFeatures;
     CollectionFrame::CollectionFrameStretchStyle stretchStyle = CollectionFrame::CollectionFrameStretchUnLimited;

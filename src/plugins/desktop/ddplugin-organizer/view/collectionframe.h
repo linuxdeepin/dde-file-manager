@@ -71,6 +71,9 @@ signals:
     void sizeModeChanged(const CollectionFrameSize &size);
     void geometryChanged();
     void editingStatusChanged(bool editing);
+    void requestChangeSurface(const QString &cursorScreenName, const QString &oldScreenName);
+    void surfaceChanged(QWidget *surface);
+    void requestDeactiveAllPredictors();
 
 protected:
     bool event(QEvent *event) override;

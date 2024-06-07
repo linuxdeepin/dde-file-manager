@@ -14,7 +14,7 @@
 #include <QApplication>
 #include <QStringList>
 
-Q_DECLARE_METATYPE(QStringList*)
+Q_DECLARE_METATYPE(QStringList *)
 
 DFMBASE_USE_NAMESPACE
 
@@ -34,7 +34,8 @@ static bool validPrimaryChanged(const ScreenProxyQt *proxy)
         // 规避方案：延迟100毫秒重复获取，超过10秒则放弃获取
         if (Q_UNLIKELY(QString(":0.0") == qApp->primaryScreen()->name())) {
             fmWarning() << " The screen name obtained by Qt is :0.0, which is re obtained after a delay of 100 milliseconds."
-                          "Current times:" << times;
+                           "Current times:"
+                        << times;
             times++;
             if (Q_LIKELY(times < 100)) {
                 QTimer::singleShot(100, proxy, &ScreenProxyQt::onPrimaryChanged);
@@ -45,7 +46,7 @@ static bool validPrimaryChanged(const ScreenProxyQt *proxy)
             return false;
         } else {
             fmInfo() << "Primary screen changed, the screen name obtained by Qt is " << qApp->primaryScreen()->name()
-                    <<".Current times:" << times;
+                     << ".Current times:" << times;
             //! When using dual-screen mode with only one screen, if the screen is switched from Screen 1 to Screen 2
             //! in the Control Center, Qt does not emit a related screen change signal.
             //! Therefore, the primary screen changed signal is handled through the dde display service.
@@ -61,7 +62,6 @@ static bool validPrimaryChanged(const ScreenProxyQt *proxy)
 ScreenProxyQt::ScreenProxyQt(QObject *parent)
     : AbstractScreenProxy(parent)
 {
-
 }
 
 ScreenPointer ScreenProxyQt::primaryScreen()
@@ -97,12 +97,13 @@ QList<ScreenPointer> ScreenProxyQt::logicScreens() const
     allScreen.push_front(primary);
 
     for (QScreen *sc : allScreen) {
-        if (screenMap.contains(sc))
+        if (screenMap.contains(sc)) {
             if (sc->name().isEmpty() || sc->geometry().size() == QSize(0, 0)) {
                 fmCritical() << "screen error. does it is closed?" << sc->name();
                 continue;
             }
             order.append(screenMap.value(sc));
+        }
     }
     return order;
 }
@@ -111,7 +112,7 @@ ScreenPointer ScreenProxyQt::screen(const QString &name) const
 {
     ScreenPointer ret;
     auto allScreen = screenMap.values();
-    auto iter = std::find_if(allScreen.begin(), allScreen.end(), [name](const ScreenPointer & sp) {
+    auto iter = std::find_if(allScreen.begin(), allScreen.end(), [name](const ScreenPointer &sp) {
         return sp->name() == name;
     });
 
@@ -251,7 +252,7 @@ void ScreenProxyQt::processEvent()
     // is invalid.
     if (!events.contains(AbstractScreenProxy::kMode) && !events.contains(AbstractScreenProxy::kScreen)) {
         if (!checkUsedScreens())
-           events.insert(AbstractScreenProxy::kScreen, 0);
+            events.insert(AbstractScreenProxy::kScreen, 0);
     }
 
     //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
@@ -300,4 +301,3 @@ void ScreenProxyQt::disconnectScreen(ScreenPointer sp)
     disconnect(sp.get(), &AbstractScreen::geometryChanged, this,
                &ScreenProxyQt::onScreenGeometryChanged);
 }
-

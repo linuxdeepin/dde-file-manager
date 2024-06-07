@@ -5,6 +5,9 @@
 #include "collectionframe_p.h"
 #include "private/surface.h"
 
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/dfm_desktop_defines.h>
+
 #include <DMenu>
 #include <DGuiApplicationHelper>
 
@@ -15,6 +18,7 @@
 #include <QPainterPath>
 #include <QtMath>
 #include <QPropertyAnimation>
+#include <QScreen>
 
 static constexpr int kWidgetRoundRadius = 8;
 
@@ -187,7 +191,7 @@ void CollectionFramePrivate::updateFrameGeometry()
     titleBarRect.setWidth(rect.width());
 }
 
-QPoint CollectionFramePrivate::moveResultRectPos()
+QPoint CollectionFramePrivate::moveResultRectPos(bool *validPos)
 {
     QPoint pos = q->pos();
     Surface *sur = surface();
@@ -195,8 +199,14 @@ QPoint CollectionFramePrivate::moveResultRectPos()
         return oldGeometry.topLeft();
 
     auto validRect = sur->findValidArea(q);
-    if (!validRect.isValid())
+    if (!validRect.isValid()) {
+        if (validPos)
+            *validPos = false;
         return oldGeometry.topLeft();
+    }
+    if (validPos)
+        *validPos = true;
+
     auto gridGeo = sur->mapToGridGeo(validRect);
     auto gridSize = sur->gridSize();
 
@@ -210,7 +220,7 @@ QPoint CollectionFramePrivate::moveResultRectPos()
     else if (gridGeo.bottom() >= gridSize.height())
         gridGeo.setY(gridSize.height() - gridGeo.height());
 
-    auto rect = sur->mapToScreenGeo(gridGeo);
+    auto rect = sur->mapToPixelSize(gridGeo);
     pos = rect.topLeft();
     pos += { kCollectionGridMargin, kCollectionGridMargin };   // margin around collection.
 
@@ -233,7 +243,7 @@ QRect CollectionFramePrivate::stretchResultRect()
         if (screenRect.bottom() > sur->height() - sur->gridMargins().bottom())
             screenRect.setBottom(sur->height() - sur->gridMargins().bottom());
         auto r = sur->mapToGridGeo(screenRect);
-        r = sur->mapToScreenGeo(r);
+        r = sur->mapToPixelSize(r);
         r = r.marginsRemoved({ kCollectionGridMargin,
                                kCollectionGridMargin,
                                kCollectionGridMargin,
@@ -531,6 +541,7 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
             // handle move
             d->moveStartPoint = this->mapToParent(event->pos());
             d->frameState = CollectionFramePrivate::MoveState;
+            d->dragPos = event->pos();
 
             if (d->collView)
                 d->collView->setProperty(kCollectionPropertyEditing, true);
@@ -541,6 +552,8 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
 
         raise();
     }
+    Q_ASSERT(this->parent());
+    d->oldSurface = dynamic_cast<Surface *>(this->parent());
     DFrame::mousePressEvent(event);
     event->accept();
 }
@@ -589,32 +602,81 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
         if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
             d->frameState = CollectionFramePrivate::NormalShowState;
 
-            auto pos = d->moveResultRectPos();
-            // animation here.
-            if (Surface::animationEnabled()) {
-                Surface::animate({ this,
-                                   "pos",
-                                   200,
-                                   QEasingCurve::BezierSpline,
-                                   this->pos(),
-                                   pos,
-                                   {},
-                                   [this] {
-                                       d->updateMoveRect();
-                                       Q_EMIT geometryChanged();
-                                   } });
-            } else {
-                move(pos);
-            }
-            if (d->surface())
-                d->surface()->deactivatePosIndicator();
-            d->updateMoveRect();
+            bool validPos = false;
+            auto pos = d->moveResultRectPos(&validPos);
+            auto geometry = this->geometry();
 
-            if (pos != d->oldGeometry.topLeft()) {
+            // no valid space for collection on other surface,
+            // the collection should be removed from other surface
+            // and get back to previous surface.
+            if (!validPos && this->parent() != d->oldSurface) {
+                if (Surface::animationEnabled()) {
+                    // appear on old surface.
+                    auto onVanishOnNewScreen = [=]() {
+                        auto finalGeo = geometry;
+                        finalGeo.moveTo(pos);
+                        auto startGeo = finalGeo.marginsRemoved({ finalGeo.width() / 2,
+                                                                  finalGeo.height() / 2,
+                                                                  finalGeo.width() / 2,
+                                                                  finalGeo.height() / 2 });
+                        this->setParent(d->oldSurface);
+                        this->setGeometry(startGeo);
+                        this->show();
+                        Q_EMIT surfaceChanged(d->surface());
+                        Surface::animate({ this,
+                                           "geometry",
+                                           200,
+                                           QEasingCurve::BezierSpline,
+                                           startGeo,
+                                           finalGeo,
+                                           {},
+                                           [=] {
+                                               d->updateMoveRect();
+                                               Q_EMIT geometryChanged();
+                                           } });
+                    };
+
+                    // valish on new surface.
+                    Surface::animate({ this,
+                                       "geometry",
+                                       200,
+                                       QEasingCurve::BezierSpline,
+                                       this->geometry(),
+                                       this->geometry().marginsRemoved({ width() / 2, height() / 2, width() / 2, height() / 2 }),
+                                       {},
+                                       onVanishOnNewScreen });
+                } else {
+                    setParent(d->oldSurface);
+                    Q_EMIT surfaceChanged(d->surface());
+                    move(pos);
+                    show();
+                }
+            } else {
+                // animation here.
+                if (Surface::animationEnabled()) {
+                    Surface::animate({ this,
+                                       "pos",
+                                       200,
+                                       QEasingCurve::BezierSpline,
+                                       this->pos(),
+                                       pos,
+                                       {},
+                                       [this] {
+                                           d->updateMoveRect();
+                                           Q_EMIT geometryChanged();
+                                       } });
+                } else {
+                    move(pos);
+                }
             }
+            d->updateMoveRect();
         }
         emit geometryChanged();
         Q_EMIT editingStatusChanged(false);
+        Q_EMIT requestDeactiveAllPredictors();
+
+        if (d->surface())
+            Q_EMIT surfaceChanged(d->surface());
 
         if (d->collView)
             d->collView->setProperty(kCollectionPropertyEditing, false);
@@ -633,19 +695,29 @@ void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
 
             emit geometryChanged();
         } else if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
-            QPoint movePoint = this->mapToParent(event->pos()) - d->moveStartPoint;
-            d->moveStartPoint = this->mapToParent(event->pos());
-            this->move(pos().x() + movePoint.x(), pos().y() + movePoint.y());
+            if (!d->surface())
+                return;
+            this->move(d->surface()->mapFromGlobal(QCursor::pos()) - d->dragPos);
 
-            if (d->surface()) {
-                auto predicate = d->moveResultRectPos();
-                auto rect = this->rect();
-                rect.moveTopLeft(predicate);
-                if (qAbs(predicate.x() - this->pos().x()) < Surface::cellWidth()
-                    && qAbs(predicate.y() - this->pos().y()) < Surface::cellWidth())
-                    d->surface()->deactivatePosIndicator();
-                else
-                    d->surface()->activatePosIndicator(rect);
+            auto screen = dfmbase::WindowUtils::cursorScreen();
+            if (screen && d->surface()) {
+                auto currScreenName = screen->name();
+                auto parentScreenName = d->surface()->property(dfmbase::DesktopFrameProperty::kPropScreenName).toString();
+                if (parentScreenName != currScreenName)
+                    Q_EMIT requestChangeSurface(currScreenName, parentScreenName);
+            }
+
+            bool validPos = false;
+            auto predictPos = d->moveResultRectPos(&validPos);
+            auto rect = this->rect();
+            rect.moveTopLeft(predictPos);
+
+            Q_EMIT requestDeactiveAllPredictors();
+            if (!validPos && parent() != d->oldSurface) {
+                d->oldSurface->activatePosIndicator(rect);
+            } else if (qAbs(predictPos.x() - this->pos().x()) >= Surface::cellWidth()
+                       || qAbs(predictPos.y() - this->pos().y()) >= Surface::cellWidth()) {
+                d->surface()->activatePosIndicator(rect);
             }
 
             emit geometryChanged();
