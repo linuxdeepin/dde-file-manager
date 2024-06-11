@@ -124,7 +124,7 @@ void TaskWidget::onButtonClicked()
         infoTimer.stop();
     if (btnPause)
         btnPause->setEnabled(true);
-    isShowError.store(false);
+    isShowError.storeRelaxed(false);
     AbstractJobHandler::SupportActions actions = obj->property(kBtnPropertyActionName).value<AbstractJobHandler::SupportAction>();
     showConflictButtons(actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction));
     actions = chkboxNotAskAgain && chkboxNotAskAgain->isChecked() ? actions | AbstractJobHandler::SupportAction::kRememberAction : actions;
@@ -143,7 +143,7 @@ void TaskWidget::parentClose()
  */
 void TaskWidget::onShowErrors(const JobInfoPointer jobInfo)
 {
-    isShowError.store(true);
+    isShowError.storeRelaxed(true);
 
     AbstractJobHandler::JobErrorType errorType = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
     QString sourceMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
@@ -311,7 +311,7 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 {
     if (isPauseState)
         return;
-    if (isShowError.load())
+    if (isShowError.loadRelaxed())
         return;
 
     int preValue = progress->value();
@@ -361,7 +361,7 @@ void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
 {
     if (isPauseState)
         return;
-    if (isShowError.load())
+    if (isShowError.loadRelaxed())
         return;
 
     if (progress->value() >= 100) {
@@ -797,7 +797,7 @@ bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
     return needRetry;
 }
 
-void TaskWidget::enterEvent(QEvent *event)
+void TaskWidget::enterEvent(QEnterEvent *event)
 {
     onMouseHover(true);
 
@@ -808,7 +808,7 @@ void TaskWidget::leaveEvent(QEvent *event)
 {
     onMouseHover(false);
 
-    return QWidget::enterEvent(event);
+    return QWidget::leaveEvent(event);
 }
 
 void TaskWidget::paintEvent(QPaintEvent *event)

@@ -303,7 +303,7 @@ FileStatisticsJob::~FileStatisticsJob()
 
 FileStatisticsJob::State FileStatisticsJob::state() const
 {
-    return static_cast<FileStatisticsJob::State>(d->state.load());
+    return static_cast<FileStatisticsJob::State>(d->state.loadRelaxed());
 }
 
 FileStatisticsJob::FileHints FileStatisticsJob::fileHints() const

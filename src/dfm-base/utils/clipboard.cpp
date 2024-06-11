@@ -62,7 +62,7 @@ void onClipboardDataChanged()
         return;
     }
     QByteArray data = mimeData->data(kGnomeCopyKey);
-    data = data.replace(QString(kGnomeCopyKey) + "\n", "");
+    data = data.replace(QString(kGnomeCopyKey).append("\n").toLatin1(), "");
 
     if (data.startsWith("cut")) {
         clipboardAction = ClipBoard::kCutAction;
@@ -119,7 +119,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     QString error;
     for (const QUrl &qurl : list) {
         ba.append("\n");
-        ba.append(qurl.toString());
+        ba.append(qurl.toString().toLatin1());
 
         const QString &path = qurl.toLocalFile();
         if (!path.isEmpty()) {
@@ -170,7 +170,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     // 如果是剪切操作，则禁止跨用户的粘贴操作
     if (ClipBoard::kCutAction == action) {
         QByteArray userId;
-        userId.append(QString::number(getuid()));
+        userId.append(QString::number(getuid()).toLatin1());
         mimeData->setData(GlobalData::kUserIdKey, userId);
     }
 
@@ -374,7 +374,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
                         continue;
 
                     QString path = url.path();
-                    path = path.replace(QRegExp("/*/"), "/");
+                    path = path.replace(QRegularExpression("/*/"), "/");
                     if (path.isEmpty() || path == "/")
                         continue;
                     QUrl temp = QUrl::fromLocalFile(path);
@@ -413,7 +413,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
             continue;
 
         QString path = url.path();
-        path = path.replace(QRegExp("/*/"), "/");
+        path = path.replace(QRegularExpression("/*/"), "/");
         if (path.isEmpty() || path == "/")
             continue;
         QUrl temp = QUrl::fromLocalFile(path);

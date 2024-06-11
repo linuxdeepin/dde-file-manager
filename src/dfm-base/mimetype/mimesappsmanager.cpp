@@ -525,7 +525,7 @@ void MimesAppsManager::initMimeTypeApps()
                 orderApps.append(info.absoluteFilePath());
             }
         } else {
-            orderApps.append(apps.toList());
+            orderApps.append(apps.values());
         }
         MimeApps.insert(key, orderApps);
     }
@@ -652,7 +652,7 @@ void MimesAppsManager::loadDDEMimeTypes()
 
 bool MimesAppsManager::lessByDateTime(const QFileInfo &f1, const QFileInfo &f2)
 {
-    return f1.created() < f2.created();
+    return f1.birthTime() < f2.birthTime();
 }
 
 bool MimesAppsManager::removeOneDupFromList(QStringList &list, const QString desktopFilePath)

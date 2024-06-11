@@ -9,7 +9,6 @@
 #include <dtitlebar.h>
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QWindow>
 #include <QShowEvent>
 #include <QDebug>

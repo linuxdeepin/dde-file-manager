@@ -197,7 +197,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             delete fw;
         });
         d->isMountingOptical = true;
-        fw->setFuture(QtConcurrent::run(d->watcher, &DeviceWatcher::queryOpticalDevUsage, id));
+        fw->setFuture(QtConcurrent::run(&DeviceWatcher::queryOpticalDevUsage, d->watcher, id));
     } else {
         QString errMsg;
         if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {

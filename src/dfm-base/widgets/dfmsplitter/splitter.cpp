@@ -16,7 +16,7 @@ SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent):
 
 }
 
-void SplitterHandle::enterEvent(QEvent *)
+void SplitterHandle::enterEvent(QEnterEvent *)
 {
     QGuiApplication::setOverrideCursor(orientation() == Qt::Horizontal ? Qt::SizeHorCursor : Qt::SizeVerCursor);
 }

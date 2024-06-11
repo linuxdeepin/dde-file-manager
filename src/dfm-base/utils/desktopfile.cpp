@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QSettings>
 #include <QDebug>
+#include <QLocale>
 
 using namespace dfmbase;
 

@@ -32,7 +32,7 @@ class InfoCachePrivate
 
     // 时间排序url,利用map的有序性，来处理时间到了要移除的url
     QMap<QUrl, QString> urlTimeSortMap;
-    QMap<QString, QUrl> timeToUrlMap;
+    QMultiMap<QString, QUrl> timeToUrlMap;
 
     std::atomic_bool cacheWorkerStoped { false };
 

@@ -18,7 +18,7 @@ public:
     explicit SplitterHandle(Qt::Orientation orientation, QSplitter* parent);
 
 protected:
-    void enterEvent(QEvent*) override;
+    void enterEvent(QEnterEvent *) override;
     void leaveEvent(QEvent*) override;
 };
 
