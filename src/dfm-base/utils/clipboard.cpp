@@ -61,14 +61,14 @@ void onClipboardDataChanged()
         clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
-    QByteArray data = mimeData->data(kGnomeCopyKey);
-    data = data.replace(QString(kGnomeCopyKey).append("\n").toLatin1(), "");
-
-    if (data.startsWith("cut")) {
+    const QString &data = mimeData->data(kGnomeCopyKey);
+    const static QRegExp regCut("cut\nfile://"), regCopy("copy\nfile://");
+    if (data.contains(regCut)) {
         clipboardAction = ClipBoard::kCutAction;
-    } else if (data.startsWith("copy")) {
+    } else if (data.contains(regCopy)) {
         clipboardAction = ClipBoard::kCopyAction;
     } else {
+        qCWarning(logDFMBase) << "wrang kGnomeCopyKey data = " << data;
         clipboardAction = ClipBoard::kUnknownAction;
     }
 
