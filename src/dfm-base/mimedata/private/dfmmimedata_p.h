@@ -22,7 +22,7 @@ public:
     void parseUrls(const QList<QUrl> &urls);
 
 public:
-    QVariantMap attributes;
+    QMultiMap<QString, QVariant> attributes;
     QString version;
 
     QList<QUrl> urlList;

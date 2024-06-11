@@ -112,12 +112,12 @@ QByteArray DFMMimeData::toByteArray()
     if (d->urlList.isEmpty())
         return {};
 
-    QVariantMap data;
+    QMultiMap<QString, QVariant> data;
     data.insert(kVersionKey, d->version);
     data.insert(kUrlsKey, QUrl::toStringList(d->urlList));
     data.unite(d->attributes);
 
-    QJsonDocument doc = QJsonDocument::fromVariant(data);
+    QJsonDocument doc = QJsonDocument::fromVariant(QVariant::fromValue(data));
     return doc.toJson();
 }
 
@@ -160,7 +160,7 @@ DFMMimeData DFMMimeData::fromByteArray(const QByteArray &data)
 
     mimeData.d->version = version;
     mimeData.d->urlList = QUrl::fromStringList(map.take(kUrlsKey).toStringList());
-    mimeData.d->attributes = map;
+    mimeData.d->attributes = QMultiMap<QString, QVariant>(map);
 
     return mimeData;
 }

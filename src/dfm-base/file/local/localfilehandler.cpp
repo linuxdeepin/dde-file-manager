@@ -35,7 +35,7 @@
 #include <QRegularExpression>
 #include <QProcess>
 #include <QDesktopServices>
-#include <QX11Info>
+// #include <QX11Info>
 #include <QSettings>
 
 #include <unistd.h>
@@ -632,7 +632,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
 bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateTime,
                                    const QDateTime &lastModifiedTime)
 {
-    utimbuf buf = { accessDateTime.toTime_t(), lastModifiedTime.toTime_t() };
+    utimbuf buf = { accessDateTime.toSecsSinceEpoch(), lastModifiedTime.toSecsSinceEpoch() };
 
     if (::utime(url.toLocalFile().toLocal8Bit(), &buf) == 0) {
         return true;
@@ -1090,9 +1090,9 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
 
     bool openResult = doOpenFiles(openInfos, openMineTypes);
 
-    bool openMount = doOpenFiles(mountOpenInfos, openMineTypes);
+    bool openMount = doOpenFiles(mountOpenInfos, mountMineTypes);
 
-    bool openCmd = doOpenFiles(cmdOpenInfos, cmdOpenInfos);
+    bool openCmd = doOpenFiles(cmdOpenInfos, cmdMineTypes);
 
     if (openResult || openMount || openCmd)
         return true;

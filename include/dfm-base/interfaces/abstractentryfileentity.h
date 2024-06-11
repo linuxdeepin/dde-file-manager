@@ -10,6 +10,8 @@
 #include <QUrl>
 #include <QIcon>
 #include <QDebug>
+#include <QObject>
+#include <QVariant>
 
 namespace dfmbase {
 

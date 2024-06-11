@@ -10,7 +10,7 @@ function(INSTALL_DCONFIG CONFIG_NAME)
         message("---- AppId: ${DFMAppId}")
         message("---- Base: ${DConfigPath}")
         message("---- Files: ${DConfigPath}/${ConfigName}")
-        dconfig_meta_files(APPID ${DFMAppId}
+        dtk_add_config_meta_files(APPID ${DFMAppId}
             BASE ${DConfigPath}
             FILES ${DConfigPath}/${ConfigName})
     else()

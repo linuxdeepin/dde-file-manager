@@ -48,8 +48,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const FileInfoPointer &fileInfo, QMimeD
             || fileInfo->nameOf(NameInfoType::kFileName).endsWith(".lock") || fileInfo->nameOf(NameInfoType::kFileName).endsWith("lockfile")) {
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
-                                              | QRegularExpression::DontCaptureOption
-                                              | QRegularExpression::OptimizeOnFirstUsageOption);
+                                              | QRegularExpression::DontCaptureOption);
 
             const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                                 QRegularExpression::DontCheckSubjectStringMatchOption);
@@ -118,8 +117,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
             || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
-                                              | QRegularExpression::DontCaptureOption
-                                              | QRegularExpression::OptimizeOnFirstUsageOption);
+                                              | QRegularExpression::DontCaptureOption);
 
             const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                                 QRegularExpression::DontCheckSubjectStringMatchOption);

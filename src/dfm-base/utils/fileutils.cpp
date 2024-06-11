@@ -23,8 +23,8 @@
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
-#include <KCodecs>
-#include <KEncodingProber>
+// #include <KCodecs>
+// #include <KEncodingProber>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfile.h>
@@ -36,7 +36,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QApplication>
-#include <QTextCodec>
+// #include <QTextCodec>
 #include <QSet>
 #include <QRegularExpression>
 #include <QCollator>
@@ -65,14 +65,13 @@ namespace dfmbase {
 static constexpr char kDDETrashId[] { "dde-trash" };
 static constexpr char kDDEComputerId[] { "dde-computer" };
 static constexpr char kDDEHomeId[] { "dde-home" };
-static constexpr char kSharePixmapPath[] { "/usr/share/pixmaps" };
 static constexpr char kFileAllTrash[] { "dfm.trash.allfiletotrash" };
 const static int kDefaultMemoryPageSize = 4096;
 
 QMutex FileUtils::cacheCopyingMutex;
 QSet<QUrl> FileUtils::copyingUrl;
 
-static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
+// static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
 
 QString sizeString(const QString &str)
 {
@@ -668,8 +667,9 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
 
     tmpName.clear();
     int bytes = 0;
-    auto codec = QTextCodec::codecForLocale();
 
+    auto encoder = QStringEncoder(QStringEncoder::System);
+    auto decoder = QStringDecoder(QStringEncoder::System);
     for (int i = 0; i < name.size(); ++i) {
         const QChar &ch = name.at(i);
         QByteArray data;
@@ -683,15 +683,15 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
             if (!ch.isHighSurrogate() || !nextCh.isLowSurrogate())
                 break;
 
-            data = codec->fromUnicode(name.data() + i - 1, 2);
+            data = encoder.encode(QString(name.data() + i - 1, 2));
             fullChar.setUnicode(name.data() + i - 1, 2);
         } else {
-            data = codec->fromUnicode(name.data() + i, 1);
+            data = encoder.encode(QString(name.data() + i, 1));
             fullChar.setUnicode(name.data() + i, 1);
         }
 
-        if (codec->toUnicode(data) != fullChar) {
-            qCWarning(logDFMBase) << "Failed convert" << fullChar << "to" << codec->name() << "coding";
+        if (decoder.decode(data) != fullChar) {
+            qCWarning(logDFMBase) << "Failed convert" << fullChar << "to" << data << "coding";
             continue;
         }
 
@@ -772,180 +772,185 @@ QString FileUtils::toUnicode(const QByteArray &data, const QString &fileName)
     if (data.isEmpty())
         return QString();
 
-    const QByteArray &encoding = detectCharset(data, fileName);
+//     const QByteArray &encoding = detectCharset(data, fileName);
 
-    if (QTextCodec *codec = QTextCodec::codecForName(encoding)) {
-        return codec->toUnicode(data);
-    }
+//     if (QTextCodec *codec = QTextCodec::codecForName(encoding)) {
+//         return codec->toUnicode(data);
+//     }
+
+//     // auto decoder = QStringDecoder(QStringEncoder::System);
+//     // QString decoding = decoder.decode(encoding);
+//     // if (!decoding.isEmpty())
+//     //     return decoding;
 
     return QString::fromLocal8Bit(data);
 }
 
-QByteArray FileUtils::detectCharset(const QByteArray &data, const QString &fileName)
-{
-    // Return local encoding if nothing in file.
-    if (data.isEmpty()) {
-        return QTextCodec::codecForLocale()->name();
-    }
+// QByteArray FileUtils::detectCharset(const QByteArray &data, const QString &fileName)
+// {
+//     // Return local encoding if nothing in file.
+//     if (data.isEmpty()) {
+//         return QTextCodec::codecForLocale()->name();
+//     }
 
-    if (QTextCodec *c = QTextCodec::codecForUtfText(data, nullptr)) {
-        return c->name();
-    }
+//     if (QTextCodec *c = QTextCodec::codecForUtfText(data, nullptr)) {
+//         return c->name();
+//     }
 
-    DFMBASE_NAMESPACE::DMimeDatabase mimeDatabase;
-    const QMimeType &mimeType = fileName.isEmpty() ? mimeDatabase.mimeTypeForData(data) : mimeDatabase.mimeTypeForFileNameAndData(fileName, data);
-    const QString &mimetypeName = mimeType.name();
-    KEncodingProber::ProberType proberType = KEncodingProber::Universal;
+//     DFMBASE_NAMESPACE::DMimeDatabase mimeDatabase;
+//     const QMimeType &mimeType = fileName.isEmpty() ? mimeDatabase.mimeTypeForData(data) : mimeDatabase.mimeTypeForFileNameAndData(fileName, data);
+//     const QString &mimetypeName = mimeType.name();
+//     KEncodingProber::ProberType proberType = KEncodingProber::Universal;
 
-    if (mimetypeName == Global::Mime::kTypeAppXml
-        || mimetypeName == Global::Mime::kTypeTextHtml
-        || mimetypeName == Global::Mime::kTypeAppXhtmlXml) {
-        const QString &_data = QString::fromLatin1(data);
-        QRegularExpression pattern("<\\bmeta.+\\bcharset=(?'charset'\\S+?)\\s*['\"/>]");
+//     if (mimetypeName == Global::Mime::kTypeAppXml
+//         || mimetypeName == Global::Mime::kTypeTextHtml
+//         || mimetypeName == Global::Mime::kTypeAppXhtmlXml) {
+//         const QString &_data = QString::fromLatin1(data);
+//         QRegularExpression pattern("<\\bmeta.+\\bcharset=(?'charset'\\S+?)\\s*['\"/>]");
 
-        pattern.setPatternOptions(QRegularExpression::DontCaptureOption | QRegularExpression::CaseInsensitiveOption);
-        const QString &charset = pattern.match(_data, 0, QRegularExpression::PartialPreferFirstMatch,
-                                               QRegularExpression::DontCheckSubjectStringMatchOption)
-                                         .captured("charset");
+//         pattern.setPatternOptions(QRegularExpression::DontCaptureOption | QRegularExpression::CaseInsensitiveOption);
+//         const QString &charset = pattern.match(_data, 0, QRegularExpression::PartialPreferFirstMatch,
+//                                                QRegularExpression::DontCheckSubjectStringMatchOption)
+//                                          .captured("charset");
 
-        if (!charset.isEmpty()) {
-            return charset.toLatin1();
-        }
+//         if (!charset.isEmpty()) {
+//             return charset.toLatin1();
+//         }
 
-        pattern.setPattern("<\\bmeta\\s+http-equiv=\"Content-Language\"\\s+content=\"(?'language'[a-zA-Z-]+)\"");
+//         pattern.setPattern("<\\bmeta\\s+http-equiv=\"Content-Language\"\\s+content=\"(?'language'[a-zA-Z-]+)\"");
 
-        const QString &language = pattern.match(_data, 0, QRegularExpression::PartialPreferFirstMatch,
-                                                QRegularExpression::DontCheckSubjectStringMatchOption)
-                                          .captured("language");
+//         const QString &language = pattern.match(_data, 0, QRegularExpression::PartialPreferFirstMatch,
+//                                                 QRegularExpression::DontCheckSubjectStringMatchOption)
+//                                           .captured("language");
 
-        if (!language.isEmpty()) {
-            QLocale l(language);
+//         if (!language.isEmpty()) {
+//             QLocale l(language);
 
-            switch (l.script()) {
-            case QLocale::ArabicScript:
-                proberType = KEncodingProber::Arabic;
-                break;
-            case QLocale::SimplifiedChineseScript:
-                proberType = KEncodingProber::ChineseSimplified;
-                break;
-            case QLocale::TraditionalChineseScript:
-                proberType = KEncodingProber::ChineseTraditional;
-                break;
-            case QLocale::CyrillicScript:
-                proberType = KEncodingProber::Cyrillic;
-                break;
-            case QLocale::GreekScript:
-                proberType = KEncodingProber::Greek;
-                break;
-            case QLocale::HebrewScript:
-                proberType = KEncodingProber::Hebrew;
-                break;
-            case QLocale::JapaneseScript:
-                proberType = KEncodingProber::Japanese;
-                break;
-            case QLocale::KoreanScript:
-                proberType = KEncodingProber::Korean;
-                break;
-            case QLocale::ThaiScript:
-                proberType = KEncodingProber::Thai;
-                break;
-            default:
-                break;
-            }
-        }
-    } else if (mimetypeName == Global::Mime::kTypeTextXPython) {
-        QRegularExpression pattern("^#coding\\s*:\\s*(?'coding'\\S+)$");
-        QTextStream stream(data);
+//             switch (l.script()) {
+//             case QLocale::ArabicScript:
+//                 proberType = KEncodingProber::Arabic;
+//                 break;
+//             case QLocale::SimplifiedChineseScript:
+//                 proberType = KEncodingProber::ChineseSimplified;
+//                 break;
+//             case QLocale::TraditionalChineseScript:
+//                 proberType = KEncodingProber::ChineseTraditional;
+//                 break;
+//             case QLocale::CyrillicScript:
+//                 proberType = KEncodingProber::Cyrillic;
+//                 break;
+//             case QLocale::GreekScript:
+//                 proberType = KEncodingProber::Greek;
+//                 break;
+//             case QLocale::HebrewScript:
+//                 proberType = KEncodingProber::Hebrew;
+//                 break;
+//             case QLocale::JapaneseScript:
+//                 proberType = KEncodingProber::Japanese;
+//                 break;
+//             case QLocale::KoreanScript:
+//                 proberType = KEncodingProber::Korean;
+//                 break;
+//             case QLocale::ThaiScript:
+//                 proberType = KEncodingProber::Thai;
+//                 break;
+//             default:
+//                 break;
+//             }
+//         }
+//     } else if (mimetypeName == Global::Mime::kTypeTextXPython) {
+//         QRegularExpression pattern("^#coding\\s*:\\s*(?'coding'\\S+)$");
+//         QTextStream stream(data);
 
-        pattern.setPatternOptions(QRegularExpression::DontCaptureOption | QRegularExpression::CaseInsensitiveOption);
-        stream.setCodec("latin1");
+//         pattern.setPatternOptions(QRegularExpression::DontCaptureOption | QRegularExpression::CaseInsensitiveOption);
+//         stream.setEncoding(QStringConverter::Latin1);
 
-        while (!stream.atEnd()) {
-            const QString &_data = stream.readLine();
-            const QString &coding = pattern.match(_data, 0).captured("coding");
+//         while (!stream.atEnd()) {
+//             const QString &_data = stream.readLine();
+//             const QString &coding = pattern.match(_data, 0).captured("coding");
 
-            if (!coding.isEmpty()) {
-                return coding.toLatin1();
-            }
-        }
-    }
+//             if (!coding.isEmpty()) {
+//                 return coding.toLatin1();
+//             }
+//         }
+//     }
 
-    // for CJK
-    const QList<QPair<KEncodingProber::ProberType, QLocale::Country>> fallbackList {
-        { KEncodingProber::ChineseSimplified, QLocale::China },
-        { KEncodingProber::ChineseTraditional, QLocale::China },
-        { KEncodingProber::Japanese, QLocale::Japan },
-        { KEncodingProber::Korean, QLocale::NorthKorea },
-        { KEncodingProber::Cyrillic, QLocale::Russia },
-        { KEncodingProber::Greek, QLocale::Greece },
-        { proberType, QLocale::system().country() }
-    };
+//     // for CJK
+//     const QList<QPair<KEncodingProber::ProberType, QLocale::Country>> fallbackList {
+//         { KEncodingProber::ChineseSimplified, QLocale::China },
+//         { KEncodingProber::ChineseTraditional, QLocale::China },
+//         { KEncodingProber::Japanese, QLocale::Japan },
+//         { KEncodingProber::Korean, QLocale::NorthKorea },
+//         { KEncodingProber::Cyrillic, QLocale::Russia },
+//         { KEncodingProber::Greek, QLocale::Greece },
+//         { proberType, QLocale::system().country() }
+//     };
 
-    KEncodingProber prober(proberType);
-    prober.feed(data);
-    float preConfidence = prober.confidence();
-    QByteArray preEncoding = prober.encoding();
+//     KEncodingProber prober(proberType);
+//     prober.feed(data);
+//     float preConfidence = prober.confidence();
+//     QByteArray preEncoding = prober.encoding();
 
-    QTextCodec *defCodec = QTextCodec::codecForLocale();
-    QByteArray encoding;
-    float confidence = 0;
+//     QTextCodec *defCodec = QTextCodec::codecForLocale();
+//     QByteArray encoding;
+//     float confidence = 0;
 
-    for (auto i : fallbackList) {
-        prober.setProberType(i.first);
-        prober.feed(data);
+//     for (auto i : fallbackList) {
+//         prober.setProberType(i.first);
+//         prober.feed(data);
 
-        float proberConfidence = prober.confidence();
-        QByteArray proberEncoding = prober.encoding();
+//         float proberConfidence = prober.confidence();
+//         QByteArray proberEncoding = prober.encoding();
 
-        if (i.first != proberType && qFuzzyIsNull(proberConfidence)) {
-            proberConfidence = preConfidence;
-            proberEncoding = preEncoding;
-        }
+//         if (i.first != proberType && qFuzzyIsNull(proberConfidence)) {
+//             proberConfidence = preConfidence;
+//             proberEncoding = preEncoding;
+//         }
 
-    confidence:
-        if (QTextCodec *codec = QTextCodec::codecForName(proberEncoding)) {
-            if (defCodec == codec)
-                defCodec = nullptr;
+//     confidence:
+//         if (QTextCodec *codec = QTextCodec::codecForName(proberEncoding)) {
+//             if (defCodec == codec)
+//                 defCodec = nullptr;
 
-            float c = codecConfidenceForData(codec, data, i.second);
+//             float c = codecConfidenceForData(codec, data, i.second);
 
-            if (proberConfidence > 0.5) {
-                c = c / 2 + proberConfidence / 2;
-            } else {
-                c = c / 3 * 2 + proberConfidence / 3;
-            }
+//             if (proberConfidence > 0.5) {
+//                 c = c / 2 + proberConfidence / 2;
+//             } else {
+//                 c = c / 3 * 2 + proberConfidence / 3;
+//             }
 
-            if (c > confidence) {
-                confidence = c;
-                encoding = proberEncoding;
-            }
+//             if (c > confidence) {
+//                 confidence = c;
+//                 encoding = proberEncoding;
+//             }
 
-            if (i.first == KEncodingProber::ChineseTraditional && c < 0.5) {
-                // test Big5
-                c = codecConfidenceForData(QTextCodec::codecForName("Big5"), data, i.second);
+//             if (i.first == KEncodingProber::ChineseTraditional && c < 0.5) {
+//                 // test Big5
+//                 c = codecConfidenceForData(QTextCodec::codecForName("Big5"), data, i.second);
 
-                if (c > 0.5 && c > confidence) {
-                    confidence = c;
-                    encoding = "Big5";
-                }
-            }
-        }
+//                 if (c > 0.5 && c > confidence) {
+//                     confidence = c;
+//                     encoding = "Big5";
+//                 }
+//             }
+//         }
 
-        if (i.first != proberType) {
-            // 使用 proberType 类型探测出的结果再次做编码检查
-            i.first = proberType;
-            proberConfidence = preConfidence;
-            proberEncoding = preEncoding;
-            goto confidence;
-        }
-    }
+//         if (i.first != proberType) {
+//             // 使用 proberType 类型探测出的结果再次做编码检查
+//             i.first = proberType;
+//             proberConfidence = preConfidence;
+//             proberEncoding = preEncoding;
+//             goto confidence;
+//         }
+//     }
 
-    if (defCodec && codecConfidenceForData(defCodec, data, QLocale::system().country()) > confidence) {
-        return defCodec->name();
-    }
+//     if (defCodec && codecConfidenceForData(defCodec, data, QLocale::system().country()) > confidence) {
+//         return defCodec->name();
+//     }
 
-    return encoding;
-}
+//     return encoding;
+// }
 
 /*!
  * \brief FileUtils::getMemoryPageSize 获取当前內存页大小
@@ -1037,12 +1042,14 @@ public:
 
 bool FileUtils::isNumOrChar(const QChar ch)
 {
-    return (ch >= 48 && ch <= 57) || (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122);
+    auto chValue = ch.unicode();
+    return (chValue >= 48 && chValue <= 57) || (chValue >= 65 && chValue <= 90) || (chValue >= 97 && chValue <= 122);
 }
 
 bool FileUtils::isNumber(const QChar ch)
 {
-    return (ch >= 48 && ch <= 57);
+    auto chValue = ch.unicode();
+    return (chValue >= 48 && chValue <= 57);
 }
 
 bool FileUtils::isSymbol(const QChar ch)
@@ -1353,95 +1360,95 @@ QUrl DesktopAppUrl::homeDesktopFileUrl()
 
 ///###: Do not modify it.
 ///###: it's auxiliary.
-float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country)
-{
-    qreal hepCount = 0;
-    int nonBaseLatinCount = 0;
-    qreal unidentificationCount = 0;
-    int replacementCount = 0;
+// float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country)
+// {
+//     qreal hepCount = 0;
+//     int nonBaseLatinCount = 0;
+//     qreal unidentificationCount = 0;
+//     int replacementCount = 0;
 
-    QTextDecoder decoder(codec);
-    const QString &unicodeData = decoder.toUnicode(data);
+//     QTextDecoder decoder(codec);
+//     const QString &unicodeData = decoder.toUnicode(data);
 
-    for (int i = 0; i < unicodeData.size(); ++i) {
-        const QChar &ch = unicodeData.at(i);
+//     for (int i = 0; i < unicodeData.size(); ++i) {
+//         const QChar &ch = unicodeData.at(i);
 
-        if (ch.unicode() > 0x7f)
-            ++nonBaseLatinCount;
+//         if (ch.unicode() > 0x7f)
+//             ++nonBaseLatinCount;
 
-        switch (ch.script()) {
-        case QChar::Script_Hiragana:
-        case QChar::Script_Katakana:
-            hepCount += country == QLocale::Japan ? 1.2 : 0.5;
-            unidentificationCount += country == QLocale::Japan ? 0 : 0.3;
-            break;
-        case QChar::Script_Han:
-            hepCount += country == QLocale::China ? 1.2 : 0.5;
-            unidentificationCount += country == QLocale::China ? 0 : 0.3;
-            break;
-        case QChar::Script_Hangul:
-            hepCount += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 1.2 : 0.5;
-            unidentificationCount += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 0 : 0.3;
-            break;
-        case QChar::Script_Cyrillic:
-            hepCount += (country == QLocale::Russia) ? 1.2 : 0.5;
-            unidentificationCount += (country == QLocale::Russia) ? 0 : 0.3;
-            break;
-        case QChar::Script_Greek:
-            hepCount += (country == QLocale::Greece) ? 1.2 : 0.5;
-            unidentificationCount += (country == QLocale::Greece) ? 0 : 0.3;
-            break;
-        default:
-            // full-width character, emoji, 常用标点, 拉丁文补充1，天城文及其补充，CJK符号和标点符号（如：【】）
-            if ((ch.unicode() >= 0xff00 && ch <= 0xffef)
-                || (ch.unicode() >= 0x2600 && ch.unicode() <= 0x27ff)
-                || (ch.unicode() >= 0x2000 && ch.unicode() <= 0x206f)
-                || (ch.unicode() >= 0x80 && ch.unicode() <= 0xff)
-                || (ch.unicode() >= 0xa8e0 && ch.unicode() <= 0xa8ff)
-                || (ch.unicode() >= 0x0900 && ch.unicode() <= 0x097f)
-                || (ch.unicode() >= 0x3000 && ch.unicode() <= 0x303f)) {
-                ++hepCount;
-            } else if (ch.isSurrogate() && ch.isHighSurrogate()) {
-                ++i;
+//         switch (ch.script()) {
+//         case QChar::Script_Hiragana:
+//         case QChar::Script_Katakana:
+//             hepCount += country == QLocale::Japan ? 1.2 : 0.5;
+//             unidentificationCount += country == QLocale::Japan ? 0 : 0.3;
+//             break;
+//         case QChar::Script_Han:
+//             hepCount += country == QLocale::China ? 1.2 : 0.5;
+//             unidentificationCount += country == QLocale::China ? 0 : 0.3;
+//             break;
+//         case QChar::Script_Hangul:
+//             hepCount += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 1.2 : 0.5;
+//             unidentificationCount += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 0 : 0.3;
+//             break;
+//         case QChar::Script_Cyrillic:
+//             hepCount += (country == QLocale::Russia) ? 1.2 : 0.5;
+//             unidentificationCount += (country == QLocale::Russia) ? 0 : 0.3;
+//             break;
+//         case QChar::Script_Greek:
+//             hepCount += (country == QLocale::Greece) ? 1.2 : 0.5;
+//             unidentificationCount += (country == QLocale::Greece) ? 0 : 0.3;
+//             break;
+//         default:
+//             // full-width character, emoji, 常用标点, 拉丁文补充1，天城文及其补充，CJK符号和标点符号（如：【】）
+//             if ((ch.unicode() >= 0xff00 && ch.unicode() <= 0xffef)
+//                 || (ch.unicode() >= 0x2600 && ch.unicode() <= 0x27ff)
+//                 || (ch.unicode() >= 0x2000 && ch.unicode() <= 0x206f)
+//                 || (ch.unicode() >= 0x80 && ch.unicode() <= 0xff)
+//                 || (ch.unicode() >= 0xa8e0 && ch.unicode() <= 0xa8ff)
+//                 || (ch.unicode() >= 0x0900 && ch.unicode() <= 0x097f)
+//                 || (ch.unicode() >= 0x3000 && ch.unicode() <= 0x303f)) {
+//                 ++hepCount;
+//             } else if (ch.isSurrogate() && ch.isHighSurrogate()) {
+//                 ++i;
 
-                if (i < unicodeData.size()) {
-                    const QChar &next_ch = unicodeData.at(i);
+//                 if (i < unicodeData.size()) {
+//                     const QChar &next_ch = unicodeData.at(i);
 
-                    if (!next_ch.isLowSurrogate()) {
-                        --i;
-                        break;
-                    }
+//                     if (!next_ch.isLowSurrogate()) {
+//                         --i;
+//                         break;
+//                     }
 
-                    uint unicode = QChar::surrogateToUcs4(ch, next_ch);
+//                     uint unicode = QChar::surrogateToUcs4(ch, next_ch);
 
-                    // emoji
-                    if (unicode >= 0x1f000 && unicode <= 0x1f6ff) {
-                        hepCount += 2;
-                    }
-                }
-            } else if (ch.unicode() == QChar::ReplacementCharacter) {
-                ++replacementCount;
-            } else if (ch.unicode() > 0x7f) {
-                // 因为UTF-8编码的容错性很低，所以未识别的编码只需要判断是否为 QChar::ReplacementCharacter 就能排除
-                if (codec->name() != "UTF-8")
-                    ++unidentificationCount;
-            }
-            break;
-        }
-    }
+//                     // emoji
+//                     if (unicode >= 0x1f000 && unicode <= 0x1f6ff) {
+//                         hepCount += 2;
+//                     }
+//                 }
+//             } else if (ch.unicode() == QChar::ReplacementCharacter) {
+//                 ++replacementCount;
+//             } else if (ch.unicode() > 0x7f) {
+//                 // 因为UTF-8编码的容错性很低，所以未识别的编码只需要判断是否为 QChar::ReplacementCharacter 就能排除
+//                 if (codec->name() != "UTF-8")
+//                     ++unidentificationCount;
+//             }
+//             break;
+//         }
+//     }
 
-    // blumia: not sure why original author assume non_base_latin_count must greater than zero...
-    if (nonBaseLatinCount == 0) {
-        return 1.0f;
-    }
+//     // blumia: not sure why original author assume non_base_latin_count must greater than zero...
+//     if (nonBaseLatinCount == 0) {
+//         return 1.0f;
+//     }
 
-    float c = static_cast<float>(qreal(hepCount) / nonBaseLatinCount / 1.2);
+//     float c = static_cast<float>(qreal(hepCount) / nonBaseLatinCount / 1.2);
 
-    c -= static_cast<float>(qreal(replacementCount) / nonBaseLatinCount);
-    c -= static_cast<float>(qreal(unidentificationCount) / nonBaseLatinCount);
+//     c -= static_cast<float>(qreal(replacementCount) / nonBaseLatinCount);
+//     c -= static_cast<float>(qreal(unidentificationCount) / nonBaseLatinCount);
 
-    return qMax(0.0f, c);
-}
+//     return qMax(0.0f, c);
+// }
 
 Match::Match(const QString &group)
 {

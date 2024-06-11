@@ -16,7 +16,6 @@
 #include <QDebug>
 #include <QEvent>
 #include <QApplication>
-#include <QX11Info>
 #include <QScreen>
 #include <QWindow>
 #include <QTimer>
@@ -173,7 +172,8 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         return window;
     }
 
-    QX11Info::setAppTime(QX11Info::appUserTime());
+    //TODO: replace follow code. QX11Info removed in Qt6.
+    // QX11Info::setAppTime(QX11Info::appUserTime());
 
     // you can inherit from FMWindow to implement a custom window (by call `setCustomWindowCreator`)
     FMWindow *window = d->customCreator ? d->customCreator(showedUrl)

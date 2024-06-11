@@ -15,7 +15,6 @@
 #include <QApplication>
 #include <QThread>
 #include <QDebug>
-#include <QX11Info>
 #include <QFile>
 #include <QProcess>
 #include <QDBusConnectionInterface>
