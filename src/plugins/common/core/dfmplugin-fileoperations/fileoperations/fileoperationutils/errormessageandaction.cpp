@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "errormessageandaction.h"
-#include <dfm-base/base/urlroute.h>
+#include "fileoperationsutils.h"
 #include <dfm-base/base/schemefactory.h>
 
 #include <QUrl>
@@ -28,20 +28,20 @@ void ErrorMessageAndAction::srcAndDestString(const QUrl &from, const QUrl &to, Q
         return;
     if (AbstractJobHandler::JobType::kCopyType == jobType) {
         *sorceMsg = QString(tr("Copying %1")).arg(from.path());
-        *toMsg = QString(tr("to %1")).arg(UrlRoute::urlParent(to).path());
+        *toMsg = QString(tr("to %1")).arg(FileOperationsUtils::parentUrl(to).path());
         errorSrcAndDestString(from, to, sorceMsg, toMsg, error);
     } else if (AbstractJobHandler::JobType::kDeleteType == jobType) {
         *sorceMsg = QString(tr("Deleting %1")).arg(from.path());
     } else if (AbstractJobHandler::JobType::kCutType == jobType) {
         *sorceMsg = QString(tr("Moving %1")).arg(from.path());
-        *toMsg = QString(tr("to %1")).arg(UrlRoute::urlParent(to).path());
+        *toMsg = QString(tr("to %1")).arg(FileOperationsUtils::parentUrl(to).path());
         errorSrcAndDestString(from, to, sorceMsg, toMsg, error);
     } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType) {
         *sorceMsg = QString(tr("Trashing %1")).arg(from.path());
     } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
         *sorceMsg = QString(tr("Restoring %1")).arg(from.path());
         if (to.isValid())
-            *toMsg = QString(tr("to %1")).arg(UrlRoute::urlParent(to).path());
+            *toMsg = QString(tr("to %1")).arg(FileOperationsUtils::parentUrl(to).path());
     } else if (AbstractJobHandler::JobType::kCleanTrashType == jobType) {
         *sorceMsg = QString(tr("Deleting %1")).arg(from.path());
     }
@@ -243,23 +243,23 @@ void ErrorMessageAndAction::errorSrcAndDestString(const QUrl &from,
         static QFontMetrics metrics(label.font());
         static Qt::TextElideMode em = Qt::TextElideMode::ElideMiddle;
         int pre = metrics.width(tr("Original path %1").arg(from.path()));
-        int last = metrics.width(tr("Target path %1").arg(UrlRoute::urlParent(to).path()));
+        int last = metrics.width(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()));
         static int total = 350;
         if (pre > total / 2 && last > total / 2) {
             *toMsg = metrics.elidedText(tr("Original path %1").arg(from.path()), em, total / 2)
-                    + " " + metrics.elidedText(tr("Target path %1").arg(UrlRoute::urlParent(to).path()), em, total / 2);
+                    + " " + metrics.elidedText(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()), em, total / 2);
             return;
         }
         if (pre + last > total) {
             *toMsg = pre > total / 2
                     ? metrics.elidedText(tr("Original path %1").arg(from.path()), em, total - last)
-                            + " " + tr("Target path %1").arg(UrlRoute::urlParent(to).path())
+                            + " " + tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path())
                     : tr("Original path %1").arg(from.path())
-                            + " " + metrics.elidedText(tr("Target path %1").arg(UrlRoute::urlParent(to).path()), em, total - pre);
+                            + " " + metrics.elidedText(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()), em, total - pre);
             return;
         }
         *toMsg = QString(tr("Original path %1 Target path %2"))
-                         .arg(from.path(), UrlRoute::urlParent(to).path());
+                         .arg(from.path(), FileOperationsUtils::parentUrl(to).path());
     }
     return;
 }

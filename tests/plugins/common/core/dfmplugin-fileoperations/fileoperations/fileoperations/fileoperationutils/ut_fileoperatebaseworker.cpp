@@ -75,7 +75,7 @@ TEST_F(UT_FileOperateBaseWorker, testSetTargetPermissions)
     url.setPath(url.path() + QDir::separator() + "testSyncFileInfo.txt");
     auto info = InfoFactory::create<FileInfo>(url);
     auto targinfo = InfoFactory::create<FileInfo>(url);
-    worker.setTargetPermissions(info, targinfo);
+    worker.setTargetPermissions(url, url);
     QProcess::execute("rm ./testSyncFileInfo.txt");
 }
 
@@ -86,7 +86,7 @@ TEST_F(UT_FileOperateBaseWorker, testReadAheadSourceFile)
     url.setPath(url.path() + QDir::separator() + "testSyncFileInfo.txt");
 
     FileOperateBaseWorker worker;
-    auto info = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer info(new DFileInfo(url));
     worker.readAheadSourceFile(info);
 
     dfmio::DFile file(url);
@@ -226,7 +226,7 @@ TEST_F(UT_FileOperateBaseWorker, testCopyFileFromTrash)
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kCancelAction; });
     EXPECT_FALSE(worker.copyFileFromTrash(url, QUrl(), DFile::CopyFlag::kOverwrite));
 
-    stub.set_lamda(&FileOperateBaseWorker::doCheckFile, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&FileOperateBaseWorker::doCheckFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
     EXPECT_TRUE(worker.copyFileFromTrash(url, url, DFile::CopyFlag::kOverwrite));
 
     stub.set(&FileOperateBaseWorker::doCheckFile, doCheckFileFunc);
@@ -257,7 +257,7 @@ TEST_F(UT_FileOperateBaseWorker, testCopyAndDeleteFile)
 {
     FileOperateBaseWorker worker;
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    auto fromInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fromInfo(new DFileInfo(url));
     worker.workData.reset(new WorkerData);
     stub_ext::StubExt stub;
     stub.set_lamda(&FileOperateBaseWorker::checkDiskSpaceAvailable, []{ __DBG_STUB_INVOKE__ return false;});
@@ -304,34 +304,34 @@ TEST_F(UT_FileOperateBaseWorker, testDoCheckFile)
 {
     FileOperateBaseWorker worker;
     QUrl url = QUrl::fromLocalFile(QDir::currentPath() + QDir::separator() + "testDoCheckFile.txt");
-    auto fromInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fromInfo(new DFileInfo(url));
     stub_ext::StubExt stub;
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
     FileInfoPointer newInfo;
-    EXPECT_FALSE(worker.doCheckFile(nullptr, nullptr, QString(), newInfo, nullptr));
+    EXPECT_FALSE(worker.doCheckFile(nullptr, nullptr, QString(), nullptr));
 
-    EXPECT_FALSE(worker.doCheckFile(fromInfo, nullptr, QString(), newInfo, nullptr));
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, nullptr, QString(), nullptr));
 
     stub.set_lamda(VADDR(SyncFileInfo, exists), []{ __DBG_STUB_INVOKE__ return true;});
-    EXPECT_FALSE(worker.doCheckFile(fromInfo, nullptr, QString(), newInfo, nullptr));
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, nullptr, QString(), nullptr));
 
     int index = 0;
     stub.set_lamda(VADDR(SyncFileInfo, exists), [&index]{ __DBG_STUB_INVOKE__ index++; return index > 1;});
-    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), newInfo, nullptr));
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), nullptr));
 
     stub.set_lamda(VADDR(SyncFileInfo, exists), []{ __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(VADDR(SyncFileInfo, fileType), []{ __DBG_STUB_INVOKE__ return FileInfo::FileType::kSocketFile;});
     bool skip(false);
     worker.workData.reset(new WorkerData);
-    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), newInfo, &skip));
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), &skip));
 
     stub.set_lamda(VADDR(SyncFileInfo, fileType), []{ __DBG_STUB_INVOKE__ return FileInfo::FileType::kDocuments;});
     index = 0;
     stub.set_lamda(VADDR(SyncFileInfo, exists), [&index]{ __DBG_STUB_INVOKE__ index++; return index < 3;});
     stub.set_lamda(&FileUtils::isTrashFile, []{ __DBG_STUB_INVOKE__ return true;});
-    stub.set_lamda(&FileOperateBaseWorker::doCheckNewFile, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), newInfo, &skip));
+    stub.set_lamda(&FileOperateBaseWorker::doCheckNewFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
+    EXPECT_FALSE(worker.doCheckFile(fromInfo, fromInfo, QString(), &skip));
 }
 
 TEST_F(UT_FileOperateBaseWorker, testCreateSystemLink)
@@ -339,7 +339,7 @@ TEST_F(UT_FileOperateBaseWorker, testCreateSystemLink)
     FileOperateBaseWorker worker;
     QUrl url = QUrl::fromLocalFile(QDir::currentPath() + QDir::separator());
     worker.workData.reset(new WorkerData);
-    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fileInfo(new DFileInfo(url));
     bool skip(false);
     stub_ext::StubExt stub;
     stub.set_lamda(&FileOperateBaseWorker::checkAndCopyFile, []{ __DBG_STUB_INVOKE__ return false;});
@@ -374,62 +374,59 @@ TEST_F(UT_FileOperateBaseWorker, testDoCheckNewFile)
     FileOperateBaseWorker worker;
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     worker.workData.reset(new WorkerData);
-    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fileInfo(new DFileInfo(url));
     bool skip(false);
     stub_ext::StubExt stub;
     FileInfoPointer newInfo(nullptr);
     QString fileBaseName;
     stub.set_lamda(&FileOperateBaseWorker::createNewTargetUrl, []{ __DBG_STUB_INVOKE__ return QUrl();});
-    stub.set_lamda(&FileOperateBaseWorker::createNewTargetInfo, []{ __DBG_STUB_INVOKE__ return true;});
-    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
-    stub.set_lamda(&FileOperateBaseWorker::createNewTargetInfo, []{ __DBG_STUB_INVOKE__ return false;});
     stub.set_lamda(&FileOperationsUtils::isAncestorUrl, []{ __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
-    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kNoAction;});
-    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
-    stub.set(ADDR(FileOperateBaseWorker, createNewTargetInfo), createNewTargetInfoFunc);
     stub.set_lamda(&FileOperationsUtils::isAncestorUrl, []{ __DBG_STUB_INVOKE__ return false;});
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kReplaceAction;});
     stub.set_lamda(&FileOperateBaseWorker::doActionReplace, []{ __DBG_STUB_INVOKE__ return QVariant();});
-    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doActionReplace, []{ __DBG_STUB_INVOKE__ return QVariant(true);});
-    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kCoexistAction;});
     stub.set_lamda(&FileUtils::nonExistFileName, []{ __DBG_STUB_INVOKE__ return QString();});
-    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileUtils::nonExistFileName, []{ __DBG_STUB_INVOKE__ return QString("pp");});
-    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kMergeAction;});
     stub.set_lamda(&FileOperateBaseWorker::doActionMerge, []{ __DBG_STUB_INVOKE__ return QVariant();});
-    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doActionMerge, []{ __DBG_STUB_INVOKE__ return QVariant(true);});
-    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_TRUE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kSkipAction;});
-    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kCancelAction;});
-    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
                    []{ __DBG_STUB_INVOKE__ return AbstractJobHandler::SupportAction::kNoAction;});
-    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, newInfo, fileBaseName, &skip));
+    EXPECT_FALSE(worker.doCheckNewFile(fileInfo, fileInfo, fileBaseName, &skip));
 }
 
 TEST_F(UT_FileOperateBaseWorker, testCheckAndCopyFile)
@@ -437,7 +434,7 @@ TEST_F(UT_FileOperateBaseWorker, testCheckAndCopyFile)
     FileOperateBaseWorker worker;
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     worker.workData.reset(new WorkerData);
-    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fileInfo(new DFileInfo(url));
     bool skip(false);
     stub_ext::StubExt stub;
     stub.set_lamda(&FileOperateBaseWorker::checkFileSize, []{ __DBG_STUB_INVOKE__ return false;});
@@ -470,11 +467,11 @@ TEST_F(UT_FileOperateBaseWorker, testCheckAndCopyDir)
     FileOperateBaseWorker worker;
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     worker.workData.reset(new WorkerData);
-    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fileInfo(new DFileInfo(url));
     bool skip(false);
     stub_ext::StubExt stub;
     auto toUrl = QUrl::fromLocalFile(QDir::currentPath() + QDir::separator() + "testCheckAndCopyDir");
-    auto toInfo = InfoFactory::create<FileInfo>(toUrl);
+    DFileInfoPointer toInfo(new DFileInfo(toUrl));
     stub.set_lamda(&LocalFileHandler::mkdir, []{ __DBG_STUB_INVOKE__ return false;});
     stub.set_lamda(&LocalFileHandler::errorString, []{ __DBG_STUB_INVOKE__ return QString();});
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
@@ -521,10 +518,10 @@ TEST_F(UT_FileOperateBaseWorker, testTrashInfo)
 {
     FileOperateBaseWorker worker;
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fileInfo(new DFileInfo(url));
     EXPECT_TRUE(worker.trashInfo(fileInfo).isEmpty());
     url.setPath(StandardPaths::location(StandardPaths::kHomePath) + "/.local/share/Trash/files/testttt.txt");
-    fileInfo = InfoFactory::create<FileInfo>(url);
+    fileInfo.reset(new DFileInfo(url));
     EXPECT_TRUE(worker.trashInfo(fileInfo).path().endsWith("testttt.txt.trashinfo"));
 }
 
@@ -535,7 +532,7 @@ TEST_F(UT_FileOperateBaseWorker, testFileOriginName)
     EXPECT_TRUE(worker.fileOriginName(QUrl()).isEmpty());
 
     url.setPath(StandardPaths::location(StandardPaths::kHomePath) + "/.local/share/Trash/files/testttt.txt");
-    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fileInfo(new DFileInfo(url));
     auto trashInfoUrl = worker.trashInfo(fileInfo);
     EXPECT_TRUE(worker.fileOriginName(trashInfoUrl).isEmpty());
 
@@ -586,10 +583,10 @@ TEST_F(UT_FileOperateBaseWorker, testInitThreadCopy)
 
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     QString fileName{"testname"};
-    auto fileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer fileInfo(new DFileInfo(url));
     auto targetUrl = worker.createNewTargetUrl(fileInfo, fileName);
     EXPECT_EQ(targetUrl.fileName(), fileName);
-    auto newfileInfo = InfoFactory::create<FileInfo>(url);
+    DFileInfoPointer newfileInfo(new DFileInfo(url));
 
     worker.currentState = AbstractJobHandler::JobState::kStopState;
     EXPECT_FALSE(worker.doCopyLocalFile(newfileInfo, fileInfo));
@@ -606,8 +603,8 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyLocalBigFile)
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     bool skip{false};
     stub_ext::StubExt stub;
     worker.workData.reset(new WorkerData);
@@ -648,8 +645,8 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyLocalBigFileCallFunc)
     FileOperateBaseWorker worker;
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     stub_ext::StubExt stub;
     worker.workData.reset(new WorkerData);
 
@@ -670,13 +667,11 @@ TEST_F(UT_FileOperateBaseWorker, testCreateNewTargetInfo)
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath());
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
 
     FileInfoPointer newTargetInfo{nullptr};
     bool skip{false};
-    EXPECT_FALSE(worker.createNewTargetInfo(sorceInfo, targetInfo, newTargetInfo, QUrl(), &skip, false));
-    EXPECT_TRUE(worker.createNewTargetInfo(sorceInfo, targetInfo, newTargetInfo, sorceUrl, &skip, false));
 
     worker.initThreadCopy();
     worker.skipMemcpyBigFile(sorceUrl);
@@ -689,8 +684,8 @@ TEST_F(UT_FileOperateBaseWorker, testCheckLinkAndSameUrl)
 
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
 
 
     EXPECT_FALSE(worker.checkLinkAndSameUrl(sorceInfo, targetInfo, false).isValid());
@@ -711,8 +706,8 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyFile)
     QProcess::execute("touch sourceUrl.txt");
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     bool skip{false};
     stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
     EXPECT_FALSE(worker.doCopyFile(sorceInfo, targetInfo, &skip));
@@ -722,9 +717,8 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyFile)
             return true;
         }
         return false;});
-    targetInfo = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(QDir::currentPath()));
+    targetInfo.reset(new DFileInfo(QUrl::fromLocalFile(QDir::currentPath())));
     targetInfo->refresh();
-    qInfo() << targetInfo->isAttributes(OptInfoType::kIsDir);
     stub.set_lamda(&FileOperateBaseWorker::createSystemLink,[]{ __DBG_STUB_INVOKE__ return true;});
     EXPECT_TRUE(worker.doCopyFile(sorceInfo, targetInfo, &skip));
 
@@ -734,14 +728,14 @@ TEST_F(UT_FileOperateBaseWorker, testDoCopyFile)
         }
         return false;});
     stub.set_lamda(&FileOperateBaseWorker::checkAndCopyDir,[]{ __DBG_STUB_INVOKE__ return true;});
-    stub.set_lamda(&FileOperateBaseWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&FileOperateBaseWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return nullptr;});
     worker.targetInfo = targetInfo;
     EXPECT_TRUE(worker.doCopyFile(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(VADDR(SyncFileInfo,isAttributes), [](SyncFileInfo *,OptInfoType type){ __DBG_STUB_INVOKE__
         return false;});
     stub.set_lamda(&FileOperateBaseWorker::checkAndCopyFile,[]{ __DBG_STUB_INVOKE__ return true;});
-    stub.set_lamda(&FileOperateBaseWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return true;});
+    stub.set_lamda(&FileOperateBaseWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return nullptr;});
     worker.targetInfo = targetInfo;
     EXPECT_TRUE(worker.doCopyFile(sorceInfo, targetInfo, &skip));
 

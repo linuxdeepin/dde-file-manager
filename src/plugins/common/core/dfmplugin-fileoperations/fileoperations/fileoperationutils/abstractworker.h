@@ -137,6 +137,8 @@ protected:
     void pause();
     void resume();
     void getAction(AbstractJobHandler::SupportActions actions);
+    QUrl parentUrl(const QUrl &url);
+    static dfmbase::FileInfo::FileType fileType(const DFileInfoPointer &info);
 
 public:
     virtual ~AbstractWorker();
@@ -165,7 +167,7 @@ public:
     QList<QUrl> completeSourceFiles;   // List of all copied files
     QList<QUrl> completeTargetFiles;   // List of all complete target files
     QVariantList completeCustomInfos;
-    QList<FileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
+    QList<DFileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
     bool supportSetPermission { true };    // source file on mtp

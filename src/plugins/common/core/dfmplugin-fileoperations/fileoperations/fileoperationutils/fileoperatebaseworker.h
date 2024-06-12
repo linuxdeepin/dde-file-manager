@@ -39,22 +39,25 @@ public:
     };
 
 public:
-    bool doCheckFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, const QString &fileName,
-                     FileInfoPointer &newTargetInfo, bool *skip);
-    bool doCheckNewFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
-                        FileInfoPointer &newTargetInfo, QString &fileNewName,
-                        bool *skip, bool isCountSize = false);
+    DFileInfoPointer doCheckFile(const DFileInfoPointer &fromInfo,
+                                 const DFileInfoPointer &toInfo,
+                                 const QString &fileName,
+                                 bool *skip);
+    DFileInfoPointer doCheckNewFile(const DFileInfoPointer &fromInfo,
+                                    const DFileInfoPointer &toInfo,
+                                    QString &fileNewName,
+                                    bool *skip, bool isCountSize = false);
     bool checkFileSize(qint64 size, const QUrl &fromUrl,
                        const QUrl &toUrl, bool *skip);
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *skip);
     bool checkTotalDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *skip);
-    void setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo);
+    void setTargetPermissions(const QUrl &fromUrl, const QUrl &toUrl);
     void setAllDirPermisson();
     void determineCountProcessType();
     qint64 getWriteDataSize();
     qint64 getTidWriteSize();
     qint64 getSectorsWritten();
-    void readAheadSourceFile(const FileInfoPointer &fileInfo);
+    void readAheadSourceFile(const DFileInfoPointer &fileInfo);
     void syncFilesToDevice();
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error,
@@ -68,21 +71,21 @@ public:
     bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
     bool copyFileFromTrash(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);
 
-    bool copyAndDeleteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo, const FileInfoPointer &toInfo,
+    bool copyAndDeleteFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo, const DFileInfoPointer &toInfo,
                            bool *result);
-    bool createSystemLink(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+    bool createSystemLink(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
                           const bool followLink, const bool doCopy,
                           bool *result);
     bool canWriteFile(const QUrl &url) const;
 
-    bool doCopyFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, bool *skip);
-    bool checkAndCopyFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip);
-    bool checkAndCopyDir(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, bool *skip);
+    bool doCopyFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip);
+    bool checkAndCopyFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
+    bool checkAndCopyDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip);
 
 protected:
     void waitThreadPoolOver();
     void initCopyWay();
-    QUrl trashInfo(const FileInfoPointer &fromInfo);
+    QUrl trashInfo(const DFileInfoPointer &fromInfo);
     QString fileOriginName(const QUrl &trashInfoUrl);
     void removeTrashInfo(const QUrl &trashInfoUrl);
 
@@ -91,21 +94,18 @@ private:
     void initThreadCopy();
     void initSignalCopyWorker();
     bool actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip);
-    bool createNewTargetInfo(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
-                             FileInfoPointer &newTargetInfo, const QUrl &fileNewUrl,
-                             bool *skip, bool isCountSize = false);
-    QUrl createNewTargetUrl(const FileInfoPointer &toInfo, const QString &fileName);
-    bool doCopyLocalFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo);
-    bool doCopyOtherFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip);
-    bool doCopyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip);
+    QUrl createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName);
+    bool doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
+    bool doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
+    bool doCopyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
 
 private:   // do copy local big file
-    bool doCopyLocalBigFileResize(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, int toFd, bool *skip);
-    char *doCopyLocalBigFileMap(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, int fd, const int per, bool *skip);
-    void memcpyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, char *fromPoint, char *toPoint);
+    bool doCopyLocalBigFileResize(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int toFd, bool *skip);
+    char *doCopyLocalBigFileMap(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int fd, const int per, bool *skip);
+    void memcpyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, char *fromPoint, char *toPoint);
     void doCopyLocalBigFileClear(const size_t size, const int fromFd,
                                  const int toFd, char *fromPoint, char *toPoint);
-    int doOpenFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const bool isTo,
+    int doOpenFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, const bool isTo,
                    const int openFlag, bool *skip);
 
 protected Q_SLOTS:
@@ -117,12 +117,17 @@ protected Q_SLOTS:
 
 private:
     QVariant
-    checkLinkAndSameUrl(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize);
-    QVariant doActionReplace(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize);
-    QVariant doActionMerge(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize);
+    checkLinkAndSameUrl(const DFileInfoPointer &fromInfo,
+                        const DFileInfoPointer &newTargetInfo,
+                        const bool isCountSize);
+    QVariant doActionReplace(const DFileInfoPointer &fromInfo,
+                             const DFileInfoPointer &newTargetInfo,
+                             const bool isCountSize);
+    QVariant doActionMerge(const DFileInfoPointer &fromInfo,
+                           const DFileInfoPointer &newTargetInfo, const bool isCountSize);
 
 protected:
-    FileInfoPointer targetInfo { nullptr };   // target file infor pointer
+    DFileInfoPointer targetInfo { nullptr };   // target file infor pointer
     CountWriteSizeType countWriteType { CountWriteSizeType::kCustomizeType };   // get write size type
     long copyTid = { -1 };   // 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     qint64 targetDeviceStartSectorsWritten { 0 };   // 记录任务开始时目标磁盘设备已写入扇区数
@@ -135,7 +140,7 @@ protected:
     QList<QUrl> syncFiles;
 
     std::atomic_int threadCopyFileCount { 0 };
-    QList<FileInfoPointer> cutAndDeleteFiles;
+    QList<DFileInfoPointer> cutAndDeleteFiles;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

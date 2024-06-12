@@ -167,3 +167,14 @@ bool FileOperationsUtils::blockSync()
     bool sync = DConfigManager::instance()->value(kFileOperations, kBlockEverySync).toBool();
     return sync;
 }
+
+QUrl FileOperationsUtils::parentUrl(const QUrl &url)
+{
+    auto parent = url.adjusted(QUrl::StripTrailingSlash);
+    parent = parent.adjusted(QUrl::RemoveFilename);
+    parent = parent.adjusted(QUrl::StripTrailingSlash);
+    if (parent.isParentOf(url))
+        return parent;
+
+    return QUrl();
+}

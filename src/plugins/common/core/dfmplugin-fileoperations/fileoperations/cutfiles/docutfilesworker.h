@@ -36,15 +36,16 @@ protected:
     void endWork() override;
 
     bool cutFiles();
-    bool doCutFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo);
-    bool doRenameFile(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetPathInfo, FileInfoPointer &toInfo, const QString fileName, bool *ok);
-    bool renameFileByHandler(const FileInfoPointer &sourceInfo, const FileInfoPointer &targetInfo);
+    bool doCutFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo);
+    DFileInfoPointer doRenameFile(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetPathInfo,
+                                 const QString fileName, bool *ok);
+    bool renameFileByHandler(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
 
 private:
-    bool checkSymLink(const FileInfoPointer &fromInfo);
-    bool checkSelf(const FileInfoPointer &fromInfo);
+    bool checkSymLink(const DFileInfoPointer &fromInfo);
+    bool checkSelf(const DFileInfoPointer &fromInfo);
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

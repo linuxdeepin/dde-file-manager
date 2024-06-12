@@ -71,7 +71,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         if (!stateCheck())
             return false;
 
-        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        const DFileInfoPointer fileInfo(new DFileInfo(url));
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
@@ -83,21 +83,12 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         }
 
         const QUrl &targetFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                                   fileInfo->displayOf(DisPlayInfoType::kFileDisplayName).toStdString().c_str(), nullptr);
+                                                                   fileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).
+                                                                   toString().toStdString().c_str(), nullptr);
 
-        const FileInfoPointer &targetFileInfo = InfoFactory::create<FileInfo>(targetFileUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (!targetFileInfo) {
-            // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
-                return false;
-            } else {
-                completeFilesCount++;
-                continue;
-            }
-        }
-
-        FileInfoPointer targetInfo = nullptr;
-        if (!createParentDir(fileInfo, targetFileInfo, targetInfo, &result)) {
+        const DFileInfoPointer targetFileInfo(new DFileInfo(targetFileUrl));
+        DFileInfoPointer targetInfo = createParentDir(fileInfo, targetFileInfo, &result);
+        if (targetInfo.isNull()) {
             if (result) {
                 completeFilesCount++;
                 continue;
@@ -109,19 +100,20 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         // read trash info
         emitCurrentTaskNotify(url, targetFileUrl);
 
-        FileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
-        if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
+        DFileInfoPointer newTargetInfo = doCheckFile(fileInfo, targetInfo, fileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(), &ok);
+
+        if (newTargetInfo.isNull())
             continue;
 
-        bool copySucc = this->copyFileFromTrash(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
+        bool copySucc = this->copyFileFromTrash(url, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
         if (copySucc) {
             completeFilesCount++;
             if (!completeSourceFiles.contains(url)) {
                 completeSourceFiles.append(url);
             }
-            if (!completeTargetFiles.contains(targetFileInfo->urlOf(UrlInfoType::kUrl)))
-                completeTargetFiles.append(targetFileInfo->urlOf(UrlInfoType::kUrl));
+            if (!completeTargetFiles.contains(targetFileInfo->uri()))
+                completeTargetFiles.append(targetFileInfo->uri());
             continue;
         }
         return false;
@@ -130,20 +122,19 @@ bool DoCopyFromTrashFilesWorker::doOperate()
     return true;
 }
 
-bool DoCopyFromTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo,
-                                                 FileInfoPointer &targetFileInfo, bool *result)
+DFileInfoPointer DoCopyFromTrashFilesWorker::createParentDir(const DFileInfoPointer &trashInfo,
+                                                             const DFileInfoPointer &restoreInfo,
+                                                             bool *result)
 {
-    const QUrl &fromUrl = trashInfo->urlOf(UrlInfoType::kUrl);
-    const QUrl &toUrl = restoreInfo->urlOf(UrlInfoType::kUrl);
-    const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
+    const QUrl &fromUrl = trashInfo->uri();
+    const QUrl &toUrl = restoreInfo->uri();
+    const QUrl &parentUrl = AbstractWorker::parentUrl(toUrl);
     if (!parentUrl.isValid())
-        return false;
-    targetFileInfo.reset();
-    targetFileInfo = InfoFactory::create<FileInfo>(parentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!targetFileInfo)
-        return false;
+        return nullptr;
+    DFileInfoPointer targetFileInfo(new DFileInfo(parentUrl));
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    targetFileInfo->initQuerier();
     if (!targetFileInfo->exists()) {
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
@@ -157,9 +148,9 @@ bool DoCopyFromTrashFilesWorker::createParentDir(const FileInfoPointer &trashInf
         if (action != AbstractJobHandler::SupportAction::kNoAction) {
             if (result)
                 *result = action == AbstractJobHandler::SupportAction::kSkipAction;
-            return false;
+            return nullptr;
         }
     }
 
-    return true;
+    return targetFileInfo;
 }

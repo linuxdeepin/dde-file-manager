@@ -24,6 +24,7 @@
 #include <QStorageInfo>
 #include <QRegularExpression>
 #include <QDebug>
+#include <qplatformdefs.h>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 
@@ -170,6 +171,42 @@ void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
     }
 }
 
+QUrl AbstractWorker::parentUrl(const QUrl &url)
+{
+    return FileOperationsUtils::parentUrl(url);
+}
+
+FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
+{
+    FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
+    const QUrl &fileUrl = info->uri();
+    if (FileUtils::isTrashFile(fileUrl) && info->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
+        fileType = FileInfo::FileType::kRegularFile;
+        return fileType;
+    }
+
+    // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
+    // In addition we want to follow symlinks.
+    const QString &absoluteFilePath = info->attribute(DFileInfo::AttributeID::kStandardFilePath).toString();
+    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
+    QT_STATBUF statBuffer;
+    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
+        if (S_ISDIR(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kDirectory;
+        else if (S_ISCHR(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kCharDevice;
+        else if (S_ISBLK(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kBlockDevice;
+        else if (S_ISFIFO(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kFIFOFile;
+        else if (S_ISSOCK(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kSocketFile;
+        else if (S_ISREG(statBuffer.st_mode))
+            fileType = FileInfo::FileType::kRegularFile;
+    }
+    return fileType;
+}
+
 /*!
  * \brief AbstractWorker::startCountProccess start update proccess timer
  */
@@ -291,7 +328,7 @@ void AbstractWorker::endWork()
     emit finishedNotify(info);
 
     fmInfo() << "\n work end, job: " << jobType
-            << "\n sources parent: " << (sourceUrls.count() <= 0 ? QUrl() : UrlRoute::urlParent(sourceUrls.first()))
+            << "\n sources parent: " << (sourceUrls.count() <= 0 ? QUrl() : parentUrl(sourceUrls.first()))
             << "\n sources count: " << sourceUrls.count()
             << "\n target: " << targetUrl
             << "\n time elapsed: " << timeElapsed.elapsed()
@@ -567,7 +604,7 @@ void AbstractWorker::saveOperations()
             switch (jobType) {
             case AbstractJobHandler::JobType::kCopyType:
                 operatorType = GlobalEventType::kDeleteFiles;
-                targetUrls.append(UrlRoute::urlParent(completeSourceFiles.first()));
+                targetUrls.append(parentUrl(completeSourceFiles.first()));
                 redoType = GlobalEventType::kCopy;
                 break;
             case AbstractJobHandler::JobType::kCutType:
@@ -575,7 +612,7 @@ void AbstractWorker::saveOperations()
                 if (!sourceUrls.isEmpty() && FileUtils::isTrashFile(sourceUrls.first())) {
                     operatorType = GlobalEventType::kMoveToTrash;
                 } else {
-                    targetUrls.append(UrlRoute::urlParent(completeSourceFiles.first()));
+                    targetUrls.append(parentUrl(completeSourceFiles.first()));
                 }
                 redoType = GlobalEventType::kCutFile;
                 break;

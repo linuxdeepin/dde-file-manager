@@ -102,14 +102,14 @@ bool DoCopyFilesWorker::initArgs()
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
-    targetInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+    targetInfo.reset(new DFileInfo(targetUrl));
     if (!targetInfo) {
         // pause and emit error msg
         fmCritical() << "create target info error, url = " << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
-
+    targetInfo->initQuerier();
     if (!targetInfo->exists()) {
         // pause and emit error msg
         fmCritical() << "target dir is not exists, url = " << targetUrl;
@@ -117,8 +117,8 @@ bool DoCopyFilesWorker::initArgs()
         return false;
     }
 
-    if (targetInfo->isAttributes(OptInfoType::kIsSymLink))
-        targetOrgUrl = QUrl::fromLocalFile(targetInfo->pathOf(PathInfoType::kSymLinkTarget));
+    if (targetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool())
+        targetOrgUrl = QUrl::fromLocalFile(targetInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
 
     workData->needSyncEveryRW = FileUtils::isGvfsFile(targetUrl);
     if (!workData->needSyncEveryRW) {
@@ -135,9 +135,10 @@ void DoCopyFilesWorker::endWork()
     waitThreadPoolOver();
 
     // deal target files
-    for (FileInfoPointer info : precompleteTargetFileInfo) {
+    for (DFileInfoPointer info : precompleteTargetFileInfo) {
+        info->initQuerier();
         if (info->exists()) {
-            const QUrl &url = info->urlOf(UrlInfoType::kUrl);
+            const QUrl &url = info->uri();
             completeTargetFiles.append(url);
             info->refresh();
         }
@@ -156,8 +157,8 @@ bool DoCopyFilesWorker::copyFiles()
         if (!stateCheck()) {
             return false;
         }
-        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (!fileInfo || !targetInfo) {
+        DFileInfoPointer fileInfo(new DFileInfo(url));
+        if (!targetInfo) {
             // pause and emit error msg
             fmCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (fileInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
             const AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
@@ -167,10 +168,9 @@ bool DoCopyFilesWorker::copyFiles()
                 continue;
             }
         }
-        fileInfo->refresh();
 
         // check self
-        if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
+        if (fileInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
                 emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});

@@ -73,8 +73,8 @@ TEST_F(UT_DoCopyFileWorker, testDoCopyFilePractically)
 
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
 
     bool skip{false};
     worker.resume();
@@ -143,8 +143,8 @@ TEST_F(UT_DoCopyFileWorker, testDoDfmioFileCopy)
     worker.stop();
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     EXPECT_FALSE(worker.doDfmioFileCopy(sorceInfo, targetInfo, nullptr));
 
     bool skip{false};
@@ -228,7 +228,7 @@ TEST_F(UT_DoCopyFileWorker, testReadAheadSourceFile)
     DoCopyFileWorker worker(data);
     QProcess::execute("touch sourceUrl.txt");
 
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     worker.readAheadSourceFile(sorceInfo);
 
     stub_ext::StubExt stub;
@@ -245,8 +245,8 @@ TEST_F(UT_DoCopyFileWorker, testCreateFileDevice)
 
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     bool skip{false};
     QSharedPointer<DFMIO::DFile> file{nullptr};
     stub_ext::StubExt stub;
@@ -266,8 +266,8 @@ TEST_F(UT_DoCopyFileWorker, testResizeTargetFile)
     DoCopyFileWorker worker(data);
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     bool skip{false};
     QSharedPointer<DFMIO::DFile> file{new DFile(sorceUrl)};
     stub_ext::StubExt stub;
@@ -288,8 +288,8 @@ TEST_F(UT_DoCopyFileWorker, testDoReadFile)
     DoCopyFileWorker worker(data);
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     bool skip{false};
 
     worker.stop();
@@ -345,8 +345,8 @@ TEST_F(UT_DoCopyFileWorker, testDoWriteFile)
     DoCopyFileWorker worker(data);
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     bool skip{false};
     worker.stop();
     QSharedPointer<DFMIO::DFile> file{new DFile(sorceUrl)};
@@ -396,8 +396,8 @@ TEST_F(UT_DoCopyFileWorker, testVerifyFileIntegrity)
     DoCopyFileWorker worker(data);
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     bool skip{false};
     worker.stop();
     QSharedPointer<DFMIO::DFile> file{new DFile(sorceUrl)};
@@ -452,7 +452,7 @@ TEST_F(UT_DoCopyFileWorker, testSyncBlockFile)
     worker.syncBlockFile(nullptr);
 
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
 
     stub_ext::StubExt stub;
     stub.set(&::open, OpenFunc);
