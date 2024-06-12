@@ -142,11 +142,11 @@ TEST_F(UT_DoRestoreTrashFilesWorker, testDoRestoreTrashFiles)
     EXPECT_TRUE(worker.doRestoreTrashFiles());
 
     worker.handleSourceFiles.clear();
-    stub.set_lamda(&DoRestoreTrashFilesWorker::checkRestoreInfo, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoRestoreTrashFilesWorker::checkRestoreInfo, []{ __DBG_STUB_INVOKE__ return nullptr;});
     EXPECT_TRUE(worker.doRestoreTrashFiles());
 
     worker.handleSourceFiles.clear();
-    stub.set_lamda(&DoRestoreTrashFilesWorker::createParentDir, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoRestoreTrashFilesWorker::createParentDir, []{ __DBG_STUB_INVOKE__ return nullptr;});
     stub.set(&DoRestoreTrashFilesWorker::checkRestoreInfo, checkRestoreInfoFunc);
     EXPECT_FALSE(worker.doRestoreTrashFiles());
 
@@ -157,8 +157,8 @@ TEST_F(UT_DoRestoreTrashFilesWorker, testDoRestoreTrashFiles)
     worker.allFilesList.clear();
     auto tmpUrl = QUrl::fromLocalFile(QDir::currentPath() +QDir::separator() + "testDir_DoRestoreTrashFilesWorker.txt");
     worker.allFilesList.append(tmpUrl);
-    stub.set_lamda(&DoRestoreTrashFilesWorker::createParentDir, []{ __DBG_STUB_INVOKE__ return true;});
-    stub.set_lamda(&DoRestoreTrashFilesWorker::doCheckFile, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoRestoreTrashFilesWorker::createParentDir, []{ __DBG_STUB_INVOKE__ return nullptr;});
+    stub.set_lamda(&DoRestoreTrashFilesWorker::doCheckFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
     EXPECT_TRUE(worker.doRestoreTrashFiles());
 
     worker.handleSourceFiles.clear();
@@ -180,28 +180,29 @@ TEST_F(UT_DoRestoreTrashFilesWorker, testCreateParentDir)
 
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     stub.set_lamda(&UrlRoute::urlParent, []{ __DBG_STUB_INVOKE__ return QUrl();});
     FileInfoPointer newTargetInfo(nullptr);
     bool skip{false};
-    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    DFileInfoPointer dtargetInfo(new DFileInfo(targetUrl));
+    EXPECT_FALSE(worker.createParentDir(sorceInfo->uri(), dtargetInfo, &skip));
 
     auto tmpUrl = targetUrl;
     tmpUrl.setScheme("trash");
     stub.set_lamda(&UrlRoute::urlParent, [tmpUrl]{ __DBG_STUB_INVOKE__ return tmpUrl;});
-    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    EXPECT_FALSE(worker.createParentDir(sorceInfo->uri(), dtargetInfo, &skip));
 
     tmpUrl = QUrl::fromLocalFile(QDir::currentPath());
     stub.set_lamda(&UrlRoute::urlParent, [tmpUrl]{ __DBG_STUB_INVOKE__ return tmpUrl;});
-    EXPECT_TRUE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    EXPECT_TRUE(worker.createParentDir(sorceInfo->uri(), dtargetInfo, &skip));
 
     stub.set_lamda(&DoRestoreTrashFilesWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__
                 return AbstractJobHandler::SupportAction::kCancelAction;});
     tmpUrl = QUrl::fromLocalFile(QDir::currentPath() +QDir::separator() + "testDir_DoRestoreTrashFilesWorker");
     stub.set_lamda(&UrlRoute::urlParent, [tmpUrl]{ __DBG_STUB_INVOKE__ return tmpUrl;});
     stub.set_lamda(&LocalFileHandler::mkdir, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    EXPECT_FALSE(worker.createParentDir(sorceInfo->uri(), dtargetInfo, &skip));
 }
 
 TEST_F(UT_DoRestoreTrashFilesWorker, testCheckRestoreInfo)
@@ -211,17 +212,17 @@ TEST_F(UT_DoRestoreTrashFilesWorker, testCheckRestoreInfo)
     FileInfoPointer restoreInfo{nullptr};
     stub.set_lamda(&DoRestoreTrashFilesWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__
                 return AbstractJobHandler::SupportAction::kCancelAction;});
-    EXPECT_FALSE(worker.checkRestoreInfo(QUrl(), restoreInfo));
+    DFileInfoPointer drestoreInfo{nullptr};
+    EXPECT_FALSE(!worker.checkRestoreInfo(QUrl()).isNull());
 
     auto url = QUrl::fromLocalFile(QDir::currentPath() +QDir::separator() + "testDir_DoRestoreTrashFilesWorker");
-    stub.set_lamda(VADDR(SyncFileInfo, urlOf), []{ __DBG_STUB_INVOKE__ return QUrl();});
-    EXPECT_FALSE(worker.checkRestoreInfo(url, restoreInfo));
+    EXPECT_FALSE(!worker.checkRestoreInfo(url).isNull());
 
     worker.targetUrl.setScheme("trash");
-    EXPECT_FALSE(worker.checkRestoreInfo(url, restoreInfo));
+    EXPECT_FALSE(!worker.checkRestoreInfo(url).isNull());
 
     worker.targetUrl = url;
-    EXPECT_TRUE(worker.checkRestoreInfo(url, restoreInfo));
+    EXPECT_TRUE(!worker.checkRestoreInfo(url).isNull());
 }
 
 TEST_F(UT_DoRestoreTrashFilesWorker, testMergeDir)

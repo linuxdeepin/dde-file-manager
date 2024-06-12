@@ -38,8 +38,8 @@ protected:
     bool translateUrls();
     bool doRestoreTrashFiles();
     //check disk space available before do move job
-    bool createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo, FileInfoPointer &targetFileInfo, bool *result);
-    bool checkRestoreInfo(const QUrl &url, FileInfoPointer &restoreInfo);
+    DFileInfoPointer createParentDir(const QUrl &fromUrl, const DFileInfoPointer &restoreInfo, bool *result);
+    DFileInfoPointer checkRestoreInfo(const QUrl &url);
 
 private:
     bool mergeDir(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);

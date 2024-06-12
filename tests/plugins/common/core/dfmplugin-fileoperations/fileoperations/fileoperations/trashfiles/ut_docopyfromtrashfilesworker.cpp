@@ -121,14 +121,14 @@ TEST_F(UT_DoCopyFromTrashFilesWorker, testDoOperate)
     EXPECT_TRUE(worker.doOperate());
 
     worker.targetUrl = QUrl::fromLocalFile(QDir::currentPath());
-    stub.set_lamda(&DoCopyFromTrashFilesWorker::createParentDir, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoCopyFromTrashFilesWorker::createParentDir, []{ __DBG_STUB_INVOKE__ return nullptr;});
     EXPECT_FALSE(worker.doOperate());
 
     stub.set(&DoCopyFromTrashFilesWorker::createParentDir, createParentDirFunc);
     EXPECT_TRUE(worker.doOperate());
 
     stub.set(&DoCopyFromTrashFilesWorker::createParentDir, createParentDirFunc1);
-    stub.set_lamda(&DoCopyFromTrashFilesWorker::doCheckFile, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&DoCopyFromTrashFilesWorker::doCheckFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
     EXPECT_TRUE(worker.doOperate());
 
     stub.set(&DoCopyFromTrashFilesWorker::doCheckFile, doCheckFileFunc);
@@ -145,26 +145,26 @@ TEST_F(UT_DoCopyFromTrashFilesWorker, testCreateParentDir)
     stub_ext::StubExt stub;
     auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
     auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
-    auto sorceInfo = InfoFactory::create<FileInfo>(sorceUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
+    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
     stub.set_lamda(&UrlRoute::urlParent, []{ __DBG_STUB_INVOKE__ return QUrl();});
     FileInfoPointer newTargetInfo(nullptr);
     bool skip{false};
-    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, &skip));
 
     auto tmpUrl = targetUrl;
     tmpUrl.setScheme("trash");
     stub.set_lamda(&UrlRoute::urlParent, [tmpUrl]{ __DBG_STUB_INVOKE__ return tmpUrl;});
-    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, &skip));
 
     tmpUrl = QUrl::fromLocalFile(QDir::currentPath());
     stub.set_lamda(&UrlRoute::urlParent, [tmpUrl]{ __DBG_STUB_INVOKE__ return tmpUrl;});
-    EXPECT_TRUE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    EXPECT_TRUE(worker.createParentDir(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(&DoCopyFromTrashFilesWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__
                 return AbstractJobHandler::SupportAction::kCancelAction;});
     tmpUrl = QUrl::fromLocalFile(QDir::currentPath() +QDir::separator() + "testDir_DoCopyFromTrashFilesWorker");
     stub.set_lamda(&UrlRoute::urlParent, [tmpUrl]{ __DBG_STUB_INVOKE__ return tmpUrl;});
     stub.set_lamda(&LocalFileHandler::mkdir, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, newTargetInfo, &skip));
+    EXPECT_FALSE(worker.createParentDir(sorceInfo, targetInfo, &skip));
 }

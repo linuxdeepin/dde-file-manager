@@ -33,7 +33,9 @@ protected:
 
 protected:
     bool doOperate();
-    bool createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo, FileInfoPointer &targetFileInfo, bool *result);
+    DFileInfoPointer createParentDir(const DFileInfoPointer &trashInfo,
+                                     const DFileInfoPointer &restoreInfo,
+                                     bool *result);
 
 private:
     QAtomicInteger<qint64> completeFilesCount { 0 };

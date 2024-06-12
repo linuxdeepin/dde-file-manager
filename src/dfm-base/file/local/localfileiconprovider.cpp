@@ -28,6 +28,7 @@ QIcon LocalFileIconProviderPrivate::fileSystemIcon(const QString &path) const
     QIcon icon;
 
     DFMIO::DFileInfo info(path);
+    info.initQuerier();
     if (!info.exists())
         return icon;
 

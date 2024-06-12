@@ -94,7 +94,7 @@ bool DoRestoreTrashFilesWorker::translateUrls()
             // 错误处理
             if (deleteInfo.length() != 2)
                 // pause and emit error msg
-                action = doHandleErrorAndWait(url, UrlRoute::urlParent(url), AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash);
+                action = doHandleErrorAndWait(url, parentUrl(url), AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash);
 
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -154,16 +154,16 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         if (handleSourceFiles.contains(fileUrl))
             continue;
 
-        FileInfoPointer restoreInfo { nullptr };
-        if (!checkRestoreInfo(url, restoreInfo)) {
+        DFileInfoPointer restoreInfo = checkRestoreInfo(url);
+        if (restoreInfo.isNull()) {
             completeFilesCount++;
             handleSourceFiles.append(fileUrl);
             continue;
         }
 
-        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-        FileInfoPointer targetInfo = nullptr;
-        if (!createParentDir(fileInfo, restoreInfo, targetInfo, &result)) {
+
+        DFileInfoPointer targetInfo = createParentDir(url, restoreInfo, &result);
+        if (targetInfo.isNull()) {
             if (result) {
                 completeFilesCount++;
                 handleSourceFiles.append(fileUrl);
@@ -172,33 +172,35 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
                 return false;
             }
         }
-
+        DFileInfoPointer fileInfo { new DFileInfo(url) };
         // read trash info
-        QUrl trashInfoUrl { fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl).toString().replace("/files/", "/info/") + ".trashinfo" };
+        QUrl trashInfoUrl { fileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toString().replace("/files/", "/info/") + ".trashinfo" };
         const QString &trashInfoCache { DFMIO::DFile(trashInfoUrl).readAll() };
-        emitCurrentTaskNotify(url, restoreInfo->urlOf(UrlInfoType::kUrl));
-        FileInfoPointer newTargetInfo(nullptr);
+        emitCurrentTaskNotify(url, restoreInfo->uri());
         bool ok = false;
-        if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok)) {
+        DFileInfoPointer newTargetInfo = doCheckFile(fileInfo,
+                                                     targetInfo,
+                                                     fileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(), &ok);
+        if (newTargetInfo.isNull()) {
             handleSourceFiles.append(fileUrl);
             continue;
         }
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
+        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
         if (trashSucc) {
             completeFilesCount++;
             if (!completeSourceFiles.contains(fileUrl)) {
                 completeSourceFiles.append(fileUrl);
                 completeCustomInfos.append(trashInfoCache);
             }
-            if (!completeTargetFiles.contains(restoreInfo->urlOf(UrlInfoType::kUrl)))
-                completeTargetFiles.append(restoreInfo->urlOf(UrlInfoType::kUrl));
+            if (!completeTargetFiles.contains(restoreInfo->uri()))
+                completeTargetFiles.append(restoreInfo->uri());
         } else {
             auto errorCode = fileHandler.errorCode();
             switch (errorCode) {
             case DFMIOErrorCode::DFM_IO_ERROR_WOULD_MERGE: {
-                trashSucc = this->mergeDir(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
+                trashSucc = this->mergeDir(url, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
                 break;
             };
             default:
@@ -218,20 +220,17 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     return true;
 }
 
-bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo, const FileInfoPointer &restoreInfo,
-                                                FileInfoPointer &targetFileInfo, bool *result)
+DFileInfoPointer DoRestoreTrashFilesWorker::createParentDir(const QUrl &fromUrl,
+                                                            const DFileInfoPointer &restoreInfo,
+                                                            bool *result)
 {
-    const QUrl &fromUrl = trashInfo->urlOf(UrlInfoType::kUrl);
-    const QUrl &toUrl = restoreInfo->urlOf(UrlInfoType::kUrl);
-    const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
+    const QUrl &toUrl = restoreInfo->uri();
+    const QUrl &parentUrl = AbstractWorker::parentUrl(toUrl);
     if (!parentUrl.isValid())
-        return false;
-    targetFileInfo.reset();
-    targetFileInfo = InfoFactory::create<FileInfo>(parentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!targetFileInfo)
-        return false;
-
+        return nullptr;
+    DFileInfoPointer targetFileInfo { new DFileInfo(parentUrl) };
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    targetFileInfo->initQuerier();
     if (!targetFileInfo->exists()) {
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
@@ -244,49 +243,36 @@ bool DoRestoreTrashFilesWorker::createParentDir(const FileInfoPointer &trashInfo
         if (action != AbstractJobHandler::SupportAction::kNoAction) {
             if (result)
                 *result = action == AbstractJobHandler::SupportAction::kSkipAction;
-            return false;
+            return nullptr;
         }
     }
-
-    return true;
+    return targetFileInfo;
 }
 
-bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, FileInfoPointer &restoreInfo)
+DFileInfoPointer DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url)
 {
-    bool result;
+    DFileInfoPointer result{ nullptr };
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
-        result = true;
-        const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (!fileInfo) {
-            // pause and emit error msg
-            action = doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
-            result = false;
-            continue;
-        }
+        DFileInfoPointer fileInfo(new DFileInfo(url));
 
         QUrl restoreFileUrl;
         if (!this->targetUrl.isValid()) {
             // 获取回收站文件的原路径
-            restoreFileUrl = fileInfo->urlOf(UrlInfoType::kOriginalUrl);
+            restoreFileUrl = QUrl::fromLocalFile(fileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString());
             if (!restoreFileUrl.isValid()) {
                 action = doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
-                result = false;
+                result.clear();
                 continue;
             }
         } else {
             restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                            fileInfo->nameOf(NameInfoType::kFileCopyName).toStdString().c_str(), nullptr);
+                                                            fileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString()
+                                                            .toStdString().c_str(), nullptr);
         }
 
-        restoreInfo = InfoFactory::create<FileInfo>(restoreFileUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (!restoreInfo) {
-            // pause and emit error msg
-            action = doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError);
-            result = false;
-            continue;
-        }
+        result.reset(new DFileInfo(restoreFileUrl));
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     return result;

@@ -11,11 +11,14 @@
 
 #include <QSharedPointer>
 #include <QQueue>
+#include <dfm-io/dfileinfo.h>
 
 #include <fcntl.h>
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+typedef QSharedPointer<dfmio::DFileInfo> DFileInfoPointer;
 class WorkerData
 {
 public:

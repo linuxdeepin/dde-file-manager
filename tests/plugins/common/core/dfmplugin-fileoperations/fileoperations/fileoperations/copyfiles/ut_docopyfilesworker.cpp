@@ -88,7 +88,7 @@ TEST_F(UT_DoCopyFilesWorker, testInitArgs)
     stub.set_lamda(VADDR(SyncFileInfo, exists), []{ __DBG_STUB_INVOKE__ return true;});
     EXPECT_TRUE(worker.initArgs());
 
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
     worker.precompleteTargetFileInfo.append(targetInfo);
     worker.endWork();
 }
@@ -120,7 +120,7 @@ TEST_F(UT_DoCopyFilesWorker, testCopyFiles)
                 return AbstractJobHandler::SupportAction::kNoAction;});
     EXPECT_FALSE(worker.copyFiles());
 
-    auto targetInfo = InfoFactory::create<FileInfo>(targetUrl);
+    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
     worker.targetInfo = targetInfo;
     stub.set_lamda(VADDR(SyncFileInfo, isAttributes), []{ __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(&FileUtils::isHigherHierarchy, []{ __DBG_STUB_INVOKE__ return true;});

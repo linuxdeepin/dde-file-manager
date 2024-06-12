@@ -66,6 +66,7 @@ class FileOperationsUtils
     friend class DoCleanTrashFilesWorker;
     friend class DoRestoreTrashFilesWorker;
     friend class FileOperateBaseWorker;
+    friend class ErrorMessageAndAction;
 
 private:
     static SizeInfoPointer statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl = false);
@@ -75,6 +76,7 @@ private:
     static bool isFileOnDisk(const QUrl &url);
     static qint64 bigFileSize();
     static bool blockSync();
+    static QUrl parentUrl(const QUrl &url);
 
 private:
     static QSet<QString> fileNameUsing;

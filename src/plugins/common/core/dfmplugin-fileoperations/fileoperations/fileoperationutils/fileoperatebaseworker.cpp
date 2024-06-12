@@ -96,9 +96,11 @@ void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
  * \param fromInfo File information of source file
  * \param toInfo File information of target file
  */
-void FileOperateBaseWorker::setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo)
+void FileOperateBaseWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl &toUrl)
 {
     // 修改文件修改时间
+    const auto &fromInfo = InfoFactory::create<FileInfo>(fromUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+    const auto &toInfo = InfoFactory::create<FileInfo>(toUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     localFileHandler->setFileTime(toInfo->urlOf(UrlInfoType::kUrl),
                                   fromInfo->timeOf(TimeInfoType::kLastRead).value<QDateTime>(),
                                   fromInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>());
@@ -113,14 +115,15 @@ void FileOperateBaseWorker::setTargetPermissions(const FileInfoPointer &fromInfo
  * \brief FileOperateBaseWorker::readAheadSourceFile Pre read source file content
  * \param fileInfo File information of source file
  */
-void FileOperateBaseWorker::readAheadSourceFile(const FileInfoPointer &fileInfo)
+void FileOperateBaseWorker::readAheadSourceFile(const DFileInfoPointer &fileInfo)
 {
-    if (fileInfo->size() <= 0)
+    auto fromSize = fileInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+    if (fromSize <= 0)
         return;
-    std::string stdStr = fileInfo->urlOf(UrlInfoType::kUrl).path().toUtf8().toStdString();
+    std::string stdStr = fileInfo->uri().path().toUtf8().toStdString();
     int fromfd = open(stdStr.data(), O_RDONLY);
     if (-1 != fromfd) {
-        readahead(fromfd, 0, static_cast<size_t>(fileInfo->size()));
+        readahead(fromfd, 0, static_cast<size_t>(fromSize));
         close(fromfd);
     }
 }
@@ -286,11 +289,10 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
             return false;
         while (iterator->hasNext()) {
             const QUrl &url = iterator->next();
-            auto fileinfoNext = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+            DFileInfoPointer fileinfoNext(new DFileInfo(url));
 
-            FileInfoPointer newTargetInfo(nullptr);
             bool ok = false;
-            FileInfoPointer toInfo = InfoFactory::create<FileInfo>(urlTarget, Global::CreateFileInfoType::kCreateFileInfoSync);
+            DFileInfoPointer toInfo(new DFileInfo(urlTarget));
             if (!toInfo) {
                 // pause and emit error msg
                 fmCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (toInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
@@ -301,16 +303,19 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
                     continue;
                 }
             }
-            if (!doCheckFile(fileinfoNext, toInfo, fileinfoNext->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
+            DFileInfoPointer newTargetInfo = doCheckFile(fileinfoNext, toInfo,
+                                                         fileinfoNext->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(),
+                                                         &ok);
+            if (newTargetInfo.isNull())
                 continue;
 
-            if (fileinfoNext->isAttributes(OptInfoType::kIsDir)) {
-                bool succ = copyFileFromTrash(url, newTargetInfo->urlOf(UrlInfoType::kUrl), flag);
+            if (fileinfoNext->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
+                bool succ = copyFileFromTrash(url, newTargetInfo->uri(), flag);
                 if (!succ)
                     return false;
             } else {
                 DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-                bool trashSucc = fileHandler.copyFile(url, newTargetInfo->urlOf(UrlInfoType::kUrl), flag);
+                bool trashSucc = fileHandler.copyFile(url, newTargetInfo->uri(), flag);
                 if (!trashSucc)
                     return false;
             }
@@ -329,37 +334,38 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
  * \param result Output parameter: whether skip
  * \return Is the copy successful
  */
-bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, const FileInfoPointer &targetPathInfo, const FileInfoPointer &toInfo, bool *skip)
+bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo, const DFileInfoPointer &toInfo, bool *skip)
 {
     // 检查磁盘空间
-    if (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), targetOrgUrl, skip))
+    if (!checkDiskSpaceAvailable(fromInfo->uri(), targetOrgUrl, skip))
         return false;
 
     bool ok = false;
     if (!toInfo)
         return false;
 
-    if (fromInfo->isAttributes(OptInfoType::kIsSymLink)) {
+    if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
         ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (ok) {
             workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
             cutAndDeleteFiles.append(fromInfo);
         }
-    } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
+    } else if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
         ok = checkAndCopyDir(fromInfo, toInfo, skip);
         if (ok)
             workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
     } else {
-        const QUrl &url = toInfo->urlOf(UrlInfoType::kUrl);
+        const QUrl &url = toInfo->uri();
+        auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
 
         // check file file size bigger than 4 GB
-        if (!checkFileSize(fromInfo->size(), fromInfo->urlOf(UrlInfoType::kUrl), url, skip))
+        if (!checkFileSize(fromSize, fromInfo->uri(), url, skip))
             return ok;
 
         FileUtils::cacheCopyingFileUrl(url);
         initSignalCopyWorker();
         DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
-        if (fromInfo->size() > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
+        if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
             do {
                 nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
             } while( nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
@@ -372,12 +378,11 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
         FileUtils::removeCopyingFileUrl(url);
     }
 
+    toInfo->initQuerier();
     if (ok && toInfo->exists() && targetInfo == targetPathInfo) {
-        completeSourceFiles.append(fromInfo->urlOf(UrlInfoType::kUrl));
-        completeTargetFiles.append(toInfo->urlOf(UrlInfoType::kUrl));
+        completeSourceFiles.append(fromInfo->uri());
+        completeTargetFiles.append(toInfo->uri());
     }
-
-    targetPathInfo->refresh();
 
     return ok;
 }
@@ -389,72 +394,59 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const FileInfoPointer &fromInfo, c
  * \param result Output parameter: whether skip
  * \return Is it successful
  */
-bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, const QString &fileName,
-                                        FileInfoPointer &newTargetInfo, bool *skip)
+DFileInfoPointer FileOperateBaseWorker::doCheckFile(const DFileInfoPointer &fromInfo,
+                                                    const DFileInfoPointer &toInfo,
+                                                    const QString &fileName,
+                                                    bool *skip)
 {
-    // 检查源文件的文件信息
-    if (!fromInfo) {
-        fmCritical() << " check file from file info is  nullpter !!!!!!!";
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl),
-                                                                        AbstractJobHandler::JobErrorType::kProrogramError);
-        setSkipValue(skip, action);
-        return false;
-    }
+    fromInfo->initQuerier();
     // 检查源文件是否存在
     if (!fromInfo->exists()) {
-        fmCritical() << " check file from file is  not exists !!!!!!!" << fromInfo->fileUrl();
-        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+        auto fromUrl = fromInfo->uri();
+        fmCritical() << " check file from file is  not exists !!!!!!!" << fromUrl;
         fromUrl.setPath(fromUrl.path().replace("\\", "/"));
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kAbsolutePath).startsWith("/root/")
-                                                      && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->attribute(DFileInfo::AttributeID::kStandardFilePath).toString().startsWith("/root/")
+                                                      && !toInfo->attribute(DFileInfo::AttributeID::kStandardFilePath).toString().startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl,
-                                                                        toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), errortype);
+                                                                        toInfo == nullptr ? QUrl() : toInfo->uri(), errortype);
 
         setSkipValue(skip, action);
-        return false;
-    }
-    // 检查目标文件的文件信息
-    if (!toInfo) {
-        fmCritical() << " check file to file perant info is  nullpter !!!!!!!";
-        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
-        fromUrl.setPath(fromUrl.path().replace("\\", "/"));
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl, QUrl(),
-                                                                        AbstractJobHandler::JobErrorType::kProrogramError);
-        setSkipValue(skip, action);
-        return false;
+        return nullptr;
     }
     // 检查目标文件是否存在
+    toInfo->initQuerier();
     if (!toInfo->exists()) {
         fmCritical() << " check file to file perant file is  not exists !!!!!!!";
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
-                                                      && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->attribute(DFileInfo::AttributeID::kStandardFilePath).toString().startsWith("/root/")
+                                                      && !toInfo->attribute(DFileInfo::AttributeID::kStandardFilePath).toString().startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
-        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+        auto fromUrl = fromInfo->uri();
         fromUrl.setPath(fromUrl.path().replace("\\", "/"));
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl,
-                                                                        toInfo->urlOf(UrlInfoType::kUrl), errortype, true);
+                                                                        toInfo->uri(), errortype, true);
         setSkipValue(skip, action);
-        return false;
+        return nullptr;
     }
     // 特殊文件判断
-    switch (fromInfo->fileType()) {
+    switch (fileType(fromInfo)) {
     case FileInfo::FileType::kCharDevice:
     case FileInfo::FileType::kBlockDevice:
     case FileInfo::FileType::kFIFOFile:
     case FileInfo::FileType::kSocketFile: {
-        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+        auto fromUrl = fromInfo->uri();
         fromUrl.setPath(fromUrl.path().replace("\\", "/"));
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl,
-                                                                        toInfo->urlOf(UrlInfoType::kUrl),
+                                                                        toInfo->uri(),
                                                                         AbstractJobHandler::JobErrorType::kSpecialFileError);
         setSkipValue(skip, action);
         if (skip && *skip)
-            workData->skipWriteSize += fromInfo->size() <= 0 ? workData->dirSize : fromInfo->size();
+            workData->skipWriteSize += fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0
+                    ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
 
-        return false;
+        return nullptr;
     }
     default:
         break;
@@ -463,16 +455,14 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
     // 创建新的目标文件并做检查
     QString fileNewName = fileName;
     // bug 205732, 回收站文件找到源文件名称
-    bool isTrashFile = FileUtils::isTrashFile(fromInfo->urlOf(UrlInfoType::kUrl));
+    bool isTrashFile = FileUtils::isTrashFile(fromInfo->uri());
     if (isTrashFile) {
         auto trashInfoUrl = trashInfo(fromInfo);
         fileNewName = trashInfoUrl.isValid() ? fileOriginName(trashInfoUrl) : fileName;
     }
-    newTargetInfo.reset();
-    if (!doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, skip, true))
-        return false;
+    DFileInfoPointer newTargetInfo = doCheckNewFile(fromInfo, toInfo, fileNewName, skip, true);
 
-    return true;
+    return newTargetInfo;
 }
 /*!
  * \brief FileOperateBaseWorker::creatSystemLink Create system link file
@@ -481,38 +471,40 @@ bool FileOperateBaseWorker::doCheckFile(const FileInfoPointer &fromInfo, const F
  * \param result Output parameter: whether skip
  * \return Was the linked file created successfully
  */
-bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
+bool FileOperateBaseWorker::createSystemLink(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
                                              const bool followLink, const bool doCopy, bool *skip)
 {
     // 创建链接文件
-    FileInfoPointer newFromInfo = fromInfo;
+    DFileInfoPointer newFromInfo = fromInfo;
     if (followLink) {
         QStringList pathList;
-        QString pathValue = newFromInfo->urlOf(UrlInfoType::kUrl).path();
+        QString pathValue = newFromInfo->uri().path();
         pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator()
                 ? QString(pathValue).left(pathValue.length() - 1)
                 : pathValue;
         pathList.append(pathValue);
         do {
-            QUrl newUrl = newFromInfo->urlOf(UrlInfoType::kUrl);
-            pathValue = newFromInfo->pathOf(PathInfoType::kSymLinkTarget);
+            QUrl newUrl = newFromInfo->uri();
+            pathValue = newFromInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
             pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator()
                     ? QString(pathValue).left(pathValue.length() - 1)
                     : pathValue;
             newUrl.setPath(pathValue);
-            FileInfoPointer symlinkTarget = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+            DFileInfoPointer symlinkTarget(new DFileInfo(newUrl));
 
-            if (!symlinkTarget || !symlinkTarget->exists() || pathList.contains(pathValue)) {
+            symlinkTarget->initQuerier();
+            if (!symlinkTarget->exists() || pathList.contains(pathValue)) {
                 break;
             }
             pathList.append(pathValue);
 
             newFromInfo = symlinkTarget;
-        } while (newFromInfo->isAttributes(OptInfoType::kIsSymLink));
+        } while (newFromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool());
 
+        newFromInfo->initQuerier();
         if (newFromInfo->exists() && doCopy) {
             // copy file here
-            if (fromInfo->isAttributes(OptInfoType::kIsFile)) {
+            if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()) {
                 return checkAndCopyFile(fromInfo, toInfo, skip);
             } else {
                 return checkAndCopyDir(fromInfo, toInfo, skip);
@@ -524,10 +516,10 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
 
     do {
         actionForlink = AbstractJobHandler::SupportAction::kNoAction;
-        if (localFileHandler->createSystemLink(newFromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl))) {
+        if (localFileHandler->createSystemLink(newFromInfo->uri(), toInfo->uri())) {
             return true;
         }
-        actionForlink = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+        actionForlink = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                              AbstractJobHandler::JobErrorType::kSymlinkError, false,
                                              localFileHandler->errorString());
     } while (actionForlink == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
@@ -544,82 +536,97 @@ bool FileOperateBaseWorker::createSystemLink(const FileInfoPointer &fromInfo, co
  * \param result Output parameter: whether skip
  * \return Is it successful
  */
-bool FileOperateBaseWorker::doCheckNewFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo,
-                                           FileInfoPointer &newTargetInfo, QString &fileNewName, bool *skip, bool isCountSize)
+DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &fromInfo,
+                                                       const DFileInfoPointer &toInfo,
+                                                       QString &fileNewName, bool *skip,
+                                                       bool isCountSize)
 {
     auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
-    if (createNewTargetInfo(fromInfo, toInfo, newTargetInfo, newTargetUrl, skip, isCountSize))
-        return true;
-    if (!newTargetInfo)
-        return false;
+    DFileInfoPointer newTargetInfo { new DFileInfo(newTargetUrl)};
+    newTargetInfo->initQuerier();
+    if (!newTargetInfo->exists())
+        return newTargetInfo;
 
-    if (!workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->urlOf(UrlInfoType::kUrl), newTargetUrl)) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
-                                                                        toInfo->urlOf(UrlInfoType::kUrl),
+    if (!workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->uri(), newTargetUrl)) {
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->uri(),
+                                                                        toInfo->uri(),
                                                                         AbstractJobHandler::JobErrorType::kTargetIsSelfError);
         if (AbstractJobHandler::SupportAction::kSkipAction == action) {
             setSkipValue(skip, action);
             if (skip && *skip)
-                workData->skipWriteSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? workData->dirSize : fromInfo->size();
-            return false;
+                workData->skipWriteSize += isCountSize
+                        && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+                            || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0)
+                        ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+            return nullptr;
         }
 
         if (action != AbstractJobHandler::SupportAction::kEnforceAction) {
             setSkipValue(skip, action);
             if (skip && *skip)
-                workData->skipWriteSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? workData->dirSize : fromInfo->size();
-            return false;
+                workData->skipWriteSize += isCountSize
+                        && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+                            || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0)
+                        ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+            return nullptr;
         }
     };
 
-    bool newTargetIsFile = newTargetInfo->isAttributes(OptInfoType::kIsFile) || newTargetInfo->isAttributes(OptInfoType::kIsSymLink);
+    bool newTargetIsFile = newTargetInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()
+            || newTargetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
     AbstractJobHandler::JobErrorType errortype = newTargetIsFile ? AbstractJobHandler::JobErrorType::kFileExistsError
                                                                  : AbstractJobHandler::JobErrorType::kDirectoryExistsError;
-    AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
-                                                                    newTargetInfo->urlOf(UrlInfoType::kUrl), errortype, true);
+    AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->uri(),
+                                                                    newTargetInfo->uri(), errortype, true);
     switch (action) {
     case AbstractJobHandler::SupportAction::kReplaceAction: {
         const QVariant &var = doActionReplace(fromInfo, newTargetInfo, isCountSize);
-        if (var.isValid()) {
-            return var.toBool();
-        }
+        if (var.isValid())
+            return var.toBool() ? newTargetInfo : nullptr;
         break;
     }
     case AbstractJobHandler::SupportAction::kMergeAction: {
         const QVariant &var = doActionMerge(fromInfo, newTargetInfo, isCountSize);
-        if (var.isValid()) {
-            return var.toBool();
-        }
+        if (var.isValid())
+            return var.toBool() ? newTargetInfo : nullptr;
         break;
     }
     case AbstractJobHandler::SupportAction::kSkipAction: {
-        workData->skipWriteSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? workData->dirSize : fromInfo->size();
+        workData->skipWriteSize += (isCountSize &&
+                                    (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+                                     || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0))
+                ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
         setSkipValue(skip, action);
-        return false;
+        return nullptr;
     }
     case AbstractJobHandler::SupportAction::kCoexistAction: {
-        fileNewName = FileUtils::nonExistFileName(newTargetInfo, toInfo);
+        const auto ne = InfoFactory::create<FileInfo>(newTargetInfo->uri(), Global::CreateFileInfoType::kCreateFileInfoSync);
+        const auto to = InfoFactory::create<FileInfo>(toInfo->uri(), Global::CreateFileInfoType::kCreateFileInfoSync);
+        fileNewName = FileUtils::nonExistFileName(ne, to);
         if (fileNewName.isEmpty()) {
-            return false;
+            return nullptr;
         }
         auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
-        return createNewTargetInfo(fromInfo, toInfo, newTargetInfo, newTargetUrl, skip, isCountSize);
+        newTargetInfo.reset(new DFileInfo(newTargetUrl));
+        newTargetInfo->initQuerier();
+        return !newTargetInfo->exists() ? newTargetInfo : nullptr;
     }
     case AbstractJobHandler::SupportAction::kCancelAction: {
         stopWork.store(true);
-        return false;
+        return nullptr;
     }
     default:
-        return false;
+        return nullptr;
     }
-    return true;
+    return newTargetInfo;
 }
 
-bool FileOperateBaseWorker::checkAndCopyFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip)
+bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
+    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
     // check file file size bigger than 4 GB
-    if (!checkFileSize(fromInfo->size(), fromInfo->urlOf(UrlInfoType::kUrl),
-                       toInfo->urlOf(UrlInfoType::kUrl), skip))
+    if (!checkFileSize(fromSize, fromInfo->uri(),
+                       toInfo->uri(), skip))
         return false;
 
     if (jobType == AbstractJobHandler::JobType::kCutType)
@@ -629,7 +636,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const FileInfoPointer fromInfo, con
         while (bigFileCopy && !isStopped()) {
             QThread::msleep(10);
         }
-        if (fromInfo->size() > bigFileSize) {
+        if (fromSize > bigFileSize) {
             bigFileCopy = true;
             auto result = doCopyLocalBigFile(fromInfo, toInfo, skip);
             bigFileCopy = false;
@@ -642,26 +649,27 @@ bool FileOperateBaseWorker::checkAndCopyFile(const FileInfoPointer fromInfo, con
     return doCopyOtherFile(fromInfo, toInfo, skip);
 }
 
-bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, bool *skip)
+bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip)
 {
-    emitCurrentTaskNotify(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
+    emitCurrentTaskNotify(fromInfo->uri(), toInfo->uri());
     // 检查文件的一些合法性，源文件是否存在，创建新的目标目录名称，检查新创建目标目录名称是否存在
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    QFileDevice::Permissions permissions = fromInfo->permissions();
+    QFileDevice::Permissions permissions = QFileDevice::Permissions(uint(fromInfo->permissions()));
+    toInfo->initQuerier();
     if (!toInfo->exists()) {
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
-            if (localFileHandler->mkdir(toInfo->urlOf(UrlInfoType::kUrl)))
+            if (localFileHandler->mkdir(toInfo->uri()))
                 break;
             // 特殊处理
             auto errstr = localFileHandler->errorString();
-            auto fileUrl= toInfo->urlOf(UrlInfoType::kUrl);
+            auto fileUrl= toInfo->uri();
             if (localFileHandler->errorCode() == DFMIOErrorCode::DFM_IO_ERROR_FAILED
                     && fileUrl.path().toLocal8Bit().size() > 255
                     && FileUtils::isMtpFile(fileUrl))
                 errstr = tr("The file name or the path is too long!");
 
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kMkdirError, true,
                                           errstr);
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
@@ -680,7 +688,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
 
         if (workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf)) {
             QSharedPointer<DirSetPermissonInfo> dirinfo(new DirSetPermissonInfo);
-            dirinfo->target = toInfo->urlOf(UrlInfoType::kUrl);
+            dirinfo->target = toInfo->uri();
             dirinfo->permission = permissions;
             dirPermissonList.appendByLock(dirinfo);
             return true;
@@ -689,10 +697,10 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
 
     // 遍历源文件，执行一个一个的拷贝
     QString error;
-    const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->urlOf(UrlInfoType::kUrl), &error);
+    const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->uri(), &error);
     if (!iterator) {
         fmCritical() << "create dir's iterator failed, case : " << error;
-        doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
 
@@ -703,7 +711,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
         }
 
         const QUrl &url = iterator->next();
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        DFileInfoPointer info(new DFileInfo(url));
         bool ok = doCopyFile(info, toInfo, skip);
         if (!ok && (!skip || !*skip)) {
             return false;
@@ -715,7 +723,8 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
                 continue;
             }
 
-            if (info->isAttributes(OptInfoType::kIsSymLink) || info->isAttributes(OptInfoType::kIsFile)) {
+            if (info->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+                    || info->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()) {
                 cutAndDeleteFiles.append(info);
             } else if (self && !cutAndDeleteFiles.contains(info)) {
                 self = false;
@@ -728,12 +737,12 @@ bool FileOperateBaseWorker::checkAndCopyDir(const FileInfoPointer &fromInfo, con
 
     if (isTargetFileLocal && isSourceFileLocal) {
         DirPermsissonPointer dirinfo(new DirSetPermissonInfo);
-        dirinfo->target = toInfo->urlOf(UrlInfoType::kUrl);
+        dirinfo->target = toInfo->uri();
         dirinfo->permission = permissions;
         dirPermissonList.appendByLock(dirinfo);
     } else {
-        if (permissions && !FileUtils::isMtpFile(toInfo->urlOf(UrlInfoType::kUrl)))
-            localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
+        if (permissions && !FileUtils::isMtpFile(toInfo->uri()))
+            localFileHandler->setPermissions(toInfo->uri(), permissions);
     }
 
     return true;
@@ -775,12 +784,13 @@ void FileOperateBaseWorker::initCopyWay()
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
 
-QUrl FileOperateBaseWorker::trashInfo(const FileInfoPointer &fromInfo)
+QUrl FileOperateBaseWorker::trashInfo(const DFileInfoPointer &fromInfo)
 {
-    auto parentPath = fromInfo->urlOf(UrlInfoType::kParentUrl).path();
+
+    auto parentPath = parentUrl(fromInfo->uri()).path();
     if (!parentPath.endsWith("files"))
         return QUrl();
-    auto fileName = fromInfo->nameOf(NameInfoType::kFileName);
+    auto fileName = fromInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString();
     auto trashInfoUrl = QUrl::fromLocalFile(parentPath.replace("files", "info/") + fileName + ".trashinfo");
     return trashInfoUrl;
 }
@@ -846,31 +856,31 @@ void FileOperateBaseWorker::initSignalCopyWorker()
     }
 }
 
-QUrl FileOperateBaseWorker::createNewTargetUrl(const FileInfoPointer &toInfo, const QString &fileName)
+QUrl FileOperateBaseWorker::createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName)
 {
     QString fileNewName = formatFileName(fileName);
     // 创建文件的名称
-    QUrl newTargetUrl = toInfo->urlOf(UrlInfoType::kUrl);
+    QUrl newTargetUrl = toInfo->uri();
     const QString &newTargetPath = newTargetUrl.path();
     const QString &newPath = DFMIO::DFMUtils::buildFilePath(newTargetPath.toStdString().c_str(), fileNewName.toStdString().c_str(), nullptr);
     newTargetUrl.setPath(newPath);
     return newTargetUrl;
 }
 
-bool FileOperateBaseWorker::doCopyLocalFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo)
+bool FileOperateBaseWorker::doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo)
 {
     if (!stateCheck())
         return false;
 
     QtConcurrent::run(threadPool.data(), threadCopyWorker[threadCopyFileCount % threadCount].data(),
-                      static_cast<void (DoCopyFileWorker::*)(const FileInfoPointer, const FileInfoPointer)>(&DoCopyFileWorker::doFileCopy),
+                      static_cast<void (DoCopyFileWorker::*)(const DFileInfoPointer, const DFileInfoPointer)>(&DoCopyFileWorker::doFileCopy),
                       fromInfo, toInfo);
 
     threadCopyFileCount++;
     return true;
 }
 
-bool FileOperateBaseWorker::doCopyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip)
+bool FileOperateBaseWorker::doCopyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     waitThreadPoolOver();
     // open file
@@ -897,7 +907,7 @@ bool FileOperateBaseWorker::doCopyLocalBigFile(const FileInfoPointer fromInfo, c
     }
     auto toPoint = doCopyLocalBigFileMap(fromInfo, toInfo, toFd, PROT_WRITE, skip);
     if (!toPoint) {
-        munmap(fromPoint, static_cast<size_t>(fromInfo->size()));
+        munmap(fromPoint, static_cast<size_t>(fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()));
         close(fromFd);
         close(toFd);
         return false;
@@ -907,78 +917,80 @@ bool FileOperateBaseWorker::doCopyLocalBigFile(const FileInfoPointer fromInfo, c
     // wait copy
     waitThreadPoolOver();
     // clear
-    doCopyLocalBigFileClear(static_cast<size_t>(fromInfo->size()), fromFd, toFd, fromPoint, toPoint);
+    doCopyLocalBigFileClear(static_cast<size_t>(fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()), fromFd, toFd, fromPoint, toPoint);
     // set permissions
-    setTargetPermissions(fromInfo, toInfo);
+    setTargetPermissions(fromInfo->uri(), toInfo->uri());
     return true;
 }
 
-bool FileOperateBaseWorker::doCopyLocalBigFileResize(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, int toFd, bool *skip)
+bool FileOperateBaseWorker::doCopyLocalBigFileResize(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int toFd, bool *skip)
 {
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
+    __off_t length = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
     do {
-        __off_t length = fromInfo->size();
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (-1 == ftruncate(toFd, length)) {
             auto lastError = strerror(errno);
-            fmWarning() << "file resize error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                        << " url to: " << toInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << O_RDONLY
+            fmWarning() << "file resize error, url from: " << fromInfo->uri()
+                        << " url to: " << toInfo->uri() << " open flag: " << O_RDONLY
                         << " error code: " << errno << " error msg: " << lastError;
 
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kResizeError, true, lastError);
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     checkRetry();
 
-    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip))
+    if (!actionOperating(action, length <= 0 ? FileUtils::getMemoryPageSize() : length, skip))
         return false;
 
     return true;
 }
 
-char *FileOperateBaseWorker::doCopyLocalBigFileMap(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, int fd, const int per, bool *skip)
+char *FileOperateBaseWorker::doCopyLocalBigFileMap(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int fd, const int per, bool *skip)
 {
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     void *point = nullptr;
+    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
-        point = mmap(nullptr, static_cast<size_t>(fromInfo->size()),
+        point = mmap(nullptr, static_cast<size_t>(fromSize),
                      per, MAP_SHARED, fd, 0);
         if (!point || point == MAP_FAILED) {
             auto lastError = strerror(errno);
-            fmWarning() << "file mmap error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                        << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl)
+            fmWarning() << "file mmap error, url from: " << fromInfo->uri()
+                        << " url to: " << fromInfo->uri()
                         << " error code: " << errno << " error msg: " << lastError;
 
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kOpenError, fd == PROT_WRITE, lastError);
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     checkRetry();
 
-    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip))
+    if (!actionOperating(action, fromSize <= 0 ? FileUtils::getMemoryPageSize() : fromSize, skip))
         return nullptr;
 
     return static_cast<char *>(point);
 }
 
-void FileOperateBaseWorker::memcpyLocalBigFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, char *fromPoint, char *toPoint)
+void FileOperateBaseWorker::memcpyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, char *fromPoint, char *toPoint)
 {
-    auto offset = fromInfo->size() / threadCount;
+    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+    auto offset = fromSize / threadCount;
     char *fromPointStart = fromPoint;
     char *toPointStart = toPoint;
     for (int i = 0; i < threadCount; i++) {
-        offset = (i == (threadCount - 1) ? fromInfo->size() - (threadCount - 1) * offset : offset);
+        offset = (i == (threadCount - 1) ? fromSize - (threadCount - 1) * offset : offset);
 
         char *tempfFromPointStart = fromPointStart;
         char *tempfToPointStart = toPointStart;
         size_t tempOffet = static_cast<size_t>(offset);
         QtConcurrent::run(threadPool.data(), threadCopyWorker[i].data(),
-                          static_cast<void (DoCopyFileWorker::*)(const FileInfoPointer fromInfo,
-                                                                 const FileInfoPointer toInfo,
+                          static_cast<void (DoCopyFileWorker::*)(const DFileInfoPointer fromInfo,
+                                                                 const DFileInfoPointer toInfo,
                                                                  char *dest, char *source, size_t size)>(&DoCopyFileWorker::doMemcpyLocalBigFile),
                           fromInfo, toInfo, tempfToPointStart, tempfFromPointStart, tempOffet);
 
@@ -996,30 +1008,32 @@ void FileOperateBaseWorker::doCopyLocalBigFileClear(const size_t size,
     close(toFd);
 }
 
-int FileOperateBaseWorker::doOpenFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, const bool isTo, const int openFlag, bool *skip)
+int FileOperateBaseWorker::doOpenFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                                      const bool isTo, const int openFlag, bool *skip)
 {
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
-    emitCurrentTaskNotify(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
+    emitCurrentTaskNotify(fromInfo->uri(), toInfo->uri());
     int fd = -1;
     do {
-        QUrl url = isTo ? toInfo->urlOf(UrlInfoType::kUrl) : fromInfo->urlOf(UrlInfoType::kUrl);
+        QUrl url = isTo ? toInfo->uri() : fromInfo->uri();
         std::string path = url.path().toStdString();
         fd = open(path.c_str(), openFlag, 0666);
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (fd < 0) {
             auto lastError = strerror(errno);
-            fmWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
-                        << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << openFlag
+            fmWarning() << "file open error, url from: " << fromInfo->uri()
+                        << " url to: " << fromInfo->uri() << " open flag: " << openFlag
                         << " error code: " << errno << " error msg: " << lastError;
 
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kOpenError, isTo, lastError);
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     checkRetry();
 
-    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip)) {
+    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+    if (!actionOperating(action, fromSize <= 0 ? FileUtils::getMemoryPageSize() : fromSize, skip)) {
         if (fd >= 0)
             close(fd);
         return -1;
@@ -1028,15 +1042,16 @@ int FileOperateBaseWorker::doOpenFile(const FileInfoPointer fromInfo, const File
     return fd;
 }
 
-bool FileOperateBaseWorker::doCopyOtherFile(const FileInfoPointer fromInfo, const FileInfoPointer toInfo, bool *skip)
+bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     initSignalCopyWorker();
-    const QString &targetUrl = toInfo->urlOf(UrlInfoType::kUrl).toString();
+    const QString &targetUrl = toInfo->uri().toString();
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     bool ok { false };
+    const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
     DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
-    if (fromInfo->size() > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
+    if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
         do {
             nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
         } while( nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
@@ -1068,32 +1083,6 @@ bool FileOperateBaseWorker::actionOperating(const AbstractJobHandler::SupportAct
     return true;
 }
 
-bool FileOperateBaseWorker::createNewTargetInfo(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, FileInfoPointer &newTargetInfo, const QUrl &fileNewUrl, bool *skip, bool isCountSize)
-{
-    newTargetInfo.reset();
-
-    QString error;
-    newTargetInfo = InfoFactory::create<FileInfo>(fileNewUrl, Global::CreateFileInfoType::kCreateFileInfoSync, &error);
-
-    if (!newTargetInfo || !error.isEmpty()) {
-        fmWarning() << "newTargetInfo is null = " << !newTargetInfo << ", error message = " << error;
-        AbstractJobHandler::SupportAction action =
-                doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
-                                     toInfo->urlOf(UrlInfoType::kUrl),
-                                     AbstractJobHandler::JobErrorType::kProrogramError);
-        setSkipValue(skip, action);
-        if (skip && *skip)
-            workData->skipWriteSize += (isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0)) ? workData->dirSize : fromInfo->size();
-
-        return false;
-    }
-
-    if (!newTargetInfo->exists())
-        return true;
-
-    return false;
-}
-
 void FileOperateBaseWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                                             const bool isTo, const quint64 id, const QString &errorMsg,
                                             const bool allUsErrorMsg)
@@ -1113,31 +1102,40 @@ void FileOperateBaseWorker::skipMemcpyBigFile(const QUrl url)
     }
 }
 
-QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize)
+QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const DFileInfoPointer &fromInfo,
+                                                    const DFileInfoPointer &newTargetInfo,
+                                                    const bool isCountSize)
 {
-    if (newTargetInfo->isAttributes(OptInfoType::kIsSymLink)) {
+    if (newTargetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
         LocalFileHandler handler;
-        if (!handler.deleteFile(newTargetInfo->urlOf(UrlInfoType::kUrl)))
+        if (!handler.deleteFile(newTargetInfo->uri()))
             return false;
     }
 
-    const QUrl &newTargetUrl = newTargetInfo->urlOf(UrlInfoType::kUrl);
-    if (newTargetUrl == fromInfo->urlOf(UrlInfoType::kUrl)) {
-        workData->skipWriteSize += (isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0)) ? workData->dirSize : fromInfo->size();
+    const QUrl &newTargetUrl = newTargetInfo->uri();
+    if (newTargetUrl == fromInfo->uri()) {
+        workData->skipWriteSize += (isCountSize &&
+                                    (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+                                     || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0))
+                ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
         return true;
     }
 
     return QVariant();
 }
 
-QVariant FileOperateBaseWorker::doActionReplace(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize)
+QVariant FileOperateBaseWorker::doActionReplace(const DFileInfoPointer &fromInfo,
+                                                const DFileInfoPointer &newTargetInfo,
+                                                const bool isCountSize)
 {
     const QVariant &var = checkLinkAndSameUrl(fromInfo, newTargetInfo, isCountSize);
     if (var.isValid())
         return var;
 
-    const bool fromIsFile = fromInfo->isAttributes(OptInfoType::kIsFile) || fromInfo->isAttributes(OptInfoType::kIsSymLink);
-    const bool newTargetIsFile = newTargetInfo->isAttributes(OptInfoType::kIsFile) || newTargetInfo->isAttributes(OptInfoType::kIsSymLink);
+    const bool fromIsFile = fromInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()
+            || fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
+    const bool newTargetIsFile = newTargetInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()
+            || newTargetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
 
     if (fromIsFile == newTargetIsFile) {
         return QVariant();
@@ -1146,10 +1144,12 @@ QVariant FileOperateBaseWorker::doActionReplace(const FileInfoPointer &fromInfo,
     }
 }
 
-QVariant FileOperateBaseWorker::doActionMerge(const FileInfoPointer &fromInfo, const FileInfoPointer &newTargetInfo, const bool isCountSize)
+QVariant FileOperateBaseWorker::doActionMerge(const DFileInfoPointer &fromInfo, const DFileInfoPointer &newTargetInfo, const bool isCountSize)
 {
-    const bool fromIsFile = fromInfo->isAttributes(OptInfoType::kIsFile) || fromInfo->isAttributes(OptInfoType::kIsSymLink);
-    const bool newTargetIsFile = newTargetInfo->isAttributes(OptInfoType::kIsFile) || newTargetInfo->isAttributes(OptInfoType::kIsSymLink);
+    const bool fromIsFile = fromInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()
+            || fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
+    const bool newTargetIsFile = newTargetInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()
+            || newTargetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
 
     if (!fromIsFile && !newTargetIsFile) {
         // target is dir, do merged
@@ -1161,19 +1161,22 @@ QVariant FileOperateBaseWorker::doActionMerge(const FileInfoPointer &fromInfo, c
     }
 }
 
-bool FileOperateBaseWorker::doCopyFile(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo, bool *skip)
+bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip)
 {
-    FileInfoPointer newTargetInfo(nullptr);
     bool result = false;
-    if (!doCheckFile(fromInfo, toInfo,
-                     fromInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, skip))
+    DFileInfoPointer newTargetInfo = doCheckFile(fromInfo, toInfo,
+                                                 fromInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(), skip);
+    if (newTargetInfo.isNull())
         return result;
 
-    if (fromInfo->isAttributes(OptInfoType::kIsSymLink)) {
+    if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
         result = createSystemLink(fromInfo, newTargetInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (result)
-            workData->zeroOrlinkOrDirWriteSize += (newTargetInfo->size() > 0 ? newTargetInfo->size() : FileUtils::getMemoryPageSize());
-    } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
+            workData->zeroOrlinkOrDirWriteSize +=
+                    (newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() > 0 ?
+                         newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()
+                       : FileUtils::getMemoryPageSize());
+    } else if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
         if (result || skip)
             workData->zeroOrlinkOrDirWriteSize += workData->dirSize <= 0 ? FileUtils::getMemoryPageSize() : workData->dirSize;
@@ -1182,7 +1185,7 @@ bool FileOperateBaseWorker::doCopyFile(const FileInfoPointer &fromInfo, const Fi
     }
 
     if (targetInfo == toInfo) {
-        completeSourceFiles.append(fromInfo->urlOf(UrlInfoType::kUrl));
+        completeSourceFiles.append(fromInfo->uri());
         precompleteTargetFileInfo.append(newTargetInfo);
     }
 
