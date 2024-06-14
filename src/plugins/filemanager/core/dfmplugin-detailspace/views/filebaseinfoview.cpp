@@ -292,6 +292,8 @@ void FileBaseInfoView::audioExtenInfoReceiver(const QStringList &properties)
 
 void FileBaseInfoView::slotImageExtenInfo(const QStringList &properties)
 {
+    if (properties.isEmpty() || properties.first().startsWith("0x0"))
+        return;
     if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
         fileViewSize->setVisible(true);
         fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
@@ -301,13 +303,14 @@ void FileBaseInfoView::slotImageExtenInfo(const QStringList &properties)
 
 void FileBaseInfoView::slotVideoExtenInfo(const QStringList &properties)
 {
-    if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
+    if (fileViewSize && fileViewSize->RightValue().isEmpty() &&
+            !properties.isEmpty() && !properties.first().startsWith("0x0")) {
         fileViewSize->setVisible(true);
         fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
         fileViewSize->adjustHeight();
     }
 
-    if (fileDuration && fileDuration->RightValue().isEmpty()) {
+    if (fileDuration && fileDuration->RightValue().isEmpty() && properties.count() > 1) {
         fileDuration->setVisible(true);
         fileDuration->setRightValue(properties.count() > 1 ? properties[1] : " ", Qt::ElideNone, Qt::AlignLeft, true);
         fileDuration->adjustHeight();
