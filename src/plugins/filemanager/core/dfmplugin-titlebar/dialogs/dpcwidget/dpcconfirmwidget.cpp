@@ -4,7 +4,9 @@
 
 #include "dpcconfirmwidget.h"
 
+#include <dfm-framework/dpf.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <DPasswordEdit>
 #include <DFloatingWidget>
@@ -23,6 +25,7 @@
 #include <QDBusPendingCall>
 #include <QLibrary>
 
+Q_DECLARE_METATYPE(QString *)
 DCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -285,7 +288,15 @@ void DPCConfirmWidget::onSaveBtnClicked()
 
     if (accessControlInter->isValid()) {
         setEnabled(false);
-        accessControlInter->asyncCall(DaemonServiceIFace::kFuncChangePwd, oldPwdEdit->text(), newPwdEdit->text());
+        QString oldPass(oldPwdEdit->text().trimmed()), newPass(newPwdEdit->text().trimmed()),
+                oldPassEnc, newPassEnc;
+        int ret = dpfSlotChannel->push("dfmplugin_stringencrypt", "slot_OpenSSL_EncryptString", oldPass, &oldPassEnc).toInt();
+        ret = dpfSlotChannel->push("dfmplugin_stringencrypt", "slot_OpenSSL_EncryptString", newPass, &newPassEnc).toInt();
+        if (ret != 0) {
+            DialogManagerInstance->showErrorDialog(tr("Error"), tr("Cannot encrypt password!"));
+            return;
+        }
+        accessControlInter->asyncCall(DaemonServiceIFace::kFuncChangePwd, oldPassEnc, newPassEnc);
     }
 }
 
