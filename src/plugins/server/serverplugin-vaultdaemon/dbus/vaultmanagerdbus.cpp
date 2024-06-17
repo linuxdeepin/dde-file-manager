@@ -171,7 +171,7 @@ bool VaultManagerDBus::IsValidInvoker()
 #ifdef QT_DEBUG
     return true;
 #else
-    static QStringList kVaultWhiteProcess = { "/usr/bin/dde-file-manager" };
+    static QStringList kVaultWhiteProcess = { "/usr/bin/dde-file-manager", "/usr/libexec/dde-file-manager" };
     if (connection().isConnected()) {
         uint pid = connection().interface()->servicePid(message().service()).value();
         QFileInfo f(QString("/proc/%1/exe").arg(pid));
