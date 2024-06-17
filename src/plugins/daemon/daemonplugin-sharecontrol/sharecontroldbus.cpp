@@ -7,11 +7,15 @@
 #include "dbusadapter/sharecontrol_adapter.h"
 #include "daemonplugin_sharecontrol_global.h"
 
+#include <dfm-framework/dpf.h>
+
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDebug>
 #include <QProcess>
 #include <QFileInfo>
+
+Q_DECLARE_METATYPE(QString *)
 
 static constexpr char kUserShareObjPath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.UserShareManager" };
@@ -73,18 +77,26 @@ bool ShareControlDBus::SetUserSharePassword(const QString &name, const QString &
         return false;
     }
 
-    fmDebug() << name;   // << passward; // log password?
+    QString clearPasswd;
+    int ret = dpfSlotChannel->push("daemonplugin_stringdecrypt", "slot_OpenSSL_DecryptString",
+                                   passwd, &clearPasswd)
+                      .toInt();
+    if (ret != 0) {
+        fmWarning() << "cannot decrypt password!!!";
+        return false;
+    }
+
     QStringList args;
     args << "-a" << name << "-s";
     QProcess p;
     p.start("smbpasswd", args);
-    p.write(passwd.toStdString().c_str());
+    p.write(clearPasswd.toStdString().c_str());
     p.write("\n");
-    p.write(passwd.toStdString().c_str());
+    p.write(clearPasswd.toStdString().c_str());
     p.closeWriteChannel();
-    bool ret = p.waitForFinished();
+    bool r = p.waitForFinished();
     fmDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
-    return ret;
+    return r;
 }
 
 bool ShareControlDBus::EnableSmbServices()
