@@ -14,7 +14,7 @@
     ],
     "Quick" : [
         {
-            "Url" : "Titlebar.qml",
+            "Url" : "qml/Titlebar.qml",
             "Id" : "titlebar",
             "Parent" : "dfmplugin-core.filewindow"
         }
