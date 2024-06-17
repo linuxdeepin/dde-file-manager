@@ -84,7 +84,9 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     if (nullDirDelete || !FileUtils::fileCanTrash(sourceFirst) || !dfmio::DFMUtils::supportTrash(sourceFirst)) {
         if (DialogManagerInstance->showDeleteFilesDialog(sources, true) != QDialog::Accepted)
             return nullptr;
-        handle = copyMoveJob->deletes(sources, flags);
+        handle = copyMoveJob->deletes(sources, flags, isInit);
+        if (!isInit)
+            return handle;
     } else {
         // check url permission
         QList<QUrl> urlsCanTrash = sources;
