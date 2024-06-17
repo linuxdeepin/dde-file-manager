@@ -181,6 +181,10 @@ void OptionButtonBox::initializeUi()
                          qobject_cast<QWidget *>(d->listViewButton), AcName::kAcComputerTitleBarListViewBtn);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->iconViewButton), AcName::kAcComputerTitleBarIconViewBtn);
+    if (d->treeViewButton) {
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                             qobject_cast<QWidget *>(d->treeViewButton), AcName::kAcComputerTitleBarTreeViewBtn);
+    }
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->detailButton), AcName::kAcComputerTitleBarDetailBtn);
 #endif
