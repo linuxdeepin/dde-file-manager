@@ -4,21 +4,18 @@ project(dfmplugin-detailspace)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB DETAILSPCE_FILES
+FILE(GLOB_RECURSE DETAILSPCE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    )
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.qml"
+)
 
 find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${DETAILSPCE_FILES}
-    DetailSpace.qml
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

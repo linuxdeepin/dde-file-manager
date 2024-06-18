@@ -40,6 +40,7 @@ void WindowManagerPrivate::asyncLoadQuickItem(Applet *applet)
             tmpEngine->completeCreation();
             QObject *rootObject = tmpEngine->rootObject();
             if (AppletItem *item = qobject_cast<AppletItem *>(rootObject)) {
+                item->setApplet(applet);
                 applet->dptr->setRootObject(item);
 
                 if (auto containment = applet->containment()) {

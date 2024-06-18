@@ -5,6 +5,7 @@
 #include <dfm-gui/applet.h>
 #include <dfm-gui/containment.h>
 #include "applet_p.h"
+#include "containment_p.h"
 
 #include <QJSEngine>
 
@@ -19,6 +20,7 @@ AppletPrivate::~AppletPrivate()
 {
     // 释放关联的 QQuickItem
     if (rootObject && QJSEngine::CppOwnership == QJSEngine::objectOwnership(rootObject)) {
+        Q_ASSERT_X(rootObject->parent() == q_ptr, "AppletItem memory management", "Undefined behaviour, unmanaged QQuickItem");
         rootObject->deleteLater();
     }
 }
@@ -32,6 +34,24 @@ void AppletPrivate::setRootObject(QObject *item)
     rootObject = item;
 
     Q_EMIT q_func()->rootObjectChanged(item);
+}
+
+/*!
+ * \brief 按层级递归打印当前 Applet 树信息
+ */
+void AppletPrivate::dumpAppletTreeImpl(int level)
+{
+    QString indent = QString(' ').repeated(level * 4);
+    qCDebug(logDFMGui) << indent << metaPtr;
+
+    if (flag.testFlag(Applet::kContainment)) {
+        if (auto containment = dynamic_cast<ContainmentPrivate *>(this)) {
+            qCDebug(logDFMGui) << indent << QStringLiteral("Applet chiledren:");
+            for (Applet *child : containment->applets) {
+                child->dptr->dumpAppletTreeImpl(level + 1);
+            }
+        }
+    }
 }
 
 /*!
@@ -94,22 +114,16 @@ QObject *Applet::rootObject() const
 }
 
 /*!
- * \brief 返回当前 Applet 的容器 Containment , 若自身是容器则会返回当前对象
- * \return 容器指针
+ * \brief 返回当前 Applet 的容器 Containment , 会递归向上查找
+ * \return 容器指针，若父对象没有容器，返回 nullptr
  */
 Containment *Applet::containment() const
 {
-    Containment *contain = qobject_cast<Containment *>(const_cast<Applet *>(this));
-    if (contain) {
-        return contain;
-    }
-    contain = nullptr;
-
+    Containment *contain = nullptr;
     QObject *parent = this->parent();
 
     while (parent) {
-        Containment *tmp = qobject_cast<Containment *>(parent);
-        if (tmp) {
+        if (Containment *tmp = qobject_cast<Containment *>(parent)) {
             contain = tmp;
             break;
         }
@@ -153,6 +167,14 @@ void Applet::setComponentUrl(const QUrl &url)
         d->componentUrl = url;
         Q_EMIT componentUrlChanged(url);
     }
+}
+
+/*!
+ * \brief 打印当前 Applet 树信息
+ */
+void Applet::dumpAppletTree()
+{
+    d_func()->dumpAppletTreeImpl();
 }
 
 DFMGUI_END_NAMESPACE

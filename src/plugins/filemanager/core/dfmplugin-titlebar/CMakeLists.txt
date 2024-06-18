@@ -5,27 +5,13 @@ project(dfmplugin-titlebar)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # TODO(zhangs): remove private
-FILE(GLOB TITLEBAR_FILES
+file(GLOB_RECURSE TITLEBAR_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/dpcwidget/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/dpcwidget/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.qml"
-    "${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml"
-    )
+)
+
 find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
@@ -42,6 +28,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
+    DFM::gui
     DFM::framework
     ${DtkWidget_LIBRARIES}
 )

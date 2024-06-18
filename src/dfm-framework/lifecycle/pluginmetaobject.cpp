@@ -221,7 +221,20 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjec
 }
 
 /*!
- * \brief 重定向全局Debug打印 PluginQuickInfo 对象的函数
+ * \brief operator <<
+ * 重定向全局Debug入口函数
+ * \param out
+ * \param pointer
+ * \return
+ */
+Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjectPointer &pointer)
+{
+    out << *pointer;
+    return out;
+}
+
+/*!
+ * \brief 重定向全局Debug打印 PluginQuickMetaData 对象的函数
  */
 Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginQuickMetaData &quickMeta)
 {
@@ -237,15 +250,11 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginQuickMeta
 }
 
 /*!
- * \brief operator <<
- * 重定向全局Debug入口函数
- * \param out
- * \param pointer
- * \return
+ * \brief 重定向全局Debug打印 PluginQuickMetaPtr 的函数
  */
-Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjectPointer &pointer)
+Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginQuickMetaPtr &quickMetaPtr)
 {
-    out << *pointer;
+    out << *quickMetaPtr;
     return out;
 }
 

@@ -77,10 +77,14 @@ Applet *AppletManagerPrivate::createAppletFromNode(const AppletTemplateNode::Ptr
     }
 
     if (applet->flags().testFlag(Applet::kContainment) && !node->childNode.isEmpty()) {
-        Containment *cotainment = applet->containment();
+        Containment *containment = qobject_cast<Containment *>(applet);
+        if (!containment) {
+            return nullptr;
+        }
+
         for (auto childNode : std::as_const(node->childNode)) {
             Applet *childApplet = createAppletFromNode(childNode, nullptr);
-            cotainment->appendApplet(childApplet);
+            containment->appendApplet(childApplet);
         }
     }
 

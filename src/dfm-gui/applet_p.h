@@ -23,6 +23,7 @@ public:
     virtual ~AppletPrivate();
 
     void setRootObject(QObject *item);
+    void dumpAppletTreeImpl(int level = 0);
 
     Applet *q_ptr;
     QUrl currentUrl;   // 当前 Applet 操作的文件 Url

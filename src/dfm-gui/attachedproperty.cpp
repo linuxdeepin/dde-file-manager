@@ -24,24 +24,6 @@ AppletAttached::~AppletAttached() { }
 
 Applet *AppletAttached::qmlAttachedProperties(QObject *object)
 {
-    AppletItem *item = qobject_cast<AppletItem *>(object);
-    if (item) {
-        return item->applet();
-    }
-    Applet *applet = qobject_cast<Applet *>(object);
-    if (applet) {
-        return applet;
-    }
-
-    QObject *parent = object->parent();
-    while (parent) {
-        if (auto parItem = qobject_cast<AppletItem *>(parent)) {
-            return parItem->applet();
-        }
-
-        parent = parent->parent();
-    }
-
     if (auto context = qmlContext(object)) {
         return context->contextProperty("_dfm_applet").value<Applet *>();
     }
@@ -62,7 +44,8 @@ ContainmentAttached::~ContainmentAttached() { }
 
 Containment *ContainmentAttached::qmlAttachedProperties(QObject *object)
 {
-    return qobject_cast<Containment *>(AppletAttached::qmlAttachedProperties(object));
+    auto contain = qobject_cast<Containment *>(AppletAttached::qmlAttachedProperties(object));
+    return contain;
 }
 
 DFMGUI_END_NAMESPACE

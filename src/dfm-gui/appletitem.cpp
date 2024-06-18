@@ -39,6 +39,16 @@ void AppletItem::setApplet(Applet *applet)
 }
 
 /*!
+ * \return 返回当前 Item 是否被初始化完成，目前是对 QQuickItem::isComponentComplete
+ *  的封装，用于判断是否被 QQmlEngine 完成创建
+ */
+bool AppletItem::isCreateComplete() const
+{
+    Q_D(const AppletItem);
+    return isComponentComplete() && d->applet;
+}
+
+/*!
  * \return 当前 Item 所在的顶层窗体
  */
 QQuickWindow *AppletItem::itemWindow() const
@@ -81,6 +91,7 @@ AppletItem *AppletItem::itemForApplet(Applet *applet)
     QObject *rootObject = engine.rootObject();
     if (rootObject) {
         if (auto item = qobject_cast<AppletItem *>(rootObject)) {
+            item->setApplet(applet);
             applet->dptr->setRootObject(item);
             return item;
         }
