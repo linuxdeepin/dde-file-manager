@@ -15,7 +15,7 @@ class QQuickWindow;
 DFMGUI_BEGIN_NAMESPACE
 
 class Panel;
-class FileManagerWindowHandleData;
+class WindowHandleData;
 
 class WindowHandle
 {
@@ -32,7 +32,7 @@ public:
 
 private:
     Q_DISABLE_COPY(WindowHandle);
-    QScopedPointer<FileManagerWindowHandleData> data;
+    QScopedPointer<WindowHandleData> data;
 };
 
 using WindowHandlePtr = QSharedPointer<WindowHandle>;

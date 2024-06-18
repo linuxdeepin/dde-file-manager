@@ -55,6 +55,8 @@ public:
     void setComponentUrl(const QUrl &url);
     Q_SIGNAL void componentUrlChanged(const QUrl &url);
 
+    void dumpAppletTree();
+
 protected:
     explicit Applet(AppletPrivate &dd, QObject *parent = nullptr);
     QScopedPointer<AppletPrivate> dptr;

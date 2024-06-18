@@ -63,6 +63,7 @@ private:
 QT_BEGIN_NAMESPACE
 #ifndef QT_NO_DEBUG_STREAM
 Q_CORE_EXPORT QDebug operator<<(QDebug, const DPF_NAMESPACE::PluginQuickMetaData &);
+Q_CORE_EXPORT QDebug operator<<(QDebug, const DPF_NAMESPACE::PluginQuickMetaPtr &);
 #endif   // QT_NO_DEBUG_STREAM
 QT_END_NAMESPACE
 

@@ -62,7 +62,7 @@ void onClipboardDataChanged()
         return;
     }
     const QString &data = mimeData->data(kGnomeCopyKey);
-    const static QRegExp regCut("cut\nfile://"), regCopy("copy\nfile://");
+    const static QRegularExpression regCut("cut\nfile://"), regCopy("copy\nfile://");
     if (data.contains(regCut)) {
         clipboardAction = ClipBoard::kCutAction;
     } else if (data.contains(regCopy)) {

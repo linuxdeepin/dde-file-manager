@@ -9,7 +9,7 @@
 
 DFMGUI_BEGIN_NAMESPACE
 
-class FileManagerWindowHandleData : public QSharedData
+class WindowHandleData : public QSharedData
 {
 public:
     QPointer<Panel> panel;
@@ -22,18 +22,18 @@ public:
  * \brief 提供用于操作的窗口和Applet指针
  */
 WindowHandle::WindowHandle()
-    : data(new FileManagerWindowHandleData)
+    : data(new WindowHandleData)
 {
 }
 
 WindowHandle::WindowHandle(const QString &error)
-    : data(new FileManagerWindowHandleData)
+    : data(new WindowHandleData)
 {
     data->errorString = error;
 }
 
 WindowHandle::WindowHandle(Panel *p, QQuickWindow *w)
-    : data(new FileManagerWindowHandleData)
+    : data(new WindowHandleData)
 {
     data->panel = p;
     data->window = w;

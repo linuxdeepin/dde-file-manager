@@ -23,6 +23,8 @@ public:
     Applet *applet() const;
     void setApplet(Applet *applet);
 
+    bool isCreateComplete() const;
+
     Q_INVOKABLE QQuickWindow *itemWindow() const;
     Q_SIGNAL void itemWindowChanged(QQuickWindow *window);
 
