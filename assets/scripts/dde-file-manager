@@ -5,11 +5,31 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 args=""
+current_path=$(pwd)
 for arg in "$@"; do
+    if [[ $arg =~ "." ]] || [[ $arg =~ ".." ]] || [[ $arg =~ "~/" ]]; then
+        name=${arg##*/}
+        path=${arg%/*}"/"
+        if [[ $name == "." ]] || [[ $name == ".." ]]; then
+            name=""
+            path=$path$name
+        fi
+        if [[ $path =~ "~/" ]]; then
+            cd ~/
+            home_path=$(pwd)
+            path=$(echo "$path" | sed "s|~/|$home_path/|g")
+            cd $current_path
+        fi
+        cd $path
+        path=$(pwd)"/"
+        cd $current_path
+        absolute_path=$path$name
+        arg=$(echo "$absolute_path" | sed 's/ /*||*/g')
+    fi
     args+="$arg,"
 done
-
 args=${args%,}
+echo $args
 
 dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.Open array:string:"$args"
 
