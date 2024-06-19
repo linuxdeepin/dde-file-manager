@@ -173,8 +173,11 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             }
         }
         DFileInfoPointer fileInfo { new DFileInfo(url) };
+
         // read trash info
         QUrl trashInfoUrl { fileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toString().replace("/files/", "/info/") + ".trashinfo" };
+        QUrl trashUrl = QUrl(fileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toString());
+        fileInfo.reset(new DFileInfo(trashUrl));
         const QString &trashInfoCache { DFMIO::DFile(trashInfoUrl).readAll() };
         emitCurrentTaskNotify(url, restoreInfo->uri());
         bool ok = false;
