@@ -121,6 +121,17 @@ bool OptionsWindow::initialize()
     contentLayout->addWidget(d->sizeSlider);
     contentLayout->addSpacing(10);
 
+    // enable desktop organizer
+    d->enableOrganize = new SwitchWidget(tr("Enable desktop organizer"), this);
+    d->enableOrganize->setChecked(CfgPresenter->isEnable());
+    d->enableOrganize->setFixedHeight(48);
+    d->enableOrganize->setRoundEdge(SwitchWidget::kBoth);
+    contentLayout->addWidget(d->enableOrganize);
+    connect(d->enableOrganize, &SwitchWidget::checkedChanged, this, [](bool check) {
+        CfgPresenter->changeEnableState(check);
+    });
+    contentLayout->addSpacing(10);
+
     // organization
     d->organization = new OrganizationGroup(d->contentWidget);
     d->organization->reset();

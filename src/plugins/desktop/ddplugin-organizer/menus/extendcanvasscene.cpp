@@ -33,11 +33,12 @@ ExtendCanvasScenePrivate::ExtendCanvasScenePrivate(ExtendCanvasScene *qq)
 
 void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
 {
-    QAction *tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeDesktop));
-    predicateAction[ActionID::kOrganizeDesktop] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeDesktop));
-    tempAction->setCheckable(true);
-    tempAction->setChecked(turnOn);
+    QAction *tempAction = nullptr;
+    // tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeEnable));
+    // predicateAction[ActionID::kOrganizeEnable] = tempAction;
+    // tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeEnable));
+    // tempAction->setCheckable(true);
+    // tempAction->setChecked(turnOn);
 
     if (turnOn) {
 #ifdef EnableCollectionModeMenu
@@ -46,6 +47,11 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
         predicateAction[ActionID::kOrganizeBy] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeBy));
 #endif
+        if (ConfigPresenter::instance()->organizeOnTriggered()) {
+            tempAction = new QAction(predicateName.value(ActionID::kOrganizeTrigger), parent);
+            predicateAction[ActionID::kOrganizeTrigger] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeTrigger));
+        }
     }
 
     tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeOptions));
@@ -84,7 +90,7 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
                         << "display-settings";
         } else {
             QAction *indexAction = actions[pos];
-            parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeDesktop]);
+            parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeEnable]);
             if (turnOn) {
                 parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeBy]);
                 parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
@@ -102,6 +108,21 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
                     indexAction->setVisible(false);
             } else {
                 parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
+            }
+        }
+
+        if (turnOn) {
+            auto refreshPos = std::find_if(actions.begin(), actions.end(), [](QAction *action) {
+                return action->property(ActionPropertyKey::kActionID).toString() == "refresh";
+            });
+            if (refreshPos == actions.end()) {
+                parent->addAction(predicateAction[ActionID::kOrganizeTrigger]);
+            } else {
+                int idx = int(std::distance(actions.begin(), refreshPos)) + 1;
+                if (idx < actions.count()) {
+                    auto act = actions.at(idx);
+                    parent->insertAction(act, predicateAction[ActionID::kOrganizeTrigger]);
+                }
             }
         }
     }
@@ -206,7 +227,8 @@ bool ExtendCanvasScenePrivate::triggerSortby(const QString &actionId)
 ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
     : AbstractMenuScene(parent), d(new ExtendCanvasScenePrivate(this))
 {
-    d->predicateName[ActionID::kOrganizeDesktop] = tr("Organize desktop");
+    d->predicateName[ActionID::kOrganizeEnable] = tr("Enable desktop organization");
+    d->predicateName[ActionID::kOrganizeTrigger] = tr("Organize desktop");
     d->predicateName[ActionID::kOrganizeOptions] = tr("View options");
     d->predicateName[ActionID::kOrganizeBy] = tr("Organize by");
 
@@ -283,7 +305,7 @@ bool ExtendCanvasScene::triggered(QAction *action)
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.values().contains(action)) {
         fmDebug() << "organizer for canvas:" << actionId;
-        if (actionId == ActionID::kOrganizeDesktop) {
+        if (actionId == ActionID::kOrganizeEnable) {
             emit CfgPresenter->changeEnableState(action->isChecked());
         } else if (actionId == ActionID::kOrganizeByCustom) {
             emit CfgPresenter->switchToCustom();
@@ -299,6 +321,8 @@ bool ExtendCanvasScene::triggered(QAction *action)
             emit CfgPresenter->newCollection(d->selectFiles);
         } else if (actionId == ActionID::kOrganizeOptions) {
             emit CfgPresenter->showOptionWindow();
+        } else if (actionId == ActionID::kOrganizeTrigger) {
+            emit CfgPresenter->reorganizeDesktop();
         }
         return true;
     }

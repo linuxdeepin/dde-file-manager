@@ -40,7 +40,7 @@ public slots:
     void updateHolderSurfaceIndex(QWidget *surface);
 
 public:
-    void restore(const QList<CollectionBaseDataPtr> &cfgs);
+    void restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized = false);
     FileClassifier *classifier = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
     NormalizedModeBroker *broker = nullptr;

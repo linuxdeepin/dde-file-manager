@@ -10,7 +10,8 @@
 namespace ddplugin_organizer {
 
 namespace ActionID {
-inline constexpr char kOrganizeDesktop[] = "organize-desktop";
+inline constexpr char kOrganizeEnable[] = "organize-enable";
+inline constexpr char kOrganizeTrigger[] = "organize-trigger";
 inline constexpr char kOrganizeOptions[] = "organize-options";
 inline constexpr char kOrganizeBy[] = "organize-by";
 inline constexpr char kOrganizeByType[] = "organize-by-type";
@@ -19,7 +20,7 @@ inline constexpr char kOrganizeByTimeModified[] = "organize-by-time-modified";
 inline constexpr char kOrganizeByTimeCreated[] = "organize-by-time-created";
 inline constexpr char kOrganizeByCustom[] = "custom-collection";
 inline constexpr char kCreateACollection[] = "create-a-collection";
-} // namespace ActionID
+}   // namespace ActionID
 
 namespace CollectionMenuParams {
 inline constexpr char kOnColletion[] = "OnColletion";
@@ -27,4 +28,4 @@ inline constexpr char kColletionView[] = "ColletionView";
 }
 }
 
-#endif // ORGANIZERMENU_DEFINES_H
+#endif   // ORGANIZERMENU_DEFINES_H

@@ -14,6 +14,7 @@
 #include "broker/collectionhookinterface.h"
 #include "models/itemselectionmodel.h"
 #include "config/configpresenter.h"
+#include "mode/normalized/fileclassifier.h"
 
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/schemefactory.h>
@@ -833,11 +834,11 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
         return false;
 
     auto firstUrl = urls.first();
-    auto firstIndex = q->model()->index(firstUrl);
-    if (firstIndex.isValid()) {
-        fmWarning() << "source file belong collection:" << firstUrl;
-        return false;
-    }
+    // auto firstIndex = q->model()->index(firstUrl);
+    // if (firstIndex.isValid()) {
+    //     fmWarning() << "source file belong collection:" << firstUrl;
+    //     return false;
+    // }
 
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(firstUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
@@ -864,9 +865,13 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     provider->addPreItems(id, urls, index);
 
     for (auto url : urls)
+        provider->prepend(url);
+    selectItems(urls);
+
+    for (auto url : urls)
         canvasModelShell->take(url);
 
-    q->model()->fetch(urls);
+    // q->model()->fetch(urls);
 
     return true;
 }
@@ -1029,8 +1034,21 @@ void CollectionViewPrivate::updateDFMMimeData(QDropEvent *event)
         dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
 }
 
-bool CollectionViewPrivate::checkTargetEnable(const QUrl &targetUrl)
+bool CollectionViewPrivate::checkTargetEnable(QDropEvent *event, const QUrl &targetUrl)
 {
+    auto rootUrl = q->model()->rootUrl();
+    if (rootUrl == targetUrl) {
+        auto classfier = dynamic_cast<FileClassifier *>(provider.data());
+        if (classfier) {
+            auto dragUrls = event->mimeData()->urls();
+            for (auto url : dragUrls) {
+                auto type = classfier->classify(url);
+                if (type != id)
+                    return false;
+            }
+        }
+    }
+
     if (!dfmmimeData.isValid())
         return true;
 
@@ -2128,8 +2146,9 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     auto pos = event->pos();
     auto hoverIndex = indexAt(pos);
     auto currentUrl = hoverIndex.isValid() ? model()->fileUrl(hoverIndex) : model()->fileUrl(model()->rootIndex());
-    if (!d->checkTargetEnable(currentUrl)) {
+    if (!d->checkTargetEnable(event, currentUrl)) {
         event->ignore();
+        return;
     } else if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
             // hook
