@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "universalutils.h"
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/schemefactory.h>

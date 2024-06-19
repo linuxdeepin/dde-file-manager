@@ -16,6 +16,8 @@ class PanelPrivate : public ContainmentPrivate
 
 public:
     explicit PanelPrivate(Panel *q);
+
+    void setRootObject(QObject *item) override;
 };
 
 DFMGUI_END_NAMESPACE

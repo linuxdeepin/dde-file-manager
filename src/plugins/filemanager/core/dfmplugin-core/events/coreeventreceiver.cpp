@@ -84,12 +84,13 @@ void CoreEventReceiver::handleHeadless()
 
 void CoreEventReceiver::handleShowSettingDialog(quint64 windowId)
 {
-    auto window = FMWindowsIns.findWindowById(windowId);
+    auto handle = FMQuickWindowIns->findWindowById(windowId);
 
-    if (!window) {
+    if (!handle) {
         fmWarning() << "Invalid window id: " << windowId;
         return;
     }
 
-    DialogManagerInstance->showSetingsDialog(window);
+    // TODO: adapt qml
+    // DialogManagerInstance->showSetingsDialog(handle->window());
 }

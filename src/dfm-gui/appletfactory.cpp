@@ -46,7 +46,7 @@ bool AppletFactory::regCreator(const AppletFactory::Key &url, CreateFunc creator
     return true;
 }
 
-AppletFactory::AppletPtr AppletFactory::create(const AppletFactory::Key &url, QString *errorString)
+AppletFactory::AppletPtr AppletFactory::create(const AppletFactory::Key &url, Containment *parent, QString *errorString)
 {
     QString error;
     dfmbase::FinallyUtil finally([&]() {
@@ -60,9 +60,8 @@ AppletFactory::AppletPtr AppletFactory::create(const AppletFactory::Key &url, QS
                 "before create function";
         return nullptr;
     }
-    finally.dismiss();
-    AppletPtr info = constantFunc(url);
 
+    AppletPtr info = constantFunc(url, parent, &error);
     return info;
 }
 

@@ -4,6 +4,7 @@
 
 #include <dfm-gui/applet.h>
 #include <dfm-gui/containment.h>
+#include <dfm-gui/panel.h>
 #include "applet_p.h"
 #include "containment_p.h"
 
@@ -21,6 +22,8 @@ AppletPrivate::~AppletPrivate()
     // 释放关联的 QQuickItem
     if (rootObject && QJSEngine::CppOwnership == QJSEngine::objectOwnership(rootObject)) {
         Q_ASSERT_X(rootObject->parent() == q_ptr, "AppletItem memory management", "Undefined behaviour, unmanaged QQuickItem");
+
+        QObject::disconnect(rootObject, nullptr, q_ptr, nullptr);
         rootObject->deleteLater();
     }
 }
@@ -119,18 +122,32 @@ QObject *Applet::rootObject() const
  */
 Containment *Applet::containment() const
 {
-    Containment *contain = nullptr;
     QObject *parent = this->parent();
-
     while (parent) {
-        if (Containment *tmp = qobject_cast<Containment *>(parent)) {
-            contain = tmp;
-            break;
+        if (Containment *contain = qobject_cast<Containment *>(parent)) {
+            return contain;
         }
         parent = parent->parent();
     }
 
-    return contain;
+    return nullptr;
+}
+
+/*!
+ * \brief 返回当前 Applet 的顶层 Panel , 会递归向上查找
+ * \return Panel 指针，若没有被 Panel 管理，返回 nullptr
+ */
+Panel *Applet::panel() const
+{
+    QObject *parent = this->parent();
+    while (parent) {
+        if (Panel *panel = qobject_cast<Panel *>(parent)) {
+            return panel;
+        }
+        parent = parent->parent();
+    }
+
+    return nullptr;
 }
 
 /*!

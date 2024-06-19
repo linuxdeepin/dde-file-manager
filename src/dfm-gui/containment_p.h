@@ -8,6 +8,8 @@
 #include <dfm-gui/containment.h>
 #include "applet_p.h"
 
+#include <QQuickWindow>
+
 DFMGUI_BEGIN_NAMESPACE
 
 class ContainmentPrivate : public AppletPrivate
@@ -18,6 +20,7 @@ public:
     explicit ContainmentPrivate(Containment *q);
 
     QList<Applet *> applets;
+    QPointer<QQuickWindow> window { nullptr };
 };
 
 DFMGUI_END_NAMESPACE

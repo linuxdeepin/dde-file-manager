@@ -28,7 +28,6 @@ public:
     QObject *rootObject() const;
     QQmlContext *rootContext() const;
     QQmlComponent *mainComponent() const;
-    static QSharedPointer<QQmlEngine> globalEngine();
 
     bool create(Applet *applet, bool async = false);
     bool completeCreation(const QVariantMap &args = {});

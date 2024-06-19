@@ -7,6 +7,7 @@
 
 #include <dfm-gui/applet.h>
 #include <dfm-gui/containment.h>
+#include <dfm-gui/panel.h>
 
 #include <qqml.h>
 
@@ -32,10 +33,21 @@ public:
     static Containment *qmlAttachedProperties(QObject *object);
 };
 
+class PanelAttached : public QObject
+{
+    Q_OBJECT
+public:
+    explicit PanelAttached(QObject *parent = nullptr);
+    ~PanelAttached() override;
+
+    static Panel *qmlAttachedProperties(QObject *object);
+};
+
 DFMGUI_END_NAMESPACE
 
 // 此宏标记QML附加属性，需要完整命名空间
 QML_DECLARE_TYPEINFO(DFMGUI_NAMESPACE::AppletAttached, QML_HAS_ATTACHED_PROPERTIES)
 QML_DECLARE_TYPEINFO(DFMGUI_NAMESPACE::ContainmentAttached, QML_HAS_ATTACHED_PROPERTIES)
+QML_DECLARE_TYPEINFO(DFMGUI_NAMESPACE::PanelAttached, QML_HAS_ATTACHED_PROPERTIES)
 
 #endif   // ATTACHEDPROPERTY_P_H

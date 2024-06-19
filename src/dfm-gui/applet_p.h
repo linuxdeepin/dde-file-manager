@@ -22,7 +22,7 @@ public:
     explicit AppletPrivate(Applet *q);
     virtual ~AppletPrivate();
 
-    void setRootObject(QObject *item);
+    virtual void setRootObject(QObject *item);
     void dumpAppletTreeImpl(int level = 0);
 
     Applet *q_ptr;

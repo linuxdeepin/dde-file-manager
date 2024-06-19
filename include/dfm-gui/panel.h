@@ -23,6 +23,14 @@ public:
     explicit Panel(QObject *parent = nullptr);
 
     QQuickWindow *window() const;
+    quint64 windId() const;
+
+    virtual void loadState();
+    virtual void saveState();
+
+Q_SIGNALS:
+    void aboutToOpen();
+    void aboutToClose();
 
 private:
     Q_DECLARE_PRIVATE_D(dptr, Panel);
