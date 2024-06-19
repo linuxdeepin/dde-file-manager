@@ -19,6 +19,8 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
+#include <dfm-gui/windowmanager.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <DTitlebar>
@@ -59,6 +61,11 @@ void TitleBarHelper::removeTitleBar(quint64 windowId)
 quint64 TitleBarHelper::windowId(QWidget *sender)
 {
     return FMWindowsIns.findWindowId(sender);
+}
+
+quint64 TitleBarHelper::windowId(dfmgui::Applet *applet)
+{
+    return FMQuickWindowIns->findWindowIdFromApplet(applet);
 }
 
 void TitleBarHelper::createSettingsMenu(quint64 id)

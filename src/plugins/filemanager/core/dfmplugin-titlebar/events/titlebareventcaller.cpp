@@ -98,3 +98,16 @@ ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)
     int defaultViewMode = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetDefaultViewMode", scheme).toInt();
     return static_cast<ViewMode>(defaultViewMode);
 }
+
+void TitleBarEventCaller::sendCd(dfmgui::Applet *applet, const QUrl &url)
+{
+    DFMBASE_USE_NAMESPACE
+    quint64 id = TitleBarHelper::windowId(applet);
+    Q_ASSERT(id > 0);
+    if (!url.isValid()) {
+        fmWarning() << "Invalid url: " << url;
+        return;
+    }
+
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
+}

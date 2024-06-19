@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "titlebar.h"
+#include "titlebarcontainment.h"
 #include "utils/titlebarhelper.h"
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
@@ -16,10 +17,28 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_event_defines.h>
 
+#include <dfm-gui/containment.h>
+#include <dfm-gui/appletfactory.h>
+
 #include <dfm-framework/dpf.h>
 
 namespace dfmplugin_titlebar {
 DFM_LOG_REISGER_CATEGORY(DPTITLEBAR_NAMESPACE)
+
+static constexpr char kAppletUrl[] { "org.dfm.titlebar" };
+
+static dfmgui::Applet *createTitlebarApplet(const QString &url, dfmgui::Containment *parent, QString *errorString)
+{
+    if (kAppletUrl == url) {
+        Q_ASSERT_X(parent && parent->flags().testFlag(dfmgui::Applet::kPanel),
+                   "Create titlebar applet", "Parent must based on panel");
+
+        auto titlebar = new TitlebarContainment(parent);
+        QObject::connect(parent, &dfmgui::Applet::currentUrlChanged, titlebar, &TitlebarContainment::setCurrentUrl);
+        return titlebar;
+    }
+    return nullptr;
+}
 
 void TitleBar::initialize()
 {
@@ -31,6 +50,14 @@ void TitleBar::initialize()
 
     // event has been sended before the Window showed
     bindEvents();
+
+    // register qml component
+    QString errorString;
+    bool regSuccess = dfmgui::AppletFactory::instance()->regCreator(
+            kAppletUrl, &createTitlebarApplet, &errorString);
+    if (!regSuccess) {
+        fmWarning() << QString("Register applet %1 failed.").arg(kAppletUrl) << errorString;
+    }
 }
 
 bool TitleBar::start()

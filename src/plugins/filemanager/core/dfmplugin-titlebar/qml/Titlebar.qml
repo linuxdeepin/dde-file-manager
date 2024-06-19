@@ -10,7 +10,7 @@ import org.dfm.base
 import org.deepin.dtk
 import org.deepin.dtk.style 1.0 as DS
 
-AppletItem {
+ContainmentItem {
     id: titlebar
 
     property int breadcrumbsHeight: 30
@@ -30,7 +30,6 @@ AppletItem {
 
             RowLayout {
                 Layout.fillHeight: true
-                Layout.fillWidth: true
                 layoutDirection: Qt.LeftToRight
 
                 CheckBox {
@@ -67,16 +66,20 @@ AppletItem {
 
                 IconButton {
                     icon.name: "button_add"
+
+                    onClicked: {
+                        console.warn("--- test", Containment.applets);
+                        Applet.currentUrl = "file:///home/uos/Downloads/GammaRay/build/bin";
+                    }
                 }
             }
 
             Loader {
-                Layout.preferredWidth: item ? item.implicitWidth : 0
+                Layout.fillWidth: true
                 active: Window.window
                 height: DS.Style.titleBar.height
 
                 sourceComponent: TitleBar {
-                    // replace Window.window.width
                     width: parent.width
                 }
             }
@@ -89,12 +92,11 @@ AppletItem {
             implicitHeight: breadcrumbsHeight
             spacing: 0
 
-            Rectangle {
+            CrumbBar {
                 id: breadcrumbs
 
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "blue"
             }
 
             Rectangle {
