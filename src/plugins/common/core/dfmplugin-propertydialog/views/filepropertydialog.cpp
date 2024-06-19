@@ -168,10 +168,16 @@ void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
     if (!fileInfo.isNull()) {
         ThumbnailHelper helper;
         QUrl localUrl = fileInfo->urlOf(FileInfo::FileUrlInfoType::kUrl);
+        if (fileInfo->canAttributes(CanableInfoType::kCanRedirectionFileUrl))
+            localUrl = fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
         if (helper.checkThumbEnable(localUrl)) {
-            QImage img = helper.thumbnailImage(localUrl, ThumbnailSize::kLarge);
-            if (!img.isNull()) {
-                fileIcon->setPixmap(QPixmap::fromImage(img).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            QIcon icon = fileInfo->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
+            if (icon.isNull()) {
+                const auto &img = helper.thumbnailImage(localUrl, Global::kLarge);
+                icon = QPixmap::fromImage(img);
+            }
+            if (!icon.isNull()) {
+                fileIcon->setPixmap(icon.pixmap(128, 128).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 return;
             }
         }
