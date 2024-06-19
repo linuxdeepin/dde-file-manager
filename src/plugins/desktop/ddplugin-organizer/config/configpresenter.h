@@ -61,6 +61,10 @@ public:
 public:
     ItemCategories enabledTypeCategories() const;
     void setEnabledTypeCategories(ItemCategories flags);
+
+    OrganizeAction organizeAction() const;
+    bool organizeOnTriggered() const;
+
 signals:
     // use Qt::QueuedConnection
     void changeEnableState(bool e);
@@ -71,6 +75,8 @@ signals:
     void changeDisplaySize(int);
     void newCollection(const QList<QUrl> &);
     void showOptionWindow();
+    void reorganizeDesktop();
+
 public slots:
 protected:
     explicit ConfigPresenter(QObject *parent = nullptr);

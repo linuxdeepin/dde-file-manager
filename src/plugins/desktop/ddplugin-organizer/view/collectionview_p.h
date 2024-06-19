@@ -90,7 +90,7 @@ public:
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
 
     void updateDFMMimeData(QDropEvent *event);
-    bool checkTargetEnable(const QUrl &targetUrl);
+    bool checkTargetEnable(QDropEvent *event, const QUrl &targetUrl);
 
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);

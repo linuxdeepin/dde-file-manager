@@ -7,6 +7,8 @@
 #include "config/configpresenter.h"
 #include "interface/canvasviewshell.h"
 #include "interface/canvasmanagershell.h"
+#include "interface/canvasgridshell.h"
+#include "interface/canvasmodelshell.h"
 #include "utils/fileoperator.h"
 #include "view/collectionview.h"
 #include "view/collectionframe.h"
@@ -14,6 +16,7 @@
 
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDebug>
 #include <QTime>
@@ -261,7 +264,7 @@ void NormalizedModePrivate::updateHolderSurfaceIndex(QWidget *surface)
     }
 }
 
-void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
+void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized)
 {
     // order by config
     for (const CollectionBaseDataPtr &cfg : cfgs) {
@@ -275,7 +278,10 @@ void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
                 }
             }
 
-            ordered.append(org);
+            // those are not in config files should not be organized.
+            if (reorganized || !CfgPresenter->organizeOnTriggered())
+                ordered.append(org);
+
             base->items = ordered;
         }
     }
@@ -331,7 +337,9 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(model, &CollectionModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
 
     connect(model, &CollectionModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
-    connect(model, &CollectionModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
+    connect(model, &CollectionModel::modelReset, this, [this] { rebuild(); }, Qt::QueuedConnection);
+
+    connect(CfgPresenter, &ConfigPresenter::reorganizeDesktop, this, &NormalizedMode::onReorganizeDesktop, Qt::QueuedConnection);
 
     // creating if there already are files.
     if (!model->files().isEmpty())
@@ -488,7 +496,7 @@ void NormalizedMode::detachLayout()
     }
 }
 
-void NormalizedMode::rebuild()
+void NormalizedMode::rebuild(bool reorganize)
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
     QTime time;
@@ -498,7 +506,7 @@ void NormalizedMode::rebuild()
         d->classifier->reset(files);
 
         // order item as config
-        d->restore(CfgPresenter->normalProfile());
+        d->restore(CfgPresenter->normalProfile(), reorganize);
 
         fmInfo() << QString("Classifying %0 files takes %1 ms").arg(files.size()).arg(time.elapsed());
         time.restart();
@@ -542,7 +550,24 @@ void NormalizedMode::rebuild()
 
 void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    d->classifier->replace(oldUrl, newUrl);
+    if (CfgPresenter->organizeOnTriggered()) {
+        QString oldType = d->classifier->key(oldUrl);
+        if (oldType.isEmpty())   // old item is not in collection
+            return;
+        QString newType = d->classifier->classify(newUrl);
+        if (newType == oldType) {
+            auto idx = d->classifier->baseData(oldType)->items.indexOf(oldUrl);
+            d->classifier->baseData(oldType)->items.replace(idx, newUrl);
+        } else {
+            d->classifier->baseData(oldType)->items.removeAll(oldUrl);
+            dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", QList<QUrl> { newUrl });
+        }
+
+        Q_EMIT d->classifier->itemsChanged(oldType);
+    } else {
+        d->classifier->replace(oldUrl, newUrl);
+    }
+
     d->switchCollection();
 
     const auto &renameFileData = FileOperatorIns->renameFileData();
@@ -565,6 +590,9 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)
 {
+    if (ConfigPresenter::instance()->organizeOnTriggered())
+        return;
+
     QList<QUrl> urls;
     for (int i = first; i <= last; i++) {
         QModelIndex index = model->index(i, 0, parent);
@@ -606,6 +634,13 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
     }
 }
 
+void NormalizedMode::onReorganizeDesktop()
+{
+    rebuild(true);
+    for (auto type : d->classifier->classes())
+        Q_EMIT d->classifier->itemsChanged(type);   // to update the collection view's vertical scroll range.
+}
+
 void NormalizedMode::onCollectionEditStatusChanged(bool editing)
 {
     this->editing = editing;
@@ -634,6 +669,44 @@ void NormalizedMode::deactiveAllPredictors()
     }
 }
 
+bool NormalizedMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+{
+    if (!CfgPresenter->organizeOnTriggered())
+        return false;
+
+    auto urls = mimeData->urls();
+    QList<QUrl> collectionItems;
+    QStringList files;
+    for (auto url : urls) {
+        QString &&key = d->classifier->key(url);
+        if (key.isEmpty())
+            continue;
+        collectionItems << url;
+        files << url.toString();
+    }
+
+    if (collectionItems.isEmpty())
+        return false;
+
+    QPoint gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);
+    if (!canvasGridShell->item(viewIndex, gridPos).isEmpty())
+        return false;
+
+    canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
+
+    for (auto url : collectionItems) {
+        d->classifier->remove(url);
+        canvasModelShell->fetch(url);
+    }
+
+    dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", collectionItems);
+    QTimer::singleShot(0, this, [this] {   // to hide collection if all items are moved outside.
+        d->switchCollection();
+    });
+
+    return true;
+}
+
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)
 {
     bool filter { false };
@@ -660,6 +733,9 @@ bool NormalizedMode::filterDataRested(QList<QUrl> *urls)
 
 bool NormalizedMode::filterDataInserted(const QUrl &url)
 {
+    if (ConfigPresenter::instance()->organizeOnTriggered())
+        return false;
+
     if (d->classifier)
         return d->classifier->acceptInsert(url);
 
@@ -668,11 +744,21 @@ bool NormalizedMode::filterDataInserted(const QUrl &url)
 
 bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    Q_UNUSED(oldUrl);
-    if (d->classifier)
+    if (!d->classifier)
+        return false;
+
+    if (!CfgPresenter->organizeOnTriggered())
         return d->classifier->acceptRename(oldUrl, newUrl);
 
-    return false;
+    QString oldType = d->classifier->key(oldUrl);
+    if (oldType.isEmpty())   // old item is not in collection.
+        return false;
+
+    QString newType = d->classifier->classify(newUrl);
+    if (newType != oldType)   // the renamed result should be placed on desktop not in collection
+        return false;
+
+    return true;
 }
 
 bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const

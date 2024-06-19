@@ -238,6 +238,17 @@ void ConfigPresenter::setEnabledTypeCategories(ItemCategories flags)
     conf->sync();
 }
 
+OrganizeAction ConfigPresenter::organizeAction() const
+{
+    int val = DConfigManager::instance()->value(kConfName, "organizeAction", 0).toInt();
+    return val == 0 ? kOnTrigger : kAlways;
+}
+
+bool ConfigPresenter::organizeOnTriggered() const
+{
+    return OrganizeAction() == kOnTrigger;
+}
+
 CollectionStyle ConfigPresenter::normalStyle(const QString &key) const
 {
     if (key.isEmpty())
