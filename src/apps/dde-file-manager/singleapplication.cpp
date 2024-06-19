@@ -153,7 +153,9 @@ void SingleApplication::readData()
         if (arg.isEmpty())
             continue;
 
-        arguments << QString::fromLocal8Bit(arg);
+        QString argstr = QString::fromLocal8Bit(arg);
+        argstr = argstr.replace("*||*", " ");
+        arguments << argstr;
     }
 
     CommandParser::instance().process(arguments);

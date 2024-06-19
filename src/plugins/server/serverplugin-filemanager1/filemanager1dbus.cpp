@@ -30,11 +30,15 @@ FileManager1DBus::FileManager1DBus(QObject *parent)
 void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &StartupId)
 {
     Q_UNUSED(StartupId)
+    QStringList URIsArgs;
+    for (auto arg : URIs) {
+        URIsArgs.append(arg.replace(" ", "*||*"));
+    }
 
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << URIs))
+    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << URIsArgs))
         return;
 
-    QProcess::startDetached("dde-file-manager", QStringList() << "--raw" << URIs);
+    QProcess::startDetached("dde-file-manager", QStringList() << "--raw" << URIsArgs);
 }
 
 /*!
@@ -44,13 +48,16 @@ void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &Start
 void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString &StartupId)
 {
     Q_UNUSED(StartupId)
-
+    QStringList URIsArgs;
+    for (auto arg : URIs) {
+        URIsArgs.append(arg.replace(" ", "*||*"));
+    }
     if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw"
-                                                                 << "-p" << URIs))
+                                                                 << "-p" << URIsArgs))
         return;
 
     QProcess::startDetached("dde-file-manager", QStringList() << "--raw"
-                                                              << "-p" << URIs);
+                                                              << "-p" << URIsArgs);
 }
 
 /*!
@@ -63,16 +70,23 @@ void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString
 void FileManager1DBus::ShowItems(const QStringList &URIs, const QString &StartupId)
 {
     Q_UNUSED(StartupId)
-
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << URIs << "--raw"))
+    QStringList URIsArgs;
+    for (auto arg : URIs) {
+        URIsArgs.append(arg.replace(" ", "*||*"));
+    }
+    if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << URIsArgs << "--raw"))
         return;
 
-    QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << URIs << "--raw");
+    QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << URIsArgs << "--raw");
 }
 
 void FileManager1DBus::Trash(const QStringList &URIs)
 {
-    QJsonArray srcArray = QJsonArray::fromStringList(URIs);
+    QStringList URIsArgs;
+    for (auto arg : URIs) {
+        URIsArgs.append(arg.replace(" ", "*||*"));
+    }
+    QJsonArray srcArray = QJsonArray::fromStringList(URIsArgs);
 
     QJsonObject paramObj;
     paramObj.insert("sources", srcArray);
@@ -87,8 +101,12 @@ void FileManager1DBus::Trash(const QStringList &URIs)
 
 void FileManager1DBus::Open(const QStringList &Args)
 {
-    if (QProcess::startDetached("file-manager.sh", QStringList() << Args))
+    QStringList URIsArgs;
+    for (auto arg : Args) {
+        URIsArgs.append(arg.replace(" ", "*||*"));
+    }
+    if (QProcess::startDetached("file-manager.sh", QStringList() << URIsArgs))
         return;
 
-    QProcess::startDetached("dde-file-manager", QStringList() << Args);
+    QProcess::startDetached("dde-file-manager", QStringList() << URIsArgs);
 }
