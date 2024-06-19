@@ -7,6 +7,8 @@
 
 #include "dfmplugin_titlebar_global.h"
 
+#include <dfm-gui/applet.h>
+
 #include <QMap>
 #include <QMutex>
 #include <QWidget>
@@ -22,6 +24,8 @@ public:
     static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
     static void removeTitleBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
+
+    static quint64 windowId(dfmgui::Applet *applet);
 
     static void createSettingsMenu(quint64 id);
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);

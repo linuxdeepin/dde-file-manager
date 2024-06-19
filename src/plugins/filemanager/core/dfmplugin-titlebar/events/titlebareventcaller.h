@@ -9,6 +9,8 @@
 
 #include <dfm-base/dfm_global_defines.h>
 
+#include <dfm-gui/applet.h>
+
 #include <QObject>
 
 namespace dfmplugin_titlebar {
@@ -30,6 +32,8 @@ public:
     static void sendCheckAddressInputStr(QWidget *sender, QString *str);
     static bool sendCheckTabAddable(quint64 windowId);
     static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
+
+    static void sendCd(dfmgui::Applet *applet, const QUrl &url);
 };
 
 }
