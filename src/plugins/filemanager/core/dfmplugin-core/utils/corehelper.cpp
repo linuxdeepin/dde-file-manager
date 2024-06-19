@@ -6,18 +6,23 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
-#include <dfm-gui/windowmanager.h>
+#include <dfm-gui/panel.h>
 
 #include <dfm-framework/event/event.h>
 #include <dfm-framework/lifecycle/lifecycle.h>
 
 #include <QDir>
 #include <QProcess>
+#include <QQuickWindow>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DPCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGUI_USE_NAMESPACE
+
+static constexpr char kDefaultPlugin[] { "dfmplugin-core" };
+static constexpr char kDefaultId[] { "filewindow" };
 
 CoreHelper &CoreHelper::instance()
 {
@@ -28,15 +33,15 @@ CoreHelper &CoreHelper::instance()
 void CoreHelper::cd(quint64 windowId, const QUrl &url)
 {
     Q_ASSERT(url.isValid());
-    auto window = FMWindowsIns.findWindowById(windowId);
+    auto handle = FMQuickWindowIns->findWindowById(windowId);
 
-    if (!window) {
+    if (!handle) {
         fmWarning() << "Invalid window id: " << windowId;
         return;
     }
 
     fmInfo() << "cd to " << url;
-    window->cd(url);
+    handle->setCurrentUrl(url);
 
     QUrl titleUrl { url };
     QList<QUrl> urls {};
@@ -47,10 +52,9 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
 
     auto fileInfo = InfoFactory::create<FileInfo>(titleUrl);
     if (fileInfo) {
-        QUrl url { fileInfo->urlOf(UrlInfoType::kUrl) };
-        window->setWindowTitle(fileInfo->displayOf(DisPlayInfoType::kFileDisplayName));
+        handle->window()->setTitle(fileInfo->displayOf(DisPlayInfoType::kFileDisplayName));
     } else {
-        window->setWindowTitle({});
+        handle->window()->setTitle({});
     }
 }
 
@@ -63,28 +67,20 @@ void CoreHelper::openWindow(const QUrl &url, const QVariant &opt)
     if (openNew && oldWindow)
         openNew = false;
 
-    FMWindowsIns.resetPreviousActivedWindowId();
-    FileManagerWindow *window { openNew ? createNewWindow(url)
-                                        : findExistsWindow(url) };
-    if (!window) {
-        fmCritical() << "Create window failed for: " << url;
+    FMQuickWindowIns->resetPreviousActivedWindowId();
+    WindowHandle handle { openNew ? createNewWindow(url)
+                                  : findExistsWindow(url) };
+    if (!handle) {
+        fmCritical() << "Create window failed for: " << url << FMQuickWindowIns->lastError();
         return;
     }
 
-    // TODO
-    // FMWindowsIns.showWindow(window);
-
-    auto handlePtr = DFMGUI_NAMESPACE::WindowManager::instance()->createWindow("dfmplugin-core", "filewindow");
-    if (!handlePtr || !handlePtr->isValid()) {
-        fmCritical() << "Create dfmplugin-core filewindow failed";
-        return;
-    }
-    DFMGUI_NAMESPACE::WindowManager::instance()->showWindow(handlePtr);
+    FMQuickWindowIns->showWindow(handle);
 }
 
 void CoreHelper::cacheDefaultWindow()
 {
-    auto window { FMWindowsIns.createWindow({}) };
+    auto window { FMQuickWindowIns->createWindow({}, kDefaultPlugin, kDefaultId) };
     if (!window) {
         fmWarning() << "cache window failed";
         return;
@@ -105,30 +101,30 @@ void CoreHelper::loadPlugin(const QString &name)
     }
 }
 
-FileManagerWindow *CoreHelper::defaultWindow()
+WindowHandle CoreHelper::defaultWindow()
 {
-    const auto &idList { FMWindowsIns.windowIdList() };
+    const auto &idList { FMQuickWindowIns->windowIdList() };
     if (idList.size() == 1) {
-        auto window { FMWindowsIns.findWindowById(idList.first()) };
-        if (window && window->isHidden())
-            return window;
+        auto handle { FMQuickWindowIns->findWindowById(idList.first()) };
+        if (handle && !handle->window()->isVisible())
+            return handle;
     }
 
     return {};
 }
 
-FileManagerWindow *CoreHelper::createNewWindow(const QUrl &url)
+WindowHandle CoreHelper::createNewWindow(const QUrl &url)
 {
     fmInfo() << "Create new window for: " << url;
-    return FMWindowsIns.createWindow(url, true);
+    return FMQuickWindowIns->createWindow(url, kDefaultPlugin, kDefaultId);
 }
 
-FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
+WindowHandle CoreHelper::findExistsWindow(const QUrl &url)
 {
-    auto window { FMWindowsIns.createWindow(url, false) };
+    auto window { FMQuickWindowIns->findWindowByUrl(url) };
 
     if (window) {
-        fmInfo() << "Find exists window for: " << url << ",for window:" << window->winId();
+        fmInfo() << "Find exists window for: " << url << ",for window:" << window->windId();
         return window;
     }
 
@@ -137,7 +133,7 @@ FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
     if (oldWindow) {
         fmInfo() << "Close cached default window";
         oldWindow->setProperty("_dfm_isDefaultWindow", true);
-        oldWindow->close();
+        oldWindow->window()->close();
     }
     return createNewWindow(url);
 }
@@ -156,8 +152,13 @@ bool CoreHelper::eventFilter(QObject *watched, QEvent *event)
     if (type != QEvent::Paint && type != QEvent::Show)
         return ret;
 
-    FileManagerWindow *window = qobject_cast<FileManagerWindow *>(watched);
+    QQuickWindow *window = qobject_cast<QQuickWindow *>(watched);
     if (!window)
+        return ret;
+
+    // real signal emit
+    WindowHandle handle = FMQuickWindowIns->findWindowById(window->winId());
+    if (!handle)
         return ret;
 
     // for bug-203703:
@@ -165,12 +166,12 @@ bool CoreHelper::eventFilter(QObject *watched, QEvent *event)
     // we need all components to be displayed at the same time
     // when the window is showed
     if (type == QEvent::Show) {
-        qsizetype windowCount { FMWindowsIns.windowIdList().size() };
+        qsizetype windowCount { FMQuickWindowIns->windowIdList().size() };
         qsizetype lazyCount { DPF_NAMESPACE::LifeCycle::lazyLoadList().size() };
         if (windowCount > 1 || lazyCount == 0) {
             fmDebug("Show full window, win count %d, lazy count %d", windowCount, lazyCount);
             window->removeEventFilter(this);
-            QMetaObject::invokeMethod(window, "aboutToOpen", Qt::DirectConnection);
+            QMetaObject::invokeMethod(handle, "aboutToOpen", Qt::DirectConnection);
         }
         return ret;
     }
@@ -178,7 +179,7 @@ bool CoreHelper::eventFilter(QObject *watched, QEvent *event)
     if (type == QEvent::Paint) {
         fmDebug() << "Show empty window";
         window->removeEventFilter(this);
-        QMetaObject::invokeMethod(window, "aboutToOpen", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(handle, "aboutToOpen", Qt::QueuedConnection);
         return ret;
     }
 

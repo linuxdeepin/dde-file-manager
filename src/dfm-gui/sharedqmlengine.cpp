@@ -60,6 +60,7 @@ QSharedPointer<QQmlEngine> SharedQmlEnginePrivate::engine()
  * \brief 共享的 QQmlEngine ，传入 url 或通过 Applet 的 compnentUrl() 创建 QML 组件。
  * \details 默认同步处理，通过 createFinished() 信号报告创建组件指针，通过调用 completeCreation()
  *  完成创建。
+ * \warning qApp 退出前需释放 QQmlEngine，在初始化时使用 WindowManager::engine() 以确定维护的一致
  */
 SharedQmlEngine::SharedQmlEngine(QObject *parent)
     : QObject(parent), dptr(new SharedQmlEnginePrivate(this))
@@ -84,15 +85,6 @@ QQmlContext *SharedQmlEngine::rootContext() const
 QQmlComponent *SharedQmlEngine::mainComponent() const
 {
     return d_func()->component;
-}
-
-/*!
- * \return 返回全局使用 QmlEngine
- * \note 返回的共享指针不要进行持久化存储，在初始化时使用 WindowManager::engine() 以确定设置一致
- */
-QSharedPointer<QQmlEngine> SharedQmlEngine::globalEngine()
-{
-    return SharedQmlEnginePrivate::engine();
 }
 
 /*!
@@ -167,7 +159,7 @@ bool SharedQmlEngine::completeCreation(const QVariantMap &args)
  */
 QObject *SharedQmlEngine::createObject(const QUrl &url, const QVariantMap &args)
 {
-    QSharedPointer<QQmlEngine> engine = globalEngine();
+    QSharedPointer<QQmlEngine> engine = SharedQmlEnginePrivate::engine();
     std::unique_ptr<QQmlComponent> comp = std::make_unique<QQmlComponent>(engine.get());
     comp->loadUrl(url);
     if (comp->isError()) {

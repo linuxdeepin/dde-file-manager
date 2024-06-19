@@ -48,4 +48,22 @@ Containment *ContainmentAttached::qmlAttachedProperties(QObject *object)
     return contain;
 }
 
+/*!
+ * \class PanelAttached
+ * \brief 用于 Quick 组件在 QML 中访问附加 Panel 属性
+ */
+PanelAttached::PanelAttached(QObject *parent)
+{
+}
+
+PanelAttached::~PanelAttached()
+{
+}
+
+Panel *PanelAttached::qmlAttachedProperties(QObject *object)
+{
+    auto panel = qobject_cast<Panel *>(AppletAttached::qmlAttachedProperties(object));
+    return panel;
+}
+
 DFMGUI_END_NAMESPACE

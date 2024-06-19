@@ -4,7 +4,7 @@
 
 #include "basedialog.h"
 
-#include "utils/windowutils.h"
+#include <dfm-base/utils/windowutils.h>
 
 #include <dtitlebar.h>
 

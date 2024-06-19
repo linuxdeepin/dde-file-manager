@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileinfoasycworker.h"
-#include "fileutils.h"
 #include "networkutils.h"
 #include "mimetype/dmimedatabase.h"
+
+#include <dfm-base/utils/fileutils.h>
 
 namespace dfmbase {
 FileInfoAsycWorker::FileInfoAsycWorker(QObject *parent)

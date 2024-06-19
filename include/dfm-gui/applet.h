@@ -15,6 +15,7 @@ class QQuickItem;
 DFMGUI_BEGIN_NAMESPACE
 
 class Containment;
+class Panel;
 
 class AppletPrivate;
 class Applet : public QObject
@@ -43,10 +44,11 @@ public:
     Q_SIGNAL void rootObjectChanged(QObject *object);
 
     QUrl currentUrl() const;
-    void setCurrentUrl(const QUrl &url);
+    Q_SLOT void setCurrentUrl(const QUrl &url);
     Q_SIGNAL void currentUrlChanged(const QUrl &url);
 
     Containment *containment() const;
+    Panel *panel() const;
 
     QString plugin() const;
     QString id() const;

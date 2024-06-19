@@ -11,6 +11,7 @@
 DFMGUI_BEGIN_NAMESPACE
 
 class Applet;
+class Containment;
 class AppletFactory
 {
     explicit AppletFactory();
@@ -19,12 +20,12 @@ class AppletFactory
 public:
     using AppletPtr = Applet *;
     using Key = QString;
-    using CreateFunc = std::function<AppletPtr(const Key &url)>;
+    using CreateFunc = std::function<AppletPtr(const Key &url, Containment *parent, QString *error)>;
 
     static AppletFactory *instance();
 
     bool regCreator(const Key &url, CreateFunc creator, QString *errorString = nullptr);
-    AppletPtr create(const Key &url, QString *errorString = nullptr);
+    AppletPtr create(const Key &url, Containment *parent = nullptr, QString *errorString = nullptr);
 
 private:
     dfmbase::DThreadMap<Key, CreateFunc> constructList {};

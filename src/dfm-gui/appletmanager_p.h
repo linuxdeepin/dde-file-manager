@@ -29,7 +29,7 @@ public:
     explicit AppletManagerPrivate(AppletManager *q);
 
     void parseDefaultRootTemplates();
-    Applet *createAppletFromNode(const AppletTemplateNode::Ptr &node, QObject *parent = nullptr);
+    Applet *createAppletFromNode(const AppletTemplateNode::Ptr &node, Containment *parent = nullptr);
     void clear();
 
     static Applet::Flags flagFromString(const QString &typeString);

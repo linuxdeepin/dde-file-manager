@@ -34,7 +34,7 @@ else()
 endif()
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-find_package(DtkCMake REQUIRED)
+find_package(Dtk${DTK_VERSION_MAJOR}CMake REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 

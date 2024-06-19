@@ -19,8 +19,10 @@
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/windowutils.h>
-#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
+
+#include <dfm-gui/panel.h>
+#include <dfm-gui/windowmanager.h>
 
 #include <dfm-mount/ddevicemanager.h>
 
@@ -28,9 +30,14 @@
 #include <QApplication>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <QQuickWindow>
+
+#include <DMainWindow>
 #include <DApplication>
 
 DFMBASE_USE_NAMESPACE
+DFMGUI_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(const char *)
 namespace dfmplugin_core {
@@ -58,7 +65,7 @@ void Core::initialize()
 
     connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
     connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, [this](quint64 id) {
+    connect(FMQuickWindowIns, &WindowManager::windowOpened, this, [this](quint64 id) {
         QTimer::singleShot(0, [this, id]() {
             onWindowOpened(id);
         });
@@ -106,10 +113,10 @@ void Core::onAllPluginsInitialized()
 {
     fmInfo() << "All plugins initialized";
     // createWindow may return an existing window, which does not need to be processed again aboutToOpen
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, [](quint64 id) {
-        auto window { FMWindowsIns.findWindowById(id) };
-        if (window)
-            window->installEventFilter(&CoreHelper::instance());
+    connect(FMQuickWindowIns, &WindowManager::windowCreated, this, [](quint64 id) {
+        auto handle { FMQuickWindowIns->findWindowById(id) };
+        if (handle)
+            handle->window()->installEventFilter(&CoreHelper::instance());
     });
     // subscribe events
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,

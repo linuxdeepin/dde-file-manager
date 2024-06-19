@@ -7,7 +7,7 @@
 
 #include "dfmplugin_core_global.h"
 
-#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-gui/windowmanager.h>
 
 #include <QObject>
 #include <QVariant>
@@ -29,9 +29,9 @@ public:
     void loadPlugin(const QString &name);
 
 private:
-    DFMBASE_NAMESPACE::FileManagerWindow *defaultWindow();
-    DFMBASE_NAMESPACE::FileManagerWindow *createNewWindow(const QUrl &url);
-    DFMBASE_NAMESPACE::FileManagerWindow *findExistsWindow(const QUrl &url);
+    DFMGUI_NAMESPACE::WindowHandle defaultWindow();
+    DFMGUI_NAMESPACE::WindowHandle createNewWindow(const QUrl &url);
+    DFMGUI_NAMESPACE::WindowHandle findExistsWindow(const QUrl &url);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;

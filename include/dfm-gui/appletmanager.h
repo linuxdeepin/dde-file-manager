@@ -36,12 +36,13 @@ public:
     Panel *createPanel(const QString &pluginName, const QString &quickId);
 
     QList<QString> allAppletTemplateIdList() const;
-    Applet *createApplet(const QString &templateId, QObject *parent = nullptr);
-    Applet *createApplet(const QString &pluginName, const QString &quickId, QObject *parent = nullptr);
+    Applet *createApplet(const QString &templateId, Containment *parent = nullptr);
+    Applet *createApplet(const QString &pluginName, const QString &quickId, Containment *parent = nullptr);
 
     QString lastError() const;
 
-    static Applet *createAppletFromInfo(const dpf::PluginQuickMetaPtr &metaPtr, QObject *parent = nullptr, QString *errorString = nullptr);
+    static Applet *createAppletFromInfo(
+            const dpf::PluginQuickMetaPtr &metaPtr, Containment *parent = nullptr, QString *errorString = nullptr);
 
 private:
     QScopedPointer<AppletManagerPrivate> dptr;

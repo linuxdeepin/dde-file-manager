@@ -64,7 +64,7 @@ void AppletManagerPrivate::parseDefaultRootTemplates()
  * \brief 从模板节点 \a node 创建对应的 Applet ，将按照模板树递归创建子 Applet
  * \return 构造的 Applet
  */
-Applet *AppletManagerPrivate::createAppletFromNode(const AppletTemplateNode::Ptr &node, QObject *parent)
+Applet *AppletManagerPrivate::createAppletFromNode(const AppletTemplateNode::Ptr &node, Containment *parent)
 {
     Q_Q(AppletManager);
     if (!node || !node->quickInfoPtr) {
@@ -83,7 +83,7 @@ Applet *AppletManagerPrivate::createAppletFromNode(const AppletTemplateNode::Ptr
         }
 
         for (auto childNode : std::as_const(node->childNode)) {
-            Applet *childApplet = createAppletFromNode(childNode, nullptr);
+            Applet *childApplet = createAppletFromNode(childNode, containment);
             containment->appendApplet(childApplet);
         }
     }
@@ -207,7 +207,7 @@ Panel *AppletManager::createPanel(const QString &templateId)
 
 /*!
  * \brief 根据插件名和组件 ID 查找创建对应的 Panel
- * \return Panel 指针
+ * \return Panel 指针，未指定父对象，AppletManager 也不会维护此指针的生命周期。
  */
 Panel *AppletManager::createPanel(const QString &pluginName, const QString &quickId)
 {
@@ -227,11 +227,11 @@ QList<QString> AppletManager::allAppletTemplateIdList() const
  *      会遍历 Applet 的子节点查找创建
  * \return Applet 指针
  */
-Applet *AppletManager::createApplet(const QString &templateId, QObject *parent)
+Applet *AppletManager::createApplet(const QString &templateId, Containment *parent)
 {
     Q_D(AppletManager);
     if (auto node = d->cacheIDToNode.value(templateId)) {
-        return d->createAppletFromNode(node);
+        return d->createAppletFromNode(node, parent);
     }
 
     return nullptr;
@@ -241,7 +241,7 @@ Applet *AppletManager::createApplet(const QString &templateId, QObject *parent)
  * \brief 根据插件名和组件 ID 查找创建对应的 Applet
  * \return Applet 指针
  */
-Applet *AppletManager::createApplet(const QString &pluginName, const QString &quickId, QObject *parent)
+Applet *AppletManager::createApplet(const QString &pluginName, const QString &quickId, Containment *parent)
 {
     return createApplet(d_func()->generateId(pluginName, quickId), parent);
 }
@@ -347,7 +347,7 @@ bool AppletManager::unRegisteApplet(const QString &pluginName, const QString &qu
  * \brief 通过插件元信息 \a metaPtr 创建 Applet ，可用于创建重复的组件嵌入其他容器。
  * \return 创建的 Applet 若插件信息异常，将返回 false
  */
-Applet *AppletManager::createAppletFromInfo(const dpf::PluginQuickMetaPtr &metaPtr, QObject *parent, QString *errorString)
+Applet *AppletManager::createAppletFromInfo(const dpf::PluginQuickMetaPtr &metaPtr, Containment *parent, QString *errorString)
 {
     QString error;
     dfmbase::FinallyUtil finally([&]() {
@@ -373,8 +373,12 @@ Applet *AppletManager::createAppletFromInfo(const dpf::PluginQuickMetaPtr &metaP
 
     Applet *appletPtr = nullptr;
     if (!metaPtr->applet().isEmpty()) {
-        appletPtr = AppletFactory::instance()->create(metaPtr->applet(), &error);
-        if (flag.testFlag(Applet::kContainment) && !appletPtr->containment()) {
+        appletPtr = AppletFactory::instance()->create(metaPtr->applet(), parent, &error);
+        if (!appletPtr) {
+            return nullptr;
+        }
+
+        if (flag.testFlag(Applet::kContainment) && !qobject_cast<Containment *>(appletPtr)) {
             error = QString("Extendsion applet %1.%2 sets type to containment but not based on containment")
                             .arg(metaPtr->plugin())
                             .arg(metaPtr->id());
