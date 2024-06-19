@@ -168,6 +168,20 @@ void Trash::followEvents()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashFileHelper::instance(), &TrashFileHelper::openFileInPlugin);
 
     dpfHookSequence->follow("dfmplugin_utils", "hook_OpenWith_DisabledOpenWithWidget", TrashFileHelper::instance(), &TrashFileHelper::disableOpenWidgetWidget);
+
+    // register to tag
+    auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-tag") };
+    if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", TrashFileHelper::instance(), &TrashFileHelper::handleCanTag);
+    } else {
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-tag")
+                        dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", TrashFileHelper::instance(), &TrashFileHelper::handleCanTag);
+                },
+                Qt::DirectConnection);
+    }
 }
 
 void Trash::bindWindows()

@@ -37,6 +37,7 @@ public:
     bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
     bool blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool disableOpenWidgetWidget(const QUrl &url, bool *result);
+    bool handleCanTag(const QUrl &url, bool *canTag);
 
 private:
     explicit TrashFileHelper(QObject *parent = nullptr);
