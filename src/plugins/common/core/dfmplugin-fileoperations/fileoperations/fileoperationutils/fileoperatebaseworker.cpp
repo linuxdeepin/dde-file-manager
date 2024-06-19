@@ -786,7 +786,6 @@ void FileOperateBaseWorker::initCopyWay()
 
 QUrl FileOperateBaseWorker::trashInfo(const DFileInfoPointer &fromInfo)
 {
-
     auto parentPath = parentUrl(fromInfo->uri()).path();
     if (!parentPath.endsWith("files"))
         return QUrl();
