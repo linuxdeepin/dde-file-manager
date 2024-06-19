@@ -141,3 +141,14 @@ bool TrashFileHelper::disableOpenWidgetWidget(const QUrl &url, bool *result)
 
     return true;
 }
+
+bool TrashFileHelper::handleCanTag(const QUrl &url, bool *canTag)
+{
+    if (url.scheme() == scheme() || FileUtils::isTrashFile(url)) {
+        if (canTag)
+            *canTag = false;
+        return true;
+    }
+
+    return false;
+}
