@@ -43,6 +43,7 @@ private:
     static QPointer<QCheckBox> kAutoMountOpenCheckBox;
     static QSet<QString> kHiddenSettingItems;
     QPointer<DSettings> dtkSettings;
+    static quint64 parentWid;
 };
 }
 #endif   // DFMSETTINGDIALOG_H

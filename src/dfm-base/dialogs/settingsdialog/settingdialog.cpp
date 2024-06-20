@@ -11,6 +11,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dtkcore_global.h>
 #include <DSettingsOption>
@@ -134,10 +135,12 @@ void SettingDialog::loadSettings(const QString & /*templateFile*/)
 QPointer<QCheckBox> SettingDialog::kAutoMountCheckBox = nullptr;
 QPointer<QCheckBox> SettingDialog::kAutoMountOpenCheckBox = nullptr;
 QSet<QString> SettingDialog::kHiddenSettingItems {};
+quint64 SettingDialog::parentWid { 0 };
 
 SettingDialog::SettingDialog(QWidget *parent)
     : DSettingsDialog(parent)
 {
+    parentWid = FMWindowsIns.findWindowId(parent);
     // TODO(xust): move to server plugin.
     widgetFactory()->registerWidget("mountCheckBox", &SettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);
@@ -296,7 +299,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
     layout->addWidget(button, 0, Qt::AlignRight);
 
     connect(button, &DPushButton::clicked, option, [=] {
-        Application::appAttributeTrigger(static_cast<Application::TriggerAttribute>(attributeType));
+        Application::appAttributeTrigger(static_cast<Application::TriggerAttribute>(attributeType), parentWid);
     });
 
     return qMakePair(new QLabel(desc), rightWidget);

@@ -365,8 +365,12 @@ int AddressBarPrivate::showClearSearchHistory()
     return code;
 }
 
-void AddressBarPrivate::onClearSearchHistory()
+void AddressBarPrivate::onClearSearchHistory(quint64 winId)
 {
+    quint64 id = FMWindowsIns.findWindowId(q);
+    if (id != winId)
+        return;
+
     auto result = showClearSearchHistory();
     if (result == DDialog::Accepted)
         q->clearSearchHistory();
