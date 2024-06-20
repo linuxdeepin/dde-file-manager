@@ -93,7 +93,7 @@ public:
 
     static Settings *dataPersistence();
 
-    static void appAttributeTrigger(TriggerAttribute ta);
+    static void appAttributeTrigger(TriggerAttribute ta, quint64 winId);
 
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
@@ -111,7 +111,7 @@ Q_SIGNALS:
 
     void genericSettingCreated(Settings *settings);
     void appSettingCreated(Settings *settings);
-    void clearSearchHistory();
+    void clearSearchHistory(quint64 winId);
 
 protected:
     Application(ApplicationPrivate *dd, QObject *parent = nullptr);

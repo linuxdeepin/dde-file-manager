@@ -276,7 +276,7 @@ Settings *Application::dataPersistence()
     return dpGlobal;
 }
 
-void Application::appAttributeTrigger(TriggerAttribute ta)
+void Application::appAttributeTrigger(TriggerAttribute ta, quint64 winId)
 {
     switch (ta) {
     case kRestoreViewMode: {
@@ -307,7 +307,7 @@ void Application::appAttributeTrigger(TriggerAttribute ta)
         break;
         }
     case kClearSearchHistory:
-        Q_EMIT instance()->clearSearchHistory();
+        Q_EMIT instance()->clearSearchHistory(winId);
         break;
     }
 }
