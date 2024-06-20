@@ -349,6 +349,8 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
     bool isEmptyArea = !index.isValid();
     Qt::ItemFlags flags;
 
+    if (WindowUtils::isWayLand())
+        setAttribute(Qt::WA_InputMethodEnabled, false);
     if (isEmptyArea) {
         d->menuProxy->showEmptyAreaMenu(flags, gridPos);
     } else {
@@ -359,6 +361,8 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
         flags = model()->flags(index);
         d->menuProxy->showNormalMenu(index, flags, gridPos);
     }
+    if (WindowUtils::isWayLand())
+        setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void CanvasView::startDrag(Qt::DropActions supportedActions)
