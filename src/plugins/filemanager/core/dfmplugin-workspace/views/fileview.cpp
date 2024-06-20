@@ -96,8 +96,8 @@ FileView::~FileView()
     disconnect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
-    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
-    dpfSignalDispatcher->unsubscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
+    // dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
+    // dpfSignalDispatcher->unsubscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
 }
 
 QWidget *FileView::widget() const
@@ -361,16 +361,18 @@ void FileView::onSectionHandleDoubleClicked(int logicalIndex)
     if (rowCount < 1)
         return;
 
-    QStyleOptionViewItem option = viewOptions();
+    QStyleOptionViewItem *option = nullptr;
+    initViewItemOption(option);
+    // QStyleOptionViewItem option = viewOptions();
 
-    option.rect.setWidth(QWIDGETSIZE_MAX);
-    option.rect.setHeight(itemSizeHint().height());
+    option->rect.setWidth(QWIDGETSIZE_MAX);
+    option->rect.setHeight(itemSizeHint().height());
 
     int columnMaxWidth = 0;
 
     for (int i = 0; i < rowCount; ++i) {
         const QModelIndex &index = model()->index(i, 0, rootIndex());
-        const QList<QRect> &list = itemDelegate()->paintGeomertys(option, index, true);
+        const QList<QRect> &list = itemDelegate()->paintGeomertys(*option, index, true);
 
         // 第0列为文件名列，此列比较特殊，因为前面还有文件图标占用了一部分空间
         int width = 0;
@@ -490,7 +492,7 @@ void FileView::wheelEvent(QWheelEvent *event)
             verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
 #endif
         }
-    } else if (event->modifiers() == Qt::AltModifier || event->orientation() == Qt::Horizontal) {
+    } else if (event->modifiers() == Qt::AltModifier || event->angleDelta().x() != 0) {
         horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
     } else {
 #ifdef QT_SCROLL_WHEEL_ANI
@@ -767,9 +769,10 @@ void FileView::updateViewportContentsMargins(const QSize &itemSize)
 bool FileView::indexInRect(const QRect &actualRect, const QModelIndex &index)
 {
     auto paintRect = visualRect(index);
-    auto opt = viewOptions();
-    opt.rect = paintRect;
-    auto rectList = itemDelegate()->itemGeomertys(opt, index);
+    QStyleOptionViewItem *opt = nullptr;
+    initViewItemOption(opt);
+    opt->rect = paintRect;
+    auto rectList = itemDelegate()->itemGeomertys(*opt, index);
     for (const auto &rect : rectList) {
         if (!(actualRect.left() > rect.right()
                       || actualRect.top() > rect.bottom()
@@ -907,8 +910,11 @@ int FileView::itemCountForRow() const
 
 QSize FileView::itemSizeHint() const
 {
+    QStyleOptionViewItem *opt = nullptr;
+    initViewItemOption(opt);
+
     if (itemDelegate())
-        return itemDelegate()->sizeHint(viewOptions(), rootIndex());
+        return itemDelegate()->sizeHint(*opt, rootIndex());
 
     return QSize();
 }
@@ -1074,9 +1080,10 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
 
     auto currentIndex = model()->index(index, 0, rootIndex());
     auto paintRect = visualRect(currentIndex);
-    auto opt = viewOptions();
-    opt.rect = paintRect;
-    auto rectList = itemDelegate()->itemGeomertys(opt, currentIndex);
+    QStyleOptionViewItem *opt = nullptr;
+    initViewItemOption(opt);
+    opt->rect = paintRect;
+    auto rectList = itemDelegate()->itemGeomertys(*opt, currentIndex);
     for (const auto &rect : rectList) {
         if (rect.contains(pos))
             return currentIndex;
@@ -1492,7 +1499,7 @@ void FileView::startDrag(Qt::DropActions supportedActions)
             UniversalUtils::urlsTransformToLocal(treeSelectedUrl, &transformedUrls);
             QByteArray ba;
             for (const auto &url : transformedUrls) {
-                ba.append(url.toString() + "\n");
+                ba.append(QString(url.toString() + "\n").toLatin1());
             }
             data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey, ba);
         }

@@ -28,17 +28,15 @@ AppletItem {
                 text: fileName
             }
         }
-
         FolderListModel {
             id: folderModel
 
-            folder: "File:///home/uos"
+            folder: "File:///home"
             nameFilters: ["*"]
             showDirs: true
             showDirsFirst: true
         }
     }
-
     Text {
         color: "lightgray"
         font.pointSize: 36

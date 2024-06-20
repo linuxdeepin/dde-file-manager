@@ -21,6 +21,7 @@ endif()
 #CMake module
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(install_plugin_quick_module)
+include(install_dconfig)
 
 # Select major version.
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)

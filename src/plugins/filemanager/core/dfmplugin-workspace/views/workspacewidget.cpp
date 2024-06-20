@@ -370,7 +370,7 @@ void WorkspaceWidget::initTabBar()
     tabBottomLine->hide();
 
     tabBarLayout = new QHBoxLayout;
-    tabBarLayout->setMargin(0);
+    tabBarLayout->setContentsMargins(0, 0, 0, 0);
     tabBarLayout->setSpacing(0);
     tabBarLayout->addWidget(tabBar);
     tabBarLayout->addWidget(newTabButton);

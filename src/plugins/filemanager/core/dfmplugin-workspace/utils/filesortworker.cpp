@@ -15,6 +15,7 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 using namespace dfmplugin_workspace;
 using namespace dfmbase::Global;
@@ -776,10 +777,10 @@ void FileSortWorker::checkNameFilters(const FileItemDataPointer itemData)
     if (!itemData || itemData->data(Global::ItemRoles::kItemFileIsDirRole).toBool() || nameFilters.isEmpty())
         return;
 
-    QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
     for (int i = 0; i < nameFilters.size(); ++i) {
-        re.setPattern(nameFilters.at(i));
-        if (re.exactMatch(itemData->data(kItemNameRole).toString())) {
+        QRegularExpression re(QRegularExpression::anchoredPattern(QRegularExpression::wildcardToRegularExpression(nameFilters.at(i))));
+        QRegularExpressionMatchIterator it = re.globalMatch(itemData->data(kItemNameRole).toString());
+        if (it.hasNext()) {
             itemData->setAvailableState(true);
             return;
         }

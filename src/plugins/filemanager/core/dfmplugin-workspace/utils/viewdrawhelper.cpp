@@ -33,9 +33,11 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
     indexes.removeAll(topIndex);
 
     const qreal scale = view->devicePixelRatioF();
-    QStyleOptionViewItem option = view->viewOptions();
-    option.state |= QStyle::State_Selected;
-    option.rect = option.rect.translated(kDragIconOutline, kDragIconOutline);
+    // QStyleOptionViewItem option = view->viewOptions();
+    QStyleOptionViewItem *option = nullptr;
+    view->initViewItemOption(option);
+    option->state |= QStyle::State_Selected;
+    option->rect = option->rect.translated(kDragIconOutline, kDragIconOutline);
 
     if (mode == ViewMode::kIconMode) {
         QRectF rect = view->visualRect(topIndex);
@@ -52,9 +54,9 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
 
         QPainter painter(&pixmap);
 
-        drawDragIcons(&painter, option, pixRect, indexes, topIndex);
+        drawDragIcons(&painter, *option, pixRect, indexes, topIndex);
         if (dragCount != 1)
-            drawDragCount(&painter, topIndex, option, dragCount);
+            drawDragCount(&painter, topIndex, *option, dragCount);
         else
             drawDragText(&painter, topIndex, rect.width() - 2 * kIconModeTextPadding - 2 * kIconModeColumuPadding - kIconModeBackRadius);
 
@@ -72,11 +74,11 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
         QPainter painter(&pixmap);
 
         if (indexes.isEmpty()) {
-            drawDragIcons(&painter, option, pixRect, indexes, topIndex);
+            drawDragIcons(&painter, *option, pixRect, indexes, topIndex);
             drawDragText(&painter, topIndex, kListDragTextWidth);
         } else {
-            drawDragIcons(&painter, option, pixRect, indexes, topIndex);
-            drawDragCount(&painter, topIndex, option, dragCount);
+            drawDragIcons(&painter, *option, pixRect, indexes, topIndex);
+            drawDragCount(&painter, topIndex, *option, dragCount);
         }
 
         return pixmap;

@@ -50,7 +50,6 @@ ApplicationWindow {
     // For local module test
     ActionMenu {
     }
-
     SplitView {
         anchors.fill: parent
 
@@ -61,7 +60,6 @@ ApplicationWindow {
                 width: 200
             }
         }
-
         ColumnLayout {
             SplitView.fillHeight: true
             SplitView.fillWidth: true
@@ -70,7 +68,6 @@ ApplicationWindow {
                 id: titlebar
 
             }
-
             RowLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -79,7 +76,6 @@ ApplicationWindow {
                     id: workspace
 
                 }
-
                 LayoutItemProxy {
                     id: detailspace
 

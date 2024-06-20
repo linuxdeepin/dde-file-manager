@@ -157,13 +157,13 @@ void FileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelI
     setcolor1(option->palette, appPalette, QPalette::Shadow);
 
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
-        setcolor2(option->palette, appPalette, QPalette::Current, QPalette::Background);
+        setcolor2(option->palette, appPalette, QPalette::Current, QPalette::Window);
     } else {
-        setcolor2(option->palette, appPalette, QPalette::Normal, QPalette::Background);
+        setcolor2(option->palette, appPalette, QPalette::Normal, QPalette::Window);
     }
 
     bool transp = isTransparent(index);
-    option->backgroundBrush = appPalette.brush(transp ? QPalette::Inactive : QPalette::Current, QPalette::Background);
+    option->backgroundBrush = appPalette.brush(transp ? QPalette::Inactive : QPalette::Current, QPalette::Window);
 
     option->textElideMode = Qt::ElideLeft;
 }
@@ -238,10 +238,11 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
         if (!(index.flags() & Qt::ItemIsSelectable))
             return true;
 
-        QStyleOptionViewItem option = parent()->viewOptions();
-        option.rect = rect;
+        QStyleOptionViewItem *option = nullptr;
+        parent()->initViewItemOption(option);
+        option->rect = rect;
 
-        const QList<QRect> &geometryList = itemDelegate()->paintGeomertys(option, index);
+        const QList<QRect> &geometryList = itemDelegate()->paintGeomertys(*option, index);
         auto ret = std::any_of(geometryList.begin(), geometryList.end(), [pos](const QRect &geometry) {
             return geometry.contains(pos);
         });
