@@ -27,6 +27,10 @@
 
 #include <unistd.h>
 
+inline constexpr int kTabHeightScaling { 24 };
+inline constexpr int kCloseButtonBigSize { 36 };
+inline constexpr int kCloseButtonSmallSize { 30 };
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -426,9 +430,9 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
     if (closingIndex < count() && closingIndex >= 0) {
         Tab *tab = tabList.at(closingIndex);
         tabCloseButton->setClosingIndex(closingIndex);
-        int btnSize = height() > 24 ? 36 : 32;
+        int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
         tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, btnSize - 32);
+        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize)/2 - 1);
 
         if (closingIndex == currentIndex)
             tabCloseButton->setActiveWidthTab(true);
@@ -579,9 +583,9 @@ void TabBar::handleTabAnimationFinished(const int index)
 {
     if (tabCloseButton->getClosingIndex() == index) {
         Tab *tab = tabList.at(index);
-        int btnSize = height() > 24 ? 36 : 32;
+        int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
         tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, btnSize - 32);
+        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize)/2 - 1);
     }
 
     if ((tabCloseButton->getClosingIndex() >= count()
