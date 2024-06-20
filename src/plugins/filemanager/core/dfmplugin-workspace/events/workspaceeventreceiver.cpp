@@ -30,8 +30,8 @@ WorkspaceEventReceiver::WorkspaceEventReceiver(QObject *parent)
 
 WorkspaceEventReceiver::~WorkspaceEventReceiver()
 {
-    dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
-                                     WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
+    // dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
+    //                                  WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
 }
 
 WorkspaceEventReceiver *WorkspaceEventReceiver::instance()

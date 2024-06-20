@@ -272,7 +272,7 @@ void TabBar::onMoveNext(Tab *tab)
     if (tabIndex >= count() - 1)
         return;
 
-    tabList.swap(tabIndex, tabIndex + 1);
+    tabList.swapItemsAt(tabIndex, tabIndex + 1);
 
     ++tabIndex;
     quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
@@ -288,7 +288,7 @@ void TabBar::onMovePrevius(Tab *tab)
     if (tabIndex <= 0)
         return;
 
-    tabList.swap(tabIndex, tabIndex - 1);
+    tabList.swapItemsAt(tabIndex, tabIndex - 1);
 
     --tabIndex;
     quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));

@@ -12,6 +12,8 @@
 #include <DSuggestButton>
 #include <tuple>
 
+#include <QRegularExpressionValidator>
+
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QHBoxLayout;
@@ -78,7 +80,7 @@ public:
 
     DTuple<QLabel *, QLineEdit *, QLabel *, QLineEdit *, QLabel *> customOPeratorItems {};
     QPair<QHBoxLayout *, QFrame *> frameForLayoutCustomArea {};
-    QRegExpValidator *validator { nullptr };
+    QRegularExpressionValidator *validator { nullptr };
 
     DTuple<QPushButton *, QPushButton *, QHBoxLayout *, QFrame *> buttonsArea {};
 

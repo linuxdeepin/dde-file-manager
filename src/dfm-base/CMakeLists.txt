@@ -201,7 +201,7 @@ install(FILES ${AssetsPath}/log/viewer/dde-file-manager.json DESTINATION ${LogVi
 set(LogDebugConfDir "${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d")
 install(FILES ${AssetsPath}/log/debug/org.deepin.file-manager.json DESTINATION ${LogDebugConfDir})
 
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+# install dconfig files.
 INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.view.json")

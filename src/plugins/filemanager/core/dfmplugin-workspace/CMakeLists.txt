@@ -5,24 +5,11 @@ project(dfmplugin-workspace)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # TODO(zhangs): remove private
-FILE(GLOB WORKSPACE_FILES
+FILE(GLOB_RECURSE WORKSPACE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.qml"
     )
 find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
@@ -51,3 +38,6 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
 )
+
+#Install qml file
+INSTALL_PLUGIN_QUICK_MODULE(${DFM_PLUGIN_FILEMANAGER_CORE_DIR})

@@ -42,7 +42,7 @@ void BaseSortMenuScenePrivate::sortMenuActions(QMenu *menu, const QStringList &s
 
     auto actions = menu->actions();
     // sort
-    qSort(actions.begin(), actions.end(), [findIndex](QAction *act1, QAction *act2) {
+    std::sort(actions.begin(), actions.end(), [findIndex](QAction *act1, QAction *act2) {
         const auto &property1 = act1->property(ActionID::kActionID).toString();
         auto index1 = findIndex(property1);
         if (index1 == -1)
