@@ -14,9 +14,10 @@
     ],
     "Quick": [
         {
-            "Url" : "DetailSpace.qml",
+            "Url" : "qml/DetailSpace.qml",
             "Id" : "detailspace",
-            "Parent" : "dfmplugin-core.filewindow"
+            "Parent" : "dfmplugin-core.filewindow",
+            "Applet" : "org.dfm.detailspace"
         }
     ]
 }
