@@ -32,8 +32,9 @@ enum DetailFilterType {
     kFileInterviewTimeField = 1 << 7,
     kFileChangeTimeField = 1 << 8
 };
-Q_ENUM_NS(DetailFilterType)
+Q_FLAG_NS(DetailFilterType)
 
+// TODO: try remove it
 enum BasicFieldExpandEnum : int {
     kNotAll,
     kFileName,

@@ -322,6 +322,9 @@ QSharedPointer<QQmlEngine> WindowManager::engine() const
  * \brief 根据传入的插件 \a pluginName 和组件 \a quickId 信息查找并创建对应的主窗体，\a var 为初始化时传递给主窗体组件的参数，
  *  创建的窗口会被当前管理类保留管理.
  * \return 创建的 QQuickWindow 和 Panel，无法创建返回空的 Handle
+ *
+ * \warning 主窗口对应的 Qml 组件会立即加载，子 Applet 是异步加载的，所以在默认初始化的流程中，不使用旧版框架中 findWindowId() 这类
+ *      接口
  */
 WindowManager::Handle WindowManager::createWindow(const QUrl &url, const QString &pluginName,
                                                   const QString &quickId, const QVariantMap &var)

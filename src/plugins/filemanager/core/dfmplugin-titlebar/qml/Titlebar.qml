@@ -69,7 +69,7 @@ ContainmentItem {
 
                     onClicked: {
                         console.warn("--- test", Containment.applets);
-                        Applet.currentUrl = "file:///home/uos/Downloads/GammaRay/build/bin";
+                        Applet.currentUrl = "file:///home/uos/Videos/dde-introduction.mp4";
                     }
                 }
             }

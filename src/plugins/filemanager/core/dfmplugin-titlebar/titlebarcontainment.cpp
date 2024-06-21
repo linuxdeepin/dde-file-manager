@@ -25,15 +25,15 @@ QuickCrumbModel *TitlebarContainment::crumbModel() const
 
 void TitlebarContainment::onUrlChanged(const QUrl &url)
 {
-    TitleBarEventCaller::sendCd(this, url);
+    if (rootObject()) {
+        TitleBarEventCaller::sendCd(this, url);
+    }
 
     updateController(url);
 
     if (crumbController) {
         crumbController->crumbUrlChangedBehavior(url);
     }
-
-
 }
 
 void TitlebarContainment::updateController(const QUrl &url)
