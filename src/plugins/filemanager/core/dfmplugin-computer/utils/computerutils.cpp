@@ -221,7 +221,7 @@ QStringList ComputerUtils::allValidBlockUUIDs()
 {
     const auto &allBlocks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kNotIgnored).toSet();
     QSet<QString> uuids;
-    for(const QString &devId : allBlocks) {
+    for (const QString &devId : allBlocks) {
         const auto &&data = DevProxyMng->asyncQueryBlockInfo(devId);
         if (data.value("error", QVariant(false)).toBool())
             return uuids.values();
@@ -333,7 +333,8 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
 
     if (ok && !urls.isEmpty())
         converted = urls.first();
-
+    else
+        converted = QUrl();
     QString devId;
     if (converted.scheme() == Global::Scheme::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
         if (devId.startsWith(kBlockDeviceIdPrefix))
