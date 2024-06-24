@@ -42,6 +42,8 @@ public:
     void setOption(QStyleOptionViewItem opt);
     QRectF textGeometry(int width = -1) const;
     QRectF iconGeometry() const;
+    void setDifferenceOfLastRow(const int diff);
+    int getDifferenceOfLastRow() const;
 
 private:
     QPixmap iconPixmap;
@@ -52,6 +54,7 @@ private:
     qreal opacity { 1 };
     bool canDeferredDelete { true };
     IconItemDelegate *delegate { nullptr };
+    int diff { 0 };
 };
 }
 

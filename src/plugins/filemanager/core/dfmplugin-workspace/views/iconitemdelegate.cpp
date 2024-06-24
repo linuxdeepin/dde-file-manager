@@ -568,6 +568,8 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 
     // if has selected show all file name else show elide file name.
     bool isSelected = !isDragMode && isSelectedOpt && opt.showDecorationSelected;
+    if (!singleSelected)
+        d->expandedItem->setDifferenceOfLastRow(0);
 
     if (isSelected && singleSelected) {
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
@@ -582,10 +584,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         d->expandedItem->setOption(opt);
         d->expandedItem->setTextBounding(QRectF());
         d->expandedItem->setFixedWidth(0);
-
-        if (parent()->parent()->indexOfRow(index) == parent()->parent()->rowCount() - 1) {
-            d->lastAndExpandedIndex = index;
-        }
+        d->expandedItem->setDifferenceOfLastRow(parent()->parent()->rowCount() - parent()->parent()->indexOfRow(index) - 1);
 
         updateEditorGeometry(d->expandedItem, opt, index);
 
@@ -593,6 +592,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     } else {
         if (!singleSelected) {
             const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
+            d->lastAndExpandedIndex = QModelIndex();
         }
     }
 
@@ -630,9 +630,13 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex
 
     const QSize &size = d->itemSizeHint;
 
-    if (index.isValid() && index == d->lastAndExpandedIndex) {
+    // 如果有一个选中，名称显示很长时，最后一个index时设置item的高度为最多，右边才会出现滑动块
+    if(index.isValid() && parent()->isLastIndex(index) && d->expandedItem
+            && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
         d->expandedItem->setIconHeight(parent()->parent()->iconSize().height());
-        return QSize(size.width(), d->expandedItem->heightForWidth(size.width()));
+        auto hight = qMax(size.height(), d->expandedItem->heightForWidth(size.width()) -
+                          d->expandedItem->getDifferenceOfLastRow() * size.height());
+        return QSize(size.width(), hight);
     }
 
     return size;
@@ -700,7 +704,6 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
         editor->setFixedWidth(option.rect.width());
         d->expandedItem->setIconHeight(iconSize.height());
         editor->adjustSize();
-
         return;
     }
 
