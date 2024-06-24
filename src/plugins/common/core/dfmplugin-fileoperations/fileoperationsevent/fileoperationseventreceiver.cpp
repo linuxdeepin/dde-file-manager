@@ -869,15 +869,16 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
         if (lastEvent != DFMBASE_NAMESPACE::GlobalEventType::kUnknowType) {
             if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles)
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, fileHandler.getInvalidPath(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
             else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, fileHandler.getInvalidPath(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             // deal open file with custom dialog
-            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", windowId, urls);
+            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", windowId, fileHandler.getInvalidPath());
             ok = true;
         }
     }
+
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
     return ok;
 }
