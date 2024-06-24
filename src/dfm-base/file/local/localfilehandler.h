@@ -55,6 +55,7 @@ public:
     GlobalEventType lastEventType();
     QString errorString();
     DFMIOErrorCode errorCode();
+    QList<QUrl> invalidPath;
 
 private:
     QScopedPointer<LocalFileHandlerPrivate> d;

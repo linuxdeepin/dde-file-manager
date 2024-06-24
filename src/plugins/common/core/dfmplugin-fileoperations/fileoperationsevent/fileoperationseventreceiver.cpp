@@ -865,19 +865,17 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     bool ok = fileHandler.openFiles(urls);
-    if (!ok) {
-        DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
-        if (lastEvent != DFMBASE_NAMESPACE::GlobalEventType::kUnknowType) {
-            if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles)
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
-            else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
-        } else {
-            // deal open file with custom dialog
-            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", windowId, urls);
-            ok = true;
+    DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
+    if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles)
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, fileHandler.invalidPath, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, fileHandler.invalidPath, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    else if(!ok && lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType){
+    // deal open file with custom dialog
+    dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", windowId, fileHandler.invalidPath);
+    ok = true;
         }
-    }
+
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
     return ok;
 }

@@ -279,6 +279,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
 
     for (QUrl &fileUrl : urls) {
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
+        QUrl sourceUrl = fileUrl;
         QStringList targetList;
         targetList.append(fileUrl.path());
         FileInfoPointer fileInfoLink = fileInfo;
@@ -304,7 +305,8 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
                 d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameOf(
                                                                                      NameInfoType::kFileName),
                                                                              fileInfo->urlOf(UrlInfoType::kUrl));
-                return d->lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
+                invalidPath << sourceUrl;
+                continue;
             }
         }
 
