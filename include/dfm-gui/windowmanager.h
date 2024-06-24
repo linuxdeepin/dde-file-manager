@@ -28,6 +28,7 @@ public:
     using Handle = QPointer<Panel>;
 
     static WindowManager *instance();
+    void initialize();
     QSharedPointer<QQmlEngine> engine() const;
 
     Handle createWindow(const QUrl &url, const QString &pluginName,
