@@ -65,7 +65,10 @@ void PolicyManager::slotVaultPolicy()
             break;
         case VaultPageMark::kClipboardPage:
             if (vaultVisiable) {
-                VaultHelper::instance()->lockVault(true);
+                if (!VaultHelper::instance()->lockVault(false)) {
+                    fmWarning() << "Lock vault failed!";
+                    return;
+                }
                 vaultVisiable = false;
                 VaultVisibleManager::instance()->removeSideBarVaultItem();
                 VaultVisibleManager::instance()->removeComputerVaultItem();
@@ -75,7 +78,10 @@ void PolicyManager::slotVaultPolicy()
             break;
         case VaultPageMark::kCopyFilePage:
             if (vaultVisiable) {
-                VaultHelper::instance()->lockVault(true);
+                if (!VaultHelper::instance()->lockVault(false)) {
+                    fmWarning() << "Lock vault failed!";
+                    return;
+                }
                 vaultVisiable = false;
                 VaultVisibleManager::instance()->removeSideBarVaultItem();
                 VaultVisibleManager::instance()->removeComputerVaultItem();

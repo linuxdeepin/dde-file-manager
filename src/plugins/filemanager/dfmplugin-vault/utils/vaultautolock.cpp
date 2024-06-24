@@ -104,7 +104,8 @@ void VaultAutoLock::processAutoLock()
 
     if (interval > threshold) {
         //        VaultAutoLock::killVaultTasks();
-        VaultHelper::instance()->lockVault(true);
+        if (!VaultHelper::instance()->lockVault(false))
+            fmWarning() << "Lock vault failed!";
     }
 }
 
@@ -126,7 +127,8 @@ void VaultAutoLock::slotLockVault(int state)
 
 void VaultAutoLock::processLockEvent()
 {
-    VaultHelper::instance()->lockVault(true);
+    if (VaultHelper::instance()->lockVault(false))
+        fmWarning() << "Lock vault failed!";
 }
 
 void VaultAutoLock::slotLockEvent(const QString &user)
