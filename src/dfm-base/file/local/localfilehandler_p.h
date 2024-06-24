@@ -66,6 +66,7 @@ public:
     LocalFileHandler *q { nullptr };
     DFMIOError lastError;
     GlobalEventType lastEvent = GlobalEventType::kUnknowType;
+    QList<QUrl> invalidPath;   //BUG:https://pms.uniontech.com/bug-view-259909.html,记录无效链接路径
 };
 
 }
