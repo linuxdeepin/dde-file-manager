@@ -233,9 +233,8 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
                                      windowId,
                                      sourceUrls,
                                      view->rootUrl(),
-                                     AbstractJobHandler::JobFlag::kCopyRemote,
-                                     nullptr, nullptr,
-                                     QVariant(), nullptr);
+                                     DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kCopyRemote,
+                                     nullptr);
     } else {
         fmWarning() << "Unknown clipboard past action:" << action << " urls:" << sourceUrls;
     }

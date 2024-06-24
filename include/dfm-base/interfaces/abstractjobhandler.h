@@ -34,7 +34,7 @@ public:
         kRevocation = 0x200,   // 拷贝时不处理文件名称
         kCopyRemote = 0x400,   // 深信服远程拷贝
         kRedo = 0x800,   // 重新执行（ctrl + Y）
-        kCountProgressCustomize = 0x800,   // 强制使用自己统计进度
+        kCountProgressCustomize = 0x1000,   // 强制使用自己统计进度
     };
     Q_ENUM(JobFlag)
     Q_DECLARE_FLAGS(JobFlags, JobFlag)
