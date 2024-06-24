@@ -41,6 +41,7 @@ public:
     bool isEmptyArea(const QPoint &pos);
     QSize viewContentSize() const;
     int verticalOffset() const;
+    bool isLastIndex(const QModelIndex &index);
 
     static int caculateListItemIndex(const QSize &itemSize, const QPoint &pos);
     static int caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos);
