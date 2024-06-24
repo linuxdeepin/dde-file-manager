@@ -7,7 +7,7 @@
 args=""
 current_path=$(pwd)
 for arg in "$@"; do
-    if [[ $arg =~ "." ]] || [[ $arg =~ ".." ]] || [[ $arg =~ "~/" ]]; then
+    if [[ $arg == "." ]] || [[ $arg == ".." ]] || [[ $arg == *"/." ]] || [[ $arg == *"/.." ]] || [[ $arg =~ "./" ]] || [[ $arg =~ "../" ]] || [[ $arg =~ "~/" ]]; then
         name=${arg##*/}
         path=${arg%/*}"/"
         if [[ $name == "." ]] || [[ $name == ".." ]]; then
@@ -20,7 +20,7 @@ for arg in "$@"; do
             path=$(echo "$path" | sed "s|~/|$home_path/|g")
             cd $current_path
         fi
-        cd $path
+        cd "$path"
         path=$(pwd)"/"
         cd $current_path
         absolute_path=$path$name
