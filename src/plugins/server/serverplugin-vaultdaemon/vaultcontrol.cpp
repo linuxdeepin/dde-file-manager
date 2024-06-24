@@ -20,6 +20,7 @@
 #include <QProcess>
 #include <QFile>
 #include <QDateTime>
+#include <QCoreApplication>
 
 extern "C" {
 #include <libsecret/secret.h>
@@ -76,7 +77,8 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
             } else {
                 lockVault(VaultHelper::instance()->vaultMountDirLocalPath(), false);
 
-                DFMBASE_NAMESPACE::Settings setting(kVaultTimeConfigFilePath);
+                QString filePath { QDir::homePath() + QString("/.config/%1/dde-file-manager/").arg(qApp->organizationName()) + kVaultTimeConfigFileName };
+                DFMBASE_NAMESPACE::Settings setting("", "", filePath);
                 setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
             }
         }

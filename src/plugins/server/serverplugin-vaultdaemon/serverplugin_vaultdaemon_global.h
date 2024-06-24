@@ -34,7 +34,7 @@ inline constexpr char kCryfsConfigFileName[] { "cryfs.config" };
 inline constexpr char kCryfsType[] { "fuse.cryfs" };
 inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
 inline constexpr char kGroupPolicyKeyVaultAlgoName[] { "dfm.vault.algo.name" };
-inline constexpr char kVaultTimeConfigFilePath[] { "/../dde-file-manager/vaultTimeConfig" };
+inline constexpr char kVaultTimeConfigFileName[] { "vaultTimeConfig.json" };
 
 inline constexpr char kNetWorkDBusServiceName[] { "org.deepin.service.SystemNetwork" };
 inline constexpr char kNetWorkDBusPath[] { "/org/deepin/service/SystemNetwork" };
