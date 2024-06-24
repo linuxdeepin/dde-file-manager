@@ -38,6 +38,29 @@ WindowManagerPrivate::WindowManagerPrivate(WindowManager *q)
 {
 }
 
+/*!
+ * \brief 注册标识为 \a uri 的 QML 模块信息
+ *  此函数单独抽离，由于 QtCreator 对 std::call_once 结构下识别不佳，不能有效通过 @uri 识别注册模块。
+ */
+void WindowManagerPrivate::registerType(const char *uri)
+{
+    // 注册，使用 @uri ... 标记，以在 QtCreator 中方便访问
+    // @uri org.dfm.base
+    qmlRegisterModule(uri, 1, 0);
+    qmlRegisterUncreatableType<Applet>(uri, 1, 0, "Applet", "Applet attached");
+    qmlRegisterExtendedType<Applet, AppletAttached>(uri, 1, 0, "Applet");
+    qmlRegisterUncreatableType<Containment>(uri, 1, 0, "Containment", "Containment attached");
+    qmlRegisterExtendedType<Containment, ContainmentAttached>(uri, 1, 0, "Containment");
+    qmlRegisterUncreatableType<Panel>(uri, 1, 0, "Panel", "Panel attached");
+    qmlRegisterExtendedType<Panel, PanelAttached>(uri, 1, 0, "Panel");
+    qmlRegisterType<AppletItem>(uri, 1, 0, "AppletItem");
+    qmlRegisterType<ContainmentItem>(uri, 1, 0, "ContainmentItem");
+
+    // 工具类，生命周期由 WindowManager 管理
+    QuickUtils *globalUtils = new QuickUtils(q_ptr);
+    qmlRegisterSingletonInstance<QuickUtils>(uri, 1, 0, "QuickUtils", globalUtils);
+}
+
 WindowManager::Handle WindowManagerPrivate::createQuickWindow(const QString &pluginName, const QString &quickId, const QVariantMap &var)
 {
     // 首次进入初始化
@@ -252,28 +275,6 @@ void WindowManagerPrivate::aboutToQuit()
 WindowManager::WindowManager()
     : dptr(new WindowManagerPrivate(this))
 {
-    // 注册，使用 @uri ... 标记，以在 QtCreator 中方便访问
-    // @uri org.dfm.base
-    const char *uri { "org.dfm.base" };
-    qmlRegisterModule(uri, 1, 0);
-    qmlRegisterUncreatableType<Applet>(uri, 1, 0, "Applet", "Applet attached");
-    qmlRegisterExtendedType<Applet, AppletAttached>(uri, 1, 0, "Applet");
-    qmlRegisterUncreatableType<Containment>(uri, 1, 0, "Containment", "Containment attached");
-    qmlRegisterExtendedType<Containment, ContainmentAttached>(uri, 1, 0, "Containment");
-    qmlRegisterUncreatableType<Panel>(uri, 1, 0, "Panel", "Panel attached");
-    qmlRegisterExtendedType<Panel, PanelAttached>(uri, 1, 0, "Panel");
-    qmlRegisterType<AppletItem>(uri, 1, 0, "AppletItem");
-    qmlRegisterType<ContainmentItem>(uri, 1, 0, "ContainmentItem");
-
-    // 工具类，生命周期由 WindowManager 管理
-    QuickUtils *globalUtils = new QuickUtils(this);
-    qmlRegisterSingletonInstance<QuickUtils>(uri, 1, 0, "QuickUtils", globalUtils);
-
-    // 退出时清理界面和 QQmlengine
-    connect(qApp, &QCoreApplication::aboutToQuit, this, [this]() {
-        Q_D(WindowManager);
-        d->aboutToQuit();
-    });
 }
 
 WindowManager::~WindowManager() { }
@@ -282,6 +283,23 @@ WindowManager *WindowManager::instance()
 {
     static WindowManager manager;
     return &manager;
+}
+
+/*!
+ * \return 初始化界面管理，仅会执行一次，执行 `org.dfm.base` QML 模块的注册，以及关键信号的关联
+ */
+void WindowManager::initialize()
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        d_func()->registerType("org.dfm.base");
+
+        // 退出时清理界面和 QQmlengine
+        connect(qApp, &QCoreApplication::aboutToQuit, this, [this]() {
+            Q_D(WindowManager);
+            d->aboutToQuit();
+        });
+    });
 }
 
 /*!

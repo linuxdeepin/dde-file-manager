@@ -138,6 +138,7 @@ static bool initQmlEngine()
     globalEngine->addImportPath(DFM_QML_MODULE);
 #endif
 
+    dfmgui::WindowManager::instance()->initialize();
     return true;
 }
 

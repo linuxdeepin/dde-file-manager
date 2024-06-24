@@ -18,6 +18,8 @@ public:
     explicit WindowManagerPrivate(WindowManager *q);
     ~WindowManagerPrivate() = default;
 
+    void registerType(const char *uri);
+
     WindowManager::Handle createQuickWindow(const QString &pluginName, const QString &quickId, const QVariantMap &var);
     void connectWindowHandle(const WindowManager::Handle &handle);
 
