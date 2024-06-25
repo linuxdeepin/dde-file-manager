@@ -102,7 +102,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         return true;
 
     QUrl toUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
-    if (!checkTargetEnable(toUrl) || !hoverFileInfo->isAttributes(OptInfoType::kIsWritable)) {
+    if (!checkTargetEnable(toUrl) || !hoverFileInfo->canAttributes(CanableInfoType::kCanDrop)) {
         event->ignore();
         currentHoverIndexUrl = toUrl;
         return true;

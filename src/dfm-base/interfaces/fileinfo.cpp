@@ -639,7 +639,7 @@ bool DFMBASE_NAMESPACE::FileInfoPrivate::canDrop()
 
     if (!q->isAttributes(OptInfoType::kIsSymLink)) {
         const bool isDesktop = q->nameOf(NameInfoType::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
-        return q->isAttributes(OptInfoType::kIsDir) || isDesktop;
+        return (q->isAttributes(OptInfoType::kIsDir) && q->isAttributes(OptInfoType::kIsWritable)) || isDesktop;
     }
 
     FileInfoPointer info = nullptr;
