@@ -44,6 +44,10 @@ private slots:
     void eventDispatcher();
     void hideRenameBar();
 
+    // QWidget interface
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
 private:
     void initConnect();
     QList<QUrl> getSelectFiles();
