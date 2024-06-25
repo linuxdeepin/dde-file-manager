@@ -13,6 +13,8 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QStackedWidget>
+#include <QApplication>
+#include <QKeyEvent>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -265,6 +267,8 @@ void RenameBar::hideRenameBar()
 {
     setVisible(false);
     reset();
+    if (parentWidget())
+        parentWidget()->setFocus();
 }
 
 void RenameBar::initConnect()
@@ -301,4 +305,18 @@ QList<QUrl> RenameBar::getSelectFiles()
     }
 
     return {};
+}
+
+
+void dfmplugin_workspace::RenameBar::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        if (qApp->focusObject() == d->renameBtn
+                && d->renameBtn->focusPolicy() == Qt::FocusPolicy::TabFocus)
+            emit clickRenameButton();
+        if (qApp->focusObject() == std::get<0>(d->buttonsArea)
+                && std::get<0>(d->buttonsArea)->focusPolicy() == Qt::FocusPolicy::TabFocus)
+            emit clickCancelButton();
+    }
+    return QFrame::keyPressEvent(event);
 }
