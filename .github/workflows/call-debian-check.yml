@@ -15,6 +15,3 @@ concurrency:
 jobs:
   debian-check:
     uses: linuxdeepin/.github/.github/workflows/debian-check.yml@master
-    with:
-      job_name: "debian-check"
-    
