@@ -83,6 +83,7 @@ public:
     DTuple<QPushButton *, QPushButton *, QHBoxLayout *, QFrame *> buttonsArea {};
 
     DSuggestButton *renameBtn { nullptr };
+    bool connectInitOnce { false };
 
 public slots:
     void onRenamePatternChanged(const int &index) noexcept;

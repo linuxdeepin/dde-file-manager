@@ -972,6 +972,8 @@ void FileView::onSelectionChanged(const QItemSelection &selected, const QItemSel
 {
     delayUpdateStatusBar();
 
+    emit selectUrlChanged(selectedUrlList());
+
     quint64 winId = WorkspaceHelper::instance()->windowId(this);
     WorkspaceEventCaller::sendViewSelectionChanged(winId, selected, deselected);
 }
