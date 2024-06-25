@@ -37,6 +37,8 @@
 #include <algorithm>
 #include <unistd.h>
 #include <malloc.h>
+#include <dfm-base/utils/windowutils.h>
+#include <QSurfaceFormat>
 
 Q_LOGGING_CATEGORY(logAppDesktop, "org.deepin.dde.filemanager.desktop")
 
@@ -238,6 +240,15 @@ static void waitingForKwin()
 
 int main(int argc, char *argv[])
 {
+    if(WindowUtils::isWayLand()) {
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+        setenv("PULSE_PROP_media.role", "video", 1);
+#ifndef __x86_64__
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
+#endif
+    }
     initLog();
     QString mainTime = QDateTime::currentDateTime().toString();
     DApplication a(argc, argv);
