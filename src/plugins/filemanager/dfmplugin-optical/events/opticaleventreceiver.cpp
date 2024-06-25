@@ -189,13 +189,15 @@ bool OpticalEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
     return false;
 }
 
-bool OpticalEventReceiver::handleTabClosable(const QUrl &currentUrl, const QUrl &rootUrl)
+bool OpticalEventReceiver::handleTabCloseable(const QUrl &currentUrl, const QUrl &rootUrl)
 {
     const auto &scheme { OpticalHelper::scheme() };
     if (currentUrl.scheme() != scheme || rootUrl.scheme() != scheme)
         return false;
 
-    if (OpticalHelper::burnIsOnStaging(currentUrl)) {
+    // 当前所在的目录正在待刻录的目录中（staging），而一个磁盘的目录被删除了（disc）这意味着
+    // 光盘被卸载， 因此需要关闭当前tab
+    if (OpticalHelper::burnIsOnStaging(currentUrl) && OpticalHelper::burnIsOnDisc(rootUrl)) {
         const QString &rootDev { OpticalHelper::burnDestDevice(rootUrl) };
         const QString &curDev { OpticalHelper::burnDestDevice(currentUrl) };
         if (rootDev == curDev) {

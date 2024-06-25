@@ -181,7 +181,7 @@ void Optical::bindEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleBlockShortcutPaste);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_Closeable", &OpticalEventReceiver::instance(),
-                            &OpticalEventReceiver::handleTabClosable);
+                            &OpticalEventReceiver::handleTabCloseable);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", &OpticalEventReceiver::instance(), &OpticalEventReceiver::detailViewIcon);
 }
