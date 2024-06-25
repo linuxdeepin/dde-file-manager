@@ -29,7 +29,7 @@ public slots:
     bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool handleBlockShortcutPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool detailViewIcon(const QUrl &url, QString *iconName);
-    bool handleTabClosable(const QUrl &currentUrl, const QUrl &rootUrl);
+    bool handleTabCloseable(const QUrl &currentUrl, const QUrl &rootUrl);
 
 private:
     bool isContainPWSubDirFile(const QList<QUrl> &urls);
