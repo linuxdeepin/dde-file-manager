@@ -61,6 +61,23 @@ void RenameBar::storeUrlList(const QList<QUrl> &list) noexcept
     d->urlList = list;
 }
 
+void RenameBar::setVisible(bool visible)
+{
+    Q_D(RenameBar);
+    if (!d->connectInitOnce) {
+        auto widget = qobject_cast<WorkspaceWidget *>(parentWidget());
+        if (widget) {
+            auto view = dynamic_cast<FileView *>(widget->currentView());
+            if (view)
+            {
+                d->connectInitOnce = true;
+                QObject::connect(view, &FileView::selectUrlChanged, this, &RenameBar::onSelectUrlChanged);
+            }
+        }
+    }
+    return QFrame::setVisible(visible);
+}
+
 void RenameBar::onVisibleChanged(bool value) noexcept
 {
     Q_D(RenameBar);
@@ -269,6 +286,15 @@ void RenameBar::hideRenameBar()
     reset();
     if (parentWidget())
         parentWidget()->setFocus();
+}
+
+void RenameBar::onSelectUrlChanged(const QList<QUrl> &urls)
+{
+    if (!isVisible())
+        return;
+
+    if (urls.isEmpty())
+        emit clickCancelButton();
 }
 
 void RenameBar::initConnect()

@@ -172,6 +172,7 @@ protected:
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
     void viewStateChanged();
+    void selectUrlChanged(const QList<QUrl> &urls);
 
 private slots:
     void loadViewState(const QUrl &url);

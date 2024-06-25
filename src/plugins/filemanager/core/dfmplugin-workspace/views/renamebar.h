@@ -24,6 +24,9 @@ public:
 
     void storeUrlList(const QList<QUrl> &list) noexcept;
 
+public Q_SLOTS:
+    void setVisible(bool visible) override;
+
 signals:
     void requestReplaceOperator();
     void clickCancelButton();
@@ -43,6 +46,7 @@ private slots:
     void onCustomOperatorSNNumberChanged();
     void eventDispatcher();
     void hideRenameBar();
+    void onSelectUrlChanged(const QList<QUrl> &urls);
 
     // QWidget interface
 protected:
