@@ -87,6 +87,9 @@ public:
     void setHideOnAccept(bool enable);
     bool hideOnAccept() const;
 
+    QUrl getcurrenturl() const;
+    bool handlecheckFileSuffix(const QString &filename, QString &suffix);
+
     FileDialogStatusBar *statusBar() const;
 
 Q_SIGNALS:

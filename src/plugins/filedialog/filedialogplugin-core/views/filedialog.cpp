@@ -662,6 +662,11 @@ bool FileDialog::hideOnAccept() const
     return d->hideOnAccept;
 }
 
+QUrl FileDialog::getcurrenturl() const
+{
+    return d->currentUrl;
+}
+
 void FileDialog::accept()
 {
     done(QDialog::Accepted);
@@ -913,6 +918,7 @@ void FileDialog::handleUrlChanged(const QUrl &url)
     emit initialized();
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), curNameFilters);
     dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetAlwaysOpenInCurrentWindow", internalWinId());
+    d->currentUrl = url;
 }
 
 void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)
@@ -965,6 +971,11 @@ void FileDialog::handleRenameEndAcceptBtn(const quint64 windowID, const QUrl &ur
     if (windowID == internalWinId()) {
         statusBar()->acceptButton()->setEnabled(true);
     }
+}
+
+bool FileDialog::handlecheckFileSuffix(const QString &filename, QString &suffix)
+{
+    return d->checkFileSuffix(filename, suffix);
 }
 
 void FileDialog::showEvent(QShowEvent *event)

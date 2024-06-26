@@ -208,6 +208,18 @@ void FileDialogStatusBar::onWindowTitleChanged(const QString &title)
 void FileDialogStatusBar::onFileNameTextEdited(const QString &text)
 {
     QString dstText = DFMBASE_NAMESPACE::FileUtils::preprocessingFileName(text);
+    QString newFileName = dstText;
+    QString suffix { "" };
+    if (mainWindow->handlecheckFileSuffix(dstText, suffix)) {
+        newFileName.append('.' + suffix);
+    }
+    int length = DFMBASE_NAMESPACE::FileUtils::getFileNameLength(mainWindow->getcurrenturl(), newFileName);
+    while (length >= NAME_MAX) {
+        int originalDstTextLength = dstText.toUtf8().size();
+        dstText.chop(1);
+        int choppedCharacterLength = originalDstTextLength - dstText.toUtf8().size();
+        length -= choppedCharacterLength;
+    };
     if (text != dstText) {
         int currPos = fileNameEdit->lineEdit()->cursorPosition();
         fileNameEdit->setText(dstText);
