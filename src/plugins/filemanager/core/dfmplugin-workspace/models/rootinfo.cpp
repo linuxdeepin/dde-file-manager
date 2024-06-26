@@ -40,10 +40,24 @@ RootInfo::~RootInfo()
         thread->traversalThread->stop();
         thread->traversalThread->wait();
     }
+    // wait old dir iterator thread
+    for (const auto &thread : discardedThread) {
+        thread->disconnect();
+        thread->stop();
+        thread->wait();
+    }
 }
 
 bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder)
 {
+    // clear old dir iterator thread
+    for (auto it = discardedThread.begin(); it != discardedThread.end(); ) {
+        if (!(*it)->isRunning()) {
+            it = discardedThread.erase(it);
+        } else {
+            it++;
+        }
+    }
     // create traversal thread
     QSharedPointer<DirIteratorThread> traversalThread = traversalThreads.value(key);
     bool isGetCache = canCache;
@@ -144,14 +158,9 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
     traversalThread->disconnect(this);
     if (traversalThread->isRunning()) {
         discardedThread.append(traversalThread);
-        connect(thread->traversalThread.data(), &TraversalDirThread::finished, this, [this, traversalThread] {
-            discardedThread.removeAll(traversalThread);
-            traversalThread->disconnect();
-        },
-                Qt::QueuedConnection);
         traversaling = false;
     }
-    thread->traversalThread->quit();
+    thread->traversalThread->stop();
     if (traversalThreads.isEmpty())
         needStartWatcher = true;
 
