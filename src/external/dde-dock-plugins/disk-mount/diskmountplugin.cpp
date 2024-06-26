@@ -32,7 +32,7 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
       diskPluginItem(new DiskPluginItem)
 {
     loadTranslator();
-    diskPluginItem->setVisible(false);
+    diskPluginItem->setVisible(true);
     tipsLabel->setObjectName("diskmount");
     tipsLabel->setVisible(false);
     tipsLabel->setText(tr("Disk"));
@@ -180,19 +180,3 @@ std::once_flag &DiskMountPlugin::onceFlag()
     static std::once_flag flag;
     return flag;
 }
-
-#ifdef COMPILE_ON_V23
-QIcon DiskMountPlugin::icon(const DockPart &dockPart, DGuiApplicationHelper::ColorType)
-{
-    if (dockPart == DockPart::SystemPanel) {
-        diskPluginItem->updateIcon();
-        return diskPluginItem->getIcon();
-    }
-    return QIcon();
-}
-
-PluginFlags DiskMountPlugin::flags() const
-{
-    return PluginFlag::Type_Tray | PluginFlag::Attribute_CanDrag | PluginFlag::Attribute_CanInsert;
-}
-#endif

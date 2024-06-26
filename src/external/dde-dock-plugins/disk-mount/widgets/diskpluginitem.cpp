@@ -43,7 +43,7 @@ void DiskPluginItem::updateIcon()
 {
     QString &&iconName = "drive-removable-dock-symbolic";
 
-#if defined(COMPILE_ON_V23) || defined(USE_DOCK_NEW_INTERFACE)
+#if defined(USE_DOCK_NEW_INTERFACE)
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
         iconName.append(PLUGIN_MIN_ICON_NAME);
 #else

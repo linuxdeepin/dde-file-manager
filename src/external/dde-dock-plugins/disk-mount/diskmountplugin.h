@@ -9,10 +9,8 @@
 
 // `DOCK_API_VERSION` added after v2.0.0
 #ifdef DOCK_API_VERSION
-#    ifdef COMPILE_ON_V20
-#        if (DOCK_API_VERSION >= DOCK_API_VERSION_CHECK(2, 0, 0))
-#            define USE_DOCK_NEW_INTERFACE
-#        endif
+#    if (DOCK_API_VERSION >= DOCK_API_VERSION_CHECK(2, 0, 0))
+#        define USE_DOCK_NEW_INTERFACE
 #    endif
 #endif
 
@@ -63,11 +61,6 @@ public:
     int itemSortKey(const QString &itemKey) override;
     void setSortKey(const QString &itemKey, const int order) override;
     void refreshIcon(const QString &itemKey) override;
-
-#ifdef COMPILE_ON_V23
-    QIcon icon(const DockPart &dockPart, DGuiApplicationHelper::ColorType themeType = DGuiApplicationHelper::instance()->themeType()) override;
-    PluginFlags flags() const override;
-#endif
 
 public slots:
     void setDockEntryVisible(bool visible);
