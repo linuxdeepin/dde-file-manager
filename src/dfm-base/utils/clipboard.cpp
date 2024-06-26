@@ -50,7 +50,7 @@ void onClipboardDataChanged()
         return;
     }
     if (mimeData->hasFormat(kRemoteCopyKey)) {
-        qCInfo(logDFMBase) << "clipboard use other !";
+        qCWarning(logDFMBase) << "clipboard use other !";
         clipboardAction = ClipBoard::kRemoteAction;
         remoteCurrentCount++;
         return;
@@ -61,6 +61,12 @@ void onClipboardDataChanged()
         clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
+    // 没有文件拷贝
+    if (!mimeData->hasFormat(kGnomeCopyKey)) {
+        qCWarning(logDFMBase) << "no kGnomeCopyKey target in mimedata formats!";
+        clipboardAction = ClipBoard::kUnknownAction;
+        return;
+    }
     const QString &data = mimeData->data(kGnomeCopyKey);
     const static QRegExp regCut("cut\nfile://"), regCopy("copy\nfile://");
     if (data.contains(regCut)) {
@@ -68,7 +74,7 @@ void onClipboardDataChanged()
     } else if (data.contains(regCopy)) {
         clipboardAction = ClipBoard::kCopyAction;
     } else {
-        qCWarning(logDFMBase) << "wrang kGnomeCopyKey data = " << data;
+        qCWarning(logDFMBase) << "wrong kGnomeCopyKey data = " << data;
         clipboardAction = ClipBoard::kUnknownAction;
     }
 

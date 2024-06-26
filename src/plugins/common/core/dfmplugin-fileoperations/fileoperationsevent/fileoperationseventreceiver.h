@@ -41,12 +41,12 @@ public slots:
     void handleOperationCopy(const quint64 windowId,
                              const QList<QUrl> sources,
                              const QUrl target,
-                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                              DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationCopy(const quint64 windowId,
                              const QList<QUrl> sources,
                              const QUrl target,
-                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                              DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                              const QVariant custom,
                              DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
@@ -54,24 +54,24 @@ public slots:
     void handleOperationCut(const quint64 windowId,
                             const QList<QUrl> sources,
                             const QUrl target,
-                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
 
     void handleOperationCut(const quint64 windowId,
                             const QList<QUrl> sources,
                             const QUrl target,
-                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                             const QVariant custom,
                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
-                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
-                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                 const QVariant custom,
                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
@@ -95,11 +95,11 @@ public slots:
     bool handleOperationRenameFile(const quint64 windowId,
                                    const QUrl oldUrl,
                                    const QUrl newUrl,
-                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags);
     void handleOperationRenameFile(const quint64 windowId,
                                    const QUrl oldUrl,
                                    const QUrl newUrl,
-                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                    const QVariant custom,
                                    DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
@@ -197,13 +197,13 @@ public slots:
     void handleSaveRedoOpt(const QString &token, const qint64 fileSize);
     void handleOperationUndoDeletes(const quint64 windowId,
                                     const QList<QUrl> &sources,
-                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                     const QVariantMap &op);
     void handleOperationUndoCut(const quint64 windowId,
                                 const QList<QUrl> &sources,
                                 const QUrl target,
-                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                 const QVariantMap &op);
 private:
