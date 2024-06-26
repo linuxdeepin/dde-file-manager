@@ -36,22 +36,22 @@ Q_SIGNALS:
 public slots:
     void handleOperationMoveToTrash(const quint64 windowId,
                                     const QList<QUrl> sources,
-                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationMoveToTrash(const quint64 windowId,
                                     const QList<QUrl> sources,
-                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                     const QVariant custom,
                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
 
     void handleOperationRestoreFromTrash(const quint64 windowId,
                                          const QList<QUrl> sources, const QUrl target,
-                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationRestoreFromTrash(const quint64 windowId,
                                          const QList<QUrl> sources, const QUrl target,
-                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                          const QVariant custom,
                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
@@ -68,23 +68,23 @@ public slots:
 
     void handleOperationCopyFromTrash(const quint64 windowId,
                                       const QList<QUrl> &sources, const QUrl &target,
-                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleOperationCopyFromTrash(const quint64 windowId,
                                       const QList<QUrl> &sources, const QUrl &target,
-                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle,
                                       const QVariant custom,
                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
     void handleSaveRedoOpt(const QString &token, const bool moreThanZero);
     void handleOperationUndoMoveToTrash(const quint64 windowId,
                                         const QList<QUrl> &sources,
-                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                         DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                         const QVariantMap &op);
     void handleOperationUndoRestoreFromTrash(const quint64 windowId,
                                             const QList<QUrl> &sources, const QUrl &target,
-                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                             const QVariantMap &op);
 private slots:

@@ -158,7 +158,7 @@ void FileOperator::pasteFiles(const CollectionView *view, const QString &targetC
 
     if (ClipBoard::kRemoteAction == action) {
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
-                                     AbstractJobHandler::JobFlag::kCopyRemote, nullptr, nullptr, QVariant(), nullptr);
+                                     AbstractJobHandler::JobFlag::kCopyRemote, nullptr);
         return;
     }
 
