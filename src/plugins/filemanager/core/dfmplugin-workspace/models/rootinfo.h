@@ -46,7 +46,7 @@ public:
     bool initThreadOfFileData(const QString &key,
                               DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder);
     void startWork(const QString &key, const bool getCache = false);
-    int clearTraversalThread(const QString &key, const bool isRefresh = false);
+    int clearTraversalThread(const QString &key, const bool isRefresh);
 
     void reset();
 
