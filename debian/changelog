@@ -1,6 +1,13 @@
+dde-file-manager (6.0.53) unstable; urgency=medium
+
+  * 6.0.53,to support AM interface and video wallpaper
+  * 
+
+ -- lvwujun <lvwujun@uniontech.com>  Wed, 26 Jun 2024 9:57:50 +0800
+
 dde-file-manager (6.0.52) unstable; urgency=medium
 
-  * 6.0.52,to support am show-item
+  * 6.0.52,to support AM show-item
   * 
 
  -- lvwujun <lvwujun@uniontech.com>  Fri, 31 May 2024 15:26:50 +0800
