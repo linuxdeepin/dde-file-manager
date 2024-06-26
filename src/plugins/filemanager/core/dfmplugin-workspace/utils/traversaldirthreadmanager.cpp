@@ -142,6 +142,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     timer->restart();
 
     QList<FileInfoPointer> childrenList;   // 当前遍历出来的所有文件
+    QList<QUrl> urls;
     while (dirIterator->hasNext()) {
         if (stopFlag)
             break;
@@ -150,6 +151,9 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         const auto &fileUrl = dirIterator->next();
         if (!fileUrl.isValid())
             continue;
+        if (urls.contains(fileUrl))
+            continue;
+        urls.append(fileUrl);
         auto fileInfo = dirIterator->fileInfo();
         if (fileUrl.isValid() && !fileInfo)
             fileInfo = InfoFactory::create<FileInfo>(fileUrl);
