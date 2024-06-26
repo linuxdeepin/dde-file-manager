@@ -445,6 +445,12 @@ bool ShareControlWidget::validateShareName()
             }
 
             if (dlg.exec() != DDialog::Accepted) {
+                if(isShared){
+                    QString filePath = url.path();
+                    auto shareName = UserShareHelperInstance->shareNameByPath(filePath);
+                    shareNameEditor->setText(shareName);
+                    shareSwitcher->setChecked(isShared);
+                }
                 shareNameEditor->setFocus();
                 return false;
             }
@@ -457,18 +463,24 @@ bool ShareControlWidget::validateShareName()
 
 void ShareControlWidget::updateShare()
 {
-    shareFolder();
+   if (!isUpdating)
+       shareFolder();
+   return;
 }
 
 void ShareControlWidget::shareFolder()
 {
+    bool isShared = UserShareHelperInstance->isShared(url.path());
     if (!shareSwitcher->isChecked())
         return;
-
+    isUpdating = true;
     if (!validateShareName()) {
-        shareSwitcher->setChecked(false);
-        sharePermissionSelector->setEnabled(false);
-        shareAnonymousSelector->setEnabled(false);
+        if(!isShared){
+            shareSwitcher->setChecked(false);
+            sharePermissionSelector->setEnabled(false);
+            shareAnonymousSelector->setEnabled(false);
+        }
+        isUpdating = false;
         return;
     }
 
@@ -512,6 +524,7 @@ void ShareControlWidget::shareFolder()
         sharePermissionSelector->setEnabled(false);
         shareAnonymousSelector->setEnabled(false);
     }
+    isUpdating = false;
 }
 
 void ShareControlWidget::unshareFolder()

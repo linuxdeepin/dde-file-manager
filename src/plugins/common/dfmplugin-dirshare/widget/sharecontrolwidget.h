@@ -94,6 +94,7 @@ private:
     QTimer *timer { Q_NULLPTR };
 
     QUrl url;
+    bool isUpdating { false };
     FileInfoPointer info { Q_NULLPTR };
     AbstractFileWatcherPointer watcher { Q_NULLPTR };
 };

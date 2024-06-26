@@ -276,12 +276,14 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
 
     QList<QUrl> pathList;
     bool result = false;
-
+    d->invalidPath.clear();
     for (QUrl &fileUrl : urls) {
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
+        QUrl sourceUrl = fileUrl;
         QStringList targetList;
         targetList.append(fileUrl.path());
         FileInfoPointer fileInfoLink = fileInfo;
+
         while (fileInfoLink->isAttributes(OptInfoType::kIsSymLink)) {
             QString targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
             targetLink = targetLink.endsWith(QDir::separator()) && targetLink != QDir::separator() ? QString(targetLink).left(targetLink.length() - 1)
@@ -304,6 +306,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
                 d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameOf(
                                                                                      NameInfoType::kFileName),
                                                                              fileInfo->urlOf(UrlInfoType::kUrl));
+                d->invalidPath << sourceUrl;
                 return d->lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
             }
         }
@@ -1204,6 +1207,11 @@ QString LocalFileHandler::errorString()
 DFMIOErrorCode LocalFileHandler::errorCode()
 {
     return d->lastError.code();
+}
+
+QList<QUrl> LocalFileHandler::getInvalidPath()
+{
+    return d->invalidPath;
 }
 
 GlobalEventType LocalFileHandler::lastEventType()

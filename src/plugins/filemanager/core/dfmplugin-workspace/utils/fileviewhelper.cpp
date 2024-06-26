@@ -260,6 +260,12 @@ int FileViewHelper::verticalOffset() const
     return parent()->verticalOffset();
 }
 
+bool FileViewHelper::isLastIndex(const QModelIndex &index)
+{
+    int rowCount = parent()->model()->rowCount(parent()->rootIndex());
+    return index.row() + 1 == rowCount;
+}
+
 int FileViewHelper::caculateListItemIndex(const QSize &itemSize, const QPoint &pos)
 {
     if (pos.y() % (itemSize.height() + kListViewSpacing * 2) < kListViewSpacing)

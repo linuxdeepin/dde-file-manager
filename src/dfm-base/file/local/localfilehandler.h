@@ -47,7 +47,6 @@ public:
     bool deleteFile(const QUrl &url);
     bool deleteFileRecursive(const QUrl &url);
     bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
-
     bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);
     bool doHiddenFileRemind(const QString &name, bool *checkRule = nullptr);
 
@@ -55,6 +54,7 @@ public:
     GlobalEventType lastEventType();
     QString errorString();
     DFMIOErrorCode errorCode();
+    QList<QUrl> getInvalidPath();
 
 private:
     QScopedPointer<LocalFileHandlerPrivate> d;

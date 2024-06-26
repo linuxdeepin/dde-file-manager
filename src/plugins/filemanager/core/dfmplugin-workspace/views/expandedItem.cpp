@@ -204,3 +204,13 @@ QRectF ExpandedItem::iconGeometry() const
 
     return iconRect;
 }
+
+void ExpandedItem::setDifferenceOfLastRow(const int diff)
+{
+    this->diff = diff < 0 ? 0 : diff;
+}
+
+int ExpandedItem::getDifferenceOfLastRow() const
+{
+    return diff;
+}
