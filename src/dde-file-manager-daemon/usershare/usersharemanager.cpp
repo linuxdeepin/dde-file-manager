@@ -61,19 +61,27 @@ bool UserShareManager::addGroup(const QString &groupName)
 
 bool UserShareManager::setUserSharePassword(const QString &username, const QString &passward)
 {
+    QByteArray encodedByteArray = username.toUtf8();
+    QByteArray decodedByteArray = QByteArray::fromBase64(encodedByteArray);
+    const QString &decodedUsername = QString::fromUtf8(decodedByteArray);
+
+    encodedByteArray = passward.toUtf8();
+    decodedByteArray = QByteArray::fromBase64(encodedByteArray);
+    const QString &decodedPassward = QString::fromUtf8(decodedByteArray);
+
     if (!checkAuthentication()) {
-        qDebug() << "setUserSharePassword failed" <<  username;
+        qDebug() << "setUserSharePassword failed" <<  decodedUsername;
         return false;
     }
 
-    qDebug() << username;// << passward; // log password?
+    qDebug() << decodedUsername;// << passward; // log password?
     QStringList args;
-    args << "-a" << username << "-s";
+    args << "-a" << decodedUsername << "-s";
     QProcess p;
     p.start("smbpasswd", args);
-    p.write(passward.toStdString().c_str());
+    p.write(decodedPassward.toStdString().c_str());
     p.write("\n");
-    p.write(passward.toStdString().c_str());
+    p.write(decodedPassward.toStdString().c_str());
     p.closeWriteChannel();
     bool ret = p.waitForFinished();
     qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();

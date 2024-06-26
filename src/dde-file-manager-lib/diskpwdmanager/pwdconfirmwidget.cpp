@@ -209,7 +209,15 @@ void PwdConfirmWidget::onSaveBtnClicked()
         if (m_parentWidget)
             DWindowManagerHelper::instance()->setMotifFunctions(m_parentWidget->windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
 
-        m_diskInterface->changeDiskPassword(m_oldPwdEdit->text(), m_newPwdEdit->text());
+        QByteArray byteArray = m_oldPwdEdit->text().toUtf8();
+        QByteArray encodedByteArray = byteArray.toBase64();
+        const QString &encodedOldPwd = QString::fromUtf8(encodedByteArray);
+
+        byteArray = m_newPwdEditv->text().toUtf8();
+        encodedByteArray = byteArray.toBase64();
+        const QString &encodedNewPwd = QString::fromUtf8(encodedByteArray);
+
+        m_diskInterface->changeDiskPassword(encodedOldPwd, encodedNewPwd);
     }
 }
 

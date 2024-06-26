@@ -49,8 +49,11 @@ void DiskManager::changeDiskPassword(const QString &oldPwd, const QString &newPw
         return;
     }
 
-    const QByteArray &tmpOldPwd = oldPwd.toLocal8Bit();
-    const QByteArray &tmpNewPwd = newPwd.toLocal8Bit();
+    QByteArray decodedByteArray = oldPwd.toUtf8();
+    const QByteArray &tmpOldPwd = QByteArray::fromBase64(decodedByteArray);
+
+    decodedByteArray = oldPwd.toUtf8();
+    const QByteArray &tmpNewPwd = QByteArray::fromBase64(decodedByteArray);
 
     int ret = Unknown;
     QStringList successList;

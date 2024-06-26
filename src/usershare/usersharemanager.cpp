@@ -374,7 +374,15 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
 
 void UserShareManager::setSambaPassword(const QString &userName, const QString &password)
 {
-    QDBusReply<bool> reply = m_userShareInterface->setUserSharePassword(userName, password);
+    QByteArray byteArray = userName.toUtf8();
+    QByteArray encodedByteArray = byteArray.toBase64();
+    const QString &encodedUserName =  QString::fromUtf8(encodedByteArray);
+
+    byteArray = password.toUtf8();
+    encodedByteArray = byteArray.toBase64();
+    const QString &encodedPassword =  QString::fromUtf8(encodedByteArray);
+
+    QDBusReply<bool> reply = m_userShareInterface->setUserSharePassword(encodedUserName, encodedPassword);
     if (reply.isValid()) {
         qDebug() << "set usershare password:" << reply.value();
     } else {
