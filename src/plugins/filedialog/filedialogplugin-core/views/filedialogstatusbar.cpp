@@ -208,6 +208,12 @@ void FileDialogStatusBar::onWindowTitleChanged(const QString &title)
 void FileDialogStatusBar::onFileNameTextEdited(const QString &text)
 {
     QString dstText = DFMBASE_NAMESPACE::FileUtils::preprocessingFileName(text);
+    QString suffix { "" };
+    mainWindow->checkFileSuffix(dstText, suffix);
+    int maxLength = NAME_MAX - suffix.length() - 1;
+    while (DFMBASE_NAMESPACE::FileUtils::getFileNameLength(mainWindow->getcurrenturl(), dstText) > maxLength) {
+        dstText.chop(1);
+    }
     if (text != dstText) {
         int currPos = fileNameEdit->lineEdit()->cursorPosition();
         fileNameEdit->setText(dstText);

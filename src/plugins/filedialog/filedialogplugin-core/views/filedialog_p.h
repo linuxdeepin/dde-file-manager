@@ -53,6 +53,7 @@ private:
     QString currentInputName;
     bool allowMixedSelection { false };
     QFileDialog::Options options;
+    QUrl currentUrl;
 };
 
 }
