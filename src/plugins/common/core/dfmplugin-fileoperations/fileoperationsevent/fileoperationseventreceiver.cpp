@@ -38,6 +38,7 @@ namespace dfmplugin_fileoperations {
 FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     : QObject(parent), dialogManager(DialogManagerInstance)
 {
+    qRegisterMetaType<DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags>();
 }
 
 QString FileOperationsEventReceiver::newDocmentName(const QUrl &url,
@@ -215,7 +216,7 @@ bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap
     case kCopy:
         if (targets.isEmpty())
             return true;
-        handleOperationCopy(windowId, { sources }, targets.first(), AbstractJobHandler::JobFlag::kNoHint, handle);
+        handleOperationCopy(windowId, { sources }, targets.first(), DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, handle);
         break;
     case kCutFile:
         if (targets.isEmpty())
@@ -448,6 +449,14 @@ bool FileOperationsEventReceiver::doRenameDesktopFiles(QList<QUrl> &urls, const 
 JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId, const QList<QUrl> &sources, const QUrl &target,
                                                          const AbstractJobHandler::JobFlags flags, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback callbaskHandle)
 {
+    // 深信服拷贝
+    if (flags.testFlag(AbstractJobHandler::JobFlag::kCopyRemote)) {
+        JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
+        if (callbaskHandle)
+            callbaskHandle(handle);
+        return handle;
+    }
+
     if (sources.isEmpty())
         return nullptr;
 
@@ -762,14 +771,16 @@ FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QList<QUrl> sources,
                                                       const QUrl target,
-                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                      const AbstractJobHandler::JobFlag flags,
                                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback callbaskHandle)
 {
     auto handle = doCopyFile(windowId, sources, target, flags, callbaskHandle);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCopyType, handle);
 }
 
-void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources,
+                                                     const QUrl target,
+                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     auto handle = doCutFile(windowId, sources, target, flags, handleCallback);
@@ -778,7 +789,7 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
-                                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback)
 {
     DoDeleteErrorType erType { DoDeleteErrorType::kNoErrror };
@@ -789,7 +800,7 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
 void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QList<QUrl> sources,
                                                       const QUrl target,
-                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                       const QVariant custom,
                                                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
@@ -810,7 +821,7 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
 void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
                                                      const QList<QUrl> sources,
                                                      const QUrl target,
-                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                     const AbstractJobHandler::JobFlag flags,
                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                      const QVariant custom,
                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
@@ -829,7 +840,7 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
-                                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                                          const QVariant custom,
                                                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
@@ -967,7 +978,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
 bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
                                                             const QUrl oldUrl,
                                                             const QUrl newUrl,
-                                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+                                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags)
 {
     Q_UNUSED(windowId);
     bool ok = false;
@@ -1002,17 +1013,18 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     if (ok)
         ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
 
-    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRedo))
+    AbstractJobHandler::JobFlags tmFlags = flags;
+    if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile,
                           { oldUrl }, { newUrl }, GlobalEventType::kRenameFile,
-                          flags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
+                          tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
     return ok;
 }
 
 void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
                                                             const QUrl oldUrl,
                                                             const QUrl newUrl,
-                                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                                             const QVariant custom,
                                                             AbstractJobHandler::OperatorCallback callback)
 {
@@ -1484,7 +1496,7 @@ void FileOperationsEventReceiver::handleSaveRedoOpt(const QString &token, const 
         saveFileOperation(redoSources, redoTargets, redoEventType, undoSources, undoTargets, undoEventType, true, templateUrl);
 }
 
-void FileOperationsEventReceiver::handleOperationUndoDeletes(const quint64 windowId, const QList<QUrl> &sources, const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
+void FileOperationsEventReceiver::handleOperationUndoDeletes(const quint64 windowId, const QList<QUrl> &sources, const AbstractJobHandler::JobFlag flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
 {
     DoDeleteErrorType erType { DoDeleteErrorType::kNoErrror };
     auto handle = doDeleteFile(windowId, sources, flags, handleCallback, false, erType);
@@ -1505,7 +1517,7 @@ void FileOperationsEventReceiver::handleOperationUndoDeletes(const quint64 windo
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteType, handle);
 }
 
-void FileOperationsEventReceiver::handleOperationUndoCut(const quint64 windowId, const QList<QUrl> &sources, const QUrl target, const AbstractJobHandler::JobFlags flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
+void FileOperationsEventReceiver::handleOperationUndoCut(const quint64 windowId, const QList<QUrl> &sources, const QUrl target, const AbstractJobHandler::JobFlag flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
 {
     auto handle = doCutFile(windowId, sources, target, flags, handleCallback, false);
     if (!handle)
