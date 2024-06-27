@@ -17,6 +17,18 @@ ContainmentPrivate::ContainmentPrivate(Containment *q)
     flag = Applet::kContainment;
 }
 
+void ContainmentPrivate::setRootObject(QObject *item)
+{
+    for (auto applet : applets) {
+        // 管理部分在父组件完成创建前初始化的子组件
+        if (applet->rootObject() && applet->rootObject()->parent() != item) {
+            applet->rootObject()->setParent(item);
+        }
+    }
+
+    AppletPrivate::setRootObject(item);
+}
+
 /*!
  * \class Containment
  * \brief 容器，管理多个 Applet ，
@@ -48,7 +60,7 @@ Applet *Containment::createApplet(const dpf::PluginQuickMetaPtr &metaPtr)
 }
 
 /*!
- * \brief 在当前容器中添加 \a applet , 不会自动创建对应的 QQUickItem
+ * \brief 在当前容器中添加 \a applet , 不会自动创建对应的 QQuickItem
  */
 void Containment::appendApplet(Applet *applet)
 {
@@ -56,6 +68,12 @@ void Containment::appendApplet(Applet *applet)
     if (applet && !d->applets.contains(applet)) {
         if (Containment *oldContain = applet->containment()) {
             oldContain->removeApplet(applet);
+        }
+
+        // 已创建的 QQuickItem 发出信号
+        if (rootObject() && applet->rootObject()) {
+            applet->rootObject()->setParent(rootObject());
+            Q_EMIT appletRootObjectChanged(applet->rootObject());
         }
 
         // TODO: 不是个好方案

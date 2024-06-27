@@ -22,8 +22,8 @@ SharedQmlEnginePrivate::SharedQmlEnginePrivate(SharedQmlEngine *q)
 }
 
 /*!
- * \return QQmlComponent 加载完成后继续创建对应的 QML 组件对象，并向外抛出加载完成信号
- *  createFinished()
+ * \return QQmlComponent 加载完成后继续创建对应的 QML 组件对象，并向外抛出加载和创建完成信号
+ *  createFinished()，创建完成后，还需调用 completeCreation() 完成组件创建
  */
 bool SharedQmlEnginePrivate::continueLoading()
 {
@@ -43,6 +43,10 @@ bool SharedQmlEnginePrivate::continueLoading()
     return false;
 }
 
+/*!
+ * \brief 返回全局的 QQmlEngine 指针，静态变量中保存的是 QWeakPointer , 因此外部所有的
+ *  SharedQmlEngine 析构后，静态变量指向引擎同样析构，此设计是为程序退出时释放 QQmlEngine 设计。
+ */
 QSharedPointer<QQmlEngine> SharedQmlEnginePrivate::engine()
 {
     if (auto sharedPtr = s_globalEngine.toStrongRef()) {
@@ -174,10 +178,10 @@ QObject *SharedQmlEngine::createObject(const QUrl &url, const QVariantMap &args)
     if (!comp->isError() && object) {
         context.release();
         return object.release();
-    } else {
-        qCWarning(logDFMGui) << QString("Load url failed: %1").arg(comp->errorString());
-        return nullptr;
     }
+
+    qCWarning(logDFMGui) << QString("Load url failed: %1").arg(comp->errorString());
+    return nullptr;
 }
 
 /*!

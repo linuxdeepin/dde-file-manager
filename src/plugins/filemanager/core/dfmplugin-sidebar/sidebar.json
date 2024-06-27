@@ -16,6 +16,7 @@
         {
             "Url" : "Sidebar.qml",
             "Id" : "sidebar",
+            "Type" : "Containment",
             "Parent" : "dfmplugin-core.filewindow"
         }
     ]

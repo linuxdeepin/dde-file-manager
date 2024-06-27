@@ -21,9 +21,9 @@ DFMBASE_USE_NAMESPACE
 
 static constexpr char kAppletUrl[] { "org.dfm.detailspace" };
 
-static dfmgui::Applet *createDetailSpaceApplet(const QString &url, dfmgui::Containment *parent, QString *errorString)
+static dfmgui::Applet *createDetailSpaceApplet(const QUrl &url, dfmgui::Containment *parent, QString *errorString)
 {
-    if (kAppletUrl == url) {
+    if (kAppletUrl == url.scheme()) {
         Q_ASSERT_X(parent && parent->flags().testFlag(dfmgui::Applet::kPanel),
                    "Create detailspace applet", "Parent must based on panel");
 

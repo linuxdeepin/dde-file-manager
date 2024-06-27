@@ -61,6 +61,15 @@ void WindowManagerPrivate::registerType(const char *uri)
     qmlRegisterSingletonInstance<QuickUtils>(uri, 1, 0, "QuickUtils", globalUtils);
 }
 
+/*!
+ * \brief 根据传入的插件名 \a pluginName 和组件ID \a quickId 查找注册的 Panel 信息并加载对应的窗体
+ * \details 目前加载流程如下：
+ *  1. 通过 AppletManager 创建顶层的 Panel, 并加载对应的 Url 文件，Url 文件必须基于 QQuickWindow ；
+ *      - 使 Applet 构造时即可访问 windId()
+ *  2. 若顶层 Panel 加载无问题，根据 AppletManger 注册模板树信息填充 Panel 对应的子 Applet ；
+ *  3. 子 Applet 开始 `异步` 加载，通过 rootObjectChanged() 信号通知创建结果；
+ *  4. 创建成功后记录到窗口管理并返回。
+ */
 WindowManager::Handle WindowManagerPrivate::createQuickWindow(const QString &pluginName, const QString &quickId, const QVariantMap &var)
 {
     // 首次进入初始化
@@ -89,7 +98,8 @@ WindowManager::Handle WindowManagerPrivate::createQuickWindow(const QString &plu
     }
     panel->dptr->setRootObject(window);
 
-    // 异步创建子节点
+    // 填充子节点，异步创建子节点组件
+    AppletManager::instance()->fillChildren(panel.get());
     for (auto child : panel->applets()) {
         asyncLoadQuickItem(child);
     }
@@ -167,28 +177,7 @@ bool WindowManagerPrivate::compareUrl(const QUrl &cur, const QUrl &other) const
  */
 void WindowManagerPrivate::asyncLoadQuickItem(Applet *applet)
 {
-    Q_Q(WindowManager);
-    SharedQmlEngine *tmpEngine = new SharedQmlEngine(q);
-    QObject::connect(tmpEngine, &SharedQmlEngine::createFinished, [=](bool success) {
-        if (success) {
-            tmpEngine->completeCreation();
-            QObject *rootObject = tmpEngine->rootObject();
-            if (AppletItem *item = qobject_cast<AppletItem *>(rootObject)) {
-                item->setApplet(applet);
-                applet->dptr->setRootObject(item);
-
-                if (auto containment = applet->containment()) {
-                    rootObject->setParent(containment->rootObject());
-                }
-            } else {
-                rootObject->deleteLater();
-            }
-        }
-
-        tmpEngine->deleteLater();
-    });
-
-    tmpEngine->create(applet, true);
+    applet->createRootObject(true);
 
     if (auto containment = qobject_cast<Containment *>(applet)) {
         for (Applet *child : containment->applets()) {

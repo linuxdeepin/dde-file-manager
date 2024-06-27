@@ -26,6 +26,9 @@ class Applet : public QObject
     Q_PROPERTY(QObject *rootObject NOTIFY rootObjectChanged FINAL)
 
 public:
+    explicit Applet(QObject *parent = nullptr);
+    ~Applet() override;
+
     enum Flag {
         kUnknown,
         kApplet = 0x1,   // 基础组件
@@ -34,12 +37,18 @@ public:
     };
     Q_DECLARE_FLAGS(Flags, Flag)
     Q_FLAG(Flags)
-
-    explicit Applet(QObject *parent = nullptr);
-    ~Applet() override;
-
     Flags flags() const;
 
+    enum State {
+        kNull,
+        kLoading,
+        kReady,
+        kError,
+    };
+    State state() const;
+    Q_SIGNAL void stateChanged(State s);
+
+    bool createRootObject(bool async = false);
     QObject *rootObject() const;
     Q_SIGNAL void rootObjectChanged(QObject *object);
 

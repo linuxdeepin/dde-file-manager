@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <dfm-gui/applet.h>
+#include <dfm-gui/appletitem.h>
 #include <dfm-gui/containment.h>
 #include <dfm-gui/panel.h>
+
 #include "applet_p.h"
 #include "containment_p.h"
 
@@ -33,10 +35,59 @@ AppletPrivate::~AppletPrivate()
  */
 void AppletPrivate::setRootObject(QObject *item)
 {
-    Q_ASSERT(nullptr == rootObject);
+    Q_ASSERT(nullptr == rootObject && nullptr != item);
     rootObject = item;
+    setState(Applet::kReady);
 
     Q_EMIT q_func()->rootObjectChanged(item);
+}
+
+void AppletPrivate::setState(Applet::State s)
+{
+    if (s == state) {
+        state = s;
+        Q_EMIT q_ptr->stateChanged(state);
+    }
+}
+/*!
+ * \brief \a engine 引擎已加载创建，完成组件创建并更新当前 Applet 的 QML 组件
+ */
+bool AppletPrivate::createComplete(SharedQmlEngine *engine)
+{
+    Q_Q(Applet);
+    if (engine->completeCreation()) {
+        if (QObject *rootObject = engine->rootObject()) {
+            switch (flag) {
+            case Applet::kApplet:
+                Q_FALLTHROUGH();
+            case Applet::kContainment:
+                if (auto *item = qobject_cast<AppletItem *>(rootObject)) {
+                    item->setApplet(q);
+                    setRootObject(item);
+
+                    if (auto *containment = q->containment()) {
+                        rootObject->setParent(containment->rootObject());
+                    }
+                    return true;
+                }
+
+                break;
+            case Applet::kPanel:
+                if (auto *window = qobject_cast<QQuickWindow *>(rootObject)) {
+                    setRootObject(window);
+                    return true;
+                }
+                break;
+            default:
+                break;
+            }
+
+            rootObject->deleteLater();
+        }
+    }
+
+    setState(Applet::kError);
+    return false;
 }
 
 /*!
@@ -48,7 +99,7 @@ void AppletPrivate::dumpAppletTreeImpl(int level)
     qCDebug(logDFMGui) << indent << metaPtr;
 
     if (flag.testFlag(Applet::kContainment)) {
-        if (auto containment = dynamic_cast<ContainmentPrivate *>(this)) {
+        if (auto *containment = dynamic_cast<ContainmentPrivate *>(this)) {
             qCDebug(logDFMGui) << indent << QStringLiteral("Applet chiledren:");
             for (Applet *child : containment->applets) {
                 child->dptr->dumpAppletTreeImpl(level + 1);
@@ -109,7 +160,69 @@ Applet::Flags Applet::flags() const
 }
 
 /*!
- * \return Applet 对应的 QML 组件，
+ * \return 返回当前QML组件加载状态
+ */
+Applet::State Applet::state() const
+{
+    return d_func()->state;
+}
+
+/*!
+ * \brief 创建 Applet 对应的 Qml 组件
+ * \return 是否成功调用，若为同步调用，通过 rootObject() 取得对象；若为异步调用，
+ *  通过 rootObjectChanged() 判断是否创建成功。
+ *
+ * \code
+ *      // 同步创建使用
+ *      if (applet->createRootObject(false)) {
+ *          QObject rootObject = applet->rootObject();
+ *      }
+ *
+ *      // 异步创建使用
+ *      if (applet->createRootObject(true)) {
+ *          connect(applet, &Applet::stateChanged, [](Applet::state s){
+ *              if (Applet::kError = s) { ... }
+ *          });
+ *          connect(applet, &Applet::rootObjectChanged, []()(QObject *obj) {
+ *              if (obj) {
+ *                  // 抛送至 QML ...
+ *              }
+ *          });
+ *      }
+ * \endcode
+ */
+bool Applet::createRootObject(bool async)
+{
+    if (kNull != state()) {
+        return false;
+    }
+
+    Q_D(Applet);
+    d->setState(Applet::kLoading);
+    if (async) {
+        SharedQmlEngine *asyncEngine = new SharedQmlEngine(this);
+        QObject::connect(asyncEngine, &SharedQmlEngine::createFinished, [asyncEngine, this](bool success) {
+            if (success) {
+                d_func()->createComplete(asyncEngine);
+            } else {
+                d_func()->setState(Applet::kError);
+            }
+
+            asyncEngine->deleteLater();
+        });
+
+        asyncEngine->create(this, true);
+        return true;
+    }
+
+    // 同步创建
+    SharedQmlEngine tmpEngine;
+    tmpEngine.create(this, false);
+    return d->createComplete(&tmpEngine);
+}
+
+/*!
+ * \return Applet 对应的 QML 组件
  */
 QObject *Applet::rootObject() const
 {
@@ -124,7 +237,7 @@ Containment *Applet::containment() const
 {
     QObject *parent = this->parent();
     while (parent) {
-        if (Containment *contain = qobject_cast<Containment *>(parent)) {
+        if (auto *contain = qobject_cast<Containment *>(parent)) {
             return contain;
         }
         parent = parent->parent();
@@ -141,7 +254,7 @@ Panel *Applet::panel() const
 {
     QObject *parent = this->parent();
     while (parent) {
-        if (Panel *panel = qobject_cast<Panel *>(parent)) {
+        if (auto *panel = qobject_cast<Panel *>(parent)) {
             return panel;
         }
         parent = parent->parent();
@@ -155,7 +268,8 @@ Panel *Applet::panel() const
  */
 QString Applet::plugin() const
 {
-    return d_func()->metaPtr->plugin();
+    Q_D(const Applet);
+    return (d->metaPtr) ? d->metaPtr->plugin() : QString();
 }
 
 /*!
@@ -163,7 +277,8 @@ QString Applet::plugin() const
  */
 QString Applet::id() const
 {
-    return d_func()->metaPtr->id();
+    Q_D(const Applet);
+    return (d->metaPtr) ? d->metaPtr->id() : QString();
 }
 
 /**

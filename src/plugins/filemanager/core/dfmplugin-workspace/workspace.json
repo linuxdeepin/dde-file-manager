@@ -16,6 +16,7 @@
         {
             "Url" : "Workspace.qml",
             "Id" : "workspace",
+            "Type" : "Containment",
             "Parent" : "dfmplugin-core.filewindow"
         }
     ]

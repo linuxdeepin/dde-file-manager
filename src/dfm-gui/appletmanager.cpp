@@ -61,10 +61,11 @@ void AppletManagerPrivate::parseDefaultRootTemplates()
 }
 
 /*!
- * \brief 从模板节点 \a node 创建对应的 Applet ，将按照模板树递归创建子 Applet
+ * \brief 从模板节点 \a node 创建对应的 Applet ，并将父节点设置为 \a parent，
+ *  若 \a recursive 为 true，将按照模板树递归创建子 Applet 。
  * \return 构造的 Applet
  */
-Applet *AppletManagerPrivate::createAppletFromNode(const AppletTemplateNode::Ptr &node, Containment *parent)
+Applet *AppletManagerPrivate::createAppletFromNode(const AppletTemplateNode::Ptr &node, Containment *parent, bool recursive)
 {
     Q_Q(AppletManager);
     if (!node || !node->quickInfoPtr) {
@@ -76,7 +77,10 @@ Applet *AppletManagerPrivate::createAppletFromNode(const AppletTemplateNode::Ptr
         return nullptr;
     }
 
-    if (applet->flags().testFlag(Applet::kContainment) && !node->childNode.isEmpty()) {
+    if (recursive
+        && applet->flags().testFlag(Applet::kContainment)
+        && !node->childNode.isEmpty()) {
+
         Containment *containment = qobject_cast<Containment *>(applet);
         if (!containment) {
             return nullptr;
@@ -176,7 +180,7 @@ QList<QString> AppletManager::panelIdList() const
 }
 
 /*!
- * \brief 根据模板 ID 创建对应的 Panel
+ * \brief 根据模板 ID 创建对应的 Panel ，仅创建对应的 Panel ，不会递归创建
  * \return Panel 指针
  */
 Panel *AppletManager::createPanel(const QString &templateId)
@@ -184,7 +188,8 @@ Panel *AppletManager::createPanel(const QString &templateId)
     Q_D(AppletManager);
     if (auto node = d->cacheIDToNode.value(templateId)) {
         if (node->flag.testFlag(Applet::kPanel)) {
-            std::unique_ptr<Applet> applet(d->createAppletFromNode(node, nullptr));
+            // 仅创建当前 Applet
+            std::unique_ptr<Applet> applet(d->createAppletFromNode(node, nullptr, false));
             if (!applet) {
                 return nullptr;
             }
@@ -215,6 +220,26 @@ Panel *AppletManager::createPanel(const QString &pluginName, const QString &quic
 }
 
 /*!
+ * \brief 填充容器 \a containment 的子 Applets ，此函数用于调整初始化流程，主窗体创建完成后
+ *  再进行子控件的填充
+ */
+void AppletManager::fillChildren(Containment *containment)
+{
+    if (!containment) {
+        return;
+    }
+
+    Q_D(AppletManager);
+    QString templateId = d->generateId(containment->plugin(), containment->id());
+    if (auto node = d->cacheIDToNode.value(templateId)) {
+        for (auto childNode : std::as_const(node->childNode)) {
+            Applet *childApplet = d->createAppletFromNode(childNode, containment);
+            containment->appendApplet(childApplet);
+        }
+    }
+}
+
+/*!
  * \return 返回当前已注册的所有 Applet 的模板 ID 列表
  */
 QList<QString> AppletManager::allAppletTemplateIdList() const
@@ -223,11 +248,10 @@ QList<QString> AppletManager::allAppletTemplateIdList() const
 }
 
 /*!
- * \brief 根据模板 ID 查找创建对应的 Applet
- *      会遍历 Applet 的子节点查找创建
- * \return Applet 指针
+ * \brief 根据模板 ID 查找创建对应的 Applet ，会遍历 Applet 的子节点查找创建
+ * \return Applet 指针，创建失败返回 nullptr ，错误信息通过 lastError() 获取
  */
-Applet *AppletManager::createApplet(const QString &templateId, Containment *parent)
+Applet *AppletManager::createAppletRecursive(const QString &templateId, Containment *parent)
 {
     Q_D(AppletManager);
     if (auto node = d->cacheIDToNode.value(templateId)) {
@@ -239,15 +263,15 @@ Applet *AppletManager::createApplet(const QString &templateId, Containment *pare
 
 /*!
  * \brief 根据插件名和组件 ID 查找创建对应的 Applet
- * \return Applet 指针
+ * \return Applet 指针，创建失败返回 nullptr ，错误信息通过 lastError() 获取
  */
-Applet *AppletManager::createApplet(const QString &pluginName, const QString &quickId, Containment *parent)
+Applet *AppletManager::createAppletRecursive(const QString &pluginName, const QString &quickId, Containment *parent)
 {
-    return createApplet(d_func()->generateId(pluginName, quickId), parent);
+    return createAppletRecursive(d_func()->generateId(pluginName, quickId), parent);
 }
 
 /*!
- * \return 返回最后一次调用的错误信息
+ * \return 返回最后一次调用失败的错误信息
  */
 QString AppletManager::lastError() const
 {
@@ -257,7 +281,7 @@ QString AppletManager::lastError() const
 /*!
  * \brief 根据 Quick 组件元信息注册到 Applet 模板树中并返回结果，下一此创建此 Quick 组件的顶层 Panel 时，
  *      将包含其对应的 Applet .
- * \return 是否注册成功，若注册失败，错误信息会写入 \a errorString
+ * \return 是否注册成功，若注册失败，错误信息通过 lastError() 获取
  */
 bool AppletManager::registeApplet(const dpf::PluginQuickMetaPtr &infoPtr)
 {
@@ -373,7 +397,9 @@ Applet *AppletManager::createAppletFromInfo(const dpf::PluginQuickMetaPtr &metaP
 
     Applet *appletPtr = nullptr;
     if (!metaPtr->applet().isEmpty()) {
-        appletPtr = AppletFactory::instance()->create(metaPtr->applet(), parent, &error);
+        QUrl appletUrl;
+        appletUrl.setScheme(metaPtr->applet());
+        appletPtr = AppletFactory::instance()->create(appletUrl, parent, &error);
         if (!appletPtr) {
             return nullptr;
         }
