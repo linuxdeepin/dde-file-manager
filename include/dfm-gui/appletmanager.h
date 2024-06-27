@@ -34,10 +34,11 @@ public:
     QList<QString> panelIdList() const;
     Panel *createPanel(const QString &templateId);
     Panel *createPanel(const QString &pluginName, const QString &quickId);
+    void fillChildren(Containment *containment);
 
     QList<QString> allAppletTemplateIdList() const;
-    Applet *createApplet(const QString &templateId, Containment *parent = nullptr);
-    Applet *createApplet(const QString &pluginName, const QString &quickId, Containment *parent = nullptr);
+    Applet *createAppletRecursive(const QString &templateId, Containment *parent = nullptr);
+    Applet *createAppletRecursive(const QString &pluginName, const QString &quickId, Containment *parent = nullptr);
 
     QString lastError() const;
 

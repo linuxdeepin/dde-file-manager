@@ -19,8 +19,10 @@ class ContainmentPrivate : public AppletPrivate
 public:
     explicit ContainmentPrivate(Containment *q);
 
+    void setRootObject(QObject *item) override;
+
     QList<Applet *> applets;
-    QPointer<QQuickWindow> window { nullptr };
+    QPointer<QQuickWindow> window;
 };
 
 DFMGUI_END_NAMESPACE

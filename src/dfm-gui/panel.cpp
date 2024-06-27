@@ -36,7 +36,7 @@ PanelPrivate::PanelPrivate(Panel *q)
 
 void PanelPrivate::setRootObject(QObject *item)
 {
-    Q_ASSERT(nullptr == rootObject);
+    Q_ASSERT(nullptr == window);
 
     window = qobject_cast<QQuickWindow *>(item);
     if (window) {
