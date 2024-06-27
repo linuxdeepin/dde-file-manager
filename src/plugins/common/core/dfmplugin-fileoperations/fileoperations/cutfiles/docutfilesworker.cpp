@@ -141,7 +141,7 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
     bool ok = false;
     // 获取trashinfourl
     QUrl trashInfoUrl;
-    QString fileName = fromInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString();
+    QString fileName = fromInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString();
     bool isTrashFile = FileUtils::isTrashFile(fromInfo->uri());
     if (isTrashFile) {
         trashInfoUrl= trashInfo(fromInfo);
@@ -225,7 +225,7 @@ bool DoCutFilesWorker::checkSymLink(const DFileInfoPointer &fileInfo)
     const QUrl &sourceUrl = fileInfo->uri();
     bool skip = false;
     DFileInfoPointer newTargetInfo = doCheckFile(fileInfo, targetInfo,
-                                                 fileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(), &skip);
+                                                 fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString(), &skip);
     if (newTargetInfo.isNull())
         return skip;
 

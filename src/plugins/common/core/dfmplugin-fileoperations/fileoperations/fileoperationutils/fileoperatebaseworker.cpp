@@ -304,7 +304,7 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
                 }
             }
             DFileInfoPointer newTargetInfo = doCheckFile(fileinfoNext, toInfo,
-                                                         fileinfoNext->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(),
+                                                         fileinfoNext->attribute(DFileInfo::AttributeID::kStandardFileName).toString(),
                                                          &ok);
             if (newTargetInfo.isNull())
                 continue;
@@ -1164,7 +1164,7 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
 {
     bool result = false;
     DFileInfoPointer newTargetInfo = doCheckFile(fromInfo, toInfo,
-                                                 fromInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(), skip);
+                                                 fromInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString(), skip);
     if (newTargetInfo.isNull())
         return result;
 

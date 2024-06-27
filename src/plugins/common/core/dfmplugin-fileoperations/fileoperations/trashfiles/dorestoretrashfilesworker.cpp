@@ -183,7 +183,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         bool ok = false;
         DFileInfoPointer newTargetInfo = doCheckFile(fileInfo,
                                                      targetInfo,
-                                                     fileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(), &ok);
+                                                     fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString(), &ok);
         if (newTargetInfo.isNull()) {
             handleSourceFiles.append(fileUrl);
             continue;
@@ -271,7 +271,7 @@ DFileInfoPointer DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url)
             }
         } else {
             restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                            fileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString()
+                                                            fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString()
                                                             .toStdString().c_str(), nullptr);
         }
 
