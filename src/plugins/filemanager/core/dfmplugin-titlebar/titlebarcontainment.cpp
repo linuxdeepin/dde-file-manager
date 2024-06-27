@@ -10,6 +10,8 @@
 
 #include <QDebug>
 
+DFMBASE_USE_NAMESPACE
+
 namespace dfmplugin_titlebar {
 
 TitlebarContainment::TitlebarContainment(QObject *parent)
@@ -33,6 +35,36 @@ void TitlebarContainment::onUrlChanged(const QUrl &url)
 
     if (crumbController) {
         crumbController->crumbUrlChangedBehavior(url);
+    }
+}
+
+dfmbase::Global::ViewMode TitlebarContainment::viewMode() const
+{
+    return internalViewMode;
+}
+
+void TitlebarContainment::setViewMode(dfmbase::Global::ViewMode mode)
+{
+    if (mode != internalViewMode) {
+        internalViewMode = mode;
+        Q_EMIT viewModeChanged();
+    }
+}
+
+bool TitlebarContainment::showDetail() const
+{
+    return showDetailInfo;
+}
+
+void TitlebarContainment::setShowDetail(bool b)
+{
+    if (b != showDetailInfo) {
+        showDetailInfo = b;
+        Q_EMIT showDetailChanged();
+
+        if (rootObject()) {
+            TitleBarEventCaller::sendDetailViewState(this, showDetailInfo);
+        }
     }
 }
 

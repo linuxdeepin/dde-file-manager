@@ -99,6 +99,13 @@ ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)
     return static_cast<ViewMode>(defaultViewMode);
 }
 
+void TitleBarEventCaller::sendDetailViewState(dfmgui::Applet *applet, bool checked)
+{
+    quint64 id = TitleBarHelper::windowId(applet);
+    Q_ASSERT(id > 0);
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Show", id, checked);
+}
+
 void TitleBarEventCaller::sendCd(dfmgui::Applet *applet, const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE

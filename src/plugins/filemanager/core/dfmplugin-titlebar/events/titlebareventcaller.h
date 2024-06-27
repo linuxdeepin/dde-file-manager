@@ -33,6 +33,7 @@ public:
     static bool sendCheckTabAddable(quint64 windowId);
     static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
 
+    static void sendDetailViewState(dfmgui::Applet *applet, bool checked);
     static void sendCd(dfmgui::Applet *applet, const QUrl &url);
 };
 

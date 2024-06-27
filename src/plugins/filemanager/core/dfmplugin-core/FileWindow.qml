@@ -13,9 +13,11 @@ import org.deepin.dtk
 ApplicationWindow {
     id: root
 
-    DWindow.enabled: false
+    DWindow.enabled: true
     flags: Qt.Window | Qt.WindowMinMaxButtonsHint | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
     height: 600
+    minimumHeight: 380
+    minimumWidth: 600
     width: 800
 
     // TODO: 待评估方案
@@ -24,10 +26,9 @@ ApplicationWindow {
             return;
         }
         if (undefined !== appletItem.widgetType) {
-            var control;
             switch (appletItem.widgetType) {
             case QuickUtils.Sidebar:
-                sidebar.contentItem = appletItem;
+                sidebar.target = appletItem;
                 break;
             case QuickUtils.Titlebar:
                 titlebar.target = appletItem;
@@ -50,24 +51,73 @@ ApplicationWindow {
     // For local module test
     ActionMenu {
     }
-    SplitView {
+
+    Connections {
+        function onWidthChanged(width) {
+        }
+
+        enabled: Window.window !== null
+        target: Window.window
+    }
+
+    RowLayout {
         anchors.fill: parent
 
-        Control {
-            id: sidebar
+        Item {
+            id: sidebarProxy
 
-            contentItem: Rectangle {
-                width: 200
+            Layout.preferredHeight: parent.height
+
+            ColumnLayout {
+                id: sidebarLayoutContent
+
+                anchors.fill: parent
+
+                // 用于同步标题栏高度占位的区块
+                Rectangle {
+                    id: titlebarCorner
+
+                    Layout.preferredHeight: titlebar.target ? titlebar.target.topHeaderHeight : titlebar.height
+                    Layout.preferredWidth: parent.width
+                    color: "lightyellow"
+                }
+
+                LayoutItemProxy {
+                    id: sidebar
+
+                    Layout.fillHeight: true
+                }
+            }
+
+            AnimationHSpliter {
+                id: spliter
+
+                enableAnimation: sidebar.target !== null
+                height: parent.height
+                target: sidebarProxy
+
+                // TODO 移动到 Sidebar, 通过事件处理，而不是 QML 隐式传输
+                Connections {
+                    function onSidebarVisibleNotify(bVisible) {
+                        spliter.switchShow = bVisible;
+                    }
+
+                    enabled: titlebar.target !== null
+                    target: titlebar.target
+                }
             }
         }
+
         ColumnLayout {
-            SplitView.fillHeight: true
-            SplitView.fillWidth: true
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
             LayoutItemProxy {
                 id: titlebar
 
+                onTargetChanged: target => {}
             }
+
             RowLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -76,6 +126,7 @@ ApplicationWindow {
                     id: workspace
 
                 }
+
                 LayoutItemProxy {
                     id: detailspace
 
