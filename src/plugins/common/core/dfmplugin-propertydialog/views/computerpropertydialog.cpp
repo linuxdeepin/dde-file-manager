@@ -345,52 +345,49 @@ QString ComputerInfoThread::systemType() const
 
 QString ComputerInfoThread::cpuInfo() const
 {
-    QString result { "" };
+    if (DSysInfo::cpuModelName().contains("Hz"))
+        return DSysInfo::cpuModelName();
 
-    if (DSysInfo::cpuModelName().contains("Hz")) {
-        result = DSysInfo::cpuModelName();
-    } else {
-        fmInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE);
-        QDBusInterface interface(SYSTEM_INFO_SERVICE,
-                                 SYSTEM_INFO_PATH,
-                                 "org.freedesktop.DBus.Properties",
-                                 QDBusConnection::sessionBus());
-        interface.setTimeout(1000);
-        if (!interface.isValid()) {
-            fmWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE);
-            return "";
-        }
-
-        double cpuMaxMhz { 0.0 };
-        QString validFrequency { "CurrentSpeed" };
-        QDBusMessage msgCpuHardware = interface.call("Get", SYSTEM_INFO_SERVICE, "CPUHardware");
-        QList<QVariant> argsCpuHardware = msgCpuHardware.arguments();
-        if (argsCpuHardware.count() > 0) {
-            QString cpuHardware = argsCpuHardware.at(0).value<QDBusVariant>().variant().toString();
-            if (cpuHardware.contains("PANGU"))
-                validFrequency = "CPUMaxMHz";
-        }
-
-        QDBusMessage msgValidFrequency = interface.call("Get", SYSTEM_INFO_SERVICE, validFrequency);
-        QList<QVariant> argsValidFrequency = msgValidFrequency.arguments();
-        if (argsValidFrequency.count() > 0) {
-            cpuMaxMhz = argsValidFrequency.at(0).value<QDBusVariant>().variant().toDouble();
-        }
-
-        if (DSysInfo::cpuModelName().isEmpty()) {
-            QDBusMessage msgCpuInfo = interface.call("Get", SYSTEM_INFO_SERVICE, "Processor");
-            QList<QVariant> argsCpuInfo = msgCpuInfo.arguments();
-            QString processor { "Unkonw" };
-            if (argsCpuInfo.count() > 0)
-                processor = argsCpuInfo.at(0).value<QDBusVariant>().variant().toString();
-            result = QString("%1 @ %2GHz").arg(processor).arg(cpuMaxMhz / 1000);
-        } else {
-            result = QString("%1 @ %2GHz").arg(DSysInfo::cpuModelName()).arg(cpuMaxMhz / 1000);
-        }
-        fmInfo("End call Dbus %s!", SYSTEM_INFO_SERVICE);
+    fmInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE);
+    QDBusInterface interface(SYSTEM_INFO_SERVICE,
+                             SYSTEM_INFO_PATH,
+                             "org.freedesktop.DBus.Properties",
+                             QDBusConnection::sessionBus());
+    interface.setTimeout(1000);
+    if (!interface.isValid()) {
+        fmWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE);
+        return "";
     }
 
-    return result;
+    QDBusMessage msgCpuInfo = interface.call("Get", SYSTEM_INFO_SERVICE, "Processor");
+    QList<QVariant> argsCpuInfo = msgCpuInfo.arguments();
+    QString processor { "Unkonw" };
+    if (argsCpuInfo.count() > 0)
+        processor = argsCpuInfo.at(0).value<QDBusVariant>().variant().toString();
+    if (processor.contains("Hz"))
+        return processor;
+
+    double cpuMaxMhz { 0.0 };
+    QString validFrequency { "CurrentSpeed" };
+    QDBusMessage msgCpuHardware = interface.call("Get", SYSTEM_INFO_SERVICE, "CPUHardware");
+    QList<QVariant> argsCpuHardware = msgCpuHardware.arguments();
+    if (argsCpuHardware.count() > 0) {
+        QString cpuHardware = argsCpuHardware.at(0).value<QDBusVariant>().variant().toString();
+        if (cpuHardware.contains("PANGU"))
+            validFrequency = "CPUMaxMHz";
+    }
+
+    QDBusMessage msgValidFrequency = interface.call("Get", SYSTEM_INFO_SERVICE, validFrequency);
+    QList<QVariant> argsValidFrequency = msgValidFrequency.arguments();
+    if (argsValidFrequency.count() > 0)
+        cpuMaxMhz = argsValidFrequency.at(0).value<QDBusVariant>().variant().toDouble();
+    double dHz = cpuMaxMhz / 1000.0;
+    QString strHz = QString::number(dHz, 'f', 2);
+    if (DSysInfo::cpuModelName().isEmpty()) {
+        return QString("%1 @ %2GHz").arg(processor).arg(strHz);
+    } else {
+        return QString("%1 @ %2GHz").arg(DSysInfo::cpuModelName()).arg(strHz);
+    }
 }
 
 QString ComputerInfoThread::memoryInfo() const
