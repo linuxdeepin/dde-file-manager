@@ -40,7 +40,7 @@ public:
 
 private:
     QScopedPointer<PluginQuickData> d;
-    Q_DISABLE_COPY(PluginQuickMetaData);
+    Q_DISABLE_COPY(PluginQuickMetaData)
 };
 
 using PluginQuickMetaPtr = QSharedPointer<PluginQuickMetaData>;

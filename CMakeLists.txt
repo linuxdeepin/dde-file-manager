@@ -24,7 +24,7 @@ include(install_plugin_quick_module)
 include(install_dconfig)
 
 # Select major version.
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 message("Using Qt version: ${QT_VERSION_MAJOR}")
 
 if(QT_VERSION_MAJOR EQUAL "6")
@@ -36,7 +36,7 @@ endif()
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(Dtk${DTK_VERSION_MAJOR}CMake REQUIRED)
-#if no debug, can't out in code define key '__FUNCTION__' and so on
+#if no debug, can't out in codke define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 # TODO: control it by CI. (Automation Testing)

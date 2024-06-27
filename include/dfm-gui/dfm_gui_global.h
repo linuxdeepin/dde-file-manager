@@ -13,7 +13,7 @@
 #define DFMGUI_END_NAMESPACE }
 #define DFMGUI_USE_NAMESPACE using namespace DFMGUI_NAMESPACE;
 
-#include <dfm-base/dfm_log_defines.h>
+#include <QLoggingCategory>
 
 Q_DECLARE_LOGGING_CATEGORY(logDFMGui)
 

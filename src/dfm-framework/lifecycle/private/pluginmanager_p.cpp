@@ -262,17 +262,17 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
     metaObject->d->state = PluginMetaObject::kReaded;
 
     // QML 组件信息
-    QJsonArray quickArray = metaData.value(kQuick).toArray();
-    for (auto quickItr : quickArray) {
-        QJsonObject quick = quickItr.toObject();
+    QJsonArray &&quickArray = metaData.value(kQuick).toArray();
+    for (const auto &quickItr : quickArray) {
+        const QJsonObject &quick = quickItr.toObject();
 
         QString quickParent = quick.value(kQuickParent).toString();
         // Quick plugin 的 parent 必须在 Depends 字段存在
-        if (!quickParent.isEmpty()) {
-            QString parPlugin = quickParent.split('.').first();
-            QList<PluginDepend> &depends = metaObject->d->depends;
-            QList<PluginDepend>::iterator findItr = std::find_if(depends.begin(), depends.end(), [&](const PluginDepend &depend) {
-                return depend.pluginName == parPlugin;
+        if (!quickParent.isEmpty() && quickParent.contains(".")) {
+            QString parentPlugin = quickParent.split('.').first();
+            const QList<PluginDepend> &depends = metaObject->d->depends;
+            auto findItr = std::find_if(depends.cbegin(), depends.cend(), [&parentPlugin](const PluginDepend &depend) {
+                return depend.pluginName == parentPlugin;
             });
 
             if (findItr == metaObject->d->depends.end()) {

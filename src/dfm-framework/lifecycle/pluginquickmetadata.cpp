@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <dfm-framework/lifecycle/pluginquickmetadata.h>
 #include "private/pluginquickmetadata_p.h"
+
+#include <dfm-framework/lifecycle/pluginquickmetadata.h>
 
 DPF_BEGIN_NAMESPACE
 
