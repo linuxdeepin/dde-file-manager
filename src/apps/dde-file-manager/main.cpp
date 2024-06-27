@@ -18,12 +18,10 @@
 
 #include <dfm-framework/dpf.h>
 
-// #include <DApplicationSettings>
 #include <DSysInfo>
 
 #include <QIcon>
 #include <QDir>
-// #include <QTextCodec>
 #include <QProcess>
 #include <QTimer>
 #include <QQmlEngine>

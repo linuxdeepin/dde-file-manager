@@ -20,9 +20,7 @@ class WindowManagerPrivate;
 class WindowManager : public QObject
 {
     Q_OBJECT
-
-    explicit WindowManager();
-    ~WindowManager() override;
+    Q_DISABLE_COPY_MOVE(WindowManager)
 
 public:
     using Handle = QPointer<Panel>;
@@ -32,7 +30,7 @@ public:
     QSharedPointer<QQmlEngine> engine() const;
 
     Handle createWindow(const QUrl &url, const QString &pluginName,
-                                 const QString &quickId, const QVariantMap &var = {});
+                        const QString &quickId, const QVariantMap &var = {});
     void showWindow(const Handle &handle) const;
     bool activeExistsWindowByUrl(const QUrl &url) const;
 
@@ -56,9 +54,13 @@ Q_SIGNALS:
     void currentUrlChanged(quint64 windId, const QUrl &url);
 
 private:
+    explicit WindowManager();
+    ~WindowManager() override;
+
+private:
     QScopedPointer<WindowManagerPrivate> dptr;
-    Q_DECLARE_PRIVATE_D(dptr, WindowManager);
-    Q_DISABLE_COPY(WindowManager)
+
+    Q_DECLARE_PRIVATE_D(dptr, WindowManager)
 };
 
 using WindowHandle = WindowManager::Handle;

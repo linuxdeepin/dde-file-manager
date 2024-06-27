@@ -53,9 +53,10 @@ void AppletManagerPrivate::parseDefaultRootTemplates()
         QList<dpf::PluginQuickMetaPtr> quickInfoList = metaPtr->quickMetaData();
 
         for (const dpf::PluginQuickMetaPtr &infoPtr : quickInfoList) {
-            if (!q->registeApplet(infoPtr)) {
+            bool ret { q->registeApplet(infoPtr) };
+            Q_ASSERT_X(ret, "dfm-gui", errorString.toLocal8Bit().data());
+            if (!ret)
                 qCWarning(logDFMGui) << errorString;
-            }
         }
     }
 }

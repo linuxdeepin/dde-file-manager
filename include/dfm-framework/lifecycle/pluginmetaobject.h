@@ -5,7 +5,7 @@
 #ifndef PLUGINMETAOBJECT_H
 #define PLUGINMETAOBJECT_H
 
-#include "dfm-framework/lifecycle/pluginquickmetadata.h"
+#include <dfm-framework/lifecycle/pluginquickmetadata.h>
 #include <dfm-framework/dfm_framework_global.h>
 #include <dfm-framework/lifecycle/plugindepend.h>
 
