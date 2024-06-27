@@ -101,7 +101,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         emitCurrentTaskNotify(url, targetFileUrl);
 
         bool ok = false;
-        DFileInfoPointer newTargetInfo = doCheckFile(fileInfo, targetInfo, fileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString(), &ok);
+        DFileInfoPointer newTargetInfo = doCheckFile(fileInfo, targetInfo, fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString(), &ok);
 
         if (newTargetInfo.isNull())
             continue;
