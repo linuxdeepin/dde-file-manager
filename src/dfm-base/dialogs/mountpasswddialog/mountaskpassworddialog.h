@@ -38,6 +38,8 @@ public:
     void setDomain(const QString &domain);
     void setUser(const QString &user);
 
+    QString encryptPasswd(const QString &passwd);
+
     enum {
         kNeverSave,
         kSaveBeforeLogout,
