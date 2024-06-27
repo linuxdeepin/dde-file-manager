@@ -6,7 +6,16 @@ import QtQuick
 import QtQuick.Controls
 
 TextEdit {
+    property bool visibleState: true
+
     width: 200
+
+    Behavior on width {
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.InOutQuad
+        }
+    }
 
     TextField {
         anchors.fill: parent

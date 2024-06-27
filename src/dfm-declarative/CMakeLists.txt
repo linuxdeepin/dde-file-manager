@@ -38,7 +38,7 @@ qt_add_qml_module(${BIN_NAME}
     SHARED
     RESOURCE_PREFIX /
     OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DIR}/qml/org/dfm/${BASE_NAME}
-    QML_FILES ActionMenu.qml
+    QML_FILES ActionMenu.qml AnimationHSpliter.qml
 )
 
 target_include_directories(${BIN_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
