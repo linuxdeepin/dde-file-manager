@@ -163,7 +163,7 @@ void MountAskPasswordDialog::handleConnect()
 
     loginObj.insert(kUser, usernameLineEdit->text());
     loginObj.insert(kDomain, domainLineEdit->text());
-    loginObj.insert(kPasswd, passwordLineEdit->text());
+    loginObj.insert(kPasswd, encryptPasswd(passwordLineEdit->text()));
 
     if (passwordCheckBox->isChecked()) {
         loginObj.insert(kPasswdSaveMode, kSavePermanently);
@@ -171,6 +171,14 @@ void MountAskPasswordDialog::handleConnect()
         loginObj.insert(kPasswdSaveMode, kSaveBeforeLogout);   // kSaveBeforeLogout is used as default, for auth one time
     }
     accept();
+}
+
+QString MountAskPasswordDialog::encryptPasswd(const QString &passwd)
+{
+    //todo use encrypt-plugin
+    QByteArray byteArray = passwd.toUtf8();
+    QByteArray encodedByteArray = byteArray.toBase64();
+    return QString::fromUtf8(encodedByteArray);
 }
 
 void MountAskPasswordDialog::handleButtonClicked(int index, QString text)
