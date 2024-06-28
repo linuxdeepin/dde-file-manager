@@ -246,7 +246,7 @@ void RootInfo::doWatcherEvent()
             if (emptyLoopCount >= 5)
                 break;
 
-            QThread::msleep(10);
+            QThread::msleep(20);
             if (adds.isEmpty() && updates.isEmpty() && removes.isEmpty())
                 oldtime = timer.elapsed();
 
@@ -303,6 +303,7 @@ void RootInfo::doWatcherEvent()
             removes.append(fileUrl);
         }
     }
+    processFileEventRuning = false;
 
     // 处理添加文件
     if (!removes.isEmpty())
@@ -311,7 +312,6 @@ void RootInfo::doWatcherEvent()
         addChildren(adds);
     if (!updates.isEmpty())
         updateChildren(updates);
-    processFileEventRuning = false;
 }
 
 void RootInfo::doThreadWatcherEvent()
