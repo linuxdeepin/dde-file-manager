@@ -104,12 +104,7 @@ bool TrashHelper::showTopWidget(QWidget *w, const QUrl &url)
 {
     Q_UNUSED(w)
 
-    auto rootUrl = TrashHelper::rootUrl();
-    if (UniversalUtils::urlEquals(url, rootUrl) && !FileUtils::trashIsEmpty()) {
-        return true;
-    } else {
-        return false;
-    }
+    return false;
 }
 
 QUrl TrashHelper::transToTrashFile(const QString &filePath)
@@ -313,6 +308,20 @@ void TrashHelper::onTrashEmptyState() {
     isTrashEmpty = FileUtils::trashIsEmpty();
     if (!isTrashEmpty)
         return;
+    const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
+    for (const quint64 winId : windowIds) {
+        auto window = FMWindowsIns.findWindowById(winId);
+        if (window) {
+            const QUrl &url = window->currentUrl();
+            if (url.scheme() == scheme())
+                TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+        }
+    }
+}
+
+void TrashHelper::onTrashNotEmptyState()
+{
+    isTrashEmpty = false;
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
         auto window = FMWindowsIns.findWindowById(winId);

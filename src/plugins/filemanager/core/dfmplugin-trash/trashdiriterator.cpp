@@ -58,6 +58,10 @@ bool TrashDirIterator::hasNext() const
         return has;
 
     if (d->dEnumerator) {
+        if (!d->once)
+            TrashHelper::instance()->onTrashNotEmptyState();
+
+        d->once = true;
         const QUrl &urlNext = d->dEnumerator->next();
         d->fileInfo = InfoFactory::create<FileInfo>(urlNext);
         if (d->fileInfo) {

@@ -32,6 +32,7 @@ private:
     QUrl currentUrl;
     QMap<QString, QString> fstabMap;
     FileInfoPointer fileInfo{nullptr};
+    std::atomic_bool once{ false };
 };
 
 }
