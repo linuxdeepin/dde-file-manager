@@ -8,6 +8,8 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -83,8 +85,13 @@ QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
         QStringList pathList { curUrl.path().split("/") };
         QString displayText = pathList.isEmpty() ? "" : pathList.last();
         if (curUrl.scheme() == Global::Scheme::kTrash) {
-            auto info = InfoFactory::create<FileInfo>(curUrl);
-            displayText = info ? info->displayOf(DisPlayInfoType::kFileDisplayName) : displayText;
+            if (UniversalUtils::urlEquals(curUrl, FileUtils::trashRootUrl())) {
+                displayText = QCoreApplication::translate("PathManager", "Trash");
+            } else {
+                auto info = InfoFactory::create<FileInfo>(curUrl);
+                displayText = info ? info->displayOf(DisPlayInfoType::kFileDisplayName) : displayText;
+            }
+
         }
         CrumbData data { curUrl, displayText};
         if (UrlRoute::isRootUrl(curUrl))
