@@ -52,13 +52,8 @@
 #include <sys/stat.h>
 #include <linux/limits.h>
 
-#ifdef COMPILE_ON_V23
-#    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
-#    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
-#else
-#    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
-#    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
-#endif
+#define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
+#define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
 
 namespace dfmbase {
 
@@ -772,16 +767,16 @@ QString FileUtils::toUnicode(const QByteArray &data, const QString &fileName)
     if (data.isEmpty())
         return QString();
 
-//     const QByteArray &encoding = detectCharset(data, fileName);
+    //     const QByteArray &encoding = detectCharset(data, fileName);
 
-//     if (QTextCodec *codec = QTextCodec::codecForName(encoding)) {
-//         return codec->toUnicode(data);
-//     }
+    //     if (QTextCodec *codec = QTextCodec::codecForName(encoding)) {
+    //         return codec->toUnicode(data);
+    //     }
 
-//     // auto decoder = QStringDecoder(QStringEncoder::System);
-//     // QString decoding = decoder.decode(encoding);
-//     // if (!decoding.isEmpty())
-//     //     return decoding;
+    //     // auto decoder = QStringDecoder(QStringEncoder::System);
+    //     // QString decoding = decoder.decode(encoding);
+    //     // if (!decoding.isEmpty())
+    //     //     return decoding;
 
     return QString::fromLocal8Bit(data);
 }

@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-sys_name=$(grep "^SystemName=" /etc/os-version | cut -d'=' -f2)
-sys_ver=$(grep "^MajorVersion=" /etc/os-version | cut -d'=' -f2)
+# sys_name=$(grep "^SystemName=" /etc/os-version | cut -d'=' -f2)
+# sys_ver=$(grep "^MajorVersion=" /etc/os-version | cut -d'=' -f2)
 
 # this is for adapt the new ApplicationManager.
 # open computer/trash root with 'gio open',
@@ -16,11 +16,14 @@ sys_ver=$(grep "^MajorVersion=" /etc/os-version | cut -d'=' -f2)
 # So, after opening a directory with xdg-open,
 # the application's cgroup can be categorized into the file manager as expected.
 
-if [ "$sys_name" = "Deepin" ] && [ "$sys_ver" = "23" ]; then
-	echo "open $1 with xdg-open."
-	xdg-open $1
-else
-	echo "open $1 with gio open."
-	gio open $1
-fi
+# if [ "$sys_name" = "Deepin" ] && [ "$sys_ver" = "23" ]; then
+# 	echo "open $1 with xdg-open."
+# 	xdg-open $1
+# else
+# 	echo "open $1 with gio open."
+# 	gio open $1
+# fi
+
+echo "open $1 with xdg-open."
+xdg-open $1
 
