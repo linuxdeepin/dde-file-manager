@@ -3,7 +3,7 @@
 	"version": "1.0",
 	"contents": {
 		"enableOrganizer": {
-			"value": -1,
+                        "value": 1,
 			"serial": 0,
 			"flags": [],
 			"name": "Enable Organizer",
