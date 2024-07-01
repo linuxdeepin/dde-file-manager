@@ -46,6 +46,7 @@ private:
     DPF_EVENT_REG_HOOK(hook_CanvasManager_RequestWallpaperSetting)
 
     // CanvasView begin
+    DPF_EVENT_REG_SIGNAL(signal_CanvasView_RequestRefresh)
     DPF_EVENT_REG_SLOT(slot_CanvasView_VisualRect)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Refresh)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Update)

@@ -43,6 +43,7 @@ public:
     CollectionDataProvider *dataProvider() const;
     WId winId() const;
     void updateRegionView();
+    void refresh(bool silence);
 
     void openEditor(const QUrl &url);
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);

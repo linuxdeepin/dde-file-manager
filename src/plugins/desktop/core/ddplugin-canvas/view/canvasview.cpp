@@ -14,6 +14,7 @@
 #include "utils/keyutil.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-framework/dpf.h>
 
 #include <QGSettings>
 #include <QPainter>
@@ -532,6 +533,8 @@ void CanvasView::refresh(bool silent)
         update();
         d->flicker = false;
     }
+
+    dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), "signal_CanvasView_RequestRefresh", silent);
 }
 
 void CanvasView::reset()

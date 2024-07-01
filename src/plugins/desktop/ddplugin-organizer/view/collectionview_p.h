@@ -156,6 +156,8 @@ public:
     QString searchKeys;
     QTimer *searchTimer = nullptr;
 
+    bool flicker = false;
+
     DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };
 
