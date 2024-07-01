@@ -7,9 +7,11 @@
 #include "dbus/filedialog_adaptor.h"
 #include "utils/appexitcontroller.h"
 
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -53,6 +55,7 @@ QDBusObjectPath FileDialogManagerDBus::createDialog(QString key)
     curDialogObjectMap[path] = handle;
     connect(handle, &FileDialogHandleDBus::destroyed, this, &FileDialogManagerDBus::onDialogDestroy);
     DIALOGCORE_NAMESPACE::AppExitController::instance().dismiss();
+    initEventsFilter();
     return path;
 }
 
@@ -138,4 +141,39 @@ void FileDialogManagerDBus::onAppExit()
             return false;
         });
     }
+}
+
+void FileDialogManagerDBus::initEventsFilter()
+{
+    dpfSignalDispatcher->installGlobalEventFilter(this, [this](DPF_NAMESPACE::EventType type, const QVariantList &params) -> bool {
+        if (type == GlobalEventType::kOpenFiles) {
+            quint64 eventWinId { params.at(0).toULongLong() };
+            QMap<QDBusObjectPath, QObject *>::iterator it = curDialogObjectMap.begin();
+            for (; it != curDialogObjectMap.end(); ++it) {
+                FileDialogHandleDBus *handle = qobject_cast<FileDialogHandleDBus *>(it.value());
+                if (!handle)
+                    continue;
+                if (handle->winId() == eventWinId) {
+                    FileDialog *dialog = qobject_cast<FileDialog *>(handle->widget());
+                    if (!dialog)
+                        continue;
+                    dialog->onAcceptButtonClicked();
+                    break;
+                }
+            }
+            return true;
+        }
+
+        static QList<DPF_NAMESPACE::EventType> filterTypeGroup { GlobalEventType::kOpenNewTab,
+                    GlobalEventType::kOpenNewWindow,
+                    GlobalEventType::kOpenAsAdmin,
+                    GlobalEventType::kOpenFilesByApp,
+                    GlobalEventType::kCreateSymlink,
+                    GlobalEventType::kOpenInTerminal,
+                    GlobalEventType::kHideFiles };
+        if (filterTypeGroup.contains(type))
+            return true;
+
+        return false;
+    });
 }

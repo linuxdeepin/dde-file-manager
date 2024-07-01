@@ -105,9 +105,9 @@ public Q_SLOTS:
     int exec();
     void open();
     void reject();
+    void onAcceptButtonClicked();
 
 private Q_SLOTS:
-    void onAcceptButtonClicked();
     void onRejectButtonClicked();
     void onCurrentInputNameChanged();
     void updateAcceptButtonState();
@@ -127,7 +127,6 @@ private:
     void initializeUi();
     void initConnect();
     void initEventsConnect();
-    void initEventsFilter();
     void updateViewState();
     void adjustPosition(QWidget *w);
     QString modelCurrentNameFilter() const;

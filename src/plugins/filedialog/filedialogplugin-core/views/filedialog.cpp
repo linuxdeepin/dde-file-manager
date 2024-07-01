@@ -218,7 +218,6 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
     initializeUi();
     initConnect();
     initEventsConnect();
-    initEventsFilter();
 }
 
 FileDialog::~FileDialog()
@@ -1081,32 +1080,6 @@ void FileDialog::initEventsConnect()
 {
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
-}
-
-void FileDialog::initEventsFilter()
-{
-    dpfSignalDispatcher->installGlobalEventFilter(this, [this](DPF_NAMESPACE::EventType type, const QVariantList &params) -> bool {
-        if (type == GlobalEventType::kOpenFiles) {
-            onAcceptButtonClicked();
-            return true;
-        }
-
-        if (type == GlobalEventType::kOpenNewWindow && params.size() > 0) {
-            d->handleOpenNewWindow(params.at(0).toUrl());
-            return true;
-        }
-
-        static QList<DPF_NAMESPACE::EventType> filterTypeGroup { GlobalEventType::kOpenNewTab,
-                                                                 GlobalEventType::kOpenAsAdmin,
-                                                                 GlobalEventType::kOpenFilesByApp,
-                                                                 GlobalEventType::kCreateSymlink,
-                                                                 GlobalEventType::kOpenInTerminal,
-                                                                 GlobalEventType::kHideFiles };
-        if (filterTypeGroup.contains(type))
-            return true;
-
-        return false;
-    });
 }
 
 /*!
