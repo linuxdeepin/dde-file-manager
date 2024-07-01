@@ -21,47 +21,25 @@
 #include <QRegularExpression>
 #include <DUtil>
 
-#ifdef COMPILE_ON_V23
-#    define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager1"
-#    define APP_MANAGER_PATH_PREFIX "/org/desktopspec/ApplicationManager1"
-#    define APP_INTERFACE "org.desktopspec.ApplicationManager1.Application"
+#define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager1"
+#define APP_MANAGER_PATH_PREFIX "/org/desktopspec/ApplicationManager1"
+#define APP_INTERFACE "org.desktopspec.ApplicationManager1.Application"
 
-#    define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
-#    define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
-#    define SYSTEM_SYSTEMINFO_INTERFACE "org.deepin.dde.SystemInfo1"
+#define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
+#define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
+#define SYSTEM_SYSTEMINFO_INTERFACE "org.deepin.dde.SystemInfo1"
 
-#    define DEAMON_SYSTEMINFO_SERVICE "org.deepin.daemon.SystemInfo1"
-#    define DEAMON_SYSTEMINFO_PATH "/org/deepin/daemon/SystemInfo1"
-#    define DEAMON_SYSTEMINFO_INTERFACE "org.deepin.daemon.SystemInfo1"
+#define DEAMON_SYSTEMINFO_SERVICE "org.deepin.daemon.SystemInfo1"
+#define DEAMON_SYSTEMINFO_PATH "/org/deepin/daemon/SystemInfo1"
+#define DEAMON_SYSTEMINFO_INTERFACE "org.deepin.daemon.SystemInfo1"
 
-#    define DEAMON_DOCK_SERVICE "org.deepin.dde.daemon.Dock1"
-#    define DEAMON_DOCK_PATH "/org/deepin/dde/daemon/Dock1"
-#    define DEAMON_DOCK_INTERFACE "org.deepin.dde.daemon.Dock1"
+#define DEAMON_DOCK_SERVICE "org.deepin.dde.daemon.Dock1"
+#define DEAMON_DOCK_PATH "/org/deepin/dde/daemon/Dock1"
+#define DEAMON_DOCK_INTERFACE "org.deepin.dde.daemon.Dock1"
 
-#    define DDE_LOCKSERVICE_SERVICE "org.deepin.dde.LockService1"
-#    define DDE_LOCKSERVICE_PATH "/org/deepin/dde/LockService1"
-#    define DDE_LOCKSERVICE_INTERFACE "org.deepin.dde.LockService1"
-#else
-#    define APP_MANAGER_SERVICE "com.deepin.SessionManager"
-#    define APP_MANAGER_PATH "/com/deepin/StartManager"
-#    define APP_MANAGER_INTERFACE "com.deepin.StartManager"
-
-#    define SYSTEM_SYSTEMINFO_SERVICE "com.deepin.system.SystemInfo"
-#    define SYSTEM_SYSTEMINFO_PATH "/com/deepin/system/SystemInfo"
-#    define SYSTEM_SYSTEMINFO_INTERFACE "com.deepin.system.SystemInfo"
-
-#    define DEAMON_SYSTEMINFO_SERVICE "com.deepin.daemon.SystemInfo"
-#    define DEAMON_SYSTEMINFO_PATH "/com/deepin/daemon/SystemInfo"
-#    define DEAMON_SYSTEMINFO_INTERFACE "com.deepin.daemon.SystemInfo"
-
-#    define DEAMON_DOCK_SERVICE "com.deepin.dde.daemon.Dock"
-#    define DEAMON_DOCK_PATH "/com/deepin/dde/daemon/Dock"
-#    define DEAMON_DOCK_INTERFACE "com.deepin.dde.daemon.Dock"
-
-#    define DDE_LOCKSERVICE_SERVICE "com.deepin.dde.LockService"
-#    define DDE_LOCKSERVICE_PATH "/com/deepin/dde/LockService"
-#    define DDE_LOCKSERVICE_INTERFACE "com.deepin.dde.LockService"
-#endif
+#define DDE_LOCKSERVICE_SERVICE "org.deepin.dde.LockService1"
+#define DDE_LOCKSERVICE_PATH "/org/deepin/dde/LockService1"
+#define DDE_LOCKSERVICE_INTERFACE "org.deepin.dde.LockService1"
 
 namespace dfmbase {
 
@@ -260,39 +238,13 @@ bool UniversalUtils::checkLaunchAppInterface()
             initStatus = false;
             return;
         }
-#ifndef COMPILE_ON_V23
-        QDBusInterface introspect(APP_MANAGER_SERVICE,
-                                  APP_MANAGER_PATH,
-                                  "org.freedesktop.DBus.Introspectable",
-                                  QDBusConnection::sessionBus());
-        introspect.setTimeout(1000);
-        QDBusPendingReply<QString> reply = introspect.asyncCallWithArgumentList(QStringLiteral("Introspect"), {});
-        reply.waitForFinished();
-        if (reply.isFinished() && reply.isValid() && !reply.isError()) {
-            QString xmlCode = reply.argumentAt(0).toString();
-            if (xmlCode.contains(APP_MANAGER_INTERFACE)) {
-                if (xmlCode.contains("LaunchApp")) {
-                    initStatus = true;
-                } else {
-                    qCWarning(logDFMBase) << QString("%1 : doesn't have LaunchApp interface.").arg(APP_MANAGER_SERVICE);
-                    initStatus = false;
-                }
-            } else {
-                qCWarning(logDFMBase) << QString("%1 : Introspect error").arg(APP_MANAGER_SERVICE) << xmlCode;
-                initStatus = false;
-            }
-        } else {
-            initStatus = false;
-        }
-#endif
     });
     return initStatus;
 }
 
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-#ifdef COMPILE_ON_V23
-    const auto &file = QFileInfo{desktopFile};
+    const auto &file = QFileInfo { desktopFile };
     constexpr auto kDesktopSuffix { u8"desktop" };
 
     if (file.suffix() != kDesktopSuffix) {
@@ -311,52 +263,12 @@ bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringLi
     auto reply = appManager.callWithArgumentList(QDBus::Block, QStringLiteral("Launch"), { QVariant::fromValue(QString {}), QVariant::fromValue(filePaths), QVariant::fromValue(QVariantMap {}) });
 
     return reply.type() == QDBusMessage::ReplyMessage;
-
-#else
-    QDBusInterface appManager(APP_MANAGER_SERVICE,
-                              APP_MANAGER_PATH,
-                              APP_MANAGER_INTERFACE,
-                              QDBusConnection::sessionBus());
-
-    QList<QVariant> argumentList;
-    argumentList << QVariant::fromValue(desktopFile) << QVariant::fromValue(static_cast<uint>(QX11Info::getTimestamp())) << QVariant::fromValue(filePaths);
-    appManager.asyncCallWithArgumentList(QStringLiteral("LaunchApp"), argumentList);
-    return true;
-#endif
 }
 
 bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
 {
-#ifdef COMPILE_ON_V23
     qCDebug(logDFMBase) << "new AM wouldn't provide any method to run Command, so launch cmd by qt:" << cmd << args;
     return QProcess::startDetached(cmd, args, wd);
-#else
-    if (checkLaunchAppInterface()) {
-        qCDebug(logDFMBase) << "launch cmd by dbus:" << cmd << args;
-        QDBusInterface appManager(APP_MANAGER_SERVICE,
-                                  APP_MANAGER_PATH,
-                                  APP_MANAGER_INTERFACE,
-                                  QDBusConnection::sessionBus());
-
-        QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(cmd) << QVariant::fromValue(args);
-
-        if (!wd.isEmpty()) {
-            QVariantMap opt = { { "dir", wd } };
-            argumentList << QVariant::fromValue(opt);
-            appManager.asyncCallWithArgumentList(QStringLiteral("RunCommandWithOptions"), argumentList);
-        } else {
-            appManager.asyncCallWithArgumentList(QStringLiteral("RunCommand"), argumentList);
-        }
-
-        return true;
-    } else {
-        qCDebug(logDFMBase) << "launch cmd by qt:" << cmd << args;
-        return QProcess::startDetached(cmd, args, wd);
-    }
-
-    return false;
-#endif
 }
 
 int UniversalUtils::dockHeight()

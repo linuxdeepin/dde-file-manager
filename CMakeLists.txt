@@ -35,7 +35,6 @@ else()
 endif()
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-find_package(Dtk${DTK_VERSION_MAJOR}CMake REQUIRED)
 #if no debug, can't out in codke define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
@@ -47,15 +46,10 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 #Indentify the version
-if (${DEEPIN_OS_VERSION} MATCHES "23")
-    add_definitions(-DCOMPILE_ON_V23)
-    set(COMPLIE_ON_V23 TRUE)
-    message("COMPILE ON v23")
-else()
-    add_definitions(-DCOMPILE_ON_V20)
-    set(COMPLIE_ON_V20 TRUE)
-    message("COMPILE ON v20")
-endif()
+# TODO: remove it
+add_definitions(-DCOMPILE_ON_V23)
+set(COMPLIE_ON_V23 TRUE)
+message("COMPILE ON v23")
 
 # TODO(zhangs): enable it
 # Disbale qDebug(), qInfo(), qWaring(), qCritical()
