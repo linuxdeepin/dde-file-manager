@@ -36,6 +36,7 @@ public slots:
 private:
     void onDialogDestroy();
     void onAppExit();
+    void initEventsFilter();
 
     QMap<QDBusObjectPath, QObject *> curDialogObjectMap;
     bool lastWindowClosed { false };
