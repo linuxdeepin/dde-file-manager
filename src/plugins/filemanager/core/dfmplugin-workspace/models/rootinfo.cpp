@@ -144,10 +144,11 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
     traversalThread->disconnect(this);
     if (traversalThread->isRunning()) {
         discardedThread.append(traversalThread);
-        connect(thread->traversalThread.data(), &TraversalDirThread::finished, this, [this, traversalThread] {
-            discardedThread.removeAll(traversalThread);
-            traversalThread->disconnect();
-        },
+        connect(
+                thread->traversalThread.data(), &TraversalDirThread::finished, this, [this, traversalThread] {
+                    discardedThread.removeAll(traversalThread);
+                    traversalThread->disconnect();
+                },
                 Qt::QueuedConnection);
         traversaling = false;
     }
@@ -223,13 +224,13 @@ void RootInfo::doWatcherEvent()
     qint64 oldtime = 0;
     int emptyLoopCount = 0;
     while (checkFileEventQueue() || timer.elapsed() < 200) {
-        //检查超时，重新设置起始时间
+        // 检查超时，重新设置起始时间
         if (timer.elapsed() - oldtime >= 200) {
             // 处理添加文件
             if (!adds.isEmpty())
                 addChildren(adds);
             if (!updates.isEmpty())
-                updateChildren(updates); 
+                updateChildren(updates);
             if (!removes.isEmpty())
                 removeChildren(removes);
 

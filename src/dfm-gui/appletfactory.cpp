@@ -86,6 +86,32 @@ Applet *AppletFactory::create(const QString &id, Containment *parent, QString *e
     return info;
 }
 
+QUrl AppletFactory::pluginComponent(const QString &plugin, const QString &qmlFile, QString *errorString) const
+{
+    QString error;
+    dfmbase::FinallyUtil finally([&]() {
+        if (errorString)
+            *errorString = error;
+    });
+
+    // 根据插件路径 + 文件名查找
+    dpf::PluginMetaObjectPointer info = dpf::LifeCycle::pluginMetaObj(plugin);
+    if (!info) {
+        error = QStringLiteral("Plugin not found");
+        return QUrl();
+    }
+
+    QString pluginPath = QFileInfo(info->fileName()).absolutePath();
+    QString fullPath = pluginPath + QDir::separator() + info->name() + QDir::separator() + qmlFile;
+    if (!QFile::exists(fullPath)) {
+        error = QStringLiteral("Qml file not exists");
+        return QUrl();
+    }
+
+    finally.dismiss();
+    return QUrl::fromLocalFile(fullPath);
+}
+
 class ViewAppletFacotryData
 {
 public:
@@ -125,36 +151,18 @@ ViewAppletFactory *ViewAppletFactory::instance()
 bool ViewAppletFactory::regCreator(const QString &plugin, const QString &qmlFile, const QString &scheme,
                                    CreateFunc creator, QString *errorString)
 {
-    QString error;
-    dfmbase::FinallyUtil finally([&]() {
-        if (errorString)
-            *errorString = error;
-    });
-
-    // 根据插件路径 + 文件名查找
-    dpf::PluginMetaObjectPointer info = dpf::LifeCycle::pluginMetaObj(plugin);
-    if (!info) {
-        error = QStringLiteral("Plugin not found");
+    QUrl qmlUrl = AppletFactory::instance()->pluginComponent(plugin, qmlFile, errorString);
+    if (!qmlUrl.isValid())
         return false;
-    }
-
-    QString pluginPath = QFileInfo(info->fileName()).absolutePath();
-    QString fullPath = pluginPath + QDir::separator() + info->name() + QDir::separator() + qmlFile;
-    if (!QFile::exists(fullPath)) {
-        error = QStringLiteral("Qml file not exists");
-        return false;
-    }
-
-    QUrl qmlUrl = QUrl::fromLocalFile(fullPath);
 
     if (d->constructList.contains(scheme)) {
-        error = "The current url has registered "
-                "the associated construction class";
+        if (errorString)
+            *errorString = "The current url has registered "
+                           "the associated construction class";
         return false;
     }
 
     d->constructList.insert(scheme, { qmlUrl, creator });
-    finally.dismiss();
     return true;
 }
 

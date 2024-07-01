@@ -121,6 +121,9 @@ signals:
 private slots:
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 winId);
+
+private:
+    void registerQmlType();
 };
 
 }

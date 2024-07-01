@@ -6,6 +6,7 @@
 #define FILEVIEWMODEL_H
 
 #include "dfmplugin_workspace_global.h"
+// #include "views/fileview.h"
 
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/base/schemefactory.h>
@@ -15,6 +16,7 @@
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
 #include <QUrl>
+#include <qqml.h>
 
 #include <iostream>
 #include <memory>
@@ -25,14 +27,13 @@ class QAbstractItemView;
 
 namespace dfmplugin_workspace {
 
-class FileView;
 class FileItemData;
 class FileSortWorker;
 class RootInfo;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
-
+    QML_ELEMENT
 public:
     explicit FileViewModel(QAbstractItemView *parent = nullptr);
     virtual ~FileViewModel() override;
@@ -56,7 +57,8 @@ public:
     QUrl rootUrl() const;
     QModelIndex rootIndex() const;
 
-    QModelIndex setRootUrl(const QUrl &url);
+    Q_INVOKABLE QModelIndex setRootUrl(const QUrl &url);
+    Q_INVOKABLE void openIndex(quint64 winId, int index);
     void refresh();
 
     void doExpand(const QModelIndex &index);
@@ -99,7 +101,7 @@ Q_SIGNALS:
     void stateChanged();
     void renameFileProcessStarted();
     void selectAndEditFile(const QUrl &url);
-    void traverPrehandle(const QUrl &url, const QModelIndex &index, FileView *view);
+    // void traverPrehandle(const QUrl &url, const QModelIndex &index, FileView *view);
 
     void hiddenFileChanged();
     void filtersChanged(QStringList nameFilters, QDir::Filters filters);
@@ -135,6 +137,9 @@ public Q_SLOTS:
     void onWorkFinish(int visiableCount, int totalCount);
     void onDataChanged(int first, int last);
 
+protected:
+    virtual QHash<int, QByteArray> roleNames() const override;
+
 private:
     void connectRootAndFilterSortWork(RootInfo *root, const bool refresh = false);
     void initFilterSortWork();
@@ -144,6 +149,8 @@ private:
     void changeState(ModelState newState);
     void closeCursorTimer();
     void startCursorTimer();
+
+    void initRoleNamesMap();
 
     QUrl dirRootUrl;
     QUrl fetchingUrl;
@@ -163,6 +170,8 @@ private:
     QList<QSharedPointer<QObject>> discardedObjects {};
     QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
+
+    QHash<int, QByteArray> roleNamesMap {};
 };
 
 }

@@ -16,8 +16,8 @@ ApplicationWindow {
     DWindow.enabled: true
     flags: Qt.Window | Qt.WindowMinMaxButtonsHint | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
     height: 600
-    minimumHeight: 380
-    minimumWidth: 600
+    minimumHeight: 600
+    minimumWidth: 800
     width: 800
 
     // TODO: 待评估方案
@@ -51,7 +51,6 @@ ApplicationWindow {
     // For local module test
     ActionMenu {
     }
-
     Connections {
         function onWidthChanged(width) {
         }
@@ -59,7 +58,6 @@ ApplicationWindow {
         enabled: Window.window !== null
         target: Window.window
     }
-
     RowLayout {
         anchors.fill: parent
 
@@ -81,14 +79,12 @@ ApplicationWindow {
                     Layout.preferredWidth: parent.width
                     color: "lightyellow"
                 }
-
                 LayoutItemProxy {
                     id: sidebar
 
                     Layout.fillHeight: true
                 }
             }
-
             AnimationHSpliter {
                 id: spliter
 
@@ -107,7 +103,6 @@ ApplicationWindow {
                 }
             }
         }
-
         ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -117,7 +112,6 @@ ApplicationWindow {
 
                 onTargetChanged: target => {}
             }
-
             RowLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -127,7 +121,6 @@ ApplicationWindow {
                     id: workspace
 
                 }
-
                 LayoutItemProxy {
                     id: detailspace
 

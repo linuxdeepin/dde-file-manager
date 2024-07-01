@@ -355,7 +355,7 @@ WindowManager::Handle WindowManager::createWindow(const QUrl &url, const QString
     Handle handle = d->createQuickWindow(pluginName, quickId, var);
     if (handle) {
         handle->loadState();
-        handle->setCurrentUrl(url);
+        handle->setCurrentUrl(showedUrl);
         d->connectWindowHandle(handle);
 
         if (1 == d->windows.size()) {

@@ -31,7 +31,7 @@ enum class DirOpenMode : uint8_t {
     kOpenInCurrentWindow,
     kOpenNewWindow,
     kAwaysInCurrentWindow,
-    //kForceOpenNewWindow // Todo(yanghao): ???
+    // kForceOpenNewWindow // Todo(yanghao): ???
 };
 
 // view defines
@@ -88,6 +88,8 @@ inline constexpr int kMaxTabCount { 8 };
 
 // view select box
 inline constexpr int kSelectBoxLineWidth { 2 };
+
+inline char kWorkspaceUri[] { "org.deepin.filemanager.workspace" };
 
 namespace PropertyKey {
 inline constexpr char kScheme[] { "Property_Key_Scheme" };

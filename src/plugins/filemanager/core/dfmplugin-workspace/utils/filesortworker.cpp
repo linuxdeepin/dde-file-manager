@@ -294,8 +294,10 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
             added = suc;
     }
 
-    if (added)
+    if (added) {
+        qWarning() << "insert 111111111";
         Q_EMIT insertFinish();
+    }
 }
 
 void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &children)
@@ -387,7 +389,7 @@ bool FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 void FileSortWorker::handleWatcherUpdateFiles(const QList<SortInfoPointer> &children)
 {
     bool added = false;
-    for(auto sort : children) {
+    for (auto sort : children) {
         if (isCanceled)
             return;
         auto suc = handleWatcherUpdateFile(sort);
@@ -395,8 +397,10 @@ void FileSortWorker::handleWatcherUpdateFiles(const QList<SortInfoPointer> &chil
             added = suc;
     }
 
-    if (added)
+    if (added) {
+        qWarning() << "insert 2222222222";
         Q_EMIT insertFinish();
+    }
 }
 
 void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
@@ -550,8 +554,10 @@ void FileSortWorker::handleUpdateFiles(const QList<QUrl> &urls)
         if (!added)
             added = suc;
     }
-    if (added)
+    if (added) {
+        qWarning() << "insert 33333333333";
         emit insertFinish();
+    }
 }
 
 void FileSortWorker::handleRefresh()
@@ -744,12 +750,12 @@ bool FileSortWorker::handleAddChildren(const QString &key,
     childUrls.append(newChildren);
     visibleTreeChildren.insert(parentUrl, childUrls);
     depthMap.remove(depth - 1, parentUrl);
-    depthMap.insertMulti(depth - 1, parentUrl);
+    depthMap.insert(depth - 1, parentUrl);
     if (newChildren.isEmpty())
         return true;
     insertVisibleChildren(startPos + posOffset, newChildren);
 
-    return true;
+    return false;
 }
 
 void FileSortWorker::setSourceHandleState(const bool isFinished)
@@ -816,7 +822,7 @@ void FileSortWorker::filterAndSortFiles(const QUrl &dir, const bool fileter, con
     if (istree)
         visibleList = sortAllTreeFilesByParent(dir, reverse);
     else {
-        visibleList = sortTreeFiles(visibleTreeChildren.contains(current)? visibleTreeChildren[current] : visibleChildren, reverse);
+        visibleList = sortTreeFiles(visibleTreeChildren.contains(current) ? visibleTreeChildren[current] : visibleChildren, reverse);
     }
 
     // 执行界面刷新  设置过滤，当前的目录是当前树的根目录，反序。所有的显示url都要改变
@@ -845,7 +851,7 @@ void FileSortWorker::resortCurrent(const bool reverse)
     if (istree)
         visibleList = sortAllTreeFilesByParent(current, reverse);
     else {
-        visibleList = sortTreeFiles(visibleTreeChildren.contains(current)? visibleTreeChildren[current] : visibleChildren, reverse);
+        visibleList = sortTreeFiles(visibleTreeChildren.contains(current) ? visibleTreeChildren[current] : visibleChildren, reverse);
     }
 
     resortVisibleChildren(visibleList);
@@ -936,7 +942,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     }
 
     depthMap.remove(depth - 1, parentUrl);
-    depthMap.insertMulti(depth - 1, parentUrl);
+    depthMap.insert(depth - 1, parentUrl);
 
     if (!checkFilters(sortInfo, true))
         return false;
@@ -1033,7 +1039,7 @@ void FileSortWorker::switchListView()
     auto allShowList = visibleTreeChildren.value(current);
     visibleTreeChildren.clear();
     depthMap.clear();
-    depthMap.insertMulti(-1, current);
+    depthMap.insert(-1, current);
     auto oldMix = isMixDirAndFile;
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     // 排序
