@@ -69,7 +69,7 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
     action->setData(MenuAction::kNewWindow);
     menu->addAction(action);
 
-    action = new QAction(QObject::tr("Open in new tab"), menu);
+    action = new QAction(QObject::tr("New tab"), menu);
     action->setData(MenuAction::kOpenInNewTab);
     menu->addAction(action);
 
