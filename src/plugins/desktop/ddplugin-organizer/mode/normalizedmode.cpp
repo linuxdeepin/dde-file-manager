@@ -274,6 +274,13 @@ void NormalizedModePrivate::updateHolderSurfaceIndex(QWidget *surface)
 
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized)
 {
+    if (cfgs.isEmpty() && CfgPresenter->organizeOnTriggered()) {
+        // feature: if org on trigger is enabled and no saved configs
+        // files should not be organized when launch.
+        classifier->reset({});
+        return;
+    }
+
     // order by config
     for (const CollectionBaseDataPtr &cfg : cfgs) {
         if (auto base = classifier->baseData(cfg->key)) {
