@@ -15,12 +15,15 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/universalutils.h>
 
+#include <dfm-gui/appletfactory.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <QDir>
 #include <QTimer>
 
 using namespace dfmplugin_workspace;
+DFMGUI_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 

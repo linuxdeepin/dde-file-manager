@@ -7,11 +7,13 @@
 #include "views/fileview.h"
 #include "views/renamebar.h"
 #include "utils/workspacehelper.h"
+#include "utils/workspacemanager.h"
 #include "utils/customtopwidgetinterface.h"
 #include "events/workspaceeventreceiver.h"
 #include "menus/workspacemenuscene.h"
 #include "menus/sortanddisplaymenuscene.h"
 #include "menus/basesortmenuscene.h"
+#include "models/fileviewmodel.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -20,7 +22,14 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 
+#include <dfm-gui/applet.h>
+#include <dfm-gui/containment.h>
+#include <dfm-gui/panel.h>
+#include <dfm-gui/appletfactory.h>
+
 #include <dfm-framework/dpf.h>
+
+#include <qqml.h>
 
 namespace dfmplugin_workspace {
 DFM_LOG_REISGER_CATEGORY(DPWORKSPACE_NAMESPACE)
@@ -29,7 +38,10 @@ void Workspace::initialize()
 {
     DFMBASE_USE_NAMESPACE
 
-    WorkspaceHelper::instance()->registerFileView(Global::Scheme::kFile);
+    registerQmlType();
+
+    WorkspaceManager::instance()->registerViewItem(Global::Scheme::kFile);
+    WorkspaceManager::instance()->registerWorkspaceCreator();
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
@@ -83,5 +95,12 @@ void Workspace::onWindowOpened(quint64 windId)
 void Workspace::onWindowClosed(quint64 windId)
 {
     WorkspaceHelper::instance()->removeWorkspace(windId);
+}
+
+void Workspace::registerQmlType()
+{
+    // @uri org.deepin.filemanager.workspace
+    const char *uri { kWorkspaceUri };
+    qmlRegisterType<FileViewModel>(uri, 1, 0, "FileItemModel");
 }
 }   // namespace dfmplugin_workspace

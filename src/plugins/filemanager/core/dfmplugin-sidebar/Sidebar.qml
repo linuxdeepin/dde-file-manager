@@ -37,9 +37,9 @@ AppletItem {
             showDirsFirst: true
         }
     }
-    Text {
-        color: "lightgray"
-        font.pointSize: 36
-        text: "sidebar"
-    }
+    // Text {
+    //     color: "lightgray"
+    //     font.pointSize: 36
+    //     text: "sidebar"
+    // }
 }
