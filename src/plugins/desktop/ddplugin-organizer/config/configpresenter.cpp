@@ -25,6 +25,7 @@ static constexpr char kIsEnable[] { "enableOrganizer" };
 static inline constexpr char kEnableVisible[] { "enableVisibility" };
 static inline constexpr char kHideAllKeySeq[] { "hideAllKeySeq" };
 static inline constexpr char kHideAllDialogRepeatNoMore[] { "hideAllDialogRepeatNoMore" };
+static inline constexpr char kOrganizeAction[] { "organizeAction" };
 
 ConfigPresenter::ConfigPresenter(QObject *parent)
     : QObject(parent)
@@ -54,6 +55,10 @@ void ConfigPresenter::onDConfigChanged(const QString &cfg, const QString &key)
         bool val = value == 0 ? false : true;
         if (val != enable)
             emit changeEnableState(val);
+    }
+
+    if (key == kOrganizeAction && organizeAction() == kAlways) {
+        Q_EMIT reorganizeDesktop();
     }
 }
 
@@ -240,13 +245,13 @@ void ConfigPresenter::setEnabledTypeCategories(ItemCategories flags)
 
 OrganizeAction ConfigPresenter::organizeAction() const
 {
-    int val = DConfigManager::instance()->value(kConfName, "organizeAction", 0).toInt();
+    int val = DConfigManager::instance()->value(kConfName, kOrganizeAction, 0).toInt();
     return val == 0 ? kOnTrigger : kAlways;
 }
 
 bool ConfigPresenter::organizeOnTriggered() const
 {
-    return OrganizeAction() == kOnTrigger;
+    return organizeAction() == kOnTrigger;
 }
 
 CollectionStyle ConfigPresenter::normalStyle(const QString &key) const
