@@ -5,7 +5,8 @@
 import QtQuick
 import QtQuick.Layouts
 import org.deepin.dtk
-import org.dfm.base
+import org.deepin.filemanager.gui
+import org.deepin.filemanager.declarative
 
 ContainmentItem {
     id: detailspace
@@ -36,6 +37,8 @@ ContainmentItem {
         }
 
         Loader {
+            id: baseInfoLoader
+
             Layout.fillHeight: true
             Layout.fillWidth: true
             active: detailspace.visible
@@ -46,5 +49,19 @@ ContainmentItem {
                 anchors.fill: parent
             }
         }
+
+        Loader {
+            id: extensionInfoLoader
+
+        }
+    }
+
+    // 侧边动画
+    AnimationHSpliter {
+        enableAnimation: null !== Window.window
+        enableMouse: true
+        leftSide: true
+        showWidth: 300
+        switchShow: Containment.detailVisible
     }
 }

@@ -33,11 +33,11 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Quick REQUIRED)
 # TODO：放到公共目录？
 # 通过 Qt cmake 接口注册组件
 qt_add_qml_module(${BIN_NAME}
-    URI org.dfm.${BASE_NAME}
+    URI org.deepin.filemanager.${BASE_NAME}
     VERSION 1.0
     SHARED
     RESOURCE_PREFIX /
-    OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DIR}/qml/org/dfm/${BASE_NAME}
+    OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DIR}/qml/org/deepin/filemanager/${BASE_NAME}
     QML_FILES ActionMenu.qml AnimationHSpliter.qml
 )
 
@@ -50,4 +50,5 @@ set_target_properties(${BIN_NAME} PROPERTIES
 )
 
 # install module
-install(DIRECTORY ${DFM_BUILD_PLUGIN_DIR}/qml/org/dfm/${BASE_NAME} DESTINATION ${DFM_QML_MODULE}/org/dfm)
+install(DIRECTORY ${DFM_BUILD_PLUGIN_DIR}/qml/org/deepin/filemanager/${BASE_NAME}
+        DESTINATION ${DFM_QML_MODULE}/org/deepin/filemanager)

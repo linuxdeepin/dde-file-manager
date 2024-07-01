@@ -19,16 +19,17 @@ namespace dfmplugin_detailspace {
 DFM_LOG_REISGER_CATEGORY(DPDETAILSPACE_NAMESPACE)
 DFMBASE_USE_NAMESPACE
 
-static constexpr char kAppletUrl[] { "org.dfm.detailspace" };
+static constexpr char kAppletUrl[] { "org.deepin.filemanager.detailspace" };
 
-static dfmgui::Applet *createDetailSpaceApplet(const QUrl &url, dfmgui::Containment *parent, QString *errorString)
+static dfmgui::Applet *createDetailSpaceApplet(const QString &id, dfmgui::Containment *parent, QString *errorString)
 {
-    if (kAppletUrl == url.scheme()) {
+    if (kAppletUrl == id) {
         Q_ASSERT_X(parent && parent->flags().testFlag(dfmgui::Applet::kPanel),
                    "Create detailspace applet", "Parent must based on panel");
 
         auto detailSpace = new DetailSpaceContainment(parent);
-        QObject::connect(parent, &dfmgui::Applet::currentUrlChanged, detailSpace, &DetailSpaceContainment::setCurrentUrl);
+        // 追加到缓存记录
+        DetailSpaceHelper::addDetailSpace(detailSpace);
         return detailSpace;
     }
     return nullptr;
@@ -40,8 +41,8 @@ void DetailSpace::initialize()
     DetailSpaceEventReceiver::instance().connectService();
 
     // 注册插件使用模块组件
-    // @uri org.dfm.detailspace
-    const char *uri = "org.dfm.detailspace";
+    // @uri org.deepin.filemanager.detailspace
+    const char *uri = "org.deepin.filemanager.detailspace";
     qmlRegisterType<QuickFileBaseInfoModel>(uri, 1, 0, "BaseFileInfoModel");
 
     QString errorString;

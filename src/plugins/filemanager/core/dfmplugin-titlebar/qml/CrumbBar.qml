@@ -4,7 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
-import org.dfm.base
+import org.deepin.filemanager.gui
 import org.deepin.dtk
 import org.deepin.dtk.private 1.0 as P
 

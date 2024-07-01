@@ -6,8 +6,8 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
-import org.dfm.base
-import org.deepin.dtk
+import org.deepin.filemanager.gui
+import org.deepin.dtk as DTK
 import org.deepin.dtk.style 1.0 as DS
 
 ContainmentItem {
@@ -53,7 +53,7 @@ ContainmentItem {
         leftPadding: 5
         rightPadding: 5
 
-        IconLabel {
+        DTK.IconLabel {
             anchors.verticalCenter: parent.verticalCenter
             height: 36
             width: 36
@@ -65,7 +65,7 @@ ContainmentItem {
             }
         }
 
-        ToolButton {
+        DTK.ToolButton {
             anchors.verticalCenter: parent.verticalCenter
             height: 36
             width: 36
@@ -107,11 +107,11 @@ ContainmentItem {
                     }
                 }
 
-                IconButton {
+                DTK.IconButton {
                     icon.name: "arrow_ordinary_left"
                 }
 
-                IconButton {
+                DTK.IconButton {
                     icon.name: "arrow_ordinary_right"
                 }
 
@@ -132,7 +132,7 @@ ContainmentItem {
                     }
                 }
 
-                IconButton {
+                DTK.IconButton {
                     icon.name: "button_add"
 
                     onClicked: {
@@ -147,7 +147,7 @@ ContainmentItem {
                 active: null !== Window.window
                 height: DS.Style.titleBar.height
 
-                sourceComponent: TitleBar {
+                sourceComponent: DTK.TitleBar {
                     title: ""
                     width: parent.width
                 }
@@ -175,7 +175,6 @@ ContainmentItem {
             LineSearch {
                 id: searchbar
 
-                Layout.fillHeight: true
                 visibleState: {
                     return titlebar.width > 600;
                 }

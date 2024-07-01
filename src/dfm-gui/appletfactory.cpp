@@ -11,44 +11,16 @@
 
 #include <dfm-framework/lifecycle/lifecycle.h>
 
-#include <QFileInfo>
 #include <QDir>
+#include <QFileInfo>
 
 DFMGUI_BEGIN_NAMESPACE
 
 class AppletFactoryData
 {
 public:
-    bool regCreator(const QString &scheme, AppletFactory::CreateFunc creator, QString *errorString, QUrl qmlUrl = {});
-
-    struct CreateInfo
-    {
-        QUrl qmlComponent;
-        AppletFactory::CreateFunc func;
-    };
-
-    bool checkRoute { false };
-    dfmbase::DThreadMap<QString, CreateInfo> constructList {};
+    dfmbase::DThreadMap<QString, AppletFactory::CreateFunc> constructList {};
 };
-
-bool AppletFactoryData::regCreator(const QString &scheme, AppletFactory::CreateFunc creator, QString *errorString, QUrl qmlUrl)
-{
-    QString error;
-    dfmbase::FinallyUtil finally([&]() {
-        if (errorString)
-            *errorString = error;
-    });
-
-    if (constructList.contains(scheme)) {
-        error = "The current url has registered "
-                "the associated construction class";
-        return false;
-    }
-
-    constructList.insert(scheme, { qmlUrl, creator });
-    finally.dismiss();
-    return true;
-}
 
 /*!
  * \class AppletFactory
@@ -67,26 +39,10 @@ AppletFactory *AppletFactory::instance()
 }
 
 /*!
- * \brief 注册Applet创建器 \a creator 与 \a scheme 的关联
- * \return 注册结果，如果当前已存在 \a scheme 的关联，则返回 false ，错误信息会写入 \a errorString
+ * \brief 注册Applet创建器 \a creator 与 \a id 的关联
+ * \return 注册结果，如果当前已存在 \a id 的关联，则返回 false ，错误信息会写入 \a errorString
  */
-bool AppletFactory::regCreator(const QString &scheme, CreateFunc creator, QString *errorString)
-{
-    return d->regCreator(scheme, creator, errorString);
-}
-
-/*!
- * \brief 根据需要构造的 \a url 进行顶层类构造，调用该函数存在前置条件，否则将创建空指针
- * （ViewAppletFactory）需要注册scheme到DFMUrlRoute类
- * 需要注册scheme到 AppletFactory 类
- * 构造函数可识别传入的 \a parent 进行绑定或属性设置等处理
- *
- * \return 构造的 Applet 指针
- * （ViewAppletFactory）如果没有注册 scheme 到 DFMUrlRoute，返回空指针
- * 如果没有注册 scheme 与 class 构造函数规则，返回空指针
- * 如果出现错误，错误信息会写入 \a errorString
- */
-Applet *AppletFactory::create(const QUrl &url, Containment *parent, QString *errorString)
+bool AppletFactory::regCreator(const QString &id, CreateFunc creator, QString *errorString)
 {
     QString error;
     dfmbase::FinallyUtil finally([&]() {
@@ -94,34 +50,61 @@ Applet *AppletFactory::create(const QUrl &url, Containment *parent, QString *err
             *errorString = error;
     });
 
-    const QString scheme = url.scheme();
-    if (d->checkRoute && !dfmbase::UrlRoute::hasScheme(scheme)) {
-        error = "No scheme found for "
-                "URL registration";
-        return nullptr;
+    if (d->constructList.contains(id)) {
+        error = "The current url has registered "
+                "the associated construction class";
+        return false;
     }
 
-    auto creator = d->constructList.value(scheme);
-    if (!creator.func) {
-        error = "Scheme should be call registered 'regClass()' function "
+    d->constructList.insert(id, creator);
+    finally.dismiss();
+    return true;
+}
+
+/*!
+ * \brief 根据需要构造的标识 \a id 进行已注册 Applet 的构造，此函数一般用于存在静态元信息的插件注册
+ *  构造函数可识别传入的 \a parent 进行绑定或属性设置等处理
+ *
+ * \return 构造的 Applet 指针，出现错误返回 nullptr，错误信息会写入 \a errorString
+ */
+Applet *AppletFactory::create(const QString &id, Containment *parent, QString *errorString)
+{
+    QString error;
+    dfmbase::FinallyUtil finally([&]() {
+        if (errorString)
+            *errorString = error;
+    });
+
+    CreateFunc constantFunc = d->constructList.value(id);
+    if (!constantFunc) {
+        error = "url should be call registered 'regClass()' function "
                 "before create function";
         return nullptr;
     }
 
-    Applet *applet = creator.func(url, parent, &error);
-    if (!creator.qmlComponent.isEmpty()) {
-        applet->setComponentUrl(creator.qmlComponent);
-    }
-    return applet;
+    Applet *info = constantFunc(id, parent, &error);
+    return info;
 }
+
+class ViewAppletFacotryData
+{
+public:
+    struct CreateInfo
+    {
+        QUrl qmlComponent;
+        ViewAppletFactory::CreateFunc func;
+    };
+
+    dfmbase::DThreadMap<QString, CreateInfo> constructList {};
+};
 
 /*!
  * \class ViewAppletFactory
  * \brief 类似 ViewFactory 提供较灵活的 QML 组件注册管理方式
  */
 ViewAppletFactory::ViewAppletFactory()
+    : d(new ViewAppletFacotryData)
 {
-    d->checkRoute = true;
 }
 
 ViewAppletFactory *ViewAppletFactory::instance()
@@ -131,17 +114,16 @@ ViewAppletFactory *ViewAppletFactory::instance()
 }
 
 /*!
- * \brief 用于视图模块动态注册QML组件，不同于通过插件元信息的注册，这类 Applet 是匿名的，不会注册
+ * \brief 注册Applet创建器 \a creator 与 \a id 的关联
+ * \details 用于视图模块动态注册QML组件，不同于通过插件元信息的注册，这类 Applet 是匿名的，不会注册
  *  到 Applet 管理中，也不存在默认的依赖关系。
  *  传入插件名 \a plugin 和QML文件 \a qml 用于查找 Applet 关联的QML组件，组件文件路径如下组合：
  *      `[插件路径]/[插件名]/qml路径`
- *  其它参考 AppletFactory::regCreator()
  *
- * \return 是否注册成功，对于 ViewAppletFactory ，如果为查找到 \a plugin 对应插件，或
- *  \a qmlFile 文件不在制定路径，返回 false
+ * \return 是否注册成功，如果未查找到 \a plugin 对应插件，或 \a qmlFile 文件不在制定路径，返回 false
  */
 bool ViewAppletFactory::regCreator(const QString &plugin, const QString &qmlFile, const QString &scheme,
-                                   AppletFactory::CreateFunc creator, QString *errorString)
+                                   CreateFunc creator, QString *errorString)
 {
     QString error;
     dfmbase::FinallyUtil finally([&]() {
@@ -164,7 +146,56 @@ bool ViewAppletFactory::regCreator(const QString &plugin, const QString &qmlFile
     }
 
     QUrl qmlUrl = QUrl::fromLocalFile(fullPath);
-    return d->regCreator(scheme, creator, &error, qmlUrl);
+
+    if (d->constructList.contains(scheme)) {
+        error = "The current url has registered "
+                "the associated construction class";
+        return false;
+    }
+
+    d->constructList.insert(scheme, { qmlUrl, creator });
+    finally.dismiss();
+    return true;
+}
+
+/*!
+ * \brief 根据需要构造的 \a url (含scheme信息)进行顶层类构造，调用该函数存在前置条件，否则将创建空指针
+ * 需要注册scheme到DFMUrlRoute类
+ * 需要注册scheme到 AppletFactory 类
+ * 构造函数可识别传入的 \a parent 进行绑定或属性设置等处理
+ *
+ * \return 构造的 Applet 指针
+ * 如果没有注册 scheme 到 DFMUrlRoute，返回空指针
+ * 如果没有注册 scheme 与 class 构造函数规则，返回空指针
+ * 如果出现错误，错误信息会写入 \a errorString
+ */
+Applet *ViewAppletFactory::create(const QUrl &url, Containment *parent, QString *errorString)
+{
+    QString error;
+    dfmbase::FinallyUtil finally([&]() {
+        if (errorString)
+            *errorString = error;
+    });
+
+    const QString scheme = url.scheme();
+    if (!dfmbase::UrlRoute::hasScheme(scheme)) {
+        error = "No scheme found for "
+                "URL registration";
+        return nullptr;
+    }
+
+    auto creator = d->constructList.value(scheme);
+    if (!creator.func) {
+        error = "Scheme should be call registered 'regClass()' function "
+                "before create function";
+        return nullptr;
+    }
+
+    Applet *applet = creator.func(url, parent, &error);
+    if (!creator.qmlComponent.isEmpty()) {
+        applet->setComponentUrl(creator.qmlComponent);
+    }
+    return applet;
 }
 
 DFMGUI_END_NAMESPACE

@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel 2.6
-import org.dfm.base
+import org.deepin.filemanager.gui
 
 AppletItem {
     property int widgetType: QuickUtils.Sidebar

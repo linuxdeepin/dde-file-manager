@@ -6,9 +6,9 @@ import QtQuick
 import QtQml
 import QtQuick.Controls
 import QtQuick.Layouts
-import org.dfm.base
-import org.dfm.declarative
 import org.deepin.dtk
+import org.deepin.filemanager.gui
+import org.deepin.filemanager.declarative
 
 ApplicationWindow {
     id: root
@@ -121,6 +121,7 @@ ApplicationWindow {
             RowLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                spacing: 0
 
                 LayoutItemProxy {
                     id: workspace

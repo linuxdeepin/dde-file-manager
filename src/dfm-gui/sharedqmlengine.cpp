@@ -27,10 +27,7 @@ SharedQmlEnginePrivate::SharedQmlEnginePrivate(SharedQmlEngine *q)
  */
 bool SharedQmlEnginePrivate::continueLoading()
 {
-    if (!component) {
-        qCWarning(logDFMGui) << "No QQmlComponent";
-        return false;
-    }
+    Q_ASSERT_X(nullptr != component, "Create qml component", "Undefined component");
 
     if (component->isReady()) {
         rootObject = component->beginCreate(rootContext);

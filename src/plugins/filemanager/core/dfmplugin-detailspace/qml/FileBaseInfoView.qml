@@ -5,8 +5,8 @@
 import QtQuick
 import QtQuick.Layouts
 import org.deepin.dtk
-import org.dfm.base
-import org.dfm.detailspace
+import org.deepin.filemanager.gui
+import org.deepin.filemanager.detailspace
 
 Item {
     property int fieldWidth: 100

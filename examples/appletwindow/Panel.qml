@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls
-import org.dfm.base
+import org.deepin.filemanager.gui
 
 ApplicationWindow {
     height: 600
