@@ -3,10 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "detailspacehelper.h"
-#include "views/detailspacewidget.h"
+#include "detailspacecontainment.h"
 #include "utils/detailmanager.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+
+#include <dfm-gui/panel.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -14,9 +16,9 @@ using namespace dfmplugin_detailspace;
 
 DFMBASE_USE_NAMESPACE
 
-QMap<quint64, DetailSpaceWidget *> DetailSpaceHelper::kDetailSpaceMap {};
+QMap<quint64, DetailSpaceContainment *> DetailSpaceHelper::kDetailSpaceMap {};
 
-DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId)
+DetailSpaceContainment *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId)
 {
     if (!kDetailSpaceMap.contains(windowId))
         return nullptr;
@@ -24,19 +26,18 @@ DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId
     return kDetailSpaceMap[windowId];
 }
 
-quint64 DetailSpaceHelper::findWindowIdByDetailSpace(DetailSpaceWidget *widget)
+quint64 DetailSpaceHelper::findWindowIdByDetailSpace(DetailSpaceContainment *contain)
 {
-    return kDetailSpaceMap.key(widget, 0);
+    return kDetailSpaceMap.key(contain, 0);
 }
 
-void DetailSpaceHelper::addDetailSpace(quint64 windowId)
+void DetailSpaceHelper::addDetailSpace(DetailSpaceContainment *contain)
 {
     QMutexLocker locker(&DetailSpaceHelper::mutex());
-    if (!kDetailSpaceMap.contains(windowId)) {
-        DetailSpaceWidget *detailSpaceWidget = new DetailSpaceWidget;
-        auto window = FMWindowsIns.findWindowById(windowId);
-        window->installDetailView(detailSpaceWidget);
-        kDetailSpaceMap.insert(windowId, detailSpaceWidget);
+    if (auto panel = contain->panel()) {
+        if (!kDetailSpaceMap.contains(panel->windId())) {
+            kDetailSpaceMap.insert(panel->windId(), contain);
+        }
     }
 }
 
@@ -44,48 +45,36 @@ void DetailSpaceHelper::removeDetailSpace(quint64 windowId)
 {
     QMutexLocker locker(&DetailSpaceHelper::mutex());
     if (kDetailSpaceMap.contains(windowId)) {
-        DetailSpaceWidget *widget = kDetailSpaceMap.take(windowId);
-        widget->deleteLater();
+        // 对应Applet生命周期由Panel管理，此处暂存的指针不析构
+        (void)kDetailSpaceMap.take(windowId);
     }
 }
 
 void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 {
-    DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
-
-    // create new detail widget in window and
-    if (checked) {
-        if (!w) {
-            addDetailSpace(windowId);
-            w = findDetailSpaceByWindowId(windowId);
-            if (!w) {
-                fmCritical() << "Can't find the detail space!";
-                return;
-            }
-        }
-        w->setVisible(true);
-        auto window = FMWindowsIns.findWindowById(windowId);
-        setDetailViewByUrl(w, window->currentUrl());
-    } else {
-        if (w)
-            w->setVisible(false);
+    DetailSpaceContainment *contain = findDetailSpaceByWindowId(windowId);
+    if (contain) {
+        contain->setDetailVisible(checked);
     }
 }
 
 void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url)
 {
-    DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
-    if (w)
-        setDetailViewByUrl(w, url);
+    DetailSpaceContainment *contain = findDetailSpaceByWindowId(windowId);
+    if (contain)
+        setDetailViewByUrl(contain, url);
 }
 
-void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url)
+void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceContainment *contain, const QUrl &url)
 {
-    if (w) {
-        if (!w->isVisible())
+    if (contain) {
+        if (!contain->rootObject())
             return;
 
-        w->setCurrentUrl(url);
+        contain->setCurrentUrl(url);
+
+        // TODO: 完善拓展接口
+#if 0
         QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(w->currentUrl());
         if (!widgetMap.isEmpty()) {
             QList<int> indexs = widgetMap.keys();
@@ -93,6 +82,7 @@ void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url
                 w->insterExpandControl(index, widgetMap.value(index));
             }
         }
+#endif
     }
 }
 

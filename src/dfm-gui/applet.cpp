@@ -22,11 +22,13 @@ AppletPrivate::AppletPrivate(Applet *q)
 AppletPrivate::~AppletPrivate()
 {
     // 释放关联的 QQuickItem
-    if (rootObject && QJSEngine::CppOwnership == QJSEngine::objectOwnership(rootObject)) {
-        Q_ASSERT_X(rootObject->parent() == q_ptr, "AppletItem memory management", "Undefined behaviour, unmanaged QQuickItem");
-
+    if (rootObject) {
         QObject::disconnect(rootObject, nullptr, q_ptr, nullptr);
-        rootObject->deleteLater();
+        if (QJSEngine::CppOwnership == QJSEngine::objectOwnership(rootObject)) {
+            Q_ASSERT_X(rootObject->parent() == q_ptr, "AppletItem memory management", "Undefined behaviour, unmanaged QQuickItem");
+
+            rootObject->deleteLater();
+        }
     }
 }
 
@@ -62,12 +64,13 @@ bool AppletPrivate::createComplete(SharedQmlEngine *engine)
                 Q_FALLTHROUGH();
             case Applet::kContainment:
                 if (auto *item = qobject_cast<AppletItem *>(rootObject)) {
+                    // 先设置关联，再抛出信号
                     item->setApplet(q);
-                    setRootObject(item);
-
                     if (auto *containment = q->containment()) {
                         rootObject->setParent(containment->rootObject());
                     }
+
+                    setRootObject(item);
                     return true;
                 }
 

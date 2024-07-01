@@ -44,8 +44,8 @@ WindowManagerPrivate::WindowManagerPrivate(WindowManager *q)
  */
 void WindowManagerPrivate::registerType(const char *uri)
 {
-    // 注册，使用 @uri ... 标记，以在 QtCreator 中方便访问
-    // @uri org.dfm.base
+    // 注册，使用 @uri ... 标记，以在 QtCreator 中方便访问(高亮/提示/自动补全等)
+    // @uri org.deepin.filemanager.gui
     qmlRegisterModule(uri, 1, 0);
     qmlRegisterUncreatableType<Applet>(uri, 1, 0, "Applet", "Applet attached");
     qmlRegisterExtendedType<Applet, AppletAttached>(uri, 1, 0, "Applet");
@@ -117,7 +117,7 @@ void WindowManagerPrivate::connectWindowHandle(const WindowManager::Handle &hand
     Q_Q(WindowManager);
 
     QObject::connect(handle->window(), &QQuickWindow::destroyed, q, [this](QObject *obj) {
-        if (auto view = qobject_cast<QQuickWindow *>(obj)) {
+        if (auto *view = qobject_cast<QQuickWindow *>(obj)) {
             WindowManager::Handle deleteHandle = windows.take(view->winId());
             if (deleteHandle) {
                 deleteHandle->deleteLater();
@@ -138,6 +138,16 @@ void WindowManagerPrivate::connectWindowHandle(const WindowManager::Handle &hand
 
     QObject::connect(handle, &Panel::currentUrlChanged, q, [q, handle](const QUrl &url) {
         Q_EMIT q->currentUrlChanged(handle->windId(), url);
+    });
+
+    // 特殊处理，当 Panel 的子 AppletItem 创建时，关联其 currentUrlChanged 信号，在变更时自动更新子项目的 currentUrl
+    QObject::connect(handle, &Panel::appletRootObjectChanged, [handle](QObject *rootObject) {
+        if (auto *item = qobject_cast<AppletItem *>(rootObject)) {
+            if (auto *applet = item->applet()) {
+                applet->setCurrentUrl(handle->currentUrl());
+                QObject::connect(handle, &Panel::currentUrlChanged, applet, &Applet::setCurrentUrl, Qt::UniqueConnection);
+            }
+        }
     });
 }
 
@@ -275,13 +285,13 @@ WindowManager *WindowManager::instance()
 }
 
 /*!
- * \return 初始化界面管理，仅会执行一次，执行 `org.dfm.base` QML 模块的注册，以及关键信号的关联
+ * \return 初始化界面管理，仅会执行一次，执行 `org.deepin.filemanager.gui` QML 模块的注册，以及关键信号的关联
  */
 void WindowManager::initialize()
 {
     static std::once_flag flag;
     std::call_once(flag, [this]() {
-        d_func()->registerType("org.dfm.base");
+        d_func()->registerType("org.deepin.filemanager.gui");
 
         // 退出时清理界面和 QQmlengine
         connect(qApp, &QCoreApplication::aboutToQuit, this, [this]() {
@@ -312,8 +322,10 @@ QSharedPointer<QQmlEngine> WindowManager::engine() const
  *  创建的窗口会被当前管理类保留管理.
  * \return 创建的 QQuickWindow 和 Panel，无法创建返回空的 Handle
  *
- * \warning 主窗口对应的 Qml 组件会立即加载，子 Applet 是异步加载的，所以在默认初始化的流程中，不使用旧版框架中 findWindowId() 这类
- *      接口
+ * \warning 主窗口对应的 Qml 组件会立即加载，子 Applet 是异步加载的，所以在默认初始化的流程中，不使用旧版框架中
+ *  findWindowId() 这类接口
+ * \note 当 Panel 的子 Applet 组件创建完成时，会自动更新 currentUrl 并关联变更信号，子 Applet 的 currentUrl
+ *  跟随 Panel 的变更。仅应用 Panel 层级，Containment 和 Applet 层级不会自动关联。
  */
 WindowManager::Handle WindowManager::createWindow(const QUrl &url, const QString &pluginName,
                                                   const QString &quickId, const QVariantMap &var)
@@ -399,7 +411,7 @@ quint64 WindowManager::findWindowId(const QObject *itemObject) const
         return item->window() ? item->window()->winId() : 0;
     }
 
-    QObject *parentObject = itemObject->parent();
+    const QObject *parentObject = itemObject;
     while (parentObject) {
         if (auto window = qobject_cast<const QWindow *>(parentObject)) {
             return window->winId();
@@ -412,7 +424,7 @@ quint64 WindowManager::findWindowId(const QObject *itemObject) const
 }
 
 /*!
- * \return 查找 Applet 关联 Quick 组件的窗口 ID
+ * \return 查找 Applet 关联 Quick 组件的窗口 ID , 组件未创建完成时返回 0
  */
 quint64 WindowManager::findWindowIdFromApplet(Applet *applet) const
 {
@@ -420,7 +432,15 @@ quint64 WindowManager::findWindowIdFromApplet(Applet *applet) const
         return 0;
     }
 
-    return findWindowId(applet->rootObject());
+    // 在初始化流程中，QQuickItem 可能还未添加到界面上
+    quint64 id = findWindowId(applet->rootObject());
+    if (0 == id) {
+        if (auto *panel = applet->panel()) {
+            id = panel->windId();
+        }
+    }
+
+    return id;
 }
 
 /*!

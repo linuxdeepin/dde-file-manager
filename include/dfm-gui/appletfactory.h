@@ -18,26 +18,31 @@ class AppletFactoryData;
 class AppletFactory
 {
 public:
-    using CreateFunc = std::function<Applet *(const QUrl &url, Containment *parent, QString *error)>;
+    using CreateFunc = std::function<Applet *(const QString &id, Containment *parent, QString *error)>;
     static AppletFactory *instance();
 
-    bool regCreator(const QString &scheme, CreateFunc creator, QString *errorString = nullptr);
-    Applet *create(const QUrl &url, Containment *parent = nullptr, QString *errorString = nullptr);
+    bool regCreator(const QString &id, CreateFunc creator, QString *errorString = nullptr);
+    Applet *create(const QString &id, Containment *parent = nullptr, QString *errorString = nullptr);
 
-protected:
+private:
     explicit AppletFactory();
     QScopedPointer<AppletFactoryData> d;
 };
 
-class ViewAppletFactory : public AppletFactory
+class ViewAppletFacotryData;
+class ViewAppletFactory
 {
 public:
+    using CreateFunc = std::function<Applet *(const QUrl &url, Containment *parent, QString *error)>;
     static ViewAppletFactory *instance();
+
     bool regCreator(const QString &plugin, const QString &qmlFile, const QString &scheme,
-                    AppletFactory::CreateFunc creator, QString *errorString = nullptr);
+                    CreateFunc creator, QString *errorString = nullptr);
+    Applet *create(const QUrl &url, Containment *parent = nullptr, QString *errorString = nullptr);
 
 private:
     explicit ViewAppletFactory();
+    QScopedPointer<ViewAppletFacotryData> d;
 };
 
 DFMGUI_END_NAMESPACE

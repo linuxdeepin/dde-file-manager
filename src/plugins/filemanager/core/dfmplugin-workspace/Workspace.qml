@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import org.dfm.base
+import org.deepin.filemanager.gui
 
 ContainmentItem {
     property int widgetType: QuickUtils.WorkSpace

@@ -397,9 +397,7 @@ Applet *AppletManager::createAppletFromInfo(const dpf::PluginQuickMetaPtr &metaP
 
     Applet *appletPtr = nullptr;
     if (!metaPtr->applet().isEmpty()) {
-        QUrl appletUrl;
-        appletUrl.setScheme(metaPtr->applet());
-        appletPtr = AppletFactory::instance()->create(appletUrl, parent, &error);
+        appletPtr = AppletFactory::instance()->create(metaPtr->applet(), parent, &error);
         if (!appletPtr) {
             return nullptr;
         }

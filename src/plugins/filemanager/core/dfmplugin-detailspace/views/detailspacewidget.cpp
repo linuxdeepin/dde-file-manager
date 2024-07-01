@@ -41,6 +41,7 @@ void DetailSpaceWidget::initUiForSizeMode()
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
+#if 0
     quint64 winId = DetailSpaceHelper::findWindowIdByDetailSpace(this);
     if (winId) {
         QList<QUrl> urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", winId).value<QList<QUrl>>();
@@ -50,6 +51,7 @@ void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
         }
     }
     setCurrentUrl(url, 0);
+#endif
 }
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url, int widgetFilter)

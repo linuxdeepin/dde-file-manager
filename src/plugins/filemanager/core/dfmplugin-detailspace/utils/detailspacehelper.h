@@ -14,21 +14,22 @@
 #include <QMutex>
 namespace dfmplugin_detailspace {
 
-class DetailSpaceWidget;
+class DetailSpaceContainment;
 class DetailSpaceHelper
 {
 public:
-    static DetailSpaceWidget *findDetailSpaceByWindowId(quint64 windowId);
-    static quint64 findWindowIdByDetailSpace(DetailSpaceWidget *widget);
-    static void addDetailSpace(quint64 windowId);
+    static DetailSpaceContainment *findDetailSpaceByWindowId(quint64 windowId);
+    static quint64 findWindowIdByDetailSpace(DetailSpaceContainment *contain);
+    static void addDetailSpace(DetailSpaceContainment *contain);
     static void removeDetailSpace(quint64 windowId);
     static void showDetailView(quint64 windowId, bool checked);
     static void setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url);
-    static void setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url);
+    static void setDetailViewByUrl(DetailSpaceContainment *contain, const QUrl &url);
 
 private:
     static QMutex &mutex();
-    static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
+    static QMap<quint64, DetailSpaceContainment *> kDetailSpaceMap;
+
 };
 
 }   // namespace dfmplugin_detailspace

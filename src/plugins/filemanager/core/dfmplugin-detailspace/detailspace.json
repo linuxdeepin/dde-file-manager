@@ -18,7 +18,7 @@
             "Id" : "detailspace",
             "Type" : "Containment",
             "Parent" : "dfmplugin-core.filewindow",
-            "Applet" : "org.dfm.detailspace"
+            "Applet" : "org.deepin.filemanager.detailspace"
         }
     ]
 }

@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.deepin.dtk
-import org.dfm.base
+import org.deepin.filemanager.gui
 
 RowLayout {
     property int iconSize: 28
@@ -63,6 +63,9 @@ RowLayout {
 
         Component.onCompleted: {
             checked = Containment.showDetail;
+        }
+        onCheckedChanged: {
+            Containment.showDetail = checked;
         }
 
         icon {

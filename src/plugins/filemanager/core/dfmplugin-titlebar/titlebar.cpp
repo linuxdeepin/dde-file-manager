@@ -25,16 +25,15 @@
 namespace dfmplugin_titlebar {
 DFM_LOG_REISGER_CATEGORY(DPTITLEBAR_NAMESPACE)
 
-static constexpr char kAppletUrl[] { "org.dfm.titlebar" };
+static constexpr char kAppletUrl[] { "org.deepin.filemanager.titlebar" };
 
-static dfmgui::Applet *createTitlebarApplet(const QUrl &url, dfmgui::Containment *parent, QString *errorString)
+static dfmgui::Applet *createTitlebarApplet(const QString &id, dfmgui::Containment *parent, QString *errorString)
 {
-    if (kAppletUrl == url.scheme()) {
+    if (kAppletUrl == id) {
         Q_ASSERT_X(parent && parent->flags().testFlag(dfmgui::Applet::kPanel),
                    "Create titlebar applet", "Parent must based on panel");
 
         auto titlebar = new TitlebarContainment(parent);
-        QObject::connect(parent, &dfmgui::Applet::currentUrlChanged, titlebar, &TitlebarContainment::setCurrentUrl);
         return titlebar;
     }
     return nullptr;
