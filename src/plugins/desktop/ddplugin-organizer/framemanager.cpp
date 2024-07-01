@@ -13,6 +13,8 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 #include <dfm-base/dfm_desktop_defines.h>
 
+#include <DDBusSender>
+
 #include <QAbstractItemView>
 #include <QDBusInterface>
 
@@ -140,26 +142,36 @@ void FrameManagerPrivate::onHideAllKeyPressed()
         return;
 
     fmDebug() << "Hide/Show all collections!";
-    bool hide { surfaces.first()->isVisible() };
-    bool acceptHide { true };
-    bool initliazed { false };
-    AlertHideAllDialog dialog;
-    if (hide && !CfgPresenter->isRepeatNoMore()) {
-        dialog.initialize();
-        dialog.moveToCenter();
-        int retCode { dialog.exec() };
-        if (dialog.confirmBtnIndex() < 0 || dialog.confirmBtnIndex() != retCode)
-            acceptHide = false;
-        initliazed = true;
-    }
 
-    if (!acceptHide)
-        return;
-    if (hide && initliazed)
-        CfgPresenter->setRepeatNoMore(dialog.isRepeatNoMore());
+    bool aboutToHide = surfaces.at(0)->isVisible();
     std::for_each(surfaces.begin(), surfaces.end(), [](SurfacePointer surface) {
         surface->setVisible(!surface->isVisible());
     });
+
+    if (!CfgPresenter->isRepeatNoMore() && aboutToHide) {
+        uint notifyId = QDate::currentDate().daysInYear();
+        QString keySequence = CfgPresenter->hideAllKeySequence().toString();
+        QString tips = tr("To disable the One-Click Hide feature, invoke the \"View Options\" window "
+                          "in the desktop context menu and turn off the \"One-Click Hide Collection\".");
+        QString cmdNoRepeation = "dde-dconfig,--set,-a,org.deepin.dde.file-manager,-r,org.deepin.dde.file-manager.desktop.organizer,-k,hideAllDialogRepeatNoMore,-v,true";
+        QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
+                                         .arg(notifyId);
+        DDBusSender()
+                .service("org.freedesktop.Notifications")
+                .path("/org/freedesktop/Notifications")
+                .interface("org.freedesktop.Notifications")
+                .method(QString("Notify"))
+                .arg(tr("Desktop organizer"))
+                .arg(notifyId)
+                .arg(QString("dde-desktop"))
+                .arg(tr("Shortcut \"%1\" to show collections").arg(keySequence))
+                .arg(tips)
+                .arg(QStringList { "close-notify", tr("Close"), "no-repeat", tr("No more prompts") })
+                .arg(QVariantMap { { "x-deepin-action-no-repeat", cmdNoRepeation },
+                                   { "x-deepin-action-close-notify", cmdCloseNotify } })
+                .arg(3000)
+                .call();
+    }
 }
 
 void FrameManagerPrivate::enableChanged(bool e)
