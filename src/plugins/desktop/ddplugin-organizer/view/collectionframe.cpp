@@ -697,7 +697,6 @@ void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
         } else if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
             if (!d->surface())
                 return;
-            this->move(d->surface()->mapFromGlobal(QCursor::pos()) - d->dragPos);
 
             auto screen = dfmbase::WindowUtils::cursorScreen();
             if (screen && d->surface()) {
@@ -707,6 +706,7 @@ void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
                     Q_EMIT requestChangeSurface(currScreenName, parentScreenName);
             }
 
+            this->move(d->surface()->mapFromGlobal(QCursor::pos()) - d->dragPos);
             bool validPos = false;
             auto predictPos = d->moveResultRectPos(&validPos);
             auto rect = this->rect();
