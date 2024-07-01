@@ -25,6 +25,7 @@ public:
     void touchFiles(const FileView *view, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString suffix = "");
     void touchFiles(const FileView *view, const QUrl &source);
     void openFiles(const FileView *view);
+    void openFiles(quint64 winId, const QList<QUrl> &urls);
     void openFiles(const FileView *view, const QList<QUrl> &urls);
     void openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode = DirOpenMode::kOpenInCurrentWindow);
     void openFilesByApp(const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps);

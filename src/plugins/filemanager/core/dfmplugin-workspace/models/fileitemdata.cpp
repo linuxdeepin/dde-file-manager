@@ -29,6 +29,7 @@ FileItemData::FileItemData(const SortInfoPointer &info, FileItemData *parent)
       url(info->fileUrl()),
       sortInfo(info)
 {
+    const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
 }
 
 void FileItemData::setParentData(FileItemData *p)
@@ -111,7 +112,12 @@ QVariant FileItemData::data(int role) const
         return "-";
     }
     case kItemIconRole:
-        return fileIcon();
+        // return fileIcon();
+        if (info->isFile())
+            // return "file:///usr/share/icons/bloom/mimetypes/32/application-json.svg";
+            return "application-json";
+        // return "file:///usr/share/icons/bloom/places/32/folder.svg";
+        return "folder";
     case kItemFileSizeRole:
         if (info)
             return info->displayOf(DisPlayInfoType::kSizeDisplayName);

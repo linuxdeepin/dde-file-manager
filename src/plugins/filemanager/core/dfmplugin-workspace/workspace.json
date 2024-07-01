@@ -14,10 +14,11 @@
     ],
     "Quick": [
         {
-            "Url" : "Workspace.qml",
+            "Url" : "qml/Workspace.qml",
             "Id" : "workspace",
             "Type" : "Containment",
-            "Parent" : "dfmplugin-core.filewindow"
+            "Parent" : "dfmplugin-core.filewindow",
+            "Applet" : "org.deepin.filemanager.workspace"
         }
     ]
 }

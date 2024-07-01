@@ -24,6 +24,8 @@ public:
     bool regCreator(const QString &id, CreateFunc creator, QString *errorString = nullptr);
     Applet *create(const QString &id, Containment *parent = nullptr, QString *errorString = nullptr);
 
+    QUrl pluginComponent(const QString &plugin, const QString &qmlFile, QString *errorString = nullptr) const;
+
 private:
     explicit AppletFactory();
     QScopedPointer<AppletFactoryData> d;
