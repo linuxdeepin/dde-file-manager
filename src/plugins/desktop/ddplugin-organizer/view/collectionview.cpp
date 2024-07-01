@@ -1280,6 +1280,20 @@ void CollectionView::updateRegionView()
     d->updateVerticalBarRange();
 }
 
+void CollectionView::refresh(bool silence)
+{
+    if (verticalScrollBar())
+        verticalScrollBar()->setValue(0);
+
+    if (silence)
+        return;
+
+    d->flicker = true;
+    repaint();
+    update();
+    d->flicker = false;
+}
+
 void CollectionView::openEditor(const QUrl &url)
 {
     QModelIndex index = model()->index(url);
@@ -1643,6 +1657,9 @@ void CollectionView::paintEvent(QPaintEvent *event)
     Q_UNUSED(event)
 
     if (Q_UNLIKELY(!itemDelegate()))
+        return;
+
+    if (d->flicker)
         return;
 
     auto option = viewOptions();

@@ -249,6 +249,14 @@ void NormalizedModePrivate::onFontChanged()
     // q->layout();
 }
 
+void NormalizedModePrivate::refreshViews(bool silence)
+{
+    for (const CollectionHolderPointer &holder : holders.values()) {
+        auto view = holder->itemView();
+        if (view) view->refresh(silence);
+    }
+}
+
 void NormalizedModePrivate::updateHolderSurfaceIndex(QWidget *surface)
 {
     auto holder = dynamic_cast<CollectionHolder *>(sender());
@@ -330,6 +338,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
 
     connect(canvasManagerShell, &CanvasManagerShell::iconSizeChanged, d, &NormalizedModePrivate::onIconSizeChanged);
     connect(canvasManagerShell, &CanvasManagerShell::fontChanged, d, &NormalizedModePrivate::onFontChanged);
+    connect(canvasManagerShell, &CanvasManagerShell::requestRefresh, d, &NormalizedModePrivate::refreshViews);
 
     // must be DirectConnection to keep sequential
     connect(model, &CollectionModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);

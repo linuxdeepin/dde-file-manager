@@ -19,14 +19,16 @@ public:
     explicit CanvasManagerShell(QObject *parent = nullptr);
     ~CanvasManagerShell();
     bool initialize();
+
 public:
     int iconLevel() const;
     void setIconLevel(const int level);
 signals:
     void iconSizeChanged(const int level);
     void fontChanged();
+    void requestRefresh(bool silence);
 };
 
 }
 
-#endif // CANVASMANAGERSHELL_H
+#endif   // CANVASMANAGERSHELL_H
