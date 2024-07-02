@@ -419,9 +419,10 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
     if (index.data(kItemFileCanRenameRole).toBool())
         flags |= Qt::ItemIsEditable;
 
-    if (index.data(kItemFileIsWritableRole).toBool())
+    if (index.data(kItemFileCanDropRole).toBool())
         flags |= Qt::ItemIsDropEnabled;
 
+    // use can drop attribute,if error modify the fileinfo candrop attribute
     if (index.data(kItemFileCanDragRole).toBool())
         flags |= Qt::ItemIsDragEnabled;
 
