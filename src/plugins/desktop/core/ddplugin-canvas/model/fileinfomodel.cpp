@@ -478,7 +478,8 @@ Qt::ItemFlags FileInfoModel::flags(const QModelIndex &index) const
         if (file->canAttributes(CanableInfoType::kCanRename))
             flags |= Qt::ItemIsEditable;
 
-        if (file->isAttributes(OptInfoType::kIsWritable))
+        // use can drop attribute,if error modify the fileinfo candrop attribute
+        if (file->canAttributes(CanableInfoType::kCanDrop))
             flags |= Qt::ItemIsDropEnabled;
     }
 
