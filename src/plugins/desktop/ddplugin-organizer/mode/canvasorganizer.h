@@ -56,7 +56,7 @@ protected slots:
     virtual bool filterDataRested(QList<QUrl> *urls);
     virtual bool filterDataInserted(const QUrl &url);
     virtual bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-    virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
+    virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData);
     virtual bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
     virtual bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
     //virtual bool filterMousePress(int viewIndex, int button, const QPoint &viewPos) const;

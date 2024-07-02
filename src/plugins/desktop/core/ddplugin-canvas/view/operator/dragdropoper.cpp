@@ -129,6 +129,7 @@ bool DragDropOper::drop(QDropEvent *event)
 
     // extend
     if (view->d->hookIfs) {
+        preproccessDropEvent(event, event->mimeData()->urls(), view->model()->rootUrl());
         QVariantHash ext;
         ext.insert("QDropEvent", reinterpret_cast<qlonglong>(event));
         QUrl dropUrl;
@@ -427,7 +428,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
                 // reset the focus for key move
                 resetFocus(dropGridPos);
                 fmDebug() << "move items" << focusItem << itemPos.value(focusItem) << "to"
-                         << view->screenNum() << dropGridPos << "count" << itemPos.size();
+                          << view->screenNum() << dropGridPos << "count" << itemPos.size();
             }
         } else {
             fmWarning() << "can not find fcous." << focus << fromView->screenNum();
