@@ -13,6 +13,12 @@ if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 1)
 endif()
 
+# Disbale qDebug(), qInfo(), qWaring(), qCritical()
+# Use qCDebug() instead of qDebug()
+if(OPT_DISABLE_QDEBUG)
+    add_definitions(-DDFM_DISABLE_DEBUG_MACRO)
+endif()
+
 # signals and slots keyword is disable, use Q_SIGNALS and Q_SLOTS instead
 add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
 add_compile_definitions(THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}")
@@ -202,7 +208,6 @@ install(FILES ${AssetsPath}/log/viewer/dde-file-manager.json DESTINATION ${LogVi
 set(LogDebugConfDir "${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d")
 install(FILES ${AssetsPath}/log/debug/org.deepin.file-manager.json DESTINATION ${LogDebugConfDir})
 
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.view.json")

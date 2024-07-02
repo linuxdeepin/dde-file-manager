@@ -11,128 +11,81 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-needed")
 
-#安全加固
+# options
+option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
+option(OPT_ENABLE_BUILD_DOCS "Build develop documents" OFF)
+option(OPT_ENABLE_BUILD_UT "Buld unit tests" ON)
+option(OPT_ENABLE_QML "Use QML" OFF)
+
+# 安全加固
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-type")
+
+# Select major Qt version.
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+message("Using Qt version: ${QT_VERSION_MAJOR}")
+
+if(QT_VERSION_MAJOR EQUAL "6")
+    set(DFM_BUILD_WITH_QT6 ON)
+    set(DTK_VERSION_MAJOR 6)
+else()
+    set(DTK_VERSION_MAJOR "")
+endif()
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+
+# check arch
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -z noexecstack -z relro")
-    add_definitions(-D ARCH_MIPSEL)
+    add_definitions(-DARCH_MIPSEL)
 endif()
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(DtkCMake REQUIRED)
-#if no debug, can't out in code define key '__FUNCTION__' and so on
+# if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
-
 # TODO: control it by CI. (Automation Testing)
 add_definitions(-DENABLE_TESTING)
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX /usr)
-endif()
-
-#Indentify the version
-if (${DEEPIN_OS_VERSION} MATCHES "23")
+# QML
+if(OPT_ENABLE_QML)
+    message(STATUS "Use QML")
+    add_definitions(-DDFM_UI_TYPE_QML)
+    # TODO: remove it
     add_definitions(-DCOMPILE_ON_V23)
     set(COMPLIE_ON_V23 TRUE)
     message("COMPILE ON v23")
 else()
-    add_definitions(-DCOMPILE_ON_V20)
-    set(COMPLIE_ON_V20 TRUE)
-    message("COMPILE ON v20")
+    message(STATUS "Use QtWidget")
+    add_definitions(-DDFM_UI_TYPE_QWIDGET)
+    #Indentify the version
+    find_package(DtkCMake REQUIRED)
+    if (${DEEPIN_OS_VERSION} MATCHES "23")
+        add_definitions(-DCOMPILE_ON_V23)
+        set(COMPLIE_ON_V23 TRUE)
+        message("COMPILE ON v23")
+    else()
+        add_definitions(-DCOMPILE_ON_V20)
+        set(COMPLIE_ON_V20 TRUE)
+        message("COMPILE ON v20")
+    endif()
 endif()
 
-# TODO(zhangs): enable it
-# Disbale qDebug(), qInfo(), qWaring(), qCritical()
-# Use qCDebug() instead of qDebug()
-option(DISABLE_DEBUG_MACRO "Disable Debug Macro" Off)
-if(DISABLE_DEBUG_MACRO)
-    add_definitions(-DDFM_DISABLE_DEBUG_MACRO)
-endif()
-
+# CMake modules
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(install_plugin_quick_module)
+include(install_dconfig)
+include(DFMInstallDirs)
 include(GNUInstallDirs)
 
-# dbus xml dir
-set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus)
-
-# defines plugins install dir
-if(NOT DEFINED LIB_INSTALL_DIR)
-    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
-endif()
-
-# root plguins dir
-if(NOT DEFINED DFM_PLUGIN_DIR)
-    set(DFM_PLUGIN_DIR ${LIB_INSTALL_DIR}/dde-file-manager/plugins)
-endif()
-
-# build plugins dir
-if(NOT DEFINED DFM_BUILD_PLUGIN_DIR)
-    set(DFM_BUILD_PLUGIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/plugins)
-endif()
-
-# common-core plugins dir
-if(NOT DEFINED DFM_PLUGIN_COMMON_CORE_DIR)
-    set(DFM_PLUGIN_COMMON_CORE_DIR ${DFM_PLUGIN_DIR}/common-core)
-endif()
-
-# desktop-core plugins dir
-if(NOT DEFINED DFM_PLUGIN_DESKTOP_CORE_DIR)
-    set(DFM_PLUGIN_DESKTOP_CORE_DIR ${DFM_PLUGIN_DIR}/desktop-core)
-endif()
-
-# filemanager-core plugins dir
-if(NOT DEFINED DFM_PLUGIN_FILEMANAGER_CORE_DIR)
-    set(DFM_PLUGIN_FILEMANAGER_CORE_DIR ${DFM_PLUGIN_DIR}/filemanager-core)
-endif()
-
-# common-edge plugins dir
-if(NOT DEFINED DFM_PLUGIN_COMMON_EDGE_DIR)
-    set(DFM_PLUGIN_COMMON_EDGE_DIR ${DFM_PLUGIN_DIR}/common-edge)
-endif()
-
-# daemon-edge plugins dir
-if(NOT DEFINED DFM_PLUGIN_DAEMON_EDGE_DIR)
-    set(DFM_PLUGIN_DAEMON_EDGE_DIR ${DFM_PLUGIN_DIR}/daemon-edge)
-endif()
-
-# server-edge plugins dir
-if(NOT DEFINED DFM_PLUGIN_SERVER_EDGE_DIR)
-    set(DFM_PLUGIN_SERVER_EDGE_DIR ${DFM_PLUGIN_DIR}/server-edge)
-endif()
-
-# desktop-edge plugins dir
-if(NOT DEFINED DFM_PLUGIN_DESKTOP_EDGE_DIR)
-    set(DFM_PLUGIN_DESKTOP_EDGE_DIR ${DFM_PLUGIN_DIR}/desktop-edge)
-endif()
-
-# filemanager-edge plugins dir
-if(NOT DEFINED DFM_PLUGIN_FILEMANAGER_EDGE_DIR)
-    set(DFM_PLUGIN_FILEMANAGER_EDGE_DIR ${DFM_PLUGIN_DIR}/filemanager-edge)
-endif()
-
-# tools
-if(NOT DEFINED DFM_TOOLS_DIR)
-    set(DFM_TOOLS_DIR ${LIB_INSTALL_DIR}/dde-file-manager/tools)
-endif()
-
-# dde-file-thumbnail-tool
-if(NOT DEFINED DFM_THUMBNAIL_TOOL)
-    set(DFM_THUMBNAIL_TOOL ${LIB_INSTALL_DIR}/dde-file-manager/tools)
-endif()
-
+# build type
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
-
 message("Build type:"${CMAKE_BUILD_TYPE})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(BUILD_TESTING ON)
-    set(BUILD_DOCS Off)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
-    set(BUILD_DOCS ON CACHE BOOL "Generate doxygen-based documentation")
     # generate qm
     execute_process(COMMAND bash "translate_generation.sh"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
@@ -148,16 +101,18 @@ add_subdirectory(src/external)
 add_subdirectory(src/tools)
 
 # docs
-if (BUILD_DOCS)
+if(OPT_ENABLE_BUILD_DOCS AND NOT OPT_ENABLE_QML)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         add_subdirectory(docs)
     endif()
-endif ()
+endif()
 
 # test
-message(STATUS "Enable testing: ${BUILD_TESTING}")
-if(BUILD_TESTING)
-    enable_testing()
-    add_subdirectory(tests)
+if(OPT_ENABLE_BUILD_UT AND NOT OPT_ENABLE_QML)
+    message(STATUS "Enable testing: ${BUILD_TESTING}")
+    if(BUILD_TESTING)
+        enable_testing()
+        add_subdirectory(tests)
+    endif()
 endif()

@@ -48,5 +48,4 @@ install(TARGETS
     ${DFM_PLUGIN_COMMON_EDGE_DIR}
 )
 
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.preview.json")
