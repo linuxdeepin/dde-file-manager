@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "gridcore.h"
+#include "displayconfig.h"
 
 uint qHash(const QPoint &key, uint seed)
 {
@@ -14,26 +15,21 @@ using namespace ddplugin_canvas;
 
 GridCore::GridCore()
 {
-
 }
 
 GridCore::GridCore(const GridCore &other)
-    : surfaces(other.surfaces)
-    , posItem(other.posItem)
-    , itemPos(other.itemPos)
-    , overload(other.overload)
+    : surfaces(other.surfaces), posItem(other.posItem), itemPos(other.itemPos), overload(other.overload)
 {
 }
 
 GridCore::~GridCore()
 {
-
 }
 
 QList<int> GridCore::surfaceIndex() const
 {
     QList<int> order = surfaces.keys();
-    std::stable_sort(order.begin(), order.end(), [](const int &first, const int &second){
+    std::stable_sort(order.begin(), order.end(), [](const int &first, const int &second) {
         return first < second;
     });
     return order;
@@ -152,10 +148,9 @@ void GridCore::removeAll(const QStringList &items)
     }
 }
 
-
-MoveGridOper::MoveGridOper(GridCore *core) : GridCore(*core)
+MoveGridOper::MoveGridOper(GridCore *core)
+    : GridCore(*core)
 {
-
 }
 
 bool MoveGridOper::move(const GridPos &to, const GridPos &center, const QStringList &moveItems)
@@ -210,18 +205,18 @@ void MoveGridOper::calcDestination(const QStringList &orgItems, const GridPos &r
                 auto target = tempPos.second - ref.second + focus;
                 if (isValid(ref.first, target))
                     dest.insert(it, target);
-                else // invalid pos
+                else   // invalid pos
                     invalid.append(it);
             }
-        } else { // origin pos is invalid.
+        } else {   // origin pos is invalid.
             invalid.append(it);
         }
     }
 }
 
-AppendOper::AppendOper(GridCore *core) : GridCore(*core)
+AppendOper::AppendOper(GridCore *core)
+    : GridCore(*core)
 {
-
 }
 
 void AppendOper::tryAppendAfter(QStringList items, int index, const QPoint &begin)
@@ -252,7 +247,9 @@ QStringList AppendOper::appendAfter(QStringList items, int index, const QPoint &
 
     QList<QPoint> posList = voidPos(index);
     for (const QPoint &pos : posList) {
-        if ((pos.x() > begin.x()) || (pos.x() == begin.x() && pos.y() >= begin.y())) {
+        if ((pos.x() > begin.x())
+            || (pos.x() == begin.x() && pos.y() >= begin.y())
+            || DisplayConfig::instance()->autoAlign()) {
             // all items is appenped
             if (items.isEmpty())
                 return items;
