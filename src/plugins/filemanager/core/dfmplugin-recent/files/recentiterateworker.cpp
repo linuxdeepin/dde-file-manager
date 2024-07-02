@@ -48,6 +48,9 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
         if (location.isEmpty())
             continue;
 
+        if (stopped)
+            return;
+
         const QUrl &url { QUrl(location) };
         if (DeviceUtils::isLowSpeedDevice(url))
             continue;
