@@ -40,6 +40,8 @@ protected slots:
     bool filterDataInserted(const QUrl &url) override;
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;
     bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const override;
+    bool filterKeyPress(int viewIndex, int key, int modifiers) const override;
+    bool filterContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos) const override;
 
     void onCollectionEditStatusChanged(bool editing);
     void changeCollectionSurface(const QString &screenName);

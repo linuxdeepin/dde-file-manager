@@ -84,7 +84,9 @@ void CanvasOrganizer::setCanvasViewShell(CanvasViewShell *sh)
 
     // disable zoomin and zoomout by hook canvas's event.
     connect(canvasViewShell, &CanvasViewShell::filterShortcutkeyPress, this, &CanvasOrganizer::filterShortcutkeyPress, Qt::DirectConnection);
+    connect(canvasViewShell, &CanvasViewShell::filterKeyPress, this, &CanvasOrganizer::filterKeyPress, Qt::DirectConnection);
     connect(canvasViewShell, &CanvasViewShell::filterWheel, this, &CanvasOrganizer::filterWheel, Qt::DirectConnection);
+    connect(canvasViewShell, &CanvasViewShell::filterContextMenu, this, &CanvasOrganizer::filterContextMenu, Qt::DirectConnection);
 
     //connect(canvasViewShell, &CanvasViewShell::filterMousePress, this, &CanvasOrganizer::filterMousePress, Qt::DirectConnection);
 }
@@ -135,7 +137,7 @@ void CanvasOrganizer::reset()
 {
 }
 
-bool CanvasOrganizer::isEditing()
+bool CanvasOrganizer::isEditing() const
 {
     return editing;
 }
@@ -173,10 +175,20 @@ bool CanvasOrganizer::filterShortcutkeyPress(int viewIndex, int key, int modifie
     return false;
 }
 
+bool CanvasOrganizer::filterKeyPress(int viewIndex, int key, int modifiers) const
+{
+    return false;
+}
+
 bool CanvasOrganizer::filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const
 {
     // disbale zooom in or zoom out by mouse wheel if organizer turns on.
     return ctrl;
+}
+
+bool CanvasOrganizer::filterContextMenu(int, const QUrl &, const QList<QUrl> &, const QPoint &) const
+{
+    return false;
 }
 
 //bool CanvasOrganizer::filterMousePress(int viewIndex, int button, const QPoint &viewPos) const

@@ -10,6 +10,7 @@
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmodelshell.h"
 #include "utils/fileoperator.h"
+#include "utils/renamedialog.h"
 #include "view/collectionview.h"
 #include "view/collectionframe.h"
 #include "delegate/collectionitemdelegate.h"
@@ -270,6 +271,46 @@ void NormalizedModePrivate::updateHolderSurfaceIndex(QWidget *surface)
             break;
         }
     }
+}
+
+bool NormalizedModePrivate::batchRenameFiles()
+{
+    if (holders.count() == 0)
+        return false;
+
+    QList<QUrl> selectedUrls;
+    // 1. get files from canvas view.
+    auto canvasSelects = dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_SelectedUrls", -1).value<QList<QUrl>>();
+    selectedUrls.append(canvasSelects);
+
+    // 2. get files from collections
+    for (const QModelIndex &idx : selectionModel->selectedIndexes()) {
+        auto url = q->getModel()->fileUrl(idx);
+        if (url.isValid())
+            selectedUrls << url;
+    }
+    if (selectedUrls.count() <= 1) return false;
+
+    auto view = holders.values().at(0)->itemView();
+    RenameDialog renameDlg(selectedUrls.count());
+    renameDlg.moveToCenter();
+
+    // see DDialog::exec,it will return the index of buttons
+    if (1 == renameDlg.exec()) {
+        RenameDialog::ModifyMode mode = renameDlg.modifyMode();
+        if (RenameDialog::kReplace == mode) {
+            auto content = renameDlg.getReplaceContent();
+            FileOperatorIns->renameFiles(view, selectedUrls, content, true);
+        } else if (RenameDialog::kAdd == mode) {
+            auto content = renameDlg.getAddContent();
+            FileOperatorIns->renameFiles(view, selectedUrls, content);
+        } else if (RenameDialog::kCustom == mode) {
+            auto content = renameDlg.getCustomContent();
+            FileOperatorIns->renameFiles(view, selectedUrls, content, false);
+        }
+    }
+
+    return true;
 }
 
 bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
@@ -798,6 +839,19 @@ bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifier
         d->broker->selectAllItems();
 
     return CanvasOrganizer::filterShortcutkeyPress(viewIndex, key, modifiers);
+}
+
+bool NormalizedMode::filterKeyPress(int viewIndex, int key, int modifiers) const
+{
+    if (key == Qt::Key_F2 && modifiers == Qt::NoModifier) {
+        return d->batchRenameFiles();
+    }
+    return CanvasOrganizer::filterKeyPress(viewIndex, key, modifiers);
+}
+
+bool NormalizedMode::filterContextMenu(int, const QUrl &, const QList<QUrl> &, const QPoint &) const
+{
+    return isEditing();
 }
 
 bool NormalizedMode::setClassifier(Classifier id)

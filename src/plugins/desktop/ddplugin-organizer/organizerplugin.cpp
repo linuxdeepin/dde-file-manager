@@ -22,7 +22,6 @@ bool OrganizerPlugin::start()
 {
     instance = new FrameManager();
     bindEvent();
-    hookEvents();
 
     return instance->initialize();
 }
@@ -36,11 +35,6 @@ void OrganizerPlugin::stop()
 void OrganizerPlugin::bindEvent()
 {
     dpfSlotChannel->connect("ddplugin_organizer", "slot_Organizer_Enabled", instance, &FrameManager::organizerEnabled);
-}
-
-void OrganizerPlugin::hookEvents()
-{
-    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_ContextMenu", instance, &FrameManager::hookCanvasMenu);
 }
 
 }   // namespace ddplugin_organizer

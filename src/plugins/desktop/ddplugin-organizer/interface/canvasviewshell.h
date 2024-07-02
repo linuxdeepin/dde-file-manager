@@ -34,12 +34,14 @@ public:
 signals:   // unqiue and direct signals
     bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPos, void *extData);
     bool filterShortcutkeyPress(int viewIndex, int key, int modifiers);
+    bool filterKeyPress(int viewIndex, int key, int modifiers);
     bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl);
     bool filterContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos);
     //bool filterMousePress(int viewIndex, int button, const QPoint &viewPos);
 
 private slots:
     bool eventDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData);
+    bool eventKeyPress(int viewIndex, int key, int modifiers, void *extData = nullptr);
     bool eventShortcutkeyPress(int viewIndex, int key, int modifiers, void *extData = nullptr);
     bool eventWheel(int viewIndex, const QPoint &angleDelta, void *extData);
     bool eventContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos, void *extData);

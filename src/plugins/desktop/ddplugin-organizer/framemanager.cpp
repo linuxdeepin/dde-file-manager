@@ -397,11 +397,6 @@ bool FrameManager::organizerEnabled()
     return CfgPresenter->isEnable();
 }
 
-bool FrameManager::hookCanvasMenu(int, const QUrl &, const QList<QUrl> &, const QPoint &, void *)
-{
-    return d->organizer ? d->organizer->isEditing() : false;
-}
-
 void FrameManager::onBuild()
 {
     // 1071 added, tag config file changed
