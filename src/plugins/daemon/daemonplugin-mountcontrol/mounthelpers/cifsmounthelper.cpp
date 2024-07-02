@@ -269,8 +269,9 @@ QString CifsMountHelper::mountRoot()
 
 QString CifsMountHelper::decryptPasswd(const QString &passwd)
 {
-    // TODO(xust): encrypt and decrypt passwd
-    return passwd;
+    QByteArray encodedByteArray = passwd.toUtf8();
+    QByteArray decodedByteArray = QByteArray::fromBase64(encodedByteArray);
+    return QString::fromUtf8(decodedByteArray);
 }
 
 uint CifsMountHelper::invokerUid()
