@@ -27,7 +27,6 @@ public:
     void turnOff();
 
     bool organizerEnabled();
-    bool hookCanvasMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData);
 
 signals:
 

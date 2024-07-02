@@ -39,6 +39,7 @@ public slots:
     void onFontChanged();
     void refreshViews(bool silence);
     void updateHolderSurfaceIndex(QWidget *surface);
+    bool batchRenameFiles();
 
     bool moveFilesToCanvas(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
 

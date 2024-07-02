@@ -46,7 +46,7 @@ public:
     virtual void setCanvasSelectionShell(CanvasSelectionShell *sh);
     virtual void setSurfaces(const QList<SurfacePointer> &surfaces);
     virtual void reset();
-    virtual bool isEditing();
+    virtual bool isEditing() const;
 
 signals:
     void collectionChanged();
@@ -58,7 +58,9 @@ protected slots:
     virtual bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
     virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData);
     virtual bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
+    virtual bool filterKeyPress(int viewIndex, int key, int modifiers) const;
     virtual bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
+    virtual bool filterContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos) const;
     //virtual bool filterMousePress(int viewIndex, int button, const QPoint &viewPos) const;
 protected:
     CollectionModel *model = nullptr;

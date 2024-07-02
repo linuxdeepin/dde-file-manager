@@ -1930,6 +1930,12 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             d->helpAction();
             return;
         }
+        case Qt::Key_F2: {
+            // this is a cheat, use canvas key event handler to do batch rename.
+            if (d->canvasViewShell->filterKeyPress(0, Qt::Key_F2, Qt::NoModifier))
+                return;
+            break;
+        }
         case Qt::Key_Escape: {
             d->clearClipBoard();
             return;

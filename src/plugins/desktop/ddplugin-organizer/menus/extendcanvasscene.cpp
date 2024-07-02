@@ -336,6 +336,14 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
         return false;
 
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+
+    if (dfmplugin_menu::ActionID::kRename == actionId) {
+        // cheat, use canvas event to trigger batch rename.
+        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasView_KeyPress",
+                                 0, int(Qt::Key_F2), int(Qt::NoModifier), nullptr))
+            return true;
+    }
+
     if (d->onCollection) {
         bool isCanvas = caller->name() == "CanvasMenu";
         Q_ASSERT_X(isCanvas, "ExtendCanvasScene", "parent scene is not CanvasMenu");

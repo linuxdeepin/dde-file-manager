@@ -43,19 +43,21 @@ CanvasViewShell::CanvasViewShell(QObject *parent)
 CanvasViewShell::~CanvasViewShell()
 {
     CanvasViewUnfollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
+    CanvasViewUnfollow(hook_CanvasView_KeyPress, &CanvasViewShell::eventKeyPress);
     CanvasViewUnfollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
     CanvasViewUnfollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
     //CanvasViewUnfollow(hook_CanvasView_MousePress, &CanvasViewShell::eventMousePress);
-    //CanvasViewUnfollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
+    CanvasViewUnfollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 }
 
 bool CanvasViewShell::initialize()
 {
     CanvasViewFollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
     CanvasViewFollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
+    CanvasViewFollow(hook_CanvasView_KeyPress, &CanvasViewShell::eventKeyPress);
     CanvasViewFollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
     //CanvasViewFollow(hook_CanvasView_MousePress, &CanvasViewShell::eventMousePress);
-    //CanvasViewFollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
+    CanvasViewFollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 
     return true;
 }
@@ -89,6 +91,11 @@ bool CanvasViewShell::eventDropData(int viewIndex, const QMimeData *mimeData, co
 {
     Q_UNUSED(extData)
     CheckFilterConnected(CanvasViewShell::filterDropData) return filterDropData(viewIndex, mimeData, viewPoint, extData);
+}
+
+bool CanvasViewShell::eventKeyPress(int viewIndex, int key, int modifiers, void *extData)
+{
+    CheckFilterConnected(CanvasViewShell::filterKeyPress) return filterKeyPress(viewIndex, key, modifiers);
 }
 
 bool CanvasViewShell::eventShortcutkeyPress(int viewIndex, int key, int modifiers, void *extData)

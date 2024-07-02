@@ -23,7 +23,6 @@ public:
 
 private:
     void bindEvent();
-    void hookEvents();
 
     FrameManager *instance = nullptr;
 
