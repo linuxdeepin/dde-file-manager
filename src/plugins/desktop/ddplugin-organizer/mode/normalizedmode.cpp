@@ -272,6 +272,40 @@ void NormalizedModePrivate::updateHolderSurfaceIndex(QWidget *surface)
     }
 }
 
+bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+{
+    auto urls = mimeData->urls();
+    QList<QUrl> collectionItems;
+    QStringList files;
+    for (auto url : urls) {
+        QString &&key = classifier->key(url);
+        if (key.isEmpty())
+            continue;
+        collectionItems << url;
+        files << url.toString();
+    }
+
+    if (collectionItems.isEmpty())
+        return false;
+
+    QPoint gridPos = q->canvasViewShell->gridPos(viewIndex, viewPoint);
+    if (!q->canvasGridShell->item(viewIndex, gridPos).isEmpty())
+        return false;
+
+    q->canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
+
+    for (auto url : collectionItems) {
+        classifier->remove(url);
+        q->canvasModelShell->fetch(url);
+    }
+
+    dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", collectionItems);
+    QTimer::singleShot(0, this, [this] {   // to hide collection if all items are moved outside.
+        switchCollection();
+    });
+    return true;
+}
+
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized)
 {
     if (cfgs.isEmpty() && CfgPresenter->organizeOnTriggered()) {
@@ -685,42 +719,22 @@ void NormalizedMode::deactiveAllPredictors()
     }
 }
 
-bool NormalizedMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+bool NormalizedMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     if (!CfgPresenter->organizeOnTriggered())
         return false;
 
-    auto urls = mimeData->urls();
-    QList<QUrl> collectionItems;
-    QStringList files;
-    for (auto url : urls) {
-        QString &&key = d->classifier->key(url);
-        if (key.isEmpty())
-            continue;
-        collectionItems << url;
-        files << url.toString();
+    Qt::DropAction act = Qt::DropAction::MoveAction;
+    QVariantHash *ext = reinterpret_cast<QVariantHash *>(extData);
+    if (ext && ext->contains("QDropEvent")) {
+        QDropEvent *event = reinterpret_cast<QDropEvent *>(ext->value("QDropEvent").toLongLong());
+        if (event)
+            act = event->dropAction();
     }
 
-    if (collectionItems.isEmpty())
-        return false;
-
-    QPoint gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);
-    if (!canvasGridShell->item(viewIndex, gridPos).isEmpty())
-        return false;
-
-    canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
-
-    for (auto url : collectionItems) {
-        d->classifier->remove(url);
-        canvasModelShell->fetch(url);
-    }
-
-    dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", collectionItems);
-    QTimer::singleShot(0, this, [this] {   // to hide collection if all items are moved outside.
-        d->switchCollection();
-    });
-
-    return true;
+    if (act == Qt::MoveAction)
+        return d->moveFilesToCanvas(viewIndex, mimeData, viewPoint);
+    return false;
 }
 
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)

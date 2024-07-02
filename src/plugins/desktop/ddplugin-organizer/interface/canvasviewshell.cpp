@@ -88,7 +88,7 @@ QAbstractItemView *CanvasViewShell::canvasView(int viewIndex)
 bool CanvasViewShell::eventDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     Q_UNUSED(extData)
-    CheckFilterConnected(CanvasViewShell::filterDropData) return filterDropData(viewIndex, mimeData, viewPoint);
+    CheckFilterConnected(CanvasViewShell::filterDropData) return filterDropData(viewIndex, mimeData, viewPoint, extData);
 }
 
 bool CanvasViewShell::eventShortcutkeyPress(int viewIndex, int key, int modifiers, void *extData)

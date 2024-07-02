@@ -40,6 +40,8 @@ public slots:
     void refreshViews(bool silence);
     void updateHolderSurfaceIndex(QWidget *surface);
 
+    bool moveFilesToCanvas(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
+
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized = false);
     FileClassifier *classifier = nullptr;

@@ -307,7 +307,7 @@ bool CustomMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     return false;
 }
 
-bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     auto urls = mimeData->urls();
     QList<QUrl> collectionItems;

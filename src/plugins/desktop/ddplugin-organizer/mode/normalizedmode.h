@@ -35,7 +35,7 @@ public slots:
     void onReorganizeDesktop();
 
 protected slots:
-    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint) override;
+    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData) override;
     bool filterDataRested(QList<QUrl> *urls) override;
     bool filterDataInserted(const QUrl &url) override;
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;

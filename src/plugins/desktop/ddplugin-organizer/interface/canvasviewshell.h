@@ -32,7 +32,7 @@ public:
     QSize gridSize(int viewIndex);
     QAbstractItemView *canvasView(int viewIndex);
 signals:   // unqiue and direct signals
-    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPos);
+    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPos, void *extData);
     bool filterShortcutkeyPress(int viewIndex, int key, int modifiers);
     bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl);
     bool filterContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos);

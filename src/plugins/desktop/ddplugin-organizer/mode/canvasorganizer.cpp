@@ -155,7 +155,7 @@ bool CanvasOrganizer::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     return false;
 }
 
-bool CanvasOrganizer::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+bool CanvasOrganizer::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     return false;
 }
