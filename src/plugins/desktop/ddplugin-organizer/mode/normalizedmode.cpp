@@ -189,6 +189,26 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
             q, &NormalizedMode::deactiveAllPredictors);
 }
 
+bool NormalizedModePrivate::tryPlaceRect(QRect &item, const QList<QRect> &inSeats, const QSize &table)
+{
+    auto isIntersects = [](const QRect &item, const QList<QRect> &items) -> bool {
+        for (auto rect : items) {
+            if (rect.intersects(item))
+                return true;
+        }
+        return false;
+    };
+
+    for (int x = table.width() - item.width(); x >= 0; --x) {
+        for (int y = 0; y <= table.height() - item.height(); ++y) {
+            item.moveTopLeft({ x, y });
+            if (!isIntersects(item, inSeats))
+                return true;
+        }
+    }
+    return false;
+}
+
 void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
 {
     QItemSelection sel;
@@ -470,6 +490,8 @@ void NormalizedMode::layout()
 
     // see if collections should be re-layout
     //      1. calc the bounding rect of all collections which in same screen.
+    QList<QRect> orphanRects;   // those collections who's surface loses， should be re-layouted into surface_0.
+    QList<QRect> rectsOnSurface0;
     QList<QSize> collectionGridSizes;
     QMap<int, QRect> boundingRects;
     for (int i = 0; i < holders.count(); ++i) {
@@ -479,6 +501,13 @@ void NormalizedMode::layout()
         int sIdx = style.screenIndex - 1;
         boundingRects[sIdx] = boundingRects.value(sIdx).united(style.rect);
         collectionGridSizes.append(Surface::mapToGridSize(style.rect.size()));
+
+        if (surfaces.count() > 0) {
+            if (sIdx > surfaces.count() - 1)
+                orphanRects.append(QRect(QPoint(0, 0), Surface::mapToGridSize(style.rect.size())));
+            if (sIdx == 0)
+                rectsOnSurface0.append(surfaces[0]->mapToGridGeo(style.rect));
+        }
     }
     //      1.1 see if the bounding rect in screen is widther or higher than screen rect
     QMap<int, bool> surfaceRelayout;
@@ -492,12 +521,22 @@ void NormalizedMode::layout()
             || boundingRect.height() > surface->height())
             surfaceRelayout.insert(idx, true);
     }
+    //      1.2 make sure all orphan rects can be placed on surface 0
+    if (orphanRects.count() > 0 && surfaces.count() > 0 && !surfaceRelayout.contains(0)) {
+        for (auto &orphan : orphanRects) {
+            if (!d->tryPlaceRect(orphan, rectsOnSurface0, surfaces[0]->gridSize())) {
+                surfaceRelayout.insert(0, true);
+                break;
+            }
+            rectsOnSurface0.append(orphan);
+        }
+    }
 
     //      2. see if screen resolution was changed, if so the collections should be re-layout or move.
     //         since only horizontal axis is reversed, only screen width should be concerned
     QMap<int, int> surfaceMove;   // key: surface/screen index, val: the delta x value that collections should move.
     auto savedScreenSizes = CfgPresenter->surfaceSizes();
-    for (int i = 0; i < surfaces.count(); ++i) {
+    for (int i = 0; i < surfaces.count() && !surfaceRelayout.contains(i); ++i) {
         auto sur = surfaces.at(i);
         if (!sur) continue;
         if (i >= savedScreenSizes.count()) continue;

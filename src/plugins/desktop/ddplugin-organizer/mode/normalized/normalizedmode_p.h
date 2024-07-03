@@ -31,6 +31,8 @@ public:
     void checkPastedFiles(const QList<QUrl> &urls);
     void connectCollectionSignals(CollectionHolderPointer collection);
 
+    bool tryPlaceRect(QRect &item, const QList<QRect> &inSeats, const QSize &table);
+
 public slots:
     void onSelectFile(QList<QUrl> &urls, int flag);
     void onClearSelection();
