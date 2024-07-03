@@ -19,11 +19,11 @@
 #include <dfm-base/base/application/settings.h>
 
 #include <QGSettings>
-#include <QMenu>
 #include <QItemSelectionModel>
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 using namespace ddplugin_organizer;
 
@@ -73,11 +73,14 @@ void CollectionViewMenu::emptyAreaMenu()
         return;
     }
 
-    QMenu menu(view);
-    canvasScene->create(&menu);
-    canvasScene->updateState(&menu);
+    if (menuPtr)
+        delete menuPtr;
 
-    if (QAction *act = menu.exec(QCursor::pos())) {
+    menuPtr = new DMenu(view);
+    canvasScene->create(menuPtr);
+    canvasScene->updateState(menuPtr);
+
+    if (QAction *act = menuPtr->exec(QCursor::pos())) {
         QList<QUrl> urls { view->model()->rootUrl() };
         dpfSignalDispatcher->publish("ddplugin_organizer", "signal_CollectionView_ReportMenuData", act->text(), urls);
         canvasScene->triggered(act);
@@ -133,11 +136,14 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
         return;
     }
 
-    QMenu menu(view);
-    canvasScene->create(&menu);
-    canvasScene->updateState(&menu);
+    if (menuPtr)
+        delete menuPtr;
 
-    if (QAction *act = menu.exec(QCursor::pos())) {
+    menuPtr = new DMenu(view);
+    canvasScene->create(menuPtr);
+    canvasScene->updateState(menuPtr);
+
+    if (QAction *act = menuPtr->exec(QCursor::pos())) {
         dpfSignalDispatcher->publish("ddplugin_organizer", "signal_CollectionView_ReportMenuData", act->text(), selectUrls);
         canvasScene->triggered(act);
     }

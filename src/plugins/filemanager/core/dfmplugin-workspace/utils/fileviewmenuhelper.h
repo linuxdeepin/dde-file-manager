@@ -7,6 +7,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
+#include <DMenu>
+
 #include <QObject>
 #include <QString>
 
@@ -30,6 +32,7 @@ private:
     QString currentMenuScene() const;
 
     FileView *view { nullptr };
+    DTK_WIDGET_NAMESPACE::DMenu *menuPtr { nullptr };
 };
 
 }

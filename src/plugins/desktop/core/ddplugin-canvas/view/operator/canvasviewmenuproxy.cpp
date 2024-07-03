@@ -24,9 +24,9 @@
 #include <dfm-base/dfm_menu_defines.h>
 
 #include <QGSettings>
-#include <QMenu>
 #include <QtDebug>
 
+DWIDGET_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
@@ -79,10 +79,13 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
         return;
     }
 
-    QMenu menu(view);
-    canvasScene->create(&menu);
-    canvasScene->updateState(&menu);
-    if (QAction *act = menu.exec(QCursor::pos())) {
+    if (menuPtr)
+        delete menuPtr;
+
+    menuPtr = new DMenu(view);
+    canvasScene->create(menuPtr);
+    canvasScene->updateState(menuPtr);
+    if (QAction *act = menuPtr->exec(QCursor::pos())) {
         QList<QUrl> urls { view->model()->rootUrl() };
         dpfSignalDispatcher->publish("ddplugin_canvas", "signal_CanvasView_ReportMenuData", act->text(), urls);
         canvasScene->triggered(act);
@@ -132,11 +135,14 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
         return;
     }
 
-    QMenu menu(view);
-    canvasScene->create(&menu);
-    canvasScene->updateState(&menu);
+    if (menuPtr)
+        delete menuPtr;
 
-    if (QAction *act = menu.exec(QCursor::pos())) {
+    menuPtr = new DMenu(view);
+    canvasScene->create(menuPtr);
+    canvasScene->updateState(menuPtr);
+
+    if (QAction *act = menuPtr->exec(QCursor::pos())) {
         dpfSignalDispatcher->publish("ddplugin_canvas", "signal_CanvasView_ReportMenuData", act->text(), selectUrls);
         canvasScene->triggered(act);
     }

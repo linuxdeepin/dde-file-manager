@@ -5,6 +5,8 @@
 #ifndef COLLECTIONVIEWMENU_H
 #define COLLECTIONVIEWMENU_H
 
+#include <DMenu>
+
 #include <QObject>
 
 namespace ddplugin_organizer {
@@ -24,6 +26,7 @@ protected:
     QWidget *getCanvasView();
 private:
     CollectionView *view = nullptr;
+    DTK_WIDGET_NAMESPACE::DMenu *menuPtr { nullptr };
 };
 }
 
