@@ -7,6 +7,8 @@
 
 #include "ddplugin_canvas_global.h"
 
+#include <DMenu>
+
 #include <QObject>
 
 namespace ddplugin_canvas {
@@ -24,7 +26,8 @@ public slots:
     void changeIconLevel(bool increase);
 
 private:
-    CanvasView *view = nullptr;
+    CanvasView *view { nullptr };
+    DTK_WIDGET_NAMESPACE::DMenu *menuPtr { nullptr };
 };
 
 }

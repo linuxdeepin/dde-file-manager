@@ -17,8 +17,6 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <DMenu>
-
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
@@ -67,12 +65,15 @@ void FileViewMenuHelper::showEmptyAreaMenu()
         return;
     }
 
-    DMenu menu(this->view);
-    scene->create(&menu);
-    scene->updateState(&menu);
+    if (menuPtr)
+        delete menuPtr;
+
+    menuPtr = new DMenu(this->view);
+    scene->create(menuPtr);
+    scene->updateState(menuPtr);
     reloadCursor();
 
-    QAction *act = menu.exec(QCursor::pos());
+    QAction *act = menuPtr->exec(QCursor::pos());
     if (act)
         if (act) {
             QList<QUrl> urls { view->rootUrl() };
@@ -122,14 +123,17 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
         return;
     }
 
-    DMenu menu(this->view);
+    if (menuPtr)
+        delete menuPtr;
+
+    menuPtr = new DMenu(this->view);
     setWaitCursor();
-    scene->create(&menu);
+    scene->create(menuPtr);
     setWaitCursor();
-    scene->updateState(&menu);
+    scene->updateState(menuPtr);
     reloadCursor();
 
-    QAction *act = menu.exec(QCursor::pos());
+    QAction *act = menuPtr->exec(QCursor::pos());
     if (act) {
         dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), selectUrls);
         scene->triggered(act);
