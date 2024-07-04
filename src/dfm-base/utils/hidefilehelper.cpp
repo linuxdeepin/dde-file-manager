@@ -42,7 +42,12 @@ public:
         if (dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
             const QByteArray &data = dfile->readAll();
             const QString &dataStr = QString::fromLocal8Bit(data);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+            const QStringList &splitList = dataStr.split('\n', Qt::SkipEmptyParts);
+            hideList = QSet<QString>(splitList.begin(), splitList.end());
+#else
             hideList = QSet<QString>::fromList(dataStr.split('\n', QString::SkipEmptyParts));
+#endif
             hideListUpdate = hideList;
             dfile->close();
         }
@@ -103,10 +108,10 @@ bool HideFileHelper::save() const
     if (!d->dfile)
         return false;
 
-    QStringList lines(d->hideList.toList());
+    QStringList lines(d->hideList.values());
     QString dataStr = lines.join('\n');
     QByteArray data;
-    data.append(dataStr);
+    data.append(dataStr.toUtf8());
 
     if (d->dfile->open(DFMIO::DFile::OpenFlag::kWriteOnly | DFMIO::DFile::OpenFlag::kTruncate)) {
         d->dfile->write(data);

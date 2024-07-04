@@ -288,7 +288,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
     auto rightWidget = new QWidget;
     rightWidget->setContentsMargins(0, 0, 0, 0);
     QHBoxLayout *layout = new QHBoxLayout(rightWidget);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     rightWidget->setLayout(layout);
 
     layout->addStretch(0);

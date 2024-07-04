@@ -303,7 +303,11 @@ FileStatisticsJob::~FileStatisticsJob()
 
 FileStatisticsJob::State FileStatisticsJob::state() const
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    return static_cast<FileStatisticsJob::State>(d->state.loadRelaxed());
+#else
     return static_cast<FileStatisticsJob::State>(d->state.load());
+#endif
 }
 
 FileStatisticsJob::FileHints FileStatisticsJob::fileHints() const

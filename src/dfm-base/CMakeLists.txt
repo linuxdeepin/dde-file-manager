@@ -67,10 +67,8 @@ else()
         Qt${QT_VERSION_MAJOR}::X11Extras
         PkgConfig::gsettings
         PkgConfig::X11
-        poppler-cpp
         KF5::Codecs)
 endif()
-
 
 # generate dbus interface
 if(DFM_BUILD_WITH_QT6)
@@ -118,7 +116,7 @@ add_library(${BIN_NAME}
     ${INCLUDE_FILES}
     ${SRCS}
 )
-
+# TODO: move Widgets to ${DFM_EXTRA_LIBRARIES}
 target_link_libraries(${BIN_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -132,6 +130,7 @@ target_link_libraries(${BIN_NAME} PUBLIC
     PkgConfig::dfm-mount
     PkgConfig::dfm-io
     PkgConfig::mount
+    poppler-cpp
     ${DFM_EXTRA_LIBRARIES}
 )
 

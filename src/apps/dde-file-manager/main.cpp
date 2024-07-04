@@ -17,7 +17,9 @@
 
 #include <QIcon>
 #include <QDir>
-#include <QTextCodec>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QTextCodec>
+#endif
 #include <QProcess>
 #include <QTimer>
 
@@ -268,8 +270,10 @@ int main(int argc, char *argv[])
     // Warning: set log filter must before QApplication inited
     initLog();
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+#endif
 
     SingleApplication a(argc, argv);
 

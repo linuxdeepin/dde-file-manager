@@ -46,10 +46,16 @@ QMimeType DMimeDatabase::mimeTypeForFile(const FileInfoPointer &fileInfo, QMimeD
         //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
         if (fileInfo->nameOf(NameInfoType::kFileName).endsWith(".pid") || path.endsWith("msg.lock")
             || fileInfo->nameOf(NameInfoType::kFileName).endsWith(".lock") || fileInfo->nameOf(NameInfoType::kFileName).endsWith("lockfile")) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
                                               | QRegularExpression::DontCaptureOption
                                               | QRegularExpression::OptimizeOnFirstUsageOption);
+#else
+            QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                      QRegularExpression::DotMatchesEverythingOption
+                                              | QRegularExpression::DontCaptureOption);
+#endif
 
             const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                                 QRegularExpression::DontCheckSubjectStringMatchOption);
@@ -116,10 +122,16 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     if (!isMatchExtension) {
         if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
             || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
                                               | QRegularExpression::DontCaptureOption
                                               | QRegularExpression::OptimizeOnFirstUsageOption);
+#else
+            QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                      QRegularExpression::DotMatchesEverythingOption
+                                              | QRegularExpression::DontCaptureOption);
+#endif
 
             const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                                 QRegularExpression::DontCheckSubjectStringMatchOption);

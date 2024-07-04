@@ -16,7 +16,9 @@
 #include <QDebug>
 #include <QEvent>
 #include <QApplication>
-#include <QX11Info>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QX11Info>
+#endif
 #include <QScreen>
 #include <QWindow>
 #include <QTimer>
@@ -52,9 +54,7 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
         auto cur = window->currentUrl();
-        if (window && (UniversalUtils::urlEquals(url, cur) ||
-                UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur)) ||
-                UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url)))) {
+        if (window && (UniversalUtils::urlEquals(url, cur) || UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur)) || UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url)))) {
             qCInfo(logDFMBase) << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
@@ -172,9 +172,9 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
             qCWarning(logDFMBase) << "Cannot find a exists window by url: " << showedUrl;
         return window;
     }
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QX11Info::setAppTime(QX11Info::appUserTime());
-
+#endif
     // you can inherit from FMWindow to implement a custom window (by call `setCustomWindowCreator`)
     FMWindow *window = d->customCreator ? d->customCreator(showedUrl)
                                         : new FMWindow(showedUrl);
@@ -320,9 +320,7 @@ bool FileManagerWindowsManager::containsCurrentUrl(const QUrl &url, const QWidge
         if (win == w || !w)
             continue;
         auto cur = w->currentUrl();
-        if (UniversalUtils::urlEquals(url, cur) ||
-                UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur)) ||
-                UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url)))
+        if (UniversalUtils::urlEquals(url, cur) || UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur)) || UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url)))
             return true;
     }
     return false;
