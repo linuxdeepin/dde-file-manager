@@ -44,8 +44,11 @@ ContainmentAttached::~ContainmentAttached() { }
 
 Containment *ContainmentAttached::qmlAttachedProperties(QObject *object)
 {
-    auto contain = qobject_cast<Containment *>(AppletAttached::qmlAttachedProperties(object));
-    return contain;
+    Applet *applet = AppletAttached::qmlAttachedProperties(object);
+    if (auto *contain = qobject_cast<Containment *>(applet))
+        return contain;
+
+    return applet->containment();
 }
 
 /*!
@@ -62,8 +65,11 @@ PanelAttached::~PanelAttached()
 
 Panel *PanelAttached::qmlAttachedProperties(QObject *object)
 {
-    auto panel = qobject_cast<Panel *>(AppletAttached::qmlAttachedProperties(object));
-    return panel;
+    Applet *applet = AppletAttached::qmlAttachedProperties(object);
+    if (auto *panel = qobject_cast<Panel *>(applet))
+        return panel;
+
+    return applet->panel();
 }
 
 DFMGUI_END_NAMESPACE
