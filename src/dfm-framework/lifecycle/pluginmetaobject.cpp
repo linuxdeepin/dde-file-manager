@@ -254,7 +254,11 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginQuickMeta
  */
 Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginQuickMetaPtr &quickMetaPtr)
 {
-    out << *quickMetaPtr;
+    if (quickMetaPtr) {
+        out << *quickMetaPtr;
+    } else {
+        out << "nullptr";
+    }
     return out;
 }
 

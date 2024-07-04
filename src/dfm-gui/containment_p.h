@@ -20,6 +20,7 @@ public:
     explicit ContainmentPrivate(Containment *q);
 
     void setRootObject(QObject *item) override;
+    void appletRootObjectCreated(QObject *appletObject);
 
     QList<Applet *> applets;
 };
