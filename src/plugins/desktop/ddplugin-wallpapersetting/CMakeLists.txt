@@ -58,7 +58,8 @@ add_library(${PROJECT_NAME}
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Svg REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Svg)
+
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )

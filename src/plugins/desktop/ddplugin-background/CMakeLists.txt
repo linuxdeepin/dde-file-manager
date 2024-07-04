@@ -41,6 +41,8 @@ pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${DFrameworkDBus_INCLUDE_DIRS}
+    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+
 )
 
 target_link_libraries(${PROJECT_NAME}

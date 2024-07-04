@@ -5,6 +5,7 @@
 #ifndef PLUGINMETAOBJECT_H
 #define PLUGINMETAOBJECT_H
 
+#include <dfm-framework/lifecycle/pluginquickmetadata.h>
 #include <dfm-framework/dfm_framework_global.h>
 #include <dfm-framework/lifecycle/plugindepend.h>
 
@@ -24,7 +25,7 @@ class PluginMetaT1 : public QSharedData
 {
     Q_DISABLE_COPY(PluginMetaT1)
 public:
-    PluginMetaT1() {}
+    PluginMetaT1() { }
 };
 
 /*! 插件json元文件示例
@@ -44,6 +45,18 @@ public:
  *   "Depends" : [
  *       {"Name" : "core", "Version" : "4.8.2"},
  *       {"Name" : "other", "Version" : "4.8.2"}
+ *   ],
+ *   "Quick" : [                                        // 可选字段，需展示界面的插件提供
+ *       {
+ *           "Url" : "MainWindow.qml",                  // 必须，加载的QML组件文件名，文件位于"插件目录/插件Name/Url"
+ *           "Id" : "mainWindow",                       // 必须，用于区分的组件ID，运行时会标记为 "插件名.ID"
+ *           "Type" : "[Containment|Panel]",            // 可选，无字段或空内容视为 Applet
+ *           "Parent" : "[Depends Plugin Name].[Id]",   // 可选，默认为父组件 "插件名.ID" 的一部分, 插件名字段在 “Depends” 中必须存在
+ *           "Applet" : "core.compoment.applet"         // 可选，拓展的 Applet ，需在 AppletFactory 注册
+ *       }, {
+ *           "Url" : "property.qml",
+ *           "Id" : "propertyDialog"
+ *       }
  *   ]
  * }
  * \endcode
@@ -91,6 +104,7 @@ public:
     QVariantMap customData() const;
     State pluginState() const;
     QSharedPointer<Plugin> plugin() const;
+    QList<PluginQuickMetaPtr> quickMetaData() const;
     QString errorString() const;
 
 private:
@@ -104,7 +118,7 @@ QT_BEGIN_NAMESPACE
 #ifndef QT_NO_DEBUG_STREAM
 Q_CORE_EXPORT QDebug operator<<(QDebug, const DPF_NAMESPACE::PluginMetaObject &);
 Q_CORE_EXPORT QDebug operator<<(QDebug, const DPF_NAMESPACE::PluginMetaObjectPointer &);
-#endif   //QT_NO_DEBUG_STREAM
+#endif   // QT_NO_DEBUG_STREAM
 QT_END_NAMESPACE
 
 DPF_END_NAMESPACE

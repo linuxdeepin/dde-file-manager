@@ -11,9 +11,9 @@ file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
     "./*.cpp"
 )
 
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt5 COMPONENTS Concurrent REQUIRED)
-find_package(Dtk COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Concurrent REQUIRED)
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_library(${BIN_NAME} SHARED
     ${INCLUDE_FILES}
@@ -22,9 +22,9 @@ add_library(${BIN_NAME} SHARED
 
 target_link_libraries(
     ${BIN_NAME}
-    Qt5::Core
-    Qt5::Concurrent
-    ${DtkCore_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Concurrent
+    Dtk${DTK_VERSION_MAJOR}::Core
 )
 
 target_include_directories(${BIN_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

@@ -54,11 +54,14 @@ add_library(${PROJECT_NAME}
     ${SCREEN_FILES}
     ${EXT_FILES}
 )
-
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
+    )
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
     )
 
 #install library file

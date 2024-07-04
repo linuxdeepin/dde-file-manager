@@ -74,6 +74,12 @@
 #    warning "cmake unseting definition DFM_THUMBNAIL_TOOL"
 #endif
 
+#ifndef DFM_QML_MODULE
+#    define DFM_QML_MODULE "${DFM_QML_MODULE}"
+#elif
+#    warning "cmake unseting definition DFM_QML_MODULE"
+#endif
+
 #ifndef VERSION
 #    define VERSION "@VERSION@"
 #endif
