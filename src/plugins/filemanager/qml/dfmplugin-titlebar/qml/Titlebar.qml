@@ -14,40 +14,26 @@ ContainmentItem {
     id: titlebar
 
     property int breadcrumbsHeight: 30
-    // 是否显示侧边栏
-    property bool sidebarVisible: true
-    // 顶栏一层的高度
-    property alias topHeaderHeight: topHeader.height
     // 控件类型
     property int widgetType: QuickUtils.Titlebar
-
-    // TODO 移动到框架事件后移除
-    signal sidebarVisibleNotify(bool bVisible)
-
-    function updateTopLeftLayout() {
-        Qt.callLater(sidebarVisibleNotify, sidebarVisible);
-    }
 
     Layout.fillWidth: true
     implicitHeight: DS.Style.titleBar.height + breadcrumbsHeight
 
-    Component.onCompleted: {
-        updateTopLeftLayout();
-    }
     Window.onWindowChanged: {
         if (Window.window) {
             topLeftCorner.parent = Window.window.contentItem;
             topLeftCorner.x = 0;
             topLeftCorner.y = 0;
         }
-        updateTopLeftLayout();
-    }
-    onSidebarVisibleChanged: {
-        updateTopLeftLayout();
     }
 
+    // 左上角的
     Row {
         id: topLeftCorner
+
+        // 是否允许当前执行切换，进行动画时不允许
+        property bool enableSwitch: true
 
         height: DS.Style.titleBar.height
         leftPadding: 5
@@ -71,9 +57,7 @@ ContainmentItem {
             width: 36
 
             onClicked: {
-                if (!switchSidebar.running) {
-                    titlebar.sidebarVisible = !titlebar.sidebarVisible;
-                }
+                Panel.showSidebar = !Panel.showSidebar;
             }
 
             icon {
@@ -93,63 +77,71 @@ ContainmentItem {
 
             Layout.preferredHeight: DS.Style.titleBar.height
 
-            RowLayout {
-                Layout.fillHeight: true
-                Layout.leftMargin: sidebarVisible ? 0 : topLeftCorner.width
-                layoutDirection: Qt.LeftToRight
-
-                Behavior on Layout.leftMargin {
-                    NumberAnimation {
-                        id: switchSidebar
-
-                        duration: 200
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-
-                DTK.IconButton {
-                    icon.name: "arrow_ordinary_left"
-                }
-
-                DTK.IconButton {
-                    icon.name: "arrow_ordinary_right"
-                }
-
-                TabBar {
-                    TabButton {
-                        text: qsTr("Home")
-                        width: implicitWidth
-                    }
-
-                    TabButton {
-                        text: qsTr("Discover")
-                        width: implicitWidth
-                    }
-
-                    TabButton {
-                        text: qsTr("Activity")
-                        width: implicitWidth
-                    }
-                }
-
-                DTK.IconButton {
-                    icon.name: "button_add"
-
-                    onClicked: {
-                        console.warn("--- test", Containment.applets);
-                        Applet.currentUrl = "file:///home/uos/Videos/dde-introduction.mp4";
-                    }
-                }
-            }
-
             Loader {
                 Layout.fillWidth: true
                 active: null !== Window.window
                 height: DS.Style.titleBar.height
 
+                // TODO: DTK.TitleBar 左侧有默认的间距，不过设计图间距较大，如可行就无需调整
                 sourceComponent: DTK.TitleBar {
                     title: ""
                     width: parent.width
+
+                    leftContent: RowLayout {
+                        layoutDirection: Qt.LeftToRight
+
+                        Item {
+                            // 需要 Titlebar Applet 已追加到 Panel 中
+                            Layout.leftMargin: Panel.showSidebar ? 0 : topLeftCorner.width
+
+                            Behavior on Layout.leftMargin {
+                                NumberAnimation {
+                                    id: switchSidebar
+
+                                    duration: 200
+                                    easing.type: Easing.InOutQuad
+
+                                    onRunningChanged: {
+                                        topLeftCorner.enableSwitch = !running;
+                                    }
+                                }
+                            }
+                        }
+
+                        DTK.IconButton {
+                            icon.name: "arrow_ordinary_left"
+                        }
+
+                        DTK.IconButton {
+                            icon.name: "arrow_ordinary_right"
+                        }
+
+                        TabBar {
+                            TabButton {
+                                text: qsTr("Home")
+                                width: implicitWidth
+                            }
+
+                            TabButton {
+                                text: qsTr("Discover")
+                                width: implicitWidth
+                            }
+
+                            TabButton {
+                                text: qsTr("Activity")
+                                width: implicitWidth
+                            }
+                        }
+
+                        DTK.IconButton {
+                            icon.name: "button_add"
+
+                            onClicked: {
+                                console.warn("--- test", Containment.applets);
+                                Applet.currentUrl = "file:///home/uos/Videos/dde-introduction.mp4";
+                            }
+                        }
+                    }
                 }
             }
         }

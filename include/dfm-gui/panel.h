@@ -19,18 +19,42 @@ class Panel : public Containment
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool showSidebar READ showSidebar WRITE setShowSidebar NOTIFY showSidebarChanged FINAL)
+
 public:
     explicit Panel(QObject *parent = nullptr);
 
     QQuickWindow *window() const;
     quint64 windId() const;
 
+    bool showSidebar() const;
+    void setShowSidebar(bool b);
+    Q_SIGNAL void showSidebarChanged(bool show);
+
+    void installTitleBar(Applet *titlebar);
+    void installSideBar(Applet *sidebar);
+    void installWorkSpace(Applet *workspace);
+    void installDetailView(Applet *detailview);
+
+    Applet *titleBar() const;
+    Applet *sideBar() const;
+    Applet *workSpace() const;
+    Applet *detailView() const;
+
     virtual void loadState();
     virtual void saveState();
+
+    Q_SLOT void setSidebarState(int width, bool manualHide, bool autoHide);
+    Q_SIGNAL void sidebarStateChanged(int width, bool manualHide, bool autoHide);
 
 Q_SIGNALS:
     void aboutToOpen();
     void aboutToClose();
+
+    void titleBarInstallFinished();
+    void sideBarInstallFinished();
+    void workspaceInstallFinished();
+    void detailViewInstallFinished();
 
 private:
     Q_DECLARE_PRIVATE_D(dptr, Panel);

@@ -22,7 +22,6 @@ public:
     void setRootObject(QObject *item) override;
 
     QList<Applet *> applets;
-    QPointer<QQuickWindow> window;
 };
 
 DFMGUI_END_NAMESPACE

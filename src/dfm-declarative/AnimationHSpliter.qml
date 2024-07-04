@@ -15,32 +15,39 @@ Item {
     property alias enableAnimation: trans.enabled
     // 是否响应 Hover 和拖拽效果
     property alias enableMouse: mouseLoader.active
+    // 控件展开控制， expand 更新为 true 时触发弹出动画，为 false 时触发隐藏动画
+    property bool expand: true
     property alias handle: handleLoader.sourceComponent
     property int handleWidth: 6
     // 分裂器附加 anchor 位置，允许在父控件左侧或右侧的边缘，计算方向相反
     property bool leftSide: false
     property real maximumWidth: 600
-    property real minimumWidth: 150
+    property real minimumWidth: 100
     // 缓存手动拖拽的宽度，用于动画恢复
     property real showWidth: 200
-    // 动画控制切换，switchShow 更新为 true 时触发弹出动画，为 false 时触发隐藏动画
-    property bool switchShow: true
     property Item target: parent
+    property alias transitionsRunning: trans.running
 
-    function adjustParentWidth(xOffset) {
+    function adjustTargetWidth(xOffset) {
         var adjWidth;
         if (null === spliter.target) {
             return;
         }
         adjWidth = spliter.target.width + (leftSide ? -xOffset : xOffset);
         adjWidth = Math.min(Math.max(minimumWidth, adjWidth), maximumWidth);
+        setTargetWidth(adjWidth);
+    }
+
+    function setTargetWidth(adjWidth) {
         // 缓存用于动画的宽度
         showWidth = adjWidth;
-        // 外部组件可能被布局管理
-        if (null !== target.Layout) {
-            target.Layout.preferredWidth = adjWidth;
-        } else {
-            target.width = adjWidth;
+        if (expand) {
+            // 外部组件可能被布局管理
+            if (null !== target.Layout) {
+                target.Layout.preferredWidth = adjWidth;
+            } else {
+                target.width = adjWidth;
+            }
         }
     }
 
@@ -51,7 +58,7 @@ Item {
     states: [
         State {
             name: "show"
-            when: spliter.switchShow
+            when: spliter.expand
 
             PropertyChanges {
                 Layout.preferredWidth: showWidth
@@ -61,7 +68,7 @@ Item {
         },
         State {
             name: "hide"
-            when: !spliter.switchShow
+            when: !spliter.expand
 
             PropertyChanges {
                 Layout.preferredWidth: 0
@@ -74,9 +81,9 @@ Item {
         id: trans
 
         onRunningChanged: {
-            if (running && spliter.switchShow) {
+            if (running && spliter.expand) {
                 spliter.target.visible = true;
-            } else if (!running && !spliter.switchShow) {
+            } else if (!running && !spliter.expand) {
                 spliter.target.visible = false;
             }
         }
@@ -116,7 +123,7 @@ Item {
 
             onPositionChanged: {
                 if (pressed) {
-                    spliter.adjustParentWidth(mouseX - baseX);
+                    spliter.adjustTargetWidth(mouseX - baseX);
                 }
             }
             onPressed: {

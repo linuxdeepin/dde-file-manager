@@ -60,8 +60,8 @@ ContainmentItem {
     AnimationHSpliter {
         enableAnimation: null !== Window.window
         enableMouse: true
+        expand: Containment.detailVisible
         leftSide: true
         showWidth: 300
-        switchShow: Containment.detailVisible
     }
 }

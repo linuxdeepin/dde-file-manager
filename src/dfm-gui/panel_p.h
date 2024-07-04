@@ -18,6 +18,25 @@ public:
     explicit PanelPrivate(Panel *q);
 
     void setRootObject(QObject *item) override;
+
+    void loadWindowState();
+    void saveWindowState() const;
+
+    void loadSidebarState();
+    void saveSidebarState() const;
+
+    QPointer<QQuickWindow> window;
+    bool showSidebar { true };
+
+    Applet *sidebar;
+    Applet *titlebar;
+    Applet *workspace;
+    Applet *detailview;
+
+    int leftWidth { 200 };
+    bool autoHideSidebar { false };
+    bool manualHideSidebar { false };
+    static constexpr int kDefaultLeftWidth { 200 };
 };
 
 DFMGUI_END_NAMESPACE
