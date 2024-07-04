@@ -43,7 +43,7 @@ void KeyValueLabel::initUI()
     connect(rightValueEdit, &RightValueWidget::clicked, this, &KeyValueLabel::valueAreaClicked);
     rightValueEdit->setMinimumWidth(130);
     glayout = new QGridLayout;
-    glayout->setMargin(0);
+    glayout->setContentsMargins(0, 0, 0, 0);
     glayout->addWidget(leftValueLabel, 0, 0);
     glayout->addWidget(rightValueEdit, 0, 1);
     glayout->setColumnStretch(0, 1);

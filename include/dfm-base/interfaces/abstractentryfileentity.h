@@ -10,6 +10,8 @@
 #include <QUrl>
 #include <QIcon>
 #include <QDebug>
+#include <QObject>
+#include <QVariant>
 
 namespace dfmbase {
 
@@ -49,7 +51,7 @@ public:
     virtual bool showUsageSize() const = 0;
     virtual EntryOrder order() const = 0;
 
-    virtual inline void refresh() {}
+    virtual inline void refresh() { }
     virtual inline quint64 sizeTotal() const { return 0; }
     virtual inline quint64 sizeUsage() const { return 0; }
     virtual inline QString description() const { return {}; }

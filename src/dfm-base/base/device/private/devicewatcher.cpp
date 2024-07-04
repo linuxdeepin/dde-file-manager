@@ -312,7 +312,11 @@ void DeviceWatcher::onBlkDevMounted(const QString &id, const QString &mpt)
 {
     const QVariantMap &info = d->allBlockInfos.value(id);
     // query info async avoid blocking main thread when disks' IO load is too high.
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QtConcurrent::run(&DeviceWatcherPrivate::queryUsageOfItem, d.data(), info, DFMMOUNT::DeviceType::kBlockDevice);
+#else
     QtConcurrent::run(d.data(), &DeviceWatcherPrivate::queryUsageOfItem, info, DFMMOUNT::DeviceType::kBlockDevice);
+#endif
     emit DevMngIns->blockDevMounted(id, mpt);
 }
 

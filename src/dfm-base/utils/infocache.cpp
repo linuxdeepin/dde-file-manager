@@ -168,7 +168,6 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
         }
     }
 
-
     // 插入到主和副的所有缓存中
     d->status = kCacheCopy;
     {
@@ -304,12 +303,12 @@ void InfoCache::timeRemoveCache()
     // 取出哪些url的时间超出了u
     qint64 delCount = d->urlTimeSortMap.size() < kCacheFileinfoCount ? 0 : d->urlTimeSortMap.size() - kCacheFileinfoCount;
     QList<QUrl> delList;
-    foreach (const auto time, d->timeToUrlMap.uniqueKeys()) {
+    foreach (const auto time, d->timeToUrlMap.keys()) {
         if (d->cacheWorkerStoped)
             return;
 
         if (time < QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch() - kCacheRemoveTime)) {
-            delList.append(d->timeToUrlMap.values(time));
+            delList.append(d->timeToUrlMap.value(time));
             continue;
         }
 
@@ -317,7 +316,7 @@ void InfoCache::timeRemoveCache()
             break;
         }
 
-        delList.append(d->timeToUrlMap.values(time));
+        delList.append(d->timeToUrlMap.value(time));
     }
     // 发送异步消息 告诉移除线程创建移除线程移除，考虑是否是使用线程一直还是使用临时线程（使用临时线程）
     if (delList.size() > 0 && !d->cacheWorkerStoped)

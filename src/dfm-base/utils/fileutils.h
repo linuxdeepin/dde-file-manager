@@ -61,8 +61,9 @@ public:
     static QString cutFileName(const QString &name, int maxLength, bool useCharCount);
     static QString nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl = QUrl());
     static QString toUnicode(const QByteArray &data, const QString &fileName = QString());
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString {});
-
+#endif
     static quint16 getMemoryPageSize();
     static qint32 getCpuProcessCount();
 

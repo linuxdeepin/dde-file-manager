@@ -111,7 +111,7 @@ void SysInfoUtils::setMimeDataUserId(QMimeData *data)
 {
     QByteArray userId;
     QString strUserID = QString::number(getUserId());
-    userId.append(strUserID);
+    userId.append(strUserID.toUtf8());
     data->setData(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey, userId);
 
     QString strKey = QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey) + "_" + strUserID;

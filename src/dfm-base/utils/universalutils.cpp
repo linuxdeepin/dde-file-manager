@@ -15,7 +15,9 @@
 #include <QApplication>
 #include <QThread>
 #include <QDebug>
-#include <QX11Info>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QX11Info>
+#endif
 #include <QFile>
 #include <QProcess>
 #include <QDBusConnectionInterface>
@@ -293,7 +295,7 @@ bool UniversalUtils::checkLaunchAppInterface()
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
 #ifdef COMPILE_ON_V23
-    const auto &file = QFileInfo{desktopFile};
+    const auto &file = QFileInfo { desktopFile };
     constexpr auto kDesktopSuffix { u8"desktop" };
 
     if (file.suffix() != kDesktopSuffix) {
