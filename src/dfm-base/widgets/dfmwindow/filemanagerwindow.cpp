@@ -152,6 +152,7 @@ void FileManagerWindowPrivate::loadWindowState()
     if ((FMWindowsIns.windowIdList().isEmpty()) && ((windowState & kNetWmStateMaximizedHorz) != 0 && (windowState & kNetWmStateMaximizedVert) != 0)) {
         // make window to be maximized.
         // the following calling is copyed from QWidget::showMaximized()
+        q->titlebar()->setVisible(true);
         q->setWindowState((q->windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen))
                           | Qt::WindowMaximized);
     } else {
