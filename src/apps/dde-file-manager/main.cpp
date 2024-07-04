@@ -26,6 +26,12 @@
 #include <signal.h>
 #include <malloc.h>
 
+#ifdef DFM_UI_TYPE_QML
+#    include <dfm-gui/sharedqmlengine.h>
+#    include <dfm-gui/windowmanager.h>
+#    include <QQmlEngine>
+#endif
+
 Q_LOGGING_CATEGORY(logAppFileManager, "org.deepin.dde.filemanager.filemanager")
 
 DGUI_USE_NAMESPACE
@@ -118,6 +124,25 @@ static QStringList buildBlackNames()
     qCDebug(logAppFileManager) << "build all blacknames:" << blackNames;
     return blackNames;
 }
+
+#ifdef DFM_UI_TYPE_QML
+static bool initQmlEngine()
+{
+    QSharedPointer<QQmlEngine> globalEngine = dfmgui::WindowManager::instance()->engine();
+    if (!globalEngine) {
+        return false;
+    }
+
+#    ifdef QT_DEBUG
+    const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
+    globalEngine->addImportPath(pluginsDir + "/qml");
+#    else
+    globalEngine->addImportPath(DFM_QML_MODULE);
+#    endif
+
+    return true;
+}
+#endif
 
 static bool pluginsLoad()
 {
@@ -321,6 +346,12 @@ int main(int argc, char *argv[])
         // check upgrade
         checkUpgrade(&a);
 
+#ifdef DFM_UI_TYPE_QML
+        if (!initQmlEngine()) {
+            qCCritical(logAppFileManager) << "init QQmlEngine failed!";
+            abort();
+        }
+#endif
         if (!pluginsLoad()) {
             qCCritical(logAppFileManager) << "Load pugin failed!";
             abort();
