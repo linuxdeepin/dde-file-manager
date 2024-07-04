@@ -21,7 +21,7 @@ add_executable(${PROJECT_NAME}
     ${CPP_STUB_SRC}
     ${SRC_FILES}
 )
-
+find_package(Qt COMPONENTS Core Widget REQUIRED)
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
@@ -30,6 +30,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${DESKTOP_PLUGIN_DIR}
     ${DESKTOP_PLUGIN_SRC_DIR}
     ${DFrameworkDBus_INCLUDE_DIRS}
+    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}

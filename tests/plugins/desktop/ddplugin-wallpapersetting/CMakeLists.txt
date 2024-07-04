@@ -34,6 +34,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${DESKTOP_PLUGIN_DIR}
     ${DESKTOP_PLUGIN_SRC_DIR}
     ${DFrameworkDBus_INCLUDE_DIRS}
+    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}

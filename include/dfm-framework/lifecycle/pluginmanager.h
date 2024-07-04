@@ -34,6 +34,7 @@ public:
     QStringList blackList() const;
     QStringList lazyLoadList() const;
     QQueue<PluginMetaObjectPointer> readQueue() const;
+    QQueue<PluginMetaObjectPointer> loadQueue() const;
     void addPluginIID(const QString &pluginIIDs);
     void addBlackPluginName(const QString &name);
     void addLazyLoadPluginName(const QString &name);

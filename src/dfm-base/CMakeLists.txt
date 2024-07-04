@@ -32,7 +32,12 @@ set(QRC_FILES
     qrc/resources/resources.qrc
     qrc/chinese2pinyin/chinese2pinyin.qrc
     )
-qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
+
+if(DFM_BUILD_WITH_QT6)
+    qt_add_resources(QRC_RESOURCES ${QRC_FILES})
+else()
+    qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
+endif()
 
 # add code
 file(GLOB_RECURSE INCLUDE_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*")
@@ -43,29 +48,40 @@ file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
 )
 
 # add depends
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt5 COMPONENTS Concurrent REQUIRED)
-find_package(Qt5 COMPONENTS DBus REQUIRED)
-find_package(Qt5 COMPONENTS Sql REQUIRED)
-find_package(Qt5 COMPONENTS X11Extras REQUIRED)
-find_package(Qt5 COMPONENTS Network REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Concurrent DBus Sql Network REQUIRED)
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
-find_package(KF5Codecs REQUIRED)
-
-pkg_search_module(dfm-burn REQUIRED dfm-burn IMPORTED_TARGET)
-pkg_search_module(dfm-io REQUIRED dfm-io IMPORTED_TARGET)
-pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
-pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
+pkg_search_module(dfm-burn REQUIRED dfm${DTK_VERSION_MAJOR}-burn IMPORTED_TARGET)
+pkg_search_module(dfm-io REQUIRED dfm${DTK_VERSION_MAJOR}-io IMPORTED_TARGET)
+pkg_search_module(dfm-mount REQUIRED dfm${DTK_VERSION_MAJOR}-mount IMPORTED_TARGET)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
-pkg_search_module(Dtk REQUIRED dtkcore IMPORTED_TARGET)
-pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
+
+if(OPT_ENABLE_QML)
+    set(DFM_EXTRA_LIBRARIES "")
+else()
+    find_package(KF5Codecs REQUIRED)
+    find_package(Qt5 COMPONENTS X11Extras REQUIRED)
+    pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
+    pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
+    set(DFM_EXTRA_LIBRARIES
+        Qt${QT_VERSION_MAJOR}::X11Extras
+        PkgConfig::gsettings
+        PkgConfig::X11
+        poppler-cpp
+        KF5::Codecs)
+endif()
+
 
 # generate dbus interface
-qt5_add_dbus_interface(SRCS
-    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
-    devicemanager_interface)
+if(DFM_BUILD_WITH_QT6)
+    qt_add_dbus_interface(SRCS
+        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
+        devicemanager_interface)
+else()
+    qt5_add_dbus_interface(SRCS
+        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
+        devicemanager_interface)
+endif()
 
 # for generating middle source files of SettingsTemplate to translate.
 set(TRANS_OF_SETTINGS_CPP)
@@ -104,28 +120,24 @@ add_library(${BIN_NAME}
 )
 
 target_link_libraries(${BIN_NAME} PUBLIC
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Concurrent
-    Qt5::DBus
-    Qt5::Sql
-    Qt5::X11Extras
-    Qt5::Network
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Concurrent
+    Qt${QT_VERSION_MAJOR}::DBus
+    Qt${QT_VERSION_MAJOR}::Sql
+    Qt${QT_VERSION_MAJOR}::Network
+    Dtk${DTK_VERSION_MAJOR}::Core
+    Dtk${DTK_VERSION_MAJOR}::Widget
     PkgConfig::dfm-burn
     PkgConfig::dfm-mount
     PkgConfig::dfm-io
-    PkgConfig::gsettings
     PkgConfig::mount
-    PkgConfig::X11
-    poppler-cpp
-    KF5::Codecs
-    ${DtkWidget_LIBRARIES}
+    ${DFM_EXTRA_LIBRARIES}
 )
 
 target_include_directories(${BIN_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
     )
 
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager) # also use for install

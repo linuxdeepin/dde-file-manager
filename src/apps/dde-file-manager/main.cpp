@@ -15,9 +15,6 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <DApplicationSettings>
-#include <DSysInfo>
-
 #include <QIcon>
 #include <QDir>
 #include <QTextCodec>

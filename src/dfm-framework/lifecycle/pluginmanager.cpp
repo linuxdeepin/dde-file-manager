@@ -132,3 +132,8 @@ QQueue<PluginMetaObjectPointer> PluginManager::readQueue() const
 {
     return d->readQueue;
 }
+
+QQueue<PluginMetaObjectPointer> PluginManager::loadQueue() const
+{
+    return d->loadQueue;
+}

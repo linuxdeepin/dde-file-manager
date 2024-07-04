@@ -36,6 +36,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${DtkWidget_INCLUDE_DIRS}
+        ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}

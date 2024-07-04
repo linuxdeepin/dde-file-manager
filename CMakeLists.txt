@@ -20,30 +20,12 @@ option(OPT_ENABLE_QML "Use QML" OFF)
 # 安全加固
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-type")
 
-# Select major Qt version.
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-message("Using Qt version: ${QT_VERSION_MAJOR}")
-
-if(QT_VERSION_MAJOR EQUAL "6")
-    set(DFM_BUILD_WITH_QT6 ON)
-    set(DTK_VERSION_MAJOR 6)
-else()
-    set(DTK_VERSION_MAJOR "")
-endif()
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-
-# check arch
-if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -z noexecstack -z relro")
-    add_definitions(-DARCH_MIPSEL)
-endif()
-
 # if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 # TODO: control it by CI. (Automation Testing)
 add_definitions(-DENABLE_TESTING)
 
-# QML
+# QML or QtWidget
 if(OPT_ENABLE_QML)
     message(STATUS "Use QML")
     add_definitions(-DDFM_UI_TYPE_QML)
@@ -51,9 +33,13 @@ if(OPT_ENABLE_QML)
     add_definitions(-DCOMPILE_ON_V23)
     set(COMPLIE_ON_V23 TRUE)
     message("COMPILE ON v23")
+    find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Widgets)
+    message("Using Qt version: ${QT_VERSION_MAJOR}")
 else()
     message(STATUS "Use QtWidget")
     add_definitions(-DDFM_UI_TYPE_QWIDGET)
+    find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Widgets)
+    message("Using Qt version: ${QT_VERSION_MAJOR}")
     #Indentify the version
     find_package(DtkCMake REQUIRED)
     if (${DEEPIN_OS_VERSION} MATCHES "23")
@@ -65,6 +51,20 @@ else()
         set(COMPLIE_ON_V20 TRUE)
         message("COMPILE ON v20")
     endif()
+endif()
+
+# Select major Qt version.
+if(QT_VERSION_MAJOR EQUAL "6")
+    set(DFM_BUILD_WITH_QT6 ON)
+    set(DTK_VERSION_MAJOR 6)
+else()
+    set(DTK_VERSION_MAJOR "")
+endif()
+
+# check arch
+if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -z noexecstack -z relro")
+    add_definitions(-DARCH_MIPSEL)
 endif()
 
 # CMake modules
@@ -97,8 +97,14 @@ add_subdirectory(src/dfm-base)
 add_subdirectory(src/dfm-extension)
 add_subdirectory(src/dfm-framework)
 add_subdirectory(src/plugins)
-add_subdirectory(src/external)
-add_subdirectory(src/tools)
+if(OPT_ENABLE_QML)
+    add_subdirectory(src/dfm-gui)
+    add_subdirectory(src/dfm-declarative)
+else()
+    # TODO: adapt to it
+    add_subdirectory(src/external)
+    add_subdirectory(src/tools)
+endif()
 
 # docs
 if(OPT_ENABLE_BUILD_DOCS AND NOT OPT_ENABLE_QML)
