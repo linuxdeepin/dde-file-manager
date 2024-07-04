@@ -1378,7 +1378,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="72"/>
         <source>New tab</source>
-        <translation>新建标签</translation>
+        <translation>新建标签页</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="78"/>
