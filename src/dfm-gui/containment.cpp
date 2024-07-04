@@ -19,19 +19,37 @@ ContainmentPrivate::ContainmentPrivate(Containment *q)
 
 void ContainmentPrivate::setRootObject(QObject *item)
 {
-    for (auto applet : applets) {
+    for (auto *applet : applets) {
         // 管理部分在父组件完成创建前初始化的子组件
-        if (applet->rootObject() && applet->rootObject()->parent() != item) {
-            applet->rootObject()->setParent(item);
-        }
+        appletRootObjectCreated(applet->rootObject());
     }
 
     AppletPrivate::setRootObject(item);
 }
 
 /*!
+ * \brief 设置子 Applet QML控件 \a appletObject 的父控件为当前 Containment 的QML控件
+ */
+void ContainmentPrivate::appletRootObjectCreated(QObject *appletObject)
+{
+    if (!appletObject || !rootObject) {
+        return;
+    }
+
+    if (rootObject != appletObject->parent()) {
+        appletObject->setParent(rootObject);
+        Q_EMIT q_func()->appletRootObjectChanged(appletObject);
+    }
+}
+
+/*!
  * \class Containment
- * \brief 容器，管理多个 Applet ，
+ * \brief 容器，管理多个 Applet
+ * \section QML 组件管理
+ *  Applet 创建的 QML 组件也由其管理，当子 Applet 的 AppletItem 组件创建时，AppletItem
+ *  组件父节点将自动设置为容器 QML 组件。
+ *  当移除子 Applet 时，AppletItem 组件将设置父类为子 Applet ，在销毁 Applet 时，若
+ *  AppletItem 组件关联在 Applet 上，会自动析构对应的 AppletItem.
  */
 Containment::Containment(QObject *parent)
     : Applet(*new ContainmentPrivate(this), parent)
@@ -71,13 +89,11 @@ void Containment::appendApplet(Applet *applet)
         }
 
         // 已创建的 QQuickItem 发出信号
-        if (rootObject() && applet->rootObject()) {
-            applet->rootObject()->setParent(rootObject());
-            Q_EMIT appletRootObjectChanged(applet->rootObject());
-        }
-
-        // TODO: 不是个好方案
-        connect(applet, &Applet::rootObjectChanged, this, &Containment::appletRootObjectChanged);
+        d->appletRootObjectCreated(applet->rootObject());
+        // 后续创建的绑定信号
+        connect(applet, &Applet::rootObjectChanged, this, [this](QObject *object) {
+            d_func()->appletRootObjectCreated(object);
+        });
 
         applet->setParent(this);
         d->applets.append(applet);

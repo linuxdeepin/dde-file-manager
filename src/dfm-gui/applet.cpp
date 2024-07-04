@@ -25,7 +25,12 @@ AppletPrivate::~AppletPrivate()
     if (rootObject) {
         QObject::disconnect(rootObject, nullptr, q_ptr, nullptr);
         if (QJSEngine::CppOwnership == QJSEngine::objectOwnership(rootObject)) {
-            Q_ASSERT_X(rootObject->parent() == q_ptr, "AppletItem memory management", "Undefined behaviour, unmanaged QQuickItem");
+            const bool managed = bool(rootObject->parent() == q_ptr);
+            if (!managed) {
+                qCCritical(logDFMGui) << "Undefined behaviour, unmanaged QQuickItem:";
+                q_ptr->dumpAppletTree();
+            }
+            Q_ASSERT_X(managed, "AppletItem memory management", "Undefined behaviour, unmanaged QQuickItem");
 
             rootObject->deleteLater();
         }
@@ -66,10 +71,6 @@ bool AppletPrivate::createComplete(SharedQmlEngine *engine)
                 if (auto *item = qobject_cast<AppletItem *>(rootObject)) {
                     // 先设置关联，再抛出信号
                     item->setApplet(q);
-                    if (auto *containment = q->containment()) {
-                        rootObject->setParent(containment->rootObject());
-                    }
-
                     setRootObject(item);
                     return true;
                 }
@@ -99,7 +100,13 @@ bool AppletPrivate::createComplete(SharedQmlEngine *engine)
 void AppletPrivate::dumpAppletTreeImpl(int level)
 {
     QString indent = QString(' ').repeated(level * 4);
-    qCDebug(logDFMGui) << indent << metaPtr;
+    if (metaPtr) {
+        qCDebug(logDFMGui) << qPrintable(indent) << metaPtr;
+    } else {
+        Q_Q(Applet);
+        qCDebug(logDFMGui) << qPrintable(indent) << "(Dynamic applet):"
+                           << q << q->rootObject() << q->componentUrl();
+    }
 
     if (flag.testFlag(Applet::kContainment)) {
         if (auto *containment = dynamic_cast<ContainmentPrivate *>(this)) {
