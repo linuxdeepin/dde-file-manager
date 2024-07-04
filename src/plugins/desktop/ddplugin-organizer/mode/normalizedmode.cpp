@@ -369,7 +369,7 @@ bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QMimeData *mi
 
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized)
 {
-    if (cfgs.isEmpty() && CfgPresenter->organizeOnTriggered()) {
+    if (cfgs.isEmpty() && CfgPresenter->organizeOnTriggered() && !reorganized) {
         // feature: if org on trigger is enabled and no saved configs
         // files should not be organized when launch.
         classifier->reset({});
@@ -633,6 +633,12 @@ void NormalizedMode::rebuild(bool reorganize)
     time.start();
     {
         auto files = model->files();
+
+        if (reorganize) {   // classifier's categories should be updated.
+            QSignalBlocker block(model);
+            reset();   // classifier will be re-new-ed, which will refresh model and cause rebuild function retriggered. so block signal
+        }
+
         d->classifier->reset(files);
 
         // order item as config

@@ -22,7 +22,7 @@ TypeMethodGroup::TypeMethodGroup(QObject *parent)
         { kCatPicture, tr("Pictures") },
         { kCatVideo, tr("Videos") },
         { kCatMusic, tr("Music") },
-        { kCatFloder, tr("Folders") },
+        { kCatFolder, tr("Folders") },
         { kCatOther, QObject::tr("Others") }
     };
 }
@@ -103,8 +103,11 @@ void TypeMethodGroup::onChanged(bool on)
                     if (flags == kCatDefault)
                         flags = OrganizerUtils::buildBitwiseEnabledCategory(flags);
                     CfgPresenter->setEnabledTypeCategories(flags);
-                    // using switch signal to reset the collection.
-                    emit CfgPresenter->switchToNormalized(id());
+                    // do not re-layout items if `organizeOnTrigger` and checkbox checked.
+                    if (!on || !CfgPresenter->organizeOnTriggered()) {
+                        // using switch signal to reset the collection.
+                        emit CfgPresenter->switchToNormalized(id());
+                    }
                 }
             }
         }

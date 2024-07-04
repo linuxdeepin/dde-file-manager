@@ -75,7 +75,7 @@ TypeClassifier::TypeClassifier(QObject *parent)
             { kCatPicture, kTypeKeyPic },
             { kCatVideo, kTypeKeyVid },
             { kCatMusic, kTypeKeyMuz },
-            { kCatFloder, kTypeKeyFld },
+            { kCatFolder, kTypeKeyFld },
             { kCatOther, kTypeKeyOth }
         };
     }

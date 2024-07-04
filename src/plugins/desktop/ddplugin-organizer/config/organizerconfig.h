@@ -42,8 +42,6 @@ public:
     void writeCollectionStyle(bool custom, const QList<CollectionStyle> &styles);
 
 public:
-    int enabledTypeCategories() const;
-    void setEnabledTypeCategories(int flags);
 signals:
 
 public slots:
