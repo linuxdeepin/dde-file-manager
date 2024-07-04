@@ -4,6 +4,11 @@ cmake_minimum_required(VERSION 3.10)
 
 if(OPT_ENABLE_QML)
     # TODO: add plugins
+    add_subdirectory(qml/dfmplugin-core)
+    add_subdirectory(qml/dfmplugin-workspace)
+    add_subdirectory(qml/dfmplugin-titlebar)
+    add_subdirectory(qml/dfmplugin-detailspace)
+    add_subdirectory(qml/dfmplugin-sidebar)
 else()
     add_subdirectory(core/dfmplugin-core)
     add_subdirectory(core/dfmplugin-recent)
