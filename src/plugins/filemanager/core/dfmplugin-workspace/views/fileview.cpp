@@ -263,6 +263,10 @@ QList<QUrl> FileView::selectedUrlList() const
 
 void FileView::refresh()
 {
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
+        DialogManager::instance()->showUnableToVistDir(rootUrl().path());
+        return;
+    }
     model()->refresh();
 }
 
