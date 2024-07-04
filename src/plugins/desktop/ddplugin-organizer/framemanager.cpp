@@ -181,10 +181,13 @@ void FrameManagerPrivate::enableChanged(bool e)
 
     fmDebug() << "enableChanged" << e;
     CfgPresenter->setEnable(e);
-    if (e)
+    if (e) {
         q->turnOn();
-    else
+    } else {
         q->turnOff();
+        if (CfgPresenter->organizeOnTriggered())
+            CfgPresenter->saveNormalProfile({});   // feature
+    }
 }
 
 void FrameManagerPrivate::enableVisibility(bool e)

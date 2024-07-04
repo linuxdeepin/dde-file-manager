@@ -366,17 +366,6 @@ void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionSt
     d->settings->endGroup();
 }
 
-int OrganizerConfig::enabledTypeCategories() const
-{
-    // the defalut vaule -1 represents all items.
-    return d->value(kGroupClassifierType, kKeyEnabledItems, ItemCategory::kCatDefault).toInt();
-}
-
-void OrganizerConfig::setEnabledTypeCategories(int flags)
-{
-    d->setValue(kGroupClassifierType, kKeyEnabledItems, flags);
-}
-
 OrganizerConfig::~OrganizerConfig()
 {
     delete d;

@@ -56,6 +56,17 @@
                         "description": "Single-time organization (0) or automatic organization (1): When single-time organization is selected, the organization action only occurs when triggered by the user, and newly created files will not be organized into the collection.",
                         "permissions": "readwrite",
                         "visibility": "public"
+                },
+                "organizeCategories": {
+                        "value": ["kDocument", "kPicture", "kVideo", "kMusic", "kFolder"],
+                        "serial": 0,
+                        "flags": [],
+                        "name": "Organize categories",
+                        "name[zh_CN]": "整理策略",
+                        "description[zh_CN]": "将会被整理的文件类型，可选项为：应用（kApp）、文档（kDocument）、图片（kPicture）、视频（kVideo）、文件夹（kFolder）以及其他（kOther）",
+                        "description": "The types of files that will be organized, options: applications (kApp), documents (kDocument), pictures (kPicture), videos (kVideo), folders (kFolder), and other (kOther)",
+                        "permissions": "readwrite",
+                        "visibility": "public"
                 }
 	}
 }

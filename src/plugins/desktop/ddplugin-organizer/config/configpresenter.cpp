@@ -26,6 +26,15 @@ static inline constexpr char kEnableVisible[] { "enableVisibility" };
 static inline constexpr char kHideAllKeySeq[] { "hideAllKeySeq" };
 static inline constexpr char kHideAllDialogRepeatNoMore[] { "hideAllDialogRepeatNoMore" };
 static inline constexpr char kOrganizeAction[] { "organizeAction" };
+static inline constexpr char kOrganizeEnabledCategories[] { "organizeCategories" };
+
+static inline constexpr char kCatTypeApp[] { "kApp" };
+static inline constexpr char kCatTypeDocument[] { "kDocument" };
+static inline constexpr char kCatTypePicture[] { "kPicture" };
+static inline constexpr char kCatTypeVideo[] { "kVideo" };
+static inline constexpr char kCatTypeMusic[] { "kMusic" };
+static inline constexpr char kCatTypeFolder[] { "kFolder" };
+static inline constexpr char kCatTypeOther[] { "kOther" };
 
 ConfigPresenter::ConfigPresenter(QObject *parent)
     : QObject(parent)
@@ -234,13 +243,30 @@ void ConfigPresenter::writeCustomStyle(const QList<CollectionStyle> &styles) con
 
 ItemCategories ConfigPresenter::enabledTypeCategories() const
 {
-    return ItemCategories(conf->enabledTypeCategories());
+    QStringList categories = DConfigManager::instance()->value(kConfName, kOrganizeEnabledCategories, "").toStringList();
+
+    ItemCategories rets = kCatNone;
+    rets |= categories.contains(kCatTypeApp) ? kCatApplication : kCatNone;
+    rets |= categories.contains(kCatTypeDocument) ? kCatDocument : kCatNone;
+    rets |= categories.contains(kCatTypePicture) ? kCatPicture : kCatNone;
+    rets |= categories.contains(kCatTypeVideo) ? kCatVideo : kCatNone;
+    rets |= categories.contains(kCatTypeMusic) ? kCatMusic : kCatNone;
+    rets |= categories.contains(kCatTypeFolder) ? kCatFolder : kCatNone;
+    rets |= categories.contains(kCatTypeOther) ? kCatOther : kCatNone;
+    return rets;
 }
 
 void ConfigPresenter::setEnabledTypeCategories(ItemCategories flags)
 {
-    conf->setEnabledTypeCategories(flags);
-    conf->sync();
+    QStringList cats;
+    if (flags & kCatApplication) cats.append(kCatTypeApp);
+    if (flags & kCatDocument) cats.append(kCatTypeDocument);
+    if (flags & kCatPicture) cats.append(kCatTypePicture);
+    if (flags & kCatVideo) cats.append(kCatTypeVideo);
+    if (flags & kCatMusic) cats.append(kCatTypeMusic);
+    if (flags & kCatFolder) cats.append(kCatTypeFolder);
+    if (flags & kCatOther) cats.append(kCatTypeOther);
+    DConfigManager::instance()->setValue(kConfName, kOrganizeEnabledCategories, cats);
 }
 
 OrganizeAction ConfigPresenter::organizeAction() const

@@ -43,11 +43,11 @@ enum ItemCategory {
     kCatPicture = 0x04,
     kCatVideo = 0x08,
     kCatMusic = 0x10,
-    kCatFloder = 0x20,
+    kCatFolder = 0x20,
     kCatOther = 0x40,
 
     kCatEnd = kCatOther,
-    kCatAll = kCatApplication | kCatDocument | kCatPicture | kCatVideo | kCatMusic | kCatFloder | kCatOther,
+    kCatAll = kCatApplication | kCatDocument | kCatPicture | kCatVideo | kCatMusic | kCatFolder | kCatOther,
     kCatDefault = -1
 };
 Q_DECLARE_FLAGS(ItemCategories, ItemCategory)
