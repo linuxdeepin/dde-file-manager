@@ -1086,9 +1086,9 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
 
     bool openResult = doOpenFiles(openInfos, openMineTypes);
 
-    bool openMount = doOpenFiles(mountOpenInfos, openMineTypes);
+    bool openMount = doOpenFiles(mountOpenInfos, mountMineTypes);
 
-    bool openCmd = doOpenFiles(cmdOpenInfos, cmdOpenInfos);
+    bool openCmd = doOpenFiles(cmdOpenInfos, cmdMineTypes);
 
     if (openResult || openMount || openCmd)
         return true;

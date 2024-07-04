@@ -810,7 +810,7 @@ void TaskWidget::leaveEvent(QEvent *event)
 {
     onMouseHover(false);
 
-    return QWidget::enterEvent(event);
+    return QWidget::leaveEvent(event);
 }
 
 void TaskWidget::paintEvent(QPaintEvent *event)
