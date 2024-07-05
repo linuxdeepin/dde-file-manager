@@ -69,7 +69,13 @@ public:
     bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     void onTrashEmptyState();
+    void trashNotEmpty();
+
+private Q_SLOTS:
     void onTrashNotEmptyState();
+
+Q_SIGNALS:
+    void trashNotEmptyState();
 
 private:
     void onTrashStateChanged();

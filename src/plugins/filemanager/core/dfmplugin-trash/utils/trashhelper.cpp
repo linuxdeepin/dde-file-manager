@@ -319,6 +319,11 @@ void TrashHelper::onTrashEmptyState() {
     }
 }
 
+void TrashHelper::trashNotEmpty()
+{
+    emit trashNotEmptyState();
+}
+
 void TrashHelper::onTrashNotEmptyState()
 {
     isTrashEmpty = false;
@@ -345,4 +350,5 @@ void TrashHelper::initEvent()
     bool resutl = dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &TrashHelper::onTrashStateChanged);
     if (!resutl)
         fmWarning() << "subscribe signal_TrashCore_TrashStateChanged from dfmplugin_trashcore is failed.";
+    connect(this, &TrashHelper::trashNotEmptyState, this, &TrashHelper::onTrashNotEmptyState, Qt::QueuedConnection);
 }

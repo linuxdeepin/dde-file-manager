@@ -59,7 +59,7 @@ bool TrashDirIterator::hasNext() const
 
     if (d->dEnumerator) {
         if (!d->once)
-            TrashHelper::instance()->onTrashNotEmptyState();
+            TrashHelper::instance()->trashNotEmpty();
 
         d->once = true;
         const QUrl &urlNext = d->dEnumerator->next();
