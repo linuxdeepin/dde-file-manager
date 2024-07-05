@@ -84,7 +84,7 @@ Copyright: 2020 Christian Boxdörfer
 License: MIT
 
 # D-Bus interfaces and adaptors
-Files: src/*/*dbus_interface.* src/*/*dbus_adaptor.* src/*/dbus*/* src/plugins/daemon/daemonplugin-mountcontrol/private/mountcontrol_adapter.* src/plugins/desktop/ddplugin-background/appearance_interface.* src/plugins/daemon/daemonplugin-stringdecrypt/stringdecrypt_adapter.*
+Files: src/*/*dbus_interface.* src/*/*dbus_adaptor.* src/*/dbus*/* src/plugins/daemon/daemonplugin-mountcontrol/private/mountcontrol_adapter.* src/plugins/desktop/ddplugin-background/appearance_interface.*
 Copyright: 2016 The Qt Company Ltd.
 License: CC0-1.0
 

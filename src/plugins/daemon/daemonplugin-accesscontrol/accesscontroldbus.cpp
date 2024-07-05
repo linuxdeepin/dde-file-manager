@@ -7,7 +7,7 @@
 #include "polkit/policykithelper.h"
 
 #include <dfm-base/base/device/deviceutils.h>
-#include <dfm-framework/dpf.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QDebug>
 #include <QDBusConnection>
@@ -22,7 +22,6 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 
-Q_DECLARE_METATYPE(QString *)
 DFMBASE_USE_NAMESPACE
 DAEMONPAC_USE_NAMESPACE
 
@@ -214,13 +213,8 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
         return;
     }
 
-    QString oldPwdDec, newPwdDec;
-    int r = dpfSlotChannel->push("daemonplugin_stringdecrypt", "slot_OpenSSL_DecryptString", oldPwd, &oldPwdDec).toInt();
-    r = dpfSlotChannel->push("daemonplugin_stringdecrypt", "slot_OpenSSL_DecryptString", newPwd, &newPwdDec).toInt();
-    if (r != 0) {
-        fmCritical() << "cannot decrypt password!!!";
-        return;
-    }
+    QString oldPwdDec = FileUtils::decryptString(oldPwd);
+    QString newPwdDec = FileUtils::decryptString(newPwd);
 
     const QByteArray &tmpOldPwd = oldPwdDec.toLocal8Bit();
     const QByteArray &tmpNewPwd = newPwdDec.toLocal8Bit();

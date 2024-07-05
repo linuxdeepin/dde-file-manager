@@ -78,6 +78,9 @@ public:
     static QString numberStr(const QString &str, int pos);
     static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 
+    static QString encryptString(const QString &str);
+    static QString decryptString(const QString &str);
+
     static QString dateTimeFormat();
     static bool setBackGround(const QString &pictureFilePath);
     static QString nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer targetDir);
