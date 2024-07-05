@@ -1146,6 +1146,20 @@ bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::Sort
     return !((order == Qt::AscendingOrder) ^ compareByStringEx(str1, str2));
 }
 
+QString FileUtils::encryptString(const QString &str)
+{
+    QByteArray byteArray = str.toUtf8();
+    QByteArray encodedByteArray = byteArray.toBase64();
+    return QString::fromUtf8(encodedByteArray);
+}
+
+QString FileUtils::decryptString(const QString &str)
+{
+    QByteArray encodedByteArray = str.toUtf8();
+    QByteArray decodedByteArray = QByteArray::fromBase64(encodedByteArray);
+    return QString::fromUtf8(decodedByteArray);
+}
+
 QString FileUtils::dateTimeFormat()
 {
     return "yyyy/MM/dd HH:mm:ss";

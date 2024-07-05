@@ -10,6 +10,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -31,7 +32,6 @@
 #include <pwd.h>
 #include <unistd.h>
 
-Q_DECLARE_METATYPE(QString *)
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_dirshare {
 
@@ -142,14 +142,7 @@ bool UserShareHelper::share(const ShareInfo &info)
 
 void UserShareHelper::setSambaPasswd(const QString &userName, const QString &passwd)
 {
-    QString encPass;
-    auto ret = dpfSlotChannel->push("dfmplugin_stringencrypt", "slot_OpenSSL_EncryptString",
-                                    passwd, &encPass);
-    if (ret != 0) {
-        fmWarning() << "cannot encrypt password!!!";
-        DialogManagerInstance->showErrorDialog(tr("Error"), tr("Cannot encrypt password"));
-        return;
-    }
+    QString encPass = FileUtils::encryptString(passwd);
     QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, userName, encPass);
     bool result = reply.isValid() && reply.error().message().isEmpty();
     fmInfo() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
