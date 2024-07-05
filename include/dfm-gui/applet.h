@@ -73,8 +73,8 @@ protected:
     QScopedPointer<AppletPrivate> dptr;
 
 private:
-    Q_DECLARE_PRIVATE_D(dptr, Applet);
-    Q_DISABLE_COPY(Applet);
+    Q_DECLARE_PRIVATE_D(dptr, Applet)
+    Q_DISABLE_COPY(Applet)
 
     friend class AppletItem;
     friend class ContainmentItem;

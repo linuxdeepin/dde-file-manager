@@ -22,8 +22,13 @@ ApplicationWindow {
     property alias titlebar: titlebarProxy.target
     property alias workspace: workspaceProxy.target
 
-    function adpatSidebarOnce() {
-        showSidebarAction.enabled = true;
+    // 双击切换窗口普通/最大化
+    function switchWindowState() {
+        if (Window.Maximized === root.visibility) {
+            root.showNormal();
+        } else {
+            root.showMaximized();
+        }
     }
 
     DWindow.enabled: true
@@ -42,15 +47,19 @@ ApplicationWindow {
             switch (appletItem.widgetType) {
             case QuickUtils.Sidebar:
                 sidebar = appletItem;
+                Panel.installSideBar(appletItem);
                 break;
             case QuickUtils.Titlebar:
                 titlebar = appletItem;
+                Panel.installTitleBar(appletItem);
                 break;
             case QuickUtils.WorkSpace:
                 workspace = appletItem;
+                Panel.installWorkSpace(appletItem);
                 break;
             case QuickUtils.DetailSpace:
                 detailview = appletItem;
+                Panel.installDetailView(appletItem);
                 break;
             default:
                 return;
@@ -70,6 +79,38 @@ ApplicationWindow {
     onClosing: {
         // 关闭前缓存当前侧边栏状态
         Panel.setSidebarState(spliter.showWidth, spliter.manualHideSidebar, spliter.autoHideSidebar);
+    }
+
+    Loader {
+        asynchronous: true
+
+        // 由于需要将鼠标事件穿透到底层ApplicationWindow,因此手动控制双击时间触发
+        sourceComponent: MouseArea {
+            id: mouseTrackProxy
+
+            height: DS.Style.titleBar.height
+            propagateComposedEvents: true
+            width: root.width
+
+            onClicked: mouse.accepted = false
+            onDoubleClicked: mouse.accepted = false
+            onPressed: mouse => {
+                if (doubleClickTimer.running) {
+                    doubleClickTimer.stop();
+                    switchWindowState();
+                } else {
+                    doubleClickTimer.start();
+                }
+                mouse.accepted = false;
+            }
+            onReleased: mouse.accepted = false
+
+            Timer {
+                id: doubleClickTimer
+
+                interval: 200
+            }
+        }
     }
 
     RowLayout {
@@ -93,6 +134,7 @@ ApplicationWindow {
                     Layout.topMargin: DS.Style.titleBar.height
                 }
             }
+
             AnimationHSpliter {
                 id: spliter
 
@@ -157,6 +199,7 @@ ApplicationWindow {
                 }
             }
         }
+
         ColumnLayout {
             id: rightContent
 
@@ -167,6 +210,7 @@ ApplicationWindow {
                 id: titlebarProxy
 
             }
+
             RowLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -176,6 +220,7 @@ ApplicationWindow {
                     id: workspaceProxy
 
                 }
+
                 LayoutItemProxy {
                     id: detailviewProxy
 

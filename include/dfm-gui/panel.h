@@ -6,12 +6,15 @@
 #define PANEL_H
 
 #include <dfm-gui/containment.h>
+#include <dfm-gui/quickutils.h>
 
 #include <QObject>
 
 class QQuickWindow;
 
 DFMGUI_BEGIN_NAMESPACE
+
+class AppletItem;
 
 // TODO:此部分是否和 Applet 分离，而非继承关系
 class PanelPrivate;
@@ -31,15 +34,16 @@ public:
     void setShowSidebar(bool b);
     Q_SIGNAL void showSidebarChanged(bool show);
 
-    void installTitleBar(Applet *titlebar);
-    void installSideBar(Applet *sidebar);
-    void installWorkSpace(Applet *workspace);
-    void installDetailView(Applet *detailview);
+    // TODO: 是否沿用之前框架的注册方式
+    Q_INVOKABLE void installTitleBar(AppletItem *titlebar);
+    Q_INVOKABLE void installSideBar(AppletItem *sidebar);
+    Q_INVOKABLE void installWorkSpace(AppletItem *workspace);
+    Q_INVOKABLE void installDetailView(AppletItem *detailview);
 
-    Applet *titleBar() const;
-    Applet *sideBar() const;
-    Applet *workSpace() const;
-    Applet *detailView() const;
+    AppletItem *titleBar() const;
+    AppletItem *sideBar() const;
+    AppletItem *workSpace() const;
+    AppletItem *detailView() const;
 
     virtual void loadState();
     virtual void saveState();
@@ -51,14 +55,19 @@ Q_SIGNALS:
     void aboutToOpen();
     void aboutToClose();
 
+    void shortcutTriggered(QuickUtils::ShortcutType type, const QKeyCombination &combin);
+
     void titleBarInstallFinished();
     void sideBarInstallFinished();
     void workspaceInstallFinished();
     void detailViewInstallFinished();
 
+protected:
+    bool eventFilter(QObject *object, QEvent *event) override;
+
 private:
-    Q_DECLARE_PRIVATE_D(dptr, Panel);
-    Q_DISABLE_COPY(Panel);
+    Q_DECLARE_PRIVATE_D(dptr, Panel)
+    Q_DISABLE_COPY(Panel)
 };
 
 DFMGUI_END_NAMESPACE
