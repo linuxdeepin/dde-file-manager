@@ -25,6 +25,7 @@ public:
     QStringList classes() const override;
     QString classify(const QUrl &) const override;
     QString className(const QString &key) const override;
+    void updateClassifier() override;
 
 public:
     QString replace(const QUrl &oldUrl, const QUrl &newUrl) override;

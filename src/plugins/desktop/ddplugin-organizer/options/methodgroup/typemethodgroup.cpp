@@ -104,9 +104,10 @@ void TypeMethodGroup::onChanged(bool on)
                         flags = OrganizerUtils::buildBitwiseEnabledCategory(flags);
                     CfgPresenter->setEnabledTypeCategories(flags);
                     // do not re-layout items if `organizeOnTrigger` and checkbox checked.
-                    if (!on || !CfgPresenter->organizeOnTriggered()) {
-                        // using switch signal to reset the collection.
-                        emit CfgPresenter->switchToNormalized(id());
+                    if (!CfgPresenter->organizeOnTriggered()) {
+                        emit CfgPresenter->reorganizeDesktop();
+                    } else if (!on) {
+                        emit CfgPresenter->releaseCollection(flag);
                     }
                 }
             }

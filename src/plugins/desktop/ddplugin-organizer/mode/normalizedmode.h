@@ -33,6 +33,7 @@ public slots:
     void onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last);
     void onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
     void onReorganizeDesktop();
+    void releaseCollection(int category);
 
 protected slots:
     bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData) override;

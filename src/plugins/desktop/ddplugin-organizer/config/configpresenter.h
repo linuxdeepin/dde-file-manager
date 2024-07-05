@@ -71,6 +71,7 @@ signals:
     void changeEnableVisibilityState(bool v);
     void changeHideAllKeySequence(const QKeySequence &);
     void switchToNormalized(int);
+    void releaseCollection(int category);
     void switchToCustom();
     void changeDisplaySize(int);
     void newCollection(const QList<QUrl> &);

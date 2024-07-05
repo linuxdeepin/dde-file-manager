@@ -52,6 +52,23 @@ enum ItemCategory {
 };
 Q_DECLARE_FLAGS(ItemCategories, ItemCategory)
 
+inline const char kTypeKeyApp[] = "Type_Apps";
+inline const char kTypeKeyDoc[] = "Type_Documents";
+inline const char kTypeKeyPic[] = "Type_Pictures";
+inline const char kTypeKeyVid[] = "Type_Videos";
+inline const char kTypeKeyMuz[] = "Type_Music";
+inline const char kTypeKeyFld[] = "Type_Folders";
+inline const char kTypeKeyOth[] = "Type_Other";
+inline const QMap<ItemCategory, QString> kCategory2Key {
+    { kCatApplication, kTypeKeyApp },
+    { kCatDocument, kTypeKeyDoc },
+    { kCatPicture, kTypeKeyPic },
+    { kCatVideo, kTypeKeyVid },
+    { kCatMusic, kTypeKeyMuz },
+    { kCatFolder, kTypeKeyFld },
+    { kCatOther, kTypeKeyOth }
+};
+
 enum CollectionFrameSize {
     kMiddle = 0,
     kLarge,

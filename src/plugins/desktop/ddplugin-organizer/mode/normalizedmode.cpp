@@ -333,9 +333,8 @@ bool NormalizedModePrivate::batchRenameFiles()
     return true;
 }
 
-bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QList<QUrl> &urls, const QPoint &viewPoint)
 {
-    auto urls = mimeData->urls();
     QList<QUrl> collectionItems;
     QStringList files;
     for (auto url : urls) {
@@ -451,6 +450,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(model, &CollectionModel::modelReset, this, [this] { rebuild(); }, Qt::QueuedConnection);
 
     connect(CfgPresenter, &ConfigPresenter::reorganizeDesktop, this, &NormalizedMode::onReorganizeDesktop, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::releaseCollection, this, &NormalizedMode::releaseCollection, Qt::QueuedConnection);
 
     // creating if there already are files.
     if (!model->files().isEmpty())
@@ -633,12 +633,8 @@ void NormalizedMode::rebuild(bool reorganize)
     time.start();
     {
         auto files = model->files();
-
-        if (reorganize) {   // classifier's categories should be updated.
-            QSignalBlocker block(model);
-            reset();   // classifier will be re-new-ed, which will refresh model and cause rebuild function retriggered. so block signal
-        }
-
+        if (reorganize)   // classifier's categories should be updated.
+            d->classifier->updateClassifier();
         d->classifier->reset(files);
 
         // order item as config
@@ -777,6 +773,24 @@ void NormalizedMode::onReorganizeDesktop()
         Q_EMIT d->classifier->itemsChanged(type);   // to update the collection view's vertical scroll range.
 }
 
+void NormalizedMode::releaseCollection(int category)
+{
+    if (!d->classifier)
+        return;
+    QString key = kCategory2Key.value(ItemCategory(category), "");
+    if (key.isEmpty())
+        return;
+
+    auto files = model->files();
+    QList<QUrl> releases;
+    for (auto url : files) {
+        if (d->classifier->classify(url) == key)
+            releases << url;
+    }
+    if (!releases.isEmpty())
+        d->moveFilesToCanvas(0, releases, { 0, 0 });
+}
+
 void NormalizedMode::onCollectionEditStatusChanged(bool editing)
 {
     this->editing = editing;
@@ -819,7 +833,7 @@ bool NormalizedMode::filterDropData(int viewIndex, const QMimeData *mimeData, co
     }
 
     if (act == Qt::MoveAction)
-        return d->moveFilesToCanvas(viewIndex, mimeData, viewPoint);
+        return d->moveFilesToCanvas(viewIndex, mimeData->urls(), viewPoint);
     return false;
 }
 
