@@ -43,7 +43,7 @@ public slots:
     void updateHolderSurfaceIndex(QWidget *surface);
     bool batchRenameFiles();
 
-    bool moveFilesToCanvas(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
+    bool moveFilesToCanvas(int viewIndex, const QList<QUrl> &urls, const QPoint &viewPoint);
 
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized = false);

@@ -14,9 +14,9 @@ class TypeClassifierPrivate
 public:
     explicit TypeClassifierPrivate(TypeClassifier *qq);
     ~TypeClassifierPrivate();
+
 public:
     ItemCategories categories;
-    const QHash<ItemCategory, QString> categoryKey;
     const QHash<QString, QString> keyNames;
     const QSet<QString> docSuffix;
     const QSet<QString> picSuffix;
@@ -30,4 +30,4 @@ private:
 
 }
 
-#endif // TYPECLASSIFIER_P_H
+#endif   // TYPECLASSIFIER_P_H

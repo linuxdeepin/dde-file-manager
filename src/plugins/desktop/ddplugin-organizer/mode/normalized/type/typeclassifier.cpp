@@ -13,13 +13,6 @@ using namespace ddplugin_organizer;
 DFMBASE_USE_NAMESPACE
 
 namespace {
-inline const char kTypeKeyApp[] = "Type_Apps";
-inline const char kTypeKeyDoc[] = "Type_Documents";
-inline const char kTypeKeyPic[] = "Type_Pictures";
-inline const char kTypeKeyVid[] = "Type_Videos";
-inline const char kTypeKeyMuz[] = "Type_Music";
-inline const char kTypeKeyFld[] = "Type_Folders";
-inline const char kTypeKeyOth[] = "Type_Other";
 
 inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,"
                                      "pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,"
@@ -67,18 +60,7 @@ TypeClassifier::TypeClassifier(QObject *parent)
             { kTypeKeyOth, tr("Other") }
         };
     }
-    {
-        QHash<ItemCategory, QString> *categoryPtr = const_cast<QHash<ItemCategory, QString> *>(&d->categoryKey);
-        *categoryPtr = {
-            { kCatApplication, kTypeKeyApp },
-            { kCatDocument, kTypeKeyDoc },
-            { kCatPicture, kTypeKeyPic },
-            { kCatVideo, kTypeKeyVid },
-            { kCatMusic, kTypeKeyMuz },
-            { kCatFolder, kTypeKeyFld },
-            { kCatOther, kTypeKeyOth }
-        };
-    }
+
     // all datas shoud be accepted.
     handler = new GeneralModelFilter();
 
@@ -125,8 +107,8 @@ QStringList TypeClassifier::classes() const
         for (int i = kCatApplication; i <= kCatEnd; i = i << 1) {
             auto cat = static_cast<ItemCategory>(i);
             if (d->categories.testFlag(cat)) {
-                Q_ASSERT(d->categoryKey.contains(cat));
-                auto key = d->categoryKey.value(cat);
+                Q_ASSERT(kCategory2Key.contains(cat));
+                auto key = kCategory2Key.value(cat);
                 if (d->keyNames.contains(key)) {
                     Q_ASSERT(!usedKey.contains(key));
                     usedKey.append(key);
@@ -182,6 +164,11 @@ QString TypeClassifier::classify(const QUrl &url) const
 QString TypeClassifier::className(const QString &key) const
 {
     return d->keyNames.value(key);
+}
+
+void TypeClassifier::updateClassifier()
+{
+    d->categories = CfgPresenter->enabledTypeCategories();
 }
 
 QString TypeClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
