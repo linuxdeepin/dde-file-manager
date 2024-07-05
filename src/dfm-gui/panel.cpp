@@ -40,6 +40,8 @@ enum NetWmState {
 };
 Q_DECLARE_FLAGS(NetWmStates, NetWmState)
 
+ShortcutMapPtr PanelPrivate::shortcutPtr = PanelPrivate::windowShortcut();
+
 PanelPrivate::PanelPrivate(Panel *q)
     : ContainmentPrivate(q)
 {
@@ -54,11 +56,17 @@ void PanelPrivate::setRootObject(QObject *item)
     if (window) {
         Q_Q(Panel);
         QObject::connect(window, &QQuickWindow::closing, q, &Panel::aboutToClose);
+
+        // 事件过滤设置
+        window->installEventFilter(q);
     }
 
     ContainmentPrivate::setRootObject(item);
 }
 
+/*!
+ * \brief 从配置中恢复窗口的大小和状态信息
+ */
 void PanelPrivate::loadWindowState()
 {
     const QVariantMap &state = Application::appObtuselySetting()->value(kWindowManager, kWindowState).toMap();
@@ -79,6 +87,9 @@ void PanelPrivate::loadWindowState()
     }
 }
 
+/*!
+ * \brief 保存当前窗口的大小和状态信息到配置文件
+ */
 void PanelPrivate::saveWindowState() const
 {
     NetWmStates states { 0 };
@@ -121,6 +132,9 @@ void PanelPrivate::loadSidebarState()
     Q_EMIT q->sidebarStateChanged(leftWidth, manualHideSidebar, autoHideSidebar);
 }
 
+/*!
+ * \brief 退出时会保存当前侧边栏状态
+ */
 void PanelPrivate::saveSidebarState() const
 {
     QVariantMap state;
@@ -128,6 +142,54 @@ void PanelPrivate::saveSidebarState() const
     state[kManualHide] = manualHideSidebar;
     state[kAutoHide] = autoHideSidebar;
     Application::appObtuselySetting()->setValue(kWindowManager, kSplitterState, state);
+}
+
+/*!
+ * \brief 处理快捷键事件 \a keyEvent
+ * \return 是否有响应此事件，不继续向下传递
+ */
+bool PanelPrivate::handleKeyPressed(QKeyEvent *keyEvent)
+{
+    if (!keyEvent)
+        return false;
+
+    const int type = shortcutPtr->detectShortcut(keyEvent);
+    if (ShortcutMap::kType_Unknown == type)
+        return false;
+
+    Q_Q(Panel);
+    const QKeyCombination combin = keyEvent->keyCombination();
+    Q_EMIT q->shortcutTriggered(static_cast<QuickUtils::ShortcutType>(type), combin);
+
+    return true;
+}
+
+/*!
+ * \return 创建当前窗口使用的默认快捷键映射
+ */
+QSharedPointer<ShortcutMap> PanelPrivate::windowShortcut()
+{
+    const QList<ShortcutMap::KeyBinding> defaultWindowShortcut {
+        { QuickUtils::Refresh, Qt::Key_F5 },
+        { QuickUtils::ActivateNextTab, Qt::CTRL | Qt::Key_Tab },
+        { QuickUtils::ActivatePreviousTab, Qt::CTRL | Qt::SHIFT | Qt::Key_Backtab },
+        { QuickUtils::SearchCtrlF, Qt::CTRL | Qt::Key_F },
+        { QuickUtils::SearchCtrlL, Qt::CTRL | Qt::Key_L },
+        { QuickUtils::Back, Qt::CTRL | Qt::Key_Left },
+        { QuickUtils::BackAlias, Qt::ALT | Qt::Key_Left },
+        { QuickUtils::Forward, Qt::CTRL | Qt::Key_Right },
+        { QuickUtils::ForwardAlias, Qt::ALT | Qt::Key_Right },
+        { QuickUtils::CloseCurrentTab, Qt::CTRL | Qt::Key_W },
+        { QuickUtils::CreateTab, Qt::CTRL | Qt::Key_T },
+        { QuickUtils::CreateWindow, Qt::CTRL | Qt::Key_N },
+        { QuickUtils::TriggerActionByIndex, QKeyCombination::fromCombined(Qt::CTRL | ShortcutMap::kKey_NumRange) },
+        { QuickUtils::ActivateTabByIndex, QKeyCombination::fromCombined(Qt::ALT | ShortcutMap::kKey_NumRange) },
+        { QuickUtils::ShowHotkeyHelp, Qt::CTRL | Qt::SHIFT | Qt::Key_Question }
+    };
+
+    ShortcutMapPtr ptr = ShortcutMapPtr::create();
+    ptr->addShortcutList(defaultWindowShortcut);
+    return ptr;
 }
 
 /*!
@@ -149,17 +211,26 @@ QQuickWindow *Panel::window() const
     return d_func()->window;
 }
 
+/*!
+ * \return 若 Window QML组件已创建，返回对应的 winId ，否则返回 0
+ */
 quint64 Panel::windId() const
 {
     Q_D(const Panel);
     return d->window ? d->window->winId() : 0;
 }
 
+/*!
+ * \return 返回当前侧边栏的展开状态
+ */
 bool Panel::showSidebar() const
 {
     return d_func()->showSidebar;
 }
 
+/*!
+ * \brief 更新侧边栏展开状态为 \a b ，将抛出变更信号 showSidebarChanged()
+ */
 void Panel::setShowSidebar(bool b)
 {
     Q_D(Panel);
@@ -181,38 +252,92 @@ void Panel::setSidebarState(int width, bool manualHide, bool autoHide)
     d->autoHideSidebar = autoHide;
 }
 
-void Panel::installTitleBar(Applet *titlebar)
+/*!
+ * \brief 截取部分事件处理，当前用于快捷键处理和双击切换窗口状态
+ * \return 是否过滤当前事件
+ */
+bool Panel::eventFilter(QObject *object, QEvent *event)
 {
+    Q_D(Panel);
+    if (d->window == object) {
+        switch (event->type()) {
+        case QEvent::KeyPress:
+            return d->handleKeyPressed(dynamic_cast<QKeyEvent *>(event));
+        default:
+            break;
+        }
+    }
+    return false;
 }
 
-void Panel::installSideBar(Applet *sidebar)
+/*!
+ * \brief 将标题栏 \a titlebar 注册到当前窗口，通过 titleBar() 取得
+ */
+void Panel::installTitleBar(AppletItem *titlebar)
 {
+    Q_ASSERT(titlebar);
+    d_func()->titlebar = titlebar;
+    Q_EMIT titleBarInstallFinished();
 }
 
-void Panel::installWorkSpace(Applet *workspace)
+/*!
+ * \brief 将侧边栏 \a sidebar 注册到当前窗口，通过 sideBar() 取得
+ */
+void Panel::installSideBar(AppletItem *sidebar)
 {
+    Q_ASSERT(sidebar);
+    d_func()->sidebar = sidebar;
+    Q_EMIT sideBarInstallFinished();
 }
 
-void Panel::installDetailView(Applet *detailview)
+/*!
+ * \brief 将工作区 \a workspace 注册到当前窗口，通过 workSpace() 取得
+ */
+void Panel::installWorkSpace(AppletItem *workspace)
 {
+    Q_ASSERT(workspace);
+    d_func()->workspace = workspace;
+    Q_EMIT workspaceInstallFinished();
 }
 
-Applet *Panel::titleBar() const
+/*!
+ * \brief 将详细信息 \a detailview 注册到当前窗口，通过 detailView() 取得
+ */
+void Panel::installDetailView(AppletItem *detailview)
+{
+    Q_ASSERT(detailview);
+    d_func()->detailview = detailview;
+    Q_EMIT detailViewInstallFinished();
+}
+
+/*!
+ * \return 返回注册的侧边栏，未注册时为 nullptr
+ */
+AppletItem *Panel::titleBar() const
 {
     return d_func()->titlebar;
 }
 
-Applet *Panel::sideBar() const
+/*!
+ * \return 返回注册的标题栏，未注册时为 nullptr
+ */
+AppletItem *Panel::sideBar() const
 {
     return d_func()->sidebar;
 }
 
-Applet *Panel::workSpace() const
+/*!
+ * \return 返回注册的工作区，未注册时为 nullptr
+ */
+AppletItem *Panel::workSpace() const
 {
     return d_func()->workspace;
 }
 
-Applet *Panel::detailView() const
+/*!
+ * \return 返回注册的详细信息，未注册时为 nullptr
+ */
+AppletItem *Panel::detailView() const
 {
     return d_func()->detailview;
 }

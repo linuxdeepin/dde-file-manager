@@ -29,6 +29,30 @@ public:
     };
     Q_ENUM(WidgetType)
 
+    /*!
+     * \brief 快捷键类型映射
+     *  注释为默认的快捷键组合
+     */
+    enum ShortcutType {
+        UnknownShortcut,
+        Refresh,   // F5
+        ActivateNextTab,   // ctrl + Tab
+        ActivatePreviousTab,   // ctrl + {shift + } BackTab
+        SearchCtrlF,   // ctrl + F
+        SearchCtrlL,   // ctrl + L
+        Back,   // ctrl  + Left
+        BackAlias,   // alt + Left
+        Forward,   // ctrl  + Right
+        ForwardAlias,   // alt + Right
+        CloseCurrentTab,   // ctrl + W
+        CreateTab,   // ctrl + T
+        CreateWindow,   // ctrl + N
+        TriggerActionByIndex,   // ctrl + [1, 8]
+        ActivateTabByIndex,   // alt + [1, 8]
+        ShowHotkeyHelp,   // ctrl + shift + ?
+    };
+    Q_ENUM(ShortcutType)
+
     explicit QuickUtils(QObject *parent = nullptr);
 };
 

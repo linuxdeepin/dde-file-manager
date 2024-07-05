@@ -32,8 +32,8 @@ public:
 
 private:
     QScopedPointer<AppletItemPrivate> dptr;
-    Q_DECLARE_PRIVATE_D(dptr, AppletItem);
-    Q_DISABLE_COPY(AppletItem);
+    Q_DECLARE_PRIVATE_D(dptr, AppletItem)
+    Q_DISABLE_COPY(AppletItem)
 };
 
 DFMGUI_END_NAMESPACE

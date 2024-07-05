@@ -40,8 +40,8 @@ public:
 
 private:
     QScopedPointer<SharedQmlEnginePrivate> dptr;
-    Q_DECLARE_PRIVATE_D(dptr, SharedQmlEngine);
-    Q_DISABLE_COPY(SharedQmlEngine);
+    Q_DECLARE_PRIVATE_D(dptr, SharedQmlEngine)
+    Q_DISABLE_COPY(SharedQmlEngine)
 };
 
 DFMGUI_END_NAMESPACE

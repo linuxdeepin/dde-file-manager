@@ -135,11 +135,6 @@ ContainmentItem {
 
                         DTK.IconButton {
                             icon.name: "button_add"
-
-                            onClicked: {
-                                console.warn("--- test", Containment.applets);
-                                Applet.currentUrl = "file:///home/uos/Videos/dde-introduction.mp4";
-                            }
                         }
                     }
                 }
