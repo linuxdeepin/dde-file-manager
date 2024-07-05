@@ -32,7 +32,7 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
       diskPluginItem(new DiskPluginItem)
 {
     loadTranslator();
-    diskPluginItem->setVisible(true);
+    diskPluginItem->setVisible(false);
     tipsLabel->setObjectName("diskmount");
     tipsLabel->setVisible(false);
     tipsLabel->setText(tr("Disk"));
