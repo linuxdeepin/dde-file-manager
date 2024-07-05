@@ -1186,7 +1186,6 @@ CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *data
 
     d->initUI();
     d->initConnect();
-
     setObjectName("dd_collection_view");
 }
 

@@ -25,7 +25,7 @@
 			"visibility": "public"
 		}, 
 		"hideAllKeySeq" : {
-			"value": "Meta+O",
+                        "value": "Alt+O",
 			"serial": 0,
 			"flags": [],
 			"name": "Hide All KeySeq",
