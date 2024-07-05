@@ -653,7 +653,7 @@ bool FileView::selectFiles(const QList<QUrl> &files) const
         return false;
 
     // do not check parent if root is virtual path.
-    if (rootUrl().scheme() == files.first().scheme()) {
+    if (rootUrl().scheme() == Global::Scheme::kFile) {
         if (UniversalUtils::urlEquals(files.first().adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash), rootUrl()))
             return d->selectHelper->select(files);
         return false;
