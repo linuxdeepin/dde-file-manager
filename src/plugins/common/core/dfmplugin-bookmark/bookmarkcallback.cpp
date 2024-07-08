@@ -13,6 +13,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-framework/event/event.h>
+#include <dfm-base/utils/networkutils.h>
 
 #include <dfm-io/dfile.h>
 
@@ -89,8 +90,13 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         return;
     }
 
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(url)) {
+        DialogManager::instance()->showUnableToVistDir(url.path());
+        return;
+    }
+
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    if (info && dfmio::DFile(url).exists() && info->isAttributes(OptInfoType::kIsDir)) {
+    if (dfmio::DFile(url).exists()) {
         BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         return;
     } else if (DeviceUtils::isSamba(url) || DeviceUtils::isFtp(url)) {
