@@ -28,6 +28,8 @@ public:
     bool parseIp(const QString &mpt, QString &ip, QString &port);
     bool parseIp(const QString &mpt, QString &ip, QStringList &ports);
     bool checkFtpOrSmbBusy(const QUrl &url);
+    // if network mount，get network mount
+    static QMap<QString, QString> cifsMountHostInfo();
 
 protected:
     explicit NetworkUtils(QObject *parent = nullptr);

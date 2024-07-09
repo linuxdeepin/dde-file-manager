@@ -50,7 +50,7 @@ QVariantMap CommonMountHelper::unmount(const QString &path, const QVariantMap &o
             continue;
 
         const QString &descPath = mnt_fs_get_target(fs);
-        const QString &stdPath = descPath.startsWith("/") ? descPath : descPath + "/";
+        const QString &stdPath = descPath.endsWith("/") ? descPath : descPath + "/";
         if (stdPath.startsWith(path))
             unmountTargets << descPath;
     }

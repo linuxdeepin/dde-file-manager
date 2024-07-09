@@ -11,6 +11,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <libmount.h>
 
 using namespace dfmbase;
 
@@ -82,12 +84,24 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/|^/root/\\.gvfs/)" };
     static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
 
-    if (s.contains(gvfsPref))
+    if (s.contains(gvfsPref)) {
         s.remove(gvfsPref);
-    else if (s.contains(cifsMptPref))
+    } else if (s.contains(cifsMptPref)) {
         s.remove(cifsMptPref);
-    else
+    } else {
+        auto cifsHost = cifsMountHostInfo();
+        for (const auto &mountPoint : cifsHost.keys()) {
+            if (mpt.startsWith(mountPoint)) {
+                auto hostAndPort = cifsHost.value(mountPoint).split(":");
+                if (hostAndPort.isEmpty())
+                    continue;
+                ip = hostAndPort[0];
+                port = hostAndPort.count() > 1 ? hostAndPort[1] : kSmbPort;
+                return true;
+            }
+        }
         return false;
+    }
 
     // s = ftp:host=1.2.3.4  smb-share:server=1.2.3.4,share=draw
     bool isFtp = s.startsWith("ftp");
@@ -148,6 +162,55 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
         qCInfo(logDFMBase) << "can not connect url = " << url << " host =  " << host << " port = " << ports;
 
     return busy;
+}
+
+QMap<QString, QString> NetworkUtils::cifsMountHostInfo()
+{
+    static QMutex mutex;
+    static QMap<QString, QString> table;
+    struct stat statInfo;
+    int result = stat("/proc/mounts", &statInfo);
+
+    QMutexLocker locker(&mutex);
+    if (0 == result) {
+        static quint32 lastModify = 0;
+        if (lastModify != statInfo.st_mtime) {
+            lastModify = static_cast<quint32>(statInfo.st_mtime);
+            table.clear();
+        } else {
+            return table;
+        }
+
+        libmnt_table *tab { mnt_new_table() };
+        libmnt_iter *iter { mnt_new_iter(MNT_ITER_BACKWARD) };
+
+        int ret = mnt_table_parse_mtab(tab, nullptr);
+        if (ret != 0) {
+            mnt_free_table(tab);
+            mnt_free_iter(iter);
+            qWarning() << "device: cannot parse mtab" << ret;
+            return table;
+        }
+
+        libmnt_fs *fs = nullptr;
+        while (mnt_table_next_fs(tab, iter, &fs) == 0) {
+            if (!fs)
+                continue;
+            // net work mount must start with //
+            QString srcHostAndPort = mnt_fs_get_source(fs);
+            if (!srcHostAndPort.contains(QRegExp("^//")))
+                continue;
+
+            const QString &mountPath = mnt_fs_get_target(fs);
+            srcHostAndPort = srcHostAndPort.replace(QRegExp("^//"), "");
+            srcHostAndPort = srcHostAndPort.left(srcHostAndPort.indexOf("/"));
+            table.insert(mountPath, srcHostAndPort);
+        }
+
+        mnt_free_table(tab);
+        mnt_free_iter(iter);
+    }
+    return table;
 }
 
 NetworkUtils::NetworkUtils(QObject *parent)
