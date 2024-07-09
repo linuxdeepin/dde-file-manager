@@ -590,7 +590,7 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
         if (info) {
             count = info->countChildFile();
         }
-        if (DialogManagerInstance->showClearTrashDialog(count) != QDialog::Accepted) return nullptr;
+        if (DialogManagerInstance->showClearTrashDialog(static_cast<quint64>(count)) != QDialog::Accepted) return nullptr;
     }
 
     QList<QUrl> urls = std::move(sources);
@@ -607,46 +607,47 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl &ur
                                           const QVariant &custom,
                                           AbstractJobHandler::OperatorCallback callback, const bool useUrlPath)
 {
-    QString newPath = useUrlPath ? url.path() : newDocmentName(url, QString(), CreateFileType::kCreateFileTypeFolder);
-    if (newPath.isEmpty())
-        return false;
-
-    QUrl targetUrl;
-    targetUrl.setScheme(url.scheme());
-    targetUrl.setPath(newPath);
-
-    bool ok = false;
     QString error;
-    if (!dfmbase::FileUtils::isLocalFile(url)) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MakeDir", windowId, url, targetUrl, custom, callback)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                         windowId, QList<QUrl>() << url, true, error);
-            return true;
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MakeDir", windowId, url, custom, callback)) {
+        return true;
+    }
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url, custom, callback]() {
+        auto result = watcher->result();
+        QUrl targetUrl = watcher->property("targetUrl").toUrl();
+        QString error = watcher->property("error").toString();
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+                                     windowId, QList<QUrl>() << url, result, error);
+        saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles, { targetUrl }, {}, GlobalEventType::kMkdir);
+
+        if (callback) {
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+            args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(result));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
+            callback(args);
         }
-    }
+    });
+    watcher->setFuture(QtConcurrent::run([this, url, custom, callback, watcher, useUrlPath]() {
+        QString newPath = useUrlPath ? url.path() : newDocmentName(url, QString(), CreateFileType::kCreateFileTypeFolder);
+        if (newPath.isEmpty()) {
+            watcher->setProperty("error", "make dir the new path is empty!");
+            return false;
+        }
 
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.mkdir(targetUrl);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog(tr("Failed to create the directory"), error);
-    }
-
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                 windowId, QList<QUrl>() << url, ok, error);
-    saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles, { targetUrl }, {}, GlobalEventType::kMkdir);
-
-    if (callback) {
-        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
-        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-        callback(args);
-    }
-
-    return ok;
+        QUrl targetUrl;
+        targetUrl.setScheme(url.scheme());
+        targetUrl.setPath(newPath);
+        watcher->setProperty("targetUrl", targetUrl);
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        auto result = fileHandler.mkdir(targetUrl);
+        if (!result)
+            watcher->setProperty("error", fileHandler.errorString());
+        return result;
+    }));
+    return true;
 }
 
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl &url, const CreateFileType fileType, const QString &suffix,
@@ -654,19 +655,14 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
 {
     QString errorStr;
     if (tempUrl.isValid()) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchFile", windowId, url, tempUrl, suffix, true, custom, callbackImmediately, &errorStr)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                         windowId, QList<QUrl>() << url, tempUrl.isValid(), QString());
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", windowId, url, tempUrl, suffix, true, custom, callbackImmediately, &errorStr)) {
             return url.path();
         }
     } else {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchFile", windowId, url, fileType, suffix, custom, callbackImmediately, &errorStr)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                         windowId, QList<QUrl>() << url, tempUrl.isValid(), QString());
             return url.path();
         }
     }
-
 
     QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
     QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url,

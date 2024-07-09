@@ -40,7 +40,7 @@ public:
     bool renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl,
                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     bool makeDir(const quint64 windowId,
-                 const QUrl url, const QUrl &targetUrl,
+                 const QUrl url,
                  const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
     bool touchFile(const quint64 windowId,
                    const QUrl url,

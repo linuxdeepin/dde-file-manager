@@ -139,7 +139,6 @@ bool VaultFileHelper::renameFile(const quint64 windowId, const QUrl oldUrl, cons
 }
 
 bool VaultFileHelper::makeDir(const quint64 windowId, const QUrl url,
-                              const QUrl &targetUrl,
                               const QVariant custom,
                               AbstractJobHandler::OperatorCallback callback)
 {
@@ -147,18 +146,7 @@ bool VaultFileHelper::makeDir(const quint64 windowId, const QUrl url,
         return false;
 
     const QUrl dirUrl = transUrlsToLocal({ url }).first();
-    if (dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdir, windowId, dirUrl)) {
-        if (callback) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
-            args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(true));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callback(args);
-        }
-    }
-
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdir, windowId, dirUrl, custom, callback);
     return true;
 }
 

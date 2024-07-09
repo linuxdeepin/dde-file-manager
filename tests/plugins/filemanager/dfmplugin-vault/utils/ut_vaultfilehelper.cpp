@@ -222,7 +222,6 @@ TEST(UT_VaultFileHelper, renameFile_two)
 TEST(UT_VaultFileHelper, makeDir_one)
 {
     bool isOk = VaultFileHelper::instance()->makeDir(0, QUrl("file:///UT_TEST"),
-                                         QUrl("dfmvault:///UT_TEST1"),
                                          QVariant(1),
                                          nullptr);
 
@@ -244,7 +243,6 @@ TEST(UT_VaultFileHelper, makeDir_two)
     });
 
     bool isOk = VaultFileHelper::instance()->makeDir(0, QUrl("dfmvault:///UT_TEST"),
-                                         QUrl("dfmvault:///UT_TEST1"),
                                          QVariant(1),
                                          UTVaultFileHelperCallBackOne);
 
