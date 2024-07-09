@@ -1214,37 +1214,47 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
                                                           const bool force,
                                                           const bool silence)
 {
-    bool ok = false;
     QString error;
-    if (!dfmbase::FileUtils::isLocalFile(url)) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_LinkFile", windowId, url, link, force, silence)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                         windowId, QList<QUrl>() << url << link, true, error);
-            return true;
-        }
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_LinkFile", windowId, url, link, force, silence)) {
+        return true;
     }
 
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    // check link
-    if (force) {
-        FileInfoPointer toInfo = InfoFactory::create<FileInfo>(link);
-        if (toInfo && toInfo->exists()) {
-            DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
-            fileHandlerDelete.deleteFile(link);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url,
+                     link]() {
+        auto result = watcher->result();
+        QString error = watcher->property("error").toString();
+        QUrl urlValid = watcher->property("urlValid").toUrl();
+        watcher->deleteLater();
+        if (!result) {
+            dialogManager->showErrorDialog(tr("link file error"), error);
         }
-    }
-    QUrl urlValid = link;
-    if (silence) {
-        urlValid = checkTargetUrl(link);
-    }
-    ok = fileHandler.createSystemLink(url, urlValid);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog(tr("link file error"), error);
-    }
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                 windowId, QList<QUrl>() << url << urlValid, ok, error);
-    return ok;
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
+                                     windowId, QList<QUrl>() << url << urlValid, result, error);
+    });
+    watcher->setFuture(QtConcurrent::run([this, watcher, url, link, force, silence](){
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        // check link
+        if (force) {
+            FileInfoPointer toInfo = InfoFactory::create<FileInfo>(link);
+            if (toInfo && toInfo->exists()) {
+                DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
+                fileHandlerDelete.deleteFile(link);
+            }
+        }
+        QUrl urlValid = link;
+        if (silence) {
+            urlValid = checkTargetUrl(link);
+        }
+        watcher->setProperty("urlValid", urlValid);
+        auto result = fileHandler.createSystemLink(url, urlValid);
+        if (!result) {
+            watcher->setProperty("error", fileHandler.errorString());
+        }
+        return result;
+    }));
+
+    return true;
 }
 
 void FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
