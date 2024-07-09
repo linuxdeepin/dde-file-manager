@@ -255,7 +255,6 @@ TEST(UT_VaultFileHelper, touchFile_one)
 {
     QString error;
     bool isOk = VaultFileHelper::instance()->touchFile(0, QUrl("file:///UT_TEST"),
-                                                       QUrl("file:///UT_TEST/UT_TEST1"),
                                                        CreateFileType::kCreateFileTypeFolder, "",
                                                        QVariant(""), UTVaultFileHelperCallBackOne,
                                                        &error);
@@ -273,7 +272,6 @@ TEST(UT_VaultFileHelper, touchFile_two)
 
     QString error;
     bool isOk = VaultFileHelper::instance()->touchFile(0, QUrl("dfmvault:///UT_TEST"),
-                                                       QUrl("dfmvault:///UT_TEST/UT_TEST1"),
                                                        CreateFileType::kCreateFileTypeFolder, "",
                                                        QVariant(""), UTVaultFileHelperCallBackOne,
                                                        &error);
@@ -285,8 +283,7 @@ TEST(UT_VaultFileHelper, touchCustomFile_one)
 {
     QString error;
     bool isOk = VaultFileHelper::instance()->touchCustomFile(0, QUrl("file:///UT_TEST"),
-                                                             QUrl("file:///UT_TEST/UT_TEST1"),
-                                                             QUrl("file:///UT_TEST/UT_TEMP"), "",
+                                                             QUrl("file:///UT_TEST/UT_TEMP"), "", true,
                                                              QVariant(""), UTVaultFileHelperCallBackOne,
                                                              &error);
 
@@ -303,8 +300,7 @@ TEST(UT_VaultFileHelper, touchCustomFile_two)
 
     QString error;
     bool isOk = VaultFileHelper::instance()->touchCustomFile(0, QUrl("dfmvault:///UT_TEST"),
-                                                             QUrl("dfmvault:///UT_TEST/UT_TEST1"),
-                                                             QUrl("file:///UT_TEST/UT_TEMP"), "",
+                                                             QUrl("file:///UT_TEST/UT_TEMP"), "", true,
                                                              QVariant(""), UTVaultFileHelperCallBackOne,
                                                              &error);
 

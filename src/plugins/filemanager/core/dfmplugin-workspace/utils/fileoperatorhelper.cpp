@@ -64,6 +64,7 @@ void FileOperatorHelper::touchFiles(const FileView *view, const QUrl &source)
                                  url,
                                  source,
                                  QString(),
+                                 true,
                                  GlobalEventType::kTouchFile,
                                  callBack);
 }

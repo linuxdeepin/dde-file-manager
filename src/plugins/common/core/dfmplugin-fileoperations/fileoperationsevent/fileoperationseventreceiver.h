@@ -136,7 +136,8 @@ public slots:
     QString handleOperationTouchFile(const quint64 windowId,
                                      const QUrl url,
                                      const QUrl tempUrl,
-                                     const QString suffix);
+                                     const QString suffix,
+                                     const bool isLoadTmp);
     void handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url,
                                   const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
@@ -147,6 +148,7 @@ public slots:
                                   const QUrl url,
                                   const QUrl tempUrl,
                                   const QString suffix,
+                                  const bool isLoadTmp,
                                   const QVariant custom,
                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
 
@@ -263,12 +265,10 @@ private:
     QString doTouchFilePremature(const quint64 windowId, const QUrl &url,
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType, const QString &suffix,
                                  const QVariant &custom,
-                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
-    QString doTouchFilePremature(const quint64 windowId, const QUrl &url,
-                                 const QUrl &tempUrl, const QString &suffix,
-                                 const QVariant &custom,
-                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
-    bool doTouchFilePractically(const quint64 windowId, const QUrl &url, const QUrl &tempUrl = QUrl());
+                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately,
+                                 const QUrl &tempUrl = QUrl());
+
+    void doTouchFilePractically(const quint64 windowId, const QUrl &url, const QUrl &tempUrl = QUrl());
     void saveFileOperation(const QList<QUrl> &sourcesUrls, const QList<QUrl> &targetUrls,
                            DFMBASE_NAMESPACE::GlobalEventType type,
                            const QList<QUrl> &redoSourcesUrls, const QList<QUrl> &redoTargetUrls,

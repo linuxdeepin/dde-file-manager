@@ -108,7 +108,8 @@ bool TemplateMenuScene::triggered(QAction *action)
                                      d->windowId,
                                      d->currentDir,
                                      QUrl::fromLocalFile(action->data().toString()),
-                                     "");
+                                     QString(),
+                                     true);
         return true;
     }
 
