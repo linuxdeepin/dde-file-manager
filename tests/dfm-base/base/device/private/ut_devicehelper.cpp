@@ -289,7 +289,9 @@ TEST_F(UT_DeviceHelper, CheckNetworkConnection)
     EXPECT_TRUE(DeviceHelper::checkNetworkConnection(""));
 
     bool checkNetworkConnection_invoked = false;
-    stub.set_lamda(&NetworkUtils::checkNetConnection, [&] { __DBG_STUB_INVOKE__ checkNetworkConnection_invoked = true; return true; });
+    typedef bool (NetworkUtils::*CheckFunc)(const QString &, const QString &, int );
+        auto check = static_cast<CheckFunc>(&NetworkUtils::checkNetConnection);
+        stub.set_lamda(check, [&]() { __DBG_STUB_INVOKE__ checkNetworkConnection_invoked = true; return true; });
     EXPECT_TRUE(DeviceHelper::checkNetworkConnection("smb://1.2.3.4/hello"));
     EXPECT_TRUE(DeviceHelper::checkNetworkConnection("ftp://1.2.3.4"));
     EXPECT_TRUE(DeviceHelper::checkNetworkConnection("sftp://1.2.3.4"));
