@@ -22,9 +22,11 @@ public:
     static NetworkUtils *instance();
 
     bool checkNetConnection(const QString &host, const QString &port, int msecs = 3000);
+    bool checkNetConnection(const QString &host, QStringList ports, int msecs = 3000);
     void doAfterCheckNet(const QString &host, const QStringList &ports,
                          std::function<void(bool)> callback = nullptr, int msecs = 3000);
     bool parseIp(const QString &mpt, QString &ip, QString &port);
+    bool parseIp(const QString &mpt, QString &ip, QStringList &ports);
     bool checkFtpOrSmbBusy(const QUrl &url);
 
 protected:

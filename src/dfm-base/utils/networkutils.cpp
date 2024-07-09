@@ -14,6 +14,11 @@
 
 using namespace dfmbase;
 
+static constexpr char kSmbPort[] { "445" };
+static constexpr char kSmbPortOther[] { "139" };
+static constexpr char kFtpPort[] { "21" };
+static constexpr char kSftpPort[] { "22" };
+
 NetworkUtils *NetworkUtils::instance()
 {
     static NetworkUtils s;
@@ -26,12 +31,31 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, 
         return true;
 
     QTcpSocket conn;
-    conn.connectToHost(host, port.toInt());
+    conn.connectToHost(host, port.toUShort());
     bool connected = conn.waitForConnected(msecs);
     qCInfo(logDFMBase) << "connect to host" << host
                        << "at port" << port
                        << "result:" << connected << conn.error();
     return connected;
+}
+
+bool NetworkUtils::checkNetConnection(const QString &host, QStringList ports, int msecs)
+{
+    static QString lastPort;
+    if (!lastPort.isEmpty() && ports.contains(lastPort)) {
+        ports.removeOne(lastPort);
+        if (checkNetConnection(host, lastPort, msecs))
+            return true;
+    }
+
+    for (auto const &port : ports) {
+        if (checkNetConnection(host, port, msecs)) {
+            lastPort = port;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports, std::function<void(bool)> callback, int msecs)
@@ -54,10 +78,6 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports
 
 bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
 {
-    static constexpr char kSmbPort[] { "445" };
-    static constexpr char kFtpPort[] { "21" };
-    static constexpr char kSftpPort[] { "22" };
-
     QString s(mpt);
     static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/|^/root/\\.gvfs/)" };
     static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
@@ -104,15 +124,28 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     return false;
 }
 
+bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QStringList &ports)
+{
+    QString port;
+    if (parseIp(mpt, ip, port)) {
+        ports.append(port);
+        if (port == kSmbPort)
+            ports.append(kSmbPortOther);
+        return true;
+    }
+    return false;
+}
+
 bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
 {
-    QString host, port;
-    if (!parseIp(url.path(), host, port))
+    QString host;
+        QStringList ports;
+    if (!parseIp(url.path(), host, ports))
         return false;
 
-    auto busy = !checkNetConnection(host, port);
+    auto busy = !checkNetConnection(host, ports);
     if (busy)
-        qCInfo(logDFMBase) << "can not connect url = " << url << " host =  " << host << " port = " << port;
+        qCInfo(logDFMBase) << "can not connect url = " << url << " host =  " << host << " port = " << ports;
 
     return busy;
 }
