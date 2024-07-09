@@ -618,7 +618,8 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl &ur
         QString error = watcher->property("error").toString();
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
                                      windowId, QList<QUrl>() << url, result, error);
-        saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles, { targetUrl }, {}, GlobalEventType::kMkdir);
+        if (result)
+            saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles, { targetUrl }, {}, GlobalEventType::kMkdir);
 
         if (callback) {
             AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
@@ -629,6 +630,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl &ur
             args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callback(args);
         }
+        watcher->deleteLater();
     });
     watcher->setFuture(QtConcurrent::run([this, url, custom, callback, watcher, useUrlPath]() {
         QString newPath = useUrlPath ? url.path() : newDocmentName(url, QString(), CreateFileType::kCreateFileTypeFolder);
@@ -671,7 +673,6 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
         QString error = watcher->property("error").toString();
         QUrl templateUrl = watcher->property("templateUrl").toUrl();
         QUrl targetUrl = watcher->property("targetUrl").toUrl();
-        watcher->deleteLater();
         if (!result) {
             dialogManager->showErrorDialog(tr("Failed to create the file"), error);
         }
@@ -691,6 +692,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
             args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callbackImmediately(args);
         }
+        watcher->deleteLater();
     });
     watcher->setFuture(QtConcurrent::run([this, url, fileType, suffix, custom, callbackImmediately, watcher, tempUrl]() {
         QString newPath;
@@ -1157,6 +1159,7 @@ void FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId,
         } else {
             dialogManager->showErrorDialog(tr("Failed to create the file"), error);
         }
+        watcher->deleteLater();
     });
     watcher->setFuture(QtConcurrent::run([url, watcher, tempUrl]() {
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
@@ -1164,7 +1167,7 @@ void FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId,
         if (!templateUrl.isValid())
             watcher->setProperty("error", fileHandler.errorString());
 
-        return tempUrl.isValid();
+        return templateUrl.isValid();
     }));
 }
 
@@ -1225,12 +1228,13 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
         auto result = watcher->result();
         QString error = watcher->property("error").toString();
         QUrl urlValid = watcher->property("urlValid").toUrl();
-        watcher->deleteLater();
+
         if (!result) {
             dialogManager->showErrorDialog(tr("link file error"), error);
         }
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
                                      windowId, QList<QUrl>() << url << urlValid, result, error);
+        watcher->deleteLater();
     });
     watcher->setFuture(QtConcurrent::run([this, watcher, url, link, force, silence](){
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
@@ -1282,32 +1286,41 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
                                                                const QUrl url,
                                                                const QFileDevice::Permissions permissions)
 {
+    // hook events
     QString error;
-    bool ok = false;
-    if (!dfmbase::FileUtils::isLocalFile(url)) {
-        // hook events
-        bool hookOk = false;
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &hookOk, &error)) {
-            if (!hookOk)
-                dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, hookOk, error);
-            return hookOk;
+    bool hookOk = false;
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &hookOk, &error)) {
+        if (!hookOk)
+            dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, hookOk, error);
+        return hookOk;
+    }
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url]() {
+        auto result = watcher->result();
+        QString error = watcher->property("error").toString();
+        if (!result)
+            dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
+        // TODO:: set file permissions finished need to send set file permissions finished event
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
+                                     windowId, QList<QUrl>() << url, result, error);
+        watcher->deleteLater();
+    });
+
+    watcher->setFuture(QtConcurrent::run([watcher, url, permissions](){
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        bool result = fileHandler.setPermissions(url, permissions);
+        if (!result) {
+            watcher->setProperty("error", fileHandler.errorString());
         }
-    }
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.setPermissions(url, permissions);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
-    }
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    info->refresh();
-    fmInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
-           static_cast<int>(permissions));
-    // TODO:: set file permissions finished need to send set file permissions finished event
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
-                                 windowId, QList<QUrl>() << url, ok, error);
-    return ok;
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+        info->refresh();
+        fmInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
+               static_cast<int>(permissions));
+        return result;
+    }));
+
+    return true;
 }
 
 void FileOperationsEventReceiver::handleOperationSetPermission(const quint64 windowId,
