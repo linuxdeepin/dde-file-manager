@@ -51,6 +51,7 @@ Q_SIGNALS:
     // 第二个参数表示，当前是链接文件的原文件更新完成
     void fileRefreshFinished(const QUrl url, const QString &infoPtr, const bool isLinkOrg);
     void fileRefreshRequest(QSharedPointer<FileInfo> dfileInfo);
+    void smbSeverMayModifyPassword(const QUrl &url);
 private Q_SLOTS:
     void aboutToQuit();
     void handleFileRefresh(QSharedPointer<FileInfo> dfileInfo);

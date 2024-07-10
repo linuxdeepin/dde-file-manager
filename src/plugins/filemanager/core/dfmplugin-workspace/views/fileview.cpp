@@ -39,6 +39,8 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
@@ -1915,6 +1917,18 @@ void FileView::initializeConnect()
         },
                 Qt::DirectConnection);
     }
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::smbSeverMayModifyPassword, this, [this](const QUrl &url){
+        if (DeviceUtils::isSamba(rootUrl()) && url.path().startsWith(rootUrl().path())) {
+            fmInfo() << rootUrl() << url << "smb server may modify password";
+            if (d->isShowSmbMountError)
+                return ;
+            d->isShowSmbMountError = true;
+            DialogManager::instance()->showErrorDialog(tr("Mount error"),
+                                                       tr("Server login credentials are invalid. Please uninstall and remount"));
+            d->isShowSmbMountError = false;
+        }
+
+    });
 }
 
 void FileView::initializeScrollBarWatcher()
