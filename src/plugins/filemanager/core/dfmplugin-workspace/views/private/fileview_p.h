@@ -80,6 +80,7 @@ class FileViewPrivate
     QRect mouseMoveRect { QRect(-1, -1, 1, 1) };
 
     bool itemsExpandable { false };
+    std::atomic_bool isShowSmbMountError { false };
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
