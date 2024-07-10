@@ -1,3 +1,10 @@
+dde-file-manager (6.0.54) unstable; urgency=medium
+
+  * 6.0.54,to strengthen DBUS security
+  * 
+
+ -- lvwujun <lvwujun@uniontech.com>  Wed, 10 Jul 2024 11:14:50 +0800
+
 dde-file-manager (6.0.53) unstable; urgency=medium
 
   * 6.0.53,to support AM interface and video wallpaper
