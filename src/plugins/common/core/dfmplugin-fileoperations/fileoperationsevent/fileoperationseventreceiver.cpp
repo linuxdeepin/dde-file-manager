@@ -277,76 +277,118 @@ bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap
     return true;
 }
 
-bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QList<QUrl> &urls, const QPair<QString, QString> &pair,
-                                                const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> &pair2,
-                                                const RenameTypes type, QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
-                                                const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
+bool FileOperationsEventReceiver::doRenameFiles(QFutureWatcher<bool> *watcher,
+                                                const QList<QUrl> &urls,
+                                                const QPair<QString, QString> &pair,
+                                                const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair2,
+                                                const FileOperationsEventReceiver::RenameTypes type,
+                                                QMap<QUrl, QUrl> &successUrls, QString &errorMsg)
 {
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    bool ok = false, renameDesktop = true;
+    bool result = false, renameDesktop = true;
+    QMap<QUrl, QUrl> needDealUrls;
     switch (type) {
     case RenameTypes::kBatchRepalce: {
         auto tmpurls = urls;
-        QMap<QUrl, QUrl> needDealUrls;
         renameDesktop = doRenameDesktopFiles(tmpurls, pair, needDealUrls, successUrls);
         QMap<QUrl, QUrl> needDealUrls1 = FileUtils::fileBatchReplaceText(tmpurls, pair);
         for (auto it = needDealUrls1.begin(); it != needDealUrls1.end(); ++it) {
             needDealUrls.insert(it.key(), it.value());
         }
-        if (callback) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callback(args);
+        if (needDealUrls1.isEmpty() || !renameDesktop) {
+            result = renameDesktop;
+            break;
         }
-
-        if (needDealUrls1.isEmpty() || !renameDesktop)
-            return false;
-        ok = fileHandler.renameFilesBatch(needDealUrls1, successUrls);
+        result = fileHandler.renameFilesBatch(needDealUrls1, successUrls);
         break;
     }
     case RenameTypes::kBatchCustom: {
-        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
-        if (callback) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callback(args);
-        }
-        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
+        needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
+        result = fileHandler.renameFilesBatch(needDealUrls, successUrls);
         break;
     }
     case RenameTypes::kBatchAppend: {
-        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair2);
-        if (callback) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callback(args);
-        }
-        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
+        needDealUrls = FileUtils::fileBatchAddText(urls, pair2);
+        result = fileHandler.renameFilesBatch(needDealUrls, successUrls);
         break;
     }
     }
-    if (!ok) {
+    watcher->setProperty("needDealUrls", QVariant::fromValue(needDealUrls));
+    if (!result && renameDesktop) {
         errorMsg = fileHandler.errorString();
-        DialogManagerInstance->showErrorDialog(tr("Rename file error"), errorMsg);
+        watcher->setProperty("error", fileHandler.errorString());
     }
 
     for (const auto &scUrl : successUrls.keys()) {
         ClipBoard::instance()->replaceClipboardUrl(scUrl, successUrls.value(scUrl));
     }
 
-    return ok;
+    return result;
 }
 
-bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const dfmbase::AbstractJobHandler::JobFlags flags)
+void FileOperationsEventReceiver::doRenameFilesByThread(const quint64 windowId, const QList<QUrl> urls,
+                                                        const QPair<QString, QString> replacePair,
+                                                        const QPair<QString, AbstractJobHandler::FileNameAddFlag> AddPair,
+                                                        const RenameTypes type, const QVariant custom,
+                                                        AbstractJobHandler::OperatorCallback callback)
+{
+    if (callback) {
+        if (type == RenameTypes::kBatchAppend &&
+                dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText",
+                                     windowId, urls, AddPair, custom, callback))
+            return;
+        if (type != RenameTypes::kBatchAppend && dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles",
+                                                                      windowId, urls, replacePair, type == RenameTypes::kBatchRepalce,
+                                                                      custom, callback))
+            return;
+    } else {
+        if (type == RenameTypes::kBatchAppend &&
+                dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", windowId, urls, AddPair))
+            return;
+        if (type != RenameTypes::kBatchAppend && dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles",
+                                                                      windowId, urls, replacePair, type == RenameTypes::kBatchRepalce))
+            return;
+    }
+
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, urls,custom, callback]() {
+        auto futureResult = watcher->result();
+        QString error = watcher->property("error").toString();
+        QMap<QUrl, QUrl> successUrls = watcher->property("successUrls").value<QMap<QUrl, QUrl>>();
+        QMap<QUrl, QUrl> needDealUrls = watcher->property("needDealUrls").value<QMap<QUrl, QUrl>>();
+        if (!futureResult) {
+            DialogManagerInstance->showErrorDialog(tr("Rename file error"), error);
+        }
+        if (callback) {
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
+            callback(args);
+        }
+        // publish result
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                     windowId, successUrls, futureResult, error);
+        if (!successUrls.isEmpty())
+            saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
+                              successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
+        watcher->deleteLater();
+    });
+
+    watcher->setFuture(QtConcurrent::run([this, watcher, urls, replacePair, AddPair, type](){
+        bool result = false;
+        QMap<QUrl, QUrl> successUrls;
+        QString error;
+        result = doRenameFiles(watcher, urls, replacePair, AddPair, type, successUrls, error);
+        watcher->setProperty("successUrls", QVariant::fromValue(successUrls));
+        return result;
+    }));
+
+    return;
+}
+
+bool FileOperationsEventReceiver::doRenameDesktopFile(QFutureWatcher<bool> *watcher, const QUrl oldUrl, const QUrl newUrl, const AbstractJobHandler::JobFlags flags)
 {
     const QString &desktopPath = oldUrl.toLocalFile();
     Properties desktop(desktopPath, "Desktop Entry");
@@ -377,21 +419,14 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
 
     desktop.set(key, newFileInfo->displayOf(DisPlayInfoType::kFileDisplayName));
     desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
-    if (desktop.save(desktopPath, "Desktop Entry")) {
-        QMap<QUrl, QUrl> renamed { { oldUrl, newUrl } };
-        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                     windowId, renamed, true, "");
+    if (!desktop.save(desktopPath, "Desktop Entry"))
+        return false;
 
-        if (!flags.testFlag(AbstractJobHandler::JobFlag::kRedo)) {
-            const QString path = QFileInfo(desktopPath).absoluteDir().absoluteFilePath(oldName);
-            saveFileOperation({ oldUrl }, { QUrl::fromLocalFile(path) }, GlobalEventType::kRenameFile,
-                              { QUrl::fromLocalFile(path) }, { oldUrl },
-                              GlobalEventType::kRenameFile, flags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
-        }
-        return true;
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRedo)) {
+        const QString path = QFileInfo(desktopPath).absoluteDir().absoluteFilePath(oldName);
+        watcher->setProperty("targetUrl", QUrl::fromLocalFile(path));
     }
-
-    return false;
+    return true;
 }
 
 bool FileOperationsEventReceiver::doRenameDesktopFiles(QList<QUrl> &urls, const QPair<QString, QString> pair, QMap<QUrl, QUrl> &needDealUrls, QMap<QUrl, QUrl> &successUrls)
@@ -987,44 +1022,67 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
                                                             const AbstractJobHandler::JobFlag flags)
 {
     Q_UNUSED(windowId);
-    bool ok = false;
-    QString error;
 
-    bool isSymLink { DFMIO::DFileInfo(oldUrl).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool() };
-    if (FileUtils::isDesktopFile(oldUrl) && !isSymLink)
-        return doRenameDesktopFile(windowId, oldUrl, newUrl, flags);
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags))
+        return true;
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, oldUrl, newUrl, flags]() {
+        auto futureResult = watcher->result();
+        QString renameError = watcher->property("renameError").toString();
+        QString sameNameRrror = watcher->property("sameNameRrror").toString();
+        if (!futureResult) {
+            if (sameNameRrror.isEmpty()) {
+                dialogManager->showRenameBusyErrDialog();
+            } else {
+                dialogManager->showRenameNameSameErrorDialog(sameNameRrror);
+            }
+        } else {
+            ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
+            AbstractJobHandler::JobFlags tmFlags = flags;
+            QUrl targetUrl = watcher->property("targetUrl").toUrl();
+            if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo)) {
+                if (!targetUrl.isValid()) {
+                    saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile,
+                                      { oldUrl }, { newUrl }, GlobalEventType::kRenameFile,
+                                      tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
+                } else {
+                    saveFileOperation({ oldUrl }, { targetUrl }, GlobalEventType::kRenameFile,
+                                      { targetUrl }, { oldUrl },
+                                      GlobalEventType::kRenameFile, tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
+                }
+            }
+        }
+        // TODO:: file renameFile finished need to send file renameFile finished event
+        QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                     windowId, renamedFiles, futureResult, renameError);
+        watcher->deleteLater();
+    });
 
-    if (!dfmbase::FileUtils::isLocalFile(oldUrl)) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags))
-            return true;
-    }
+    watcher->setFuture(QtConcurrent::run([this, watcher, oldUrl, newUrl, flags](){
+        bool result = false;
+        QString error;
+        bool isSymLink { DFMIO::DFileInfo(oldUrl).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool() };
+        if (FileUtils::isDesktopFile(oldUrl) && !isSymLink)
+            return doRenameDesktopFile(watcher, oldUrl, newUrl, flags);
 
-    // async fileinfo need wait file quer over todo:: liyigang
-    FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (toFileInfo && toFileInfo->exists()) {
-        dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameOf(NameInfoType::kFileName));
-        return false;
-    }
+        // async fileinfo need wait file quer over todo:: liyigang
+        FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+        if (toFileInfo && toFileInfo->exists()) {
+            watcher->setProperty("sameNameRrror", toFileInfo->nameOf(NameInfoType::kFileName));
+            return false;
+        }
 
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.renameFile(oldUrl, newUrl);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showRenameBusyErrDialog();
-    }
-    // TODO:: file renameFile finished need to send file renameFile finished event
-    QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, renamedFiles, ok, error);
-    if (ok)
-        ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        result = fileHandler.renameFile(oldUrl, newUrl);
+        if (!result) {
+            error = fileHandler.errorString();
+            watcher->setProperty("renameError", fileHandler.errorString());
+        }
+        return result;
+    }));
 
-    AbstractJobHandler::JobFlags tmFlags = flags;
-    if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo))
-        saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile,
-                          { oldUrl }, { newUrl }, GlobalEventType::kRenameFile,
-                          tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
-    return ok;
+    return true;
 }
 
 void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
@@ -1046,88 +1104,42 @@ void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
 }
 
-bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace)
+bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, QString> pair,
+                                                             const bool replace)
 {
-    QMap<QUrl, QUrl> successUrls;
-    bool ok = false;
-    QString error;
-    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles", windowId, urls, pair, replace))
-            return true;
-    }
-
-    RenameTypes type = RenameTypes::kBatchRepalce;
-    if (!replace)
-        type = RenameTypes::kBatchCustom;
-    ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error);
-
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
-
-    return ok;
+    doRenameFilesByThread(windowId, urls, pair, {}, replace ? RenameTypes::kBatchRepalce : RenameTypes::kBatchCustom);
+    return true;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, AbstractJobHandler::OperatorCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, QString> pair,
+                                                             const bool replace, const QVariant custom,
+                                                             AbstractJobHandler::OperatorCallback callback)
 {
-    QMap<QUrl, QUrl> successUrls;
-    QString error;
-    RenameTypes type = RenameTypes::kBatchRepalce;
-    if (!replace)
-        type = RenameTypes::kBatchCustom;
-    bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error, custom, callback);
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
+    doRenameFilesByThread(windowId, urls, pair, {},
+                          replace ? RenameTypes::kBatchRepalce : RenameTypes::kBatchCustom,
+                          custom, callback);
 }
 
-bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
+bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
-    QMap<QUrl, QUrl> successUrls;
-    bool ok = false;
-    QString error;
-    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", windowId, urls, pair)) {
-
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                         windowId, successUrls, true, error);
-            if (!successUrls.isEmpty())
-                saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                                  successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
-
-            return true;
-        }
-    }
-
-    ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
-
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
-
-    return ok;
+    doRenameFilesByThread(windowId, urls, {}, pair, RenameTypes::kBatchAppend);
+    return true;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, AbstractJobHandler::OperatorCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair,
+                                                             const QVariant custom,
+                                                             AbstractJobHandler::OperatorCallback callback)
 {
-    QMap<QUrl, QUrl> successUrls;
-    QString error;
-    bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error, custom, callback);
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
+    doRenameFilesByThread(windowId, urls, {}, pair, RenameTypes::kBatchAppend,
+                          custom, callback);
 }
 
 bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, const QUrl url)

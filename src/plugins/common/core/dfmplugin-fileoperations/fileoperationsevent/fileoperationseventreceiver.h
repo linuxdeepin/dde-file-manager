@@ -227,14 +227,19 @@ private:
                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     bool redo(const quint64 windowId, const QVariantMap &ret,
               DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
-
-    bool doRenameFiles(const quint64 windowId, const QList<QUrl> &urls,
+    bool doRenameFiles(QFutureWatcher<bool> *watcher, const QList<QUrl> &urls,
                        const QPair<QString, QString> &pair,
                        const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> &pair2,
                        const RenameTypes type,
-                       QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
-                       const QVariant custom = QVariant(), DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback = nullptr);
-    bool doRenameDesktopFile(const quint64 windowId,
+                       QMap<QUrl, QUrl> &successUrls, QString &errorMsg);
+    void doRenameFilesByThread(const quint64 windowId,
+                               const QList<QUrl> urls,
+                               const QPair<QString, QString> replacePair,
+                               const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> AddPair,
+                               const RenameTypes type,
+                               const QVariant custom = QVariant(),
+                               DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback = nullptr);
+    bool doRenameDesktopFile(QFutureWatcher<bool> *watcher,
                              const QUrl oldUrl,
                              const QUrl newUrl,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
