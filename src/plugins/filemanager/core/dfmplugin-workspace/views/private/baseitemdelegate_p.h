@@ -12,6 +12,7 @@
 #include <QModelIndex>
 #include <QSize>
 #include <QtGlobal>
+#include <QMutex>
 
 QT_BEGIN_NAMESPACE
 class QLineEdit;
@@ -36,6 +37,8 @@ public:
     mutable QLineEdit *editor = nullptr;
 
     AbstractItemPaintProxy *paintProxy { nullptr };
+    QMutex commitDataMutex;
+    QWidget *commitDataCurentWidget { nullptr };
 
     BaseItemDelegate *q_ptr;
     Q_DECLARE_PUBLIC(BaseItemDelegate)
