@@ -653,6 +653,14 @@ bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierA
     return true;
 }
 
+int AsyncFileInfo::errorCodeFromDfmio() const
+{
+    auto dFileInfo = d->dfmFileInfo;
+    if (dFileInfo)
+        return dFileInfo->lastError();
+    return -1;
+}
+
 void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
 {
     mimeTypeMode = QMimeDatabase::MatchDefault;

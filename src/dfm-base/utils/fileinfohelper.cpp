@@ -6,6 +6,8 @@
 
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <QGuiApplication>
 #include <QTimer>
@@ -139,11 +141,15 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
     if (!asyncInfo)
         return;
 
-    auto callback = [asyncInfo](bool success, void *data) {
+    auto callback = [asyncInfo, this](bool success, void *data) {
         Q_UNUSED(data);
         if (!success) {
-            qCWarning(logDFMBase) << "Failed to query file information asynchronously! url = " << asyncInfo->fileUrl();
             FileInfoHelper::instance().checkInfoRefresh(asyncInfo);
+            if (DeviceUtils::isSamba(asyncInfo->fileUrl())
+                    && asyncInfo->errorCodeFromDfmio() == DFMIOErrorCode::DFM_IO_ERROR_HOST_IS_DOWN
+                    && !NetworkUtils::instance()->checkFtpOrSmbBusy(asyncInfo->fileUrl())) {
+                emit this->smbSeverMayModifyPassword(asyncInfo->fileUrl());
+            }
             return;
         }
         FileInfoHelper::instance().cacheFileInfoByThread(asyncInfo);
