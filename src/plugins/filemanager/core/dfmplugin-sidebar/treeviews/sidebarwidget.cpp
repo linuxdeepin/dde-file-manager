@@ -262,9 +262,9 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
     }
 
     QApplication::restoreOverrideCursor();
-    auto flag = DConfigManager::instance()->
+    auto flag = !DConfigManager::instance()->
             value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, false).toBool();
+                  kOpenFolderWindowsInASeparateProcess, true).toBool();
 
     auto target = item->targetUrl();
     if (flag && FileManagerWindowsManager::instance().containsCurrentUrl(target, window())) {

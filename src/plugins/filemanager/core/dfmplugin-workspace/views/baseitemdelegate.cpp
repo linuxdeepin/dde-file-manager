@@ -147,20 +147,18 @@ void BaseItemDelegate::hideAllIIndexWidget()
 void BaseItemDelegate::hideNotEditingIndexWidget()
 {
 }
-// Cannot call this interface simultaneously as it will cause editwidget to destruct
-// and crash on the second call to handle the signal
+// Repeated reentry of this function will cause a crash
 void BaseItemDelegate::commitDataAndCloseActiveEditor()
 {
     QWidget *editor = parent()->indexWidget(d->editingIndex);
 
     if (!editor)
         return;
-    {
-        QMutexLocker lk(&d->commitDataMutex);
-        if (d->commitDataCurentWidget == editor)
-            return;
-        d->commitDataCurentWidget = editor;
-    }
+
+    if (d->commitDataCurentWidget == editor)
+        return;
+    d->commitDataCurentWidget = editor;
+
 
     QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
                               Qt::DirectConnection, Q_ARG(QWidget *, editor));

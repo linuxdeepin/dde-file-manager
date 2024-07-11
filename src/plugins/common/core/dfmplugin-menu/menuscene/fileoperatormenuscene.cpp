@@ -203,9 +203,9 @@ bool FileOperatorMenuScene::triggered(QAction *action)
             if (infoPtr && infoPtr->isAttributes(OptInfoType::kIsSymLink))
                 cdUrl = QUrl::fromLocalFile(infoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
-            auto flag = DConfigManager::instance()->
+            auto flag = !DConfigManager::instance()->
                     value(kViewDConfName,
-                          kOpenFolderWindowsInASeparateProcess, false).toBool();
+                          kOpenFolderWindowsInASeparateProcess, true).toBool();
 
             if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(cdUrl)) ||
                     Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {

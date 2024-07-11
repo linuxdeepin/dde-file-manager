@@ -325,13 +325,13 @@ void SettingBackend::initWorkspaceSettingConfig()
                      { "trigger", QVariant(Application::kRestoreViewMode) } });
     ins->addCheckBoxConfig(LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
                            tr("Open folder windows in a separate process"),
-                           false);
+                           true);
     addSettingAccessor(
             LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
             []() {
                 return DConfigManager::instance()->value(kViewDConfName,
                                                          kOpenFolderWindowsInASeparateProcess,
-                                                         false);
+                                                         true);
             },
             [](const QVariant &val) {
                 DConfigManager::instance()->setValue(kViewDConfName,
