@@ -37,7 +37,6 @@ public:
     mutable QLineEdit *editor = nullptr;
 
     AbstractItemPaintProxy *paintProxy { nullptr };
-    QMutex commitDataMutex;
     QWidget *commitDataCurentWidget { nullptr };
 
     BaseItemDelegate *q_ptr;

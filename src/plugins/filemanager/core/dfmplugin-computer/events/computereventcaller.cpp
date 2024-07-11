@@ -55,9 +55,9 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
     }
 
     DFMBASE_USE_NAMESPACE
-    auto flag = DConfigManager::instance()->
+    auto flag = !DConfigManager::instance()->
             value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, false).toBool();
+                  kOpenFolderWindowsInASeparateProcess, true).toBool();
     if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(url))
             || Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
         sendEnterInNewWindow(url, !flag);

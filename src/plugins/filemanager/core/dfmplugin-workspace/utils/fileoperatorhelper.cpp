@@ -105,9 +105,9 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                 if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink))
                     dirUrl = QUrl::fromLocalFile(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
-                auto flag = DConfigManager::instance()->
+                auto flag = !DConfigManager::instance()->
                         value(kViewDConfName,
-                              kOpenFolderWindowsInASeparateProcess, false).toBool();
+                              kOpenFolderWindowsInASeparateProcess, true).toBool();
                 if (mode == DirOpenMode::kOpenNewWindow ||
                         (flag && FileManagerWindowsManager::instance().containsCurrentUrl(dirUrl, view->window()))) {
                     WorkspaceEventCaller::sendOpenWindow({ dirUrl }, !flag);
