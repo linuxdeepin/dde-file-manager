@@ -75,6 +75,12 @@ void RenameBar::setVisible(bool visible)
             }
         }
     }
+    if (visible) {
+        QLineEdit *lineEdit { std::get<1>(d->replaceOperatorItems) };
+        if (lineEdit)
+            lineEdit->setFocus();
+    }
+
     return QFrame::setVisible(visible);
 }
 
