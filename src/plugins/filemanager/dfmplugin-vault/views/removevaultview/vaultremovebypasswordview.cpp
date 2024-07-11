@@ -198,7 +198,9 @@ void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(PolkitQt1::Author
         return;
     }
 
-    emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
+    QTimer::singleShot(0, this, [this](){
+        emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
+    });
 }
 
 bool VaultRemoveByPasswordView::eventFilter(QObject *obj, QEvent *evt)

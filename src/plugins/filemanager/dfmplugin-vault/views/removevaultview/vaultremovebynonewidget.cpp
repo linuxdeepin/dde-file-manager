@@ -68,7 +68,9 @@ void VaultRemoveByNoneWidget::slotCheckAuthorizationFinished(PolkitQt1::Authorit
         return;
     }
 
-    emit jumpPage(RemoveWidgetType::kRemoveProgressWidget);
+    QTimer::singleShot(0, this, [this](){
+        emit jumpPage(RemoveWidgetType::kRemoveProgressWidget);
+    });
 }
 
 void VaultRemoveByNoneWidget::initUI()

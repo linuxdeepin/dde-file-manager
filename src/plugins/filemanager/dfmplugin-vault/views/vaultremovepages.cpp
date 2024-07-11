@@ -109,10 +109,6 @@ void VaultRemovePages::showRecoveryKeyWidget()
 void VaultRemovePages::showRemoveProgressWidget()
 {
     clearContents(true);
-    if (getButtons().size() > 1) {
-        getButton(0)->setVisible(false);
-        getButton(1)->setVisible(false);
-    }
     clearButtons();
 
     progressView = new VaultRemoveProgressView(this);
