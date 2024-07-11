@@ -1322,8 +1322,7 @@ void FileOperateBaseWorker::determineCountProcessType()
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetOrgUrl);
         isTargetFileExBlock = false;
         fmDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
-        const bool isFileSystemTypeExt = DFMUtils::fsTypeFromUrl(targetOrgUrl).startsWith("ext");
-        if (!isFileSystemTypeExt) {
+        if (!isTargetFileLocal) {
             blocakTargetRootPath = rootPath;
             QProcess process;
             process.start("lsblk", { "-niro", "MAJ:MIN,HOTPLUG,LOG-SEC", device }, QIODevice::ReadOnly);
