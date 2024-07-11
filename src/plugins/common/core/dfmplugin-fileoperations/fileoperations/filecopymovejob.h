@@ -45,7 +45,10 @@ public:
                          = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint,
                          const bool isInit = true);
     JobHandlePointer cleanTrash(const QList<QUrl> &sources);
-    void initArguments(const JobHandlePointer handler);
+    void initArguments(const JobHandlePointer handler,
+                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags =
+            DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+    void startAddTaskTimer(const JobHandlePointer handler, const bool isRemote);
 
 private:
     bool getOperationsAndDialogService();

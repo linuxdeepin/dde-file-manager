@@ -40,6 +40,7 @@ bool DoCopyFilesWorker::doWork()
     // 深信服远程下载
     if (sourceUrls.isEmpty() && workData->jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kCopyRemote)) {
         sourceUrls = dfmbase::ClipBoard::instance()->getRemoteUrls();
+        emit requestTaskDailog();
         fmInfo() << "remote copy source urls list:" << sourceUrls;
     }
     // The endcopy interface function has been called here
