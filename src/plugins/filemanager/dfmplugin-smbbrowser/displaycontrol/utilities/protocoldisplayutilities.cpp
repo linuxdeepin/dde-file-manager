@@ -11,6 +11,7 @@
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
@@ -63,11 +64,15 @@ void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
         { "Property_Key_QtItemFlags", QVariant::fromValue(Qt::ItemIsEnabled | Qt::ItemIsSelectable) },
         { "Property_Key_Ejectable", false },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(ContextMenuCallback(sidebarMenuCall)) },
+        { "Property_Key_CallbackItemClicked", QVariant::fromValue(ItemClickedActionCallback(sidebarItemClicked)) },
         { "Property_Key_VisiableControl", "mounted_share_dirs" },
         { "Property_Key_VisiableDisplayName", QObject::tr("Mounted sharing folders") }
         //        { "Property_Key_ReportName", reportName }
     };
-    dpfSlotChannel->push(kSidebarEventNS, kSbSlotAdd, info->targetUrl(), opts);
+    auto stdSmb = vEntryUrl.path().remove("." + QString(kVEntrySuffix));
+    QUrl sidebarUrl(stdSmb);
+    sidebarUrl.setScheme("vsmb");
+    dpfSlotChannel->push(kSidebarEventNS, kSbSlotAdd, sidebarUrl, opts);
 }
 
 void computer_sidebar_event_calls::callItemRemove(const QUrl &vEntryUrl)
@@ -76,8 +81,10 @@ void computer_sidebar_event_calls::callItemRemove(const QUrl &vEntryUrl)
                          vEntryUrl);
 
     // build params
-    DFMEntryFileInfoPointer info(new EntryFileInfo(vEntryUrl));
-    dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, info->targetUrl());
+    auto stdSmb = vEntryUrl.path().remove("." + QString(kVEntrySuffix));
+    QUrl sidebarUrl(stdSmb);
+    sidebarUrl.setScheme("vsmb");
+    dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, sidebarUrl);
 }
 
 void computer_sidebar_event_calls::callComputerRefresh()
@@ -304,4 +311,15 @@ bool protocol_display_utilities::hasMountedShareOf(const QString &stdHost)
     return std::any_of(allMounted.cbegin(), allMounted.cend(), [&](const QString &stdSmb) {
         return stdSmb.startsWith(stdHost);
     });
+}
+
+void computer_sidebar_event_calls::sidebarItemClicked(quint64 winId, const QUrl &url)
+{
+    QUrl smbUrl(url);
+    smbUrl.setScheme("smb");
+    auto sUrl = smbUrl.toString();
+    if (!sUrl.endsWith("/"))
+        sUrl += "/";
+    auto fullPath = VirtualEntryDbHandler::instance()->getFullSmbPath(sUrl);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl(fullPath));
 }

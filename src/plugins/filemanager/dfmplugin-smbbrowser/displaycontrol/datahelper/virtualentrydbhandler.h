@@ -41,6 +41,7 @@ public:
     bool hasOfflineEntry(const QString &stdSmb);
     QStringList allSmbIDs(QStringList *aggregated = nullptr, QStringList *seperated = nullptr);
     QString getDisplayNameOf(const QUrl &entryUrl);
+    QString getFullSmbPath(const QString &stdSmb);
     QList<QSharedPointer<VirtualEntryData>> virtualEntries();
 
 protected:
@@ -49,6 +50,8 @@ protected:
 
 private:
     explicit VirtualEntryDbHandler(QObject *parent = nullptr);
+
+    void checkAndUpdateTable();
 
     DFMBASE_NAMESPACE::SqliteHandle *handler { nullptr };
 };

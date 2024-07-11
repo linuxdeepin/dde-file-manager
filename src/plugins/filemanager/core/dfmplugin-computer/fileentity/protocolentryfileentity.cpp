@@ -129,5 +129,7 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
         return target;
     target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     target.setPath(mpt);
+    if (DFMBASE_NAMESPACE::DeviceUtils::isSamba(target))
+        return DFMBASE_NAMESPACE::DeviceUtils::getSambaFileUriFromNative(target);
     return target;
 }

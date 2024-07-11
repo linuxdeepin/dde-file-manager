@@ -22,6 +22,8 @@
 #include <QDBusInterface>
 #include <QNetworkInterface>
 
+#include <unistd.h>
+
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -63,10 +65,34 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
             dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", origUrl);
     };
 
+    static QString kRecordFilePath = QString("/tmp/dfm_smb_mount_%1.ini").arg(getuid());
+    static QString kRecordGroup = "defaultSmbPath";
+    static QRegularExpression kRegx { "/|\\.|:" };
+    auto recordSubPath = [](const QString &smbRoot, const QString &subPath) {
+        QFile record(kRecordFilePath);
+        if (!record.exists() && record.open(QIODevice::NewOnly))
+            record.close();
+        auto key(smbRoot);
+        key = key.replace(kRegx, "_");
+        QSettings sets(kRecordFilePath, QSettings::IniFormat);
+        sets.setValue(QString("%1/%2").arg(kRecordGroup).arg(key), subPath);
+    };
+    auto readSubPath = [](const QString &smbRoot) {
+        auto key(smbRoot);
+        key = key.replace(kRegx, "_");
+        QSettings sets(kRecordFilePath, QSettings::IniFormat);
+        return sets.value(QString("%1/%2").arg(kRecordGroup).arg(key), "").toString();
+    };
+
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
         fmInfo() << "mount done: " << url << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
-            doChangeCurrentUrl(winId, mpt, subPath, url);
+            if (err.code == DFMMOUNT::DeviceError::kNoError)
+                recordSubPath(mountSource, subPath);
+            QString jumpTo(subPath);
+            if (jumpTo.isEmpty())
+                jumpTo = readSubPath(mountSource);
+            doChangeCurrentUrl(winId, mpt, jumpTo, url);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {

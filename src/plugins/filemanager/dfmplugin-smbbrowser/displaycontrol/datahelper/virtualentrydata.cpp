@@ -104,3 +104,13 @@ void VirtualEntryData::setDisplayName(const QString &newDisplayName)
     displayName = newDisplayName;
     emit displayNameChanged();
 }
+
+const QString &VirtualEntryData::getTargetPath() const
+{
+    return targetPath;
+}
+
+void VirtualEntryData::setTargetPath(const QString &targetPath)
+{
+    this->targetPath = targetPath;
+}
