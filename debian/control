@@ -70,13 +70,13 @@ Depends:
  libqt5xdg3,
  socat,
  cryfs,
- libblockdev-crypto2,
  dde-device-formatter,
  dde-file-manager-plugins, 
  dde-file-manager-daemon-plugins,
  dde-file-manager-server-plugins,
  dde-file-manager-common-plugins, 
- dde-file-manager-preview-plugins
+ dde-file-manager-preview-plugins,
+ libblockdev-crypto2 | libblockdev-crypto3 
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
