@@ -182,8 +182,9 @@ void VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished(PolkitQt1::Aut
         dialog.exec();
         return;
     }
-
-    emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
+    QTimer::singleShot(0, this, [this](){
+        emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
+    });
 }
 
 int VaultRemoveByRecoverykeyView::afterRecoveryKeyChanged(QString &str)
