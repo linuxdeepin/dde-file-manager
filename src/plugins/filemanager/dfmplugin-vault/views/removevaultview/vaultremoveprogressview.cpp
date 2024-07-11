@@ -36,7 +36,7 @@ VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
     deletingWidget = new QWidget(this);
     QVBoxLayout *deletingLay = new QVBoxLayout;
     vaultRmProgressBar = new DWaterProgress(deletingWidget);
-    vaultRmProgressBar->setFixedSize(80, 80);
+    vaultRmProgressBar->setFixedSize(90, 90);
     hintLabel = new DLabel(tr("Removing..."), deletingWidget);
     deletingLay->addWidget(vaultRmProgressBar, 0, Qt::AlignHCenter);
     deletingLay->addWidget(hintLabel, 0, Qt::AlignHCenter);

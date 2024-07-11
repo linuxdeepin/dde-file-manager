@@ -63,6 +63,7 @@ void VaultActiveFinishedView::initUi()
     // 进度条
     waterProgress = new DWaterProgress(this);
     waterProgress->setValue(1);
+    waterProgress->setFixedSize(90, 90);
     // 进度条提示
     tipsLabelone = new DLabel(tr("Encrypting..."), this);
     tipsLabelone->setAlignment(Qt::AlignHCenter);
@@ -96,9 +97,10 @@ void VaultActiveFinishedView::initUi()
 
     widgetThree = new QWidget(this);
     QVBoxLayout *play3 = new QVBoxLayout(widgetThree);
-    play3->setContentsMargins(0, 15, 0, 0);
-    play3->addWidget(encryptFinishedImageLabel);
-    play3->addWidget(tipsThree);
+    play3->setContentsMargins(0, 22, 0, 0);
+    play3->addWidget(encryptFinishedImageLabel, 0, Qt::AlignCenter);
+    play3->addSpacing(22);
+    play3->addWidget(tipsThree, 0, Qt::AlignCenter);
 
     QVBoxLayout *m_pLay = new QVBoxLayout(this);
     m_pLay->setMargin(0);
