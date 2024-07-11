@@ -639,8 +639,10 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
             });
         }
         DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));
-        auto mntUrl = info->targetUrl();
-        return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
+        auto target = info->targetUrl();
+        auto mpt = QUrl::fromLocalFile(info->extraProperty(DeviceProperty::kMountPoint).toString());
+        return dfmbase::UniversalUtils::urlEquals(target, targetUrl)
+                || dfmbase::UniversalUtils::urlEquals(mpt, targetUrl);
     };
 
     static const QStringList kItemVisiableControlKeys { "builtin_disks", "loop_dev", "other_disks", "mounted_share_dirs" };

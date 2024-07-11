@@ -38,5 +38,7 @@ DPSMBBROWSER_END_NAMESPACE
 
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 Q_DECLARE_METATYPE(ContextMenuCallback)
+using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+Q_DECLARE_METATYPE(ItemClickedActionCallback);
 
 #endif   // TYPEDEFINES_H
