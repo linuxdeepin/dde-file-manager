@@ -94,6 +94,7 @@ signals:   // update proccess timer use
     void startWork();
     void errorNotify(const JobInfoPointer jobInfo);
     void retryErrSuccess(const quint64 id);
+    void requestTaskDailog();
 
 public:
     void doOperateWork(AbstractJobHandler::SupportActions actions, AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError, const quint64 id = 0);
