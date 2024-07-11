@@ -198,11 +198,11 @@ QMap<QString, QString> NetworkUtils::cifsMountHostInfo()
                 continue;
             // net work mount must start with //
             QString srcHostAndPort = mnt_fs_get_source(fs);
-            if (!srcHostAndPort.contains(QRegExp("^//")))
+            if (!srcHostAndPort.contains(QRegularExpression("^//")))
                 continue;
 
             const QString &mountPath = mnt_fs_get_target(fs);
-            srcHostAndPort = srcHostAndPort.replace(QRegExp("^//"), "");
+            srcHostAndPort = srcHostAndPort.replace(QRegularExpression("^//"), "");
             srcHostAndPort = srcHostAndPort.left(srcHostAndPort.indexOf("/"));
             table.insert(mountPath, srcHostAndPort);
         }
