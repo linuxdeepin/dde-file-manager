@@ -248,6 +248,7 @@ Q_SIGNALS:   // 发送给任务调用者使用的信号
     void workerFinish();
     void requestRemoveTaskWidget();
     void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);
+    void requestTaskDailog();
 Q_SIGNALS:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作
