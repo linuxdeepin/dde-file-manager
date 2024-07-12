@@ -375,6 +375,8 @@ void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bo
         return;
     }
 
+    relayoutedFiles.clear();
+    relayoutedCollectionIDs.clear();
     // order by config
     for (const CollectionBaseDataPtr &cfg : cfgs) {
         if (auto base = classifier->baseData(cfg->key)) {
@@ -390,6 +392,10 @@ void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bo
             // those are not in config files should not be organized.
             if (reorganized || !CfgPresenter->organizeOnTriggered())
                 ordered.append(org);
+            if (reorganized && !org.isEmpty()) {
+                relayoutedFiles.append(org);
+                relayoutedCollectionIDs.append(cfg->key);
+            }
 
             base->items = ordered;
         }
@@ -674,6 +680,19 @@ void NormalizedMode::rebuild(bool reorganize)
     }
 
     layout();
+
+    QTimer::singleShot(0, this, [this] {
+        if (!d->relayoutedCollectionIDs.isEmpty()) {
+            // QParallelAnimationGroup *anis = new QParallelAnimationGroup();
+            for (auto id : d->relayoutedCollectionIDs) {
+                // auto ani = d->holders.value(id)->createAnimation();
+                // ani->setParent(anis);
+                // anis->addAnimation(ani);
+                d->holders.value(id)->selectFiles(d->relayoutedFiles);
+            }
+            // anis->start(QAbstractAnimation::DeleteWhenStopped);
+        }
+    });
 
     fmInfo() << QString("create groups %0 takes %1 ms").arg(d->holders.size()).arg(time.elapsed());
 

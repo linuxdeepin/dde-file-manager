@@ -52,6 +52,8 @@ public:
     NormalizedModeBroker *broker = nullptr;
     ItemSelectionModel *selectionModel = nullptr;
     SelectionSyncHelper *selectionHelper = nullptr;
+    QList<QUrl> relayoutedFiles;
+    QList<QString> relayoutedCollectionIDs;
 
 private:
     NormalizedMode *q;

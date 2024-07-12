@@ -268,6 +268,28 @@ bool CollectionHolder::fileShiftable() const
     return d->widget->view()->fileShiftable();
 }
 
+QPropertyAnimation *CollectionHolder::createAnimation()
+{
+    QPropertyAnimation *ani = new QPropertyAnimation(d->frame, "pos");
+    auto pos = d->frame->pos();
+    ani->setDuration(500);
+    ani->setEasingCurve(QEasingCurve::BezierSpline);
+    ani->setStartValue(pos);
+    ani->setEndValue(pos);
+    ani->setKeyValueAt(0.2, pos + QPoint { -10, 0 });
+    ani->setKeyValueAt(0.4, pos + QPoint { 10, 0 });
+    ani->setKeyValueAt(0.6, pos + QPoint { -10, 0 });
+    ani->setKeyValueAt(0.8, pos);
+    return ani;
+}
+
+void CollectionHolder::selectFiles(const QList<QUrl> &urls)
+{
+    if (!itemView()) return;
+    itemView()->selectUrls(urls);
+    itemView()->scrollToBottom();
+}
+
 void CollectionHolder::setStyle(const CollectionStyle &style)
 {
     if (style.key != id())
