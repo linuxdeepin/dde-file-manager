@@ -47,6 +47,7 @@ public:
 
     void openEditor(const QUrl &url);
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);
+    void selectUrls(const QList<QUrl> &urls);
 
     void setModel(QAbstractItemModel *model) override;
     void setSelectionModel(QItemSelectionModel *sel) override;

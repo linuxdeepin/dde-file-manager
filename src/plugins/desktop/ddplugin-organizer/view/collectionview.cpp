@@ -1320,6 +1320,12 @@ void CollectionView::selectUrl(const QUrl &url, const QItemSelectionModel::Selec
     this->update();
 }
 
+void CollectionView::selectUrls(const QList<QUrl> &urls)
+{
+    if (d)
+        d->selectItems(urls);
+}
+
 void CollectionView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
