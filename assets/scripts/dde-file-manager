@@ -6,6 +6,7 @@
 
 args=""
 current_path=$(pwd)
+isDbus="true"
 for arg in "$@"; do
     if [[ $arg == "." ]] || [[ $arg == ".." ]] || [[ $arg == *"/." ]] || [[ $arg == *"/.." ]] || [[ $arg =~ "./" ]] || [[ $arg =~ "../" ]] || [[ $arg =~ "~/" ]]; then
         name=${arg##*/}
@@ -26,10 +27,21 @@ for arg in "$@"; do
         absolute_path=$path$name
         arg=$(echo "$absolute_path" | sed 's/ /*||*/g')
     fi
+
+    if [[ $arg == "-h" ]] || [[ $arg == "-v" ]]; then
+        isDbus="false"
+        break;
+    fi
+
     args+="$arg,"
 done
 args=${args%,}
 echo $args
+
+if [[ $isDbus == "false" ]]; then
+    exec file-manager.sh "$@"
+    return;
+fi
 
 dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.Open array:string:"$args"
 
