@@ -13,6 +13,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QItemSelectionModel>
+#include <QPropertyAnimation>
 
 namespace ddplugin_organizer {
 
@@ -64,6 +65,9 @@ public:
     bool renamable() const;
     void setFileShiftable(bool enable);
     bool fileShiftable() const;
+
+    QPropertyAnimation *createAnimation();
+    void selectFiles(const QList<QUrl> &urls);
 
     void setStyle(const CollectionStyle &style);
     CollectionStyle style() const;
