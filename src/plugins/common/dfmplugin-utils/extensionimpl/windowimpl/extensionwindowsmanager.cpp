@@ -18,7 +18,10 @@ DFMBASE_USE_NAMESPACE
 static void doActionForEveryPlugin(std::function<void(DFMEXT::DFMExtWindowPlugin *)> callback)
 {
     Q_ASSERT(callback);
-    Q_ASSERT(ExtensionPluginManager::instance().initialized());
+    if (!ExtensionPluginManager::instance().initialized()) {
+        fmWarning() << "The event occurs before any plugin initialization is complete";
+        return;
+    }
     const auto &windowPlugins { ExtensionPluginManager::instance().windowPlugins() };
     std::for_each(windowPlugins.begin(), windowPlugins.end(), [callback](QSharedPointer<DFMEXT::DFMExtWindowPlugin> plugin) {
         Q_ASSERT(plugin);
