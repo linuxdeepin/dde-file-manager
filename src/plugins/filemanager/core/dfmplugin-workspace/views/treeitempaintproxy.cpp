@@ -6,7 +6,7 @@
 #include "fileview.h"
 #include "utils/itemdelegatehelper.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QStyle>
 

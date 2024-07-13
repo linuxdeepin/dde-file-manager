@@ -9,7 +9,8 @@
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/schemefactory.h>
-#include "dfm-framework/dpf.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QDebug>
 #include <QMenu>

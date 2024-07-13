@@ -5,7 +5,7 @@
 #include "fileinfomodelshell.h"
 #include "interface/canvasinterface.h"
 
-#include "dfm-framework/dpf.h"
+#include <dfm-framework/dpf.h>
 
 #include <QModelIndex>
 

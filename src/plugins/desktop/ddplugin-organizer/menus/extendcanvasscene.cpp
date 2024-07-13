@@ -13,7 +13,8 @@
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/menuutils.h"
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
-#include "dfm-framework/dpf.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QDebug>
