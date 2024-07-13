@@ -46,12 +46,13 @@ public:
     using DFMExtWindowPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtWindowPlugin>>;
 
     explicit ExtensionPluginManagerPrivate(ExtensionPluginManager *qq);
-    ~ExtensionPluginManagerPrivate() override {}
+    ~ExtensionPluginManagerPrivate() override;
 
     void startInitializePlugins();
     void startMonitorPlugins();
     void restartDesktop(const QUrl &url);
     void doAppendExt(const QString &name, ExtPluginLoaderPointer loader);
+    void release();
 
 Q_SIGNALS:
     void startInitialize(const QStringList &paths);
