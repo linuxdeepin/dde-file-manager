@@ -67,6 +67,11 @@ ExtensionPluginManagerPrivate::ExtensionPluginManagerPrivate(ExtensionPluginMana
 #endif
 }
 
+ExtensionPluginManagerPrivate::~ExtensionPluginManagerPrivate()
+{
+    release();
+}
+
 void ExtensionPluginManagerPrivate::startInitializePlugins()
 {
     Q_Q(ExtensionPluginManager);
@@ -86,8 +91,7 @@ void ExtensionPluginManagerPrivate::startInitializePlugins()
     connect(worker, &ExtensionPluginInitWorker::initPluginsFinished, this, [this, q]() {
         curState = ExtensionPluginManager::kInitialized;
         emit q->allPluginsInitialized();
-        workerThread.quit();
-        workerThread.wait();
+        release();
     });
     connect(worker, &ExtensionPluginInitWorker::requestInitPlugin, this, [this](ExtPluginLoaderPointer loader) {
         // Some plugins construct GUI object in `initialize`,
@@ -188,6 +192,15 @@ void ExtensionPluginManagerPrivate::doAppendExt(const QString &name, ExtPluginLo
     DFMEXT::DFMExtWindowPlugin *window { loader->resolveWindowPlugin() };
     if (window)
         windowMap.insert(name, QSharedPointer<DFMEXT::DFMExtWindowPlugin>(window));
+}
+
+void ExtensionPluginManagerPrivate::release()
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        workerThread.quit();
+        workerThread.wait();
+    });
 }
 
 ExtensionPluginManager &ExtensionPluginManager::instance()
