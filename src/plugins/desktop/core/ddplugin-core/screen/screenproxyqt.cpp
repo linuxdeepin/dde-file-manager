@@ -7,7 +7,7 @@
 
 #include "dbus-private/dbushelper.h"
 
-#include "dfm-framework/dpf.h"
+#include <dfm-framework/dpf.h>
 
 #include <QDebug>
 #include <QScreen>
@@ -27,7 +27,7 @@ static bool validPrimaryChanged(const ScreenProxyQt *proxy)
      * 拔掉VGA连接线后不会触发该槽函数，通过dbus获取到的主屏名字仍然是VGA，但是Qt会创建虚拟屏幕，名字会是 :0.0 等。
      * 插上HDMI连接线会触发该槽函数，通过dbus获取到主屏的名字是HDMI，通过Qt获取到的也是HDMI，
      * 说明Qt已经从虚拟屏幕转换为真实屏幕，再配合屏幕数量只有1个，来发出屏幕改变事件。
-    */
+     */
     static int times = 0;
     if (Q_LIKELY(qApp->screens().count() == 1)) {
         // 偶现，通过Qt获取到的屏幕名称可能是虚拟屏幕名称:0.0，需要延迟几百毫秒后才会获取到正确的名称（例如HDMI）
@@ -91,7 +91,7 @@ QList<ScreenPointer> ScreenProxyQt::logicScreens() const
     QList<ScreenPointer> order;
     auto allScreen = qApp->screens();
 
-    //调整主屏幕到第一
+    // 调整主屏幕到第一
     QScreen *primary = qApp->primaryScreen();
     allScreen.removeOne(primary);
     allScreen.push_front(primary);
@@ -143,7 +143,7 @@ DisplayMode ScreenProxyQt::displayMode() const
     if (allScreen.size() == 1) {
         return DisplayMode::kShowonly;
     } else {
-        //存在两个屏幕坐标不一样则视为扩展，只有所有屏幕坐标相等发生重叠时才视为复制
+        // 存在两个屏幕坐标不一样则视为扩展，只有所有屏幕坐标相等发生重叠时才视为复制
         const ScreenPointer &screen1 = allScreen.at(0);
         for (int i = 1; i < allScreen.size(); ++i) {
             const ScreenPointer &screen2 = allScreen.at(i);
@@ -152,7 +152,7 @@ DisplayMode ScreenProxyQt::displayMode() const
             }
         }
 
-        //所有屏幕的都重叠，则视为复制
+        // 所有屏幕的都重叠，则视为复制
         return DisplayMode::kDuplicate;
     }
 }
@@ -169,13 +169,13 @@ void ScreenProxyQt::reset()
      * 根因：当只存在一个屏幕时，拔插连接线（VGA和HDMI）时，不会收到Qt的屏幕添加删除信号（Qt会创建虚拟屏幕），桌面不会进行重建。
      * 但是屏幕对象返回的名字已经发生了变化，而Qt暂时没有提供屏幕名字改变的信号，导致程序中通过屏幕名字判断的逻辑都会出现问题。
      * 该bug就是由于画布中保存的名字没有更新，调用显示壁纸屏保设置界面后，找不到对应的屏幕，从而导致位置校正错误。
-    */
+     */
     connect(DisplayInfoIns, &DBusDisplay::PrimaryChanged, this, &ScreenProxyQt::onPrimaryChanged);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this]() {
         this->appendEvent(kScreen);
     });
 
-    //dock区处理
+    // dock区处理
     connect(DockInfoIns, &DBusDock::FrontendWindowRectChanged, this, &ScreenProxyQt::onDockChanged);
     connect(DockInfoIns, &DBusDock::HideModeChanged, this, &ScreenProxyQt::onDockChanged);
 
@@ -186,7 +186,7 @@ void ScreenProxyQt::reset()
         connectScreen(psc);
     }
 
-    //依赖现有屏幕数据，必须在屏幕对象初始化后调用
+    // 依赖现有屏幕数据，必须在屏幕对象初始化后调用
     lastMode = displayMode();
 }
 
@@ -255,7 +255,7 @@ void ScreenProxyQt::processEvent()
             events.insert(AbstractScreenProxy::kScreen, 0);
     }
 
-    //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
+    // 事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
     if (events.contains(AbstractScreenProxy::kMode)) {
         emit displayModeChanged();
     } else if (events.contains(AbstractScreenProxy::kScreen)) {
