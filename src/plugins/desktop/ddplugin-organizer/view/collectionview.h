@@ -44,6 +44,7 @@ public:
     WId winId() const;
     void updateRegionView();
     void refresh(bool silence);
+    void setFreeze(bool freeze);
 
     void openEditor(const QUrl &url);
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);

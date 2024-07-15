@@ -27,6 +27,7 @@ static inline constexpr char kHideAllKeySeq[] { "hideAllKeySeq" };
 static inline constexpr char kHideAllDialogRepeatNoMore[] { "hideAllDialogRepeatNoMore" };
 static inline constexpr char kOrganizeAction[] { "organizeAction" };
 static inline constexpr char kOrganizeEnabledCategories[] { "organizeCategories" };
+static inline constexpr char kOrganizeMovingOptimize[] { "collectionMovingOptimize" };
 
 static inline constexpr char kCatTypeApp[] { "kApp" };
 static inline constexpr char kCatTypeDocument[] { "kDocument" };
@@ -69,6 +70,9 @@ void ConfigPresenter::onDConfigChanged(const QString &cfg, const QString &key)
     if (key == kOrganizeAction && organizeAction() == kAlways) {
         Q_EMIT reorganizeDesktop();
     }
+
+    if (key == kOrganizeMovingOptimize)
+        Q_EMIT optimizeStateChanged(optimizeMovingPerformance());
 }
 
 ConfigPresenter *ConfigPresenter::instance()
@@ -278,6 +282,12 @@ OrganizeAction ConfigPresenter::organizeAction() const
 bool ConfigPresenter::organizeOnTriggered() const
 {
     return organizeAction() == kOnTrigger;
+}
+
+bool ConfigPresenter::optimizeMovingPerformance() const
+{
+    bool val = DConfigManager::instance()->value(kConfName, kOrganizeMovingOptimize, false).toBool();
+    return val;
 }
 
 CollectionStyle ConfigPresenter::normalStyle(const QString &key) const

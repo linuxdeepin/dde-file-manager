@@ -419,6 +419,8 @@ void BackgroundBridge::onFinished(void *pData)
         repeat = false;
         request(true);
     }
+
+    dpfSignalDispatcher->publish("ddplugin_background", "signal_Background_BackgroundSetted");
 }
 
 void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
