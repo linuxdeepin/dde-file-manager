@@ -43,6 +43,39 @@ QVariant genericAttribute(const QString &key)
     return QVariant();
 }
 
+void addOldGenericAttribute(const QJsonArray &array)
+{
+    auto paths = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
+    if (paths.isEmpty())
+        return;
+
+    auto genCfgPath = paths.first() + "/deepin/dde-file-manager.json";
+    QFile cfgFile(genCfgPath);
+
+    if (!cfgFile.open(QIODevice::ReadOnly))
+        return;
+    auto datas = cfgFile.readAll();
+    cfgFile.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(datas);
+    if (!doc.isObject())
+        return;
+
+    qCInfo(logToolUpgrade) << "upgrade: addOldGenericAttribute config path: " << genCfgPath;
+    auto rootObj = doc.object();
+    auto genObj = rootObj.value("GenericAttribute").toObject();
+    genObj.insert("OldAttributes", array);
+    rootObj["GenericAttribute"] = genObj;
+    QJsonDocument newDoc(rootObj);
+    QByteArray data = newDoc.toJson();
+
+    QFile file(genCfgPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    file.write(data);
+    file.close();
+}
+
 QVariant applicationAttribute(const QString &key)
 {
     static constexpr char kAppAttrKey[] { "ApplicationAttribute" };
