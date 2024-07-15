@@ -68,6 +68,7 @@ public:
 
     QPropertyAnimation *createAnimation();
     void selectFiles(const QList<QUrl> &urls);
+    void setFreeze(bool freeze);
 
     void setStyle(const CollectionStyle &style);
     CollectionStyle style() const;

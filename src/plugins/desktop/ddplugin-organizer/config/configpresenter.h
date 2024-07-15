@@ -65,6 +65,8 @@ public:
     OrganizeAction organizeAction() const;
     bool organizeOnTriggered() const;
 
+    bool optimizeMovingPerformance() const;
+
 signals:
     // use Qt::QueuedConnection
     void changeEnableState(bool e);
@@ -77,6 +79,7 @@ signals:
     void newCollection(const QList<QUrl> &);
     void showOptionWindow();
     void reorganizeDesktop();
+    void optimizeStateChanged(bool);
 
 public slots:
 protected:

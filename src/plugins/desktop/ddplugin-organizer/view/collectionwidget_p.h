@@ -8,6 +8,7 @@
 #include "collectionwidget.h"
 
 #include <QVBoxLayout>
+#include <QTimer>
 #include <QPointer>
 
 namespace ddplugin_organizer {
@@ -30,10 +31,13 @@ public:
     CollectionTitleBar *titleBar = nullptr;
     CollectionView *view = nullptr;
     QVBoxLayout *mainLayout = nullptr;
+    QPixmap freezePixmap;
+    bool freeze = false;
+    QTimer updateSnapshotTimer;
 
     QPointer<CollectionDataProvider> provider = nullptr;
 };
 
 }
 
-#endif // COLLECTIONWIDGET_P_H
+#endif   // COLLECTIONWIDGET_P_H
