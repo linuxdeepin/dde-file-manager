@@ -4,7 +4,11 @@
 
 #include "dconfigupgradeunit.h"
 #include "utils/upgradeutils.h"
+
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+#include <QJsonObject>
+#include <QJsonArray>
 
 Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
@@ -45,6 +49,7 @@ bool DConfigUpgradeUnit::upgrade()
     ret &= upgradeRecentConfigs();
     ret &= upgradeSearchConfigs();
     clearDiskHidden();
+    addOldGenericSettings();
 
     return ret;
 }
@@ -157,8 +162,13 @@ bool DConfigUpgradeUnit::upgradeMenuConfigs()
 
 bool DConfigUpgradeUnit::upgradeSmbConfigs()
 {
+    static constexpr auto kOldKey { "AlwaysShowOfflineRemoteConnections" };
+    // 0. check old
+    if (checkOldGeneric(kOldKey))
+        return true;
+
     // 1. read main config value
-    auto oldVal = UpgradeUtils::genericAttribute("AlwaysShowOfflineRemoteConnections");
+    auto oldVal = UpgradeUtils::genericAttribute(kOldKey);
     if (!oldVal.isValid())
         return true;
 
@@ -166,6 +176,10 @@ bool DConfigUpgradeUnit::upgradeSmbConfigs()
     // 2. write to dconfig
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kSambaPermanent, alwaysShowSamba);
     qCInfo(logToolUpgrade) << "upgrade: set samba permanent to dconfig, value:" << alwaysShowSamba;
+
+    // 3. remove old config
+    oldGenericSettings.append(kOldKey);
+
     return true;
 }
 
@@ -179,7 +193,14 @@ bool DConfigUpgradeUnit::upgradeSmbConfigs()
  */
 bool DConfigUpgradeUnit::upgradeRecentConfigs()
 {
-    auto oldValue = UpgradeUtils::genericAttribute("ShowRecentFileEntry");
+    static constexpr auto kOldKey { "ShowRecentFileEntry" };
+
+    // 0. check old
+    if (checkOldGeneric(kOldKey))
+        return true;
+
+    // 1. read main config value
+    auto oldValue = UpgradeUtils::genericAttribute(kOldKey);
     if (!oldValue.isValid())
         return true;
 
@@ -187,19 +208,30 @@ bool DConfigUpgradeUnit::upgradeRecentConfigs()
     if (!DConfigManager::instance()->addConfig(configFile))
         return false;
 
+    // 2. write to dconfig
     bool showRecent = oldValue.toBool();
     qCInfo(logToolUpgrade) << "upgrade: the old `showRecent` is" << showRecent;
     auto theSidebarVisiableList = DConfigManager::instance()->value(configFile, "itemVisiable").toMap();
     qCInfo(logToolUpgrade) << "upgrade: the new dconfig sidebar visiable list:" << theSidebarVisiableList;
     theSidebarVisiableList["recent"] = showRecent;
     DConfigManager::instance()->setValue(configFile, "itemVisiable", theSidebarVisiableList);
+
+    // 3. remove old config
+    oldGenericSettings.append(kOldKey);
+
     return true;
 }
 
 bool DConfigUpgradeUnit::upgradeSearchConfigs()
 {
+    static constexpr auto kOldKey { "IndexFullTextSearch" };
+
+    // 0. check old
+    if (checkOldGeneric(kOldKey))
+        return true;
+
     // 1. read main config value
-    auto oldValue = UpgradeUtils::genericAttribute("IndexFullTextSearch");
+    auto oldValue = UpgradeUtils::genericAttribute(kOldKey);
     if (!oldValue.isValid())
         return true;
 
@@ -211,10 +243,28 @@ bool DConfigUpgradeUnit::upgradeSearchConfigs()
     // 2. write to dconfig
     DConfigManager::instance()->setValue(configFile, "enableFullTextSearch", ftsEnabled);
     qCInfo(logToolUpgrade) << "upgrade: set search permanent to dconfig, value:" << ftsEnabled;
+
+    // 3. remove old config
+    oldGenericSettings.append(kOldKey);
+
     return true;
 }
 
 void DConfigUpgradeUnit::clearDiskHidden()
 {
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kDiskHidden, QStringList());
+}
+
+void DConfigUpgradeUnit::addOldGenericSettings()
+{
+    UpgradeUtils::addOldGenericAttribute(QJsonArray::fromStringList(oldGenericSettings));
+}
+
+bool DConfigUpgradeUnit::checkOldGeneric(const QString &key)
+{
+    auto oldGeneric = UpgradeUtils::genericAttribute("OldAttributes");
+    if (oldGeneric.isValid() && oldGeneric.toStringList().contains(key))
+        return true;
+
+    return false;
 }
