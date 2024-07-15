@@ -157,6 +157,7 @@ public:
     QTimer *searchTimer = nullptr;
 
     bool flicker = false;
+    bool freeze { false };
 
     DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };

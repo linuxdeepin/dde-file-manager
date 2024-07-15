@@ -1293,6 +1293,11 @@ void CollectionView::refresh(bool silence)
     d->flicker = false;
 }
 
+void CollectionView::setFreeze(bool freeze)
+{
+    d->freeze = freeze;
+}
+
 void CollectionView::openEditor(const QUrl &url)
 {
     QModelIndex index = model()->index(url);
@@ -1660,6 +1665,9 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
 void CollectionView::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
+
+    if (d->freeze)
+        return;
 
     if (Q_UNLIKELY(!itemDelegate()))
         return;

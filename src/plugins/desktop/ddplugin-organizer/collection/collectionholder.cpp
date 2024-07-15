@@ -6,6 +6,7 @@
 #include "view/collectionframe.h"
 #include "view/collectionwidget.h"
 #include "view/collectionview.h"
+#include "config/configpresenter.h"
 #include "models/collectionmodel.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
@@ -288,6 +289,12 @@ void CollectionHolder::selectFiles(const QList<QUrl> &urls)
     if (!itemView()) return;
     itemView()->selectUrls(urls);
     itemView()->scrollToBottom();
+}
+
+void CollectionHolder::setFreeze(bool freeze)
+{
+    if (CfgPresenter->optimizeMovingPerformance())
+        d->widget->setFreeze(freeze);
 }
 
 void CollectionHolder::setStyle(const CollectionStyle &style)

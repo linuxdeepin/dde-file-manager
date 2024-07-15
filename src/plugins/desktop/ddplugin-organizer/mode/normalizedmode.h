@@ -47,6 +47,7 @@ protected slots:
     void onCollectionEditStatusChanged(bool editing);
     void changeCollectionSurface(const QString &screenName);
     void deactiveAllPredictors();
+    void onCollectionMoving(bool moving);
 
 protected:
     bool setClassifier(Classifier id);

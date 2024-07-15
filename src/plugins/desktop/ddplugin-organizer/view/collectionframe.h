@@ -74,6 +74,7 @@ signals:
     void requestChangeSurface(const QString &cursorScreenName, const QString &oldScreenName);
     void surfaceChanged(QWidget *surface);
     void requestDeactiveAllPredictors();
+    void moveStateChanged(bool moving);
 
 protected:
     bool event(QEvent *event) override;

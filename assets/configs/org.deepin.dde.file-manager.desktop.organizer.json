@@ -67,6 +67,17 @@
                         "description": "The types of files that will be organized, options: applications (kApp), documents (kDocument), pictures (kPicture), videos (kVideo), folders (kFolder), and other (kOther)",
                         "permissions": "readwrite",
                         "visibility": "public"
+                },
+                "collectionMovingOptimize": {
+                        "value": true,
+                        "serial": 0,
+                        "flags": [],
+                        "name": "Optimize moving performance",
+                        "name[zh_CN]": "优化移动性能",
+                        "description[zh_CN]": "提升低性能设备上，集合移动时的性能效果，开启此开关，将减少集合移动过程中的卡顿现象。",
+                        "description": "Improve the performance effect when moving the collection on low performance devices, turn on this switch, it will reduce the lag phenomenon during the collection moving.",
+                        "permissions": "readwrite",
+                        "visibility": "public"
                 }
 	}
 }
