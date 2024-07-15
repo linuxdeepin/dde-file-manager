@@ -546,6 +546,7 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
             if (d->collView)
                 d->collView->setProperty(kCollectionPropertyEditing, true);
             Q_EMIT editingStatusChanged(true);
+            Q_EMIT moveStateChanged(true);
         } else {
             d->frameState = CollectionFramePrivate::NormalShowState;
         }
@@ -562,26 +563,31 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
 {
     if (Qt::LeftButton == event->button()) {
         if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
-            d->frameState = CollectionFramePrivate::NormalShowState;
             auto result = d->stretchResultRect();
+            auto resizeFinish = [=] {
+                d->frameState = CollectionFramePrivate::NormalShowState;
+                setGeometry(result);
+                d->updateStretchRect();
+                Q_EMIT geometryChanged();
+                Q_EMIT editingStatusChanged(false);
+            };
 
             if (Surface::animationEnabled()) {
-                // animation here.
-                Surface::animate({ this,
-                                   "geometry",
-                                   200,
-                                   QEasingCurve::BezierSpline,
-                                   this->geometry(),
-                                   result,
-                                   {},
-                                   [this] {
-                                       d->updateStretchRect();
-                                       Q_EMIT geometryChanged();
-                                   } });
+                auto param = AnimateParams {
+                    .target = this,
+                    .property = "geometry",
+                    .duration = 200,
+                    .curve = QEasingCurve::BezierSpline,
+                    .begin = this->geometry(),
+                    .end = result,
+                    .onFinished = resizeFinish,
+                };
+                Surface::animate(param);
             } else {
-                setGeometry(result);
+                resizeFinish();
             }
-            d->updateStretchRect();
+
+            // update collection size state.
             if (result != d->oldGeometry) {
                 if (!d->surface())
                     return;
@@ -600,18 +606,29 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
         }
 
         if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
-            d->frameState = CollectionFramePrivate::NormalShowState;
-
             bool validPos = false;
             auto pos = d->moveResultRectPos(&validPos);
             auto geometry = this->geometry();
+
+            auto moveFinish = [=] {
+                move(pos);
+                d->frameState = CollectionFramePrivate::NormalShowState;
+                d->updateMoveRect();
+                d->surface()->update();
+                if (d->collView) d->collView->setProperty(kCollectionPropertyEditing, false);
+                Q_EMIT surfaceChanged(d->surface());
+                Q_EMIT geometryChanged();
+                Q_EMIT moveStateChanged(false);
+                Q_EMIT editingStatusChanged(false);
+                Q_EMIT requestDeactiveAllPredictors();
+            };
 
             // no valid space for collection on other surface,
             // the collection should be removed from other surface
             // and get back to previous surface.
             if (!validPos && this->parent() != d->oldSurface) {
                 if (Surface::animationEnabled()) {
-                    // appear on old surface.
+                    // appear on old surface callback.
                     auto onVanishOnNewScreen = [=]() {
                         auto finalGeo = geometry;
                         finalGeo.moveTo(pos);
@@ -620,66 +637,57 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
                                                                   finalGeo.width() / 2,
                                                                   finalGeo.height() / 2 });
                         this->setParent(d->oldSurface);
+                        Q_EMIT surfaceChanged(d->surface());
                         this->setGeometry(startGeo);
                         this->show();
-                        Q_EMIT surfaceChanged(d->surface());
-                        Surface::animate({ this,
-                                           "geometry",
-                                           200,
-                                           QEasingCurve::BezierSpline,
-                                           startGeo,
-                                           finalGeo,
-                                           {},
-                                           [=] {
-                                               d->updateMoveRect();
-                                               Q_EMIT geometryChanged();
-                                           } });
+                        auto params = AnimateParams {
+                            .target = this,
+                            .property = "geometry",
+                            .duration = 200,
+                            .curve = QEasingCurve::BezierSpline,
+                            .begin = startGeo,
+                            .end = finalGeo,
+                            .onFinished = moveFinish
+                        };
+                        Surface::animate(params);
                     };
 
-                    // valish on new surface.
-                    Surface::animate({ this,
-                                       "geometry",
-                                       200,
-                                       QEasingCurve::BezierSpline,
-                                       this->geometry(),
-                                       this->geometry().marginsRemoved({ width() / 2, height() / 2, width() / 2, height() / 2 }),
-                                       {},
-                                       onVanishOnNewScreen });
+                    // vanish on current surface.
+                    auto params = AnimateParams {
+                        .target = this,
+                        .property = "geometry",
+                        .duration = 200,
+                        .curve = QEasingCurve::BezierSpline,
+                        .begin = this->geometry(),
+                        .end = this->geometry().marginsRemoved({ width() / 2, height() / 2, width() / 2, height() / 2 }),
+                        .onFinished = onVanishOnNewScreen
+                    };
+                    Surface::animate(params);
                 } else {
                     setParent(d->oldSurface);
                     Q_EMIT surfaceChanged(d->surface());
+                    Q_EMIT moveStateChanged(false);
                     move(pos);
                     show();
                 }
             } else {
-                // animation here.
                 if (Surface::animationEnabled()) {
-                    Surface::animate({ this,
-                                       "pos",
-                                       200,
-                                       QEasingCurve::BezierSpline,
-                                       this->pos(),
-                                       pos,
-                                       {},
-                                       [this] {
-                                           d->updateMoveRect();
-                                           Q_EMIT geometryChanged();
-                                       } });
+                    auto params = AnimateParams {
+                        .target = this,
+                        .property = "pos",
+                        .duration = 200,
+                        .curve = QEasingCurve::BezierSpline,
+                        .begin = this->pos(),
+                        .end = pos,
+                        .onFinished = moveFinish
+                    };
+                    Surface::animate(params);
                 } else {
-                    move(pos);
+                    moveFinish();
                 }
             }
             d->updateMoveRect();
         }
-        emit geometryChanged();
-        Q_EMIT editingStatusChanged(false);
-        Q_EMIT requestDeactiveAllPredictors();
-
-        if (d->surface())
-            Q_EMIT surfaceChanged(d->surface());
-
-        if (d->collView)
-            d->collView->setProperty(kCollectionPropertyEditing, false);
     }
 
     DFrame::mouseReleaseEvent(event);

@@ -21,6 +21,7 @@ class BackgroundPlugin : public dpf::Plugin
 
     // signal events
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_BackgroundPaint)
+    DPF_EVENT_REG_SIGNAL(signal_Background_BackgroundSetted)
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_FetchUseColorBackground)

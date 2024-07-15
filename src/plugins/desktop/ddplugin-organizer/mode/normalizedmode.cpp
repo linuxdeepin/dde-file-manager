@@ -13,12 +13,14 @@
 #include "utils/renamedialog.h"
 #include "view/collectionview.h"
 #include "view/collectionframe.h"
+#include "view/collectionwidget.h"
 #include "delegate/collectionitemdelegate.h"
 
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-framework/dpf.h>
 
+#include <QScrollBar>
 #include <QDebug>
 #include <QTime>
 
@@ -187,6 +189,25 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
             q, &NormalizedMode::changeCollectionSurface);
     connect(frame, &CollectionFrame::requestDeactiveAllPredictors,
             q, &NormalizedMode::deactiveAllPredictors);
+    connect(frame, &CollectionFrame::moveStateChanged,
+            q, &NormalizedMode::onCollectionMoving);
+
+    {   // update freeze image when signals emitted.
+        connect(q, &NormalizedMode::collectionChanged,
+                collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(frame, &CollectionFrame::geometryChanged,
+                collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(collection->itemView(), &CollectionView::iconSizeChanged,
+                collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(collection->itemView()->verticalScrollBar(), &QScrollBar::valueChanged,
+                collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(classifier, &FileClassifier::itemsChanged,
+                collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(CfgPresenter, &ConfigPresenter::optimizeStateChanged,
+                collection->widget(), [collection](bool state) {if (state) collection->widget()->cacheSnapshot(); });
+        dpfSignalDispatcher->subscribe("ddplugin_background", "signal_Background_BackgroundSetted",
+                                       collection->widget(), &CollectionWidget::cacheSnapshot);
+    }
 }
 
 bool NormalizedModePrivate::tryPlaceRect(QRect &item, const QList<QRect> &inSeats, const QSize &table)
@@ -835,6 +856,14 @@ void NormalizedMode::deactiveAllPredictors()
     for (auto surface : surfaces) {
         if (surface)
             surface->deactivatePosIndicator();
+    }
+}
+
+void NormalizedMode::onCollectionMoving(bool moving)
+{
+    for (auto holder : d->holders) {
+        if (holder)
+            holder->setFreeze(moving);
     }
 }
 
