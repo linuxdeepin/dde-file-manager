@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "private/fileinfo_p.h"
-
+#include <dfm-base/interfaces/private/fileinfo_p.h>
 #include <dfm-base/utils/chinese2pinyin.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/utils/fileutils.h>
