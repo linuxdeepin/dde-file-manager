@@ -184,6 +184,8 @@ SettingDialog::SettingDialog(QWidget *parent)
         SettingBackend::instance()->setToSettings(dtkSettings);
         updateSettings(dtkSettings);
     }
+
+    setIcon(QIcon::fromTheme("dde-file-manager"));
 }
 
 void SettingDialog::setItemVisiable(const QString &key, bool visiable)
