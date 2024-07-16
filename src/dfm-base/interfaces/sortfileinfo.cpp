@@ -2,18 +2,16 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "private/sortfileinfo_p.h"
+#include <dfm-base/interfaces/private/sortfileinfo_p.h>
 
 namespace dfmbase {
 SortFileInfo::SortFileInfo()
     : d(new SortFileInfoPrivate(this))
 {
-
 }
 
 SortFileInfo::~SortFileInfo()
 {
-
 }
 
 void SortFileInfo::setUrl(const QUrl &url)
@@ -109,12 +107,10 @@ bool SortFileInfo::isExecutable() const
 SortFileInfoPrivate::SortFileInfoPrivate(SortFileInfo *qq)
     : q(qq)
 {
-
 }
 
 SortFileInfoPrivate::~SortFileInfoPrivate()
 {
-
 }
 
 }
