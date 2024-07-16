@@ -1,13 +1,29 @@
 [Unit]
 Description=DDE File Manager Daemon
+Wants=dbus.socket
 After=local-fs.target udisks2.service usec-boot-unlock.service
 
 [Service]
 Type=dbus
 BusName=com.deepin.filemanager.daemon
+User=root
 ExecStart=/usr/bin/dde-file-manager-daemon
 CapabilityBoundingSet=~CAP_NET_RAW
 MemoryLimit=8G
+ProtectSystem=strict
+InaccessiblePaths=-/etc/shadow
+InaccessiblePaths=-/etc/NetworkManager/system-connections
+InaccessiblePaths=-/etc/pam.d
+InaccessiblePaths=-/usr/share/uadp/
+
+NoNewPrivileges=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RemoveIPC=yes
+
 
 [Install]
 WantedBy=multi-user.target
