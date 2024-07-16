@@ -65,6 +65,7 @@ void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
         { "Property_Key_Ejectable", false },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(ContextMenuCallback(sidebarMenuCall)) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(ItemClickedActionCallback(sidebarItemClicked)) },
+        { "Property_Key_CallbackFindMe", QVariant::fromValue(FindMeCallback(sidebarUrlEquals)) },
         { "Property_Key_VisiableControl", "mounted_share_dirs" },
         { "Property_Key_VisiableDisplayName", QObject::tr("Mounted sharing folders") }
         //        { "Property_Key_ReportName", reportName }
@@ -102,7 +103,9 @@ void computer_sidebar_event_calls::callComputerRefresh()
     }
 
     std::for_each(allStdSmbs.cbegin(), allStdSmbs.cend(), [=](const QString &smb) {
-        dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, QUrl(smb));
+        QUrl url(smb);
+        url.setScheme("vsmb");
+        dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, url);
     });
 
     dpfSlotChannel->push(kComputerEventNS, kCptSlotRefresh);
@@ -119,7 +122,11 @@ void computer_sidebar_event_calls::sidebarMenuCall(quint64 winId, const QUrl &ur
         return;
     }
 
-    QVariant selectedUrls = QVariant::fromValue<QList<QUrl>>({ makeVEntryUrl(url.toString()) });
+    if (url.scheme() != "vsmb")
+        return;
+    QUrl smbUrl = url;
+    smbUrl.setScheme("smb");
+    QVariant selectedUrls = QVariant::fromValue<QList<QUrl>>({ makeVEntryUrl(smbUrl.toString()) });
     QVariantHash params {
         { MenuParamKey::kIsEmptyArea, false },
         { MenuParamKey::kWindowId, winId },
@@ -322,4 +329,18 @@ void computer_sidebar_event_calls::sidebarItemClicked(quint64 winId, const QUrl 
         sUrl += "/";
     auto fullPath = VirtualEntryDbHandler::instance()->getFullSmbPath(sUrl);
     dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl(fullPath));
+}
+
+bool computer_sidebar_event_calls::sidebarUrlEquals(const QUrl &item, const QUrl &target)
+{
+    if (item.scheme() == "vsmb" && target.scheme() == "smb") {
+        auto pathA = item.path();
+        auto pathB = target.path();
+        if (!pathA.endsWith('/'))
+            pathA += "/";
+        if (!pathB.endsWith('/'))
+            pathB += "/";
+        return pathA == pathB && item.host() == target.host();
+    }
+    return false;
 }
