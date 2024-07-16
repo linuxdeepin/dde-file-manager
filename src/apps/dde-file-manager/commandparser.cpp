@@ -325,7 +325,7 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
     auto flag = !DConfigManager::instance()->
             value(kViewDConfName,
                   kOpenFolderWindowsInASeparateProcess, true).toBool();
-    flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile");
+    flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile") || isSet("show-item");
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
 
