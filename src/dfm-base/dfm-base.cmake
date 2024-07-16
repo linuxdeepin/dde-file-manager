@@ -64,7 +64,7 @@ add_library(${BIN_NAME}
 
 if(${QT_VERSION_MAJOR} EQUAL "6")
     qt6_add_dbus_interface(Qt6App_dbus
-        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
+        ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.DeviceManager.xml
         devicemanager_interface_qt6)
     target_sources(${BIN_NAME} PRIVATE ${Qt6App_dbus})
     set(DFM_IO_HEADERS ${dfm6-io_INCLUDE_DIR})
@@ -72,7 +72,7 @@ if(${QT_VERSION_MAJOR} EQUAL "6")
     set(DFM_BURN_HEADERS ${dfm6-burn_INCLUDE_DIR})
 else()
     qt5_add_dbus_interface(Qt5App_dbus
-        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml
+        ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.DeviceManager.xml
         devicemanager_interface)
     target_sources(${BIN_NAME} PRIVATE ${Qt5App_dbus})
     set(DFM_IO_HEADERS ${dfm-io_INCLUDE_DIR})

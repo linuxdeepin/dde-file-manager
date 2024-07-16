@@ -4,7 +4,7 @@ After=local-fs.target udisks2.service usec-boot-unlock.service dde-dconfig-daemo
 
 [Service]
 Type=dbus
-BusName=com.deepin.filemanager.daemon
+BusName=org.deepin.Filemanager.Daemon
 ExecStart=/usr/bin/dde-file-manager-daemon
 CapabilityBoundingSet=~CAP_NET_RAW
 MemoryLimit=8G

@@ -12,6 +12,7 @@ set(SRCS
     main.cpp
 )
 find_package(Qt5 COMPONENTS Core)
+find_package(PkgConfig REQUIRED)
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME}

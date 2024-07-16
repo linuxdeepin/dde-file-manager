@@ -13,12 +13,12 @@ set_target_properties(${BIN_NAME} PROPERTIES
 
 if(${QT_VERSION_MAJOR} EQUAL "6")
     qt6_add_dbus_interface(Qt6App_dbus
-        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
+        ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.OperationsStackManager.xml
         operationsstackmanager_interface_qt6)
     target_sources(${BIN_NAME} PRIVATE ${Qt6App_dbus})
 else()
     qt5_add_dbus_interface(Qt5App_dbus
-        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
+        ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.OperationsStackManager.xml
         operationsstackmanager_interface)
     target_sources(${BIN_NAME} PRIVATE ${Qt5App_dbus})
 endif()

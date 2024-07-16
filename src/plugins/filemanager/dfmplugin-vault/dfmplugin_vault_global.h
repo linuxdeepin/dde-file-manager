@@ -198,7 +198,7 @@ inline constexpr char kAcEditVaultRemovePassword[] { "edit_vault_remove_password
 inline constexpr char kAcBtnVaultRemovePasswordHint[] { "btn_vault_remove_passwordHint" };
 }
 
-inline constexpr char kDeamonServiceName[] { "com.deepin.filemanager.daemon" };
+inline constexpr char kDeamonServiceName[] { "org.deepin.Filemanager" };
 #ifdef COMPILE_ON_V23
 inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
 inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
