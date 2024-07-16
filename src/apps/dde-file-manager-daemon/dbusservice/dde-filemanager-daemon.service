@@ -1,13 +1,40 @@
 [Unit]
 Description=DDE File Manager Daemon
+Wants=dbus.socket
 After=local-fs.target udisks2.service usec-boot-unlock.service
 
+#非rootTODO
 [Service]
 Type=dbus
 BusName=com.deepin.filemanager.daemon
+User=root
 ExecStart=/usr/bin/dde-file-manager-daemon
-CapabilityBoundingSet=~CAP_NET_RAW
-MemoryLimit=8G
+#CapabilityBoundingSet=~CAP_NET_RAW
+
+#com.deepin.filemanager.daemon.MountControl 屏蔽参数均对挂载功能有影响//TODOmount命令来实现一个简单的逻辑，看下有没有mount的报错，需要代码改动遗留验证
+#ReadWritePaths=/media  挂载目录为空
+
+#ProtectSystem=strict 挂载失败
+#InaccessiblePaths=-/etc/shadow 挂载目录为空/无法卸载设备
+#InaccessiblePaths=-/etc/NetworkManager/system-connections 挂载目录为空/无法卸载设备
+#InaccessiblePaths=-/etc/pam.d 挂载目录为空
+#InaccessiblePaths=-/usr/share/uadp/ 挂载目录为空
+
+NoNewPrivileges=yes 
+#ProtectHome=yes 挂载失败
+#ProtectKernelTunables=yes 挂载目录为空/无法卸载设备
+#ProtectKernelModules=yes 挂载目录为空
+#ProtectControlGroups=yes 挂载目录为空
+#PrivateMounts=yes  挂载失败
+#PrivateTmp=yes 挂载失败
+#PrivateDevices=yes 挂载目录为空
+#PrivateNetwork=yes 挂载目录为空
+RestrictNamespaces=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RemoveIPC=yes
+MemoryDenyWriteExecute=yes
+
 
 [Install]
 WantedBy=multi-user.target
