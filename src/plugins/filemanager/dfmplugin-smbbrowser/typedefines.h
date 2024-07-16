@@ -40,5 +40,7 @@ using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url
 Q_DECLARE_METATYPE(ContextMenuCallback)
 using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
 Q_DECLARE_METATYPE(ItemClickedActionCallback);
+using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targetUrl)>;
+Q_DECLARE_METATYPE(FindMeCallback);
 
 #endif   // TYPEDEFINES_H
