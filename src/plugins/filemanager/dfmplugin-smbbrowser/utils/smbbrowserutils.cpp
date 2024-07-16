@@ -121,9 +121,9 @@ bool startService(const QString &service)
 
 void enableServiceAsync()
 {
-    QDBusInterface iface("com.deepin.filemanager.daemon",
-                         "/com/deepin/filemanager/daemon/UserShareManager",
-                         "com.deepin.filemanager.daemon.UserShareManager",
+    QDBusInterface iface("org.deepin.Filemanager",
+                         "/org/deepin/Filemanager/UserShareManager",
+                         "org.deepin.Filemanager.UserShareManager",
                          QDBusConnection::systemBus());
     iface.asyncCall("EnableSmbServices");
 }

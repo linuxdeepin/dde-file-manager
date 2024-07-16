@@ -8,12 +8,12 @@ add_library(${BIN_NAME}
 # generate dbus interface
 if(${QT_VERSION_MAJOR} EQUAL "6")
     qt6_add_dbus_interface(Qt6App_dbus
-        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.TagManager.xml
+        ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.TagManager.xml
         tagmanager_interface_qt6)
     target_sources(${BIN_NAME} PRIVATE ${Qt6App_dbus})
 else()
     qt5_add_dbus_interface(Qt5App_dbus
-        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.TagManager.xml
+        ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.TagManager.xml
         tagmanager_interface)
     target_sources(${BIN_NAME} PRIVATE ${Qt5App_dbus})
 endif()

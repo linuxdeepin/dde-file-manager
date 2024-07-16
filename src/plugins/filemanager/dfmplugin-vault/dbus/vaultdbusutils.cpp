@@ -58,8 +58,8 @@ VaultPolicyState VaultDBusUtils::getVaultPolicy()
         return VaultPolicyState::kEnable;
 
     QDBusInterface deepinSystemInfo(kDeamonServiceName,
-                                    "/com/deepin/filemanager/daemon/AccessControlManager",
-                                    "com.deepin.filemanager.daemon.AccessControlManager",
+                                    "/org/deepin/Filemanager/AccessControlManager",
+                                    "org.deepin.Filemanager.AccessControlManager",
                                     QDBusConnection::systemBus());
 
     VaultPolicyState vaulthidestate { VaultPolicyState::kUnkonw };
@@ -87,8 +87,8 @@ bool VaultDBusUtils::setVaultPolicyState(int policyState)
         return false;
 
     QDBusInterface deepinSystemInfo(kDeamonServiceName,
-                                    "/com/deepin/filemanager/daemon/AccessControlManager",
-                                    "com.deepin.filemanager.daemon.AccessControlManager",
+                                    "/org/deepin/Filemanager/AccessControlManager",
+                                    "org.deepin.Filemanager.AccessControlManager",
                                     QDBusConnection::systemBus());
 
     auto response = deepinSystemInfo.call("FileManagerReply", QVariant::fromValue(policyState));

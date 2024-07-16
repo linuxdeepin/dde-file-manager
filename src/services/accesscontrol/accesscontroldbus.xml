@@ -1,0 +1,52 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.deepin.filemanager.daemon.AccessControlManager">
+    <signal name="AccessPolicySetFinished">
+      <arg name="policy" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="DeviceAccessPolicyChanged">
+      <arg name="policy" type="av" direction="out"/>
+    </signal>
+    <signal name="AccessVaultPolicyNotify">
+    </signal>
+    <signal name="DiskPasswordChecked">
+      <arg name="code" type="i" direction="out"/>
+    </signal>
+    <signal name="DiskPasswordChanged">
+      <arg name="code" type="i" direction="out"/>
+    </signal>
+    <method name="SetAccessPolicy">
+      <arg type="s" direction="out"/>
+      <arg name="policy" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="QueryAccessPolicy">
+      <arg type="av" direction="out"/>
+    </method>
+    <method name="SetVaultAccessPolicy">
+      <arg type="s" direction="out"/>
+      <arg name="policy" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="QueryVaultAccessPolicy">
+      <arg type="av" direction="out"/>
+    </method>
+    <method name="QueryVaultAccessPolicyVisible">
+      <arg type="i" direction="out"/>
+    </method>
+    <method name="FileManagerReply">
+      <arg type="s" direction="out"/>
+      <arg name="policystate" type="i" direction="in"/>
+    </method>
+    <method name="ChangeDiskPassword">
+      <arg name="oldPwd" type="s" direction="in"/>
+      <arg name="newPwd" type="s" direction="in"/>
+    </method>
+    <method name="Chmod">
+      <arg type="b" direction="out"/>
+      <arg name="path" type="s" direction="in"/>
+      <arg name="mode" type="u" direction="in"/>
+    </method>
+  </interface>
+</node>
