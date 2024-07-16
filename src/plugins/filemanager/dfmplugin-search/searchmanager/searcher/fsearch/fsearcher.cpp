@@ -7,6 +7,7 @@
 #include "utils/searchhelper.h"
 
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <QDebug>
 
@@ -37,6 +38,12 @@ bool FSearcher::isSupport(const QUrl &url)
         return false;
 
     auto path = UrlRoute::urlToPath(url);
+
+    QString host, share;
+    bool isSmb = dfmbase::DeviceUtils::parseSmbInfo(path, host, share);
+    if (isSmb)
+        return false;
+
     return FSearchHandler::checkPathSearchable(path);
 }
 
