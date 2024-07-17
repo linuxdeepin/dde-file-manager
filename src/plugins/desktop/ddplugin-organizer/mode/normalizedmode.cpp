@@ -18,12 +18,14 @@
 
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-framework/dpf.h>
 
 #include <QScrollBar>
 #include <QDebug>
 #include <QTime>
-
+#include <DGuiApplicationHelper>
 using namespace ddplugin_organizer;
 
 NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
@@ -205,6 +207,15 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
                 collection->widget(), &CollectionWidget::cacheSnapshot);
         connect(CfgPresenter, &ConfigPresenter::optimizeStateChanged,
                 collection->widget(), [collection](bool state) {if (state) collection->widget()->cacheSnapshot(); });
+        connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
+                collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(dfmbase::ThumbnailFactory::instance(), &dfmbase::ThumbnailFactory::produceFinished,
+                collection->widget(), [collection](const QUrl &url) {
+                    auto path = url.path();
+                    path = path.mid(0, path.lastIndexOf("/"));
+                    if (path == dfmbase::StandardPaths::location(dfmbase::StandardPaths::kDesktopPath))
+                        collection->widget()->cacheSnapshot();
+                });
         dpfSignalDispatcher->subscribe("ddplugin_background", "signal_Background_BackgroundSetted",
                                        collection->widget(), &CollectionWidget::cacheSnapshot);
     }
