@@ -386,7 +386,7 @@ bool FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 void FileSortWorker::handleWatcherUpdateFiles(const QList<SortInfoPointer> &children)
 {
     bool added = false;
-    for(auto sort : children) {
+    for (auto sort : children) {
         if (isCanceled)
             return;
         auto suc = handleWatcherUpdateFile(sort);
@@ -815,7 +815,7 @@ void FileSortWorker::filterAndSortFiles(const QUrl &dir, const bool fileter, con
     if (istree)
         visibleList = sortAllTreeFilesByParent(dir, reverse);
     else {
-        visibleList = sortTreeFiles(visibleTreeChildren.contains(current)? visibleTreeChildren[current] : visibleChildren, reverse);
+        visibleList = sortTreeFiles(visibleTreeChildren.contains(current) ? visibleTreeChildren[current] : visibleChildren, reverse);
     }
 
     // 执行界面刷新  设置过滤，当前的目录是当前树的根目录，反序。所有的显示url都要改变
@@ -844,7 +844,7 @@ void FileSortWorker::resortCurrent(const bool reverse)
     if (istree)
         visibleList = sortAllTreeFilesByParent(current, reverse);
     else {
-        visibleList = sortTreeFiles(visibleTreeChildren.contains(current)? visibleTreeChildren[current] : visibleChildren, reverse);
+        visibleList = sortTreeFiles(visibleTreeChildren.contains(current) ? visibleTreeChildren[current] : visibleChildren, reverse);
     }
 
     resortVisibleChildren(visibleList);
@@ -1446,7 +1446,7 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
     case kItemFileSizeRole:
         return info->displayOf(DisPlayInfoType::kSizeDisplayName);
     case kItemFileMimeTypeRole:
-        return info->displayOf(DisPlayInfoType::kMimeTypeDisplayName);
+        return info->displayOf(DisPlayInfoType::kFileTypeDisplayName);
     case kItemNameRole:
         return info->nameOf(NameInfoType::kFileName);
     case kItemDisplayRole:
