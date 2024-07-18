@@ -18,11 +18,15 @@
 
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-framework/dpf.h>
 
 #include <QScrollBar>
 #include <QDebug>
 #include <QTime>
+
+#include <DGuiApplicationHelper>
 
 using namespace ddplugin_organizer;
 
@@ -191,20 +195,33 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
             q, &NormalizedMode::deactiveAllPredictors);
     connect(frame, &CollectionFrame::moveStateChanged,
             q, &NormalizedMode::onCollectionMoving);
+    // QueueConnection: the slot function will be invoked later.
+    connect(classifier, &FileClassifier::itemsChanged,
+            this, &NormalizedModePrivate::switchCollection, Qt::QueuedConnection);
 
     {   // update freeze image when signals emitted.
+        auto collWidget = collection->widget();
         connect(q, &NormalizedMode::collectionChanged,
-                collection->widget(), &CollectionWidget::cacheSnapshot);
+                collWidget, &CollectionWidget::cacheSnapshot);
         connect(frame, &CollectionFrame::geometryChanged,
-                collection->widget(), &CollectionWidget::cacheSnapshot);
+                collWidget, &CollectionWidget::cacheSnapshot);
         connect(collection->itemView(), &CollectionView::iconSizeChanged,
-                collection->widget(), &CollectionWidget::cacheSnapshot);
+                collWidget, &CollectionWidget::cacheSnapshot);
         connect(collection->itemView()->verticalScrollBar(), &QScrollBar::valueChanged,
-                collection->widget(), &CollectionWidget::cacheSnapshot);
+                collWidget, &CollectionWidget::cacheSnapshot);
         connect(classifier, &FileClassifier::itemsChanged,
-                collection->widget(), &CollectionWidget::cacheSnapshot);
+                collWidget, &CollectionWidget::cacheSnapshot);
         connect(CfgPresenter, &ConfigPresenter::optimizeStateChanged,
-                collection->widget(), [collection](bool state) {if (state) collection->widget()->cacheSnapshot(); });
+                collWidget, [collWidget](bool state) {if (state) collWidget->cacheSnapshot(); });
+        connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
+                collWidget, &CollectionWidget::cacheSnapshot);
+        connect(dfmbase::ThumbnailFactory::instance(), &dfmbase::ThumbnailFactory::produceFinished,
+                collWidget, [collWidget](const QUrl &url) {
+                    auto path = url.path();
+                    path = path.mid(0, path.lastIndexOf("/"));
+                    if (path == dfmbase::StandardPaths::location(dfmbase::StandardPaths::kDesktopPath))
+                        collWidget->cacheSnapshot();
+                });
         dpfSignalDispatcher->subscribe("ddplugin_background", "signal_Background_BackgroundSetted",
                                        collection->widget(), &CollectionWidget::cacheSnapshot);
     }
@@ -381,9 +398,6 @@ bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QList<QUrl> &
     }
 
     dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", collectionItems);
-    QTimer::singleShot(0, this, [this] {   // to hide collection if all items are moved outside.
-        switchCollection();
-    });
     return true;
 }
 
