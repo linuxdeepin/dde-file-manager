@@ -31,7 +31,18 @@ CollectionWidgetPrivate::CollectionWidgetPrivate(const QString &uuid, Collection
     : QObject(parent), q(qq), id(uuid), provider(dataProvider)
 {
     connect(provider, &CollectionDataProvider::nameChanged, this, &CollectionWidgetPrivate::onNameChanged);
-    connect(&updateSnapshotTimer, &QTimer::timeout, this, [this] { freezePixmap = q->grab(); });
+    connect(&updateSnapshotTimer, &QTimer::timeout, this, [this] {
+        if (freeze) return;
+        // grab the DBlurWidget, the pixmap a little white, reduce the alpha channel to make the color colser.
+        // if DTK fixed, then remove the color sets.
+        auto colorNormal = q->maskColor();
+        auto colorNew = colorNormal;
+        colorNew.setAlpha(0.06 * 255);
+        q->setMaskColor(colorNew);
+        q->update();
+        freezePixmap = q->grab();
+        q->setMaskColor(colorNormal);
+    });
     updateSnapshotTimer.setSingleShot(true);
     updateSnapshotTimer.setInterval(100);
 }
