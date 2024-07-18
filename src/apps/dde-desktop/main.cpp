@@ -252,7 +252,7 @@ bool first_check_wayland_env()
 }
 int main(int argc, char *argv[])
 {
-    if(first_check_wayland_env()) {
+    if (first_check_wayland_env()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
         setenv("PULSE_PROP_media.role", "video", 1);
 #ifndef __x86_64__

@@ -35,21 +35,31 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${DFrameworkDBus_INCLUDE_DIRS}
-    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+if(DFM_BUILD_WITH_QT6)
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
+    )
+    target_link_libraries(${PROJECT_NAME}
+        DFM::base
+        DFM::framework
+    )
+else()
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+        ${DFrameworkDBus_INCLUDE_DIRS}
+    )
+    target_link_libraries(${PROJECT_NAME}
+        DFM::base
+        DFM::framework
+        ${DFrameworkDBus_LIBRARIES}
+    )
+endif()
 
-)
 
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    ${DFrameworkDBus_LIBRARIES}
-)
 
 #install library file
 install(TARGETS

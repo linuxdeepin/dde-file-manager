@@ -5,7 +5,6 @@
 #include "switchwidget.h"
 
 #include <DPalette>
-#include <DApplicationHelper>
 
 #include <QPainter>
 
@@ -15,7 +14,7 @@ using namespace ddplugin_organizer;
 SwitchWidget::SwitchWidget(const QString &title, QWidget *parent)
     : EntryWidget(new QLabel(title), new DSwitchButton(), parent)
 {
-    label = qobject_cast<QLabel* >(leftWidget);
+    label = qobject_cast<QLabel *>(leftWidget);
     label->setParent(this);
     label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 

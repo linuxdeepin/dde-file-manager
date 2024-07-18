@@ -9,7 +9,6 @@ FILE(GLOB_RECURSE MENU_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -26,8 +25,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    
-    ${DtkWidget_LIBRARIES}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE MENU_CHECK_FOCUSONLY)

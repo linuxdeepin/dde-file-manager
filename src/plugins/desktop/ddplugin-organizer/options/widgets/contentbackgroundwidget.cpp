@@ -5,7 +5,7 @@
 #include "contentbackgroundwidget.h"
 
 #include <DPalette>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 
 #include <QPainter>
 #include <QPainterPath>
@@ -25,7 +25,7 @@ ContentBackgroundWidget::ContentBackgroundWidget(QWidget *parent)
 
 void ContentBackgroundWidget::paintEvent(QPaintEvent *event)
 {
-    const DPalette &dp = DApplicationHelper::instance()->palette(this);
+    const DPalette &dp = DPaletteHelper::instance()->palette(this);
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     p.setPen(Qt::NoPen);

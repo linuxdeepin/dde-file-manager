@@ -13,7 +13,6 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QFontMetrics>
 #include <QScreen>
 

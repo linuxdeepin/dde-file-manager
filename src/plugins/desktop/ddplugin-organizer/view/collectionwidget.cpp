@@ -193,7 +193,11 @@ bool CollectionWidget::eventFilter(QObject *obj, QEvent *event)
     return DBlurEffectWidget::eventFilter(obj, event);
 }
 
-void CollectionWidget::enterEvent(QEvent *event)
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+void CollectionWidget::enterEvent(QEvent *)
+#else
+void CollectionWidget::enterEvent(QEnterEvent *event)
+#endif
 {
     d->titleBar->setTitleBarVisible(true);
 

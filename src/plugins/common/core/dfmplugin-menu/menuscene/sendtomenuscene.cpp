@@ -117,7 +117,7 @@ bool SendToMenuScene::create(QMenu *parent)
         // udisk
         using namespace GlobalServerDefines;
         auto devs = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
-        auto dedupedDevs = devs.toSet();
+        auto dedupedDevs = QSet<QString>(devs.begin(), devs.end());
         int idx = 0;
         for (const QString &dev : dedupedDevs) {
             auto &&data = DevProxyMng->queryBlockInfo(dev);

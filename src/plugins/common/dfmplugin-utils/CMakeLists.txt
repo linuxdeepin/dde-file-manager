@@ -15,8 +15,7 @@ FILE(GLOB_RECURSE UTILS_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(Qt5 COMPONENTS Svg REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Svg REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -27,18 +26,11 @@ set(EXTENSIONS_LIB_DIR ${DFM_PLUGIN_DIR}/extensions)
 add_definitions(-DEXTENSIONS_PATH=\"${EXTENSIONS_LIB_DIR}\")
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-        ${Qt5Svg_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     DFM::extension
-    Qt5::Svg
-    ${DtkWidget_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Svg
 )
 
 #install library file

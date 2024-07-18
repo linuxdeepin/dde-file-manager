@@ -11,7 +11,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/windowutils.h>
 
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 #include <DDBusSender>
 #include <DSysInfo>
 
@@ -67,11 +67,12 @@ DFMBASE_USE_NAMESPACE
 WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
     : QObject(parent), q(parent)
 {
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     fmDebug() << "create com.deepin.wm interface.";
     wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm",
                           QDBusConnection::sessionBus(), q);
     fmDebug() << "end com.deepin.wm interface.";
+#endif
 
     regionMonitor = new DRegionMonitor(q);
     connect(regionMonitor, &DRegionMonitor::buttonPress, this, &WallpaperSettingsPrivate::onMousePressed);
@@ -115,7 +116,7 @@ void WallpaperSettingsPrivate::propertyForWayland()
 void WallpaperSettingsPrivate::initUI()
 {
     QVBoxLayout *layout = new QVBoxLayout(q);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
     // wallpaper
@@ -544,7 +545,7 @@ void WallpaperSettingsPrivate::initCloseButton()
 
 void WallpaperSettingsPrivate::initCarousel()
 {
-    DPalette pal = DApplicationHelper::instance()->palette(q);
+    DPalette pal = DPaletteHelper::instance()->palette(q);
     QColor textColor = pal.color(QPalette::Normal, QPalette::BrightText);
 
     carouselLayout = new QHBoxLayout(q);
@@ -635,7 +636,7 @@ void WallpaperSettingsPrivate::initScreenSaver()
     lockScreenBox->installEventFilter(q);
     connect(lockScreenBox, &QCheckBox::toggled, screenSaverIfs, &ScreenSaverIfs::setLockScreenAtAwake);
 
-    DPalette pal = DApplicationHelper::instance()->palette(q);
+    DPalette pal = DPaletteHelper::instance()->palette(q);
     QColor textColor = pal.color(QPalette::Normal, QPalette::BrightText);
 
     QPalette lsPal = lockScreenBox->palette();
@@ -874,9 +875,10 @@ void WallpaperSettings::hideEvent(QHideEvent *event)
     d->regionMonitor->unregisterRegion();
 
     if (d->mode == Mode::WallpaperMode) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         if (!d->currentSelectedWallpaper.isEmpty())
             d->wmInter->SetTransientBackground("");
-
+#endif
         if (ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF()))
             manager->stop();
     } else {

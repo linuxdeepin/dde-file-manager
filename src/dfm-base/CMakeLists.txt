@@ -23,6 +23,15 @@ endif()
 add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
 add_compile_definitions(THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}")
 
+# add depends
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Gui Concurrent DBus Sql Network REQUIRED)
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Widget Gui REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_search_module(dfm-burn REQUIRED dfm${DTK_VERSION_MAJOR}-burn IMPORTED_TARGET)
+pkg_search_module(dfm-io REQUIRED dfm${DTK_VERSION_MAJOR}-io IMPORTED_TARGET)
+pkg_search_module(dfm-mount REQUIRED dfm${DTK_VERSION_MAJOR}-mount IMPORTED_TARGET)
+pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
+
 # add qrc resources
 set(QRC_FILES
     qrc/skin/skin.qrc
@@ -47,16 +56,7 @@ file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
     "./*.cpp"
 )
 
-# add depends
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Concurrent DBus Sql Network REQUIRED)
-find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Widget REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_search_module(dfm-burn REQUIRED dfm${DTK_VERSION_MAJOR}-burn IMPORTED_TARGET)
-pkg_search_module(dfm-io REQUIRED dfm${DTK_VERSION_MAJOR}-io IMPORTED_TARGET)
-pkg_search_module(dfm-mount REQUIRED dfm${DTK_VERSION_MAJOR}-mount IMPORTED_TARGET)
-pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
-
-if(OPT_ENABLE_QML)
+if(DFM_BUILD_WITH_QT6)
     set(DFM_EXTRA_LIBRARIES "")
 else()
     find_package(KF5Codecs REQUIRED)
@@ -120,12 +120,14 @@ add_library(${BIN_NAME}
 target_link_libraries(${BIN_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::DBus
     Qt${QT_VERSION_MAJOR}::Sql
     Qt${QT_VERSION_MAJOR}::Network
     Dtk${DTK_VERSION_MAJOR}::Core
     Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Gui
     PkgConfig::dfm-burn
     PkgConfig::dfm-mount
     PkgConfig::dfm-io

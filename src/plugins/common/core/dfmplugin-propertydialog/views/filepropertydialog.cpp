@@ -64,7 +64,7 @@ void FilePropertyDialog::initInfoUI()
     scrollArea = new QScrollArea();
     scrollArea->setObjectName("PropertyDialog-QScrollArea");
     QPalette palette = scrollArea->viewport()->palette();
-    palette.setBrush(QPalette::Background, Qt::NoBrush);
+    palette.setBrush(QPalette::Window, Qt::NoBrush);
     scrollArea->viewport()->setPalette(palette);
     scrollArea->setFrameShape(QFrame::Shape::NoFrame);
     scrollArea->setWidgetResizable(true);
@@ -81,7 +81,7 @@ void FilePropertyDialog::initInfoUI()
     QVBoxLayout *vlayout1 = new QVBoxLayout;
     vlayout1->addWidget(scrollArea);
     vlayout1->setContentsMargins(0, 0, 0, 0);
-    vlayout1->setMargin(0);
+    vlayout1->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *widgetlayout = qobject_cast<QVBoxLayout *>(this->layout());
     widgetlayout->addLayout(vlayout1, 1);
 }
@@ -98,7 +98,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
     connect(editStackWidget, &EditStackedWidget::selectUrlRenamed, this, &FilePropertyDialog::onSelectUrlRenamed);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setMargin(0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->addWidget(fileIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout->addWidget(editStackWidget, 1, Qt::AlignHCenter | Qt::AlignTop);

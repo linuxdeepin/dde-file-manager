@@ -124,7 +124,9 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
         for (const QFileInfo &actionFileInfo : dir.entryInfoList({ "*.conf" }, QDir::Files, QDir::Time)) {
             //解析文件字段
             QSettings actionSetting(actionFileInfo.filePath(), customFormat);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             actionSetting.setIniCodec("UTF-8");
+#endif
             parseFile(actionSetting);
         }
     }

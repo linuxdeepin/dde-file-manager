@@ -488,7 +488,8 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(model, &CollectionModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
 
     connect(model, &CollectionModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
-    connect(model, &CollectionModel::modelReset, this, [this] { rebuild(); }, Qt::QueuedConnection);
+    connect(
+            model, &CollectionModel::modelReset, this, [this] { rebuild(); }, Qt::QueuedConnection);
 
     connect(CfgPresenter, &ConfigPresenter::reorganizeDesktop, this, &NormalizedMode::onReorganizeDesktop, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::releaseCollection, this, &NormalizedMode::releaseCollection, Qt::QueuedConnection);
@@ -670,7 +671,7 @@ void NormalizedMode::detachLayout()
 void NormalizedMode::rebuild(bool reorganize)
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
-    QTime time;
+    QElapsedTimer time;
     time.start();
     {
         auto files = model->files();

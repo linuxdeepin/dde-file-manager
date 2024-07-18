@@ -14,8 +14,6 @@
 #include <QHash>
 #include <QTimer>
 #include <QIODevice>
-#include <QSettings>
-
 #include <mutex>
 
 namespace dfmplugin_menu {

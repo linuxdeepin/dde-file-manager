@@ -54,15 +54,22 @@ add_library(${PROJECT_NAME}
     ${SCREEN_FILES}
     ${EXT_FILES}
 )
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Gui)
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     )
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+
+if(DFM_BUILD_WITH_QT6)
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
     )
+else()
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+    )
+endif()
 
 #install library file
 install(TARGETS

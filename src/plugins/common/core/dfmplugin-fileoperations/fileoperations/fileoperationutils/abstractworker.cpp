@@ -328,11 +328,11 @@ void AbstractWorker::endWork()
     emit finishedNotify(info);
 
     fmInfo() << "\n work end, job: " << jobType
-            << "\n sources parent: " << (sourceUrls.count() <= 0 ? QUrl() : parentUrl(sourceUrls.first()))
-            << "\n sources count: " << sourceUrls.count()
-            << "\n target: " << targetUrl
-            << "\n time elapsed: " << timeElapsed.elapsed()
-            << "\n";
+             << "\n sources parent: " << (sourceUrls.count() <= 0 ? QUrl() : parentUrl(sourceUrls.first()))
+             << "\n sources count: " << sourceUrls.count()
+             << "\n target: " << targetUrl
+             << "\n time elapsed: " << timeElapsed.elapsed()
+             << "\n";
     fmDebug() << "\n sources urls: " << sourceUrls;
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
@@ -420,7 +420,7 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     emit errorNotify(info);
 
     fmDebug() << "work error, job: " << jobType << " job error: " << error << " url from: " << from << " url to: " << to
-             << " error msg: " << errorMsg << id;
+              << " error msg: " << errorMsg << id;
 }
 
 /*!
@@ -583,7 +583,7 @@ QString AbstractWorker::formatFileName(const QString &fileName)
     if (fs_type == "vfat") {
         QString new_name = fileName;
 
-        return new_name.replace(QRegExp("[\"*:<>?\\|]"), "_");
+        return new_name.replace(QRegularExpression("[\"*:<>?\\|]"), "_");
     }
 
     return fileName;
@@ -640,7 +640,7 @@ void AbstractWorker::saveOperations()
     }
 
     if (handle && isConvert && !completeSourceFiles.isEmpty()) {
-        emit requestSaveRedoOperation(QString::number(quintptr(handle.data()),16), deleteFirstFileSize.load());
+        emit requestSaveRedoOperation(QString::number(quintptr(handle.data()), 16), deleteFirstFileSize.load());
     }
 }
 
@@ -651,7 +651,7 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->wait();
     }
     if (speedtimer) {
-        delete  speedtimer;
+        delete speedtimer;
         speedtimer = nullptr;
     }
 }

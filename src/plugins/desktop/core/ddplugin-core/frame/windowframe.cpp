@@ -19,10 +19,8 @@ DFMBASE_USE_NAMESPACE
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
 WindowFramePrivate::WindowFramePrivate(WindowFrame *parent)
-    : QObject(parent)
-    , q(parent)
+    : QObject(parent), q(parent)
 {
-
 }
 
 void WindowFramePrivate::updateProperty(BaseWindowPointer win, ScreenPointer screen, bool primary)
@@ -42,7 +40,7 @@ BaseWindowPointer WindowFramePrivate::createWindow(ScreenPointer sp)
 {
     BaseWindowPointer win(new BaseWindow);
     win->init();
-    win->setGeometry(sp->geometry()); // 经过缩放的区域
+    win->setGeometry(sp->geometry());   // 经过缩放的区域
     fmDebug() << "screen name" << sp->name() << "geometry" << sp->geometry() << win.get();
 
     ddplugin_desktop_util::setDesktopWindow(win.get());
@@ -89,10 +87,8 @@ void WindowFramePrivate::heightChanged(int arg) const
 }
 
 WindowFrame::WindowFrame(QObject *parent)
-    : AbstractDesktopFrame(parent)
-    , d(new WindowFramePrivate(this))
+    : AbstractDesktopFrame(parent), d(new WindowFramePrivate(this))
 {
-
 }
 
 WindowFrame::~WindowFrame()
@@ -123,7 +119,7 @@ QList<QWidget *> WindowFrame::rootWindows() const
     for (ScreenPointer s : scs) {
         if (appended.contains(s->name())) {
             fmCritical() << "Duplicate name screen" << s->name()
-                        << s->geometry() << "appended" << appended;
+                         << s->geometry() << "appended" << appended;
             continue;
         }
         if (auto win = d->windows.value(s->name())) {
@@ -154,7 +150,7 @@ void WindowFrame::layoutChildren()
         }
 
         // sort by level
-        std::sort(subWidgets.begin(), subWidgets.end(), [](const QWidget *before, const QWidget *after)->bool {
+        std::sort(subWidgets.begin(), subWidgets.end(), [](const QWidget *before, const QWidget *after) -> bool {
             QVariant var1 = before->property(DesktopFrameProperty::kPropWidgetLevel);
             QVariant var2 = after->property(DesktopFrameProperty::kPropWidgetLevel);
             return var1.toDouble() < var2.toDouble();
@@ -185,8 +181,8 @@ void WindowFrame::buildBaseWindow()
 
     QWriteLocker lk(&d->locker);
     // 实际是单屏
-    if ((DisplayMode::kShowonly == mode) || (DisplayMode::kDuplicate == mode) // 仅显示和复制
-            || (screens.count() == 1)) {  // 单屏模式
+    if ((DisplayMode::kShowonly == mode) || (DisplayMode::kDuplicate == mode)   // 仅显示和复制
+        || (screens.count() == 1)) {   // 单屏模式
 
         ScreenPointer primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (primary == nullptr) {
@@ -233,7 +229,7 @@ void WindowFrame::buildBaseWindow()
                 // 添加缺少的数据
                 winPtr = d->createWindow(s);
                 d->windows.insert(s->name(), winPtr);
-                fmInfo() << "screen:" << s->name()  << s->geometry() << " added, create frame." << winPtr->geometry();
+                fmInfo() << "screen:" << s->name() << s->geometry() << " added, create frame." << winPtr->geometry();
             }
 
             d->updateProperty(winPtr, s, (s == primary));
@@ -269,7 +265,7 @@ void WindowFrame::onGeometryChanged()
                 continue;
 
             fmInfo() << "root geometry change from" << win->geometry() << "to" << sp->geometry()
-                    << "screen name" << sp->name();
+                     << "screen name" << sp->name();
             win->setGeometry(sp->geometry());
             d->updateProperty(win, sp, (sp == primary));
             changed = true;
@@ -302,5 +298,3 @@ void WindowFrame::onAvailableGeometryChanged()
     if (changed)
         emit availableGeometryChanged();
 }
-
-

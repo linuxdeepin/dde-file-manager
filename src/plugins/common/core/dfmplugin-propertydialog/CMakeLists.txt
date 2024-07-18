@@ -8,7 +8,11 @@ set(QRC_FILES
     qrc/images.qrc
     )
 
-qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
+if(DFM_BUILD_WITH_QT6)
+    qt6_add_resources(QRC_RESOURCES ${QRC_FILES})
+else()
+    qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
+endif()
 
 FILE(GLOB DETAILSPCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -20,8 +24,6 @@ FILE(GLOB DETAILSPCE_FILES
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../services/filemanager/)
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-
 add_library(${PROJECT_NAME}
     SHARED
     ${DETAILSPCE_FILES}
@@ -30,15 +32,9 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    ${DtkWidget_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file

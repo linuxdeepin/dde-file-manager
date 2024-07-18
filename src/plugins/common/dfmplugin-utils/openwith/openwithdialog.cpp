@@ -18,7 +18,6 @@
 #include <QHBoxLayout>
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QWindow>
 #include <QDebug>
 #include <QScrollArea>
@@ -104,7 +103,11 @@ QString OpenWithDialogListItem::text() const
     return label->text();
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 void OpenWithDialogListItem::enterEvent(QEvent *e)
+#else
+void OpenWithDialogListItem::enterEvent(QEnterEvent *e)
+#endif
 {
     Q_UNUSED(e)
 
