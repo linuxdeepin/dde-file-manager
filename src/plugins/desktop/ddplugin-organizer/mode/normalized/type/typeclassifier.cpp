@@ -62,7 +62,9 @@ TypeClassifier::TypeClassifier(QObject *parent)
     }
 
     // all datas shoud be accepted.
-    handler = new GeneralModelFilter();
+    auto filter = new GeneralModelFilter();
+    filter->installFilter(QSharedPointer<ModelDataHandler>(this));
+    handler = filter;
 
     // get enable items
     d->categories = CfgPresenter->enabledTypeCategories();
@@ -204,4 +206,23 @@ QString TypeClassifier::change(const QUrl &url)
     if (!classes().contains(classify(url)))
         return classify(url);
     return FileClassifier::change(url);
+}
+
+bool TypeClassifier::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    if (!CfgPresenter->organizeOnTriggered())
+        return FileClassifier::acceptRename(oldUrl, newUrl);
+
+    QList<QUrl> collected;
+    for (auto base : baseData())
+        collected.append(base->items);
+    if (collected.contains(newUrl)) {
+        // if the newUrl existed in collections, means new file replaced the old file.
+        // remove it from collection
+        remove(newUrl);
+        return true;
+    } else if (collected.contains(oldUrl)) {
+        return true;
+    }
+    return false;
 }
