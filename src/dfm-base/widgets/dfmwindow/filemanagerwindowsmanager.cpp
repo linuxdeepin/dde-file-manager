@@ -315,6 +315,10 @@ quint64 FileManagerWindowsManager::previousActivedWindowId()
 
 bool FileManagerWindowsManager::containsCurrentUrl(const QUrl &url, const QWidget *win)
 {
+    // TODO: Discuss with ligigang, maybe there is a better way.
+    if (qAppName() != "dde-file-manager")
+        return false;
+
     auto windows = d->windows.values();
     for (auto w : windows) {
         if (win == w || !w)
