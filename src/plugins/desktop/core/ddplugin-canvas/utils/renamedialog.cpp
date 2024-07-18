@@ -50,8 +50,8 @@ void RenameDialogPrivate::initUi()
     mainFrame = new QFrame(q);
     mainLayout = new QVBoxLayout(mainFrame);
 
-    QRegExp regStr("[0-9]+");
-    validator = new QRegExpValidator(regStr, q);
+    QRegularExpression regStr("[0-9]+");
+    validator = new QRegularExpressionValidator(regStr, q);
 }
 
 void RenameDialogPrivate::initParameters()
@@ -127,7 +127,7 @@ void RenameDialogPrivate::initLayout()
     comboBox = std::get<1>(modeSelection);
     label->setBuddy(comboBox);
     hLayout = std::get<2>(modeSelection);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(comboBox);
@@ -137,7 +137,7 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(replaceForFinding);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(replaceForFinding);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
@@ -146,12 +146,12 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(replaceForReplacing);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(replaceForReplacing);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
 
-    replaceLayout.first->setMargin(MARGINWIDTH);
+    replaceLayout.first->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     replaceLayout.first->addLayout(std::get<2>(replaceForFinding));
     replaceLayout.first->addSpacing(VSPACEWIDTH);
     replaceLayout.first->addLayout(std::get<2>(replaceForReplacing));
@@ -162,7 +162,7 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(addForAdding);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(addForAdding);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
@@ -171,12 +171,12 @@ void RenameDialogPrivate::initLayout()
     comboBox = std::get<1>(addForLocating);
     label->setBuddy(comboBox);
     hLayout = std::get<2>(addForLocating);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(comboBox);
 
-    addLayout.first->setMargin(MARGINWIDTH);
+    addLayout.first->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     addLayout.first->addLayout(std::get<2>(addForAdding));
     addLayout.first->addSpacing(VSPACEWIDTH);
     addLayout.first->addLayout(std::get<2>(addForLocating));
@@ -187,7 +187,7 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(customForName);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(customForName);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
@@ -196,19 +196,19 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(customForNumber);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(customForNumber);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
 
-    customLayout.first->setMargin(MARGINWIDTH);
+    customLayout.first->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     customLayout.first->addLayout(std::get<2>(customForName));
     customLayout.first->addSpacing(VSPACEWIDTH);
     customLayout.first->addLayout(std::get<2>(customForNumber));
     customLayout.second->setLayout(customLayout.first);
 
     // total layout
-    mainLayout->setMargin(MARGINWIDTH);
+    mainLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     mainLayout->addWidget(titleLabel);
     mainLayout->addSpacing(30);
     mainLayout->addLayout(std::get<2>(modeSelection));

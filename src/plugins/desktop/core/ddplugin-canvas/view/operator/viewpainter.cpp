@@ -24,8 +24,11 @@ ViewPainter::ViewPainter(CanvasViewPrivate *dd)
 void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
 {
     QRect repaintRect = event->rect();
-    QVector<QRect> region = event->region().rects();
-
+    QVector<QRect> region;
+    const QRegion &eventRegion = event->region();
+    for (auto it = eventRegion.begin(); it != eventRegion.end(); ++it) {
+        region.append(*it);
+    }
     QPair<QModelIndex, QPoint> expandItem;
     // if need expand.
     expandItem.second = QPoint(-1, -1);
@@ -183,7 +186,7 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
             const int border = 1;
             pen.setWidth(1);
             auto lastRect = view()->visualRect(hoverIndex).marginsRemoved(QMargins(border, border, border, border));
-            path.addRoundRect(lastRect, 4, 4);
+            path.addRoundedRect(lastRect, 4, 4);
             fillPath(path, QColor(43, 167, 248, 255 * 3 / 10));
             strokePath(path, pen);
         }
@@ -280,7 +283,12 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     const qreal offsetY = pixRect.height() / 2;
     const QSize iconSize(iconWidth, iconWidth);
 
-    QStyleOptionViewItem option = viewPtr->viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    viewPtr->initViewItemOption(&option);
+#else
+    option = viewPtr->viewOptions();
+#endif
     option.state |= QStyle::State_Selected;
     // icon rect in pixmap.
     option.rect = pixRect.translated(iconMargin, iconMargin);

@@ -184,7 +184,8 @@ EventHandle::~EventHandle()
     CanvasCoreDisconnect(slot_DesktopFrame_RootWindows);
     CanvasCoreDisconnect(slot_DesktopFrame_LayoutWidget);
 
-    CanvasCorelUnfollow(hook_ScreenProxy_ScreensInUse, &EventHandle::screensInUse);
+    // CanvasCorelUnfollow(hook_ScreenProxy_ScreensInUse, &EventHandle::screensInUse);
+    dpfHookSequence->unfollow("ddplugin_core", "hook_ScreenProxy_ScreensInUse", this, &EventHandle::screensInUse);
 
     delete frame;
     frame = nullptr;

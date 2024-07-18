@@ -115,10 +115,10 @@ QDateTime TrashFileInfoPrivate::lastRead() const
     bool success = false;
     uint64_t data = dFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>();
     if (success) {
-        time = QDateTime::fromTime_t(static_cast<uint>(data));
+        time = QDateTime::fromSecsSinceEpoch(static_cast<uint>(data));
     } else {
         if (dAncestorsFileInfo)
-            time = QDateTime::fromTime_t(static_cast<uint>(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>()));
+            time = QDateTime::fromSecsSinceEpoch(static_cast<uint>(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>()));
     }
     return time;
 }
@@ -132,10 +132,10 @@ QDateTime TrashFileInfoPrivate::lastModified() const
     bool success = false;
     uint64_t data = dFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>();
     if (success) {
-        time = QDateTime::fromTime_t(static_cast<uint>(data));
+        time = QDateTime::fromSecsSinceEpoch(static_cast<uint>(data));
     } else {
         if (dAncestorsFileInfo)
-            time = QDateTime::fromTime_t(static_cast<uint>(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>()));
+            time = QDateTime::fromSecsSinceEpoch(static_cast<uint>(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>()));
     }
     return time;
 }
@@ -432,10 +432,9 @@ QVariant TrashFileInfo::customData(int role) const
         return urlOf(UrlInfoType::kOriginalUrl).path();
     else if (role == kItemFileDeletionDate)
         return d->deletionTime().toString(FileUtils::dateTimeFormat());
-    else if (role == Global::ItemRoles::kItemFileRefreshIcon){
+    else if (role == Global::ItemRoles::kItemFileRefreshIcon) {
         return ProxyFileInfo::customData(role);
-    }
-    else
+    } else
         return QVariant();
 }
 

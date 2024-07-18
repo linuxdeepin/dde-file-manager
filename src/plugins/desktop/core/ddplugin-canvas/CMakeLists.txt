@@ -14,11 +14,8 @@ FILE(GLOB_RECURSE CANVAS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Svg REQUIRED)
-pkg_check_modules(DtkGui REQUIRED dtkgui )
-pkg_check_modules(DtkWidget REQUIRED dtkwidget )
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Gui Svg)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -28,19 +25,25 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    ${DtkGui_INCLUDE_DIRS}
-    ${DtkWidget_INCLUDE_DIRS}
-)
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
-    ${DtkGui_LIBRARIES}
-    Qt5::Svg
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Svg
 )
+if(DFM_BUILD_WITH_QT6)
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
+    )
+else()
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+    )
+endif()
+
 
 #install library file
 install(TARGETS

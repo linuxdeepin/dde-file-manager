@@ -189,11 +189,11 @@ void PermissionManagerWidget::initUI()
     QFrame *mainFrame = new QFrame(this);
 
     QVBoxLayout *mainFrameLay = new QVBoxLayout(mainFrame);
-    mainFrameLay->setMargin(0);
+    mainFrameLay->setContentsMargins(0, 0, 0, 0);
     mainFrameLay->setContentsMargins(0, 0, 0, 10);
 
     QFormLayout *formLay = new QFormLayout;
-    formLay->setMargin(0);
+    formLay->setContentsMargins(0, 0, 0, 0);
     formLay->setContentsMargins(10, 10, 10, 0);
     formLay->setLabelAlignment(Qt::AlignLeft);
     formLay->setSpacing(11);
@@ -203,7 +203,7 @@ void PermissionManagerWidget::initUI()
 
     executableFrame = new QFrame(mainFrame);
     QHBoxLayout *exeLay = new QHBoxLayout;
-    exeLay->setMargin(0);
+    exeLay->setContentsMargins(0, 0, 0, 0);
     exeLay->setContentsMargins(0, 0, 0, 0);
     exeLay->setSpacing(0);
     exeLay->addSpacing(95);
@@ -267,8 +267,7 @@ bool PermissionManagerWidget::canChmod(const FileInfoPointer &info)
     QString path = info->pathOf(PathInfoType::kFilePath);
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
                                      QRegularExpression::DotMatchesEverythingOption
-                                             | QRegularExpression::DontCaptureOption
-                                             | QRegularExpression::OptimizeOnFirstUsageOption);
+                                             | QRegularExpression::DontCaptureOption);
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
         return false;
 

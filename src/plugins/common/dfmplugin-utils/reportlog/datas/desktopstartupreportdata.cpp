@@ -17,6 +17,6 @@ QJsonObject DesktopStartUpReportData::prepareData(const QVariantMap &args) const
 {
     QVariantMap data = args;
     data.insert("tid", 1000500008);
-    data.insert("sysTime", QDateTime::currentDateTime().toTime_t());
+    data.insert("sysTime", QDateTime::currentDateTime().toSecsSinceEpoch());
     return QJsonObject::fromVariantMap(data);
 }

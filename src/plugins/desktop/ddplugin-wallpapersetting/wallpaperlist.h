@@ -9,11 +9,16 @@
 #include "wallpaperitem.h"
 
 #include <DAnchors>
-#include <DImageButton>
 
 #include <QScrollArea>
 #include <QPropertyAnimation>
 #include <QTimer>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <DImageButton>
+#else
+#    include <DIconButton>
+#endif
 
 class QHBoxLayout;
 
@@ -36,11 +41,14 @@ public:
     void clear();
     void setCurrentIndex(int index);
     WallpaperItem *currentItem() const;
+
 public:
-    inline QWidget *itemAt(const QPoint &pos) const {
+    inline QWidget *itemAt(const QPoint &pos) const
+    {
         return itemAt(pos.x(), pos.y());
     }
-    inline int count() const {
+    inline int count() const
+    {
         return items.count();
     }
 signals:
@@ -54,6 +62,7 @@ private slots:
     void onItemPressed(WallpaperItem *);
     void onItemHoverIn(WallpaperItem *);
     void onItemHoverOut(WallpaperItem *);
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
@@ -62,14 +71,22 @@ protected:
     void updateBothEndsItem();
     void showDeleteButtonForItem(const WallpaperItem *item) const;
     void scrollList(int step, int duration = 100);
+
 private:
     void init();
+
 public:
     static const int kItemWidth;
     static const int kItemHeight;
+
 private:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DImageButton> prevButton = nullptr;
     DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DImageButton> nextButton = nullptr;
+#else
+    DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DIconButton> prevButton = nullptr;
+    DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DIconButton> nextButton = nullptr;
+#endif
     QTimer *updateTimer = nullptr;
     QPropertyAnimation scrollAnimation;
 
@@ -86,4 +103,4 @@ private:
 
 }
 
-#endif // WALLPAPERLIST_H
+#endif   // WALLPAPERLIST_H

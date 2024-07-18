@@ -17,7 +17,9 @@
 #include <QDebug>
 
 using namespace ddplugin_canvas;
-class BoxSelectorGlobal : public BoxSelector{};
+class BoxSelectorGlobal : public BoxSelector
+{
+};
 Q_GLOBAL_STATIC(BoxSelectorGlobal, boxSelectorGlobal)
 
 BoxSelector *BoxSelector::instance()
@@ -127,7 +129,8 @@ void BoxSelector::endSelect()
         updateRubberBand();
 }
 
-BoxSelector::BoxSelector(QObject *parent) : QObject(parent)
+BoxSelector::BoxSelector(QObject *parent)
+    : QObject(parent)
 {
     connect(&updateTimer, &QTimer::timeout, this, &BoxSelector::update);
     updateTimer.setSingleShot(true);
@@ -137,13 +140,10 @@ bool BoxSelector::eventFilter(QObject *watched, QEvent *event)
 {
     if (active && qobject_cast<QWidget *>(watched)) {
         switch (event->type()) {
-        case QEvent::MouseButtonRelease:
-        {
+        case QEvent::MouseButtonRelease: {
             endSelect();
-        }
-            break;
-        case QEvent::MouseMove:
-        {
+        } break;
+        case QEvent::MouseMove: {
             QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
             if (Q_LIKELY(e->buttons().testFlag(Qt::LeftButton))) {
                 end = e->globalPos();
@@ -151,8 +151,7 @@ bool BoxSelector::eventFilter(QObject *watched, QEvent *event)
             } else {
                 endSelect();
             }
-        }
-            break;
+        } break;
         default:
             break;
         }
@@ -263,8 +262,8 @@ void BoxSelector::updateCurrentIndex()
         } else {
             // there is no item at end pos. reset all focus index.
             // we maybe need to find a greater method to process it.
-            auto sels =  view->selectionModel()->selectedIndexesCache();
-            if (sels.size() == 1) { // single, set it to current index.
+            auto sels = view->selectionModel()->selectedIndexesCache();
+            if (sels.size() == 1) {   // single, set it to current index.
                 view->d->operState().setCurrent(sels.first());
                 view->d->operState().setContBegin(sels.first());
             } else {
@@ -308,12 +307,12 @@ void BoxSelector::selection(CanvasView *w, const QRect &rect, QItemSelection *ne
 
     for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
         for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
-            const QPoint gridPos(x ,y);
+            const QPoint gridPos(x, y);
             QString item = w->d->visualItem(gridPos);
             if (item.isEmpty())
                 continue;
 
-            auto itemRect = w->d->itemRect(QPoint(x ,y));
+            auto itemRect = w->d->itemRect(QPoint(x, y));
             if (itemRect.intersects(rect)) {
                 QModelIndex rowIndex = model->index(item, 0);
                 QItemSelectionRange selectionRange(rowIndex);
@@ -327,7 +326,8 @@ void BoxSelector::selection(CanvasView *w, const QRect &rect, QItemSelection *ne
     *newSelection = rectSelection;
 }
 
-RubberBand::RubberBand() : QWidget()
+RubberBand::RubberBand()
+    : QWidget()
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_InputMethodEnabled);
@@ -347,7 +347,7 @@ void RubberBand::touch(QWidget *w)
 
     if (w) {
         connect(w, &QWidget::destroyed, this, &RubberBand::onParentDestroyed);
-        this->lower(); // set self to bottom of w;
+        this->lower();   // set self to bottom of w;
     }
 
     hide();
@@ -356,7 +356,7 @@ void RubberBand::touch(QWidget *w)
 void RubberBand::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    painter.setRenderHint(QPainter::Antialiasing, true);
     QStyleOptionRubberBand opt;
     opt.initFrom(this);
     opt.shape = QRubberBand::Rectangle;

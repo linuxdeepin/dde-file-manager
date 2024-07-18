@@ -8,7 +8,9 @@
 #include "ddplugin_canvas_global.h"
 #include "canvasproxymodel.h"
 
-class QGSettings;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QGSettings>
+#endif
 
 namespace ddplugin_canvas {
 
@@ -22,6 +24,7 @@ public:
     virtual bool updateFilter(const QUrl &url, const QVector<int> &roles = {});
     virtual bool removeFilter(const QUrl &url);
     virtual bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl);
+
 protected:
     CanvasProxyModel *model = nullptr;
 };
@@ -48,8 +51,11 @@ public:
     bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl) override;
 public slots:
     void changed(const QString &key);
+
 protected:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGSettings *gsettings = nullptr;
+#endif
     QMap<QString, QUrl> keys;
     QMap<QString, bool> hidden;
 };
@@ -67,4 +73,4 @@ public:
 };
 }
 
-#endif // CANVASMODELFILTER_H
+#endif   // CANVASMODELFILTER_H

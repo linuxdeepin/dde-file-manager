@@ -248,7 +248,7 @@ QPoint PropertyDialogUtil::getPropertyPos(int dialogWidth, int dialogHeight)
     const QScreen *cursor_screen = WindowUtils::cursorScreen();
 
     int x = (cursor_screen->availableSize().width() - dialogWidth) / 2;
-    int y = (cursor_screen->availableSize().height()- kBottomReserveHeight - dialogHeight) / 2;
+    int y = (cursor_screen->availableSize().height() - kBottomReserveHeight - dialogHeight) / 2;
 
     return QPoint(x, y) + cursor_screen->geometry().topLeft();
 }

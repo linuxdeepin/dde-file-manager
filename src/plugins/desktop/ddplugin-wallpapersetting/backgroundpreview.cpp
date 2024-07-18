@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QImageReader>
 #include <QPaintDevice>
+
 #include <qpa/qplatformwindow.h>
 #include <qpa/qplatformscreen.h>
 #include <qpa/qplatformbackingstore.h>

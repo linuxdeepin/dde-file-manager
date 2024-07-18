@@ -15,7 +15,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QStackedLayout>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 
 namespace ddplugin_organizer {
 
@@ -33,8 +33,9 @@ public:
 
 private slots:
     void updateStates();
+
 private:
-    void setRenameButtonStatus(const bool& enabled);
+    void setRenameButtonStatus(const bool &enabled);
 
 public:
     QStackedLayout *stackedLayout = nullptr;
@@ -57,7 +58,7 @@ public:
     QVBoxLayout *mainLayout = nullptr;
     QFrame *mainFrame = nullptr;
 
-    QRegExpValidator *validator = nullptr;
+    QScopedPointer<QRegularExpressionValidator> validator;
     RenameDialog::ModifyMode mode = RenameDialog::kReplace;
 
 private:
@@ -66,4 +67,4 @@ private:
 
 }
 
-#endif // RENAMEDIALOGPRIVATE_H
+#endif   // RENAMEDIALOGPRIVATE_H

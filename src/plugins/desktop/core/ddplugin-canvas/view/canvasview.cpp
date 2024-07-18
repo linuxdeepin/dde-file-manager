@@ -16,7 +16,6 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-framework/dpf.h>
 
-#include <QGSettings>
 #include <QPainter>
 #include <QDebug>
 #include <QScrollBar>
@@ -25,6 +24,10 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QTimer>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QGSettings>
+#endif
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
@@ -241,7 +244,12 @@ QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
     if (!d->itemGridpos(item, gridPos))
         return {};
 
-    QStyleOptionViewItem option = viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    initViewItemOption(&option);
+#else
+    option = viewOptions();
+#endif
     option.rect = d->itemRect(gridPos);
     return itemDelegate()->paintGeomertys(option, index);
 }
@@ -259,7 +267,12 @@ QRect CanvasView::expendedVisualRect(const QModelIndex &index) const
 
     visRect = d->visualRect(gridPos);
 
-    QStyleOptionViewItem option = viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    initViewItemOption(&option);
+#else
+    option = viewOptions();
+#endif
     option.rect = d->itemRect(gridPos);
     option.rect = itemDelegate()->expendedGeomerty(option, index);
 
@@ -322,13 +335,18 @@ QModelIndex CanvasView::baseIndexAt(const QPoint &point) const
 void CanvasView::paintEvent(QPaintEvent *event)
 {
     ViewPainter painter(d);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     // debug网格信息展示
     painter.drawGirdInfos();
 
     // 桌面文件绘制
-    auto option = viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    initViewItemOption(&option);
+#else
+    option = viewOptions();
+#endif
 
     // for flicker when refresh.
     if (!d->flicker) {
@@ -918,9 +936,11 @@ bool CanvasViewPrivate::itemGridpos(const QString &item, QPoint &gridPos) const
 
 bool CanvasViewPrivate::isWaterMaskOn()
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("waterMask"))
         return desktopSettings.get("waterMask").toBool();
+#endif
     return true;
 }
 

@@ -16,6 +16,7 @@ option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
 option(OPT_ENABLE_BUILD_DOCS "Build develop documents" OFF)
 option(OPT_ENABLE_BUILD_UT "Buld unit tests" ON)
 option(OPT_ENABLE_QML "Use QML" OFF)
+option(OPT_ENABLE_QT6 "Use Qt6" OFF)
 
 # 安全加固
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-type")
@@ -29,17 +30,19 @@ add_definitions(-DENABLE_TESTING)
 if(OPT_ENABLE_QML)
     message(STATUS "Use QML")
     add_definitions(-DDFM_UI_TYPE_QML)
-    # TODO: remove it
-    add_definitions(-DCOMPILE_ON_V23)
-    set(COMPLIE_ON_V23 TRUE)
-    message("COMPILE ON v23")
-    find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Widgets)
-    message("Using Qt version: ${QT_VERSION_MAJOR}")
 else()
     message(STATUS "Use QtWidget")
     add_definitions(-DDFM_UI_TYPE_QWIDGET)
+endif()
+
+# Qt5 or Qt6
+if(OPT_ENABLE_QT6 OR OPT_ENABLE_QML)
+    add_definitions(-DCOMPILE_ON_V23)    # TODO: remove it
+    set(COMPLIE_ON_V23 TRUE)
+    message("COMPILE ON v23")
+    find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Widgets)
+else()
     find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Widgets)
-    message("Using Qt version: ${QT_VERSION_MAJOR}")
     #Indentify the version
     find_package(DtkCMake REQUIRED)
     if (${DEEPIN_OS_VERSION} MATCHES "23")
@@ -52,8 +55,9 @@ else()
         message("COMPILE ON v20")
     endif()
 endif()
+message("Using Qt version: ${QT_VERSION_MAJOR}")
 
-# Select major Qt version.
+# Select major DTK version.
 if(QT_VERSION_MAJOR EQUAL "6")
     set(DFM_BUILD_WITH_QT6 ON)
     set(DTK_VERSION_MAJOR 6)
@@ -102,8 +106,10 @@ if(OPT_ENABLE_QML)
     add_subdirectory(src/dfm-declarative)
 else()
     # TODO: adapt to it
-    add_subdirectory(src/external)
-    add_subdirectory(src/tools)
+    if(NOT OPT_ENABLE_QT6)
+        add_subdirectory(src/external)
+        add_subdirectory(src/tools)
+    endif()
 endif()
 
 # docs
@@ -115,7 +121,7 @@ if(OPT_ENABLE_BUILD_DOCS AND NOT OPT_ENABLE_QML)
 endif()
 
 # test
-if(OPT_ENABLE_BUILD_UT AND NOT OPT_ENABLE_QML)
+if(OPT_ENABLE_BUILD_UT AND NOT OPT_ENABLE_QML AND NOT OPT_ENABLE_QT6)
     message(STATUS "Enable testing: ${BUILD_TESTING}")
     if(BUILD_TESTING)
         enable_testing()

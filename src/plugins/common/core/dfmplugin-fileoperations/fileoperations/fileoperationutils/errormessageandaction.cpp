@@ -242,8 +242,8 @@ void ErrorMessageAndAction::errorSrcAndDestString(const QUrl &from,
         static QLabel label;
         static QFontMetrics metrics(label.font());
         static Qt::TextElideMode em = Qt::TextElideMode::ElideMiddle;
-        int pre = metrics.width(tr("Original path %1").arg(from.path()));
-        int last = metrics.width(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()));
+        int pre = metrics.horizontalAdvance(tr("Original path %1").arg(from.path()));
+        int last = metrics.horizontalAdvance(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()));
         static int total = 350;
         if (pre > total / 2 && last > total / 2) {
             *toMsg = metrics.elidedText(tr("Original path %1").arg(from.path()), em, total / 2)

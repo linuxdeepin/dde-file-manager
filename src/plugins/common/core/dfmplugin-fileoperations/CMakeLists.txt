@@ -9,17 +9,21 @@ FILE(GLOB_RECURSE FILEOPERATIONS_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt5 COMPONENTS DBus REQUIRED)
+
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(zlib REQUIRED zlib IMPORTED_TARGET)
 
 # generate dbus interface
-qt5_add_dbus_interface(FILEOPERATIONS_FILES
-    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
-    operationsstackmanager_interface)
+if(DFM_BUILD_WITH_QT6)
+    qt6_add_dbus_interface(FILEOPERATIONS_FILES
+        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
+        operationsstackmanager_interface)
+else()
+    qt5_add_dbus_interface(FILEOPERATIONS_FILES
+        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
+        operationsstackmanager_interface)
+endif()
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -28,14 +32,7 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
-    Qt5::Core
-    Qt5::DBus
     DFM::base
     DFM::framework
     ${DtkWidget_LIBRARIES}

@@ -34,7 +34,7 @@ void WallpaperList::setMaskWidget(QWidget *w)
 
     takeWidget();
     setWidget(w);
-    w->setAutoFillBackground(false); //keep background same as parent
+    w->setAutoFillBackground(false);   //keep background same as parent
     contentWidget->hide();
 }
 
@@ -44,7 +44,7 @@ QWidget *WallpaperList::removeMaskWidget()
     if (widget() != contentWidget) {
         wid = takeWidget();
         setWidget(contentWidget);
-        contentWidget->setAutoFillBackground(false); // keep background same as parent
+        contentWidget->setAutoFillBackground(false);   // keep background same as parent
         contentWidget->show();
     }
     return wid;
@@ -106,14 +106,14 @@ void WallpaperList::setGridSize(const QSize &size)
     grid = size;
     contentLayout->setSpacing(qRound((width() - c * kItemWidth) / qreal(c + 1) - 0.500001) + 1);
     contentLayout->setContentsMargins(contentLayout->spacing(), 0,
-                                        contentLayout->spacing(), 0);
+                                      contentLayout->spacing(), 0);
     contentWidget->adjustSize();
 }
 
 QWidget *WallpaperList::itemAt(int x, int y) const
 {
     Q_UNUSED(y)
-    if (grid.width() < 1){
+    if (grid.width() < 1) {
         fmCritical() << "error gridSize().width() " << gridSize().width();
         return nullptr;
     }
@@ -156,7 +156,7 @@ void WallpaperList::setCurrentIndex(int index)
     int prevIndex = items.indexOf(qobject_cast<WallpaperItem *>(itemAt(kItemWidth / 2, kItemHeight / 2)), 0);
     int nextIndex = items.indexOf(qobject_cast<WallpaperItem *>(itemAt(width() - kItemWidth / 2, kItemHeight / 2)), 0);
     scrollAnimation.setStartValue(((prevIndex + nextIndex) / 2 - visualCount / 2) * (kItemWidth + contentLayout->spacing()));
-    scrollAnimation.setEndValue((index-visualCount/2) * (kItemWidth + contentLayout->spacing()));
+    scrollAnimation.setEndValue((index - visualCount / 2) * (kItemWidth + contentLayout->spacing()));
 
     //the starting direction is opposite to the target direction
     {
@@ -165,7 +165,7 @@ void WallpaperList::setCurrentIndex(int index)
         int current = horizontalScrollBar()->value();
         if (((start - end) * (current - start)) < 0) {
             fmDebug() << "the starting direction is opposite to the target direction"
-                     << start << end << current << horizontalScrollBar()->maximum();
+                      << start << end << current << horizontalScrollBar()->maximum();
             scrollAnimation.setStartValue(current);
         }
     }
@@ -184,7 +184,7 @@ WallpaperItem *WallpaperList::currentItem() const
 
 void WallpaperList::prevPage()
 {
-    if (gridSize().width() < 1){
+    if (gridSize().width() < 1) {
         fmCritical() << "error gridSize().width() " << gridSize().width();
         return;
     }
@@ -195,7 +195,7 @@ void WallpaperList::prevPage()
 
 void WallpaperList::nextPage()
 {
-    if (gridSize().width() < 1){
+    if (gridSize().width() < 1) {
         fmCritical() << "error gridSize().width() " << gridSize().width();
         return;
     }
@@ -237,7 +237,7 @@ void WallpaperList::keyPressEvent(QKeyEvent *event)
         } else {
             setCurrentIndex(currentIndex + 1);
         }
-            break;
+        break;
     default:
         event->ignore();
         break;
@@ -250,9 +250,8 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
 {
     QFrame::resizeEvent(event);
     if (width() < kItemWidth) {
-        fmCritical() << "error. widget width is less than ItemWidth" <<
-                   width() << "<" << kItemWidth
-                    << "resize" << event->size();
+        fmCritical() << "error. widget width is less than ItemWidth" << width() << "<" << kItemWidth
+                     << "resize" << event->size();
     }
 
     int itemCount = width() / kItemWidth;
@@ -261,7 +260,7 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
 
     if (itemCount < 1) {
         fmCritical() << "screen_item_count: " << itemCount
-                    << "set to 1";
+                     << "set to 1";
         itemCount = 1;
     }
 
@@ -328,7 +327,7 @@ void WallpaperList::updateBothEndsItem()
 
 void WallpaperList::showDeleteButtonForItem(const WallpaperItem *item) const
 {
-    if (item && item->isDeletable() && item != prevItem && item != nextItem ) {
+    if (item && item->isDeletable() && item != prevItem && item != nextItem) {
         // we can't get a correct item if content image geometry is not available to use.
         if (item->contentGeometry().isNull()) {
             return;
@@ -350,7 +349,7 @@ void WallpaperList::scrollList(int step, int duration)
     int endValue = startValue + step;
 
     if ((endValue < horizontalScrollBar()->minimum() && startValue == horizontalScrollBar()->minimum())
-            || (endValue > horizontalScrollBar()->maximum() && startValue == horizontalScrollBar()->maximum())) {
+        || (endValue > horizontalScrollBar()->maximum() && startValue == horizontalScrollBar()->maximum())) {
         return;
     }
 
@@ -378,7 +377,7 @@ void WallpaperList::updateItemThumb()
 
     showDeleteButtonForItem(static_cast<WallpaperItem *>(itemAt(mapFromGlobal(QCursor::pos()))));
     QRect r = rect();
-    QRect cacheRect(r.x() - r.width(), r.y(),r.width() * 3, r.height());
+    QRect cacheRect(r.x() - r.width(), r.y(), r.width() * 3, r.height());
     for (WallpaperItem *item : items) {
         if (cacheRect.intersects(QRect(item->mapTo(this, QPoint()), item->size()))) {
             item->renderPixmap();
@@ -390,12 +389,20 @@ void WallpaperList::updateItemThumb()
 
 void WallpaperList::init()
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     prevButton = new DImageButton(":/images/previous_normal.svg",
                                   ":/images/previous_hover.svg",
                                   ":/images/previous_press.svg", this);
     nextButton = new DImageButton(":/images/next_normal.svg",
                                   ":/images/next_hover.svg",
                                   ":/images/next_press.svg", this);
+#else
+    // TODO #v25: 需要设计师提供 dci icon
+    prevButton = new DIconButton(this);
+    prevButton->setIcon(QIcon(":/images/previous_normal.svg"));
+    nextButton = new DIconButton(this);
+    nextButton->setIcon(QIcon(":/images/next_normal.svg"));
+#endif
 
     setObjectName("WallpaperList-QScrollArea");
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -429,8 +436,13 @@ void WallpaperList::init()
     nextButton.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
     nextButton.setAnchor(Qt::AnchorRight, this, Qt::AnchorRight);
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(prevButton.widget(), &DImageButton::clicked, this, &WallpaperList::prevPage);
     connect(nextButton.widget(), &DImageButton::clicked, this, &WallpaperList::nextPage);
+#else
+    connect(prevButton.widget(), &DIconButton::clicked, this, &WallpaperList::prevPage);
+    connect(nextButton.widget(), &DIconButton::clicked, this, &WallpaperList::nextPage);
+#endif
 
     scrollAnimation.setTargetObject(horizontalScrollBar());
     scrollAnimation.setPropertyName("value");
