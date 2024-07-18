@@ -34,6 +34,10 @@ public:
     QString remove(const QUrl &) override;
     QString change(const QUrl &) override;
 
+    // ModelDataHandler interface
+public:
+    virtual bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
+
 private:
     TypeClassifierPrivate *d;
     ModelDataHandler *handler = nullptr;
