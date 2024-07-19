@@ -62,17 +62,21 @@ Global::ViewMode WorkspaceWidget::currentViewMode() const
 
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
+    if (!tabBar->currentTab())
+        tabBar->createTab();
+
     auto curView = currentViewPtr();
     if (curView) {
+        if (UniversalUtils::urlEquals(url, curView->rootUrl()) &&
+                UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()))
+            return;
+
         FileView *view = qobject_cast<FileView *>(curView->widget());
         if (view)
             view->stopWork();
     }
 
     workspaceUrl = url;
-
-    if (!tabBar->currentTab())
-        tabBar->createTab();
 
     // NOTE: In the function `initCustomTopWidgets` the `cd` event may be
     // called causing this function to reentrant!!!
