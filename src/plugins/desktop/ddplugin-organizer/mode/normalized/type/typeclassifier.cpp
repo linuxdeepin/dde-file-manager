@@ -77,7 +77,7 @@ TypeClassifier::TypeClassifier(QObject *parent)
 
     // all datas shoud be accepted.
     auto filter = new GeneralModelFilter();
-    filter->installFilter(QSharedPointer<ModelDataHandler>(this));
+    // filter->installFilter(QSharedPointer<ModelDataHandler>(this));
     handler = filter;
 
     // get enable items
