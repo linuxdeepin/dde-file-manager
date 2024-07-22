@@ -8,22 +8,34 @@
 #include "filters/innerdesktopappfilter.h"
 
 using namespace ddplugin_organizer;
-GeneralModelFilter::GeneralModelFilter() : ModelDataHandler()
+GeneralModelFilter::GeneralModelFilter()
+    : ModelDataHandler()
 {
     // the default filters
-    modelFilters << QSharedPointer<ModelDataHandler>(new HiddenFileFilter());
-    modelFilters << QSharedPointer<ModelDataHandler>(new InnerDesktopAppFilter());
+    defaultFilters << new HiddenFileFilter();
+    defaultFilters << new InnerDesktopAppFilter();
+    modelFilters << defaultFilters;
 }
 
-bool GeneralModelFilter::installFilter(const QSharedPointer<ModelDataHandler> &filter)
+GeneralModelFilter::~GeneralModelFilter()
 {
-    if (filter.get() && modelFilters.contains(filter))
+    for (auto filter : defaultFilters)
+        delete filter;
+    defaultFilters.clear();
+    modelFilters.clear();
+}
+
+bool GeneralModelFilter::installFilter(ModelDataHandler *filter)
+{
+    if (!filter)
+        return false;
+    if (modelFilters.contains(filter))
         return false;
     modelFilters.append(filter);
     return true;
 }
 
-void GeneralModelFilter::removeFilter(const QSharedPointer<ModelDataHandler> &filter)
+void GeneralModelFilter::removeFilter(ModelDataHandler *filter)
 {
     modelFilters.removeAll(filter);
 }
@@ -31,9 +43,9 @@ void GeneralModelFilter::removeFilter(const QSharedPointer<ModelDataHandler> &fi
 bool GeneralModelFilter::acceptInsert(const QUrl &url)
 {
     bool accepted = std::all_of(modelFilters.begin(), modelFilters.end(),
-                                [&url](const QSharedPointer<ModelDataHandler> &filter){
-        return filter->acceptInsert(url);
-    });
+                                [&url](ModelDataHandler *filter) {
+                                    return filter ? filter->acceptInsert(url) : false;
+                                });
     if (!accepted)
         return false;
 
@@ -43,8 +55,10 @@ bool GeneralModelFilter::acceptInsert(const QUrl &url)
 QList<QUrl> GeneralModelFilter::acceptReset(const QList<QUrl> &urls)
 {
     QList<QUrl> ret = urls;
-    for (const auto &filter : modelFilters)
-         ret = filter->acceptReset(ret);
+    for (const auto &filter : modelFilters) {
+        if (filter)
+            ret = filter->acceptReset(ret);
+    }
 
     return ModelDataHandler::acceptReset(ret);
 }
@@ -53,7 +67,7 @@ bool GeneralModelFilter::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     bool ret = true;
     for (const auto &filter : modelFilters)
-        ret = ret && filter->acceptRename(oldUrl, newUrl);
+        ret = ret && filter && filter->acceptRename(oldUrl, newUrl);
 
     return ModelDataHandler::acceptRename(oldUrl, newUrl) && ret;
 }
@@ -64,7 +78,7 @@ bool GeneralModelFilter::acceptUpdate(const QUrl &url, const QVector<int> &roles
     // so it will don't interrupt when some one return true.
     bool ret = true;
     for (const auto &filter : modelFilters)
-        ret = ret && filter->acceptUpdate(url, roles);
+        ret = ret && filter && filter->acceptUpdate(url, roles);
 
     return ModelDataHandler::acceptUpdate(url, roles) && ret;
 }
