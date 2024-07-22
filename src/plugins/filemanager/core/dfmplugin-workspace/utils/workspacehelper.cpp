@@ -450,6 +450,7 @@ void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
     connect(window, &FileManagerWindow::reqCreateWindow, widget, &WorkspaceWidget::onCreateNewWindow);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, widget, &WorkspaceWidget::onSetCurrentTabIndex);
     connect(window, &FileManagerWindow::reqRefresh, widget, &WorkspaceWidget::onRefreshCurrentView);
+    connect(window, &FileManagerWindow::currentViewStateChanged, widget, &WorkspaceWidget::handleViewStateChanged);
 }
 
 void WorkspaceHelper::handleRefreshDir(const QList<QUrl> &urls)

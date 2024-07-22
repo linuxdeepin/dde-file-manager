@@ -35,6 +35,7 @@ namespace dfmplugin_workspace {
 
 class TabBar;
 class FileView;
+class EnterDirAnimationWidget;
 class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
@@ -76,6 +77,7 @@ public slots:
     void onCreateNewWindow();
     void onSetCurrentTabIndex(const int index);
     void onRefreshCurrentView();
+    void handleViewStateChanged();
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -95,9 +97,12 @@ private:
     QUrl workspaceUrl;
     QHBoxLayout *tabBarLayout { nullptr };
     QVBoxLayout *widgetLayout { nullptr };
+    // QWidget *centralContainer { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QMap<QString, ViewPtr> views;
     QMap<QString, TopWidgetPtr> topWidgets;
+    EnterDirAnimationWidget *appearAnim { nullptr };
+    EnterDirAnimationWidget *disappearAnim { nullptr };
 
     TabBar *tabBar { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *newTabButton { nullptr };

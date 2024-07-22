@@ -6,6 +6,7 @@
 #include "fileview.h"
 #include "tabbar.h"
 #include "tab.h"
+#include "enterdiranimationwidget.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
@@ -70,6 +71,24 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         if (UniversalUtils::urlEquals(url, curView->rootUrl()) &&
                 UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()))
             return;
+            
+        auto contentWidget = curView->contentWidget();
+        if (contentWidget) {
+            if (!disappearAnim)
+                disappearAnim = new EnterDirAnimationWidget(this);
+
+            auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+            auto localPos = mapFromGlobal(globalPos);
+            disappearAnim->move(localPos);
+            disappearAnim->resize(contentWidget->size());
+
+            QPixmap preDirPix = contentWidget->grab();
+            disappearAnim->setPixmap(preDirPix);
+
+            disappearAnim->raise();
+            disappearAnim->show();
+            disappearAnim->playDisappear();
+        }
 
         FileView *view = qobject_cast<FileView *>(curView->widget());
         if (view)
@@ -231,6 +250,33 @@ void WorkspaceWidget::onSetCurrentTabIndex(const int index)
 void WorkspaceWidget::onRefreshCurrentView()
 {
     currentView()->refresh();
+}
+
+void WorkspaceWidget::handleViewStateChanged()
+{
+    auto view = views[workspaceUrl.scheme()];
+    if (!appearAnim || !view || view->viewState() != AbstractBaseView::ViewState::kViewIdle)
+        return;
+
+    auto contentWidget = view->contentWidget();
+    if (!contentWidget)
+        return;
+
+    QPixmap curDirPix = contentWidget->grab();
+
+    if (curDirPix.isNull()) {
+        appearAnim->hide();
+        return;
+    }
+
+    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+    auto localPos = mapFromGlobal(globalPos);
+
+    appearAnim->resize(contentWidget->size());
+    appearAnim->move(localPos);
+
+    appearAnim->setPixmap(curDirPix);
+    appearAnim->playAppear();
 }
 
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
@@ -469,12 +515,28 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
 void WorkspaceWidget::setCurrentView(const QUrl &url)
 {
     auto view = views[url.scheme()];
-    if (view) {
-        viewStackLayout->setCurrentWidget(view->widget());
+    if (!view)
+        return;
 
-        view->setRootUrl(url);
-        tabBar->setCurrentUrl(url);
-
-        initCustomTopWidgets(url);
+    if (!appearAnim) {
+        appearAnim = new EnterDirAnimationWidget(this);
+        appearAnim->setBlankBackgroundVisiable(true);
     }
+
+    appearAnim->resize(width(), height());
+
+    viewStackLayout->setCurrentWidget(view->widget());
+
+    if (disappearAnim) {
+        disappearAnim->raise();
+        appearAnim->stackUnder(disappearAnim);
+    } else {
+        appearAnim->raise();
+    }
+    appearAnim->show();
+
+    tabBar->setCurrentUrl(url);
+    initCustomTopWidgets(url);
+
+    view->setRootUrl(url);
 }

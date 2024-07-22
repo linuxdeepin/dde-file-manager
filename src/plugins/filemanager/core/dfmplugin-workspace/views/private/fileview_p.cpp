@@ -21,6 +21,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QScrollBar>
+#include <QVBoxLayout>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -60,17 +61,16 @@ QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
 
 void FileViewPrivate::initIconModeView()
 {
-    if (headerView) {
-        headerView->disconnect();
-        q->takeHeaderWidget(0);
-        delete headerView;
-        headerView = nullptr;
-    }
-
     if (emptyInteractionArea) {
-        q->takeHeaderWidget(0);
-        delete emptyInteractionArea;
-        emptyInteractionArea = nullptr;
+        emptyInteractionArea->setVisible(false);
+
+        if (headerView) {
+            headerView->disconnect();
+            auto headerLayout = qobject_cast<QVBoxLayout *>(emptyInteractionArea->layout());
+            headerLayout->takeAt(0);
+            delete headerView;
+            headerView = nullptr;
+        }
     }
 
     if (statusBar) {
@@ -83,7 +83,20 @@ void FileViewPrivate::initIconModeView()
 
 void FileViewPrivate::initListModeView()
 {
+    if (!emptyInteractionArea) {
+        emptyInteractionArea = new QWidget(q);
+        QVBoxLayout *headerLayout = new QVBoxLayout;
+        headerLayout->setMargin(0);
+        headerLayout->setAlignment(Qt::AlignTop);
+        emptyInteractionArea->setLayout(headerLayout);
+        emptyInteractionArea->setFixedHeight(10 + kListViewHeaderHeight);
+        emptyInteractionArea->installEventFilter(q);
+        q->addHeaderWidget(emptyInteractionArea);
+    }
+
     if (!headerView) {
+        auto headerLayout = qobject_cast<QVBoxLayout *>(emptyInteractionArea->layout());
+
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
 
         headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -95,14 +108,7 @@ void FileViewPrivate::initListModeView()
             headerView->setSelectionModel(q->selectionModel());
         }
 
-        q->addHeaderWidget(headerView);
-        if (!emptyInteractionArea) {
-            emptyInteractionArea = new QWidget(q);
-            emptyInteractionArea->setFixedHeight(10);
-            emptyInteractionArea->installEventFilter(q);
-        }
-
-        q->addHeaderWidget(emptyInteractionArea);
+        headerLayout->addWidget(headerView);
 
         QObject::connect(headerView, &HeaderView::mousePressed, q, &FileView::onHeaderViewMousePressed);
         QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
@@ -115,6 +121,9 @@ void FileViewPrivate::initListModeView()
             headerView->move(-value, headerView->y());
         });
     }
+
+    emptyInteractionArea->setVisible(true);
+
     if (statusBar)
         statusBar->setScalingVisible(false);
 }
