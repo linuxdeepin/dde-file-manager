@@ -51,6 +51,7 @@ public:
     ~FileView() override;
 
     QWidget *widget() const override;
+    QWidget *contentWidget() const override;
     bool setRootUrl(const QUrl &url) override;
     QUrl rootUrl() const override;
     ViewState viewState() const override;
@@ -60,14 +61,14 @@ public:
     void doItemsLayout() override;
 
     void setViewMode(DFMBASE_NAMESPACE::Global::ViewMode mode);
-    DFMBASE_NAMESPACE::Global::ViewMode currentViewMode();
+    DFMBASE_NAMESPACE::Global::ViewMode currentViewMode() const;
     void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
     FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
     void stopWork();
 
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
-                         const QVector<int> &roles = QVector<int>()) override;
+                     const QVector<int> &roles = QVector<int>()) override;
     QModelIndex indexAt(const QPoint &pos) const override;
     virtual QRect visualRect(const QModelIndex &index) const override;
     void setIconSize(const QSize &size);
