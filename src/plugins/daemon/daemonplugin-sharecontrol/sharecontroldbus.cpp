@@ -15,7 +15,6 @@
 #include <QProcess>
 #include <QFileInfo>
 
-
 static constexpr char kUserShareObjPath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.UserShareManager" };
 DAEMONPSHARECONTROL_USE_NAMESPACE
@@ -59,10 +58,8 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     }
 
     QProcess p;
-    //取得所有连击的pid
-    QString cmd = QString("smbcontrol smbd close-share %1").arg(name);
-    fmDebug() << "execute: " << cmd;
-    p.start(cmd);
+    QStringList params { "smbd", "close-share", name };
+    p.start("smbcontrol", params);
     bool ret = p.waitForFinished();
 
     fmDebug() << "close smb share" << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
