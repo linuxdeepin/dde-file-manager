@@ -130,6 +130,13 @@ void ToolBarFrame::stop()
 
 void ToolBarFrame::durationToLabel(qint64 duration)
 {
+    if (duration < 1) {
+        durationLabel->setText("--");
+        progressSlider->setMinimum(0);
+        progressSlider->setMaximum(0);
+        return;
+    }
+
     qlonglong msDuration = duration;
     qlonglong sDurations = msDuration / 1000;
     int minutes = static_cast<int>(sDurations) / 60;
