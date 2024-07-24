@@ -35,7 +35,9 @@ RootInfo::~RootInfo()
     if (watcher)
         watcher->stopWatcher();
     cancelWatcherEvent = true;
-    watcherEventFuture.waitForFinished();
+    for (auto &future : watcherEventFutures) {
+        future.waitForFinished();
+    }
     for (const auto &thread : traversalThreads) {
         thread->traversalThread->stop();
         thread->traversalThread->wait();
@@ -318,8 +320,15 @@ void RootInfo::doThreadWatcherEvent()
 {
     if (processFileEventRuning)
         return;
+    for (auto it = watcherEventFutures.begin(); it != watcherEventFutures.end(); ) {
+        if (it->isFinished()) {
+            it = watcherEventFutures.erase(it);
+        } else {
+            it++;
+        }
+    }
 
-    watcherEventFuture = QtConcurrent::run([&]() {
+    watcherEventFutures << QtConcurrent::run([&]() {
         if (cancelWatcherEvent)
             return;
         doWatcherEvent();

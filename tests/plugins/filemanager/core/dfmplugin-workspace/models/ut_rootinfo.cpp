@@ -333,19 +333,25 @@ TEST_F(UT_RootInfo, DoThreadWatcherEvent)
 
     rootInfoObj->processFileEventRuning = true;
     rootInfoObj->doThreadWatcherEvent();
-    rootInfoObj->watcherEventFuture.waitForFinished();
+    for (auto &future : rootInfoObj->watcherEventFutures) {
+        future.waitForFinished();
+    }
     EXPECT_FALSE(calledDoWatcherEvent);
 
     rootInfoObj->processFileEventRuning = false;
     rootInfoObj->cancelWatcherEvent = true;
     rootInfoObj->doThreadWatcherEvent();
-    rootInfoObj->watcherEventFuture.waitForFinished();
+    for (auto &future : rootInfoObj->watcherEventFutures) {
+        future.waitForFinished();
+    }
     EXPECT_FALSE(calledDoWatcherEvent);
 
     rootInfoObj->processFileEventRuning = false;
     rootInfoObj->cancelWatcherEvent = false;
     rootInfoObj->doThreadWatcherEvent();
-    rootInfoObj->watcherEventFuture.waitForFinished();
+    for (auto &future : rootInfoObj->watcherEventFutures) {
+        future.waitForFinished();
+    }
     EXPECT_TRUE(calledDoWatcherEvent);
 }
 
