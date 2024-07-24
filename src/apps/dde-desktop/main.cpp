@@ -32,13 +32,12 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QDBusConnectionInterface>
+#include <QSurfaceFormat>
 
 #include <iostream>
 #include <algorithm>
 #include <unistd.h>
 #include <malloc.h>
-#include <dfm-base/utils/windowutils.h>
-#include <QSurfaceFormat>
 
 Q_LOGGING_CATEGORY(logAppDesktop, "org.deepin.dde.filemanager.desktop")
 
@@ -240,6 +239,11 @@ static void waitingForKwin()
 
 bool first_check_wayland_env()
 {
+#ifdef COMPILE_ON_V23
+    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand")
+        return false;
+#endif
+
     auto e = QProcessEnvironment::systemEnvironment();
     QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
     QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
@@ -261,6 +265,7 @@ int main(int argc, char *argv[])
         format.setDefaultFormat(format);
 #endif
     }
+
     initLog();
     QString mainTime = QDateTime::currentDateTime().toString();
     DApplication a(argc, argv);
