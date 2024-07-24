@@ -176,6 +176,7 @@ RecentManager::RecentManager(QObject *parent)
 
 RecentManager::~RecentManager()
 {
+    onStopRecentWatcherThread();
 }
 
 void RecentManager::init()
@@ -189,17 +190,7 @@ void RecentManager::init()
             &RecentManager::onUpdateRecentFileInfo);
     connect(iteratorWorker, &RecentIterateWorker::deleteExistRecentUrls, this,
             &RecentManager::onDeleteExistRecentUrls);
-    connect(qApp, &QApplication::aboutToQuit, this, [this](){
-        if (watcher) {
-            watcher->stopWatcher();
-            watcher->disconnect(this);
-        }
-        iteratorWorker->stop();
-        if (workerThread.isRunning()) {
-            workerThread.quit();
-            workerThread.wait();
-        }
-    });
+    connect(qApp, &QApplication::aboutToQuit, this, &RecentManager::onStopRecentWatcherThread);
 
     workerThread.start();
 
@@ -243,6 +234,21 @@ void RecentManager::onDeleteExistRecentUrls(const QList<QUrl> &urls)
             }
         }
     }
+}
+
+void RecentManager::onStopRecentWatcherThread()
+{
+    static std::once_flag stopFlag;
+    std::call_once(stopFlag, [this]{
+        if (watcher) {
+            watcher->stopWatcher();
+            watcher->disconnect(this);
+        }
+        if (iteratorWorker)
+            iteratorWorker->stop();
+        workerThread.quit();
+        workerThread.wait();
+    });
 }
 
 QUrl RecentHelper::rootUrl()
