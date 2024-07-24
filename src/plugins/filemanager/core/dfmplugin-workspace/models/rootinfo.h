@@ -146,7 +146,7 @@ private:
     bool canCache { false };
 
     std::atomic_bool cancelWatcherEvent { false };
-    QFuture<void> watcherEventFuture;
+    QList<QFuture<void>> watcherEventFutures;
 
     QQueue<QPair<QUrl, EventType>> watcherEvent {};
     QMutex watcherEventMutex;
