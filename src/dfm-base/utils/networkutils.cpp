@@ -7,6 +7,7 @@
 #include <QtConcurrent>
 #include <QFutureWatcher>
 #include <QTcpSocket>
+#include <QNetworkProxy>
 
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -35,9 +36,20 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, 
     QTcpSocket conn;
     conn.connectToHost(host, port.toUShort());
     bool connected = conn.waitForConnected(msecs);
-    qCInfo(logDFMBase) << "connect to host" << host
-                       << "at port" << port
-                       << "result:" << connected << conn.error();
+    conn.close();
+    // 如果系统设置了代理，那么QTcpSocket会使用代理去连接目标host，代理可能不能访问目标host
+    // 在QTcpSocket使用代理不能访问目标host的情况下，将QTcpSocket设置为不使用代理再次连接host，检查能否访问目标host
+    if (!connected) {
+        // 检查系统代理设置
+        QNetworkProxy proxy = QNetworkProxy::applicationProxy();
+        if (proxy.type() == QNetworkProxy::NoProxy)
+            return connected;
+
+        conn.setProxy(QNetworkProxy::NoProxy);
+        conn.connectToHost(host, port.toUShort());
+        connected = conn.waitForConnected(msecs);
+        conn.close();
+    }
     return connected;
 }
 
