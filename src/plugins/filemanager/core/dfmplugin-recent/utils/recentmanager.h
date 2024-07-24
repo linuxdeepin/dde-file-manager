@@ -89,6 +89,7 @@ public slots:
 private slots:
     void onUpdateRecentFileInfo(const QUrl &url, const QString &originPath, qint64 readTime);
     void onDeleteExistRecentUrls(const QList<QUrl> &urls);
+    void onStopRecentWatcherThread();
 
 private:
     QThread workerThread;
