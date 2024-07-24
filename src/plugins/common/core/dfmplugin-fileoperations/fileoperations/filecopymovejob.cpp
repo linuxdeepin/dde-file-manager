@@ -123,7 +123,7 @@ JobHandlePointer FileCopyMoveJob::copy(const QList<QUrl> &sources, const QUrl &t
     }
 
     JobHandlePointer jobHandle = operationsService->copy(sources, target, flags);
-    initArguments(jobHandle);
+    initArguments(jobHandle, flags);
 
     return jobHandle;
 }
