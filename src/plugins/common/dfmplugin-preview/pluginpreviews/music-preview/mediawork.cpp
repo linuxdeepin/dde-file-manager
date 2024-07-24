@@ -6,15 +6,19 @@
 
 using namespace plugin_filepreview;
 
-MediaWork::MediaWork(QObject *parent) : QObject(parent)
+MediaWork::MediaWork(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
 void MediaWork::createMediaPlayer()
 {
     mediaPlayer = new QMediaPlayer;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(mediaPlayer, &QMediaPlayer::stateChanged, this, &MediaWork::playerStateChanged);
+#else
+    connect(mediaPlayer, &QMediaPlayer::playbackStateChanged, this, &MediaWork::playerStateChanged);
+#endif
     connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &MediaWork::playerStatusChanged);
     connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &MediaWork::playerDurationChanged);
     connect(mediaPlayer, &QMediaPlayer::positionChanged, this, &MediaWork::playerPositionChanged);
@@ -22,8 +26,13 @@ void MediaWork::createMediaPlayer()
 
 void MediaWork::setMedia(const QUrl &url)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (mediaPlayer)
         mediaPlayer->setMedia(url);
+#else
+    if (mediaPlayer)
+        mediaPlayer->setSource(url);
+#endif
 }
 
 void MediaWork::setPosition(qint64 pos)
@@ -32,12 +41,21 @@ void MediaWork::setPosition(qint64 pos)
         mediaPlayer->setPosition(pos);
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 QMediaPlayer::State MediaWork::state() const
 {
     if (mediaPlayer)
         return mediaPlayer->state();
     return QMediaPlayer::State::StoppedState;
 }
+#else
+QMediaPlayer::PlaybackState MediaWork::state() const
+{
+    if (mediaPlayer)
+        return mediaPlayer->playbackState();
+    return QMediaPlayer::PlaybackState::StoppedState;
+}
+#endif
 
 qint64 MediaWork::position() const
 {

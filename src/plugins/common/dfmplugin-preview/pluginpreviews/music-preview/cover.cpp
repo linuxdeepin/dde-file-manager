@@ -27,7 +27,7 @@ void Cover::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
 
     QPainter painter(this);
-    painter.setRenderHints(QPainter::Antialiasing | QPainter::HighQualityAntialiasing | QPainter::SmoothPixmapTransform);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
     QRect backgroundRect = rect();
     QPainterPath backgroundPath;

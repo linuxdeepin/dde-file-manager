@@ -23,11 +23,19 @@ public:
     void setMedia(const QUrl &url);
 
     qint64 duration() const;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QMediaPlayer::State state() const;
+#else
+    QMediaPlayer::PlaybackState state() const;
+#endif
     qint64 position() const;
 
 Q_SIGNALS:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     void sigStateChanged(QMediaPlayer::State newState);
+#else
+    void sigStateChanged(QMediaPlayer::PlaybackState newState);
+#endif
     void sigStatusChanged(QMediaPlayer::MediaStatus status);
     void sigDurationChanged(qint64 duration);
     void sigPositionChanged(qint64 pos);
@@ -49,4 +57,4 @@ private:
 };
 }
 
-#endif // CUSMEDIAPLAYER_H
+#endif   // CUSMEDIAPLAYER_H

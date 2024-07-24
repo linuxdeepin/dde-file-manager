@@ -14,7 +14,6 @@
 #include <QMediaMetaData>
 #include <QTime>
 #include <QFileInfo>
-#include <QTextCodec>
 #include <QBuffer>
 #include <QImageReader>
 
@@ -29,6 +28,10 @@
 #include <taglib/id3v2frame.h>
 #include <taglib/attachedpictureframe.h>
 #include <taglib/apetag.h>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QTextCodec>
+#endif
 
 using namespace plugin_filepreview;
 MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent)
@@ -178,8 +181,12 @@ void MusicMessageView::resizeEvent(QResizeEvent *event)
 QList<QByteArray> MusicMessageView::detectEncodings(const QByteArray &rawData)
 {
     QList<QByteArray> charsets;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QByteArray charset = QTextCodec::codecForLocale()->name();
     charsets << charset;
+#else
+    charsets << locale().name().toUtf8();
+#endif
 
     const char *data = rawData.data();
     int32_t len = rawData.size();
@@ -303,7 +310,9 @@ void MusicMessageView::characterEncodingTransform(MediaMeta &meta, void *obj)
             meta.title = TStringToQString(tag->title());
             meta.codec = "UTF-8";   //info codec
         } else {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             QTextCodec *codec = QTextCodec::codecForName(detectCodec);
+
             if (codec == nullptr) {
                 meta.album = TStringToQString(tag->album());
                 meta.artist = TStringToQString(tag->artist());
@@ -313,6 +322,11 @@ void MusicMessageView::characterEncodingTransform(MediaMeta &meta, void *obj)
                 meta.artist = codec->toUnicode(tag->artist().toCString());
                 meta.title = codec->toUnicode(tag->title().toCString());
             }
+#else
+            meta.album = TStringToQString(tag->album());
+            meta.artist = TStringToQString(tag->artist());
+            meta.title = TStringToQString(tag->title());
+#endif
             meta.codec = detectCodec;
         }
     } else {

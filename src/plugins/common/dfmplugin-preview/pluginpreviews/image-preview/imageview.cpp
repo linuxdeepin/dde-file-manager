@@ -9,7 +9,6 @@
 #include <QUrl>
 #include <QImageReader>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QtMath>
 #include <QPainter>
 #include <QVBoxLayout>

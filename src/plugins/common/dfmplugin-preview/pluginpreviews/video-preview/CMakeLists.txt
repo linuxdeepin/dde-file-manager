@@ -16,7 +16,6 @@ FILE(GLOB VIDEOPREVIEW_FILES
     "${GlobalFiles}"
     )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 
@@ -31,14 +30,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
         ${libdmr_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
     ${libdmr_LIBRARIES}
 )
 

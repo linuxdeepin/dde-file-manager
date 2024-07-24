@@ -10,7 +10,6 @@ FILE(GLOB DCIICONPREVIEW_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.xml"
     "${GlobalFiles}"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -19,15 +18,9 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../previews)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkGui_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtGui_LIBRARIES}
 )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dtk-dciicon-preview-plugin.json DESTINATION ../../previews)

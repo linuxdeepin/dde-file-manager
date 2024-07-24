@@ -10,14 +10,18 @@ FILE(GLOB_RECURSE TAG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt5 COMPONENTS DBus REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS DBus REQUIRED)
 
 # generate dbus interface
-qt5_add_dbus_interface(TAG_FILES
-    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.TagManager.xml
-    tagmanager_interface)
+if(DFM_BUILD_WITH_QT6)
+    qt_add_dbus_interface(TAG_FILES
+        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.TagManager.xml
+        tagmanager_interface)
+else()
+    qt5_add_dbus_interface(TAG_FILES
+        ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.TagManager.xml
+        tagmanager_interface)
+endif()
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -26,17 +30,10 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
-    Qt5::Core
-    Qt5::DBus
+    Qt${QT_VERSION_MAJOR}::DBus
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file

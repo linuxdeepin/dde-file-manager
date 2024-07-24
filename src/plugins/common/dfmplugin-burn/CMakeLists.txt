@@ -4,20 +4,11 @@ project(dfmplugin-burn)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB BURN_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+FILE(GLOB_RECURSE BURN_FILES CONFIGURE_DEPENDS
+    "./*.h"
+    "./*.cpp"
+    "./*.json"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -26,16 +17,10 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file

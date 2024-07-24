@@ -15,7 +15,11 @@ class MediaWork : public QObject
 public:
     explicit MediaWork(QObject *parent = nullptr);
     qint64 duration() const;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QMediaPlayer::State state() const;
+#else
+    QMediaPlayer::PlaybackState state() const;
+#endif
     qint64 position() const;
 
 public Q_SLOTS:
@@ -27,7 +31,11 @@ public Q_SLOTS:
     void stop();
 
 Q_SIGNALS:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     void playerStateChanged(QMediaPlayer::State newState);
+#else
+    void playerStateChanged(QMediaPlayer::PlaybackState newState);
+#endif
     void playerStatusChanged(QMediaPlayer::MediaStatus status);
     void playerDurationChanged(qint64 duration);
     void playerPositionChanged(qint64 duration);
@@ -37,4 +45,4 @@ private:
 };
 }
 
-#endif // MEDIAWORK_H
+#endif   // MEDIAWORK_H

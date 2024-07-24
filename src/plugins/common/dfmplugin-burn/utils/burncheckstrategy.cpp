@@ -125,7 +125,11 @@ bool BurnCheckStrategy::validComontFilePathBytes(const QString &filePath)
 
 bool BurnCheckStrategy::validCommonFilePathDeepLength(const QString &filePath)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     return filePath.split(QDir::separator(), QString::SkipEmptyParts).size() <= kMaxCommonDirDeepLength;
+#else
+    return filePath.split(QDir::separator(), Qt::SkipEmptyParts).size() <= kMaxCommonDirDeepLength;
+#endif
 }
 
 bool BurnCheckStrategy::validFileNameCharacters(const QString &fileName)

@@ -266,7 +266,11 @@ QString UserShareHelper::sharedIP() const
 int UserShareHelper::getSharePort() const
 {
     QSettings smbConf("/etc/samba/smb.conf", QSettings::IniFormat);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     auto ports = smbConf.value("global/smb ports").toString().split(" ", QString::SkipEmptyParts);
+#else
+    auto ports = smbConf.value("global/smb ports").toString().split(" ", Qt::SkipEmptyParts);
+#endif
     return ports.isEmpty() ? -1 : ports.first().toInt();
 }
 
@@ -499,16 +503,17 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
 
     // 端口被禁用
     if (err.contains("net usershare add: cannot convert name") && err.contains("{Device Timeout}")) {
-        NetworkUtils::instance()->doAfterCheckNet("127.0.0.1", { "139", "445" },
-                                                  [](bool result) {
-                                                      if (result) {
-                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"), "");
-                                                      } else {
-                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
-                                                                                                 tr("SMB port is banned, please check the firewall strategy."));
-                                                      }
-                                                  },
-                                                  500);
+        NetworkUtils::instance()->doAfterCheckNet(
+                "127.0.0.1", { "139", "445" },
+                [](bool result) {
+                    if (result) {
+                        DialogManagerInstance->showErrorDialog(tr("Sharing failed"), "");
+                    } else {
+                        DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
+                                                               tr("SMB port is banned, please check the firewall strategy."));
+                    }
+                },
+                500);
         return;
     }
 

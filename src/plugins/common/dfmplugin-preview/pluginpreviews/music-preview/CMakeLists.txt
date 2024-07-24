@@ -14,8 +14,8 @@ FILE(GLOB MUSICPREVIEW_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.qrc"
     "${GlobalFiles}"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(Qt5 COMPONENTS Multimedia REQUIRED)
+
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Multimedia REQUIRED)
 find_package(ICU COMPONENTS i18n io uc REQUIRED)
 find_package(PkgConfig REQUIRED)
 
@@ -28,16 +28,11 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../previews)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
-    ${Qt5Multimedia_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Multimedia
     ${taglib_LIBRARIES}
     ICU::i18n
 )
