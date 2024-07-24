@@ -9,6 +9,8 @@
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/device/deviceutils.h>
 
+#include <dfm-io/error/en.h>
+
 #include <QGuiApplication>
 #include <QTimer>
 
@@ -148,7 +150,7 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
             if (DeviceUtils::isSamba(asyncInfo->fileUrl())
                     && asyncInfo->errorCodeFromDfmio() == DFMIOErrorCode::DFM_IO_ERROR_HOST_IS_DOWN
                     && !NetworkUtils::instance()->checkFtpOrSmbBusy(asyncInfo->fileUrl())) {
-                emit this->smbSeverMayModifyPassword(asyncInfo->fileUrl());
+                smbSeverMayModifyPassword(asyncInfo->fileUrl());
             }
             return;
         }

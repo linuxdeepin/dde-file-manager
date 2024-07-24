@@ -16,8 +16,8 @@ TEST(GeneralModelFilter, construct)
 {
     GeneralModelFilter obj;
     ASSERT_EQ(obj.modelFilters.size(), 2);
-    EXPECT_NE(dynamic_cast<HiddenFileFilter *>(obj.modelFilters.at(0).get()), nullptr);
-    EXPECT_NE(dynamic_cast<InnerDesktopAppFilter *>(obj.modelFilters.at(1).get()), nullptr);
+    EXPECT_NE(dynamic_cast<HiddenFileFilter *>(obj.modelFilters.at(0)), nullptr);
+    EXPECT_NE(dynamic_cast<InnerDesktopAppFilter *>(obj.modelFilters.at(1)), nullptr);
 }
 
 TEST(GeneralModelFilter, installFilter)
@@ -26,7 +26,7 @@ TEST(GeneralModelFilter, installFilter)
     obj.modelFilters.clear();
 
     QSharedPointer<ModelDataHandler> cur(new ModelDataHandler());
-    obj.installFilter(cur);
+    obj.installFilter(cur.data());
     ASSERT_EQ(obj.modelFilters.size(), 1);
     EXPECT_EQ(obj.modelFilters.at(0), cur);
 }
@@ -37,9 +37,9 @@ TEST(GeneralModelFilter, removeFilter)
     obj.modelFilters.clear();
 
     QSharedPointer<ModelDataHandler> cur(new ModelDataHandler());
-    obj.modelFilters << cur;
+    obj.modelFilters << cur.data();
 
-    obj.removeFilter(cur);
+    obj.removeFilter(cur.data());
     EXPECT_EQ(obj.modelFilters.size(), 0);
 }
 
@@ -67,7 +67,7 @@ class GeneralModelFilterTest : public testing::Test
 public:
     virtual void SetUp() override {
         obj.modelFilters.clear();
-        obj.modelFilters << QSharedPointer<ModelDataHandler>(filter = new testing::TestModelFilter());
+        obj.modelFilters << QSharedPointer<ModelDataHandler>(filter = new testing::TestModelFilter()).data();
     }
     virtual void TearDown() override {}
     GeneralModelFilter obj;
