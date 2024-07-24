@@ -14,7 +14,7 @@
             "visibility":"private"
         },
         "dfm.open.in.single.process": {
-            "value":false,
+            "value":true,
             "serial":0,
             "flags":[],
             "name":"Open folder windows in a separate process",
