@@ -547,8 +547,10 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
     if (typeAll.contains(FileInfoAttributeID::kStandardIcon)) {
         typeAll.removeOne(FileInfoAttributeID::kStandardIcon);
         // 再在缓存和正在查询都不调用，缓存时会去调用
-        if (!d->cacheingAttributes && !d->queringAttribute)
-            d->updateIcon();
+        if (!d->cacheingAttributes && !d->queringAttribute) {
+            QWriteLocker wlk(&d->iconLock);
+            d->fileIcon = QIcon();
+        }
     }
 
     // 更新filecount
@@ -1232,7 +1234,8 @@ void AsyncFileInfoPrivate::updateThumbnail(const QUrl &url)
 
 QIcon AsyncFileInfoPrivate::updateIcon()
 {
-    QIcon icon = LocalFileIconProvider::globalProvider()->icon(q);
+    assert(QThread::currentThread() == qApp->thread());
+    QIcon icon = LocalFileIconProvider::globalProvider()->icon(q->sharedFromThis());
     if (q->isAttributes(OptInfoType::kIsSymLink)) {
         const auto &&target = q->pathOf(PathInfoType::kSymLinkTarget);
         if (!target.isEmpty() && target != q->pathOf(PathInfoType::kFilePath)) {

@@ -560,7 +560,8 @@ void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &
     // 更新fileicon
     if (typeAll.contains(FileInfoAttributeID::kStandardIcon)) {
         typeAll.removeOne(FileInfoAttributeID::kStandardIcon);
-        d->updateIcon();
+        QWriteLocker wlk(&d->iconLock);
+        d->fileIcon = QIcon();
     }
 
     // 更新mediaInfo
@@ -680,7 +681,8 @@ FileInfo::FileType SyncFileInfoPrivate::updateFileType()
 
 QIcon SyncFileInfoPrivate::updateIcon()
 {
-    QIcon icon = LocalFileIconProvider::globalProvider()->icon(q);
+    assert(QThread::currentThread() == qApp->thread());
+    QIcon icon = LocalFileIconProvider::globalProvider()->icon(q->sharedFromThis());
     if (q->isAttributes(OptInfoType::kIsSymLink)) {
         const auto &&target = symLinkTarget();
         if (!target.isEmpty() && target != filePath()) {

@@ -151,7 +151,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             }
             // TODO lanxs::目前缩略图还没有处理，等待处理完成了在修改
             // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
-            QIcon icon = LocalFileIconProvider::globalProvider()->icon(info.data());
+            QIcon icon = LocalFileIconProvider::globalProvider()->icon(info);
             FileInfo::FileType fileType = MimeTypeDisplayManager::
                                                   instance()
                                                           ->displayNameToEnum(info->nameOf(NameInfoType::kMimeTypeName));
