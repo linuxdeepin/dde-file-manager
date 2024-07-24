@@ -36,7 +36,12 @@ private:
     void initConnections();
 
 public slots:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     void onPlayStateChanged(const QMediaPlayer::State &state);
+#else
+    void onPlayStateChanged(const QMediaPlayer::PlaybackState &state);
+
+#endif
     void onPlayStatusChanged(const QMediaPlayer::MediaStatus &status);
     void onPlayDurationChanged(qint64 duration);
     void onPlayPositionChanged(qint64 pos);
@@ -55,7 +60,11 @@ private:
     QLabel *durationLabel { nullptr };
     QTimer *updateProgressTimer { nullptr };
     qint64 lastPos { -1 };
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QMediaPlayer::State curState { QMediaPlayer::State::StoppedState };
+#else
+    QMediaPlayer::PlaybackState curState { QMediaPlayer::StoppedState };
+#endif
 };
 }
 #endif   // TOOLBARFRAME_H

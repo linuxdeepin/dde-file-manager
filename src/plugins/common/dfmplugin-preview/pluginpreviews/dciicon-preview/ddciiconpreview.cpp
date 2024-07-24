@@ -59,10 +59,10 @@ public:
     {
         this->setFocusPolicy(Qt::ClickFocus);
         this->mainLayout = new QVBoxLayout(this);
-        this->mainLayout->setMargin(10);
+        this->mainLayout->setContentsMargins(10, 10, 10, 10);
         this->mainLayout->setSpacing(5);
         this->titleLayout = new QHBoxLayout;
-        this->titleLayout->setMargin(0);
+        this->titleLayout->setContentsMargins(0, 0, 0, 0);
         this->titleLabel = new QLabel(this);
         auto font = this->titleLabel->font();
         font.setBold(true);
@@ -277,7 +277,7 @@ void DDciIconPreview::initControlWidgets()
 
     QWidget *customSizeWidget = new QWidget();
     QHBoxLayout *customSizeLayout = new QHBoxLayout(customSizeWidget);
-    customSizeLayout->setMargin(0);
+    customSizeLayout->setContentsMargins(0, 0, 0, 0);
 
     this->customSizeEdit = new QLineEdit();
     QObject::connect(this->customSizeEdit, &QLineEdit::editingFinished, this, std::bind(&DDciIconPreview::updatePixmap, this));
@@ -306,7 +306,7 @@ void DDciIconPreview::initControlWidgets()
     QWidget *devicePixelSliderWidget = new QWidget;
     devicePixelRatioWidget->addContentWidget(devicePixelSliderWidget);
     QHBoxLayout *devicePixelSliderLayout = new QHBoxLayout(devicePixelSliderWidget);
-    devicePixelSliderLayout->setMargin(0);
+    devicePixelSliderLayout->setContentsMargins(0, 0, 0, 0);
     devicePixelSliderLayout->setSpacing(0);
     QSlider *devicePixelSlider = new QSlider(this->controlWidget);
     devicePixelSliderLayout->addWidget(devicePixelSlider);
@@ -342,14 +342,14 @@ void DDciIconPreview::initControlWidgets()
     textFont.setItalic(true);
     this->paletteNosupportedText->setFont(textFont);
     auto palette = this->paletteNosupportedText->palette();
-    palette.setBrush(QPalette::Foreground, QColor(220, 20, 60));
+    palette.setBrush(QPalette::WindowText, QColor(220, 20, 60));
     this->paletteNosupportedText->setPalette(palette);
     this->paletteWidget->addHeaderWidget(this->paletteNosupportedText);
 
     QWidget *paletteContentWidget = new QWidget;
     this->paletteWidget->addContentWidget(paletteContentWidget);
     QVBoxLayout *paletteContentLayout = new QVBoxLayout(paletteContentWidget);
-    paletteContentLayout->setMargin(0);
+    paletteContentLayout->setContentsMargins(0, 0, 0, 0);
     paletteContentLayout->setSpacing(4);
     QHBoxLayout *foregroundPaletteLayout = new QHBoxLayout;
     foregroundPaletteLayout->setContentsMargins(10, 0, 0, 0);
@@ -360,7 +360,7 @@ void DDciIconPreview::initControlWidgets()
     font.setPointSize(10);
     foregroundPaletteTitle->setFont(font);
     this->foregroundPaletteEdit = new QLineEdit(this->controlWidget);
-    this->foregroundPaletteEdit->setText(this->mainWidget->palette().foreground().color().name());
+    this->foregroundPaletteEdit->setText(this->mainWidget->palette().windowText().color().name());
     this->foregroundPaletteEdit->setFixedWidth(100);
     this->foregroundPaletteEdit->setFont(font);
     QObject::connect(this->foregroundPaletteEdit, &QLineEdit::editingFinished, this, std::bind(&DDciIconPreview::updatePixmap, this));
@@ -372,7 +372,7 @@ void DDciIconPreview::initControlWidgets()
     QLabel *backgroundPaletteTitle = new QLabel(tr("Background:"), this->controlWidget);
     backgroundPaletteTitle->setFixedWidth(140);
     this->backgroundPaletteEdit = new QLineEdit(this->controlWidget);
-    this->backgroundPaletteEdit->setText(this->mainWidget->palette().background().color().name());
+    this->backgroundPaletteEdit->setText(this->mainWidget->palette().window().color().name());
     this->backgroundPaletteEdit->setFixedWidth(100);
     this->backgroundPaletteEdit->setFont(font);
     QObject::connect(this->backgroundPaletteEdit, &QLineEdit::editingFinished, this, std::bind(&DDciIconPreview::updatePixmap, this));
@@ -418,7 +418,7 @@ void DDciIconPreview::initControlWidgets()
     QWidget *customBackgroundWidget = new QWidget;
     backgroundColorWidget->addContentWidget(customBackgroundWidget);
     QHBoxLayout *customBackgroundLayout = new QHBoxLayout(customBackgroundWidget);
-    customBackgroundLayout->setMargin(0);
+    customBackgroundLayout->setContentsMargins(0, 0, 0, 0);
     customBackgroundLayout->setSpacing(10);
     QLineEdit *cusBackEdit = new QLineEdit();
     cusBackEdit->setVisible(false);

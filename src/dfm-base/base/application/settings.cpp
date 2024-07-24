@@ -570,15 +570,15 @@ QUrl Settings::toUrlValue(const QVariant &url)
  */
 QVariant Settings::value(const QString &group, const QString &key, const QVariant &defaultValue) const
 {
-    QVariant value = d->writableData.values.value(group).value(key, QVariant::Invalid);
+    QVariant value = d->writableData.values.value(group).value(key);
 
-    if (value.isValid()) {
+    if (!value.isNull()) {
         return value;
     }
 
-    value = d->fallbackData.values.value(group).value(key, QVariant::Invalid);
+    value = d->fallbackData.values.value(group).value(key);
 
-    if (value.isValid()) {
+    if (!value.isNull()) {
         return value;
     }
 

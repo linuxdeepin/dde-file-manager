@@ -38,7 +38,11 @@ qint64 CusMediaPlayer::duration() const
     return worker->duration();
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 QMediaPlayer::State CusMediaPlayer::state() const
+#else
+QMediaPlayer::PlaybackState CusMediaPlayer::state() const
+#endif
 {
     return worker->state();
 }
@@ -48,7 +52,8 @@ qint64 CusMediaPlayer::position() const
     return worker->position();
 }
 
-CusMediaPlayer::CusMediaPlayer(QObject *parent) : QObject(parent)
+CusMediaPlayer::CusMediaPlayer(QObject *parent)
+    : QObject(parent)
 {
     worker = new MediaWork;
     worker->moveToThread(&workerThread);
