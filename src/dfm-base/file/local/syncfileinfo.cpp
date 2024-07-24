@@ -765,6 +765,7 @@ QString SyncFileInfoPrivate::completeSuffix() const
 
 QString SyncFileInfoPrivate::iconName() const
 {
+    assert(QThread::currentThread() == qApp->thread());
     QString iconNameValue;
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
         iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(filePath());
