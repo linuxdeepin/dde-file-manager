@@ -103,7 +103,7 @@ void FileManager1DBus::Open(const QStringList &Args)
 {
     QStringList URIsArgs;
     for (auto arg : Args) {
-        URIsArgs.append(arg.replace(" ", "*||*"));
+        URIsArgs.append(arg.replace("*|||*", ",").replace(" ", "*||*"));
     }
     if (QProcess::startDetached("file-manager.sh", QStringList() << URIsArgs))
         return;
