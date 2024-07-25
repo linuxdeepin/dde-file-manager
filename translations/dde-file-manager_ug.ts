@@ -30,7 +30,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="278"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="283"/>
         <source>Desktop</source>
         <translation>ئۈستەليۈزى</translation>
     </message>
@@ -189,7 +189,7 @@
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="491"/>
         <source>%1 Encrypted</source>
-        <translation>% 1 شىفىرلانغان</translation>
+        <translation>%1 شىفىرلانغان</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="499"/>
@@ -299,7 +299,7 @@
         <translation>يېقىندا ئىشلەتكەنلىرىم</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="205"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="207"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
@@ -307,7 +307,7 @@
         <translation>ئاپتوماتىك ئاغدۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="231"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="233"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
@@ -354,13 +354,13 @@
         <translation>تارماق ھۆججەتلەرنى كۆرۈش ھوقۇقىڭىز يوق</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="439"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="438"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>ھۆججەت قىسقۇچ قۇرۇق</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="440"/>
         <source>Loading...</source>
         <translation>يۈكلەۋاتىدۇ...</translation>
     </message>
@@ -442,7 +442,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="650"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="70"/>
         <source>Mounted sharing folders</source>
         <translation>يۈكلەنگەن ھەمبەھىر ھۆججەت قىسقۇچ بار</translation>
     </message>
@@ -1733,7 +1733,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="605"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="718"/>
         <source>Clear search history</source>
-        <translation type="unfinished"></translation>
+        <translation>ئىزدەش تارىخىنى تازىلاش</translation>
     </message>
 </context>
 <context>
@@ -1766,7 +1766,7 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
         <source>Personalization</source>
-        <translation type="unfinished"></translation>
+        <translation>خاسلاشتۇرۇش</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
@@ -1946,12 +1946,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
         <source>The hortcut key &quot;%1&quot; to show collection</source>
-        <translation type="unfinished"></translation>
+        <translation>توپلامنى كۆرسىتىش ئۈچۈن تېزلەتمە كۇنۇپكا &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation type="unfinished"></translation>
+        <translation>ھېچقانداق ئەسكەرتىش يوق</translation>
     </message>
 </context>
 <context>
@@ -2002,7 +2002,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="134"/>
         <source>Middle area</source>
-        <translation type="unfinished"></translation>
+        <translation>ئوتتۇرا رايون</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="160"/>
@@ -2026,52 +2026,52 @@
 <context>
     <name>ddplugin_organizer::ExtendCanvasScene</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="231"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="232"/>
         <source>Organize desktop</source>
         <translation>ئۈستەليۈزىنى رەتلەش پىروگراممىسىنى قوزغىتىش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="230"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="231"/>
         <source>Enable desktop organization</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="232"/>
-        <source>View options</source>
-        <translation type="unfinished"></translation>
+        <translation>ئۈستەل يۈزى تەشكىللەشنى قوزغىتىڭ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
+        <source>View options</source>
+        <translation>تاللانمىلارنى كۆرۈش</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Organize by</source>
         <translation>توپلام شەكلى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="237"/>
         <source>Custom collection</source>
         <translation>توپلام بەلگىلەش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="237"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="238"/>
         <source>Type</source>
         <translation>تىپى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="238"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="239"/>
         <source>Time accessed</source>
         <translation>زىيارەت ۋاقتى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="239"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
         <source>Time modified</source>
         <translation>ئۆزگەرتىلگەن ۋاقىت</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="241"/>
         <source>Time created</source>
         <translation>قۇرۇلغان ۋاقتى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="242"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="243"/>
         <source>Create a collection</source>
         <translation>توپلان قۇرۇش</translation>
     </message>
@@ -2081,27 +2081,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="154"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>بىر چېكىش يوشۇرۇش ئىقتىدارىنى چەكلەش ئۈچۈن ، ئۈستەل يۈزى تىزىملىك ​​تىزىملىكىدىكى «تاللاش تاللانمىلىرى» كۆزنىكىنى چاقىرىپ ، «بىر چېكىش يوشۇرۇش توپلىمى» نى ئېتىڭ.</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="164"/>
         <source>Desktop organizer</source>
-        <translation type="unfinished"></translation>
+        <translation>ئۈستەلئۈستى تەشكىللىگۈچى</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="167"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation type="unfinished"></translation>
+        <translation>توپلاملارنى كۆرسىتىش ئۈچۈن «%1» تېزلەتمىسى</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>Close</source>
-        <translation type="unfinished">تاقاش</translation>
+        <translation>تاقاشتاقاش</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>No more prompts</source>
-        <translation type="unfinished"></translation>
+        <translation>ئەمدى ئەسكەرتىش يوق</translation>
     </message>
 </context>
 <context>
@@ -2135,7 +2135,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="125"/>
         <source>Enable desktop organizer</source>
-        <translation type="unfinished"></translation>
+        <translation>ئۈستەل يۈزى تەشكىللىگۈچىنى قوزغىتىڭ</translation>
     </message>
 </context>
 <context>
@@ -2153,12 +2153,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation type="unfinished"></translation>
+        <translation>بىر چېكىش ئارقىلىق بارلىق توپلاملارنى يوشۇرۇڭ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>توپلاش تېزلەتمىسىنى يوشۇرۇش / كۆرسىتىش</translation>
     </message>
 </context>
 <context>
@@ -2465,12 +2465,12 @@
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="29"/>
         <source>%1 folder selected (contains %2)</source>
-        <translation>% 1 ھۆججەت قىسقۇچنى تاللاڭ (% 2 نى ئۆز ئىچىگە ئالىدۇ)</translation>
+        <translation>%1 ھۆججەت قىسقۇچنى تاللاڭ (%2 نى ئۆز ئىچىگە ئالىدۇ)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="30"/>
         <source>%1 folders selected (contains %2)</source>
-        <translation>% 1 ھۆججەت قىسقۇچنى تاللاڭ (% 2 نى ئۆز ئىچىگە ئالىدۇ)</translation>
+        <translation>%1 ھۆججەت قىسقۇچنى تاللاڭ (%2 نى ئۆز ئىچىگە ئالىدۇ)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="31"/>
@@ -2969,7 +2969,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
         <source>Open folder windows in a separate process</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەت قىسقۇچ كۆزنىكىنى ئايرىم جەرياندا ئېچىڭ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
@@ -3325,12 +3325,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>ئەمەلدىن قالدۇرۇش</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>قايتا قىلىش</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
@@ -3627,17 +3627,17 @@
 <context>
     <name>dfmplugin_avfsbrowser::AvfsMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="142"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="143"/>
         <source>Open</source>
         <translation>ئېچىش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="144"/>
         <source>Copy</source>
         <translation>كۆچۈرۈش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="145"/>
         <source>Properties</source>
         <translation>ئىقتىدار</translation>
     </message>
@@ -4300,7 +4300,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="508"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation type="unfinished"></translation>
+        <translation>SMB ئېغىزى چەكلەنگەن ، مۇداپىئە تام ئىستراتېگىيىسىنى تەكشۈرۈپ بېقىڭ.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="517"/>
@@ -4472,12 +4472,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەتنى كۆچۈرۈش ياكى كېسىش مەغلۇب بولدى! بۇ ھۆججەتنى قايتا كۆچۈرۈڭ!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەتنى زىيارەت قىلالمىدى!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
@@ -4532,12 +4532,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەتنى كۆچۈرۈش ياكى كېسىش مەغلۇب بولدى ، سەۋەبى:%1. بۇ ھۆججەتنى قايتا كۆچۈرۈڭ!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation type="unfinished">ھۆججەتنى كۆچۈرۈش ياكى كېسىپ چاپلاش مەغلۇپ بولدى، سەۋەبى: %1.</translation>
+        <translation>ھۆججەتنى كۆچۈرۈش ياكى كېسىپ چاپلاش مەغلۇپ بولدى، سەۋەبى: %1.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
@@ -4909,7 +4909,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/closealldialog.cpp" line="77"/>
         <source>Total size: %1, %2 files</source>
-        <translation>ئومۇمىي سىغىمى% 1 ، ھۆججەتلەرنىڭ ئومۇمىي سانى% 2</translation>
+        <translation>ئومۇمىي سىغىمى%1 ، ھۆججەتلەرنىڭ ئومۇمىي سانى%2</translation>
     </message>
 </context>
 <context>
@@ -5260,17 +5260,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="145"/>
         <source>Display search history</source>
-        <translation type="unfinished"></translation>
+        <translation>ئىزدەش تارىخىنى كۆرسىتىش</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="174"/>
         <source>Clear dde-file-manager Search Records</source>
-        <translation type="unfinished"></translation>
+        <translation>Dde-file-manager ئىزدەش خاتىرىسىنى تازىلاڭ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="175"/>
         <source>Clean up</source>
-        <translation type="unfinished"></translation>
+        <translation>تازىلاش</translation>
     </message>
 </context>
 <context>
@@ -5422,7 +5422,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="190"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>خەتكۈچ قوشۇش &quot;% 1&quot;</translation>
+        <translation>خەتكۈچ قوشۇش &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -5443,19 +5443,19 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="347"/>
         <source>Are you sure clear search histories?</source>
-        <translation type="unfinished"></translation>
+        <translation>ئىزدەش تارىخىنى ئېنىق بىلەمسىز؟</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="349"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>بىكار قىلىش</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="350"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">جەزملەشتۈرۈش</translation>
+        <translation>جەزملەشتۈرۈشجەزملەشتۈرۈڭ</translation>
     </message>
 </context>
 <context>
@@ -6245,40 +6245,40 @@
 <context>
     <name>dfmplugin_vault::VaultActiveFinishedView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="53"/>
         <source>Encrypt File Vault</source>
         <translation>بىخەتەرلىك ساندۇقىغا قوشۇش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="57"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation>«بىخەتەرلىك ساندۇقىغا قوشۇش» نى باسقاندىن كېيىن، ئىشلەتكۈچى پارولىنى كىرگۈزۈپ تەڭشەكنى تاماملاڭ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="70"/>
         <source>Encrypting...</source>
         <translation>شىفىرلاشتۇرۇۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="78"/>
         <source>The setup is complete</source>
         <translation>شىفىرلاندى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="162"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="191"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="217"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="219"/>
         <source>Encrypt</source>
         <translation>بىخەتەرلىك ساندۇقىغا قوشۇش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="187"/>
         <source>Failed to create file vault: %1</source>
         <translation>بىخەتەرلىك ساندۇقىغا قوشالمىدى: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="271"/>
         <source>OK</source>
         <translation>ماقۇل</translation>
     </message>
@@ -6645,12 +6645,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1926"/>
         <source>Mount error</source>
-        <translation type="unfinished">يۈكلەش خاتالىقى</translation>
+        <translation>يۈكلەش خاتالىقىتاغ خاتالىقى</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1927"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"></translation>
+        <translation>مۇلازىمېتىرغا كىرىش كىنىشكىسى ئىناۋەتسىز. ئۆچۈرۈۋېتىڭ ۋە قايتا ئۆچۈرۈڭ</translation>
     </message>
 </context>
 <context>
@@ -6759,7 +6759,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="918"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="920"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>ساقلاش</translation>
