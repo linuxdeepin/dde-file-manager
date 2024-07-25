@@ -102,7 +102,10 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         return true;
 
     QUrl toUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
-    if (!checkTargetEnable(toUrl) || !hoverFileInfo->canAttributes(CanableInfoType::kCanDrop)) {
+    // NOTE: if drag file hover on a file item in list view, allow drop the file to root dir.
+    // so, check kCanDrop attributes of dir file only
+    if (!checkTargetEnable(toUrl)
+            || (!hoverFileInfo->canAttributes(CanableInfoType::kCanDrop) && hoverFileInfo->isAttributes(OptInfoType::kIsDir))) {
         event->ignore();
         currentHoverIndexUrl = toUrl;
         return true;
