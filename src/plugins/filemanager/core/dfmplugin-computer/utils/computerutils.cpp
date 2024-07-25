@@ -311,7 +311,7 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
     DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
     devInfo.deviceUrl = info->urlOf(UrlInfoType::kUrl);
-    devInfo.mountPoint = info->targetUrl();
+    devInfo.mountPoint = QUrl::fromLocalFile(info->extraProperty(GlobalServerDefines::DeviceProperty::kMountPoint).toString());
     devInfo.deviceName = info->displayName();
     devInfo.deviceType = ComputerUtils::deviceTypeInfo(info);
     devInfo.fileSystem = info->extraProperty(GlobalServerDefines::DeviceProperty::kFileSystem).toString();
