@@ -28,6 +28,9 @@ for arg in "$@"; do
         arg=$(echo "$absolute_path" | sed 's/ /*||*/g')
     fi
 
+    # array:string:"$args"中','是切分符号，所以传入dbus是要被切分
+    arg=$(echo "$arg" | sed 's/,/*|||*/g')
+
     if [[ $arg == "-h" ]] || [[ $arg == "-v" ]]; then
         isDbus="false"
         break;
