@@ -206,7 +206,7 @@ static bool pluginsLoad()
 
 static void handleSIGTERM(int sig)
 {
-    qCWarning(logAppFileManager) << "break with !SIGTERM! " << sig;
+    qCWarning(logAppFileManager) << "break with !SIGTERM! " << sig << " current pid " << getpid();
 
     if (qApp) {
         // Don't use headless if SIGTERM, cause system shutdown blocked
@@ -368,6 +368,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    qCWarning(logAppFileManager) << " --- app start --- pid = " << a.applicationPid();
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
