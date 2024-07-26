@@ -115,7 +115,7 @@ void SessionBusiness::releaseArguments(int argc, char **argv_new)
 void SessionBusiness::savePath(quint64 wid, const QString &path)
 {
     if (!sessionAPI.isInitialized()) {
-        qCWarning(logAppFileManager) << "failed to save path caused no usm session api init";
+        qCWarning(logAppFileManager) << "failed to save path caused no usm session api init, current pid = " << qApp->applicationPid();
         return;
     }
     QString filePath = QString("%1/.config/%2").arg(QDir::homePath()).arg(sessionAPI.filename(wid));
