@@ -26,14 +26,14 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-find_package(Qt5 COMPONENTS
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
     DBus
     REQUIRED
 )
 
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
-    Qt5::DBus
+    Qt${QT_VERSION_MAJOR}::DBus
     ${PolkitAgent_LIBRARIES}
     ${PolkitQt5_LIBRARIES}
     PkgConfig::mount

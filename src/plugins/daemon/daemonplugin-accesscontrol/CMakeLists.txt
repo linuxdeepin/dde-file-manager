@@ -23,17 +23,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 
 find_package(PkgConfig REQUIRED)
 
-pkg_search_module(dfm-io
-    REQUIRED
-    dfm-io
-    IMPORTED_TARGET
-)
-pkg_search_module(dfm-mount
-    REQUIRED
-    dfm-mount
-    IMPORTED_TARGET
-)
-
 pkg_search_module(crypt
     REQUIRED
     libcryptsetup
@@ -49,7 +38,7 @@ pkg_check_modules(PolkitQt5
     polkit-qt5-1
     IMPORTED_TARGET
 )
-find_package(Qt5 COMPONENTS
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
     DBus
     REQUIRED
 )
@@ -57,12 +46,10 @@ find_package(Qt5 COMPONENTS
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
     DFM::base
-    PkgConfig::dfm-io
-    PkgConfig::dfm-mount
     PkgConfig::crypt
     PkgConfig::PolkitAgent
     PkgConfig::PolkitQt5
-    Qt5::DBus
+    Qt${QT_VERSION_MAJOR}::DBus
     ${DtkWidget_LIBRARIES}
 )
 

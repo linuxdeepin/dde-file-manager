@@ -34,13 +34,11 @@
 #include <QPointer>
 #include <QWindow>
 #include <QShowEvent>
-#include <QDesktopWidget>
 #include <QWhatsThis>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <qpa/qplatformtheme.h>
 #include <qpa/qplatformdialoghelper.h>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -365,7 +363,11 @@ QList<QUrl> FileDialog::selectedUrls() const
         return QList<QUrl>() << fileUrl;
     }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (list.isEmpty() && (d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly)) {
+#else
+    if (list.isEmpty() && (d->fileMode == QFileDialog::Directory)) {
+#endif
         if (dfmbase::FileUtils::isLocalFile(directoryUrl()))
             list << QUrl(directoryUrl());
     }
@@ -396,8 +398,12 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     if (!d->isFileView)
         return;
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (d->fileMode == QFileDialog::DirectoryOnly
         || d->fileMode == QFileDialog::Directory) {
+#else
+    if (d->fileMode == QFileDialog::Directory) {
+#endif
         // 清理只显示目录时对文件名添加的过滤条件
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList());
         curNameFilters.clear();
@@ -410,13 +416,13 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::ExistingFiles:
         CoreEventsCaller::setEnabledSelectionModes(this, { QAbstractItemView::ExtendedSelection });
         break;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     case QFileDialog::DirectoryOnly:
+#endif
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList("/"));
         curNameFilters = QStringList("/");
-        // fall through
-        [[fallthrough]];
     default:
         CoreEventsCaller::setEnabledSelectionModes(this, { QAbstractItemView::SingleSelection });
         break;
@@ -448,8 +454,11 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         statusBar()->setMode(FileDialogStatusBar::kSave);
         CoreEventsCaller::setSelectionMode(this, QAbstractItemView::SingleSelection);
         urlSchemeEnable("recent", false);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         setFileMode(QFileDialog::DirectoryOnly);
-
+#else
+        setFileMode(QFileDialog::Directory);
+#endif
         connect(statusBar()->lineEdit(), &DLineEdit::textChanged,
                 this, &FileDialog::onCurrentInputNameChanged);
     }
@@ -823,7 +832,11 @@ void FileDialog::selectNameFilterByIndex(int index)
 
     // when d->fileMode == QFileDialog::DirectoryOnly or d->fileMode == QFileDialog::Directory
     // we use setNameFilters("/") to filter files (can't select file, select dir is ok)
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if ((d->fileMode == QFileDialog::DirectoryOnly || d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
+#else
+    if ((d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
+#endif
         newNameFilters = QStringList("/");
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), newNameFilters);
@@ -858,7 +871,11 @@ void FileDialog::updateAcceptButtonState()
         return;
     }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
+#else
+    bool isDirMode = d->fileMode == QFileDialog::Directory;
+#endif
     bool dialogShowMode = d->acceptMode;
     bool isVirtual = UrlRoute::isVirtual(fileInfo->urlOf(UrlInfoType::kUrl).scheme());
     if (dialogShowMode == QFileDialog::AcceptOpen) {
@@ -1069,12 +1086,19 @@ void FileDialog::initConnect()
 {
     connect(statusBar()->acceptButton(), &QPushButton::clicked, this, &FileDialog::onAcceptButtonClicked);
     connect(statusBar()->rejectButton(), &QPushButton::clicked, this, &FileDialog::onRejectButtonClicked);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(statusBar()->comboBox(),
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
             this, &FileDialog::selectNameFilter);
     connect(statusBar()->comboBox(),
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
             this, &FileDialog::selectedNameFilterChanged);
+#else
+    connect(statusBar()->comboBox(), &QComboBox::textActivated,
+            this, &FileDialog::selectNameFilter);
+    connect(statusBar()->comboBox(), &QComboBox::textActivated,
+            this, &FileDialog::selectedNameFilterChanged);
+#endif
     connect(this, &FileDialog::selectionFilesChanged, &FileDialog::updateAcceptButtonState);
 }
 
@@ -1115,7 +1139,7 @@ void FileDialog::updateViewState()
     if (!d->nameFilters.isEmpty())
         setNameFilters(d->nameFilters);
 
-    if (d->filters != 0)
+    if (d->filters != QDir::NoFilter)
         setFilter(d->filters);
 
     if (d->currentNameFilterIndex >= 0)
@@ -1141,6 +1165,8 @@ void FileDialog::adjustPosition(QWidget *w)
         w = w->window();
     }
     QRect desk;
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (w) {
         scrn = QApplication::desktop()->screenNumber(w);
     } else if (QApplication::desktop()->isVirtualDesktop()) {
@@ -1149,6 +1175,21 @@ void FileDialog::adjustPosition(QWidget *w)
         scrn = QApplication::desktop()->screenNumber(this);
     }
     desk = QApplication::desktop()->availableGeometry(scrn);
+#else
+    QScreen *screen = nullptr;
+
+    if (w) {
+        screen = w->windowHandle()->screen();
+    } else {
+        screen = QGuiApplication::screenAt(QCursor::pos());
+    }
+
+    if (!screen) {
+        screen = QGuiApplication::primaryScreen();
+    }
+
+    desk = screen->availableGeometry();
+#endif
 
     QWidgetList list = QApplication::topLevelWidgets();
     for (int i = 0; (extraw == 0 || extrah == 0) && i < list.size(); ++i) {

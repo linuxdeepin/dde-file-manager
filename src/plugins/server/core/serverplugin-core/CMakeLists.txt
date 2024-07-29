@@ -13,9 +13,8 @@ FILE(GLOB_RECURSE SRC_FILES
     "${DeviceManager_XML}"
     "${OperationsStackManager_XML}"
     )
-# TODO: tag manager
-find_package(Qt5 COMPONENTS
-    Core
+
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
     DBus
     REQUIRED)
 
@@ -25,8 +24,7 @@ find_package(Qt5 COMPONENTS
 #    ${DeviceManager_XML}
 #    OPTIONS -M -S
 #)
-qt5_add_dbus_adaptor(SRC_FILES ${DeviceManager_XML}
-    devicemanagerdbus.h DeviceManagerDBus)
+
 
 # DBus: OperationsStackManager
 # qt5_generate_dbus_interface(
@@ -34,8 +32,17 @@ qt5_add_dbus_adaptor(SRC_FILES ${DeviceManager_XML}
 #    ${OperationsStackManager_XML}
 #    OPTIONS -M -S
 #)
-qt5_add_dbus_adaptor(SRC_FILES ${OperationsStackManager_XML}
-    operationsstackmanagerdbus.h OperationsStackManagerDbus)
+if(DFM_BUILD_WITH_QT6)
+    qt_add_dbus_adaptor(SRC_FILES ${OperationsStackManager_XML}
+        operationsstackmanagerdbus.h OperationsStackManagerDbus)
+    qt_add_dbus_adaptor(SRC_FILES ${DeviceManager_XML}
+        devicemanagerdbus.h DeviceManagerDBus)
+else()
+    qt5_add_dbus_adaptor(SRC_FILES ${OperationsStackManager_XML}
+        operationsstackmanagerdbus.h OperationsStackManagerDbus)
+    qt5_add_dbus_adaptor(SRC_FILES ${DeviceManager_XML}
+        devicemanagerdbus.h DeviceManagerDBus)
+endif()
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -47,8 +54,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt5::Core
-    Qt5::DBus
+    Qt${QT_VERSION_MAJOR}::DBus
 )
 
 #install library file

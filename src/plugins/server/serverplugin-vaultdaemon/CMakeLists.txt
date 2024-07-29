@@ -2,10 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(serverplugin-vaultdaemon)
 
-find_package(Qt5 COMPONENTS DBus REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_search_module(dfm-io REQUIRED dfm-io IMPORTED_TARGET)
-
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS DBus REQUIRED)
 add_definitions(-DQT_NO_KEYWORDS)
 
 FILE(GLOB_RECURSE SRC_FILES
@@ -21,8 +18,13 @@ FILE(GLOB_RECURSE SRC_FILES
 #    ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
 #    OPTIONS -M -S
 #)
-qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
-    dbus/vaultmanagerdbus.h VaultManagerDBus)
+if(DFM_BUILD_WITH_QT6)
+    qt_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
+        dbus/vaultmanagerdbus.h VaultManagerDBus)
+else()
+    qt5_add_dbus_adaptor(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.VaultManager.xml
+        dbus/vaultmanagerdbus.h VaultManagerDBus)
+endif()
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -34,8 +36,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
     DFM::base
-    PkgConfig::dfm-io
-    Qt5::DBus
+    Qt${QT_VERSION_MAJOR}::DBus
     )
 
 #install library file

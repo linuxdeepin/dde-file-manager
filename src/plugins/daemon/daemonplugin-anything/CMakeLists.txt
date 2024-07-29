@@ -17,7 +17,7 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-find_package(Qt5 COMPONENTS
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
     DBus
     REQUIRED
 )

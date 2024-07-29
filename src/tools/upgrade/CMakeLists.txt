@@ -5,11 +5,9 @@ project(dfm-upgrade)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 configure_file(
-    "./config.h.in"
+    "${CMAKE_SOURCE_DIR}/src/apps/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
-
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -27,14 +25,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
         ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 install(TARGETS

@@ -102,14 +102,10 @@ add_subdirectory(src/dfm-extension)
 add_subdirectory(src/dfm-framework)
 add_subdirectory(src/plugins)
 add_subdirectory(src/external)
+add_subdirectory(src/tools)
 if(OPT_ENABLE_QML)
     add_subdirectory(src/dfm-gui)
     add_subdirectory(src/dfm-declarative)
-else()
-    # TODO: adapt to it
-    if(NOT OPT_ENABLE_QT6)
-        add_subdirectory(src/tools)
-    endif()
 endif()
 
 # docs

@@ -48,7 +48,7 @@ private:
     QFileDialog::AcceptMode acceptMode { QFileDialog::AcceptOpen };
     bool acceptCanOpenOnSave { false };
     QStringList nameFilters;
-    QDir::Filters filters { nullptr };
+    QDir::Filters filters { QDir::NoFilter };
     int currentNameFilterIndex { -1 };
     QString currentInputName;
     bool allowMixedSelection { false };

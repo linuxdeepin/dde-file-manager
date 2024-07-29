@@ -12,17 +12,12 @@ set(SRCS
     main.cpp
 )
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
-
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_link_libraries(
     ${PROJECT_NAME}
-    Qt5::Widgets
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

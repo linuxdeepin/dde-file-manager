@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QCoreApplication>
+#include <QRegularExpression>
 
 extern "C" {
 #include <libsecret/secret.h>
@@ -140,7 +141,7 @@ void VaultControl::MonitorNetworkStatus()
     }
 
     if (!QDBusConnection::systemBus().connect(kNetWorkDBusServiceName, kNetWorkDBusPath, kNetWorkDBusInterfaces,
-                                               "ConnectivityChanged", this, SLOT(responseNetworkStateChaneDBus(int)))) {
+                                              "ConnectivityChanged", this, SLOT(responseNetworkStateChaneDBus(int)))) {
         fmCritical() << "Connect network dbus error!";
     }
 }
@@ -192,7 +193,7 @@ VaultControl::CryfsVersionInfo VaultControl::versionString()
             QStringList &&tmpDatas = data.split(' ', Qt::SkipEmptyParts);
 #endif
             for (int i = 0; i < tmpDatas.size(); ++i) {
-                if (tmpDatas.at(i).contains(QRegExp("^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$"))) {
+                if (tmpDatas.at(i).contains(QRegularExpression("^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$"))) {
                     const QString tmpVersions = tmpDatas.at(i);
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
                     QStringList &&versions = tmpVersions.split('.', QString::SkipEmptyParts);

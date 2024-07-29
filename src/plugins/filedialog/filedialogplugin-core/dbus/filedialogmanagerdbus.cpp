@@ -4,7 +4,7 @@
 
 #include "filedialogmanagerdbus.h"
 #include "dbus/filedialoghandledbus.h"
-#include "dbus/filedialog_adaptor.h"
+#include "filedialogadaptor.h"
 #include "utils/appexitcontroller.h"
 
 #include <dfm-base/dfm_event_defines.h>
@@ -165,12 +165,12 @@ void FileDialogManagerDBus::initEventsFilter()
         }
 
         static QList<DPF_NAMESPACE::EventType> filterTypeGroup { GlobalEventType::kOpenNewTab,
-                    GlobalEventType::kOpenNewWindow,
-                    GlobalEventType::kOpenAsAdmin,
-                    GlobalEventType::kOpenFilesByApp,
-                    GlobalEventType::kCreateSymlink,
-                    GlobalEventType::kOpenInTerminal,
-                    GlobalEventType::kHideFiles };
+                                                                 GlobalEventType::kOpenNewWindow,
+                                                                 GlobalEventType::kOpenAsAdmin,
+                                                                 GlobalEventType::kOpenFilesByApp,
+                                                                 GlobalEventType::kCreateSymlink,
+                                                                 GlobalEventType::kOpenInTerminal,
+                                                                 GlobalEventType::kHideFiles };
         if (filterTypeGroup.contains(type))
             return true;
 
