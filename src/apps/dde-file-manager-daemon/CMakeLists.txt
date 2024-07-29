@@ -16,12 +16,6 @@ set(SRCS
     main.cpp
 )
 
-find_package(PkgConfig REQUIRED)
-find_package(Qt5 COMPONENTS
-    Widgets
-    DBus
-    REQUIRED)
-
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME}
@@ -29,13 +23,10 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-
 target_link_libraries(
     ${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt5::Widgets
-    Qt5::DBus
 )
 
 # binary

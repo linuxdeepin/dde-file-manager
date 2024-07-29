@@ -217,11 +217,19 @@ bool TagDbHandler::addTagsForFiles(const QVariantMap &data)
     for (auto dataIt = data.begin(); dataIt != data.end(); ++dataIt) {
         if (dbData.contains(dataIt.key())) {
             //use Qset() to get difference set ,tmpData = data - dbData
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             QStringList tags = dataIt.value()
                                        .toStringList()
                                        .toSet()
                                        .subtract(dbData.value(dataIt.key()).toStringList().toSet())
                                        .toList();
+#else
+            QStringList dataItList { dataIt.value().toStringList() };
+            QSet<QString> dataItSet { dataItList.begin(), dataItList.end() };
+            QStringList dbDataList { dbData.value(dataIt.key()).toStringList() };
+            QSet<QString> dbDataSet { dbDataList.begin(), dbDataList.end() };
+            QStringList tags { dataItSet.subtract(dbDataSet).values() };
+#endif
             tmpData[dataIt.key()] = tags;
         }
     }

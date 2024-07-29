@@ -4,7 +4,7 @@
 
 #include "core.h"
 #include "dbus/filedialogmanagerdbus.h"
-#include "dbus/filedialogmanager_adaptor.h"
+#include "filedialogmanageradaptor.h"
 #include "views/filedialog.h"
 #include "menus/filedialogmenuscene.h"
 

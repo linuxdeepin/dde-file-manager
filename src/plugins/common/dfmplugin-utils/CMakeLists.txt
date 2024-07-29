@@ -5,7 +5,7 @@ project(dfmplugin-utils)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 configure_file(
-    "./config.h.in"
+    "${CMAKE_SOURCE_DIR}/src/apps/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 
