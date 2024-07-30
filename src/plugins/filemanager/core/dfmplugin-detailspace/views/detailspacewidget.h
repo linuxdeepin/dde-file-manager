@@ -28,6 +28,8 @@ public:
 
     void removeControls();
 
+    int detailWidth();
+
 private slots:
     void initUiForSizeMode();
 

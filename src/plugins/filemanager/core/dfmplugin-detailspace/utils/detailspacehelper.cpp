@@ -10,6 +10,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <QPropertyAnimation>
+
 using namespace dfmplugin_detailspace;
 
 DFMBASE_USE_NAMESPACE
@@ -53,7 +55,6 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 {
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
 
-    // create new detail widget in window and
     if (checked) {
         if (!w) {
             addDetailSpace(windowId);
@@ -63,12 +64,30 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
                 return;
             }
         }
+
+        // Set initial width to 0
+        w->setFixedWidth(0);
         w->setVisible(true);
+
+        QPropertyAnimation *ani = new QPropertyAnimation(w, "maximumWidth");
+        ani->setEasingCurve(QEasingCurve::OutExpo);
+        ani->setDuration(kViewAnimationDuration);
+        ani->setStartValue(0);
+        ani->setEndValue(w->detailWidth());   // Set to desired width
+        ani->start(QAbstractAnimation::DeleteWhenStopped);
+
         auto window = FMWindowsIns.findWindowById(windowId);
         setDetailViewByUrl(w, window->currentUrl());
+
     } else {
-        if (w)
-            w->setVisible(false);
+        if (w) {
+            QPropertyAnimation *aniHide = new QPropertyAnimation(w, "maximumWidth");
+            aniHide->setDuration(kViewAnimationDuration);
+            aniHide->setStartValue(w->width());
+            aniHide->setEndValue(0);
+            aniHide->setEasingCurve(QEasingCurve::OutExpo);
+            aniHide->start(QAbstractAnimation::DeleteWhenStopped);
+        }
     }
 }
 

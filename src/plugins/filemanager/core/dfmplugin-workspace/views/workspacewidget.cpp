@@ -68,10 +68,9 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 
     auto curView = currentViewPtr();
     if (curView) {
-        if (UniversalUtils::urlEquals(url, curView->rootUrl()) &&
-                UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()))
+        if (UniversalUtils::urlEquals(url, curView->rootUrl()) && UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()))
             return;
-            
+
         auto contentWidget = curView->contentWidget();
         if (contentWidget) {
             if (!disappearAnim)
@@ -254,29 +253,14 @@ void WorkspaceWidget::onRefreshCurrentView()
 
 void WorkspaceWidget::handleViewStateChanged()
 {
-    auto view = views[workspaceUrl.scheme()];
-    if (!appearAnim || !view || view->viewState() != AbstractBaseView::ViewState::kViewIdle)
-        return;
-
-    auto contentWidget = view->contentWidget();
-    if (!contentWidget)
-        return;
-
-    QPixmap curDirPix = contentWidget->grab();
-
-    if (curDirPix.isNull()) {
-        appearAnim->hide();
-        return;
+    if (!appearAnimDelayTimer) {
+        appearAnimDelayTimer = new QTimer(this);
+        appearAnimDelayTimer->setInterval(100);
+        appearAnimDelayTimer->setSingleShot(true);
+        connect(appearAnimDelayTimer, &QTimer::timeout, this, &WorkspaceWidget::onAnimDelayTimeout);
     }
 
-    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
-    auto localPos = mapFromGlobal(globalPos);
-
-    appearAnim->resize(contentWidget->size());
-    appearAnim->move(localPos);
-
-    appearAnim->setPixmap(curDirPix);
-    appearAnim->playAppear();
+    appearAnimDelayTimer->start();
 }
 
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
@@ -446,6 +430,40 @@ void WorkspaceWidget::initUiForSizeMode()
     tabBar->setFixedHeight(36);
     newTabButton->setFixedSize(36, 36);
 #endif
+}
+
+void WorkspaceWidget::onAnimDelayTimeout()
+{
+    auto view = views[workspaceUrl.scheme()];
+    if (!appearAnim)
+        return;
+
+    if (!view || view->viewState() != AbstractBaseView::ViewState::kViewIdle) {
+        appearAnim->hide();
+        return;
+    }
+
+    auto contentWidget = view->contentWidget();
+    if (!contentWidget) {
+        appearAnim->hide();
+        return;
+    }
+
+    QPixmap curDirPix = contentWidget->grab();
+
+    if (curDirPix.isNull()) {
+        appearAnim->hide();
+        return;
+    }
+
+    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+    auto localPos = mapFromGlobal(globalPos);
+
+    appearAnim->resize(contentWidget->size());
+    appearAnim->move(localPos);
+
+    appearAnim->setPixmap(curDirPix);
+    appearAnim->playAppear();
 }
 
 void WorkspaceWidget::initViewLayout()
