@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "retrievepasswordview.h"
+#include "utils/vaultutils.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/policy/policymanager.h"
 
@@ -25,8 +26,6 @@
 #include <QLineEdit>
 #include <QShowEvent>
 #include <QGridLayout>
-
-using namespace PolkitQt1;
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
@@ -154,11 +153,8 @@ void RetrievePasswordView::buttonClicked(int index, const QString &text)
         break;
     case 1:
         //! 用户权限认证(异步授权)
-        auto ins = Authority::instance();
-        ins->checkAuthorization(PolicyKitRetrievePasswordActionId,
-                                UnixProcessSubject(getpid()),
-                                Authority::AllowUserInteraction);
-        connect(ins, &Authority::checkAuthorizationFinished,
+        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &RetrievePasswordView::slotCheckAuthorizationFinished);
         break;
     }
@@ -215,12 +211,12 @@ void RetrievePasswordView::onBtnSelectFilePath(const QString &path)
         emit sigBtnEnabled(1, true);
 }
 
-void RetrievePasswordView::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+void RetrievePasswordView::slotCheckAuthorizationFinished(bool result)
 {
-    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+    disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &RetrievePasswordView::slotCheckAuthorizationFinished);
     if (isVisible()) {
-        if (result == Authority::Yes) {
+        if (result) {
             verificationKey();
         }
     }
