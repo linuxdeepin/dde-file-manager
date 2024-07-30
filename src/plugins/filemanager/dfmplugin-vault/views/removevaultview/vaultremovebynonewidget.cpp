@@ -4,6 +4,7 @@
 
 #include "vaultremovebynonewidget.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultutils.h"
 
 #include <DLabel>
 #include <DDialog>
@@ -11,7 +12,6 @@
 #include <QVBoxLayout>
 
 using namespace dfmplugin_vault;
-using namespace PolkitQt1;
 DWIDGET_USE_NAMESPACE
 
 VaultRemoveByNoneWidget::VaultRemoveByNoneWidget(QWidget *parent) : QWidget(parent)
@@ -38,11 +38,8 @@ void VaultRemoveByNoneWidget::buttonClicked(int index, const QString &text)
         emit closeDialog();
     } break;
     case 1: {
-        auto ins = Authority::instance();
-        ins->checkAuthorization(kPolkitVaultRemove,
-                                UnixProcessSubject(getpid()),
-                                Authority::AllowUserInteraction);
-        connect(ins, &Authority::checkAuthorizationFinished,
+        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &VaultRemoveByNoneWidget::slotCheckAuthorizationFinished);
     } break;
     default:
@@ -50,12 +47,12 @@ void VaultRemoveByNoneWidget::buttonClicked(int index, const QString &text)
     }
 }
 
-void VaultRemoveByNoneWidget::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+void VaultRemoveByNoneWidget::slotCheckAuthorizationFinished(bool result)
 {
-    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+    disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &VaultRemoveByNoneWidget::slotCheckAuthorizationFinished);
 
-    if (Authority::Yes != result)
+    if (!result)
         return;
 
     if (!VaultHelper::instance()->lockVault(false)) {
