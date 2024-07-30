@@ -7,8 +7,6 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
-
 #include <QWidget>
 
 namespace dfmplugin_vault {
@@ -28,7 +26,7 @@ Q_SIGNALS:
     void closeDialog();
 
 public Q_SLOTS:
-    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
+    void slotCheckAuthorizationFinished(bool result);
 
 private:
     void initUI();

@@ -10,8 +10,6 @@
 #include <dtkwidget_global.h>
 #include <DSuggestButton>
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
-
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -44,7 +42,7 @@ private slots:
     void slotEncryptVault();
     void slotTimeout();
     //! 异步授权时，此函数接收授权完成的结果
-    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
+    void slotCheckAuthorizationFinished(bool result);
 
 protected:
     void showEvent(QShowEvent *event) override;

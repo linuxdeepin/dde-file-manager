@@ -6,6 +6,7 @@
 #include "utils/encryption/operatorcenter.h"
 #include "utils/vaulthelper.h"
 #include "utils/servicemanager.h"
+#include "utils/vaultutils.h"
 #include "utils/policy/policymanager.h"
 #include "utils/fileencrypthandle.h"
 #include "utils/encryption/vaultconfig.h"
@@ -35,7 +36,6 @@
 
 Q_DECLARE_METATYPE(const char *)
 
-using namespace PolkitQt1;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
@@ -192,11 +192,8 @@ void VaultActiveFinishedView::slotEncryptVault()
 {
     if (finishedBtn->text() == tr("Encrypt")) {
         // 异步授权
-        auto ins = Authority::instance();
-        ins->checkAuthorization(kPolkitVaultCreate,
-                                UnixProcessSubject(getpid()),
-                                Authority::AllowUserInteraction);
-        connect(ins, &Authority::checkAuthorizationFinished,
+        VaultUtils::instance().showAuthorityDialog(kPolkitVaultCreate);
+        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
         // 灰化按钮，避免异步时用户再次点击按钮
         finishedBtn->setEnabled(false);
@@ -209,13 +206,13 @@ void VaultActiveFinishedView::slotEncryptVault()
     }
 }
 
-void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+void VaultActiveFinishedView::slotCheckAuthorizationFinished(bool result)
 {
-    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+    disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
     if (isVisible()) {
         PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage1);
-        if (result == Authority::Yes) {
+        if (result) {
             if (finishedBtn->text() == tr("Encrypt")) {
                 // 完成按钮灰化
                 finishedBtn->setEnabled(false);
