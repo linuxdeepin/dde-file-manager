@@ -23,7 +23,6 @@
 
 #include <DTitlebar>
 
-#include <QGSettings>
 #include <QStandardPaths>
 #include <QSettings>
 
@@ -189,12 +188,6 @@ QList<CrumbData> TitleBarHelper::tansToCrumbDataList(const QList<QVariantMap> &m
         group.push_back(CrumbData { url, text, icon });
     }
     return group;
-}
-
-bool TitleBarHelper::displayIcon()
-{
-    QGSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
-    return settings.get("contextMenuIcons").toBool();
 }
 
 void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *isSearch)

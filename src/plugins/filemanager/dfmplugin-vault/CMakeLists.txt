@@ -4,23 +4,21 @@ project(dfmplugin-vault)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB VAULT_FILES
+FILE(GLOB_RECURSE VAULT_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt5-1)
 pkg_check_modules(openssl REQUIRED libcrypto)
+
+if (DFM_BUILD_WITH_QT6)
+    set(VAULT_EXTRA_LIBRARIES "")
+else()
+    pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt5-1)
+    set(VAULT_EXTRA_LIBRARIES ${polkit_LIBRARIES})
+endif()
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -29,16 +27,10 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
-    ${polkit_LIBRARIES}
+    ${VAULT_EXTRA_LIBRARIES}
     ${openssl_LIBRARIES}
 )
 

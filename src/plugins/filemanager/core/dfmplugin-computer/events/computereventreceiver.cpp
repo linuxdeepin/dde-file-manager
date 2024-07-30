@@ -118,7 +118,11 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
             break;
         }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         QString devDesc = deviceID.split("/", QString::SkipEmptyParts).last();
+#else
+        QString devDesc = deviceID.split("/", Qt::SkipEmptyParts).last();
+#endif
         if (devDesc.isEmpty() || !deviceID.startsWith("/org/freedesktop/UDisks")) {
             fmInfo() << "cannot get the device description, ignore prehandle" << url << deviceID;
             break;

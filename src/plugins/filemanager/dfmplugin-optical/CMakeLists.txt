@@ -4,24 +4,19 @@ project(dfmplugin-optical)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB OPTICAL_FILES
+FILE(GLOB_RECURSE OPTICAL_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/mastered/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/mastered/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.cpp"
     )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(Qt5 COMPONENTS Svg REQUIRED)
+if (DFM_BUILD_WITH_QT6)
+    find_package(Qt6 COMPONENTS SvgWidgets REQUIRED)
+    set(SVGLIB Qt6::SvgWidgets)
+else()
+    find_package(Qt5 COMPONENTS Svg REQUIRED)
+    set(SVGLIB Qt5::Svg)
+endif()
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -30,17 +25,10 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-        ${Qt5Svg_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
-    Qt5::Svg
+    ${SVGLIB}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file

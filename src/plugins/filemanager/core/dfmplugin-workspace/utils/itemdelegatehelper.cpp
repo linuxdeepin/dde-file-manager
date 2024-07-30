@@ -9,7 +9,6 @@
 
 #include <QPainter>
 #include <QApplication>
-#include <QTextCodec>
 #include <QPainterPath>
 
 #include <cmath>

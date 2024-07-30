@@ -11,9 +11,10 @@
 #include <dfm-base/base/application/application.h>
 
 #include <DApplication>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 #include <DPalette>
 #include <DPaletteHelper>
+#include <DGuiApplicationHelper>
 
 #include <QPainter>
 #include <QGraphicsScene>
@@ -343,7 +344,7 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
 
     // draw filesystem tag behind label
     if (showFsTag) {
-        fnt.setWeight(12);
+        fnt.setWeight(QFont::ExtraLight);
         painter->setFont(fnt);
         QFontMetrics fm(fnt);
 

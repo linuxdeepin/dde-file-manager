@@ -188,8 +188,12 @@ void ViewAnimationHelper::paintPixmaps()
             continue;
 
         const qreal scale = view->devicePixelRatioF();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QStyleOptionViewItem option = view->viewOptions();
-
+#else
+        QStyleOptionViewItem option;
+        view->initViewItemOption(&option);
+#endif
         if (selectIndexes.contains(index))
             option.state |= QStyle::State_Selected;
 

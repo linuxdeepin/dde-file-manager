@@ -9,7 +9,10 @@
 
 #include <QPair>
 #include <QUrl>
+#include <QRegularExpressionValidator>
+
 #include <DSuggestButton>
+
 #include <tuple>
 
 QT_BEGIN_NAMESPACE
@@ -78,7 +81,7 @@ public:
 
     DTuple<QLabel *, QLineEdit *, QLabel *, QLineEdit *, QLabel *> customOPeratorItems {};
     QPair<QHBoxLayout *, QFrame *> frameForLayoutCustomArea {};
-    QRegExpValidator *validator { nullptr };
+    QRegularExpressionValidator *validator { nullptr };
 
     DTuple<QPushButton *, QPushButton *, QHBoxLayout *, QFrame *> buttonsArea {};
 

@@ -26,7 +26,6 @@ public:
     static void createSettingsMenu(quint64 id);
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
     static QList<CrumbData> tansToCrumbDataList(const QList<QVariantMap> &mapGroup);
-    static bool displayIcon();
     static void handlePressed(QWidget *sender, const QString &text, bool *isSearch = nullptr);
 
     static void openCurrentUrlInNewTab(quint64 windowId);

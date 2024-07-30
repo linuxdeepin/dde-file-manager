@@ -8,9 +8,6 @@
 #include <DListView>
 #include <DArrowRectangle>
 #include <DPalette>
-#include <DApplicationHelper>
-
-#include <private/qtextengine_p.h>
 
 DWIDGET_USE_NAMESPACE
 

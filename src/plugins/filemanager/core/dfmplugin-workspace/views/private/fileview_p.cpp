@@ -88,7 +88,7 @@ void FileViewPrivate::initListModeView()
     if (!emptyInteractionArea) {
         emptyInteractionArea = new QWidget(q);
         QVBoxLayout *headerLayout = new QVBoxLayout;
-        headerLayout->setMargin(0);
+        headerLayout->setContentsMargins(0, 0, 0, 0);
         headerLayout->setAlignment(Qt::AlignTop);
         emptyInteractionArea->setLayout(headerLayout);
         emptyInteractionArea->setFixedHeight(10 + kListViewHeaderHeight);

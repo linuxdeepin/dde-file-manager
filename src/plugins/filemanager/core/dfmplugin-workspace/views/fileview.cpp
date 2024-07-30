@@ -374,7 +374,12 @@ void FileView::onSectionHandleDoubleClicked(int logicalIndex)
     if (rowCount < 1)
         return;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QStyleOptionViewItem option = viewOptions();
+#else
+    QStyleOptionViewItem option;
+    initViewItemOption(&option);
+#endif
 
     option.rect.setWidth(QWIDGETSIZE_MAX);
     option.rect.setHeight(itemSizeHint().height());
@@ -503,7 +508,11 @@ void FileView::wheelEvent(QWheelEvent *event)
             verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
 #endif
         }
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     } else if (event->modifiers() == Qt::AltModifier || event->orientation() == Qt::Horizontal) {
+#else
+    } else if (event->modifiers() == Qt::AltModifier || event->angleDelta().x() != 0) {
+#endif
         horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
     } else {
 #ifdef QT_SCROLL_WHEEL_ANI
@@ -778,7 +787,12 @@ void FileView::updateViewportContentsMargins(const QSize &itemSize)
 bool FileView::indexInRect(const QRect &actualRect, const QModelIndex &index)
 {
     auto paintRect = visualRect(index);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto opt = viewOptions();
+#else
+    QStyleOptionViewItem opt;
+    initViewItemOption(&opt);
+#endif
     opt.rect = paintRect;
     auto rectList = itemDelegate()->itemGeomertys(opt, index);
     for (const auto &rect : rectList) {
@@ -916,8 +930,16 @@ int FileView::itemCountForRow() const
 
 QSize FileView::itemSizeHint() const
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (itemDelegate())
         return itemDelegate()->sizeHint(viewOptions(), rootIndex());
+#else
+    if (itemDelegate()) {
+        QStyleOptionViewItem option;
+        initViewItemOption(&option);
+        return itemDelegate()->sizeHint(option, rootIndex());
+    }
+#endif
 
     return QSize();
 }
@@ -1085,7 +1107,12 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
 
     auto currentIndex = model()->index(index, 0, rootIndex());
     auto paintRect = visualRect(currentIndex);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto opt = viewOptions();
+#else
+    QStyleOptionViewItem opt;
+    initViewItemOption(&opt);
+#endif
     opt.rect = paintRect;
     auto rectList = itemDelegate()->itemGeomertys(opt, currentIndex);
     for (const auto &rect : rectList) {
@@ -1526,7 +1553,7 @@ void FileView::startDrag(Qt::DropActions supportedActions)
             UniversalUtils::urlsTransformToLocal(treeSelectedUrl, &transformedUrls);
             QByteArray ba;
             for (const auto &url : transformedUrls) {
-                ba.append(url.toString() + "\n");
+                ba.append(QString(url.toString() + "\n").toUtf8());
             }
             data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey, ba);
         }

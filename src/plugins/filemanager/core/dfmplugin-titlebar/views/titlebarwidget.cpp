@@ -116,7 +116,7 @@ void TitleBarWidget::initializeUi()
 #endif
 
     titleBarLayout = new QHBoxLayout(this);
-    titleBarLayout->setMargin(0);
+    titleBarLayout->setContentsMargins(0, 0, 0, 0);
     titleBarLayout->setSpacing(0);
     titleBarLayout->addSpacing(10);
     titleBarLayout->addWidget(curNavWidget, 0, Qt::AlignLeft);

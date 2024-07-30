@@ -8,6 +8,7 @@
 #include "dfmplugin_recent_global.h"
 
 #include <QObject>
+#include <QUrl>
 
 namespace dfmplugin_recent {
 

@@ -70,8 +70,12 @@ void EnterDirAnimationWidget::playAppear()
 {
     if (!scaleAnim || !transparentAnim)
         return;
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto pix = freezePixmapContainer->pixmap();
+#else
+    auto pixObject = freezePixmapContainer->pixmap();
+    auto pix = &pixObject;
+#endif
     if (pix->isNull())
         return;
 
@@ -95,8 +99,12 @@ void EnterDirAnimationWidget::playDisappear()
 {
     if (!scaleAnim || !transparentAnim)
         return;
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto pix = freezePixmapContainer->pixmap();
+#else
+    auto pixObject = freezePixmapContainer->pixmap();
+    auto pix = &pixObject;
+#endif
     if (pix->isNull())
         return;
 

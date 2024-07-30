@@ -37,7 +37,7 @@ void DPCResultWidget::setResult(bool success, const QString &msg)
 void DPCResultWidget::initUI()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
 
     titleLabel = new DLabel(this);

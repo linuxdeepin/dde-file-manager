@@ -47,7 +47,7 @@ void VaultActiveStartView::initUi()
     startBtn->setFixedWidth(200);
 
     QVBoxLayout *play = new QVBoxLayout(this);
-    play->setMargin(0);
+    play->setContentsMargins(0, 0, 0, 0);
     play->addWidget(titleLabel);
     play->addSpacing(5);
     play->addWidget(pLabel3);

@@ -30,8 +30,7 @@ using namespace dfmplugin_vault;
 using namespace dfmplugin_utils;
 
 VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
-    : QWidget(parent)
-    , layout(new QVBoxLayout())
+    : QWidget(parent), layout(new QVBoxLayout())
 {
     deletingWidget = new QWidget(this);
     QVBoxLayout *deletingLay = new QVBoxLayout;
@@ -53,8 +52,7 @@ VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
     deletedWidget->setLayout(deletedLay);
     deletedWidget->setHidden(true);
 
-
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(deletingWidget, 0, Qt::AlignCenter);
     this->setLayout(layout);
 

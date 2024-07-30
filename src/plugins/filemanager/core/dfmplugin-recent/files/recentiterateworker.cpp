@@ -39,7 +39,7 @@ void RecentIterateWorker::onRecentFileChanged(const QList<QUrl> &cachedUrls)
         if (reader.readNext() == QXmlStreamReader::EndDocument)
             continue;
 
-        if (!reader.isStartElement() || reader.name() != "bookmark")
+        if (!reader.isStartElement() || reader.name() != QStringLiteral("bookmark"))
             continue;
 
         const QString &location = reader.attributes().value("href").toString();

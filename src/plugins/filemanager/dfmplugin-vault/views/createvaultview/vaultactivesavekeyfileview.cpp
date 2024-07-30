@@ -11,7 +11,6 @@
 
 #include <DPalette>
 #include <DFontSizeManager>
-#include <DApplicationHelper>
 #include <DFileDialog>
 #include <DLabel>
 #include <DFileChooserEdit>
@@ -135,7 +134,7 @@ void VaultActiveSaveKeyFileView::initUI()
     layout5->addWidget(selectfileSavePathEdit);
 
     QVBoxLayout *vlayout5 = new QVBoxLayout(frame1);
-    vlayout5->setMargin(0);
+    vlayout5->setContentsMargins(0, 0, 0, 0);
     vlayout5->setSpacing(0);
     vlayout5->addLayout(layout4);
     vlayout5->addWidget(line);
@@ -273,7 +272,7 @@ bool VaultActiveSaveKeyFileView::eventFilter(QObject *watched, QEvent *event)
         QFrame *frame = static_cast<QFrame *>(watched);
         QPainter painter(frame);
         QPalette palette = this->palette();
-        painter.setBrush(palette.background());
+        painter.setBrush(palette.window());
 
         painter.setPen(Qt::transparent);
         QRect rect = this->rect();

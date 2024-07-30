@@ -13,8 +13,6 @@
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
-#include <QGSettings>
-
 namespace dfmplugin_workspace {
 
 class FileView;

@@ -100,8 +100,8 @@ void RenameBarPrivate::setUIParameters()
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setText(QString { "1" });
 
-    QRegExp regStr { QString { "[0-9]+" } };
-    validator = new QRegExpValidator { regStr, lineEdit };
+    QRegularExpression regStr { QString { "[0-9]+" } };
+    validator = new QRegularExpressionValidator { regStr, lineEdit };
 
     lineEdit->setValidator(validator);
     label->setBuddy(lineEdit);
@@ -126,7 +126,7 @@ void RenameBarPrivate::layoutItems() noexcept
 
     hBoxLayout = frameForLayoutReplaceArea.first;
     frame = frameForLayoutReplaceArea.second;
-    hBoxLayout->setMargin(0);
+    hBoxLayout->setContentsMargins(0, 0, 0, 0);
     hBoxLayout->addWidget(std::get<0>(replaceOperatorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(replaceOperatorItems));
@@ -140,7 +140,7 @@ void RenameBarPrivate::layoutItems() noexcept
     hBoxLayout = frameForLayoutAddArea.first;
     frame = frameForLayoutAddArea.second;
     hBoxLayout->addSpacing(20);
-    hBoxLayout->setMargin(0);
+    hBoxLayout->setContentsMargins(0, 0, 0, 0);
     hBoxLayout->addWidget(std::get<0>(addOperatorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(addOperatorItems));
@@ -155,7 +155,7 @@ void RenameBarPrivate::layoutItems() noexcept
     hBoxLayout = frameForLayoutCustomArea.first;
     frame = frameForLayoutCustomArea.second;
     hBoxLayout->setSpacing(0);
-    hBoxLayout->setMargin(0);
+    hBoxLayout->setContentsMargins(0, 0, 0, 0);
     hBoxLayout->addWidget(std::get<0>(customOPeratorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(customOPeratorItems));
@@ -171,7 +171,7 @@ void RenameBarPrivate::layoutItems() noexcept
 
     hBoxLayout = std::get<2>(buttonsArea);
     hBoxLayout->setSpacing(0);
-    hBoxLayout->setMargin(0);
+    hBoxLayout->setContentsMargins(0, 0, 0, 0);
     frame = std::get<3>(buttonsArea);
     hBoxLayout->addSpacing(50);
     hBoxLayout->addWidget(std::get<0>(buttonsArea));
@@ -202,7 +202,7 @@ QString RenameBarPrivate::filteringText(const QString &text)
         return text;
 
     QString readyText = text;
-    return readyText.remove(QRegExp("[\\\\/:\\*\\?\"<>|%&]"));
+    return readyText.remove(QRegularExpression("[\\\\/:\\*\\?\"<>|%&]"));
 }
 
 void RenameBarPrivate::updateLineEditText(QLineEdit *lineEdit, const QString &defaultValue)

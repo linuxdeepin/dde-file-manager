@@ -73,7 +73,7 @@ ConnectToServerDialog::ConnectToServerDialog(const QUrl &url, QWidget *parent)
     initConnect();
 
     protocolIPRegExp.setPattern(kprotocolIPRegExp);
-    protocolIPRegExp.setCaseSensitivity(Qt::CaseInsensitive);
+    protocolIPRegExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 }
 
 void ConnectToServerDialog::collectionOperate()
@@ -107,7 +107,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
 
         // add search history list
         SearchHistroyManager::instance()->writeIntoSearchHistory(url);
-        if (protocolIPRegExp.exactMatch(url))
+        if (protocolIPRegExp.match(url).hasMatch())
             SearchHistroyManager::instance()->writeIntoIPHistory(url);
     }
     close();

@@ -4,27 +4,11 @@ project(dfmplugin-workspace)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# TODO(zhangs): remove private
-FILE(GLOB WORKSPACE_FILES
+FILE(GLOB_RECURSE WORKSPACE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/models/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -32,17 +16,20 @@ add_library(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
+if(DFM_BUILD_WITH_QT6)
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
+    )
+else()
+    target_include_directories(${PROJECT_NAME} PRIVATE
         ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
-)
-
+    )
+endif()
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file

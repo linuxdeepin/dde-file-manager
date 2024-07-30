@@ -113,6 +113,7 @@ void TabBar::removeTab(const int index, const bool &remainState)
         setCurrentIndex(index);
     else
         setCurrentIndex(count() - 1);
+
     emit tabAddableChanged(count() < kMaxTabCount);
 
     if (count() < 2) {
@@ -275,8 +276,11 @@ void TabBar::onMoveNext(Tab *tab)
     int tabIndex = tabList.indexOf(tab);
     if (tabIndex >= count() - 1)
         return;
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     tabList.swap(tabIndex, tabIndex + 1);
+#else
+    tabList.swapItemsAt(tabIndex, tabIndex + 1);
+#endif
 
     ++tabIndex;
     quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
@@ -292,8 +296,11 @@ void TabBar::onMovePrevius(Tab *tab)
     if (tabIndex <= 0)
         return;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     tabList.swap(tabIndex, tabIndex - 1);
-
+#else
+    tabList.swapItemsAt(tabIndex, tabIndex - 1);
+#endif
     --tabIndex;
     quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
     WorkspaceEventCaller::sendTabMoved(thisWinID, tabIndex + 1, tabIndex);
@@ -432,7 +439,7 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
         tabCloseButton->setClosingIndex(closingIndex);
         int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
         tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize)/2 - 1);
+        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize) / 2 - 1);
 
         if (closingIndex == currentIndex)
             tabCloseButton->setActiveWidthTab(true);
@@ -585,7 +592,7 @@ void TabBar::handleTabAnimationFinished(const int index)
         Tab *tab = tabList.at(index);
         int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
         tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize)/2 - 1);
+        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize) / 2 - 1);
     }
 
     if ((tabCloseButton->getClosingIndex() >= count()

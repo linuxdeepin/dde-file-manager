@@ -157,7 +157,7 @@ bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
 
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return proxy;
+        return !proxy.isNull();
     case FileCanType::kCanDrop:
         return d->canDrop();
     case FileCanType::kCanDragCompress:
