@@ -72,8 +72,8 @@ class AddressBarPrivate : public QObject
     bool isClearSearch { false };
     bool isKeyPressed { false };
     bool isHistoryInCompleterModel { false };
-    QRegExp ipRegExp;   // 0.0.0.0-255.255.255.255
-    QRegExp protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
+    QRegularExpression ipRegExp;   // 0.0.0.0-255.255.255.255
+    QRegularExpression protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
     QString completionPrefix;
     bool inputIsIpAddress { false };
 

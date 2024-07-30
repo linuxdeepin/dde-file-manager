@@ -776,6 +776,7 @@ void FileSortWorker::checkNameFilters(const FileItemDataPointer itemData)
     if (!itemData || itemData->data(Global::ItemRoles::kItemFileIsDirRole).toBool() || nameFilters.isEmpty())
         return;
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
     for (int i = 0; i < nameFilters.size(); ++i) {
         re.setPattern(nameFilters.at(i));
@@ -784,6 +785,17 @@ void FileSortWorker::checkNameFilters(const FileItemDataPointer itemData)
             return;
         }
     }
+#else
+    for (const QString &filter : nameFilters) {
+        // 使用 QRegularExpression::wildcardToRegularExpression 转换通配符为正则表达式
+        QRegularExpression re(QRegularExpression::wildcardToRegularExpression(filter), QRegularExpression::CaseInsensitiveOption);
+        QRegularExpressionMatch match = re.match(itemData->data(kItemNameRole).toString());
+        if (match.hasMatch()) {
+            itemData->setAvailableState(true);
+            return;
+        }
+    }
+#endif
 
     itemData->setAvailableState(false);
 }

@@ -5,7 +5,7 @@
 #include "emptyTrashWidget.h"
 
 #include <DHorizontalLine>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -33,7 +33,7 @@ EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
     emptyTrashButton->setText(tr("Empty"));
     emptyTrashButton->setToolTip(tr("Empty Trash"));
     emptyTrashButton->setFixedSize({ 86, 36 });
-    DPalette pal = DApplicationHelper::instance()->palette(this);
+    DPalette pal = DPaletteHelper::instance()->palette(this);
     QPalette buttonPalette = emptyTrashButton->palette();
     buttonPalette.setColor(QPalette::ButtonText, pal.color(DPalette::Active, DPalette::TextWarning));
     emptyTrashButton->setPalette(buttonPalette);

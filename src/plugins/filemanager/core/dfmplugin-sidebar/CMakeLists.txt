@@ -44,7 +44,6 @@ FILE(GLOB SIDEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 endif()
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -53,15 +52,9 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file

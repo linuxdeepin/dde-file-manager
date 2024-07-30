@@ -57,7 +57,7 @@ bool RecentFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRename:
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return proxy;
+        return !proxy.isNull();
     default:
         return ProxyFileInfo::canAttributes(type);
     }

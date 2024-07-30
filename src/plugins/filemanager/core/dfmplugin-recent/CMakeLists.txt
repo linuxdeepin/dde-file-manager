@@ -4,16 +4,13 @@ project(dfmplugin-recent)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB RECENT_FILES
+FILE(GLOB_RECURSE RECENT_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Qt5 COMPONENTS Xml REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Xml REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -22,16 +19,10 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt5::Xml
-    ${DtkWidget_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Xml
 )
 
 #install library file

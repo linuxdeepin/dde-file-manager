@@ -11,7 +11,7 @@
 #include <QModelIndex>
 #include <QItemSelectionModel>
 
-QT_BEGIN_HEADER
+QT_BEGIN_NAMESPACE
 class QItemSelection;
 QT_END_NAMESPACE
 
@@ -32,6 +32,7 @@ public:
 
     void saveSelectedFilesList(const QUrl &current, const QList<QUrl> &urls);
     void resortSelectFiles();
+
 private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);

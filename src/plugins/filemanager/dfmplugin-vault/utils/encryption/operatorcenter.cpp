@@ -542,23 +542,23 @@ QStringList OperatorCenter::getConfigFilePath()
 QString OperatorCenter::autoGeneratePassword(int length)
 {
     if (length < 3) return "";
-    qsrand(uint(QTime(0, 0, 0).secsTo(QTime::currentTime())));
+    ::srand(uint(QTime(0, 0, 0).secsTo(QTime::currentTime())));
 
     QString strPassword("");
 
     QString strNum("0123456789");
-    strPassword += strNum.at(qrand() % 10);
+    strPassword += strNum.at(::rand() % 10);
 
     QString strSpecialChar("`~!@#$%^&*");
-    strPassword += strSpecialChar.at(qrand() % 10);
+    strPassword += strSpecialChar.at(::rand() % 10);
 
     QString strABC("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    strPassword += strABC.at(qrand() % 10);
+    strPassword += strABC.at(::rand() % 10);
 
     QString strAllChar = strNum + strSpecialChar + strABC;
     int nCount = length - 3;
     for (int i = 0; i < nCount; ++i) {
-        strPassword += strAllChar.at(qrand() % 52);
+        strPassword += strAllChar.at(::rand() % 52);
     }
     return strPassword;
 }
@@ -689,7 +689,7 @@ void OperatorCenter::removeVault(const QString &basePath)
     if (basePath.isEmpty())
         return;
 
-    QtConcurrent::run([this, basePath](){
+    QtConcurrent::run([this, basePath]() {
         int filesCount { 0 };
         int removedFileCount { 0 };
         int removedDirCount { 0 };

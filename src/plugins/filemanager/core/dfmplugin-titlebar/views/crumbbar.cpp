@@ -18,7 +18,6 @@
 
 #include <DListView>
 
-#include <QGSettings>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QScrollBar>
@@ -381,7 +380,7 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
 
     quint64 id { window()->internalWinId() };
     bool tabAddable { TitleBarEventCaller::sendCheckTabAddable(id) };
-    bool displayIcon { TitleBarHelper::displayIcon() };
+    bool displayIcon { false };   // TODO: use dde-dconfig
     bool displayNewWindowAndTab { TitleBarHelper::newWindowAndTabEnabled };
     QMenu *menu { new QMenu() };
     QUrl url { index.data(CrumbModel::FileUrlRole).toUrl() };

@@ -58,7 +58,7 @@ VaultActiveView::VaultActiveView(QWidget *parent)
     stackedWidget->addWidget(setUnclockMethodWidget);
     stackedWidget->addWidget(saveKeyFileWidget);
     stackedWidget->addWidget(activeVaultFinishedWidget);
-    stackedWidget->layout()->setMargin(0);
+    stackedWidget->layout()->setContentsMargins(0, 0, 0, 0);
 
     this->addContent(stackedWidget);
     setFixedWidth(kWidth);
@@ -85,7 +85,7 @@ void VaultActiveView::slotNextWidget()
         int nIndex = stackedWidget->currentIndex();
         int nCount = stackedWidget->count();
         if (nIndex < nCount - 1) {
-            if (nIndex == 1) {  // set encryption method view
+            if (nIndex == 1) {   // set encryption method view
                 VaultConfig config;
                 QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
                 if (encryptionMethod == QString(kConfigValueMethodKey)) {
@@ -96,7 +96,6 @@ void VaultActiveView::slotNextWidget()
                     fmCritical() << "Vault: Get encryption method failed, can't next!";
                 }
                 return;
-
             }
             stackedWidget->setCurrentIndex(++nIndex);
         } else {

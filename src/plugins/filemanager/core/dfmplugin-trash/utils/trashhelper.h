@@ -15,7 +15,7 @@
 #include <QUrl>
 #include <QIcon>
 
-QT_BEGIN_HEADER
+QT_BEGIN_NAMESPACE
 class QFrame;
 QT_END_NAMESPACE
 

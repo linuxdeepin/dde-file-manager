@@ -157,13 +157,13 @@ void FileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelI
     setcolor1(option->palette, appPalette, QPalette::Shadow);
 
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
-        setcolor2(option->palette, appPalette, QPalette::Current, QPalette::Background);
+        setcolor2(option->palette, appPalette, QPalette::Current, QPalette::Window);
     } else {
-        setcolor2(option->palette, appPalette, QPalette::Normal, QPalette::Background);
+        setcolor2(option->palette, appPalette, QPalette::Normal, QPalette::Window);
     }
 
     bool transp = isTransparent(index);
-    option->backgroundBrush = appPalette.brush(transp ? QPalette::Inactive : QPalette::Current, QPalette::Background);
+    option->backgroundBrush = appPalette.brush(transp ? QPalette::Inactive : QPalette::Current, QPalette::Window);
 
     option->textElideMode = Qt::ElideLeft;
 }
@@ -238,7 +238,12 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
         if (!(index.flags() & Qt::ItemIsSelectable))
             return true;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QStyleOptionViewItem option = parent()->viewOptions();
+#else
+        QStyleOptionViewItem option;
+        parent()->initViewItemOption(&option);
+#endif
         option.rect = rect;
 
         const QList<QRect> &geometryList = itemDelegate()->paintGeomertys(option, index);
@@ -318,7 +323,8 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     ListItemEditor *lineEdit = qobject_cast<ListItemEditor *>(editor);
     IconItemEditor *iconEdit = qobject_cast<IconItemEditor *>(editor);
 
-    QString newFileName = lineEdit ? lineEdit->text() : iconEdit ? iconEdit->getTextEdit()->toPlainText() : "";
+    QString newFileName = lineEdit ? lineEdit->text() : iconEdit ? iconEdit->getTextEdit()->toPlainText()
+                                                                 : "";
 
     if (newFileName.isEmpty()) {
         return;

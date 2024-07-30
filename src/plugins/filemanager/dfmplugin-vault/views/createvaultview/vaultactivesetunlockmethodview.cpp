@@ -20,8 +20,8 @@
 
 #include <QDebug>
 #include <QToolTip>
-#include <QRegExp>
-#include <QRegExpValidator>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QGridLayout>
 #include <QVBoxLayout>
 
@@ -46,11 +46,11 @@ void VaultActiveSetUnlockMethodView::initUi()
     DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
     typeCombo = new DComboBox(this);
     QStringList lstItems;
-    lstItems << tr("Key encryption")  << tr("Transparent encryption");
+    lstItems << tr("Key encryption") << tr("Transparent encryption");
     typeCombo->addItems(lstItems);
 
-    QRegExp regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
-    QValidator *validator = new QRegExpValidator(regx, this);
+    QRegularExpression regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
+    QValidator *validator = new QRegularExpressionValidator(regx, this);
 
     passwordLabel = new DLabel(tr("Password"), this);
     passwordEdit = new DPasswordEdit(this);
@@ -85,7 +85,7 @@ void VaultActiveSetUnlockMethodView::initUi()
     nextBtn->setEnabled(false);
 
     gridLayout = new QGridLayout();
-    gridLayout->setMargin(0);
+    gridLayout->setContentsMargins(0, 0, 0, 0);
     gridLayout->setVerticalSpacing(10);
 
     gridLayout->addWidget(pTypeLabel, 0, 0, 1, 1, Qt::AlignLeft);
@@ -101,7 +101,7 @@ void VaultActiveSetUnlockMethodView::initUi()
     gridLayout->addWidget(tipsEdit, 3, 1, 1, 5);
 
     QVBoxLayout *play = new QVBoxLayout(this);
-    play->setMargin(0);
+    play->setContentsMargins(0, 0, 0, 0);
     play->addWidget(titleLabel);
     play->addSpacing(15);
     play->addLayout(gridLayout);
@@ -268,7 +268,7 @@ void VaultActiveSetUnlockMethodView::slotNextBtnClicked()
         QString strPassword = passwordEdit->text();
         QString strPasswordHint = tipsEdit->text();
         if (OperatorCenter::getInstance()->savePasswordAndPasswordHint(strPassword, strPasswordHint)
-                && OperatorCenter::getInstance()->createKeyNew(strPassword)) {
+            && OperatorCenter::getInstance()->createKeyNew(strPassword)) {
             config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
             emit sigAccepted();
         }
@@ -345,8 +345,8 @@ bool VaultActiveSetUnlockMethodView::checkPassword(const QString &password)
 {
     QString strPassword = password;
 
-    QRegExp rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
-    QRegExpValidator v(rx);
+    QRegularExpression rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
+    QRegularExpressionValidator v(rx);
     int pos = 0;
     QValidator::State res;
     res = v.validate(strPassword, pos);
