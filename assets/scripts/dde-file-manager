@@ -29,7 +29,9 @@ for arg in "$@"; do
     fi
 
     # array:string:"$args"中','是切分符号，所以传入dbus是要被切分
-    arg=$(echo "$arg" | sed 's/,/*|||*/g')
+    if [[ $arg == *","* ]]; then
+        arg=$(echo "$arg" | sed 's/,/*|||*/g')
+    fi
 
     if [[ $arg == "-h" ]] || [[ $arg == "-v" ]]; then
         isDbus="false"
