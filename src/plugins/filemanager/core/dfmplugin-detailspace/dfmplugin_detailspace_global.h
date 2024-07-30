@@ -52,6 +52,8 @@ enum BasicExpandType : int {
 };
 Q_ENUM_NS(BasicExpandType)
 
+inline constexpr int kViewAnimationDuration { 366 };
+
 using BasicExpandMap = QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>>;
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;

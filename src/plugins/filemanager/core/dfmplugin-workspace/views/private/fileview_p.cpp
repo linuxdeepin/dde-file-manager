@@ -14,6 +14,7 @@
 #include "utils/shortcuthelper.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/fileviewmenuhelper.h"
+#include "utils/viewanimationhelper.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -34,6 +35,7 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
     selectHelper = new SelectHelper(qq);
     shortcutHelper = new ShortcutHelper(qq);
     viewMenuHelper = new FileViewMenuHelper(qq);
+    animationHelper = new ViewAnimationHelper(qq);
 
     enabledSelectionModes << FileView::NoSelection << FileView::SingleSelection
                           << FileView::MultiSelection << FileView::ExtendedSelection

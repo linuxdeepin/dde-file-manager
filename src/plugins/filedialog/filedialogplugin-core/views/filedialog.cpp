@@ -38,6 +38,9 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#include <QDesktopWidget>
+#endif
 
 #include <qpa/qplatformdialoghelper.h>
 
@@ -71,7 +74,7 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
     if (!q->directory().exists())
         return;
 
-    QString fileName = q->statusBar()->lineEdit()->text();   //文件名
+    QString fileName = q->statusBar()->lineEdit()->text(); // 文件名
     // Check whether the suffix needs to be added
     QString suffix { "" };
     if (checkFileSuffix(fileName, suffix)) {

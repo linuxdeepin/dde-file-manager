@@ -26,17 +26,11 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 
     initUiForSizeMode();
     initializeUi();
-    initConnect();
 }
 
 void DetailSpaceWidget::initUiForSizeMode()
 {
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    setFixedWidth(DSizeModeHelper::element(260, 290));
-    setFixedWidth(DSizeModeHelper::element(260, 290));
-#else
-    setFixedWidth(290);
-#endif
+    setFixedWidth(detailWidth());
 }
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
@@ -84,12 +78,17 @@ void DetailSpaceWidget::initializeUi()
     setBackgroundRole(QPalette::ColorRole::Base);
 
     QHBoxLayout *rvLayout = new QHBoxLayout(this);
-    rvLayout->setMargin(0);
+    rvLayout->setContentsMargins(0, 0, 0, 0);
     detailView = new DetailView(this);
-    rvLayout->addWidget(detailView);
+    rvLayout->addWidget(detailView, 1);
     setLayout(rvLayout);
 }
 
-void DetailSpaceWidget::initConnect()
+int DetailSpaceWidget::detailWidth()
 {
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    return DSizeModeHelper::element(260, 290);
+#else
+    return 290;
+#endif
 }

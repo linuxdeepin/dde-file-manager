@@ -25,6 +25,7 @@
 #include "utils/fileoperatorhelper.h"
 #include "utils/filedatamanager.h"
 #include "utils/itemdelegatehelper.h"
+#include "utils/viewanimationhelper.h"
 #include "events/workspaceeventsequence.h"
 
 #include <dfm-base/mimedata/dfmmimedata.h>
@@ -83,6 +84,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
 #endif
     setVerticalScrollMode(ScrollPerPixel);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setAutoFillBackground(true);
 
     initializeModel();
     initializeDelegate();
@@ -1424,6 +1426,21 @@ QRect FileView::visualRect(const QModelIndex &index) const
     rect.moveLeft(rect.left() - horizontalOffset());
     rect.moveTop(rect.top() - verticalOffset());
 
+    if (isIconViewMode()) {
+        if (d->animationHelper->isInAnimationProccess()) {
+            d->animationHelper->setNewItemRect(index, rect);
+            QRect currentRect = d->animationHelper->getCurrentRectByIndex(index);
+            if (currentRect.isValid()) {
+                return currentRect;
+            } else {
+                rect.moveTop(contentWidget()->height());
+                return rect;
+            }
+        } else {
+            d->animationHelper->syncItemRect(index, rect);
+        }
+    }
+
     return rect;
 }
 
@@ -1454,10 +1471,19 @@ void FileView::updateGeometries()
 {
     if (isIconViewMode()) {
         int iconVerticalTopMargin = 0;
+        int iconViewSpacing = kIconViewSpacing;
 #ifdef DTKWIDGET_CLASS_DSizeMode
         iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+        iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
 #endif
         resizeContents(contentsSize().width(), contentsSize().height() + iconVerticalTopMargin);
+
+        int itemWidth = itemSizeHint().width() + iconViewSpacing * 2;
+        int columnCount = d->iconModeColumnCount(itemWidth);
+
+        if (d->animationHelper->checkColumnChanged(columnCount) && model()->currentState() == ModelState::kIdle) {
+            d->animationHelper->playViewAnimation();
+        }
     }
     if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();

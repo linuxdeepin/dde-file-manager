@@ -25,6 +25,7 @@ namespace dfmplugin_workspace {
 
 class ShortcutHelper;
 class FileViewHelper;
+class ViewAnimationHelper;
 class FileViewStatusBar;
 class HeaderView;
 class BaseItemDelegate;
@@ -50,6 +51,7 @@ class FileViewPrivate
     SelectHelper *selectHelper { nullptr };
     FileViewMenuHelper *viewMenuHelper { nullptr };
     FileViewHelper *fileViewHelper { nullptr };
+    ViewAnimationHelper *animationHelper { nullptr };
     QWidget *emptyInteractionArea { nullptr };
 
     QList<FileView::SelectionMode> enabledSelectionModes;

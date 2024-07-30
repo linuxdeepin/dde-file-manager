@@ -541,7 +541,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     if (index == d->editingIndex)
         return;
 
-    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device()) && !(opt.state & QStyle::State_AutoRaise);
 
     if (index == d->expandedIndex && !isDragMode) {
         if (d->expandedItem && d->expandedItem->getIndex() == index
@@ -557,7 +557,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 
     bool singleSelected = parent()->parent()->selectedIndexCount() < 2;
     bool isSelectedOpt = opt.state & QStyle::State_Selected;
-    //文管窗口拖拽时的字体保持白色
+    // 文管窗口拖拽时的字体保持白色
     if (isDragMode || (!singleSelected && isSelectedOpt)) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
     } else {
@@ -596,7 +596,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         }
     }
 
-    //图标拖拽时保持活动色
+    // 图标拖拽时保持活动色
     auto background = isDragMode || (!singleSelected && isSelectedOpt)
             ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight))
             : QBrush(Qt::NoBrush);
@@ -631,11 +631,10 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex
     const QSize &size = d->itemSizeHint;
 
     // 如果有一个选中，名称显示很长时，最后一个index时设置item的高度为最多，右边才会出现滑动块
-    if(index.isValid() && parent()->isLastIndex(index) && d->expandedItem
-            && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
+    if (index.isValid() && parent()->isLastIndex(index) && d->expandedItem
+        && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
         d->expandedItem->setIconHeight(parent()->parent()->iconSize().height());
-        auto hight = qMax(size.height(), d->expandedItem->heightForWidth(size.width()) -
-                          d->expandedItem->getDifferenceOfLastRow() * size.height());
+        auto hight = qMax(size.height(), d->expandedItem->heightForWidth(size.width()) - d->expandedItem->getDifferenceOfLastRow() * size.height());
         return QSize(size.width(), hight);
     }
 
@@ -699,7 +698,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     initStyleOption(&opt, index);
 
     if (editor == d->expandedItem) {
-        //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
+        // 重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
         d->expandedItem->show();
         d->expandedItem->setTextBounding(QRect());
         editor->setFixedWidth(option.rect.width());
@@ -718,7 +717,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     FileViewHelper *viewHelper = qobject_cast<FileViewHelper *>(parent());
     int maxHeight = viewHelper ? (viewHelper->viewContentSize().height() - viewHelper->verticalOffset() - item->pos().y()) : INT_MAX;
     if (viewHelper && fileview
-            && fileview->size().height() > viewHelper->viewContentSize().height())
+        && fileview->size().height() > viewHelper->viewContentSize().height())
         maxHeight = fileview->size().height() - viewHelper->verticalOffset() - item->pos().y();
 
     item->setMaxHeight(qMax(maxHeight, sizeHint(opt, index).height()));

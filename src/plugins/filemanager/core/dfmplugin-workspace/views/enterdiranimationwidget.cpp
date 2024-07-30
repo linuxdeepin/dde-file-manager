@@ -126,7 +126,7 @@ void EnterDirAnimationWidget::init()
     freezePixmapContainer->setScaledContents(true);
 
     scaleAnim = new QPropertyAnimation(freezePixmapContainer, "geometry", this);
-    scaleAnim->setDuration(366);
+    scaleAnim->setDuration(kViewAnimationDuration);
     scaleAnim->setEasingCurve(QEasingCurve::OutExpo);
 
     QGraphicsOpacityEffect *opaEffect = new QGraphicsOpacityEffect(freezePixmapContainer);
@@ -134,7 +134,7 @@ void EnterDirAnimationWidget::init()
     freezePixmapContainer->setGraphicsEffect(opaEffect);
 
     transparentAnim = new QPropertyAnimation(opaEffect, "opacity", this);
-    transparentAnim->setDuration(366);
+    transparentAnim->setDuration(kViewAnimationDuration);
     transparentAnim->setEasingCurve(QEasingCurve::OutExpo);
 
     connect(transparentAnim, &QPropertyAnimation::finished, this, [=] {

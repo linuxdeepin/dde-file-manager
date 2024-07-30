@@ -85,6 +85,7 @@ protected:
 
 public slots:
     void initUiForSizeMode();
+    void onAnimDelayTimeout();
 
 private:
     void initializeUi();
@@ -103,6 +104,7 @@ private:
     QMap<QString, TopWidgetPtr> topWidgets;
     EnterDirAnimationWidget *appearAnim { nullptr };
     EnterDirAnimationWidget *disappearAnim { nullptr };
+    QTimer *appearAnimDelayTimer { nullptr };
 
     TabBar *tabBar { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *newTabButton { nullptr };
