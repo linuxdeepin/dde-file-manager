@@ -139,6 +139,7 @@ void DiskMountPlugin::setDockEntryVisible(bool visible)
         proxyInter()->itemAdded(this, kDiskMountKey);
     else
         proxyInter()->itemRemoved(this, kDiskMountKey);
+    diskPluginItem->setVisible(visible);
 }
 
 void DiskMountPlugin::loadTranslator()
