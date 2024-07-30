@@ -4,6 +4,7 @@
 
 #include "vaultremovebypasswordview.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultutils.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/encryption/vaultconfig.h"
 #include "utils/encryption/operatorcenter.h"
@@ -23,7 +24,6 @@
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
-using namespace PolkitQt1;
 
 VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     : QWidget(parent)
@@ -103,12 +103,10 @@ void VaultRemoveByPasswordView::buttonClicked(int index, const QString &text)
             return;
         }
 
-        auto ins = Authority::instance();
-        ins->checkAuthorization(kPolkitVaultRemove,
-                                UnixProcessSubject(getpid()),
-                                Authority::AllowUserInteraction);
-        connect(ins, &Authority::checkAuthorizationFinished,
+        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
+
     } break;
     default:
         break;
@@ -180,12 +178,12 @@ void VaultRemoveByPasswordView::onPasswordChanged(const QString &password)
     }
 }
 
-void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(bool result)
 {
-    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+    disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
 
-    if (Authority::Yes != result)
+    if (!result)
         return;
 
     if (!VaultHelper::instance()->lockVault(false)) {
