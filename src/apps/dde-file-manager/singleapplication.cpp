@@ -6,6 +6,7 @@
 #include "commandparser.h"
 
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/finallyutil.h>
 
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -104,11 +105,14 @@ void SingleApplication::handleNewClient(const QString &uniqueKey)
         data.chop(1);
 
     QLocalSocket *socket = SingleApplication::getNewClientConnect(uniqueKey, data);
-    if (isSetGetMonitorFiles && socket->error() == QLocalSocket::UnknownSocketError) {
+    if (socket) {
         socket->waitForReadyRead();
 
         for (const QByteArray &i : socket->readAll().split(' '))
-            qCDebug(logAppFileManager) << QString::fromLocal8Bit(QByteArray::fromBase64(i));
+            qInfo(logAppFileManager) << QString::fromLocal8Bit(QByteArray::fromBase64(i));
+
+        socket->close();
+        socket->deleteLater();
     }
 }
 
@@ -160,9 +164,15 @@ void SingleApplication::readData()
 
     CommandParser::instance().process(arguments);
 
+    FinallyUtil release([&] {
+        if (socket) {
+            socket->close();
+            socket->deleteLater();
+        }
+    });
+
     if (CommandParser::instance().isSet("get-monitor-files")) {
         //Todo(yanghao&lxs): get-monitor-files
-
         return;
     }
 
