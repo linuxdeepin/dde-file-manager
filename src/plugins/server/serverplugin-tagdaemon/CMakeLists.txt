@@ -12,7 +12,7 @@ FILE(GLOB_RECURSE SRC_FILES
     "${TagManager_XML}"
     )
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
+find_package(Qt5 COMPONENTS
     DBus
     Sql
     REQUIRED)
@@ -23,26 +23,22 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
 #    OPTIONS -M -S
 #)
 
-if(DFM_BUILD_WITH_QT6)
-    qt_add_dbus_adaptor(SRC_FILES ${TagManager_XML}
-        tagmanagerdbus.h TagManagerDBus)
-else()
-    qt5_add_dbus_adaptor(SRC_FILES ${TagManager_XML}
-        tagmanagerdbus.h TagManagerDBus)
-endif()
+qt5_add_dbus_adaptor(SRC_FILES ${TagManager_XML}
+    tagmanagerdbus.h TagManagerDBus)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_SERVER_DIR})
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt${QT_VERSION_MAJOR}::DBus
-    Qt${QT_VERSION_MAJOR}::Sql
+    Qt5::DBus
+    Qt5::Sql
 )
 
 #install library file

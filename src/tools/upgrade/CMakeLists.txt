@@ -15,7 +15,7 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     )
-    
+find_package(Qt5 COMPONENTS Core)
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}

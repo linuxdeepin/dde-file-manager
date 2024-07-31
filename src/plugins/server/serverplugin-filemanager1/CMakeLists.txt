@@ -12,30 +12,25 @@ FILE(GLOB_RECURSE SRC_FILES
     "${FILEMANGER1_XML}"
     )
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
+find_package(Qt5 COMPONENTS
     DBus
     REQUIRED)
 
-
-if(DFM_BUILD_WITH_QT6)
-    qt_add_dbus_adaptor(SRC_FILES ${FILEMANGER1_XML}
-        filemanager1dbus.h FileManager1DBus)
-else()
-    qt5_add_dbus_adaptor(SRC_FILES ${FILEMANGER1_XML}
-        filemanager1dbus.h FileManager1DBus)
-endif()
+qt5_add_dbus_adaptor(SRC_FILES ${FILEMANGER1_XML}
+    filemanager1dbus.h FileManager1DBus)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_SERVER_DIR})
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt${QT_VERSION_MAJOR}::DBus
+    Qt5::DBus
 )
 
 #install library file

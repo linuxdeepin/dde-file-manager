@@ -10,25 +10,9 @@ FILE(GLOB_RECURSE DIRSHARE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${DIRSHARE_FILES}
-)
+include(dfmplugin-dirshare-qt5.cmake)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
-
-target_link_libraries(${PROJECT_NAME}
-    Qt${QT_VERSION_MAJOR}::Network
-    DFM::base
-    DFM::framework
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-dirshare-qt6.cmake)
+endif()

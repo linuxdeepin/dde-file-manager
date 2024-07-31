@@ -32,7 +32,8 @@ add_library(${PROJECT_NAME}
     ${SRC}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC

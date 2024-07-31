@@ -22,6 +22,17 @@ if (COMPLIE_ON_V20)
         DFM::framework
     )
 
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
+
+    #install library file
+    install(TARGETS
+        ${PROJECT_NAME}
+        LIBRARY
+        DESTINATION
+        ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
+    )
+
 else()
 
     FILE(GLOB_RECURSE SRC_FILES
@@ -39,54 +50,11 @@ else()
         images.qrc
     )
 
-    add_library(${PROJECT_NAME}
-        SHARED
-        ${SRC_FILES}
-        ${EXT_FILES}
-        ${QRCS}
-    )
+    include(ddplugin-wallpapersetting-qt5.cmake)
 
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Svg)
-    find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
-    find_package(PkgConfig REQUIRED)
-
-    pkg_check_modules(xcb REQUIRED xcb IMPORTED_TARGET)
-
-    if(DFM_BUILD_WITH_QT6)
-        set(INCLUDE_DIRS
-            ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
-        )
-        set(EXTRA_LINK_LIBS "")
-    else()
-        pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
-        set(INCLUDE_DIRS
-            ${DFrameworkDBus_INCLUDE_DIRS}
-            ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
-        )
-        set(EXTRA_LINK_LIBS
-            ${DFrameworkDBus_LIBRARIES}
-        )
+    # Qt6
+    if (DFM_BUILD_WITH_QT6)
+    include(ddplugin-wallpapersetting-qt6.cmake)
     endif()
 
-    target_include_directories(${PROJECT_NAME} PUBLIC
-        ${INCLUDE_DIRS}
-    )
-
-    target_link_libraries(${PROJECT_NAME}
-        DFM::base
-        DFM::framework
-        Qt${QT_VERSION_MAJOR}::Svg
-        PkgConfig::xcb
-        ${EXTRA_LINK_LIBS}
-        )
 endif()
-
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
-)

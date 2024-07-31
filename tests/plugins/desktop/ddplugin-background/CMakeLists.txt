@@ -21,7 +21,7 @@ add_executable(${PROJECT_NAME}
     ${CPP_STUB_SRC}
     ${SRC_FILES}
 )
-find_package(Qt COMPONENTS Core Widget REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )

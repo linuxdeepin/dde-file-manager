@@ -37,12 +37,12 @@ endif()
 
 # Qt5 or Qt6
 if(OPT_ENABLE_QT6 OR OPT_ENABLE_QML)
-    add_definitions(-DCOMPILE_ON_V23)    # TODO: remove it
+    find_package(Dtk6CMake REQUIRED)
+    set(DFM_BUILD_WITH_QT6 TRUE)
     set(COMPLIE_ON_V23 TRUE)
+    add_definitions(-DCOMPILE_ON_V23)    # TODO: remove it
     message("COMPILE ON v23")
-    find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Widgets)
 else()
-    find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Widgets)
     #Indentify the version
     find_package(DtkCMake REQUIRED)
     if (${DEEPIN_OS_VERSION} MATCHES "23")
@@ -55,15 +55,8 @@ else()
         message("COMPILE ON v20")
     endif()
 endif()
-message("Using Qt version: ${QT_VERSION_MAJOR}")
 
-# Select major DTK version.
-if(QT_VERSION_MAJOR EQUAL "6")
-    set(DFM_BUILD_WITH_QT6 ON)
-    set(DTK_VERSION_MAJOR 6)
-else()
-    set(DTK_VERSION_MAJOR "")
-endif()
+set(DTK_VERSION_MAJOR "")
 
 # check arch
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
@@ -73,7 +66,10 @@ endif()
 
 # CMake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(install_plugin_quick_module)
+
+if (OPT_ENABLE_QML)
+    include(install_plugin_quick_module)
+endif()
 include(install_dconfig)
 include(GNUInstallDirs)
 include(DFMInstallDirs)
@@ -84,7 +80,7 @@ if(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
-message("Build type:"${CMAKE_BUILD_TYPE})
+message("Build type:" ${CMAKE_BUILD_TYPE})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(BUILD_TESTING ON)
@@ -109,7 +105,7 @@ if(OPT_ENABLE_QML)
 endif()
 
 # docs
-if(OPT_ENABLE_BUILD_DOCS AND NOT OPT_ENABLE_QML)
+if(OPT_ENABLE_BUILD_DOCS)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         add_subdirectory(docs)

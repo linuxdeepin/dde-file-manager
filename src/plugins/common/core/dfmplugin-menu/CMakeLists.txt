@@ -10,29 +10,9 @@ FILE(GLOB_RECURSE MENU_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${MENU_FILES}
-)
+include(dfmplugin-menu-qt5.cmake)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-)
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE MENU_CHECK_FOCUSONLY)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_CORE_DIR}
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-menu-qt6.cmake)
+endif()

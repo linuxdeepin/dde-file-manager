@@ -10,18 +10,19 @@ file(GLOB_RECURSE BROWSER_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${BROWSER_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_link_libraries(
     ${PROJECT_NAME}
-    Qt${QT_VERSION_MAJOR}::Network
+    Qt5::Network
     DFM::base
     DFM::framework
 )

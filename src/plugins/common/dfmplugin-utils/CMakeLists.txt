@@ -15,28 +15,10 @@ FILE(GLOB_RECURSE UTILS_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Svg REQUIRED)
+include(dfmplugin-utils-qt5.cmake)
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${UTILS_FILES}
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-utils-qt6.cmake)
+endif()
 
-set(EXTENSIONS_LIB_DIR ${DFM_PLUGIN_DIR}/extensions)
-add_definitions(-DEXTENSIONS_PATH=\"${EXTENSIONS_LIB_DIR}\")
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    DFM::extension
-    Qt${QT_VERSION_MAJOR}::Svg
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
-)

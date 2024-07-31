@@ -10,23 +10,10 @@ FILE(GLOB_RECURSE BOOKMARK_FILES CONFIGURE_DEPENDS
     "./*.json"
 )
 
+include(dfmplugin-bookmark-qt5.cmake)
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${BOOKMARK_FILES}
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-bookmark-qt6.cmake)
+endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_CORE_DIR}
-)

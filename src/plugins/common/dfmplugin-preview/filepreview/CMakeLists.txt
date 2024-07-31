@@ -10,28 +10,12 @@ FILE(GLOB_RECURSE FILEPREVIEW_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${FILEPREVIEW_FILES}
-)
+include(dfmplugin-preview-qt5.cmake)
 
-add_definitions(-DPLUGINDIR=\"${DFM_PLUGIN_PREVIEW_DIR}\")
-set(VERSION 1.8.2)
-add_definitions(-DVERSION=\"${VERSION}\")
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-preview-qt6.cmake)
+endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../../)
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
-)
 
 INSTALL_DCONFIG("org.deepin.dde.file-manager.preview.json")

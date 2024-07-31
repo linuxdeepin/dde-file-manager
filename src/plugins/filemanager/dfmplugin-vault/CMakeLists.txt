@@ -12,26 +12,25 @@ FILE(GLOB_RECURSE VAULT_FILES CONFIGURE_DEPENDS
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(openssl REQUIRED libcrypto)
-
-if (DFM_BUILD_WITH_QT6)
-    set(VAULT_EXTRA_LIBRARIES "")
-else()
-    pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt5-1)
-    set(VAULT_EXTRA_LIBRARIES ${polkit_LIBRARIES})
-endif()
+pkg_check_modules(secret REQUIRED libsecret-1 IMPORTED_TARGET)
+pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt5-1)
+set(VAULT_EXTRA_LIBRARIES ${polkit_LIBRARIES})
 
 add_library(${PROJECT_NAME}
     SHARED
     ${VAULT_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
+find_package(Qt5 COMPONENTS Core)
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     ${VAULT_EXTRA_LIBRARIES}
     ${openssl_LIBRARIES}
+    PkgConfig::secret
 )
 
 install(FILES polkit/com.deepin.filemanager.vault.policy
