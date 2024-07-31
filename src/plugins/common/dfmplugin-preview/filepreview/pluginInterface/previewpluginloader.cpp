@@ -201,7 +201,7 @@ void PreviewPluginLoader::update()
             loader = new QPluginLoader(fileName, this);
             if (!loader->load()) {
                 if (dfm_debug_component()) {
-                    fmDebug() << loader->errorString();
+                    fmWarning() << "load failed:" << loader->errorString();
                 }
                 loader->deleteLater();
                 continue;

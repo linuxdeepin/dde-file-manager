@@ -20,7 +20,7 @@ else()
     add_subdirectory(dde-file-dialog)
     add_subdirectory(dde-file-dialog-x11)
     add_subdirectory(dde-file-dialog-wayland)
-    if(NOT OPT_ENABLE_QT6)
+    if(NOT DFM_BUILD_WITH_QT6)
         add_subdirectory(dde-desktop) # as a plugin of dde-shell in Qt6
     endif()
 endif()

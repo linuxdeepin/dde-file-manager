@@ -24,8 +24,8 @@ set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/sessionloader.cpp
     )
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
 find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
@@ -43,8 +43,8 @@ endif()
 
 target_link_libraries(
     ${PROJECT_NAME}
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Network
+    Qt5::Widgets
+    Qt5::Network
     DFM::base
     DFM::framework
     Dtk${DTK_VERSION_MAJOR}::Widget

@@ -19,7 +19,8 @@ add_library(${PROJECT_NAME}
     ${FILEOPERATIONS_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DAEMON_DIR})
 
 find_package(PkgConfig REQUIRED)
 
@@ -38,7 +39,7 @@ pkg_check_modules(PolkitQt5
     polkit-qt5-1
     IMPORTED_TARGET
 )
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
+find_package(Qt5 COMPONENTS
     DBus
     REQUIRED
 )
@@ -49,7 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     PkgConfig::crypt
     PkgConfig::PolkitAgent
     PkgConfig::PolkitQt5
-    Qt${QT_VERSION_MAJOR}::DBus
+    Qt5::DBus
     ${DtkWidget_LIBRARIES}
 )
 

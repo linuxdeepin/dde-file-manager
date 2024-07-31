@@ -119,7 +119,7 @@ static bool pluginsLoad()
     qCInfo(logAppDialogX11) << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
-    pluginsDirs.push_back(pluginsDir);
+    pluginsDirs.push_back(pluginsDir + "/filedialog");
 #else
     pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
                 << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)

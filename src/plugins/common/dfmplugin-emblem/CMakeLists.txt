@@ -4,36 +4,18 @@ project(dfmplugin-emblem)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB EMBLEM_FILES
+FILE(GLOB_RECURSE GLOB EMBLEM_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${EMBLEM_FILES}
-)
+include(dfmplugin-emblem-qt5.cmake)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-emblem-qt6.cmake)
+endif()
 
 # install dconfig files.
 INSTALL_DCONFIG("org.deepin.dde.file-manager.emblem.json")

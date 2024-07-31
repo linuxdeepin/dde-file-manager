@@ -48,10 +48,10 @@ DFMBASE_USE_NAMESPACE
 using namespace dde_desktop;
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop";
-static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
+static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop.qt6";
+static const char *const kCommonPluginInterface = "org.deepin.plugin.common.qt6";
 static const char *const kPluginCore = "ddplugin-core";
-static const char *const kLibCore = "libddplugin-core.so";
+static const char *const kLibCore = "libdd-core-plugin.so";
 
 #define SESSION_MANAGER_SERVICE "org.deepin.dde.SessionManager1"
 #define SESSION_MANAGER_PATH "org/deepin/dde/SessionManager1"
@@ -72,7 +72,6 @@ static bool pluginsLoad()
     qApp->setProperty("DFM_BUILD_PLUGIN_DIR", pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/desktop");
     pluginsDirs.push_back(pluginsDir + "/common");
-    pluginsDirs.push_back(pluginsDir);
 #else
     pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
                 << QString(DFM_PLUGIN_DESKTOP_CORE_DIR)

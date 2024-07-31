@@ -13,12 +13,14 @@ FILE(GLOB_RECURSE COMPUTER_FILES CONFIGURE_DEPENDS
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(Secret REQUIRED libsecret-1)
 
+find_package(Qt5 COMPONENTS Core)
 add_library(${PROJECT_NAME}
     SHARED
     ${COMPUTER_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC

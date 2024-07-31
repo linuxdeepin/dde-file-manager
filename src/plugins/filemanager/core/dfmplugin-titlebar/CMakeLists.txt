@@ -15,8 +15,10 @@ add_library(${PROJECT_NAME}
     ${TITLEBAR_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
+find_package(Qt5 COMPONENTS Core)
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework

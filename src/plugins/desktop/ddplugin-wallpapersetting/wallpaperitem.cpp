@@ -13,7 +13,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QGridLayout>
-#include <QSvgRenderer>
+#include <QtSvg/QSvgRenderer>
 
 using namespace ddplugin_wallpapersetting;
 

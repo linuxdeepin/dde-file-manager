@@ -8,7 +8,7 @@ configure_file(
 )
 
 find_package(DDEShell REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS DBus REQUIRED)
+find_package(Qt6 COMPONENTS DBus REQUIRED)
 
 FILE(GLOB_RECURSE FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -32,9 +32,9 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Dde::Shell
-    DFM::base
-    DFM::framework
-    Qt${QT_VERSION_MAJOR}::DBus
+    DFM6::base
+    DFM6::framework
+    Qt6::DBus
 )
 
 ds_install_package(PACKAGE org.deepin.ds.desktop TARGET ds-panel-desktop)

@@ -4,43 +4,19 @@ project(dfmplugin-propertydialog)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(QRC_FILES
-    qrc/images.qrc
-    )
 
-if(DFM_BUILD_WITH_QT6)
-    qt6_add_resources(QRC_RESOURCES ${QRC_FILES})
-else()
-    qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
-endif()
-
-FILE(GLOB DETAILSPCE_FILES
+FILE(GLOB_RECURSE DETAILSPCE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../services/filemanager/)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-propertydialog-qt6.cmake)
+endif()
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${DETAILSPCE_FILES}
-    ${QRC_RESOURCES}
-)
+include(dfmplugin-propertydialog-qt5.cmake)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-)
 
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_CORE_DIR}
-)

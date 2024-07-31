@@ -24,9 +24,10 @@ add_library(${PROJECT_NAME}
     ${FILEOPERATIONS_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DAEMON_DIR})
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
+find_package(Qt5 COMPONENTS
     DBus
     REQUIRED
 )
@@ -34,7 +35,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
     DFM::base
-    Qt${QT_VERSION_MAJOR}::DBus
+    Qt5::DBus
     ${PolkitAgent_LIBRARIES}
     ${PolkitQt5_LIBRARIES}
 )

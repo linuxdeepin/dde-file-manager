@@ -10,6 +10,7 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
+find_package(Qt5 COMPONENTS Core)
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}
@@ -17,7 +18,8 @@ add_library(${PROJECT_NAME}
 
 add_definitions(-DGRANDSEARCHDAEMON_LIB_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/dde-grand-search-daemon")
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_SERVER_DIR})
 
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
