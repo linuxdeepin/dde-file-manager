@@ -33,12 +33,14 @@ class CanvasView : public QAbstractItemView
     friend class CanvasViewMenuProxy;
     friend class CanvasViewBroker;
     friend class CanvasViewPrivate;
+
 public:
     using CursorAction = QAbstractItemView::CursorAction;
     explicit CanvasView(QWidget *parent = nullptr);
     void initUI();
     void setViewHook(ViewHookInterface *);
     ViewHookInterface *viewHook() const;
+
 public:
     virtual QRect visualRect(const QModelIndex &index) const override;
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
@@ -67,6 +69,10 @@ public:
     void setGeometry(const QRect &rect);
     void updateGrid();
     void showGrid(bool v) const;
+
+    void aboutToResortFiles();
+    void filesResorted();
+
 public Q_SLOTS:
     void reset() override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
@@ -76,6 +82,7 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+
 protected:
     QRect itemRect(const QModelIndex &index) const;
 
@@ -95,6 +102,7 @@ protected:
     void dropEvent(QDropEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
+
 private:
     CanvasViewPrivate *d;
 };
