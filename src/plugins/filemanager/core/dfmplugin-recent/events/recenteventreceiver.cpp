@@ -26,18 +26,7 @@ RecentEventReceiver *RecentEventReceiver::instance()
 
 void RecentEventReceiver::initConnect()
 {
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_InputAdddressStr_Check", instance(), &RecentEventReceiver::handleAddressInputStr);
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, RecentEventReceiver::instance(), &RecentEventReceiver::handleWindowUrlChanged);
-}
-
-void RecentEventReceiver::handleAddressInputStr(quint64 winId, QString *str)
-{
-    Q_UNUSED(winId)
-
-    if (str->startsWith(RecentHelper::scheme())) {
-        str->clear();
-        str->append(RecentHelper::scheme() + ":/");
-    }
 }
 
 void RecentEventReceiver::handleWindowUrlChanged(quint64 winId, const QUrl &url)
