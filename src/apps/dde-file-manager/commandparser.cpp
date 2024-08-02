@@ -128,8 +128,16 @@ void CommandParser::process()
 void CommandParser::process(const QStringList &arguments)
 {
     qCInfo(logAppFileManager) << "App start args: " << arguments;
-    SessionBusiness::instance()->process(arguments);
-    commandParser->process(arguments);
+    QStringList args;
+    for (const auto &arg : arguments) {
+        if (!arg.startsWith("-")) {
+            args.append(QUrl::fromPercentEncoding(arg.toStdString().c_str()));
+        } else {
+            args.append(arg);
+        }
+    }
+    SessionBusiness::instance()->process(args);
+    commandParser->process(args);
 }
 
 void CommandParser::initialize()
