@@ -314,6 +314,8 @@ bool AbstractBurnJob::mediaChangDected()
 
 void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString &speed, const QStringList &message)
 {
+    if (!message.isEmpty())
+        fmWarning() << "burn job changed, progress:" << progress << "msg:" << message;
     lastStatus = status;
 
     Q_ASSERT(jobHandlePtr);
