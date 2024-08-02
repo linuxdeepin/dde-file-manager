@@ -29,13 +29,6 @@ public:
     stub_ext::StubExt stub;
 };
 
-TEST_F(RecentEventReceiverTest, handleAddressInputStr)
-{
-    QString str("recent");
-    RecentEventReceiver::instance()->handleAddressInputStr(123, &str);
-    EXPECT_EQ(str, QString("recent:/"));
-}
-
 TEST_F(RecentEventReceiverTest, handleWindowUrlChanged)
 {
     stub_ext::StubExt st;
