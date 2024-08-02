@@ -16,7 +16,7 @@ option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
 option(OPT_ENABLE_BUILD_DOCS "Build develop documents" OFF)
 option(OPT_ENABLE_BUILD_UT "Buld unit tests" ON)
 option(OPT_ENABLE_QML "Use QML" OFF)
-option(OPT_ENABLE_QT6 "Use Qt6" OFF)
+option(OPT_ENABLE_QT6 "Use Qt6" ON)
 
 # 安全加固
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-type")
@@ -36,13 +36,21 @@ else()
 endif()
 
 # Qt5 or Qt6
+set(DFM_BUILD_WITH_QT6 FALSE)
 if(OPT_ENABLE_QT6 OR OPT_ENABLE_QML)
-    find_package(Dtk6CMake REQUIRED)
-    set(DFM_BUILD_WITH_QT6 TRUE)
-    set(COMPLIE_ON_V23 TRUE)
-    add_definitions(-DCOMPILE_ON_V23)    # TODO: remove it
-    message("COMPILE ON v23")
-else()
+    find_package(Qt6 QUIET)
+    if (Qt6_FOUND)
+        message(STATUS "Found Qt6: ${Qt6_VERSION}")
+        find_package(Dtk6CMake REQUIRED)
+        set(DFM_BUILD_WITH_QT6 TRUE)
+        set(COMPLIE_ON_V23 TRUE)
+        add_definitions(-DCOMPILE_ON_V23)    # TODO: remove it
+        message("COMPILE ON v23")
+    endif()
+endif()
+
+if(NOT DFM_BUILD_WITH_QT6)
+    message(WARNING "Qt6 not found, Use Qt5.")
     #Indentify the version
     find_package(DtkCMake REQUIRED)
     if (${DEEPIN_OS_VERSION} MATCHES "23")
