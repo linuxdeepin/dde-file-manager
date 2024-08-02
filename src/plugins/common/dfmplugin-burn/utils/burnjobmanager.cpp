@@ -169,6 +169,8 @@ void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)
     connect(job, &AbstractBurnJob::requestReloadDisc, this, [](const QString &devId) {
         DevMngIns->mountBlockDevAsync(devId, {}, [devId](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
             DevProxyMng->reloadOpticalInfo(devId);
+            // WORKAROUND: 由于内核原因，reload总是失败，暂擦除后弹出光盘
+            DeviceManager::instance()->ejectBlockDevAsync(devId);
         });
     });
     connect(job, &AbstractBurnJob::burnFinished, this, [this, job](int type, bool result) {
