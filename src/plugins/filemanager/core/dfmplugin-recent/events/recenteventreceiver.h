@@ -20,7 +20,6 @@ public:
     void initConnect();
 
 public slots:
-    void handleAddressInputStr(quint64 winId, QString *str);
     void handleWindowUrlChanged(quint64 winId, const QUrl &url);
     void handleUpdateRecent(const QList<QUrl> &urls, bool ok, const QString &errMsg);
     void handleFileRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
