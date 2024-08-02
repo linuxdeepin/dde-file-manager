@@ -353,7 +353,8 @@ void ShareControlWidget::init()
 
     if (!watcher) {
         watcher = WatcherFactory::create<AbstractFileWatcher>(info->urlOf(UrlInfoType::kParentUrl));
-        watcher->startWatcher();
+        if (watcher)
+            watcher->startWatcher();
     }
 
     QString filePath = url.path();
@@ -389,7 +390,8 @@ void ShareControlWidget::initConnection()
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &ShareControlWidget::updateWidgetStatus);
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_RemoveShareFailed", this, &ShareControlWidget::updateWidgetStatus);
 
-    connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &ShareControlWidget::updateFile);
+    if (!watcher.isNull())
+        connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &ShareControlWidget::updateFile);
 
     // the timer is used to control the frequency of switcher action.
     connect(timer, &QTimer::timeout, this, [this] { shareSwitcher->setEnabled(true); });
