@@ -361,9 +361,7 @@ void OpenWithDialog::initData()
     }
 
     const QString &defaultApp = MimesAppsManager::instance()->getDefaultAppByMimeType(mimeType);
-    const QStringList &recommendApps = curUrl.isValid() || !urlList.isEmpty() ?
-                MimesAppsManager::instance()->getRecommendedApps(curUrl.isValid() ? curUrl : urlList.first())
-              : MimesAppsManager::instance()->getRecommendedAppsByQio(mimeType);
+    const QStringList &recommendApps = MimesAppsManager::instance()->getRecommendedAppsByQio(mimeType);
 
     for (int i = 0; i < recommendApps.count(); ++i) {
         const DesktopFile &desktopInfo = MimesAppsManager::instance()->DesktopObjs.value(recommendApps.at(i));
@@ -439,7 +437,6 @@ void OpenWithDialog::useOtherApplication()
 
     targetDesktopFileName = targetDesktopFileName.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(mimeType.name().replace("/", "-"));
 
-    QString iconName;
     if (filePath.endsWith(".desktop")) {
         auto list = recommandLayout->parentWidget()->findChildren<OpenWithDialog *>();
         auto ret = std::any_of(list.begin(), list.end(), [filePath](const OpenWithDialog *w) {
@@ -451,14 +448,8 @@ void OpenWithDialog::useOtherApplication()
 
         Properties desktop(filePath, "Desktop Entry");
 
-        // 目前发现有些.desktop文件没有遵循规则写入MimeType
-        // 但是这里又是用户自己选中的这个app，那么这里就只判断是否是application
-        if (desktop.value("Type").toString() != "Application") {
-            qCWarning(logDFMBase()) << filePath << " is not Application!!";
+        if (desktop.value("MimeType").toString().isEmpty())
             return;
-        }
-
-        iconName = desktop.value("Icon").toString();
 
         if (!QFile::link(filePath, targetDesktopFileName))
             return;
@@ -493,8 +484,7 @@ void OpenWithDialog::useOtherApplication()
         }
     }
 
-    OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName.isEmpty() ? "application-x-desktop" : iconName),
-                                              info.fileName(), targetDesktopFileName);
+    OpenWithDialogListItem *item = createItem(QIcon::fromTheme("application-x-desktop"), info.fileName(), targetDesktopFileName);
 
     int otherLayoutSizeHintHeight = otherLayout->sizeHint().height();
     otherLayout->addWidget(item);
