@@ -13,6 +13,7 @@ FILE(GLOB PDFPREVIEW_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     "${GlobalFiles}"
     )
+find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Dtk COMPONENTS Widget REQUIRED)
 
 find_package(PkgConfig REQUIRED)

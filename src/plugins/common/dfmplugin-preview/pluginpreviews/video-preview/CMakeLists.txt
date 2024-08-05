@@ -18,6 +18,7 @@ FILE(GLOB VIDEOPREVIEW_FILES
 
 
 find_package(PkgConfig REQUIRED)
+find_package(Qt5 COMPONENTS Core REQUIRED)
 
 pkg_search_module(libdmr REQUIRED libdmr)
 
