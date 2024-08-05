@@ -158,6 +158,7 @@ void SingleApplication::readData()
             continue;
 
         QString argstr = QString::fromLocal8Bit(arg);
+        argstr = argstr.replace("*||*", " ");
         arguments << argstr;
     }
 
