@@ -8,6 +8,9 @@ add_library(${BIN_NAME}
     ${FILEOPERATIONS_FILES}
 )
 
+set_target_properties(${BIN_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_COMMON_DIR})
+
 if(${QT_VERSION_MAJOR} EQUAL "6")
     qt6_add_dbus_interface(Qt6App_dbus
         ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.OperationsStackManager.xml
