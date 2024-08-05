@@ -29,6 +29,7 @@ Build-Depends:
  qt6-tools-dev-tools | hello,
  qttools5-dev,
  qt6-tools-dev | hello,
+ qt6-5compat-dev | hello,
  dde-dock-dev(>=4.8.4.1),
  libdframeworkdbus-dev,
  libtag1-dev,
