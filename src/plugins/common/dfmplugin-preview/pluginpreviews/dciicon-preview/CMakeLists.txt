@@ -15,6 +15,7 @@ FILE(GLOB_RECURSE DCIICONPREVIEW_FILES CONFIGURE_DEPENDS
 set(BIN_NAME dtkdciicon-preview)
 set(QT_VERSION_MAJOR 5)
 set(DTK_VERSION_MAJOR "")
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_library(${BIN_NAME}
     SHARED
@@ -35,6 +36,7 @@ if (DFM_BUILD_WITH_QT6)
     set(BIN_NAME dtk6dciicon-previeww)
     set(QT_VERSION_MAJOR 6)
     set(DTK_VERSION_MAJOR 6)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
     add_library(${BIN_NAME}
         SHARED

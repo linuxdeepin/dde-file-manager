@@ -14,6 +14,7 @@ FILE(GLOB_RECURSE TEXTPREVIEW_FILES CONFIGURE_DEPENDS
 set(BIN_NAME dfmtext-preview)
 set(QT_VERSION_MAJOR 5)
 set(DTK_VERSION_MAJOR "")
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_library(${BIN_NAME}
     SHARED
@@ -40,6 +41,7 @@ if (DFM_BUILD_WITH_QT6)
     set(BIN_NAME dfm6text-preview)
     set(QT_VERSION_MAJOR 6)
     set(DTK_VERSION_MAJOR 6)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
     add_library(${BIN_NAME}
         SHARED
@@ -51,6 +53,14 @@ if (DFM_BUILD_WITH_QT6)
     target_link_libraries(${BIN_NAME}
         DFM${DTK_VERSION_MAJOR}::base
         DFM${DTK_VERSION_MAJOR}::framework
+    )
+
+    #install library file
+    install(TARGETS
+        ${BIN_NAME}
+        LIBRARY
+        DESTINATION
+        ${DFM_PLUGIN_PREVIEW_DIR}
     )
 endif()
 

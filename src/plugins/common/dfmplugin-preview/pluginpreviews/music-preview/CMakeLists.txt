@@ -17,7 +17,7 @@ if (DFM_BUILD_WITH_QT6)
     set(QT_VERSION_MAJOR 6)
     set(DTK_VERSION_MAJOR 6)
 
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Multimedia REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Multimedia REQUIRED)
     find_package(ICU COMPONENTS i18n io uc REQUIRED)
     find_package(PkgConfig REQUIRED)
 
@@ -51,8 +51,7 @@ endif()
 set(BIN_NAME dfmmusic-preview)
 set(QT_VERSION_MAJOR 5)
 set(DTK_VERSION_MAJOR "")
-
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Multimedia REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Multimedia REQUIRED)
 find_package(ICU COMPONENTS i18n io uc REQUIRED)
 find_package(PkgConfig REQUIRED)
 
@@ -68,6 +67,7 @@ set_target_properties(${BIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../prev
 target_link_libraries(${BIN_NAME}
     DFM::base
     DFM::framework
+    Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Multimedia
     ${taglib_LIBRARIES}
     ICU::i18n
