@@ -79,7 +79,7 @@ void DeviceManagerDBus::initConnection()
             emit this->BlockDevicePropertyChanged(id, property, QDBusVariant(val));
     });
 
-    connect(DevMngIns, &DeviceManager::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
+    connect(DevMngIns, &DeviceManager::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
     connect(DevMngIns, &DeviceManager::protocolDevMounted, this, [this](const QString &id, const QString &mpt) {
         emit ProtocolDeviceMounted(id, mpt);
         requestRefreshDesktopAsNeeded(mpt, "onMount");
