@@ -56,6 +56,14 @@ int FileViewPrivate::iconModeColumnCount(int itemWidth) const
     return qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
 }
 
+int FileViewPrivate::calcColumnCount(int widgetWidth, int itemWidth) const
+{
+    if (itemWidth <= 0)
+        itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
+
+    return qMax((widgetWidth - 1) / itemWidth, 1);
+}
+
 QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
 {
     return index.data().toUrl();
@@ -182,6 +190,9 @@ void FileViewPrivate::pureResizeEvent(QResizeEvent *event)
     if (currentViewMode == Global::ViewMode::kListMode || currentViewMode == Global::ViewMode::kTreeMode) {
         if (adjustFileNameColumn && headerView)
             headerView->doFileNameColumnResize(q->width());
+    } else {
+        if (animationHelper)
+            animationHelper->aboutToPlay();
     }
 }
 

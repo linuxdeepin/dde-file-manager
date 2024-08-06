@@ -110,6 +110,8 @@ private:
     DTK_WIDGET_NAMESPACE::DIconButton *newTabButton { nullptr };
     DTK_WIDGET_NAMESPACE::DHorizontalLine *tabTopLine { nullptr };
     DTK_WIDGET_NAMESPACE::DHorizontalLine *tabBottomLine { nullptr };
+
+    bool canPlayAppearAnimation { false };
 };
 
 }

@@ -6,6 +6,7 @@
 #include "dfmplugin_workspace_global.h"
 #include "views/fileview.h"
 #include "views/baseitemdelegate.h"
+#include "models/fileviewmodel.h"
 
 #include <QTimer>
 #include <QPainter>
@@ -21,6 +22,34 @@ ViewAnimationHelper::ViewAnimationHelper(FileView *parent)
 {
 }
 
+void ViewAnimationHelper::initAnimationHelper()
+{
+    currentIndexRectMap = calcIndexRects(view->contentsRect());
+    initialized = true;
+}
+
+void ViewAnimationHelper::reset()
+{
+    currentIndexRectMap.clear();
+    initialized = false;
+}
+
+void ViewAnimationHelper::syncVisiableRect()
+{
+    currentVisiableRect = view->viewport()->rect();
+    currentVisiableRect.moveTop(view->verticalOffset());
+}
+
+void ViewAnimationHelper::aboutToPlay()
+{
+    if (isWaitingToPlaying())
+        return;
+
+    oldVisiableRect = view->viewport()->rect();
+    oldVisiableRect.moveTop(view->verticalOffset());
+    indexPixmaps.clear();
+}
+
 QRect ViewAnimationHelper::getCurrentRectByIndex(const QModelIndex &index) const
 {
     if (currentIndexRectMap.contains(index))
@@ -29,57 +58,105 @@ QRect ViewAnimationHelper::getCurrentRectByIndex(const QModelIndex &index) const
     return QRect();
 }
 
-void ViewAnimationHelper::syncItemRect(const QModelIndex &index, const QRect &rect)
-{
-    currentIndexRectMap[index] = rect;
-}
-
-void ViewAnimationHelper::setNewItemRect(const QModelIndex &index, const QRect &rect)
-{
-    newIndexRectMap[index] = rect;
-}
-
-bool ViewAnimationHelper::checkColumnChanged(int newCount)
-{
-    if (currentColumnCount < 0) {
-        currentColumnCount = newCount;
-        return false;
-    }
-
-    if (currentColumnCount == newCount)
-        return false;
-
-    currentColumnCount = newCount;
-    return true;
-}
-
 void ViewAnimationHelper::playViewAnimation()
 {
-    if (!proposeTimer) {
-        proposeTimer = new QTimer(this);
-        proposeTimer->setSingleShot(true);
-        proposeTimer->setInterval(100);
-        connect(proposeTimer, &QTimer::timeout, this, &ViewAnimationHelper::onProposeTimerFinish);
+    if (!initialized)
+        return;
+
+    if (!delayTimer) {
+        delayTimer = new QTimer(this);
+        delayTimer->setSingleShot(true);
+        delayTimer->setInterval(100);
+        connect(delayTimer, &QTimer::timeout, this, &ViewAnimationHelper::onDelayTimerFinish);
     }
 
-    stopAnimation();
-    proposeTimer->start();
+    if (!delayTimer->isActive())
+        newIndexRectMap.clear();
+
+    syncVisiableRect();
+    QRect validRect = currentVisiableRect;
+    validRect.setWidth(oldVisiableRect.width());
+    currentIndexRectMap = calcIndexRects(validRect);
+    createPixmapsForVisiableRect();
+
+    delayTimer->start();
 }
 
-bool ViewAnimationHelper::isInAnimationProccess() const
+bool ViewAnimationHelper::isAnimationPlaying() const
 {
-    if (proposeTimer && proposeTimer->isActive())
-        return true;
-
     if (animationTimer && animationTimer->isActive())
         return true;
 
-    return proposeToPlay;
+    return false;
 }
 
-void ViewAnimationHelper::onProposeTimerFinish()
+bool ViewAnimationHelper::isWaitingToPlaying() const
 {
-    proposeToPlay = false;
+    if (delayTimer && delayTimer->isActive())
+        return true;
+
+    return false;
+}
+
+bool ViewAnimationHelper::hasInitialized() const
+{
+    return initialized;
+}
+
+void ViewAnimationHelper::paintItems() const
+{
+    QPainter painter(view->viewport());
+    auto itemIterator = indexPixmaps.begin();
+
+    if (isWaitingToPlaying()) {
+        while (itemIterator != indexPixmaps.end()) {
+            auto index = itemIterator.key();
+
+            if (!currentIndexRectMap.contains(index)) {
+                itemIterator++;
+                continue;
+            }
+
+            QRect paintRect = currentIndexRectMap[index];
+            painter.drawPixmap(paintRect, itemIterator.value());
+
+            itemIterator++;
+        }
+    } else if (isAnimationPlaying()) {
+        QSize viewportSize = view->contentsSize();
+        QPoint itemBirthPos(viewportSize.width() / 2, viewportSize.height());
+
+        int elapse = animFrame * kViewAnimationFrameDuration;
+
+        while (itemIterator != indexPixmaps.end()) {
+            auto index = itemIterator.key();
+
+            QPoint targetPos = newIndexRectMap[index].topLeft();
+            QPoint oldPos;
+            if (!oldIndexRectMap.contains(index)) {
+                oldPos = itemBirthPos;
+            } else {
+                oldPos = oldIndexRectMap[index].topLeft();
+            }
+
+            qreal proccess = static_cast<qreal>(elapse) / static_cast<qreal>(kViewAnimationDuration);
+            int deltaX = (targetPos.x() - oldPos.x()) * easeOutExpo(proccess);
+            int deltaY = (targetPos.y() - oldPos.y()) * easeOutExpo(proccess);
+
+            QPoint newPos(oldPos.x() + deltaX, oldPos.y() + deltaY);
+
+            QRect paintRect = newIndexRectMap[index];
+            paintRect.moveTopLeft(newPos);
+
+            painter.drawPixmap(paintRect, itemIterator.value());
+
+            itemIterator++;
+        }
+    }
+}
+
+void ViewAnimationHelper::onDelayTimerFinish()
+{
     if (!animationTimer) {
         animationTimer = new QTimer(this);
         animationTimer->setInterval(kViewAnimationFrameDuration);
@@ -87,10 +164,8 @@ void ViewAnimationHelper::onProposeTimerFinish()
         connect(animationTimer, &QTimer::timeout, this, &ViewAnimationHelper::onAnimationTimerFinish);
     }
 
-    if (animationTimer->isActive()) {
+    if (animationTimer->isActive())
         animationTimer->stop();
-        clearLabels();
-    }
 
     animFrame = 0;
     animationTimer->start();
@@ -101,90 +176,40 @@ void ViewAnimationHelper::onAnimationTimerFinish()
     if (animFrame == 0) {
         oldIndexRectMap = currentIndexRectMap;
 
-        if (!blankBackground) {
-            blankBackground = new QLabel(view);
-            blankBackground->setAutoFillBackground(true);
-            auto palette = blankBackground->palette();
-        }
+        syncVisiableRect();
+        newIndexRectMap = calcIndexRects(currentVisiableRect);
 
-        auto contentWidget = view->contentWidget();
-        blankBackground->resize(contentWidget->size());
-        blankBackground->move(contentWidget->rect().topLeft());
-        blankBackground->show();
-
-        createItemLabels();
+        paintPixmaps(newIndexRectMap);
     }
 
     int elapse = ++animFrame * kViewAnimationFrameDuration;
-    if (elapse > kViewAnimationDuration) {
-        currentIndexRectMap = newIndexRectMap;
+    if (elapse > kViewAnimationDuration)
         animationTimer->stop();
-        blankBackground->hide();
-        clearLabels();
-        view->viewport()->update();
-        return;
-    }
 
-    QPoint itemBirthPos(blankBackground->width() / 2, blankBackground->height());
-    auto itemIterator = indexLabels.begin();
-    while (itemIterator != indexLabels.end()) {
-        auto index = itemIterator.key();
+    view->viewport()->update();
+}
 
-        QPoint targetPos = newIndexRectMap[index].topLeft();
-        QPoint oldPos;
-        if (!oldIndexRectMap.contains(index)) {
-            oldPos = itemBirthPos;
-        } else {
-            oldPos = oldIndexRectMap[index].topLeft();
+QMap<QModelIndex, QRect> ViewAnimationHelper::calcIndexRects(const QRect &rect) const
+{
+    auto visibleIndexes = view->visibleIndexes(rect);
+
+    QMap<QModelIndex, QRect> map {};
+    for (auto rangeList : visibleIndexes) {
+        for (int i = rangeList.first; i <= rangeList.second; ++i) {
+            auto index = view->model()->index(i, 0, view->model()->rootIndex());
+            auto itemRect = view->calcVisualRect(rect.width(), i);
+            map[index] = itemRect;
         }
-
-        qreal proccess = static_cast<qreal>(elapse) / static_cast<qreal>(kViewAnimationDuration);
-        int deltaX = (targetPos.x() - oldPos.x()) * easeOutExpo(proccess);
-        int deltaY = (targetPos.y() - oldPos.y()) * easeOutExpo(proccess);
-
-        QPoint newPos(oldPos.x() + deltaX, oldPos.y() + deltaY);
-
-        QLabel *item = itemIterator.value();
-        item->move(newPos);
-
-        itemIterator++;
     }
+
+    return map;
 }
 
-void ViewAnimationHelper::stopAnimation()
-{
-    if (animationTimer)
-        animationTimer->stop();
-
-    if (blankBackground)
-        blankBackground->hide();
-
-    clearLabels();
-    clearData();
-}
-
-void ViewAnimationHelper::clearData()
-{
-    indexLabels.clear();
-    newIndexRectMap.clear();
-    indexPixmaps.clear();
-
-    proposeToPlay = true;
-}
-
-void ViewAnimationHelper::clearLabels()
-{
-    for (auto labelPtr : indexLabels.values()) {
-        delete labelPtr;
-    }
-    indexLabels.clear();
-}
-
-void ViewAnimationHelper::paintPixmaps()
+void ViewAnimationHelper::paintPixmaps(const QMap<QModelIndex, QRect> &indexRects)
 {
     auto selectIndexes = view->selectedIndexes();
-    for (auto index : newIndexRectMap.keys()) {
-        if (!index.isValid())
+    for (auto index : indexRects.keys()) {
+        if (!index.isValid() || indexPixmaps.contains(index))
             continue;
 
         const qreal scale = view->devicePixelRatioF();
@@ -201,7 +226,7 @@ void ViewAnimationHelper::paintPixmaps()
         // refer code in iconitemdelegate.cpp function paintItemFileName().
         option.state |= QStyle::State_AutoRaise;
 
-        QRect rect = newIndexRectMap[index];
+        QRect rect = indexRects[index];
         rect.moveTopLeft(QPoint(0, 0));
         option.rect = rect;
 
@@ -216,29 +241,13 @@ void ViewAnimationHelper::paintPixmaps()
     }
 }
 
-void ViewAnimationHelper::createItemLabels()
+void ViewAnimationHelper::createPixmapsForVisiableRect()
 {
-    paintPixmaps();
+    QRect validRect = currentVisiableRect;
+    validRect.setWidth(oldVisiableRect.width());
 
-    auto pixmapIterator = indexPixmaps.begin();
-    while (pixmapIterator != indexPixmaps.end()) {
-        auto index = pixmapIterator.key();
-
-        QLabel *item = new QLabel(blankBackground);
-        item->setPixmap(pixmapIterator.value());
-        item->resize(pixmapIterator.value().size());
-        if (!oldIndexRectMap.contains(index)) {
-            item->move(blankBackground->width() / 2, blankBackground->height());
-        } else {
-            item->move(oldIndexRectMap[index].topLeft());
-        }
-
-        item->show();
-
-        indexLabels[index] = item;
-
-        pixmapIterator++;
-    }
+    auto visiableIndexRects = calcIndexRects(validRect);
+    paintPixmaps(visiableIndexRects);
 }
 
 qreal ViewAnimationHelper::easeOutExpo(qreal value) const
