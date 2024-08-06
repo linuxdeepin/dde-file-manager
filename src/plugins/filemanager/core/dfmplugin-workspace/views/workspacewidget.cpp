@@ -103,6 +103,9 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 
     QString scheme { url.scheme() };
 
+    // do not paly appear animation when create first view.
+    canPlayAppearAnimation = !views.isEmpty();
+
     if (!views.contains(scheme)) {
         QString error;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
@@ -253,6 +256,9 @@ void WorkspaceWidget::onRefreshCurrentView()
 
 void WorkspaceWidget::handleViewStateChanged()
 {
+    if (!canPlayAppearAnimation)
+        return;
+
     if (!appearAnimDelayTimer) {
         appearAnimDelayTimer = new QTimer(this);
         appearAnimDelayTimer->setInterval(100);
@@ -260,6 +266,18 @@ void WorkspaceWidget::handleViewStateChanged()
         connect(appearAnimDelayTimer, &QTimer::timeout, this, &WorkspaceWidget::onAnimDelayTimeout);
     }
 
+    if (!appearAnim)
+        return;
+
+    auto view = views[workspaceUrl.scheme()];
+    if (!view)
+        return;
+
+    auto contentWidget = view->contentWidget();
+    if (!contentWidget)
+        return;
+
+    appearAnim->resetWidgetSize(contentWidget->rect());
     appearAnimDelayTimer->start();
 }
 
@@ -545,13 +563,15 @@ void WorkspaceWidget::setCurrentView(const QUrl &url)
 
     viewStackLayout->setCurrentWidget(view->widget());
 
-    if (disappearAnim) {
-        disappearAnim->raise();
-        appearAnim->stackUnder(disappearAnim);
-    } else {
-        appearAnim->raise();
+    if (canPlayAppearAnimation) {
+        if (disappearAnim) {
+            disappearAnim->raise();
+            appearAnim->stackUnder(disappearAnim);
+        } else {
+            appearAnim->raise();
+        }
+        appearAnim->show();
     }
-    appearAnim->show();
 
     tabBar->setCurrentUrl(url);
     initCustomTopWidgets(url);

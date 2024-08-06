@@ -24,6 +24,7 @@ public:
     void setScaleAnimParam(const QRect &start, const QRect &end);
     void setTrasparentAnimParam(qreal start, qreal end);
     void setBlankBackgroundVisiable(bool visible = false);
+    void resetWidgetSize(const QRect &rect);
 
     void play();
     void playAppear();

@@ -114,6 +114,8 @@ public:
     QList<QUrl> selectedTreeViewUrlList() const;
     void selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const;
 
+    QRect calcVisualRect(int widgetWidth, int index) const;
+
     using DListView::edit;
     using DListView::updateGeometries;
     using DListView::viewportMargins;
@@ -210,7 +212,9 @@ private:
 
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
 
-    RandeIndexList visibleIndexes(QRect rect) const;
+    RandeIndexList visibleIndexes(const QRect &rect) const;
+    RandeIndexList rectContainsIndexes(const QRect &rect) const;
+    RandeIndexList calcRectContiansIndexes(int columnCount, const QRect &rect) const;
 
     QSize itemSizeHint() const;
 

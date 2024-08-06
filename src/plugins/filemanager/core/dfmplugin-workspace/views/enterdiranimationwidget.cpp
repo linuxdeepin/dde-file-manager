@@ -54,6 +54,16 @@ void EnterDirAnimationWidget::setBlankBackgroundVisiable(bool visible)
     blankBackground->setVisible(visible);
 }
 
+void EnterDirAnimationWidget::resetWidgetSize(const QRect &rect)
+{
+    resize(rect.size());
+
+    if (!blankBackground)
+        return;
+
+    blankBackground->resize(rect.size());
+}
+
 void EnterDirAnimationWidget::play()
 {
     if (!scaleAnim || !transparentAnim)
@@ -70,6 +80,10 @@ void EnterDirAnimationWidget::playAppear()
 {
     if (!scaleAnim || !transparentAnim)
         return;
+
+    scaleAnim->stop();
+    transparentAnim->stop();
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto pix = freezePixmapContainer->pixmap();
 #else
@@ -99,6 +113,10 @@ void EnterDirAnimationWidget::playDisappear()
 {
     if (!scaleAnim || !transparentAnim)
         return;
+
+    scaleAnim->stop();
+    transparentAnim->stop();
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto pix = freezePixmapContainer->pixmap();
 #else

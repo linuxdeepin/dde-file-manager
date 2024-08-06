@@ -84,7 +84,6 @@ FileView::FileView(const QUrl &url, QWidget *parent)
 #endif
     setVerticalScrollMode(ScrollPerPixel);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    setAutoFillBackground(true);
 
     initializeModel();
     initializeDelegate();
@@ -563,12 +562,11 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
     saveViewModeState();
 }
 
-FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
+FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
 {
     RandeIndexList list;
 
     QSize itemSize = itemSizeHint();
-    QSize aIconSize = iconSize();
 
     int count = this->count();
     int spacing = this->spacing();
@@ -584,54 +582,98 @@ FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
 
         list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
     } else if (isIconViewMode()) {
-        rect -= QMargins(spacing, spacing, spacing, spacing);
+        QRect validRect = rect.marginsRemoved(QMargins(spacing, spacing, spacing, spacing));
+        int columnCount = d->calcColumnCount(validRect.width(), itemWidth);
 
+        list << calcRectContiansIndexes(columnCount, rect);
+    }
+
+    return list;
+}
+
+FileView::RandeIndexList FileView::rectContainsIndexes(const QRect &rect) const
+{
+    RandeIndexList list;
+
+    QSize itemSize = itemSizeHint();
+
+    int count = this->count();
+    int spacing = this->spacing();
+    int itemWidth = itemSize.width() + spacing * 2;
+    int itemHeight = itemSize.height() + spacing * 2;
+
+    if (isListViewMode() || isTreeViewMode()) {
+        int firstIndex = (rect.top() + spacing) / itemHeight;
+        int lastIndex = (rect.bottom() - spacing) / itemHeight;
+
+        if (firstIndex >= count)
+            return list;
+
+        list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+    } else if (isIconViewMode()) {
         int columnCount = d->iconModeColumnCount(itemWidth);
+        list << calcRectContiansIndexes(columnCount, rect);
+    }
 
-        if (columnCount <= 0)
-            return list;
+    return list;
+}
 
-        int beginRowIndex = rect.top() / itemHeight;
-        int endRowIndex = rect.bottom() / itemHeight;
-        int beginColumnIndex = rect.left() / itemWidth;
-        int endColumnIndex = rect.right() / itemWidth;
+FileView::RandeIndexList FileView::calcRectContiansIndexes(int columnCount, const QRect &rect) const
+{
+    RandeIndexList list {};
 
-        if (rect.top() % itemHeight > aIconSize.height())
-            ++beginRowIndex;
+    QSize itemSize = itemSizeHint();
+    QSize aIconSize = iconSize();
 
-        int iconMargin = (itemWidth - aIconSize.width()) / 2;
+    int count = this->count();
+    int spacing = this->spacing();
+    int itemWidth = itemSize.width() + spacing * 2;
+    int itemHeight = itemSize.height() + spacing * 2;
+    QRect validRect = rect.marginsRemoved(QMargins(spacing, spacing, spacing, spacing));
 
-        if (rect.left() % itemWidth > itemWidth - iconMargin)
-            ++beginColumnIndex;
+    if (columnCount <= 0)
+        return list;
 
-        if (rect.right() % itemWidth < iconMargin)
-            --endColumnIndex;
+    int beginRowIndex = validRect.top() / itemHeight;
+    int endRowIndex = validRect.bottom() / itemHeight;
+    int beginColumnIndex = validRect.left() / itemWidth;
+    int endColumnIndex = validRect.right() / itemWidth;
 
-        beginRowIndex = qMax(beginRowIndex, 0);
-        beginColumnIndex = qMax(beginColumnIndex, 0);
-        endRowIndex = qMin(endRowIndex, count / columnCount);
-        endColumnIndex = qMin(endColumnIndex, columnCount - 1);
+    if (validRect.top() % itemHeight > aIconSize.height())
+        ++beginRowIndex;
 
-        if (beginRowIndex > endRowIndex || beginColumnIndex > endColumnIndex)
-            return list;
+    int iconMargin = (itemWidth - aIconSize.width()) / 2;
 
-        int beginIndex = beginRowIndex * columnCount;
+    if (validRect.left() % itemWidth > itemWidth - iconMargin)
+        ++beginColumnIndex;
 
-        if (endColumnIndex - beginColumnIndex + 1 == columnCount) {
-            list << RandeIndex(qMax(beginIndex, 0), qMin((endRowIndex + 1) * columnCount - 1, count - 1));
+    if (validRect.right() % itemWidth < iconMargin)
+        --endColumnIndex;
 
-            return list;
-        }
+    beginRowIndex = qMax(beginRowIndex, 0);
+    beginColumnIndex = qMax(beginColumnIndex, 0);
+    endRowIndex = qMin(endRowIndex, count / columnCount);
+    endColumnIndex = qMin(endColumnIndex, columnCount - 1);
 
-        for (int i = beginRowIndex; i <= endRowIndex; ++i) {
-            if (beginIndex + beginColumnIndex >= count)
-                break;
+    if (beginRowIndex > endRowIndex || beginColumnIndex > endColumnIndex)
+        return list;
 
-            list << RandeIndex(qMax(beginIndex + beginColumnIndex, 0),
-                               qMin(beginIndex + endColumnIndex, count - 1));
+    int beginIndex = beginRowIndex * columnCount;
 
-            beginIndex += columnCount;
-        }
+    if (endColumnIndex - beginColumnIndex + 1 == columnCount) {
+        list << RandeIndex(qMax(beginIndex, 0), qMin((endRowIndex + 1) * columnCount - 1, count - 1));
+
+        return list;
+    }
+
+    for (int i = beginRowIndex; i <= endRowIndex; ++i) {
+        if (beginIndex + beginColumnIndex >= count)
+            break;
+
+        list << RandeIndex(qMax(beginIndex + beginColumnIndex, 0),
+                           qMin(beginIndex + endColumnIndex, count - 1));
+
+        beginIndex += columnCount;
     }
 
     return list;
@@ -888,6 +930,38 @@ void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &t
     }
 
     return;
+}
+
+QRect FileView::calcVisualRect(int widgetWidth, int index) const
+{
+    int iconViewSpacing = kIconViewSpacing;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
+#endif
+    QSize itemSize = itemSizeHint();
+    int itemWidth = itemSize.width() + iconViewSpacing * 2;
+
+    int columnCount = d->calcColumnCount(widgetWidth, itemWidth);
+    if (columnCount == 0)
+        return QRect();
+
+    int columnIndex = index % columnCount;
+    int rowIndex = index / columnCount;
+
+    int iconVerticalTopMargin = 0;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+#endif
+    QRect rect;
+    rect.setTop(rowIndex * (itemSize.height() + 2 * iconViewSpacing) + iconVerticalTopMargin + (rowIndex == 0 ? iconViewSpacing : 0));
+    rect.setLeft(columnIndex * itemWidth + (columnIndex == 0 ? iconViewSpacing : 0));
+    rect.setSize(itemSize);
+
+    int customHorizontalOffset = -(widgetWidth - itemWidth * columnCount) / 2;
+    rect.moveLeft(rect.left() - customHorizontalOffset);
+    rect.moveTop(rect.top() - verticalOffset());
+
+    return rect;
 }
 
 void FileView::onHeaderViewMousePressed()
@@ -1231,8 +1305,11 @@ void FileView::resizeEvent(QResizeEvent *event)
     if (itemDelegate() && itemDelegate()->editingIndex().isValid())
         doItemsLayout();
 
-    if (isIconViewMode())
+    if (isIconViewMode()) {
         updateViewportContentsMargins(itemSizeHint());
+        if (model()->currentState() == ModelState::kIdle)
+            d->animationHelper->playViewAnimation();
+    }
 
     verticalScrollBar()->setFixedHeight(rect().height() - d->statusBar->height() - (d->headerView ? d->headerView->height() : 0));
 }
@@ -1427,45 +1504,11 @@ QRect FileView::visualRect(const QModelIndex &index) const
         if (d->allowedAdjustColumnSize && d->headerView) {
             rect.setWidth(d->headerView->length());
         }
+
+        rect.moveLeft(rect.left() - horizontalOffset());
+        rect.moveTop(rect.top() - verticalOffset());
     } else {
-        int iconViewSpacing = kIconViewSpacing;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-        iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
-#endif
-        int itemWidth = itemSize.width() + iconViewSpacing * 2;
-        int columnCount = d->iconModeColumnCount(itemWidth);
-
-        if (columnCount == 0)
-            return rect;
-
-        int columnIndex = index.row() % columnCount;
-        int rowIndex = index.row() / columnCount;
-
-        int iconVerticalTopMargin = 0;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-        iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
-#endif
-        rect.setTop(rowIndex * (itemSize.height() + 2 * iconViewSpacing) + iconVerticalTopMargin + (rowIndex == 0 ? 1 * iconViewSpacing : 0 * iconViewSpacing));
-        rect.setLeft(columnIndex * itemWidth + (columnIndex == 0 ? iconViewSpacing : 0));
-        rect.setSize(itemSize);
-    }
-
-    rect.moveLeft(rect.left() - horizontalOffset());
-    rect.moveTop(rect.top() - verticalOffset());
-
-    if (isIconViewMode()) {
-        if (d->animationHelper->isInAnimationProccess()) {
-            d->animationHelper->setNewItemRect(index, rect);
-            QRect currentRect = d->animationHelper->getCurrentRectByIndex(index);
-            if (currentRect.isValid()) {
-                return currentRect;
-            } else {
-                rect.moveTop(contentWidget()->height());
-                return rect;
-            }
-        } else {
-            d->animationHelper->syncItemRect(index, rect);
-        }
+        rect = calcVisualRect(maximumViewportSize().width(), index.row());
     }
 
     return rect;
@@ -1498,19 +1541,10 @@ void FileView::updateGeometries()
 {
     if (isIconViewMode()) {
         int iconVerticalTopMargin = 0;
-        int iconViewSpacing = kIconViewSpacing;
 #ifdef DTKWIDGET_CLASS_DSizeMode
         iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
-        iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
 #endif
         resizeContents(contentsSize().width(), contentsSize().height() + iconVerticalTopMargin);
-
-        int itemWidth = itemSizeHint().width() + iconViewSpacing * 2;
-        int columnCount = d->iconModeColumnCount(itemWidth);
-
-        if (d->animationHelper->checkColumnChanged(columnCount) && model()->currentState() == ModelState::kIdle) {
-            d->animationHelper->playViewAnimation();
-        }
     }
     if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();
@@ -1846,6 +1880,11 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
 
 void FileView::paintEvent(QPaintEvent *event)
 {
+    if (d->animationHelper->isWaitingToPlaying() || d->animationHelper->isAnimationPlaying()) {
+        d->animationHelper->paintItems();
+        return;
+    }
+
     DListView::paintEvent(event);
 
     if (d->isShowViewSelectBox) {
@@ -2216,6 +2255,12 @@ void FileView::onModelStateChanged()
     updateContentLabel();
     updateLoadingIndicator();
     updateSelectedUrl();
+
+    if (model()->currentState() == ModelState::kBusy) {
+        d->animationHelper->reset();
+    } else {
+        d->animationHelper->initAnimationHelper();
+    }
 
     if (d->headerView)
         d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->currentState() == ModelState::kBusy);

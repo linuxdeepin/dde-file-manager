@@ -7,10 +7,10 @@
 
 #include <QObject>
 #include <QMap>
+#include <QRect>
 
 QT_BEGIN_NAMESPACE
 class QTimer;
-class QLabel;
 QT_END_NAMESPACE
 
 namespace dfmplugin_workspace {
@@ -22,42 +22,45 @@ class ViewAnimationHelper : public QObject
 public:
     explicit ViewAnimationHelper(FileView *parent);
 
+    void initAnimationHelper();
+    void reset();
+    void syncVisiableRect();
+    void aboutToPlay();
+
     QRect getCurrentRectByIndex(const QModelIndex &index) const;
-    void syncItemRect(const QModelIndex &index, const QRect &rect);
-    void setNewItemRect(const QModelIndex &index, const QRect &rect);
-    void isRectChanged(const QModelIndex &index, const QRect &newRect);
-    bool checkColumnChanged(int newCount);
     void playViewAnimation();
-    bool isInAnimationProccess() const;
+    bool isAnimationPlaying() const;
+    bool isWaitingToPlaying() const;
+    bool hasInitialized() const;
+
+    void paintItems() const;
 
 public Q_SLOTS:
-    void onProposeTimerFinish();
+    void onDelayTimerFinish();
     void onAnimationTimerFinish();
 
 private:
-    void stopAnimation();
-    void clearData();
-    void clearLabels();
-    void paintPixmaps();
-    void createItemLabels();
+    QMap<QModelIndex, QRect> calcIndexRects(const QRect &rect) const;
+    void paintPixmaps(const QMap<QModelIndex, QRect> &indexRects);
+    void createPixmapsForVisiableRect();
     qreal easeOutExpo(qreal value) const;
+
+private:
+    bool initialized { false };
+    QRect currentVisiableRect;
+    QRect oldVisiableRect;
 
     QMap<QModelIndex, QRect> currentIndexRectMap {};
     QMap<QModelIndex, QRect> newIndexRectMap {};
     QMap<QModelIndex, QRect> oldIndexRectMap {};
     QMap<QModelIndex, QPixmap> indexPixmaps {};
-    QMap<QModelIndex, QLabel *> indexLabels {};
-
-    int currentColumnCount { -1 };
-    bool proposeToPlay { false };
 
     int animFrame { 0 };
 
-    QTimer *proposeTimer { nullptr };
+    QTimer *delayTimer { nullptr };
     QTimer *animationTimer { nullptr };
 
     FileView *view { nullptr };
-    QLabel *blankBackground { nullptr };
 };
 
 }
