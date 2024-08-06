@@ -25,6 +25,7 @@ Build-Depends:
  libtag1-dev,
  libdmr-dev,
  libicu-dev,
+ libxcb-ewmh-dev,
  libdeepin-pdfium-dev,
  libqt5xdg-dev,
  libgio-qt-dev,
