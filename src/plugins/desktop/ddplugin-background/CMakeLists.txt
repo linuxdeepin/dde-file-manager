@@ -27,10 +27,11 @@ endif()
 
 list(REMOVE_ITEM SRC_FILES ${RM_SRC})
 
-include(ddplugin-background-qt5.cmake)
 
 # Qt6
 if (DFM_BUILD_WITH_QT6)
-include(ddplugin-background-qt6.cmake)
+    include(ddplugin-background-qt6.cmake)
+else()
+    include(ddplugin-background-qt5.cmake)
 endif()
 

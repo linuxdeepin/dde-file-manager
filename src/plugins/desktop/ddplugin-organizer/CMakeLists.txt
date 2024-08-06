@@ -16,10 +16,11 @@ FILE(GLOB_RECURSE CORE_FILES
 
 # Qt6
 if (DFM_BUILD_WITH_QT6)
-include(ddplugin-organizer-qt6.cmake)
+    include(ddplugin-organizer-qt6.cmake)
+else()
+    include(ddplugin-organizer-qt5.cmake)
 endif()
 
-include(ddplugin-organizer-qt5.cmake)
 
 # install dconfig files.
 INSTALL_DCONFIG("org.deepin.dde.file-manager.desktop.organizer.json")
