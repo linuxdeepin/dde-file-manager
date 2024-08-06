@@ -9,7 +9,10 @@ set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_CXX_FLAGS "")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-needed")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-type")
 
 # options
 option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
@@ -18,8 +21,6 @@ option(OPT_ENABLE_BUILD_UT "Buld unit tests" ON)
 option(OPT_ENABLE_QML "Use QML" OFF)
 option(OPT_ENABLE_QT6 "Use Qt6" ON)
 
-# 安全加固
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-type")
 
 # if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
@@ -98,6 +99,7 @@ else()
     execute_process(COMMAND bash "translate_generation.sh"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
 endif()
+message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 # sub directories
 add_subdirectory(src/apps)
