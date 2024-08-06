@@ -5,166 +5,127 @@
 #include "enterdiranimationwidget.h"
 #include "dfmplugin_workspace_global.h"
 
-#include <QLabel>
+#include <QPainter>
 #include <QPropertyAnimation>
-#include <QGraphicsOpacityEffect>
 
 DPWORKSPACE_USE_NAMESPACE
 
 EnterDirAnimationWidget::EnterDirAnimationWidget(QWidget *parent)
     : QWidget(parent)
 {
-    setAutoFillBackground(false);
+    setAutoFillBackground(true);
     init();
 }
 
-void EnterDirAnimationWidget::setPixmap(const QPixmap &pix)
+void EnterDirAnimationWidget::setAppearPixmap(const QPixmap &pm)
 {
-    if (!freezePixmapContainer)
-        return;
-
-    freezePixmapContainer->setPixmap(pix);
-    freezePixmapContainer->resize(pix.width(), pix.height());
-    blankBackground->resize(pix.width(), pix.height());
+    appearPix = pm;
 }
 
-void EnterDirAnimationWidget::setScaleAnimParam(const QRect &start, const QRect &end)
+void EnterDirAnimationWidget::setDisappearPixmap(const QPixmap &pm)
 {
-    if (!scaleAnim)
-        return;
-
-    scaleAnim->setStartValue(start);
-    scaleAnim->setEndValue(end);
+    disappearPix = pm;
 }
 
-void EnterDirAnimationWidget::setTrasparentAnimParam(qreal start, qreal end)
+void EnterDirAnimationWidget::resetWidgetSize(const QSize &size)
 {
-    if (!transparentAnim)
-        return;
-
-    transparentAnim->setStartValue(start);
-    transparentAnim->setEndValue(end);
-}
-
-void EnterDirAnimationWidget::setBlankBackgroundVisiable(bool visible)
-{
-    if (!blankBackground)
-        return;
-
-    blankBackground->setVisible(visible);
-}
-
-void EnterDirAnimationWidget::resetWidgetSize(const QRect &rect)
-{
-    resize(rect.size());
-
-    if (!blankBackground)
-        return;
-
-    blankBackground->resize(rect.size());
-}
-
-void EnterDirAnimationWidget::play()
-{
-    if (!scaleAnim || !transparentAnim)
-        return;
-
-    // if (freezePixmapContainer->pixmap()->isNull())
-    //     return;
-
-    scaleAnim->start();
-    transparentAnim->start();
+    resize(size);
 }
 
 void EnterDirAnimationWidget::playAppear()
 {
-    if (!scaleAnim || !transparentAnim)
-        return;
-
-    scaleAnim->stop();
-    transparentAnim->stop();
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    auto pix = freezePixmapContainer->pixmap();
-#else
-    auto pixObject = freezePixmapContainer->pixmap();
-    auto pix = &pixObject;
-#endif
-    if (pix->isNull())
-        return;
-
-    QRect endRect = freezePixmapContainer->rect();
-    qreal pixWidth = pix->width();
-    qreal pixHeight = pix->height();
-    QRect startRect = endRect.adjusted(pixWidth * 0.11, pixHeight * 0.11, -(pixWidth * 0.11), -(pixHeight * 0.11));
-    startRect.moveCenter(endRect.center());
-    scaleAnim->setStartValue(startRect);
-    scaleAnim->setEndValue(endRect);
-
-    transparentAnim->setStartValue(0.0);
-    transparentAnim->setEndValue(1.0);
-
-    freezePixmapContainer->show();
-    scaleAnim->start();
-    transparentAnim->start();
+    appearAnim->start();
 }
 
 void EnterDirAnimationWidget::playDisappear()
 {
-    if (!scaleAnim || !transparentAnim)
+    appearAnim->stop();
+    disappearAnim->stop();
+
+    disappearAnim->start();
+}
+
+void EnterDirAnimationWidget::stopAndHide()
+{
+    appearAnim->stop();
+    disappearAnim->stop();
+    hide();
+
+    appearPix = QPixmap();
+    disappearPix = QPixmap();
+}
+
+void EnterDirAnimationWidget::setAppearProcess(double value)
+{
+    if (qFuzzyCompare(appearProcess, value))
         return;
 
-    scaleAnim->stop();
-    transparentAnim->stop();
+    appearProcess = value;
+}
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    auto pix = freezePixmapContainer->pixmap();
-#else
-    auto pixObject = freezePixmapContainer->pixmap();
-    auto pix = &pixObject;
-#endif
-    if (pix->isNull())
+void EnterDirAnimationWidget::setDisappearProcess(double value)
+{
+    if (qFuzzyCompare(disappearProcess, value))
         return;
 
-    QRect startRect = freezePixmapContainer->rect();
-    qreal pixWidth = pix->width();
-    qreal pixHeight = pix->height();
-    QRect endRect = startRect.adjusted(pixWidth * 0.11, pixHeight * 0.11, -(pixWidth * 0.11), -(pixHeight * 0.11));
-    endRect.moveCenter(startRect.center());
-    scaleAnim->setStartValue(startRect);
-    scaleAnim->setEndValue(endRect);
+    disappearProcess = value;
+}
 
-    transparentAnim->setStartValue(1.0);
-    transparentAnim->setEndValue(0.0);
+void EnterDirAnimationWidget::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    if (disappearAnim && disappearAnim->state() == QPropertyAnimation::Running) {
+        QPixmap pix = disappearPix.scaled(disappearPix.size() * (0.78 + (0.22 * disappearProcess)));
+        QRect rect(0, 0, pix.width(), pix.height());
+        rect.moveCenter(this->rect().center());
 
-    freezePixmapContainer->show();
-    scaleAnim->start();
-    transparentAnim->start();
+        painter.save();
+        painter.setOpacity(disappearProcess);
+        painter.drawPixmap(rect, pix);
+        painter.restore();
+    }
+
+    if (appearAnim && appearAnim->state() == QPropertyAnimation::Running) {
+        QPixmap pix = appearPix.scaled(appearPix.size() * (0.78 + (0.22 * appearProcess)));
+        QRect rect(0, 0, pix.width(), pix.height());
+        rect.moveCenter(this->rect().center());
+
+        painter.save();
+        painter.setOpacity(appearProcess);
+        painter.drawPixmap(rect, pix);
+        painter.restore();
+    }
+
+    QWidget::paintEvent(event);
+}
+
+void EnterDirAnimationWidget::onProcessChanged()
+{
+    this->update();
 }
 
 void EnterDirAnimationWidget::init()
 {
-    blankBackground = new QLabel(this);
-    blankBackground->setAutoFillBackground(true);
-    blankBackground->setVisible(false);
+    appearAnim = new QPropertyAnimation(this, "appearProcess", this);
+    appearAnim->setDuration(kViewAnimationDuration);
+    appearAnim->setEasingCurve(QEasingCurve::OutExpo);
+    appearAnim->setStartValue(0.0);
+    appearAnim->setEndValue(1.0);
 
-    freezePixmapContainer = new QLabel(this);
-    freezePixmapContainer->setScaledContents(true);
+    disappearAnim = new QPropertyAnimation(this, "disappearProcess", this);
+    disappearAnim->setDuration(kViewAnimationDuration);
+    disappearAnim->setEasingCurve(QEasingCurve::OutExpo);
+    disappearAnim->setStartValue(1.0);
+    disappearAnim->setEndValue(0.0);
 
-    scaleAnim = new QPropertyAnimation(freezePixmapContainer, "geometry", this);
-    scaleAnim->setDuration(kViewAnimationDuration);
-    scaleAnim->setEasingCurve(QEasingCurve::OutExpo);
+    connect(appearAnim, &QPropertyAnimation::valueChanged,
+            this, &EnterDirAnimationWidget::onProcessChanged);
+    connect(disappearAnim, &QPropertyAnimation::valueChanged,
+            this, &EnterDirAnimationWidget::onProcessChanged);
 
-    QGraphicsOpacityEffect *opaEffect = new QGraphicsOpacityEffect(freezePixmapContainer);
-    opaEffect->setOpacity(1);
-    freezePixmapContainer->setGraphicsEffect(opaEffect);
-
-    transparentAnim = new QPropertyAnimation(opaEffect, "opacity", this);
-    transparentAnim->setDuration(kViewAnimationDuration);
-    transparentAnim->setEasingCurve(QEasingCurve::OutExpo);
-
-    connect(transparentAnim, &QPropertyAnimation::finished, this, [=] {
-        freezePixmapContainer->hide();
+    connect(appearAnim, &QPropertyAnimation::finished, this, [=] {
         this->hide();
+        appearPix = QPixmap();
+        disappearPix = QPixmap();
     });
 }

@@ -73,20 +73,20 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 
         auto contentWidget = curView->contentWidget();
         if (contentWidget) {
-            if (!disappearAnim)
-                disappearAnim = new EnterDirAnimationWidget(this);
+            if (!enterAnim)
+                enterAnim = new EnterDirAnimationWidget(this);
 
             auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
             auto localPos = mapFromGlobal(globalPos);
-            disappearAnim->move(localPos);
-            disappearAnim->resize(contentWidget->size());
+            enterAnim->move(localPos);
+            enterAnim->resetWidgetSize(contentWidget->size());
 
             QPixmap preDirPix = contentWidget->grab();
-            disappearAnim->setPixmap(preDirPix);
+            enterAnim->setDisappearPixmap(preDirPix);
+            enterAnim->show();
+            enterAnim->raise();
 
-            disappearAnim->raise();
-            disappearAnim->show();
-            disappearAnim->playDisappear();
+            enterAnim->playDisappear();
         }
 
         FileView *view = qobject_cast<FileView *>(curView->widget());
@@ -259,15 +259,15 @@ void WorkspaceWidget::handleViewStateChanged()
     if (!canPlayAppearAnimation)
         return;
 
+    if (!enterAnim)
+        return;
+
     if (!appearAnimDelayTimer) {
         appearAnimDelayTimer = new QTimer(this);
         appearAnimDelayTimer->setInterval(100);
         appearAnimDelayTimer->setSingleShot(true);
         connect(appearAnimDelayTimer, &QTimer::timeout, this, &WorkspaceWidget::onAnimDelayTimeout);
     }
-
-    if (!appearAnim)
-        return;
 
     auto view = views[workspaceUrl.scheme()];
     if (!view)
@@ -277,7 +277,11 @@ void WorkspaceWidget::handleViewStateChanged()
     if (!contentWidget)
         return;
 
-    appearAnim->resetWidgetSize(contentWidget->rect());
+    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+    auto localPos = mapFromGlobal(globalPos);
+    enterAnim->move(localPos);
+    enterAnim->resetWidgetSize(contentWidget->size());
+
     appearAnimDelayTimer->start();
 }
 
@@ -453,35 +457,34 @@ void WorkspaceWidget::initUiForSizeMode()
 void WorkspaceWidget::onAnimDelayTimeout()
 {
     auto view = views[workspaceUrl.scheme()];
-    if (!appearAnim)
+    if (!enterAnim)
         return;
 
     if (!view || view->viewState() != AbstractBaseView::ViewState::kViewIdle) {
-        appearAnim->hide();
+        appearAnimDelayTimer->start();
         return;
     }
 
     auto contentWidget = view->contentWidget();
     if (!contentWidget) {
-        appearAnim->hide();
+        enterAnim->stopAndHide();
         return;
     }
 
     QPixmap curDirPix = contentWidget->grab();
-
     if (curDirPix.isNull()) {
-        appearAnim->hide();
+        enterAnim->stopAndHide();
         return;
     }
 
     auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
     auto localPos = mapFromGlobal(globalPos);
 
-    appearAnim->resize(contentWidget->size());
-    appearAnim->move(localPos);
+    enterAnim->resize(contentWidget->size());
+    enterAnim->move(localPos);
 
-    appearAnim->setPixmap(curDirPix);
-    appearAnim->playAppear();
+    enterAnim->setAppearPixmap(curDirPix);
+    enterAnim->playAppear();
 }
 
 void WorkspaceWidget::initViewLayout()
@@ -554,24 +557,10 @@ void WorkspaceWidget::setCurrentView(const QUrl &url)
     if (!view)
         return;
 
-    if (!appearAnim) {
-        appearAnim = new EnterDirAnimationWidget(this);
-        appearAnim->setBlankBackgroundVisiable(true);
-    }
-
-    appearAnim->resize(width(), height());
-
     viewStackLayout->setCurrentWidget(view->widget());
 
-    if (canPlayAppearAnimation) {
-        if (disappearAnim) {
-            disappearAnim->raise();
-            appearAnim->stackUnder(disappearAnim);
-        } else {
-            appearAnim->raise();
-        }
-        appearAnim->show();
-    }
+    if (canPlayAppearAnimation && enterAnim)
+        enterAnim->raise();
 
     tabBar->setCurrentUrl(url);
     initCustomTopWidgets(url);
