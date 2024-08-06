@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_AUTOMOC OFF)
-set(CMAKE_AUTORCC OFF)
-set(CMAKE_AUTOUIC OFF)
-
 project(dfm-compat)
 
 set (VERSION "1.0.0" CACHE STRING "define project version")
