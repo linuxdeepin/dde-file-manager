@@ -23,7 +23,6 @@ usr/share/deepin-manual/manual-assets/application
 usr/share/polkit-1/actions/*.policy
 usr/share/deepin-log-viewer/deepin-log.conf.d/*.json
 usr/share/deepin-debug-config/deepin-debug-config.d/*.json
-usr/share/qt5/doc
 usr/lib/systemd/system/ lib/systemd/
 usr/lib/systemd/user/
 etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf

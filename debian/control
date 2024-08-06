@@ -93,7 +93,6 @@ Depends:
  dde-file-manager-common-plugins, 
  dde-file-manager-preview-plugins,
  libblockdev-crypto2 | libblockdev-crypto3,
- # qml required
  qml6-module-qtqml,
  qml6-module-qtquick,
  qml6-module-qtquick-controls,
