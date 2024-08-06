@@ -110,6 +110,7 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
  cryptsetup,
+ libdfm-extension( =${binary:Version})
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
@@ -157,6 +158,19 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: plugin of dde-dock
  Disk mount plugin of dde-dock which is created by dde-file-manager
+
+Package: libdfm-extension
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: extension library of dde-file-manager
+ Extension library of dde-file-manager which is provided for third parties
+
+Package: libdfm-extension-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension( =${binary:Version})
+Description: Development package for libdfm-extension
+ This package contains the header files and pkgconfig
+ of libdfm-extension
 
 Package: dde-file-manager-dev
 Architecture: any
