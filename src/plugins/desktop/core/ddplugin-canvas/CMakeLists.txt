@@ -14,11 +14,12 @@ FILE(GLOB_RECURSE CANVAS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-include(ddplugin-canvas-qt5.cmake)
 
 # Qt6
 if (DFM_BUILD_WITH_QT6)
-include(ddplugin-canvas-qt6.cmake)
+    include(ddplugin-canvas-qt6.cmake)
+else()
+    include(ddplugin-canvas-qt5.cmake)
 endif()
 
 # install dconfig files.

@@ -50,11 +50,12 @@ else()
         images.qrc
     )
 
-    include(ddplugin-wallpapersetting-qt5.cmake)
 
     # Qt6
     if (DFM_BUILD_WITH_QT6)
-    include(ddplugin-wallpapersetting-qt6.cmake)
+        include(ddplugin-wallpapersetting-qt6.cmake)
+    else()
+        include(ddplugin-wallpapersetting-qt5.cmake)
     endif()
 
 endif()

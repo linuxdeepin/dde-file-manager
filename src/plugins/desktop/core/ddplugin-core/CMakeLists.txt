@@ -48,11 +48,12 @@ set(CORE_FILES
     core.json
     )
 
-include(ddplugin-core-qt5.cmake)
 
 # Qt6
 if (DFM_BUILD_WITH_QT6)
-include(ddplugin-core-qt6.cmake)
+    include(ddplugin-core-qt6.cmake)
+else()
+    include(ddplugin-core-qt5.cmake)
 endif()
 
 INSTALL_DCONFIG("org.deepin.dde.file-manager.desktop.json")

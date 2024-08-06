@@ -1,5 +1,5 @@
 find_package(PkgConfig REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Gui)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Gui Svg)
 
 add_library(${BIN_NAME}
     SHARED
@@ -16,6 +16,7 @@ target_link_libraries(${BIN_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Svg
 )
 if(DFM_BUILD_WITH_QT6)
     target_include_directories(${BIN_NAME} PUBLIC
