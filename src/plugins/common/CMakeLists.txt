@@ -11,5 +11,5 @@ add_subdirectory(dfmplugin-preview)
 add_subdirectory(dfmplugin-emblem)
 add_subdirectory(dfmplugin-dirshare)
 add_subdirectory(dfmplugin-tag)
-add_subdirectory(dfmplugin-utils)
+#add_subdirectory(dfmplugin-utils)
 
