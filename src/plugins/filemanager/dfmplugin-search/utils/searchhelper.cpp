@@ -314,6 +314,13 @@ bool SearchHelper::isHiddenFile(const QString &fileName, QHash<QString, QSet<QSt
             : isHiddenFile(fileParentPath, filters, searchPath);
 }
 
+bool SearchHelper::allowRepeatUrl(const QUrl &cur, const QUrl &pre)
+{
+    if (cur.scheme() == scheme() && pre.scheme() == scheme())
+        return true;
+    return false;
+}
+
 QDBusInterface &SearchHelper::anythingInterface()
 {
     static QDBusInterface interface("com.deepin.anything",

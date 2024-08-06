@@ -68,7 +68,9 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     auto curView = currentViewPtr();
     if (curView) {
         if (UniversalUtils::urlEquals(url, curView->rootUrl()) &&
-                UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()))
+                UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()) &&
+                !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url",
+                                      url, tabBar->currentTab()->getCurrentUrl()))
             return;
 
         FileView *view = qobject_cast<FileView *>(curView->widget());
