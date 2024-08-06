@@ -42,7 +42,6 @@ if(OPT_ENABLE_QT6 OR OPT_ENABLE_QML)
     find_package(Qt6 QUIET)
     if (Qt6_FOUND)
         message(STATUS "Found Qt6: ${Qt6_VERSION}")
-        find_package(Dtk6CMake REQUIRED)
         set(DFM_BUILD_WITH_QT6 TRUE)
         set(COMPLIE_ON_V23 TRUE)
         add_definitions(-DCOMPILE_ON_V23)    # TODO: remove it
