@@ -17,26 +17,42 @@ namespace dfmplugin_workspace {
 class EnterDirAnimationWidget : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(double appearProcess READ getAppearProcess WRITE setAppearProcess)
+    Q_PROPERTY(double disappearProcess READ getDisappearProcess WRITE setDisappearProcess)
 public:
     explicit EnterDirAnimationWidget(QWidget *parent = nullptr);
 
-    void setPixmap(const QPixmap &pix);
-    void setScaleAnimParam(const QRect &start, const QRect &end);
-    void setTrasparentAnimParam(qreal start, qreal end);
-    void setBlankBackgroundVisiable(bool visible = false);
-    void resetWidgetSize(const QRect &rect);
+    void setAppearPixmap(const QPixmap &pm);
+    void setDisappearPixmap(const QPixmap &pm);
+    void resetWidgetSize(const QSize &size);
 
-    void play();
     void playAppear();
     void playDisappear();
+    void stopAndHide();
+
+    void setAppearProcess(double value);
+    inline double getAppearProcess() const { return appearProcess; };
+
+    void setDisappearProcess(double value);
+    inline double getDisappearProcess() const { return disappearProcess; };
+
+protected:
+    void paintEvent(QPaintEvent *event);
+
+private slots:
+    void onProcessChanged();
 
 private:
     void init();
 
-    QLabel *blankBackground { nullptr };
-    QLabel *freezePixmapContainer { nullptr };
-    QPropertyAnimation *scaleAnim { nullptr };
-    QPropertyAnimation *transparentAnim { nullptr };
+    QPixmap appearPix;
+    QPixmap disappearPix;
+
+    QPropertyAnimation *appearAnim { nullptr };
+    QPropertyAnimation *disappearAnim { nullptr };
+
+    double appearProcess { 0.0 };
+    double disappearProcess { 0.0 };
 };
 
 }   // namespace dfmplugin_workspace

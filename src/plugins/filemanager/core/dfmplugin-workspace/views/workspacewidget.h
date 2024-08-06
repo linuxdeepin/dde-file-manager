@@ -98,12 +98,10 @@ private:
     QUrl workspaceUrl;
     QHBoxLayout *tabBarLayout { nullptr };
     QVBoxLayout *widgetLayout { nullptr };
-    // QWidget *centralContainer { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QMap<QString, ViewPtr> views;
     QMap<QString, TopWidgetPtr> topWidgets;
-    EnterDirAnimationWidget *appearAnim { nullptr };
-    EnterDirAnimationWidget *disappearAnim { nullptr };
+    EnterDirAnimationWidget *enterAnim { nullptr };
     QTimer *appearAnimDelayTimer { nullptr };
 
     TabBar *tabBar { nullptr };
