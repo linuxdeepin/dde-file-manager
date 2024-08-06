@@ -102,7 +102,7 @@ endif()
 # sub directories
 add_subdirectory(src/apps)
 add_subdirectory(src/dfm-base)
-add_subdirectory(src/dfm-extension)
+#add_subdirectory(src/dfm-extension)
 add_subdirectory(src/dfm-framework)
 add_subdirectory(src/plugins)
 add_subdirectory(src/external)
