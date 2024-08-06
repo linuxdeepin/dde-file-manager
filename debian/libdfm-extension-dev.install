@@ -1,0 +1,3 @@
+usr/include/dfm-extension/*
+usr/lib/*/pkgconfig/dfm-extension.pc
+usr/lib/*/cmake/dfm-extension/*.cmake
