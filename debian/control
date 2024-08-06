@@ -47,6 +47,7 @@ Build-Depends:
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
  qt6-base-dev | hello,
  qt6-base-private-dev | hello,
+ qt6-svg-dev | hello,
  qt6-multimedia-dev | hello,
  qt6-tools-dev | hello,
  qt6-tools-dev-tools | hello,
