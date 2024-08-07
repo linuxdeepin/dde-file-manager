@@ -7,6 +7,7 @@
 #include "utils/searchhelper.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <algorithm>
 
@@ -53,10 +54,7 @@ void SearchFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool en
 {
     // When 'subfileUrl' is a directory, unable to receive it rename event,
     // so monitor it's parent
-    QUrl tmpUrl = subfileUrl;
-    auto fileInfo = InfoFactory::create<FileInfo>(tmpUrl);
-    if (fileInfo && fileInfo->fileType() == FileInfo::FileType::kDirectory)
-        tmpUrl = fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl);
+    QUrl tmpUrl = UrlRoute::urlParent(subfileUrl);
 
     if (enabled) {
         addWatcher(tmpUrl);
@@ -78,6 +76,7 @@ void SearchFileWatcher::addWatcher(const QUrl &url)
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &SearchFileWatcher::onFileAttributeChanged);
     connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &SearchFileWatcher::onFileDeleted);
     connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &SearchFileWatcher::onFileRenamed);
+    connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &SearchFileWatcher::onFileCreate);
 
     dptr->urlToWatcherHash[url] = watcher;
     if (dptr->started)
@@ -86,7 +85,8 @@ void SearchFileWatcher::addWatcher(const QUrl &url)
 
 void SearchFileWatcher::removeWatcher(const QUrl &url)
 {
-    dptr->urlToWatcherHash.remove(url);
+    auto watcher = dptr->urlToWatcherHash.take(url);
+    watcher->disconnect(this);
 }
 
 void SearchFileWatcher::onFileDeleted(const QUrl &url)
@@ -105,7 +105,8 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
     bool isMatched = false;
     auto targetUrl = SearchHelper::searchTargetUrl(url());
     if (toUrl.path().startsWith(targetUrl.path())) {
-        const auto &keyword = SearchHelper::instance()->checkWildcardAndToRegularExpression((SearchHelper::searchKeyword(url())));
+        const auto &keyword = SearchHelper::instance()->
+                checkWildcardAndToRegularExpression((SearchHelper::searchKeyword(url())));
         QRegularExpression regexp(keyword, QRegularExpression::CaseInsensitiveOption);
         const auto &info = InfoFactory::create<FileInfo>(toUrl);
         auto match = regexp.match(info->displayOf(DisPlayInfoType::kFileDisplayName));
@@ -117,6 +118,25 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
     }
 
     emit fileRename(fromUrl, isMatched ? toUrl : QUrl());
+}
+
+void SearchFileWatcher::onFileCreate(const QUrl &url)
+{
+    bool isMatched = false;
+    auto targetUrl = SearchHelper::searchTargetUrl(this->url());
+    if (url.path().startsWith(targetUrl.path())) {
+        const auto &keyword = SearchHelper::instance()->
+                checkWildcardAndToRegularExpression((SearchHelper::searchKeyword(this->url())));
+        QRegularExpression regexp(keyword, QRegularExpression::CaseInsensitiveOption);
+        const auto &info = InfoFactory::create<FileInfo>(url);
+        auto match = regexp.match(info->displayOf(DisPlayInfoType::kFileDisplayName));
+
+        if (match.hasMatch()) {
+            isMatched = true;
+            emit subfileCreated(url);
+            addWatcher(url);
+        }
+    }
 }
 
 }
