@@ -28,6 +28,7 @@ private:
     void onFileDeleted(const QUrl &url);
     void onFileAttributeChanged(const QUrl &url);
     void onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl);
+    void onFileCreate(const QUrl &url);
 
     SearchFileWatcherPrivate *dptr;
 };
