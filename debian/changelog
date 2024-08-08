@@ -1,3 +1,10 @@
+dde-file-manager (6.0.55) unstable; urgency=medium
+
+  * some bug fix.
+  * 
+
+ -- XuShitong <xushitong@uniontech.com>  Thu, 08 Aug 2024 13:30:59 +0800
+
 dde-file-manager (6.0.54) unstable; urgency=medium
 
   * 6.0.54,to strengthen DBUS security
