@@ -1,5 +1,13 @@
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
+if(${QT_VERSION_MAJOR} EQUAL "6")
+    find_package(Qt6 COMPONENTS SvgWidgets REQUIRED)
+   set(SVGLIB Qt6::SvgWidgets)
+else()
+    find_package(Qt5 COMPONENTS Svg REQUIRED)
+    set(SVGLIB Qt5::Svg)
+endif()
+
 add_library(${BIN_NAME}
     SHARED
     ${UTILS_FILES}
@@ -14,6 +22,7 @@ target_link_libraries(${BIN_NAME}
     DFM${DTK_VERSION_MAJOR}::base
     DFM${DTK_VERSION_MAJOR}::framework
     DFM::extension
+    ${SVGLIB}
 )
 
 #install library file

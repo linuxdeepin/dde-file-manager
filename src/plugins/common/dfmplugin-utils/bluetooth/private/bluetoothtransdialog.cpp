@@ -31,9 +31,9 @@
 #include <QDateTime>
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#    include <QtSvg/QSvgWidget>
+#    include <QSvgWidget>
 #else
-#    include <QtSvgWidgets/QSvgWidget>
+#    include <QSvgWidget>
 #endif
 
 #define TITLE_BT_TRANS_FILE dfmplugin_utils::BluetoothTransDialog::tr("Bluetooth File Transfer")
