@@ -43,6 +43,7 @@ class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
+    ~WorkspaceWidget() override;
 
     ViewPtr currentViewPtr() const;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode() const;
