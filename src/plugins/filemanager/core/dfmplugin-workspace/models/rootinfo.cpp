@@ -34,6 +34,15 @@ RootInfo::~RootInfo()
     disconnect();
     if (watcher)
         watcher->stopWatcher();
+    QList<QUrl> cleanUrls;
+    {
+        QReadLocker lk(&childrenLock);
+        cleanUrls = childrenUrlList;
+    }
+    for (const auto &childUrl : cleanUrls) {
+        if (watcher)
+            watcher->setEnabledSubfileWatcher(childUrl, false);
+    }
     cancelWatcherEvent = true;
     for (auto &future : watcherEventFutures) {
         future.waitForFinished();
@@ -112,10 +121,16 @@ void RootInfo::startWork(const QString &key, const bool getCache)
         return handleGetSourceData(key);
 
     traversaling = true;
+    QList<QUrl> cleanUrls;
     {
         QWriteLocker lk(&childrenLock);
+        cleanUrls = childrenUrlList;
         childrenUrlList.clear();
         sourceDataList.clear();
+    }
+    for (const auto &childUrl : cleanUrls) {
+        if (watcher)
+            watcher->setEnabledSubfileWatcher(childUrl, false);
     }
     traversalThreads.value(key)->traversalThread->start();
 }
@@ -173,10 +188,16 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
 
 void RootInfo::reset()
 {
+    QList<QUrl> cleanUrls;
     {
         QWriteLocker lk(&childrenLock);
+        cleanUrls = childrenUrlList;
         childrenUrlList.clear();
         sourceDataList.clear();
+    }
+    for (const auto &childUrl : cleanUrls) {
+        if (watcher)
+            watcher->setEnabledSubfileWatcher(childUrl, false);
     }
 
     traversaling = false;
@@ -231,7 +252,7 @@ void RootInfo::doWatcherEvent()
             if (!adds.isEmpty())
                 addChildren(adds);
             if (!updates.isEmpty())
-                updateChildren(updates); 
+                updateChildren(updates);
             if (!removes.isEmpty())
                 removeChildren(removes);
 
@@ -275,9 +296,17 @@ void RootInfo::doWatcherEvent()
                 WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
                 emit requestCloseTab(fileUrl);
                 emit requestClearRoot(fileUrl);
-                QWriteLocker lk(&childrenLock);
-                childrenUrlList.clear();
-                sourceDataList.clear();
+                QList<QUrl> cleanUrls;
+                {
+                    QWriteLocker lk(&childrenLock);
+                    cleanUrls = childrenUrlList;
+                    childrenUrlList.clear();
+                    sourceDataList.clear();
+                }
+                for (const auto &childUrl : cleanUrls) {
+                    if (watcher)
+                        watcher->setEnabledSubfileWatcher(childUrl, false);
+                }
                 break;
             }
         }
@@ -376,6 +405,15 @@ void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
 
 void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
+    QList<QUrl> cleanUrls;
+    {
+        QReadLocker lk(&childrenLock);
+        cleanUrls = childrenUrlList;
+    }
+    for (const auto &childUrl : cleanUrls) {
+        if (watcher)
+            watcher->setEnabledSubfileWatcher(childUrl, true);
+    }
     traversaling = false;
     emit traversalFinished(travseToken);
     traversalFinish = true;
