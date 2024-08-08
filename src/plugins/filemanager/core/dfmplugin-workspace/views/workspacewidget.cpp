@@ -53,7 +53,7 @@ Global::ViewMode WorkspaceWidget::currentViewMode() const
     if (!view)
         return Global::ViewMode::kNoneMode;
 
-    auto fileView = dynamic_cast<FileView *>(view.data());
+    auto fileView = dynamic_cast<FileView *>(view);
     if (fileView)
         return fileView->currentViewMode();
 
@@ -114,7 +114,7 @@ QUrl WorkspaceWidget::currentUrl() const
 AbstractBaseView *WorkspaceWidget::currentView()
 {
     auto scheme = currentUrl().scheme();
-    return views.value(scheme).data();
+    return views.value(scheme);
 }
 
 void WorkspaceWidget::openNewTab(const QUrl &url)

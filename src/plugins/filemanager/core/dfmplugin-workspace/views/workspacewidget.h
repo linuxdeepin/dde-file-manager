@@ -38,7 +38,7 @@ class FileView;
 class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
-    using ViewPtr = QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView>;
+    using ViewPtr = DFMBASE_NAMESPACE::AbstractBaseView *;
     using TopWidgetPtr = QSharedPointer<QWidget>;
 
 public:
