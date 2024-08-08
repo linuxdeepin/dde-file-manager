@@ -16,6 +16,7 @@ if (COMPLIE_ON_V23)
     find_package(PkgConfig REQUIRED)
 endif()
 
+find_package(Qt5 COMPONENTS Core)
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME}
