@@ -46,7 +46,8 @@ RootInfo::~RootInfo()
     for (const auto &thread : discardedThread) {
         thread->disconnect();
         thread->stop();
-        thread->exit();
+        thread->quit();
+        thread->wait();
     }
 }
 
