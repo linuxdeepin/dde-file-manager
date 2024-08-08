@@ -957,7 +957,10 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
     rect.setLeft(columnIndex * itemWidth + (columnIndex == 0 ? iconViewSpacing : 0));
     rect.setSize(itemSize);
 
-    int customHorizontalOffset = -(widgetWidth - itemWidth * columnCount) / 2;
+    int customHorizontalOffset = -kIconHorizontalMargin;
+    if (columnCount < model()->rowCount())
+        customHorizontalOffset = -(widgetWidth - itemWidth * columnCount) / 2;
+
     rect.moveLeft(rect.left() - customHorizontalOffset);
     rect.moveTop(rect.top() - verticalOffset());
 
@@ -1057,7 +1060,12 @@ void FileView::updateHorizontalOffset()
         int itemWidth = itemSizeHint().width() + spacing() * 2;
         int itemColumn = d->iconModeColumnCount(itemWidth);
 
-        d->horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
+        if (itemColumn >= model()->rowCount()) {
+            d->horizontalOffset = -kIconHorizontalMargin;
+        } else {
+            d->horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
+        }
+
     } else {
         d->horizontalOffset = 0;
     }
@@ -1882,6 +1890,7 @@ void FileView::paintEvent(QPaintEvent *event)
 {
     if (d->animationHelper->isWaitingToPlaying() || d->animationHelper->isAnimationPlaying()) {
         d->animationHelper->paintItems();
+        itemDelegate()->hideAllIIndexWidget();
         return;
     }
 

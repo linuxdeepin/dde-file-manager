@@ -434,7 +434,8 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     Q_UNUSED(backgroundMargin);
     painter->save();
 
-    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
+    bool isPaintForAnim = option.state & QStyle::State_AutoRaise;
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device()) && !isPaintForAnim;
     bool isSelected = !isDragMode && (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
@@ -538,12 +539,13 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     Q_UNUSED(backgroundMargin);
     Q_D(const IconItemDelegate);
 
-    if (index == d->editingIndex)
+    bool isPaintForAnim = opt.state & QStyle::State_AutoRaise;
+    if (index == d->editingIndex && !isPaintForAnim)
         return;
 
-    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device()) && !(opt.state & QStyle::State_AutoRaise);
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device()) && !isPaintForAnim;
 
-    if (index == d->expandedIndex && !isDragMode) {
+    if (index == d->expandedIndex && !isDragMode && !isPaintForAnim) {
         if (d->expandedItem && d->expandedItem->getIndex() == index
             && d->expandedItem->getOption().rect == opt.rect) {
             d->expandedItem->setOption(opt);
@@ -571,7 +573,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     if (!singleSelected)
         d->expandedItem->setDifferenceOfLastRow(0);
 
-    if (isSelected && singleSelected) {
+    if (isSelected && singleSelected && !isPaintForAnim) {
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
         /// init file name text
         d->expandedIndex = index;
