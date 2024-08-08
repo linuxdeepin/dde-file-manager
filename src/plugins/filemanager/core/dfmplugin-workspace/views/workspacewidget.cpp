@@ -68,7 +68,10 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 
     auto curView = currentViewPtr();
     if (curView) {
-        if (UniversalUtils::urlEquals(url, curView->rootUrl()) && UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()))
+        if (UniversalUtils::urlEquals(url, curView->rootUrl()) &&
+                UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()) &&
+                !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url",
+                                      url, tabBar->currentTab()->getCurrentUrl()))
             return;
 
         auto contentWidget = curView->contentWidget();
