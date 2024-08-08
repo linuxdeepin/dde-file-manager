@@ -2,6 +2,7 @@
     "Plugin": {
         "Version": "1.0",
         "Id": "org.deepin.ds.desktop",
-        "ContainmentType": "Panel"
+        "ContainmentType": "Panel",
+        "Category": "DDE"
     }
 }
