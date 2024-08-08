@@ -15,10 +15,12 @@ FILE(GLOB_RECURSE UTILS_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-include(dfmplugin-utils-qt5.cmake)
-
+# NOTE: maybe a Qt bug, qt6 before qt5 if use QtSvg
 # Qt6
 if (DFM_BUILD_WITH_QT6)
 include(dfmplugin-utils-qt6.cmake)
 endif()
+
+include(dfmplugin-utils-qt5.cmake)
+
 
