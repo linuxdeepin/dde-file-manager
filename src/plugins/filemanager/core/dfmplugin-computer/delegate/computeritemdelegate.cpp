@@ -19,6 +19,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsBlurEffect>
+#include <QDBusInterface>
+#include <QDBusConnection>
 
 namespace dfmplugin_computer {
 
@@ -57,10 +59,15 @@ static int editorMarginTop(const QString &family)
 
 DWIDGET_USE_NAMESPACE
 
+static constexpr char kAppearanceService[] = "com.deepin.daemon.Appearance";
+static constexpr char kAppearancePath[] = "/com/deepin/daemon/Appearance";
+static constexpr char kAppearanceInterface[] = "com.deepin.daemon.Appearance";
+
 ComputerItemDelegate::ComputerItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {
     view = qobject_cast<ComputerView *>(parent);
+    watchWindowRadius();
 }
 
 ComputerItemDelegate::~ComputerItemDelegate()
@@ -201,6 +208,16 @@ void ComputerItemDelegate::closeEditor(ComputerView *view)
                               Qt::DirectConnection, Q_ARG(QWidget *, editor));
 }
 
+void ComputerItemDelegate::onAppearancePropertiesChanged(const QString &addr, const QVariantMap &properties, const QStringList &)
+{
+    if (addr == kAppearanceService) {
+        if (properties.contains("WindowRadius")) {
+            windowRadius = properties.value("WindowRadius").toInt();
+            view->update();
+        }
+    }
+}
+
 void ComputerItemDelegate::paintSplitter(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QFont fnt(view->font());
@@ -223,7 +240,7 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
     prepareColor(painter, option, index);
 
     // draw round rect
-    painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), 18, 18);
+    painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), windowRadius, windowRadius);
 
     const int IconSize = view->iconSize().width();
     const int TopMargin = 16;
@@ -258,7 +275,7 @@ void ComputerItemDelegate::paintLargeItem(QPainter *painter, const QStyleOptionV
     prepareColor(painter, option, index);
 
     // draw round rect
-    painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), 18, 18);
+    painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), windowRadius, windowRadius);
 
     drawDeviceIcon(painter, option, index);
     drawDeviceLabelAndFs(painter, option, index);
@@ -512,4 +529,16 @@ QPixmap ComputerItemDelegate::renderBlurShadow(const QPixmap &pm, int blurRadius
     return ret;
 }
 
+void ComputerItemDelegate::watchWindowRadius()
+{
+    QDBusInterface iface(kAppearanceService, kAppearancePath, kAppearanceInterface);
+    if (iface.isValid())
+        windowRadius = iface.property("WindowRadius").toInt();
+    QDBusConnection::sessionBus().connect(kAppearanceService,
+                                          kAppearancePath,
+                                          "org.freedesktop.DBus.Properties",
+                                          "PropertiesChanged",
+                                          this,
+                                          SLOT(onAppearancePropertiesChanged(const QString &, const QVariantMap &, const QStringList &)));
+}
 }
