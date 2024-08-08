@@ -12,6 +12,7 @@ set(SRCS
     main.cpp
 )
 
+find_package(Qt5 COMPONENTS Core)
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_link_libraries(

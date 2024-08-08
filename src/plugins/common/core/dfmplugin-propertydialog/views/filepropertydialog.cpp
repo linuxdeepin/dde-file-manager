@@ -120,10 +120,9 @@ void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url)
     permissionManagerWidget = new PermissionManagerWidget(this);
     permissionManagerWidget->selectFileUrl(url);
 
-    insertExtendedControl(INT_MAX, permissionManagerWidget);
-
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     if (vlayout) {
+        insertExtendedControl(vlayout->count(), permissionManagerWidget);
         vlayout->addStretch();
     }
 }
@@ -250,6 +249,7 @@ void FilePropertyDialog::processHeight(int height)
 void FilePropertyDialog::insertExtendedControl(int index, QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
+    vlayout->count();
     vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
     widget->setFixedWidth(kExtendedWidgetWidth);
     extendedControl.append(widget);

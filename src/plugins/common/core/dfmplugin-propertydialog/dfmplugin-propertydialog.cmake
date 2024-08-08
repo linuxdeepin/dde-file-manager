@@ -1,13 +1,12 @@
 set(QRC_FILES
     qrc/images.qrc
     )
-
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 if(${QT_VERSION_MAJOR} EQUAL "6")
     qt_add_resources(QRC_RESOURCES ${QRC_FILES})
 else()
     qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
 endif()
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_library(${BIN_NAME}
     SHARED
