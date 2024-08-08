@@ -40,13 +40,6 @@ WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     initConnect();
 }
 
-WorkspaceWidget::~WorkspaceWidget()
-{
-    while(viewStackLayout->currentWidget()) {
-        viewStackLayout->currentWidget()->setParent(nullptr);
-    }
-}
-
 WorkspaceWidget::ViewPtr WorkspaceWidget::currentViewPtr() const
 {
     auto scheme = currentUrl().scheme();
