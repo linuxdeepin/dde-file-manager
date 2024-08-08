@@ -60,6 +60,7 @@ public:
                 + QLatin1String(")\\z");
     }
     bool isHiddenFile(const QString &fileName, QHash<QString, QSet<QString>> &filters, const QString &searchPath);
+    bool allowRepeatUrl(const QUrl &cur, const QUrl &pre);
 
     static QDBusInterface &anythingInterface();
 private:
