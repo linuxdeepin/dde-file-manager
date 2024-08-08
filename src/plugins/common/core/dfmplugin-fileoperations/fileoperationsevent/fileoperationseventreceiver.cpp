@@ -277,76 +277,118 @@ bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap
     return true;
 }
 
-bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QList<QUrl> &urls, const QPair<QString, QString> &pair,
-                                                const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> &pair2,
-                                                const RenameTypes type, QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
-                                                const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
+bool FileOperationsEventReceiver::doRenameFiles(QFutureWatcher<bool> *watcher,
+                                                const QList<QUrl> &urls,
+                                                const QPair<QString, QString> &pair,
+                                                const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair2,
+                                                const FileOperationsEventReceiver::RenameTypes type,
+                                                QMap<QUrl, QUrl> &successUrls, QString &errorMsg)
 {
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    bool ok = false, renameDesktop = true;
+    bool result = false, renameDesktop = true;
+    QMap<QUrl, QUrl> needDealUrls;
     switch (type) {
     case RenameTypes::kBatchRepalce: {
         auto tmpurls = urls;
-        QMap<QUrl, QUrl> needDealUrls;
         renameDesktop = doRenameDesktopFiles(tmpurls, pair, needDealUrls, successUrls);
         QMap<QUrl, QUrl> needDealUrls1 = FileUtils::fileBatchReplaceText(tmpurls, pair);
         for (auto it = needDealUrls1.begin(); it != needDealUrls1.end(); ++it) {
             needDealUrls.insert(it.key(), it.value());
         }
-        if (callback) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callback(args);
+        if (needDealUrls1.isEmpty() || !renameDesktop) {
+            result = renameDesktop;
+            break;
         }
-
-        if (needDealUrls1.isEmpty() || !renameDesktop)
-            return false;
-        ok = fileHandler.renameFilesBatch(needDealUrls1, successUrls);
+        result = fileHandler.renameFilesBatch(needDealUrls1, successUrls);
         break;
     }
     case RenameTypes::kBatchCustom: {
-        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
-        if (callback) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callback(args);
-        }
-        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
+        needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
+        result = fileHandler.renameFilesBatch(needDealUrls, successUrls);
         break;
     }
     case RenameTypes::kBatchAppend: {
-        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair2);
-        if (callback) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callback(args);
-        }
-        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
+        needDealUrls = FileUtils::fileBatchAddText(urls, pair2);
+        result = fileHandler.renameFilesBatch(needDealUrls, successUrls);
         break;
     }
     }
-    if (!ok) {
+    watcher->setProperty("needDealUrls", QVariant::fromValue(needDealUrls));
+    if (!result && renameDesktop) {
         errorMsg = fileHandler.errorString();
-        DialogManagerInstance->showErrorDialog(tr("Rename file error"), errorMsg);
+        watcher->setProperty("error", fileHandler.errorString());
     }
 
     for (const auto &scUrl : successUrls.keys()) {
         ClipBoard::instance()->replaceClipboardUrl(scUrl, successUrls.value(scUrl));
     }
 
-    return ok;
+    return result;
 }
 
-bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const dfmbase::AbstractJobHandler::JobFlags flags)
+void FileOperationsEventReceiver::doRenameFilesByThread(const quint64 windowId, const QList<QUrl> urls,
+                                                        const QPair<QString, QString> replacePair,
+                                                        const QPair<QString, AbstractJobHandler::FileNameAddFlag> AddPair,
+                                                        const RenameTypes type, const QVariant custom,
+                                                        AbstractJobHandler::OperatorCallback callback)
+{
+    if (callback) {
+        if (type == RenameTypes::kBatchAppend &&
+                dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText",
+                                     windowId, urls, AddPair, custom, callback))
+            return;
+        if (type != RenameTypes::kBatchAppend && dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles",
+                                                                      windowId, urls, replacePair, type == RenameTypes::kBatchRepalce,
+                                                                      custom, callback))
+            return;
+    } else {
+        if (type == RenameTypes::kBatchAppend &&
+                dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", windowId, urls, AddPair))
+            return;
+        if (type != RenameTypes::kBatchAppend && dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles",
+                                                                      windowId, urls, replacePair, type == RenameTypes::kBatchRepalce))
+            return;
+    }
+
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, urls,custom, callback]() {
+        auto futureResult = watcher->result();
+        QString error = watcher->property("error").toString();
+        QMap<QUrl, QUrl> successUrls = watcher->property("successUrls").value<QMap<QUrl, QUrl>>();
+        QMap<QUrl, QUrl> needDealUrls = watcher->property("needDealUrls").value<QMap<QUrl, QUrl>>();
+        if (!futureResult) {
+            DialogManagerInstance->showErrorDialog(tr("Rename file error"), error);
+        }
+        if (callback) {
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
+            callback(args);
+        }
+        // publish result
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                     windowId, successUrls, futureResult, error);
+        if (!successUrls.isEmpty())
+            saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
+                              successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
+        watcher->deleteLater();
+    });
+
+    watcher->setFuture(QtConcurrent::run([this, watcher, urls, replacePair, AddPair, type](){
+        bool result = false;
+        QMap<QUrl, QUrl> successUrls;
+        QString error;
+        result = doRenameFiles(watcher, urls, replacePair, AddPair, type, successUrls, error);
+        watcher->setProperty("successUrls", QVariant::fromValue(successUrls));
+        return result;
+    }));
+
+    return;
+}
+
+bool FileOperationsEventReceiver::doRenameDesktopFile(QFutureWatcher<bool> *watcher, const QUrl oldUrl, const QUrl newUrl, const AbstractJobHandler::JobFlags flags)
 {
     const QString &desktopPath = oldUrl.toLocalFile();
     Properties desktop(desktopPath, "Desktop Entry");
@@ -377,21 +419,14 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
 
     desktop.set(key, newFileInfo->displayOf(DisPlayInfoType::kFileDisplayName));
     desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
-    if (desktop.save(desktopPath, "Desktop Entry")) {
-        QMap<QUrl, QUrl> renamed { { oldUrl, newUrl } };
-        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                     windowId, renamed, true, "");
+    if (!desktop.save(desktopPath, "Desktop Entry"))
+        return false;
 
-        if (!flags.testFlag(AbstractJobHandler::JobFlag::kRedo)) {
-            const QString path = QFileInfo(desktopPath).absoluteDir().absoluteFilePath(oldName);
-            saveFileOperation({ oldUrl }, { QUrl::fromLocalFile(path) }, GlobalEventType::kRenameFile,
-                              { QUrl::fromLocalFile(path) }, { oldUrl },
-                              GlobalEventType::kRenameFile, flags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
-        }
-        return true;
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRedo)) {
+        const QString path = QFileInfo(desktopPath).absoluteDir().absoluteFilePath(oldName);
+        watcher->setProperty("targetUrl", QUrl::fromLocalFile(path));
     }
-
-    return false;
+    return true;
 }
 
 bool FileOperationsEventReceiver::doRenameDesktopFiles(QList<QUrl> &urls, const QPair<QString, QString> pair, QMap<QUrl, QUrl> &needDealUrls, QMap<QUrl, QUrl> &successUrls)
@@ -590,7 +625,7 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
         if (info) {
             count = info->countChildFile();
         }
-        if (DialogManagerInstance->showClearTrashDialog(count) != QDialog::Accepted) return nullptr;
+        if (DialogManagerInstance->showClearTrashDialog(static_cast<quint64>(count)) != QDialog::Accepted) return nullptr;
     }
 
     QList<QUrl> urls = std::move(sources);
@@ -607,118 +642,126 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl &ur
                                           const QVariant &custom,
                                           AbstractJobHandler::OperatorCallback callback, const bool useUrlPath)
 {
-    QString newPath = useUrlPath ? url.path() : newDocmentName(url, QString(), CreateFileType::kCreateFileTypeFolder);
-    if (newPath.isEmpty())
-        return false;
-
-    QUrl targetUrl;
-    targetUrl.setScheme(url.scheme());
-    targetUrl.setPath(newPath);
-
-    bool ok = false;
     QString error;
-    if (!dfmbase::FileUtils::isLocalFile(url)) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MakeDir", windowId, url, targetUrl, custom, callback)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                         windowId, QList<QUrl>() << url, true, error);
-            return true;
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MakeDir", windowId, url, custom, callback)) {
+        return true;
+    }
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url, custom, callback]() {
+        auto result = watcher->result();
+        QUrl targetUrl = watcher->property("targetUrl").toUrl();
+        QString error = watcher->property("error").toString();
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+                                     windowId, QList<QUrl>() << url, result, error);
+        if (result)
+            saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles, { targetUrl }, {}, GlobalEventType::kMkdir);
+
+        if (callback) {
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+            args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(result));
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
+            callback(args);
         }
-    }
+        watcher->deleteLater();
+    });
+    watcher->setFuture(QtConcurrent::run([this, url, custom, callback, watcher, useUrlPath]() {
+        QString newPath = useUrlPath ? url.path() : newDocmentName(url, QString(), CreateFileType::kCreateFileTypeFolder);
+        if (newPath.isEmpty()) {
+            watcher->setProperty("error", "make dir the new path is empty!");
+            return false;
+        }
 
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.mkdir(targetUrl);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog(tr("Failed to create the directory"), error);
-    }
-
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                 windowId, QList<QUrl>() << url, ok, error);
-    saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles, { targetUrl }, {}, GlobalEventType::kMkdir);
-
-    if (callback) {
-        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
-        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-        callback(args);
-    }
-
-    return ok;
+        QUrl targetUrl;
+        targetUrl.setScheme(url.scheme());
+        targetUrl.setPath(newPath);
+        watcher->setProperty("targetUrl", targetUrl);
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        auto result = fileHandler.mkdir(targetUrl);
+        if (!result)
+            watcher->setProperty("error", fileHandler.errorString());
+        return result;
+    }));
+    return true;
 }
 
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl &url, const CreateFileType fileType, const QString &suffix,
-                                                          const QVariant &custom, AbstractJobHandler::OperatorCallback callbackImmediately)
+                                                          const QVariant &custom, AbstractJobHandler::OperatorCallback callbackImmediately, const QUrl &tempUrl)
 {
-    const QString newPath = newDocmentName(url, suffix, fileType);
-    if (newPath.isEmpty())
-        return newPath;
+    QString errorStr;
+    if (tempUrl.isValid()) {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", windowId, url, tempUrl, suffix, true, custom, callbackImmediately, &errorStr)) {
+            return url.path();
+        }
+    } else {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchFile", windowId, url, fileType, suffix, custom, callbackImmediately, &errorStr)) {
+            return url.path();
+        }
+    }
 
-    QUrl urlNew;
-    urlNew.setScheme(url.scheme());
-    urlNew.setPath(newPath);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url,
+                     suffix, custom, callbackImmediately, tempUrl]() {
+        auto result = watcher->result();
+        QString error = watcher->property("error").toString();
+        QUrl templateUrl = watcher->property("templateUrl").toUrl();
+        QUrl targetUrl = watcher->property("targetUrl").toUrl();
+        if (!result) {
+            dialogManager->showErrorDialog(tr("Failed to create the file"), error);
+        }
 
-    if (dfmbase::FileUtils::isLocalFile(url)) {
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                                     windowId, QList<QUrl>() << url, result, error);
+        if (result)
+            saveFileOperation({ url }, {}, GlobalEventType::kDeleteFiles, { url }, {},
+                              GlobalEventType::kTouchFile, false, templateUrl);
+
         if (callbackImmediately) {
             AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
             args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
             args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+            args->insert(AbstractJobHandler::CallbackKey::kTargets,
+                         QVariant::fromValue(QList<QUrl>() << targetUrl));
             args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
             callbackImmediately(args);
         }
-
-        return doTouchFilePractically(windowId, urlNew) ? newPath : QString();
-    } else {
-        QString error;
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchFile", windowId, url, urlNew, fileType, suffix, custom, callbackImmediately, &error)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                         windowId, QList<QUrl>() << url, true, error);
-            return url.path();
+        watcher->deleteLater();
+    });
+    watcher->setFuture(QtConcurrent::run([this, url, fileType, suffix, custom, callbackImmediately, watcher, tempUrl]() {
+        QString newPath;
+        if (tempUrl.isValid()) {
+            auto fileInfo = InfoFactory::create<FileInfo>(tempUrl);
+            if (!fileInfo) {
+                watcher->setProperty("error", QString("get empty target file name!"));
+                return false;
+            }
+            newPath = newDocmentName(url, fileInfo->nameOf(FileInfo::FileNameInfoType::kCompleteBaseName),
+                                                   suffix.isEmpty() ? fileInfo->nameOf(FileInfo::FileNameInfoType::kSuffix) : suffix);
+        } else {
+            newPath = newDocmentName(url, suffix, fileType);
         }
-
-        return doTouchFilePractically(windowId, url) ? url.path() : QString();
-    }
-}
-
-QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl &url, const QUrl &tempUrl, const QString &suffix, const QVariant &custom, AbstractJobHandler::OperatorCallback callbackImmediately)
-{
-    auto fileInfo = InfoFactory::create<FileInfo>(tempUrl);
-    if (!fileInfo)
-        return QString();
-
-    const QString &newPath = newDocmentName(url, fileInfo->nameOf(FileInfo::FileNameInfoType::kCompleteBaseName),
-                                            suffix.isEmpty() ? fileInfo->nameOf(FileInfo::FileNameInfoType::kSuffix) : suffix);
-    if (newPath.isEmpty())
-        return QString();
-
-    QUrl urlNew;
-    urlNew.setScheme(url.scheme());
-    urlNew.setPath(newPath);
-
-    if (dfmbase::FileUtils::isLocalFile(url)) {
-        if (callbackImmediately) {
-            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
-            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-            args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
-            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
-            callbackImmediately(args);
+        if (newPath.isEmpty()) {
+            watcher->setProperty("error", QString("get empty target file name!"));
+            return false;
         }
+        QUrl urlNew;
+        urlNew.setScheme(url.scheme());
+        urlNew.setPath(newPath);
+        watcher->setProperty("targetUrl", urlNew);
 
-        return doTouchFilePractically(windowId, urlNew, tempUrl) ? newPath : QString();
-    } else {
-        QString error;
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", windowId, url, urlNew, tempUrl, suffix, custom, callbackImmediately, &error)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                         windowId, QList<QUrl>() << url, true, error);
-            return url.path();
-        }
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        QUrl templateUrl = fileHandler.touchFile(urlNew, tempUrl);
 
-        return doTouchFilePractically(windowId, url, tempUrl) ? url.path() : QString();
-    }
+        if (!templateUrl.isValid())
+            watcher->setProperty("error", fileHandler.errorString());
+
+        watcher->setProperty("templateUrl", templateUrl);
+        return templateUrl.isValid();
+
+    }));
+    return "";
 }
 
 void FileOperationsEventReceiver::saveFileOperation(const QList<QUrl> &sourcesUrls,
@@ -979,44 +1022,67 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
                                                             const AbstractJobHandler::JobFlag flags)
 {
     Q_UNUSED(windowId);
-    bool ok = false;
-    QString error;
 
-    bool isSymLink { DFMIO::DFileInfo(oldUrl).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool() };
-    if (FileUtils::isDesktopFile(oldUrl) && !isSymLink)
-        return doRenameDesktopFile(windowId, oldUrl, newUrl, flags);
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags))
+        return true;
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, oldUrl, newUrl, flags]() {
+        auto futureResult = watcher->result();
+        QString renameError = watcher->property("renameError").toString();
+        QString sameNameRrror = watcher->property("sameNameRrror").toString();
+        if (!futureResult) {
+            if (sameNameRrror.isEmpty()) {
+                dialogManager->showRenameBusyErrDialog();
+            } else {
+                dialogManager->showRenameNameSameErrorDialog(sameNameRrror);
+            }
+        } else {
+            ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
+            AbstractJobHandler::JobFlags tmFlags = flags;
+            QUrl targetUrl = watcher->property("targetUrl").toUrl();
+            if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo)) {
+                if (!targetUrl.isValid()) {
+                    saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile,
+                                      { oldUrl }, { newUrl }, GlobalEventType::kRenameFile,
+                                      tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
+                } else {
+                    saveFileOperation({ oldUrl }, { targetUrl }, GlobalEventType::kRenameFile,
+                                      { targetUrl }, { oldUrl },
+                                      GlobalEventType::kRenameFile, tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
+                }
+            }
+        }
+        // TODO:: file renameFile finished need to send file renameFile finished event
+        QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                     windowId, renamedFiles, futureResult, renameError);
+        watcher->deleteLater();
+    });
 
-    if (!dfmbase::FileUtils::isLocalFile(oldUrl)) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags))
-            return true;
-    }
+    watcher->setFuture(QtConcurrent::run([this, watcher, oldUrl, newUrl, flags](){
+        bool result = false;
+        QString error;
+        bool isSymLink { DFMIO::DFileInfo(oldUrl).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool() };
+        if (FileUtils::isDesktopFile(oldUrl) && !isSymLink)
+            return doRenameDesktopFile(watcher, oldUrl, newUrl, flags);
 
-    // async fileinfo need wait file quer over todo:: liyigang
-    FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (toFileInfo && toFileInfo->exists()) {
-        dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameOf(NameInfoType::kFileName));
-        return false;
-    }
+        // async fileinfo need wait file quer over todo:: liyigang
+        FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+        if (toFileInfo && toFileInfo->exists()) {
+            watcher->setProperty("sameNameRrror", toFileInfo->nameOf(NameInfoType::kFileName));
+            return false;
+        }
 
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.renameFile(oldUrl, newUrl);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showRenameBusyErrDialog();
-    }
-    // TODO:: file renameFile finished need to send file renameFile finished event
-    QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, renamedFiles, ok, error);
-    if (ok)
-        ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        result = fileHandler.renameFile(oldUrl, newUrl);
+        if (!result) {
+            error = fileHandler.errorString();
+            watcher->setProperty("renameError", fileHandler.errorString());
+        }
+        return result;
+    }));
 
-    AbstractJobHandler::JobFlags tmFlags = flags;
-    if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo))
-        saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile,
-                          { oldUrl }, { newUrl }, GlobalEventType::kRenameFile,
-                          tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));
-    return ok;
+    return true;
 }
 
 void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
@@ -1038,88 +1104,42 @@ void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
 }
 
-bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace)
+bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, QString> pair,
+                                                             const bool replace)
 {
-    QMap<QUrl, QUrl> successUrls;
-    bool ok = false;
-    QString error;
-    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles", windowId, urls, pair, replace))
-            return true;
-    }
-
-    RenameTypes type = RenameTypes::kBatchRepalce;
-    if (!replace)
-        type = RenameTypes::kBatchCustom;
-    ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error);
-
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
-
-    return ok;
+    doRenameFilesByThread(windowId, urls, pair, {}, replace ? RenameTypes::kBatchRepalce : RenameTypes::kBatchCustom);
+    return true;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, AbstractJobHandler::OperatorCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, QString> pair,
+                                                             const bool replace, const QVariant custom,
+                                                             AbstractJobHandler::OperatorCallback callback)
 {
-    QMap<QUrl, QUrl> successUrls;
-    QString error;
-    RenameTypes type = RenameTypes::kBatchRepalce;
-    if (!replace)
-        type = RenameTypes::kBatchCustom;
-    bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error, custom, callback);
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
+    doRenameFilesByThread(windowId, urls, pair, {},
+                          replace ? RenameTypes::kBatchRepalce : RenameTypes::kBatchCustom,
+                          custom, callback);
 }
 
-bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
+bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
-    QMap<QUrl, QUrl> successUrls;
-    bool ok = false;
-    QString error;
-    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", windowId, urls, pair)) {
-
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                         windowId, successUrls, true, error);
-            if (!successUrls.isEmpty())
-                saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                                  successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
-
-            return true;
-        }
-    }
-
-    ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
-
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
-
-    return ok;
+    doRenameFilesByThread(windowId, urls, {}, pair, RenameTypes::kBatchAppend);
+    return true;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, AbstractJobHandler::OperatorCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId,
+                                                             const QList<QUrl> urls,
+                                                             const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair,
+                                                             const QVariant custom,
+                                                             AbstractJobHandler::OperatorCallback callback)
 {
-    QMap<QUrl, QUrl> successUrls;
-    QString error;
-    bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error, custom, callback);
-    // publish result
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, successUrls, ok, error);
-    if (!successUrls.isEmpty())
-        saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles,
-                          successUrls.keys(), successUrls.values(), GlobalEventType::kRenameFiles);
+    doRenameFilesByThread(windowId, urls, {}, pair, RenameTypes::kBatchAppend,
+                          custom, callback);
 }
 
 bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, const QUrl url)
@@ -1135,22 +1155,32 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
     doMkdir(windowId, url, custom, callback);
 }
 
-bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId, const QUrl &url, const QUrl &tempUrl /*= QUrl()*/)
+void FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId, const QUrl &url, const QUrl &tempUrl /*= QUrl()*/)
 {
     QString error;
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url, tempUrl]() {
+        auto futureResult = watcher->result();
+        QUrl templateUrl = watcher->property("templateUrl").toUrl();
+        QString error = watcher->property("error").toString();
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                                     windowId, QList<QUrl>() << url, futureResult, error);
+        if (futureResult) {
+            saveFileOperation({ url }, {}, GlobalEventType::kDeleteFiles, { url }, {},
+                              GlobalEventType::kTouchFile, false, templateUrl);
+        } else {
+            dialogManager->showErrorDialog(tr("Failed to create the file"), error);
+        }
+        watcher->deleteLater();
+    });
+    watcher->setFuture(QtConcurrent::run([url, watcher, tempUrl]() {
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        auto templateUrl = fileHandler.touchFile(url, tempUrl);
+        if (!templateUrl.isValid())
+            watcher->setProperty("error", fileHandler.errorString());
 
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    auto templateUrl = fileHandler.touchFile(url, tempUrl);
-    if (!templateUrl.isValid()) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog(tr("Failed to create the file"), error);
-    }
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                 windowId, QList<QUrl>() << url, templateUrl.isValid(), error);
-    if (templateUrl.isValid())
-        saveFileOperation({ url }, {}, GlobalEventType::kDeleteFiles, { url }, {}, GlobalEventType::kTouchFile, false, templateUrl);
-
-    return templateUrl.isValid();
+        return templateUrl.isValid();
+    }));
 }
 
 QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
@@ -1164,9 +1194,11 @@ QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 wind
 QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                               const QUrl url,
                                                               const QUrl tempUrl,
-                                                              const QString suffix)
+                                                              const QString suffix, const bool isLoadTmp)
 {
-    return doTouchFilePremature(windowId, url, tempUrl, suffix, QVariant(), nullptr);
+    Q_UNUSED(isLoadTmp);
+    return doTouchFilePremature(windowId, url, Global::CreateFileType::kCreateFileTypeUnknow,
+                                suffix, QVariant(), nullptr, tempUrl);
 }
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
@@ -1182,11 +1214,13 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                            const QUrl url,
                                                            const QUrl tempUrl,
-                                                           const QString suffix,
+                                                           const QString suffix, const bool isLoadTmp,
                                                            const QVariant custom,
                                                            AbstractJobHandler::OperatorCallback callbackImmediately)
 {
-    doTouchFilePremature(windowId, url, tempUrl, suffix, custom, callbackImmediately);
+    Q_UNUSED(isLoadTmp);
+    doTouchFilePremature(windowId, url, Global::CreateFileType::kCreateFileTypeUnknow,
+                         suffix, custom, callbackImmediately, tempUrl);
 }
 
 bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
@@ -1195,37 +1229,48 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
                                                           const bool force,
                                                           const bool silence)
 {
-    bool ok = false;
     QString error;
-    if (!dfmbase::FileUtils::isLocalFile(url)) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_LinkFile", windowId, url, link, force, silence)) {
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                         windowId, QList<QUrl>() << url << link, true, error);
-            return true;
-        }
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_LinkFile", windowId, url, link, force, silence)) {
+        return true;
     }
 
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    // check link
-    if (force) {
-        FileInfoPointer toInfo = InfoFactory::create<FileInfo>(link);
-        if (toInfo && toInfo->exists()) {
-            DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
-            fileHandlerDelete.deleteFile(link);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url,
+                     link]() {
+        auto result = watcher->result();
+        QString error = watcher->property("error").toString();
+        QUrl urlValid = watcher->property("urlValid").toUrl();
+
+        if (!result) {
+            dialogManager->showErrorDialog(tr("link file error"), error);
         }
-    }
-    QUrl urlValid = link;
-    if (silence) {
-        urlValid = checkTargetUrl(link);
-    }
-    ok = fileHandler.createSystemLink(url, urlValid);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog(tr("link file error"), error);
-    }
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                 windowId, QList<QUrl>() << url << urlValid, ok, error);
-    return ok;
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
+                                     windowId, QList<QUrl>() << url << urlValid, result, error);
+        watcher->deleteLater();
+    });
+    watcher->setFuture(QtConcurrent::run([this, watcher, url, link, force, silence](){
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        // check link
+        if (force) {
+            FileInfoPointer toInfo = InfoFactory::create<FileInfo>(link);
+            if (toInfo && toInfo->exists()) {
+                DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
+                fileHandlerDelete.deleteFile(link);
+            }
+        }
+        QUrl urlValid = link;
+        if (silence) {
+            urlValid = checkTargetUrl(link);
+        }
+        watcher->setProperty("urlValid", urlValid);
+        auto result = fileHandler.createSystemLink(url, urlValid);
+        if (!result) {
+            watcher->setProperty("error", fileHandler.errorString());
+        }
+        return result;
+    }));
+
+    return true;
 }
 
 void FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
@@ -1253,32 +1298,41 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
                                                                const QUrl url,
                                                                const QFileDevice::Permissions permissions)
 {
+    // hook events
     QString error;
-    bool ok = false;
-    if (!dfmbase::FileUtils::isLocalFile(url)) {
-        // hook events
-        bool hookOk = false;
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &hookOk, &error)) {
-            if (!hookOk)
-                dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, hookOk, error);
-            return hookOk;
+    bool hookOk = false;
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &hookOk, &error)) {
+        if (!hookOk)
+            dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, hookOk, error);
+        return hookOk;
+    }
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+    QObject::connect(watcher, &QFutureWatcher<bool>::finished, [this, windowId, watcher, url]() {
+        auto result = watcher->result();
+        QString error = watcher->property("error").toString();
+        if (!result)
+            dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
+        // TODO:: set file permissions finished need to send set file permissions finished event
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
+                                     windowId, QList<QUrl>() << url, result, error);
+        watcher->deleteLater();
+    });
+
+    watcher->setFuture(QtConcurrent::run([watcher, url, permissions](){
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        bool result = fileHandler.setPermissions(url, permissions);
+        if (!result) {
+            watcher->setProperty("error", fileHandler.errorString());
         }
-    }
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.setPermissions(url, permissions);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
-    }
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    info->refresh();
-    fmInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
-           static_cast<int>(permissions));
-    // TODO:: set file permissions finished need to send set file permissions finished event
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
-                                 windowId, QList<QUrl>() << url, ok, error);
-    return ok;
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+        info->refresh();
+        fmInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
+               static_cast<int>(permissions));
+        return result;
+    }));
+
+    return true;
 }
 
 void FileOperationsEventReceiver::handleOperationSetPermission(const quint64 windowId,

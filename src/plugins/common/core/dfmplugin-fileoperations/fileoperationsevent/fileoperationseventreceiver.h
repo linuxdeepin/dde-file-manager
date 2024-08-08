@@ -136,7 +136,8 @@ public slots:
     QString handleOperationTouchFile(const quint64 windowId,
                                      const QUrl url,
                                      const QUrl tempUrl,
-                                     const QString suffix);
+                                     const QString suffix,
+                                     const bool isLoadTmp);
     void handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url,
                                   const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
@@ -147,6 +148,7 @@ public slots:
                                   const QUrl url,
                                   const QUrl tempUrl,
                                   const QString suffix,
+                                  const bool isLoadTmp,
                                   const QVariant custom,
                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
 
@@ -225,14 +227,19 @@ private:
                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     bool redo(const quint64 windowId, const QVariantMap &ret,
               DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
-
-    bool doRenameFiles(const quint64 windowId, const QList<QUrl> &urls,
+    bool doRenameFiles(QFutureWatcher<bool> *watcher, const QList<QUrl> &urls,
                        const QPair<QString, QString> &pair,
                        const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> &pair2,
                        const RenameTypes type,
-                       QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
-                       const QVariant custom = QVariant(), DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback = nullptr);
-    bool doRenameDesktopFile(const quint64 windowId,
+                       QMap<QUrl, QUrl> &successUrls, QString &errorMsg);
+    void doRenameFilesByThread(const quint64 windowId,
+                               const QList<QUrl> urls,
+                               const QPair<QString, QString> replacePair,
+                               const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> AddPair,
+                               const RenameTypes type,
+                               const QVariant custom = QVariant(),
+                               DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback = nullptr);
+    bool doRenameDesktopFile(QFutureWatcher<bool> *watcher,
                              const QUrl oldUrl,
                              const QUrl newUrl,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
@@ -263,12 +270,10 @@ private:
     QString doTouchFilePremature(const quint64 windowId, const QUrl &url,
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType, const QString &suffix,
                                  const QVariant &custom,
-                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
-    QString doTouchFilePremature(const quint64 windowId, const QUrl &url,
-                                 const QUrl &tempUrl, const QString &suffix,
-                                 const QVariant &custom,
-                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
-    bool doTouchFilePractically(const quint64 windowId, const QUrl &url, const QUrl &tempUrl = QUrl());
+                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately,
+                                 const QUrl &tempUrl = QUrl());
+
+    void doTouchFilePractically(const quint64 windowId, const QUrl &url, const QUrl &tempUrl = QUrl());
     void saveFileOperation(const QList<QUrl> &sourcesUrls, const QList<QUrl> &targetUrls,
                            DFMBASE_NAMESPACE::GlobalEventType type,
                            const QList<QUrl> &redoSourcesUrls, const QList<QUrl> &redoTargetUrls,

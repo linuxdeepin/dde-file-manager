@@ -215,10 +215,10 @@ TEST_F(UT_FileOperationsEventReceiver, testHandleOperationTouchFile)
     EXPECT_TRUE(op != nullptr);
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     EXPECT_TRUE(op->handleOperationTouchFile(0, QUrl(), Global::CreateFileType::kCreateFileTypeText, QString()).isEmpty());
-    EXPECT_TRUE(op->handleOperationTouchFile(0, QUrl(), url, QString()).isEmpty());
+    EXPECT_TRUE(op->handleOperationTouchFile(0, QUrl(), url, QString(), true).isEmpty());
     AbstractJobHandler::OperatorCallback callback = [](const AbstractJobHandler::CallbackArgus){};
     EXPECT_NO_FATAL_FAILURE(op->handleOperationTouchFile(0, QUrl(), Global::CreateFileType::kCreateFileTypeText, QString(), QVariant(), callback));
-    EXPECT_NO_FATAL_FAILURE(op->handleOperationTouchFile(0, QUrl(), url, QString(), QVariant(), callback));
+    EXPECT_NO_FATAL_FAILURE(op->handleOperationTouchFile(0, QUrl(), url, QString(), true, QVariant(), callback));
 
     stub_ext::StubExt stub;
     stub.set_lamda(&DialogManager::showErrorDialog,[]{});
@@ -227,7 +227,7 @@ TEST_F(UT_FileOperationsEventReceiver, testHandleOperationTouchFile)
     auto publishFun = static_cast<PublishFun>(&EventDispatcherManager::publish);
     stub.set_lamda(publishFun, [] {return true;});
     EXPECT_TRUE(op->handleOperationTouchFile(0, url, Global::CreateFileType::kCreateFileTypeText, QString()).isEmpty());
-    EXPECT_TRUE(op->handleOperationTouchFile(0, url, QUrl(), QString()).isEmpty());
+    EXPECT_TRUE(op->handleOperationTouchFile(0, url, QUrl(), QString(), true).isEmpty());
 
     stub.set_lamda(&FileUtils::isLocalFile,[]{ return false; });
     typedef bool (EventSequenceManager::*RunFunc)(const QString &, const QString &, quint64, const QUrl &, QUrl &,
@@ -236,7 +236,7 @@ TEST_F(UT_FileOperationsEventReceiver, testHandleOperationTouchFile)
     auto runFunc = static_cast<RunFunc>(&EventSequenceManager::run);
     stub.set_lamda(runFunc, [] {return true;});
     EXPECT_TRUE(op->handleOperationTouchFile(0, url, Global::CreateFileType::kCreateFileTypeText, QString()).isEmpty());
-    EXPECT_TRUE(op->handleOperationTouchFile(0, url, QUrl(), QString()).isEmpty());
+    EXPECT_TRUE(op->handleOperationTouchFile(0, url, QUrl(), QString(), true).isEmpty());
 }
 
 TEST_F(UT_FileOperationsEventReceiver, testHandleOperationLinkFile)
@@ -602,7 +602,7 @@ TEST_F(UT_FileOperationsEventReceiver, testDoTouchFilePractically)
     typedef bool (EventDispatcherManager::*PublishFun)(dpf::EventType, quint64, QList<QUrl> &, bool &, QString &);
     auto publishFun = static_cast<PublishFun>(&EventDispatcherManager::publish);
     stub.set_lamda(publishFun, [] {return false;});
-    EXPECT_FALSE(op->doTouchFilePractically(0, url, QUrl()));
+    EXPECT_NO_FATAL_FAILURE(op->doTouchFilePractically(0, url, QUrl()));
 }
 
 TEST_F(UT_FileOperationsEventReceiver, testDoTouchFilePremature)
@@ -611,7 +611,7 @@ TEST_F(UT_FileOperationsEventReceiver, testDoTouchFilePremature)
     EXPECT_TRUE(op != nullptr);
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     stub_ext::StubExt stub;
-    stub.set_lamda(&FileOperationsEventReceiver::doTouchFilePractically,[]{return false;});
+    stub.set_lamda(&FileOperationsEventReceiver::doTouchFilePractically,[]{return;});
     AbstractJobHandler::OperatorCallback callback = [](const AbstractJobHandler::CallbackArgus){};
     EXPECT_TRUE(op->doTouchFilePremature(0, QUrl(), Global::CreateFileType::kCreateFileTypeText, "", QVariant(), callback).isEmpty());
 
@@ -637,11 +637,11 @@ TEST_F(UT_FileOperationsEventReceiver, testDoTouchFilePremature1)
     EXPECT_TRUE(op != nullptr);
     QUrl url = QUrl::fromLocalFile(QDir::currentPath());
     stub_ext::StubExt stub;
-    stub.set_lamda(&FileOperationsEventReceiver::doTouchFilePractically,[]{return false;});
+    stub.set_lamda(&FileOperationsEventReceiver::doTouchFilePractically,[]{return;});
     AbstractJobHandler::OperatorCallback callback = [](const AbstractJobHandler::CallbackArgus){};
-    EXPECT_TRUE(op->doTouchFilePremature(0, QUrl(), url, "", QVariant(), callback).isEmpty());
+    EXPECT_TRUE(op->doTouchFilePremature(0, QUrl(), Global::CreateFileType::kCreateFileTypeUnknow, "", QVariant(), callback, url).isEmpty());
 
-    EXPECT_TRUE(op->doTouchFilePremature(0, url, url, "", QVariant(), callback).isEmpty());
+    EXPECT_TRUE(op->doTouchFilePremature(0, url, Global::CreateFileType::kCreateFileTypeUnknow, "", QVariant(), callback, url).isEmpty());
 
     stub.set_lamda(&FileUtils::isLocalFile, []{return false;});
     typedef bool (EventSequenceManager::*RunFunc)(const QString &, const QString &, quint64, const QUrl &, QUrl &, const QUrl &,
@@ -652,7 +652,7 @@ TEST_F(UT_FileOperationsEventReceiver, testDoTouchFilePremature1)
     typedef bool (EventDispatcherManager::*PublishFun1)(dpf::EventType, quint64, QList<QUrl> &, bool &&, QString &);
     auto publishFun1 = static_cast<PublishFun1>(&EventDispatcherManager::publish);
     stub.set_lamda(publishFun1, [] {return false;});
-    EXPECT_TRUE(!op->doTouchFilePremature(0, url, url, "", QVariant(), callback).isEmpty());
+    EXPECT_TRUE(!op->doTouchFilePremature(0, url, Global::CreateFileType::kCreateFileTypeUnknow, "", QVariant(), callback, url).isEmpty());
 
     op->handleOperationCleanSaveOperationsStack();
 }

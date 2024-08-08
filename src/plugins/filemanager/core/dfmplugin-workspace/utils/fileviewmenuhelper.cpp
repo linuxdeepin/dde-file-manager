@@ -80,7 +80,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
             dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), urls);
             scene->triggered(act);
         }
-    delete scene;
+    scene->deleteLater();
 }
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)

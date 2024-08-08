@@ -40,16 +40,16 @@ public:
     bool renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl,
                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     bool makeDir(const quint64 windowId,
-                 const QUrl url, const QUrl &targetUrl,
+                 const QUrl url,
                  const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
     bool touchFile(const quint64 windowId,
-                   const QUrl url, const QUrl &targetUrl,
+                   const QUrl url,
                    const DFMGLOBAL_NAMESPACE::CreateFileType type, const QString &suffix,
                    const QVariant &custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback,
                    QString *error);
-    bool touchCustomFile(const quint64 windowId, const QUrl url, const QUrl &targetUrl,
+    bool touchCustomFile(const quint64 windowId, const QUrl url,
                          const QUrl tempUrl,
-                         const QString &suffix, const QVariant &custom,
+                         const QString &suffix, const bool isLoadTmp, const QVariant &custom,
                          DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback, QString *error);
     bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                               const QList<QUrl> urls);

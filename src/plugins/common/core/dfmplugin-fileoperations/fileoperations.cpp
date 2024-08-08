@@ -217,13 +217,15 @@ void FileOperations::initEventHandle()
                                    static_cast<QString (FileOperationsEventReceiver::*)(const quint64,
                                                                                         const QUrl,
                                                                                         const QUrl,
-                                                                                        const QString)>(&FileOperationsEventReceiver::handleOperationTouchFile));
+                                                                                        const QString,
+                                                                                        const bool)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfSignalDispatcher->subscribe(GlobalEventType::kTouchFile,
                                    FileOperationsEventReceiver::instance(),
                                    static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                      const QUrl,
                                                                                      const QUrl,
                                                                                      const QString,
+                                                                                     const bool,
                                                                                      const QVariant,
                                                                                      AbstractJobHandler::OperatorCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCreateSymlink,
