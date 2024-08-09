@@ -168,10 +168,12 @@ void TabBar::setCurrentIndex(const int index)
 void TabBar::setCurrentUrl(const QUrl &url)
 {
     Tab *tab = currentTab();
-    if (!tab)
+    if (tab == nullptr)
         createTab();
 
-    tab->setCurrentUrl(url);
+    tab = currentTab();
+    if (tab)
+        tab->setCurrentUrl(url);
 }
 
 void TabBar::closeTab(quint64 winId, const QUrl &url)
@@ -432,7 +434,7 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
         tabCloseButton->setClosingIndex(closingIndex);
         int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
         tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize)/2 - 1);
+        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize) / 2 - 1);
 
         if (closingIndex == currentIndex)
             tabCloseButton->setActiveWidthTab(true);
@@ -585,7 +587,7 @@ void TabBar::handleTabAnimationFinished(const int index)
         Tab *tab = tabList.at(index);
         int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
         tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize)/2 - 1);
+        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize) / 2 - 1);
     }
 
     if ((tabCloseButton->getClosingIndex() >= count()

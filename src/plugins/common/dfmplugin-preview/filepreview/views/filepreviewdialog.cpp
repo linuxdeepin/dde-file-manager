@@ -308,7 +308,7 @@ void FilePreviewDialog::switchToPage(int index)
     }
 
     if (!view) {
-        if (qobject_cast<UnknowFilePreview *>(preview)) {
+        if (preview && qobject_cast<UnknowFilePreview *>(preview)) {
             preview->setFileUrl(fileList.at(index));
             // statusBar->openButton()->setFocus();
             return;

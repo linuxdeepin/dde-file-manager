@@ -179,9 +179,9 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 
     QColor separatorTextColor;
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
-        separatorTextColor = QColor(255, 255, 255, 102); // alpha 40%
+        separatorTextColor = QColor(255, 255, 255, 102);   // alpha 40%
     } else {
-        separatorTextColor = QColor(0, 0, 0, 76); // alpha 30%
+        separatorTextColor = QColor(0, 0, 0, 76);   // alpha 30%
     }
     painter->setPen(separatorItem ? separatorTextColor : qApp->palette().color(QPalette::ColorRole::Text));
     if (iconMode == QIcon::Selected)
@@ -299,7 +299,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
         SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
         SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
 
-        if (event->type() == QEvent::MouseMove && separatorItem)
+        if (event->type() == QEvent::MouseMove && separatorItem && sidebarView)
             sidebarView->update(index);
         if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease || event->type() == QEvent::MouseButtonDblClick) {
             QMouseEvent *e = static_cast<QMouseEvent *>(event);

@@ -114,7 +114,7 @@ void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
     if (info->isAttributes(OptInfoType::kIsFile) || info->isAttributes(OptInfoType::kIsSymLink)) {
         sizeLabel->setText(QObject::tr("Size: %1").arg(info->displayOf(DisPlayInfoType::kSizeDisplayName)));
         typeLabel->setText(QObject::tr("Type: %1").arg(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName)));
-    } else if (info->isAttributes(OptInfoType::kIsDir)) {
+    } else if (fileCalculationUtils && info->isAttributes(OptInfoType::kIsDir)) {
         fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kUrl));
         sizeLabel->setText(QObject::tr("Size: 0"));
     }
