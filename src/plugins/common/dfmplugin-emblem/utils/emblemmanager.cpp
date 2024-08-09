@@ -61,7 +61,11 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
     for (int i = 0; i < qMin(paintRects.count(), emblems.count()); ++i) {
         if (emblems.at(i).isNull())
             continue;
-        emblems.at(i).paint(painter, paintRects.at(i).toRect());
+        // NOTE: for some special icons, the QIcon::paint function will cast lots of cpu resource.
+        // so use the painter drawPixmap function to paint the emblems.
+        QRect emblemRect = paintRects.at(i).toRect();
+        QPixmap emblemPix = emblems.at(i).pixmap(emblemRect.size());
+        painter->drawPixmap(emblemRect, emblemPix);
     }
 
     return true;
