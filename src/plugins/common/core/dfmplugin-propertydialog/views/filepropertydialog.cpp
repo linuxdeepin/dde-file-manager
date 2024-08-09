@@ -249,7 +249,7 @@ void FilePropertyDialog::processHeight(int height)
 void FilePropertyDialog::insertExtendedControl(int index, QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-    vlayout->count();
+    index = index > vlayout->count() ? vlayout->count() : index;
     vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
     widget->setFixedWidth(kExtendedWidgetWidth);
     extendedControl.append(widget);
