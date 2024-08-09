@@ -748,7 +748,7 @@ void SideBarView::updateSeparatorVisibleState()
         SideBarItem *item = sidebarModel->itemFromIndex(i);   // top item
         if (item)
             allItemsInvisiable = false;
-        if (item->group() != lastGroupName) {
+        if (item && item->group() != lastGroupName) {
             SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
             if (groupItem) {   // Separator
                 QVariantMap temGroupExpandState;

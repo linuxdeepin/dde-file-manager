@@ -1474,6 +1474,9 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
 
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
 {
+    if (sortInfo.isNull())
+        return true;
+
     auto item = childData(sortInfo->fileUrl());
     if (item && !nameFilters.isEmpty() && !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
         QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
@@ -1486,13 +1489,13 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     }
 
     // 处理继承
-    if (sortInfo && sortAndFilter) {
+    if (sortAndFilter) {
         auto result = sortAndFilter->checkFilters(InfoFactory::create<FileInfo>(sortInfo->fileUrl()), filters, filterData);
         if (result >= 0)
             return result;
     }
 
-    if (!sortInfo || filters == QDir::NoFilter)
+    if (filters == QDir::NoFilter)
         return true;
 
     FileInfoPointer fileInfo { nullptr };
@@ -1572,7 +1575,7 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
             return true;
     }
 
-    if (sortInfo && filterCallback)
+    if (filterCallback)
         return filterCallback(InfoFactory::create<FileInfo>(sortInfo->fileUrl()).data(), filterData);
 
     return true;

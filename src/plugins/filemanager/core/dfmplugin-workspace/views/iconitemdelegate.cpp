@@ -631,11 +631,10 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex
     const QSize &size = d->itemSizeHint;
 
     // 如果有一个选中，名称显示很长时，最后一个index时设置item的高度为最多，右边才会出现滑动块
-    if(index.isValid() && parent()->isLastIndex(index) && d->expandedItem
-            && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
+    if (index.isValid() && parent()->isLastIndex(index) && d->expandedItem
+        && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
         d->expandedItem->setIconHeight(parent()->parent()->iconSize().height());
-        auto hight = qMax(size.height(), d->expandedItem->heightForWidth(size.width()) -
-                          d->expandedItem->getDifferenceOfLastRow() * size.height());
+        auto hight = qMax(size.height(), d->expandedItem->heightForWidth(size.width()) - d->expandedItem->getDifferenceOfLastRow() * size.height());
         return QSize(size.width(), hight);
     }
 
@@ -690,6 +689,9 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     Q_D(const IconItemDelegate);
 
     auto fileview = parent()->parent();
+    if (fileview == nullptr)
+        return;
+
     const QSize &iconSize = fileview->iconSize();
 
     editor->move(option.rect.topLeft());
@@ -717,8 +719,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
     FileViewHelper *viewHelper = qobject_cast<FileViewHelper *>(parent());
     int maxHeight = viewHelper ? (viewHelper->viewContentSize().height() - viewHelper->verticalOffset() - item->pos().y()) : INT_MAX;
-    if (viewHelper && fileview
-            && fileview->size().height() > viewHelper->viewContentSize().height())
+    if (viewHelper && fileview->size().height() > viewHelper->viewContentSize().height())
         maxHeight = fileview->size().height() - viewHelper->verticalOffset() - item->pos().y();
 
     item->setMaxHeight(qMax(maxHeight, sizeHint(opt, index).height()));
