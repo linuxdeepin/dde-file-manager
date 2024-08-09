@@ -4,6 +4,23 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# qurl::toPercentEncoding的加密规则
+urlencode() {
+    local string="${1}"
+    local strlen=${#string}
+    local encoded=""
+
+    for (( pos=0 ; pos<strlen ; pos++ )); do
+        c=${string:$pos:1}
+        printf -v o '%%%02x' "'$c"
+        case "$c" in
+            [-_.~a-zA-Z0-9] ) o=${c} ;;
+        esac
+        encoded+="${o}"
+    done
+    echo "${encoded}"
+}
+
 args=""
 argsOrigin=""
 current_path=$(pwd)
@@ -30,10 +47,11 @@ for arg in "$@"; do
         arg=$absolute_path
     fi
 
-    # 对空格进行转义 %20, 对%转义为%25 qurl::toPercentEncoding的加密规则
-    if [[ $arg == *"%"* ]] || [[ $arg == *" "* ]]; then
-        tmpArg=$(echo "$arg" | sed 's/%/%25/g')
-        tmpArg=$(echo "$tmpArg" | sed 's/ /%20/g')
+    # 对不是-开头的参数进行qurl::toPercentEncoding加密
+    if [[ "$arg:0:1" =~ "-" ]]; then
+        tmpArg=$(urlencode "$arg")
+        # 对于\n加密为了%5cn，替换为正确的%0A
+        tmpArg=$(echo "$tmpArg" | sed 's/%5cn/%0A/g')
         argsOrigin+="$tmpArg "
     else
         argsOrigin+="$arg "
