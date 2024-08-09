@@ -17,9 +17,10 @@ namespace dfmplugin_propertydialog {
 class PropertyDialogUtil : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PropertyDialogUtil)
+
 public:
-    explicit PropertyDialogUtil(QObject *parent = nullptr);
-    virtual ~PropertyDialogUtil() override;
+    static PropertyDialogUtil *instance();
 
 public slots:
     void showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
@@ -35,7 +36,8 @@ public slots:
     void updateCloseIndicator();
 
 public:
-    static PropertyDialogUtil *instance();
+    explicit PropertyDialogUtil(QObject *parent = nullptr);
+    virtual ~PropertyDialogUtil() override;
 
 private:
     /*!
