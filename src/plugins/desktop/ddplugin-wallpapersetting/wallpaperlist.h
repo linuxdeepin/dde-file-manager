@@ -9,16 +9,11 @@
 #include "wallpaperitem.h"
 
 #include <DAnchors>
+#include <DIconButton>
 
 #include <QScrollArea>
 #include <QPropertyAnimation>
 #include <QTimer>
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#    include <DImageButton>
-#else
-#    include <DIconButton>
-#endif
 
 class QHBoxLayout;
 
@@ -80,13 +75,9 @@ public:
     static const int kItemHeight;
 
 private:
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DImageButton> prevButton = nullptr;
-    DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DImageButton> nextButton = nullptr;
-#else
     DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DIconButton> prevButton = nullptr;
     DTK_WIDGET_NAMESPACE::DAnchors<DTK_WIDGET_NAMESPACE::DIconButton> nextButton = nullptr;
-#endif
+
     QTimer *updateTimer = nullptr;
     QPropertyAnimation scrollAnimation;
 

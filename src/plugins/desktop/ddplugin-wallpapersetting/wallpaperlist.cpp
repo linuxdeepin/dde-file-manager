@@ -389,20 +389,8 @@ void WallpaperList::updateItemThumb()
 
 void WallpaperList::init()
 {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    prevButton = new DImageButton(":/images/previous_normal.svg",
-                                  ":/images/previous_hover.svg",
-                                  ":/images/previous_press.svg", this);
-    nextButton = new DImageButton(":/images/next_normal.svg",
-                                  ":/images/next_hover.svg",
-                                  ":/images/next_press.svg", this);
-#else
-    // TODO #v25: 需要设计师提供 dci icon
-    prevButton = new DIconButton(this);
-    prevButton->setIcon(QIcon(":/images/previous_normal.svg"));
-    nextButton = new DIconButton(this);
-    nextButton->setIcon(QIcon(":/images/next_normal.svg"));
-#endif
+    prevButton = new DIconButton(DDciIcon(QStringLiteral(":/images/arrow-left.dci")), this);
+    nextButton = new DIconButton(DDciIcon(QStringLiteral(":/images/arrow-right.dci")), this);
 
     setObjectName("WallpaperList-QScrollArea");
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -436,13 +424,8 @@ void WallpaperList::init()
     nextButton.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
     nextButton.setAnchor(Qt::AnchorRight, this, Qt::AnchorRight);
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    connect(prevButton.widget(), &DImageButton::clicked, this, &WallpaperList::prevPage);
-    connect(nextButton.widget(), &DImageButton::clicked, this, &WallpaperList::nextPage);
-#else
     connect(prevButton.widget(), &DIconButton::clicked, this, &WallpaperList::prevPage);
     connect(nextButton.widget(), &DIconButton::clicked, this, &WallpaperList::nextPage);
-#endif
 
     scrollAnimation.setTargetObject(horizontalScrollBar());
     scrollAnimation.setPropertyName("value");
