@@ -7,6 +7,9 @@
 #include "grid/canvasgrid.h"
 #include "model/canvasproxymodel.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
 SortAnimationOper::SortAnimationOper(CanvasView *parent)
@@ -89,8 +92,23 @@ void SortAnimationOper::startMoveAnimation()
         animation->disconnect();
 
     animation.reset(new QPropertyAnimation(this, "moveDuration"));
-    animation->setDuration(GridIns->mode() == CanvasGrid::Mode::Custom ? 400 : 366);
-    animation->setEasingCurve(QEasingCurve::OutExpo);
+    int duration;
+    QEasingCurve::Type curve;
+    switch (GridIns->mode()) {
+    case CanvasGrid::Mode::Custom:
+        duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortCustomDuration, true).toInt();
+        curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortCustomCurve).toInt());
+        break;
+    case CanvasGrid::Mode::Align:
+        duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortAlignDuration, true).toInt();
+        curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortAlignCurve).toInt());
+        break;
+    default:
+        duration = 366;
+        break;
+    }
+    animation->setDuration(duration);
+    animation->setEasingCurve(curve);
     animation->setStartValue(0.0);
     animation->setEndValue(1.0);
 

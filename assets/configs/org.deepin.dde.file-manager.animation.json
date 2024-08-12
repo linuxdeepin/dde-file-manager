@@ -1,0 +1,150 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "dfm.animation.enable": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"View animation enabled",
+            "name[zh_CN]":"启用视图动效",
+            "description[zh_CN]":"用于判断是否允许在视图中开启动效",
+            "description":"Used to determine if the view animation enabled",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.enter.duration": {
+            "value":366,
+            "serial":0,
+            "flags":[],
+            "name":"Change dir animation duration",
+            "name[zh_CN]":"切换目录动效时长",
+            "description[zh_CN]":"用于调整切换目录时动效播放时长",
+            "description":"Used to adjust the change dir animation duration",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.enter.curve": {
+            "value":22,
+            "serial":0,
+            "flags":[],
+            "name":"Change dir animation curve",
+            "name[zh_CN]":"切换目录动效动画曲线",
+            "description[zh_CN]":"用于调整切换目录时动效动画曲线",
+            "description":"Used to adjust the change dir animation curve",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.enter.scale": {
+            "value":0.8,
+            "serial":0,
+            "flags":[],
+            "name":"Change dir animation scale",
+            "name[zh_CN]":"切换目录动效缩放幅度",
+            "description[zh_CN]":"用于调整切换目录时动效缩放幅度",
+            "description":"Used to adjust the change dir animation scale",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.enter.opacity": {
+            "value":0.0,
+            "serial":0,
+            "flags":[],
+            "name":"Change dir animation opacity",
+            "name[zh_CN]":"切换目录动效透明度",
+            "description[zh_CN]":"用于调整切换目录时动效中视图最低透明度",
+            "description":"Used to adjust the change dir animation opacity",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.layout.duration": {
+            "value":366,
+            "serial":0,
+            "flags":[],
+            "name":"View layout animation duration",
+            "name[zh_CN]":"视图重布局动效时长",
+            "description[zh_CN]":"用于调整视图重布局时动效播放时长",
+            "description":"Used to adjust the view layout animation duration",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.layout.curve": {
+            "value":22,
+            "serial":0,
+            "flags":[],
+            "name":"View layout animation curve",
+            "name[zh_CN]":"视图重布局动效动画曲线",
+            "description[zh_CN]":"用于调整切视图重布局时动效动画曲线",
+            "description":"Used to adjust the view layout animation curve",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.detailview.duration": {
+            "value":366,
+            "serial":0,
+            "flags":[],
+            "name":"Detail view show animation duration",
+            "name[zh_CN]":"详细视图出入动效时长",
+            "description[zh_CN]":"用于调整详细视图开关时动效播放时长",
+            "description":"Used to adjust the detail view show animation duration",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.detailview.curve": {
+            "value":22,
+            "serial":0,
+            "flags":[],
+            "name":"Detail view show animation curve",
+            "name[zh_CN]":"切换目录动效动画曲线",
+            "description[zh_CN]":"用于调整切换目录时动效动画曲线",
+            "description":"Used to adjust the detail view show animation curve",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dd.animation.resort.custom.duration": {
+            "value":400,
+            "serial":0,
+            "flags":[],
+            "name":"Desktop canvas resort animation duration(custom mode)",
+            "name[zh_CN]":"视图重布局动效时长",
+            "description[zh_CN]":"用于调整视图重布局时动效播放时长",
+            "description":"Used to adjust the desktop canvas resort animation duration(custom mode)",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dd.animation.resort.custom.curve": {
+            "value":22,
+            "serial":0,
+            "flags":[],
+            "name":"Desktop canvas resort animation curve(custom mode)",
+            "name[zh_CN]":"视图重布局动效动画曲线",
+            "description[zh_CN]":"用于调整切视图重布局时动效动画曲线",
+            "description":"Used to adjust the desktop canvas resort animation curve(custom mode)",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dd.animation.resort.align.duration": {
+            "value":366,
+            "serial":0,
+            "flags":[],
+            "name":"Desktop canvas resort animation duration(align mode)",
+            "name[zh_CN]":"视图重布局动效时长",
+            "description[zh_CN]":"用于调整视图重布局时动效播放时长",
+            "description":"Used to adjust the desktop canvas resort animation duration(align mode)",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dd.animation.resort.align.curve": {
+            "value":22,
+            "serial":0,
+            "flags":[],
+            "name":"Desktop canvas resort animation curve(align mode)",
+            "name[zh_CN]":"视图重布局动效动画曲线",
+            "description[zh_CN]":"用于调整切视图重布局时动效动画曲线",
+            "description":"Used to adjust the desktop canvas resort animation curve(align mode)",
+            "permissions":"readwrite",
+            "visibility":"private"
+        }
+    }
+}
+

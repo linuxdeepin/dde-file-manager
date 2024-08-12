@@ -16,6 +16,7 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-framework/event/event.h>
 
 #include <DIconButton>
@@ -74,22 +75,25 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
                                       url, tabBar->currentTab()->getCurrentUrl()))
             return;
 
-        auto contentWidget = curView->contentWidget();
-        if (contentWidget) {
-            if (!enterAnim)
-                enterAnim = new EnterDirAnimationWidget(this);
+        bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+        if (animEnable) {
+            auto contentWidget = curView->contentWidget();
+            if (contentWidget) {
+                if (!enterAnim)
+                    enterAnim = new EnterDirAnimationWidget(this);
 
-            auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
-            auto localPos = mapFromGlobal(globalPos);
-            enterAnim->move(localPos);
-            enterAnim->resetWidgetSize(contentWidget->size());
+                auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+                auto localPos = mapFromGlobal(globalPos);
+                enterAnim->move(localPos);
+                enterAnim->resetWidgetSize(contentWidget->size());
 
-            QPixmap preDirPix = contentWidget->grab();
-            enterAnim->setDisappearPixmap(preDirPix);
-            enterAnim->show();
-            enterAnim->raise();
+                QPixmap preDirPix = contentWidget->grab();
+                enterAnim->setDisappearPixmap(preDirPix);
+                enterAnim->show();
+                enterAnim->raise();
 
-            enterAnim->playDisappear();
+                enterAnim->playDisappear();
+            }
         }
 
         FileView *view = qobject_cast<FileView *>(curView->widget());

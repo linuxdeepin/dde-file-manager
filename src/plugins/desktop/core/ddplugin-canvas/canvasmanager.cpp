@@ -17,6 +17,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -622,8 +623,9 @@ void CanvasManagerPrivate::onAboutToFileSort()
 
 void CanvasManagerPrivate::onFileSorted()
 {
+    bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
     // TODO(liuyangming): only one screen can play sort animation now.
-    if (q->views().count() == 1) {
+    if (animEnable && q->views().count() == 1) {
         if (auto view = q->views().first()) {
             view->filesResorted();
             return;

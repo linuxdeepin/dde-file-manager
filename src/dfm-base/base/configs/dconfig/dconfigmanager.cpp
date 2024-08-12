@@ -20,6 +20,7 @@ DConfigManager::DConfigManager(QObject *parent)
 {
     addConfig(kDefaultCfgPath);
     addConfig(kViewDConfName);
+    addConfig(kAnimationDConfName);
 }
 
 DConfigManager *DConfigManager::instance()

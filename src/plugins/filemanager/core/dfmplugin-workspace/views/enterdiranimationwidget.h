@@ -53,6 +53,9 @@ private:
 
     double appearProcess { 0.0 };
     double disappearProcess { 0.0 };
+
+    double configScale { 0.8 };
+    double configOpacity { 0.0 };
 };
 
 }   // namespace dfmplugin_workspace

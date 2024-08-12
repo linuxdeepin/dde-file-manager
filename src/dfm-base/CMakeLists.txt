@@ -93,4 +93,5 @@ install(FILES ${AssetsPath}/log/debug/org.deepin.file-manager.json DESTINATION $
 INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.view.json")
+INSTALL_DCONFIG("org.deepin.dde.file-manager.animation.json")
 

@@ -11,6 +11,7 @@
 
 QT_BEGIN_NAMESPACE
 class QTimer;
+class QPropertyAnimation;
 QT_END_NAMESPACE
 
 namespace dfmplugin_workspace {
@@ -19,6 +20,7 @@ class FileView;
 class ViewAnimationHelper : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(double animProcess READ getAnimProcess WRITE setAnimProcess)
 public:
     explicit ViewAnimationHelper(FileView *parent);
 
@@ -35,6 +37,9 @@ public:
 
     void paintItems() const;
 
+    void setAnimProcess(double value);
+    inline double getAnimProcess() const { return animProcess; };
+
 public Q_SLOTS:
     void onDelayTimerFinish();
     void onAnimationTimerFinish();
@@ -43,7 +48,6 @@ private:
     QMap<QModelIndex, QRect> calcIndexRects(const QRect &rect) const;
     void paintPixmaps(const QMap<QModelIndex, QRect> &indexRects);
     void createPixmapsForVisiableRect();
-    qreal easeOutExpo(qreal value) const;
 
 private:
     bool initialized { false };
@@ -55,10 +59,11 @@ private:
     QMap<QModelIndex, QRect> oldIndexRectMap {};
     QMap<QModelIndex, QPixmap> indexPixmaps {};
 
-    int animFrame { 0 };
-
     QTimer *delayTimer { nullptr };
-    QTimer *animationTimer { nullptr };
+
+    QPropertyAnimation *animPtr { nullptr };
+
+    double animProcess { 0.0 };
 
     FileView *view { nullptr };
 };
