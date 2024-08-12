@@ -16,5 +16,7 @@
         <file>images/transparent_button_normal.svg</file>
         <file>images/transparent_button_press.svg</file>
         <file>images/edit.svg</file>
+        <file>images/arrow-left.dci</file>
+        <file>images/arrow-right.dci</file>
     </qresource>
 </RCC>
