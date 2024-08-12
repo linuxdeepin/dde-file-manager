@@ -5,9 +5,12 @@
 #include "enterdiranimationwidget.h"
 #include "dfmplugin_workspace_global.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #include <QPainter>
 #include <QPropertyAnimation>
 
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 EnterDirAnimationWidget::EnterDirAnimationWidget(QWidget *parent)
@@ -75,23 +78,23 @@ void EnterDirAnimationWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     if (disappearAnim && disappearAnim->state() == QPropertyAnimation::Running) {
-        QPixmap pix = disappearPix.scaled(disappearPix.size() * (0.78 + (0.22 * disappearProcess)));
+        QPixmap pix = disappearPix.scaled(disappearPix.size() * (configScale + ((1.0 - configScale) * disappearProcess)));
         QRect rect(0, 0, pix.width(), pix.height());
         rect.moveCenter(this->rect().center());
 
         painter.save();
-        painter.setOpacity(disappearProcess);
+        painter.setOpacity(configOpacity + ((1.0 - configOpacity) * disappearProcess));
         painter.drawPixmap(rect, pix);
         painter.restore();
     }
 
     if (appearAnim && appearAnim->state() == QPropertyAnimation::Running) {
-        QPixmap pix = appearPix.scaled(appearPix.size() * (0.78 + (0.22 * appearProcess)));
+        QPixmap pix = appearPix.scaled(appearPix.size() * (configScale + ((1.0 - configScale) * appearProcess)));
         QRect rect(0, 0, pix.width(), pix.height());
         rect.moveCenter(this->rect().center());
 
         painter.save();
-        painter.setOpacity(appearProcess);
+        painter.setOpacity(configOpacity + ((1.0 - configOpacity) * appearProcess));
         painter.drawPixmap(rect, pix);
         painter.restore();
     }
@@ -106,15 +109,21 @@ void EnterDirAnimationWidget::onProcessChanged()
 
 void EnterDirAnimationWidget::init()
 {
+    configScale = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnterScale, 0.8).toDouble();
+    configOpacity = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnterOpacity, 0.0).toDouble();
+
+    int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnterDuration, 366).toInt();
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnterCurve).toInt());
+
     appearAnim = new QPropertyAnimation(this, "appearProcess", this);
-    appearAnim->setDuration(kViewAnimationDuration);
-    appearAnim->setEasingCurve(QEasingCurve::OutExpo);
+    appearAnim->setDuration(duration);
+    appearAnim->setEasingCurve(curve);
     appearAnim->setStartValue(0.0);
     appearAnim->setEndValue(1.0);
 
     disappearAnim = new QPropertyAnimation(this, "disappearProcess", this);
-    disappearAnim->setDuration(kViewAnimationDuration);
-    disappearAnim->setEasingCurve(QEasingCurve::OutExpo);
+    disappearAnim->setDuration(duration);
+    disappearAnim->setEasingCurve(curve);
     disappearAnim->setStartValue(1.0);
     disappearAnim->setEndValue(0.0);
 

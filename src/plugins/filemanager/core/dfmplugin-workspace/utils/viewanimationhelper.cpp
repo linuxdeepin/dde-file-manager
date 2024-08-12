@@ -8,12 +8,16 @@
 #include "views/baseitemdelegate.h"
 #include "models/fileviewmodel.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #include <QTimer>
 #include <QPainter>
 #include <QLabel>
+#include <QPropertyAnimation>
 
 #include <math.h>
 
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 ViewAnimationHelper::ViewAnimationHelper(FileView *parent)
@@ -24,6 +28,9 @@ ViewAnimationHelper::ViewAnimationHelper(FileView *parent)
 
 void ViewAnimationHelper::initAnimationHelper()
 {
+    if (!DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool())
+        return;
+
     currentIndexRectMap = calcIndexRects(view->contentsRect());
     initialized = true;
 }
@@ -84,7 +91,7 @@ void ViewAnimationHelper::playViewAnimation()
 
 bool ViewAnimationHelper::isAnimationPlaying() const
 {
-    if (animationTimer && animationTimer->isActive())
+    if (animPtr && animPtr->state() == QPropertyAnimation::Running)
         return true;
 
     return false;
@@ -122,11 +129,9 @@ void ViewAnimationHelper::paintItems() const
 
             itemIterator++;
         }
-    } else if (isAnimationPlaying()) {
+    } else if (animPtr && animPtr->state() == QPropertyAnimation::Running) {
         QSize viewportSize = view->contentsSize();
         QPoint itemBirthPos(viewportSize.width() / 2, viewportSize.height());
-
-        int elapse = animFrame * kViewAnimationFrameDuration;
 
         while (itemIterator != indexPixmaps.end()) {
             auto index = itemIterator.key();
@@ -139,9 +144,8 @@ void ViewAnimationHelper::paintItems() const
                 oldPos = oldIndexRectMap[index].topLeft();
             }
 
-            qreal proccess = static_cast<qreal>(elapse) / static_cast<qreal>(kViewAnimationDuration);
-            int deltaX = (targetPos.x() - oldPos.x()) * easeOutExpo(proccess);
-            int deltaY = (targetPos.y() - oldPos.y()) * easeOutExpo(proccess);
+            int deltaX = (targetPos.x() - oldPos.x()) * animProcess;
+            int deltaY = (targetPos.y() - oldPos.y()) * animProcess;
 
             QPoint newPos(oldPos.x() + deltaX, oldPos.y() + deltaY);
 
@@ -155,37 +159,45 @@ void ViewAnimationHelper::paintItems() const
     }
 }
 
+void ViewAnimationHelper::setAnimProcess(double value)
+{
+    if (qFuzzyCompare(animProcess, value))
+        return;
+
+    animProcess = value;
+}
+
 void ViewAnimationHelper::onDelayTimerFinish()
 {
-    if (!animationTimer) {
-        animationTimer = new QTimer(this);
-        animationTimer->setInterval(kViewAnimationFrameDuration);
-        animationTimer->setSingleShot(false);
-        connect(animationTimer, &QTimer::timeout, this, &ViewAnimationHelper::onAnimationTimerFinish);
+    oldIndexRectMap = currentIndexRectMap;
+
+    syncVisiableRect();
+    newIndexRectMap = calcIndexRects(currentVisiableRect);
+
+    paintPixmaps(newIndexRectMap);
+
+    if (!animPtr) {
+        animPtr = new QPropertyAnimation(this, "animProcess", this);
+
+        int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutDuration, 366).toInt();
+        auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutCurve).toInt());
+        animPtr->setDuration(duration);
+        animPtr->setEasingCurve(curve);
+        animPtr->setStartValue(0.0);
+        animPtr->setEndValue(1.0);
+
+        connect(animPtr, &QPropertyAnimation::valueChanged, this, &ViewAnimationHelper::onAnimationTimerFinish);
+        connect(animPtr, &QPropertyAnimation::finished, this, &ViewAnimationHelper::onAnimationTimerFinish);
     }
 
-    if (animationTimer->isActive())
-        animationTimer->stop();
+    if (animPtr->state() == QPropertyAnimation::Running)
+        animPtr->stop();
 
-    animFrame = 0;
-    animationTimer->start();
+    animPtr->start();
 }
 
 void ViewAnimationHelper::onAnimationTimerFinish()
 {
-    if (animFrame == 0) {
-        oldIndexRectMap = currentIndexRectMap;
-
-        syncVisiableRect();
-        newIndexRectMap = calcIndexRects(currentVisiableRect);
-
-        paintPixmaps(newIndexRectMap);
-    }
-
-    int elapse = ++animFrame * kViewAnimationFrameDuration;
-    if (elapse > kViewAnimationDuration)
-        animationTimer->stop();
-
     view->viewport()->update();
 }
 
@@ -248,9 +260,4 @@ void ViewAnimationHelper::createPixmapsForVisiableRect()
 
     auto visiableIndexRects = calcIndexRects(validRect);
     paintPixmaps(visiableIndexRects);
-}
-
-qreal ViewAnimationHelper::easeOutExpo(qreal value) const
-{
-    return value == 1.0 ? 1.0 : 1.0 - pow(2, -10 * value);
 }
