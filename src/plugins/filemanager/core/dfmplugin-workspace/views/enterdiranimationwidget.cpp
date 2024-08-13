@@ -77,8 +77,10 @@ void EnterDirAnimationWidget::setDisappearProcess(double value)
 void EnterDirAnimationWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    qreal ratio = painter.device()->devicePixelRatioF();
+    painter.setRenderHint(QPainter::Antialiasing);
     if (disappearAnim && disappearAnim->state() == QPropertyAnimation::Running) {
-        QPixmap pix = disappearPix.scaled(disappearPix.size() * (configScale + ((1.0 - configScale) * disappearProcess)));
+        QPixmap pix = disappearPix.scaled(disappearPix.size() * (configScale + ((1.0 - configScale) * disappearProcess)) / ratio);
         QRect rect(0, 0, pix.width(), pix.height());
         rect.moveCenter(this->rect().center());
 
@@ -89,7 +91,7 @@ void EnterDirAnimationWidget::paintEvent(QPaintEvent *event)
     }
 
     if (appearAnim && appearAnim->state() == QPropertyAnimation::Running) {
-        QPixmap pix = appearPix.scaled(appearPix.size() * (configScale + ((1.0 - configScale) * appearProcess)));
+        QPixmap pix = appearPix.scaled(appearPix.size() * (configScale + ((1.0 - configScale) * appearProcess)) / ratio);
         QRect rect(0, 0, pix.width(), pix.height());
         rect.moveCenter(this->rect().center());
 

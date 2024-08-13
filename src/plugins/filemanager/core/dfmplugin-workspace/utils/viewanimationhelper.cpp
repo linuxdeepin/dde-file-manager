@@ -15,8 +15,6 @@
 #include <QLabel>
 #include <QPropertyAnimation>
 
-#include <math.h>
-
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
@@ -52,6 +50,9 @@ void ViewAnimationHelper::aboutToPlay()
     if (isWaitingToPlaying())
         return;
 
+    if (playingAnim)
+        return;
+
     oldVisiableRect = view->viewport()->rect();
     oldVisiableRect.moveTop(view->verticalOffset());
     indexPixmaps.clear();
@@ -68,6 +69,9 @@ QRect ViewAnimationHelper::getCurrentRectByIndex(const QModelIndex &index) const
 void ViewAnimationHelper::playViewAnimation()
 {
     if (!initialized)
+        return;
+
+    if (playingAnim)
         return;
 
     if (!delayTimer) {
@@ -110,9 +114,33 @@ bool ViewAnimationHelper::hasInitialized() const
     return initialized;
 }
 
+void ViewAnimationHelper::playAnimationWithWidthChange(int deltaWidth)
+{
+    if (!initialized)
+        return;
+
+    playingAnim = true;
+
+    syncVisiableRect();
+    QRect validRect = currentVisiableRect;
+    currentIndexRectMap = calcIndexRects(validRect);
+    createPixmapsForVisiableRect();
+
+    oldIndexRectMap = currentIndexRectMap;
+    currentVisiableRect.setWidth(currentVisiableRect.width() + deltaWidth);
+    newIndexRectMap = calcIndexRects(currentVisiableRect);
+
+    paintPixmaps(newIndexRectMap);
+
+    resetAnimation();
+    animPtr->start();
+}
+
 void ViewAnimationHelper::paintItems() const
 {
     QPainter painter(view->viewport());
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     auto itemIterator = indexPixmaps.begin();
 
     if (isWaitingToPlaying()) {
@@ -125,7 +153,9 @@ void ViewAnimationHelper::paintItems() const
             }
 
             QRect paintRect = currentIndexRectMap[index];
-            painter.drawPixmap(paintRect, itemIterator.value());
+            QPixmap paintPix = itemIterator.value();
+            paintPix = paintPix.scaled(paintPix.size() * (1.0 / view->devicePixelRatioF()));
+            painter.drawPixmap(paintRect, paintPix);
 
             itemIterator++;
         }
@@ -176,29 +206,20 @@ void ViewAnimationHelper::onDelayTimerFinish()
 
     paintPixmaps(newIndexRectMap);
 
-    if (!animPtr) {
-        animPtr = new QPropertyAnimation(this, "animProcess", this);
-
-        int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutDuration, 366).toInt();
-        auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutCurve).toInt());
-        animPtr->setDuration(duration);
-        animPtr->setEasingCurve(curve);
-        animPtr->setStartValue(0.0);
-        animPtr->setEndValue(1.0);
-
-        connect(animPtr, &QPropertyAnimation::valueChanged, this, &ViewAnimationHelper::onAnimationTimerFinish);
-        connect(animPtr, &QPropertyAnimation::finished, this, &ViewAnimationHelper::onAnimationTimerFinish);
-    }
-
-    if (animPtr->state() == QPropertyAnimation::Running)
-        animPtr->stop();
+    resetAnimation();
 
     animPtr->start();
+}
+
+void ViewAnimationHelper::onAnimationValueChanged()
+{
+    view->viewport()->update();
 }
 
 void ViewAnimationHelper::onAnimationTimerFinish()
 {
     view->viewport()->update();
+    playingAnim = false;
 }
 
 QMap<QModelIndex, QRect> ViewAnimationHelper::calcIndexRects(const QRect &rect) const
@@ -224,7 +245,6 @@ void ViewAnimationHelper::paintPixmaps(const QMap<QModelIndex, QRect> &indexRect
         if (!index.isValid() || indexPixmaps.contains(index))
             continue;
 
-        const qreal scale = view->devicePixelRatioF();
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QStyleOptionViewItem option = view->viewOptions();
 #else
@@ -242,7 +262,8 @@ void ViewAnimationHelper::paintPixmaps(const QMap<QModelIndex, QRect> &indexRect
         rect.moveTopLeft(QPoint(0, 0));
         option.rect = rect;
 
-        QPixmap pixmap(rect.size());
+        qreal scale = view->devicePixelRatioF();
+        QPixmap pixmap(rect.size() * scale);
         pixmap.setDevicePixelRatio(scale);
         pixmap.fill(Qt::transparent);
 
@@ -260,4 +281,24 @@ void ViewAnimationHelper::createPixmapsForVisiableRect()
 
     auto visiableIndexRects = calcIndexRects(validRect);
     paintPixmaps(visiableIndexRects);
+}
+
+void ViewAnimationHelper::resetAnimation()
+{
+    if (!animPtr) {
+        animPtr = new QPropertyAnimation(this, "animProcess", this);
+
+        int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutDuration, 366).toInt();
+        auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutCurve).toInt());
+        animPtr->setDuration(duration);
+        animPtr->setEasingCurve(curve);
+        animPtr->setStartValue(0.0);
+        animPtr->setEndValue(1.0);
+
+        connect(animPtr, &QPropertyAnimation::valueChanged, this, &ViewAnimationHelper::onAnimationValueChanged);
+        connect(animPtr, &QPropertyAnimation::finished, this, &ViewAnimationHelper::onAnimationTimerFinish);
+    }
+
+    if (animPtr->state() == QPropertyAnimation::Running)
+        animPtr->stop();
 }

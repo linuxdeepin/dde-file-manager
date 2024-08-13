@@ -115,6 +115,7 @@ public:
     void selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const;
 
     QRect calcVisualRect(int widgetWidth, int index) const;
+    void aboutToChangeWidth(int deltaWidth);
 
     using DListView::edit;
     using DListView::updateGeometries;
