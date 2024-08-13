@@ -35,6 +35,8 @@ public:
     bool isWaitingToPlaying() const;
     bool hasInitialized() const;
 
+    void playAnimationWithWidthChange(int deltaWidth);
+
     void paintItems() const;
 
     void setAnimProcess(double value);
@@ -42,15 +44,18 @@ public:
 
 public Q_SLOTS:
     void onDelayTimerFinish();
+    void onAnimationValueChanged();
     void onAnimationTimerFinish();
 
 private:
     QMap<QModelIndex, QRect> calcIndexRects(const QRect &rect) const;
     void paintPixmaps(const QMap<QModelIndex, QRect> &indexRects);
     void createPixmapsForVisiableRect();
+    void resetAnimation();
 
 private:
     bool initialized { false };
+    bool playingAnim { false };
     QRect currentVisiableRect;
     QRect oldVisiableRect;
 

@@ -67,6 +67,8 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
         }
 
         if (animEnable) {
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_View_AboutToChangeViewWidth", windowId, -w->detailWidth());
+
             // Set initial width to 0
             w->setFixedWidth(0);
             w->setVisible(true);
@@ -89,6 +91,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
     } else {
         if (w) {
             if (animEnable) {
+                dpfSlotChannel->push("dfmplugin_workspace", "slot_View_AboutToChangeViewWidth", windowId, w->width());
                 int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewDuration, 366).toInt();
                 auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewCurve).toInt());
                 QPropertyAnimation *aniHide = new QPropertyAnimation(w, "maximumWidth");

@@ -79,6 +79,7 @@ public slots:
     bool handleRegisterRoutePrehandle(const QString &scheme, const FileViewRoutePrehaldler &prehandler);
     void handleRegisterDataCache(const QString &scheme);
     void handleSetAlwaysOpenInCurrentWindow(const quint64 windowID);
+    void handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

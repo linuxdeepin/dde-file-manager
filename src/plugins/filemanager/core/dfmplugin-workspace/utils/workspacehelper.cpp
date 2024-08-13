@@ -429,6 +429,13 @@ void WorkspaceHelper::setAlwaysOpenInCurrentWindow(const quint64 windowID)
         view->setAlwaysOpenInCurrentWindow(true);
 }
 
+void WorkspaceHelper::aboutToChangeViewWidth(const quint64 windowID, int deltaWidth)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->aboutToChangeWidth(deltaWidth);
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;

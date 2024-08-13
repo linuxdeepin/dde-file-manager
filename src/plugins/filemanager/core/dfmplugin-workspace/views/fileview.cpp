@@ -967,6 +967,13 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
     return rect;
 }
 
+void FileView::aboutToChangeWidth(int deltaWidth)
+{
+    d->animationHelper->initAnimationHelper();
+    d->animationHelper->aboutToPlay();
+    d->animationHelper->playAnimationWithWidthChange(deltaWidth);
+}
+
 void FileView::onHeaderViewMousePressed()
 {
     d->oldHeaderViewLenght = d->headerView->length();

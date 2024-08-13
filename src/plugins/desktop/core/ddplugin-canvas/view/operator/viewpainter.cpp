@@ -233,6 +233,7 @@ void ViewPainter::drawMove(QStyleOptionViewItem option)
 {
     if (d->sortAnimOper->getMoveAnimationing()) {
         const QStringList &moveItems = d->sortAnimOper->getMoveItems();
+        qreal scale = view()->devicePixelRatioF();
         for (auto animationItem : moveItems) {
             auto index = model()->index(animationItem);
             auto margins = view()->d->gridMargins;
@@ -259,7 +260,8 @@ void ViewPainter::drawMove(QStyleOptionViewItem option)
 
             QPixmap itemPix = d->sortAnimOper->findPixmap(animationItem);
             if (itemPix.isNull()) {
-                itemPix = QPixmap(end.size());
+                itemPix = QPixmap(end.size() * scale);
+                itemPix.setDevicePixelRatio(scale);
                 itemPix.fill(Qt::transparent);
 
                 auto opt = option;
