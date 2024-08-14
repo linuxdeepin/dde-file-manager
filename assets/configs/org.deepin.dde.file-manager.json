@@ -112,7 +112,7 @@
             "permissions":"readwrite",
             "visibility":"private"
         },
-        "dfm.mount.dlnfs": {
+        "dfm.mount.lnfs": {
             "value":false,
             "serial":0,
             "flags":[],
@@ -120,17 +120,6 @@
             "name[zh_CN]":"扩展文件名字符数",
             "description[zh_CN]":"扩展文件名字符数需重启后才能生效",
             "description":"To extend characters of file names, you should restart to make the configuration effective.",
-            "permissions":"readwrite",
-            "visibility":"private"
-        },
-        "dfm.mount.dlnfs.defaults": {
-            "value":["$HOME/Desktop", "$HOME/Music", "$HOME/Pictures", "$HOME/Downloads", "$HOME/Videos", "$HOME/Documents"],
-            "serial":0,
-            "flags":[],
-            "name":"Dirs that support long file names",
-            "name[zh_CN]":"启用长文件名扩展的目录",
-            "description[zh_CN]":"默认启用长文件名扩展的目录",
-            "description":"Dirs that support long file names by default.",
             "permissions":"readwrite",
             "visibility":"private"
         },

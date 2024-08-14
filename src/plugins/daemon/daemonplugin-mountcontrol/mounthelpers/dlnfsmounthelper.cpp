@@ -22,13 +22,13 @@ QVariantMap DlnfsMountHelper::mount(const QString &path, const QVariantMap &opts
     // 1. check if dlnfs at `path` is already exist.
     if (checkDlnfsExist(path))
         return { { kResult, true },
-                 { kErrorCode, -kDlnMountMounted },
+                 { kErrorCode, -kLnMountMounted },
                  { kErrorMessage, QString("dlnfs is already mounted at %1").arg(path) } };
 
     // 2. check `dlnfs` process exist.
     if (QStandardPaths::findExecutable(kDlnfs).isEmpty())
         return { { kResult, false },
-                 { kErrorCode, -kDlnFsProcessNotExists },
+                 { kErrorCode, -kLnFsProcessNotExists },
                  { kErrorMessage, "dlnfs do not exist" } };
 
     // 3. mount dlnfs on `path`
