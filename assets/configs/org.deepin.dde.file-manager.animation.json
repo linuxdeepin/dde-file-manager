@@ -14,7 +14,7 @@
             "visibility":"private"
         },
         "dfm.animation.enter.duration": {
-            "value":366,
+            "value":200,
             "serial":0,
             "flags":[],
             "name":"Change dir animation duration",
@@ -102,7 +102,7 @@
             "visibility":"private"
         },
         "dd.animation.resort.custom.duration": {
-            "value":400,
+            "value":366,
             "serial":0,
             "flags":[],
             "name":"Desktop canvas resort animation duration(custom mode)",
