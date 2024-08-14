@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+echo "\ndfm_INFO: start main script to mount ulnfs at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
+[ -f /etc/deepin/dde-file-manager/dfm-ulnfs-automount ] && bash /etc/deepin/dde-file-manager/dfm-ulnfs-automount &
+echo "dfm_INFO: end main script at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
