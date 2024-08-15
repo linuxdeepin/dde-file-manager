@@ -140,7 +140,6 @@ void ViewAnimationHelper::paintItems() const
 {
     QPainter painter(view->viewport());
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     auto itemIterator = indexPixmaps.begin();
 
     if (isWaitingToPlaying()) {
@@ -154,7 +153,6 @@ void ViewAnimationHelper::paintItems() const
 
             QRect paintRect = currentIndexRectMap[index];
             QPixmap paintPix = itemIterator.value();
-            paintPix = paintPix.scaled(paintPix.size() * (1.0 / view->devicePixelRatioF()));
             painter.drawPixmap(paintRect, paintPix);
 
             itemIterator++;
@@ -268,6 +266,7 @@ void ViewAnimationHelper::paintPixmaps(const QMap<QModelIndex, QRect> &indexRect
         pixmap.fill(Qt::transparent);
 
         QPainter painter(&pixmap);
+        painter.setRenderHint(QPainter::Antialiasing, true);
         view->itemDelegate()->paint(&painter, option, index);
 
         indexPixmaps[index] = pixmap;

@@ -969,6 +969,9 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
 
 void FileView::aboutToChangeWidth(int deltaWidth)
 {
+    if (!isIconViewMode())
+        return;
+
     d->animationHelper->initAnimationHelper();
     d->animationHelper->aboutToPlay();
     d->animationHelper->playAnimationWithWidthChange(deltaWidth);
