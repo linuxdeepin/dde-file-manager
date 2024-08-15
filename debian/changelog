@@ -1,3 +1,10 @@
+dde-file-manager (6.0.56) unstable; urgency=medium
+
+  * Dependencies on libblockdev-crypto3
+  * 
+
+ -- zhangsheng<zhangsheng@uniontech.com>  Thu, 15 Aug 2024 14:06:10 +0800
+
 dde-file-manager (6.0.55) unstable; urgency=medium
 
   * some bug fix.
