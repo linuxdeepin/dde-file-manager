@@ -44,7 +44,9 @@ private slots:
 
 private:
     void init();
+    void paintPix(QPainter *painter, const QPixmap &pix, double process);
 
+private:
     QPixmap appearPix;
     QPixmap disappearPix;
 

@@ -77,29 +77,12 @@ void EnterDirAnimationWidget::setDisappearProcess(double value)
 void EnterDirAnimationWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    qreal ratio = painter.device()->devicePixelRatioF();
     painter.setRenderHint(QPainter::Antialiasing);
-    if (disappearAnim && disappearAnim->state() == QPropertyAnimation::Running) {
-        QPixmap pix = disappearPix.scaled(disappearPix.size() * (configScale + ((1.0 - configScale) * disappearProcess)) / ratio);
-        QRect rect(0, 0, pix.width(), pix.height());
-        rect.moveCenter(this->rect().center());
+    if (disappearAnim && disappearAnim->state() == QPropertyAnimation::Running)
+        paintPix(&painter, disappearPix, disappearProcess);
 
-        painter.save();
-        painter.setOpacity(configOpacity + ((1.0 - configOpacity) * disappearProcess));
-        painter.drawPixmap(rect, pix);
-        painter.restore();
-    }
-
-    if (appearAnim && appearAnim->state() == QPropertyAnimation::Running) {
-        QPixmap pix = appearPix.scaled(appearPix.size() * (configScale + ((1.0 - configScale) * appearProcess)) / ratio);
-        QRect rect(0, 0, pix.width(), pix.height());
-        rect.moveCenter(this->rect().center());
-
-        painter.save();
-        painter.setOpacity(configOpacity + ((1.0 - configOpacity) * appearProcess));
-        painter.drawPixmap(rect, pix);
-        painter.restore();
-    }
+    if (appearAnim && appearAnim->state() == QPropertyAnimation::Running)
+        paintPix(&painter, appearPix, appearProcess);
 
     QWidget::paintEvent(event);
 }
@@ -139,4 +122,16 @@ void EnterDirAnimationWidget::init()
         appearPix = QPixmap();
         disappearPix = QPixmap();
     });
+}
+
+void EnterDirAnimationWidget::paintPix(QPainter *painter, const QPixmap &pix, double process)
+{
+    QSize paintSize = rect().size() * (configScale + ((1.0 - configScale) * process));
+    QRect paintRect(0, 0, paintSize.width(), paintSize.height());
+    paintRect.moveCenter(rect().center());
+
+    painter->save();
+    painter->setOpacity(configOpacity + ((1.0 - configOpacity) * process));
+    painter->drawPixmap(paintRect, pix);
+    painter->restore();
 }
