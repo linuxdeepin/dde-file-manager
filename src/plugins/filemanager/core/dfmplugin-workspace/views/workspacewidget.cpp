@@ -78,6 +78,9 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
         if (animEnable) {
             auto contentWidget = curView->contentWidget();
+            if (!contentWidget)
+                contentWidget = curView->widget();
+
             if (contentWidget) {
                 if (!enterAnim)
                     enterAnim = new EnterDirAnimationWidget(this);
@@ -282,7 +285,12 @@ void WorkspaceWidget::handleViewStateChanged()
 
     auto contentWidget = view->contentWidget();
     if (!contentWidget)
+        contentWidget = view->widget();
+
+    if (!contentWidget) {
+        enterAnim->stopAndHide();
         return;
+    }
 
     auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
     auto localPos = mapFromGlobal(globalPos);
@@ -473,6 +481,9 @@ void WorkspaceWidget::onAnimDelayTimeout()
     }
 
     auto contentWidget = view->contentWidget();
+    if (!contentWidget)
+        contentWidget = view->widget();
+
     if (!contentWidget) {
         enterAnim->stopAndHide();
         return;
@@ -573,4 +584,7 @@ void WorkspaceWidget::setCurrentView(const QUrl &url)
     initCustomTopWidgets(url);
 
     view->setRootUrl(url);
+
+    if (view->viewState() != AbstractBaseView::ViewState::kViewBusy)
+        handleViewStateChanged();
 }
