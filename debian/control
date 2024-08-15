@@ -70,7 +70,7 @@ Depends:
  libqt5xdg3,
  socat,
  cryfs,
- libblockdev-crypto2,
+ libblockdev-crypto2 | libblockdev-crypto3,
  dde-device-formatter,
  dde-file-manager-plugins, 
  dde-file-manager-daemon-plugins,
