@@ -804,13 +804,14 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     bool isOptical = me.value(DeviceProperty::kOpticalDrive).toBool();
     bool canPowerOff = me.value(DeviceProperty::kCanPowerOff).toBool();
 
-    auto func = [this, id, isOptical, canPowerOff, cb](bool allUnmounted, const OperationErrorInfo &err) {
+    auto media = me.value(DeviceProperty::kMedia).toString();
+    auto func = [this, id, isOptical, canPowerOff, cb, media](bool allUnmounted, const OperationErrorInfo &err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
                     // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
-            else if (canPowerOff)
+            else if (canPowerOff && media != "flash_sd")   // do not detach SD driver.
                 powerOffBlockDevAsync(id, {}, cb);
             else if (cb)
                 cb(true, err);
