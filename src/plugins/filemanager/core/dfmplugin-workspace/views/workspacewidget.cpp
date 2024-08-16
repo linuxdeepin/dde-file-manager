@@ -10,6 +10,7 @@
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/interfaces/abstractbaseview.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
@@ -67,7 +68,9 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 
     auto curView = currentViewPtr();
     if (curView) {
-        if (UniversalUtils::urlEquals(url, curView->rootUrl()) && UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()) && !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url", url, tabBar->currentTab()->getCurrentUrl()))
+        if (UniversalUtils::urlEquals(url, curView->rootUrl())
+                && UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl())
+                && !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url", url, tabBar->currentTab()->getCurrentUrl()))
             return;
 
         FileView *view = qobject_cast<FileView *>(curView->widget());
@@ -75,6 +78,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             view->stopWork();
     }
 
+    auto lastUrl = workspaceUrl;
     workspaceUrl = url;
 
     // NOTE: In the function `initCustomTopWidgets` the `cd` event may be
@@ -83,12 +87,17 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         return;
 
     QString scheme { url.scheme() };
-
     if (!views.contains(scheme)) {
         QString error;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
         if (!fileView) {
             fmWarning() << "Cannot create view for " << url << "Reason: " << error;
+
+            // reset to last view and notify other plugins return to last dir.
+            workspaceUrl = lastUrl;
+            setCurrentView(workspaceUrl);
+            auto windowID = WorkspaceHelper::instance()->windowId(this);
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowID, lastUrl);
             return;
         }
 #ifdef ENABLE_TESTING
@@ -229,7 +238,8 @@ void WorkspaceWidget::onSetCurrentTabIndex(const int index)
 
 void WorkspaceWidget::onRefreshCurrentView()
 {
-    currentView()->refresh();
+    if (auto view = currentView())
+        view->refresh();
 }
 
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
