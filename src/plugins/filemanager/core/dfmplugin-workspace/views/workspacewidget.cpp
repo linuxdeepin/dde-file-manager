@@ -69,10 +69,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 
     auto curView = currentViewPtr();
     if (curView) {
-        if (UniversalUtils::urlEquals(url, curView->rootUrl()) &&
-                UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()) &&
-                !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url",
-                                      url, tabBar->currentTab()->getCurrentUrl()))
+        if (UniversalUtils::urlEquals(url, curView->rootUrl()) && UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl()) && !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url", url, tabBar->currentTab()->getCurrentUrl()))
             return;
 
         bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
@@ -549,7 +546,10 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
     }
 
     auto interface = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
-    if (interface && !interface->parent())
+    if (interface == nullptr)
+        return;
+
+    if (!interface->parent())
         interface->setParent(this);
 
     if (topWidgets.contains(scheme)) {
@@ -558,13 +558,11 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
         topWidgets[scheme]->setVisible(interface && (showUrl || interface->isKeepShow()));
         fmDebug() << topWidgets[scheme]->contentsMargins();
     } else {
-        if (interface) {
-            TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
-            if (topWidgetPtr) {
-                widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine) + 1, topWidgetPtr.get());
-                topWidgets.insert(scheme, topWidgetPtr);
-                topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
-            }
+        TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
+        if (topWidgetPtr) {
+            widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine) + 1, topWidgetPtr.get());
+            topWidgets.insert(scheme, topWidgetPtr);
+            topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
         }
     }
 }

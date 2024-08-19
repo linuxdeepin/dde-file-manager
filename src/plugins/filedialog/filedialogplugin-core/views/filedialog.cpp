@@ -869,10 +869,12 @@ void FileDialog::updateAcceptButtonState()
         return;
     QUrl url = currentUrl();
     auto fileInfo = InfoFactory::create<FileInfo>(url);
-    if (!fileInfo && statusBar() && statusBar()->acceptButton()) {
+    if (fileInfo == nullptr && statusBar() && statusBar()->acceptButton()) {
         statusBar()->acceptButton()->setDisabled(true);
         return;
     }
+    if (fileInfo == nullptr)
+        return;
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;

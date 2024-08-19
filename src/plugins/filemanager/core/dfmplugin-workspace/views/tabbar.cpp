@@ -169,10 +169,12 @@ void TabBar::setCurrentIndex(const int index)
 void TabBar::setCurrentUrl(const QUrl &url)
 {
     Tab *tab = currentTab();
-    if (!tab)
+    if (tab == nullptr)
         createTab();
 
-    tab->setCurrentUrl(url);
+    tab = currentTab();
+    if (tab)
+        tab->setCurrentUrl(url);
 }
 
 void TabBar::closeTab(quint64 winId, const QUrl &url)

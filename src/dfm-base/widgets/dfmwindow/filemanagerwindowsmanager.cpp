@@ -53,8 +53,13 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
     for (int i = 0; i != count; ++i) {
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
+        if (window == nullptr)
+            continue;
+
         auto cur = window->currentUrl();
-        if (window && (UniversalUtils::urlEquals(url, cur) || UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur)) || UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url)))) {
+        if (UniversalUtils::urlEquals(url, cur)
+            || UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur))
+            || UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url))) {
             qCInfo(logDFMBase) << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);

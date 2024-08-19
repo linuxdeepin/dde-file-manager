@@ -400,7 +400,8 @@ void CollectionFrame::setWidget(QWidget *w)
     }
     d->collView = w->findChild<QWidget *>(QStringLiteral("dd_collection_view"));
 
-    d->mainLayout->addWidget(d->widget);
+    if (d->widget && d->mainLayout)
+        d->mainLayout->addWidget(d->widget);
 }
 
 QWidget *CollectionFrame::widget() const

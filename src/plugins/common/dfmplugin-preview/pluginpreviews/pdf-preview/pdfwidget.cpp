@@ -119,6 +119,9 @@ bool PdfWidget::closeAllSheets()
 
 void PdfWidget::onOpened(DocSheet *sheet, Document::Error error)
 {
+    if (nullptr == sheet)
+        return;
+
     if (Document::kFileError == error || Document::kFileDamaged == error || Document::kConvertFailed == error) {
         stackedLayout->removeWidget(sheet);
 
@@ -130,12 +133,7 @@ void PdfWidget::onOpened(DocSheet *sheet, Document::Error error)
             fmWarning() << "PDF Preview: Please check if the file is damaged!";
         else if (Document::kConvertFailed == error)
             fmWarning() << "PDF Preview: Conversion failed, please check if the file is damaged!";
-
-        return;
     }
-
-    if (nullptr == sheet)
-        return;
 }
 
 void recordSheetPath::insertSheet(DocSheet *sheet)

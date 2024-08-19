@@ -194,12 +194,15 @@ void FileDialogHandle::setNameFilters(const QStringList &filters)
 {
     D_D(FileDialogHandle);
 
+    if (d->dialog == nullptr)
+        return;
+
     auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d->dialog->internalWinId()));
     Q_ASSERT(window);
 
     isSetNameFilters = true;
 
-    if (window->workSpace()) {
+    if (window && window->workSpace()) {
         if (d->dialog)
             d->dialog->setNameFilters(filters);
         d->lastFilterGroup.clear();
@@ -221,10 +224,13 @@ void FileDialogHandle::selectNameFilter(const QString &filter)
 {
     D_D(FileDialogHandle);
 
+    if (d->dialog == nullptr)
+        return;
+
     auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d->dialog->internalWinId()));
     Q_ASSERT(window);
 
-    if (window->workSpace()) {
+    if (window && window->workSpace()) {
         if (d->dialog)
             d->dialog->selectNameFilter(filter);
         d->lastFilter.clear();

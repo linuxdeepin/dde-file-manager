@@ -455,14 +455,14 @@ QMimeType SyncFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
     type = d->mimeType;
     modeCache = d->mimeTypeMode;
 
-    if (!d->fileMimeTypeFuture && (!type.isValid() || modeCache != mode)) {
+    if (d->fileMimeTypeFuture.isNull() && (!type.isValid() || modeCache != mode)) {
         rlk.unlock();
         auto future = FileInfoHelper::instance().fileMimeTypeAsync(url, mode, QString(), false);
         QWriteLocker wlk(&d->lock);
         d->mimeType = type;
         d->mimeTypeMode = mode;
         d->fileMimeTypeFuture = future;
-    } else if (d->fileMimeTypeFuture->finish) {
+    } else if (!d->fileMimeTypeFuture.isNull() && d->fileMimeTypeFuture->finish) {
         type = d->fileMimeTypeFuture->data.value<QMimeType>();
         rlk.unlock();
         QWriteLocker wlk(&d->lock);
