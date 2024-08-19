@@ -183,15 +183,15 @@ void ExtensionPluginManagerPrivate::doAppendExt(const QString &name, ExtPluginLo
 
     DFMEXT::DFMExtMenuPlugin *menu { loader->resolveMenuPlugin() };
     if (menu)
-        menuMap.insert(name, QSharedPointer<DFMEXT::DFMExtMenuPlugin>(menu));
+        menuMap.insert(name, menu);
 
     DFMEXT::DFMExtEmblemIconPlugin *emblem { loader->resolveEmblemPlugin() };
     if (emblem)
-        emblemMap.insert(name, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>(emblem));
+        emblemMap.insert(name, emblem);
 
     DFMEXT::DFMExtWindowPlugin *window { loader->resolveWindowPlugin() };
     if (window)
-        windowMap.insert(name, QSharedPointer<DFMEXT::DFMExtWindowPlugin>(window));
+        windowMap.insert(name, window);
 }
 
 void ExtensionPluginManagerPrivate::release()
@@ -237,21 +237,21 @@ bool ExtensionPluginManager::exists(ExtensionPluginManager::ExtensionType type) 
     return false;
 }
 
-QList<QSharedPointer<dfmext::DFMExtMenuPlugin>> ExtensionPluginManager::menuPlugins() const
+QList<DFMEXT::DFMExtMenuPlugin *> ExtensionPluginManager::menuPlugins() const
 {
     Q_D(const ExtensionPluginManager);
 
     return d->menuMap.values();
 }
 
-QList<QSharedPointer<dfmext::DFMExtEmblemIconPlugin>> ExtensionPluginManager::emblemPlugins() const
+QList<DFMEXT::DFMExtEmblemIconPlugin *> ExtensionPluginManager::emblemPlugins() const
 {
     Q_D(const ExtensionPluginManager);
 
     return d->emblemMap.values();
 }
 
-QList<QSharedPointer<dfmext::DFMExtWindowPlugin>> ExtensionPluginManager::windowPlugins() const
+QList<DFMEXT::DFMExtWindowPlugin *> ExtensionPluginManager::windowPlugins() const
 {
     Q_D(const ExtensionPluginManager);
 

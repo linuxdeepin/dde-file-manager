@@ -29,9 +29,9 @@ public Q_SLOTS:
 
 private:
     // method 2
-    bool parseLocationEmblemIcons(const QString &path, int count, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin> plugin);
+    bool parseLocationEmblemIcons(const QString &path, int count, DFMEXT::DFMExtEmblemIconPlugin *plugin);
     // method 1
-    void parseEmblemIcons(const QString &path, int count, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin> plugin);
+    void parseEmblemIcons(const QString &path, int count, DFMEXT::DFMExtEmblemIconPlugin *plugin);
 
     CacheType makeCache(const QString &path, const QList<QPair<QString, int>> &group);
     void makeLayoutGroup(const std::vector<DFMEXT::DFMExtEmblemIconLayout> &layouts, QList<QPair<QString, int>> *group);
