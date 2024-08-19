@@ -691,6 +691,9 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     Q_D(const IconItemDelegate);
 
     auto fileview = parent()->parent();
+    if (fileview == nullptr)
+        return;
+
     const QSize &iconSize = fileview->iconSize();
 
     editor->move(option.rect.topLeft());
@@ -718,8 +721,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
     FileViewHelper *viewHelper = qobject_cast<FileViewHelper *>(parent());
     int maxHeight = viewHelper ? (viewHelper->viewContentSize().height() - viewHelper->verticalOffset() - item->pos().y()) : INT_MAX;
-    if (viewHelper && fileview
-        && fileview->size().height() > viewHelper->viewContentSize().height())
+    if (viewHelper && fileview->size().height() > viewHelper->viewContentSize().height())
         maxHeight = fileview->size().height() - viewHelper->verticalOffset() - item->pos().y();
 
     item->setMaxHeight(qMax(maxHeight, sizeHint(opt, index).height()));

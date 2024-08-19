@@ -172,8 +172,8 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     // rename
     if (auto rename = d->predicateAction.value(ActionID::kRename)) {
         if ((!d->treeSelectedUrls.isEmpty() && d->selectFiles.count() != d->treeSelectedUrls.count())
-                || !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename)
-                || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+            || !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename)
+            || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
 
@@ -203,29 +203,28 @@ bool FileOperatorMenuScene::triggered(QAction *action)
             if (infoPtr && infoPtr->isAttributes(OptInfoType::kIsSymLink))
                 cdUrl = QUrl::fromLocalFile(infoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
-            auto flag = !DConfigManager::instance()->
-                    value(kViewDConfName,
-                          kOpenFolderWindowsInASeparateProcess, true).toBool();
+            auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                           kOpenFolderWindowsInASeparateProcess, true)
+                                 .toBool();
 
-            if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(cdUrl)) ||
-                    Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
+            if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(cdUrl)) || Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
                 dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl, !flag);
             } else {
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, d->windowId, cdUrl);
             }
-        } else  {
+        } else {
             if (d->onDesktop)
                 return dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
             // 如果是目录全部是用文管内部事件打开，因为一个目录就是这么处理的，保持一致，
             // 这里开启了fileinfo的缓存，这里执行效率高
-            for ( auto it = d->selectFiles.begin(); it != d->selectFiles.end();) {
+            for (auto it = d->selectFiles.begin(); it != d->selectFiles.end();) {
                 auto info = InfoFactory::create<FileInfo>(*it);
-                if (info.isNull() || !info->isAttributes(OptInfoType::kIsDir) ) {
+                if (info.isNull() || !info->isAttributes(OptInfoType::kIsDir)) {
                     it++;
                     continue;
                 }
                 QUrl cdUrl = *it;
-                if (info && info->isAttributes(OptInfoType::kIsSymLink))
+                if (info->isAttributes(OptInfoType::kIsSymLink))
                     cdUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
 
                 qApp->processEvents();
