@@ -58,7 +58,7 @@ void EmblemIconWorker::onFetchEmblemIcons(const QList<QPair<QString, int>> &loca
         return;
 
     const auto &emblemPlugins = ExtensionPluginManager::instance().emblemPlugins();
-    std::for_each(emblemPlugins.begin(), emblemPlugins.end(), [&localPaths, this](QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin> plugin) {
+    std::for_each(emblemPlugins.begin(), emblemPlugins.end(), [&localPaths, this](DFMEXT::DFMExtEmblemIconPlugin *plugin) {
         Q_ASSERT(plugin);
         for (const auto &path : localPaths) {
             if (this->parseLocationEmblemIcons(path.first, path.second, plugin))
@@ -74,13 +74,13 @@ void EmblemIconWorker::onClearCache()
     pluginCaches.clear();
 }
 
-bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, QSharedPointer<dfmext::DFMExtEmblemIconPlugin> plugin)
+bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, dfmext::DFMExtEmblemIconPlugin *plugin)
 {
     const auto &emblem { plugin->locationEmblemIcons(path.toStdString(), count) };
     const std::vector<DFMEXT::DFMExtEmblemIconLayout> &layouts { emblem.emblems() };
     // why add `pluginCaches` ?
     // To clear the emblem icon when a plugin returns an empty `DFMExtEmblemIconLayout`.
-    quint64 pluginAddr { reinterpret_cast<quint64>(plugin.data()) };
+    quint64 pluginAddr { reinterpret_cast<quint64>(plugin) };
     const CacheType &curPluginCache { pluginCaches.value(pluginAddr) };
     if (layouts.empty() && curPluginCache.value(path).isEmpty())
         return false;
@@ -108,9 +108,9 @@ bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, 
     return true;
 }
 
-void EmblemIconWorker::parseEmblemIcons(const QString &path, int count, QSharedPointer<dfmext::DFMExtEmblemIconPlugin> plugin)
+void EmblemIconWorker::parseEmblemIcons(const QString &path, int count, dfmext::DFMExtEmblemIconPlugin *plugin)
 {
-    quint64 pluginAddr { reinterpret_cast<quint64>(plugin.data()) };
+    quint64 pluginAddr { reinterpret_cast<quint64>(plugin) };
     if (hasCachedByOtherLocationEmblem(path, pluginAddr))
         return;
     const std::vector<std::string> &icons { plugin->emblemIcons(path.toStdString()) };
