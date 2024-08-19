@@ -41,9 +41,9 @@ class ExtensionPluginManagerPrivate : public QObject
     Q_DECLARE_PUBLIC(ExtensionPluginManager)
 
 public:
-    using DFMExtMenuPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtMenuPlugin>>;
-    using DFMExtEmblemPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>>;
-    using DFMExtWindowPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtWindowPlugin>>;
+    using DFMExtMenuPluginMap = QMap<QString, DFMEXT::DFMExtMenuPlugin *>;
+    using DFMExtEmblemPluginMap = QMap<QString, DFMEXT::DFMExtEmblemIconPlugin *>;
+    using DFMExtWindowPluginMap = QMap<QString, DFMEXT::DFMExtWindowPlugin *>;
 
     explicit ExtensionPluginManagerPrivate(ExtensionPluginManager *qq);
     ~ExtensionPluginManagerPrivate() override;
