@@ -23,9 +23,9 @@ static void doActionForEveryPlugin(std::function<void(DFMEXT::DFMExtWindowPlugin
         return;
     }
     const auto &windowPlugins { ExtensionPluginManager::instance().windowPlugins() };
-    std::for_each(windowPlugins.begin(), windowPlugins.end(), [callback](QSharedPointer<DFMEXT::DFMExtWindowPlugin> plugin) {
+    std::for_each(windowPlugins.begin(), windowPlugins.end(), [callback](DFMEXT::DFMExtWindowPlugin *plugin) {
         Q_ASSERT(plugin);
-        callback(plugin.data());
+        callback(plugin);
     });
 }
 
