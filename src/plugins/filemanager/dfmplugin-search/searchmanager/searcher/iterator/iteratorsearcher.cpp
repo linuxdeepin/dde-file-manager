@@ -81,6 +81,9 @@ void IteratorSearcher::doSearch()
         if (!iterator)
             continue;
 
+        iterator->setQueryAttributes("standard::name,standard::type,standard::size,\
+                                     standard::size,standard::is-symlink,standard::symlink-target,access::*,time::*");
+
         // 仅在过滤目录下进行搜索时，过滤目录下的内容才能被检索
         if (dfmbase::FileUtils::isLocalFile(url)) {
             QRegExp reg(kFilterFolders);
@@ -111,8 +114,9 @@ void IteratorSearcher::doSearch()
             if (match.hasMatch()) {
                 const auto &fileUrl = info->urlOf(UrlInfoType::kUrl);
                 {
+                    info->updateAttributes();
                     QMutexLocker lk(&mutex);
-                    allResults << fileUrl;
+                    allResults << fileUrl;                   
                 }
 
                 //推送

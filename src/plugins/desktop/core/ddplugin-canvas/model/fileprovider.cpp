@@ -79,6 +79,7 @@ void FileProvider::refresh(QDir::Filters filters)
     }
 
     traversalThread = new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags);
+    traversalThread->setQueryAttributes("standard::standard::name");
     connect(traversalThread, &TraversalDirThread::updateChildren, this, &FileProvider::reset);
     connect(traversalThread, &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
 

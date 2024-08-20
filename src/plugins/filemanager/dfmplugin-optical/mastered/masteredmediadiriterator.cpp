@@ -112,8 +112,6 @@ const FileInfoPointer MasteredMediaDirIterator::fileInfo() const
         infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, false);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, false);
-        emit InfoCacheController::instance().removeCacheFileInfo({ url });
-        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     } else {
         fmWarning() << "MasteredMediaFileInfo: info is nullptr, url = " << url;
         //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性

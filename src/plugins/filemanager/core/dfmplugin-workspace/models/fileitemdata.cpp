@@ -20,8 +20,10 @@ FileItemData::FileItemData(const QUrl &url, const FileInfoPointer &info, FileIte
       url(url),
       info(info)
 {
-    if (info)
+    if (info) {
         info->customData(kItemFileRefreshIcon);
+        updateOnce = !info->extendAttributes(ExtInfoType::kFileNeedUpdate).toBool();
+    }
 }
 
 FileItemData::FileItemData(const SortInfoPointer &info, FileItemData *parent)
@@ -97,6 +99,12 @@ QVariant FileItemData::data(int role) const
             const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
             if (info)
                 info->customData(kItemFileRefreshIcon);
+        } else if (!updateOnce) {
+            updateOnce = true;
+            info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, false);
+            info->updateAttributes();
+            if (info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool())
+                const_cast<FileItemData *>(this)->transFileInfo();
         }
         return QVariant();
     case kItemFilePathRole:
@@ -215,6 +223,15 @@ QVariant FileItemData::data(int role) const
         return QVariant(expanded);
     case kItemTreeViewCanExpandRole:
         return isDir();
+    case kItemUpdateAndTransFileInfoRole:
+        if (!updateOnce) {
+            updateOnce = true;
+            info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, false);
+            info->updateAttributes();
+            if (info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool())
+                const_cast<FileItemData *>(this)->transFileInfo();
+        }
+        return QVariant();
     default:
         return QVariant();
     }
@@ -233,6 +250,20 @@ void FileItemData::setExpanded(bool b)
 void FileItemData::setDepth(const int8_t depth)
 {
     this->depth = depth;
+}
+
+void FileItemData::transFileInfo()
+{
+    if (info.isNull() ||
+            !info->extendAttributes(ExtInfoType::kFileNeedTransInfo).toBool())
+        return;
+    info->setExtendedAttributes(ExtInfoType::kFileNeedTransInfo, false);
+    auto infoTrans = InfoFactory::transfromInfo(url.scheme(), info);
+    if (infoTrans != info) {
+        info = infoTrans;
+        emit InfoCacheController::instance().removeCacheFileInfo({url});
+        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+    }
 }
 
 bool FileItemData::isDir() const

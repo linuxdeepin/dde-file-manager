@@ -103,7 +103,7 @@ public:
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
 
     FileInfo::FileType fileType() const;
-    int cacheAllAttributes();
+    int cacheAllAttributes(const QString &attributes = QString());
     bool inserAsyncAttribute(const FileInfo::FileInfoAttributeID id, const QVariant &value);
     void fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
