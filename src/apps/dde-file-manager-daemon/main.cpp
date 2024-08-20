@@ -39,6 +39,13 @@ static void handleSIGTERM(int sig)
     }
 }
 
+[[noreturn]] static void handleSIGBUS(int sig)
+{
+    qCCritical(logAppDaemon) << "daemon break with !SIGBUS! " << sig;
+
+    ::_Exit(EXIT_FAILURE);
+}
+
 static void initEnv()
 {
     ///###: why?
@@ -130,6 +137,7 @@ int main(int argc, char *argv[])
         abort();
     }
     signal(SIGTERM, handleSIGTERM);
+    signal(SIGBUS, handleSIGBUS);
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
