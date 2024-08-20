@@ -130,21 +130,24 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
     if (!info)
         return "";
 
-    QImage tmpImg = img;
     const QString &fileUrl = url.toString(QUrl::FullyEncoded);
     const QString &thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
     const QString &thumbnailPath = ThumbnailHelper::sizeToFilePath(size);
     const QString &thumbnailFilePath = DFMIO::DFMUtils::buildFilePath(thumbnailPath.toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
-
-    tmpImg.setText(QT_STRINGIFY(Thumb::URL), fileUrl);
     const qint64 fileModify = info->timeOf(TimeInfoType::kLastModifiedSecond).toLongLong();
-    tmpImg.setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
     makePath(thumbnailPath);
-    if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
-        qCWarning(logDFMBase) << "thumbnail: save failed." << fileUrl;
-        return "";
-    }
+
+    QMetaObject::invokeMethod(QCoreApplication::instance(), [img, thumbnailFilePath, fileUrl, fileModify]() {
+        Q_ASSERT(QThread::currentThread() == qApp->thread());
+        QImage tmpImg = img;
+        tmpImg.setText(QT_STRINGIFY(Thumb::URL), fileUrl);
+        tmpImg.setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
+        if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
+            qCWarning(logDFMBase) << "thumbnail: save failed." << fileUrl;
+        }
+    },
+                              Qt::QueuedConnection);
 
     return thumbnailFilePath;
 }
@@ -232,10 +235,10 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
             return false;
     }
 
-    bool enable{ true };
-    if (FileUtils::isMtpFile(fileUrl)) { // 是否是mtpfile
+    bool enable { true };
+    if (FileUtils::isMtpFile(fileUrl)) {   // 是否是mtpfile
         enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
-    } else if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) { // 是否是协议设备
+    } else if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) {   // 是否是协议设备
         enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
     }
 
