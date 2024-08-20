@@ -94,6 +94,7 @@ enum ItemRoles {
     kItemTreeViewDepthRole = Qt::UserRole + 34,
     kItemTreeViewExpandedRole = Qt::UserRole + 35,
     kItemTreeViewCanExpandRole = Qt::UserRole + 36, // item can expand
+    kItemUpdateAndTransFileInfoRole = Qt::UserRole + 37,
     kItemUnknowRole = Qt::UserRole + 999
 };
 

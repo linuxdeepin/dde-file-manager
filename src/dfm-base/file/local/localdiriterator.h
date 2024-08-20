@@ -48,6 +48,9 @@ public:
     DFMIO::DEnumeratorFuture *asyncIterator();
     // get all sub file's fileinfo
     virtual QList<FileInfoPointer> fileInfos() const override;
+
+    // AbstractDirIterator interface
+    virtual void setQueryAttributes(const QString &attributes) override;
 };
 }
 

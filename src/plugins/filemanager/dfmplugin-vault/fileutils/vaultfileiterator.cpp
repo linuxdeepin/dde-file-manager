@@ -84,16 +84,13 @@ const FileInfoPointer VaultFileIterator::fileInfo() const
         infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, false);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, false);
-        emit InfoCacheController::instance().removeCacheFileInfo({url});
-        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+        InfoFactory::cacheFileInfo(infoTrans);
     } else {
         fmWarning() << "Vault: info is nullptr, url = " << url;
         return  InfoFactory::create<FileInfo>(fileUrl());
     }
 
     FileInfoPointer vaultInfo(new VaultFileInfo(fileUrl(), infoTrans));
-    emit InfoCacheController::instance().removeCacheFileInfo({fileUrl()});
-    emit InfoCacheController::instance().cacheFileInfo(fileUrl(), vaultInfo);
     return vaultInfo;
 }
 

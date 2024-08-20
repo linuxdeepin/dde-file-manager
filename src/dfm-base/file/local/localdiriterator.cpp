@@ -61,25 +61,25 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
     }
     auto targetPath = dfmInfo->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
     if (FileUtils::isLocalDevice(url) && (targetPath.isEmpty() || FileUtils::isLocalDevice(QUrl::fromLocalFile(targetPath)))) {
-        info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url, dfmInfo));
+        info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url));
     } else {
         info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, dfmInfo));
         info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-        info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes();
+        info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes(q->queryAttributes());
     }
 
-    auto infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
-
-    if (infoTrans) {
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
-        emit InfoCacheController::instance().removeCacheFileInfo({url});
-        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+    if (info) {
+        if (!q->queryAttributes().isEmpty() && q->queryAttributes() != "*") {
+            info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, true);
+            info->setExtendedAttributes(ExtInfoType::kFileNeedTransInfo, true);
+        }
+        info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+        info->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
     } else {
         qCWarning(logDFMBase) << "info is nullptr url = " << url;
     }
 
-    return infoTrans;
+    return info;
 }
 
 QList<FileInfoPointer> LocalDirIteratorPrivate::fileInfos()
@@ -279,4 +279,12 @@ QList<FileInfoPointer> LocalDirIterator::fileInfos() const
     if (d->dfmioDirIterator)
         return {};
     return d->fileInfos();
+}
+
+
+void LocalDirIterator::setQueryAttributes(const QString &attributes)
+{
+    if (d->dfmioDirIterator)
+        d->dfmioDirIterator->setQueryAttributes(attributes);
+    return AbstractDirIterator::setQueryAttributes(attributes);
 }

@@ -596,7 +596,7 @@ void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &
         return;
 
     QWriteLocker locker(&d->lock);
-    d->dfmFileInfo->refresh();
+    d->init(fileUrl());
 }
 
 void SyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
@@ -643,7 +643,7 @@ QMimeType SyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase:
 
 FileInfo::FileType SyncFileInfoPrivate::updateFileType()
 {
-    FileInfo::FileType fileType;
+    FileInfo::FileType fileType = FileInfo::FileType::kUnknown;
     const QUrl &fileUrl = q->fileUrl();
     if (FileUtils::isTrashFile(fileUrl) && q->isAttributes(FileInfo::FileIsType::kIsSymLink)) {
         {
@@ -659,23 +659,26 @@ FileInfo::FileType SyncFileInfoPrivate::updateFileType()
     const QString &absoluteFilePath = filePath();
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
-    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
-        if (S_ISDIR(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kDirectory;
-        else if (S_ISCHR(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kCharDevice;
-        else if (S_ISBLK(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kBlockDevice;
-        else if (S_ISFIFO(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kFIFOFile;
-        else if (S_ISSOCK(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kSocketFile;
-        else if (S_ISREG(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kRegularFile;
+    auto fileMode = attribute(DFileInfo::AttributeID::kStandardType).toUInt();
+    if (fileMode <= 0 || QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
+        return fileType;
+    fileMode = fileMode <= 0 ? statBuffer.st_mode : fileMode;
+    if (S_ISDIR(fileMode))
+        fileType = FileInfo::FileType::kDirectory;
+    else if (S_ISCHR(fileMode))
+        fileType = FileInfo::FileType::kCharDevice;
+    else if (S_ISBLK(fileMode))
+        fileType = FileInfo::FileType::kBlockDevice;
+    else if (S_ISFIFO(fileMode))
+        fileType = FileInfo::FileType::kFIFOFile;
+    else if (S_ISSOCK(fileMode))
+        fileType = FileInfo::FileType::kSocketFile;
+    else if (S_ISREG(fileMode))
+        fileType = FileInfo::FileType::kRegularFile;
 
-        QWriteLocker locker(&lock);
-        this->fileType = FileInfo::FileType(fileType);
-    }
+    QWriteLocker locker(&lock);
+    this->fileType = FileInfo::FileType(fileType);
+
     return fileType;
 }
 

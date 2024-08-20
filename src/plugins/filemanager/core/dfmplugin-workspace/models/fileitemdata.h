@@ -33,6 +33,8 @@ public:
     void setExpanded(bool b);
     void setDepth(const int8_t depth);
 
+    void transFileInfo();
+
 private:
     bool isDir() const;
 
@@ -45,6 +47,7 @@ private:
     std::atomic_int8_t depth { 0 };
     std::atomic_bool expanded { false };
     std::atomic_int subFileCount{ 0 }; // sub file count,not contain hide file
+    mutable std::atomic_bool updateOnce { true };
 };
 
 }

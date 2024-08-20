@@ -65,6 +65,15 @@ void TraversalDirThread::stopAndDeleteLater()
     }
 }
 
+void TraversalDirThread::setQueryAttributes(const QString &fileAttributes)
+{
+    if (fileInfoQueryAttributes == fileAttributes)
+        return;
+    fileInfoQueryAttributes = fileAttributes;
+    if (fileInfoQueryAttributes.isEmpty() && fileInfoQueryAttributes != "*")
+        dirIterator->setQueryAttributes(fileInfoQueryAttributes);
+}
+
 void TraversalDirThread::run()
 {
     if (dirIterator.isNull())
