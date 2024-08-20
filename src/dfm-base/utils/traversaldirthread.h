@@ -25,6 +25,7 @@ protected:
     QDirIterator::IteratorFlags flags;
     QList<QUrl> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
+    QString fileInfoQueryAttributes;
 
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -35,6 +36,7 @@ public:
     void stop();
     void quit();
     void stopAndDeleteLater();
+    void setQueryAttributes(const QString &fileAttributes);
 
 Q_SIGNALS:
     void updateChildren(QList<QUrl> children);

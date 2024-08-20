@@ -248,7 +248,6 @@ QVariant AsyncFileInfo::extendAttributes(const ExtInfoType type) const
     case FileExtendedInfoType::kGroupId:
         return d->asyncAttribute(FileInfo::FileInfoAttributeID::kUnixGID);
     default:
-        QReadLocker(&d->lock);
         return FileInfo::extendAttributes(type);
     }
 }
@@ -534,15 +533,6 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
         d->updateThumbnail(url);
     }
 
-    // 更新filetype
-    if (typeAll.contains(FileInfoAttributeID::kStandardFileType)) {
-        typeAll.removeOne(FileInfoAttributeID::kStandardFileType);
-        // 再在缓存和正在查询都不调用，缓存时会去调用
-        if (!d->cacheingAttributes && !d->queringAttribute)
-            d->inserAsyncAttribute(static_cast<FileInfo::FileInfoAttributeID>(FileInfoAttributeID::kStandardFileType),
-                                   QVariant::fromValue(d->fileType()));
-    }
-
     // 更新fileicon
     if (typeAll.contains(FileInfoAttributeID::kStandardIcon)) {
         typeAll.removeOne(FileInfoAttributeID::kStandardIcon);
@@ -590,6 +580,7 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
     // 其他属性都是从 dfm-io 的dfileinfo中获取，只需要异步刷新就行
     if (d->queringAttribute)
         return;
+    d->init(fileUrl());
     FileInfoHelper::instance().fileRefreshAsync(sharedFromThis());
 }
 
@@ -619,7 +610,7 @@ void AsyncFileInfo::removeNotifyUrl(const QUrl &url, const QString &infoPtr)
     d->notifyUrls.remove(url, infoPtr);
 }
 
-int AsyncFileInfo::cacheAsyncAttributes()
+int AsyncFileInfo::cacheAsyncAttributes(const QString &attributes)
 {
     assert(qApp->thread() != QThread::currentThread());
     auto dfmFileInfo = d->dfmFileInfo;
@@ -631,7 +622,7 @@ int AsyncFileInfo::cacheAsyncAttributes()
 
     if (!d->cacheingAttributes)
         d->cacheingAttributes = true;
-    auto result = d->cacheAllAttributes();
+    auto result = d->cacheAllAttributes(attributes);
     d->cacheingAttributes = false;
     return result;
 }
@@ -649,7 +640,6 @@ bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierA
         d->queringAttribute = false;
         return false;
     }
-
     d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
     d->queringAttribute = false;
     return true;
@@ -783,7 +773,8 @@ QString AsyncFileInfoPrivate::iconName() const
     }
     if (!FileUtils::isGvfsFile(q->fileUrl()) && iconNameValue.isEmpty())
         iconNameValue = q->fileMimeType().iconName();
-
+    if (iconNameValue.isEmpty() && q->isAttributes(OptInfoType::kIsDir))
+        iconNameValue = "folder";
     return iconNameValue;
 }
 
@@ -1066,35 +1057,30 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
     const QString &absoluteFilePath = filePath();
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
-    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
-        if (S_ISDIR(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kDirectory;
-        else if (S_ISCHR(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kCharDevice;
-        else if (S_ISBLK(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kBlockDevice;
-        else if (S_ISFIFO(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kFIFOFile;
-        else if (S_ISSOCK(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kSocketFile;
-        else if (S_ISREG(statBuffer.st_mode))
-            fileType = FileInfo::FileType::kRegularFile;
-    }
+    auto fileMode = attribute(DFileInfo::AttributeID::kStandardType).toUInt();
+    if (fileMode <= 0 || QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
+        return fileType;
+    fileMode = fileMode <= 0 ? statBuffer.st_mode : fileMode;
+    if (S_ISDIR(fileMode))
+        fileType = FileInfo::FileType::kDirectory;
+    else if (S_ISCHR(fileMode))
+        fileType = FileInfo::FileType::kCharDevice;
+    else if (S_ISBLK(fileMode))
+        fileType = FileInfo::FileType::kBlockDevice;
+    else if (S_ISFIFO(fileMode))
+        fileType = FileInfo::FileType::kFIFOFile;
+    else if (S_ISSOCK(fileMode))
+        fileType = FileInfo::FileType::kSocketFile;
+    else if (S_ISREG(fileMode))
+        fileType = FileInfo::FileType::kRegularFile;
+
     return fileType;
 }
 
-int AsyncFileInfoPrivate::cacheAllAttributes()
+int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
 {
     assert(qApp->thread() != QThread::currentThread());
-    QMap<FileInfo::FileInfoAttributeID, QVariant> tmp, cacheTmp;
-    {
-        QReadLocker lk(&lock);
-        cacheTmp = cacheAsyncAttributes;
-    }
-    {
-        QWriteLocker lk(&changesLock);
-        changesAttributes.clear();
-    }
+    QMap<FileInfo::FileInfoAttributeID, QVariant> tmp;
     if (needUpdateMediaInfo) {
         DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
         QList<DFileInfo::AttributeExtendID> extendIDs;
@@ -1105,21 +1091,25 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
         }
         updateMediaInfo(mediaType, extendIDs);
     }
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardName, fileName());
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardCompleteBaseName, completeBaseName());
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardCompleteSuffix, completeSuffix());
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardDisplayName, fileDisplayName());
-    tmp.insert(FileInfo::FileInfoAttributeID::kOriginalUri, attribute(DFileInfo::AttributeID::kOriginalUri));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardName, fileName());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardCompleteBaseName, completeBaseName());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardCompleteSuffix, completeSuffix());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardDisplayName, fileDisplayName());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kOriginalUri, attribute(DFileInfo::AttributeID::kOriginalUri));
     if (q->size() > 0 && attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0) {
         DFileInfo checkInfo(q->fileUrl());
-        tmp.insert(FileInfo::FileInfoAttributeID::kStandardSize, checkInfo.attribute(DFileInfo::AttributeID::kStandardSize));
+        inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardSize, checkInfo.attribute(DFileInfo::AttributeID::kStandardSize));
     } else {
-        tmp.insert(FileInfo::FileInfoAttributeID::kStandardSize, attribute(DFileInfo::AttributeID::kStandardSize));
+        inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardSize, attribute(DFileInfo::AttributeID::kStandardSize));
     }
 
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardFilePath, filePath());
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardParentPath, path());
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardFileExists, DFile(q->fileUrl()).exists());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath, filePath());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardParentPath, path());
+    if (attributes.isEmpty() || attributes == "*") {
+        inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardFileExists, DFile(q->fileUrl()).exists());
+    } else {
+        inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardFileExists, true);
+    }
     // redirectedFileUrl
     auto symlink = symLinkTarget();
     if (attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
@@ -1137,18 +1127,22 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
             asyncInfo->refresh();
         }
     }
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardSymlinkTarget, symLinkTarget());
-    tmp.insert(FileInfo::FileInfoAttributeID::kAccessCanRead, attribute(DFileInfo::AttributeID::kAccessCanRead));
-    tmp.insert(FileInfo::FileInfoAttributeID::kAccessCanWrite, attribute(DFileInfo::AttributeID::kAccessCanWrite));
-    tmp.insert(FileInfo::FileInfoAttributeID::kAccessCanExecute, isExecutable());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardSymlinkTarget, symLinkTarget());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanRead, attribute(DFileInfo::AttributeID::kAccessCanRead));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanWrite, attribute(DFileInfo::AttributeID::kAccessCanWrite));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanExecute, isExecutable());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kTimeAccess, attribute(DFileInfo::AttributeID::kTimeAccess));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kTimeAccessUsec, attribute(DFileInfo::AttributeID::kTimeAccessUsec));
     if (!notInit)
-        tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsHidden, attribute(DFileInfo::AttributeID::kStandardIsHidden));
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsFile, attribute(DFileInfo::AttributeID::kStandardIsFile));
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsDir, attribute(DFileInfo::AttributeID::kStandardIsDir));
-    tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsSymlink, attribute(DFileInfo::AttributeID::kStandardIsSymlink));
-    tmp.insert(FileInfo::FileInfoAttributeID::kAccessCanDelete, canDelete());
-    tmp.insert(FileInfo::FileInfoAttributeID::kAccessCanTrash, canTrash());
-    tmp.insert(FileInfo::FileInfoAttributeID::kAccessCanRename, canRename());
+        inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsHidden, attribute(DFileInfo::AttributeID::kStandardIsHidden));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsFile, attribute(DFileInfo::AttributeID::kStandardIsFile));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsDir, attribute(DFileInfo::AttributeID::kStandardIsDir));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsSymlink, attribute(DFileInfo::AttributeID::kStandardIsSymlink));
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanDelete, canDelete());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanTrash, canTrash());
+    inserAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanRename, canRename());
+    if (!attributes.isEmpty() && attributes != "*")
+        return 2;
     tmp.insert(FileInfo::FileInfoAttributeID::kOwnerUser, attribute(DFileInfo::AttributeID::kOwnerUser));
     tmp.insert(FileInfo::FileInfoAttributeID::kOwnerGroup, attribute(DFileInfo::AttributeID::kOwnerGroup));
     tmp.insert(FileInfo::FileInfoAttributeID::kUnixInode, attribute(DFileInfo::AttributeID::kUnixInode));
@@ -1157,11 +1151,11 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
     tmp.insert(FileInfo::FileInfoAttributeID::kTimeCreated, attribute(DFileInfo::AttributeID::kTimeCreated));
     tmp.insert(FileInfo::FileInfoAttributeID::kTimeChanged, attribute(DFileInfo::AttributeID::kTimeChanged));
     tmp.insert(FileInfo::FileInfoAttributeID::kTimeModified, attribute(DFileInfo::AttributeID::kTimeModified));
-    tmp.insert(FileInfo::FileInfoAttributeID::kTimeAccess, attribute(DFileInfo::AttributeID::kTimeAccess));
+
     tmp.insert(FileInfo::FileInfoAttributeID::kTimeCreatedUsec, attribute(DFileInfo::AttributeID::kTimeCreatedUsec));
     tmp.insert(FileInfo::FileInfoAttributeID::kTimeChangedUsec, attribute(DFileInfo::AttributeID::kTimeChangedUsec));
     tmp.insert(FileInfo::FileInfoAttributeID::kTimeModifiedUsec, attribute(DFileInfo::AttributeID::kTimeModifiedUsec));
-    tmp.insert(FileInfo::FileInfoAttributeID::kTimeAccessUsec, attribute(DFileInfo::AttributeID::kTimeAccessUsec));
+
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardFileType, QVariant::fromValue(fileType()));
     auto tmpdfmfileinfo = dfmFileInfo;
     if (tmpdfmfileinfo)
@@ -1175,18 +1169,6 @@ int AsyncFileInfoPrivate::cacheAllAttributes()
     if (q->nameOf(NameInfoType::kIconName) != attribute(DFileInfo::AttributeID::kStandardIcon)) {
         QWriteLocker rlk(&iconLock);
         fileIcon = QIcon();
-    }
-    if (cacheTmp.isEmpty()) {
-        {
-            QWriteLocker lk(&lock);
-            QVariant hid = cacheAsyncAttributes.value(FileInfo::FileInfoAttributeID::kStandardIsHidden);
-            cacheAsyncAttributes = tmp;
-            if (notInit && hid.isValid())
-                cacheAsyncAttributes.insert(FileInfo::FileInfoAttributeID::kStandardIsHidden, hid);
-        }
-        // kMimeTypeName
-        fileMimeTypeAsync();
-        return 2;
     }
 
     {

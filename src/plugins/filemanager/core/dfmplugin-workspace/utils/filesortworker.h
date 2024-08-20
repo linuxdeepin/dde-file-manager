@@ -83,12 +83,15 @@ signals:
     void getSourceData(const QString &key);
 
     void requestUpdateView();
+    void requestCursorWait();
+    void reqUestCloseCursor();
 
     // Note that the slot functions here are executed in asynchronous threads,
     // so the link can only be Qt:: QueuedConnection,
     // which cannot be directly called elsewhere, but can only be triggered by signals
 signals:
     void requestUpdateTimerStart();
+    void requestSortByMimeType();
 
 public slots:
     // Receive all local files of iteration of iterator thread, perform filtering and sorting
@@ -133,6 +136,7 @@ public slots:
     void handleClearThumbnail();
     void handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
     void handleUpdateRefreshFiles();
+    void handleSortByMimeType();
 
     // treeview solts
 public slots:
@@ -201,16 +205,18 @@ private:
     int indexOfVisibleChild(const QUrl &itemUrl);
     int setVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
                             const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
+    bool checkAndUpdateFileInfoUpdate();
+    void checkAndSortBytMimeType(const QUrl &url);
 
 private:
     QUrl current;
     QStringList nameFilters {};
     QDir::Filters filters { QDir::NoFilter };
     QDirIterator::IteratorFlags flags { QDirIterator::NoIteratorFlags };
-    QMap<QUrl, QMap<QUrl, SortInfoPointer>> children {};
+    QHash<QUrl, QHash<QUrl, SortInfoPointer>> children {};
     QReadWriteLock childrenDataLocker;
-    QMap<QUrl, FileItemDataPointer> childrenDataMap {};
-    QMap<QUrl, FileItemDataPointer> childrenDataLastMap {};
+    QHash<QUrl, FileItemDataPointer> childrenDataMap {};
+    QHash<QUrl, FileItemDataPointer> childrenDataLastMap {};
     QList<QUrl> visibleChildren {};
     QReadWriteLock locker;
     AbstractSortFilterPointer sortAndFilter { nullptr };
@@ -224,12 +230,14 @@ private:
     std::atomic_bool isCanceled { false };
     bool isMixDirAndFile { false };
     char placeholderMemory[4];
-    QMap<QUrl, QList<QUrl>> visibleTreeChildren{};
+    QHash<QUrl, QList<QUrl>> visibleTreeChildren{};
     QMultiMap<int8_t, QUrl> depthMap;
     std::atomic_bool istree;
     std::atomic_bool currentSupportTreeView {false};
     QList<QUrl> fileInfoRefresh;
     QTimer *updateRefresh {nullptr};
+    std::atomic_bool mimeSorting{ false };
+    QSet<QUrl> waitUpdatedFiles;
 };
 
 }
