@@ -108,6 +108,13 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 {
     FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
+    processFile(info, followLink, directoryQueue);
+}
+
+void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, const bool followLink, QQueue<QUrl> &directoryQueue)
+{
+    auto info = fileInfo;
+    auto url = fileInfo->fileUrl();
     if (!info) {
         qCWarning(logDFMBase) << "Url not yet supported: " << url;
         return;
@@ -279,7 +286,7 @@ bool FileStatisticsJobPrivate::checkInode(const FileInfoPointer info)
             }
             return false;
         }
-        inodelist.append(fileInode);
+        inodelist.insert(fileInode);
     }
     return true;
 }
@@ -506,6 +513,8 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             qCWarning(logDFMBase) << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
+        d->iterator->setQueryAttributes("standard::name,standard::type,standard::size,\
+                                        standard::size,standard::is-symlink,standard::symlink-target,access::*,unix::inode");
         d->iteratorCanStop = true;
         while (d->iterator->hasNext()) {
             QUrl url = d->iterator->next();

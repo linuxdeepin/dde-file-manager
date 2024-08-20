@@ -115,6 +115,8 @@ public:
         kFileCdRomDevice = 8,   // 文件是光驱
         kFileThumbnail = 9,     // 文件缩略图
         kCustomerStartExtended = 50,   // 其他用户使用
+        kFileNeedUpdate = 51,   // 文件信息需要在显示更新
+        kFileNeedTransInfo = 52,   // 文件信息需要转换为desktopfileinfo
         kUnknowExtendedInfo = 255,
     };
     /*!

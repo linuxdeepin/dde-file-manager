@@ -338,6 +338,13 @@ public:
         return qSharedPointerDynamicCast<T>(info);
     }
 
+    static void cacheFileInfo(const QSharedPointer<FileInfo> &info) {
+        if (InfoCacheController::instance().cacheDisable(info->fileUrl().scheme()))
+            return;
+        emit InfoCacheController::instance().removeCacheFileInfo({info->fileUrl()});
+        emit InfoCacheController::instance().cacheFileInfo(info->fileUrl(), info);
+    }
+
 private:
     static InfoFactory &instance();   // 获取全局实例
     explicit InfoFactory() {}
