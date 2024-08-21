@@ -8,7 +8,7 @@
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/windowutils.h>
-
+#include <dfm-framework/event/event.h>
 #include <DArrowLineDrawer>
 
 #include <QApplication>
@@ -46,6 +46,10 @@ void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVari
 {
     QList<QUrl> fileUrls;
     foreach (const QUrl &url, urls) {
+        bool ret = dpfHookSequence->run("dfmplugin_propertydialog", "hook_PropertyDialog_Disable", url);
+        if (ret)
+            continue;
+
         if (!showCustomDialog(url))
             fileUrls.append(url);
     }
@@ -248,7 +252,7 @@ QPoint PropertyDialogUtil::getPropertyPos(int dialogWidth, int dialogHeight)
     const QScreen *cursor_screen = WindowUtils::cursorScreen();
 
     int x = (cursor_screen->availableSize().width() - dialogWidth) / 2;
-    int y = (cursor_screen->availableSize().height()- kBottomReserveHeight - dialogHeight) / 2;
+    int y = (cursor_screen->availableSize().height() - kBottomReserveHeight - dialogHeight) / 2;
 
     return QPoint(x, y) + cursor_screen->geometry().topLeft();
 }
