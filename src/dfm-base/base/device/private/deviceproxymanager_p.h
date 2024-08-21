@@ -36,8 +36,6 @@ public:
     void connectToAPI();
     void disconnCurrentConnections();
 
-    QVariantMap asyncQueryInfo(const QString &id, bool reload, std::function<QDBusPendingReply<QVariantMap>(const QString &, bool)> func);
-
 private Q_SLOTS:
     void addMounts(const QString &id, const QString &mpt);
     void removeMounts(const QString &id);
