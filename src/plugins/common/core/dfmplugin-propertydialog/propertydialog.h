@@ -27,6 +27,7 @@ class PropertyDialog : public dpf::Plugin
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_PermissionView_Ash)
+    DPF_EVENT_REG_HOOK(hook_PropertyDialog_Disable)
 
 public:
     virtual void initialize() override;
