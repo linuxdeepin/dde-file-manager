@@ -239,7 +239,7 @@ void RecentManager::onDeleteExistRecentUrls(const QList<QUrl> &urls)
 void RecentManager::onStopRecentWatcherThread()
 {
     static std::once_flag stopFlag;
-    std::call_once(stopFlag, [this]{
+    std::call_once(stopFlag, [this] {
         if (watcher) {
             watcher->stopWatcher();
             watcher->disconnect(this);

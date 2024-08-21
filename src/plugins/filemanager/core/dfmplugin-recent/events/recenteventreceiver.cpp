@@ -14,6 +14,7 @@
 
 Q_DECLARE_METATYPE(QDir::Filters);
 Q_DECLARE_METATYPE(QString *)
+Q_DECLARE_METATYPE(bool *)
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_recent;
@@ -26,6 +27,7 @@ RecentEventReceiver *RecentEventReceiver::instance()
 
 void RecentEventReceiver::initConnect()
 {
+    dpfHookSequence->follow("dfmplugin_propertydialog", "hook_PropertyDialog_Disable", RecentEventReceiver::instance(), &RecentEventReceiver::handlePropertydialogDisable);
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, RecentEventReceiver::instance(), &RecentEventReceiver::handleWindowUrlChanged);
 }
 
@@ -64,6 +66,14 @@ void RecentEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const 
     if (!ok || destUrls.isEmpty())
         return;
     RecentManager::instance()->updateRecent();
+}
+
+bool RecentEventReceiver::handlePropertydialogDisable(const QUrl &url)
+{
+    if (url != RecentHelper::rootUrl())
+        return false;
+
+    return true;
 }
 
 RecentEventReceiver::RecentEventReceiver(QObject *parent)
