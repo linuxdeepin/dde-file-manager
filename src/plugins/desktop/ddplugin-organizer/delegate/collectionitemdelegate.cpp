@@ -783,18 +783,25 @@ QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, co
         painter->save();
         painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
 
+        auto iconStyle { IconUtils::getIconStyle(opts.rect.size().toSize().width()) };
         QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
         QRect imageRect { backgroundRect };
-        // 绘制带有阴影的背景
-        painter->drawPixmap(backgroundRect, IconUtils::renderIconBackground(backgroundRect.size()));
 
-        // 绘制缩略图(上下左右各缩小2px)
-        imageRect.adjust(4, 4, -4, -4);
+        // 绘制带有阴影的背景
+        auto stroke { iconStyle.stroke };
+        backgroundRect.adjust(-stroke, -stroke, stroke, stroke);
+        const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
+        const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
+        painter->drawPixmap(backgroundRect, shadowPixmap);
+        imageRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
+
         QPainterPath clipPath;
-        clipPath.addRoundedRect(imageRect, 4, 4);
+        auto radius { iconStyle.radius - iconStyle.stroke };
+        clipPath.addRoundedRect(imageRect, radius, radius);
         painter->setClipPath(clipPath);
         painter->drawPixmap(imageRect, px);
         painter->restore();
+
         return backgroundRect;
     }
 
