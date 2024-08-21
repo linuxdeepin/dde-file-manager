@@ -257,7 +257,8 @@ void DConfigUpgradeUnit::clearDiskHidden()
 
 void DConfigUpgradeUnit::addOldGenericSettings()
 {
-    UpgradeUtils::addOldGenericAttribute(QJsonArray::fromStringList(oldGenericSettings));
+    if (!oldGenericSettings.isEmpty())
+        UpgradeUtils::addOldGenericAttribute(QJsonArray::fromStringList(oldGenericSettings));
 }
 
 bool DConfigUpgradeUnit::checkOldGeneric(const QString &key)
