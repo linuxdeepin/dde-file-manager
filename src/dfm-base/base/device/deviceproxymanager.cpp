@@ -6,10 +6,8 @@
 #include "devicemanager.h"
 #include "deviceutils.h"
 #include "private/deviceproxymanager_p.h"
-#include <dfm-base/utils/finallyutil.h>
 
 #include <QDBusServiceWatcher>
-#include <QtConcurrent>
 
 using namespace dfmbase;
 static constexpr char kDeviceService[] { "org.deepin.filemanager.server" };
@@ -49,20 +47,6 @@ QStringList DeviceProxyManager::getAllBlockIdsByUUID(const QStringList &uuids, G
     return devs;
 }
 
-QStringList DeviceProxyManager::asyncGetAllBlockIdsByUUID(const QStringList &uuids, GlobalServerDefines::DeviceQueryOptions opts)
-{
-    const auto &&devices = getAllBlockIds(opts);
-    QStringList devs;
-    for (const auto &id : devices) {
-        const auto &&info = asyncQueryBlockInfo(id);
-        if (info.value("error", QVariant(false)).toBool())
-            return devs;
-        if (uuids.contains(info.value(GlobalServerDefines::DeviceProperty::kUUID).toString()))
-            devs << id;
-    }
-    return devs;
-}
-
 QStringList DeviceProxyManager::getAllProtocolIds()
 {
     if (d->isDBusRuning() && d->devMngDBus) {
@@ -93,32 +77,6 @@ QVariantMap DeviceProxyManager::queryProtocolInfo(const QString &id, bool reload
         return reply.value();
     } else {
         return DevMngIns->getProtocolDevInfo(id, reload);
-    }
-}
-
-QVariantMap DeviceProxyManager::asyncQueryBlockInfo(const QString &id, bool reload)
-{
-    if (d->isDBusRuning() && d->devMngDBus) {
-        auto fun = [=](const QString &id, bool reload) -> QDBusPendingReply<QVariantMap> {
-            DeviceManagerInterface devMngDBus(kDeviceService, kDevMngPath, QDBusConnection::sessionBus());
-            return devMngDBus.QueryBlockDeviceInfo(id, reload);
-        };
-        return d->asyncQueryInfo(id, reload, fun);
-    } else {
-        return queryBlockInfo(id, reload);
-    }
-}
-
-QVariantMap DeviceProxyManager::asyncQueryProtocolInfo(const QString &id, bool reload)
-{
-    if (d->isDBusRuning() && d->devMngDBus) {
-        auto fun = [=](const QString &id, bool reload) -> QDBusPendingReply<QVariantMap> {
-            DeviceManagerInterface devMngDBus(kDeviceService, kDevMngPath, QDBusConnection::sessionBus());
-            return devMngDBus.QueryProtocolDeviceInfo(id, reload);
-        };
-        return d->asyncQueryInfo(id, reload, fun);
-    } else {
-        return queryProtocolInfo(id, reload);
     }
 }
 
@@ -385,32 +343,6 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
         q->disconnect(connection);
     connections.clear();
     currentConnectionType = kNoneConnection;
-}
-
-QVariantMap DeviceProxyManagerPrivate::asyncQueryInfo(const QString &id, bool reload, std::function<QDBusPendingReply<QVariantMap>(const QString&, bool)> func)
-{
-    QEventLoop loop;
-    QFutureWatcher<QDBusPendingReply<QVariantMap>>* fw = new QFutureWatcher<QDBusPendingReply<QVariantMap>>;
-    FinallyUtil release([&] {
-        if (fw) {
-            delete fw;
-            fw = nullptr;
-        }
-    });
-    connect(fw, &QFutureWatcher<QDBusPendingReply<QVariantMap>>::finished, [&loop](){
-        loop.quit();
-    });
-    QFuture<QDBusPendingReply<QVariantMap>> ft =
-    QtConcurrent::run([id, reload, func](){
-        QDBusPendingReply<QVariantMap> reply = func(id, reload);
-        reply.waitForFinished();
-        return reply;
-        });
-    fw->setFuture(ft);
-    if (loop.exec()) {
-        return QVariantMap({{"error", true}});
-    }
-    return fw->result();
 }
 
 void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
