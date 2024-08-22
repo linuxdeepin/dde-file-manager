@@ -299,11 +299,14 @@ QString dfmbase::FileInfo::displayOf(const DisPlayInfoType type) const
         return url.path();
     case DisPlayInfoType::kMimeTypeDisplayName:
         return MimeTypeDisplayManager::instance()->displayName(nameOf(FileNameInfoType::kMimeTypeName));
-    case DisPlayInfoType::kFileTypeDisplayName:
-        return QString::number(static_cast<int>(MimeTypeDisplayManager::
-                                                        instance()
-                                                                ->displayNameToEnum(const_cast<FileInfo *>(this)->fileMimeType().name())))
+    case DisPlayInfoType::kFileTypeDisplayName: {
+
+        int mimeDisplayNum = static_cast<int>(MimeTypeDisplayManager::
+                                              instance()
+                                                      ->displayNameToEnum(const_cast<FileInfo *>(this)->fileMimeType().name()));
+        return QString("%1.").arg(mimeDisplayNum, 2, 10, QChar('0'))
                 .append(nameOf(FileNameInfoType::kSuffix));
+        }
     case DisPlayInfoType::kFileDisplayPinyinName:
         if (pinyinName.isEmpty()) {
             const QString &displayName = this->displayOf(DisplayInfoType::kFileDisplayName);
