@@ -11,6 +11,7 @@
 #include <dfm-base/file/local/localfileiconprovider.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QApplication>
 #include <QClipboard>
@@ -40,7 +41,8 @@ static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
 
 void onClipboardDataChanged()
 {
-
+    if (FileManagerWindowsManager::instance().windowIdList().count() <= 0)
+        return;
     QMutexLocker lk(&clipboardFileUrlsMutex);
     clipboardFileUrls.clear();
 
@@ -91,6 +93,11 @@ ClipBoard::ClipBoard(QObject *parent)
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this]() {
         onClipboardDataChanged();
         emit clipboardDataChanged();
+    });
+
+    connect(qApp, &QApplication::aboutToQuit, this, [this]{
+        disconnect();
+        qCWarning(logDFMBase) << "disconnect clip board singal!";
     });
 }
 
