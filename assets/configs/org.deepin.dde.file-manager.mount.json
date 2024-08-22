@@ -1,0 +1,17 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "enableCifsMount": {
+            "value": true,
+            "serial":0,
+            "flags":["global"],
+            "name":"Mount SMB share by CIFS",
+            "name[zh_CN]":"通过 CIFS 挂载 SMB 共享",
+            "description[zh_CN]":"通过内核支持的 CIFS 挂载 SMB 共享文件夹，性能会更好。重启后生效。",
+            "description":"Mount SMB share folders via CIFS which is supported by kernel and have a better performance. Take effective after reboot.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}
