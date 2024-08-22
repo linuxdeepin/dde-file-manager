@@ -46,3 +46,4 @@ install(FILES .readme DESTINATION ${AppEntryInstallDir})
 
 # install dconfig files.
 INSTALL_DCONFIG("org.deepin.dde.file-manager.computer.json")
+INSTALL_DCONFIG("org.deepin.dde.file-manager.mount.json")

@@ -26,6 +26,7 @@ public:
 public slots:
     QVariantMap Mount(const QString &path, const QVariantMap &opts);
     QVariantMap Unmount(const QString &path, const QVariantMap &opts);
+    QStringList SupportedFileSystems();
 
 private:
     QScopedPointer<DAEMONPMOUNTCONTROL_NAMESPACE::MountControlDBusPrivate> d;

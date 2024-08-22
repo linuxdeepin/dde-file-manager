@@ -27,7 +27,7 @@ public:
 
 private:
     // for remove the gerrit warning
-    MountControlDBusPrivate(const MountControlDBusPrivate &other) { }
+    MountControlDBusPrivate(const MountControlDBusPrivate &other) {}
     MountControlDBusPrivate &operator=(const MountControlDBusPrivate &other) { return *this; }
 
     QVariantMap mountDlnfs(const QString &path, const QVariantMap &opts);
@@ -39,6 +39,7 @@ private:
     QMap<QString, AbstractMountHelper *> mountHelpers;
     MountControlDBus *q { nullptr };
     MountControlAdapter *adapter { nullptr };
+    QStringList supportedFS;
 };
 
 DAEMONPMOUNTCONTROL_END_NAMESPACE
