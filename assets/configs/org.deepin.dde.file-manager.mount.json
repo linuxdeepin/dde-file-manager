@@ -12,6 +12,17 @@
             "description":"Mount SMB share folders via CIFS which is supported by kernel and have a better performance. Take effective after reboot.",
             "permissions":"readwrite",
             "visibility":"public"
+        },
+        "cifsMountOptionOverride": {
+            "value": {},
+            "serial":0,
+            "flags":["global"],
+            "name":"CIFS mount option override list",
+            "name[zh_CN]":"CIFS 挂载选项覆盖列表",
+            "description[zh_CN]":"这些输入将用于覆盖 CIFS 挂载选项。仅当 enableCifsMount 启用时有效。",
+            "description":"The inputs will be used to override the CIFS mount options. Valid only if enableCifsMount is on.",
+            "permissions":"readwrite",
+            "visibility":"public"
         }
     }
 }
