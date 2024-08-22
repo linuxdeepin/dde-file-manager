@@ -6,6 +6,7 @@
 #include "utils/searchhelper.h"
 
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -34,7 +35,8 @@ void SearchEventCaller::sendStartSpinner(quint64 winId)
 
 void SearchEventCaller::sendStopSpinner(quint64 winId)
 {
-    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Spinner_Stop", winId);
+    if (dfmbase::FileManagerWindowsManager::instance().findWindowById(winId))
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Spinner_Stop", winId);
 }
 
 }
