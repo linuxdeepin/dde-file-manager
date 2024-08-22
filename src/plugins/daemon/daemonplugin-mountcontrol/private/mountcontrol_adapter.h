@@ -47,6 +47,9 @@ class MountControlAdapter: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"a{sv}\" name=\"opts\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In1\"/>\n"
 "    </method>\n"
+"    <method name=\"SupportedFileSystems\">\n"
+"      <arg direction=\"out\" type=\"as\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -59,6 +62,7 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     QVariantMap Mount(const QString &path, const QVariantMap &opts);
+    QStringList SupportedFileSystems();
     QVariantMap Unmount(const QString &path, const QVariantMap &opts);
 Q_SIGNALS: // SIGNALS
 };

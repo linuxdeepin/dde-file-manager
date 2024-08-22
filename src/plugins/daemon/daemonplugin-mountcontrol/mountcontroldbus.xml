@@ -15,5 +15,8 @@
       <arg name="opts" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
+    <method name="SupportedFileSystems">
+      <arg type="as" direction="out"/>
+    </method>
   </interface>
 </node>

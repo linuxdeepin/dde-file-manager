@@ -39,6 +39,12 @@ QVariantMap MountControlAdapter::Mount(const QString &path, const QVariantMap &o
     return parent()->Mount(path, opts);
 }
 
+QStringList MountControlAdapter::SupportedFileSystems()
+{
+    // handle method call com.deepin.filemanager.daemon.MountControl.SupportedFileSystems
+    return parent()->SupportedFileSystems();
+}
+
 QVariantMap MountControlAdapter::Unmount(const QString &path, const QVariantMap &opts)
 {
     // handle method call com.deepin.filemanager.daemon.MountControl.Unmount
