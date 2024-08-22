@@ -9,6 +9,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -231,7 +232,7 @@ void RootInfo::doWatcherEvent()
             if (!adds.isEmpty())
                 addChildren(adds);
             if (!updates.isEmpty())
-                updateChildren(updates); 
+                updateChildren(updates);
             if (!removes.isEmpty())
                 removeChildren(removes);
 
@@ -426,6 +427,8 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
 
     for (auto url : urlList) {
         url.setPath(url.path());
+        if (DeviceUtils::isFtp(url) && !DFMIO::DFile(url).exists())
+            continue;
 
         auto child = fileInfo(url);
 
