@@ -225,12 +225,12 @@ bool DeviceUtils::isWorkingOpticalDiscId(const QString &id)
 
 bool DeviceUtils::isBlankOpticalDisc(const QString &id)
 {
-    // for dvd+rw/dvd-rw disc, erase operation only overwrite some blocks which used to present filesystem,
+    // for dvd+rw/dvd-rw/bd-re disc, erase operation only overwrite some blocks which used to present filesystem,
     // so the blank field is still false even if it can be write datas from the beginning,
     auto &&map = DevProxyMng->queryBlockInfo(id);
     bool isBlank { map[kOpticalBlank].toBool() };
     auto mediaType { static_cast<MediaType>(map[kOpticalMediaType].toUInt()) };
-    if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW)
+    if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW || mediaType == MediaType::kBD_RE)
         isBlank |= map[kSizeTotal].toULongLong() == map[kSizeFree].toULongLong();
 
     return isBlank;
