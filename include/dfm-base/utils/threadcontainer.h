@@ -374,5 +374,137 @@ private:
     QMap<DKey, DValue> myMap;   // 当前的QMap
     QMutex mutable mutex;   // 当前的锁
 };
+
+template<class DKey, class DValue>
+class DThreadHash
+{
+public:
+    DThreadHash<DKey, DValue>()
+        : myHash()
+    {
+    }
+    /*!
+     * \brief insert 插入一个模板类型到map
+     *
+     * \param Key 模板类引用key
+     *
+     * \param Value 模板类引用value
+     *
+     * \return
+     */
+    inline void insert(const DKey &key, const DValue &value)
+    {
+        QMutexLocker lk(&mutex);
+        myHash.insert(key, value);
+    }
+    /*!
+     * \brief remove 从map中移除所有的模板类型
+     *
+     * \param Key 模板类引用key
+     *
+     * \return
+     */
+    inline void remove(const DKey &key)
+    {
+        QMutexLocker lk(&mutex);
+        myHash.remove(key);
+    }
+    /*!
+     * \brief contains map中是否包含key对应的键值对
+     *
+     * Key 模板类引用key
+     *
+     * \return bool 是否包含key对应的键值对
+     */
+    inline DValue value(const DKey &key)
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.value(key);
+    }
+    /*!
+     * \brief contains map中是否包含key对应的键值对
+     *
+     * Key 模板类引用key
+     *
+     * \return bool 是否包含key对应的键值对
+     */
+    inline bool contains(const DKey &key)
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.contains(key);
+    }
+    /*!
+     * \brief begin 当前map的开始迭代器
+     *
+     * \param null
+     *
+     * \return QMap<Key, Value>::iterator 当前map的开始迭代器
+     */
+    inline typename QMap<DKey, DValue>::iterator begin()
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.begin();
+    }
+    /*!
+     * \brief begin 当前map的结束迭代器
+     *
+     * \param null
+     *
+     * \return QMap<Key, Value>::iterator 当前map的结束迭代器
+     */
+    inline typename QMap<DKey, DValue>::iterator end()
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.end();
+    }
+    /*!
+     * \brief erase 去掉map中当前的迭代器
+     *
+     * \param QMap<Key, Value>::iterator map的迭代器
+     *
+     * \return QMap<Key, Value>::iterator 当前迭代器的下一个迭代器
+     */
+    inline typename QMap<DKey, DValue>::iterator erase(typename QMap<DKey, DValue>::iterator it)
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.erase(it);
+    }
+    /*!
+     * \brief count map的总个数
+     *
+     * \return int map的总个数
+     */
+    inline int count()
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.count();
+    }
+    /*!
+     * \brief clear 清理整个map
+     *
+     * \return
+     */
+    inline void clear()
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.clear();
+    }
+
+    inline QList<DKey> keys()
+    {
+        QMutexLocker lk(&mutex);
+        return myHash.keys();
+    }
+
+    inline QHash<DKey, DValue> hash() const
+    {
+        QMutexLocker lk(&mutex);
+        return myHash;
+    }
+
+private:
+    QHash<DKey, DValue> myHash;   // 当前的QMap
+    QMutex mutable mutex;   // 当前的锁
+};
 }
 #endif   // THREADCONTAINER_H
