@@ -30,13 +30,26 @@ public:
 public Q_SLOTS:
     void cacheInfo(const QUrl url, const FileInfoPointer info);
     void removeCaches(const QList<QUrl> urls);
-    void updateInfoTime(const QUrl url);
-    void dealRemoveInfo();
-    void removeInfosTime(const QList<QUrl> urls);
     void disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos);
 
 private:
     explicit CacheWorker(QObject *parent = nullptr);
+};
+
+// 计算和统计fileinfo、filewatcher超过缓存数量和超过时间移除cache的处理
+class TimeToUpdateCache : public QObject
+{
+    Q_OBJECT
+    friend class InfoCacheController;
+
+public:
+    ~TimeToUpdateCache() override;
+public Q_SLOTS:
+    void updateInfoTime(const QUrl url);
+    void dealRemoveInfo();
+    void updateWatcherTime(const QList<QUrl> &urls, const bool add);
+private:
+    explicit TimeToUpdateCache(QObject *parent = nullptr);
 };
 
 class InfoCachePrivate;
@@ -48,6 +61,7 @@ class InfoCache : public QObject
     QScopedPointer<InfoCachePrivate> d;
     friend class CacheWorker;
     friend class InfoCacheController;
+    friend class TimeToUpdateCache;
 
 public:
     virtual ~InfoCache() override;
@@ -56,7 +70,6 @@ Q_SIGNALS:
     void cacheRemoveCaches(const QList<QUrl> &key);
     void cacheDisconnectWatcher(const QMap<QUrl, FileInfoPointer> infos);
     void cacheUpdateInfoTime(const QUrl url);
-    void cacheRemoveInfosTime(const QList<QUrl> urls);
 
 private:
     explicit InfoCache(QObject *parent = nullptr);
@@ -68,14 +81,18 @@ private:
     void cacheInfo(const QUrl url, const FileInfoPointer info);
     void disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos);
     void removeCaches(const QList<QUrl> urls);
-    void updateSortTimeWorker(const QUrl url);
+    bool updateSortTimeWorker(const QUrl url);
     void timeRemoveCache();
     void removeInfosTimeWorker(const QList<QUrl> urls);
+    void updateSortTimeWatcherWorker(const QList<QUrl> &urls, const bool add);
 
 private Q_SLOTS:
     void fileAttributeChanged(const QUrl url);
     void removeCache(const QUrl url);
     void refreshFileInfo(const QUrl &url);
+private:
+    void addWatcherTimeInfo(const QList<QUrl> &urls);
+    void removeWatcherTimeInfo(const QList<QUrl> &urls);
 };
 
 class InfoCacheController : public QObject
@@ -85,6 +102,8 @@ class InfoCacheController : public QObject
     QSharedPointer<QThread> thread { nullptr };
     QSharedPointer<CacheWorker> worker { nullptr };
     QSharedPointer<QTimer> removeTimer { nullptr };   // 移除缓存的
+    QSharedPointer<QThread> threadUpdate { nullptr };
+    QSharedPointer<TimeToUpdateCache> workerUpdate { nullptr };
 public:
     virtual ~InfoCacheController() override;
     static InfoCacheController &instance();

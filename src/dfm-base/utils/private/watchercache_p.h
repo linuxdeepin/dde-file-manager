@@ -16,7 +16,7 @@ class WatcherCachePrivate
 {
     friend class WatcherCache;
     WatcherCache *const q;
-    DThreadMap<QUrl, QSharedPointer<AbstractFileWatcher>> watchers;
+    DThreadHash<QUrl, QSharedPointer<AbstractFileWatcher>> watchers;
     DThreadList<QString> disableCahceSchemes;
 
 public:
