@@ -105,6 +105,7 @@ SearchDirIterator::SearchDirIterator(const QUrl &url,
     : AbstractDirIterator(url, nameFilters, filters, flags),
       d(new SearchDirIteratorPrivate(url, this))
 {
+    setProperty("fileInfoNoCache", true);
 }
 
 SearchDirIterator::~SearchDirIterator()
@@ -156,7 +157,7 @@ const FileInfoPointer SearchDirIterator::fileInfo() const
     if (!d->currentFileUrl.isValid())
         return nullptr;
 
-    return InfoFactory::create<FileInfo>(d->currentFileUrl);
+    return InfoFactory::create<FileInfo>(d->currentFileUrl, Global::CreateFileInfoType::kCreateFileInfoAutoNoCache);
 }
 
 QUrl SearchDirIterator::url() const

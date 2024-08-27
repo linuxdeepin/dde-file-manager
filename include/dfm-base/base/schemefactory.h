@@ -316,20 +316,30 @@ public:
             }
         }
 
-        QSharedPointer<FileInfo> info = InfoCacheController::instance().getCacheInfo(url);
+        QSharedPointer<FileInfo> info;
+        if (type != Global::CreateFileInfoType::kCreateFileInfoAutoNoCache)
+            info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
             auto tarScheme = scheme(url);
             info = instance().SchemeFactory<FileInfo>::create(tarScheme, url, errorString);
             if (info && tarScheme == Global::Scheme::kAsyncFile)
                 info->updateAttributes();
 
-            emit InfoCacheController::instance().cacheFileInfo(url, info);
+            if (type != Global::CreateFileInfoType::kCreateFileInfoAutoNoCache)
+                emit InfoCacheController::instance().cacheFileInfo(url, info);
         }
 
         if (!info)
             qCWarning(logDFMBase) << "info is nullptr url = " << url;
 
         return qSharedPointerDynamicCast<T>(info);
+    }
+
+    static void cacheInfo(const FileInfoPointer &info) {
+        if (InfoCacheController::instance().cacheDisable(info->fileUrl().scheme()))
+            return;
+        emit InfoCacheController::instance().removeCacheFileInfo({info->fileUrl()});
+        emit InfoCacheController::instance().cacheFileInfo(info->fileUrl(), info);
     }
 
 private:
