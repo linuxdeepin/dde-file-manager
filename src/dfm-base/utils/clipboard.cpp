@@ -11,6 +11,7 @@
 #include <dfm-base/file/local/localfileiconprovider.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QApplication>
 #include <QClipboard>
@@ -32,6 +33,7 @@ static QList<QUrl> clipboardFileUrls;
 static QMutex clipboardFileUrlsMutex;
 static QAtomicInt remoteCurrentCount = 0;
 static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
+static std::atomic_bool canReadClipboard { true };
 
 static constexpr char kUserIdKey[] = "userId";
 static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
@@ -40,6 +42,8 @@ static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
 
 void onClipboardDataChanged()
 {
+    if (!canReadClipboard)
+        return;
 
     QMutexLocker lk(&clipboardFileUrlsMutex);
     clipboardFileUrls.clear();
@@ -91,6 +95,14 @@ ClipBoard::ClipBoard(QObject *parent)
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this]() {
         onClipboardDataChanged();
         emit clipboardDataChanged();
+    });
+
+    connect(&FileManagerWindowsManager::instance(),
+            &FileManagerWindowsManager::windowCreated, this, []{
+        GlobalData::canReadClipboard = true;
+    });
+    connect(&FileManagerWindowsManager::instance(), &FileManagerWindowsManager::lastWindowClosed, this, []{
+        GlobalData::canReadClipboard = false;
     });
 }
 
