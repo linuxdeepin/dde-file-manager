@@ -25,6 +25,7 @@ public:
     static bool keyCtrlIsPressed();
 
     static bool keyAltIsPressed();
+
     static QScreen *cursorScreen();
 };
 
