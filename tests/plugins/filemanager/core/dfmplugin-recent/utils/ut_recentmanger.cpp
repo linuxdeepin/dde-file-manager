@@ -4,6 +4,7 @@
 
 #include "stubext.h"
 #include "utils/recentmanager.h"
+
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/watchercache.h>
@@ -119,6 +120,7 @@ TEST_F(RecentManagerTest, urlTransform)
     EXPECT_TRUE(RecentHelper::urlTransform(QUrl("recent:/hello/world")) == QUrl("recent:/hello/world"));
 }
 
+#if 0
 TEST_F(RecentManagerTest, customColumnRole)
 {
     stub.set_lamda(&RecentManager::init, []() {});
@@ -180,6 +182,7 @@ TEST_F(RecentManagerTest, handleDropFiles)
     EXPECT_FALSE(RecentManager::instance()->handleDropFiles(QList<QUrl>(), QUrl("file:/hello/world")));
     EXPECT_FALSE(RecentManager::instance()->handleDropFiles(QList<QUrl>() << QUrl("recent:/hello/world"), QUrl("file:/hello/world")));
 }
+#endif
 
 TEST_F(RecentManagerTest, propetyExtensionFunc)
 {

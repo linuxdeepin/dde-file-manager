@@ -742,7 +742,6 @@ void LocalFileHandlerPrivate::addRecentFile(const QString &filePath, const Deskt
     recentData.appName = desktopFile.desktopName();
     recentData.appExec = desktopFile.desktopExec();
     recentData.mimeType = mimetype;
-    DTK_CORE_NAMESPACE::DRecentManager::removeItem(filePath);
     DTK_CORE_NAMESPACE::DRecentManager::addItem(filePath, recentData);
 }
 
@@ -1124,7 +1123,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QMultiMap<QString, QString> &inf
     if (infos.isEmpty())
         return false;
     bool result { false };
-    for (const auto &key :  infos.uniqueKeys()) {
+    for (const auto &key : infos.uniqueKeys()) {
         auto urls = infos.values(key);
         bool tmp = launchApp(key, urls);
         result = result ? result : tmp;
