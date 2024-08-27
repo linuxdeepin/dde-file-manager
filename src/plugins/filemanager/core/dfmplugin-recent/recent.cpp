@@ -47,8 +47,8 @@ void Recent::initialize()
     DirIteratorFactory::regClass<RecentDirIterator>(RecentHelper::scheme());
 
     followEvents();
+    bindEvents();
     bindWindows();
-    RecentEventReceiver::instance()->initConnect();
     RecentManager::instance();
 }
 
@@ -64,10 +64,10 @@ bool Recent::start()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", RecentHelper::scheme(), RecentMenuCreator::name());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", RecentHelper::scheme());
 
-    addFileOperations();
-
-    // events
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", RecentFileHelper::instance(), &RecentFileHelper::setPermissionHandle);
+    // add to property
+    BasicViewFieldFunc func { RecentHelper::propetyExtensionFunc };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                         func, RecentHelper::scheme());
 
     return true;
 }
@@ -104,14 +104,15 @@ void Recent::updateRecentItemToSideBar()
 
 void Recent::followEvents()
 {
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_CheckTransparent", RecentManager::instance(), &RecentManager::isTransparent);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", RecentManager::instance(), &RecentManager::checkDragDropAction);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", RecentManager::instance(), &RecentManager::handleDropFiles);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", RecentEventReceiver::instance(), &RecentEventReceiver::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", RecentEventReceiver::instance(), &RecentEventReceiver::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_CheckTransparent", RecentEventReceiver::instance(), &RecentEventReceiver::isTransparent);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", RecentEventReceiver::instance(), &RecentEventReceiver::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", RecentEventReceiver::instance(), &RecentEventReceiver::handleDropFiles);
 
-    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
-    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentEventReceiver::instance(), &RecentEventReceiver::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentEventReceiver::instance(), &RecentEventReceiver::sepateTitlebarCrumb);
+    dpfHookSequence->follow("dfmplugin_propertydialog", "hook_PropertyDialog_Disable", RecentEventReceiver::instance(), &RecentEventReceiver::handlePropertydialogDisable);
 
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", RecentFileHelper::instance(), &RecentFileHelper::cutFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", RecentFileHelper::instance(), &RecentFileHelper::copyFile);
@@ -121,14 +122,20 @@ void Recent::followEvents()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", RecentFileHelper::instance(), &RecentFileHelper::linkFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", RecentFileHelper::instance(), &RecentFileHelper::writeUrlsToClipboard);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", RecentFileHelper::instance(), &RecentFileHelper::openFileInTerminal);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", RecentFileHelper::instance(), &RecentFileHelper::setPermissionHandle);
+}
+
+void Recent::bindEvents()
+{
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, RecentEventReceiver::instance(), &RecentEventReceiver::handleWindowUrlChanged);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleFileCutResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleRemoveFilesResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleRemoveFilesResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleFileRenameResult);
 }
 
 void Recent::bindWindows()
 {
-    dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleFileCutResult);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleUpdateRecent);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleUpdateRecent);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, RecentEventReceiver::instance(), &RecentEventReceiver::handleFileRenameResult);
     const auto &winIdList { FMWindowsIns.windowIdList() };
     std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
         onWindowOpened(id);
@@ -159,10 +166,4 @@ void Recent::regRecentItemToSideBar()
     }
 }
 
-void Recent::addFileOperations()
-{
-    BasicViewFieldFunc func { RecentHelper::propetyExtensionFunc };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
-                         func, RecentHelper::scheme());
-}
 }
