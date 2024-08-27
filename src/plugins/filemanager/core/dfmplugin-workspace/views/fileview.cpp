@@ -151,6 +151,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         verticalScrollBar()->setFixedHeight(rect().height() - d->statusBar->height());
         break;
     case Global::ViewMode::kListMode:
+        d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(new ListItemPaintProxy(this));
         setIconSize(QSize(kListViewIconSize, kListViewIconSize));
         viewport()->setContentsMargins(0, 0, 0, 0);
         d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(new ListItemPaintProxy(this));
@@ -160,7 +161,6 @@ void FileView::setViewMode(Global::ViewMode mode)
     case Global::ViewMode::kExtendMode:
         break;
     case Global::ViewMode::kTreeMode:
-        setIconSize(QSize(kListViewIconSize, kListViewIconSize));
         viewport()->setContentsMargins(0, 0, 0, 0);
         if (d->itemsExpandable) {
             auto proxy = new TreeItemPaintProxy(this);
@@ -171,7 +171,7 @@ void FileView::setViewMode(Global::ViewMode mode)
             d->delegates[static_cast<int>(Global::ViewMode::kListMode)]->setPaintProxy(new ListItemPaintProxy(this));
             model()->setTreeView(false);
         }
-
+        setIconSize(QSize(kListViewIconSize, kListViewIconSize));
         setListViewMode();
         break;
     case Global::ViewMode::kAllViewMode:

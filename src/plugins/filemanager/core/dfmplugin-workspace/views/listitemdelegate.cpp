@@ -332,7 +332,9 @@ QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
 
 QRect ListItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &index) const
 {
-    return d->paintProxy->rectByType(type, index).toRect();
+    if (d->paintProxy)
+        return d->paintProxy->rectByType(type, index).toRect();
+    return QRect();
 }
 
 /*!
