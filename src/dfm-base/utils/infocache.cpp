@@ -192,17 +192,19 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
  *
  * \return
  */
-void InfoCache::updateSortTimeWorker(const QUrl url)
+bool InfoCache::updateSortTimeWorker(const QUrl url)
 {
     Q_D(InfoCache);
     if (d->cacheWorkerStoped)
-        return;
+        return false;
     auto time = QDateTime::currentMSecsSinceEpoch();
     auto key = QString::number(time) + QString("-") + url.toString();
-    if (d->urlTimeSortMap.contains(url))
-        d->timeToUrlMap.remove(d->urlTimeSortMap.value(url));
+    if (d->urlTimeSortHash.contains(url))
+        d->timeToUrlMap.remove(d->urlTimeSortHash.value(url));
     d->timeToUrlMap.insert(key, url);
-    d->urlTimeSortMap.insert(url, key);
+    d->urlTimeSortHash.insert(url, key);
+
+    return d->urlTimeSortHash.count() > kCacheFileinfoCount;
 }
 
 void InfoCache::stop()
@@ -302,7 +304,7 @@ void InfoCache::timeRemoveCache()
 {
     Q_D(InfoCache);
     // 取出哪些url的时间超出了u
-    qint64 delCount = d->urlTimeSortMap.size() < kCacheFileinfoCount ? 0 : d->urlTimeSortMap.size() - kCacheFileinfoCount;
+    qint64 delCount = d->urlTimeSortHash.size() < kCacheFileinfoCount ? 0 : d->urlTimeSortHash.size() - kCacheFileinfoCount;
     QList<QUrl> delList;
     foreach (const auto time, d->timeToUrlMap.uniqueKeys()) {
         if (d->cacheWorkerStoped)
@@ -327,8 +329,8 @@ void InfoCache::timeRemoveCache()
 void InfoCache::removeInfosTimeWorker(const QList<QUrl> urls)
 {
     for (auto url : urls) {
-        if (d->urlTimeSortMap.contains(url)) {
-            d->timeToUrlMap.remove(d->urlTimeSortMap.take(url));
+        if (d->urlTimeSortHash.contains(url)) {
+            d->timeToUrlMap.remove(d->urlTimeSortHash.take(url));
         }
     }
 }
@@ -362,7 +364,8 @@ void CacheWorker::removeCaches(const QList<QUrl> urls)
 void CacheWorker::updateInfoTime(const QUrl url)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    InfoCache::instance().updateSortTimeWorker(url);
+    if (InfoCache::instance().updateSortTimeWorker(url))
+        dealRemoveInfo();
 }
 
 void CacheWorker::dealRemoveInfo()
@@ -427,6 +430,7 @@ void InfoCacheController::init()
     connect(&InfoCache::instance(), &InfoCache::cacheRemoveCaches, worker.data(), &CacheWorker::removeCaches, Qt::QueuedConnection);
     connect(&InfoCache::instance(), &InfoCache::cacheRemoveInfosTime, worker.data(), &CacheWorker::removeInfosTime, Qt::QueuedConnection);
     connect(&InfoCache::instance(), &InfoCache::cacheDisconnectWatcher, worker.data(), &CacheWorker::disconnectWatcher, Qt::QueuedConnection);
+    connect(&InfoCache::instance(), &InfoCache::cacheUpdateInfoTime, worker.data(), &CacheWorker::updateInfoTime, Qt::QueuedConnection);
 
     worker->moveToThread(thread.data());
     thread->start();

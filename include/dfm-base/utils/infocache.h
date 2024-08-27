@@ -68,7 +68,7 @@ private:
     void cacheInfo(const QUrl url, const FileInfoPointer info);
     void disconnectWatcher(const QMap<QUrl, FileInfoPointer> infos);
     void removeCaches(const QList<QUrl> urls);
-    void updateSortTimeWorker(const QUrl url);
+    bool updateSortTimeWorker(const QUrl url);
     void timeRemoveCache();
     void removeInfosTimeWorker(const QList<QUrl> urls);
 

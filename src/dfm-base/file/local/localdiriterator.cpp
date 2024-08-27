@@ -73,8 +73,6 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
     if (infoTrans) {
         infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
         infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
-        emit InfoCacheController::instance().removeCacheFileInfo({url});
-        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     } else {
         qCWarning(logDFMBase) << "info is nullptr url = " << url;
     }
