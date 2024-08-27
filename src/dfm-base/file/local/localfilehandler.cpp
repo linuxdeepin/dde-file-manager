@@ -741,7 +741,6 @@ void LocalFileHandlerPrivate::addRecentFile(const QString &filePath, const Deskt
     recentData.appName = desktopFile.desktopName();
     recentData.appExec = desktopFile.desktopExec();
     recentData.mimeType = mimetype;
-    DTK_CORE_NAMESPACE::DRecentManager::removeItem(filePath);
     DTK_CORE_NAMESPACE::DRecentManager::addItem(filePath, recentData);
 }
 

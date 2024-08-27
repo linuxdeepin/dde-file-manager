@@ -67,14 +67,6 @@ public:
     QMap<QUrl, QString> getRecentOriginPaths() const;
     bool removeRecentFile(const QUrl &url);
 
-    bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
-    bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
-    bool detailViewIcon(const QUrl &url, QString *iconName);
-    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
-    bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
-    bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
-    bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
-
 signals:
     void asyncHandleFileChanged(const QList<QUrl> &);
 
@@ -86,6 +78,7 @@ private:
 
 public slots:
     void updateRecent();
+
 private slots:
     void onUpdateRecentFileInfo(const QUrl &url, const QString &originPath, qint64 readTime);
     void onDeleteExistRecentUrls(const QList<QUrl> &urls);
