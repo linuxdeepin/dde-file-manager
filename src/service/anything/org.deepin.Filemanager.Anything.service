@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.deepin.Filemanager.Anything
+Exec=/usr/bin/deepin-anything-service
+User=root

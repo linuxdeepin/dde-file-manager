@@ -1,28 +1,24 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h"   // cmake
+#include "config.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/loggerrules.h>
 
 #include <dfm-framework/dpf.h>
 
-#include <dtkcore_config.h>
-#include <dfm-base/utils/loggerrules.h>
+#include <DApplication>
+#include <DSysInfo>
 
-#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <pwd.h>
-#include <sys/types.h>
 #include <signal.h>
+#include <unistd.h>
 
-Q_LOGGING_CATEGORY(logAppDaemon, "org.deepin.dde.filemanager.daemon")
+Q_LOGGING_CATEGORY(logAppDaemon, "org.deepin.dde.Filemanager.Daemon")
 
 static constexpr char kDaemonInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemonplugin-core" };
@@ -30,32 +26,14 @@ static constexpr char kLibCore[] { "libdaemonplugin-core.so" };
 
 DFMBASE_USE_NAMESPACE
 
-static void handleSIGTERM(int sig)
-{
-    qCCritical(logAppDaemon) << "daemon break with !SIGTERM! " << sig;
+#ifdef DFM_ORGANIZATION_NAME
+#    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
+#else
+#    define ORGANIZATION_NAME "deepin"
+#endif
 
-    if (qApp) {
-        qApp->quit();
-    }
-}
-
-static void initEnv()
-{
-    ///###: why?
-    ///###: when dbus invoke a daemon the variants in the environment of daemon(s) are empty.
-    ///###: So we need to set them.
-    if (!qEnvironmentVariableIsSet("LANG")) {
-        qputenv("LANG", "en_US.UTF8");
-    }
-
-    if (!qEnvironmentVariableIsSet("LANGUAGE")) {
-        qputenv("LANGUAGE", "en_US");
-    }
-
-    if (!qEnvironmentVariableIsSet("HOME")) {
-        qputenv("HOME", getpwuid(getuid())->pw_dir);
-    }
-}
+DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 static void initLog()
 {
@@ -81,13 +59,8 @@ static bool pluginsLoad()
     pluginsDirs << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
                 << QString(DFM_PLUGIN_DAEMON_EDGE_DIR);
 #endif
-    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "daemon.blackList").toStringList() };
-#ifdef DISABLE_ANYTHING
-    if (!blackNames.contains("daemonplugin-anything"))
-        blackNames << "daemonplugin-anything";
-#endif
-
     qCInfo(logAppDaemon) << "Using plugins dir:" << pluginsDirs;
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "server.blackList").toStringList() };
     DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs, blackNames);
 
     qCInfo(logAppDaemon) << "Depend library paths:" << QCoreApplication::libraryPaths();
@@ -115,21 +88,47 @@ static bool pluginsLoad()
     return true;
 }
 
+static void handleSIGTERM(int sig)
+{
+    qCCritical(logAppDaemon) << "break with !SIGTERM! " << sig;
+
+    if (qApp) {
+        qApp->quit();
+    }
+}
+
+[[noreturn]] static void handleSIGABRT(int sig)
+{
+    qCCritical(logAppDaemon) << "break with !SIGABRT! " << sig;
+    // WORKAROUND: cannot receive SIGTERM when shutdown or reboot
+    // see: bug-228373
+    ::_exit(1);
+}
+
+DWIDGET_USE_NAMESPACE
+
 int main(int argc, char *argv[])
 {
-    initEnv();
     initLog();
+    DApplication a(argc, argv);
+    a.setOrganizationName(ORGANIZATION_NAME);
+    {
+        // load translation
+        QString appName = a.applicationName();
+        a.setApplicationName("dde-file-manager");
+        a.loadTranslator();
+        a.setApplicationName(appName);
+    }
 
-    QCoreApplication a(argc, argv);
-    a.setOrganizationName("deepin");
+    signal(SIGTERM, handleSIGTERM);
+    signal(SIGABRT, handleSIGABRT);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
 
     if (!pluginsLoad()) {
-        qCCritical(logAppDaemon) << "Load plugin failed!";
+        qCCritical(logAppDaemon) << "Load pugin failed!";
         abort();
     }
-    signal(SIGTERM, handleSIGTERM);
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();

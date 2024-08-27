@@ -1,0 +1,26 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.Daemon.OperationsStackManager">
+    <method name="SaveOperations">
+      <arg name="values" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="CleanOperations">
+    </method>
+    <method name="RevocationOperations">
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </method>
+    <method name="SaveRedoOperations">
+      <arg name="values" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="RevocationRedoOperations">
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </method>
+    <method name="CleanOperationsByUrl">
+      <arg name="urls" type="as" direction="in"/>
+    </method>
+  </interface>
+</node>

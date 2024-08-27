@@ -17,4 +17,9 @@ if (DFM_BUILD_WITH_QT6)
 include(dfmplugin-fileoperations-qt6.cmake)
 endif()
 
+# generate dbus interface
+qt5_add_dbus_interface(FILEOPERATIONS_FILES
+    ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.OperationsStackManager.xml
+    operationsstackmanager_interface)
+
 INSTALL_DCONFIG("org.deepin.dde.file-manager.operations.json")

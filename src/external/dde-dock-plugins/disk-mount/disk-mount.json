@@ -1,4 +1,4 @@
 {
     "api": "1.1.1",
-    "depends-daemon-dbus-service": "org.deepin.filemanager.server"
+    "depends-daemon-dbus-service": "org.deepin.Filemanager.Daemon"
 }

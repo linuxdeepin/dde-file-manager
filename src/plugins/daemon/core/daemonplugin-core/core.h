@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,6 +9,10 @@
 
 #include <dfm-framework/dpf.h>
 
+class QDBusConnection;
+class DeviceManagerDBus;
+class OperationsStackManagerDbus;
+
 DAEMONPCORE_BEGIN_NAMESPACE
 
 class Core : public DPF_NAMESPACE::Plugin
@@ -16,16 +20,21 @@ class Core : public DPF_NAMESPACE::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.daemon" FILE "core.json")
 
-    DPF_EVENT_NAMESPACE(DAEMONPCORE_NAMESPACE)
-    // slots
-    DPF_EVENT_REG_SLOT(slot_Polkit_CheckAuth)
-
 public:
     virtual void initialize() override;
     virtual bool start() override;
 
-protected:
-    void bindEvents();
+private:
+    void initServiceDBusInterfaces(QDBusConnection *connection);
+    void initDeviceDBus(QDBusConnection *connection);
+    void initOperationsDBus(QDBusConnection *connection);
+
+private Q_SLOTS:
+    void exitOnShutdown(bool);
+
+private:
+    QScopedPointer<DeviceManagerDBus> deviceManager;
+    QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
 };
 
 DAEMONPCORE_END_NAMESPACE

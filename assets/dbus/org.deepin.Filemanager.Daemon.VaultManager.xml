@@ -1,0 +1,54 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.Daemon.VaultManager">
+    <signal name="LockEventTriggered">
+      <arg name="user" type="s" direction="out"/>
+    </signal>
+    <signal name="ChangedVaultState">
+      <arg name="map" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <method name="SysUserChanged">
+      <arg name="curUser" type="s" direction="in"/>
+    </method>
+    <method name="SetRefreshTime">
+      <arg name="time" type="t" direction="in"/>
+    </method>
+    <method name="GetLastestTime">
+      <arg type="t" direction="out"/>
+    </method>
+    <method name="GetSelfTime">
+      <arg type="t" direction="out"/>
+    </method>
+    <method name="IsLockEventTriggered">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="TriggerLockEvent">
+    </method>
+    <method name="ClearLockEvent">
+    </method>
+    <method name="ComputerSleep">
+      <arg name="bSleep" type="b" direction="in"/>
+    </method>
+    <method name="GetLeftoverErrorInputTimes">
+      <arg type="i" direction="out"/>
+      <arg name="userID" type="i" direction="in"/>
+    </method>
+    <method name="LeftoverErrorInputTimesMinusOne">
+      <arg name="userID" type="i" direction="in"/>
+    </method>
+    <method name="RestoreLeftoverErrorInputTimes">
+      <arg name="userID" type="i" direction="in"/>
+    </method>
+    <method name="StartTimerOfRestorePasswordInput">
+      <arg name="userID" type="i" direction="in"/>
+    </method>
+    <method name="GetNeedWaitMinutes">
+      <arg type="i" direction="out"/>
+      <arg name="userID" type="i" direction="in"/>
+    </method>
+    <method name="RestoreNeedWaitMinutes">
+      <arg name="userID" type="i" direction="in"/>
+    </method>
+  </interface>
+</node>
