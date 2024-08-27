@@ -1,0 +1,57 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.Daemon.TagManager">
+    <signal name="TagsServiceReady">
+    </signal>
+    <signal name="NewTagsAdded">
+      <arg name="tags" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="TagsDeleted">
+      <arg name="tags" type="as" direction="out"/>
+    </signal>
+    <signal name="TagsColorChanged">
+      <arg name="oldAndNew" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="TagsNameChanged">
+      <arg name="oldAndNew" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="FilesTagged">
+      <arg name="fileAndTags" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="FilesUntagged">
+      <arg name="fileAndTags" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <method name="Query">
+      <arg type="v" direction="out"/>
+      <arg name="opt" type="i" direction="in"/>
+      <arg name="value" type="as" direction="in"/>
+    </method>
+    <method name="Query">
+      <arg type="v" direction="out"/>
+      <arg name="opt" type="i" direction="in"/>
+    </method>
+    <method name="Insert">
+      <arg type="b" direction="out"/>
+      <arg name="opt" type="i" direction="in"/>
+      <arg name="value" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="Delete">
+      <arg type="b" direction="out"/>
+      <arg name="opt" type="i" direction="in"/>
+      <arg name="value" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="Update">
+      <arg type="b" direction="out"/>
+      <arg name="opt" type="i" direction="in"/>
+      <arg name="value" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+  </interface>
+</node>

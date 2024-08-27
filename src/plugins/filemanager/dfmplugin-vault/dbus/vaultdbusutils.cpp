@@ -27,7 +27,7 @@ VaultDBusUtils *VaultDBusUtils::instance()
 QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &vaule)
 {
     QVariant value;
-    QDBusInterface sessionManagerIface(kFileManagerDBusServiceName,
+    QDBusInterface sessionManagerIface(kFileManagerDBusDaemonName,
                                        kFileManagerVaultDBusPath,
                                        kFileManagerVaultDBusInterfaces,
                                        QDBusConnection::sessionBus());
@@ -116,7 +116,7 @@ bool VaultDBusUtils::setVaultPolicyState(int policyState)
 void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)
 {
     QDBusConnection::sessionBus().connect(
-            kFileManagerDBusServiceName,
+            kFileManagerDBusDaemonName,
             kFileManagerVaultDBusPath,
             kFileManagerVaultDBusInterfaces,
             "LockEventTriggered",
@@ -126,7 +126,7 @@ void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)
 
 int VaultDBusUtils::getLeftoverErrorInputTimes()
 {
-    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+    QDBusInterface VaultManagerdbus(kFileManagerDBusDaemonName,
                                     kFileManagerVaultDBusPath,
                                     kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
@@ -147,7 +147,7 @@ int VaultDBusUtils::getLeftoverErrorInputTimes()
 
 void VaultDBusUtils::leftoverErrorInputTimesMinusOne()
 {
-    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+    QDBusInterface VaultManagerdbus(kFileManagerDBusDaemonName,
                                     kFileManagerVaultDBusPath,
                                     kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
@@ -162,7 +162,7 @@ void VaultDBusUtils::leftoverErrorInputTimesMinusOne()
 
 void VaultDBusUtils::startTimerOfRestorePasswordInput()
 {
-    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+    QDBusInterface VaultManagerdbus(kFileManagerDBusDaemonName,
                                     kFileManagerVaultDBusPath,
                                     kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
@@ -177,7 +177,7 @@ void VaultDBusUtils::startTimerOfRestorePasswordInput()
 
 int VaultDBusUtils::getNeedWaitMinutes()
 {
-    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+    QDBusInterface VaultManagerdbus(kFileManagerDBusDaemonName,
                                     kFileManagerVaultDBusPath,
                                     kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
@@ -197,7 +197,7 @@ int VaultDBusUtils::getNeedWaitMinutes()
 
 void VaultDBusUtils::restoreNeedWaitMinutes()
 {
-    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+    QDBusInterface VaultManagerdbus(kFileManagerDBusDaemonName,
                                     kFileManagerVaultDBusPath,
                                     kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
@@ -212,7 +212,7 @@ void VaultDBusUtils::restoreNeedWaitMinutes()
 
 void VaultDBusUtils::restoreLeftoverErrorInputTimes()
 {
-    QDBusInterface VaultManagerdbus(kFileManagerDBusServiceName,
+    QDBusInterface VaultManagerdbus(kFileManagerDBusDaemonName,
                                     kFileManagerVaultDBusPath,
                                     kFileManagerVaultDBusInterfaces,
                                     QDBusConnection::sessionBus());
@@ -308,7 +308,7 @@ void VaultDBusUtils::handleLockScreenDBus(const QDBusMessage &msg)
 
 VaultDBusUtils::VaultDBusUtils()
 {
-    QDBusConnection::sessionBus().connect(kFileManagerDBusServiceName,
+    QDBusConnection::sessionBus().connect(kFileManagerDBusDaemonName,
                                           kFileManagerVaultDBusPath,
                                           kFileManagerVaultDBusInterfaces,
                                           "ChangedVaultState",

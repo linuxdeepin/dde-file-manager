@@ -1,0 +1,17 @@
+usr/lib/*/deepin-service-manager/libdde-filemanager-accesscontrol.so
+usr/lib/*/deepin-service-manager/libdde-filemanager-mountcontrol.so
+usr/lib/*/deepin-service-manager/libdde-filemanager-sharecontrol.so
+
+usr/share/deepin-service-manager/system/dde-filemanager-accesscontrol.json
+usr/share/deepin-service-manager/system/dde-filemanager-mountcontrol.json
+usr/share/deepin-service-manager/system/dde-filemanager-sharecontrol.json
+
+usr/share/dbus-1/system.d/org.deepin.filemanager.accesscontrol.conf
+usr/share/dbus-1/system.d/org.deepin.filemanager.mountcontrol.conf
+usr/share/dbus-1/system.d/org.deepin.filemanager.usersharemanager.conf
+usr/share/dbus-1/system-services/org.deepin.Filemanager.MountControl.service
+usr/share/dbus-1/system-services/org.deepin.Filemanager.UserShareManager.service
+
+usr/share/deepin-service-manager/other/deepin-anything-service.json
+usr/share/dbus-1/system.d/org.deepin.Filemanager.Anything.conf
+usr/share/dbus-1/system-services/org.deepin.Filemanager.Anything.service
