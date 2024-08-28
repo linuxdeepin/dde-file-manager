@@ -31,6 +31,7 @@ QSet<QString> FileOperationsUtils::fileNameUsing = {};
 inline constexpr char kFileOperations[] { "org.deepin.dde.file-manager.operations" };
 inline constexpr char kFileBigSize[] { "file.operation.bigfilesize" };
 inline constexpr char kBlockEverySync[] { "file.operation.blockeverysync" };
+inline constexpr char kBroadcastPaste[] { "file.operation.broadcastpastevent" };
 QMutex FileOperationsUtils::mutex;
 
 /*!
@@ -177,4 +178,10 @@ QUrl FileOperationsUtils::parentUrl(const QUrl &url)
         return parent;
 
     return QUrl();
+}
+
+bool FileOperationsUtils::canBroadcastPaste()
+{
+    // 组策略中配置
+    return DConfigManager::instance()->value(kFileOperations, kBroadcastPaste, false).toBool();
 }

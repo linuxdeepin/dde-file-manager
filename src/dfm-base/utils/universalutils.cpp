@@ -62,6 +62,10 @@
 #    define DDE_LOCKSERVICE_SERVICE "com.deepin.dde.LockService"
 #    define DDE_LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #    define DDE_LOCKSERVICE_INTERFACE "com.deepin.dde.LockService"
+
+#    define DESKTOP_FILEMONITOR_SERVICE "com.deepin.dde.desktop.filemonitor"
+#    define DESKTOP_FILEMONITOR_PATH "/com/deepin/dde/desktop/filemonitor"
+#    define DESKTOP_FILEMONITOR_INTERFACE "com.deepin.dde.desktop.filemonitor"
 #endif
 
 namespace dfmbase {
@@ -550,6 +554,25 @@ QString UniversalUtils::covertUrlToLocalPath(const QString &url)
         return url;
     else
         return QUrl(QUrl::fromPercentEncoding(url.toUtf8())).toLocalFile();
+}
+
+void UniversalUtils::boardCastPastData(const QUrl &sourcPath, const QUrl &targetPath, const QList<QUrl> &files)
+{
+    QDBusInterface fileMonitor(DESKTOP_FILEMONITOR_SERVICE,
+                               DESKTOP_FILEMONITOR_PATH,
+                               DESKTOP_FILEMONITOR_INTERFACE,
+                               QDBusConnection::sessionBus());
+
+    QList<QVariant> data;
+    data.append(sourcPath.toString());
+    data.append(targetPath.toString());
+    QStringList fileNames;
+    for (const auto &file : files) {
+        fileNames.append(file.fileName());
+    }
+
+    data.append(fileNames);
+    fileMonitor.asyncCallWithArgumentList(QStringLiteral("PrepareSendData"), data);
 }
 
 }
