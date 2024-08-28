@@ -77,6 +77,7 @@ private:
     static qint64 bigFileSize();
     static bool blockSync();
     static QUrl parentUrl(const QUrl &url);
+    static bool canBroadcastPaste();
 
 private:
     static QSet<QString> fileNameUsing;
