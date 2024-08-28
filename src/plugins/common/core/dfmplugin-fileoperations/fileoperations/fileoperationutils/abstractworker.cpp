@@ -12,6 +12,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -641,6 +642,18 @@ void AbstractWorker::saveOperations()
 
     if (handle && isConvert && !completeSourceFiles.isEmpty()) {
         emit requestSaveRedoOperation(QString::number(quintptr(handle.data()), 16), deleteFirstFileSize.load());
+    }
+    if (jobType == AbstractJobHandler::JobType::kCopyType
+            || jobType == AbstractJobHandler::JobType::kCutType
+            || FileOperationsUtils::canBroadcastPaste()) {
+        QUrl sourceUrl = sourceUrls.isEmpty() ? QUrl() : sourceUrls.first();
+        if (!sourceUrl.isValid() || !targetUrl.isValid()) {
+            fmWarning(logDFMBase()) << "broadcast paste error, cast invalid source or target url!!!"
+                                    << sourceUrl << targetUrl;
+            return;
+        }
+        sourceUrl = parentUrl(sourceUrl);
+        UniversalUtils::boardCastPastData(sourceUrl, targetUrl, completeSourceFiles);
     }
 }
 
