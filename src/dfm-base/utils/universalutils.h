@@ -52,6 +52,8 @@ public:
     static bool isParentOnly(const QUrl &child, const QUrl &parent);
 
     static QString covertUrlToLocalPath(const QString &url);
+    static void boardCastPastData(const QUrl &sourcPath, const QUrl &targetPath,
+                                  const QList<QUrl> &files);
 };
 
 }
