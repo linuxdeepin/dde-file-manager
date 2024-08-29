@@ -9,23 +9,25 @@
 #include "events/recenteventcaller.h"
 
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/utils/fileutils.h>
-#include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-framework/event/event.h>
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <DDialog>
 #include <DRecentManager>
 
 #include <QFile>
 #include <QMenu>
-#include <QCoreApplication>
+#include <QApplication>
+
+#include <mutex>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -34,6 +36,7 @@ DPF_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+using namespace GlobalServerDefines;
 
 static constexpr char kEmptyRecentFile[] =
         R"|(<?xml version="1.0" encoding="UTF-8"?>
@@ -45,111 +48,171 @@ static constexpr char kEmptyRecentFile[] =
 
 RecentManager *RecentManager::instance()
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     // data race
     static RecentManager instance;
     return &instance;
 }
 
+RecentManagerDBusInterface *RecentManager::dbus() const
+{
+    return recentDBusInterce.data();
+}
+
 QMap<QUrl, FileInfoPointer> RecentManager::getRecentNodes() const
 {
-    return recentNodes.map();
+    QMap<QUrl, FileInfoPointer> nodes;
+    for (auto it = recentItems.constBegin(); it != recentItems.constEnd(); ++it)
+        nodes.insert(it.key(), it.value().fileInfo);
+
+    return nodes;
 }
 
-QMap<QUrl, QString> RecentManager::getRecentOriginPaths() const
+QString RecentManager::getRecentOriginPaths(const QUrl &url) const
 {
-    return recentOriginPaths;
-}
+    auto it = recentItems.find(url);
+    if (it != recentItems.end())
+        return it.value().originPath;
 
-bool RecentManager::removeRecentFile(const QUrl &url)
-{
-    if (recentNodes.contains(url)) {
-        recentNodes.remove(url);
-        recentOriginPaths.remove(url);
-        return true;
-    }
-    return false;
+    return QString();
 }
 
 RecentManager::RecentManager(QObject *parent)
     : QObject(parent)
 {
-    init();
 }
 
 RecentManager::~RecentManager()
 {
-    onStopRecentWatcherThread();
+}
+
+void RecentManager::resetRecentNodes()
+{
+    auto reply = recentDBusInterce->GetItemsInfo();
+    reply.waitForFinished();
+    const QVariantList &topLevelList = reply.value();
+    for (const auto &value : topLevelList) {
+        QDBusArgument dbusArg = value.value<QDBusArgument>();
+
+        QVariantMap map;
+        dbusArg >> map;   // 直接将QDBusArgument解包为QVariantMap
+
+        if (!map.isEmpty()) {
+            auto path = map.value(RecentProperty::kPath).toString();
+            auto href = map.value(RecentProperty::kHref).toString();
+            auto modified = map.value(RecentProperty::kModified).toLongLong();
+            onItemAdded(path, href, modified);
+        } else {
+            qWarning() << "Map is empty or could not be converted!";
+        }
+    }
+}
+
+bool RecentManager::removeRecentFile(const QUrl &url)
+{
+    return recentItems.remove(url) > 0;
+}
+
+int RecentManager::size()
+{
+    return recentItems.size();
 }
 
 void RecentManager::init()
 {
-    iteratorWorker->moveToThread(&workerThread);
-    connect(&workerThread, &QThread::finished, iteratorWorker, &QObject::deleteLater);
-    connect(this, &RecentManager::asyncHandleFileChanged,
-            iteratorWorker, &RecentIterateWorker::onRecentFileChanged);
+    recentDBusInterce.reset(
+            new RecentManagerDBusInterface("org.deepin.filemanager.server",
+                                           "/org/deepin/filemanager/server/RecentManager",
+                                           QDBusConnection::sessionBus(), this));
+    recentDBusInterce->setTimeout(2000);
 
-    connect(iteratorWorker, &RecentIterateWorker::updateRecentFileInfo, this,
-            &RecentManager::onUpdateRecentFileInfo);
-    connect(iteratorWorker, &RecentIterateWorker::deleteExistRecentUrls, this,
-            &RecentManager::onDeleteExistRecentUrls);
-    connect(qApp, &QApplication::aboutToQuit, this, &RecentManager::onStopRecentWatcherThread);
+    connect(recentDBusInterce.data(), &RecentManagerDBusInterface::ReloadFinished,
+            this, [this](qint64 timestamp) {
+                fmDebug() << "reload finieshed: " << timestamp;
+                if (timestamp != 0)
+                    resetRecentNodes();
+                static std::once_flag flag;
+                std::call_once(flag, [this]() {
+                    // 初始化的过程中可能会发送大量信号
+                    connect(recentDBusInterce.data(), &RecentManagerDBusInterface::ItemAdded, this, &RecentManager::onItemAdded);
+                    connect(recentDBusInterce.data(), &RecentManagerDBusInterface::ItemsRemoved, this, &RecentManager::onItemsRemoved);
+                    connect(recentDBusInterce.data(), &RecentManagerDBusInterface::ItemChanged, this, &RecentManager::onItemChanged);
+                });
+            });
 
-    workerThread.start();
+    auto reply = recentDBusInterce->Reload();
+    reply.waitForFinished();
 
-    emit asyncHandleFileChanged({});
-
-    watcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentHelper::xbelPath()));
-    connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentManager::updateRecent);
-    watcher->startWatcher();
-
-    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &RecentManager::updateRecent);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &RecentManager::reloadRecent);
 }
 
-void RecentManager::updateRecent()
+void RecentManager::reloadRecent()
 {
-    emit asyncHandleFileChanged(recentNodes.keys());
+    fmDebug() << "reload recent..";
+    recentDBusInterce->Reload();
 }
 
-void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString &originPath, qint64 readTime)
+void RecentManager::onItemAdded(const QString &path, const QString &href, qint64 modified)
 {
-    if (!recentNodes.contains(url)) {
-        recentNodes.insert(url, InfoFactory::create<FileInfo>(url));
-        recentOriginPaths[url] = originPath;
+    if (path.isEmpty())
+        return;
+
+    const QUrl &url { RecentHelper::recentUrl(path) };
+    if (!url.isValid()) {
+        fmWarning() << "Add node failed, invliad url";
+        return;
+    }
+
+    if (recentItems.contains(url))
+        return;
+
+    auto info = InfoFactory::create<FileInfo>(url);
+    if (info.isNull()) {
+        fmWarning() << "Add node failed, nullptr fileinfo";
+        return;
+    }
+
+    fmDebug() << "recent item added:" << url;
+    RecentItem item;
+    item.fileInfo = info;
+    item.originPath = href;
+    recentItems.insert(url, item);
+    item.fileInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kTimeAccess, modified);
+    QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
+    if (watcher)
+        emit watcher->subfileCreated(url);
+}
+
+void RecentManager::onItemsRemoved(const QStringList &paths)
+{
+    for (const auto &path : paths) {
+        const QUrl &url { RecentHelper::recentUrl(path) };
+        if (!recentItems.contains(url))
+            break;
+
+        fmDebug() << "recent item removed:" << url;
+        recentItems.remove(url);
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
-        if (watcher) {
-            emit watcher->subfileCreated(url);
-        }
-    }
-
-    // ToDo(yanghao):update read time
-    Q_UNUSED(readTime)
-}
-
-void RecentManager::onDeleteExistRecentUrls(const QList<QUrl> &urls)
-{
-    for (const auto &url : urls) {
-        if (removeRecentFile(url)) {
-            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
-            if (watcher) {
-                emit watcher->fileDeleted(url);
-            }
-        }
+        if (watcher)
+            emit watcher->fileDeleted(url);
     }
 }
 
-void RecentManager::onStopRecentWatcherThread()
+void RecentManager::onItemChanged(const QString &path, qint64 modified)
 {
-    static std::once_flag stopFlag;
-    std::call_once(stopFlag, [this] {
-        if (watcher) {
-            watcher->stopWatcher();
-            watcher->disconnect(this);
-        }
-        if (iteratorWorker)
-            iteratorWorker->stop();
-        workerThread.quit();
-        workerThread.wait();
-    });
+    if (path.isEmpty())
+        return;
+
+    const QUrl &url { RecentHelper::recentUrl(path) };
+    if (!recentItems.contains(url))
+        return;
+
+    fmDebug() << "recent item changed: " << path << modified;
+    QDateTime dateTime { QDateTime::fromSecsSinceEpoch(modified) };
+    recentItems[url].fileInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kTimeAccess, modified);
+    QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
+    if (watcher)
+        emit watcher->fileAttributeChanged(url);
 }
 
 QUrl RecentHelper::rootUrl()
@@ -178,10 +241,10 @@ void RecentHelper::removeRecent(const QList<QUrl> &urls)
     int code = dlg.exec();
     if (code == 1) {
         QStringList list;
-        auto originPath = RecentManager::instance()->getRecentOriginPaths();
         for (const QUrl &url : urls) {
-            if (originPath.contains(url)) {
-                list << originPath[url];
+            QString href = RecentManager::instance()->getRecentOriginPaths(url);
+            if (!href.isEmpty()) {
+                list << href;
                 continue;
             }
             // list << DUrl::fromLocalFile(url.path()).toString();
@@ -191,19 +254,16 @@ void RecentHelper::removeRecent(const QList<QUrl> &urls)
             list << newUrl.toString();
         }
 
-        DRecentManager::removeItems(list);
+        if (list.size() == RecentManager::instance()->size())
+            RecentManager::instance()->dbus()->PurgeItems();   // 此时为全选，purge性能更高
+        else
+            RecentManager::instance()->dbus()->RemoveItems(list);
     }
 }
 
 void RecentHelper::clearRecent()
 {
-    QFile f(RecentHelper::xbelPath());
-    if (f.open(QIODevice::WriteOnly)) {
-        f.write(kEmptyRecentFile);
-        f.close();
-    } else {
-        fmWarning() << "open recent xbel file failed!!!";
-    }
+    RecentManager::instance()->dbus()->PurgeItems();
 }
 
 bool RecentHelper::openFileLocation(const QUrl &url)
@@ -275,4 +335,11 @@ QUrl RecentHelper::urlTransform(const QUrl &url)
     QUrl out { url };
     out.setScheme(Global::Scheme::kFile);
     return out;
+}
+
+QUrl RecentHelper::recentUrl(const QString &path)
+{
+    QUrl recentUrl { QUrl::fromLocalFile(path) };
+    recentUrl.setScheme(RecentHelper::scheme());
+    return recentUrl;
 }

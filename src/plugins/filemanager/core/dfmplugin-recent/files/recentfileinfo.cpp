@@ -10,6 +10,8 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/interfaces/private/fileinfo_p.h>
 
+#include <QDateTime>
+
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_recent {
 
@@ -94,12 +96,13 @@ QUrl RecentFileInfo::urlOf(const UrlInfoType type) const
 QVariant RecentFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
-    if (role == kItemFilePathRole)
+    if (role == kItemFilePathRole) {
         return urlOf(UrlInfoType::kRedirectedFileUrl).path();
-    else if (role == kItemFileLastReadRole)
+    } else if (role == kItemFileLastReadRole) {
         return timeOf(TimeInfoType::kLastRead).value<QDateTime>().toString(FileUtils::dateTimeFormat());
-    else
+    } else {
         return QVariant();
+    }
 }
 
 QString RecentFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
