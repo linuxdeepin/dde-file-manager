@@ -19,12 +19,11 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-io/doperator.h>
 #include <dfm-io/dfile.h>
 #include <dfm-io/denumerator.h>
-
-#include <DRecentManager>
 
 #include <QString>
 #include <QUrl>
@@ -37,6 +36,7 @@
 #include <QDesktopServices>
 #include <QX11Info>
 #include <QSettings>
+#include <QDBusConnection>
 
 #include <unistd.h>
 #include <utime.h>
@@ -51,8 +51,7 @@ extern "C" {
 #define signals public
 
 using namespace dfmbase;
-
-static QMutex lock;
+using namespace GlobalServerDefines;
 
 LocalFileHandler::LocalFileHandler()
     : d(new LocalFileHandlerPrivate(this))
@@ -408,9 +407,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
         QString mimetype = d->getFileMimetype(fileUrls.first());
-        QtConcurrent::run([this, fileUrls, desktopFile, mimetype]() {
-            d->asyncAddRecentFile(desktopFile, fileUrls, mimetype);
-        });
+        d->addRecentFile(desktopFile, fileUrls, mimetype);
     }
 
     return ok;
@@ -733,16 +730,34 @@ bool LocalFileHandlerPrivate::isInvalidSymlinkFile(const QUrl &url)
     return false;
 }
 
-void LocalFileHandlerPrivate::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
+void LocalFileHandlerPrivate::doAddRecentFile(const QVariantMap &item)
 {
-    if (filePath.isEmpty()) {
+    if (item.isEmpty())
         return;
-    }
-    DTK_CORE_NAMESPACE::DRecentData recentData;
-    recentData.appName = desktopFile.desktopName();
-    recentData.appExec = desktopFile.desktopExec();
-    recentData.mimeType = mimetype;
-    DTK_CORE_NAMESPACE::DRecentManager::addItem(filePath, recentData);
+
+    QDBusMessage message = QDBusMessage::createMethodCall("org.deepin.filemanager.server",
+                                                          "/org/deepin/filemanager/server/RecentManager",
+                                                          "org.deepin.filemanager.server.RecentManager",
+                                                          "AddItem");
+    message << QVariant::fromValue(item);
+
+    QDBusReply<void> reply = QDBusConnection::sessionBus().call(message);
+    if (!reply.isValid())
+        qCWarning(logDFMBase) << "D-Bus call AddItem failed:" << reply.error().name() << reply.error().message();
+    else
+        qCDebug(logDFMBase) << "D-Bus call AddItem succeeded";
+}
+
+QVariantMap LocalFileHandlerPrivate::buildRecentItem(const QString &path, const DesktopFile &desktop, const QString &mimeType)
+{
+    QVariantMap item;
+
+    item.insert(RecentProperty::kPath, path);
+    item.insert(RecentProperty::kAppName, desktop.desktopName());
+    item.insert(RecentProperty::kAppExec, desktop.desktopExec());
+    item.insert(RecentProperty::kMimeType, mimeType);
+
+    return item;
 }
 
 QString LocalFileHandler::defaultTerminalPath()
@@ -1132,9 +1147,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QMultiMap<QString, QString> &inf
             // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
             // the correct approach: let the app add it to the recent list.
             // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-            QtConcurrent::run([urls, key, mimeTypes]() {
-                asyncAddRecentFile(key, urls, mimeTypes);
-            });
+            addRecentFile(key, urls, mimeTypes);
         }
     }
 
@@ -1243,27 +1256,25 @@ QUrl LocalFileHandlerPrivate::loadTemplateUrl(const QString &suffix)
     return templateFile;
 }
 
-void LocalFileHandlerPrivate::asyncAddRecentFile(const QString &desktop, const QList<QString> urls, const QMap<QString, QString> &mimeTypes)
+void LocalFileHandlerPrivate::addRecentFile(const QString &desktop, const QList<QString> urls, const QMap<QString, QString> &mimeTypes)
 {
-    QMutexLocker lk(&lock);
     for (const auto &tmpUrl : urls) {
         QUrl url(tmpUrl);
         QString filePath = url.toLocalFile();
-
         DesktopFile df(desktop);
-        addRecentFile(filePath, df, mimeTypes.value(tmpUrl));
+        const auto &item { buildRecentItem(filePath, df, mimeTypes.value(tmpUrl)) };
+        doAddRecentFile(item);
     }
 }
 
-void LocalFileHandlerPrivate::asyncAddRecentFile(const QString &desktop, const QList<QUrl> urls, const QString &mimeType)
+void LocalFileHandlerPrivate::addRecentFile(const QString &desktop, const QList<QUrl> urls, const QString &mimeType)
 {
-    QMutexLocker lk(&lock);
     for (const auto &tmpUrl : urls) {
         QUrl url(tmpUrl);
         QString filePath = url.toLocalFile();
-
         DesktopFile df(desktop);
-        addRecentFile(filePath, df, mimeType);
+        const auto &item { buildRecentItem(filePath, df, mimeType) };
+        doAddRecentFile(item);
     }
 }
 

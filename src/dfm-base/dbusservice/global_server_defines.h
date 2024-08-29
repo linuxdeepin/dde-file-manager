@@ -83,6 +83,19 @@ inline constexpr char kPreferredDevice[] { "PreferredDevice" };
 }   // namespace DeviceProperty
 
 /*!
+ * brief Recent property information
+ */
+namespace RecentProperty {
+inline constexpr char kPath[] { "Path" };
+inline constexpr char kHref[] { "Href" };
+inline constexpr char kModified[] { "modified" };
+
+inline constexpr char kAppName[] { "AppName" };
+inline constexpr char kAppExec[] { "AppExec" };
+inline constexpr char kMimeType[] { "MimeType" };
+}   // namespace RecentProperty
+
+/*!
  * \brief Options for processing the device list interface,
  * returning a list of devices with different contents
  * detail in: DeviceService::blockDevicesIdList
