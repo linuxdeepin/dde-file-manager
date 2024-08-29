@@ -198,7 +198,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? int(min) : int(max)));
     int rowHeight = itemRect.height();
     qreal txtDx = (separatorItem ? 21 : 46);
-    qreal txtDy = (itemRect.height() - metricsLabel.lineSpacing()) / 2;
+    qreal txtDy = (itemRect.height() - metricsLabel.lineSpacing()) / 2 - 1;
     painter->drawText(QRectF(itemRect.x() + txtDx, itemRect.y() + txtDy, itemRect.width(), rowHeight), Qt::AlignLeft, text);
     painter->restore();
 }
