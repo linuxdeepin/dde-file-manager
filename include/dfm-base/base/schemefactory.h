@@ -259,6 +259,12 @@ public:
     template<class CT = FileInfo>
     static bool regClass(const QString &scheme, RegOpts opts = RegOpts::kNoOpt, QString *errorString = nullptr)
     {
+        assert(qApp->thread() == QThread::currentThread());
+        static std::once_flag createFlag;
+        // main thread create InfoCacheController
+        std::call_once(createFlag, [] {
+            InfoCacheController::instance();
+        });
         if (opts & RegOpts::kNoCache)
             InfoCacheController::instance().setCacheDisbale(scheme);
         return instance().SchemeFactory<FileInfo>::regClass<CT>(scheme, errorString);
