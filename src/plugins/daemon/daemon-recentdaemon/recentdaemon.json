@@ -1,0 +1,7 @@
+{
+    "Name" : "serverplugin-recentdaemon",
+    "Version" : "1.0.0",
+    "Description" : "Recent backend",
+    "Depends" : [
+    ]
+}

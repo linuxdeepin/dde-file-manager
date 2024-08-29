@@ -41,7 +41,7 @@ void RecentEventReceiver::handleRemoveFilesResult(const QList<QUrl> &urls, bool 
 {
     Q_UNUSED(errMsg)
     if (ok && !urls.isEmpty()) {
-        RecentManager::instance()->updateRecent();
+        RecentManager::instance()->reloadRecent();
     }
 }
 
@@ -52,7 +52,7 @@ void RecentEventReceiver::handleFileRenameResult(quint64 winId, const QMap<QUrl,
 
     if (!ok || renamedUrls.isEmpty())
         return;
-    RecentManager::instance()->updateRecent();
+    RecentManager::instance()->reloadRecent();
 }
 
 void RecentEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
@@ -62,7 +62,7 @@ void RecentEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const 
 
     if (!ok || destUrls.isEmpty())
         return;
-    RecentManager::instance()->updateRecent();
+    RecentManager::instance()->reloadRecent();
 }
 
 bool RecentEventReceiver::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleList)

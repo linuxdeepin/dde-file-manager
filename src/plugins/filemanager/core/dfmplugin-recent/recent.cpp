@@ -13,6 +13,7 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
@@ -49,7 +50,7 @@ void Recent::initialize()
     followEvents();
     bindEvents();
     bindWindows();
-    RecentManager::instance();
+    RecentManager::instance()->init();
 }
 
 bool Recent::start()

@@ -6,13 +6,10 @@
 #define RECENTMANAGER_H
 
 #include "dfmplugin_recent_global.h"
+#include "recentmanager_interface.h"
 #include "files/recentfileinfo.h"
-#include "files/recentiterateworker.h"
 
 #include <dfm-base/utils/clipboard.h>
-#include <dfm-base/interfaces/abstractjobhandler.h>
-#include <dfm-base/interfaces/abstractfilewatcher.h>
-#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/threadcontainer.h>
 
@@ -28,6 +25,7 @@ namespace dfmplugin_recent {
 
 using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
 using ExpandFieldMap = QMap<QString, BasicExpand>;
+using RecentManagerDBusInterface = OrgDeepinFilemanagerServerRecentManagerInterface;
 
 namespace RecentHelper {
 inline QString scheme()
@@ -40,12 +38,8 @@ inline QIcon icon()
     return QIcon::fromTheme("document-open-recent-symbolic");
 }
 
-inline QString xbelPath()
-{
-    return QDir::homePath() + "/.local/share/recently-used.xbel";
-}
-
 QUrl rootUrl();
+QUrl recentUrl(const QString &path);
 void removeRecent(const QList<QUrl> &urls);
 void clearRecent();
 bool openFileLocation(const QUrl &url);
@@ -62,34 +56,33 @@ class RecentManager final : public QObject
 
 public:
     static RecentManager *instance();
+    RecentManagerDBusInterface *dbus() const;
+    void init();
 
     QMap<QUrl, FileInfoPointer> getRecentNodes() const;
-    QMap<QUrl, QString> getRecentOriginPaths() const;
+    QString getRecentOriginPaths(const QUrl &url) const;
     bool removeRecentFile(const QUrl &url);
-
-signals:
-    void asyncHandleFileChanged(const QList<QUrl> &);
+    int size();
 
 private:
     explicit RecentManager(QObject *parent = nullptr);
     ~RecentManager() override;
-
-    void init();
+    void resetRecentNodes();
 
 public slots:
-    void updateRecent();
-
-private slots:
-    void onUpdateRecentFileInfo(const QUrl &url, const QString &originPath, qint64 readTime);
-    void onDeleteExistRecentUrls(const QList<QUrl> &urls);
-    void onStopRecentWatcherThread();
+    void reloadRecent();
+    void onItemAdded(const QString &path, const QString &href, qint64 modified);
+    void onItemsRemoved(const QStringList &paths);
+    void onItemChanged(const QString &path, qint64 modified);
 
 private:
-    QThread workerThread;
-    RecentIterateWorker *iteratorWorker { new RecentIterateWorker };   // free by QThread::finished
-    AbstractFileWatcherPointer watcher;
-    dfmbase::DThreadMap<QUrl, FileInfoPointer> recentNodes;
-    QMap<QUrl, QString> recentOriginPaths;
+    QScopedPointer<RecentManagerDBusInterface> recentDBusInterce;
+    struct RecentItem
+    {
+        FileInfoPointer fileInfo;
+        QString originPath;
+    };
+    QMap<QUrl, RecentItem> recentItems;
 };
-}
+}   // namespace dfmplugin_recent
 #endif   // RECENTMANAGER_H
