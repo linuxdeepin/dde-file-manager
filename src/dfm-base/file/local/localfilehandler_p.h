@@ -56,11 +56,12 @@ public:
     void setError(DFMIOError error);
     QUrl loadTemplateUrl(const QString &suffix);
 
-    static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
-    static void asyncAddRecentFile(const QString &desktop, const QList<QString> urls,
-                                   const QMap<QString, QString> &mimeTypes);
-    static void asyncAddRecentFile(const QString &desktop, const QList<QUrl> urls,
-                                   const QString &mimeType);
+    static void doAddRecentFile(const QVariantMap &item);
+    static QVariantMap buildRecentItem(const QString &path, const DesktopFile &desktop, const QString &mimeType);
+    static void addRecentFile(const QString &desktop, const QList<QString> urls,
+                              const QMap<QString, QString> &mimeTypes);
+    static void addRecentFile(const QString &desktop, const QList<QUrl> urls,
+                              const QString &mimeType);
 
 public:
     LocalFileHandler *q { nullptr };
