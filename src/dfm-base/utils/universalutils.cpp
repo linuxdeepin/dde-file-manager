@@ -44,6 +44,10 @@
 #    define DDE_LOCKSERVICE_SERVICE "org.deepin.dde.LockService1"
 #    define DDE_LOCKSERVICE_PATH "/org/deepin/dde/LockService1"
 #    define DDE_LOCKSERVICE_INTERFACE "org.deepin.dde.LockService1"
+
+#    define DESKTOP_FILEMONITOR_SERVICE "org.deepin.dde.desktop.filemonitor"
+#    define DESKTOP_FILEMONITOR_PATH "/org/deepin/dde/desktop/filemonitor"
+#    define DESKTOP_FILEMONITOR_INTERFACE "org.deepin.dde.desktop.filemonitor"
 #else
 #    define APP_MANAGER_SERVICE "com.deepin.SessionManager"
 #    define APP_MANAGER_PATH "/com/deepin/StartManager"
