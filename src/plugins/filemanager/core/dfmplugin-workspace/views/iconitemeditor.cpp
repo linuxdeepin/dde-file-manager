@@ -151,6 +151,7 @@ void IconItemEditor::showAlertMessage(const QString &text, int duration)
         d->tooltip->setBackgroundColor(palette().color(backgroundRole()));
         QTimer::singleShot(duration, this, [d] {
             if (d->tooltip) {
+                d->tooltip->setParent(nullptr);
                 d->tooltip->hide();
                 d->tooltip->deleteLater();
                 d->tooltip = nullptr;
@@ -163,8 +164,13 @@ void IconItemEditor::showAlertMessage(const QString &text, int duration)
         label->adjustSize();
     }
 
-    QPoint pos = this->mapToGlobal(QPoint(this->width() / 2, this->height()));
-    d->tooltip->show(pos.x(), pos.y());
+    if (!this->window())
+        return;
+
+    QPoint pos = this->mapTo(this->window(), QPoint(this->width() / 2 + 16, this->height()));
+    d->tooltip->setParent(this->window());
+    d->tooltip->show(pos.x(),
+                     pos.y());
 }
 
 void IconItemEditor::popupEditContentMenu()

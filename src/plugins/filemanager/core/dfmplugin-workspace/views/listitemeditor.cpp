@@ -49,6 +49,7 @@ void ListItemEditor::showAlertMessage(const QString &text, int duration)
         tooltip->setBackgroundColor(palette().color(backgroundRole()));
         QTimer::singleShot(duration, this, [this] {
             if (tooltip) {
+                tooltip->setParent(nullptr);
                 tooltip->hide();
                 tooltip->deleteLater();
                 tooltip = nullptr;
@@ -61,7 +62,10 @@ void ListItemEditor::showAlertMessage(const QString &text, int duration)
         label->adjustSize();
     }
 
-    QPoint pos = this->mapToGlobal(QPoint(this->width() / 2, this->height()));
+    if (!this->window())
+        return;
+    QPoint pos = this->mapTo(this->window(), QPoint(this->width() / 2, this->height()));
+    tooltip->setParent(this->window());
     tooltip->show(pos.x(), pos.y());
 }
 
