@@ -184,7 +184,7 @@ install(FILES ${DLNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X
 set(DFM_DLNFS_SCRIPT_LAUNCHER
     ${AssetsPath}/scripts/dde-file-manager
     ${AssetsPath}/scripts/file-manager.sh)
-install(FILES ${DFM_DLNFS_SCRIPT_LAUNCHER} DESTINATION bin)
+install(PROGRAMS ${DFM_DLNFS_SCRIPT_LAUNCHER} DESTINATION bin)
 
 set(Mimetypes "${ShareDir}/mimetypes")
 FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
