@@ -98,7 +98,7 @@
 <context>
     <name>FileDialogHandle</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="555"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="561"/>
         <source>All Files </source>
         <translation>ཡིག་ཆ་ཚང་མ།</translation>
     </message>
@@ -132,27 +132,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1048"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1049"/>
         <source>need authorization to access</source>
         <translation>དབང་ཚད་སྤྲད་ནས་ལྟ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1123"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1124"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>%1ཡི་ཐོབ་ཐང་ངོས་འཛིན་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1124"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1125"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>ཁྱོད་རང་ཐེངས་དང་པོར་ཐོ་འཇུག་བྱེད་སྐབས་དྲན་སྐུལ་འདི་མཐོང་སྲིད། </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1125"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1126"/>
         <source>The identity sent by the remote computer is</source>
         <translation>རྒྱང་སྟོན་གློག་ཀླད་ཀྱིས་བསྐུར་བའི་ཐོབ་ཐང་གི་ཆ་འཕྲིན་ནི།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1127"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1128"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>མུ་མཐུད་བཀོལ་སྤྱོད་བྱས་ཚེ་བདེ་འཇགས་ཡིན་མིན་གཏན་འཁེལ་བྱེད་དགོས་ན། རྒྱུད་ཁོངས་ཀྱི་དོ་དམ་པར་འབྲེལ་བ་བྱོས། </translation>
     </message>
@@ -293,8 +293,8 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
         <source>Recent</source>
         <translation>ཉེར་ཆར་བེད་སྤྱོད་བྱས་པ།</translation>
     </message>
@@ -330,7 +330,7 @@
         <translation>ཚན་པ་%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="301"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="300"/>
         <source>Unable to find the original file</source>
         <translation>དམིགས་འབེན་ཡིག་ཆའི་འབྲེལ་མཐུད་རྙེད་ཐབས་བྲལ།</translation>
     </message>
@@ -354,13 +354,13 @@
         <translation>ཁྱོད་ལ་ཡན་ལག་ཡིག་ཆར་ལྟ་སྤྱོད་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="438"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="441"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>ཡིག་ཁུག་སྟོང་པ་རེད་འདུག</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="440"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
         <source>Loading...</source>
         <translation>སྣོན་འཇུག་བྱེད་བཞིན་པ།</translation>
     </message>
@@ -854,7 +854,7 @@
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="329"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -889,19 +889,19 @@
         <translation>（འདྲ་དཔེ།&#xa0;%1）</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="80"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="103"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="84"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="107"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="98"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="178"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="182"/>
         <source>Files are being processed</source>
         <translation>ཡིག་ཆ་ཐག་གཅོད་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="211"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="215"/>
         <source>Bit</source>
         <translation>གནས།</translation>
     </message>
@@ -921,7 +921,7 @@
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="560"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="295"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="407"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="63"/>
@@ -935,7 +935,7 @@
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="564"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="332"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="411"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="67"/>
@@ -1152,8 +1152,8 @@
         <translation>རྒྱུས་མེད་པའི་ནོར་འཁྲུལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="287"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="331"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="289"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="333"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>སྒོ་བརྒྱབ།</translation>
@@ -1297,74 +1297,74 @@
         <translation>ལྟ་སྤྱོད་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="276"/>
         <source>User directory</source>
         <translation>སྤྱོད་མཁན་དཀར་ཆག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="282"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
         <source>Local disk</source>
         <translation>རང་སའི་སྡུད་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="282"/>
         <source>Removable disk</source>
         <translation>སྤོ་རུང་བའི་སྡུད་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
         <source>DVD</source>
         <translation>སྡེར་སྐུར་སྒྲིག་ཆས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="287"/>
         <source>Network shared directory</source>
         <translation>དྲ་རྒྱ་མཉམ་སྤྱོད་དཀར་ཆག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="291"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
         <source>Android mobile device</source>
         <translation>ཨན་ཊོ་སྤོ་རུང་སྒྲིག་ཆས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="294"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="292"/>
         <source>Apple mobile device</source>
         <translation>ཀུ་ཤུའི་སྤོ་རུང་སྒྲིག་ཆས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="297"/>
         <source>Unknown device</source>
         <translation>རྒྱུས་མེད་པའི་སྒྲིག་ཆས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="233"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>སྤོ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Do you want to remove this item?</source>
         <translation>ཁྱེད་ཀྱིས་བདམས་ཟིན་པའི་ནང་དོན་འདི་བསུབ་རྒྱུ་གཏན་ཁེལ་ལམ། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>ཁྱེད་ཀྱིས་བདམས་ཟིན་པའི་ནང་དོན་%1བསུབ་རྒྱུ་གཏན་ཁེལ་ལམ། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>It does not delete the original files</source>
         <translation>བཀོལ་སྤྱོད་འདིས་ཁུངས་ཡིག་ཆ་བསུབ་མི་སྲིད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="339"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
         <source>Clear recent history</source>
         <translation>ཉེ་ཆར་གྱི་ལྟ་སྤྱོད་མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="355"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
         <source>Source path</source>
@@ -1696,7 +1696,7 @@
         <translation>ཡིག་ཆ་བྲེལ་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="389"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="391"/>
         <source>Device disconnected</source>
         <translation>འོད་སྡེར་སྒྲིག་ཆས་འབྲེལ་མཐུད་བྱས་མེད། </translation>
     </message>
@@ -3730,7 +3730,7 @@
 <context>
     <name>dfmplugin_burn::BurnISOFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="421"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="423"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>ཡིག་ཆའི་མིང་ངམ་འགྲོ་ལམ་རིང་དྲགས་པས། མིང་ངམ་འགྲོ་ལམ་གི་རིང་ཚད་ལེགས་སྒྲིག་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱོས།</translation>
     </message>
@@ -3738,71 +3738,71 @@
 <context>
     <name>dfmplugin_burn::BurnJobManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="221"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="223"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="234"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="236"/>
         <source>Disc erase failed</source>
         <translation>བསུབས་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="238"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="240"/>
         <source>Burn process failed</source>
         <translation>ཕབ་བརྐོ་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="241"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="243"/>
         <source>Data verification failed</source>
         <translation>གཞི་གྲངས་ར་སྤྲོད་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="244"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="246"/>
         <source>%1: %2</source>
         <translation>%1：%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="262"/>
         <source>Show details</source>
         <translation>ཞིབ་ཕྲའི་གནས་ཚུལ་མངོན་སྟོན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="264"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="266"/>
         <source>Hide details</source>
         <translation>ཞིབ་ཕྲའི་གནས་ཚུལ་ཡིབ་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="265"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="267"/>
         <source>Error</source>
         <translation>ཆ་འཕྲིན་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="274"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="276"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>ཞིབ་ཕྲའི་གནས་ཚུལ་མངོན་སྟོན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="275"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="290"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>ཤེལ་བརྙན་ཡིག་ཆར་ལྟ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="307"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="309"/>
         <source>Image successfully created</source>
         <translation>ཤེལ་བརྙན་བཟོ་གྲུབ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="341"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="343"/>
         <source>Image creation failed</source>
         <translation>ཤེལ་བརྙན་བཟོ་མ་ཐུབ་པ།</translation>
     </message>
@@ -3853,7 +3853,7 @@
 <context>
     <name>dfmplugin_burn::BurnUDFFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="518"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>ཡིག་ཆའི་མིང་ངམ་འགྲོ་ལམ་རིང་དྲགས་པས། མིང་ངམ་འགྲོ་ལམ་གི་རིང་ཚད་ལེགས་སྒྲིག་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱོས།</translation>
     </message>
@@ -3861,12 +3861,12 @@
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="568"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
         <source>Creating an ISO image</source>
         <translation>ཤེལ་བརྙན་ཡིག་ཆ་བཟོ་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="569"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="571"/>
         <source>to %1</source>
         <translation>%1བར།</translation>
     </message>
@@ -3898,7 +3898,7 @@
 <context>
     <name>dfmplugin_burn::EraseJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="360"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="362"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>%1སུབ་བཞིན་ཡོད་པས། ཏོག་ཙམ་སྒུག་རོགས།</translation>
     </message>
@@ -4201,20 +4201,20 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="299"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="586"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="588"/>
         <source>None</source>
         <translation>མེད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="301"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="587"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
         <source>Set password</source>
         <translation>གསང་ཨང་སྒྲིག་འགོད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="587"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
         <source>Change password</source>
         <translation>གསང་ཨང་བཟོ་བཅོས།</translation>
     </message>
@@ -4229,34 +4229,34 @@
         <translation>གསང་ཨང་འདི་ཉིད་མཉམ་སྤྱོད་ཡིག་ཆ་ཚང་མར་སྤྱོད་རྒྱུ་ཡིན་པས། མཉམ་སྤྱོད་གསང་ཨང་མེད་པའི་སྤྱོད་མཁན་གྱིས་“མིང་སྐུང་ནས་ལྟ་སྤྱོད་”ཀྱི་མཉམ་སྤྱོད་ཡིག་ཁུག་ལ་ལྟ་སྤྱོད་བྱ་ཆོག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="421"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="423"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>དང་བཀག་འགོག་ནི་མཉམ་སྤྱོད་མིང་ལ་བྱས་ཏེ་སྤྱོད་པ། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="439"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="441"/>
         <source>The share name is used by another user.</source>
         <translation>མཉམ་སྤྱོད་མིང་འདི་སྤྱོད་མཁན་གཞན་གྱིས་བེད་སྤྱོད་བྱས་འདུག </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="440"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="444"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>མཉམ་སྤྱོད་མིང་འདི་འདུག་པས། དང་ཐོག་གི་མཉམ་སྤྱོད་ཡིག་ཁུལ་ལ་བརྗེ་དགོས་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="443"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="445"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="444"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="446"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>བརྗེ་བ།</translation>
@@ -4935,7 +4935,7 @@
         <translation>གནས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="398"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="393"/>
         <source>Available</source>
         <translation>སྤྱོད་ཆོག</translation>
     </message>
@@ -5060,25 +5060,25 @@
 <context>
     <name>dfmplugin_recent::Recent</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="44"/>
         <source>Recent</source>
         <translation>ཉེར་ཆར་བེད་སྤྱོད་བྱས་པ།</translation>
     </message>
 </context>
 <context>
-    <name>dfmplugin_recent::RecentManager</name>
+    <name>dfmplugin_recent::RecentEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
         <translation>འགྲོ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
         <translation>ཉེ་ཆར་གྱི་ལྟ་སྤྱོད་དུས་ཚོད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
         <translation>ཉེར་ཆར་བེད་སྤྱོད་བྱས་པ།</translation>
     </message>
@@ -5942,12 +5942,12 @@
         <translation>ཉེར་སྤྱོད་གཞན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="428"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="430"/>
         <source>Open File</source>
         <translation>ཡིག་ཆ་ཁ་ཕྱེ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="430"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="432"/>
         <source>Applications (*.desktop);;All files (*)</source>
         <translation>ཉེར་སྤྱོད་བྱ་རིམ། (*.desktop) ཡིག་ཆ་ཚང་མ་&#xa0;(*)</translation>
     </message>
@@ -6098,50 +6098,50 @@
 <context>
     <name>dfmplugin_vault::RetrievePasswordView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="42"/>
         <source>By key in the default path</source>
         <translation>སོར་བཞག་བརྒྱུད་ལམ་གྱི་གསང་ལྡེའི་ཡིག་ཆ་བརྒྱུད་ནས་གསང་ཨང་འཚོལ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="43"/>
         <source>By key in the specified path</source>
         <translation>དམིགས་བཙུགས་བརྒྱུད་ལམ་གྱི་གསང་ལྡེའི་ཡིག་ཆ་བརྒྱུད་ནས་གསང་ཨང་འཚོལ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="47"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="199"/>
         <source>Select a path</source>
         <translation>གསང་ལྡེའི་ཡིག་ཆའི་ཉར་ཚགས་བརྒྱུད་ལམ་འདེམས་རོགས། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="115"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="184"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="198"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="199"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="232"/>
         <source>Unable to get the key file</source>
         <translation>གསང་ལྡེའི་ཡིག་ཆ་ཐོབ་ཐབས་མེད། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="127"/>
         <source>Verification failed</source>
         <translation>གསང་ལྡེ་ར་སྤྲོད་བྱེད་མ་ཐུབ། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="140"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>ཕྱིར་བཤོལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="140"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>ར་སྤྲོད་གསང་ལྡེ། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="146"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="145"/>
         <source>Retrieve Password</source>
         <translation>གསང་ཨང་འཚོལ་བ།</translation>
     </message>
@@ -6268,7 +6268,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="82"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="164"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="216"/>
         <source>Encrypt</source>
         <translation>གསང་སྡོམ་ཉེན་འགོག་སྒམ་ཆུང་།</translation>
     </message>
@@ -6278,7 +6278,7 @@
         <translation>ཉེན་འགོག་སྒམ་ཆུང་བཟོ་མ་ཐུབ་པ། %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="268"/>
         <source>OK</source>
         <translation>ཆོག</translation>
     </message>
@@ -6490,17 +6490,17 @@
         <translation>ཉེན་འགོག་སྒམ་ཆུང་བསུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="59"/>
         <source>Failed to delete file vault</source>
         <translation>ཉེན་འགོག་སྒམ་ཆུང་བསུབས་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="63"/>
         <source>OK</source>
         <translation>གཏན་ཁེལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="75"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation>ཉེན་འགོག་སྒམ་ཆུང་བསུབས་རྗེས། དེའི་ནང་གི་ནང་དོན་ཚང་མ་ཡོངས་སུ་བསུབས་ངེས་རེད། </translation>
     </message>
@@ -6548,12 +6548,12 @@
         <translation>གསང་ཨང་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="192"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="190"/>
         <source>Failed to delete file vault</source>
         <translation>ཉེན་འགོག་སྒམ་ཆུང་བསུབས་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="194"/>
         <source>OK</source>
         <translation>གཏན་ཁེལ།</translation>
     </message>
@@ -6586,12 +6586,12 @@
         <translation>གསང་ལྡེ་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="174"/>
         <source>Failed to delete file vault</source>
         <translation>ཉེན་འགོག་སྒམ་ཆུང་བསུབས་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="178"/>
         <source>OK</source>
         <translation>གཏན་ཁེལ།</translation>
     </message>
@@ -6643,12 +6643,12 @@
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1926"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1925"/>
         <source>Mount error</source>
         <translation>འགེལ་འཇུག་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1927"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1926"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>ཞབས་ཞུའི་ནང་འཛུལ་ཡིག་ཆ་ནུས་མེད་ཡིན། བཤུབ་ནས་བསྐྱར་སྒྲིག་བྱེད་རོགས།</translation>
     </message>
@@ -6759,7 +6759,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="920"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="922"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>ཉར་ཚགས།</translation>
