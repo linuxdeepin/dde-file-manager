@@ -17,11 +17,11 @@ find_package(Qt5 COMPONENTS
     DBus
     REQUIRED)
 
-qt5_generate_dbus_interface(
-    recentmanagerdbus.h
-    ${RecentManager_XML}
-    OPTIONS -M -S
-)
+#qt5_generate_dbus_interface(
+#    recentmanagerdbus.h
+#    ${RecentManager_XML}
+#    OPTIONS -M -S
+#)
 
 qt5_add_dbus_adaptor(SRC_FILES ${RecentManager_XML}
     recentmanagerdbus.h RecentManagerDBus)
