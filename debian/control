@@ -43,6 +43,7 @@ Build-Depends:
  libpoppler-cpp-dev,
  libcryptsetup-dev,
  libpcre3-dev,
+ libxcb-xfixes0-dev (>= 1.10~),
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
