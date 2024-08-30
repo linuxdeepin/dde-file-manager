@@ -62,7 +62,7 @@ install(FILES dde-open.desktop DESTINATION share/applications)
 
 # pkexec
 install(FILES pkexec/com.deepin.pkexec.dde-file-manager.policy DESTINATION share/polkit-1/actions/)
-install(FILES pkexec/dde-file-manager-pkexec DESTINATION bin)
+install(PROGRAMS pkexec/dde-file-manager-pkexec DESTINATION bin)
 
 # manual
 install(DIRECTORY assets/dde-file-manager DESTINATION share/deepin-manual/manual-assets/application)
