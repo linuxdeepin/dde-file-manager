@@ -365,7 +365,8 @@ void CommandParser::processEvent()
         { "copy", GlobalEventType::kCopy },
         { "move", GlobalEventType::kCutFile },
         { "delete", GlobalEventType::kDeleteFiles },
-        { "trash", GlobalEventType::kMoveToTrash }
+        { "trash", GlobalEventType::kMoveToTrash },
+        { "cleantrash", GlobalEventType::kCleanTrash },
     };
 
     if (!eventMap.contains(argsInfo.action))
@@ -397,6 +398,13 @@ void CommandParser::processEvent()
                 || FileUtils::isTrashFile(srcUrls.first()))
             return;
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        break;
+    }
+    case GlobalEventType::kCleanTrash: {
+        dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
+                                     0,
+                                     QList<QUrl>(),
+                                     AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
         break;
     }
     default:
