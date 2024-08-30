@@ -29,7 +29,7 @@
             "serial":0,
             "flags":[],
             "name":"Broadcast file past event result",
-            "name[zh_CN]":"上报文件粘贴事假结果",
+            "name[zh_CN]":"上报文件粘贴事件结果",
             "description[zh_CN]":"打开此配置，上报粘贴事件的结果到指定位置",
             "description":"Open this configuration and report the results of the paste event to the specified location.",
             "permissions":"readwrite",
