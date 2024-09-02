@@ -335,20 +335,20 @@
         <translation>無法找到鏈接目標文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="445"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="480"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移動或刪除</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="448"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="482"/>
         <source>You do not have permission to access this folder</source>
         <translation>您沒有權限訪問該文件夾</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="451"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="450"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="485"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>您沒有權限遍歷子文件</translation>
@@ -889,19 +889,19 @@
         <translation>（副本 %1）</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="84"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="107"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="88"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="111"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="98"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="182"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="186"/>
         <source>Files are being processed</source>
         <translation>正在處理文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="215"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="219"/>
         <source>Bit</source>
         <translation>位</translation>
     </message>
@@ -2124,8 +2124,8 @@
     <name>ddplugin_organizer::OptionsWindow</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="90"/>
-        <source>Desktop options</source>
-        <translation>桌面選項</translation>
+        <source>View options</source>
+        <translation>視圖選項</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="105"/>
