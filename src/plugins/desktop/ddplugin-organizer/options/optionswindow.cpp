@@ -87,7 +87,7 @@ bool OptionsWindow::initialize()
     auto titleBar = new DTitlebar(this);
     titleBar->setMenuVisible(false);
     titleBar->setBackgroundTransparent(true);
-    titleBar->setTitle(tr("Desktop options"));
+    titleBar->setTitle(tr("View options"));
     mainLayout->addWidget(titleBar, 0, Qt::AlignTop);
 
     // content
