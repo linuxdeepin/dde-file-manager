@@ -35,6 +35,10 @@ signals:
     void searchCompleted(const QString &taskId);
     void searchStoped(const QString &taskId);
 
+    void fileAdd(const QUrl &url);
+    void fileDelete(const QUrl &url);
+    void fileRename(const QUrl &oldUrl, const QUrl &newUrl);
+
 private:
     explicit SearchManager(QObject *parent = nullptr);
     ~SearchManager();

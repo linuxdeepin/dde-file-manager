@@ -306,5 +306,14 @@ void FileOperations::followEvents()
                             FileOperationsEventReceiver::instance(), &FileOperationsEventReceiver::handleShortCut);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
                             FileOperationsEventReceiver::instance(), &FileOperationsEventReceiver::handleShortCutPaste);
+    connect(
+            DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [](const QString &iid, const QString &name) {
+                Q_UNUSED(iid)
+                if (name == "dfmplugin-search")
+                    dpfHookSequence->follow("dfmplugin_search", "hook_Url_IsSubFile",
+                                            FileOperationsEventReceiver::instance(),
+                                            &FileOperationsEventReceiver::handleIsSubFile);
+            },
+    Qt::DirectConnection);
 }
 }   // namespace dfmplugin_fileoperations
