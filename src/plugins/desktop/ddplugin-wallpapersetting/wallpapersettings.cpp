@@ -20,6 +20,7 @@
 #include <QWindow>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QScreen>
 
 #ifdef COMPILE_ON_V23
 #    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
@@ -1131,11 +1132,17 @@ void WallpaperSettings::applyToDesktop()
 
     fmDebug() << "dbus Appearance SetMonitorBackground is called " << d->screenName << " " << d->currentSelectedWallpaper;
     QList<QVariant> argumentList;
-    argumentList << QVariant::fromValue(d->screenName) << QVariant::fromValue(d->currentSelectedWallpaper);
-    d->appearanceIfs->asyncCallWithArgumentList(QStringLiteral("SetMonitorBackground"), argumentList);
-    fmDebug() << "dbus Appearance SetMonitorBackground end";
+    QList<QScreen*> allScreensList=QApplication::screens();
+    if(allScreensList.size()){
+        for (QScreen*tmp :allScreensList) {
+            argumentList << QVariant::fromValue(tmp->name()) << QVariant::fromValue(d->currentSelectedWallpaper);
+            d->appearanceIfs->asyncCallWithArgumentList(QStringLiteral("SetMonitorBackground"), argumentList);
+            fmDebug() << "dbus Appearance SetMonitorBackground end";
 
-    emit backgroundChanged();
+            emit backgroundChanged();
+        }
+    }
+
 }
 
 void WallpaperSettings::applyToGreeter()
