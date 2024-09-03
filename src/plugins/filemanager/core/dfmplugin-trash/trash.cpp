@@ -181,6 +181,15 @@ void Trash::followEvents()
                         dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", TrashFileHelper::instance(), &TrashFileHelper::handleCanTag);
                 },
                 Qt::DirectConnection);
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-search")
+                        dpfHookSequence->follow("dfmplugin_search", "hook_Url_IsSubFile",
+                                                TrashFileHelper::instance(),
+                                                &TrashFileHelper::handleIsSubFile);
+                },
+        Qt::DirectConnection);
     }
 }
 

@@ -42,7 +42,8 @@ void Search::initialize()
     //注册Scheme为"search"的扩展的文件信息
     InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
-    WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
+    WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme(),
+                                                WatcherFactory::RegOpts::kNoCache);
 
     bindEvents();
     bindWindows();
@@ -202,6 +203,13 @@ void Search::bindEvents()
                                    SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_InputAdddressStr_Check",
                                    SearchEventReceiverIns, &SearchEventReceiver::handleAddressInputStr);
+
+    dpfSignalDispatcher->subscribe("dfmplugin_fileoperations", "signal_File_Add",
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleFileAdd);
+    dpfSignalDispatcher->subscribe("dfmplugin_fileoperations", "signal_File_Delete",
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleFileDelete);
+    dpfSignalDispatcher->subscribe("dfmplugin_fileoperations", "signal_File_Rename",
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleFileRename);
 
     // connect self slot events
     static constexpr auto selfSpace { DPF_MACRO_TO_STR(DPSEARCH_NAMESPACE) };
