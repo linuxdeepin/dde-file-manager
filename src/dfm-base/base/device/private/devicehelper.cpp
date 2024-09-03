@@ -9,6 +9,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h>
 #include <dfm-base/utils/universalutils.h>
@@ -26,6 +27,7 @@
 
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dburn_global.h>
+#include <sys/statvfs.h>
 
 static constexpr char kBurnAttribute[] { "BurnAttribute" };
 static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
@@ -119,8 +121,23 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevAutoPtr &dev)
     datas[kDriveModel] = getNullStrIfNotValid(Property::kDriveModel);
     datas[kPreferredDevice] = getNullStrIfNotValid(Property::kBlockPreferredDevice);
 
-    if (dev->optical())
-        datas[kUDisks2Size] = dev->sizeTotal();
+    datas[kUDisks2Size] = dev->sizeTotal();
+    auto mpt = dev->mountPoint();
+    if (!mpt.isEmpty() && !dev->optical()) {
+        auto type = DConfigManager::instance()->value("org.deepin.dde.file-manager.mount",
+                                                      "deviceCapacityDisplay",
+                                                      DEVICE_SIZE_DISPLAY_BY_DISK)
+                            .toInt();
+        if (type == DEVICE_SIZE_DISPLAY_BY_FS) {
+            struct statvfs fsInfo;
+            int ok = statvfs(mpt.toStdString().c_str(), &fsInfo);
+            if (ok == 0) {
+                const quint64 blksize = quint64(fsInfo.f_frsize);
+                auto total = fsInfo.f_blocks * blksize;
+                datas[kSizeTotal] = total;
+            }
+        }
+    }
 
     auto eType = dev->partitionEType();
     datas[kHasExtendedPatition] = eType == PartitionType::kMbrWin95_Extended_LBA
