@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -1378,7 +1376,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="72"/>
         <source>New tab</source>
-        <translation>新建标签页</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="78"/>
@@ -1733,7 +1731,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="605"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="718"/>
         <source>Clear search history</source>
-        <translation>清空搜索记录</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1766,7 +1764,7 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
         <source>Personalization</source>
-        <translation>个性化</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
@@ -1946,12 +1944,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
         <source>The hortcut key &quot;%1&quot; to show collection</source>
-        <translation>快捷键“%1”以显示集合</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation>不再提示</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2002,7 +2000,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="134"/>
         <source>Middle area</source>
-        <translation>中尺寸</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="160"/>
@@ -2028,17 +2026,17 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="232"/>
         <source>Organize desktop</source>
-        <translation>整理桌面</translation>
+        <translation>开启桌面整理</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="231"/>
         <source>Enable desktop organization</source>
-        <translation>启用桌面整理</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>View options</source>
-        <translation>视图选项</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
@@ -2081,27 +2079,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="154"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation>如需禁用一键隐藏功能，可在桌面右键菜单唤起“视图选项”窗口，关闭“一键隐藏集合”。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="164"/>
         <source>Desktop organizer</source>
-        <translation>桌面整理</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="167"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation>快捷键“%1”显示集合</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>Close</source>
-        <translation>关闭</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>No more prompts</source>
-        <translation>不再提示</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2135,7 +2133,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="125"/>
         <source>Enable desktop organizer</source>
-        <translation>启用桌面整理</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2153,12 +2151,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation>一键隐藏所有集合</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation>隐藏/显示集合快捷键</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2765,12 +2763,12 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="502"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation>撤销后将会彻底删除&#xa0;%1&#xa0;，您确定要彻底删除？</translation>
+        <translation>撤销后将会彻底删除 %1 ，您确定要彻底删除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation>撤销后将会彻底删除这&#xa0;%1&#xa0;项内容，您确定要彻底删除？</translation>
+        <translation>撤销后将会彻底删除这 %1 项内容，您确定要彻底删除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
@@ -2969,7 +2967,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
         <source>Open folder windows in a separate process</source>
-        <translation>在单独的进程中打开文件夹窗口</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
@@ -3325,12 +3323,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Undo</source>
-        <translation>撤销</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Redo</source>
-        <translation>重做</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
@@ -4300,7 +4298,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="508"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation>SMB端口被禁用，请检查防火墙策略。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="517"/>
@@ -4472,12 +4470,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation>拷贝或剪贴文件失败！重试执行重新拷贝当前文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Can&apos;t access file!</source>
-        <translation>不能访问当前文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
@@ -4532,12 +4530,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation>拷贝或剪贴文件失败，原因： %1 .重试执行重新拷贝当前文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation>拷贝或剪贴文件失败，原因： %1. </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
@@ -5070,17 +5068,17 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation>路径</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation>最近访问时间</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
-        <translation>最近使用</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5260,17 +5258,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="145"/>
         <source>Display search history</source>
-        <translation>显示搜索记录</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="174"/>
         <source>Clear dde-file-manager Search Records</source>
-        <translation>清空文件管理器搜索记录</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="175"/>
         <source>Clean up</source>
-        <translation>清除</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5443,19 +5441,19 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="347"/>
         <source>Are you sure clear search histories?</source>
-        <translation>确认清空搜索记录？</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="349"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>取 消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="350"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>确 定</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6645,12 +6643,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1925"/>
         <source>Mount error</source>
-        <translation>挂载错误</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1926"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation>服务器登录凭证失效，请卸载后重新挂载</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
