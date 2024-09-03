@@ -286,12 +286,12 @@ void BasicWidget::basicFill(const QUrl &url)
         fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideMiddle, Qt::AlignVCenter, true);
         if (type == FileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
             fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
+            connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
             if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
                 fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kRedirectedFileUrl));
             } else {
                 fileCalculationUtils->start(QList<QUrl>() << url);
             }
-            connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
         } else {
             layoutMain->removeWidget(fileCount);
             fieldMap.remove(BasicFieldExpandEnum::kFileCount);
