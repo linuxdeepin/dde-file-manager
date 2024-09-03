@@ -224,6 +224,10 @@ void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer col
                 });
         dpfSignalDispatcher->subscribe("ddplugin_background", "signal_Background_BackgroundSetted",
                                        collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(collection->widget(), &QWidget::destroyed, this, [](QObject *obj) {
+            dpfSignalDispatcher->unsubscribe("ddplugin_background", "signal_Background_BackgroundSetted",
+                                             obj, &CollectionWidget::cacheSnapshot);
+        });
     }
 }
 
