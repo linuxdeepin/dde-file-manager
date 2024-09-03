@@ -47,6 +47,7 @@ bool DConfigManager::addConfig(const QString &config, QString *err)
     if (d->configs.contains(config)) {
         if (err)
             *err = "config is already added";
+        qCInfo(logDFMBase) << config << "already added.";
         return false;
     }
 
@@ -54,12 +55,14 @@ bool DConfigManager::addConfig(const QString &config, QString *err)
     if (!cfg) {
         if (err)
             *err = "cannot create config";
+        qCWarning(logDFMBase) << config << "object cannot be created!";
         return false;
     }
 
     if (!cfg->isValid()) {
         if (err)
             *err = "config is not valid";
+        qCWarning(logDFMBase) << config << "not valid config!";
         delete cfg;
         return false;
     }
