@@ -2,12 +2,12 @@
 <context>
     <name>AccessControlDBus</name>
     <message>
-        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="40"/>
+        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="41"/>
         <source>Invalid args</source>
         <translation>Neplatné argumenty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="41"/>
+        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="42"/>
         <source>Invalid invoker</source>
         <translation>Neplatný volající</translation>
     </message>
@@ -28,7 +28,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="236"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="283"/>
         <source>Desktop</source>
         <translation>Plocha</translation>
     </message>
@@ -36,7 +36,7 @@
 <context>
     <name>DeviceList</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="136"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="130"/>
         <source>Disks</source>
         <translation type="unfinished"/>
     </message>
@@ -62,33 +62,33 @@
 <context>
     <name>DockItemDataManager</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="144"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="153"/>
         <source>The device has been safely removed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="156"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="165"/>
         <source>eject</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="157"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="166"/>
         <source>unmount</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="158"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="163"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="167"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="172"/>
         <source>remove</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="160"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="169"/>
         <source>Operation failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="161"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="170"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
         <translation type="unfinished"/>
     </message>
@@ -96,7 +96,7 @@
 <context>
     <name>FileDialogHandle</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="555"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="561"/>
         <source>All Files </source>
         <translation>Veškeré soubory</translation>
     </message>
@@ -104,7 +104,7 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="651"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="670"/>
         <source>The file name or the path is too long!</source>
         <translation type="unfinished"/>
     </message>
@@ -112,7 +112,7 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="766"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="770"/>
         <source>Unknown</source>
         <translation>Neznámý</translation>
     </message>
@@ -121,6 +121,8 @@
     <name>PathManager</name>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-core/utils/corehelper.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/crumbinterface.cpp" line="89"/>
         <source>Trash</source>
         <translation>Koš</translation>
     </message>
@@ -128,27 +130,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1048"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1049"/>
         <source>need authorization to access</source>
         <translation>K přístupu je vyžadováno ověření</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1114"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1124"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>Nelze ověřit totožnost %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1115"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1125"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Toto se stává, když se k počítači přihlašujete poprvé.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1116"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1126"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Totožnost poslaná vzdáleným počítačem je</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1118"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1128"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Pokud si chcete být zcela jistí, zda je bezpečné pokračovat, obraťte se na správce systému.</translation>
     </message>
@@ -289,13 +291,13 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
         <source>Recent</source>
         <translation>Nedávné</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="202"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="207"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
@@ -303,7 +305,7 @@
         <translation>Připojit automaticky</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="228"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="233"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
@@ -316,47 +318,47 @@
         <translation>%1 probíhajících úloh</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="773"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="777"/>
         <source>%1 item</source>
         <translation>%1 položka</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="774"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="778"/>
         <source>%1 items</source>
         <translation>%1 položek</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="299"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="300"/>
         <source>Unable to find the original file</source>
         <translation>Nelze najít původní soubor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="431"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="434"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="478"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="445"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="480"/>
         <source>File has been moved or deleted</source>
         <translation>Soubor byl přesunut nebo smazán</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="437"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="480"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="448"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="482"/>
         <source>You do not have permission to access this folder</source>
         <translation>Nemáte oprávnění přistupovat k této složce</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="440"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="483"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="451"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="485"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Nemáte oprávnění pro procházení souborů v ní</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="439"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="183"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="441"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>Složka je prázdná</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
         <source>Loading...</source>
         <translation>Načítání…</translation>
     </message>
@@ -405,7 +407,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="647"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="649"/>
         <source>Built-in disks</source>
         <translation>Integrovaná úložiště</translation>
     </message>
@@ -420,7 +422,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="14"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/events/smbbrowsereventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/events/smbbrowsereventreceiver.cpp" line="71"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/fileinfo/smbsharefileinfo.cpp" line="46"/>
         <source>Computers in LAN</source>
         <translation>Počítače v místní síti (LAN)</translation>
@@ -429,7 +431,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="647"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="649"/>
         <source>Loop partitions</source>
         <translation>Oddíly smyčky</translation>
     </message>
@@ -437,8 +439,8 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="648"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="650"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="70"/>
         <source>Mounted sharing folders</source>
         <translation>Připojené složky pro sdílení</translation>
     </message>
@@ -461,7 +463,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="648"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="650"/>
         <source>Mounted partitions and discs</source>
         <translation>Připojené oddíly a disky</translation>
     </message>
@@ -850,7 +852,7 @@
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="329"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="256"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -868,36 +870,36 @@
         <translation>-odkaz_na</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1162"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1176"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Toto systémové pozadí je uzamčeno. Obraťte se prosím na správce.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1220"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1234"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>(kopírovat)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1221"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1235"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>(kopírovat %1)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="80"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="103"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="96"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="84"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="98"/>
         <source>dde-file-manager</source>
         <translation>Správce souborů</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="178"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="182"/>
         <source>Files are being processed</source>
         <translation>Soubory jsou zpracovávány</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="211"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="215"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
@@ -908,51 +910,52 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="36"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potvrdit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="38"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="560"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="295"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="403"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="407"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="63"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="230"/>
         <source>Open in new window</source>
         <translation>Otevřít v novém okně</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="41"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="564"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="407"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="411"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="67"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
         <source>Open in new tab</source>
         <translation>Otevřít v nové kartě</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="48"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="49"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="573"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="53"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="54"/>
         <source>Remove from quick access</source>
         <translation>Odebrat z rychlého přístupu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="58"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="59"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="82"/>
@@ -1031,6 +1034,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="165"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <source>Others</source>
         <translation>Ostatní</translation>
     </message>
@@ -1146,8 +1150,8 @@
         <translation>Neznámá chyba</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="287"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="331"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="289"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="333"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Zavřít</translation>
@@ -1332,35 +1336,35 @@
         <translation>Neznámé zařízení</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="257"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="233"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Odstranit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="260"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Do you want to remove this item?</source>
         <translation>Chcete tuto položku odebrat?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>Chcete odebrat %1 položek?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>It does not delete the original files</source>
         <translation>Nesmaže původní soubory</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
         <source>Clear recent history</source>
         <translation>Smazat nedávnou historii</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="349"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="172"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
         <source>Source path</source>
         <translation>Zdrojový popis umístění</translation>
     </message>
@@ -1370,22 +1374,27 @@
         <translation>Nové okno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="72"/>
+        <source>New tab</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="78"/>
         <source>Connect to Server</source>
         <translation>Připojit se k serveru</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="82"/>
         <source>Set share password</source>
         <translation>Nastavit heslo pro sdílení</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="87"/>
         <source>Change disk password</source>
         <translation>Změnit heslo disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="92"/>
         <source>Settings</source>
         <translation>Nastavení</translation>
     </message>
@@ -1395,7 +1404,7 @@
         <translation>Zkopírovat popis umístění</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="420"/>
         <source>Edit address</source>
         <translation>Upravit adresu</translation>
     </message>
@@ -1410,7 +1419,7 @@
         <translation>Vyprázdnit koš</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Location</source>
         <translation>Umístění</translation>
@@ -1685,7 +1694,7 @@
         <translation>Soubor je zaneprázdněn</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="389"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="391"/>
         <source>Device disconnected</source>
         <translation>Zařízení odpojeno</translation>
     </message>
@@ -1710,90 +1719,100 @@
         <translation>Postranní panel</translation>
     </message>
     <message>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="341"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="554"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="578"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="605"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="718"/>
+        <source>Clear search history</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ddplugin_canvas::CanvasMenuScene</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="105"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="110"/>
         <source>Sort by</source>
         <translation>Seřadit podle</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="106"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="115"/>
         <source>Icon size</source>
         <translation>Velikost ikon</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="107"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="116"/>
         <source>Auto arrange</source>
         <translation>Uspořádávat automaticky</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="108"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="111"/>
         <source>Display Settings</source>
         <translation>Zobrazit nastavení</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="109"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="112"/>
         <source>Refresh</source>
         <translation>Načíst znovu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="112"/>
-        <source>Wallpaper and Screensaver</source>
-        <translation>Pozadí plochy a spořič obrazovky</translation>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
+        <source>Personalization</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="114"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
         <source>Set Wallpaper</source>
         <translation>Nastavit pozadí</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="117"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="124"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="118"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="125"/>
         <source>Time modified</source>
         <translation>Změněno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="126"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="120"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="127"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="123"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="131"/>
         <source>Tiny</source>
         <translation>Drobné</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="124"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="132"/>
         <source>Small</source>
         <translation>Malá</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="125"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="133"/>
         <source>Medium</source>
         <translation>Střední</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="126"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="134"/>
         <source>Large</source>
         <translation>Velká</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="127"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
         <source>Super large</source>
         <translation>Opravdu velké</translation>
     </message>
@@ -1921,29 +1940,42 @@
     </message>
 </context>
 <context>
+    <name>ddplugin_organizer::AlertHideAllDialog</name>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
+        <source>The hortcut key &quot;%1&quot; to show collection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
+        <source>No prompt</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ddplugin_organizer::CollectionItemDelegate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="104"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="106"/>
         <source>Tiny</source>
         <translation>Drobné</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="105"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="107"/>
         <source>Small</source>
         <translation>Malá</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="106"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="108"/>
         <source>Medium</source>
         <translation>Střední</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="107"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="109"/>
         <source>Large</source>
         <translation>Velká</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="108"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="110"/>
         <source>Super large</source>
         <translation>Opravdu velké</translation>
     </message>
@@ -1956,22 +1988,27 @@
         <translation>Velikost sbírky</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="132"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="135"/>
         <source>Large area</source>
         <translation>Velká plocha</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="144"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="133"/>
         <source>Small area</source>
         <translation>Malá plocha</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="157"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="134"/>
+        <source>Middle area</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="160"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="166"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="169"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
@@ -1987,49 +2024,82 @@
 <context>
     <name>ddplugin_organizer::ExtendCanvasScene</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="270"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="232"/>
         <source>Organize desktop</source>
         <translation>Uspořádat pracovní plochu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="271"/>
-        <source>Desktop options</source>
-        <translation>Nastavení pracovní plochy</translation>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="231"/>
+        <source>Enable desktop organization</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="272"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
+        <source>View options</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Organize by</source>
         <translation>Uspořádat podle</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="275"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="237"/>
         <source>Custom collection</source>
         <translation>Vlastní sbírka</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="276"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="238"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="277"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="239"/>
         <source>Time accessed</source>
         <translation>Čas přístupu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="278"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
         <source>Time modified</source>
         <translation>Změněno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="279"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="241"/>
         <source>Time created</source>
         <translation>Čas vytvoření</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="281"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="243"/>
         <source>Create a collection</source>
         <translation>Vytvořit sbírku</translation>
+    </message>
+</context>
+<context>
+    <name>ddplugin_organizer::FrameManagerPrivate</name>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="154"/>
+        <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="164"/>
+        <source>Desktop organizer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="167"/>
+        <source>Shortcut &quot;%1&quot; to show collections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
+        <source>Close</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
+        <source>No more prompts</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2051,27 +2121,42 @@
 <context>
     <name>ddplugin_organizer::OptionsWindow</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="94"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="90"/>
         <source>Desktop options</source>
         <translation>Nastavení pracovní plochy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="116"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="105"/>
         <source>Auto arrange icons</source>
         <translation>Automaticky uspořádat ikony</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="125"/>
+        <source>Enable desktop organizer</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ddplugin_organizer::OrganizationGroup</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="36"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="39"/>
         <source>Organize desktop</source>
         <translation>Uspořádat pracovní plochu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="51"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="115"/>
         <source>Organize by</source>
         <translation>Uspořádat podle</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
+        <source>Hide all collections with one click</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
+        <source>Hide/Show Collection Shortcuts</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2161,7 +2246,7 @@
 <context>
     <name>ddplugin_organizer::SizeSlider</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="92"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="87"/>
         <source>Icon size</source>
         <translation>Velikost ikon</translation>
     </message>
@@ -2169,37 +2254,37 @@
 <context>
     <name>ddplugin_organizer::TypeClassifier</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="58"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="54"/>
         <source>Apps</source>
         <translation>Aplikace</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="59"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="55"/>
         <source>Documents</source>
         <translation>Dokumenty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="60"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="56"/>
         <source>Pictures</source>
         <translation>Obrázky</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="61"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="57"/>
         <source>Videos</source>
         <translation>Obrazy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="62"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="58"/>
         <source>Music</source>
         <translation>Hudba</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="63"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="59"/>
         <source>Folders</source>
         <translation>Složky</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="64"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="60"/>
         <source>Other</source>
         <translation>Jiný</translation>
     </message>
@@ -2207,32 +2292,32 @@
 <context>
     <name>ddplugin_organizer::TypeMethodGroup</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="21"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="20"/>
         <source>Apps</source>
         <translation>Aplikace</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="22"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="21"/>
         <source>Documents</source>
         <translation>Dokumenty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="23"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="22"/>
         <source>Pictures</source>
         <translation>Obrázky</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="24"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="23"/>
         <source>Videos</source>
         <translation>Obrazy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="25"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="24"/>
         <source>Music</source>
         <translation>Hudba</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="25"/>
         <source>Folders</source>
         <translation>Složky</translation>
     </message>
@@ -2405,10 +2490,10 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="56"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="545"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="559"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="598"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="619"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="548"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="562"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="601"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="622"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="54"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2490,253 +2575,253 @@
         <translation>Požadovaný soubor nebo složka neexistuje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="153"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="156"/>
         <source>Error occured while mounting device</source>
         <translation>Při připojování zařízení došlo k chybě</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="156"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation>Zařízení bylo zablokováno a nemáte k němu oprávnění. Nastavte jeho zásady připojení v Centru zabezpečení nebo se obraťte na správce.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
         <source>The device is busy, cannot remove now</source>
         <translation>Zařízení je něčím využíváno, proto ho není možné nyní odebrat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="183"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="186"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Nemáte oprávnění pro přistupování k této složce/souboru!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="200"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="203"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Je nám líto, ale nemáte oprávnění pro přístup k následujícímu %1 souboru/složce(kám)!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="229"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="239"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="489"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="655"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="232"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="242"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="492"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="658"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="236"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="482"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="239"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="485"/>
         <source>Operation failed!</source>
         <translation>Operace se nezdařila!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="237"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Cílová složka je uvnitř zdrojové složky (nelze samo do sebe)!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="281"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="284"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>Pro přístup k zašifrovaným datům na %1 je třeba zadat přístupovou frázi.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="289"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="309"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="338"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="359"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="408"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="468"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="506"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="292"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="312"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="341"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="411"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="471"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="509"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="621"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="645"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="290"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="293"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="291"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="294"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Aby bylo možné k zařízení přistupovat, je třeba ho nejprve naformátovat. Chcete to provést nyní?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="305"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="308"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Chcete %1 spustit nebo zobrazit jeho obsah?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="306"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="309"/>
         <source>It is an executable text file.</source>
         <translation>Je spustitelným textovým souborem.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="310"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="340"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="643"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="343"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="646"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Spustit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="311"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="314"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="342"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Spustit v terminálu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="312"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="315"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="335"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="338"/>
         <source>Do you want to run %1?</source>
         <translation>Chcete %1 spustit?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="336"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
         <source>It is an executable file.</source>
         <translation>Je spustitelným textovým souborem.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="353"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="356"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation>Vybrané položky %1 nelze přesunout do koše. Chcete je trvale odstranit?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="354"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="357"/>
         <source>Permanently delete %1 items?</source>
         <translation>Nadobro smazat %1 položek?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="384"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="387"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation>Nelze přesunout „%1“ do koše. Chcete jej trvale odstranit?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="360"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="409"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="469"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="507"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="412"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="472"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="510"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="385"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="388"/>
         <source>Permanently delete %1?</source>
         <translation>Nadobro smazat %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="391"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="428"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
         <source>This action cannot be undone</source>
         <translation>Tuto akci není možné vzít zpět</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="404"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="407"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Chcete smazat %1 položku?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="405"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="408"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Chcete smazat %1 položek?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="414"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="417"/>
         <source>Empty</source>
         <translation>Vyprázdnit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="452"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="455"/>
         <source>Do you want to delete %1?</source>
         <translation>Opravdu chcete %1 smazat?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="453"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="456"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Opravdu chcete označených %1 položek smazat?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="484"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="487"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Nepodařilo se obnovit %1 soubor, cílová složka je jen pro čtení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="486"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="489"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Nepodařilo se obnovit %1 souborů, cílová složka je jen pro čtení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="499"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="502"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="502"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
         <source>This operation cannot be reversed.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="543"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="546"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>„%1“ už existuje. Použijte jiný název.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="557"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="560"/>
         <source>Device or resource busy</source>
         <translation>Zařízení nebo prostředek je zaneprázdněn</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="570"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Pokud název souboru bude začínat na tečku, bude skrytý. Opravdu to chcete?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="571"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="574"/>
         <source>Hide</source>
         <translation>Skrýt</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="572"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="595"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="598"/>
         <source>Unable to access %1</source>
         <translation>Nedaří se přistupovat k %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="612"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="615"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 odkazující na tuto zkratku byl změněn nebo přesunut</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="616"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="619"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Chcete smazat tuto klávesovou zkratku?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="641"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="644"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Tento soubor není spustitelný. Chcete přidat oprávnění pro spouštění a spustit ho?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="653"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="656"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Vybrané soubory obsahují systémový soubor/složku, a nelze je proto smazat</translation>
     </message>
@@ -2867,7 +2952,7 @@
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="280"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="281"/>
         <source>Copy complete info</source>
         <translation type="unfinished"/>
     </message>
@@ -2875,265 +2960,270 @@
 <context>
     <name>dfmbase::SettingBackend</name>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="227"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="228"/>
         <source>Always open folder in new window</source>
         <translation>Složku vždy otevřít v novém okně</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="230"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
+        <source>Open folder windows in a separate process</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
         <source>Open file:</source>
         <translation>Otevřít soubor:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="232"/>
         <source>Click</source>
         <translation>Klepnutím</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="232"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="233"/>
         <source>Double click</source>
         <translation>Dvojklepnutím</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="236"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="237"/>
         <source>New window and tab</source>
         <translation>Nové okno a karta</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="238"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="239"/>
         <source>Open from default window:</source>
         <translation>Otevřít z výchozího okna:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="240"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="241"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
         <source>Computer</source>
         <translation>Počítač</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="241"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="242"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
         <source>Home</source>
         <translation>Domovská složka</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="242"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="243"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
         <source>Desktop</source>
         <translation>Plocha</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="243"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
         <source>Videos</source>
         <translation>Videa</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="245"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="267"/>
         <source>Music</source>
         <translation>Hudba</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="245"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="267"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="246"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="268"/>
         <source>Pictures</source>
         <translation>Obrázky</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="246"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="268"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>Documents</source>
         <translation>Dokumenty</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="248"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="270"/>
         <source>Downloads</source>
         <translation>Stažené</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="259"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="260"/>
         <source>Open in new tab:</source>
         <translation>V nové kartě otevřít:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="261"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
         <source>Current Directory</source>
         <translation>Stávající složka</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="282"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
         <source>Files and folders</source>
         <translation>Soubory a složky</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
         <source>Show hidden files</source>
         <translation>Zobrazit skryté soubory</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="287"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="288"/>
         <source>Show file extensions</source>
         <translation>Zobrazit přípony souborů</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="289"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="290"/>
         <source>Mix sorting of files and folders</source>
         <translation>Smíšené třídění souborů a složek</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Workspace</source>
         <translation>Pracovní prostor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
         <source>View</source>
         <translation>Pohled</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
         <source>Default size:</source>
         <translation>Výchozí velikost:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
         <source>Extra small</source>
         <translation>Velice malá</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="304"/>
         <source>Small</source>
         <translation>Malá</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="304"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="305"/>
         <source>Medium</source>
         <translation>Střední</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="305"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
         <source>Large</source>
         <translation>Velké</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="307"/>
         <source>Extra large</source>
         <translation>Opravdu velká</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="311"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="312"/>
         <source>Tree</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="316"/>
         <source>Default view:</source>
         <translation>Výchozí pohled:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="308"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="309"/>
         <source>Icon</source>
         <translation>Ikony</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="308"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="309"/>
         <source>List</source>
         <translation>Seznam</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="321"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
         <source>Restore default view mode for all directories</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="323"/>
         <source>Restore default view mode</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="342"/>
         <source>Thumbnail preview</source>
         <translation>Náhled</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="329"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="345"/>
         <source>Compressed file preview</source>
         <translation>Náhled komprimovaného souboru</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="332"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="348"/>
         <source>Text preview</source>
         <translation>Náhled textu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="334"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="350"/>
         <source>Document preview</source>
         <translation>Náhled dokumentu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="336"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="352"/>
         <source>Image preview</source>
         <translation>Náhled obrázku</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
         <source>Video preview</source>
         <translation>Náhled videa</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="340"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="356"/>
         <source>Music preview</source>
         <translation>Náhled hudby</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="343"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="359"/>
         <source>The remote environment shows thumbnail previews</source>
         <translation>Vzdálené prostředí zobrazuje náhledy miniatur</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="344"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
         <translation>Zapnutí náhledu miniatur může způsobit pomalé načítání vzdáleného adresáře nebo zamrznutí operace.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="353"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="369"/>
         <source>Advanced</source>
         <translation>Pokročilé</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="355"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
         <source>Mount</source>
         <translation>Připojit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
         <source>Auto mount</source>
         <translation>Připojit automaticky</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="363"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="379"/>
         <source>Open after auto mount</source>
         <translation>Po automatickém připojení otevřít</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="384"/>
         <source>Merge the entries of Samba shared folders</source>
         <translation>Sloučení záznamů sdílených složek Samba</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="370"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>Přepínání vstupního zobrazení může vést k neúspěšnému připojení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="375"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="391"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>Použít dialog pro výběr souboru správce souborů</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="377"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>Při mazání souborů vyžadovat potvrzení</translation>
     </message>
@@ -3232,126 +3322,136 @@
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
+        <source>Undo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
+        <source>Redo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
         <source>New/Search</source>
         <translation>Nový/Hledat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
         <source>New window</source>
         <translation>Nové okno</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
         <source>New folder</source>
         <translation>Nová složka</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
         <source>Search</source>
         <translation>Hledat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
         <source>New tab</source>
         <translation>Nová karta</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
         <source>View</source>
         <translation>Pohled</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
         <source>Item information</source>
         <translation>Informace o položce</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
         <source>Help</source>
         <translation>Nápověda</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
         <source>Keyboard shortcuts</source>
         <translation>Klávesové zkratky</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
         <source>Switch display status</source>
         <translation>Přepnout stav zobrazení</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
         <source>Hide item</source>
         <translation>Skrýt položku</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
         <source>Input in address bar</source>
         <translation>Zadat v adresním řádku</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
         <source>Switch to icon view</source>
         <translation>Přepnout na pohled s ikonami</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
         <source>Switch to list view</source>
         <translation>Přepnout na podrobný pohled</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
         <source>Others</source>
         <translation>Ostatní</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
         <source>Close current tab</source>
         <translation>Zavřít stávající kartu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
         <source>Back</source>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
         <source>Forward</source>
         <translation>Vpřed</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
         <source>Switch to next tab</source>
         <translation>Přepnout na další kartu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="59"/>
         <source>Switch to previous tab</source>
         <translation>Přepnout na předchozí kartu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="60"/>
         <source>Next file</source>
         <translation>Následující soubor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="61"/>
         <source>Previous file</source>
         <translation>Předchozí soubor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="59"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="62"/>
         <source>Switch tab by specified number between 1 to 8</source>
         <translation>Přepnout kartu pomocí zadaného čísla z rozmezí 1 až 8</translation>
     </message>
@@ -3412,98 +3512,98 @@
 <context>
     <name>dfmbase::TaskWidget</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="203"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="205"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
         <translation>Nepodařilo se vytvořit cílový soubor %1 ve funkci zobrazit konfliktní informace!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="215"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
         <translation>Nepodařilo se vytvořit cílový soubor %1 ve funkci zobrazit konfliktní informace!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="763"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="767"/>
         <source>Time modified: %1</source>
         <translation>Změněno: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="768"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="772"/>
         <source>Original folder</source>
         <translation>Původní složka</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="775"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="779"/>
         <source>Contains: %1</source>
         <translation>Obsahuje: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="778"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
         <source>Original file</source>
         <translation>Původní soubor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="779"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="783"/>
         <source>Size: %1</source>
         <translation>Velikost: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="768"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="772"/>
         <source>Target folder</source>
         <translation>Cílová složka</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="429"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="767"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="433"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="771"/>
         <source>In data statistics ...</source>
         <translation>V datových statistikách…</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="778"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
         <source>Target file</source>
         <translation>Cílový soubor</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="368"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="370"/>
         <source>Syncing data</source>
         <translation>Synchronizují se data</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="369"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="371"/>
         <source>Please wait</source>
         <translation>Počkejte, prosím</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="583"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="587"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>Ponechat oba</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="586"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="590"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>Přeskočit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="591"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="648"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="595"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="652"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Nahradit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="616"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="620"/>
         <source>Do not ask again</source>
         <translation>Znovu se neptat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="645"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="649"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>Zkusit znovu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="651"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="655"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Sloučit</translation>
@@ -3525,17 +3625,17 @@
 <context>
     <name>dfmplugin_avfsbrowser::AvfsMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="142"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="143"/>
         <source>Open</source>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="144"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="145"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>
@@ -3628,7 +3728,7 @@
 <context>
     <name>dfmplugin_burn::BurnISOFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="421"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="423"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Název souboru nebo cesta jsou příliš dlouhé. Zkraťte prosím název souboru nebo cestu a zkuste to znovu.</translation>
     </message>
@@ -3636,71 +3736,71 @@
 <context>
     <name>dfmplugin_burn::BurnJobManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="221"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="223"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="234"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="236"/>
         <source>Disc erase failed</source>
         <translation>Disk se nepodařilo smazat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="238"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="240"/>
         <source>Burn process failed</source>
         <translation>Vypalování se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="241"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="243"/>
         <source>Data verification failed</source>
         <translation>Ověření dat se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="244"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="246"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="262"/>
         <source>Show details</source>
         <translation>Zobrazit podrobnosti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="264"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="266"/>
         <source>Hide details</source>
         <translation>Skrýt podrobnosti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="265"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="267"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="274"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="276"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Zobrazit podrobnosti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="275"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potvrdit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="290"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>Zobrazit obraz</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="307"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="309"/>
         <source>Image successfully created</source>
         <translation>Obraz byl úspěšně vytvořen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="341"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="343"/>
         <source>Image creation failed</source>
         <translation>Vytvoření obrazu se nezdařilo</translation>
     </message>
@@ -3751,7 +3851,7 @@
 <context>
     <name>dfmplugin_burn::BurnUDFFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="518"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Název souboru nebo cesta jsou příliš dlouhé. Zkraťte prosím název souboru nebo cestu a zkuste to znovu.</translation>
     </message>
@@ -3759,12 +3859,12 @@
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="568"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
         <source>Creating an ISO image</source>
         <translation>Vytváření obrazu ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="569"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="571"/>
         <source>to %1</source>
         <translation>do %1</translation>
     </message>
@@ -3796,7 +3896,7 @@
 <context>
     <name>dfmplugin_burn::EraseJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="360"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="362"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Maže se disk %1 – čekejte prosím…</translation>
     </message>
@@ -3817,32 +3917,32 @@
         <translation>Počítač</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="178"/>
         <source>Computer display items</source>
         <translation>Položky zobrazení počítače</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="180"/>
         <source>Hide built-in disks on the Computer page</source>
         <translation>Skrýt integrované úložiště na stránce Počítač</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="182"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="183"/>
         <source>Hide loop partitions on the Computer page</source>
         <translation>Skrýt oddíly na stránce Počítač</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="185"/>
         <source>Show file system on disk icon</source>
         <translation>Zobrazovat typ souborového systému na ikoně disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide My Directories on the Computer page</source>
         <translation>Skrýt mé oddíly na stránce Počítač</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="204"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="205"/>
         <source>Hide 3rd party entries on the Computer page</source>
         <translation>Skrýt položky třetích stran na stránce Počítač</translation>
     </message>
@@ -4099,20 +4199,20 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="299"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="570"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="588"/>
         <source>None</source>
         <translation>Žádná</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="301"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="571"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
         <source>Set password</source>
         <translation>Nastavit heslo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="571"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
         <source>Change password</source>
         <translation>Změnit heslo</translation>
     </message>
@@ -4127,34 +4227,34 @@
         <translation>Toto heslo bude použito pro všechny sdílené složky a uživatelé bez něj budou mít přístup pouze ke sdíleným složkám, které umožňují anonymní přístup.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="418"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="423"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Je třeba, aby název sdílení nebyl dvě tečky (..) nebo jedna tečka (.)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="436"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="441"/>
         <source>The share name is used by another user.</source>
         <translation>Název pro sdílení je používán jiným uživatelem.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="437"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="439"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="444"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Název pro sdílení už existuje. Přejete si sdílenou složku nahradit?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="440"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="445"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="441"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="446"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Nahradit</translation>
@@ -4163,38 +4263,45 @@
 <context>
     <name>dfmplugin_dirshare::UserShareHelper</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="89"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
         <source>Kindly Reminder</source>
         <translation>Laskavá připomínka</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="89"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
         <source>Please firstly install samba to continue</source>
         <translation>Nejprve je třeba nainstalovat nástroj samba</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="99"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="475"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="101"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="486"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>Je třeba, aby název sdílení neobsahoval %1 a nezačínal na pomlčku (-) nebo prázdný znak, nebo na takový nekončil.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="463"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="474"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Sdílenou složku nelze nazvat stejně jako uživatelské jméno, kterým jste právě přihlášení</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="469"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="480"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Pro ochranu souborů, tuto složku není možné sdílet.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="491"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="505"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="507"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="517"/>
         <source>Sharing failed</source>
         <translation>Nepodařilo se sdílet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="491"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="508"/>
+        <source>SMB port is banned, please check the firewall strategy.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="517"/>
         <source>The computer name is too long</source>
         <translation>Název počítače je příliš dlouhý</translation>
     </message>
@@ -4235,209 +4342,224 @@
         <translation>Obnovuje se %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="112"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="173"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
         <source>Permission error</source>
         <translation>Chyba v oprávnění</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="175"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
         <source>The action is denied</source>
         <translation>Tato akce je odepřena</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="177"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
         <source>Target file %1 already exists</source>
         <translation>Cílový soubor %1 už existuje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="179"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
         <source>Target directory %1 already exists</source>
         <translation>Cílová složka %1 už existuje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
         <source>Failed to open the file %1</source>
         <translation>Nepodařilo se otevřít soubor %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
         <source>Failed to read the file %1</source>
         <translation>Nepodařilo se přečíst soubor %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="126"/>
         <source>Failed to write the file %1</source>
         <translation>Nepodařilo se zapsat soubor %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="127"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="129"/>
         <source>Failed to create the directory %1</source>
         <translation>Nepodařilo se vytvořit adresář %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="130"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
         <source>Failed to delete the file %1</source>
         <translation>Nepodařilo se smazat soubor %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
         <source>Failed to move the file %1 to trash</source>
         <translation>Nepodařilo se přesunout soubor %1 do Koše</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
         <source>Failed to move the file %1</source>
         <translation>Nepodařilo se přesunout soubor %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="197"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="202"/>
         <source>Original file %1 does not exist</source>
         <translation>Původní soubor %1 neexistuje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="199"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="204"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
         <translation>Nezdařilo se. Je třeba, aby velikost souboru %1 byla menší než 4 GB.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="201"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="206"/>
         <source>Not enough free space on the target disk</source>
         <translation>Nedostatek volného místa na cílovém disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
         <source>File %1 integrity was damaged</source>
         <translation>Soubor %1 je poškozený</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="210"/>
         <source>The target device is read only</source>
         <translation>Cílové zařízení je pouze pro čtení</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="212"/>
         <source>Target folder is inside the source folder</source>
         <translation>Cílová složka je uvnitř zdrojové složky</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="214"/>
         <source>The action is not supported</source>
         <translation>Činnost není podporována</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="216"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>Nemáte oprávnění pro procházení souborů v %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
         <source>Restore failed, original path could not be found</source>
         <translation>Obnovení se nezdařilo, původní umístění se nepodařilo najít</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
         <source>Unknown error</source>
         <translation>Neznámá chyba</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
         <source>Failed to parse the url of trash</source>
         <translation>Nepodařilo se analyzovat url adresu koše</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Restore failed: the original file does not exist</source>
         <translation>Obnova se nezdařila: původní soubor neexistuje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
-        <source>Copy or Cut File failed!</source>
-        <translation>Zkopírování či vyjmutí souboru se nezdařilo!</translation>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
+        <source>Copy or Cut File failed! Retry copy this file again!</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="181"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
+        <source>Can&apos;t access file!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
         <source>Failed to open the file %1, cause: %2</source>
         <translation>Nepodařilo se otevřít soubor %1, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="189"/>
         <source>Failed to read the file %1, cause: %2</source>
         <translation>Ze souboru %1 se nepodařilo číst, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="191"/>
         <source>Failed to write the file %1, cause: %2</source>
         <translation>Do souboru %1 se nepodařilo zapsat, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
         <source>Failed to create the directory %1, cause: %2</source>
         <translation>Adresář %1 se nepodařilo vytvořit, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="191"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
         <source>Failed to delete the file %1, cause: %2</source>
         <translation>Nepodařilo se smazat soubor %1, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="198"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
         <translation>Nepodařilo se přemístit soubor %1 do koše, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="195"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="200"/>
         <source>Failed to move the file %1, cause: %2</source>
         <translation>Nepodařilo se přemístit soubor %1, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="208"/>
         <source>File %1 integrity was damaged, cause: %2</source>
         <translation>Soubor %1 je poškozený, příčina: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="218"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation>Nepodařilo se vytvořit symbolický odkaz, příčina: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="220"/>
         <source>Copy or Cut File failed, cause: %1</source>
         <translation>Zkopírování či vyjmutí souboru se nezdařilo, příčina: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="232"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
+        <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
+        <source>Copy or Cut File failed, cause: %1.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 už v cílové složce existuje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="236"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="240"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="248"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="245"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="255"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
         <source>Original path %1</source>
         <translation>Původní umístění %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="237"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="247"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
         <source>Target path %1</source>
         <translation>Cílové umístění %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="252"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
         <source>Original path %1 Target path %2</source>
         <translation>Původní umístění %1, cílové umístění %2</translation>
     </message>
@@ -4445,28 +4567,28 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="238"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="339"/>
         <source>Rename file error</source>
         <translation>Chyba při přejmenování souboru</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="498"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="632"/>
         <source>Failed to create the directory</source>
         <translation>Adresář se nepodařilo vytvořit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="984"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1146"/>
         <source>Failed to create the file</source>
         <translation>Soubor se nepodařilo vytvořit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1061"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1224"/>
         <source>link file error</source>
         <translation>Chyba v odkazu na soubor</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1100"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1109"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1263"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1272"/>
         <source>Failed to modify file permissions</source>
         <translation>Nepodařilo se změnit práva</translation>
     </message>
@@ -4500,27 +4622,27 @@
 <context>
     <name>dfmplugin_menu::FileOperatorMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="38"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="40"/>
         <source>&amp;Open</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="39"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="41"/>
         <source>Rena&amp;me</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="40"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="42"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="41"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="43"/>
         <source>Empty Trash</source>
         <translation>Vyprázdnit koš</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="42"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="44"/>
         <source>Set as wallpaper</source>
         <translation>Nastavit jako pozadí</translation>
     </message>
@@ -4607,22 +4729,22 @@
 <context>
     <name>dfmplugin_menu::SendToMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="252"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="256"/>
         <source>Send to</source>
         <translation>Odeslat na</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="253"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="257"/>
         <source>Bluetooth</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="254"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="258"/>
         <source>Create link</source>
         <translation>Vytvořit odkaz</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="255"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="259"/>
         <source>Send to desktop</source>
         <translation>Odeslat na pracovní plochu</translation>
     </message>
@@ -4811,7 +4933,7 @@
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="401"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="393"/>
         <source>Available</source>
         <translation>K dispozici</translation>
     </message>
@@ -4936,27 +5058,27 @@
 <context>
     <name>dfmplugin_recent::Recent</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="44"/>
         <source>Recent</source>
         <translation>Nedávné</translation>
     </message>
 </context>
 <context>
-    <name>dfmplugin_recent::RecentManager</name>
+    <name>dfmplugin_recent::RecentEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation>Popis umístění</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation>Poslední přístup</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
-        <translation>Nedávné</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5133,6 +5255,21 @@
         <source>Full-Text search</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="145"/>
+        <source>Display search history</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="174"/>
+        <source>Clear dde-file-manager Search Records</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="175"/>
+        <source>Clean up</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>dfmplugin_search::SearchHelper</name>
@@ -5145,17 +5282,17 @@
 <context>
     <name>dfmplugin_search::SearchMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="165"/>
         <source>Open file location</source>
         <translation>Otevřít umístění souboru</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="166"/>
         <source>Select all</source>
         <translation>Vybrat vše</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="167"/>
         <source>Path</source>
         <translation>Cesta</translation>
     </message>
@@ -5163,32 +5300,32 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="341"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
         <source>Quick access</source>
         <translation>Rychlý přístup</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="342"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
         <source>Partitions</source>
         <translation>Oddíly</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="343"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="374"/>
         <source>Network</source>
         <translation>Síť</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="344"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="375"/>
         <source>Tag</source>
         <translation>Štítek</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="376"/>
         <source>Other</source>
         <translation>Jiný</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="346"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="377"/>
         <source>Unknown Group</source>
         <translation>Neznámá skupina</translation>
     </message>
@@ -5297,9 +5434,26 @@
 <context>
     <name>dfmplugin_titlebar::AddressBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/private/addressbar_p.h" line="49"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/private/addressbar_p.h" line="55"/>
         <source>Search or enter address</source>
         <translation>Vyhledávání nebo zadání adresy</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="347"/>
+        <source>Are you sure clear search histories?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="349"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="350"/>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5372,66 +5526,66 @@
 <context>
     <name>dfmplugin_titlebar::DPCConfirmWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
         <source>Change disk password</source>
         <translation>Změnit heslo disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="89"/>
         <source>Current password:</source>
         <translation>Současné heslo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
         <source>New password:</source>
         <translation>Nové heslo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
         <source>Repeat password:</source>
         <translation>Opakovat heslo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="104"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="106"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="172"/>
         <source>Passwords do not match</source>
         <translation>Zadání hesla se neshodují</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="188"/>
         <source>New password should differ from the current one</source>
         <translation>Nové heslo se musí lišit od současného</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="231"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
         <translation>Nejméně 8 znaků. Přinejmenším 3 druhy z: 0-9, a-z, A-Z a symboly. Je třeba, aby bylo něco jiného než uživatelské jméno.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="264"/>
         <source>Password must be no more than %1 characters</source>
         <translation>Heslo nemůže být delší než %1 znaků</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="271"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="275"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="279"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="280"/>
         <source>Password cannot be empty</source>
         <translation>Heslo nemůže zůstat prázdné</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
         <source>Wrong password</source>
         <translation>Nesprávné heslo</translation>
     </message>
@@ -5514,7 +5668,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="195"/>
         <source>detail view</source>
         <translation type="unfinished"/>
     </message>
@@ -5523,12 +5677,12 @@
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/titlebarwidget.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/titlebarwidget.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/titlebarwidget.cpp" line="286"/>
         <source>search</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/titlebarwidget.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/titlebarwidget.cpp" line="279"/>
         <source>advanced search</source>
         <translation type="unfinished"/>
     </message>
@@ -5554,12 +5708,12 @@
 <context>
     <name>dfmplugin_trash::TrashHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="274"/>
         <source>Source Path</source>
         <translation>Zdrojový popis umístění</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
         <source>Time deleted</source>
         <translation>Smazáno</translation>
     </message>
@@ -5786,12 +5940,12 @@
         <translation>Ostatní aplikace</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="428"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="430"/>
         <source>Open File</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="430"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="432"/>
         <source>Applications (*.desktop);;All files (*)</source>
         <translation type="unfinished"/>
     </message>
@@ -5943,50 +6097,50 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
 <context>
     <name>dfmplugin_vault::RetrievePasswordView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="42"/>
         <source>By key in the default path</source>
         <translation>Pomocí klíče ve výchozím umístění</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="43"/>
         <source>By key in the specified path</source>
         <translation>Pomocí klíče v zadaném umístění</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="47"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="199"/>
         <source>Select a path</source>
         <translation>Vybrat umístění</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="115"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="184"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="198"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="199"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="232"/>
         <source>Unable to get the key file</source>
         <translation>Nedaří se získat soubor s klíčem</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="127"/>
         <source>Verification failed</source>
         <translation>Ověření se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="140"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="140"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Ověřit klíč</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="146"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="145"/>
         <source>Retrieve Password</source>
         <translation>Získat heslo nazpět</translation>
     </message>
@@ -6090,40 +6244,40 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
 <context>
     <name>dfmplugin_vault::VaultActiveFinishedView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="53"/>
         <source>Encrypt File Vault</source>
         <translation>Zašifrovat trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="57"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation>Klepněte na „Zašifrovat“ a zadejte heslo uživatele</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="70"/>
         <source>Encrypting...</source>
         <translation>Šifruje se…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="78"/>
         <source>The setup is complete</source>
         <translation>Nastavení je dokončeno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="79"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="160"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="189"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="216"/>
         <source>Encrypt</source>
         <translation>Šifrovat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="187"/>
         <source>Failed to create file vault: %1</source>
         <translation>Nepodařilo se vytvořit trezor na soubory: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="267"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="268"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -6335,17 +6489,17 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
         <translation>Smazat trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="59"/>
         <source>Failed to delete file vault</source>
         <translation>Nepodařilo se smazat trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="63"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="75"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation>Po jeho smazání budou soubory v něm natrvalo smazány</translation>
     </message>
@@ -6393,12 +6547,12 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
         <translation>Nesprávné heslo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="192"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="190"/>
         <source>Failed to delete file vault</source>
         <translation>Nepodařilo se smazat trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="194"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -6431,12 +6585,12 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="174"/>
         <source>Failed to delete file vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="178"/>
         <source>OK</source>
         <translation type="unfinished"/>
     </message>
@@ -6480,30 +6634,43 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="99"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>%1 se nepodařilo otevřít – mohlo být přesunuto nebo přejmenováno</translation>
     </message>
 </context>
 <context>
+    <name>dfmplugin_workspace::FileView</name>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1925"/>
+        <source>Mount error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="1926"/>
+        <source>Server login credentials are invalid. Please uninstall and remount</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="627"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="629"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="629"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="631"/>
         <source>Time modified</source>
         <translation>Změněno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="631"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="633"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="633"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="635"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
@@ -6591,7 +6758,7 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="893"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="922"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Uložit</translation>
@@ -6624,18 +6791,18 @@ vyčistěte veškeré soubory z této složky a zkuste trezor znovu odemknout.</
         <translation>Otevřít soubor</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="234"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="240"/>
         <source>File Name</source>
         <translation>Název souboru</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="235"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="241"/>
         <source>Format</source>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="262"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="264"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="268"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="270"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Zrušit</translation>
