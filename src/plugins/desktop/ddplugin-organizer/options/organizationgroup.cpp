@@ -99,7 +99,8 @@ QLayout *OrganizationGroup::buildTypeLayout()
     for (QWidget *wid : list) {
         wid->setFixedHeight(kCheckEntryHeight);
         gridLayout->addWidget(wid, row, col, Qt::AlignTop);
-        wid->setVisible(true);   // requiring widget to be visible when layout calculates sizehint.
+        // this line makes the setting widget lose focus, Commenting this line seems to have no effect
+        // wid->setVisible(true);   // requiring widget to be visible when layout calculates sizehint.
         ++index;
         row = index / 3;
         col = index % 3;
