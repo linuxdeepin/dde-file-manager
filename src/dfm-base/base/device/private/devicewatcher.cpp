@@ -8,6 +8,7 @@
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/utils/finallyutil.h>
 
@@ -19,6 +20,8 @@
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dopticaldiscinfo.h>
 #include <dfm-burn/dopticaldiscmanager.h>
+
+#include <sys/statvfs.h>
 
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
@@ -100,7 +103,7 @@ void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, dfmmoun
     if (/*old != newStorage && */ newStorage.isValid()) {
         const QString &devId = itemData.value(DeviceProperty::kId).toString();
         emit DevMngIns->devSizeChanged(devId,
-                                       itemData.value(DeviceProperty::kSizeTotal).toULongLong(),
+                                       newStorage.total,
                                        newStorage.avai);
     }
 }
@@ -117,13 +120,31 @@ DevStorage DeviceWatcherPrivate::queryUsageOfBlock(const QVariantMap &itemData)
                  opticalStorage.value(DeviceProperty::kSizeFree).toULongLong(),
                  opticalStorage.value(DeviceProperty::kSizeUsed).toULongLong() };
     } else {
-        QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
-        quint64 total = itemData.value(DeviceProperty::kSizeTotal).toULongLong();
-        qint64 avai = si.bytesAvailable();
-        if (avai < 0)   // if nagative value returned, error occured.
-            return {};
-        return { total, static_cast<quint64>(avai), total - avai };
+        auto type = DConfigManager::instance()->value("org.deepin.dde.file-manager.mount",
+                                                      "deviceCapacityDisplay",
+                                                      DEVICE_SIZE_DISPLAY_BY_DISK)
+                            .toInt();
+        if (type == DEVICE_SIZE_DISPLAY_BY_FS) {
+            struct statvfs fsInfo;
+            QString mpt = itemData.value(DeviceProperty::kMountPoint).toString();
+            int ok = statvfs(mpt.toStdString().c_str(), &fsInfo);
+            if (ok == 0) {
+                const quint64 blksize = quint64(fsInfo.f_frsize);
+                auto total = fsInfo.f_blocks * blksize;
+                auto avai = fsInfo.f_bavail * blksize;
+                auto usage = (fsInfo.f_blocks - fsInfo.f_bavail) * blksize;
+                return { total, avai, usage };
+            }
+        } else {
+            QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
+            quint64 total = itemData.value(DeviceProperty::kUDisks2Size).toULongLong();
+            qint64 avai = si.bytesAvailable();
+            if (avai < 0)   // if nagative value returned, error occured.
+                return {};
+            return { total, static_cast<quint64>(avai), total - avai };
+        }
     }
+    return {};
 }
 
 DevStorage DeviceWatcherPrivate::queryUsageOfProtocol(const QVariantMap &itemData)
@@ -499,4 +520,5 @@ DeviceWatcherPrivate::DeviceWatcherPrivate(DeviceWatcher *qq)
     : QObject(qq), q(qq)
 {
     connect(DevProxyMng, &DeviceProxyManager::devSizeChanged, this, &DeviceWatcherPrivate::updateStorage, Qt::QueuedConnection);
+    DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.mount");
 }
