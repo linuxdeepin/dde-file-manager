@@ -155,17 +155,14 @@ void PermissionManagerWidget::initUI()
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
     DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
     ownerComboBox = new QComboBox(this);
-    ownerComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
     DLabel *group = new DLabel(QObject::tr("Group"), this);
     DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
     groupComboBox = new QComboBox(this);
-    groupComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
     DLabel *other = new DLabel(QObject::tr("Others"), this);
     DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
     otherComboBox = new QComboBox(this);
-    otherComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
@@ -216,6 +213,22 @@ void PermissionManagerWidget::initUI()
 
     mainFrame->setLayout(mainFrameLay);
     setContent(mainFrame);
+    updateBackgroundColor();
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &PermissionManagerWidget::updateBackgroundColor);
+}
+
+void PermissionManagerWidget::updateBackgroundColor()
+{
+    QPalette palette = this->palette();
+
+    QColor bgColor;
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+        bgColor.setRgb(255, 255, 255);
+    else
+        bgColor.setRgb(40, 40, 40);
+
+    palette.setColor(QPalette::Background, bgColor);
+    setPalette(palette);
 }
 
 QString PermissionManagerWidget::getPermissionString(int enumFlag)

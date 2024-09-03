@@ -36,6 +36,8 @@ public:
 private:
     void initUI();
 
+    void updateBackgroundColor();
+
     QString getPermissionString(int enumFlag);
 
     void setComboBoxByPermission(QComboBox *cb, int permission, int offset);
