@@ -1,3 +1,10 @@
+dde-file-manager (6.0.59) unstable; urgency=medium
+
+  * update tag 6.0.59
+  *
+
+ -- liyigang<liyigang1@uniontech.com>  Tues, 3 Sep 2024 17:06:20 +0800
+
 dde-file-manager (6.0.58) unstable; urgency=medium
 
   * some bug fix.
