@@ -206,6 +206,8 @@ public slots:
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                 const QVariantMap &op);
+
+    bool handleIsSubFile(const QUrl &parent, const QUrl &sub);
 private:
     enum class RenameTypes {
         kBatchRepalce,

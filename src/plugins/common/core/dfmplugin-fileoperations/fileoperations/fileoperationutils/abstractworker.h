@@ -15,6 +15,8 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/filestatisticsjob.h>
 
+#include <dfm-framework/event/event.h>
+
 #include <QObject>
 #include <QUrl>
 #include <QQueue>

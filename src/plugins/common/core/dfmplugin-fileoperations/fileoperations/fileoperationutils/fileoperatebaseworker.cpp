@@ -1183,6 +1183,10 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
 
+    if (result)
+        dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Add",
+                                     newTargetInfo->uri());
+
     if (targetInfo == toInfo) {
         completeSourceFiles.append(fromInfo->uri());
         precompleteTargetFileInfo.append(newTargetInfo);

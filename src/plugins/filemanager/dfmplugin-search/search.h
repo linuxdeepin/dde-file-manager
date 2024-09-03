@@ -25,6 +25,9 @@ class Search : public dpf::Plugin
     // signal events
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
 
+    // hook events
+    DPF_EVENT_REG_HOOK(hook_Url_IsSubFile)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
