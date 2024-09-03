@@ -227,7 +227,7 @@ void PermissionManagerWidget::updateBackgroundColor()
     else
         bgColor.setRgb(40, 40, 40);
 
-    palette.setColor(QPalette::Background, bgColor);
+    palette.setColor(QPalette::Window, bgColor);
     setPalette(palette);
 }
 

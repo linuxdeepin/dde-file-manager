@@ -59,6 +59,21 @@ void SearchEventReceiver::handleAddressInputStr(quint64 windId, QString *str)
     }
 }
 
+void SearchEventReceiver::handleFileAdd(const QUrl &url)
+{
+    emit SearchManager::instance()->fileAdd(url);
+}
+
+void SearchEventReceiver::handleFileDelete(const QUrl &url)
+{
+    emit SearchManager::instance()->fileDelete(url);
+}
+
+void SearchEventReceiver::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    emit SearchManager::instance()->fileRename(oldUrl, newUrl);
+}
+
 SearchEventReceiver::SearchEventReceiver(QObject *parent)
     : QObject(parent)
 {

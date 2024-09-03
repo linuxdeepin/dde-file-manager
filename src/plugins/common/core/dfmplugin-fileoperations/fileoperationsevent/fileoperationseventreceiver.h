@@ -193,7 +193,7 @@ public slots:
     void handleOperationSaveRedoOperations(const QVariantMap &values);
     void handleOperationCleanByUrls(const QList<QUrl> &urls);
     void handleRecoveryOperationRedoRecovery(const quint64 windowId,
-                                                   DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
+                                             DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle);
     void handleSaveRedoOpt(const QString &token, const qint64 fileSize);
     void handleOperationUndoDeletes(const quint64 windowId,
                                     const QList<QUrl> &sources,
@@ -209,6 +209,8 @@ public slots:
     void handleOperationFilesPreview(const quint64 windowId,
                                      const QList<QUrl> &selectUrls,
                                      const QList<QUrl> &dirUrls);
+    bool handleIsSubFile(const QUrl &parent, const QUrl &sub);
+
 private:
     enum class RenameTypes {
         kBatchRepalce,

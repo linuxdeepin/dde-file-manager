@@ -149,6 +149,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     QList<FileInfoPointer> childrenList;   // 当前遍历出来的所有文件
     QSet<QUrl> urls;
     int filecount = 0;
+    bool noCache = dirIterator->property("FileInfoNoCache").toBool();
     while (dirIterator->hasNext()) {
         if (stopFlag)
             break;
@@ -162,8 +163,10 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         urls.insert(fileUrl);
         auto fileInfo = dirIterator->fileInfo();
         if (fileUrl.isValid() && !fileInfo) {
-            fileInfo = InfoFactory::create<FileInfo>(fileUrl);
-        } else if (!fileInfo.isNull()) {
+            fileInfo = InfoFactory::create<FileInfo>(fileUrl,
+                                                     noCache ? Global::CreateFileInfoType::kCreateFileInfoAutoNoCache
+                                                             : Global::CreateFileInfoType::kCreateFileInfoAuto);
+        } else if (!fileInfo.isNull() && !noCache) {
             InfoFactory::cacheFileInfo(fileInfo);
         }
 

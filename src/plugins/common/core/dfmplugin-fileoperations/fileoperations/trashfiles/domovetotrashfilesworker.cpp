@@ -10,6 +10,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/trashhelper.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -128,6 +129,10 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 completeTargetFiles.append(trashUrl);
                 emitProgressChangedNotify(completeFilesCount);
                 completeSourceFiles.append(urlSource);
+                auto targetTash = trashTargetUrl(trashUrl);
+                if (targetTash.isValid())
+                    dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename",
+                                                 urlSource, targetTash);
                 continue;
             } else {
                 // pause and emit error msg
@@ -183,4 +188,39 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     }
 
     return true;
+}
+
+QUrl DoMoveToTrashFilesWorker::trashTargetUrl(const QUrl &url)
+{
+    auto fileUrl = url;
+    if (!url.isValid() || url.scheme() != dfmbase::Global::Scheme::kFile)
+        return QUrl();
+
+    QMap<QUrl, QSharedPointer<TrashHelper::DeleteTimeInfo>> targetUrls;
+    QList<QUrl> fileUrls;
+    QStringList deleteInfo;
+    auto userInfo = url.userInfo();
+    deleteInfo = userInfo.split("-");
+    // 错误处理
+    if (deleteInfo.length() != 2)
+        return QUrl();
+
+    if (isStopped())
+        return QUrl();
+
+    QSharedPointer<TrashHelper::DeleteTimeInfo> info(new TrashHelper::DeleteTimeInfo);
+    info->startTime = deleteInfo.first().toInt();
+    info->endTime = deleteInfo.at(1).toInt();
+    fileUrl.setUserInfo("");
+    targetUrls.insert(fileUrl, info);
+
+    QString errorMsg;
+    TrashHelper trashHelper;
+    trashHelper.setDeleteInfos(targetUrls);
+    if (!trashHelper.getTrashUrls(&fileUrls, &errorMsg))
+        return QUrl();
+    if (fileUrls.length() <= 0)
+        return QUrl();
+
+    return fileUrls.first();
 }

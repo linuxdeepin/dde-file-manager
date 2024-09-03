@@ -46,6 +46,10 @@ class FileOperations : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Operation_RenameFilesAddText)
     DPF_EVENT_REG_SLOT(slot_Operation_FilesPreview)
 
+    DPF_EVENT_REG_SIGNAL(signal_File_Add)
+    DPF_EVENT_REG_SIGNAL(signal_File_Delete)
+    DPF_EVENT_REG_SIGNAL(signal_File_Rename)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

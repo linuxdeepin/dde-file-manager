@@ -142,9 +142,13 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const FileInfoPointer &trashInfo)
         const QUrl &fileUrl = trashInfo->urlOf(UrlInfoType::kUrl);
         bool resultFile = deleteFile(fileUrl);
 
-        if (!resultFile)
+        if (!resultFile) {
             action = doHandleErrorAndWait(fileUrl, AbstractJobHandler::JobErrorType::kDeleteTrashFileError,
                                           false, localFileHandler->errorString());
+        } else {
+            dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Delete",
+                                         fileUrl);
+        }
 
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
