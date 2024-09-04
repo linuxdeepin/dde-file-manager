@@ -21,8 +21,7 @@ SERVICEACCESSCONTROL_USE_NAMESPACE
 
 const QStringList Utils::whiteProcess()
 {
-    // TODO(xust) add python3.7 so that we can invoke the method through d-feet.
-    static const QStringList processList { "/usr/bin/dmcg", "/usr/bin/dde-file-manager", "/usr/bin/python3.7" };
+    static const QStringList processList { "/usr/bin/dmcg", "/usr/bin/dde-file-manager"};
     return processList;
 }
 

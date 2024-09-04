@@ -68,13 +68,21 @@ static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
  */
 static void setEnvForRoot()
 {
-    QProcess p;
-    p.start("bash", QStringList() << "-c"
-                                  << "echo $(dbus-launch --autolaunch $(cat /var/lib/dbus/machine-id))");
-    p.waitForFinished();
+    QProcess p1;
+    QProcess p2;
+
+    // 首先执行 cat 命令获取 machine-id
+    p1.start("cat", QStringList() << "/var/lib/dbus/machine-id");
+    p1.waitForFinished();
+    QString machineId = p1.readAllStandardOutput().trimmed();   // 去除多余的空白字符
+
+    // 然后使用获取到的 machine-id 执行 dbus-launch
+    p2.start("dbus-launch", QStringList() << "--autolaunch" << machineId);
+    p2.waitForFinished();
+    QString output = p2.readAllStandardOutput().trimmed();
+
+    QStringList group(output.split('\n'));
     QString envName("DBUS_SESSION_BUS_ADDRESS");
-    QString output(p.readAllStandardOutput());
-    QStringList group(output.split(" "));
     for (const QString &vals : group) {
         const QStringList &envGroup = vals.split(",");
         for (const QString &env : envGroup) {
