@@ -192,9 +192,12 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
         if (closeable || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
-                if (isMountedDevPath(url) || url.scheme() != Global::Scheme::kFile) {
+                if (isMountedDevPath(url)) {
                     redirectToWhenDelete = kGotoWhenDevRemoved;
-                } else {   // redirect to upper directory
+                } else if (dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_FileDeleteNotCdComputer", curUrl, &redirectToWhenDelete)) {
+                    if (!redirectToWhenDelete.isValid())
+                        redirectToWhenDelete = kGotoWhenDevRemoved;
+                } else if (url.scheme() == Global::Scheme::kFile){   // redirect to upper directory
                     QString localPath = url.path();
                     do {
                         QStringList pathFragment = localPath.split("/");
@@ -225,6 +228,8 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
                         if (kGvfsMpts.contains(localPath))
                             redirectToWhenDelete = kGotoWhenDevRemoved;
                     }
+                } else {
+                    redirectToWhenDelete = kGotoWhenDevRemoved;
                 }
 
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);

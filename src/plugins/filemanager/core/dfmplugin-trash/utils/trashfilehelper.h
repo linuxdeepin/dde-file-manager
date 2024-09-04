@@ -39,10 +39,11 @@ public:
     bool disableOpenWidgetWidget(const QUrl &url, bool *result);
     bool handleCanTag(const QUrl &url, bool *canTag);
     bool handleIsSubFile(const QUrl &parent, const QUrl &sub);
+    bool handleNotCdComputer(const QUrl &url, QUrl *cdUrl);
 
 private:
     explicit TrashFileHelper(QObject *parent = nullptr);
 };
 DPTRASH_END_NAMESPACE
-
+Q_DECLARE_METATYPE(QUrl *);
 #endif   // TRASHFILEHELPER_H
