@@ -86,6 +86,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Tab_SetTabName)
     DPF_EVENT_REG_HOOK(hook_Tab_Closeable)
     DPF_EVENT_REG_HOOK(hook_Tab_Allow_Repeat_Url)
+    DPF_EVENT_REG_HOOK(hook_Tab_FileDeleteNotCdComputer)
 
     DPF_EVENT_REG_HOOK(hook_DragDrop_CheckDragDropAction)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileDragMove)

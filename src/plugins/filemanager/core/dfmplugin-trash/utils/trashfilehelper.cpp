@@ -165,3 +165,16 @@ bool TrashFileHelper::handleIsSubFile(const QUrl &parent, const QUrl &sub)
 
     return sub.path().contains(parent.path());
 }
+
+bool TrashFileHelper::handleNotCdComputer(const QUrl &url, QUrl *cdUrl)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    if (!cdUrl)
+        return false;
+
+    // 回收站中只能最上层目录可以删除和还原，那么它们的父目录都是回收站
+    *cdUrl = FileUtils::trashRootUrl();
+    return true;
+}

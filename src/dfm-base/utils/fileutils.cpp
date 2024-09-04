@@ -403,6 +403,7 @@ QUrl FileUtils::trashRootUrl()
     QUrl url;
     url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kTrash);
     url.setPath("/");
+    url.setHost("");
     return url;
 }
 
