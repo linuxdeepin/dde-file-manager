@@ -9,6 +9,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;
@@ -58,7 +59,8 @@ bool TrashDirIterator::hasNext() const
         return has;
 
     if (d->dEnumerator) {
-        if (!d->once)
+        if (!d->once &&  UniversalUtils::urlEquals(d->dEnumerator->uri(),
+                                                   TrashHelper::instance()->rootUrl()))
             TrashHelper::instance()->trashNotEmpty();
 
         d->once = true;
@@ -106,5 +108,7 @@ const FileInfoPointer TrashDirIterator::fileInfo() const
 
 QUrl TrashDirIterator::url() const
 {
+    if (d->dEnumerator)
+        return d->dEnumerator->uri();
     return TrashHelper::rootUrl();
 }
