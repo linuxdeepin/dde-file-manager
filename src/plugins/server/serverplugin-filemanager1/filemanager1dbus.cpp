@@ -30,18 +30,11 @@ FileManager1DBus::FileManager1DBus(QObject *parent)
 void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &StartupId)
 {
     Q_UNUSED(StartupId)
-    QStringList ArgsTmp;
-    for (const auto &arg : URIs) {
-        if (!arg.startsWith("-")) {
-            ArgsTmp.append(QUrl::toPercentEncoding(arg));
-        } else {
-            ArgsTmp.append(arg);
-        }
-    }
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << ArgsTmp))
+
+    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << URIs))
         return;
 
-    QProcess::startDetached("dde-file-manager", QStringList() << "--raw" << ArgsTmp);
+    QProcess::startDetached("dde-file-manager", QStringList() << "--raw" << URIs);
 }
 
 /*!
@@ -51,20 +44,13 @@ void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &Start
 void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString &StartupId)
 {
     Q_UNUSED(StartupId)
-    QStringList ArgsTmp;
-    for (const auto &arg : URIs) {
-        if (!arg.startsWith("-")) {
-            ArgsTmp.append(QUrl::toPercentEncoding(arg));
-        } else {
-            ArgsTmp.append(arg);
-        }
-    }
+
     if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw"
-                                                                 << "-p" << ArgsTmp))
+                                                                 << "-p" << URIs))
         return;
 
     QProcess::startDetached("dde-file-manager", QStringList() << "--raw"
-                                                              << "-p" << ArgsTmp);
+                                                              << "-p" << URIs);
 }
 
 /*!
@@ -77,18 +63,11 @@ void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString
 void FileManager1DBus::ShowItems(const QStringList &URIs, const QString &StartupId)
 {
     Q_UNUSED(StartupId)
-    QStringList ArgsTmp;
-    for (const auto &arg : URIs) {
-        if (!arg.startsWith("-")) {
-            ArgsTmp.append(QUrl::toPercentEncoding(arg));
-        } else {
-            ArgsTmp.append(arg);
-        }
-    }
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << ArgsTmp << "--raw"))
+
+    if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << URIs << "--raw"))
         return;
 
-    QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << ArgsTmp << "--raw");
+    QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << URIs << "--raw");
 }
 
 void FileManager1DBus::Trash(const QStringList &URIs)
@@ -103,27 +82,5 @@ void FileManager1DBus::Trash(const QStringList &URIs)
     argsObj.insert("params", paramObj);
 
     QJsonDocument doc(argsObj);
-    if (QProcess::startDetached("file-manager.sh",
-                                QStringList() << "--event"
-                                << QUrl::toPercentEncoding(doc.toJson())))
-        return;
-    QProcess::startDetached("dde-file-manager",
-                                    QStringList() << "--event"
-                                    << QUrl::toPercentEncoding(doc.toJson()));
-}
-
-void FileManager1DBus::Open(const QStringList &Args)
-{
-    QStringList ArgsTmp;
-    for (const auto &arg : Args) {
-        if (!arg.startsWith("-")) {
-            ArgsTmp.append(QUrl::toPercentEncoding(arg));
-        } else {
-            ArgsTmp.append(arg);
-        }
-    }
-    if (QProcess::startDetached("file-manager.sh", ArgsTmp))
-        return;
-
-    QProcess::startDetached("dde-file-manager", ArgsTmp);
+    QProcess::startDetached("dde-file-manager", QStringList() << "--event" << doc.toJson());
 }
