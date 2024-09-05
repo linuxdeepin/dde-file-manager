@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(BIN_NAME "deepin-anything-service")
-project(${BIN_NAME})
+project(dde-filemanager-anything)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -11,20 +10,22 @@ FILE(GLOB SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-add_executable(${BIN_NAME}
+add_library(${PROJECT_NAME}
+    SHARED
     ${SOURCE_FILES}
 )
+
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 find_package(Qt5 COMPONENTS
     DBus
     REQUIRED
 )
 
-target_link_libraries(${BIN_NAME}
+target_link_libraries(${PROJECT_NAME}
     DFM::framework
 )
 
-install(TARGETS ${BIN_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES ${BIN_NAME}.json DESTINATION share/deepin-service-manager/other/)
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/deepin-service-manager/)
+install(FILES ${PROJECT_NAME}.json DESTINATION share/deepin-service-manager/system/)
 install(FILES org.deepin.Filemanager.Anything.conf DESTINATION share/dbus-1/system.d/)
-install(FILES org.deepin.Filemanager.Anything.service DESTINATION share/dbus-1/system-services/)
