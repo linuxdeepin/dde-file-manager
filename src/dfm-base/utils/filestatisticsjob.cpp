@@ -143,7 +143,7 @@ void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, cons
             }
 
             const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
-            if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
+            if (allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
                 return;
             }
             fileStatistics << symLinkTargetUrl;
@@ -179,7 +179,7 @@ void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, cons
             auto isSyslink = info->isAttributes(OptInfoType::kIsSymLink);
             if (isSyslink) {
                 const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
-                if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
+                if (allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
                     return;
                 }
                 fileStatistics << symLinkTargetUrl;
@@ -433,10 +433,11 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 return;
             }
             // The files counted are not counted
-            if (d->sizeInfo->allFiles.contains(url))
+            if (d->allFiles.contains(url))
                 continue;
 
             d->sizeInfo->allFiles << url;
+            d->allFiles.insert(url);
             FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
             if (!info) {
@@ -460,7 +461,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
 
                 const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
                 // The files counted are not counted
-                if (d->fileStatistics.contains(symLinkTargetUrl) || d->sizeInfo->allFiles.contains(symLinkTargetUrl))
+                if (d->fileStatistics.contains(symLinkTargetUrl) || d->allFiles.contains(symLinkTargetUrl))
                     continue;
 
                 info = InfoFactory::create<FileInfo>(symLinkTargetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
@@ -483,6 +484,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             d->fileHints = d->fileHints | kDontSkipAVFSDStorage | kDontSkipPROCStorage;
             d->processFile(url, followLink, directory_queue);
             d->sizeInfo->allFiles << url;
+            d->allFiles.insert(url);
             d->fileHints = save_file_hints;
 
             if (!d->stateCheck()) {
@@ -515,11 +517,12 @@ void FileStatisticsJob::statistcsOtherFileSystem()
         while (d->iterator->hasNext()) {
             QUrl url = d->iterator->next();
             // The files counted are not counted
-            if (d->sizeInfo->allFiles.contains(url))
+            if (d->allFiles.contains(url))
                 continue;
 
             d->processFile(url, followLink, directory_queue);
             d->sizeInfo->allFiles << url;
+            d->allFiles.insert(url);
 
             if (!d->stateCheck()) {
                 d->setState(kStoppedState);
