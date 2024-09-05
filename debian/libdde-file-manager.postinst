@@ -3,7 +3,7 @@
 #dfm-upgrade
 
 function createUpgradeFlag(){
-echo "File manager is ready to upgrade configuration."
+echo "File manager is ready to upgratde configuration."
 homeDir="/home"
 for user in `ls $homeDir`
 do
@@ -23,53 +23,29 @@ done
 }
 #end dfm-upgrade
 
-# Handle system service
-handle_system_service() {
-    local service_name="$1"
-    echo "Checking system service: $service_name"
-    if systemctl is-active --quiet "$service_name"; then
-        echo "Restarting system service: $service_name"
-        systemctl restart "$service_name" || true
-    else
-        echo "Enabling and starting system service: $service_name"
-        systemctl enable "$service_name" || true
-        systemctl start "$service_name" || true
-    fi
+kill_service() {
+       local SERVER_NAME="$1"
+	PID=$(pidof "$SERVER_NAME")
+
+	if [ -z "$PID" ]; then
+	    echo "Process $SERVER_NAME is not running."
+	fi
+
+	echo "Process $SERVER_NAME (PID: $PID) found. Attempting to terminate..."
+	kill -TERM "$PID"
+	sleep 2  # 等待进程响应 SIGTERM
+
+	# 再次检查进程是否仍在运行
+	if pgrep -f "$SERVER_NAME" > /dev/null; then
+	    echo "Process did not terminate. Sending SIGKILL..."
+	    # 发送 SIGKILL 信号
+	    kill -KILL "$PID"
+	    echo "Process $SERVER_NAME has been killed."
+	else
+	    echo "Process $SERVER_NAME terminated successfully."
+	fi
 }
 
-# 重启已登录用户的 dde-file-manager.service
-restart_logged_in_user_service() {
-    local service_name="dde-file-manager.service"
-    
-    # 获取已登录的用户，并去除重复
-    local logged_in_users=($(who | awk '{print $1}' | sort | uniq))
-    
-    echo "Restarting $service_name for logged-in users"
-    
-    for user in "${logged_in_users[@]}"; do
-        echo "Processing user: $user"
-        
-        # 获取用户ID
-        local user_id=$(id -u "$user")
-        
-        # 设置 XDG_RUNTIME_DIR
-        local xdg_runtime_dir="/run/user/$user_id"
-        
-        # 获取服务状态
-        local service_status=$(runuser -l "$user" -c "XDG_RUNTIME_DIR=\"$xdg_runtime_dir\" systemctl --user is-active $service_name")
-        
-        if [ "$service_status" = "active" ]; then
-            echo "Restarting $service_name for user $user"
-            runuser -l "$user" -c "XDG_RUNTIME_DIR=\"$xdg_runtime_dir\" systemctl --user restart $service_name" || true
-        else
-            echo "Enabling and starting $service_name for user $user"
-            runuser -l "$user" -c "XDG_RUNTIME_DIR=\"$xdg_runtime_dir\" systemctl --user enable $service_name" || true
-            runuser -l "$user" -c "XDG_RUNTIME_DIR=\"$xdg_runtime_dir\" systemctl --user start $service_name" || true
-        fi
-    done
-    
-    echo "Finished processing $service_name for all logged-in users"
-}
 
 # Main function
 main() {
@@ -79,12 +55,9 @@ main() {
 
     echo "Starting postinst script execution"
 
-    # Handle system service
-    handle_system_service "dde-filemanager-daemon.service"
+    kill_service "dde-file-manager-server"
+    kill_service "dde-file-manager-daemon"
 
-    # 调用函数重启已登录用户的 dde-file-manager.service
-    restart_logged_in_user_service
-  
     echo "Finished postinst script execution"
 }
 
