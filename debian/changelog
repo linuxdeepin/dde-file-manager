@@ -1,3 +1,10 @@
+dde-file-manager (6.5.2) unstable; urgency=medium
+
+  * refactor daemon
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Thu, 05 Sep 2024 22:25:31 +0800
+
 dde-file-manager (6.5.1) unstable; urgency=medium
 
   * update file manager version to V6.5.1
