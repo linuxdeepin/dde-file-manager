@@ -251,8 +251,7 @@ bool AbstractWorker::statisticsFilesSize()
 
     if (isSourceFileLocal) {
         const SizeInfoPointer &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
-        for (const auto &url : fileSizeInfo->allFiles)
-            allFilesList.append(url);
+        allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         workData->dirSize = fileSizeInfo->dirSize;
         sourceFilesCount = fileSizeInfo->fileCount;
@@ -555,8 +554,7 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
     sourceFilesTotalSize = statisticsFilesSizeJob->totalProgressSize();
     workData->dirSize = sizeInfo->dirSize;
     sourceFilesCount = sizeInfo->fileCount;
-    for (const auto &url : sizeInfo->allFiles)
-        allFilesList.append(url);
+    allFilesList = sizeInfo->allFiles;
 }
 
 void AbstractWorker::onStatisticsFilesSizeUpdate(qint64 size)
