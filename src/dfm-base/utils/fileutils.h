@@ -21,7 +21,7 @@ public:
         qint64 totalSize { 0 };
         quint16 dirSize { 0 };
         quint32 fileCount { 0 };
-        QSet<QUrl> allFiles;
+        QList<QUrl> allFiles;
     };
 
 public:

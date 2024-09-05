@@ -47,6 +47,7 @@ public:
     QAtomicInt directoryCount { 0 };
     SizeInfoPointer sizeInfo { nullptr };
     QSet<QUrl> fileStatistics;
+    QSet<QUrl> allFiles;
     QSet<QString> skipPath;
     QSet<quint64> inodelist;
     AbstractDirIteratorPointer iterator { nullptr };
