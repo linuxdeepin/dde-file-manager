@@ -1,6 +1,4 @@
 usr/bin/dde-file-manager
-usr/bin/file-manager.sh
-usr/libexec/dde-file-manager
 usr/bin/dde-file-manager-pkexec
 usr/bin/dde-file-manager-daemon
 usr/bin/dde-file-manager-server

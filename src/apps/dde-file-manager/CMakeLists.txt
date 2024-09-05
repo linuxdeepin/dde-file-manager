@@ -45,7 +45,7 @@ target_link_libraries(
     ${DtkWidget_LIBRARIES}
     )
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 # sh
 install(FILES dde-property-dialog DESTINATION bin)
