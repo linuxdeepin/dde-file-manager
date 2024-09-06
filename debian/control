@@ -142,11 +142,11 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - daemon edge plugins module
  Deepin Desktop Environment (DDE) - daemon edge plugins module.
 
-Package: dde-file-manager-service-plugins
+Package: dde-file-manager-services-plugins
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: deepin desktop-environment - service edge plugins module
- Deepin Desktop Environment (DDE) - server edge plugins module.
+Description: deepin desktop-environment - services edge plugins module
+ Deepin Desktop Environment (DDE) - services edge plugins module.
  
 Package: dde-file-manager-preview-plugins
 Architecture: any
