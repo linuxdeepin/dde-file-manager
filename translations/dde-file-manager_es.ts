@@ -5068,17 +5068,17 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Ruta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Ultimo acceso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>Reciente</translation>
     </message>
 </context>
 <context>
