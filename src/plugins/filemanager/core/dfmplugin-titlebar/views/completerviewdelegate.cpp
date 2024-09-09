@@ -8,6 +8,7 @@
 
 #include <QPainter>
 #include <QCompleter>
+#include <QApplication>
 
 using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
@@ -83,6 +84,7 @@ void CompleterViewDelegate::paintItemIcon(QPainter *painter, const QStyleOptionV
 QPixmap CompleterViewDelegate::createCustomOpacityPixmap(const QPixmap &px, float opacity) const
 {
     QPixmap tmp(px.size());
+    tmp.setDevicePixelRatio(qApp->devicePixelRatio());
     tmp.fill(Qt::transparent);
 
     QPainter p(&tmp);
