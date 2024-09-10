@@ -64,6 +64,8 @@ class FileViewPrivate
     int horizontalOffset { 0 };
     int cachedViewWidth { -1 };
     bool isShowViewSelectBox { false };
+    bool isResizeEvent { false };
+    int lastContentHeight { 0 };
 
     QList<QUrl> preSelectionUrls;
     QTimer *preSelectTimer { nullptr };
