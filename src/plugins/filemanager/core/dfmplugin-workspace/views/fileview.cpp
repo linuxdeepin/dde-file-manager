@@ -1192,7 +1192,9 @@ bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tri
 
 void FileView::resizeEvent(QResizeEvent *event)
 {
+    d->isResizeEvent = true;
     DListView::resizeEvent(event);
+    d->isResizeEvent = false;
 
     updateHorizontalOffset();
 
@@ -1456,14 +1458,16 @@ void FileView::updateGeometries()
 #ifdef DTKWIDGET_CLASS_DSizeMode
         iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
 #endif
-        resizeContents(contentsSize().width(), contentsSize().height() + iconVerticalTopMargin);
+        if (!d->isResizeEvent
+                || (d->isResizeEvent && d->lastContentHeight > 0 && d->lastContentHeight != contentsSize().height()))
+            resizeContents(contentsSize().width(), contentsSize().height() + iconVerticalTopMargin);
+        d->lastContentHeight = contentsSize().height();
     }
     if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();
     }
 
     resizeContents(d->headerView->length(), contentsSize().height());
-
     DListView::updateGeometries();
 }
 
