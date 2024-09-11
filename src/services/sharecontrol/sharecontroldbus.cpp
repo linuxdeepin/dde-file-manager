@@ -44,6 +44,11 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
         return true;
     }
 
+    if (!checkAuthentication()) {
+        fmInfo() << "cannot close smb for" << name;
+        return false;
+    }
+
     unsigned int suid = 0;
     QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
     if (!c.isConnected()) {
@@ -97,11 +102,10 @@ bool ShareControlDBus::SetUserSharePassword(const QString &name, const QString &
 
 bool ShareControlDBus::EnableSmbServices()
 {
-    // 创建链接文件之前已经提权了 这里就不需要再次判断权限了
-    /*if (!checkAuthentication()) {
+    if (!checkAuthentication()) {
         fmDebug() << "EnableSmbServices";
         return false;
-    }*/
+    }
 
     QProcess sh;
     sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
