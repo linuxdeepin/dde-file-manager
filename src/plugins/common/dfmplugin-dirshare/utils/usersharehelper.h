@@ -73,7 +73,7 @@ private:
     void initConnect();
     void initMonitorPath();
 
-    void removeShareByShareName(const QString &name);
+    void removeShareByShareName(const QString &name, bool silent = false);
     void removeShareWhenShareFolderDeleted(const QString &deletedPath);
     ShareInfo getOldShareByNewShare(const ShareInfo &newShare);
 

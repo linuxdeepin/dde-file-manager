@@ -422,18 +422,17 @@ void UserShareHelper::initMonitorPath()
         watcherManager->add(info.value(ShareInfoKeys::kPath).toString());
 }
 
-void UserShareHelper::removeShareByShareName(const QString &name)
+void UserShareHelper::removeShareByShareName(const QString &name, bool silent)
 {
-    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, true);
+    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
     if (reply.isValid() && reply.value()) {
         fmDebug() << "share closed: " << name;
+        runNetCmd(QStringList() << "usershare"
+                                << "delete" << name);
     } else {
         fmWarning() << "share close failed: " << name << ", " << reply.error();
         // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
     }
-
-    runNetCmd(QStringList() << "usershare"
-                            << "delete" << name);
 }
 
 void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPath)
@@ -442,7 +441,7 @@ void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPa
     if (shareName.isEmpty())
         return;
 
-    removeShareByShareName(shareName);
+    removeShareByShareName(shareName, true);
 }
 
 ShareInfo UserShareHelper::getOldShareByNewShare(const ShareInfo &newShare)
