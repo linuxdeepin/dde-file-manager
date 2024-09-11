@@ -165,16 +165,27 @@ FILE(GLOB SCHEMA_FILES ${AssetsPath}/gschema/*)
 install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
 install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
 
-set(LNFS_SCRIPT ${AssetsPath}/scripts/dfm-ulnfs-automount)
-install(FILES ${LNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
+set(DLNFS_SCRIPT ${AssetsPath}/scripts/dfm-dlnfs-automount)
+install(FILES ${DLNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
 
-set(LNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-ulnfs-automount)
-install(FILES ${LNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
+set(DLNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-dlnfs-automount)
+install(FILES ${DLNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
 
-set(DFM_LNFS_SCRIPT_LAUNCHER
+set(DFM_DLNFS_SCRIPT_LAUNCHER
     ${AssetsPath}/scripts/dde-file-manager
     ${AssetsPath}/scripts/file-manager.sh)
-install(FILES ${DFM_LNFS_SCRIPT_LAUNCHER} DESTINATION bin)
+install(FILES ${DFM_DLNFS_SCRIPT_LAUNCHER} DESTINATION bin)
+
+set(ULNFS_SCRIPT ${AssetsPath}/scripts/dfm-ulnfs-automount)
+install(FILES ${ULNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
+
+set(ULNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-ulnfs-automount)
+install(FILES ${ULNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
+
+set(DFM_ULNFS_SCRIPT_LAUNCHER
+    ${AssetsPath}/scripts/dde-file-manager
+    ${AssetsPath}/scripts/file-manager.sh)
+install(FILES ${DFM_ULNFS_SCRIPT_LAUNCHER} DESTINATION bin)
 
 set(Mimetypes "${ShareDir}/mimetypes")
 FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
