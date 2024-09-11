@@ -415,7 +415,7 @@ QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
     // get system disk name if there is no alias
     if (mountPoint == "/")
         return QObject::tr("System Disk");
-    if (!mountPoint.startsWith("/media/")) {
+    if (!mountPoint.startsWith("/media/") && !mountPoint.isEmpty()) {
         if (label.startsWith("_dde_data"))
             return QObject::tr("Data Disk");
         if (label.startsWith("_dde_"))

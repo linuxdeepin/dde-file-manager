@@ -185,16 +185,16 @@ AbstractEntryFileEntity::EntryOrder BlockEntryFileEntity::order() const
     if (clearInfo.value(DeviceProperty::kMountPoint, "").toString() == "/")
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
 
-    if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_data"))
+    bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
+    if (!canPowerOff && datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_data"))
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
-    if (clearInfo.value(DeviceProperty::kIdLabel, "").toString() == "_dde_data")
+    if (!canPowerOff && clearInfo.value(DeviceProperty::kIdLabel, "").toString() == "_dde_data")
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
 
     if (datas.value(DeviceProperty::kOptical).toBool()
         || datas.value(DeviceProperty::kOpticalDrive).toBool())
         return AbstractEntryFileEntity::EntryOrder::kOrderOptical;
 
-    bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
     if (canPowerOff && !isSiblingOfRoot())
         return AbstractEntryFileEntity::EntryOrder::kOrderRemovableDisks;
 
