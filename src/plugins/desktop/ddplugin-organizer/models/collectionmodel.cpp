@@ -104,8 +104,12 @@ void CollectionModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft,
         auto url = shell->fileUrl(q->sourceModel()->index(i, 0));
         auto cur = q->index(url);
 
-        if (handler)
-            handler->acceptUpdate(url, roles);
+        if (handler && handler->acceptUpdate(url, roles)) {
+            if (!fileList.contains(url)) {
+                fileList.append(url);
+                fileMap.insert(url, shell->fileInfo(q->sourceModel()->index(i, 0)));
+            }
+        }
 
         if (cur.isValid())
             idxs << cur;
