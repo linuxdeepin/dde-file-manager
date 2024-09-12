@@ -131,6 +131,7 @@ inline constexpr char kAcViewTabBarBottomLine[] { "bottom_line" };
 
 namespace DConfigInfo {
 inline constexpr char kConfName[] { "org.deepin.dde.file-manager.preview" };
+inline constexpr char kRemoteThumbnailKey[] { "remoteThumbnailEnable" };
 inline constexpr char kMtpThumbnailKey[] { "mtpThumbnailEnable" };
 }
 

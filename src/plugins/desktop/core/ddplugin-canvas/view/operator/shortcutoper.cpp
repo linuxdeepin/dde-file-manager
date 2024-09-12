@@ -263,5 +263,5 @@ void ShortcutOper::previewFiles()
     if (urls.isEmpty())
         return;
     auto currentDirUrls = view->model()->files();
-    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), urls, currentDirUrls);
+    dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", view->topLevelWidget()->winId(), urls, currentDirUrls);
 }

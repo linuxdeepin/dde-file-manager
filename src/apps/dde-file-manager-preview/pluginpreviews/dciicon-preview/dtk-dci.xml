@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+   <mime-type type="image/dci">
+      <comment>DSG Icon file format</comment>
+      <comment xml:lang="zh_CN">深度图标文件格式</comment>
+      <glob pattern="*.dci"/>
+      <icon name="image-dci"/>
+      <magic priority="80">
+        <match value="DCI" type="string" offset="0"/>
+      </magic>
+   </mime-type> 
+</mime-info>
