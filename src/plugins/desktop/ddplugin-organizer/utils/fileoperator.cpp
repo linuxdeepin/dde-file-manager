@@ -258,7 +258,7 @@ void FileOperator::previewFiles(const CollectionView *view)
         return;
 
     QList<QUrl> currentDirUrls = view->dataProvider()->items(view->id());
-    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
+    dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }
 
 void FileOperator::showFilesProperty(const CollectionView *view)

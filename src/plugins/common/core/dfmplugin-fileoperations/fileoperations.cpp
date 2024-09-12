@@ -291,6 +291,11 @@ void FileOperations::initEventHandle()
     dpfSignalDispatcher->subscribe(GlobalEventType::kRedo,
                                    FileOperationsEventReceiver::instance(),
                                    &FileOperationsEventReceiver::handleRecoveryOperationRedoRecovery);
+
+    dpfSlotChannel->connect("dfmplugin_fileoperations",
+                            "slot_Operation_FilesPreview",
+                            FileOperationsEventReceiver::instance(),
+                            &FileOperationsEventReceiver::handleOperationFilesPreview);
 }
 
 void FileOperations::followEvents()

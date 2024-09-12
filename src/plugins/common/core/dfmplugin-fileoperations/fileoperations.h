@@ -44,6 +44,7 @@ class FileOperations : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Operation_WriteUrlsToClipboard)
     DPF_EVENT_REG_HOOK(hook_Operation_RenameFiles)
     DPF_EVENT_REG_HOOK(hook_Operation_RenameFilesAddText)
+    DPF_EVENT_REG_SLOT(slot_Operation_FilesPreview)
 
 public:
     virtual void initialize() override;

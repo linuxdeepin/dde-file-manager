@@ -123,6 +123,13 @@ signals:
 private slots:
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 winId);
+
+private:
+    void initConfig();
+
+    static void saveRemoteToConf(const QVariant &var);
+    static void syncRemoteToAppSet(const QString &, const QString &, const QVariant &var);
+    static bool isRemoteConfEqual(const QVariant &dcon, const QVariant &dset);
 };
 
 }

@@ -1531,4 +1531,34 @@ void FileOperationsEventReceiver::handleOperationUndoCut(const quint64 windowId,
         handleCallback(handle);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCutType, handle);
 }
+
+void FileOperationsEventReceiver::handleOperationFilesPreview(const quint64 windowId,
+                                                              const QList<QUrl> &selectUrls,
+                                                              const QList<QUrl> &dirUrls)
+{
+    if (selectUrls.isEmpty() || dirUrls.isEmpty())
+        return;
+
+    QString selectListStr;
+    QString dirListStr;
+
+    for (auto url : selectUrls) {
+        selectListStr.append(url.toString());
+        selectListStr.append(";");
+    }
+    if (!selectListStr.isEmpty())
+        selectListStr.chop(1);
+
+    for (auto url : dirUrls) {
+        dirListStr.append(url.toString());
+        dirListStr.append(";");
+    }
+    if (!dirListStr.isEmpty())
+        dirListStr.chop(1);
+
+    QStringList args;
+    args << QString::number(windowId) << selectListStr << dirListStr;
+    QString cmd("/usr/libexec/dde-file-manager-preview");
+    QProcess::startDetached(cmd, args);
+}
 }   // namespace dfmplugin_fileoperations

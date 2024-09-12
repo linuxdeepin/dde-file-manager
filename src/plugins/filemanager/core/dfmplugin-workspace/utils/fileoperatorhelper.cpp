@@ -356,7 +356,7 @@ void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
 {
     quint64 winID = WorkspaceHelper::instance()->windowId(view);
-    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", winID, selectUrls, currentDirUrls);
+    dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", winID, selectUrls, currentDirUrls);
 }
 
 void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)

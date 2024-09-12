@@ -206,6 +206,9 @@ public slots:
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag flags,
                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handleCallback,
                                 const QVariantMap &op);
+    void handleOperationFilesPreview(const quint64 windowId,
+                                     const QList<QUrl> &selectUrls,
+                                     const QList<QUrl> &dirUrls);
 private:
     enum class RenameTypes {
         kBatchRepalce,

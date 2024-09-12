@@ -93,7 +93,7 @@ Depends:
  dde-file-manager-daemon-plugins,
  dde-file-manager-server-plugins,
  dde-file-manager-common-plugins, 
- dde-file-manager-preview-plugins,
+ dde-file-manager-preview,
  libblockdev-crypto2 | libblockdev-crypto3,
  qml6-module-qtquick-controls,
  qml6-module-qtquick-layouts,
@@ -148,11 +148,11 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - services edge plugins module
  Deepin Desktop Environment (DDE) - services edge plugins module.
  
-Package: dde-file-manager-preview-plugins
+Package: dde-file-manager-preview
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: deepin desktop-environment - filemanager preview plugins module
- Deepin Desktop Environment (DDE) - filemanager preview edge plugins module.
+Description: deepin desktop-environment - filemanager preview module
+ Deepin Desktop Environment (DDE) - filemanager preview edge module.
 
 Package: dde-disk-mount-plugin
 Architecture: any
