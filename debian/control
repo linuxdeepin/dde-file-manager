@@ -61,7 +61,8 @@ Build-Depends:
  libdtk6declarative-dev | hello,
  libdfm6-io-dev | hello,
  libdfm6-mount-dev | hello,
- libdfm6-burn-dev | hello
+ libdfm6-burn-dev | hello,
+ libxcb-xfixes0-dev (>= 1.10~)
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
