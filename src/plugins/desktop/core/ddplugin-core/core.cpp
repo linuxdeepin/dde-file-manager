@@ -161,7 +161,7 @@ void Core::initializeAfterPainted()
         fmInfo() << "load lazy plugins" << list;
         dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
         // init clipboard
-        ClipBoard::instance()->onClipboardDataChanged();
+        ClipBoard::instance()->readFirstClipboard();
     });
 }
 
