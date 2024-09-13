@@ -230,7 +230,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (workData->exBlockSyncEveryWrite)
+        if (workData->exBlockSyncEveryWrite || DeviceUtils::isSamba(toInfo->uri()))
             syncBlockFile(toInfo);
         return NextDo::kDoCopyNext;
     }
@@ -239,7 +239,8 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         return NextDo::kDoCopyErrorAddCancel;
     // 循环读取和写入文件，拷贝
     int toFd = -1;
-    if (workData->exBlockSyncEveryWrite)
+    auto toIsSmb = DeviceUtils::isSamba(toInfo->uri());
+    if (workData->exBlockSyncEveryWrite || toIsSmb)
         toFd = open(toInfo->uri().path().toUtf8().toStdString().data(), O_RDONLY);
     qint64 blockSize = fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize;
     char *data = new char[static_cast<uint>(blockSize + 1)];
@@ -269,7 +270,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         }
 
         // 执行同步策略
-        if (workData->exBlockSyncEveryWrite && toFd > 0)
+        if ((workData->exBlockSyncEveryWrite || toIsSmb) && toFd > 0)
             syncfs(toFd);
 
     } while (fromDevice->pos() != fromSize);
@@ -278,7 +279,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
     data = nullptr;
 
     // 执行同步策略
-    if (workData->exBlockSyncEveryWrite && toFd > 0)
+    if ((workData->exBlockSyncEveryWrite  || toIsSmb) && toFd > 0)
         syncfs(toFd);
 
     if (toFd > 0)
@@ -675,13 +676,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
         return  NextDo::kDoCopyErrorAddCancel;
 
     if (workData->needSyncEveryRW && sizeWrite > 0) {
-        if (workData->isFsTypeVfat) {
-            // FAT and VFAT file systems ignore the "sync" option
-            toDevice->close();
-            if (!openFile(fromInfo, toInfo, toDevice, DFMIO::DFile::OpenFlag::kWriteOnly | DFMIO::DFile::OpenFlag::kAppend, skip)) {
-                return  NextDo::kDoCopyErrorAddCancel;
-            }
-        } else {
+        if (!workData->exBlockSyncEveryWrite) {
             toDevice->flush();
         }
     }
