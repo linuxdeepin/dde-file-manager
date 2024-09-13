@@ -272,17 +272,17 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
 
 bool AccessControlDBus::Chmod(const QString &path, uint mode)
 {
+    if (!checkAuthentication(kPolicyKitChmodActionId)) {
+        fmWarning() << "authenticate failed to change permission of" << path;
+        return false;
+    }
+
     if (path.isEmpty())
         return false;
 
     QFile f(path);
     if (!f.exists()) {
         fmWarning() << "file not exists" << path;
-        return false;
-    }
-
-    if (!checkAuthentication(kPolicyKitChmodActionId)) {
-        fmWarning() << "authenticate failed to change permission of" << path;
         return false;
     }
 
