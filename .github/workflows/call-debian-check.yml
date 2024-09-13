@@ -3,11 +3,44 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   debian-check:
-    uses: linuxdeepin/.github/.github/workflows/debian-check.yml@master
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - if: always()
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@debian-prefix-check
+      - if: always()
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@debian-version-check
+      - if: always()
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@debian-keys-check
+      - if: always() && hashFiles('comment.txt')
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@post-check
+        with:
+          comment-file: comment.txt
+          reviewers: ckux
+      - if: always()
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@send-data
+        with:
+          testtype: "debianCheck"
+          status: ${{ hashFiles('comment.txt') && '否' || '是' }}
+          result: ${{ hashFiles('comment.txt') && '1' || '0' }}
+      - if: always() && hashFiles('comment.txt')
+        run: exit 1

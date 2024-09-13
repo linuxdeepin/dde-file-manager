@@ -9,5 +9,45 @@ concurrency:
 
 jobs:
   static-check:
-    uses: linuxdeepin/.github/.github/workflows/static-check.yml@master
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - id: change-file-lang
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@get-change-file-lang
+      - id: golangci-lint
+        if: always() && steps.change-file-lang.outputs.isGo == 'true'
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@golangci-lint
+      - id: cppcheck
+        if: always() && steps.change-file-lang.outputs.isC == 'true'
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@cpp-check
+      - id: shellcheck
+        if: always() && steps.change-file-lang.outputs.isSh == 'true'
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@shell-check
+      - id: get-summary-result
+        if: always()
+        continue-on-error: true
+        run: |
+          echo "summary-result=$goResult|$cppResult|$shellResult" >> $GITHUB_OUTPUT
+          echo "summary-status=[${goStatus},${cppStatus},${shellStatus}]" >> $GITHUB_OUTPUT
+        env:
+          goResult: ${{ steps.golangci-lint.outputs.isFailed != 'true' && '0' || steps.golangci-lint.outputs.errNum }}
+          cppResult: ${{ steps.cppcheck.outputs.isFailed != 'true' && '0' || steps.cppcheck.outputs.errNum }}
+          shellResult: ${{ steps.shellcheck.outputs.isFailed != 'true' && '0' || steps.shellcheck.outputs.errNum }}
+          goStatus: ${{ steps.golangci-lint.outputs.isFailed != 'true' && 'false' || 'true' }}
+          cppStatus: ${{ steps.cppcheck.outputs.isFailed != 'true' && 'false' || 'true' }}
+          shellStatus: ${{ steps.shellcheck.outputs.isFailed != 'true' && 'false' || 'true' }}
+      - if: always()
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@send-data
+        with:
+          testtype: "staticCheck"
+          status: ${{ contains(fromJSON(steps.get-summary-result.outputs.summary-status), 'true') && '否' || '是' }}
+          result: ${{ steps.get-summary-result.outputs.summary-result }}
+      - if: always()
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@dbusapi-check
+        with:
+          reviewers: ckux

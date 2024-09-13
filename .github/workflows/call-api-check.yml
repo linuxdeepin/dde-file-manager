@@ -9,5 +9,22 @@ concurrency:
 
 jobs:
   api-check:
-    uses: linuxdeepin/.github/.github/workflows/api-check.yml@master
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - continue-on-error: true
+        uses: reviews-team-test/ci-check-action@api-check
+      - if: always() && hashFiles('comment.txt')
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@post-check
+        with:
+          comment-file: comment.txt
+          reviewers: ckux
+      - if: always()
+        continue-on-error: true
+        uses: reviews-team-test/ci-check-action@send-data
+        with:
+          testtype: "apiCheck"
+          status: ${{ hashFiles('comment.txt') && '否' || '是' }}
+          result: ${{ hashFiles('comment.txt') && '1' || '0' }}
+      - if: always() && hashFiles('comment.txt')
+        run: exit 1
