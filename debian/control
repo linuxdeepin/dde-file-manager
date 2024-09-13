@@ -3,7 +3,7 @@ Section: libdevel
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
 Build-Depends:
- cmake,
+ cmake1,
  doxygen,
  debhelper (>=9),
  pkg-config,
