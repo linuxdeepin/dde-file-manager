@@ -12,6 +12,8 @@
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/clipboardmonitor.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <QApplication>
 #include <QClipboard>
@@ -34,13 +36,16 @@ static QMutex clipboardFileUrlsMutex;
 static QAtomicInt remoteCurrentCount = 0;
 static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
 static std::atomic_bool canReadClipboard { true };
+static std::atomic_bool hasUosRemote{ false };
+static ClipboardMonitor * clipMonitor{ nullptr };
+static std::atomic_bool isX11{ false };
 
 static constexpr char kUserIdKey[] = "userId";
 static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
 static constexpr char kGnomeCopyKey[] = "x-special/gnome-copied-files";
 static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
 
-void onClipboardDataChanged()
+void onClipboardDataChanged(const QStringList & formats)
 {
     if (!canReadClipboard)
         return;
@@ -48,29 +53,29 @@ void onClipboardDataChanged()
     QMutexLocker lk(&clipboardFileUrlsMutex);
     clipboardFileUrls.clear();
 
-    const QMimeData *mimeData = qApp->clipboard()->mimeData();
-    if (!mimeData || mimeData->formats().isEmpty()) {
-        qCWarning(logDFMBase) << "get null mimeData from QClipBoard or remote formats is null!";
+    if (formats.isEmpty()) {
+        qCWarning(logDFMBase) << "get empty mimeData formats from QClipBoard!";
         return;
     }
-    if (mimeData->hasFormat(kRemoteCopyKey)) {
-        qCWarning(logDFMBase) << "clipboard use other !";
+
+    if (formats.contains(kRemoteCopyKey) || hasUosRemote) {
+        qCInfo(logDFMBase) << "clipboard use other !";
         clipboardAction = ClipBoard::kRemoteAction;
         remoteCurrentCount++;
         return;
     }
     // 远程协助功能
-    if (mimeData->hasFormat(kRemoteAssistanceCopyKey)) {
+    if (formats.contains(kRemoteAssistanceCopyKey)) {
         qCInfo(logDFMBase) << "Remote copy: set remote copy action";
         clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
-    // 没有文件拷贝
-    if (!mimeData->hasFormat(kGnomeCopyKey)) {
+    if (!formats.contains(kGnomeCopyKey)) {
         qCWarning(logDFMBase) << "no kGnomeCopyKey target in mimedata formats!";
         clipboardAction = ClipBoard::kUnknownAction;
         return;
     }
+    const QMimeData *mimeData = qApp->clipboard()->mimeData();
     const QString &data = mimeData->data(kGnomeCopyKey);
     const static QRegularExpression regCut("cut\nfile://"), regCopy("copy\nfile://");
     if (data.contains(regCut)) {
@@ -78,7 +83,7 @@ void onClipboardDataChanged()
     } else if (data.contains(regCopy)) {
         clipboardAction = ClipBoard::kCopyAction;
     } else {
-        qCWarning(logDFMBase) << "wrong kGnomeCopyKey data = " << data;
+        qCWarning(logDFMBase) << "wrong kGnomeCopyKey data = " << data << mimeData->formats();
         clipboardAction = ClipBoard::kUnknownAction;
     }
 
@@ -92,8 +97,15 @@ void onClipboardDataChanged()
 ClipBoard::ClipBoard(QObject *parent)
     : QObject(parent)
 {
+    init();
+}
+
+void ClipBoard::init()
+{
+    QLibrary library("libdisplayjack-clipboard.so");
+    qCritical() << library.fileName();
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this]() {
-        onClipboardDataChanged();
+        onClipboardDataChanged(qApp->clipboard()->mimeData()->formats());
         emit clipboardDataChanged();
     });
 
@@ -104,6 +116,20 @@ ClipBoard::ClipBoard(QObject *parent)
     connect(&FileManagerWindowsManager::instance(), &FileManagerWindowsManager::lastWindowClosed, this, []{
         GlobalData::canReadClipboard = false;
     });
+
+    if (!WindowUtils ::isWayLand() || !library.load())
+        return;
+
+    library.unload();
+    qCWarning(logDFMBase()) << "connect x11 clipboard changed single!!!!" ;
+    GlobalData::isX11 = true;
+    GlobalData::clipMonitor = new ClipboardMonitor;
+    connect(GlobalData::clipMonitor, &ClipboardMonitor::clipboardChanged, this, [](const QStringList & formats) {
+        qInfo() << " * Clipboard formats changed: " << formats;
+        GlobalData::hasUosRemote = formats.contains(GlobalData::kRemoteCopyKey);
+    });
+
+    GlobalData::clipMonitor->start();
 }
 
 ClipBoard *ClipBoard::instance()
@@ -311,6 +337,22 @@ void ClipBoard::replaceClipboardUrl(const QUrl &oldUrl, const QUrl &newUrl)
     clipboardUrls.replace(index, newUrl);
     setUrlsToClipboard(clipboardUrls, action);
 }
+
+void ClipBoard::readFirstClipboard()
+{
+    QStringList mime;
+    if(GlobalData::isX11) {
+        static bool first = false;
+        if (first)
+            return;
+        first = true;
+        mime = getFirstMimeTypesByX11();
+    } else {
+        mime = qApp->clipboard()->mimeData()->formats();
+    }
+
+    onClipboardDataChanged(mime);
+}
 /*!
  * \brief ClipBoard::getUrlsByX11 Use X11 to read URLs downloaded
  * remotely from the clipboard
@@ -448,7 +490,48 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     return clipboardFileUrls;
 }
 
-void ClipBoard::onClipboardDataChanged()
+QStringList ClipBoard::getFirstMimeTypesByX11()
 {
-    GlobalData::onClipboardDataChanged();
+    //使用x11创建一个窗口去阻塞获取URl
+    Display *display = XOpenDisplay(nullptr);
+    unsigned long color = BlackPixel(display, DefaultScreen(display));
+    Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 1, 1, 0, color, color);
+
+    char *result = nullptr;
+    unsigned long ressize = 0, restail = 0;
+    int resbits;
+    Atom bufid = XInternAtom(display, "CLIPBOARD", False),
+         fmtid = XInternAtom(display, "TARGETS", False),
+         propid = XInternAtom(display, "XSEL_DATA", False);
+    XEvent event;
+
+    QList<QUrl> urls;
+    QString results;
+
+    XSelectInput(display, window, PropertyChangeMask);
+    XConvertSelection(display, bufid, fmtid, propid, window, CurrentTime);
+    QList<QUrl> currentClipboardFileUrls;
+    do {
+        XNextEvent(display, &event);
+    } while (event.type != SelectionNotify || event.xselection.selection != bufid);
+
+    XGetWindowProperty(display, window, propid, 0, LONG_MAX / 4, True, AnyPropertyType,
+                       &fmtid, &resbits, &ressize, &restail, reinterpret_cast<unsigned char **>(&result));
+    QStringList formats;
+    if (resbits == 32 && ressize > 0) {
+        Atom *atoms = reinterpret_cast<Atom*>(result);
+        for (int i = 0; i < static_cast<int>(ressize); i++) {
+            formats.append(XGetAtomName(display, atoms[i]));
+        }
+        qCWarning(logDFMBase) << "first x11 read formats = " << formats;
+    }
+    XFree(result);
+    XDestroyWindow(display, window);
+    XCloseDisplay(display);
+    return formats;
+}
+
+void ClipBoard::onClipboardDataChanged(const QStringList &mimeTypes)
+{
+    GlobalData::onClipboardDataChanged(mimeTypes);
 }
