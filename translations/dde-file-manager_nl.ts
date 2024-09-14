@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/LineSearch.qml" line="23"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Zoeken</translation>
     </message>
 </context>
 <context>
@@ -1793,17 +1793,17 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="121"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Persoonlijke map</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="126"/>
         <source>Discover</source>
-        <translation type="unfinished"/>
+        <translation>Ontdekken</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="131"/>
         <source>Activity</source>
-        <translation type="unfinished"/>
+        <translation>Activiteit</translation>
     </message>
 </context>
 <context>
@@ -4205,42 +4205,42 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="304"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Naam</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="306"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Grootte</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="308"/>
         <source>Dimension</source>
-        <translation type="unfinished"/>
+        <translation>Afmetingen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="310"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Duur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="312"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="314"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Geopend op/om</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="316"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Bewerkt op/om</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="318"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Onbekend</translation>
     </message>
 </context>
 <context>
