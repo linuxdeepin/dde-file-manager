@@ -61,6 +61,7 @@ private:
 
     Lucene::DocumentPtr fileDocument(const QString &file);
     QString dealKeyword(const QString &keyword);
+    QString dealKeywordEx(const QString &keyword);
     void doIndexTask(const Lucene::IndexReaderPtr &reader, const Lucene::IndexWriterPtr &writer, const QString &path, TaskType type);
     void indexDocs(const Lucene::IndexWriterPtr &writer, const QString &file, IndexType type);
     bool checkUpdate(const Lucene::IndexReaderPtr &reader, const QString &file, IndexType &type);
