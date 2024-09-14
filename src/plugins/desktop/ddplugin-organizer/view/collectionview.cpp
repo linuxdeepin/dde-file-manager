@@ -25,6 +25,7 @@
 
 #include <DApplication>
 #include <DFileDragClient>
+#include <DGuiApplicationHelper>
 
 #include <QScrollBar>
 #include <QUrl>
@@ -581,15 +582,9 @@ bool CollectionViewPrivate::drop(QDropEvent *event)
 
 void CollectionViewPrivate::helpAction()
 {
-    class PublicApplication : public DApplication
-    {
-    public:
-        using DApplication::handleHelpAction;
-    };
-
     QString appName = qApp->applicationName();
     qApp->setApplicationName("dde");
-    reinterpret_cast<PublicApplication *>(DApplication::instance())->handleHelpAction();
+    DGuiApplicationHelper::instance()->handleHelpAction();
     qApp->setApplicationName(appName);
 }
 
