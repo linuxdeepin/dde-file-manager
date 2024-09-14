@@ -39,8 +39,8 @@ static constexpr char kSavePasswd[] { "savePasswd" };
 static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
 static constexpr char kSavedPasswordType[] { "SavedPasswordType" };
 
-static constexpr char kDaemonService[] { "org.deepin.Filemanager" };
-static constexpr char kDaemonPath[] { "/org/deepin/Filemanager" };
+static constexpr char kDaemonService[] { "org.deepin.Filemanager.MountControl" };
+static constexpr char kDaemonPath[] { "/org/deepin/Filemanager/MountControl" };
 static constexpr char kDaemonMountPath[] { "/org/deepin/Filemanager/MountControl" };
 static constexpr char kDaemonMountIface[] { "org.deepin.Filemanager.MountControl" };
 static constexpr char kDaemonIntroIface[] { "org.freedesktop.DBus.Introspectable" };
@@ -808,7 +808,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, canPowerOff, cb, media](bool allUnmounted, const OperationErrorInfo &err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                    // 'device busy' error.
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else if (canPowerOff && media != "flash_sd")   // do not detach SD driver.
@@ -892,7 +892,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() {}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 {

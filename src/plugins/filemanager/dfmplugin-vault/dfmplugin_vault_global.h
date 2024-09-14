@@ -198,7 +198,7 @@ inline constexpr char kAcEditVaultRemovePassword[] { "edit_vault_remove_password
 inline constexpr char kAcBtnVaultRemovePasswordHint[] { "btn_vault_remove_passwordHint" };
 }
 
-inline constexpr char kDeamonServiceName[] { "org.deepin.Filemanager" };
+inline constexpr char kDeamonServiceName[] { "org.deepin.Filemanager.AccessControlManager" };
 #ifdef COMPILE_ON_V23
 inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
 inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
@@ -229,7 +229,7 @@ enum class Connectivity {
     Noconnectivity,
     Portal,
     Limited,
-    Full        // 主机已连接到网络，并且似乎能够访问完整的Internet
+    Full   // 主机已连接到网络，并且似乎能够访问完整的Internet
 };
 
 inline constexpr char kVaultDConfigName[] { "org.deepin.dde.file-manager.vault" };

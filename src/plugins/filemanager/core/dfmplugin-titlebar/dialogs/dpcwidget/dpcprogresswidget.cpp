@@ -18,7 +18,7 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 
 namespace DaemonServiceIFace {
-static constexpr char kInterfaceService[] { "org.deepin.Filemanager" };
+static constexpr char kInterfaceService[] { "org.deepin.Filemanager.AccessControlManager" };
 static constexpr char kInterfacePath[] { "/org/deepin/Filemanager/AccessControlManager" };
 static constexpr char kInterfaceInterface[] { "org.deepin.Filemanager.AccessControlManager" };
 
