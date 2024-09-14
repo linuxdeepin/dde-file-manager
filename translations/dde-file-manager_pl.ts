@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/LineSearch.qml" line="23"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj</translation>
     </message>
 </context>
 <context>
@@ -1793,7 +1793,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="121"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Katalog domowy</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="126"/>
@@ -1803,7 +1803,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="131"/>
         <source>Activity</source>
-        <translation type="unfinished"/>
+        <translation>Aktywność</translation>
     </message>
 </context>
 <context>
@@ -4205,42 +4205,42 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="304"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="306"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="308"/>
         <source>Dimension</source>
-        <translation type="unfinished"/>
+        <translation>Wymiary</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="310"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Czas trwania</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="312"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Typ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="314"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Dostęp</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="316"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Modyfikacja</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="318"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Nieznany</translation>
     </message>
 </context>
 <context>
