@@ -551,6 +551,12 @@ void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &
         ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
     }
 
+    // 更新fileicon
+    if (typeAll.contains(FileInfoAttributeID::kStandardIcon)) {
+        QWriteLocker wlk(&d->iconLock);
+        d->fileIcon = QIcon();
+    }
+
     // 更新mediaInfo
     if (typeAll.contains(FileInfoAttributeID::kFileMediaInfo)) {
         typeAll.removeOne(FileInfoAttributeID::kFileMediaInfo);
