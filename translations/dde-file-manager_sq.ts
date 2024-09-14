@@ -3247,7 +3247,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="356"/>
         <source>Music preview</source>
-        <translation>Paraparje muzikore</translation>
+        <translation>Paradëgjim muzike</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="359"/>
@@ -3292,7 +3292,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="391"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Përdorni dialogun e zgjedhjes së kartelave të Përgjegjësit të Kartelave</translation>
+        <translation>Përdor dialogun e zgjedhjes së kartelave të Përgjegjësit të Kartelave</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
@@ -3330,7 +3330,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="22"/>
         <source>Select to upper row</source>
-        <translation>Përzgjidh deri rreshti i sipërm</translation>
+        <translation>Përzgjidh deri te rreshti i sipërm</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="23"/>
@@ -3475,7 +3475,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
-        <translation>Kalo në pamjen si pemë</translation>
+        <translation>Kalo te pamja si pemë</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
