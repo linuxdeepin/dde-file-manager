@@ -10,23 +10,15 @@
 #    define ORGANIZATION_NAME "deepin"
 #endif
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     // singlentan process
     PreviewSingleApplication app(argc, argv);
 
-    app.setQuitOnLastWindowClosed(false);
     app.setOrganizationName(ORGANIZATION_NAME);
     app.setApplicationName("Deepin File Preview");
     app.setApplicationVersion("v1.0");
 
-    QString uniqueKey(app.applicationName());
-    bool isSinglentanApp = app.setSingleInstance(uniqueKey);
-
-    if (isSinglentanApp) {
-        PreviewSingleApplication::processArgs(app.arguments());
-        return app.exec();
-    } else {
-        app.handleNewClient(uniqueKey);
-        return 0;
-    }
+    PreviewSingleApplication::processArgs(app.arguments());
+    return app.exec();
 }
