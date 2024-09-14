@@ -600,6 +600,9 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
         const QVariant &var = doActionMerge(fromInfo, newTargetInfo, isCountSize);
         if (var.isValid())
             return var.toBool() ? newTargetInfo : nullptr;
+        newTargetInfo->initQuerier();
+        if (jobType == AbstractJobHandler::JobType::kCutType && newTargetInfo)
+            isCutMerge = true;
         break;
     }
     case AbstractJobHandler::SupportAction::kSkipAction: {
@@ -722,6 +725,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
 
         const QUrl &url = iterator->next();
         DFileInfoPointer info(new DFileInfo(url));
+        info->initQuerier();
         bool ok = doCopyFile(info, toInfo, skip);
         if (!ok && (!skip || !*skip)) {
             return false;
