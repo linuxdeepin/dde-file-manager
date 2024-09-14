@@ -7,12 +7,12 @@
 
 #include "service_mountcontrol_global.h"
 
+#include "mountcontroladaptor.h"
 #include "mounthelpers/abstractmounthelper.h"
 
 #include <QString>
 #include <QVariantMap>
 
-class MountControlAdapter;
 class MountControlDBus;
 
 SERVICEMOUNTCONTROL_BEGIN_NAMESPACE
@@ -38,7 +38,8 @@ private:
 private:
     QMap<QString, AbstractMountHelper *> mountHelpers;
     MountControlDBus *q { nullptr };
-    MountControlAdapter *adapter { nullptr };
+    MountControlAdaptor *adapter { nullptr };
+    QStringList supportedFS;
 };
 
 SERVICEMOUNTCONTROL_END_NAMESPACE

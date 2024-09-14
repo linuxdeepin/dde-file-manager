@@ -15,6 +15,8 @@
 #include <QRegularExpression>
 #include <QUrl>
 
+#include <DConfig>
+
 #include <polkit-qt5-1/PolkitQt1/Authority>
 #include <sys/mount.h>
 #include <sys/stat.h>
@@ -28,7 +30,7 @@
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE
 
-static constexpr char kPolicyKitActionId[] { "org.deepin.Filemanager.MountController" };
+static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
 
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
     : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
@@ -290,50 +292,75 @@ uint CifsMountHelper::invokerUid()
 
 std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
 {
-    QString param;
+    QStringList params;
     using namespace MountOptionsField;
 
-    if (opts.contains(kUser) && opts.contains(kPasswd) && !opts.value(kUser).toString().isEmpty()
+    if (opts.contains(kUser) && opts.contains(kPasswd)
+        && !opts.value(kUser).toString().isEmpty()
         && !opts.value(kPasswd).toString().isEmpty()) {
         const QString &user = opts.value(kUser).toString();
         const QString &passwd = opts.value(kPasswd).toString();
-        param += QString("user=%1,pass=%2,").arg(user).arg(decryptPasswd(passwd));
+        params.append(QString("user=%1").arg(user));
+        params.append(QString("pass=%1").arg(decryptPasswd(passwd)));
     } else {
-        param += "user=,";   // user is necessary even for anonymous mount
+        params.append("user=");
     }
 
     if (opts.contains(kDomain) && !opts.value(kDomain).toString().isEmpty())
-        param += QString("dom=%1,").arg(opts.value(kDomain).toString());
+        params.append(QString("dom=%1").arg(opts.value(kDomain).toString()));
 
     if (opts.value(kPort, -1).toInt() != -1)
-        param += QString("port=%1,").arg(opts.value(kPort).toInt());
-
-    // this param is supported by cifs only.
-    if (opts.contains(kTimeout)) {
-        param += QString("echo_interval=1,");
-        if (opts.contains(kTryWaitReconn))
-            param += QString("wait_reconnect_timeout=%1,").arg(/*opts.value(kTimeout).toString()*/ 1);   // w_r_t = ?? s
-        else
-            param += QString("handletimeout=%1,").arg(opts.value(kTimeout).toInt() * 1000);   // handletimeout = ?? ms
-    }
+        params.append(QString("port=%1").arg(opts.value(kPort).toInt()));
 
     if (opts.contains(kIp))
-        param += QString("ip=%1,").arg(opts.value(kIp).toString());
+        params.append(QString("ip=%1").arg(opts.value(kIp).toString()));
 
     auto user = getpwuid(invokerUid());
     if (user) {
-        param += QString("uid=%1,").arg(user->pw_uid);
-        param += QString("gid=%1,").arg(user->pw_gid);
+        params.append(QString("uid=%1").arg(user->pw_uid));
+        params.append(QString("gid=%1").arg(user->pw_gid));
     }
-    param += "iocharset=utf8";
-    param += ",actimeo=5";   // bug 211337
 
-    if (opts.contains(MountOptionsField::kVersion))
-        param += QString(",vers=%1").arg(opts.value(MountOptionsField::kVersion).toString());
-    else
-        param += ",vers=default";
+    // params below can be override >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    auto overrides = overrideOptions();
 
-    return param.toStdString();
+    if (opts.contains(kTimeout)) {
+        params.append(option("echo_interval", overrides, "1"));
+        if (opts.contains(kTryWaitReconn))
+            params.append(option("wait_reconnect_timeout", overrides, "1" /*opts.value(kTimeout).toString()*/));   // w_r_t = ?? s
+        else
+            params.append(option("handletimeout", overrides, QString::number(opts.value(kTimeout).toInt() * 1000)));   // handletimeout = ?? ms
+    }
+
+    params.append(option("iocharset", overrides, "utf8"));
+    params.append(option("actimeo", overrides, "5"));   // bug 211337
+
+    QString version = opts.value(MountOptionsField::kVersion, "default").toString();
+    params.append(option("vers", overrides, version));
+
+    return params.join(",").toStdString();
+}
+
+QVariantMap CifsMountHelper::overrideOptions()
+{
+    auto config = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
+                                             "org.deepin.dde.file-manager.mount");
+    if (!config)
+        return {};
+    auto overrides = config->value("cifsMountOptionOverride", "{}").toMap();
+    config->deleteLater();
+    fmInfo() << "override configs:" << overrides;
+    return overrides;
+}
+
+QString CifsMountHelper::option(const QString &key, const QVariantMap &override, const QString &def)
+{
+    QString val = def;
+    if (override.contains(key)) {
+        val = override.value(key).toString();
+        fmInfo() << key << "is override with" << val << "while default is" << def;
+    }
+    return QString("%1=%2").arg(key).arg(val);
 }
 
 bool CifsMountHelper::checkAuth()

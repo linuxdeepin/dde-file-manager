@@ -4,12 +4,13 @@
 
 #include "mountcontroldbus.h"
 #include "private/mountcontroldbus_p.h"
-#include "private/mountcontrol_adapter.h"
 #include "mounthelpers/cifsmounthelper.h"
 #include "mounthelpers/dlnfsmounthelper.h"
 #include "mounthelpers/commonmounthelper.h"
 
 #include <QFile>
+
+#include <DConfig>
 
 static constexpr char kMountControlObjPath[] { "/org/deepin/Filemanager/MountControl" };
 
@@ -75,17 +76,33 @@ QVariantMap MountControlDBus::Unmount(const QString &path, const QVariantMap &op
                  { kErrorMessage, "current fsType is not supported" } };
 }
 
+QStringList MountControlDBus::SupportedFileSystems()
+{
+    // handle method call com.deepin.filemanager.daemon.MountControl.SupportedFileSystems
+    return d->supportedFS;
+}
+
 MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)
-    : q(qq), adapter(new MountControlAdapter(qq))
+    : q(qq), adapter(new MountControlAdaptor(qq))
 {
     CifsMountHelper *cifsHelper = new CifsMountHelper(qq);
     DlnfsMountHelper *dlnfsHelper = new DlnfsMountHelper(qq);
     CommonMountHelper *commonHelper = new CommonMountHelper(qq);
 
     cifsHelper->cleanMountPoint();
-    mountHelpers.insert(MountFstypeSupportedField::kCifs, cifsHelper);
     mountHelpers.insert(MountFstypeSupportedField::kDlnFs, dlnfsHelper);
+    supportedFS.append(MountFstypeSupportedField::kDlnFs);
     mountHelpers.insert(MountFstypeSupportedField::kCommon, commonHelper);
+
+    auto config = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
+                                             "org.deepin.dde.file-manager.mount");
+    if (!config || !config->value("enableCifsMount").toBool()) {
+        fmInfo() << "cannot create config object or cifs mount disabled." << config;
+        return;
+    }
+    mountHelpers.insert(MountFstypeSupportedField::kCifs, cifsHelper);
+    supportedFS.append(MountFstypeSupportedField::kCifs);
+    config->deleteLater();
 }
 
 MountControlDBusPrivate::~MountControlDBusPrivate()

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(dde-filemanager-mountcontrol)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(MountControl_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.MountControl.xml)
 
 FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -15,9 +16,19 @@ FILE(GLOB FILEOPERATIONS_FILES
     )
 
 find_package(PkgConfig REQUIRED)
+find_package(Qt5 COMPONENTS Core DBus REQUIRED)
 pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1)
 pkg_check_modules(PolkitQt5 REQUIRED polkit-qt5-1)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
+
+# qt5_generate_dbus_interface(
+#    mountcontroldbus.h
+#    ${MountControl_XML}
+#    OPTIONS -M -S
+# )
+
+qt5_add_dbus_adaptor(FILEOPERATIONS_FILES ${MountControl_XML}
+    mountcontroldbus.h MountControlDBus)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -32,8 +43,9 @@ find_package(Qt5 COMPONENTS
 )
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
+    Qt5::Core
     Qt5::DBus
+    DFM::base
     ${PolkitAgent_LIBRARIES}
     ${PolkitQt5_LIBRARIES}
     PkgConfig::mount

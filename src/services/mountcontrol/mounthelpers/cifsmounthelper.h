@@ -35,6 +35,8 @@ private:
     QString decryptPasswd(const QString &passwd);
     uint invokerUid();
     std::string convertArgs(const QVariantMap &opts);
+    QVariantMap overrideOptions();
+    QString option(const QString &key, const QVariantMap &override, const QString &def = QString());
     bool checkAuth();
     bool mkdir(const QString &path);
     bool rmdir(const QString &path);
