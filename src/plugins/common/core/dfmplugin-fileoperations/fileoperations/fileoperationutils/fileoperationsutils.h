@@ -78,6 +78,8 @@ private:
     static bool blockSync();
     static QUrl parentUrl(const QUrl &url);
     static bool canBroadcastPaste();
+    static qint64 getSysFreeMem();
+    static qint64 transMem(const QString &mem);
 
 private:
     static QSet<QString> fileNameUsing;

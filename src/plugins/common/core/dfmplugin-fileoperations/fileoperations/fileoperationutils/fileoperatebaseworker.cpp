@@ -636,7 +636,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
         while (bigFileCopy && !isStopped()) {
             QThread::msleep(10);
         }
-        if (fromSize > bigFileSize) {
+        if (fromSize > bigFileSize && curMemAvail > fromSize * 2) {
             bigFileCopy = true;
             auto result = doCopyLocalBigFile(fromInfo, toInfo, skip);
             bigFileCopy = false;
@@ -1369,6 +1369,9 @@ void FileOperateBaseWorker::determineCountProcessType()
                     fmWarning("Failed on exec lsblk command, exit code: %d, error message: \"%s\"", process.exitCode(), process.readAllStandardError().constData());
                 }
             }
+        } else {
+            curMemAvail = FileOperationsUtils::getSysFreeMem();
+            fmWarning("current memory available size = %lld", curMemAvail);
         }
         fmDebug("targetIsRemovable = %d", bool(targetIsRemovable));
     }
