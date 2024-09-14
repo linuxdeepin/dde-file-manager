@@ -11,8 +11,11 @@
 
 #include <dfm-io/dfmio_utils.h>
 
-#include <QGSettings>
 #include <QDebug>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QGSettings>
+#endif
 
 namespace dfmplugin_menu {
 namespace Helper {
@@ -66,6 +69,7 @@ bool isHiddenMenu(const QString &app)
 
 bool isHiddenDesktopMenu()
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     // the gsetting control is higher than json profile. it doesn't check json profile if there is gsetting value.
     if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.desktop")) {
         QGSettings set("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
@@ -73,6 +77,7 @@ bool isHiddenDesktopMenu()
         if (var.isValid())
             return !var.toBool();
     }
+#endif
 
     return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
 }

@@ -92,7 +92,7 @@ void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
             }
         } else {
             fmWarning() << "there were no model and selection model.";
-            pasteFileData = files.toSet();
+            pasteFileData = QSet<QUrl>(files.begin(), files.end());
         }
         emit q->filePastedCallback();
     }

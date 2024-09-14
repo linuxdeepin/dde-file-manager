@@ -170,7 +170,6 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
         }
     }
 
-
     // 插入到主和副的所有缓存中
     d->status = kCacheCopy;
     {
@@ -348,12 +347,12 @@ void InfoCache::timeRemoveCache()
     // 取出哪些url的时间超出了u
     qint64 delCount = d->urlTimeSortHash.size() < kCacheFileinfoCount ? 0 : d->urlTimeSortHash.size() - kCacheFileinfoCount;
     QList<QUrl> delList;
-    foreach (const auto time, d->timeToUrlMap.uniqueKeys()) {
+    foreach (const auto time, d->timeToUrlMap.keys()) {
         if (d->cacheWorkerStoped)
             return;
 
         if (time < QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch() - kCacheRemoveTime)) {
-            delList.append(d->timeToUrlMap.values(time));
+            delList.append(d->timeToUrlMap.value(time));
             continue;
         }
 
@@ -361,7 +360,7 @@ void InfoCache::timeRemoveCache()
             break;
         }
 
-        delList.append(d->timeToUrlMap.values(time));
+        delList.append(d->timeToUrlMap.value(time));
     }
     for (auto url : delList) {
         if (d->urlTimeSortHash.contains(url)) {

@@ -11,15 +11,19 @@
 #include <QSplitterHandle>
 
 namespace dfmbase {
-class SplitterHandle: public QSplitterHandle
+class SplitterHandle : public QSplitterHandle
 {
     Q_OBJECT
 public:
-    explicit SplitterHandle(Qt::Orientation orientation, QSplitter* parent);
+    explicit SplitterHandle(Qt::Orientation orientation, QSplitter *parent);
 
 protected:
-    void enterEvent(QEvent*) override;
-    void leaveEvent(QEvent*) override;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    void enterEvent(QEnterEvent *) override;
+#else
+    void enterEvent(QEvent *) override;
+#endif
+    void leaveEvent(QEvent *) override;
 };
 
 // ---------- Item Get Border Line ----------
@@ -32,8 +36,8 @@ public:
     void moveSplitter(int pos, int index);
 
 protected:
-    QSplitterHandle* createHandle() override;
+    QSplitterHandle *createHandle() override;
 };
 }
 
-#endif // Splitter_H
+#endif   // Splitter_H

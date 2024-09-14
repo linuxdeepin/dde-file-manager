@@ -6,8 +6,10 @@
 #define FILETAGCACHE_P_H
 
 #include "utils/filetagcache.h"
+
 #include <QReadWriteLock>
 #include <QMutex>
+#include <QHash>
 
 namespace dfmplugin_tag {
 class FileTagCachePrivate

@@ -97,8 +97,8 @@ void DoCopyFileWorker::doMemcpyLocalBigFile(const DFileInfoPointer fromInfo, con
             if (!memcpy(destStart, sourceStart, everyCopySize)) {
                 auto lastError = strerror(errno);
                 fmWarning() << "file memcpy error, url from: " << fromInfo->uri()
-                           << " url to: " << toInfo->uri()
-                           << " error code: " << errno << " error msg: " << lastError;
+                            << " url to: " << toInfo->uri()
+                            << " error code: " << errno << " error msg: " << lastError;
 
                 action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                               AbstractJobHandler::JobErrorType::kWriteError,
@@ -139,15 +139,15 @@ bool DoCopyFileWorker::doDfmioFileCopy(const DFileInfoPointer fromInfo,
         return false;
     // emit current task url
     auto fromUrl = fromInfo->uri();
-    auto toUrl =  toInfo->uri();
+    auto toUrl = toInfo->uri();
     emit currentTask(fromUrl, toUrl);
     // 创建doperator类
-    QSharedPointer<dfmio::DOperator> op{new dfmio::DOperator(fromUrl)};
+    QSharedPointer<dfmio::DOperator> op { new dfmio::DOperator(fromUrl) };
     fileOps.appendByLock(op);
-    ProgressData *data {new ProgressData()};
+    ProgressData *data { new ProgressData() };
     data->data = workData;
     data->copyFile = fromUrl;
-    bool ret{ false };
+    bool ret { false };
 
     DFile::CopyFlags flag = DFile::CopyFlag::kNoFollowSymlinks | DFile::CopyFlag::kOverwrite;
     if (!DeviceUtils::supportSetPermissionsDevice(toUrl))
@@ -159,8 +159,8 @@ bool DoCopyFileWorker::doDfmioFileCopy(const DFileInfoPointer fromInfo,
         if (!ret) {
             auto lastError = op->lastError().errorMsg();
             fmWarning() << "file copy error, url from: " << fromUrl
-                       << " url to: " << toUrl
-                       << " error code: " << op->lastError().code() << " error msg: " << lastError;
+                        << " url to: " << toUrl
+                        << " error code: " << op->lastError().code() << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromUrl, toUrl,
                                           AbstractJobHandler::JobErrorType::kDfmIoError, false, lastError);
@@ -349,16 +349,14 @@ AbstractJobHandler::SupportAction DoCopyFileWorker::doHandleErrorAndWait(const Q
 
     bool isSame = false, checkAgain = true;
     if (urlFrom.scheme() == Global::Scheme::kFile
-            &&  urlFrom.scheme() == Global::Scheme::kFile) {
+        && urlFrom.scheme() == Global::Scheme::kFile) {
         auto tmF = FileUtils::bindUrlTransform(urlFrom);
         auto tmT = FileUtils::bindUrlTransform(urlTo);
         isSame = UniversalUtils::urlEquals(tmF, tmT);
         checkAgain = false;
     }
 
-    if (isSame || (checkAgain &&
-                   FileUtils::isSameFile(urlFrom, urlTo,
-                                         Global::CreateFileInfoType::kCreateFileInfoSync))) {
+    if (isSame || (checkAgain && FileUtils::isSameFile(urlFrom, urlTo, Global::CreateFileInfoType::kCreateFileInfoSync))) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
         return currentAction;
     }
@@ -491,8 +489,8 @@ bool DoCopyFileWorker::openFile(const DFileInfoPointer &fromInfo, const DFileInf
         if (!file->open(flags)) {
             auto lastError = file->lastError();
             fmWarning() << "file open error, url from: " << fromInfo->uri()
-                       << " url to: " << toInfo->uri() << " open flag: " << flags
-                       << " error code: " << lastError.code() << " error msg: " << lastError.errorMsg();
+                        << " url to: " << toInfo->uri() << " open flag: " << flags
+                        << " error code: " << lastError.code() << " error msg: " << lastError.errorMsg();
 
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kOpenError,
@@ -584,14 +582,13 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doReadFile(const DFileInfoPointer &fr
                     if (!NetworkUtils::instance()->checkFtpOrSmbBusy(fromInfo->uri())) {
                         break;
                     }
-                    actionForCheck
-                            = doHandleErrorAndWait(
-                                fromInfo->uri(),
-                                toInfo->uri(),
-                                AbstractJobHandler::JobErrorType::kCanNotAccessFile,
-                                true,
-                                "Can't access file!");
-                } while(actionForCheck == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+                    actionForCheck = doHandleErrorAndWait(
+                            fromInfo->uri(),
+                            toInfo->uri(),
+                            AbstractJobHandler::JobErrorType::kCanNotAccessFile,
+                            true,
+                            "Can't access file!");
+                } while (actionForCheck == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
                 if (actionForCheck != AbstractJobHandler::SupportAction::kNoAction) {
                     if (skip)
                         *skip = actionForCheck == AbstractJobHandler::SupportAction::kSkipAction;
@@ -662,7 +659,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
                                               toDevice->lastError().errorMsg());
         if (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction && !isStopped()) {
             qint64 curWrite = 0;
-            auto nextDo = doWriteFileErrorRetry(fromInfo,toInfo, toDevice, fromDevice, readSize, skip, currentPos, surplusSize, curWrite);
+            auto nextDo = doWriteFileErrorRetry(fromInfo, toInfo, toDevice, fromDevice, readSize, skip, currentPos, surplusSize, curWrite);
             checkRetry();
             return nextDo;
         }
@@ -670,33 +667,32 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
 
     checkRetry();
 
-    if (!actionOperating(actionForWrite, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()
-                         - (currentPos + readSize - surplusSize), skip))
-        return  NextDo::kDoCopyErrorAddCancel;
+    if (!actionOperating(actionForWrite, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() - (currentPos + readSize - surplusSize), skip))
+        return NextDo::kDoCopyErrorAddCancel;
 
     if (workData->needSyncEveryRW && sizeWrite > 0) {
         if (workData->isFsTypeVfat) {
             // FAT and VFAT file systems ignore the "sync" option
             toDevice->close();
             if (!openFile(fromInfo, toInfo, toDevice, DFMIO::DFile::OpenFlag::kWriteOnly | DFMIO::DFile::OpenFlag::kAppend, skip)) {
-                return  NextDo::kDoCopyErrorAddCancel;
+                return NextDo::kDoCopyErrorAddCancel;
             }
         } else {
             toDevice->flush();
         }
     }
 
-    return  NextDo::kDoCopyCurrentFile;
+    return NextDo::kDoCopyCurrentFile;
 }
 
 DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFileErrorRetry(const DFileInfoPointer &fromInfo,
-                                                            const DFileInfoPointer &toInfo,
-                                                            const QSharedPointer<DFile> &toDevice,
-                                                            const QSharedPointer<DFile> &fromDevice,
-                                                            const qint64 readSize,
-                                                            bool *skip,
-                                                            const qint64 currentPos,
-                                                            const qint64 &surplusSize, qint64 &curWrite)
+                                                                 const DFileInfoPointer &toInfo,
+                                                                 const QSharedPointer<DFile> &toDevice,
+                                                                 const QSharedPointer<DFile> &fromDevice,
+                                                                 const qint64 readSize,
+                                                                 bool *skip,
+                                                                 const qint64 currentPos,
+                                                                 const qint64 &surplusSize, qint64 &curWrite)
 {
     Q_UNUSED(toDevice);
     Q_UNUSED(fromDevice);
@@ -708,17 +704,15 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFileErrorRetry(const DFileInfo
         if (!NetworkUtils::instance()->checkFtpOrSmbBusy(toInfo->uri())) {
             break;
         }
-        actionForWrite
-                = doHandleErrorAndWait(
-                    fromInfo->uri(),
-                    toInfo->uri(),
-                    AbstractJobHandler::JobErrorType::kCanNotAccessFile,
-                    true,
-                    "Can't access file!");
-    } while(actionForWrite == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+        actionForWrite = doHandleErrorAndWait(
+                fromInfo->uri(),
+                toInfo->uri(),
+                AbstractJobHandler::JobErrorType::kCanNotAccessFile,
+                true,
+                "Can't access file!");
+    } while (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
     if (actionForWrite != AbstractJobHandler::SupportAction::kNoAction) {
-        actionOperating(actionForWrite, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()
-                        - (currentPos + readSize - surplusSize), skip);
+        actionOperating(actionForWrite, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() - (currentPos + readSize - surplusSize), skip);
         return NextDo::kDoCopyErrorAddCancel;
     }
 
@@ -733,7 +727,7 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
     if (!workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))
         return true;
     char *data = new char[static_cast<uint>(blockSize + 1)];
-    QTime t;
+    QElapsedTimer t;
     ulong targetCheckSum = adler32(0L, nullptr, 0);
     Q_FOREVER {
         qint64 size = toDevice->read(data, blockSize);

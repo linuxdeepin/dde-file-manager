@@ -10,8 +10,6 @@
 #include <QObject>
 #include <QHash>
 
-class QGSettings;
-
 namespace ddplugin_canvas {
 
 class FileFilter
@@ -25,6 +23,7 @@ public:
     virtual bool fileCreatedFilter(const QUrl &url);
     virtual bool fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl);
     virtual bool fileUpdatedFilter(const QUrl &url);
+
 protected:
 };
 
@@ -35,9 +34,11 @@ class RedundantUpdateFilter : public QObject, public FileFilter
 public:
     explicit RedundantUpdateFilter(FileProvider *parent);
     bool fileUpdatedFilter(const QUrl &url) override;
+
 protected:
     void checkUpdate();
     void timerEvent(QTimerEvent *event) override;
+
 protected:
     FileProvider *provider = nullptr;
     QHash<QUrl, int> updateList;
@@ -46,4 +47,4 @@ protected:
 
 }
 
-#endif // FILEFILTER_H
+#endif   // FILEFILTER_H

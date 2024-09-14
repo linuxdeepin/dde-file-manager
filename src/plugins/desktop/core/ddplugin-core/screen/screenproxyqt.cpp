@@ -275,7 +275,7 @@ bool ScreenProxyQt::checkUsedScreens()
 
     QStringList scs;
     dpfHookSequence->run("ddplugin_core", "hook_ScreenProxy_ScreensInUse", &scs);
-    auto inuse = scs.toSet();
+    QSet<QString> inuse(scs.begin(), scs.end());
     fmInfo() << "current screens" << cur << "used" << inuse;
 
     bool invaild = false;

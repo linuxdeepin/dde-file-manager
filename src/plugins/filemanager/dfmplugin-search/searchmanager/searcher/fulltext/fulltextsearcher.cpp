@@ -114,7 +114,8 @@ void FullTextSearcherPrivate::doIndexTask(const IndexReaderPtr &reader, const In
         if (is_dir) {
             doIndexTask(reader, writer, fn, type);
         } else {
-            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(fn));
+            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(fn),
+                                                      Global::CreateFileInfoType::kCreateFileInfoSync);
             if (!info) continue;
 
             QString suffix = info->nameOf(NameInfoType::kSuffix);
@@ -196,7 +197,8 @@ bool FullTextSearcherPrivate::checkUpdate(const IndexReaderPtr &reader, const QS
             return true;
         } else {
             DocumentPtr doc = searcher->doc(topDocs->scoreDocs[0]->doc);
-            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file));
+            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file),
+                                                      Global::CreateFileInfoType::kCreateFileInfoSync);
             if (!info)
                 return false;
 
@@ -236,7 +238,8 @@ DocumentPtr FullTextSearcherPrivate::fileDocument(const QString &file)
     doc->add(newLucene<Field>(L"path", file.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file last modified time
-    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file));
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file),
+                                              Global::CreateFileInfoType::kCreateFileInfoSync);
     const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
     const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
     doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
@@ -355,7 +358,8 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
 
             if (!resultPath.empty()) {
                 const QUrl &url = QUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str());
-                auto info = InfoFactory::create<FileInfo>(url);
+                auto info = InfoFactory::create<FileInfo>(url,
+                                                          Global::CreateFileInfoType::kCreateFileInfoSync);
                 // delete invalid index
                 if (!info || !info->exists()) {
                     indexDocs(writer, url.path(), kDeleteIndex);

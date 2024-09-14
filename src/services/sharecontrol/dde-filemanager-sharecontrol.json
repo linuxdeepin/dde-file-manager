@@ -1,0 +1,13 @@
+{
+    "name": "org.deepin.Filemanager.UserShareManager",
+    "libPath": "libdde-filemanager-sharecontrol.so",
+    "group": "app",
+    "policyStartType": "OnDemand",
+    "pluginType": "qt",
+    "idleTime": 1,
+    "policy": [
+        {
+            "path": "org/deepin/Filemanager/UserShareManager"
+        }
+    ]
+}

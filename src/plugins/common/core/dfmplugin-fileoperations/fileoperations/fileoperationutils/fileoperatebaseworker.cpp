@@ -81,7 +81,8 @@ void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
     }
 
     qint64 speed = currentState == AbstractJobHandler::JobState::kRunningState
-            ? writSize * 1000 / (elTime) : 0;
+            ? writSize * 1000 / (elTime)
+            : 0;
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateKey, QVariant::fromValue(currentState));
     info->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, QVariant::fromValue(speed));
@@ -368,7 +369,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
         if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
             do {
                 nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
-            } while( nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
+            } while (nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
             ok = nextDo != DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
         } else {
             ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
@@ -444,7 +445,8 @@ DFileInfoPointer FileOperateBaseWorker::doCheckFile(const DFileInfoPointer &from
         setSkipValue(skip, action);
         if (skip && *skip)
             workData->skipWriteSize += fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0
-                    ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+                    ? workData->dirSize
+                    : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
 
         return nullptr;
     }
@@ -542,7 +544,7 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
                                                        bool isCountSize)
 {
     auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
-    DFileInfoPointer newTargetInfo { new DFileInfo(newTargetUrl)};
+    DFileInfoPointer newTargetInfo { new DFileInfo(newTargetUrl) };
     newTargetInfo->initQuerier();
     if (!newTargetInfo->exists())
         return newTargetInfo;
@@ -555,9 +557,10 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
             setSkipValue(skip, action);
             if (skip && *skip)
                 workData->skipWriteSize += isCountSize
-                        && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
-                            || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0)
-                        ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+                                && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+                                    || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0)
+                        ? workData->dirSize
+                        : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
             return nullptr;
         }
 
@@ -565,9 +568,10 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
             setSkipValue(skip, action);
             if (skip && *skip)
                 workData->skipWriteSize += isCountSize
-                        && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
-                            || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0)
-                        ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+                                && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
+                                    || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0)
+                        ? workData->dirSize
+                        : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
             return nullptr;
         }
     };
@@ -592,10 +596,9 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
         break;
     }
     case AbstractJobHandler::SupportAction::kSkipAction: {
-        workData->skipWriteSize += (isCountSize &&
-                                    (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
-                                     || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0))
-                ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+        workData->skipWriteSize += (isCountSize && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool() || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0))
+                ? workData->dirSize
+                : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
         setSkipValue(skip, action);
         return nullptr;
     }
@@ -663,10 +666,10 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
                 break;
             // 特殊处理
             auto errstr = localFileHandler->errorString();
-            auto fileUrl= toInfo->uri();
+            auto fileUrl = toInfo->uri();
             if (localFileHandler->errorCode() == DFMIOErrorCode::DFM_IO_ERROR_FAILED
-                    && fileUrl.path().toLocal8Bit().size() > 255
-                    && FileUtils::isMtpFile(fileUrl))
+                && fileUrl.path().toLocal8Bit().size() > 255
+                && FileUtils::isMtpFile(fileUrl))
                 errstr = tr("The file name or the path is too long!");
 
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
@@ -724,7 +727,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
             }
 
             if (info->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
-                    || info->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()) {
+                || info->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()) {
                 cutAndDeleteFiles.append(info);
             } else if (self && !cutAndDeleteFiles.contains(info)) {
                 self = false;
@@ -871,9 +874,15 @@ bool FileOperateBaseWorker::doCopyLocalFile(const DFileInfoPointer fromInfo, con
     if (!stateCheck())
         return false;
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QtConcurrent::run(threadPool.data(), threadCopyWorker[threadCopyFileCount % threadCount].data(),
                       static_cast<void (DoCopyFileWorker::*)(const DFileInfoPointer, const DFileInfoPointer)>(&DoCopyFileWorker::doFileCopy),
                       fromInfo, toInfo);
+#else
+    QtConcurrent::run(threadPool.data(), [this, fromInfo, toInfo]() {
+        threadCopyWorker[threadCopyFileCount % threadCount]->doFileCopy(fromInfo, toInfo);
+    });
+#endif
 
     threadCopyFileCount++;
     return true;
@@ -987,11 +996,17 @@ void FileOperateBaseWorker::memcpyLocalBigFile(const DFileInfoPointer fromInfo, 
         char *tempfFromPointStart = fromPointStart;
         char *tempfToPointStart = toPointStart;
         size_t tempOffet = static_cast<size_t>(offset);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         QtConcurrent::run(threadPool.data(), threadCopyWorker[i].data(),
                           static_cast<void (DoCopyFileWorker::*)(const DFileInfoPointer fromInfo,
                                                                  const DFileInfoPointer toInfo,
                                                                  char *dest, char *source, size_t size)>(&DoCopyFileWorker::doMemcpyLocalBigFile),
                           fromInfo, toInfo, tempfToPointStart, tempfFromPointStart, tempOffet);
+#else
+        QtConcurrent::run(threadPool.data(), [this, i, fromInfo, toInfo, tempfToPointStart, tempfFromPointStart, tempOffet]() {
+            threadCopyWorker[i]->doMemcpyLocalBigFile(fromInfo, toInfo, tempfToPointStart, tempfFromPointStart, tempOffet);
+        });
+#endif
 
         fromPointStart += offset;
         toPointStart += offset;
@@ -1053,7 +1068,7 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
     if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
         do {
             nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
-        } while( nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
+        } while (nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
         ok = nextDo != DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
     } else {
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
@@ -1113,10 +1128,9 @@ QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const DFileInfoPointer &from
 
     const QUrl &newTargetUrl = newTargetInfo->uri();
     if (newTargetUrl == fromInfo->uri()) {
-        workData->skipWriteSize += (isCountSize &&
-                                    (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
-                                     || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0))
-                ? workData->dirSize : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+        workData->skipWriteSize += (isCountSize && (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool() || fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() <= 0))
+                ? workData->dirSize
+                : fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
         return true;
     }
 
@@ -1172,9 +1186,8 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
         result = createSystemLink(fromInfo, newTargetInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (result)
             workData->zeroOrlinkOrDirWriteSize +=
-                    (newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() > 0 ?
-                         newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()
-                       : FileUtils::getMemoryPageSize());
+                    (newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() > 0 ? newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()
+                                                                                                      : FileUtils::getMemoryPageSize());
     } else if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
         if (result || skip)
@@ -1182,6 +1195,10 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
+
+    if (result)
+        dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Add",
+                                     newTargetInfo->uri());
 
     if (targetInfo == toInfo) {
         completeSourceFiles.append(fromInfo->uri());

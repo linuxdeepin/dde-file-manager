@@ -31,7 +31,7 @@ enum class DirOpenMode : uint8_t {
     kOpenInCurrentWindow,
     kOpenNewWindow,
     kAwaysInCurrentWindow,
-    //kForceOpenNewWindow // Todo(yanghao): ???
+    // kForceOpenNewWindow // Todo(yanghao): ???
 };
 
 // view defines
@@ -82,6 +82,8 @@ inline constexpr int kTreeItemIndent { 17 };
 inline constexpr int kTreeExpandArrowWidth { 20 };
 inline constexpr int kTreeExpandArrowHeight { 20 };
 inline constexpr int kTreeArrowAndIconDistance { 8 };
+inline constexpr int kViewAnimationDuration { 366 };
+inline constexpr int kViewAnimationFrameDuration { 16 };
 
 // tab defines
 inline constexpr int kMaxTabCount { 8 };
@@ -129,6 +131,7 @@ inline constexpr char kAcViewTabBarBottomLine[] { "bottom_line" };
 
 namespace DConfigInfo {
 inline constexpr char kConfName[] { "org.deepin.dde.file-manager.preview" };
+inline constexpr char kRemoteThumbnailKey[] { "remoteThumbnailEnable" };
 inline constexpr char kMtpThumbnailKey[] { "mtpThumbnailEnable" };
 }
 

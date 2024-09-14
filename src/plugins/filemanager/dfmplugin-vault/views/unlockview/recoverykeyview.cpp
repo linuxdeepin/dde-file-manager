@@ -36,7 +36,7 @@ RecoveryKeyView::RecoveryKeyView(QWidget *parent)
 
     //! 布局
     QVBoxLayout *mainLayout = new QVBoxLayout();
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(recoveryKeyEdit);
     setLayout(mainLayout);
 
@@ -177,13 +177,16 @@ void RecoveryKeyView::recoveryKeyChanged()
     }
 
     //! 限制密钥输入框只能输入数字、字母、以及+/-
-    QRegExp rx("[a-zA-Z0-9-+/]+");
-    QString res("");
+    QRegularExpression rx("[a-zA-Z0-9-+/]+");
+    QString res;
+    QRegularExpressionMatch match;
     int pos = 0;
-    while ((pos = rx.indexIn(key, pos)) != -1) {
-        res += rx.cap(0);
-        pos += rx.matchedLength();
+
+    while ((match = rx.match(key, pos)).hasMatch()) {
+        res += match.captured(0);
+        pos = match.capturedEnd();
     }
+
     key = res;
 
     recoveryKeyEdit->blockSignals(true);

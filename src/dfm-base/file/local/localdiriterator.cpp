@@ -156,7 +156,7 @@ QString LocalDirIterator::fileName() const
     if (path.isEmpty())
         return QString();
 
-    path = path.replace(QRegExp("/*/"), "/");
+    path = path.replace(QRegularExpression("/*/"), "/");
     if (path == "/")
         return QString();
 
@@ -280,7 +280,6 @@ QList<FileInfoPointer> LocalDirIterator::fileInfos() const
         return {};
     return d->fileInfos();
 }
-
 
 void LocalDirIterator::setQueryAttributes(const QString &attributes)
 {

@@ -7,9 +7,12 @@
 
 #include <dfm-base/dfm_menu_defines.h>
 
-#include <QGSettings>
 #include <QMenu>
 #include <QDebug>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QGSettings>
+#endif
 
 DPMENU_USE_NAMESPACE
 
@@ -19,15 +22,13 @@ AbstractMenuScene *ActionIconMenuCreator::create()
 }
 
 ActionIconMenuScenePrivate::ActionIconMenuScenePrivate(ActionIconMenuScene *qq)
-    :AbstractMenuScenePrivate(qq)
+    : AbstractMenuScenePrivate(qq)
 {
-
 }
 
 ActionIconMenuScene::ActionIconMenuScene(QObject *parent)
-    :AbstractMenuScene(parent)
+    : AbstractMenuScene(parent)
 {
-
 }
 
 QString ActionIconMenuScene::name() const
@@ -90,6 +91,7 @@ void ActionIconMenuScene::updateState(QMenu *parent)
 
 bool ActionIconMenuScene::actionIconVisible() const
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     // the gsetting control for action icon visible
     if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.general")) {
         const QGSettings setting("com.deepin.dde.filemanager.general",
@@ -101,6 +103,7 @@ bool ActionIconMenuScene::actionIconVisible() const
                 return visible.toBool();
         }
     }
+#endif
 
     return false;
 }

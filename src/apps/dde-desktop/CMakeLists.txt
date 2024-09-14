@@ -28,8 +28,6 @@ add_executable(${PROJECT_NAME} ${SRCS})
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}
-        ${DtkWidget_INCLUDE_DIRS}
-        ${Qt5DBus_INCLUDE_DIRS}
 )
 
 target_link_libraries(
@@ -51,5 +49,6 @@ install(FILES data/applications/dfm-open.sh DESTINATION bin/)
 install(FILES data/applications/dde-computer.desktop DESTINATION share/applications/)
 install(FILES data/applications/dde-trash.desktop DESTINATION share/applications/)
 install(FILES data/applications/dde-home.desktop DESTINATION share/applications/)
+install(FILES data/applications/dde-desktop.desktop DESTINATION share/applications)
 
 

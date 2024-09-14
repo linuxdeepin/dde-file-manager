@@ -121,8 +121,8 @@ int RecentManager::size()
 void RecentManager::init()
 {
     recentDBusInterce.reset(
-            new RecentManagerDBusInterface("org.deepin.filemanager.server",
-                                           "/org/deepin/filemanager/server/RecentManager",
+            new RecentManagerDBusInterface("org.deepin.Filemanager.Daemon",
+                                           "/org/deepin/Filemanager/Daemon/RecentManager",
                                            QDBusConnection::sessionBus(), this));
     recentDBusInterce->setTimeout(2000);
 

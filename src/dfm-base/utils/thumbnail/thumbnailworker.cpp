@@ -77,7 +77,7 @@ bool ThumbnailWorkerPrivate::checkFileStable(const QUrl &url)
 
     // 修改时间稳定
     qint64 mtime = info->timeOf(TimeInfoType::kMetadataChangeTimeSecond).toLongLong();
-    qint64 curTime = QDateTime::currentDateTime().toTime_t();
+    qint64 curTime = QDateTime::currentDateTime().toSecsSinceEpoch();
     qint64 diffTime = curTime - mtime;
 
     if (diffTime < 2 && diffTime >= 0)

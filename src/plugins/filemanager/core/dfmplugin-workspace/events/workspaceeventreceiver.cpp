@@ -128,6 +128,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSort);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterDataCache",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterDataCache);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_AboutToChangeViewWidth",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleAboutToChangeViewWidth);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -425,3 +427,7 @@ void WorkspaceEventReceiver::handleSetAlwaysOpenInCurrentWindow(const quint64 wi
     WorkspaceHelper::instance()->setAlwaysOpenInCurrentWindow(windowID);
 }
 
+void WorkspaceEventReceiver::handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth)
+{
+    WorkspaceHelper::instance()->aboutToChangeViewWidth(windowID, deltaWidth);
+}

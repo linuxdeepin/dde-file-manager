@@ -4,48 +4,16 @@ project(dfmplugin-bookmark)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB BOOKMARK_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/controller/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/controller/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/private/*.cpp"
+FILE(GLOB_RECURSE BOOKMARK_FILES CONFIGURE_DEPENDS
+    "./*.h"
+    "./*.cpp"
+    "./*.json"
 )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
+include(dfmplugin-bookmark-qt5.cmake)
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${BOOKMARK_FILES}
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-bookmark-qt6.cmake)
+endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    ${DtkWidget_LIBRARIES}
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_CORE_DIR}
-)

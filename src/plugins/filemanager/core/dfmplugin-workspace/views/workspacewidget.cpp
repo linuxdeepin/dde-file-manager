@@ -6,6 +6,7 @@
 #include "fileview.h"
 #include "tabbar.h"
 #include "tab.h"
+#include "enterdiranimationwidget.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
@@ -16,6 +17,7 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-framework/event/event.h>
 
 #include <DIconButton>
@@ -69,9 +71,33 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     auto curView = currentViewPtr();
     if (curView) {
         if (UniversalUtils::urlEquals(url, curView->rootUrl())
-                && UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl())
-                && !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url", url, tabBar->currentTab()->getCurrentUrl()))
+            && UniversalUtils::urlEquals(url, tabBar->currentTab()->getCurrentUrl())
+            && !dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url", url, tabBar->currentTab()->getCurrentUrl()))
             return;
+
+        bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+        if (animEnable) {
+            auto contentWidget = curView->contentWidget();
+            if (!contentWidget)
+                contentWidget = curView->widget();
+
+            if (contentWidget) {
+                if (!enterAnim)
+                    enterAnim = new EnterDirAnimationWidget(this);
+
+                auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+                auto localPos = mapFromGlobal(globalPos);
+                enterAnim->move(localPos);
+                enterAnim->resetWidgetSize(contentWidget->size());
+
+                QPixmap preDirPix = contentWidget->grab();
+                enterAnim->setDisappearPixmap(preDirPix);
+                enterAnim->show();
+                enterAnim->raise();
+
+                enterAnim->playDisappear();
+            }
+        }
 
         FileView *view = qobject_cast<FileView *>(curView->widget());
         if (view)
@@ -87,6 +113,10 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         return;
 
     QString scheme { url.scheme() };
+
+    // do not paly appear animation when create first view.
+    canPlayAppearAnimation = !views.isEmpty();
+
     if (!views.contains(scheme)) {
         QString error;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
@@ -242,6 +272,42 @@ void WorkspaceWidget::onRefreshCurrentView()
         view->refresh();
 }
 
+void WorkspaceWidget::handleViewStateChanged()
+{
+    if (!canPlayAppearAnimation)
+        return;
+
+    if (!enterAnim)
+        return;
+
+    if (!appearAnimDelayTimer) {
+        appearAnimDelayTimer = new QTimer(this);
+        appearAnimDelayTimer->setInterval(100);
+        appearAnimDelayTimer->setSingleShot(true);
+        connect(appearAnimDelayTimer, &QTimer::timeout, this, &WorkspaceWidget::onAnimDelayTimeout);
+    }
+
+    auto view = views[workspaceUrl.scheme()];
+    if (!view)
+        return;
+
+    auto contentWidget = view->contentWidget();
+    if (!contentWidget)
+        contentWidget = view->widget();
+
+    if (!contentWidget) {
+        enterAnim->stopAndHide();
+        return;
+    }
+
+    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+    auto localPos = mapFromGlobal(globalPos);
+    enterAnim->move(localPos);
+    enterAnim->resetWidgetSize(contentWidget->size());
+
+    appearAnimDelayTimer->start();
+}
+
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
 {
     quint64 thisWindowID = WorkspaceHelper::instance()->windowId(this);
@@ -383,7 +449,7 @@ void WorkspaceWidget::initTabBar()
     tabBottomLine->hide();
 
     tabBarLayout = new QHBoxLayout;
-    tabBarLayout->setMargin(0);
+    tabBarLayout->setContentsMargins(0, 0, 0, 0);
     tabBarLayout->setSpacing(0);
     tabBarLayout->addWidget(tabBar);
     tabBarLayout->addWidget(newTabButton);
@@ -409,6 +475,42 @@ void WorkspaceWidget::initUiForSizeMode()
     tabBar->setFixedHeight(36);
     newTabButton->setFixedSize(36, 36);
 #endif
+}
+
+void WorkspaceWidget::onAnimDelayTimeout()
+{
+    auto view = views[workspaceUrl.scheme()];
+    if (!enterAnim)
+        return;
+
+    if (!view || view->viewState() != AbstractBaseView::ViewState::kViewIdle) {
+        appearAnimDelayTimer->start();
+        return;
+    }
+
+    auto contentWidget = view->contentWidget();
+    if (!contentWidget)
+        contentWidget = view->widget();
+
+    if (!contentWidget) {
+        enterAnim->stopAndHide();
+        return;
+    }
+
+    QPixmap curDirPix = contentWidget->grab();
+    if (curDirPix.isNull()) {
+        enterAnim->stopAndHide();
+        return;
+    }
+
+    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
+    auto localPos = mapFromGlobal(globalPos);
+
+    enterAnim->resize(contentWidget->size());
+    enterAnim->move(localPos);
+
+    enterAnim->setAppearPixmap(curDirPix);
+    enterAnim->playAppear();
 }
 
 void WorkspaceWidget::initViewLayout()
@@ -479,12 +581,19 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
 void WorkspaceWidget::setCurrentView(const QUrl &url)
 {
     auto view = views[url.scheme()];
-    if (view) {
-        viewStackLayout->setCurrentWidget(view->widget());
+    if (!view)
+        return;
 
-        view->setRootUrl(url);
-        tabBar->setCurrentUrl(url);
+    viewStackLayout->setCurrentWidget(view->widget());
 
-        initCustomTopWidgets(url);
-    }
+    if (canPlayAppearAnimation && enterAnim)
+        enterAnim->raise();
+
+    tabBar->setCurrentUrl(url);
+    initCustomTopWidgets(url);
+
+    view->setRootUrl(url);
+
+    if (view->viewState() != AbstractBaseView::ViewState::kViewBusy)
+        handleViewStateChanged();
 }

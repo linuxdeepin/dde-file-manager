@@ -77,7 +77,7 @@ void onClipboardDataChanged(const QStringList & formats)
     }
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
     const QString &data = mimeData->data(kGnomeCopyKey);
-    const static QRegExp regCut("cut\nfile://"), regCopy("copy\nfile://");
+    const static QRegularExpression regCut("cut\nfile://"), regCopy("copy\nfile://");
     if (data.contains(regCut)) {
         clipboardAction = ClipBoard::kCutAction;
     } else if (data.contains(regCopy)) {
@@ -163,7 +163,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     QString error;
     for (const QUrl &qurl : list) {
         ba.append("\n");
-        ba.append(qurl.toString());
+        ba.append(qurl.toString().toUtf8());
 
         const QString &path = qurl.toLocalFile();
         if (!path.isEmpty()) {
@@ -214,7 +214,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     // 如果是剪切操作，则禁止跨用户的粘贴操作
     if (ClipBoard::kCutAction == action) {
         QByteArray userId;
-        userId.append(QString::number(getuid()));
+        userId.append(QString::number(getuid()).toUtf8());
         mimeData->setData(GlobalData::kUserIdKey, userId);
     }
 
@@ -434,7 +434,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
                         continue;
 
                     QString path = url.path();
-                    path = path.replace(QRegExp("/*/"), "/");
+                    path = path.replace(QRegularExpression("/*/"), "/");
                     if (path.isEmpty() || path == "/")
                         continue;
                     QUrl temp = QUrl::fromLocalFile(path);
@@ -473,7 +473,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
             continue;
 
         QString path = url.path();
-        path = path.replace(QRegExp("/*/"), "/");
+        path = path.replace(QRegularExpression("/*/"), "/");
         if (path.isEmpty() || path == "/")
             continue;
         QUrl temp = QUrl::fromLocalFile(path);

@@ -22,7 +22,6 @@
 #include <dfm-framework/dpf.h>
 
 #include <DApplication>
-#include <DApplicationHelper>
 
 #include <QPainter>
 #include <QScrollBar>
@@ -734,10 +733,10 @@ void CollectionItemDelegate::initStyleOption(QStyleOptionViewItem *option, const
 
     // multi-selected background
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && model->selectedIndexes().size() > 1) {
-        option->palette.setColor(QPalette::Background, QColor("#0076F9"));
+        option->palette.setColor(QPalette::Window, QColor("#0076F9"));
         option->backgroundBrush = QColor("#0076F9");
     } else {   // normal
-        option->palette.setColor(QPalette::Background, QColor("#2da6f7"));
+        option->palette.setColor(QPalette::Window, QColor("#2da6f7"));
         option->backgroundBrush = QColor("#2da6f7");
     }
 

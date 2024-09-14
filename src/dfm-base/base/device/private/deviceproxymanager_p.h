@@ -5,7 +5,11 @@
 #ifndef DEVICEPROXYMANAGER_P_H
 #define DEVICEPROXYMANAGER_P_H
 
-#include "devicemanager_interface.h"
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include "devicemanager_interface.h"
+#else
+#    include "devicemanager_interface_qt6.h"
+#endif
 
 #include <dfm-base/dfm_base_global.h>
 
@@ -14,7 +18,7 @@
 #include <QtCore/qobjectdefs.h>
 #include <QReadWriteLock>
 
-using DeviceManagerInterface = OrgDeepinFilemanagerServerDeviceManagerInterface;
+using DeviceManagerInterface = OrgDeepinFilemanagerDaemonDeviceManagerInterface;
 class QDBusServiceWatcher;
 namespace dfmbase {
 

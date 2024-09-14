@@ -8,7 +8,6 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/standardpaths.h>
 
-#include <QGSettings>
 #include <QDateTime>
 #include <QTimerEvent>
 #include <QDebug>

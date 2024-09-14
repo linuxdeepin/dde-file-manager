@@ -10,6 +10,7 @@
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QObject>
+#include <QUrl>
 
 namespace dfmplugin_recent {
 

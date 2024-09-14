@@ -10,13 +10,15 @@
 
 namespace dfmbase {
 
-SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent):
-    QSplitterHandle(orientation, parent)
+SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent)
+    : QSplitterHandle(orientation, parent)
 {
-
 }
-
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+void SplitterHandle::enterEvent(QEnterEvent *)
+#else
 void SplitterHandle::enterEvent(QEvent *)
+#endif
 {
     QGuiApplication::setOverrideCursor(orientation() == Qt::Horizontal ? Qt::SizeHorCursor : Qt::SizeVerCursor);
 }
@@ -29,9 +31,8 @@ void SplitterHandle::leaveEvent(QEvent *)
 // ---------- Item Get Border Line ----------
 
 Splitter::Splitter(Qt::Orientation orientation, QWidget *parent)
-    :QSplitter(orientation, parent)
+    : QSplitter(orientation, parent)
 {
-
 }
 
 void Splitter::moveSplitter(int pos, int index)

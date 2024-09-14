@@ -155,17 +155,14 @@ void PermissionManagerWidget::initUI()
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
     DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
     ownerComboBox = new QComboBox(this);
-    ownerComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
     DLabel *group = new DLabel(QObject::tr("Group"), this);
     DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
     groupComboBox = new QComboBox(this);
-    groupComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
     DLabel *other = new DLabel(QObject::tr("Others"), this);
     DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
     otherComboBox = new QComboBox(this);
-    otherComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
@@ -189,11 +186,11 @@ void PermissionManagerWidget::initUI()
     QFrame *mainFrame = new QFrame(this);
 
     QVBoxLayout *mainFrameLay = new QVBoxLayout(mainFrame);
-    mainFrameLay->setMargin(0);
+    mainFrameLay->setContentsMargins(0, 0, 0, 0);
     mainFrameLay->setContentsMargins(0, 0, 0, 10);
 
     QFormLayout *formLay = new QFormLayout;
-    formLay->setMargin(0);
+    formLay->setContentsMargins(0, 0, 0, 0);
     formLay->setContentsMargins(10, 10, 10, 0);
     formLay->setLabelAlignment(Qt::AlignLeft);
     formLay->setSpacing(11);
@@ -203,7 +200,7 @@ void PermissionManagerWidget::initUI()
 
     executableFrame = new QFrame(mainFrame);
     QHBoxLayout *exeLay = new QHBoxLayout;
-    exeLay->setMargin(0);
+    exeLay->setContentsMargins(0, 0, 0, 0);
     exeLay->setContentsMargins(0, 0, 0, 0);
     exeLay->setSpacing(0);
     exeLay->addSpacing(95);
@@ -216,6 +213,22 @@ void PermissionManagerWidget::initUI()
 
     mainFrame->setLayout(mainFrameLay);
     setContent(mainFrame);
+    updateBackgroundColor();
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &PermissionManagerWidget::updateBackgroundColor);
+}
+
+void PermissionManagerWidget::updateBackgroundColor()
+{
+    QPalette palette = this->palette();
+
+    QColor bgColor;
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+        bgColor.setRgb(255, 255, 255);
+    else
+        bgColor.setRgb(40, 40, 40);
+
+    palette.setColor(QPalette::Window, bgColor);
+    setPalette(palette);
 }
 
 QString PermissionManagerWidget::getPermissionString(int enumFlag)
@@ -267,8 +280,7 @@ bool PermissionManagerWidget::canChmod(const FileInfoPointer &info)
     QString path = info->pathOf(PathInfoType::kFilePath);
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
                                      QRegularExpression::DotMatchesEverythingOption
-                                             | QRegularExpression::DontCaptureOption
-                                             | QRegularExpression::OptimizeOnFirstUsageOption);
+                                             | QRegularExpression::DontCaptureOption);
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
         return false;
 

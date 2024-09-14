@@ -15,7 +15,8 @@
 
 #include <DWidgetUtil>
 #include <DPalette>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
+#include <DGuiApplicationHelper>
 
 #include <qdrawutil.h>
 #include <QPainter>
@@ -153,7 +154,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     font.setPixelSize(12);
 
     if (isChecked()) {
-        font.setWeight(QFont::Normal + 10);
+        font.setWeight(QFont::Medium);
     } else {
         font.setWeight(QFont::Normal);
     }
@@ -163,7 +164,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     QString tabName = d->tabAlias.isEmpty() ? d->tabText : d->tabAlias;
     QString str = fm.elidedText(tabName, Qt::ElideRight, d->width - 10);
 
-    DPalette pal = DApplicationHelper::instance()->palette(widget);
+    DPalette pal = DPaletteHelper::instance()->palette(widget);
     QColor color;
 
     // draw backgound
@@ -202,7 +203,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
     qDrawShadeLine(painter, QPoint(x, 0), QPoint(x, y), pal);
     QPalette::ColorGroup cp = isChecked() || d->hovered ? QPalette::Active : QPalette::Inactive;
-    pen.setColor(pal.color(cp, QPalette::Foreground));
+    pen.setColor(pal.color(cp, QPalette::WindowText));
     painter->setPen(pen);
 }
 

@@ -34,7 +34,6 @@
 #include <QRegularExpression>
 #include <QProcess>
 #include <QDesktopServices>
-#include <QX11Info>
 #include <QSettings>
 #include <QDBusConnection>
 
@@ -632,7 +631,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
 bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateTime,
                                    const QDateTime &lastModifiedTime)
 {
-    utimbuf buf = { accessDateTime.toTime_t(), lastModifiedTime.toTime_t() };
+    utimbuf buf = { accessDateTime.toSecsSinceEpoch(), lastModifiedTime.toSecsSinceEpoch() };
 
     if (::utime(url.toLocalFile().toLocal8Bit(), &buf) == 0) {
         return true;
@@ -735,9 +734,9 @@ void LocalFileHandlerPrivate::doAddRecentFile(const QVariantMap &item)
     if (item.isEmpty())
         return;
 
-    QDBusMessage message = QDBusMessage::createMethodCall("org.deepin.filemanager.server",
-                                                          "/org/deepin/filemanager/server/RecentManager",
-                                                          "org.deepin.filemanager.server.RecentManager",
+    QDBusMessage message = QDBusMessage::createMethodCall("org.deepin.Filemanager.Daemon",
+                                                          "/org/deepin/Filemanager/Daemon/RecentManager",
+                                                          "org.deepin.Filemanager.Daemon.RecentManager",
                                                           "AddItem");
     message << QVariant::fromValue(item);
 

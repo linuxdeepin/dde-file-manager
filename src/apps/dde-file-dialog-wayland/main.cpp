@@ -6,7 +6,6 @@
 
 #include <DApplication>
 #include <QDir>
-#include <QTextCodec>
 #include <QIcon>
 
 #include <dfm-base/dfm_plugin_defines.h>
@@ -120,7 +119,7 @@ static bool pluginsLoad()
     qCInfo(logAppDialogWayland) << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
-    pluginsDirs.push_back(pluginsDir);
+    pluginsDirs.push_back(pluginsDir + "/filedialog");
 #else
     pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
                 << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
@@ -174,9 +173,6 @@ int main(int argc, char *argv[])
 {
     initEnv();
     initLog();
-
-    // Fixed the locale codec to utf-8
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);

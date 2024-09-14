@@ -32,6 +32,7 @@ QStringList lazyLoadList();
 PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
                                       const QString version = "");
 QList<PluginMetaObjectPointer> pluginMetaObjs(const std::function<bool(PluginMetaObjectPointer)> &cond = {});
+QList<PluginMetaObjectPointer> pluginSortedMetaObjs(const std::function<bool(PluginMetaObjectPointer)> &cond = {});
 
 bool readPlugins();
 bool loadPlugins();

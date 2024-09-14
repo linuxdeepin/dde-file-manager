@@ -551,19 +551,6 @@ void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &
         ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
     }
 
-    // 更新filetype
-    if (typeAll.contains(FileInfoAttributeID::kStandardFileType)) {
-        typeAll.removeOne(FileInfoAttributeID::kStandardFileType);
-        d->updateFileType();
-    }
-
-    // 更新fileicon
-    if (typeAll.contains(FileInfoAttributeID::kStandardIcon)) {
-        typeAll.removeOne(FileInfoAttributeID::kStandardIcon);
-        QWriteLocker wlk(&d->iconLock);
-        d->fileIcon = QIcon();
-    }
-
     // 更新mediaInfo
     if (typeAll.contains(FileInfoAttributeID::kFileMediaInfo)) {
         typeAll.removeOne(FileInfoAttributeID::kFileMediaInfo);
@@ -659,9 +646,10 @@ FileInfo::FileType SyncFileInfoPrivate::updateFileType()
     const QString &absoluteFilePath = filePath();
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
-    if (QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
+    auto fileMode = attribute(DFileInfo::AttributeID::kUnixMode).toUInt();
+    if (fileMode <= 0 || QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
         return fileType;
-    auto fileMode = statBuffer.st_mode;
+    fileMode = fileMode <= 0 ? statBuffer.st_mode : fileMode;
     if (S_ISDIR(fileMode))
         fileType = FileInfo::FileType::kDirectory;
     else if (S_ISCHR(fileMode))

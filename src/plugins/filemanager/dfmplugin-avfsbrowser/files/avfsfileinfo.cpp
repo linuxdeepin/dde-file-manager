@@ -37,7 +37,7 @@ bool AvfsFileInfo::canAttributes(const FileInfo::FileCanType type) const
 {
     switch (type) {
     case FileCanType::kCanRedirectionFileUrl:
-        return proxy;
+        return !proxy.isNull();
     default:
         return ProxyFileInfo::canAttributes(type);
     }

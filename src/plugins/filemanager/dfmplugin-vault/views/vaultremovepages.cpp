@@ -24,7 +24,7 @@
 #include <DLabel>
 
 #include <QFrame>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QStackedWidget>
 #include <QAbstractButton>
 #include <QLabel>

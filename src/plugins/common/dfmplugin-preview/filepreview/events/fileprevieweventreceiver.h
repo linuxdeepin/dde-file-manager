@@ -7,6 +7,7 @@
 #include "dfmplugin_filepreview_global.h"
 
 #include <QObject>
+#include <QUrl>
 
 namespace dfmplugin_filepreview {
 class FilePreviewEventReceiver : public QObject

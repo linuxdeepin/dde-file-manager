@@ -36,9 +36,9 @@ DFMBASE_USE_NAMESPACE
 namespace dfmplugin_dirshare {
 
 namespace DaemonServiceIFace {
-static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
-static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
-static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon.UserShareManager" };
+static constexpr char kInterfaceService[] { "org.deepin.Filemanager" };
+static constexpr char kInterfacePath[] { "/org/deepin/Filemanager/UserShareManager" };
+static constexpr char kInterfaceInterface[] { "org.deepin.Filemanager.UserShareManager" };
 
 static constexpr char kFuncIsPasswordSet[] { "IsUserSharePasswordSet" };
 static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
@@ -266,7 +266,11 @@ QString UserShareHelper::sharedIP() const
 int UserShareHelper::getSharePort() const
 {
     QSettings smbConf("/etc/samba/smb.conf", QSettings::IniFormat);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     auto ports = smbConf.value("global/smb ports").toString().split(" ", QString::SkipEmptyParts);
+#else
+    auto ports = smbConf.value("global/smb ports").toString().split(" ", Qt::SkipEmptyParts);
+#endif
     return ports.isEmpty() ? -1 : ports.first().toInt();
 }
 
@@ -422,18 +426,17 @@ void UserShareHelper::initMonitorPath()
         watcherManager->add(info.value(ShareInfoKeys::kPath).toString());
 }
 
-void UserShareHelper::removeShareByShareName(const QString &name)
+void UserShareHelper::removeShareByShareName(const QString &name, bool silent)
 {
-    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, true);
+    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
     if (reply.isValid() && reply.value()) {
         fmDebug() << "share closed: " << name;
+        runNetCmd(QStringList() << "usershare"
+                                << "delete" << name);
     } else {
         fmWarning() << "share close failed: " << name << ", " << reply.error();
         // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
     }
-
-    runNetCmd(QStringList() << "usershare"
-                            << "delete" << name);
 }
 
 void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPath)
@@ -442,7 +445,7 @@ void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPa
     if (shareName.isEmpty())
         return;
 
-    removeShareByShareName(shareName);
+    removeShareByShareName(shareName, true);
 }
 
 ShareInfo UserShareHelper::getOldShareByNewShare(const ShareInfo &newShare)
@@ -499,16 +502,17 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
 
     // 端口被禁用
     if (err.contains("net usershare add: cannot convert name") && err.contains("{Device Timeout}")) {
-        NetworkUtils::instance()->doAfterCheckNet("127.0.0.1", { "139", "445" },
-                                                  [](bool result) {
-                                                      if (result) {
-                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"), "");
-                                                      } else {
-                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
-                                                                                                 tr("SMB port is banned, please check the firewall strategy."));
-                                                      }
-                                                  },
-                                                  500);
+        NetworkUtils::instance()->doAfterCheckNet(
+                "127.0.0.1", { "139", "445" },
+                [](bool result) {
+                    if (result) {
+                        DialogManagerInstance->showErrorDialog(tr("Sharing failed"), "");
+                    } else {
+                        DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
+                                                               tr("SMB port is banned, please check the firewall strategy."));
+                    }
+                },
+                500);
         return;
     }
 

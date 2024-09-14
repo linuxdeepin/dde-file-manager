@@ -109,9 +109,14 @@ void FileBaseInfoView::basicExpand(const QUrl &url)
     glayout->setSpacing(0);
     int row = 0;
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QSet<BasicFieldExpandEnum> fieldset = QSet<BasicFieldExpandEnum>::fromList(fields);
     fields = fieldset.toList();
-    qSort(fields.begin(), fields.end());
+#else
+    QSet<BasicFieldExpandEnum> fieldset { fields.begin(), fields.end() };
+    fields = fieldset.values();
+#endif
+    std::sort(fields.begin(), fields.end());
     for (BasicFieldExpandEnum &key : fields) {
         QList<KeyValueLabel *> kvls = fieldMap.values(key);
         for (int i = kvls.count() - 1; i >= 0; --i) {
@@ -303,8 +308,7 @@ void FileBaseInfoView::slotImageExtenInfo(const QStringList &properties)
 
 void FileBaseInfoView::slotVideoExtenInfo(const QStringList &properties)
 {
-    if (fileViewSize && fileViewSize->RightValue().isEmpty() &&
-            !properties.isEmpty() && !properties.first().startsWith("0x0")) {
+    if (fileViewSize && fileViewSize->RightValue().isEmpty() && !properties.isEmpty() && !properties.first().startsWith("0x0")) {
         fileViewSize->setVisible(true);
         fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
         fileViewSize->adjustHeight();

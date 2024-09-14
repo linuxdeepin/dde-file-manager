@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.freedesktop.FileManager1
-Exec=/usr/bin/dde-file-manager-server

@@ -11,7 +11,6 @@
 #include <DTitlebar>
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QScreen>
 #include <QSize>
 

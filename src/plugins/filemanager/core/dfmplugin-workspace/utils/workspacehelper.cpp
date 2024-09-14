@@ -429,6 +429,13 @@ void WorkspaceHelper::setAlwaysOpenInCurrentWindow(const quint64 windowID)
         view->setAlwaysOpenInCurrentWindow(true);
 }
 
+void WorkspaceHelper::aboutToChangeViewWidth(const quint64 windowID, int deltaWidth)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->aboutToChangeWidth(deltaWidth);
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;
@@ -450,6 +457,7 @@ void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
     connect(window, &FileManagerWindow::reqCreateWindow, widget, &WorkspaceWidget::onCreateNewWindow);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, widget, &WorkspaceWidget::onSetCurrentTabIndex);
     connect(window, &FileManagerWindow::reqRefresh, widget, &WorkspaceWidget::onRefreshCurrentView);
+    connect(window, &FileManagerWindow::currentViewStateChanged, widget, &WorkspaceWidget::handleViewStateChanged);
 }
 
 void WorkspaceHelper::handleRefreshDir(const QList<QUrl> &urls)

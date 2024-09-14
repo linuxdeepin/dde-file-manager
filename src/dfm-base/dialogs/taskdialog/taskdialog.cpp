@@ -10,9 +10,9 @@
 #include <QListWidget>
 #include <QLayout>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QMutex>
 #include <QKeyEvent>
+#include <QScreen>
 
 using namespace dfmbase;
 
@@ -166,7 +166,7 @@ void TaskDialog::adjustSize(int hight)
         listHeight += h;
     }
 
-    if (listHeight < qApp->desktop()->availableGeometry().height() - 60) {
+    if (listHeight < qApp->primaryScreen()->availableGeometry().height() - 60) {
         taskListWidget->setFixedHeight(listHeight);
         setFixedHeight(listHeight + 60);
         kMaxHeight = height();
@@ -186,7 +186,7 @@ void TaskDialog::moveYCenter()
     if (parent()) {
         cp = static_cast<QWidget *>(parent())->geometry().center();
     } else {
-        cp = qApp->desktop()->availableGeometry().center();
+        cp = qApp->primaryScreen()->availableGeometry().center();
     }
     qr.moveCenter(cp);
     move(x(), qr.y());

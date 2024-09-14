@@ -63,8 +63,8 @@ QUrl VaultFileInfoPrivate::vaultUrl(const QUrl &url) const
 QUrl VaultFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
 {
     QUrl theUrl = q->urlOf(FileInfo::FileUrlInfoType::kUrl);
-    QString newPath =  DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsolutePath).toStdString().c_str(),
-                                                      fileName.toStdString().c_str(), nullptr);
+    QString newPath = DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsolutePath).toStdString().c_str(),
+                                                     fileName.toStdString().c_str(), nullptr);
     if (!newPath.startsWith(QDir::separator()))
         newPath = QDir::separator() + newPath;
     theUrl.setPath(newPath);
@@ -78,7 +78,7 @@ VaultFileInfo::VaultFileInfo(const QUrl &url)
     : ProxyFileInfo(url), d(new VaultFileInfoPrivate(url, this))
 {
     d->localUrl = VaultHelper::vaultToLocalUrl(url);
-    setProxy(InfoFactory::create<FileInfo>(d->localUrl,  Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache));
+    setProxy(InfoFactory::create<FileInfo>(d->localUrl, Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache));
 }
 
 VaultFileInfo::VaultFileInfo(const QUrl &url, const FileInfoPointer &proxy)
@@ -188,7 +188,7 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
         }
         return !proxy || proxy->canAttributes(type);
     case FileCanType::kCanRedirectionFileUrl:
-        return proxy;
+        return !proxy.isNull();
     default:
         return ProxyFileInfo::canAttributes(type);
     }

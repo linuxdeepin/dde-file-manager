@@ -5,10 +5,11 @@
 #include "gridcore.h"
 #include "displayconfig.h"
 
+#include <QHashFunctions>
+
 uint qHash(const QPoint &key, uint seed)
 {
-    QString val = QString("%1x%2").arg(key.x()).arg(key.y());
-    return qHash<QString>(val, seed);
+    return qHash(qMakePair(key.x(), key.y()), seed);
 }
 
 using namespace ddplugin_canvas;

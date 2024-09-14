@@ -36,7 +36,6 @@ FileEncryptHandle::FileEncryptHandle(QObject *parent)
 {
     connect(d->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
     connect(d->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
-
 }
 
 FileEncryptHandle::~FileEncryptHandle()
@@ -109,7 +108,6 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
         DialogManager::instance()->showErrorDialog(tr("Unlock failed"), tr("The %1 directory is occupied,\n please clear the files in this directory and try to unlock the safe again.").arg(unlockFileDir));
         return false;
     }
-
 
     bool result { false };
     d->mutex->lock();
@@ -468,7 +466,7 @@ FileEncryptHandlerPrivate::CryfsVersionInfo FileEncryptHandlerPrivate::versionSt
             QStringList &&tmpDatas = data.split(' ', Qt::SkipEmptyParts);
 #endif
             for (int i = 0; i < tmpDatas.size(); ++i) {
-                if (tmpDatas.at(i).contains(QRegExp("^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$"))) {
+                if (tmpDatas.at(i).contains(QRegularExpression("^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$"))) {
                     const QString tmpVersions = tmpDatas.at(i);
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
                     QStringList &&versions = tmpVersions.split('.', QString::SkipEmptyParts);
@@ -502,8 +500,11 @@ QStringList FileEncryptHandlerPrivate::algoNameOfSupport()
     process.waitForStarted();
     process.waitForFinished();
     QString output = QString::fromLocal8Bit(process.readAllStandardError());
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     result = output.split('\n', QString::SkipEmptyParts);
-
+#else
+    result = output.split('\n', Qt::SkipEmptyParts);
+#endif
     return result;
 }
 

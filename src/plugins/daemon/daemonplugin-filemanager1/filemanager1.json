@@ -1,0 +1,7 @@
+{
+    "Name" : "daemonplugin-filemanager1",
+    "Version" : "1.0.0",
+    "Description" : "The core plugin for the dde-file-manager-daemon.",
+    "Depends" : [
+    ]
+}

@@ -18,6 +18,9 @@ class DBlockDevice;
 class DProtocolDevice;
 DFM_MOUNT_END_NS
 
+#define DEVICE_SIZE_DISPLAY_BY_DISK 0
+#define DEVICE_SIZE_DISPLAY_BY_FS 1
+
 namespace dfmbase {
 
 using DevAutoPtr = QSharedPointer<DFMMOUNT::DDevice>;

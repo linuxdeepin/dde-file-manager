@@ -23,8 +23,10 @@
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
-#include <KCodecs>
-#include <KEncodingProber>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <KCodecs>
+#    include <KEncodingProber>
+#endif
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfile.h>
@@ -36,7 +38,9 @@
 #include <QProcess>
 #include <QDebug>
 #include <QApplication>
-#include <QTextCodec>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QTextCodec>
+#endif
 #include <QSet>
 #include <QRegularExpression>
 #include <QCollator>
@@ -65,14 +69,15 @@ namespace dfmbase {
 static constexpr char kDDETrashId[] { "dde-trash" };
 static constexpr char kDDEComputerId[] { "dde-computer" };
 static constexpr char kDDEHomeId[] { "dde-home" };
-static constexpr char kSharePixmapPath[] { "/usr/share/pixmaps" };
 static constexpr char kFileAllTrash[] { "dfm.trash.allfiletotrash" };
 const static int kDefaultMemoryPageSize = 4096;
 
 QMutex FileUtils::cacheCopyingMutex;
 QSet<QUrl> FileUtils::copyingUrl;
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
+#endif
 
 QString sizeString(const QString &str)
 {
@@ -403,6 +408,7 @@ QUrl FileUtils::trashRootUrl()
     QUrl url;
     url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kTrash);
     url.setPath("/");
+    url.setHost("");
     return url;
 }
 
@@ -668,8 +674,12 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
 
     tmpName.clear();
     int bytes = 0;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     auto codec = QTextCodec::codecForLocale();
-
+#else
+    auto encoder = QStringEncoder(QStringEncoder::System);
+    auto decoder = QStringDecoder(QStringEncoder::System);
+#endif
     for (int i = 0; i < name.size(); ++i) {
         const QChar &ch = name.at(i);
         QByteArray data;
@@ -682,18 +692,32 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
             const QChar &nextCh = name.at(i);
             if (!ch.isHighSurrogate() || !nextCh.isLowSurrogate())
                 break;
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             data = codec->fromUnicode(name.data() + i - 1, 2);
+#else
+            data = encoder.encode(QString(name.data() + i - 1, 2));
+#endif
             fullChar.setUnicode(name.data() + i - 1, 2);
         } else {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             data = codec->fromUnicode(name.data() + i, 1);
+#else
+            data = encoder.encode(QString(name.data() + i, 1));
+#endif
             fullChar.setUnicode(name.data() + i, 1);
         }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         if (codec->toUnicode(data) != fullChar) {
             qCWarning(logDFMBase) << "Failed convert" << fullChar << "to" << codec->name() << "coding";
             continue;
         }
+#else
+        if (decoder.decode(data) != fullChar) {
+            qCWarning(logDFMBase) << "Failed convert" << fullChar << "to" << data << "coding";
+            continue;
+        }
+#endif
 
         bytes += data.size();
         if (bytes > maxLength)
@@ -771,16 +795,17 @@ QString FileUtils::toUnicode(const QByteArray &data, const QString &fileName)
 {
     if (data.isEmpty())
         return QString();
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     const QByteArray &encoding = detectCharset(data, fileName);
 
     if (QTextCodec *codec = QTextCodec::codecForName(encoding)) {
         return codec->toUnicode(data);
     }
-
+#endif
     return QString::fromLocal8Bit(data);
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 QByteArray FileUtils::detectCharset(const QByteArray &data, const QString &fileName)
 {
     // Return local encoding if nothing in file.
@@ -946,6 +971,7 @@ QByteArray FileUtils::detectCharset(const QByteArray &data, const QString &fileN
 
     return encoding;
 }
+#endif
 
 /*!
  * \brief FileUtils::getMemoryPageSize 获取当前內存页大小
@@ -1037,12 +1063,22 @@ public:
 
 bool FileUtils::isNumOrChar(const QChar ch)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     return (ch >= 48 && ch <= 57) || (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122);
+#else
+    auto chValue = ch.unicode();
+    return (chValue >= 48 && chValue <= 57) || (chValue >= 65 && chValue <= 90) || (chValue >= 97 && chValue <= 122);
+#endif
 }
 
 bool FileUtils::isNumber(const QChar ch)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     return (ch >= 48 && ch <= 57);
+#else
+    auto chValue = ch.unicode();
+    return (chValue >= 48 && chValue <= 57);
+#endif
 }
 
 bool FileUtils::isSymbol(const QChar ch)
@@ -1365,6 +1401,7 @@ QUrl DesktopAppUrl::homeDesktopFileUrl()
     return home;
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 ///###: Do not modify it.
 ///###: it's auxiliary.
 float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country)
@@ -1456,6 +1493,7 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
 
     return qMax(0.0f, c);
 }
+#endif
 
 Match::Match(const QString &group)
 {

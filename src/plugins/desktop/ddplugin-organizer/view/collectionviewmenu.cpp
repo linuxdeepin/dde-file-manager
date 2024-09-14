@@ -18,7 +18,6 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 
-#include <QGSettings>
 #include <QItemSelectionModel>
 
 DFMGLOBAL_USE_NAMESPACE

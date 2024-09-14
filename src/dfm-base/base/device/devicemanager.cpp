@@ -39,10 +39,10 @@ static constexpr char kSavePasswd[] { "savePasswd" };
 static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
 static constexpr char kSavedPasswordType[] { "SavedPasswordType" };
 
-static constexpr char kDaemonService[] { "com.deepin.filemanager.daemon" };
-static constexpr char kDaemonPath[] { "/com/deepin/filemanager/daemon" };
-static constexpr char kDaemonMountPath[] { "/com/deepin/filemanager/daemon/MountControl" };
-static constexpr char kDaemonMountIface[] { "com.deepin.filemanager.daemon.MountControl" };
+static constexpr char kDaemonService[] { "org.deepin.Filemanager" };
+static constexpr char kDaemonPath[] { "/org/deepin/Filemanager" };
+static constexpr char kDaemonMountPath[] { "/org/deepin/Filemanager/MountControl" };
+static constexpr char kDaemonMountIface[] { "org.deepin.Filemanager.MountControl" };
 static constexpr char kDaemonIntroIface[] { "org.freedesktop.DBus.Introspectable" };
 static constexpr char kDaemonIntroMethod[] { "Introspect" };
 
@@ -197,7 +197,11 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             delete fw;
         });
         d->isMountingOptical = true;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        fw->setFuture(QtConcurrent::run(&DeviceWatcher::queryOpticalDevUsage, d->watcher, id));
+#else
         fw->setFuture(QtConcurrent::run(d->watcher, &DeviceWatcher::queryOpticalDevUsage, id));
+#endif
     } else {
         QString errMsg;
         if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {

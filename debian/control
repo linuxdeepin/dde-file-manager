@@ -25,6 +25,7 @@ Build-Depends:
  libtag1-dev,
  libdmr-dev,
  libicu-dev,
+ libxcb-ewmh-dev,
  libdeepin-pdfium-dev,
  libqt5xdg-dev,
  libgio-qt-dev,
@@ -43,8 +44,25 @@ Build-Depends:
  libpoppler-cpp-dev,
  libcryptsetup-dev,
  libpcre3-dev,
- libxcb-xfixes0-dev (>= 1.10~),
- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
+ libdde-shell-dev (>= 0.0.10),
+ deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
+ qt6-base-dev | hello,
+ qt6-base-private-dev | hello,
+ qt6-svg-dev | hello,
+ qt6-multimedia-dev | hello,
+ qt6-tools-dev | hello,
+ qt6-tools-dev-tools | hello,
+ qt6-declarative-dev | hello,
+ qt6-5compat-dev | hello,
+ libdtk6widget-dev | hello,
+ libdtk6gui-dev | hello,
+ libdtk6core-dev | hello,
+ libdtk6core-bin | hello,
+ libdtk6declarative-dev | hello,
+ libdfm6-io-dev | hello,
+ libdfm6-mount-dev | hello,
+ libdfm6-burn-dev | hello,
+ libxcb-xfixes0-dev (>= 1.10~)
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
@@ -71,13 +89,16 @@ Depends:
  libqt5xdg3,
  socat,
  cryfs,
- libblockdev-crypto2 | libblockdev-crypto3,
  dde-device-formatter,
  dde-file-manager-plugins, 
  dde-file-manager-daemon-plugins,
- dde-file-manager-server-plugins,
+ dde-file-manager-services-plugins,
  dde-file-manager-common-plugins, 
- dde-file-manager-preview-plugins
+ dde-file-manager-preview,
+ libblockdev-crypto2 | libblockdev-crypto3,
+ qml6-module-qtquick-controls,
+ qml6-module-qtquick-layouts,
+ qml6-module-qtquick-window
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
@@ -119,20 +140,22 @@ Description: deepin desktop-environment - filemanager common edge plugins module
 Package: dde-file-manager-daemon-plugins
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflics: dde-file-manager-server-plugins
 Description: deepin desktop-environment - daemon edge plugins module
  Deepin Desktop Environment (DDE) - daemon edge plugins module.
 
-Package: dde-file-manager-server-plugins
+Package: dde-file-manager-services-plugins
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: deepin desktop-environment - server edge plugins module
- Deepin Desktop Environment (DDE) - server edge plugins module.
+Description: deepin desktop-environment - services edge plugins module
+ Deepin Desktop Environment (DDE) - services edge plugins module.
  
-Package: dde-file-manager-preview-plugins
+Package: dde-file-manager-preview
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: deepin desktop-environment - filemanager preview plugins module
- Deepin Desktop Environment (DDE) - filemanager preview edge plugins module.
+Replaces: dde-file-manager-preview-plugins
+Description: deepin desktop-environment - filemanager preview module
+ Deepin Desktop Environment (DDE) - filemanager preview edge module.
 
 Package: dde-disk-mount-plugin
 Architecture: any

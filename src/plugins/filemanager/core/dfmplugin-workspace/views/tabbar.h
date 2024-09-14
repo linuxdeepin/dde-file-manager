@@ -100,4 +100,6 @@ private:
 
 }
 
+Q_DECLARE_METATYPE(QUrl*);
+
 #endif   // TABBAR_H

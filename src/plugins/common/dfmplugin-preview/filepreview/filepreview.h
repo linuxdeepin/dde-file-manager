@@ -13,7 +13,12 @@ namespace dfmplugin_filepreview {
 class FilePreview : public dpf::Plugin
 {
     Q_OBJECT
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "filepreview.json")
+#else
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "filepreview.json")
+#endif
 
     DPF_EVENT_NAMESPACE(DPFILEPREVIEW_NAMESPACE)
     DPF_EVENT_REG_SLOT(slot_PreviewDialog_Show)

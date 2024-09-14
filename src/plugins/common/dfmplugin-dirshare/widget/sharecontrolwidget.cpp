@@ -117,12 +117,12 @@ void ShareControlWidget::setupUi(bool disableState)
     mainFrame->setDisabled(disableState);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setContentsMargins(0, 0, 0, 10);
     mainLayout->setSpacing(0);
 
     QFormLayout *basicInfoFrameLay = new QFormLayout(mainFrame);
-    basicInfoFrameLay->setMargin(0);
+    basicInfoFrameLay->setContentsMargins(0, 0, 0, 0);
     basicInfoFrameLay->setContentsMargins(20, 0, 10, 0);
     basicInfoFrameLay->setVerticalSpacing(6);
 
@@ -138,12 +138,12 @@ void ShareControlWidget::setupUi(bool disableState)
     // More share info
     moreInfoFrame = new QFrame(mainFrame);
     QVBoxLayout *moreInfoFrameLay = new QVBoxLayout(moreInfoFrame);
-    moreInfoFrameLay->setMargin(0);
+    moreInfoFrameLay->setContentsMargins(0, 0, 0, 0);
     moreInfoFrameLay->setContentsMargins(20, 10, 10, 0);
     moreInfoFrame->setLayout(moreInfoFrameLay);
 
     QFormLayout *formLay = new QFormLayout(moreInfoFrame);
-    formLay->setMargin(0);
+    formLay->setContentsMargins(0, 0, 0, 0);
     formLay->setContentsMargins(0, 0, 0, 0);
     formLay->addRow(new SectionKeyLabel(tr("Network path"), this), setupNetworkPath());
     formLay->addRow(new SectionKeyLabel(tr("Username"), this), setupUserName());
@@ -307,7 +307,7 @@ QHBoxLayout *ShareControlWidget::setupSharePassword()
     });
 
     QHBoxLayout *hBoxLine = new QHBoxLayout(this);
-    hBoxLine->setMargin(0);
+    hBoxLine->setContentsMargins(0, 0, 0, 0);
     hBoxLine->setStretch(0, 1);
     hBoxLine->addWidget(sharePassword);
     hBoxLine->addWidget(setPasswordBt);
@@ -447,7 +447,7 @@ bool ShareControlWidget::validateShareName()
             }
 
             if (dlg.exec() != DDialog::Accepted) {
-                if(isShared){
+                if (isShared) {
                     QString filePath = url.path();
                     auto shareName = UserShareHelperInstance->shareNameByPath(filePath);
                     shareNameEditor->setText(shareName);
@@ -465,9 +465,9 @@ bool ShareControlWidget::validateShareName()
 
 void ShareControlWidget::updateShare()
 {
-   if (!isUpdating)
-       shareFolder();
-   return;
+    if (!isUpdating)
+        shareFolder();
+    return;
 }
 
 void ShareControlWidget::shareFolder()
@@ -477,7 +477,7 @@ void ShareControlWidget::shareFolder()
         return;
     isUpdating = true;
     if (!validateShareName()) {
-        if(!isShared){
+        if (!isShared) {
             shareSwitcher->setChecked(false);
             sharePermissionSelector->setEnabled(false);
             shareAnonymousSelector->setEnabled(false);

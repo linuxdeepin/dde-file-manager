@@ -25,6 +25,7 @@ namespace dfmplugin_workspace {
 
 class ShortcutHelper;
 class FileViewHelper;
+class ViewAnimationHelper;
 class FileViewStatusBar;
 class HeaderView;
 class BaseItemDelegate;
@@ -50,6 +51,7 @@ class FileViewPrivate
     SelectHelper *selectHelper { nullptr };
     FileViewMenuHelper *viewMenuHelper { nullptr };
     FileViewHelper *fileViewHelper { nullptr };
+    ViewAnimationHelper *animationHelper { nullptr };
     QWidget *emptyInteractionArea { nullptr };
 
     QList<FileView::SelectionMode> enabledSelectionModes;
@@ -64,6 +66,8 @@ class FileViewPrivate
     int horizontalOffset { 0 };
     int cachedViewWidth { -1 };
     bool isShowViewSelectBox { false };
+    bool isResizeEvent { false };
+    int lastContentHeight { 0 };
 
     QList<QUrl> preSelectionUrls;
     QTimer *preSelectTimer { nullptr };
@@ -84,6 +88,7 @@ class FileViewPrivate
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
+    int calcColumnCount(int widgetWidth, int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;
 
     void initIconModeView();

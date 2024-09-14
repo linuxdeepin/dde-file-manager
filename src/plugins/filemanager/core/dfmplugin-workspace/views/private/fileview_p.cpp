@@ -14,6 +14,7 @@
 #include "utils/shortcuthelper.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/fileviewmenuhelper.h"
+#include "utils/viewanimationhelper.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -21,6 +22,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QScrollBar>
+#include <QVBoxLayout>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -33,6 +35,7 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
     selectHelper = new SelectHelper(qq);
     shortcutHelper = new ShortcutHelper(qq);
     viewMenuHelper = new FileViewMenuHelper(qq);
+    animationHelper = new ViewAnimationHelper(qq);
 
     enabledSelectionModes << FileView::NoSelection << FileView::SingleSelection
                           << FileView::MultiSelection << FileView::ExtendedSelection
@@ -53,6 +56,14 @@ int FileViewPrivate::iconModeColumnCount(int itemWidth) const
     return qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
 }
 
+int FileViewPrivate::calcColumnCount(int widgetWidth, int itemWidth) const
+{
+    if (itemWidth <= 0)
+        itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
+
+    return qMax((widgetWidth - 1) / itemWidth, 1);
+}
+
 QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
 {
     return index.data().toUrl();
@@ -60,17 +71,16 @@ QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
 
 void FileViewPrivate::initIconModeView()
 {
-    if (headerView) {
-        headerView->disconnect();
-        q->takeHeaderWidget(0);
-        delete headerView;
-        headerView = nullptr;
-    }
-
     if (emptyInteractionArea) {
-        q->takeHeaderWidget(0);
-        delete emptyInteractionArea;
-        emptyInteractionArea = nullptr;
+        emptyInteractionArea->setVisible(false);
+
+        if (headerView) {
+            headerView->disconnect();
+            auto headerLayout = qobject_cast<QVBoxLayout *>(emptyInteractionArea->layout());
+            headerLayout->takeAt(0);
+            delete headerView;
+            headerView = nullptr;
+        }
     }
 
     if (statusBar) {
@@ -83,7 +93,20 @@ void FileViewPrivate::initIconModeView()
 
 void FileViewPrivate::initListModeView()
 {
+    if (!emptyInteractionArea) {
+        emptyInteractionArea = new QWidget(q);
+        QVBoxLayout *headerLayout = new QVBoxLayout;
+        headerLayout->setContentsMargins(0, 0, 0, 0);
+        headerLayout->setAlignment(Qt::AlignTop);
+        emptyInteractionArea->setLayout(headerLayout);
+        emptyInteractionArea->setFixedHeight(10 + kListViewHeaderHeight);
+        emptyInteractionArea->installEventFilter(q);
+        q->addHeaderWidget(emptyInteractionArea);
+    }
+
     if (!headerView) {
+        auto headerLayout = qobject_cast<QVBoxLayout *>(emptyInteractionArea->layout());
+
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
 
         headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -95,14 +118,7 @@ void FileViewPrivate::initListModeView()
             headerView->setSelectionModel(q->selectionModel());
         }
 
-        q->addHeaderWidget(headerView);
-        if (!emptyInteractionArea) {
-            emptyInteractionArea = new QWidget(q);
-            emptyInteractionArea->setFixedHeight(10);
-            emptyInteractionArea->installEventFilter(q);
-        }
-
-        q->addHeaderWidget(emptyInteractionArea);
+        headerLayout->addWidget(headerView);
 
         QObject::connect(headerView, &HeaderView::mousePressed, q, &FileView::onHeaderViewMousePressed);
         QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
@@ -115,6 +131,9 @@ void FileViewPrivate::initListModeView()
             headerView->move(-value, headerView->y());
         });
     }
+
+    emptyInteractionArea->setVisible(true);
+
     if (statusBar)
         statusBar->setScalingVisible(false);
 }
@@ -171,6 +190,9 @@ void FileViewPrivate::pureResizeEvent(QResizeEvent *event)
     if (currentViewMode == Global::ViewMode::kListMode || currentViewMode == Global::ViewMode::kTreeMode) {
         if (adjustFileNameColumn && headerView)
             headerView->doFileNameColumnResize(q->width());
+    } else {
+        if (animationHelper)
+            animationHelper->aboutToPlay();
     }
 }
 

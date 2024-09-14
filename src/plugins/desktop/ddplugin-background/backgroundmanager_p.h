@@ -8,8 +8,6 @@
 #include "backgroundmanager.h"
 #include "backgroundservice.h"
 
-#include <com_deepin_wm.h>
-
 #include <QObject>
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
@@ -25,17 +23,22 @@ public:
         QSize size;
         QPixmap pixmap;
     };
+
 public:
     explicit BackgroundBridge(class BackgroundManagerPrivate *ptr);
     ~BackgroundBridge();
+
 public:
-    inline bool isRunning() const {
+    inline bool isRunning() const
+    {
         return future.isRunning();
     }
-    inline bool isForce() const {
+    inline bool isForce() const
+    {
         return force;
     }
-    inline void setRepeat() {
+    inline void setRepeat()
+    {
         repeat = true;
     }
     void request(bool refresh);
@@ -43,8 +46,10 @@ public:
     void terminate(bool wait);
     Q_INVOKABLE void onFinished(void *pData);
     static QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap = QPixmap());
+
 private:
     static void runUpdate(BackgroundBridge *self, QList<Requestion> reqs);
+
 private:
     class BackgroundManagerPrivate *d = nullptr;
     volatile bool getting = false;
@@ -77,4 +82,4 @@ public:
 
 DDP_BACKGROUND_END_NAMESPACE
 
-#endif // BACKGROUNDMANAGER_P_H
+#endif   // BACKGROUNDMANAGER_P_H

@@ -34,7 +34,7 @@ set(QRC_FILE
 qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
 qt5_add_dbus_interface(MOUNT_PLUGIN_FILES
-    "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.filemanager.server.DeviceManager.xml"
+    "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.Daemon.DeviceManager.xml"
     devicemanager_interface
 )
 

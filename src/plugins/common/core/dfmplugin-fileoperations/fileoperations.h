@@ -13,7 +13,11 @@ DPFILEOPERATIONS_BEGIN_NAMESPACE
 class FileOperations : public dpf::Plugin
 {
     Q_OBJECT
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "fileoperations.json")
+#else
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "fileoperations.json")
+#endif
 
     DPF_EVENT_NAMESPACE(DPFILEOPERATIONS_NAMESPACE)
 
@@ -40,6 +44,11 @@ class FileOperations : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Operation_WriteUrlsToClipboard)
     DPF_EVENT_REG_HOOK(hook_Operation_RenameFiles)
     DPF_EVENT_REG_HOOK(hook_Operation_RenameFilesAddText)
+    DPF_EVENT_REG_SLOT(slot_Operation_FilesPreview)
+
+    DPF_EVENT_REG_SIGNAL(signal_File_Add)
+    DPF_EVENT_REG_SIGNAL(signal_File_Delete)
+    DPF_EVENT_REG_SIGNAL(signal_File_Rename)
 
 public:
     virtual void initialize() override;
@@ -47,6 +56,7 @@ public:
 
 private slots:
     void initEventHandle();
+
 private:
     void followEvents();
 };

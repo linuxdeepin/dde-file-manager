@@ -10,6 +10,7 @@
 #include <DDialog>
 #include <DFrame>
 #include <QUrl>
+#include <QRegularExpression>
 
 DWIDGET_BEGIN_NAMESPACE
 class DIconButton;
@@ -65,7 +66,7 @@ private:
         kConnectButton
     };
 
-    QRegExp protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
+    QRegularExpression protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
     QUrl currentUrl;
     QStringList supportedSchemes;
     DTK_WIDGET_NAMESPACE::DComboBox *serverComboBox { nullptr };

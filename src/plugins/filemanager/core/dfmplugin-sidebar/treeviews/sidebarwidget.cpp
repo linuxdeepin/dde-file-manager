@@ -262,9 +262,9 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
     }
 
     QApplication::restoreOverrideCursor();
-    auto flag = !DConfigManager::instance()->
-            value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, true).toBool();
+    auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                   kOpenFolderWindowsInASeparateProcess, true)
+                         .toBool();
 
     auto target = item->targetUrl();
     if (flag && FileManagerWindowsManager::instance().containsCurrentUrl(target, window())) {
@@ -328,7 +328,7 @@ void SideBarWidget::initializeUi()
     setGraphicsEffect(effect);
 
     QHBoxLayout *hlayout = new QHBoxLayout(this);
-    hlayout->setMargin(0);
+    hlayout->setContentsMargins(0, 0, 0, 0);
     hlayout->setSpacing(0);
     QWidget *leftSpacer = new QWidget(this);
     leftSpacer->setAutoFillBackground(true);
@@ -337,7 +337,7 @@ void SideBarWidget::initializeUi()
 
     QVBoxLayout *vlayout = new QVBoxLayout();
     vlayout->addWidget(sidebarView);
-    vlayout->setMargin(0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->setSpacing(0);
 
     hlayout->addWidget(leftSpacer);

@@ -101,7 +101,12 @@ QList<QRect> CollectionViewPrivate::itemPaintGeomertys(const QModelIndex &index)
     if (Q_UNLIKELY(!index.isValid()))
         return {};
 
-    QStyleOptionViewItem option = q->viewOptions();
+    QStyleOptionViewItem option;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    option = q->viewOptions();
+#else
+    q->initViewItemOption(&option);
+#endif
     option.rect = itemRect(index);
     return q->itemDelegate()->paintGeomertys(option, index);
 }
@@ -343,7 +348,13 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
     const qreal offsetY = pixRect.height() / 2;
     const QSize iconSize(iconWidth, iconWidth);
 
-    QStyleOptionViewItem option = q->viewOptions();
+    QStyleOptionViewItem option;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    option = q->viewOptions();
+#else
+    q->initViewItemOption(&option);
+#endif
+
     option.state |= QStyle::State_Selected;
     // icon rect in pixmap.
     option.rect = pixRect.translated(iconMargin, iconMargin);
@@ -1350,7 +1361,7 @@ void CollectionView::setSelectionModel(QItemSelectionModel *selectionModel)
 
     //! when selection changed, we need to update all view.
     //! otherwise the expanded text will partly remain.
-    connect(selectionModel, &QItemSelectionModel::selectionChanged, this, (void (QWidget::*)()) & QWidget::update);
+    connect(selectionModel, &QItemSelectionModel::selectionChanged, this, (void(QWidget::*)()) & QWidget::update);
 }
 
 void CollectionView::reset()
@@ -1675,7 +1686,12 @@ void CollectionView::paintEvent(QPaintEvent *event)
     if (d->flicker)
         return;
 
-    auto option = viewOptions();
+    QStyleOptionViewItem option;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    option = viewOptions();
+#else
+    initViewItemOption(&option);
+#endif
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);
 

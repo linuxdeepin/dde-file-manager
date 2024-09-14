@@ -329,7 +329,8 @@ public:
             if (info && tarScheme == Global::Scheme::kAsyncFile)
                 info->updateAttributes();
 
-            emit InfoCacheController::instance().cacheFileInfo(url, info);
+            if (type != Global::CreateFileInfoType::kCreateFileInfoAutoNoCache)
+                emit InfoCacheController::instance().cacheFileInfo(url, info);
         }
 
         if (!info)

@@ -4,34 +4,32 @@ project(dfmplugin-computer)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB COMPUTER_FILES
+FILE(GLOB_RECURSE COMPUTER_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-find_package(Dtk COMPONENTS Widget REQUIRED)
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(Secret REQUIRED libsecret-1)
 
+find_package(Qt5 COMPONENTS Core)
 add_library(${PROJECT_NAME}
     SHARED
     ${COMPUTER_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
         ${Secret_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
     ${Secret_LIBRARIES}
 )
 
@@ -47,6 +45,5 @@ set(AppEntryInstallDir "${CMAKE_INSTALL_PREFIX}/share/dde-file-manager/extension
 install(FILES .readme DESTINATION ${AppEntryInstallDir})
 
 # install dconfig files.
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.computer.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.mount.json")

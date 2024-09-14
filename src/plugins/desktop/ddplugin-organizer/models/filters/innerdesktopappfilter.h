@@ -10,7 +10,9 @@
 #include <QMap>
 #include <QList>
 
-class QGSettings;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QGSettings>
+#endif
 
 namespace ddplugin_organizer {
 
@@ -26,12 +28,15 @@ public:
     bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
 public slots:
     void changed(const QString &key);
+
 protected:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGSettings *gsettings = nullptr;
+#endif
     QMap<QString, QUrl> keys;
     QMap<QString, bool> hidden;
 };
 
 }
 
-#endif // INNERDESKTOPAPPFILTER_H
+#endif   // INNERDESKTOPAPPFILTER_H

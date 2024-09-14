@@ -19,16 +19,19 @@
 #include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
+#include <dfm-base/base/application/application.h>
 
 #include <dfm-framework/dpf.h>
+
+DFMBASE_USE_NAMESPACE
 
 namespace dfmplugin_workspace {
 DFM_LOG_REISGER_CATEGORY(DPWORKSPACE_NAMESPACE)
 
 void Workspace::initialize()
 {
-    DFMBASE_USE_NAMESPACE
-
     WorkspaceHelper::instance()->registerFileView(Global::Scheme::kFile);
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
@@ -38,6 +41,8 @@ void Workspace::initialize()
             WorkspaceHelper::instance(), &WorkspaceHelper::installWorkspaceWidgetToWindow);
 
     WorkspaceEventReceiver::instance()->initConnection();
+
+    initConfig();
 }
 
 bool Workspace::start()
@@ -65,6 +70,11 @@ bool Workspace::start()
         return interface;
     });
 
+    QString err;
+    auto ret = DConfigManager::instance()->addConfig(DConfigInfo::kConfName, &err);
+    if (!ret)
+        fmWarning() << "File Preview: create dconfig failed: " << err;
+
     return true;
 }
 
@@ -83,5 +93,32 @@ void Workspace::onWindowOpened(quint64 windId)
 void Workspace::onWindowClosed(quint64 windId)
 {
     WorkspaceHelper::instance()->removeWorkspace(windId);
+}
+
+void Workspace::initConfig()
+{
+    SyncPair pair {
+        { SettingType::kGenAttr, Application::kShowThunmbnailInRemote },
+        { DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey },
+        saveRemoteToConf,
+        syncRemoteToAppSet,
+        isRemoteConfEqual
+    };
+    ConfigSynchronizer::instance()->watchChange(pair);
+}
+
+void Workspace::saveRemoteToConf(const QVariant &var)
+{
+    DConfigManager::instance()->setValue(DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey, var);
+}
+
+void Workspace::syncRemoteToAppSet(const QString &, const QString &, const QVariant &var)
+{
+    Application::instance()->setGenericAttribute(Application::kShowThunmbnailInRemote, var.toBool());
+}
+
+bool Workspace::isRemoteConfEqual(const QVariant &dcon, const QVariant &dset)
+{
+    return dcon.toBool() && dset.toBool();
 }
 }   // namespace dfmplugin_workspace
