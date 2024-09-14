@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="bo">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -181,7 +179,7 @@
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="462"/>
         <source>Blank %1 Disc</source>
-        <translation>འོད་སྡེར་སྟོང་པ་%1&#xa0;</translation>
+        <translation>འོད་སྡེར་སྟོང་པ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="462"/>
@@ -194,18 +192,18 @@
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="472"/>
         <source>%1 Drive</source>
-        <translation>སྐུལ་ཆས་%1&#xa0;</translation>
+        <translation>སྐུལ་ཆས་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="491"/>
         <source>%1 Encrypted</source>
-        <translation>གསང་སྡོམ་%1&#xa0;</translation>
+        <translation>གསང་སྡོམ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="499"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="79"/>
         <source>%1 Volume</source>
-        <translation>བམ་པོ་%1&#xa0;</translation>
+        <translation>བམ་པོ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="267"/>
@@ -901,7 +899,7 @@
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1271"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation>（འདྲ་དཔེ།&#xa0;%1）</translation>
+        <translation>（འདྲ་དཔེ། %1）</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="90"/>
@@ -1403,7 +1401,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="71"/>
         <source>New tab</source>
-        <translation>ཤོག་བྱང་གསར་བཟོ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="77"/>
@@ -1787,7 +1785,7 @@
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="613"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="726"/>
         <source>Clear search history</source>
-        <translation>འཚོལ་བཤེར་ལོ་རྒྱུས་གསལ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1838,7 +1836,7 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
         <source>Personalization</source>
-        <translation>མི་སྒེར་ཅན་བཟོ་བ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
@@ -2018,12 +2016,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
         <source>The hortcut key &quot;%1&quot; to show collection</source>
-        <translation>བསྡུ་རུབ་སྟོན་པའི་མགྱོགས་མཐེབ་ &quot;%1&quot;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation>བསླབ་བྱ་མེད།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2074,7 +2072,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="134"/>
         <source>Middle area</source>
-        <translation>དཀྱིལ་ཁུལ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="160"/>
@@ -2105,12 +2103,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="231"/>
         <source>Enable desktop organization</source>
-        <translation>ཡིག་ཆའི་སྒྲིག་འཛུགས་ལྕོགས་ཅན་བཟོས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>View options</source>
-        <translation>གདམ་ག་ལ་ལྟ་བ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
@@ -2153,27 +2151,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="154"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation>གཅིག་རྐྱང་གིས་སྦས་པའི་ཁྱད་ཆོས་དེ་ལྕོགས་མིན་བཟོ་བར་ཌེཀ་སི་ཊོཔ་སྐབས་དོན་དཀར་ཆག་ནང་ &quot;གདམ་ག་མཐོང་&quot; སྒེའུ་ཁུངས་དེ་འབོད་སྐུལ་བྱས་ནས་ &quot;གཅིག་གིས་གཅིག་གིས་སྦས་པའི་བསྡུ་རུབ&quot; དེ་ཁ་བརྒྱབ་དགོས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="164"/>
         <source>Desktop organizer</source>
-        <translation>ཀམ་པུ་ཊར་གོ་སྒྲིག་བྱེད་མཁན།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="167"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation>བསྡུ་རུབ་སྟོན་པའི་ཆེད་དུ་&quot;%1&quot;མགྱོགས་ཐབས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>Close</source>
-        <translation>སྒོ་བརྒྱབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>No more prompts</source>
-        <translation>ད་དུང་འབོད་སྐུལ་མེད།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2207,7 +2205,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="124"/>
         <source>Enable desktop organizer</source>
-        <translation>ཀམ་པུ་ཊར་སྒྲིག་ཆས་ལྕོགས་ཅན་བཟོས།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2225,12 +2223,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation>གནོན་ཐེངས་གཅིག་གིས་བསྡུ་རུབ་ཚང་མ་སྦས་དགོས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation>བསྡུ་རུབ་ཀྱི་མགྱོགས་ཐབས་སྦས་བ/སྟོན།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2852,7 +2850,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="546"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>ཡིག་ཆ་&quot;%1&quot;&#xa0;བཟུང་ཟིན་པས། མིང་གཞན་སྤྱོད་རོགས།</translation>
+        <translation>ཡིག་ཆ་&quot;%1&quot; བཟུང་ཟིན་པས། མིང་གཞན་སྤྱོད་རོགས།</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="560"/>
@@ -3041,7 +3039,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
         <source>Open folder windows in a separate process</source>
-        <translation>སྣོད་སྒེའུ་ཁུངས་སོ་སོའི་བརྒྱུད་རིམ་ནང་ཁ་ཕྱེ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
@@ -3397,12 +3395,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Undo</source>
-        <translation>ཕྱིར་འཐེན་བྱེད་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Redo</source>
-        <translation>བསྐྱར་དུ་བྱེད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
@@ -4422,7 +4420,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="512"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation>SMB port བཀག་སྡོམ་བྱས་ཡོད། སྐུ་མཁྱེན། མེ་གྱང་གི་ཐབས་ཤེས་ལ་ཞིབ་བཤེར་བྱེད་རོགས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="521"/>
@@ -4594,12 +4592,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation>ཡིག་ཆ་འདྲ་བཤུས་ཡང་ན་གཏུབ་པ་འཐུས་ཤོར་བྱུང་། ཡིག་ཆ་འདི་ཡང་བསྐྱར་འདྲ་བཤུས་བྱེད་རོགས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Can&apos;t access file!</source>
-        <translation>ཡིག་ཆ་འཛུལ་སྤྱོད་བྱེད་མི་ཐུབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
@@ -4654,12 +4652,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation>ཡིག་ཆ་འདྲ་བཤུས་ཡང་ན་གཏུབ་པ་འཐུས་ཤོར་བྱུང་བ། རྒྱུ་རྐྱེན། %1. ཡིག་ཆ་འདི་ཡང་བསྐྱར་འདྲ་བཤུས་བྱེད་རོགས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation>ཡིག་ཆ་མཁོ་ཕབ་བམ་དྲས་སྦྱར་བྱེད་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
@@ -5192,17 +5190,17 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation>འགྲོ་ལམ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation>ཉེ་ཆར་གྱི་ལྟ་སྤྱོད་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
-        <translation>ཉེར་ཆར་བེད་སྤྱོད་བྱས་པ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5382,17 +5380,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="146"/>
         <source>Display search history</source>
-        <translation>འཚོལ་བཤེར་ལོ་རྒྱུས་མངོན་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="175"/>
         <source>Clear dde-file-manager Search Records</source>
-        <translation>dde-file-manager ཡི་འཚོལ་བཤེར་ཟིན་ཐོ་བསལ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="176"/>
         <source>Clean up</source>
-        <translation>གཙང་མ་ བཟོས</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5573,21 +5571,21 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="349"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="355"/>
         <source>Are you sure clear search histories?</source>
-        <translation>ཁྱེད་རང་གི་འཚོལ་ཞིབ་ལོ་རྒྱུས་གསལ་པོ་ཡིན་ནམ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="351"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="357"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>འདོར་བ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="352"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="358"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>ཆོག</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6126,7 +6124,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="435"/>
         <source>Applications (*.desktop);;All files (*)</source>
-        <translation>ཉེར་སྤྱོད་བྱ་རིམ། (*.desktop) ཡིག་ཆ་ཚང་མ་&#xa0;(*)</translation>
+        <translation>ཉེར་སྤྱོད་བྱ་རིམ། (*.desktop) ཡིག་ཆ་ཚང་མ་ (*)</translation>
     </message>
 </context>
 <context>
@@ -6824,12 +6822,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="2041"/>
         <source>Mount error</source>
-        <translation>འགེལ་འཇུག་ནོར་བ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="2042"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation>ཞབས་ཞུའི་ནང་འཛུལ་ཡིག་ཆ་ནུས་མེད་ཡིན། བཤུབ་ནས་བསྐྱར་སྒྲིག་བྱེད་རོགས།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
