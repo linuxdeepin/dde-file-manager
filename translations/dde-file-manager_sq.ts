@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/LineSearch.qml" line="23"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Kërko</translation>
     </message>
 </context>
 <context>
@@ -4420,7 +4420,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="512"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation type="unfinished"/>
+        <translation>Porta SMB është e ndaluar, ju lutemi, shihni strategjinë e firewall-it.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="521"/>
@@ -4592,7 +4592,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation type="unfinished"/>
+        <translation>Kopjimi, ose Prerja dështoi! Riprovoni të kopjoni këtë kartelë!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
@@ -4652,12 +4652,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation type="unfinished"/>
+        <translation>Kopjimi, ose Prerja dështoi, për shkak të: %1. Riprovoni të kopjoni këtë kartelë!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation type="unfinished"/>
+        <translation>Kopjimi, ose Prerja dështoi, për shkak të: %1.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
@@ -5390,7 +5390,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="176"/>
         <source>Clean up</source>
-        <translation type="unfinished"/>
+        <translation>Spastroje</translation>
     </message>
 </context>
 <context>
@@ -5571,7 +5571,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="349"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="355"/>
         <source>Are you sure clear search histories?</source>
-        <translation type="unfinished"/>
+        <translation>Jeni i sigurt se doni të spastrohet historik kërkimesh?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="351"/>
@@ -6828,7 +6828,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="2042"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"/>
+        <translation>Kredencialet për hyrje në shërbyes janë të pavlefshme. Ju lutemi, çinstalojeni dhe rimontojeni</translation>
     </message>
 </context>
 <context>
