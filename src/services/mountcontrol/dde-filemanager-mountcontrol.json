@@ -2,7 +2,7 @@
     "name": "org.deepin.Filemanager.MountControl",
     "libPath": "libdde-filemanager-mountcontrol.so",
     "group": "app",
-    "policyStartType": "OnDemand",
+    "policyStartType": "Resident",
     "pluginType": "qt",
     "idleTime": 1,
     "policy": [
