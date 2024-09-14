@@ -19,6 +19,8 @@
 #include <dfm-framework/event/event.h>
 
 #include <DApplication>
+#include <DGuiApplicationHelper>
+
 #include <QAction>
 
 DFMBASE_USE_NAMESPACE
@@ -176,15 +178,9 @@ bool ShortcutOper::disableShortcut() const
 
 void ShortcutOper::helpAction()
 {
-    class PublicApplication : public DApplication
-    {
-    public:
-        using DApplication::handleHelpAction;
-    };
-
     QString appName = qApp->applicationName();
     qApp->setApplicationName("dde");
-    reinterpret_cast<PublicApplication *>(DApplication::instance())->handleHelpAction();
+    DGuiApplicationHelper::instance()->handleHelpAction();
     qApp->setApplicationName(appName);
 }
 
