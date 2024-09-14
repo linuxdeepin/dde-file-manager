@@ -76,13 +76,13 @@ void UnlockView::initUI()
     play1->addWidget(tipsButton);
 
     QHBoxLayout *play2 = new QHBoxLayout();
-    play2->setMargin(0);
+    play2->setContentsMargins(0, 0, 0, 0);
     play2->addStretch(1);
     play2->addWidget(forgetPassword);
     forgetPassword->setAlignment(Qt::AlignRight);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addStretch();
     mainLayout->addLayout(play1);
     mainLayout->addLayout(play2);

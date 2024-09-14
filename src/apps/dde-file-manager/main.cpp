@@ -15,17 +15,22 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <DApplicationSettings>
-#include <DSysInfo>
-
 #include <QIcon>
 #include <QDir>
-#include <QTextCodec>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QTextCodec>
+#endif
 #include <QProcess>
 #include <QTimer>
 
 #include <signal.h>
 #include <malloc.h>
+
+#ifdef DFM_UI_TYPE_QML
+#    include <dfm-gui/sharedqmlengine.h>
+#    include <dfm-gui/windowmanager.h>
+#    include <QQmlEngine>
+#endif
 
 Q_LOGGING_CATEGORY(logAppFileManager, "org.deepin.dde.filemanager.filemanager")
 
@@ -63,13 +68,21 @@ static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
  */
 static void setEnvForRoot()
 {
-    QProcess p;
-    p.start("bash", QStringList() << "-c"
-                                  << "echo $(dbus-launch --autolaunch $(cat /var/lib/dbus/machine-id))");
-    p.waitForFinished();
+    QProcess p1;
+    QProcess p2;
+
+    // 首先执行 cat 命令获取 machine-id
+    p1.start("cat", QStringList() << "/var/lib/dbus/machine-id");
+    p1.waitForFinished();
+    QString machineId = p1.readAllStandardOutput().trimmed();   // 去除多余的空白字符
+
+    // 然后使用获取到的 machine-id 执行 dbus-launch
+    p2.start("dbus-launch", QStringList() << "--autolaunch" << machineId);
+    p2.waitForFinished();
+    QString output = p2.readAllStandardOutput().trimmed();
+
+    QStringList group(output.split('\n'));
     QString envName("DBUS_SESSION_BUS_ADDRESS");
-    QString output(p.readAllStandardOutput());
-    QStringList group(output.split(" "));
     for (const QString &vals : group) {
         const QStringList &envGroup = vals.split(",");
         for (const QString &env : envGroup) {
@@ -120,6 +133,27 @@ static QStringList buildBlackNames()
     return blackNames;
 }
 
+#ifdef DFM_UI_TYPE_QML
+static bool initQmlEngine()
+{
+    QSharedPointer<QQmlEngine> globalEngine = dfmgui::WindowManager::instance()->engine();
+    if (!globalEngine) {
+        return false;
+    }
+
+#    ifdef QT_DEBUG
+    const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
+    globalEngine->addImportPath(pluginsDir + "/qml");
+#    else
+    globalEngine->addImportPath(DFM_QML_MODULE);
+#    endif
+
+    dfmgui::WindowManager::instance()->initialize();
+    return true;
+}
+
+#endif
+
 static bool pluginsLoad()
 {
     QString msg;
@@ -130,9 +164,11 @@ static bool pluginsLoad()
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
     qCInfo(logAppFileManager) << QString("Load plugins path : %1").arg(pluginsDir);
+    qApp->setProperty("DFM_BUILD_PLUGIN_DIR", pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
     pluginsDirs.push_back(pluginsDir);
+    qApp->setProperty("DFM_BUILD_PLUGIN_DIR", DFM_BUILD_PLUGIN_DIR);
 #else
     pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
                 << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
@@ -271,8 +307,10 @@ int main(int argc, char *argv[])
     // Warning: set log filter must before QApplication inited
     initLog();
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+#endif
 
     SingleApplication a(argc, argv);
 
@@ -320,6 +358,12 @@ int main(int argc, char *argv[])
         // check upgrade
         checkUpgrade(&a);
 
+#ifdef DFM_UI_TYPE_QML
+        if (!initQmlEngine()) {
+            qCCritical(logAppFileManager) << "init QQmlEngine failed!";
+            abort();
+        }
+#endif
         if (!pluginsLoad()) {
             qCCritical(logAppFileManager) << "Load pugin failed!";
             abort();

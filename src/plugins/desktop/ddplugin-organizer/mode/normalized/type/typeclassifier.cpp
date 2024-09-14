@@ -24,11 +24,25 @@ inline const char kTypeSuffixApp[] = "desktop";
 //inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
 }
 
-#define InitSuffixTable(table, suffix)                                 \
-    {                                                                  \
-        QSet<QString> *tablePtr = const_cast<QSet<QString> *>(&table); \
-        *tablePtr = tablePtr->fromList(QString(suffix).split(','));    \
-    }
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    define InitSuffixTable(table, suffix)                                 \
+        {                                                                  \
+            QSet<QString> *tablePtr = const_cast<QSet<QString> *>(&table); \
+            *tablePtr = tablePtr->fromList(QString(suffix).split(','));    \
+        }
+#else
+static void InitSuffixTable(const QSet<QString> &table, const QString &suffix)
+{
+    QSet<QString> *tablePtr = const_cast<QSet<QString> *>(&table);
+    if (!tablePtr)
+        return;
+    tablePtr->clear();
+    QStringList list = suffix.split(',');
+    for (const QString &item : list)
+        tablePtr->insert(item);
+}
+#endif
+
 TypeClassifierPrivate::TypeClassifierPrivate(TypeClassifier *qq)
     : q(qq)
 {

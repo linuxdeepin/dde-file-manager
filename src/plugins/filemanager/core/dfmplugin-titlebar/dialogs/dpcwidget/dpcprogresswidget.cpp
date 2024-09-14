@@ -18,9 +18,9 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 
 namespace DaemonServiceIFace {
-static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
-static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/AccessControlManager" };
-static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon.AccessControlManager" };
+static constexpr char kInterfaceService[] { "org.deepin.Filemanager" };
+static constexpr char kInterfacePath[] { "/org/deepin/Filemanager/AccessControlManager" };
+static constexpr char kInterfaceInterface[] { "org.deepin.Filemanager.AccessControlManager" };
 
 static constexpr char kSigPwdChanged[] { "DiskPasswordChanged" };
 }   // namespace DBusInterfaceInfo
@@ -40,7 +40,7 @@ DPCProgressWidget::DPCProgressWidget(QWidget *parent)
 void DPCProgressWidget::initUI()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
 
     progressTimer = new QTimer(this);

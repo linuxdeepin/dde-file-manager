@@ -4,32 +4,35 @@ project(filedialogplugin-core)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB CORE
+FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Qt5 COMPONENTS DBus Widgets REQUIRED)
+
+qt5_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialog.xml
+    ${CMAKE_CURRENT_SOURCE_DIR}/dbus/filedialoghandledbus.h FileDialogHandleDBus)
+qt5_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialogmanager.xml
+    ${CMAKE_CURRENT_SOURCE_DIR}/dbus/filedialogmanagerdbus.h FileDialogManagerDBus)
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${CORE}
+    ${SRC_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEDIALOG_DIR})
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
+    Qt5::DBus
 )
 
 #install library file
@@ -39,7 +42,6 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
 )
-
 
 # install dbus
 install(FILES dbus/com.deepin.filemanager.filedialog.xml DESTINATION share/dbus-1/interfaces)

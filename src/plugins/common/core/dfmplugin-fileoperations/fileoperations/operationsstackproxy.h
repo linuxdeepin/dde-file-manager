@@ -6,11 +6,16 @@
 #define OPERATIONSSTACK_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "operationsstackmanager_interface.h"
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include "operationsstackmanager_interface.h"
+#else
+#    include "operationsstackmanager_interface_qt6.h"
+#endif
 
 #include <QObject>
 
-using OperationsStackManagerInterface = OrgDeepinFilemanagerServerOperationsStackManagerInterface;
+using OperationsStackManagerInterface = OrgDeepinFilemanagerDaemonOperationsStackManagerInterface;
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 

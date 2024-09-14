@@ -20,6 +20,7 @@
 #include <DComboBox>
 #include <DSuggestButton>
 #include <DFrame>
+#include <DListView>
 
 #include <QHBoxLayout>
 #include <QWindow>
@@ -259,10 +260,13 @@ void FileDialogStatusBar::initializeUi()
     fileNameEdit->setClearButtonEnabled(false);
 
     filtersComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    filtersComboBox->setView(new QListView);
     QScrollBar *scrollBar = new QScrollBar(filtersComboBox);
-    filtersComboBox->view()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    filtersComboBox->view()->setHorizontalScrollBar(scrollBar);
+    DListView *itemView = new DListView();
+    itemView->setItemRadius(0);
+    itemView->setItemSpacing(0);
+    itemView->setHorizontalScrollBar(scrollBar);
+    filtersComboBox->setView(itemView);
+    itemView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     curAcceptButton = new DSuggestButton(this);
     curRejectButton = new DPushButton(tr("Cancel", "button"), this);

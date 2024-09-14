@@ -15,7 +15,7 @@ CheckBoxWithMessage::CheckBoxWithMessage(QWidget *parent)
     auto widget = new QWidget(this);
     widget->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     setLayout(layout);
 
     checkBox = new QCheckBox(widget);

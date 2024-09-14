@@ -15,8 +15,8 @@ Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 DGUI_BEGIN_NAMESPACE
 DGUI_END_NAMESPACE
 
-static constexpr char kDeviceService[] { "org.deepin.filemanager.server" };
-static constexpr char kDevMngPath[] { "/org/deepin/filemanager/server/DeviceManager" };
+static constexpr char kDeviceDaemonName[] { "org.deepin.Filemanager.Daemon" };
+static constexpr char kDevMngPath[] { "/org/deepin/Filemanager/Daemon/DeviceManager" };
 static const bool kDisplay = true;
 static const bool kIgnore = false;
 
@@ -29,7 +29,7 @@ DockItemDataManager *DockItemDataManager::instance()
 DockItemDataManager::DockItemDataManager(QObject *parent)
     : QObject { parent }
 {
-    devMng.reset(new DeviceManager(kDeviceService,
+    devMng.reset(new DeviceManager(kDeviceDaemonName,
                                    kDevMngPath,
                                    QDBusConnection::sessionBus(),
                                    this));
@@ -176,7 +176,7 @@ void DockItemDataManager::sendNotification(const QString &id, const QString &ope
 
 void DockItemDataManager::onServiceRegistered()
 {
-    devMng.reset(new DeviceManager(kDeviceService,
+    devMng.reset(new DeviceManager(kDeviceDaemonName,
                                    kDevMngPath,
                                    QDBusConnection::sessionBus(),
                                    this));
@@ -349,7 +349,7 @@ void DockItemDataManager::connectDeviceManger()
 
 void DockItemDataManager::watchService()
 {
-    auto watcher = new QDBusServiceWatcher(kDeviceService, QDBusConnection::sessionBus(),
+    auto watcher = new QDBusServiceWatcher(kDeviceDaemonName, QDBusConnection::sessionBus(),
                                            QDBusServiceWatcher::WatchForOwnerChange, this);
     connect(watcher, &QDBusServiceWatcher::serviceUnregistered,
             this, [this](auto serv) {

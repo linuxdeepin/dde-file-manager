@@ -44,24 +44,19 @@ FILE(GLOB SIDEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 endif()
-find_package(Dtk COMPONENTS Widget REQUIRED)
 
+find_package(Qt5 COMPONENTS Core)
 add_library(${PROJECT_NAME}
     SHARED
     ${SIDEBAR_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    ${DtkWidget_LIBRARIES}
 )
 
 #install library file
@@ -73,6 +68,5 @@ install(TARGETS
 )
 
 # install dconfig files.
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.sidebar.json")
 

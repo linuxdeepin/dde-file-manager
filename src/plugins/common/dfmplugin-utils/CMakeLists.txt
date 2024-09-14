@@ -5,7 +5,7 @@ project(dfmplugin-utils)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 configure_file(
-    "./config.h.in"
+    "${CMAKE_SOURCE_DIR}/src/apps/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 
@@ -15,36 +15,12 @@ FILE(GLOB_RECURSE UTILS_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(Qt5 COMPONENTS Svg REQUIRED)
+# NOTE: maybe a Qt bug, qt6 before qt5 if use QtSvg
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-utils-qt6.cmake)
+endif()
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${UTILS_FILES}
-)
+include(dfmplugin-utils-qt5.cmake)
 
-set(EXTENSIONS_LIB_DIR ${DFM_PLUGIN_DIR}/extensions)
-add_definitions(-DEXTENSIONS_PATH=\"${EXTENSIONS_LIB_DIR}\")
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-        ${Qt5Svg_INCLUDE_DIRS}
-)
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    DFM::extension
-    Qt5::Svg
-    ${DtkWidget_LIBRARIES}
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
-)

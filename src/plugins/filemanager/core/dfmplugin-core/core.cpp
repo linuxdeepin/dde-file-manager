@@ -91,11 +91,11 @@ void Core::connectToServer()
     // mount business
     if (!DevProxyMng->initService()) {
         // active server
-        QDBusInterface ifs("org.deepin.filemanager.server",
-                           "/org/deepin/filemanager/server");
+        QDBusInterface ifs("org.deepin.Filemanager.Daemon",
+                           "/org/deepin/Filemanager/Daemon");
         ifs.asyncCall("Ping");
 
-        fmCritical() << "device manager cannot connect to service!";
+        fmCritical() << "device manager cannot connect to daemon!";
         DevMngIns->startMonitor();
         DevMngIns->startPollingDeviceUsage();
         DevMngIns->enableBlockAutoMount();

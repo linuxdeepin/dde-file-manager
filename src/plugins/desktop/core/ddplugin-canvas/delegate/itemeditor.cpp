@@ -47,7 +47,7 @@ void ItemEditor::setBaseGeometry(const QRect &base, const QSize &itemSize, const
     setMinimumHeight(base.height());
 
     auto lay = new QVBoxLayout(this);
-    lay->setMargin(0);
+    lay->setContentsMargins(0, 0, 0, 0);
     lay->setSpacing(0);
 
     // add grid margin ,icon height ,icon space, text padding
@@ -70,7 +70,7 @@ void ItemEditor::init()
 
     connect(textEditor, &RenameEdit::textChanged, this, &ItemEditor::textChanged, Qt::UniqueConnection);
     QVBoxLayout *lay = new QVBoxLayout(this);
-    lay->setMargin(0);
+    lay->setContentsMargins(0, 0, 0, 0);
     lay->setSpacing(0);
     lay->setContentsMargins(0, 0, 0, 0);
     lay->addWidget(textEditor, Qt::AlignTop | Qt::AlignHCenter);

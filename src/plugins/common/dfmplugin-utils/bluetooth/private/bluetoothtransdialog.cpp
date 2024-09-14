@@ -27,9 +27,14 @@
 #include <QDebug>
 #include <QTimer>
 #include <QPalette>
-#include <QtSvg/QSvgWidget>
 #include <QUuid>
 #include <QDateTime>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QSvgWidget>
+#else
+#    include <QSvgWidget>
+#endif
 
 #define TITLE_BT_TRANS_FILE dfmplugin_utils::BluetoothTransDialog::tr("Bluetooth File Transfer")
 #define TITLE_BT_TRANS_SUCC dfmplugin_utils::BluetoothTransDialog::tr("File Transfer Successful")
@@ -190,14 +195,14 @@ void BluetoothTransDialog::initUI()
 {
     setIcon(QIcon::fromTheme(kIconConnect));
     setFixedSize(381, 271);
-    layout()->setMargin(0);
+    layout()->setContentsMargins(0, 0, 0, 0);
     layout()->setSpacing(0);
 
     // main structure
     QFrame *mainFrame = new QFrame(this);
     QVBoxLayout *pLayout = new QVBoxLayout;
     pLayout->setSpacing(0);
-    pLayout->setMargin(0);
+    pLayout->setContentsMargins(0, 0, 0, 0);
     mainFrame->setLayout(pLayout);
 
     addContent(mainFrame);
@@ -211,7 +216,7 @@ void BluetoothTransDialog::initUI()
 
     // stacked area
     stackedWidget = new QStackedWidget(this);
-    stackedWidget->layout()->setMargin(0);
+    stackedWidget->layout()->setContentsMargins(0, 0, 0, 0);
     stackedWidget->layout()->setSpacing(0);
 
     pLayout->addWidget(stackedWidget);
@@ -360,7 +365,7 @@ QWidget *BluetoothTransDialog::createDeviceSelectorPage()
     QWidget *w = new QWidget(this);
     QVBoxLayout *pLayout = new QVBoxLayout(w);
     pLayout->setSpacing(0);
-    pLayout->setMargin(0);
+    pLayout->setContentsMargins(0, 0, 0, 0);
     w->setLayout(pLayout);
     // w->setStyleSheet("border: 1px solid red;");
 
@@ -393,7 +398,7 @@ QWidget *BluetoothTransDialog::createDeviceSelectorPage()
     setObjTextStyle(linkBtn, 12, true);
     connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluetoothSetting);
     QHBoxLayout *pLay = new QHBoxLayout(this);
-    pLay->setMargin(0);
+    pLay->setContentsMargins(0, 0, 0, 0);
     pLay->setSpacing(0);
     pLay->addStretch(1);
     pLay->addWidget(linkBtn);
@@ -408,7 +413,7 @@ QWidget *BluetoothTransDialog::createNonDevicePage()
     QWidget *w = new QWidget(this);
     QVBoxLayout *pLay = new QVBoxLayout(w);
     pLay->setSpacing(0);
-    pLay->setMargin(0);
+    pLay->setContentsMargins(0, 0, 0, 0);
     w->setLayout(pLay);
 
     DLabel *statusTxt = new DLabel(TXT_NO_DEV_FOUND, this);
@@ -433,7 +438,7 @@ QWidget *BluetoothTransDialog::createNonDevicePage()
     iconLay->addStretch(1);
     iconLay->addWidget(pIconWid);
     iconLay->addStretch(1);
-    iconLay->setMargin(0);
+    iconLay->setContentsMargins(0, 0, 0, 0);
     iconLay->setSpacing(0);
     pLay->addWidget(pIconWidContainer);
 
@@ -518,7 +523,7 @@ QWidget *BluetoothTransDialog::createFailedPage()
     QWidget *w = new QWidget(this);
     QVBoxLayout *pLay = new QVBoxLayout(w);
     pLay->setSpacing(0);
-    pLay->setMargin(0);
+    pLay->setContentsMargins(0, 0, 0, 0);
     // w->setStyleSheet("border: 1px solid red;");
     w->setLayout(pLay);
 

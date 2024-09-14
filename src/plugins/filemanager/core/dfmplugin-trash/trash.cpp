@@ -159,6 +159,7 @@ void Trash::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TrashFileHelper::instance(), &TrashFileHelper::blockPaste);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_FileDeleteNotCdComputer", TrashFileHelper::instance(), &TrashFileHelper::handleNotCdComputer);
 
     // hook events, file operation
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
@@ -181,6 +182,15 @@ void Trash::followEvents()
                         dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", TrashFileHelper::instance(), &TrashFileHelper::handleCanTag);
                 },
                 Qt::DirectConnection);
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-search")
+                        dpfHookSequence->follow("dfmplugin_search", "hook_Url_IsSubFile",
+                                                TrashFileHelper::instance(),
+                                                &TrashFileHelper::handleIsSubFile);
+                },
+        Qt::DirectConnection);
     }
 }
 

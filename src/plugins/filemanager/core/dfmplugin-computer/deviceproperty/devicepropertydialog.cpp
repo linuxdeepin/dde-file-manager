@@ -9,7 +9,8 @@
 #include <DDrawer>
 #include <denhancedwidget.h>
 #include <DArrowLineDrawer>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
+#include <DGuiApplicationHelper>
 
 #include <QKeyEvent>
 #include <QPainterPath>
@@ -37,7 +38,6 @@ void DevicePropertyDialog::iniUI()
     deviceIcon->setFixedHeight(128);
 
     deviceNameLayout = new QVBoxLayout(this);
-    deviceNameLayout->setMargin(0);
     deviceNameLayout->setContentsMargins(0, 0, 0, 0);
 
     QFrame *basicInfoFrame = new QFrame(this);
@@ -54,7 +54,6 @@ void DevicePropertyDialog::iniUI()
     devicesProgressBar->setTextVisible(false);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setMargin(0);
     vlayout->setContentsMargins(12, 8, 12, 8);
     vlayout->addWidget(basicInfo);
     vlayout->addWidget(devicesProgressBar);
@@ -63,7 +62,7 @@ void DevicePropertyDialog::iniUI()
     new DFMRoundBackground(basicInfoFrame, 8);
 
     QVBoxLayout *vlayout1 = new QVBoxLayout();
-    vlayout1->setMargin(0);
+    vlayout1->setContentsMargins(0, 0, 0, 0);
     vlayout1->setSpacing(0);
     vlayout1->addWidget(deviceIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout1->addLayout(deviceNameLayout);
@@ -159,7 +158,7 @@ void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize, boo
     if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {
         DPalette palette = devicesProgressBar->palette();
         palette.setBrush(DPalette::ObviousBackground, QColor("#ededed"));
-        DApplicationHelper::instance()->setPalette(devicesProgressBar, palette);
+        DPaletteHelper::instance()->setPalette(devicesProgressBar, palette);
     }
 
     // 进度条背景色跟随主题变化而变化
@@ -167,10 +166,10 @@ void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize, boo
         DPalette palette = devicesProgressBar->palette();
         if (type == DGuiApplicationHelper::LightType) {
             palette.setBrush(DPalette::ObviousBackground, QColor("#ededed"));
-            DApplicationHelper::instance()->setPalette(devicesProgressBar, palette);
+            DPaletteHelper::instance()->setPalette(devicesProgressBar, palette);
         } else {
             palette.setBrush(DPalette::ObviousBackground, QColor("#4e4e4e"));
-            DApplicationHelper::instance()->setPalette(devicesProgressBar, palette);
+            DPaletteHelper::instance()->setPalette(devicesProgressBar, palette);
         }
     });
 }

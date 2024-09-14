@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_AUTOMOC OFF)
+set(CMAKE_AUTORCC OFF)
+set(CMAKE_AUTOUIC OFF)
 
 # If do't define version number, specify the version number
 set (VERSION "1.0.0" CACHE STRING "define project version")
 
 set(BIN_NAME dfm-extension)
 
-file(GLOB_RECURSE INCLUDE_FILES  CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*")
+file(GLOB_RECURSE INCLUDE_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*")
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
     "./*.h"
     "./*.cpp"
@@ -43,11 +46,6 @@ install(DIRECTORY
     DESTINATION include
     FILES_MATCHING PATTERN "*.h"
 )
-
-# for pc file config
-set(PC_LIBS_PRIVATE Qt${QT_VERSION_MAJOR}Core)
-set(PC_REQ_PRIVATE)
-set(PC_REQ_PUBLIC)
 
 # config pkgconfig file
 configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}.pc.in ${BIN_NAME}.pc @ONLY)

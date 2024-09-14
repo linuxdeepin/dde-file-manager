@@ -102,6 +102,8 @@ public:
 
     void setAlwaysOpenInCurrentWindow(const quint64 windowID);
 
+    void aboutToChangeViewWidth(const quint64 windowID, int deltaWidth);
+
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 

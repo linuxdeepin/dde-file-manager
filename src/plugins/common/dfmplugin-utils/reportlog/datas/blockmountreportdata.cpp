@@ -22,6 +22,6 @@ QJsonObject BlockMountReportData::prepareData(const QVariantMap &args) const
 {
     QVariantMap temArgs = args;
     temArgs.insert("tid", kBlockMountTid);
-    temArgs.insert("opTime", QDateTime::currentDateTime().toTime_t());
+    temArgs.insert("opTime", QDateTime::currentDateTime().toSecsSinceEpoch());
     return QJsonObject::fromVariantMap(temArgs);
 }

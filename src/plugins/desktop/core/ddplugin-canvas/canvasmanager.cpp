@@ -17,6 +17,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -227,7 +228,7 @@ void CanvasManager::onCanvasBuild()
     if (root.size() == 1) {
         QWidget *primary = root.first();
         if (primary == nullptr) {
-            //屏幕信息获取失败，清空对应关系
+            // 屏幕信息获取失败，清空对应关系
             d->viewMap.clear();
             fmCritical() << "get primary screen failed return.";
             return;
@@ -258,7 +259,7 @@ void CanvasManager::onCanvasBuild()
         // init grid
         GridIns->initSurface(root.size());
 
-        //检查新增的屏幕
+        // 检查新增的屏幕
         for (QWidget *win : root) {
             ++screenNum;
 
@@ -269,7 +270,7 @@ void CanvasManager::onCanvasBuild()
             }
 
             CanvasViewPointer view = d->viewMap.value(screenName);
-            //新增
+            // 新增
             if (view.get()) {
                 d->updateView(view, win, screenNum);
                 fmInfo() << "update view" << screenNum << screenName;
@@ -406,6 +407,11 @@ void CanvasManagerPrivate::initModel()
 
     connect(canvasModel, &CanvasProxyModel::dataChanged, this, &CanvasManagerPrivate::onFileDataChanged, Qt::QueuedConnection);
     connect(canvasModel, &CanvasProxyModel::modelReset, this, &CanvasManagerPrivate::onFileModelReset, Qt::QueuedConnection);
+    connect(canvasModel,
+            &CanvasProxyModel::layoutAboutToBeChanged,
+            this,
+            &CanvasManagerPrivate::onAboutToFileSort,
+            Qt::QueuedConnection);
     connect(canvasModel, &CanvasProxyModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
 
     // hook interface
@@ -605,8 +611,27 @@ void CanvasManagerPrivate::onFileModelReset()
     q->reloadItem();
 }
 
+void CanvasManagerPrivate::onAboutToFileSort()
+{
+    // TODO(liuyangming): only one screen is valid now.
+    if (q->views().count() != 1)
+        return;
+
+    if (auto view = q->views().first())
+        view->aboutToResortFiles();
+}
+
 void CanvasManagerPrivate::onFileSorted()
 {
+    bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+    // TODO(liuyangming): only one screen can play sort animation now.
+    if (animEnable && q->views().count() == 1) {
+        if (auto view = q->views().first()) {
+            view->filesResorted();
+            return;
+        }
+    }
+
     auto oldMode = GridIns->mode();
     GridIns->setMode(CanvasGrid::Mode::Align);
     QStringList existItems;

@@ -61,7 +61,7 @@ void DumpISOOptDialog::initliazeUi()
     contentWidget = new QWidget(this);
     // m_contentWidget->setStyleSheet("border: 1px solid red"); // debug
     QVBoxLayout *contentLay = new QVBoxLayout;
-    contentLay->setMargin(0);
+    contentLay->setContentsMargins(0, 0, 0, 0);
     contentWidget->setLayout(contentLay);
     addContent(contentWidget, Qt::AlignTop);
 

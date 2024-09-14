@@ -142,7 +142,7 @@ void BasicWidget::basicExpand(const QUrl &url)
     label->setFixedWidth(80);
 #endif
     QHBoxLayout *gl = new QHBoxLayout;
-    gl->setMargin(0);
+    gl->setContentsMargins(0, 0, 0, 0);
     gl->addWidget(label);
     gl->addWidget(hideFile, Qt::AlignLeft);
 
@@ -155,9 +155,8 @@ void BasicWidget::basicExpand(const QUrl &url)
     layoutMain->setSpacing(kSpacingHeight);
     int row = 0;
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
-    QSet<BasicFieldExpandEnum> fieldset = QSet<BasicFieldExpandEnum>::fromList(fields);
-    fields = fieldset.toList();
-    qSort(fields.begin(), fields.end());
+    std::sort(fields.begin(), fields.end());
+    fields.erase(std::unique(fields.begin(), fields.end()), fields.end());
     for (BasicFieldExpandEnum &key : fields) {
         QList<KeyValueLabel *> kvls = fieldMap.values(key);
         for (int i = kvls.count() - 1; i >= 0; --i) {

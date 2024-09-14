@@ -110,7 +110,7 @@ public:
         return map;
     }
 
-    inline bool operator==(const IPHistroyData &other)
+    inline bool operator==(const IPHistroyData &other) const
     {
         return (!this->ipData.compare(other.ipData)
                 && !this->accessedType.compare(other.accessedType, Qt::CaseInsensitive));

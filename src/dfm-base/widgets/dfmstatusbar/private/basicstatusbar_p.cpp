@@ -48,7 +48,7 @@ void BasicStatusBarPrivate::initLayout()
     q->setFixedHeight(30);
     q->setContentsMargins(0, 0, 0, 0);
     auto vLayout = new QVBoxLayout(q);
-    vLayout->setMargin(0);
+    vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
     auto line = new DTK_WIDGET_NAMESPACE::DHorizontalLine(q);
     line->setContentsMargins(0, 0, 0, 0);

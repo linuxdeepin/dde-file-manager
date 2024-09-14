@@ -26,6 +26,7 @@ public:
     void deleteLater();
 
     virtual QWidget *widget() const = 0;
+    virtual QWidget *contentWidget() const;
     virtual QUrl rootUrl() const = 0;
     virtual ViewState viewState() const;
     virtual bool setRootUrl(const QUrl &url) = 0;

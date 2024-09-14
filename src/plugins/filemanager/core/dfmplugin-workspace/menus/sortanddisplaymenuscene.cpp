@@ -221,8 +221,11 @@ void SortAndDisplayMenuScenePrivate::sortByRole(int role)
 {
     auto itemRole = static_cast<Global::ItemRoles>(role);
     Qt::SortOrder order = view->model()->sortOrder();
+    auto oldRole = view->model()->sortRole();
+    order = oldRole != role ? Qt::AscendingOrder
+                            : order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
 
-    view->setSort(itemRole, order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder);
+    view->setSort(itemRole, order);
 }
 
 void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()

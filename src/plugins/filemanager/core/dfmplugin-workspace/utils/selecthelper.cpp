@@ -9,7 +9,7 @@
 
 #include <dfm-base/utils/windowutils.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
+#    include <DSizeMode>
 #endif
 
 DFMBASE_USE_NAMESPACE
@@ -150,7 +150,7 @@ void SelectHelper::saveSelectedFilesList(const QUrl &current, const QList<QUrl> 
 void SelectHelper::resortSelectFiles()
 {
     if (selectedFiles.isEmpty() || !currentSelectedFile.isValid())
-            return;
+        return;
 
     select(selectedFiles);
     view->selectionModel()->setCurrentIndex(view->model()->getIndexByUrl(currentSelectedFile), QItemSelectionModel::Select);
@@ -216,7 +216,7 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
     using RandeIndexList = FileView::RandeIndexList;
     using RandeIndex = FileView::RandeIndex;
 
-    const RandeIndexList &list = view->visibleIndexes(tmpRect);
+    const RandeIndexList &list = view->rectContainsIndexes(tmpRect);
     for (const RandeIndex &index : list) {
         selection->append(QItemSelectionRange(view->model()->index(index.first, 0, view->rootIndex()), view->model()->index(index.second, 0, view->rootIndex())));
     }
@@ -227,7 +227,7 @@ void SelectHelper::caculateAndSelectIndex(const QItemSelection &lastSelect, cons
     const QModelIndexList &lastIndexes = lastSelect.indexes();
     const QModelIndexList &newIndexes = newSelect.indexes();
 
-    if (newIndexes.count() == 1) {    // click one item
+    if (newIndexes.count() == 1) {   // click one item
         view->selectionModel()->select(newSelect, flags);
         return;
     }

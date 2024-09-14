@@ -67,6 +67,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_View_SetFilter)
     DPF_EVENT_REG_SLOT(slot_View_GetFilter)
     DPF_EVENT_REG_SLOT(slot_View_SetAlwaysOpenInCurrentWindow)
+    DPF_EVENT_REG_SLOT(slot_View_AboutToChangeViewWidth)
 
     DPF_EVENT_REG_SLOT(slot_Model_SetCustomFilterData)
     DPF_EVENT_REG_SLOT(slot_Model_SetCustomFilterCallback)
@@ -86,6 +87,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Tab_SetTabName)
     DPF_EVENT_REG_HOOK(hook_Tab_Closeable)
     DPF_EVENT_REG_HOOK(hook_Tab_Allow_Repeat_Url)
+    DPF_EVENT_REG_HOOK(hook_Tab_FileDeleteNotCdComputer)
 
     DPF_EVENT_REG_HOOK(hook_DragDrop_CheckDragDropAction)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileDragMove)
@@ -122,6 +124,13 @@ signals:
 private slots:
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 winId);
+
+private:
+    void initConfig();
+
+    static void saveRemoteToConf(const QVariant &var);
+    static void syncRemoteToAppSet(const QString &, const QString &, const QVariant &var);
+    static bool isRemoteConfEqual(const QVariant &dcon, const QVariant &dset);
 };
 
 }

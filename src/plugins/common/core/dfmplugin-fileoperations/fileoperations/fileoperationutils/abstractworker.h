@@ -15,6 +15,8 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/filestatisticsjob.h>
 
+#include <dfm-framework/event/event.h>
+
 #include <QObject>
 #include <QUrl>
 #include <QQueue>
@@ -117,7 +119,7 @@ protected:
 
 protected slots:
     virtual bool doWork();
-    virtual void onUpdateProgress() {}
+    virtual void onUpdateProgress() { }
     virtual void onStatisticsFilesSizeFinish();
     virtual void onStatisticsFilesSizeUpdate(qint64 size);
 
@@ -163,7 +165,7 @@ public:
 
     QList<QUrl> sourceUrls;   // source urls
     QUrl targetUrl;   // target dir url
-    QUrl targetOrgUrl; // target origin url
+    QUrl targetOrgUrl;   // target origin url
     QList<QUrl> allFilesList;   // all files(contains children)
     QList<QUrl> completeSourceFiles;   // List of all copied files
     QList<QUrl> completeTargetFiles;   // List of all complete target files
@@ -171,14 +173,14 @@ public:
     QList<DFileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
-    bool supportSetPermission { true };    // source file on mtp
-    bool supportDfmioCopy { true };    // source file on mtp
+    bool supportSetPermission { true };   // source file on mtp
+    bool supportDfmioCopy { true };   // source file on mtp
     bool isTargetFileExBlock { false };   // target file on extra block device
     bool isConvert { false };   // is convert operation
     QSharedPointer<WorkerData> workData { nullptr };
     QSharedPointer<DoCopyFileWorker> copyOtherFileWorker { nullptr };
     std::atomic_bool exblockThreadStarted { false };
-    QTime timeElapsed;
+    QElapsedTimer timeElapsed;
 
     QWaitCondition waitCondition;
     QMutex mutex;
@@ -188,9 +190,9 @@ public:
     QSharedPointer<QThreadPool> threadPool { nullptr };
     static std::atomic_bool bigFileCopy;
     QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
-    QElapsedTimer *speedtimer{ nullptr };   // time eslape
+    QElapsedTimer *speedtimer { nullptr };   // time eslape
     std::atomic_int64_t elapsed { 0 };
-    std::atomic_int64_t deleteFirstFileSize{ false };
+    std::atomic_int64_t deleteFirstFileSize { false };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

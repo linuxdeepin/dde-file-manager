@@ -23,7 +23,6 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_menu_defines.h>
 
-#include <QGSettings>
 #include <QtDebug>
 
 DWIDGET_USE_NAMESPACE

@@ -40,7 +40,11 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     void showEvent(QShowEvent *event) override;
     void inputMethodEvent(QInputMethodEvent *e) override;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     void enterEvent(QEvent *e) override;
+#else
+    void enterEvent(QEnterEvent *event) override;
+#endif
     void leaveEvent(QEvent *e) override;
 
 Q_SIGNALS:

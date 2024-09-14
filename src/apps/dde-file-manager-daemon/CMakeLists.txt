@@ -8,48 +8,48 @@ configure_file(
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 
-if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw")
-    add_definitions(-DDISABLE_ANYTHING)
-endif()
-
 set(SRCS
     main.cpp
 )
-
+find_package(Qt5 COMPONENTS Core)
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 COMPONENTS
-    Widgets
-    DBus
-    REQUIRED)
-
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}
+        ${DtkWidget_INCLUDE_DIRS}
 )
-
 
 target_link_libraries(
     ${PROJECT_NAME}
     DFM::base
     DFM::framework
-    Qt5::Widgets
-    Qt5::DBus
 )
+
+
+if (COMPLIE_ON_V23)
+    if (NOT DEFINED SYSTEMD_USER_UNIT_DIR)
+        pkg_get_variable(SYSTEMD_USER_UNIT_DIR systemd systemduserunitdir)
+    endif()
+
+    macro(install_symlink filepath wantsdir)
+        file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/link/${wantsdir}/)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${SYSTEMD_USER_UNIT_DIR}/${filepath} ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath})
+        install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION ${SYSTEMD_USER_UNIT_DIR}/${wantsdir}/)
+    endmacro(install_symlink)
+
+    install_symlink(dde-file-manager.service dde-session-initialized.target.wants)
+endif()
 
 # binary
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
-# systembusconf
-install(FILES dbusservice/com.deepin.filemanager.daemon.conf
-    DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/dbus-1/system.d)
-
 # services
-install(FILES dbusservice/com.deepin.filemanager.daemon.service
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/system-services)
+install(FILES dbusservice/org.deepin.Filemanager.Daemon.service
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services)
 
 # systemd service
-install(FILES dbusservice/dde-filemanager-daemon.service
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system)
+install(FILES dbusservice/dde-file-manager.service
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
 

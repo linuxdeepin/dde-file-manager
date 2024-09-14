@@ -1,0 +1,21 @@
+{
+    "Name" : "dfmplugin-core",
+    "Version" : "1.0.0",
+    "CompatVersion" : "1.0.0",
+    "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+    "Copyright" : "Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.",
+    "License" : [
+    ],
+    "Category" : "",
+    "Description" : "The core plugin for the filemanager.",
+    "UrlLink" : "https://www.uniontech.com",
+    "Depends" : [
+    ],
+    "Quick": [
+        {
+            "Url": "FileWindow.qml",
+            "Id": "filewindow",
+            "Type": "Panel"
+        }
+    ]
+}

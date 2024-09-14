@@ -87,7 +87,7 @@ void BasicWidget::initUI()
     fileModified->rightWidget()->setMaximumHeight(kMaximumHeight);
 
     QGridLayout *gl = new QGridLayout;
-    gl->setMargin(0);
+    gl->setContentsMargins(0, 0, 0, 0);
     gl->setColumnStretch(0, 1);
     gl->setColumnStretch(1, 1);
     gl->setColumnStretch(2, 2);

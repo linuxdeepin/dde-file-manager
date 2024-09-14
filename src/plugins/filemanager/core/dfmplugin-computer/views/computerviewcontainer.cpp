@@ -23,12 +23,15 @@ ComputerViewContainer::ComputerViewContainer(const QUrl &url, QWidget *parent)
     mainLay->setSpacing(0);
     mainLay->setContentsMargins(0, 0, 0, 0);
 
-    view = new ComputerView(url, parent);
-    auto lay = new QHBoxLayout();
+    // contentWidget向外部提供widget时需要保留布局margin信息
+    // 故增加viewContainer来包含layout信息
+    viewContainer = new QWidget(this);
+    view = new ComputerView(url, viewContainer);
+    auto lay = new QHBoxLayout(viewContainer);
     lay->addWidget(view);
     lay->setContentsMargins(11, 0, 0, 0);
 
-    mainLay->addLayout(lay, 1);
+    mainLay->addWidget(viewContainer);
     auto sb = new ComputerStatusBar(this);
     mainLay->addWidget(sb);
     view->setStatusBarHandler(sb);
@@ -37,6 +40,11 @@ ComputerViewContainer::ComputerViewContainer(const QUrl &url, QWidget *parent)
 QWidget *ComputerViewContainer::widget() const
 {
     return const_cast<ComputerViewContainer *>(this);
+}
+
+QWidget *ComputerViewContainer::contentWidget() const
+{
+    return viewContainer;
 }
 
 QUrl ComputerViewContainer::rootUrl() const
@@ -51,7 +59,9 @@ dfmbase::AbstractBaseView::ViewState dfmplugin_computer::ComputerViewContainer::
 
 bool ComputerViewContainer::setRootUrl(const QUrl &url)
 {
-    return view->setRootUrl(url);
+    bool ret = view->setRootUrl(url);
+    notifyStateChanged();
+    return ret;
 }
 
 QList<QUrl> ComputerViewContainer::selectedUrlList() const

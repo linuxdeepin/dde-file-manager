@@ -18,6 +18,7 @@ public:
     explicit ComputerViewContainer(const QUrl &url, QWidget *parent = nullptr);
 
     virtual QWidget *widget() const override;
+    virtual QWidget *contentWidget() const override;
     virtual QUrl rootUrl() const override;
     virtual ViewState viewState() const override;
     virtual bool setRootUrl(const QUrl &url) override;
@@ -25,6 +26,7 @@ public:
 
 private:
     ComputerView *view { nullptr };
+    QWidget *viewContainer { nullptr };
 };
 }
 

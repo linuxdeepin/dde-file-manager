@@ -69,7 +69,7 @@ CollectionWidget::CollectionWidget(const QString &uuid, ddplugin_organizer::Coll
     d->view = new CollectionView(uuid, dataProvider, this);
     d->view->viewport()->installEventFilter(this);
     d->mainLayout = new QVBoxLayout(this);
-    d->mainLayout->setContentsMargins(1, 1, 1, 1);   //for inner border
+    d->mainLayout->setContentsMargins(1, 1, 1, 1);   // for inner border
     d->mainLayout->addSpacing(16);
     d->mainLayout->addWidget(d->view);
 
@@ -193,7 +193,11 @@ bool CollectionWidget::eventFilter(QObject *obj, QEvent *event)
     return DBlurEffectWidget::eventFilter(obj, event);
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 void CollectionWidget::enterEvent(QEvent *event)
+#else
+void CollectionWidget::enterEvent(QEnterEvent *event)
+#endif
 {
     d->titleBar->setTitleBarVisible(true);
 

@@ -85,7 +85,7 @@ void VaultActiveFinishedView::initUi()
     // 布局
     widgetOne = new QWidget(this);
     QVBoxLayout *play1 = new QVBoxLayout(widgetOne);
-    play1->setMargin(0);
+    play1->setContentsMargins(0, 0, 0, 0);
     play1->addWidget(tipsLabel);
     play1->addSpacing(22);
     play1->addWidget(encryVaultImageLabel);
@@ -105,7 +105,7 @@ void VaultActiveFinishedView::initUi()
     play3->addWidget(tipsThree, 0, Qt::AlignCenter);
 
     QVBoxLayout *m_pLay = new QVBoxLayout(this);
-    m_pLay->setMargin(0);
+    m_pLay->setContentsMargins(0, 0, 0, 0);
     m_pLay->addWidget(titleLabel);
     m_pLay->addWidget(widgetOne);
     m_pLay->addWidget(widgetTow, 0, Qt::AlignHCenter);

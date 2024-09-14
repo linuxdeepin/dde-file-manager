@@ -16,7 +16,6 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-framework/dpf.h>
 
-#include <QGSettings>
 #include <QPainter>
 #include <QDebug>
 #include <QScrollBar>
@@ -25,6 +24,10 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QTimer>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <QGSettings>
+#endif
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
@@ -75,14 +78,14 @@ QModelIndex CanvasView::indexAt(const QPoint &point) const
         if (QWidget *editor = indexWidget(rowIndex))
             identify << editor->geometry();
         if (checkRect(identify, point)) {
-            //fmDebug() << "preesed on editor" << rowIndex;
+            // fmDebug() << "preesed on editor" << rowIndex;
             return rowIndex;
         }
     } else if (itemDelegate()->mayExpand(&rowIndex)) {   // second
         // get the expended rect.
         auto listRect = itemPaintGeomertys(rowIndex);
         if (checkRect(listRect, point)) {
-            //fmDebug() << "preesed on expand index" << rowIndex;
+            // fmDebug() << "preesed on expand index" << rowIndex;
             return rowIndex;
         }
     }
@@ -176,7 +179,7 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
     if (pos == d->overlapPos())
         return d->lastIndex();
 
-    //fmDebug() << "cursorAction" << cursorAction << "KeyboardModifiers" << modifiers << currentItem;
+    // fmDebug() << "cursorAction" << cursorAction << "KeyboardModifiers" << modifiers << currentItem;
     return model()->index(currentItem);
 }
 
@@ -200,7 +203,7 @@ void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionF
 {
     //! do not enable QAbstractItemView using this to select.
     //! it will disturb selections of CanvasView
-    //fmWarning() << "do not using this" << rect.normalized();
+    // fmWarning() << "do not using this" << rect.normalized();
     return;
 
     //    QItemSelection selection;
@@ -241,7 +244,12 @@ QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
     if (!d->itemGridpos(item, gridPos))
         return {};
 
-    QStyleOptionViewItem option = viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    initViewItemOption(&option);
+#else
+    option = viewOptions();
+#endif
     option.rect = d->itemRect(gridPos);
     return itemDelegate()->paintGeomertys(option, index);
 }
@@ -259,7 +267,12 @@ QRect CanvasView::expendedVisualRect(const QModelIndex &index) const
 
     visRect = d->visualRect(gridPos);
 
-    QStyleOptionViewItem option = viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    initViewItemOption(&option);
+#else
+    option = viewOptions();
+#endif
     option.rect = d->itemRect(gridPos);
     option.rect = itemDelegate()->expendedGeomerty(option, index);
 
@@ -312,7 +325,7 @@ QModelIndex CanvasView::baseIndexAt(const QPoint &point) const
 
     auto listRect = itemPaintGeomertys(rowIndex);
     if (checkRect(listRect, point)) {
-        //fmDebug() << "pressed on" << item << rowIndex;
+        // fmDebug() << "pressed on" << item << rowIndex;
         return rowIndex;
     }
 
@@ -322,16 +335,23 @@ QModelIndex CanvasView::baseIndexAt(const QPoint &point) const
 void CanvasView::paintEvent(QPaintEvent *event)
 {
     ViewPainter painter(d);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     // debug网格信息展示
     painter.drawGirdInfos();
 
     // 桌面文件绘制
-    auto option = viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    initViewItemOption(&option);
+#else
+    option = viewOptions();
+#endif
 
     // for flicker when refresh.
     if (!d->flicker) {
+        // sort move
+        painter.drawMove(option);
         // dodge
         painter.drawDodge(option);
         painter.paintFiles(option, event);
@@ -498,7 +518,7 @@ void CanvasView::setGeometry(const QRect &rect)
 void CanvasView::updateGrid()
 {
     itemDelegate()->updateItemSizeHint();
-    //close editor
+    // close editor
     itemDelegate()->revertAndcloseEditor();
 
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
@@ -520,6 +540,27 @@ void CanvasView::updateGrid()
 void CanvasView::showGrid(bool v) const
 {
     d->showGrid = v;
+}
+
+void CanvasView::aboutToResortFiles()
+{
+    if (!d->sortAnimOper)
+        return;
+
+    QStringList existItems;
+    const QList<QUrl> &actualList = model()->files();
+    for (const QUrl &df : actualList)
+        existItems.append(df.toString());
+
+    d->sortAnimOper->setMoveValue(existItems);
+}
+
+void CanvasView::filesResorted()
+{
+    if (!d->sortAnimOper)
+        return;
+
+    d->sortAnimOper->tryMove();
 }
 
 void CanvasView::refresh(bool silent)
@@ -658,7 +699,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
     d->viewSetting->checkTouchDrag(event);
     QAbstractItemView::mousePressEvent(event);
 
-    if (!index.isValid() && event->button() == Qt::LeftButton) {   //empty area
+    if (!index.isValid() && event->button() == Qt::LeftButton) {   // empty area
         BoxSelIns->beginSelect(event->globalPos(), true);
         setState(DragSelectingState);
     }
@@ -792,6 +833,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 
     dragDropOper = new DragDropOper(q);
     dodgeOper = new DodgeOper(q);
+    sortAnimOper = new SortAnimationOper(q);
     shortcutOper = new ShortcutOper(q);
     menuProxy = new CanvasViewMenuProxy(q);
     viewSetting = new ViewSettingUtil(q);
@@ -918,9 +960,11 @@ bool CanvasViewPrivate::itemGridpos(const QString &item, QPoint &gridPos) const
 
 bool CanvasViewPrivate::isWaterMaskOn()
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("waterMask"))
         return desktopSettings.get("waterMask").toBool();
+#endif
     return true;
 }
 

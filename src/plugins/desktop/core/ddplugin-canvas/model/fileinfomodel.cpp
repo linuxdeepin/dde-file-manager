@@ -17,6 +17,7 @@
 
 #include <QMimeData>
 #include <QDateTime>
+#include <QApplication>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
@@ -434,6 +435,8 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
         return QVariant();
     }
     switch (itemRole) {
+    case Global::ItemRoles::kItemFontRole:
+        return qApp->font();
     case Global::ItemRoles::kItemIconRole:
         return d->fileIcon(indexFileInfo);
     case Global::ItemRoles::kItemNameRole:

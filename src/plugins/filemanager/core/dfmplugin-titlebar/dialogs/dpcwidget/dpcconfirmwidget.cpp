@@ -31,9 +31,9 @@ DGUI_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 
 namespace DaemonServiceIFace {
-static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
-static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/AccessControlManager" };
-static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon.AccessControlManager" };
+static constexpr char kInterfaceService[] { "org.deepin.Filemanager" };
+static constexpr char kInterfacePath[] { "/org/deepin/Filemanager/AccessControlManager" };
+static constexpr char kInterfaceInterface[] { "org.deepin.Filemanager.AccessControlManager" };
 
 static constexpr char kFuncChangePwd[] { "ChangeDiskPassword" };
 static constexpr char kSigPwdChecked[] { "DiskPasswordChecked" };
@@ -73,9 +73,9 @@ void DPCConfirmWidget::initUI()
     DFontSizeManager *fontManager = DFontSizeManager::instance();
     fontManager->bind(titleLabel, DFontSizeManager::T5, QFont::Medium);
 
-    QRegExp regx("[^\\x4e00-\\x9fa5]+");
+    QRegularExpression regx("[^\\x4e00-\\x9fa5]+");
     // 创建验证器
-    QValidator *validator = new QRegExpValidator(regx, this);
+    QValidator *validator = new QRegularExpressionValidator(regx, this);
 
     oldPwdEdit = new DPasswordEdit(this);
     oldPwdEdit->lineEdit()->setValidator(validator);   // 设置验证器
@@ -114,7 +114,7 @@ void DPCConfirmWidget::initUI()
     buttonLayout->addWidget(saveBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(contentLayout);

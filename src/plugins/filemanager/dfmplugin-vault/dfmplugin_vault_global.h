@@ -198,7 +198,7 @@ inline constexpr char kAcEditVaultRemovePassword[] { "edit_vault_remove_password
 inline constexpr char kAcBtnVaultRemovePasswordHint[] { "btn_vault_remove_passwordHint" };
 }
 
-inline constexpr char kDeamonServiceName[] { "com.deepin.filemanager.daemon" };
+inline constexpr char kDeamonServiceName[] { "org.deepin.Filemanager" };
 #ifdef COMPILE_ON_V23
 inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
 inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
@@ -210,9 +210,9 @@ inline constexpr char kNetWorkDBusServiceName[] { "org.deepin.service.SystemNetw
 inline constexpr char kNetWorkDBusPath[] { "/org/deepin/service/SystemNetwork" };
 inline constexpr char kNetWorkDBusInterfaces[] { "org.deepin.service.SystemNetwork" };
 
-inline constexpr char kFileManagerDBusServiceName[] { "org.deepin.filemanager.server" };
-inline constexpr char kFileManagerVaultDBusPath[] { "/org/deepin/filemanager/server/VaultManager" };
-inline constexpr char kFileManagerVaultDBusInterfaces[] { "org.deepin.filemanager.server.VaultManager" };
+inline constexpr char kFileManagerDBusDaemonName[] { "org.deepin.Filemanager.Daemon" };
+inline constexpr char kFileManagerVaultDBusPath[] { "/org/deepin/Filemanager/Daemon/VaultManager" };
+inline constexpr char kFileManagerVaultDBusInterfaces[] { "org.deepin.Filemanager.Daemon.VaultManager" };
 
 enum RemoveWidgetType : int {
     kPasswordWidget = 0,

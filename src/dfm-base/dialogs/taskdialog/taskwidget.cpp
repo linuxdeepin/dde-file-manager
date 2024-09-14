@@ -124,7 +124,11 @@ void TaskWidget::onButtonClicked()
         infoTimer.stop();
     if (btnPause)
         btnPause->setEnabled(true);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    isShowError.storeRelaxed(false);
+#else
     isShowError.store(false);
+#endif
     AbstractJobHandler::SupportActions actions = obj->property(kBtnPropertyActionName).value<AbstractJobHandler::SupportAction>();
     showConflictButtons(actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction));
     actions = chkboxNotAskAgain && chkboxNotAskAgain->isChecked() ? actions | AbstractJobHandler::SupportAction::kRememberAction : actions;
@@ -145,7 +149,11 @@ void TaskWidget::parentClose()
  */
 void TaskWidget::onShowErrors(const JobInfoPointer jobInfo)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    isShowError.storeRelaxed(true);
+#else
     isShowError.store(true);
+#endif
 
     AbstractJobHandler::JobErrorType errorType = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
     QString sourceMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
@@ -234,7 +242,6 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
 
     if (btnPause)
         btnPause->setEnabled(false);
-
 }
 /*!
  * \brief TaskWidget::onHandlerTaskStateChange 处理和显示当前拷贝任务的状态变化
@@ -313,7 +320,11 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 {
     if (isPauseState)
         return;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    if (isShowError.loadRelaxed())
+#else
     if (isShowError.load())
+#endif
         return;
 
     int preValue = progress->value();
@@ -363,7 +374,11 @@ void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
 {
     if (isPauseState)
         return;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    if (isShowError.loadRelaxed())
+#else
     if (isShowError.load())
+#endif
         return;
 
     if (progress->value() >= 100) {
@@ -765,9 +780,9 @@ bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
     auto icon = thumImage.isNull() ? info->fileIcon().pixmap(48, 48) : QPixmap::fromImage(thumImage);
 
     auto modifyTimeStr = QString(tr("Time modified: %1"))
-            .arg(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
-                         ? info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
-                         : qApp->translate("MimeTypeDisplayManager", "Unknown"));
+                                 .arg(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
+                                              ? info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
+                                              : qApp->translate("MimeTypeDisplayManager", "Unknown"));
     auto sizeStr = tr("In data statistics ...");
     auto titleStr = isOrg ? tr("Original folder") : tr("Target folder");
     if (info->isAttributes(OptInfoType::kIsDir)) {
@@ -799,7 +814,11 @@ bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
     return needRetry;
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+void TaskWidget::enterEvent(QEnterEvent *event)
+#else
 void TaskWidget::enterEvent(QEvent *event)
+#endif
 {
     onMouseHover(true);
 

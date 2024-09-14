@@ -23,7 +23,8 @@
 using namespace ddplugin_organizer;
 using namespace dfmbase;
 
-CustomModePrivate::CustomModePrivate(CustomMode *qq) : q(qq)
+CustomModePrivate::CustomModePrivate(CustomMode *qq)
+    : q(qq)
 {
 
     selectionModel = new ItemSelectionModel(nullptr, qq);
@@ -36,8 +37,7 @@ CustomModePrivate::~CustomModePrivate()
 }
 
 CustomMode::CustomMode(QObject *parent)
-    : CanvasOrganizer(parent)
-    , d(new CustomModePrivate(this))
+    : CanvasOrganizer(parent), d(new CustomModePrivate(this))
 {
     d->dataSyncTimer.setInterval(500);
     d->dataSyncTimer.setSingleShot(true);
@@ -75,9 +75,9 @@ bool CustomMode::initialize(CollectionModel *m)
     connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection, Qt::QueuedConnection);
 
     d->dataHandler = new CustomDataHandler();
-    connect(d->dataHandler, &CustomDataHandler::itemsChanged, this, [this](){
+    connect(d->dataHandler, &CustomDataHandler::itemsChanged, this, [this]() {
         d->dataSyncTimer.start();
-    }); // delay to save collection datas
+    });   // delay to save collection datas
 
     // restore collection as config
     QList<CollectionBaseDataPtr> store = CfgPresenter->customProfile();
@@ -97,10 +97,10 @@ bool CustomMode::initialize(CollectionModel *m)
 
     {
         int srcState = model->modelShell()->modelState();
-        if (srcState & 0x1) {// 0x1 is ready
-            model->refresh(model->rootIndex(), false, 0); // refresh own model.
-        } else if (srcState == 0) {// 0x0 is uninitialized
-            model->refresh(model->rootIndex(), true, 0); // refresh source model.
+        if (srcState & 0x1) {   // 0x1 is ready
+            model->refresh(model->rootIndex(), false, 0);   // refresh own model.
+        } else if (srcState == 0) {   // 0x0 is uninitialized
+            model->refresh(model->rootIndex(), true, 0);   // refresh source model.
         } else {
             fmDebug() << "source model is refreshing" << srcState;
         }
@@ -167,8 +167,11 @@ void CustomMode::detachLayout()
 void CustomMode::rebuild()
 {
     {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         auto files = QSet<QUrl>::fromList(model->files());
-
+#else
+        auto files = QSet<QUrl>(model->files().begin(), model->files().end());
+#endif
         // remove invaild url
         d->dataHandler->check(files);
 
@@ -205,7 +208,7 @@ void CustomMode::rebuild()
 
             connect(collectionHolder.data(), &CollectionHolder::sigRequestClose, this, &CustomMode::onDeleteCollection);
             // temp. save style.
-            connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, [this](const QString &id){
+            connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, [this](const QString &id) {
                 if (auto holder = d->holders.value(id)) {
                     CfgPresenter->updateCustomStyle(holder->style());
                 }
@@ -361,7 +364,7 @@ void CustomMode::onNewCollection(const QList<QUrl> &list)
         style.key = base->key;
         style.screenIndex = screen;
         style.rect = QRect(rect.topLeft(), QSize(rect.width() * 4, rect.height() * 2))
-                .marginsRemoved(QMargins(4, 4, 4, 4)); // defalut size
+                             .marginsRemoved(QMargins(4, 4, 4, 4));   // defalut size
 
         // save the style of new collection.
         CfgPresenter->updateCustomStyle(style);
@@ -375,7 +378,7 @@ void CustomMode::onDeleteCollection(const QString &key)
     QList<QUrl> urls;
     {
         auto bd = d->dataHandler->baseDatas();
-        auto it = std::find_if(bd.begin(), bd.end(), [&key](const CollectionBaseDataPtr &handler){
+        auto it = std::find_if(bd.begin(), bd.end(), [&key](const CollectionBaseDataPtr &handler) {
             return handler->key == key;
         });
         if (it != bd.end())
@@ -423,5 +426,3 @@ void CustomMode::onItemsChanged()
 {
     CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
 }
-
-

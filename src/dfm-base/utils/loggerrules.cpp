@@ -20,7 +20,7 @@ void LoggerRules::initLoggerRules()
     qunsetenv("QT_LOGGING_RULES");
 
     // set env
-    currentRules = logRules;
+    currentRules = QString(logRules);
     qCWarning(logDFMBase) << "Current system env log rules:" << logRules;
 
     logRules = DConfigManager::instance()->value(kDefaultCfgPath, "log_rules").toByteArray();

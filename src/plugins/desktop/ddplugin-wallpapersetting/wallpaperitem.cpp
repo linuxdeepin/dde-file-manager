@@ -13,7 +13,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QGridLayout>
-#include <QSvgRenderer>
+#include <QtSvg/QSvgRenderer>
 
 using namespace ddplugin_wallpapersetting;
 
@@ -201,7 +201,7 @@ void WallpaperItem::setEntranceIconOfSettings(const QString &id)
         {
             QSvgRenderer svg(QString(":/images/edit.svg"));
             QPainter painter(&pmap);
-            svg.render(&painter, QRect(QPoint(0,0), pmap.size()));
+            svg.render(&painter, QRect(QPoint(0, 0), pmap.size()));
         }
 
         pmap.setDevicePixelRatio(ratio);
@@ -210,7 +210,7 @@ void WallpaperItem::setEntranceIconOfSettings(const QString &id)
 
     const QSize visibleSize(28, 28);
     editLabel->setHotZoom(QRect(fixSize.width() - visibleSize.width(), 0,
-                                visibleSize.width(), visibleSize.height())); // the edit.svg has 28pix area that is visible.
+                                visibleSize.width(), visibleSize.height()));   // the edit.svg has 28pix area that is visible.
     editLabel->move(wrapper->width() - fixSize.width(), 0);
 
     connect(editLabel, &EditLabel::editLabelClicked, this, [this, id] {
@@ -261,7 +261,11 @@ void WallpaperItem::keyPressEvent(QKeyEvent *event)
     QWidget::keyPressEvent(event);
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 void WallpaperItem::enterEvent(QEvent *event)
+#else
+void WallpaperItem::enterEvent(QEnterEvent *event)
+#endif
 {
     Q_UNUSED(event);
     emit hoverIn(this);

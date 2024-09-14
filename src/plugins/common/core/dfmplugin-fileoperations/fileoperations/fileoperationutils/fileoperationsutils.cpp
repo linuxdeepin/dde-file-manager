@@ -120,7 +120,7 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
 
         // url record
         if (isRecordUrl && flag != FTS_DP)
-            sizeInfo->allFiles.insert(curUrl);
+            sizeInfo->allFiles.append(curUrl);
 
         // file counted
         if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE)

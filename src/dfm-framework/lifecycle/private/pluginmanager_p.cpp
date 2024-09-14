@@ -4,6 +4,7 @@
 
 #include "pluginmetaobject_p.h"
 #include "pluginmanager_p.h"
+#include "pluginquickmetadata_p.h"
 
 #include <dfm-framework/listener/listener.h>
 #include <dfm-framework/lifecycle/plugin.h>
@@ -259,6 +260,50 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
     }
 
     metaObject->d->state = PluginMetaObject::kReaded;
+
+    // QML 组件信息
+    QJsonArray &&quickArray = metaData.value(kQuick).toArray();
+    for (const auto &quickItr : quickArray) {
+        const QJsonObject &quick = quickItr.toObject();
+
+        QString quickParent = quick.value(kQuickParent).toString();
+        // Quick plugin 的 parent 必须在 Depends 字段存在
+        if (!quickParent.isEmpty() && quickParent.contains(".")) {
+            QString parentPlugin = quickParent.split('.').first();
+            const QList<PluginDepend> &depends = metaObject->d->depends;
+            auto findItr = std::find_if(depends.cbegin(), depends.cend(), [&parentPlugin](const PluginDepend &depend) {
+                return depend.pluginName == parentPlugin;
+            });
+
+            if (findItr == metaObject->d->depends.end()) {
+                qCWarning(logDPF) << QString("Quick plugin %1 not find parent %2 plugin name on Depends field!")
+                                             .arg(metaObject->d->name)
+                                             .arg(quickParent);
+                continue;
+            }
+        }
+
+        // id url 不为空
+        QString url = quick.value(kQuickUrl).toString();
+        QString id = quick.value(kQuickId).toString();
+        if (url.isEmpty() || id.isEmpty()) {
+            qCWarning(logDPF) << QString("Quick plugin's id %1 or url %2 is empty").arg(id).arg(url);
+            continue;
+        }
+
+        PluginQuickMetaPtr quickMeta = PluginQuickMetaPtr::create();
+        // QML Url = [插件绝对路径 plugin.path] / [插件名称 plugin.name] / [url]
+        QString pluginPath = QFileInfo(metaObject->fileName()).absolutePath();
+        QString fullPath = pluginPath + QDir::separator() + metaObject->name() + QDir::separator() + url;
+        quickMeta->d->quickUrl = QUrl::fromLocalFile(fullPath);
+        quickMeta->d->quickId = id;
+        quickMeta->d->plugin = metaObject->name();
+        quickMeta->d->quickType = quick.value(kQuickType).toString();
+        quickMeta->d->quickApplet = quick.value(kQuickApplet).toString();
+        quickMeta->d->quickParent = quickParent;
+
+        metaObject->d->quickMetaList.append(quickMeta);
+    }
 }
 
 /*!

@@ -14,7 +14,11 @@
 using namespace dfmplugin_filepreview;
 Q_GLOBAL_STATIC(QList<PreviewPluginLoader *>, qt_factory_loaders)
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 Q_GLOBAL_STATIC_WITH_ARGS(QMutex, qt_factoryloader_mutex, (QMutex::Recursive))
+#else
+Q_GLOBAL_STATIC(QRecursiveMutex, qt_factoryloader_mutex)
+#endif
 
 /* Internal, for debugging */
 static bool dfm_debug_component()
@@ -197,7 +201,7 @@ void PreviewPluginLoader::update()
             loader = new QPluginLoader(fileName, this);
             if (!loader->load()) {
                 if (dfm_debug_component()) {
-                    fmDebug() << loader->errorString();
+                    fmWarning() << "load failed:" << loader->errorString();
                 }
                 loader->deleteLater();
                 continue;
@@ -229,7 +233,7 @@ void PreviewPluginLoader::update()
                  *library was built with a future Qt version,
                  * whereas the new one has a Qt version that fits
                  * better
-                */
+                 */
                 const QString &key = keys.at(k);
 
                 if (dptr->rki) {
@@ -257,7 +261,7 @@ void PreviewPluginLoader::update()
 #else
     if (dfm_debug_component()) {
         fmDebug() << "PreviewPluginLoader::PreviewPluginLoader() ignoring" << dptr->iid
-                 << "since plugins are disabled in static builds";
+                  << "since plugins are disabled in static builds";
     }
 #endif
 }

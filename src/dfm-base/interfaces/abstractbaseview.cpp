@@ -25,6 +25,11 @@ void AbstractBaseView::deleteLater()
 {
 }
 
+QWidget *AbstractBaseView::contentWidget() const
+{
+    return nullptr;
+}
+
 AbstractBaseView::ViewState AbstractBaseView::viewState() const
 {
     return ViewState::kViewIdle;

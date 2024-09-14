@@ -48,26 +48,12 @@ set(CORE_FILES
     core.json
     )
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${CORE_FILES}
-    ${SCREEN_FILES}
-    ${EXT_FILES}
-)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    )
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+    include(ddplugin-core-qt6.cmake)
+else()
+    include(ddplugin-core-qt5.cmake)
+endif()
 
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_DESKTOP_CORE_DIR}
-)
-
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.desktop.json")

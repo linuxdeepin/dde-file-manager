@@ -533,16 +533,6 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
         d->updateThumbnail(url);
     }
 
-    // 更新fileicon
-    if (typeAll.contains(FileInfoAttributeID::kStandardIcon)) {
-        typeAll.removeOne(FileInfoAttributeID::kStandardIcon);
-        // 再在缓存和正在查询都不调用，缓存时会去调用
-        if (!d->cacheingAttributes && !d->queringAttribute) {
-            QWriteLocker wlk(&d->iconLock);
-            d->fileIcon = QIcon();
-        }
-    }
-
     // 更新filecount
     if (typeAll.contains(FileInfoAttributeID::kFileCount)) {
         typeAll.removeOne(FileInfoAttributeID::kFileCount);
@@ -1057,7 +1047,7 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
     const QString &absoluteFilePath = filePath();
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
-    auto fileMode = attribute(DFileInfo::AttributeID::kStandardType).toUInt();
+    auto fileMode = attribute(DFileInfo::AttributeID::kUnixMode).toUInt();
     if (fileMode <= 0 || QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
         return fileType;
     fileMode = fileMode <= 0 ? statBuffer.st_mode : fileMode;

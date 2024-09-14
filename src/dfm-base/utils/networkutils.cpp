@@ -165,7 +165,7 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QStringList &ports)
 bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
 {
     QString host;
-        QStringList ports;
+    QStringList ports;
     if (!parseIp(url.path(), host, ports))
         return false;
 

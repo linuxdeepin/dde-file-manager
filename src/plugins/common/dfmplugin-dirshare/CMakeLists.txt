@@ -4,40 +4,15 @@ project(dfmplugin-dirshare)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB DIRSHARE_FILES
+FILE(GLOB_RECURSE DIRSHARE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${DIRSHARE_FILES}
-)
+include(dfmplugin-dirshare-qt5.cmake)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-find_package(Qt5 COMPONENTS Network REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-)
-
-target_link_libraries(${PROJECT_NAME}
-    Qt5::Network
-    DFM::base
-    DFM::framework
-    ${DtkWidget_LIBRARIES}
-)
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+include(dfmplugin-dirshare-qt6.cmake)
+endif()

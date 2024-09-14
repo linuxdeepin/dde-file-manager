@@ -1,0 +1,17 @@
+[Unit]
+Description=DDE File Manager Daemon
+
+Wants=dde-session-pre.target
+After=dde-session-pre.target
+
+Wants=dde-session-initialized.target
+PartOf=dde-session-initialized.target
+Before=dde-session-initialized.target
+
+[Service]
+Type=dbus
+BusName=org.deepin.Filemanager.Daemon
+ExecStart=/usr/bin/dde-file-manager-daemon
+
+[Install]
+WantedBy=graphical-session.target

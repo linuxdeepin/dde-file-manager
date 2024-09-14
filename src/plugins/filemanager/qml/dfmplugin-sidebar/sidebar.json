@@ -1,0 +1,23 @@
+{
+    "Name" : "dfmplugin-sidebar",
+    "Version" : "1.0.0",
+    "CompatVersion" : "1.0.0",
+    "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+    "Copyright" : "Copyright (C) 2021 Uniontech Software Technology Co., Ltd.",
+    "License" : [
+    ],
+    "Category" : "",
+    "Description" : "The sidebar plugin for the filemanager.",
+    "UrlLink" : "https://www.uniontech.com",
+    "Depends" : [
+        {"Name" : "dfmplugin-core", "Version": "1.0.0"}
+    ],
+    "Quick" : [
+        {
+            "Url" : "Sidebar.qml",
+            "Id" : "sidebar",
+            "Type" : "Containment",
+            "Parent" : "dfmplugin-core.filewindow"
+        }
+    ]
+}

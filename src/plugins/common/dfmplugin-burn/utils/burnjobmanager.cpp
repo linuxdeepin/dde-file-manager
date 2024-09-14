@@ -300,7 +300,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 
     QFrame *contentFrame { new QFrame };
     QVBoxLayout *mainLayout { new QVBoxLayout };
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     contentFrame->setLayout(mainLayout);
     d.addContent(contentFrame);
 
@@ -334,7 +334,7 @@ void BurnJobManager::showOpticalDumpISOFailedDialog()
 
     QFrame *contentFrame { new QFrame };
     QVBoxLayout *mainLayout { new QVBoxLayout };
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     contentFrame->setLayout(mainLayout);
     d.addContent(contentFrame);
 

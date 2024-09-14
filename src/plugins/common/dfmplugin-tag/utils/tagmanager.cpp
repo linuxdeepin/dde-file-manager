@@ -631,7 +631,11 @@ QMap<QString, QColor> TagManager::assignColorToTags(const QStringList &tagList) 
 
             tagsMap[tag] = tagColor;
         } else {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             tagsMap.unite(tagMap);
+#else
+            tagsMap.insert(tagMap);
+#endif
         }
     }
 

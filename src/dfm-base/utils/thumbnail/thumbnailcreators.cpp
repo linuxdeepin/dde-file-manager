@@ -67,8 +67,8 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
     QImage img;
     if (!ffmpeg.waitForFinished()) {
         qCWarning(logDFMBase) << "thumbnail: ffmpeg execute failed: "
-                   << ffmpeg.errorString()
-                   << filePath;
+                              << ffmpeg.errorString()
+                              << filePath;
         return img;
     }
 
@@ -78,14 +78,18 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
 
     QString outputs(data);
     if (!img.loadFromData(data)) {   // filter the outputs outputed by video tool.
-        QStringList data = outputs.split(QRegExp("[\n]"), QString::SkipEmptyParts);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        QStringList data = outputs.split(QRegularExpression("[\n]"), Qt::SkipEmptyParts);
+#else
+        QStringList data = outputs.split(QRegularExpression("[\n]"), QString::SkipEmptyParts);
+#endif
         if (data.isEmpty())
             return img;
 
         outputs = data.last();
     }
 
-    if (!img.loadFromData(outputs.toLocal8Bit().data(), "png"))
+    if (!img.loadFromData(outputs.toLocal8Bit(), "png"))
         qCWarning(logDFMBase) << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
     return img;
 }
@@ -152,8 +156,8 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbna
     QImage img;
     if (!ffmpeg.waitForFinished()) {
         qCWarning(logDFMBase) << "thumbnail: ffmpeg execute failed: "
-                   << ffmpeg.errorString()
-                   << filePath;
+                              << ffmpeg.errorString()
+                              << filePath;
         return img;
     }
 
@@ -176,8 +180,8 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     QImageReader reader(filePath, suffix.toLatin1());
     if (!reader.canRead()) {
         qCWarning(logDFMBase) << "thumbnail: can not read this file:"
-                   << reader.errorString()
-                   << filePath;
+                              << reader.errorString()
+                              << filePath;
         return {};
     }
 
@@ -198,8 +202,8 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     QImage image;
     if (!reader.read(&image)) {
         qCWarning(logDFMBase) << "thumbnail: read failed."
-                   << reader.errorString()
-                   << filePath;
+                              << reader.errorString()
+                              << filePath;
         return image;
     }
 
@@ -229,8 +233,8 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
 
     if (!process.waitForFinished() || process.exitCode() != 0) {
         qCWarning(logDFMBase) << "thumbnail: deepin-reader execute failed:"
-                   << process.errorString()
-                   << filePath;
+                              << process.errorString()
+                              << filePath;
 
         return img;
     }

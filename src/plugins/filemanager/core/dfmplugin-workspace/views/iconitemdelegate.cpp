@@ -434,7 +434,8 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     Q_UNUSED(backgroundMargin);
     painter->save();
 
-    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
+    bool isPaintForAnim = option.state & QStyle::State_AutoRaise;
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device()) && !isPaintForAnim;
     bool isSelected = !isDragMode && (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
@@ -538,12 +539,13 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     Q_UNUSED(backgroundMargin);
     Q_D(const IconItemDelegate);
 
-    if (index == d->editingIndex)
+    bool isPaintForAnim = opt.state & QStyle::State_AutoRaise;
+    if (index == d->editingIndex && !isPaintForAnim)
         return;
 
-    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device()) && !isPaintForAnim;
 
-    if (index == d->expandedIndex && !isDragMode) {
+    if (index == d->expandedIndex && !isDragMode && !isPaintForAnim) {
         if (d->expandedItem && d->expandedItem->getIndex() == index
             && d->expandedItem->getOption().rect == opt.rect) {
             d->expandedItem->setOption(opt);
@@ -557,7 +559,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 
     bool singleSelected = parent()->parent()->selectedIndexCount() < 2;
     bool isSelectedOpt = opt.state & QStyle::State_Selected;
-    //文管窗口拖拽时的字体保持白色
+    // 文管窗口拖拽时的字体保持白色
     if (isDragMode || (!singleSelected && isSelectedOpt)) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
     } else {
@@ -571,7 +573,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     if (!singleSelected)
         d->expandedItem->setDifferenceOfLastRow(0);
 
-    if (isSelected && singleSelected) {
+    if (isSelected && singleSelected && !isPaintForAnim) {
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
         /// init file name text
         d->expandedIndex = index;
@@ -596,7 +598,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         }
     }
 
-    //图标拖拽时保持活动色
+    // 图标拖拽时保持活动色
     auto background = isDragMode || (!singleSelected && isSelectedOpt)
             ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight))
             : QBrush(Qt::NoBrush);
@@ -701,7 +703,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     initStyleOption(&opt, index);
 
     if (editor == d->expandedItem) {
-        //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
+        // 重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
         d->expandedItem->show();
         d->expandedItem->setTextBounding(QRect());
         editor->setFixedWidth(option.rect.width());

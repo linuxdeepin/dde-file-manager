@@ -22,7 +22,6 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <DHorizontalLine>
-#include <DApplicationHelper>
 
 #include <QFileInfo>
 #include <QFile>
@@ -304,7 +303,8 @@ void TrashHelper::onTrashStateChanged()
     }
 }
 
-void TrashHelper::onTrashEmptyState() {
+void TrashHelper::onTrashEmptyState()
+{
     isTrashEmpty = FileUtils::trashIsEmpty();
     if (!isTrashEmpty)
         return;

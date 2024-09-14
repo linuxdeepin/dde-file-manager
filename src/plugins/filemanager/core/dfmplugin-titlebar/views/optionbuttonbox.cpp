@@ -129,7 +129,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         if (d->detailButton->isChecked())
             d->detailButton->click();
 
-        if (state & OptionButtonManager::kHideAllBtn)
+        if (state == OptionButtonManager::kHideAllBtn)
             setContentsMargins(0, 0, 0, 0);
         else
             setContentsMargins(5, 0, 15, 0);
@@ -231,7 +231,7 @@ void OptionButtonBox::initUiForSizeMode()
         d->hBoxLayout = nullptr;
     }
     d->hBoxLayout = new QHBoxLayout;
-    d->hBoxLayout->setMargin(0);
+    d->hBoxLayout->setContentsMargins(0, 0, 0, 0);
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
     if (d->treeViewButton)

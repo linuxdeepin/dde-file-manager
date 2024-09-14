@@ -23,9 +23,16 @@ ViewPainter::ViewPainter(CanvasViewPrivate *dd)
 */
 void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
 {
-    QRect repaintRect = event->rect();
-    QVector<QRect> region = event->region().rects();
+    // all item paint in drawMove
+    if (d->sortAnimOper->getMoveAnimationing())
+        return;
 
+    QRect repaintRect = event->rect();
+    QVector<QRect> region;
+    const QRegion &eventRegion = event->region();
+    for (auto it = eventRegion.begin(); it != eventRegion.end(); ++it) {
+        region.append(*it);
+    }
     QPair<QModelIndex, QPoint> expandItem;
     // if need expand.
     expandItem.second = QPoint(-1, -1);
@@ -183,7 +190,7 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
             const int border = 1;
             pen.setWidth(1);
             auto lastRect = view()->visualRect(hoverIndex).marginsRemoved(QMargins(border, border, border, border));
-            path.addRoundRect(lastRect, 4, 4);
+            path.addRoundedRect(lastRect, 4, 4);
             fillPath(path, QColor(43, 167, 248, 255 * 3 / 10));
             strokePath(path, pen);
         }
@@ -220,6 +227,66 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
             restore();
         }
     }
+}
+
+void ViewPainter::drawMove(QStyleOptionViewItem option)
+{
+    if (d->sortAnimOper->getMoveAnimationing()) {
+        const QStringList &moveItems = d->sortAnimOper->getMoveItems();
+        qreal scale = view()->devicePixelRatioF();
+        for (auto animationItem : moveItems) {
+            auto index = model()->index(animationItem);
+            auto margins = view()->d->gridMargins;
+
+            if (!index.isValid())
+                continue;
+
+            GridPos gridPos;
+            if (!d->sortAnimOper->getMoveItemGridPos(animationItem, gridPos))
+                continue;
+
+            if (gridPos.first != view()->screenNum())
+                continue;
+
+            QRect end = view()->d->visualRect(gridPos.second).marginsRemoved(margins);
+            auto tempCurrent = d->sortAnimOper->getMoveDuration();
+            option.rect = view()->visualRect(index).marginsRemoved(margins);
+
+            auto nx = option.rect.x() + (end.x() - option.rect.x()) * tempCurrent;
+            auto ny = option.rect.y() + (end.y() - option.rect.y()) * tempCurrent;
+            option.rect.setX(static_cast<int>(nx));
+            option.rect.setY(static_cast<int>(ny));
+            option.rect.setSize(end.size());
+
+            QPixmap itemPix = d->sortAnimOper->findPixmap(animationItem);
+            if (itemPix.isNull()) {
+                itemPix = QPixmap(end.size() * scale);
+                itemPix.setDevicePixelRatio(scale);
+                itemPix.fill(Qt::transparent);
+
+                auto opt = option;
+                opt.rect.moveTo(0, 0);
+
+                drawFileToPixmap(&itemPix, opt, index);
+
+                d->sortAnimOper->setItemPixmap(animationItem, itemPix);
+            }
+
+            drawPixmap(option.rect, itemPix);
+        }
+    }
+}
+
+void ViewPainter::drawFileToPixmap(QPixmap *pix,
+                                   QStyleOptionViewItem option,
+                                   const QModelIndex &index)
+{
+    QPainter painter(pix);
+    // painting extend.
+    if (d->hookIfs && d->hookIfs->drawFile(d->screenNum, d->q->model()->fileUrl(index), &painter, &option))
+        return;
+
+    itemDelegate()->paint(&painter, option, index);
 }
 
 #if 0   // do draw selected rect by view. see BoxSelecter::updateRubber()
@@ -280,7 +347,12 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     const qreal offsetY = pixRect.height() / 2;
     const QSize iconSize(iconWidth, iconWidth);
 
-    QStyleOptionViewItem option = viewPtr->viewOptions();
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    viewPtr->initViewItemOption(&option);
+#else
+    option = viewPtr->viewOptions();
+#endif
     option.state |= QStyle::State_Selected;
     // icon rect in pixmap.
     option.rect = pixRect.translated(iconMargin, iconMargin);
@@ -291,10 +363,10 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0; --i) {
         painter.save();
 
-        //opacity 50% 40% 30% 20%
+        // opacity 50% 40% 30% 20%
         painter.setOpacity(1.0 - (i + 5) * opacityBase);
 
-        //rotate
+        // rotate
         {
             qreal rotate = rotateBase * (qRound((i + 1.0) / 2.0) / 2.0 + 1.0) * (i % 2 == 1 ? -1 : 1);
             auto tf = painter.transform();
@@ -304,7 +376,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
             painter.setTransform(tf);
         }
 
-        //paint icon
+        // paint icon
         viewPtr->itemDelegate()->paintDragIcon(&painter, option, indexs.at(i));
 
         painter.restore();
@@ -324,7 +396,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
         int length = 0;
         QString text;
         if (indexCount > maxTextCount) {
-            length = 28;   //there are three characters showed.
+            length = 28;   // there are three characters showed.
             text = QString::number(maxTextCount).append("+");
         } else {
             length = 24;   // one or two characters
@@ -349,7 +421,7 @@ void ViewPainter::drawDragText(QPainter *painter, const QString &str, const QRec
 {
     painter->save();
     painter->setPen(Qt::white);
-    //the font defined by ui ：Arial，12px, Bold
+    // the font defined by ui ：Arial，12px, Bold
     QFont ft("Arial");
     ft.setPixelSize(12);
     ft.setBold(true);
