@@ -193,6 +193,7 @@ public:
     QElapsedTimer *speedtimer{ nullptr };   // time eslape
     std::atomic_int64_t elapsed { 0 };
     std::atomic_int64_t deleteFirstFileSize{ false };
+    bool isCutMerge{false};
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

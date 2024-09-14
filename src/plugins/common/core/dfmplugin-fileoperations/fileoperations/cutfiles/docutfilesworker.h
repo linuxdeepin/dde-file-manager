@@ -36,12 +36,13 @@ protected:
     void endWork() override;
 
     bool cutFiles();
-    bool doCutFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo);
+    bool doCutFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo, bool *skip);
     DFileInfoPointer doRenameFile(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetPathInfo,
-                                 const QString fileName, bool *ok);
+                                 const QString fileName, bool *ok, bool *skip);
     bool renameFileByHandler(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
+    bool doMergDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip);
 
 private:
     bool checkSymLink(const DFileInfoPointer &fromInfo);
