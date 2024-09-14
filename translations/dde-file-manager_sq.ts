@@ -2161,7 +2161,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="167"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation type="unfinished"/>
+        <translation>Shkurtore “%1” për shfaqje koleksionesh</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
@@ -2205,7 +2205,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="124"/>
         <source>Enable desktop organizer</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizo sistemues desktopi</translation>
     </message>
 </context>
 <context>
@@ -2228,7 +2228,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation type="unfinished"/>
+        <translation>Fshih/Shfaq Shkurtore Koleksionesh</translation>
     </message>
 </context>
 <context>
@@ -3039,7 +3039,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
         <source>Open folder windows in a separate process</source>
-        <translation type="unfinished"/>
+        <translation>Hape dritaren e dosjes në një proces më vete</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
