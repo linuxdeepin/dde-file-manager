@@ -2151,7 +2151,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="154"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Që të çaktivizoni veçorinë Fshehje Me Një Klikim, hapni dritaren “Shihni Mundësi”, te menuja e kontekstit për desktopin dhe çaktivizoni “Fshehje Koleksioni Me Një Klikim”.</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="164"/>
@@ -5385,7 +5385,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="175"/>
         <source>Clear dde-file-manager Search Records</source>
-        <translation type="unfinished"/>
+        <translation>Spastro Zëra Kërkimi dde-file-manager</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="176"/>
@@ -6377,7 +6377,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="119"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
-        <translation type="unfinished"/>
+        <translation>S’mund të shkyçet kasaforta ndërkohë që punohet në rrjet!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="128"/>
