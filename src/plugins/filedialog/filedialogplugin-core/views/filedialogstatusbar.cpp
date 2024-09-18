@@ -476,6 +476,8 @@ bool FileDialogStatusBar::eventFilter(QObject *watched, QEvent *event)
         QTimer::singleShot(500, this, [this]() {
             fileNameEdit->setFocus();
         });
+    } else if (event->type() == QEvent::FocusOut) {
+        fileNameEdit->lineEdit()->setSelection(0, 0);
     }
 
     return false;
