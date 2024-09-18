@@ -334,7 +334,7 @@ void FileDialog::selectUrl(const QUrl &url)
         return;
 
     CoreEventsCaller::sendSelectFiles(this->internalWinId(), { url });
-    setCurrentInputName(QFileInfo(url.path()).fileName());
+    setCurrentInputName(url.fileName());
 }
 
 QList<QUrl> FileDialog::selectedUrls() const
@@ -549,17 +549,22 @@ void FileDialog::setCurrentInputName(const QString &name)
         return;
     }
 
-    statusBar()->lineEdit()->setText(name);
+    auto current = statusBar()->lineEdit()->text();
+    if (current.isEmpty())
+        current = name;
+
+    statusBar()->lineEdit()->setText(current);
 
     DFMBASE_NAMESPACE::DMimeDatabase db;
 
-    const QString &suffix = db.suffixForFileName(name);
+    const QString &suffix = db.suffixForFileName(current);
 
     if (suffix.isEmpty()) {
         statusBar()->lineEdit()->lineEdit()->selectAll();
     } else {
-        statusBar()->lineEdit()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
+        statusBar()->lineEdit()->lineEdit()->setSelection(0, current.length() - suffix.length() - 1);
     }
+    statusBar()->lineEdit()->lineEdit()->setFocus();
 }
 
 void FileDialog::addCustomWidget(FileDialog::CustomWidgetType type, const QString &data)
