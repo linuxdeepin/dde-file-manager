@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/LineSearch.qml" line="23"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Haku</translation>
     </message>
 </context>
 <context>
@@ -1793,17 +1793,17 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="121"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Koti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="126"/>
         <source>Discover</source>
-        <translation type="unfinished"/>
+        <translation>Haku</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="131"/>
         <source>Activity</source>
-        <translation type="unfinished"/>
+        <translation>Toiminta</translation>
     </message>
 </context>
 <context>
@@ -4173,7 +4173,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Dimension</source>
-        <translation>Mitat</translation>
+        <translation>Mitta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -4205,42 +4205,42 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="304"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="306"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Koko</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="308"/>
         <source>Dimension</source>
-        <translation type="unfinished"/>
+        <translation>Mitta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="310"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Kesto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="312"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tyyppi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="314"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Käytetty</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="316"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Muokattu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="318"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Tuntematon</translation>
     </message>
 </context>
 <context>
