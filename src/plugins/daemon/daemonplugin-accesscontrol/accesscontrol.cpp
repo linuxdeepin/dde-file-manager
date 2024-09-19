@@ -89,9 +89,28 @@ void AccessControl::createUserMountDir(const QString &objPath)
         }
     }
     // ACL
-    QString aclCmd = QString("setfacl -m o:rx %1").arg(userMountRoot);
-    QProcess::execute(aclCmd);
-    fmInfo() << "acl the /media/anyuser folder";
+    // ACL
+    QStringList aclCmd;
+    aclCmd << "-m" << "o:rx" << userMountRoot;
+
+    QProcess process;
+    process.start("setfacl", aclCmd);
+
+    if (!process.waitForFinished(3000)) {
+        fmWarning() << "Failed to execute command:" << process.errorString();
+    } else {
+        // 检查返回值
+        if (process.exitStatus() == QProcess::CrashExit) {
+            fmWarning() << "Process crashed";
+        } else {
+            int exitCode = process.exitCode();
+            if (exitCode != 0) {
+                fmWarning() << "Command failed with exit code:" << exitCode;
+            } else {
+                fmInfo() << "Command: setfacl" << aclCmd << "executed successfully.";
+            }
+        }
+    }
 }
 
 void AccessControl::createUserMountDirs()
