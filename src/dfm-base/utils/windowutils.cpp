@@ -4,6 +4,8 @@
 
 #include "windowutils.h"
 
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+
 #include <QApplication>
 #include <QScreen>
 
@@ -47,4 +49,19 @@ QScreen *DFMBASE_NAMESPACE::WindowUtils::cursorScreen()
         cursorScreen = qApp->primaryScreen();
 
     return cursorScreen;
+}
+
+void DFMBASE_NAMESPACE::WindowUtils::closeAllFileManagerWindows()
+{
+    auto winIds { FileManagerWindowsManager::instance().windowIdList() };
+
+    for (auto id : winIds) {
+        FileManagerWindow *window { FileManagerWindowsManager::instance().findWindowById(id) };
+        if (window)
+            window->close();
+    }
+
+    winIds = FileManagerWindowsManager::instance().windowIdList();
+    if (winIds.count() > 0)
+        qApp->quit();
 }
