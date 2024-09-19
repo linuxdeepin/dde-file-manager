@@ -273,6 +273,24 @@ bool ExtendMenuScene::create(QMenu *parent)
         //自动释放
         action->setParent(parent);
 
+        auto actions = d->childActions(action);
+        d->extendChildActions.append(actions);
+
+        bool isExist = false;
+        for (auto existAction : d->extendActions) {
+            //合并名字相同的菜单且都有子菜单的一级菜单
+            if (action->text() == existAction->text()
+                && existAction->menu()
+                && action->menu()) {
+                isExist = true;
+                for (QAction *subaction : action->menu()->actions()) {
+                    existAction->menu()->addAction(subaction);
+                }
+            }
+        }
+        if (isExist)
+            continue;
+
         //记录分隔线
         if (actionData.separator() != DCustomActionDefines::kNone)
             d->cacheActionsSeparator.insert(action, actionData.separator());
@@ -289,9 +307,6 @@ bool ExtendMenuScene::create(QMenu *parent)
             d->cacheLocateActions[pos].append(action);
             action->setProperty(kActionPosInMenu, pos);
         }
-
-        auto actions = d->childActions(action);
-        d->extendChildActions.append(actions);
 
         d->extendActions.append(action);
     }
