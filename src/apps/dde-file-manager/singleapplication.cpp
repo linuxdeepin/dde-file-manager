@@ -187,3 +187,13 @@ void SingleApplication::closeServer()
         localServer = nullptr;
     }
 }
+
+void SingleApplication::handleQuitAction()
+{
+    // fix bug-272373
+    // When exiting the process, if a copy task exists (@abstractjob.cpp),
+    // this task will block the main thread, causing the UI to be unresponsive.
+    // So here is a rewrite of the exit implementation that closes all the windows
+    // of the filemanager
+    WindowUtils::closeAllFileManagerWindows();
+}
