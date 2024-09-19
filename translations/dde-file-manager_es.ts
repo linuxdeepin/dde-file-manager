@@ -974,7 +974,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="54"/>
         <source>Remove from quick access</source>
-        <translation>Eliminar del acceso rápido</translation>
+        <translation>Quitar de accesos rápidos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="59"/>
@@ -3742,7 +3742,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="59"/>
         <source>Remove from quick access</source>
-        <translation>Eliminar del acceso rápido</translation>
+        <translation>Quitar de accesos rápidos</translation>
     </message>
 </context>
 <context>
