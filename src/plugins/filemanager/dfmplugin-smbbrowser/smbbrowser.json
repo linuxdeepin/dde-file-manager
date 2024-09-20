@@ -21,5 +21,6 @@
             "ReportName" : "Network",
             "Pos": 0
         }]
-    }
+    },
+    "PluginSchemes": ["network", "smb", "ftp", "sftp"]
 }
