@@ -4,6 +4,8 @@ project(dde-filemanager-anything)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+find_package(Qt5 COMPONENTS Core REQUIRED)
+
 FILE(GLOB SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
@@ -16,11 +18,6 @@ add_library(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-find_package(Qt5 COMPONENTS
-    DBus
-    REQUIRED
-)
 
 target_link_libraries(${PROJECT_NAME}
     DFM::framework

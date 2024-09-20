@@ -54,62 +54,11 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
 
 VaultPolicyState VaultDBusUtils::getVaultPolicy()
 {
-    if (!isServiceRegister(QDBusConnection::SystemBus, kDeamonServiceName))
-        return VaultPolicyState::kEnable;
-
-    QDBusInterface deepinSystemInfo(kDeamonServiceName,
-                                    "/org/deepin/Filemanager/AccessControlManager",
-                                    "org.deepin.Filemanager.AccessControlManager",
-                                    QDBusConnection::systemBus());
-
-    VaultPolicyState vaulthidestate { VaultPolicyState::kUnkonw };
-
-    //调用
-    auto response = deepinSystemInfo.call("QueryVaultAccessPolicyVisible");
-    //判断method是否被正确返回
-    if (response.type() == QDBusMessage::ReplyMessage) {
-        //从返回参数获取返回值
-        QVariantList value = response.arguments();
-        if (!value.isEmpty()) {
-            QVariant varVaule = value.first();
-            vaulthidestate = static_cast<VaultPolicyState>(varVaule.toInt());
-        }
-    } else {
-        fmWarning() << "Vault: dbus method(QueryVaultAccessPolicyVisible) call failed!";
-    }
-
-    return vaulthidestate;
+    return VaultPolicyState::kUnkonw;
 }
 
 bool VaultDBusUtils::setVaultPolicyState(int policyState)
 {
-    if (!isServiceRegister(QDBusConnection::SystemBus, kDeamonServiceName))
-        return false;
-
-    QDBusInterface deepinSystemInfo(kDeamonServiceName,
-                                    "/org/deepin/Filemanager/AccessControlManager",
-                                    "org.deepin.Filemanager.AccessControlManager",
-                                    QDBusConnection::systemBus());
-
-    auto response = deepinSystemInfo.call("FileManagerReply", QVariant::fromValue(policyState));
-    //判断method是否被正确返回
-    if (response.type() == QDBusMessage::ReplyMessage) {
-        //从返回参数获取返回值
-        QVariantList value = response.arguments();
-        if (!value.isEmpty()) {
-            QVariant varVaule = value.first();
-            if (!varVaule.toString().isEmpty()) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-
-    } else {
-        fmWarning() << "Vault: dbus method(FileManagerReply) called failed!";
-        return false;
-    }
-
     return false;
 }
 

@@ -4,7 +4,7 @@
 
 #include "sharecontroldbus.h"
 #include "polkit/policykithelper.h"
-#include "dbusadapter/sharecontrol_adapter.h"
+#include "sharecontroladaptor.h"
 #include "service_sharecontrol_global.h"
 
 #include <dfm-base/utils/fileutils.h>
@@ -27,15 +27,12 @@ SERVICESHARECONTROL_USE_NAMESPACE
 ShareControlDBus::ShareControlDBus(const char *name, QObject *parent)
     : QObject(parent), QDBusContext()
 {
-    adapter = new ShareControlAdapter(this);
+    adapter = new UserShareManagerAdaptor(this);
     QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name)).registerObject(kUserShareObjPath, this, QDBusConnection::ExportAdaptors);
 }
 
 ShareControlDBus::~ShareControlDBus()
 {
-    if (adapter)
-        delete adapter;
-    adapter = nullptr;
 }
 
 bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)

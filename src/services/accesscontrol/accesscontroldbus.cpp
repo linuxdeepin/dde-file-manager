@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "accesscontroldbus.h"
+#include "accesscontroladaptor.h"
 #include "utils.h"
 #include "polkit/policykithelper.h"
 
@@ -50,6 +51,7 @@ AccessControlDBus::AccessControlDBus(const char *name, QObject *parent)
 
     initConnect();
 
+    adaptor = new AccessControlManagerAdaptor(this);
     QDBusConnection::RegisterOptions opts =
             QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
 
@@ -58,156 +60,6 @@ AccessControlDBus::AccessControlDBus(const char *name, QObject *parent)
 
 AccessControlDBus::~AccessControlDBus()
 {
-}
-
-QString AccessControlDBus::SetAccessPolicy(const QVariantMap &policy)
-{
-    QVariantMap sigInfo;
-    // 0. 接口访问权限
-    uint invokerPid = connection().interface()->servicePid(message().service()).value();
-    QString invokerPath;
-    if (!Utils::isValidInvoker(invokerPid, invokerPath)) {
-        sigInfo = policy;
-        sigInfo.insert(kKeyErrno, kInvalidInvoker);
-        sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidInvoker));
-        emit AccessPolicySetFinished(sigInfo);
-        fmDebug() << invokerPath << " is not allowed to invoke this function";
-        return invokerPath + " is not allowed";
-    }
-
-    // 1. 校验策略有效性
-    if (!Utils::isValidDevPolicy(policy, invokerPath)) {
-        sigInfo = policy;
-        sigInfo.insert(kKeyErrno, kInvalidArgs);
-        sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidArgs));
-        emit AccessPolicySetFinished(sigInfo);
-        fmDebug() << "policy is not valid";
-        return QString("policy is not valid");
-    }
-
-    // 2. 写入配置文件
-    Utils::saveDevPolicy(policy);
-
-    // 2.5 加载最新的策略到内存
-    Utils::loadDevPolicy(&globalDevPolicies);
-
-    // 2.5.5 发送信号通知策略已完成修改
-    sigInfo.insert(kKeyInvoker, invokerPath);
-    sigInfo.insert(kKeyType, policy.value(kKeyType));
-    sigInfo.insert(kKeyPolicy, policy.value(kKeyPolicy));
-    sigInfo.insert(kKeyErrno, kNoError);
-    sigInfo.insert(kKeyErrstr, "");
-    emit AccessPolicySetFinished(sigInfo);
-    QVariantList sigInfos;
-    QMapIterator<int, QPair<QString, int>> iter(globalDevPolicies);
-    while (iter.hasNext()) {
-        iter.next();
-        QVariantMap item;
-        item.insert(kKeyType, iter.key());
-        item.insert(kKeyPolicy, iter.value().second);
-        sigInfos << item;
-    }
-    emit DeviceAccessPolicyChanged(sigInfos);
-
-    // 3. 改变已挂载设备的访问权限；现阶段不接入此功能；
-    //    changeMountedPolicy(policy);
-    return "OK";
-}
-
-QVariantList AccessControlDBus::QueryAccessPolicy()
-{
-    QVariantList ret;
-    QVariantMap item;
-    QMapIterator<int, QPair<QString, int>> iter(globalDevPolicies);
-    while (iter.hasNext()) {
-        iter.next();
-        item.clear();
-        item.insert(kKeyType, iter.key());
-        item.insert(kKeyPolicy, iter.value().second);
-        item.insert(kKeyInvoker, iter.value().first);
-        ret << item;
-    }
-    return ret;
-}
-
-/*!
- * \brief AccessControlDBus::SetVaultAccessPolicy
- * \param policy POLICYTYPE 1表示保险箱, VAULTHIDESTATE 1表示隐藏保险箱 2表示显示保险箱, POLICYSTATE 1表示策略执行 2表示策略不执行
- * \return
- */
-QString AccessControlDBus::SetVaultAccessPolicy(const QVariantMap &policy)
-{
-    QVariantMap sigInfo;
-    // 0. 接口访问权限
-    uint invokerPid = connection().interface()->servicePid(message().service()).value();
-    QString invokerPath;
-    if (!Utils::isValidInvoker(invokerPid, invokerPath)) {
-        sigInfo = policy;
-        sigInfo.insert(kKeyErrno, kInvalidInvoker);
-        sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidInvoker));
-        emit AccessPolicySetFinished(sigInfo);
-        fmInfo() << invokerPath << " is not allowed to invoke this function";
-        return invokerPath + " is not allowed";
-    }
-
-    // 1. 校验策略有效性
-    if (!Utils::isValidVaultPolicy(policy)) {
-        sigInfo = policy;
-        sigInfo.insert(kKeyErrno, kInvalidArgs);
-        sigInfo.insert(kKeyErrstr, errMsg.value(kInvalidArgs));
-        emit AccessPolicySetFinished(sigInfo);
-        fmDebug() << "policy is not valid";
-        return QString("policy is not valid");
-    }
-
-    Utils::saveVaultPolicy(policy);
-
-    Utils::loadVaultPolicy(&globalVaultHidePolicies);
-
-    if (globalVaultHidePolicies.isEmpty())
-        return QString("");
-
-    // 2.5.5 发送信号通知策略已完成修改
-    sigInfo.insert(kPolicyType, policy.value(kPolicyType));
-    sigInfo.insert(kVaultHideState, policy.value(kVaultHideState));
-    sigInfo.insert(kPolicyState, policy.value(kPolicyState));
-    sigInfo.insert(kKeyErrno, kNoError);
-    sigInfo.insert(kKeyErrstr, "");
-    emit AccessPolicySetFinished(sigInfo);
-
-    emit AccessVaultPolicyNotify();
-
-    return QString("OK");
-}
-
-QVariantList AccessControlDBus::QueryVaultAccessPolicy()
-{
-    QVariantList ret;
-    QVariantMap item;
-    QMapIterator<QString, int> iter(globalVaultHidePolicies);
-    while (iter.hasNext()) {
-        iter.next();
-        item.insert(iter.key(), iter.value());
-    }
-    ret << QVariant::fromValue(item);
-    return ret;
-}
-
-int AccessControlDBus::QueryVaultAccessPolicyVisible()
-{
-    if (globalVaultHidePolicies.value(kPolicyState) == 1)
-        return globalVaultHidePolicies.value(kVaultHideState);
-    else
-        return 0;
-}
-
-QString AccessControlDBus::FileManagerReply(int policystate)
-{
-    QVariantList listMap = QueryVaultAccessPolicy();
-    QVariantMap map = listMap.at(0).toMap();
-    map.insert(kPolicyState, policystate);
-    SetVaultAccessPolicy(map);
-    return "OK";
 }
 
 void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString &newPwd)

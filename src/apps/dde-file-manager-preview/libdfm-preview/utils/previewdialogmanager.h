@@ -17,6 +17,9 @@ class PreviewDialogManager : public QObject
 public:
     static PreviewDialogManager *instance();
 
+public Q_SLOTS:
+    void onPreviewDialogClose();
+
 private:
     explicit PreviewDialogManager(QObject *parent = nullptr);
 
@@ -25,6 +28,7 @@ public slots:
 
 private:
     FilePreviewDialog *filePreviewDialog { nullptr };
+    QTimer *exitTimer { nullptr };
 };
 }
 #endif   // PREVIEWDIALOGMANAGER_H

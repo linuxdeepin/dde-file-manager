@@ -37,11 +37,6 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-find_package(Qt5 COMPONENTS
-    DBus
-    REQUIRED
-)
-
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::DBus

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(dde-filemanager-sharecontrol)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(ShareControl_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.ShareControl.xml)
 
 FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -15,9 +16,18 @@ FILE(GLOB FILEOPERATIONS_FILES
     )
 
 find_package(PkgConfig REQUIRED)
+find_package(Qt5 COMPONENTS DBus REQUIRED)
 pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1)
 pkg_check_modules(PolkitQt5 REQUIRED polkit-qt5-1)
 
+# qt5_generate_dbus_interface(
+#    sharecontroldbus.h
+#    ${ShareControl_XML}
+#    OPTIONS -M -S
+# )
+
+qt5_add_dbus_adaptor(FILEOPERATIONS_FILES ${ShareControl_XML}
+    sharecontroldbus.h ShareControlDBus)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -25,11 +35,6 @@ add_library(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
-find_package(Qt5 COMPONENTS
-    DBus
-    REQUIRED
-)
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base

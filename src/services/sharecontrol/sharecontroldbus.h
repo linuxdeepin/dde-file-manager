@@ -8,11 +8,10 @@
 #include <QObject>
 #include <QDBusContext>
 
-class ShareControlAdapter;
+class UserShareManagerAdaptor;
 class ShareControlDBus : public QObject, public QDBusContext
 {
     Q_OBJECT
-    // Q_CLASSINFO("D-Bus Interface", "org.deepin.Filemanager.UserShareManager")
     Q_CLASSINFO("D-Bus Interface", "org.deepin.Filemanager.UserShareManager")
 
 public:
@@ -29,7 +28,7 @@ protected:
     bool checkAuthentication();
 
 private:
-    ShareControlAdapter *adapter = nullptr;
+    UserShareManagerAdaptor *adapter = nullptr;
 };
 
 #endif   // SHARECONTROLDBUS_H

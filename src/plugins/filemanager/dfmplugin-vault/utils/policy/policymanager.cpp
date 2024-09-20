@@ -16,12 +16,6 @@ bool PolicyManager::vaultVisiable = true;
 PolicyManager::PolicyManager(QObject *parent)
     : QObject(parent)
 {
-    QDBusConnection::systemBus().connect("org.deepin.Filemanager.AccessControlManager",
-                                         "/org/deepin/Filemanager/AccessControlManager",
-                                         "org.deepin.Filemanager.AccessControlManager",
-                                         "AccessVaultPolicyNotify",
-                                         this,
-                                         SLOT(slotVaultPolicy()));
 }
 
 VaultPolicyState PolicyManager::getVaultPolicy()
