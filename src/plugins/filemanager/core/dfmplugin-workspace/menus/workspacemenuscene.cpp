@@ -170,12 +170,19 @@ bool WorkspaceMenuScene::create(DMenu *parent)
 void WorkspaceMenuScene::updateState(DMenu *parent)
 {
     auto currentWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(d->windowId);
+    bool renameEnabled = true;
+    if (d->focusFileInfo && FileUtils::isDesktopFileInfo(d->focusFileInfo)
+            && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
+        renameEnabled = false;
     if (currentWidget && !currentWidget->canAddNewTab()) {
         auto actions = parent->actions();
         for (auto act : actions) {
             const auto &actId = act->property(ActionPropertyKey::kActionID);
-            if (dfmplugin_menu::ActionID::kOpenInNewTab == actId)
+            if (dfmplugin_menu::ActionID::kOpenInNewTab == actId) {
                 act->setEnabled(false);
+            } else if (!renameEnabled && dfmplugin_menu::ActionID::kRename == actId){
+                act->setEnabled(renameEnabled);
+            }
         }
     }
 

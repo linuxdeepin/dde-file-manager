@@ -22,6 +22,8 @@
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -78,6 +80,11 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
     else
         disableActions = &normalDisableActions;
 
+    bool renameEnabled = true;
+    if (focusFileInfo && FileUtils::isDesktopFileInfo(focusFileInfo)
+            && !focusFileInfo->canAttributes(CanableInfoType::kCanRename))
+        renameEnabled = false;
+
     if (!disableActions->isEmpty()) {
         for (auto action : actions) {
             if (action->isSeparator())
@@ -94,6 +101,8 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
                 // disable,remove it.
                 menu->removeAction(action);
             }
+            if (actionId == dfmplugin_menu::ActionID::kRename)
+                action->setEnabled(renameEnabled);
         }
     }
 }
@@ -144,8 +153,10 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->selectFiles.isEmpty())
+    if (!d->selectFiles.isEmpty()) {
         d->focusFile = d->selectFiles.first();
+        d->focusFileInfo = InfoFactory::create<FileInfo>(d->focusFile);
+    }
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();

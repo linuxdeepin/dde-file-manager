@@ -78,7 +78,8 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
 
     if (!d->isEmptyArea) {
         QString errString;
-        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile,
+                                                                            Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
             fmDebug() << errString;
             return false;
@@ -174,6 +175,10 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         if ((!d->treeSelectedUrls.isEmpty() && d->selectFiles.count() != d->treeSelectedUrls.count())
             || !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename)
             || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+            rename->setDisabled(true);
+
+        if (d->focusFileInfo && FileUtils::isDesktopFileInfo(d->focusFileInfo)
+                && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
             rename->setDisabled(true);
     }
 
