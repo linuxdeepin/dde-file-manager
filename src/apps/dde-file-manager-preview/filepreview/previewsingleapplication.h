@@ -5,6 +5,8 @@
 #ifndef PREVIEWSINGLEAPPLICATION_H
 #define PREVIEWSINGLEAPPLICATION_H
 
+#include "previewlibrary.h"
+
 #include <DApplication>
 
 QT_BEGIN_NAMESPACE
@@ -12,6 +14,7 @@ class QLocalServer;
 class QLocalSocket;
 QT_END_NAMESPACE
 
+class PreviewLibrary;
 class PreviewSingleApplication : public DTK_WIDGET_NAMESPACE::DApplication
 {
     Q_OBJECT

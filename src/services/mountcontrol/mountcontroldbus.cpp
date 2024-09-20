@@ -107,9 +107,6 @@ MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)
 
 MountControlDBusPrivate::~MountControlDBusPrivate()
 {
-    if (adapter)
-        delete adapter;
-
     CifsMountHelper *helper = dynamic_cast<CifsMountHelper *>(mountHelpers.value(MountFstypeSupportedField::kCifs, nullptr));
     if (helper)
         helper->cleanMountPoint();

@@ -19,9 +19,19 @@ PreviewDialogManager *PreviewDialogManager::instance()
     return &previewManager;
 }
 
+void PreviewDialogManager::onPreviewDialogClose()
+{
+    exitTimer->start(60000);
+}
+
 PreviewDialogManager::PreviewDialogManager(QObject *parent)
     : QObject(parent)
 {
+    exitTimer = new QTimer(this);
+    exitTimer->setSingleShot(true);
+    connect(exitTimer, &QTimer::timeout, this, []() {
+        QCoreApplication::quit();
+    });
 }
 
 void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> &dirUrl)
@@ -65,6 +75,8 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         return;
     }
 
+    exitTimer->stop();
+
     if (filePreviewDialog) {
         filePreviewDialog->close();
         filePreviewDialog = nullptr;
@@ -74,6 +86,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         filePreviewDialog = new FilePreviewDialog(selecturls, nullptr);
         DPlatformWindowHandle::enableDXcbForWindow(filePreviewDialog, true);
         filePreviewDialog->setCurrentWinID(winId);
+        connect(filePreviewDialog, &FilePreviewDialog::signalCloseEvent, this, &PreviewDialogManager::onPreviewDialogClose);
     }
 
     if (selecturls.count() == 1)

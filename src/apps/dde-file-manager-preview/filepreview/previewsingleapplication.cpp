@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "previewsingleapplication.h"
-#include "previewlibrary.h"
 
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/finallyutil.h>
@@ -70,7 +69,7 @@ void PreviewSingleApplication::processArgs(const QStringList &list)
     QList<QUrl> selectUrls(QUrl::fromStringList(selectUrlsStr));
     QList<QUrl> dirUrls(QUrl::fromStringList(dirUrlsStr));
 
-    PreviewLibrary lib;
+    static PreviewLibrary lib;
     if (!lib.load())
         return;
 

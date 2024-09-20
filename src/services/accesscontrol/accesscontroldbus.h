@@ -14,6 +14,7 @@ DFM_MOUNT_BEGIN_NS
 class DBlockMonitor;
 DFM_MOUNT_END_NS
 
+class AccessControlManagerAdaptor;
 class AccessControlDBus : public QObject, public QDBusContext
 {
     Q_OBJECT
@@ -37,12 +38,6 @@ public:
     ~AccessControlDBus();
 
 public slots:
-    QString SetAccessPolicy(const QVariantMap &policy);
-    QVariantList QueryAccessPolicy();
-    QString SetVaultAccessPolicy(const QVariantMap &policy);
-    QVariantList QueryVaultAccessPolicy();
-    int QueryVaultAccessPolicyVisible();
-    QString FileManagerReply(int policystate);
     void ChangeDiskPassword(const QString &oldPwd, const QString &newPwd);
     bool Chmod(const QString &path, uint mode);
 
@@ -51,9 +46,6 @@ private slots:
     void onBlockDevMounted(const QString &deviceId, const QString &mountPoint);
 
 signals:
-    void AccessPolicySetFinished(const QVariantMap &policy);
-    void DeviceAccessPolicyChanged(const QVariantList &policy);
-    void AccessVaultPolicyNotify();
     void DiskPasswordChecked(int code);
     void DiskPasswordChanged(int code);
 
@@ -70,6 +62,7 @@ private:
     QMap<QString, int> globalVaultHidePolicies;
     QMap<int, QString> errMsg;
     QScopedPointer<DFMMOUNT::DBlockMonitor> monitor;
+    AccessControlManagerAdaptor *adaptor;
 };
 
 #endif   // ACCESSCONTROLDBUS_H

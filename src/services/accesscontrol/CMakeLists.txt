@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 project(dde-filemanager-accesscontrol)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(AccessControl_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.AccessControl.xml)
+
+find_package(PkgConfig REQUIRED)
+find_package(Qt5 COMPONENTS DBus REQUIRED)
 
 FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -13,6 +17,15 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.policy"
     )
 
+# qt5_generate_dbus_interface(
+#    accesscontroldbus.h
+#    ${AccessControl_XML}
+#    OPTIONS -M -S
+# )
+
+qt5_add_dbus_adaptor(FILEOPERATIONS_FILES ${AccessControl_XML}
+    accesscontroldbus.h AccessControlDBus)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${FILEOPERATIONS_FILES}
@@ -20,7 +33,6 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-find_package(PkgConfig REQUIRED)
 
 pkg_search_module(dfm-io
     REQUIRED
@@ -47,10 +59,6 @@ pkg_check_modules(PolkitQt5
     REQUIRED
     polkit-qt5-1
     IMPORTED_TARGET
-)
-find_package(Qt5 COMPONENTS
-    DBus
-    REQUIRED
 )
 
 target_link_libraries(${PROJECT_NAME}
