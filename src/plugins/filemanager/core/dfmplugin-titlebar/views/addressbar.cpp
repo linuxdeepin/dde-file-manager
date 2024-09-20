@@ -143,8 +143,8 @@ void AddressBarPrivate::initUiForSizeMode()
 
 void AddressBarPrivate::initData()
 {
-    ipRegExp.setPattern(R"(((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})");
-    protocolIPRegExp.setPattern(R"(((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})");
+    ipRegExp.setPattern(R"(^((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$)");
+    protocolIPRegExp.setPattern(R"(^((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$)");
     protocolIPRegExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
     // 设置补全组件
@@ -532,7 +532,7 @@ void AddressBarPrivate::onReturnPressed()
         if (DConfigManager::instance()->value(DConfigSearch::kSearchCfgPath,
                                               DConfigSearch::kDisplaySearchHistory, true)
                     .toBool()) {
-            if (!historyList.contains(text))
+            if (historyList.contains(text))
                 historyList.removeAll(text);
             historyList.append(text);
             isHistoryInCompleterModel = false;
