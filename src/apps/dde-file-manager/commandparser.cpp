@@ -16,6 +16,7 @@
 #include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
+#include <dfm-framework/lifecycle/lifecycle.h>
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
@@ -310,20 +311,34 @@ void CommandParser::openInUrls()
 void CommandParser::openWindowWithUrl(const QUrl &url)
 {
     // Some args must require the plugin to be started in advance
-    static const QMap<QString, QString> kSchemeMap {
-        { Global::Scheme::kSmb, "dfmplugin-smbbrowser" },
-        { Global::Scheme::kTrash, "dfmplugin-trash" }
-    };
-    if (Q_UNLIKELY(kSchemeMap.keys().contains(url.scheme()))) {
+    QMap<QString, QString> schemeMap {};
+    QMap<QString, dpf::PluginMetaObjectPointer> schemePlugins;
+    dpf::LifeCycle::pluginMetaObjs([&schemeMap, &schemePlugins](dpf::PluginMetaObjectPointer ptr) {
+        Q_ASSERT(ptr);
+        const auto &data { ptr->customData() };
+        if (data.isEmpty())
+            return false;
+        auto schemes = ptr->customData().value("PluginSchemes").toStringList();
+        if (schemes.isEmpty())
+            return false;
+        for (auto scheme : schemes) {
+            schemeMap.insert(scheme, ptr->name());
+            schemePlugins.insert(scheme, ptr);
+        }
+        return true;
+    });
+
+    if (Q_UNLIKELY(schemeMap.keys().contains(url.scheme())
+                   && schemePlugins.value(url.scheme())->pluginState()!= dpf::PluginMetaObject::State::kLoaded)) {
         static std::once_flag flag;
-        std::call_once(flag, [url]() {
-            const QString &name { kSchemeMap.value(url.scheme()) };
+        std::call_once(flag, [url, schemeMap]() {
+            const QString &name { schemeMap.value(url.scheme()) };
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, QStringList() << name);
         });
     }
-    auto flag = !DConfigManager::instance()->
-            value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, true).toBool();
+    auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                   kOpenFolderWindowsInASeparateProcess, true)
+                         .toBool();
     flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile") || isSet("show-item");
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
