@@ -24,6 +24,7 @@
                 "VisiableControl" : "trash",
                 "ReportName" : "Trash"
             }
-        }]
+        }],
+        "PluginSchemes": ["trash"]
     }
 }
