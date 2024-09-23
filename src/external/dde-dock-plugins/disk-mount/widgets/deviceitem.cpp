@@ -67,6 +67,15 @@ void DeviceItem::initUI()
     setTextFont(labName, 14, QFont::Medium);
     setTextColor(labName, DGuiApplicationHelper::instance()->themeType(), 0.8);
 
+    QFontMetrics fm(labName->font());
+    auto textPixelWidth = fm.boundingRect(data.displayName).width();
+    const int kDevNameLen = 175;
+    if (textPixelWidth > kDevNameLen) {
+        auto text = fm.elidedText(data.displayName, Qt::TextElideMode::ElideRight, kDevNameLen);
+        labName->setText(text);
+        labName->setToolTip(data.displayName);
+    }
+
     sizeLabel = new QLabel(this);
     setTextFont(sizeLabel, 12, QFont::Normal);
     setTextColor(sizeLabel, DGuiApplicationHelper::instance()->themeType(), 0.6);
