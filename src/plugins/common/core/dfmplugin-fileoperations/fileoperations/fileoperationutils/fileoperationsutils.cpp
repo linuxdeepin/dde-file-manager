@@ -185,3 +185,52 @@ bool FileOperationsUtils::canBroadcastPaste()
     // 组策略中配置
     return DConfigManager::instance()->value(kFileOperations, kBroadcastPaste, false).toBool();
 }
+
+qint64 FileOperationsUtils::getSysFreeMem()
+{
+    QFile file("/proc/meminfo");
+    if (!file.open(QFileDevice::ReadOnly | QIODevice::Text))
+        return 0;
+    qint64 available =0, countAvail = 0, countSize = 0;
+    do {
+        auto info = file.readLine();
+        auto infoList = info.split(':');
+        if (infoList.size() != 2)
+            continue;
+
+        if (infoList.first() == "MemAvailable") {
+            available = transMem(infoList.last());
+            break;
+        }
+
+        if (infoList.first() == "MemFree" || infoList.first() == "Buffers" || infoList.first() == "Cached") {
+            countSize++;
+            countAvail += transMem(infoList.last());
+        }
+
+        if (countSize >= 3)
+            break;
+    } while (!file.atEnd());
+
+    file.close();
+    return available > 0 ? available : countAvail;
+}
+
+qint64 FileOperationsUtils::transMem(const QString &mem)
+{
+    auto info = mem;
+    info = info.replace(QRegularExpression("^ +"), "");
+    qint64 ceil = 1;
+    auto infoList = info.split(" ");
+    if (infoList.size() != 2)
+        return 0;
+
+    if (infoList.last().startsWith("kb", Qt::CaseInsensitive)) {
+        ceil = 1024;
+    } else if (infoList.last().startsWith("mb", Qt::CaseInsensitive)){
+        ceil = 1024 * 1024;
+    } else if (infoList.last().startsWith("gb", Qt::CaseInsensitive)){
+        ceil = 1024 * 1024 * 1024;
+    }
+    return infoList.first().toLongLong() * ceil;
+}
