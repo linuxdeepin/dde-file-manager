@@ -653,7 +653,7 @@ FileInfo::FileType SyncFileInfoPrivate::updateFileType()
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
     auto fileMode = attribute(DFileInfo::AttributeID::kUnixMode).toUInt();
-    if (fileMode <= 0 || QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
+    if (fileMode <= 0 && QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
         return fileType;
     fileMode = fileMode <= 0 ? statBuffer.st_mode : fileMode;
     if (S_ISDIR(fileMode))
