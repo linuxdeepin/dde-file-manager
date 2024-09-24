@@ -45,11 +45,6 @@ void PreviewSingleApplication::handleNewClient(const QString &uniqueKey)
 
     QLocalSocket *socket = getNewClientConnect(uniqueKey, data);
     if (socket) {
-        socket->waitForReadyRead();
-
-        for (const QByteArray &i : socket->readAll().split(' '))
-            fmInfo() << QString::fromLocal8Bit(QByteArray::fromBase64(i));
-
         socket->close();
         socket->deleteLater();
     }
