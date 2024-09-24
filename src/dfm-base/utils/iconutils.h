@@ -20,6 +20,7 @@ struct IconStyle
     int shadowRange { 3 };
 };
 QPixmap renderIconBackground(const QSize &size, const IconStyle &style = IconStyle {});
+QPixmap renderIconBackground(const QSizeF &size, const IconStyle &style = IconStyle {});
 QPixmap addShadowToPixmap(const QPixmap &originalPixmap, int shadowOffsetY, qreal blurRadius, qreal shadowOpacity);
 IconStyle getIconStyle(int size);
 }   // end namespace IconUtils
