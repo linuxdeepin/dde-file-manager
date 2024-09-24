@@ -1052,9 +1052,7 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
 
     d->currentIconSizeLevel = sizeIndex;
     d->statusBar->scalingSlider()->setValue(sizeIndex);
-    itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
-    if (isIconViewMode())
-        updateViewportContentsMargins(itemSizeHint());
+    setFileViewStateValue(rootUrl(), "iconSizeLevel", sizeIndex);
 }
 
 void FileView::onShowFileSuffixChanged(bool isShow)
