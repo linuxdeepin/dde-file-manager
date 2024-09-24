@@ -72,7 +72,8 @@ bool SmbBrowserEventReceiver::hookSetTabName(const QUrl &url, QString *tabName)
         return true;
     }
 
-    if (url.scheme() == "smb" && url.path().contains(QRegularExpression(R"([^/]*)"))) {
+    static QRegularExpression regx(R"([^/]*)");
+    if (url.scheme() == "smb" && url.path().contains(regx)) {
         auto path = url.toString();
         while (path.endsWith("/"))
             path.chop(1);
@@ -91,6 +92,12 @@ bool SmbBrowserEventReceiver::hookTitleBarAddrHandle(QUrl *url)
         return true;
     }
     return false;
+}
+
+bool SmbBrowserEventReceiver::hookAllowRepeatUrl(const QUrl &cur, const QUrl &pre)
+{
+    QStringList allowReEnterScehmes { Global::Scheme::kSmb, Global::Scheme::kSFtp, Global::Scheme::kFtp };
+    return allowReEnterScehmes.contains(cur.scheme()) && allowReEnterScehmes.contains(pre.scheme());
 }
 
 bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
