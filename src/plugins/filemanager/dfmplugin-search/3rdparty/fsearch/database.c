@@ -46,6 +46,7 @@
 // add py index,update database version to 1.0
 #define DATABASE_MAJOR_VERSION 1
 #define DATABASE_MINOR_VERSION 0
+#define MAX_DIR_DEPTH 100
 
 #define DATABASE_FILTER_PATH "^((/boot)|(/dev)|(/proc)|(/sys)|(/root)|(/run)).*$"
 
@@ -458,7 +459,8 @@ db_location_walk_tree_recursive(DatabaseLocation *location,
                                 BTreeNode *parent,
                                 int spec,
                                 bool *is_stop,
-                                bool has_data_prefix)
+                                bool has_data_prefix,
+                                const int depth)
 {
     if (*is_stop)
         return WALK_OK;
@@ -466,7 +468,7 @@ db_location_walk_tree_recursive(DatabaseLocation *location,
     if (!db_support(dname, has_data_prefix))
         return WALK_BADPATTERN;
 
-    int len = strlen(dname);
+    size_t len = strlen(dname);
     if (len >= FILENAME_MAX - 1) {
         //trace ("filename too long: %s\n", dname);
         return WALK_NAMETOOLONG;
@@ -535,7 +537,7 @@ db_location_walk_tree_recursive(DatabaseLocation *location,
                                          is_dir);
         btree_node_prepend(parent, node);
         location->num_items++;
-        if (is_dir) {
+        if (is_dir && depth <= MAX_DIR_DEPTH) {
             db_location_walk_tree_recursive(location,
                                             db_config,
                                             excludes,
@@ -546,7 +548,8 @@ db_location_walk_tree_recursive(DatabaseLocation *location,
                                             node,
                                             spec,
                                             is_stop,
-                                            has_data_prefix);
+                                            has_data_prefix,
+                                            depth + 1);
         }
     }
 
@@ -598,7 +601,8 @@ db_location_build_tree(const char *dname, DatabaseConfig *db_config, bool *is_st
                                                    root,
                                                    spec,
                                                    is_stop,
-                                                   has_data_prefix);
+                                                   has_data_prefix,
+                                                   0);
     config_free(config);
     g_timer_destroy(timer);
     if (res == WALK_OK) {
