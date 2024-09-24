@@ -98,9 +98,10 @@ QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, Thum
 {
     Q_UNUSED(size)
 
-    static QLibrary lib("libimageviewer.so");
     QImage img;
-
+// TODO: libimageviewer.so build wiht qt5, wait qt6 version...
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    static QLibrary lib("libimageviewer.so");
     if (lib.isLoaded() || lib.load()) {
         typedef void (*GetMovieCover)(const QUrl &, const QString &, QImage *);
         GetMovieCover func = reinterpret_cast<GetMovieCover>(lib.resolve("getMovieCover"));
@@ -108,6 +109,9 @@ QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, Thum
         if (func)
             func(QUrl::fromLocalFile(filePath), filePath, &img);
     }
+#else
+    qCWarning(logDFMBase) << "libimageviewer.so is not Qt6";
+#endif
 
     return img;
 }
