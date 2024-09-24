@@ -305,7 +305,7 @@ QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionVie
     return paintIcon(painter, indexOption.icon,
                      { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
                        QIcon::Off, isThumnailIconIndex(index) })
-            .size();
+            .size().toSize();
 }
 
 int CanvasItemDelegate::textLineHeight() const
@@ -735,7 +735,7 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
  * \param mode: icon mode (Normal, Disabled, Active, Selected )
  * \param state: The state for which a pixmap is intended to be used. (On, Off)
  */
-QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
+QRectF CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
 {
     // Copy of QStyle::alignedRect
     Qt::Alignment alignment { visualAlignment(painter->layoutDirection(), opts.alignment) };
@@ -759,29 +759,29 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const 
         painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
 
         auto iconStyle { IconUtils::getIconStyle(opts.rect.size().toSize().width()) };
-        QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
-        QRect imageRect { backgroundRect };
+        QRectF backgroundRect { x, y, w, h };
+        QRectF imageRect { backgroundRect };
 
         // 绘制带有阴影的背景
         auto stroke { iconStyle.stroke };
         backgroundRect.adjust(-stroke, -stroke, stroke, stroke);
         const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
         const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
-        painter->drawPixmap(backgroundRect, shadowPixmap);
+        painter->drawPixmap(backgroundRect, shadowPixmap, px.rect());
         imageRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
 
         QPainterPath clipPath;
         auto radius { iconStyle.radius - iconStyle.stroke };
         clipPath.addRoundedRect(imageRect, radius, radius);
         painter->setClipPath(clipPath);
-        painter->drawPixmap(imageRect, px);
+        painter->drawPixmap(imageRect, px, px.rect());
         painter->restore();
 
         return backgroundRect;
     }
-    painter->drawPixmap(qRound(x), qRound(y), px);
+    painter->drawPixmap(QPointF(x, y), px);
     // return rect before scale
-    return QRect(qRound(x), qRound(y), w, h);
+    return QRectF(x, y, w, h);
 }
 
 QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info)

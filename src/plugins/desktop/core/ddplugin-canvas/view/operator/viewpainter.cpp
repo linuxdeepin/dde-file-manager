@@ -260,7 +260,9 @@ void ViewPainter::drawMove(QStyleOptionViewItem option)
 
             QPixmap itemPix = d->sortAnimOper->findPixmap(animationItem);
             if (itemPix.isNull()) {
-                itemPix = QPixmap(end.size() * scale);
+                auto pixWidth = end.size().width() * scale;
+                auto pixHeight = end.size().height() * scale;
+                itemPix = QPixmap(QSize(qRound(pixWidth), qRound(pixHeight)));
                 itemPix.setDevicePixelRatio(scale);
                 itemPix.fill(Qt::transparent);
 
@@ -272,7 +274,7 @@ void ViewPainter::drawMove(QStyleOptionViewItem option)
                 d->sortAnimOper->setItemPixmap(animationItem, itemPix);
             }
 
-            drawPixmap(option.rect, itemPix);
+            drawPixmap(QPointF(nx, ny), itemPix);
         }
     }
 }

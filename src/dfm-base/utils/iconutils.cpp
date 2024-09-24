@@ -92,3 +92,19 @@ IconUtils::IconStyle IconUtils::getIconStyle(int size)
 
     return style;
 }
+
+QPixmap IconUtils::renderIconBackground(const QSizeF &size, const IconStyle &style)
+{
+    QSize pixSize(qRound(size.width()), qRound(size.height()));
+    QPixmap pm { pixSize };
+    pm.fill(Qt::transparent);
+    QPainter p(&pm);
+    p.setRenderHints(p.renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
+    p.setPen(Qt::NoPen);
+    p.setBrush(Qt::white);
+
+    QRectF rect { { 0, 0 }, size };
+    p.drawRoundedRect(rect, style.radius, style.radius);
+    p.end();
+    return pm;
+}
