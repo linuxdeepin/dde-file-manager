@@ -4,6 +4,10 @@
 
 #include "backgroundservice.h"
 
+#include <QStandardPaths>
+#include <QSettings>
+#include <QDBusInterface>
+
 DDP_BACKGROUND_USE_NAMESPACE
 
 BackgroundService::BackgroundService(QObject *parent)
@@ -17,6 +21,19 @@ BackgroundService::BackgroundService(QObject *parent)
     fmInfo() << "create com.deepin.wm end";
     currentWorkspaceIndex = getCurrentWorkspaceIndex();
     connect(wmInter, &WMInter::WorkspaceSwitched, this, &BackgroundService::onWorkspaceSwitched);
+#else
+    fmInfo() << "create com.deepin.wm";
+    QDBusInterface *interface = new QDBusInterface("com.deepin.wm",
+                                                   "/com/deepin/wm",
+                                                   "com.deepin.wm",
+                                                   QDBusConnection::sessionBus(),
+                                                   this);
+    fmInfo() << "create com.deepin.wm end";
+    interface->setTimeout(200);
+    currentWorkspaceIndex = getCurrentWorkspaceIndex();
+    connect(interface, SIGNAL(WorkspaceSwitched(int, int)),
+            this, SLOT(onWorkspaceSwitched(int, int)));
+
 #endif
 }
 
@@ -44,7 +61,6 @@ QString BackgroundService::getDefaultBackground()
 
 int BackgroundService::getCurrentWorkspaceIndex()
 {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QString configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/kwinrc";
     QSettings settings(configPath, QSettings::IniFormat);
 
@@ -58,7 +74,4 @@ int BackgroundService::getCurrentWorkspaceIndex()
     }
 
     return currentIdx;
-#else
-    return 0;
-#endif
 }
