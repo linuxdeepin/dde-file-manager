@@ -98,9 +98,10 @@ OrganizerConfig::OrganizerConfig(QObject *parent)
 
     // delay sync
     d->syncTimer.setSingleShot(true);
-    connect(&d->syncTimer, &QTimer::timeout, this, [this]() {
-        d->settings->sync();
-    },
+    connect(
+            &d->syncTimer, &QTimer::timeout, this, [this]() {
+                d->settings->sync();
+            },
             Qt::QueuedConnection);
 }
 
@@ -381,7 +382,7 @@ QString OrganizerConfig::path() const
     QString configPath = paths.first();
     configPath = DFMIO::DFMUtils::buildFilePath(configPath.toStdString().c_str(),
                                                 QApplication::organizationName().toStdString().c_str(),
-                                                QApplication::applicationName().toStdString().c_str(),
+                                                "dde-desktop",
                                                 "ddplugin-organizer.conf", nullptr);
 
     return configPath;

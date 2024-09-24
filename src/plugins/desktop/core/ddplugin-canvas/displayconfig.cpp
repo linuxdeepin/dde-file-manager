@@ -318,8 +318,8 @@ QString DisplayConfig::path() const
     QString configPath = paths.first();
     configPath = DFMIO::DFMUtils::buildFilePath(configPath.toStdString().c_str(),
                                                 QApplication::organizationName().toStdString().c_str(),
-                                                QApplication::applicationName().toStdString().c_str(),
-                                                QString(QApplication::applicationName() + ".conf").toStdString().c_str(), nullptr);
+                                                "dde-desktop",
+                                                "dde-desktop.conf", nullptr);
 
     return configPath;
 }
