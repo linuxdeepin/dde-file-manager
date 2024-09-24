@@ -80,7 +80,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
         if (auto cur = fileMap.value(url)) {
             lk.unlock();
             fmInfo() << "the file to insert is existed" << url;
-            cur->refresh(); // refresh fileinfo.
+            cur->updateAttributes(); // refresh fileinfo.
             const QModelIndex &index = q->index(url);
             emit q->dataChanged(index, index);
             return;
@@ -167,7 +167,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
                 lk.unlock();
 
                 // refresh file
-                cur->refresh();
+                cur->updateAttributes();
                 fmInfo() << "move file" << oldUrl << "to overwritte" << newUrl;
             } else {
                 fileList.replace(position, newUrl);
@@ -177,7 +177,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
 
                 // refresh file because an old info cahe may exist.
                 if (cachedInfo == newInfo)
-                    newInfo->refresh();
+                    newInfo->updateAttributes();
 
                 emit q->dataReplaced(oldUrl, newUrl);
             }
@@ -395,7 +395,7 @@ void FileInfoModel::updateFile(const QUrl &url)
 void FileInfoModel::refreshAllFile()
 {
     for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
-        itor.value()->refresh();
+        itor.value()->updateAttributes();
 
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }

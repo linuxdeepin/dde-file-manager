@@ -380,7 +380,7 @@ void CollectionModel::refresh(const QModelIndex &parent, bool global, int ms, bo
 void CollectionModel::update()
 {
     for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
-        itor.value()->refresh();
+        itor.value()->updateAttributes();
 
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
