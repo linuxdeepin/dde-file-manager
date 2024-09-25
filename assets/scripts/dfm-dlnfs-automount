@@ -13,7 +13,10 @@ query_dconfig="dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dd
 dlnfs_enable=`$query_dconfig dfm.mount.dlnfs`
 echo "dfm_INFO: dlnfs mount status: $dlnfs_enable"
 
-if [ "$dlnfs_enable" == "true" ]; then
+ulnfs_enable=`$query_dconfig dfm.mount.ulnfs`
+echo "dfm_INFO: ulnfs mount status: $ulnfs_enable"
+
+if [ "$dlnfs_enable" == "true" ] && [ "$ulnfs_enable" != "true" ]; then
     default_paths=`$query_dconfig dfm.mount.dlnfs.defaults`
     echo "dfm_INFO: default mount paths: $default_paths"
 
