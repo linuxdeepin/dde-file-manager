@@ -53,7 +53,15 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
         connect(doWorker, &AbstractWorker::retryErrSuccess, this, &AbstractJob::handleRetryErrorSuccess, Qt::QueuedConnection);
         connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
             thread.quit();
-            thread.wait();
+            // When manipulating a file,
+            // if the TaskDialog has not been popped up yet,
+            // immediately close dde-file-manage at this time,
+            // here will cause the dde-file-manager process
+            // to be blocked in the main thread,
+            // and then can not open the new dde-file-manage process,
+            // so here to add a timeout time.
+            // see: bug-272373
+            thread.wait(3000);
         });
         start();
     }
