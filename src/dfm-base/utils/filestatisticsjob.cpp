@@ -515,7 +515,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             qCWarning(logDFMBase) << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
-        d->iterator->setQueryAttributes("standard::name,standard::type,standard::size,\
+        d->iterator->setProperty("QueryAttributes","standard::name,standard::type,standard::size,\
                                         standard::size,standard::is-symlink,standard::symlink-target,access::*,unix::inode");
         d->iteratorCanStop = true;
         while (d->iterator->hasNext()) {

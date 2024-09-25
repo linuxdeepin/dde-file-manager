@@ -71,7 +71,7 @@ void TraversalDirThread::setQueryAttributes(const QString &fileAttributes)
         return;
     fileInfoQueryAttributes = fileAttributes;
     if (fileInfoQueryAttributes.isEmpty() && fileInfoQueryAttributes != "*")
-        dirIterator->setQueryAttributes(fileInfoQueryAttributes);
+        dirIterator->setProperty("QueryAttributes", fileInfoQueryAttributes);
 }
 
 void TraversalDirThread::run()
