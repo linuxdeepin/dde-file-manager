@@ -121,15 +121,6 @@ public:
     {
         return {};
     }
-    virtual void setQueryAttributes(const QString &attributes) {
-        queryFileAttributes = attributes;
-    }
-    virtual QString queryAttributes() const
-    {
-        return queryFileAttributes;
-    }
-private:
-    QString queryFileAttributes; // isempty or * is query all file attributes
 };
 
 }

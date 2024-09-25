@@ -46,6 +46,7 @@ private:
     QSet<QString> hideFileList;
     bool isLocalDevice = false;
     bool isCdRomDevice = false;
+    bool initQuerry = false;
 };
 }
 #endif   // ABSTRACTDIRITERATOR_P_H

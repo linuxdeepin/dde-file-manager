@@ -708,6 +708,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
     }
 
     bool self = true;
+    iterator->setProperty("QueryAttributes", "standard::name");
     while (iterator->hasNext()) {
         if (!stateCheck()) {
             return false;
