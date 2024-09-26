@@ -89,6 +89,12 @@ void BurnOptDialog::setWriteSpeedInfo(const QStringList &writespeed)
     }
 }
 
+void BurnOptDialog::setMediaType(DFMBURN::MediaType media)
+{
+    if (media == DFMBURN::MediaType::kDVD_PLUS_RW)
+        donotcloseComb->hide();   // DVD+RW can not be closed.
+}
+
 void BurnOptDialog::initializeUi()
 {
     if (WindowUtils::isWayLand()) {

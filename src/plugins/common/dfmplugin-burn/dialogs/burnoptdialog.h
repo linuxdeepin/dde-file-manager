@@ -29,6 +29,7 @@ public:
     void setISOImage(const QUrl &image);
     void setDefaultVolName(const QString &volName);
     void setWriteSpeedInfo(const QStringList &writespeed);
+    void setMediaType(DFMBURN::MediaType media);
 
 private:
     void initializeUi();
