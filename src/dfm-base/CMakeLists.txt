@@ -70,6 +70,9 @@ install(FILES ${ULNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde
 set(ULNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-ulnfs-automount)
 install(FILES ${ULNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
 
+set(MIGRATE_FILENAME_SCRIPT ${AssetsPath}/scripts/dfm_migrate_filename_from_dlnfs_to_ulnfs)
+install(FILES ${MIGRATE_FILENAME_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
+
 set(Mimetypes "${ShareDir}/mimetypes")
 FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
 install(FILES ${MIMETYPE_FILES} DESTINATION ${Mimetypes})
