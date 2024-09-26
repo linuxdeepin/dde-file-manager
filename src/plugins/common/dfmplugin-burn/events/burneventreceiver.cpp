@@ -56,6 +56,7 @@ void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUD
     dlg->setDefaultVolName(defaultDiscName);
     dlg->setUDFSupported(isSupportedUDF, disableISOOpts);
     dlg->setWriteSpeedInfo(speed);
+    dlg->setMediaType(static_cast<DFMBURN::MediaType>(map[DeviceProperty::kOpticalMediaType].toInt()));
     dlg->exec();
 }
 
