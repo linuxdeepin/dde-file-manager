@@ -1,3 +1,10 @@
+dde-file-manager (6.1.0) unstable; urgency=medium
+
+  * update the base version to 6.1.0
+  *
+
+ -- lvwujun <lvwujun@uniontech.com>  Fri, 27 Sep 2024 11:38:25 +0800
+
 dde-file-manager (6.0.57) unstable; urgency=medium
 
   * 1072 some bug fix.
