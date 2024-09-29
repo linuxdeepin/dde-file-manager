@@ -53,7 +53,7 @@ DWIDGET_USE_NAMESPACE
 
 static constexpr char kConnectServer[] { "ConnectServer" };
 static constexpr char kUrl[] { "URL" };
-static constexpr char kprotocolIPRegExp[] { R"(((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})" };
+static constexpr char kprotocolIPRegExp[] { R"(^((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$)" };
 static const int kMaxHistoryItems = 10;
 static constexpr char kGBKCharset[] { "gbk" };
 static constexpr char kUTF8CharSet[] { "utf8" };
