@@ -140,7 +140,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
         if (err.code == DeviceError::kUserErrorNetworkAnonymousNotAllowed)
             errMsg = tr("Anonymous mount is not allowed");
         else if (err.code == DeviceError ::kUserErrorNetworkWrongPasswd)
-            errMsg = tr("Wrong password");
+            errMsg = tr("Incorrect user name or password");
         else if (err.code == DeviceError::kUserErrorUserCancelled)
             errMsg.clear();
         else if (err.code == DeviceError::kDaemonErrorCannotMkdirMountPoint)
