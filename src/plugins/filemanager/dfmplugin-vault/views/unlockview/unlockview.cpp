@@ -4,7 +4,6 @@
 
 #include "unlockview.h"
 #include "utils/vaulthelper.h"
-#include "utils/policy/policymanager.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaultdefine.h"
 #include "utils/vaultautolock.h"
@@ -235,7 +234,6 @@ void UnlockView::slotTooltipTimerTimeout()
 
 void UnlockView::showEvent(QShowEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnlockVaultPage);
     if (extraLockVault) {
         extraLockVault = false;
     }
@@ -260,7 +258,6 @@ void UnlockView::showEvent(QShowEvent *event)
 
 void UnlockView::closeEvent(QCloseEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
     extraLockVault = true;
     QFrame::closeEvent(event);
 }

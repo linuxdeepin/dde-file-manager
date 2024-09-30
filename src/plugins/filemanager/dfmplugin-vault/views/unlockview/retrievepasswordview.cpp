@@ -5,7 +5,6 @@
 #include "retrievepasswordview.h"
 #include "utils/vaultutils.h"
 #include "utils/encryption/operatorcenter.h"
-#include "utils/policy/policymanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -224,7 +223,6 @@ void RetrievePasswordView::slotCheckAuthorizationFinished(bool result)
 
 void RetrievePasswordView::showEvent(QShowEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kRetrievePassWordPage);
     if (QFile::exists(defaultKeyPath)) {
         defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
         emit sigBtnEnabled(1, true);
@@ -236,10 +234,4 @@ void RetrievePasswordView::showEvent(QShowEvent *event)
     setVerificationPage();
 
     QFrame::showEvent(event);
-}
-
-void RetrievePasswordView::closeEvent(QCloseEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
-    QFrame::closeEvent(event);
 }

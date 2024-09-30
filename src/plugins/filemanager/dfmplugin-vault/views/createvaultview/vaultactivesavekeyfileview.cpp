@@ -5,7 +5,6 @@
 #include "vaultactivesavekeyfileview.h"
 #include "utils/vaultdefine.h"
 #include "utils/encryption/operatorcenter.h"
-#include "utils/policy/policymanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -259,7 +258,6 @@ void VaultActiveSaveKeyFileView::slotSelectCurrentFile(const QString &file)
 
 void VaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage);
     defaultPathRadioBtn->setChecked(true);
     selectfileSavePathEdit->clear();
     otherRadioBtnHitMsg->hide();

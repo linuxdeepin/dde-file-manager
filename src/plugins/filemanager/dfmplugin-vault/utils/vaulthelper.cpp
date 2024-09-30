@@ -13,7 +13,6 @@
 #include "utils/encryption/operatorcenter.h"
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
-#include "utils/policy/policymanager.h"
 #include "utils/fileencrypthandle.h"
 #include "events/vaulteventcaller.h"
 #include "dbus/vaultdbusutils.h"
