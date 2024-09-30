@@ -5,7 +5,6 @@
 #include "vaultremovepages.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
-#include "utils/policy/policymanager.h"
 #include "utils/pathmanager.h"
 #include "utils/servicemanager.h"
 #include "utils/fileencrypthandle.h"
@@ -141,12 +140,6 @@ void VaultRemovePages::showNodeWidget()
 
     connect(noneWidget, &VaultRemoveByNoneWidget::closeDialog, this, &VaultRemovePages::close);
     connect(noneWidget, &VaultRemoveByNoneWidget::jumpPage, this, &VaultRemovePages::pageSelect);
-}
-
-void VaultRemovePages::showEvent(QShowEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kDeleteVaultPage);
-    DDialog::showEvent(event);
 }
 
 void VaultRemovePages::onButtonClicked(int index, const QString &text)

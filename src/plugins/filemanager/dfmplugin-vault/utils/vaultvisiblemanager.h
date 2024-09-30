@@ -16,11 +16,6 @@ public:
     explicit VaultVisibleManager(QObject *parent = nullptr);
 
 public:
-    /*!
-     * \brief isVaultEnabled
-     * \return true vault is available, vice versa.
-     */
-    bool isVaultEnabled();
     void infoRegister();
     void pluginServiceRegister();
 
