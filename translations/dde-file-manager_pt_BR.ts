@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/LineSearch.qml" line="23"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Pesquisar</translation>
     </message>
 </context>
 <context>
@@ -4205,12 +4205,12 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="304"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="306"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="308"/>
@@ -4225,7 +4225,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="312"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="314"/>
@@ -4240,7 +4240,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="318"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Desconhecido</translation>
     </message>
 </context>
 <context>
