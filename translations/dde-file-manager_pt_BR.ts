@@ -1793,7 +1793,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="121"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Pasta Pessoal</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="126"/>
@@ -4220,7 +4220,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="310"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Duração</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="312"/>
@@ -4235,7 +4235,7 @@
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="316"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="318"/>
