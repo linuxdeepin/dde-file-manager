@@ -30,9 +30,6 @@ public Q_SLOTS:
     void onButtonClicked(int index, const QString &text);
     void setBtnEnable(int index, bool enable);
 
-protected:
-    virtual void showEvent(QShowEvent *event) override;
-
 private:
     void initUI();
     void initConnect();

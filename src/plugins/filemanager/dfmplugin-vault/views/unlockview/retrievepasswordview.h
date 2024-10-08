@@ -85,8 +85,6 @@ private:
 protected:
     void showEvent(QShowEvent *event) override;
 
-    void closeEvent(QCloseEvent *event) override;
-
 private:
     //! 找回密码页面标题
     DTK_WIDGET_NAMESPACE::DLabel *currentPageTitle { nullptr };

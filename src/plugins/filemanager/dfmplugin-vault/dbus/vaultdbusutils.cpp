@@ -52,16 +52,6 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
     return value;
 }
 
-VaultPolicyState VaultDBusUtils::getVaultPolicy()
-{
-    return VaultPolicyState::kUnkonw;
-}
-
-bool VaultDBusUtils::setVaultPolicyState(int policyState)
-{
-    return false;
-}
-
 void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)
 {
     QDBusConnection::sessionBus().connect(

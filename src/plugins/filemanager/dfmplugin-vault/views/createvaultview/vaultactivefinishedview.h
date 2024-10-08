@@ -44,9 +44,6 @@ private slots:
     //! 异步授权时，此函数接收授权完成的结果
     void slotCheckAuthorizationFinished(bool result);
 
-protected:
-    void showEvent(QShowEvent *event) override;
-
 private:
     void initUi();
     void initUiForSizeMode();

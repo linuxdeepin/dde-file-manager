@@ -7,7 +7,6 @@
 #include "createvaultview/vaultactivesetunlockmethodview.h"
 #include "createvaultview/vaultactivesavekeyfileview.h"
 #include "createvaultview/vaultactivefinishedview.h"
-#include "utils/policy/policymanager.h"
 #include "utils/encryption/vaultconfig.h"
 
 #include <dfm-base/utils/windowutils.h>
@@ -64,19 +63,6 @@ VaultActiveView::VaultActiveView(QWidget *parent)
     setFixedWidth(kWidth);
 
     this->setAttribute(Qt::WA_DeleteOnClose, true);
-}
-
-void VaultActiveView::closeEvent(QCloseEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
-    //! 响应基类关闭事件
-    VaultPageBase::closeEvent(event);
-}
-
-void VaultActiveView::showEvent(QShowEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage);
-    VaultPageBase::showEvent(event);
 }
 
 void VaultActiveView::slotNextWidget()

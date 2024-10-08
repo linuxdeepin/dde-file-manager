@@ -7,7 +7,6 @@
 #include "utils/vaulthelper.h"
 #include "utils/servicemanager.h"
 #include "utils/vaultutils.h"
-#include "utils/policy/policymanager.h"
 #include "utils/fileencrypthandle.h"
 #include "utils/encryption/vaultconfig.h"
 
@@ -211,7 +210,6 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(bool result)
     disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
     if (isVisible()) {
-        PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage1);
         if (result) {
             if (finishedBtn->text() == tr("Encrypt")) {
                 // 完成按钮灰化
@@ -252,12 +250,6 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(bool result)
             finishedBtn->setEnabled(true);
         }
     }
-}
-
-void VaultActiveFinishedView::showEvent(QShowEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage1);
-    QWidget::showEvent(event);
 }
 
 void VaultActiveFinishedView::slotTimeout()

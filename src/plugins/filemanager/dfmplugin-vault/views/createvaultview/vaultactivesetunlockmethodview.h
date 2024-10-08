@@ -69,7 +69,6 @@ private:
     bool checkRepeatPassword();
     //! 校验界面输入信息是否符合规则
     bool checkInputInfo();
-    void showEvent(QShowEvent *event) override;
 
 private:
     DTK_WIDGET_NAMESPACE::DLabel *titleLabel { nullptr };

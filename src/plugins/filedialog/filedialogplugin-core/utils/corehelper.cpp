@@ -147,7 +147,7 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
             fmInfo() << "File Dialog: Cannot find extesion name by QMimeDataBase::suffixForFileName，try regexp: " << filter;
             for (QMimeType m : db->allMimeTypes()) {
                 for (QString suffixe : m.suffixes()) {
-                    if (regExp.match(suffixe).hasMatch()) {
+                    if (regExp.match("^" + suffixe + "$").hasMatch()) {
                         newNameFilterExtension = suffixe;
                         fmInfo() << "Find extesion name by regexp: " << suffixe;
                         break;   //查询到后跳出循环
@@ -164,7 +164,7 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
 
         QRegularExpression re(QRegularExpression::wildcardToRegularExpression(newNameFilterExtension),
                               QRegularExpression::CaseInsensitiveOption);
-        if (re.match(fileNameExtension).hasMatch()) {   //原扩展名与新扩展名不匹配？
+        if (re.match("^" + fileNameExtension + "$").hasMatch()) {   //原扩展名与新扩展名不匹配？
             fmInfo() << "Set new filter rules:" << newNameFilters;
             // TODO(liuyangming):
             // getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰

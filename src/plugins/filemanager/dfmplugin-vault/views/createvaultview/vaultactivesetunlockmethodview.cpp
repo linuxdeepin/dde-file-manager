@@ -5,7 +5,6 @@
 #include "vaultactivesetunlockmethodview.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/vaulthelper.h"
-#include "utils/policy/policymanager.h"
 #include "utils/encryption/vaultconfig.h"
 
 #include <dfm-framework/event/event.h>
@@ -376,10 +375,4 @@ bool VaultActiveSetUnlockMethodView::checkInputInfo()
     } else {
         return false;
     }
-}
-
-void VaultActiveSetUnlockMethodView::showEvent(QShowEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage);
-    QWidget::showEvent(event);
 }
