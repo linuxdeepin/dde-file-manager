@@ -193,7 +193,7 @@ public:
         kCanTrash = 1,   // 可以移动到回收站
         kCanRename = 2,   // 可以重命名
         kCanRedirectionFileUrl = 3,   // 可以重定向
-        kCanMoveOrCopy = 4,   // 可以移动或者拷贝
+        kCanMoveOrCopy = 4,   // 可以拷贝，可以移动使用kCanRename去判断
         kCanDrop = 5,   // 可以Drop
         kCanDrag = 6,   // 可以drag
         kCanDragCompress = 7,   // 可以压缩
