@@ -69,7 +69,8 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 
     for (const QUrl &url : currentDragUrls) {
         auto info = InfoFactory::create<FileInfo>(url);
-        if (!info || !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
+        if (!info || (!info->canAttributes(CanableInfoType::kCanMoveOrCopy)
+                      && !info->canAttributes(CanableInfoType::kCanRename))) {
             event->ignore();
             return true;
         }
@@ -134,14 +135,12 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             return true;
         }
 
-        // target is not local device, origin is dir and can not write, prohibit drop
+        // copy action must origin file can copy
         const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
-        if (!hoverFileInfo->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
-            if (!info->isAttributes(OptInfoType::kIsWritable)) {
-                view->setViewSelectState(false);
-                event->ignore();
-                return true;
-            }
+        if (event->dropAction() == Qt::DropAction::CopyAction && !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
+            view->setViewSelectState(false);
+            event->ignore();
+            return true;
         }
 
         if (UniversalUtils::urlEquals(targetUrl, url)) {
