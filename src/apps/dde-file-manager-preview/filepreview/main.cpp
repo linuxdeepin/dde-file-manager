@@ -20,6 +20,14 @@ int main(int argc, char *argv[])
     app.setApplicationName("Deepin File Preview");
     app.setApplicationVersion("v1.0");
 
+    {
+        // load translation
+        auto appName = app.applicationName();
+        app.setApplicationName("dde-file-manager");
+        app.loadTranslator();
+        app.setApplicationName(appName);
+    }
+
     QString uniqueKey(app.applicationName());
     bool isSinglentanApp = app.setSingleInstance(uniqueKey);
 
