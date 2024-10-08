@@ -51,11 +51,8 @@ void DoDeleteFilesWorker::onUpdateProgress()
 bool DoDeleteFilesWorker::deleteAllFiles()
 {
     // sources file list is checked
-    // delete files on can't remove device
-    if (isSourceFileLocal) {
-        return deleteFilesOnCanNotRemoveDevice();
-    }
-    return deleteFilesOnOtherDevice();
+    // delete all files,all file was statisticed
+    return deleteFilesOnCanNotRemoveDevice();
 }
 /*!
  * \brief DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice Delete files on non removable devices
@@ -74,7 +71,6 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         if (!stateCheck())
             return false;
         const QUrl &url = *it;
-        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         emitCurrentTaskNotify(url, QUrl());
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
@@ -99,7 +95,8 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         if (action != AbstractJobHandler::SupportAction::kNoAction)
             return false;
 
-        dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Delete", url);
+        dpfSignalDispatcher->publish("dfmplugin_fileoperations",
+                                     "signal_File_Delete", url);
     }
     return true;
 }
