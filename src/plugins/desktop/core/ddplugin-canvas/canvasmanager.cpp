@@ -641,7 +641,7 @@ void CanvasManager::onTrashStateChanged()
     auto idx = d->sourceModel->index(trash);
     if (idx.isValid()) {
         if (auto file = d->sourceModel->fileInfo(idx)) {
-            file->refresh();
+            file->updateAttributes();
             emit d->sourceModel->dataChanged(idx, idx);
         }
     }
