@@ -146,8 +146,7 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const FileInfoPointer &trashInfo)
             action = doHandleErrorAndWait(fileUrl, AbstractJobHandler::JobErrorType::kDeleteTrashFileError,
                                           false, localFileHandler->errorString());
         } else {
-            dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Delete",
-                                         fileUrl);
+            emit fileDeleted(fileUrl);
         }
 
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
