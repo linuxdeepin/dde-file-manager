@@ -20,7 +20,7 @@ Build-Depends:
  libdtkcore5-bin,
  qttools5-dev-tools,
  qttools5-dev,
- dde-dock-dev(>=4.8.4.1),
+ dde-dock-dev (>=4.8.4.1),
  libdframeworkdbus-dev,
  libtag1-dev,
  libdmr-dev,
@@ -71,8 +71,8 @@ Architecture: any
 Depends: 
  ${shlibs:Depends}, 
  ${misc:Depends}, 
- libdde-file-manager,
- dde-desktop-plugins
+ libdde-file-manager (=${binary:Version}),
+ dde-desktop-plugins (=${binary:Version})
 Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1)
 Recommends: qt5dxcb-plugin, deepin-screensaver, dcc-wallpapersetting-plugin
@@ -84,17 +84,17 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
- libdde-file-manager,
+ libdde-file-manager (=${binary:Version}),
  libgio-qt,
  libqt5xdg3,
  socat,
  cryfs,
  dde-device-formatter,
- dde-file-manager-plugins, 
- dde-file-manager-daemon-plugins,
- dde-file-manager-services-plugins,
- dde-file-manager-common-plugins, 
- dde-file-manager-preview,
+ dde-file-manager-plugins (=${binary:Version}),
+ dde-file-manager-daemon-plugins (=${binary:Version}),
+ dde-file-manager-services-plugins (=${binary:Version}),
+ dde-file-manager-common-plugins (=${binary:Version}),
+ dde-file-manager-preview (=${binary:Version}),
  libblockdev-crypto2 | libblockdev-crypto3,
  qml6-module-qtquick-controls,
  qml6-module-qtquick-layouts,
@@ -110,9 +110,9 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  libpoppler-cpp0v5 (>= 0.48.0),
- gvfs-backends(>=1.27.3),
+ gvfs-backends (>=1.27.3),
  cryptsetup,
- libdfm-extension( =${binary:Version})
+ libdfm-extension (=${binary:Version})
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
@@ -171,15 +171,16 @@ Description: extension library of dde-file-manager
 
 Package: libdfm-extension-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension( =${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension (=${binary:Version})
 Description: Development package for libdfm-extension
  This package contains the header files and pkgconfig
  of libdfm-extension
 
 Package: dde-file-manager-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager,
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager (=${binary:Version}),
  libdfm-io-dev, libdfm-mount-dev, libdfm-burn-dev
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of dde-file-manager
+ 
