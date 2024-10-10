@@ -516,7 +516,8 @@ bool FileOperateBaseWorker::createSystemLink(const DFileInfoPointer &fromInfo, c
 
     do {
         actionForlink = AbstractJobHandler::SupportAction::kNoAction;
-        if (localFileHandler->createSystemLink(newFromInfo->uri(), toInfo->uri())) {
+        auto target = QUrl::fromLocalFile(newFromInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
+        if (localFileHandler->createSystemLink(target, toInfo->uri())) {
             return true;
         }
         actionForlink = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
