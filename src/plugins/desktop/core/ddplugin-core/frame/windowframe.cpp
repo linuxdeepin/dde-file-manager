@@ -261,8 +261,10 @@ void WindowFrame::onGeometryChanged()
         auto win = d->windows.value(sp->name());
         fmDebug() << "screen geometry change:" << sp.get() << win.get();
         if (win.get() != nullptr) {
+            // Don't continue! dde-shell change the window geometry,
+            // always send geometryChanged in the scene
             if (win->geometry() == sp->geometry())
-                continue;
+                fmDebug() << "Window geometry is equal to logic geomertry" << win->geometry() << sp->geometry();
 
             fmInfo() << "root geometry change from" << win->geometry() << "to" << sp->geometry()
                      << "screen name" << sp->name();
