@@ -291,7 +291,7 @@ bool SearchHelper::isHiddenFile(const QString &fileName, QHash<QString, QSet<QSt
     if (filters[fileParentPath].isEmpty()) {
         QFile file(hiddenFileConfig);
         // 判断.hidden文件中的内容是否为空，空则表示该路径下没有隐藏文件
-        if (file.isReadable() && file.size() > 0) {
+        if (file.size() > 0) {
             if (!file.open(QFile::ReadOnly))
                 return false;
 
