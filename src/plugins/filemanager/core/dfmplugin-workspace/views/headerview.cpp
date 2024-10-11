@@ -94,18 +94,35 @@ void HeaderView::doFileNameColumnResize(const int totalWidth)
     int fileNameColumn = viewModel()->getColumnByRole(kItemFileDisplayNameRole);
     int columnCount = count();
     int columnWidthSumOmitFileName = 0;
+    QMap<int, int> moreThanMin = {};
+    bool isMoreThanMin = false;
 
     for (int i = 0; i < columnCount; ++i) {
-        if (i == fileNameColumn || isSectionHidden(i))
+        if (isSectionHidden(i))
             continue;
-        columnWidthSumOmitFileName += view->getColumnWidth(i);
+        auto itemColWidth = view->getColumnWidth(i);
+        moreThanMin.insert(i, itemColWidth - minimumSectionSize());
+        if (!isMoreThanMin && itemColWidth - minimumSectionSize() > 0)
+            isMoreThanMin = true;
+        columnWidthSumOmitFileName += itemColWidth;
     }
-
-    int targetWidth = totalWidth - columnWidthSumOmitFileName;
-    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
-    int colWidth = state.value(QString::number(kItemFileDisplayNameRole), -1).toInt();
-
-    resizeSection(fileNameColumn, qMax(targetWidth, colWidth));
+    // 所有列的宽度大于当前窗口的宽度，并且有一列宽度大于最小值，调整这一列的宽度
+    if (columnWidthSumOmitFileName > totalWidth && isMoreThanMin) {
+        int moreThanTotal = columnWidthSumOmitFileName - totalWidth;
+        for (const int logicCol : moreThanMin.keys()) {
+            auto itemMoreThan = moreThanMin.value(logicCol);
+            if (moreThanTotal > 0 && moreThanMin.value(logicCol) > 0) {
+                resizeSection(logicCol, view->getColumnWidth(logicCol) - qMin(moreThanTotal, itemMoreThan));
+                moreThanTotal -= qMin(moreThanTotal, itemMoreThan);
+            }
+            if (moreThanTotal <= 0)
+                break;
+        }
+    } else if (totalWidth > columnWidthSumOmitFileName) {
+        // 所有列的宽度小于当前窗口的宽度，调整名称这一行的宽度
+        resizeSection(fileNameColumn, view->getColumnWidth(fileNameColumn) +
+                      totalWidth - columnWidthSumOmitFileName);
+    }
 }
 
 void HeaderView::onActionClicked(const int column, QAction *action)
