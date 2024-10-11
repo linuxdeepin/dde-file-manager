@@ -31,6 +31,7 @@ private:
                                         const QString &errorMsg);
     static void errorSrcAndDestString(const QUrl &from, const QUrl &to, QString *sorceMsg, QString *toMsg,
                                       const AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError);
+    static QString transLateErrorMsg(const QString &errorMsg);
 };
 }
 #endif   // ERRORMESSAGEANDACTION_H

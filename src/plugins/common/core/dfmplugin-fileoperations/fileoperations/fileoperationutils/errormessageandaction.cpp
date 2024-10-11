@@ -173,6 +173,7 @@ QString ErrorMessageAndAction::errorToString(const QUrl &url, const AbstractJobH
 QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const AbstractJobHandler::JobErrorType &error,
                                                     const QString &errorMsg)
 {
+    auto trErrorMsg = transLateErrorMsg(errorMsg);
     switch (error) {
     case AbstractJobHandler::JobErrorType::kPermissionError:
         return tr("Permission error");
@@ -183,21 +184,21 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
     case AbstractJobHandler::JobErrorType::kDirectoryExistsError:
         return tr("Target directory %1 already exists").arg(url.path());
     case AbstractJobHandler::JobErrorType::kOpenError:
-        return tr("Failed to open the file %1, cause: %2").arg(url.path(), errorMsg);
+        return tr("Failed to open the file %1, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kReadError:
     case AbstractJobHandler::JobErrorType::kCreateParentDirError:
-        return tr("Failed to read the file %1, cause: %2").arg(url.path(), errorMsg);
+        return tr("Failed to read the file %1, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kWriteError:
-        return tr("Failed to write the file %1, cause: %2").arg(url.path(), errorMsg);
+        return tr("Failed to write the file %1, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kMkdirError:
-        return tr("Failed to create the directory %1, cause: %2").arg(url.path(), errorMsg);
+        return tr("Failed to create the directory %1, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kRemoveError:
     case AbstractJobHandler::JobErrorType::kDeleteFileError:
-        return tr("Failed to delete the file %1, cause: %2").arg(url.path(), errorMsg);
+        return tr("Failed to delete the file %1, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kFileMoveToTrashError:
-        return tr("Failed to move the file %1 to trash, cause: %2").arg(url.path(), errorMsg);
+        return tr("Failed to move the file %1 to trash, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kRenameError:
-        return tr("Failed to move the file %1, cause: %2").arg(url.path(), errorMsg);
+        return tr("Failed to move the file %1, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kNonexistenceError:
         return tr("Original file %1 does not exist").arg(url.path());
     case AbstractJobHandler::JobErrorType::kFileSizeTooBigError:
@@ -205,7 +206,7 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
     case AbstractJobHandler::JobErrorType::kNotEnoughSpaceError:
         return tr("Not enough free space on the target disk");
     case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
-        return tr("File %1 integrity was damaged, cause: %2").arg(url.path(), errorMsg);
+        return tr("File %1 integrity was damaged, cause: %2").arg(url.path(), trErrorMsg);
     case AbstractJobHandler::JobErrorType::kTargetReadOnlyError:
         return tr("The target device is read only");
     case AbstractJobHandler::JobErrorType::kTargetIsSelfError:
@@ -215,13 +216,13 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
     case AbstractJobHandler::JobErrorType::kPermissionDeniedError:
         return tr("You do not have permission to traverse files in %1").arg(url.path());
     case AbstractJobHandler::JobErrorType::kSymlinkError:
-        return tr("Failed to create symlink, cause: %1").arg(errorMsg);
+        return tr("Failed to create symlink, cause: %1").arg(trErrorMsg);
     case AbstractJobHandler::JobErrorType::kDfmIoError:
-        return tr("Copy or Cut File failed, cause: %1").arg(errorMsg);
+        return tr("Copy or Cut File failed, cause: %1").arg(trErrorMsg);
     case AbstractJobHandler::JobErrorType::kRetryReadOrWriteFailed:
-        return tr("Copy or Cut File failed, cause: %1. Retry copy this file again!").arg(errorMsg);
+        return tr("Copy or Cut File failed, cause: %1. Retry copy this file again!").arg(trErrorMsg);
     case AbstractJobHandler::JobErrorType::kCanNotAccessFile:
-        return tr("Copy or Cut File failed, cause: %1.").arg(errorMsg);
+        return tr("Copy or Cut File failed, cause: %1.").arg(trErrorMsg);
     default:
         break;
     }
@@ -262,5 +263,16 @@ void ErrorMessageAndAction::errorSrcAndDestString(const QUrl &from,
                          .arg(from.path(), FileOperationsUtils::parentUrl(to).path());
     }
     return;
+}
+
+QString ErrorMessageAndAction::transLateErrorMsg(const QString &errorMsg)
+{
+    if (errorMsg.contains("Unknown reason") || errorMsg.contains("Could not send object info")) {
+        qWarning() << " translate error msg, origin msg = " << errorMsg;
+        return errorToString(QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+    } else if (errorMsg.contains("the path is too long")) {
+        return tr("Filename has too many characters");
+    }
+    return errorMsg;
 }
 }
