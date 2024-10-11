@@ -237,9 +237,10 @@ void FrameManagerPrivate::showOptionWindow()
     options = new OptionsWindow();
     options->setAttribute(Qt::WA_DeleteOnClose);
     options->initialize();
-    connect(options, &OptionsWindow::destroyed, this, [this]() {
-        options = nullptr;
-    },
+    connect(
+            options, &OptionsWindow::destroyed, this, [this]() {
+                options = nullptr;
+            },
             Qt::DirectConnection);
 
     options->moveToCenter(QCursor::pos());

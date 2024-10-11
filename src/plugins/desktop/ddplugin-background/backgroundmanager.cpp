@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifdef COMPILE_ON_V23
-    #include "backgrounddde.h"
+#    include "backgrounddde.h"
 #else
-    #include "backgroundwm.h"
+#    include "backgroundwm.h"
 #endif
 #include "backgroundmanager.h"
 #include "backgroundmanager_p.h"
@@ -48,10 +48,8 @@ static QMap<QString, QWidget *> rootMap()
 }
 
 BackgroundManagerPrivate::BackgroundManagerPrivate(BackgroundManager *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
-
 }
 
 BackgroundManagerPrivate::~BackgroundManagerPrivate()
@@ -71,15 +69,14 @@ bool BackgroundManagerPrivate::isEnableBackground()
 }
 
 BackgroundManager::BackgroundManager(QObject *parent)
-    : QObject(parent)
-    , d(new BackgroundManagerPrivate(this))
+    : QObject(parent), d(new BackgroundManagerPrivate(this))
 {
     d->service =
-    #ifdef COMPILE_ON_V23
-        new BackgroundDDE(this);
-    #else
-        new BackgroundWM(this);
-    #endif
+#ifdef COMPILE_ON_V23
+            new BackgroundDDE(this);
+#else
+            new BackgroundWM(this);
+#endif
 
     d->bridge = new BackgroundBridge(d);
 }
@@ -88,7 +85,7 @@ BackgroundManager::~BackgroundManager()
 {
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &BackgroundManager::onBackgroundBuild);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);    
+    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);
 }
 
 void BackgroundManager::init()
@@ -257,14 +254,14 @@ void BackgroundManager::onGeometryChanged()
         if (bw.get() != nullptr) {
             QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
             if (bw->geometry() == geometry) {
-                fmDebug() << "background geometry is equal to root widget geometry,and discard changes" << bw->geometry()
-                         << win->geometry() << win->property(DesktopFrameProperty::kPropScreenName).toString()
-                         << win->property(DesktopFrameProperty::kPropScreenGeometry).toRect() << win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect()
-                         << win->property(DesktopFrameProperty::kPropScreenAvailableGeometry);
+                fmWarning() << "background geometry is equal to root widget geometry,and discard changes" << bw->geometry()
+                            << win->geometry() << win->property(DesktopFrameProperty::kPropScreenName).toString()
+                            << win->property(DesktopFrameProperty::kPropScreenGeometry).toRect() << win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect()
+                            << win->property(DesktopFrameProperty::kPropScreenAvailableGeometry);
                 continue;
             }
             fmInfo() << "background geometry change from" << bw->geometry() << "to" << geometry
-                    << "screen name" << getScreenName(win) << "screen geometry" << win->geometry();
+                     << "screen name" << getScreenName(win) << "screen geometry" << win->geometry();
             bw->setGeometry(geometry);
             changed = true;
         }
@@ -291,12 +288,9 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
     return bwp;
 }
 
-
 BackgroundBridge::BackgroundBridge(BackgroundManagerPrivate *ptr)
-    : QObject()
-    , d(ptr)
+    : QObject(), d(ptr)
 {
-
 }
 
 BackgroundBridge::~BackgroundBridge()
@@ -438,7 +432,7 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
         QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path);
         if (backgroundPixmap.isNull()) {
             fmCritical() << "screen " << req.screen << "backfround path" << req.path
-                        << "can not read!";
+                         << "can not read!";
             continue;
         }
 
@@ -473,7 +467,6 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
 
     QList<Requestion> *pRecorder = new QList<Requestion>;
     *pRecorder = std::move(recorder);
-    QMetaObject::invokeMethod(self, "onFinished", Qt::QueuedConnection
-                              , Q_ARG(void *, pRecorder));
+    QMetaObject::invokeMethod(self, "onFinished", Qt::QueuedConnection, Q_ARG(void *, pRecorder));
     self->getting = false;
 }
