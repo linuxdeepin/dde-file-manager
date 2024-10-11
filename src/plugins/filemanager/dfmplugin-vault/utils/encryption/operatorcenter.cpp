@@ -621,28 +621,32 @@ bool OperatorCenter::savePasswordToKeyring(const QString &password)
 {
     fmInfo() << "Vault: start store password to keyring!";
 
-    GError *error = Q_NULLPTR;
-    SecretService *service = Q_NULLPTR;
+    GError *error = nullptr;
+    SecretService *service = nullptr;
     QByteArray baPassword = password.toLatin1();
-    const char *cPassword = baPassword.data();
+    const char *cPassword = baPassword.constData();
     // Create a password struceture
-    SecretValue *value = secret_value_new_full(g_strdup(cPassword), strlen(cPassword), "text/plain", (GDestroyNotify)secret_password_free);
+    SecretValue *value = secret_value_new(cPassword, strlen(cPassword), "text/plain");
     // Obtain password service synchronously
-    service = secret_service_get_sync(SECRET_SERVICE_NONE, Q_NULLPTR, &error);
-    if (error == Q_NULLPTR) {
+    service = secret_service_get_sync(SECRET_SERVICE_NONE, nullptr, &error);
+    if (error == nullptr) {
         GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
         // Get the currently logged in user information
         char *userName = getlogin();
         fmInfo() << "Vault: Get user name : " << QString(userName);
         g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
         g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
-        secret_service_store_sync(service, Q_NULLPTR, attributes, Q_NULLPTR, "uos cryfs password", value, Q_NULLPTR, &error);
+        secret_service_store_sync(service, nullptr, attributes, nullptr, "uos cryfs password", value, nullptr, &error);
+        g_hash_table_unref(attributes);
     }
     secret_value_unref(value);
-    g_object_unref(value);
+    if (service) {
+        g_object_unref(service);
+    }
 
-    if (error != Q_NULLPTR) {
+    if (error != nullptr) {
         fmCritical() << "Vault: Store password failed! error :" << QString(error->message);
+        g_error_free(error);
         return false;
     }
 
