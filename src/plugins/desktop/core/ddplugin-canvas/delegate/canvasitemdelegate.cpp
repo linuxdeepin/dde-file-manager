@@ -767,14 +767,14 @@ QRectF CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const
         backgroundRect.adjust(-stroke, -stroke, stroke, stroke);
         const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
         const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
-        painter->drawPixmap(backgroundRect, shadowPixmap, px.rect());
+        painter->drawPixmap(backgroundRect, shadowPixmap, QRectF());
         imageRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
 
         QPainterPath clipPath;
         auto radius { iconStyle.radius - iconStyle.stroke };
         clipPath.addRoundedRect(imageRect, radius, radius);
         painter->setClipPath(clipPath);
-        painter->drawPixmap(imageRect, px, px.rect());
+        painter->drawPixmap(imageRect, px, QRectF());
         painter->restore();
 
         return backgroundRect;
