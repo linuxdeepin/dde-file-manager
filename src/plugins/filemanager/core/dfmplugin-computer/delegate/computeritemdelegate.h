@@ -31,6 +31,9 @@ public:
 
     void closeEditor(ComputerView *view);
 
+private Q_SLOTS:
+    void onAppearancePropertiesChanged(const QString &, const QVariantMap &, const QStringList &);
+
 private:
     void paintSplitter(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintCustomWidget(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -45,10 +48,14 @@ private:
     QPixmap renderBlurShadow(const QSize &sz, const QColor &color, int blurRadius) const;
     QPixmap renderBlurShadow(const QPixmap &pm, int blurRadius) const;
 
+    void watchWindowRadius();
+
 private:
     ComputerView *view { nullptr };
     mutable QLineEdit *renameEditor { nullptr };
     mutable QModelIndex editingIndex;
+
+    int windowRadius { 18 };
 };
 
 }
