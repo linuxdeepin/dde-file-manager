@@ -1357,8 +1357,8 @@ void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 void FileView::dropEvent(QDropEvent *event)
 {
     setViewSelectState(false);
-    if (d->dragDropHelper->drop(event))
-        return;
+    d->dragDropHelper->drop(event);
+    setState(NoState);
 }
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
