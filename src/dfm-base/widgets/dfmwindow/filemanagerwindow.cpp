@@ -255,7 +255,7 @@ void FileManagerWindow::installTitleBar(AbstractFrame *w)
     std::call_once(d->titleBarFlag, [this, w]() {
         d->titleBar = w;
         d->titleBar->setCurrentUrl(d->currentUrl);
-        titlebar()->setCustomWidget(d->titleBar);
+        d->rightLayout->insertWidget(0, d->titleBar);
 
         emit this->titleBarInstallFinished();
     });
@@ -266,7 +266,7 @@ void FileManagerWindow::installSideBar(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
     std::call_once(d->sideBarFlag, [this, w]() {
         d->sideBar = w;
-        d->splitter->insertWidget(0, d->sideBar);
+        d->splitter->replaceWidget(0, d->sideBar);
         updateUi();   // setSizes is only valid when the splitter is non-empty
 
         d->sideBar->setContentsMargins(0, 0, 0, 0);
@@ -283,15 +283,9 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null Workspace");
     std::call_once(d->workspaceFlag, [this, w]() {
         d->workspace = w;
-        d->splitter->insertWidget(1, d->workspace);
+        d->rightLayout->addWidget(d->workspace, 1);
         updateUi();   // setSizes is only valid when the splitter is non-empty
 
-        // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
-        //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
-        //              设置size policy可以生效
-        QSizePolicy sp = d->workspace->sizePolicy();
-        sp.setHorizontalStretch(1);
-        d->workspace->setSizePolicy(sp);
         d->workspace->setCurrentUrl(d->currentUrl);
         d->workspace->installEventFilter(this);
         emit this->workspaceInstallFinished();
@@ -391,19 +385,37 @@ bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 
 void FileManagerWindow::initializeUi()
 {
+    // hide titlebar
+    titlebar()->setHidden(true);
+    titlebar()->setFixedHeight(0);
+    setTitlebarShadowEnabled(false);
+
     titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
 
     // size
     resize(d->kDefaultWindowWidth, d->kDefaultWindowHeight);
     setMinimumSize(d->kMinimumWindowWidth, d->kMinimumWindowHeight);
 
-    // title bar
-    titlebar()->setContentsMargins(0, 0, 0, 0);
-
     // splitter
     d->splitter = new Splitter(Qt::Orientation::Horizontal, this);
     d->splitter->setChildrenCollapsible(false);
     d->splitter->setHandleWidth(0);
+
+    // left area
+    d->splitter->insertWidget(0, new QWidget);
+
+    // right area
+    d->rightArea = new QFrame(this);
+    d->rightLayout = new QVBoxLayout;
+    d->rightArea->setLayout(d->rightLayout);
+    d->rightLayout->setContentsMargins(0, 0, 0, 0);
+    d->splitter->insertWidget(1, d->rightArea);
+    // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
+    //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
+    //              设置size policy可以生效
+    QSizePolicy sp = d->rightArea->sizePolicy();
+    sp.setHorizontalStretch(1);
+    d->rightArea->setSizePolicy(sp);
 
     // central
     d->centralView = new QFrame(this);
