@@ -78,53 +78,6 @@ void DoCopyFileWorker::doFileCopy(const DFileInfoPointer fromInfo, const DFileIn
     workData->completeFileCount++;
 }
 
-void DoCopyFileWorker::doMemcpyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, char *dest, char *source, size_t size)
-{
-    size_t copySize = size;
-    char *destStart = dest;
-    char *sourceStart = source;
-    size_t everyCopySize = kMaxBufferLength;
-    while (copySize > 0 && !isStopped()) {
-        if (Q_UNLIKELY(!stateCheck())) {
-            break;
-        }
-        everyCopySize = copySize >= everyCopySize ? everyCopySize : copySize;
-
-        AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
-
-        do {
-            action = AbstractJobHandler::SupportAction::kNoAction;
-            if (!memcpy(destStart, sourceStart, everyCopySize)) {
-                auto lastError = strerror(errno);
-                fmWarning() << "file memcpy error, url from: " << fromInfo->uri()
-                           << " url to: " << toInfo->uri()
-                           << " error code: " << errno << " error msg: " << lastError;
-
-                action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
-                                              AbstractJobHandler::JobErrorType::kWriteError,
-                                              true, lastError);
-            }
-        } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-        checkRetry();
-
-        if (!actionOperating(action, static_cast<qint64>(copySize), nullptr)) {
-            if (action == AbstractJobHandler::SupportAction::kSkipAction)
-                emit skipCopyLocalBigFile(fromInfo->uri());
-            return;
-        }
-
-        copySize -= everyCopySize;
-        destStart += everyCopySize;
-        sourceStart += everyCopySize;
-
-        if (memcpySkipUrl.isValid() && memcpySkipUrl == fromInfo->uri())
-            return;
-
-        workData->currentWriteSize += static_cast<int64_t>(everyCopySize);
-    }
-}
-
 bool DoCopyFileWorker::doDfmioFileCopy(const DFileInfoPointer fromInfo,
                                        const DFileInfoPointer toInfo, bool *skip)
 {
@@ -205,6 +158,54 @@ void DoCopyFileWorker::syncBlockFile(const DFileInfoPointer toInfo)
         syncfs(tofd);
         close(tofd);
     }
+}
+/*!
+ * \brief DoCopyFileWorker::openFile
+ * \param fromInfo
+ * \param toInfo
+ * \param flags
+ * \param skip
+ * \param isSource
+ * \return
+ */
+int DoCopyFileWorker::openFileBySys(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
+                                    const int flags, bool *skip, const bool isSource)
+{
+    int fd = -1;
+    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    auto openUrl = isSource ? fromInfo->uri() : toInfo->uri();
+    do {
+        action = AbstractJobHandler::SupportAction::kNoAction;
+        if (flags & O_CREAT) {
+            fd = open(openUrl.path().toStdString().c_str(), flags, 0666);
+        } else {
+            fd = open(openUrl.path().toStdString().c_str(), flags);
+        }
+
+        if (fd < 0) {
+            auto lastError = strerror(errno);
+            fmWarning() << "file open error, url from: " << fromInfo->uri()
+                       << " url to: " << toInfo->uri() << " open flag: " << flags
+                       << " open url : " << openUrl << " error msg: " << lastError;
+
+            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
+                                          AbstractJobHandler::JobErrorType::kOpenError,
+                                          !isSource, lastError);
+        }
+    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+
+    checkRetry();
+
+    auto fileSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+    if (!actionOperating(action, fileSize <= 0 ? FileUtils::getMemoryPageSize() : fileSize, skip)) {
+        close(fd);
+        return -1;
+    }
+
+    if (isSource && fileSize > 100 * 1024 * 1024)
+        readahead(fd, 0, static_cast<size_t>(fileSize));
+
+    return fd;
 }
 
 // copy thread using
@@ -294,6 +295,109 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
     if (skip)
         *skip = verifyFileIntegrity(blockSize, sourceCheckSum, fromInfo, toInfo, toDevice);
     toInfo->refresh();
+
+    if (skip && *skip)
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
+
+    return NextDo::kDoCopyNext;
+}
+/*!
+ * \brief DoCopyFileWorker::doCopyFileByRange
+ * \param fromInfo
+ * \param toInfo
+ * \param skip
+ * \return
+ */
+DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
+{
+    if (isStopped())
+        return NextDo::kDoCopyErrorAddCancel;
+
+    // emit current task url
+    emit currentTask(fromInfo->uri(), toInfo->uri());
+
+    // open source file
+    int sourcFd = openFileBySys(fromInfo, toInfo, O_RDONLY, skip);
+    if (sourcFd < 0)
+        return NextDo::kDoCopyErrorAddCancel;
+
+    FinallyUtil releaseSc([&] {
+        close(sourcFd);
+    });
+
+    int targetFd = openFileBySys(fromInfo, toInfo, O_CREAT | O_WRONLY | O_TRUNC, skip, false);
+    if (targetFd < 0) {
+        return NextDo::kDoCopyErrorAddCancel;
+    }
+
+    FinallyUtil releaseTg([&] {
+        close(targetFd);
+    });
+
+    // 源文件大小如果为0
+    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+    if (fromSize <= 0) {
+        // 对文件加权
+        setTargetPermissions(fromInfo->uri(), toInfo->uri());
+        workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
+        if (workData->exBlockSyncEveryWrite || DeviceUtils::isSamba(toInfo->uri()))
+            syncfs(targetFd);
+        return NextDo::kDoCopyNext;
+    }
+
+    // 循环读取和写入文件，拷贝
+    auto toIsSmb = DeviceUtils::isSamba(toInfo->uri());
+    size_t blockSize = static_cast<size_t>(fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize);
+
+    off_t offset_in = 0;
+    off_t offset_out = 0;
+    ssize_t result = -1;
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
+    do {
+        if (Q_UNLIKELY(!stateCheck()))
+            return NextDo::kDoCopyErrorAddCancel;
+
+        do {
+            if (Q_UNLIKELY(!stateCheck()))
+                return NextDo::kDoCopyErrorAddCancel;
+
+            result = copy_file_range(sourcFd, &offset_in, targetFd, &offset_out, blockSize, 0);
+
+            if (result < 0) {
+                auto lastError = strerror(errno);
+                fmWarning() << "copy file range error, url from: " << fromInfo->uri()
+                           << " url to: " << toInfo->uri() << " error msg: " << lastError;
+
+                action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
+                                              AbstractJobHandler::JobErrorType::kOpenError,
+                                              false, lastError);
+                offset_in = qMin(offset_in, offset_out);
+                offset_out = offset_in;
+            } else {
+                workData->currentWriteSize += result;
+            }
+        } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+
+        checkRetry();
+
+        if (!actionOperating(action, fromSize - offset_out, skip))
+            return  NextDo::kDoCopyErrorAddCancel;
+
+        // 执行同步策略
+        if (workData->exBlockSyncEveryWrite || toIsSmb)
+            syncfs(targetFd);
+
+    } while (offset_out != fromSize);
+
+    // 执行同步策略
+    if (workData->exBlockSyncEveryWrite  || toIsSmb)
+        syncfs(targetFd);
+
+    // 对文件加权
+    setTargetPermissions(fromInfo->uri(), toInfo->uri());
+    if (!stateCheck())
+        return NextDo::kDoCopyErrorAddCancel;
 
     if (skip && *skip)
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());

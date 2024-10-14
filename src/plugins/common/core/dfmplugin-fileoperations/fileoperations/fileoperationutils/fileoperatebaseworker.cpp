@@ -516,7 +516,9 @@ bool FileOperateBaseWorker::createSystemLink(const DFileInfoPointer &fromInfo, c
 
     do {
         actionForlink = AbstractJobHandler::SupportAction::kNoAction;
-        auto target = QUrl::fromLocalFile(newFromInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
+        auto target = newFromInfo->uri();
+        if (newFromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool())
+            target = QUrl::fromLocalFile(newFromInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
         if (localFileHandler->createSystemLink(target, toInfo->uri())) {
             return true;
         }
@@ -642,7 +644,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
         }
         if (fromSize > bigFileSize) {
             bigFileCopy = true;
-            auto result = doCopyLocalBigFile(fromInfo, toInfo, skip);
+            auto result = doCopyLocalByRange(fromInfo, toInfo, skip);
             bigFileCopy = false;
             return result;
         }
@@ -885,166 +887,15 @@ bool FileOperateBaseWorker::doCopyLocalFile(const DFileInfoPointer fromInfo, con
     return true;
 }
 
-bool FileOperateBaseWorker::doCopyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
+bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     waitThreadPoolOver();
-    // open file
-    auto fromFd = doOpenFile(fromInfo, toInfo, false, O_RDONLY, skip);
-    if (fromFd < 0)
-        return false;
-    auto toFd = doOpenFile(fromInfo, toInfo, true, O_CREAT | O_RDWR, skip);
-    if (toFd < 0) {
-        close(fromFd);
-        return false;
-    }
-    // resize target file
-    if (!doCopyLocalBigFileResize(fromInfo, toInfo, toFd, skip)) {
-        close(fromFd);
-        close(toFd);
-        return false;
-    }
-    // mmap file
-    auto fromPoint = doCopyLocalBigFileMap(fromInfo, toInfo, fromFd, PROT_READ, skip);
-    if (!fromPoint) {
-        close(fromFd);
-        close(toFd);
-        return false;
-    }
-    auto toPoint = doCopyLocalBigFileMap(fromInfo, toInfo, toFd, PROT_WRITE, skip);
-    if (!toPoint) {
-        munmap(fromPoint, static_cast<size_t>(fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()));
-        close(fromFd);
-        close(toFd);
-        return false;
-    }
-    // memcpy file in other thread
-    memcpyLocalBigFile(fromInfo, toInfo, fromPoint, toPoint);
-    // wait copy
-    waitThreadPoolOver();
-    // clear
-    doCopyLocalBigFileClear(static_cast<size_t>(fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()), fromFd, toFd, fromPoint, toPoint);
-    // set permissions
-    setTargetPermissions(fromInfo->uri(), toInfo->uri());
-    return true;
-}
+    const QString &targetUrl = toInfo->uri().toString();
 
-bool FileOperateBaseWorker::doCopyLocalBigFileResize(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int toFd, bool *skip)
-{
-    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
-    __off_t length = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    do {
-        action = AbstractJobHandler::SupportAction::kNoAction;
-        if (-1 == ftruncate(toFd, length)) {
-            auto lastError = strerror(errno);
-            fmWarning() << "file resize error, url from: " << fromInfo->uri()
-                        << " url to: " << toInfo->uri() << " open flag: " << O_RDONLY
-                        << " error code: " << errno << " error msg: " << lastError;
-
-            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
-                                          AbstractJobHandler::JobErrorType::kResizeError, true, lastError);
-        }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-    checkRetry();
-
-    if (!actionOperating(action, length <= 0 ? FileUtils::getMemoryPageSize() : length, skip))
-        return false;
-
-    return true;
-}
-
-char *FileOperateBaseWorker::doCopyLocalBigFileMap(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int fd, const int per, bool *skip)
-{
-    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
-    void *point = nullptr;
-    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    do {
-        action = AbstractJobHandler::SupportAction::kNoAction;
-        point = mmap(nullptr, static_cast<size_t>(fromSize),
-                     per, MAP_SHARED, fd, 0);
-        if (!point || point == MAP_FAILED) {
-            auto lastError = strerror(errno);
-            fmWarning() << "file mmap error, url from: " << fromInfo->uri()
-                        << " url to: " << fromInfo->uri()
-                        << " error code: " << errno << " error msg: " << lastError;
-
-            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
-                                          AbstractJobHandler::JobErrorType::kOpenError, fd == PROT_WRITE, lastError);
-        }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-    checkRetry();
-
-    if (!actionOperating(action, fromSize <= 0 ? FileUtils::getMemoryPageSize() : fromSize, skip))
-        return nullptr;
-
-    return static_cast<char *>(point);
-}
-
-void FileOperateBaseWorker::memcpyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, char *fromPoint, char *toPoint)
-{
-    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    auto offset = fromSize / threadCount;
-    char *fromPointStart = fromPoint;
-    char *toPointStart = toPoint;
-    for (int i = 0; i < threadCount; i++) {
-        offset = (i == (threadCount - 1) ? fromSize - (threadCount - 1) * offset : offset);
-
-        char *tempfFromPointStart = fromPointStart;
-        char *tempfToPointStart = toPointStart;
-        size_t tempOffet = static_cast<size_t>(offset);
-        QtConcurrent::run(threadPool.data(), threadCopyWorker[i].data(),
-                          static_cast<void (DoCopyFileWorker::*)(const DFileInfoPointer fromInfo,
-                                                                 const DFileInfoPointer toInfo,
-                                                                 char *dest, char *source, size_t size)>(&DoCopyFileWorker::doMemcpyLocalBigFile),
-                          fromInfo, toInfo, tempfToPointStart, tempfFromPointStart, tempOffet);
-
-        fromPointStart += offset;
-        toPointStart += offset;
-    }
-}
-
-void FileOperateBaseWorker::doCopyLocalBigFileClear(const size_t size,
-                                                    const int fromFd, const int toFd, char *fromPoint, char *toPoint)
-{
-    munmap(fromPoint, size);
-    munmap(toPoint, size);
-    close(fromFd);
-    close(toFd);
-}
-
-int FileOperateBaseWorker::doOpenFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
-                                      const bool isTo, const int openFlag, bool *skip)
-{
-    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
-    emitCurrentTaskNotify(fromInfo->uri(), toInfo->uri());
-    int fd = -1;
-    do {
-        QUrl url = isTo ? toInfo->uri() : fromInfo->uri();
-        std::string path = url.path().toStdString();
-        fd = open(path.c_str(), openFlag, 0666);
-        action = AbstractJobHandler::SupportAction::kNoAction;
-        if (fd < 0) {
-            auto lastError = strerror(errno);
-            fmWarning() << "file open error, url from: " << fromInfo->uri()
-                        << " url to: " << fromInfo->uri() << " open flag: " << openFlag
-                        << " error code: " << errno << " error msg: " << lastError;
-
-            action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
-                                          AbstractJobHandler::JobErrorType::kOpenError, isTo, lastError);
-        }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-    checkRetry();
-
-    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    if (!actionOperating(action, fromSize <= 0 ? FileUtils::getMemoryPageSize() : fromSize, skip)) {
-        if (fd >= 0)
-            close(fd);
-        return -1;
-    }
-
-    return fd;
+    FileUtils::cacheCopyingFileUrl(targetUrl);
+    DoCopyFileWorker::NextDo nextDo = threadCopyWorker[0]->doCopyFileByRange(fromInfo, toInfo, skip);
+    FileUtils::removeCopyingFileUrl(targetUrl);
+    return nextDo != DoCopyFileWorker::NextDo::kDoCopyNext;
 }
 
 bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)

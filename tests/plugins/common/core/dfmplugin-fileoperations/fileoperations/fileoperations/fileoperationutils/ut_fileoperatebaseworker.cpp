@@ -450,7 +450,7 @@ TEST_F(UT_FileOperateBaseWorker, testCheckAndCopyFile)
     worker.isTargetFileLocal = true;
     worker.workData->signalThread = false;
     stub.set_lamda(VADDR(SyncFileInfo, size), []{ __DBG_STUB_INVOKE__ return 100 * 1024 *1024;});
-    stub.set_lamda(&FileOperateBaseWorker::doCopyLocalBigFile, []{ __DBG_STUB_INVOKE__ return false;});
+    stub.set_lamda(&FileOperateBaseWorker::doCopyLocalByRange, []{ __DBG_STUB_INVOKE__ return false;});
     EXPECT_FALSE(worker.checkAndCopyFile(fileInfo, fileInfo, &skip));
 
     stub.set_lamda(&FileOperateBaseWorker::doCopyLocalFile, []{ __DBG_STUB_INVOKE__ return false;});
@@ -596,68 +596,12 @@ TEST_F(UT_FileOperateBaseWorker, testInitThreadCopy)
     worker.stopAllThread();
 }
 
-TEST_F(UT_FileOperateBaseWorker, testDoCopyLocalBigFile)
-{
-    QProcess::execute("rm sourceUrl.txt targetUrl.txt");
-    FileOperateBaseWorker worker;
-    QUrl url = QUrl::fromLocalFile(QDir::currentPath());
-    auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
-    auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
-    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
-    bool skip{false};
-    stub_ext::StubExt stub;
-    worker.workData.reset(new WorkerData);
-    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
-    EXPECT_FALSE(worker.doCopyLocalBigFile(sorceInfo, targetInfo, &skip));
-
-    QProcess::execute("touch sourceUrl.txt");
-    sorceUrl.setPath(url.path() + QDir::separator() + "sourceUrl.txt");
-    EXPECT_FALSE(worker.doCopyLocalBigFile(sorceInfo, targetInfo, &skip));
-
-    QFile sorcefile(sorceUrl.path());
-    if (sorcefile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        QByteArray data("tttttttt");
-        for (int i = 0; i < 10000; ++i) {
-            sorcefile.write(data);
-        }
-        sorcefile.close();
-        worker.threadPool.reset(new QThreadPool);
-        worker.initThreadCopy();
-        EXPECT_FALSE(worker.doCopyLocalBigFile(sorceInfo, targetInfo, &skip));
-        sorceInfo->refresh();
-        EXPECT_TRUE(worker.doCopyLocalBigFile(sorceInfo, targetInfo, &skip));
-    }
-
-    QProcess::execute("rm sourceUrl.txt targetUrl.txt");
-
-}
-
 int openTest(int fd, __off_t offset) {
     Q_UNUSED(fd);
     Q_UNUSED(offset);
     __DBG_STUB_INVOKE__
     return -1;
 };
-
-TEST_F(UT_FileOperateBaseWorker, testDoCopyLocalBigFileCallFunc)
-{
-    FileOperateBaseWorker worker;
-    auto sorceUrl = QUrl::fromLocalFile(QDir::currentPath() + "/sourceUrl.txt");
-    auto targetUrl = QUrl::fromLocalFile(QDir::currentPath() + "/targetUrl.txt");
-    DFileInfoPointer targetInfo(new DFileInfo(targetUrl));
-    DFileInfoPointer sorceInfo(new DFileInfo(sorceUrl));
-    stub_ext::StubExt stub;
-    worker.workData.reset(new WorkerData);
-
-    stub.set(&::ftruncate, openTest);
-    bool skip{false};
-    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
-    EXPECT_FALSE(worker.doCopyLocalBigFileResize(sorceInfo, targetInfo, -1, &skip));
-
-    stub.set_lamda(&DoCopyFileWorker::doHandleErrorAndWait, []{ __DBG_STUB_INVOKE__  return AbstractJobHandler::SupportAction::kSkipAction; });
-    EXPECT_FALSE(worker.doCopyOtherFile(sorceInfo, targetInfo, &skip));
-}
 
 TEST_F(UT_FileOperateBaseWorker, testCreateNewTargetInfo)
 {
