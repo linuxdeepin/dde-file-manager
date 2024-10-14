@@ -1340,6 +1340,8 @@ QString FileUtils::normalPathToTrash(const QString &normal)
 
 bool FileUtils::supportLongName(const QUrl &url)
 {
+    if (isGvfsFile(url))
+        return false;
     const static QList<QString> datas {
         "vfat", "exfat", "ntfs", "fuseblk", "fuse.dlnfs", "ulnfs"
     };

@@ -17,6 +17,8 @@
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -308,10 +310,17 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         return;
     }
 
+
     const auto &index = itemDelegate()->editingIndex();
     const FileInfoPointer &fileInfo = parent()->model()->fileInfo(index);
 
     if (!fileInfo) {
+        return;
+    }
+
+    // check network
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(fileInfo->urlOf(UrlInfoType::kUrl))) {
+        DialogManager::instance()->showUnableToVistDir(fileInfo->urlOf(UrlInfoType::kUrl).path());
         return;
     }
 
@@ -342,6 +351,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
 
     QUrl oldUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, fileInfo->nameOf(NameInfoType::kFileName));
     QUrl newUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, newFileName);
+
     //Todo(yanghao): tag
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
