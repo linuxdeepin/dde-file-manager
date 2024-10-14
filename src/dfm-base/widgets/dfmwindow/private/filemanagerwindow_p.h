@@ -51,7 +51,9 @@ protected:
     static constexpr int kDefaultLeftWidth { 200 };
 
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
+    QFrame *rightArea { nullptr };
     QHBoxLayout *midLayout { nullptr };
+    QVBoxLayout *rightLayout { nullptr };
     Splitter *splitter { nullptr };
     AbstractFrame *titleBar { nullptr };
     AbstractFrame *sideBar { nullptr };
