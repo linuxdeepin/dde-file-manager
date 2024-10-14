@@ -203,7 +203,29 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
     : DMainWindow(parent),
       d(new FileManagerWindowPrivate(url, this))
 {
-    initializeUi();
+    // hide titlebar
+    titlebar()->setHidden(true);
+    titlebar()->setFixedHeight(0);
+    setTitlebarShadowEnabled(false);
+
+    // size
+    resize(d->kDefaultWindowWidth, d->kDefaultWindowHeight);
+    setMinimumSize(d->kMinimumWindowWidth, d->kMinimumWindowHeight);
+
+    d->centralView = new QFrame(this);
+    d->centralView->setObjectName("CentralView");
+
+    d->midLayout = new QHBoxLayout;
+    d->midLayout->setContentsMargins(0, 0, 0, 0);
+    d->midLayout->setSpacing(0);
+
+    d->rightLayout = new QVBoxLayout;
+    d->rightLayout->setContentsMargins(0, 0, 0, 0);
+    d->rightLayout->setSpacing(0);
+
+    d->rightBottomLayout = new QHBoxLayout;
+    d->rightBottomLayout->setContentsMargins(0, 0, 0, 0);
+    d->rightBottomLayout->setSpacing(0);
 }
 
 FileManagerWindow::~FileManagerWindow()
@@ -255,8 +277,8 @@ void FileManagerWindow::installTitleBar(AbstractFrame *w)
     std::call_once(d->titleBarFlag, [this, w]() {
         d->titleBar = w;
         d->titleBar->setCurrentUrl(d->currentUrl);
-        d->rightLayout->insertWidget(0, d->titleBar);
 
+        initializeUi();
         emit this->titleBarInstallFinished();
     });
 }
@@ -266,14 +288,10 @@ void FileManagerWindow::installSideBar(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
     std::call_once(d->sideBarFlag, [this, w]() {
         d->sideBar = w;
-        d->splitter->replaceWidget(0, d->sideBar);
-        updateUi();   // setSizes is only valid when the splitter is non-empty
-
-        d->sideBar->setContentsMargins(0, 0, 0, 0);
-        d->sideBar->setMaximumWidth(d->kMaximumLeftWidth);
-        d->sideBar->setMinimumWidth(d->kMinimumLeftWidth);
         d->sideBar->setCurrentUrl(d->currentUrl);
 
+        initializeUi();
+        updateUi();   // setSizes is only valid when the splitter is non-empty
         emit this->sideBarInstallFinished();
     });
 }
@@ -283,11 +301,12 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null Workspace");
     std::call_once(d->workspaceFlag, [this, w]() {
         d->workspace = w;
-        d->rightLayout->addWidget(d->workspace, 1);
-        updateUi();   // setSizes is only valid when the splitter is non-empty
 
         d->workspace->setCurrentUrl(d->currentUrl);
         d->workspace->installEventFilter(this);
+
+        initializeUi();
+        updateUi();   // setSizes is only valid when the splitter is non-empty
         emit this->workspaceInstallFinished();
     });
 }
@@ -300,8 +319,7 @@ void FileManagerWindow::installDetailView(AbstractFrame *w)
 {
     d->detailSpace = w;
     if (d->detailSpace) {
-        d->midLayout->setSpacing(0);
-        d->midLayout->addWidget(d->detailSpace, 1);
+        d->rightBottomLayout->addWidget(d->detailSpace, 1);
         d->detailSpace->setVisible(false);
     }
 
@@ -385,61 +403,53 @@ bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 
 void FileManagerWindow::initializeUi()
 {
-    // hide titlebar
-    titlebar()->setHidden(true);
-    titlebar()->setFixedHeight(0);
-    setTitlebarShadowEnabled(false);
+    if (d->sideBar && d->titleBar && d->workspace) {
+        // left area
+        d->sideBar->setContentsMargins(0, 0, 0, 0);
+        d->sideBar->setMaximumWidth(d->kMaximumLeftWidth);
+        d->sideBar->setMinimumWidth(d->kMinimumLeftWidth);
 
-    titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
+        // right area
+        d->rightArea = new QFrame(this);
+        auto minimumWidth = d->kMinimumWindowWidth - d->kMaximumLeftWidth;
+        d->rightArea->setMinimumWidth(minimumWidth > 0 ? minimumWidth : 80);
+        // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
+        //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
+        //              设置size policy可以生效
+        QSizePolicy sp = d->rightArea->sizePolicy();
+        sp.setHorizontalStretch(1);
+        d->rightArea->setSizePolicy(sp);
 
-    // size
-    resize(d->kDefaultWindowWidth, d->kDefaultWindowHeight);
-    setMinimumSize(d->kMinimumWindowWidth, d->kMinimumWindowHeight);
+        d->rightLayout->addWidget(d->titleBar);
+        d->rightLayout->addLayout(d->rightBottomLayout, 1);
+        d->rightBottomLayout->addWidget(d->workspace, 1);
+        d->rightArea->setLayout(d->rightLayout);
 
-    // splitter
-    d->splitter = new Splitter(Qt::Orientation::Horizontal, this);
-    d->splitter->setChildrenCollapsible(false);
-    d->splitter->setHandleWidth(0);
+        // splitter
+        d->splitter = new Splitter(Qt::Orientation::Horizontal, this);
+        d->splitter->setChildrenCollapsible(false);
+        d->splitter->setHandleWidth(0);
+        d->splitter->addWidget(d->sideBar);
+        d->splitter->addWidget(d->rightArea);
 
-    // left area
-    d->splitter->insertWidget(0, new QWidget);
-
-    // right area
-    d->rightArea = new QFrame(this);
-    d->rightLayout = new QVBoxLayout;
-    d->rightArea->setLayout(d->rightLayout);
-    d->rightLayout->setContentsMargins(0, 0, 0, 0);
-    d->splitter->insertWidget(1, d->rightArea);
-    // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
-    //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
-    //              设置size policy可以生效
-    QSizePolicy sp = d->rightArea->sizePolicy();
-    sp.setHorizontalStretch(1);
-    d->rightArea->setSizePolicy(sp);
-
-    // central
-    d->centralView = new QFrame(this);
-    d->centralView->setObjectName("CentralView");
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    QWidget *midWidget = new QWidget;
-    d->midLayout = new QHBoxLayout;
-    midWidget->setLayout(d->midLayout);
-    d->midLayout->setContentsMargins(0, 0, 0, 0);
-    d->midLayout->addWidget(d->splitter);
-    mainLayout->addWidget(midWidget);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    d->centralView->setLayout(mainLayout);
-    setCentralWidget(d->centralView);
+        // central
+        QVBoxLayout *mainLayout = new QVBoxLayout;
+        QWidget *midWidget = new QWidget;
+        midWidget->setLayout(d->midLayout);
+        mainLayout->addWidget(midWidget);
+        mainLayout->setSpacing(0);
+        mainLayout->setContentsMargins(0, 0, 0, 0);
+        d->midLayout->insertWidget(0, d->splitter);
+        d->centralView->setLayout(mainLayout);
+        setCentralWidget(d->centralView);
+    }
 }
 
 void FileManagerWindow::updateUi()
 {
-    if (d->sideBar && d->workspace) {
-        const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
-        int splitterPos = state.value("sidebar", d->kDefaultLeftWidth).toInt();
-        d->setSplitterPosition(splitterPos);
-    }
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+    int splitterPos = state.value("sidebar", d->kDefaultLeftWidth).toInt();
+    d->setSplitterPosition(splitterPos);
 }
 
 }
