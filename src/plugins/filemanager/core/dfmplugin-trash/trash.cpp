@@ -170,6 +170,8 @@ void Trash::followEvents()
 
     dpfHookSequence->follow("dfmplugin_utils", "hook_OpenWith_DisabledOpenWithWidget", TrashFileHelper::instance(), &TrashFileHelper::disableOpenWidgetWidget);
 
+    dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit", TrashFileHelper::instance(),
+                            &TrashFileHelper::handleNotAllowedAppendCompress);
     // register to tag
     auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-tag") };
     if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {

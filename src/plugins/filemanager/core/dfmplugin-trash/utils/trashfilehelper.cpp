@@ -178,3 +178,12 @@ bool TrashFileHelper::handleNotCdComputer(const QUrl &url, QUrl *cdUrl)
     *cdUrl = FileUtils::trashRootUrl();
     return true;
 }
+
+bool TrashFileHelper::handleNotAllowedAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl)
+{
+    Q_UNUSED(fromUrls);
+    if (FileUtils::isTrashFile(toUrl))
+        return true;
+
+    return false;
+}
