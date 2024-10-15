@@ -40,6 +40,7 @@ public:
     bool handleCanTag(const QUrl &url, bool *canTag);
     bool handleIsSubFile(const QUrl &parent, const QUrl &sub);
     bool handleNotCdComputer(const QUrl &url, QUrl *cdUrl);
+    bool handleNotAllowedAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
 
 private:
     explicit TrashFileHelper(QObject *parent = nullptr);
