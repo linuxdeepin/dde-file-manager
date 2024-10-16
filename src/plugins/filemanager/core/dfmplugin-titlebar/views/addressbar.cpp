@@ -52,6 +52,7 @@ void AddressBarPrivate::initializeUi()
     pauseButton->setCursor({ Qt::ArrowCursor });
     pauseButton->setFlat(true);
     pauseButton->setVisible(false);
+    pauseButton->installEventFilter(this);
 
     // 左侧Action按钮 设置
     q->addAction(&indicatorAction, QLineEdit::LeadingPosition);
@@ -667,6 +668,12 @@ bool AddressBarPrivate::eventFilter(QObject *watched, QEvent *event)
     if (watched == q && event->type() == QEvent::Resize) {
         return eventFilterResize(qobject_cast<AddressBar *>(watched),
                                  dynamic_cast<QResizeEvent *>(event));
+    }
+
+    if (watched == pauseButton && (event->type() == QEvent::HoverEnter
+                                   || event->type() == QEvent::HoverMove
+                                   || event->type() == QEvent::HoverLeave)) {
+        return true;
     }
 
     return false;
