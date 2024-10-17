@@ -5,8 +5,3 @@
 echo "\ndfm_INFO: start main script to mount ulnfs at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
 [ -f /etc/deepin/dde-file-manager/dfm-ulnfs-automount ] && bash /etc/deepin/dde-file-manager/dfm-ulnfs-automount &
 echo "dfm_INFO: end main script at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
-
-echo "\ndfm_INFO: start migrate filename from dlnfs to ulnfs at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
-[ -f /etc/deepin/dde-file-manager/dfm_migrate_filename_from_dlnfs_to_ulnfs ] && \
-    bash /etc/deepin/dde-file-manager/dfm_migrate_filename_from_dlnfs_to_ulnfs &
-echo "dfm_INFO: end migrate at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
