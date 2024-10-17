@@ -30,6 +30,8 @@ inline constexpr int kIconHeight { 14 };
 inline constexpr int kItemHeight { 30 };
 inline constexpr int kItemMargin { 8 };
 inline constexpr int kCompleterMaxHeight { 260 };
+inline constexpr int kSpinnerSize { 24 };
+inline constexpr int kCompactSpinnerSize { 16 };
 
 namespace CustomKey {
 inline constexpr char kUrl[] { "CrumbData_Key_Url" };

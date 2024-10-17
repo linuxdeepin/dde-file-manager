@@ -637,7 +637,11 @@ void AddressBarPrivate::onCompletionModelCountChanged()
 bool AddressBarPrivate::eventFilterResize(AddressBar *addressbar, QResizeEvent *event)
 {
     Q_UNUSED(addressbar)
-    spinner.setFixedSize(q->height() - 8, q->height() - 8);
+    int spinnerSize = kSpinnerSize;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        spinnerSize = DSizeModeHelper::element(kCompactSpinnerSize, kSpinnerSize);
+#endif
+    spinner.setFixedSize(spinnerSize, spinnerSize);
     spinner.setGeometry(event->size().width() - spinner.size().width() - 45,
                         (event->size().height() - spinner.size().height()) / 2,
                         spinner.size().width(), spinner.size().height());
