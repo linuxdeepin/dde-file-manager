@@ -1376,7 +1376,7 @@ QString FileUtils::normalPathToTrash(const QString &normal)
 bool FileUtils::supportLongName(const QUrl &url)
 {
     const static QList<QString> datas {
-        "vfat", "exfat", "ntfs", "fuseblk", "fuse.dlnfs", "ulnfs"
+        "vfat", "exfat", "ntfs", "fuseblk", "fuse.dlnfs"
     };
 
     const QString &fileSystem = dfmio::DFMUtils::fsTypeFromUrl(url);
