@@ -24,13 +24,10 @@ class WorkspaceEventCaller
 
 public:
     static void sendOpenWindow(const QList<QUrl> &urls, const bool isNew = true);
+    static void sendOpenNewTab(const quint64 windowId, const QUrl &url);
     static void sendChangeCurrentUrl(const quint64 windowId, const QUrl &url);
     static void sendOpenAsAdmin(const QUrl &url);
 
-    static void sendTabAdded(const quint64 windowID);
-    static void sendTabChanged(const quint64 windowID, const int index);
-    static void sendTabMoved(const quint64 windowID, const int from, const int to);
-    static void sendTabRemoved(const quint64 windowID, const int index);
     static void sendShowCustomTopWidget(const quint64 windowId, const QString &scheme, bool visible);
 
     static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const FileInfoPointer &info);
@@ -43,6 +40,9 @@ public:
     static bool sendViewItemClicked(const QVariantMap &data);
     static void sendEnterDirReportLog(const QVariantMap &data);
     static void sendModelFilesEmpty();
+
+    static bool sendCheckTabAddable(quint64 windowId);
+    static void sendCloseTab(const QUrl &url);
 };
 
 }

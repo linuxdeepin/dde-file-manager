@@ -141,18 +141,7 @@ WorkspaceWidget *WorkspaceHelper::findWorkspaceByWindowId(quint64 windowId)
 void WorkspaceHelper::closeTab(const QUrl &url)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    for (auto iter = kWorkspaceMap.cbegin(); iter != kWorkspaceMap.cend(); ++iter) {
-        if (iter.value())
-            iter.value()->closeTab(iter.key(), url);
-    }
-}
-
-void WorkspaceHelper::setTabAlias(const QUrl &url, const QString &newName)
-{
-    for (auto iter = kWorkspaceMap.cbegin(); iter != kWorkspaceMap.cend(); ++iter) {
-        if (iter.value())
-            iter.value()->setTabAlias(url, newName);
-    }
+    WorkspaceEventCaller::sendCloseTab(url);
 }
 
 void WorkspaceHelper::addWorkspace(quint64 windowId, WorkspaceWidget *workspace)
@@ -186,19 +175,9 @@ void WorkspaceHelper::addScheme(const QString &scheme)
     ViewFactory::regClass<FileView>(scheme);
 }
 
-void WorkspaceHelper::openUrlInNewTab(quint64 windowId, const QUrl &url)
-{
-    emit openNewTab(windowId, url);
-}
-
 void WorkspaceHelper::actionNewWindow(const QList<QUrl> &urls)
 {
     WorkspaceEventCaller::sendOpenWindow(urls);
-}
-
-void WorkspaceHelper::actionNewTab(quint64 windowId, const QUrl &url)
-{
-    openUrlInNewTab(windowId, url);
 }
 
 QString WorkspaceHelper::findMenuScene(const QString &scheme)
@@ -450,12 +429,7 @@ void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 
     window->installWorkSpace(widget);
 
-    connect(window, &FileManagerWindow::reqActivateNextTab, widget, &WorkspaceWidget::onNextTab);
-    connect(window, &FileManagerWindow::reqActivatePreviousTab, widget, &WorkspaceWidget::onPreviousTab);
-    connect(window, &FileManagerWindow::reqCloseCurrentTab, widget, &WorkspaceWidget::onCloseCurrentTab);
-    connect(window, &FileManagerWindow::reqCreateTab, widget, &WorkspaceWidget::onCreateNewTab);
     connect(window, &FileManagerWindow::reqCreateWindow, widget, &WorkspaceWidget::onCreateNewWindow);
-    connect(window, &FileManagerWindow::reqActivateTabByIndex, widget, &WorkspaceWidget::onSetCurrentTabIndex);
     connect(window, &FileManagerWindow::reqRefresh, widget, &WorkspaceWidget::onRefreshCurrentView);
     connect(window, &FileManagerWindow::currentViewStateChanged, widget, &WorkspaceWidget::handleViewStateChanged);
 }

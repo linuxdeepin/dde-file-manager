@@ -229,7 +229,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
         { "Property_Key_Editable", true }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", info->urlOf(UrlInfoType::kUrl), map);
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_SetAlias", info->targetUrl(), displayAlias);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_SetAlias", info->targetUrl(), displayAlias);
     Q_EMIT updateItemAlias(info->urlOf(UrlInfoType::kUrl));
 }
 

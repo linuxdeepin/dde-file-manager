@@ -8,11 +8,16 @@
 #include "dfmplugin_titlebar_global.h"
 #include "utils/historystack.h"
 
-#include <DButtonBox>
+#include <dtkwidget_global.h>
+
 #include <QObject>
 #include <QHBoxLayout>
 
 #include <memory>
+
+DWIDGET_BEGIN_NAMESPACE
+class DIconButton;
+DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_titlebar {
 class NavWidget;
@@ -29,9 +34,8 @@ public:
 
 private:
     NavWidget *const q;
-    Dtk::Widget::DButtonBox *buttonBox { nullptr };
-    Dtk::Widget::DButtonBoxButton *navBackButton { nullptr };
-    Dtk::Widget::DButtonBoxButton *navForwardButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DIconButton *navBackButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DIconButton *navForwardButton { nullptr };
     QHBoxLayout *hboxLayout { nullptr };
     QUrl currentUrl {};
     std::shared_ptr<HistoryStack> curNavStack { nullptr };

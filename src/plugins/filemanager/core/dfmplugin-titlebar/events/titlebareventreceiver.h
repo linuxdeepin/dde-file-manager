@@ -20,12 +20,6 @@ public:
     static TitleBarEventReceiver *instance();
 
 public slots:
-    // receive other plugin signals
-    void handleTabAdded(quint64 windowId);
-    void handleTabChanged(quint64 windowId, int index);
-    void handleTabMoved(quint64 windowId, int from, int to);
-    void handleTabRemovd(quint64 windowId, int index);
-
     // self slots
     bool handleCustomRegister(const QString &scheme, const QVariantMap &properties);
 
@@ -39,6 +33,11 @@ public slots:
     void handleWindowForward(quint64 windowId);
     void handleWindowBackward(quint64 windowId);
     void handleRemoveHistory(quint64 windowId, const QUrl &url);
+
+    bool handleTabAddable(quint64 windowId);
+    void handleCloseTabs(const QUrl &url);
+    void handleSetTabAlias(const QUrl &url, const QString &name);
+    void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
 
 private:
     explicit TitleBarEventReceiver(QObject *parent = nullptr);

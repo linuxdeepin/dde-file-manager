@@ -29,6 +29,11 @@ void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls, const bool is
     }
 }
 
+void WorkspaceEventCaller::sendOpenNewTab(const quint64 windowId, const QUrl &url)
+{
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
+}
+
 void WorkspaceEventCaller::sendChangeCurrentUrl(const quint64 windowId, const QUrl &url)
 {
     bool hooked = dpfHookSequence->run(kEventNS, "hook_SendChangeCurrentUrl", windowId, url);
@@ -42,26 +47,6 @@ void WorkspaceEventCaller::sendChangeCurrentUrl(const quint64 windowId, const QU
 void WorkspaceEventCaller::sendOpenAsAdmin(const QUrl &url)
 {
     dpfSignalDispatcher->publish(GlobalEventType::kOpenAsAdmin, url);
-}
-
-void WorkspaceEventCaller::sendTabAdded(const quint64 windowID)
-{
-    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Added", windowID);
-}
-
-void WorkspaceEventCaller::sendTabChanged(const quint64 windowID, const int index)
-{
-    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Changed", windowID, index);
-}
-
-void WorkspaceEventCaller::sendTabMoved(const quint64 windowID, const int from, const int to)
-{
-    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Moved", windowID, from, to);
-}
-
-void WorkspaceEventCaller::sendTabRemoved(const quint64 windowID, const int index)
-{
-    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Removed", windowID, index);
 }
 
 void WorkspaceEventCaller::sendShowCustomTopWidget(const quint64 windowID, const QString &scheme, bool visible)
@@ -105,4 +90,14 @@ void WorkspaceEventCaller::sendEnterDirReportLog(const QVariantMap &data)
 void WorkspaceEventCaller::sendModelFilesEmpty()
 {
     dpfSignalDispatcher->publish(kEventNS, "signal_Model_EmptyDir");
+}
+
+bool WorkspaceEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Addable", windowId).toBool();
+}
+
+void WorkspaceEventCaller::sendCloseTab(const QUrl &url)
+{
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Close", url);
 }

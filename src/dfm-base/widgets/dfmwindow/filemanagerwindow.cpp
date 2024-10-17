@@ -277,8 +277,8 @@ void FileManagerWindow::installTitleBar(AbstractFrame *w)
     std::call_once(d->titleBarFlag, [this, w]() {
         d->titleBar = w;
         d->titleBar->setCurrentUrl(d->currentUrl);
-
         initializeUi();
+
         emit this->titleBarInstallFinished();
     });
 }

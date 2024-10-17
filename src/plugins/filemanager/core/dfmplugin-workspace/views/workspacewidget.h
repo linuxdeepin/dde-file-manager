@@ -52,10 +52,6 @@ public:
 
     DFMBASE_NAMESPACE::AbstractBaseView *currentView();
 
-    void openNewTab(const QUrl &url);
-    bool canAddNewTab();
-    void closeTab(quint64 winId, const QUrl &url);
-    void setTabAlias(const QUrl &url, const QString &newName);
     void setCustomTopWidgetVisible(const QString &scheme, bool visible);
     bool getCustomTopWidgetVisible(const QString &scheme);
 
@@ -63,19 +59,7 @@ public:
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
 
 public slots:
-    void onOpenUrlInNewTab(quint64 windowId, const QUrl &url);
-    void onCurrentTabChanged(int tabIndex);
-    void onRequestCloseTab(const int index, const bool &remainState);
-    void onTabAddableChanged(bool addable);
-    void showNewTabButton();
-    void hideNewTabButton();
-    void onNewTabButtonClicked();
-    void onNextTab();
-    void onPreviousTab();
-    void onCloseCurrentTab();
-    void onCreateNewTab();
     void onCreateNewWindow();
-    void onSetCurrentTabIndex(const int index);
     void onRefreshCurrentView();
     void handleViewStateChanged();
 
@@ -89,25 +73,17 @@ public slots:
 
 private:
     void initializeUi();
-    void initConnect();
-    void initTabBar();
     void initViewLayout();
     void initCustomTopWidgets(const QUrl &url);
     void setCurrentView(const QUrl &url);
 
     QUrl workspaceUrl;
-    QHBoxLayout *tabBarLayout { nullptr };
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QMap<QString, ViewPtr> views;
     QMap<QString, TopWidgetPtr> topWidgets;
     EnterDirAnimationWidget *enterAnim { nullptr };
     QTimer *appearAnimDelayTimer { nullptr };
-
-    TabBar *tabBar { nullptr };
-    DTK_WIDGET_NAMESPACE::DIconButton *newTabButton { nullptr };
-    DTK_WIDGET_NAMESPACE::DHorizontalLine *tabTopLine { nullptr };
-    DTK_WIDGET_NAMESPACE::DHorizontalLine *tabBottomLine { nullptr };
 
     bool canPlayAppearAnimation { false };
 };

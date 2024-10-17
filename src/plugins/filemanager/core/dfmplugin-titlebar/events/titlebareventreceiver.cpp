@@ -9,44 +9,12 @@
 #include "utils/crumbinterface.h"
 #include "utils/titlebarhelper.h"
 #include "utils/optionbuttonmanager.h"
-
+#include "utils/tabbarmanager.h"
 using namespace dfmplugin_titlebar;
 TitleBarEventReceiver *TitleBarEventReceiver::instance()
 {
     static TitleBarEventReceiver receiver;
     return &receiver;
-}
-
-void TitleBarEventReceiver::handleTabAdded(quint64 windowId)
-{
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->navWidget()->addHistroyStack();
-}
-
-void TitleBarEventReceiver::handleTabChanged(quint64 windowId, int index)
-{
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->navWidget()->switchHistoryStack(index);
-}
-
-void TitleBarEventReceiver::handleTabMoved(quint64 windowId, int from, int to)
-{
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->navWidget()->moveNavStacks(from, to);
-}
-
-void TitleBarEventReceiver::handleTabRemovd(quint64 windowId, int index)
-{
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->navWidget()->removeNavStackAt(index);
 }
 
 bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QVariantMap &properties)
@@ -150,4 +118,24 @@ void TitleBarEventReceiver::handleRemoveHistory(quint64 windowId, const QUrl &ur
 TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
     : QObject(parent)
 {
+}
+
+bool TitleBarEventReceiver::handleTabAddable(quint64 windowId)
+{
+    return TabBarManager::instance()->canAddNewTab(windowId);
+}
+
+void TitleBarEventReceiver::handleCloseTabs(const QUrl &url)
+{
+    TabBarManager::instance()->closeTab(url);
+}
+
+void TitleBarEventReceiver::handleSetTabAlias(const QUrl &url, const QString &name)
+{
+    TabBarManager::instance()->setTabAlias(url, name);
+}
+
+void TitleBarEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QUrl &url)
+{
+    TabBarManager::instance()->openNewTab(windowId, url);
 }
