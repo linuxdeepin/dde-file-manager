@@ -30,6 +30,10 @@ void MimeTypeDisplayManager::initData()
     displayNamesMap[FileInfo::FileType::kExecutable] = tr("Executable");
     displayNamesMap[FileInfo::FileType::kBackups] = tr("Backup file");
     displayNamesMap[FileInfo::FileType::kUnknown] = tr("Unknown");
+    displayNamesMap[FileInfo::FileType::kCharDevice] = tr("CharDevice");
+    displayNamesMap[FileInfo::FileType::kFIFOFile] = tr("FIFO File");
+    displayNamesMap[FileInfo::FileType::kSocketFile] = tr("Socket File");
+    displayNamesMap[FileInfo::FileType::kBlockDevice] = tr("Block Device");
 
     defaultIconNames[FileInfo::FileType::kDirectory] = "folder";
     defaultIconNames[FileInfo::FileType::kDesktopApplication] = "application-default-icon";
@@ -73,6 +77,14 @@ FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mime
         return FileInfo::FileType::kArchives;
     } else if (backupMimeTypes.contains(mimeType)) {
         return FileInfo::FileType::kBackups;
+    } else if (mimeType == "inode/chardevice") {
+        return FileInfo::FileType::kCharDevice;
+    } else if (mimeType == "inode/socket") {
+        return FileInfo::FileType::kSocketFile;
+    } else if (mimeType == "inode/blockdevice") {
+        return FileInfo::FileType::kBlockDevice;
+    } else if (mimeType == "inode/fifo") {
+        return FileInfo::FileType::kFIFOFile;
     } else {
         return FileInfo::FileType::kUnknown;
     }
