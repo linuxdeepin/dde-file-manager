@@ -38,7 +38,6 @@ inline constexpr char kErrorMessage[] { "errMsg" };
 
 namespace MountFstypeSupportedField {
 inline constexpr char kDlnFs[] { "dlnfs" };
-inline constexpr char kUlnFs[] { "ulnfs" };
 inline constexpr char kCifs[] { "cifs" };
 inline constexpr char kCommon[] { "common" };
 }
@@ -52,8 +51,8 @@ enum MountErrorCode {   // NOTE(xust): use NAGATIVE value when return, avoid con
     kMountNotExist,
     kNotOwnerOfMount,
 
-    kLnFsProcessNotExists,
-    kLnMountMounted,
+    kDlnFsProcessNotExists,
+    kDlnMountMounted,
     kFusermountProcessNotExists,
 
     kUnhandledError = 1000
