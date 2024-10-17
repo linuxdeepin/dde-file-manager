@@ -2880,6 +2880,26 @@
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
+    <message>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="33"/>
+        <source>CharDevice</source>
+        <translation>字符设备</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="34"/>
+        <source>FIFO File</source>
+        <translation>管道</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="35"/>
+        <source>Socket File</source>
+        <translation>套接字</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="36"/>
+        <source>Block Device</source>
+        <translation>块设备</translation>
+    </message>
 </context>
 <context>
     <name>dfmbase::MountAskPasswordDialog</name>
