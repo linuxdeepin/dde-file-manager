@@ -55,15 +55,12 @@ public:
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QUrl &url);
-    void setTabAlias(const QUrl &url, const QString &newName);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
     void removeWorkspace(quint64 windowId);
     quint64 windowId(const QWidget *sender);
     void switchViewMode(quint64 windowId, int viewMode);
     void addScheme(const QString &scheme);
-    void openUrlInNewTab(quint64 windowId, const QUrl &viewMode);
     void actionNewWindow(const QList<QUrl> &urls);
-    void actionNewTab(quint64 windowId, const QUrl &url);
     QString findMenuScene(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode findViewMode(const QString &scheme);
     void selectFiles(quint64 windowId, const QList<QUrl> &files);
@@ -112,7 +109,6 @@ public Q_SLOTS:
     void handleRefreshDir(const QList<QUrl> &urls);
 
 signals:
-    void openNewTab(quint64 windowId, const QUrl &url);
     void requestSelectFiles(const QList<QUrl> &urlList);
     void trashStateChanged();
 

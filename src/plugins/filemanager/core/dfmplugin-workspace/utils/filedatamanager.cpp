@@ -5,10 +5,13 @@
 #include "filedatamanager.h"
 #include "models/rootinfo.h"
 #include "models/fileitemdata.h"
+#include "events/workspaceeventcaller.h"
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/watchercache.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <QApplication>
 
@@ -87,6 +90,17 @@ void FileDataManager::setFileActive(const QUrl &rootUrl, const QUrl &childUrl, b
         root->watcher->setEnabledSubfileWatcher(childUrl, active);
 }
 
+bool FileDataManager::isMountedDevPath(const QUrl &url)
+{
+    for (auto iter = allMntedDevs.cbegin(); iter != allMntedDevs.cend(); ++iter) {
+        auto urls = allMntedDevs.values(iter.key());
+        auto ret = std::find_if(urls.cbegin(), urls.cend(), [url](const QUrl &u) { return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(u, url); });
+        if (ret != urls.cend())
+            return true;
+    }
+    return false;
+}
+
 void FileDataManager::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
 {
     if (aa == Application::kFileAndDirMixedSort)
@@ -98,12 +112,32 @@ void FileDataManager::onHandleFileDeleted(const QUrl url)
     cleanRoot(url);
 }
 
+void FileDataManager::removeCachedMnts(const QString &id)
+{
+    if (!allMntedDevs.contains(id))
+        return;
+
+    for (const auto &url : allMntedDevs.values(id)) {
+        WorkspaceEventCaller::sendCloseTab(url);
+        FileDataManager::instance()->cleanRoot(url);
+        Q_EMIT InfoCacheController::instance().removeCacheFileInfo({ url });
+        WatcherCache::instance().removeCacheWatcherByParent(url);
+    }
+
+    allMntedDevs.remove(id);
+}
+
+void FileDataManager::cacheMnt(const QString &id, const QString &mnt)
+{
+    if (!mnt.isEmpty())
+        allMntedDevs.insert(id, QUrl::fromLocalFile(mnt));
+}
+
 FileDataManager::FileDataManager(QObject *parent)
     : QObject(parent)
 {
     isMixFileAndFolder = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     connect(Application::instance(), &Application::appAttributeChanged, this, &FileDataManager::onAppAttributeChanged);
-
 }
 
 FileDataManager::~FileDataManager()
@@ -111,6 +145,28 @@ FileDataManager::~FileDataManager()
     //clean rootInfoMap
     qDeleteAll(rootInfoMap.values());
     rootInfoMap.clear();
+}
+
+void FileDataManager::initMntedDevsCache()
+{
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, &FileDataManager::cacheMnt);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::protocolDevMounted, this, &FileDataManager::cacheMnt);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevAdded, this, [this](const QString &id) { cacheMnt(id, ""); });
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &FileDataManager::removeCachedMnts);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &FileDataManager::removeCachedMnts);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &FileDataManager::removeCachedMnts);
+
+    for (auto id : DevProxyMng->getAllBlockIds()) {
+        auto datas = DevProxyMng->queryBlockInfo(id);
+        const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+        cacheMnt(id, mntPath);
+    }
+    for (auto id : DevProxyMng->getAllProtocolIds()) {
+        auto datas = DevProxyMng->queryProtocolInfo(id);
+        const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+        if (!mntPath.isEmpty())
+            allMntedDevs.insert(id, QUrl::fromLocalFile(mntPath));
+    }
 }
 
 RootInfo *FileDataManager::createRoot(const QUrl &url)

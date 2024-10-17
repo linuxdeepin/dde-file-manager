@@ -19,11 +19,6 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_NAMESPACE(DPWORKSPACE_NAMESPACE)
 
     // signal events
-    DPF_EVENT_REG_SIGNAL(signal_Tab_Added)
-    DPF_EVENT_REG_SIGNAL(signal_Tab_Changed)
-    DPF_EVENT_REG_SIGNAL(signal_Tab_Moved)
-    DPF_EVENT_REG_SIGNAL(signal_Tab_Removed)
-
     DPF_EVENT_REG_SIGNAL(signal_View_SelectionChanged)
     DPF_EVENT_REG_SIGNAL(signal_View_RenameStartEdit)
     DPF_EVENT_REG_SIGNAL(signal_View_RenameEndEdit)
@@ -44,10 +39,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_CheckSchemeViewIsFileView)
     DPF_EVENT_REG_SLOT(slot_RefreshDir)
     DPF_EVENT_REG_SLOT(slot_NotSupportTreeView)
-
-    DPF_EVENT_REG_SLOT(slot_Tab_Addable)
-    DPF_EVENT_REG_SLOT(slot_Tab_Close)
-    DPF_EVENT_REG_SLOT(slot_Tab_SetAlias)
+    DPF_EVENT_REG_SLOT(slot_CheckMountedDevPath)
 
     DPF_EVENT_REG_SLOT(slot_View_GetVisualGeometry)
     DPF_EVENT_REG_SLOT(slot_View_GetViewItemRect)
@@ -83,11 +75,7 @@ class Workspace : public dpf::Plugin
     // hook events
     DPF_EVENT_REG_HOOK(hook_SendOpenWindow)
     DPF_EVENT_REG_HOOK(hook_SendChangeCurrentUrl)
-
-    DPF_EVENT_REG_HOOK(hook_Tab_SetTabName)
-    DPF_EVENT_REG_HOOK(hook_Tab_Closeable)
-    DPF_EVENT_REG_HOOK(hook_Tab_Allow_Repeat_Url)
-    DPF_EVENT_REG_HOOK(hook_Tab_FileDeleteNotCdComputer)
+    DPF_EVENT_REG_HOOK(hook_Allow_Repeat_Url)
 
     DPF_EVENT_REG_HOOK(hook_DragDrop_CheckDragDropAction)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileDragMove)

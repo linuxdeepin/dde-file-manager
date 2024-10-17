@@ -21,6 +21,7 @@ public:
     static void sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode);
     static void sendDetailViewState(QWidget *sender, bool checked);
     static void sendCd(QWidget *sender, const QUrl &url);
+    static void sendChangeCurrentUrl(quint64 windowId, const QUrl &url);
     static void sendOpenFile(QWidget *sender, const QUrl &url);
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
@@ -28,7 +29,7 @@ public:
     static void sendStopSearch(QWidget *sender);
     static void sendShowFilterView(QWidget *sender, bool visible);
     static void sendCheckAddressInputStr(QWidget *sender, QString *str);
-    static bool sendCheckTabAddable(quint64 windowId);
+    static void sendTabChanged(quint64 windowId, int tabIndex);
     static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
 };
 

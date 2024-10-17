@@ -10,8 +10,6 @@
 
 #include <dfm-framework/dpf.h>
 
-Q_DECLARE_METATYPE(QString *)
-
 using namespace dfmplugin_titlebar;
 DFMGLOBAL_USE_NAMESPACE
 
@@ -41,6 +39,11 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     }
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
+}
+
+void TitleBarEventCaller::sendChangeCurrentUrl(quint64 windowId, const QUrl &url)
+{
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
 
 void TitleBarEventCaller::sendOpenFile(QWidget *sender, const QUrl &url)
@@ -88,9 +91,9 @@ void TitleBarEventCaller::sendCheckAddressInputStr(QWidget *sender, QString *str
     dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_InputAdddressStr_Check", id, str);
 }
 
-bool TitleBarEventCaller::sendCheckTabAddable(quint64 windowId)
+void TitleBarEventCaller::sendTabChanged(quint64 windowId, int tabIndex)
 {
-    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Tab_Changed", windowId, tabIndex);
 }
 
 ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)

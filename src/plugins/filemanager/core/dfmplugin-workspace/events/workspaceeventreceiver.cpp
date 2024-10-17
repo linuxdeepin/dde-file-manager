@@ -5,6 +5,7 @@
 #include "workspaceeventreceiver.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
+#include "utils/filedatamanager.h""
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
 
@@ -63,14 +64,10 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCheckSchemeViewIsFileView);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RefreshDir",
                             WorkspaceHelper::instance(), &WorkspaceHelper::handleRefreshDir);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Tab_Addable",
-                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTabAddable);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Tab_Close",
-                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Tab_SetAlias",
-                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetTabAlias);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_NotSupportTreeView",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleNotSupportTreeView);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_CheckMountedDevPath",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCheckMountedDevPath);
 
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetVisualGeometry",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetVisualGeometry);
@@ -133,8 +130,6 @@ void WorkspaceEventReceiver::initConnection()
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewTab,
-                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult,
@@ -152,33 +147,9 @@ void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, 
     WorkspaceHelper::instance()->switchViewMode(windowId, mode);
 }
 
-void WorkspaceEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QUrl &url)
-{
-    WorkspaceHelper::instance()->openUrlInNewTab(windowId, url);
-}
-
 void WorkspaceEventReceiver::handleShowCustomTopWidget(quint64 windowId, const QString &scheme, bool visible)
 {
     WorkspaceHelper::instance()->setCustomTopWidgetVisible(windowId, scheme, visible);
-}
-
-bool WorkspaceEventReceiver::handleTabAddable(quint64 windowId)
-{
-    auto widget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
-    if (!widget)
-        return false;
-
-    return widget->canAddNewTab();
-}
-
-void WorkspaceEventReceiver::handleCloseTabs(const QUrl &url)
-{
-    WorkspaceHelper::instance()->closeTab(url);
-}
-
-void WorkspaceEventReceiver::handleSetTabAlias(const QUrl &url, const QString &name)
-{
-    WorkspaceHelper::instance()->setTabAlias(url, name);
 }
 
 void WorkspaceEventReceiver::handleSelectFiles(quint64 windowId, const QList<QUrl> &files)
@@ -430,4 +401,9 @@ void WorkspaceEventReceiver::handleSetAlwaysOpenInCurrentWindow(const quint64 wi
 void WorkspaceEventReceiver::handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth)
 {
     WorkspaceHelper::instance()->aboutToChangeViewWidth(windowID, deltaWidth);
+}
+
+bool WorkspaceEventReceiver::handleCheckMountedDevPath(const QUrl &url)
+{
+    return FileDataManager::instance()->isMountedDevPath(url);
 }

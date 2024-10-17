@@ -1,13 +1,13 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tabbar.h"
 #include "tab.h"
-#include "tabclosebutton.h"
-#include "events/workspaceeventcaller.h"
-#include "utils/workspacehelper.h"
-#include "utils/filedatamanager.h"
+#include "titlebarwidget.h"
+#include "dfmplugin_titlebar_global.h"
+#include "utils/titlebarhelper.h"
+#include "events/titlebareventcaller.h"
 
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/dfm_event_defines.h>
@@ -16,14 +16,17 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/dfm_global_defines.h>
-
 #include <dfm-framework/event/event.h>
 
+#include <DIconButton>
+
+#include <QDir>
 #include <QUrl>
 #include <QEvent>
 #include <QMouseEvent>
 #include <QPropertyAnimation>
 #include <QGraphicsSceneMouseEvent>
+#include <QCursor>
 
 #include <unistd.h>
 
@@ -32,7 +35,7 @@ inline constexpr int kCloseButtonBigSize { 36 };
 inline constexpr int kCloseButtonSmallSize { 30 };
 
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_workspace;
+DPTITLEBAR_USE_NAMESPACE
 
 TabBar::TabBar(QWidget *parent)
     : QGraphicsView(parent)
@@ -43,6 +46,7 @@ TabBar::TabBar(QWidget *parent)
 
 TabBar::~TabBar()
 {
+    disconnect(this, &TabBar::currentChanged, nullptr, nullptr);
     for (int index = tabList.count() - 1; index >= 0; --index) {
         removeTab(index);
     }
@@ -54,13 +58,7 @@ int TabBar::createTab()
     tabList.append(tab);
     scene->addItem(tab);
 
-    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
-    WorkspaceEventCaller::sendTabAdded(thisWinID);
-
-    if (isHidden() && count() >= 2) {
-        show();
-        emit tabBarShown();
-    }
+    Q_EMIT newTabCreated();
 
     int index = count() - 1;
 
@@ -73,13 +71,14 @@ int TabBar::createTab()
     connect(tab, &Tab::draggingStarted, this, &TabBar::onTabDragStarted);
     connect(tab, &Tab::requestActiveNextTab, this, &TabBar::activateNextTab);
     connect(tab, &Tab::requestActivePreviousTab, this, &TabBar::activatePreviousTab);
+    connect(tab, &Tab::closeRequested, this, &TabBar::onTabCloseButtonClicked);
 
     lastAddTabState = true;
     setCurrentIndex(index);
     lastAddTabState = false;
 
-    tabAddableChanged(count() < kMaxTabCount);
-
+    updateAddTabButtonState();
+    updateTabCloseButtonVisibility();
     return index;
 }
 
@@ -90,37 +89,13 @@ void TabBar::removeTab(const int index, const bool &remainState)
     tabList.removeAt(index);
     tab->deleteLater();
 
-    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
-    WorkspaceEventCaller::sendTabRemoved(thisWinID, index);
+    Q_EMIT tabRemoved(index);
 
-    if (tabCloseButton->getClosingIndex() <= count() - 1
-        && tabCloseButton->getClosingIndex() >= 0) {
-        lastDeleteState = remainState;
-    } else {
-        lastAddTabState = false;
-        // handle tab close button display position
-        if (remainState) {
-            QMouseEvent *event = new QMouseEvent(QMouseEvent::MouseMove,
-                                                 mapFromGlobal(QCursor::pos()),
-                                                 Qt::NoButton,
-                                                 Qt::NoButton,
-                                                 Qt::NoModifier);
-            mouseMoveEvent(event);
-        }
-    }
-
-    if (index < count())
-        setCurrentIndex(index);
-    else
+    if (currentIndex >= count())
         setCurrentIndex(count() - 1);
 
-    emit tabAddableChanged(count() < kMaxTabCount);
-
-    if (count() < 2) {
-        lastDeleteState = false;
-        hide();
-        emit tabBarHidden();
-    }
+    updateAddTabButtonState();
+    updateTabCloseButtonVisibility();
 }
 
 int TabBar::getCurrentIndex() const
@@ -177,7 +152,7 @@ void TabBar::setCurrentUrl(const QUrl &url)
         tab->setCurrentUrl(url);
 }
 
-void TabBar::closeTab(quint64 winId, const QUrl &url)
+void TabBar::closeTab(const QUrl &url)
 {
     for (int i = count() - 1; i >= 0; --i) {
         Tab *tab = tabAt(i);
@@ -186,16 +161,16 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
 
         QUrl curUrl = tab->getCurrentUrl();
         // Some URLs cannot be compared universally
-        bool closeable { dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_Closeable",
-                                              curUrl, url) };
+        bool closeable { dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_Closeable",
+                                            curUrl, url) };
 
         static const QUrl &kGotoWhenDevRemoved = QUrl("computer:///");
         if (closeable || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
-                if (isMountedDevPath(url)) {
+                if (dpfSlotChannel->push("dfmplugin_workspace", "slot_CheckMountedDevPath", url).toBool()) {
                     redirectToWhenDelete = kGotoWhenDevRemoved;
-                } else if (dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_FileDeleteNotCdComputer", curUrl, &redirectToWhenDelete)) {
+                } else if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_FileDeleteNotCdComputer", curUrl, &redirectToWhenDelete)) {
                     if (!redirectToWhenDelete.isValid())
                         redirectToWhenDelete = kGotoWhenDevRemoved;
                 } else if (url.scheme() == Global::Scheme::kFile){   // redirect to upper directory
@@ -233,6 +208,7 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
                     redirectToWhenDelete = kGotoWhenDevRemoved;
                 }
 
+                auto winId = TitleBarHelper::windowId(this);
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
             } else {
                 removeTab(i);
@@ -241,30 +217,14 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
     }
 }
 
-void TabBar::onTabCloseButtonHovered(int closingIndex)
-{
-    if (closingIndex < 0 || closingIndex >= count())
-        return;
-    Tab *tab = tabList.at(closingIndex);
-    if (!tab)
-        return;
-    tab->setHovered(true);
-    tab->update();
-}
-
-void TabBar::onTabCloseButtonUnHovered(int closingIndex)
-{
-    if (closingIndex < 0 || closingIndex >= count())
-        return;
-    Tab *tab = tabList.at(closingIndex);
-    tab->setHovered(false);
-    tab->update();
-}
-
 void TabBar::onTabCloseButtonClicked()
 {
-    int closingIndex = tabCloseButton->getClosingIndex();
+    auto tab = dynamic_cast<Tab *>(sender());
+    if (!tab)
+        return;
 
+    int closingIndex = tabList.indexOf(tab);
+    
     // effect handler
     if (closingIndex == count() - 1) {
         historyWidth = count() * tabList.at(0)->width();
@@ -272,10 +232,6 @@ void TabBar::onTabCloseButtonClicked()
         historyWidth = (count() - 1) * tabList.at(0)->width();
     }
     emit tabCloseRequested(closingIndex, true);
-
-    // redirect tab close button's closingIndex
-    if (closingIndex >= count())
-        tabCloseButton->setClosingIndex(--closingIndex);
 }
 
 void TabBar::onMoveNext(Tab *tab)
@@ -290,8 +246,6 @@ void TabBar::onMoveNext(Tab *tab)
 #endif
 
     ++tabIndex;
-    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
-    WorkspaceEventCaller::sendTabMoved(thisWinID, tabIndex - 1, tabIndex);
     emit tabMoved(tabIndex - 1, tabIndex);
 
     setCurrentIndex(tabIndex);
@@ -309,8 +263,6 @@ void TabBar::onMovePrevius(Tab *tab)
     tabList.swapItemsAt(tabIndex, tabIndex - 1);
 #endif
     --tabIndex;
-    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
-    WorkspaceEventCaller::sendTabMoved(thisWinID, tabIndex + 1, tabIndex);
     emit tabMoved(tabIndex + 1, tabIndex);
 
     setCurrentIndex(tabIndex);
@@ -318,7 +270,7 @@ void TabBar::onMovePrevius(Tab *tab)
 
 void TabBar::onRequestNewWindow(const QUrl url)
 {
-    WorkspaceEventCaller::sendOpenWindow(QList<QUrl>() << url);
+    TitleBarEventCaller::sendOpenWindow(url);
 }
 
 void TabBar::onAboutToNewWindow(Tab *tab)
@@ -332,7 +284,6 @@ void TabBar::onTabClicked()
     if (!tab)
         return;
     setCurrentIndex(tabList.indexOf(tab));
-    tabCloseButton->setActiveWidthTab(true);
 }
 
 void TabBar::onTabDragFinished()
@@ -340,10 +291,7 @@ void TabBar::onTabDragFinished()
     Tab *tab = qobject_cast<Tab *>(sender());
     if (!tab)
         return;
-    tabCloseButton->setZValue(2);
-    if (tab->isDragOutSide())
-        tabCloseButton->hide();
-    lastDeleteState = false;
+
     updateScreen();
 
     //hide border left line
@@ -354,8 +302,6 @@ void TabBar::onTabDragFinished()
 
 void TabBar::onTabDragStarted()
 {
-    tabCloseButton->setZValue(0);
-
     Tab *tab = qobject_cast<Tab *>(sender());
     if (!tab)
         return;
@@ -387,29 +333,10 @@ void TabBar::activatePreviousTab()
         setCurrentIndex(currentIndex - 1);
 }
 
-void TabBar::closeTabAndRemoveCachedMnts(const QString &id)
-{
-    if (!allMntedDevs.contains(id))
-        return;
-    for (const auto &url : allMntedDevs.values(id)) {
-        this->closeTab(WorkspaceHelper::instance()->windowId(this), url);
-        FileDataManager::instance()->cleanRoot(url);
-        emit InfoCacheController::instance().removeCacheFileInfo({ url });
-        WatcherCache::instance().removeCacheWatcherByParent(url);
-    }
-    allMntedDevs.remove(id);
-}
-
-void TabBar::cacheMnt(const QString &id, const QString &mnt)
-{
-    if (!mnt.isEmpty())
-        allMntedDevs.insert(id, QUrl::fromLocalFile(mnt));
-}
-
 void TabBar::resizeEvent(QResizeEvent *event)
 {
     scene->setSceneRect(0, 0, width(), height());
-    historyWidth = width();
+    historyWidth = getTabAreaWidth();
     updateScreen();
     QGraphicsView::resizeEvent(event);
 }
@@ -417,50 +344,77 @@ void TabBar::resizeEvent(QResizeEvent *event)
 bool TabBar::event(QEvent *event)
 {
     if (event->type() == event->Leave) {
-        tabCloseButton->hide();
-        lastDeleteState = false;
-        historyWidth = width();
+        historyWidth = getTabAreaWidth();
         updateScreen();
     }
     return QGraphicsView::event(event);
 }
 
+void TabBar::mousePressEvent(QMouseEvent *event)
+{
+    // 检查是否点击在标签上
+    bool onTab = false;
+    for (Tab *tab : tabList) {
+        if (tab->sceneBoundingRect().contains(event->pos())) {
+            onTab = true;
+            break;
+        }
+    }
+
+    if (!onTab) {
+        // 如果不在标签上,开始窗口拖拽
+        dragStartPosition = event->globalPos();
+        isDragging = true;
+        setCursor(Qt::SizeAllCursor);
+    } else {
+        // 如果在标签上,让 QGraphicsView 处理事件
+        QGraphicsView::mousePressEvent(event);
+    }
+
+    QWidget *parentWidget = this->parentWidget();
+    if (parentWidget) {
+        QMouseEvent *newEvent = new QMouseEvent(event->type(), parentWidget->mapFromGlobal(event->globalPos()),
+                                                event->button(), event->buttons(), event->modifiers());
+        QCoreApplication::sendEvent(parentWidget, newEvent);
+        delete newEvent;
+    }
+}
+
 void TabBar::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!tabCloseButton->isVisible())
-        tabCloseButton->show();
-
-    int closingIndex = -1;
-    for (int i = 0; i < tabList.count(); i++) {
-        Tab *tab = tabList.at(i);
-        if (tab->sceneBoundingRect().contains(event->pos())) {
-            closingIndex = i;
+    if (isDragging) {
+        // 如果正在拖拽,移动窗口
+        QWidget *window = this->window();
+        if (window->isMaximized() || window->isFullScreen()) {
+            // 如果窗口已最大化或全屏,先还原
+            window->showNormal();
+            // 调整拖拽起始位置,使鼠标保持在原来的相对位置
+            dragStartPosition = event->globalPos();
         } else {
-            tab->setHovered(false);
-            tab->update();
+            QPoint delta = event->globalPos() - dragStartPosition;
+            window->move(window->pos() + delta);
+            dragStartPosition = event->globalPos();
         }
-    }
-
-    if (closingIndex < count() && closingIndex >= 0) {
-        Tab *tab = tabList.at(closingIndex);
-        tabCloseButton->setClosingIndex(closingIndex);
-        int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
-        tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize) / 2 - 1);
-
-        if (closingIndex == currentIndex)
-            tabCloseButton->setActiveWidthTab(true);
-        else
-            tabCloseButton->setActiveWidthTab(false);
-
     } else {
-        if (lastDeleteState) {
-            lastDeleteState = false;
-            updateScreen();
-        }
+        // 如果不是拖拽,让 QGraphicsView 处理事件
+        QGraphicsView::mouseMoveEvent(event);
     }
 
-    QGraphicsView::mouseMoveEvent(event);
+    for (Tab *tab : tabList) {
+        bool hovered = tab->sceneBoundingRect().contains(event->pos());
+        tab->setHovered(hovered);
+        tab->update();
+    }
+}
+
+void TabBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (isDragging) {
+        isDragging = false;
+        // 恢复默认鼠标样式
+        unsetCursor();
+    }
+    QGraphicsView::mouseReleaseEvent(event);
 }
 
 bool TabBar::eventFilter(QObject *obj, QEvent *event)
@@ -502,49 +456,34 @@ void TabBar::initializeUI()
     setScene(scene);
     scene->installEventFilter(this);
 
-    tabCloseButton = new TabCloseButton;
-    tabCloseButton->setZValue(4);
-    tabCloseButton->hide();
-    scene->addItem(tabCloseButton);
+    tabAddButton = new DIconButton(DStyle::SP_IncreaseElement, this);
+    tabAddButton->setObjectName("NewTabButton");
+    tabAddButton->setFixedSize(kToolButtonSize, kToolButtonSize);
+    tabAddButton->setFlat(true);
+    scene->addWidget(tabAddButton);
+
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<DIconButton *>(tabAddButton), AcName::kAcViewTabBarNewButton);
+#endif
 
     setMouseTracking(true);
     setFrameShape(QFrame::NoFrame);
 
     initializeConnections();
-    hide();
 }
 
 void TabBar::initializeConnections()
 {
-    QObject::connect(tabCloseButton, &TabCloseButton::hovered, this, &TabBar::onTabCloseButtonHovered);
-    QObject::connect(tabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
-    QObject::connect(tabCloseButton, &TabCloseButton::clicked, this, &TabBar::onTabCloseButtonClicked);
-
-    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, &TabBar::cacheMnt);
-    QObject::connect(DevProxyMng, &DeviceProxyManager::protocolDevMounted, this, &TabBar::cacheMnt);
-    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevAdded, this, [this](const QString &id) { cacheMnt(id, ""); });
-    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
-    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &TabBar::closeTabAndRemoveCachedMnts);
-    QObject::connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
-
-    for (auto id : DevProxyMng->getAllBlockIds()) {
-        auto datas = DevProxyMng->queryBlockInfo(id);
-        const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
-        cacheMnt(id, mntPath);
-    }
-    for (auto id : DevProxyMng->getAllProtocolIds()) {
-        auto datas = DevProxyMng->queryProtocolInfo(id);
-        const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
-        if (!mntPath.isEmpty())
-            allMntedDevs.insert(id, QUrl::fromLocalFile(mntPath));
-    }
+    QObject::connect(tabAddButton, &DIconButton::clicked, this, &TabBar::tabAddButtonClicked);
 }
 
 void TabBar::updateScreen()
 {
     int counter = 0;
     int lastX = 0;
-    historyWidth = width();
+    historyWidth = getTabAreaWidth();
+
     for (Tab *tab : tabList) {
         QSize tabSize = tabSizeHint(counter);
         QRect rect(lastX, 0, tabSize.width(), tabSize.height());
@@ -557,7 +496,7 @@ void TabBar::updateScreen()
 
         if (!lastAddTabState) {
             QPropertyAnimation *animation = new QPropertyAnimation(tab, "geometry");
-            animation->setDuration(100);
+            animation->setDuration(50);
             animation->setStartValue(tab->geometry());
             animation->setEndValue(rect);
             animation->start(QAbstractAnimation::DeleteWhenStopped);
@@ -572,18 +511,31 @@ void TabBar::updateScreen()
         counter++;
     }
 
+    // update tabAddButton position
+    if (tabAddButton) {
+        int btnX = lastX + 10;
+        int btnY = (height() - tabAddButton->height()) / 2;
+        QRect rect(btnX, btnY, tabAddButton->size().width(), tabAddButton->size().height());
+        if (!lastAddTabState) {
+            QPropertyAnimation *animation = new QPropertyAnimation(tabAddButton, "geometry");
+            animation->setDuration(50);
+            animation->setStartValue(tabAddButton->geometry());
+            animation->setEndValue(rect);
+            animation->start(QAbstractAnimation::DeleteWhenStopped);
+        } else {
+            tabAddButton->setGeometry(rect);
+        }
+    }
+
     updateSceneRect(scene->sceneRect());
 }
 
 QSize TabBar::tabSizeHint(const int &index)
 {
-    if (lastDeleteState)
-        return QSize(tabList.at(0)->width(), tabList.at(0)->height());
-
-    int averageWidth = historyWidth / count();
+    int averageWidth = qMin(120, historyWidth / count());
 
     if (index == count() - 1)
-        return (QSize(historyWidth - averageWidth * (count() - 1), height()));
+        return (QSize(qMin(120, historyWidth - averageWidth * (count() - 1)), height()));
     else
         return (QSize(averageWidth, height()));
 }
@@ -595,27 +547,17 @@ int TabBar::count() const
 
 void TabBar::handleTabAnimationFinished(const int index)
 {
-    if (tabCloseButton->getClosingIndex() == index) {
-        Tab *tab = tabList.at(index);
-        int btnSize = height() > kTabHeightScaling ? kCloseButtonBigSize : kCloseButtonSmallSize;
-        tabCloseButton->setSize(btnSize);
-        tabCloseButton->setPos(tab->x() + tab->width() - btnSize - 4, (btnSize - kCloseButtonSmallSize) / 2 - 1);
-    }
+}
 
-    if ((tabCloseButton->getClosingIndex() >= count()
-         || tabCloseButton->getClosingIndex() < 0)
-        && lastDeleteState) {
-        lastDeleteState = false;
+void TabBar::updateTabCloseButtonVisibility()
+{
+    int tabCount = tabList.count();
+    for (Tab *tab : tabList) {
+        tab->setShowCloseButton(tabCount > 1);
     }
 }
 
-bool TabBar::isMountedDevPath(const QUrl &url)
+void TabBar::updateAddTabButtonState()
 {
-    for (auto iter = allMntedDevs.cbegin(); iter != allMntedDevs.cend(); ++iter) {
-        auto urls = allMntedDevs.values(iter.key());
-        auto ret = std::find_if(urls.cbegin(), urls.cend(), [url](const QUrl &u) { return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(u, url); });
-        if (ret != urls.cend())
-            return true;
-    }
-    return false;
+    tabAddButton->setEnabled(count() < kMaxTabCount);
 }
