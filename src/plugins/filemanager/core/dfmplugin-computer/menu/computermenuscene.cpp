@@ -176,7 +176,7 @@ void ComputerMenuScene::updateState(QMenu *parent)
         break;
     }
 
-    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", d->windowId).toBool())
+    if (!dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Addable", d->windowId).toBool())
         disabled.append(kOpenInNewTab);
 
     // do not show 'rename' entry for loop devices.

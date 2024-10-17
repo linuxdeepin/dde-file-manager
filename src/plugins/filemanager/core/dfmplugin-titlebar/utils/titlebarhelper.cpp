@@ -109,7 +109,8 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
         }
     }
 
-    window->titlebar()->setMenu(menu);
+    auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar());
+    titleBarWidget->titleBar()->setMenu(menu);
 }
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)

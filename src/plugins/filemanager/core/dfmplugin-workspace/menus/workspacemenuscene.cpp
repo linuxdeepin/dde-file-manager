@@ -174,7 +174,8 @@ void WorkspaceMenuScene::updateState(DMenu *parent)
     if (d->focusFileInfo && FileUtils::isDesktopFileInfo(d->focusFileInfo)
             && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
         renameEnabled = false;
-    if (currentWidget && !currentWidget->canAddNewTab()) {
+
+    if (currentWidget && WorkspaceEventCaller::sendCheckTabAddable(d->windowId)) {
         auto actions = parent->actions();
         for (auto act : actions) {
             const auto &actId = act->property(ActionPropertyKey::kActionID);
@@ -301,7 +302,7 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
         }
     } else if (sceneName == kOpenDirMenuSceneName) {
         if (actionId == dfmplugin_menu::ActionID::kOpenInNewTab) {
-            WorkspaceHelper::instance()->actionNewTab(d->windowId, d->focusFile);
+            WorkspaceEventCaller::sendOpenNewTab(d->windowId, d->focusFile);
             return true;
         }
         if (actionId == dfmplugin_menu::ActionID::kReverseSelect) {

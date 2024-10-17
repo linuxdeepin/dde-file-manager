@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -6,7 +6,7 @@
 #define TAB_H
 
 #include <dfm-base/dfm_base_global.h>
-#include "dfmplugin_workspace_global.h"
+#include "dfmplugin_titlebar_global.h"
 
 #include <QSharedPointer>
 #include <QGraphicsObject>
@@ -15,14 +15,13 @@ namespace dfmbase {
 class AbstractBaseView;
 }
 
-namespace dfmplugin_workspace {
+namespace dfmplugin_titlebar {
 
 class TabPrivate;
 class Tab : public QGraphicsObject
 {
     Q_OBJECT
     Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
-
 public:
     explicit Tab(QGraphicsObject *parent = nullptr);
 
@@ -49,6 +48,8 @@ public:
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    
+    void setShowCloseButton(bool show);
 
 public slots:
     void onFileRootUrlChanged(const QUrl &url);
@@ -63,6 +64,7 @@ signals:
     void draggingStarted();
     void requestActiveNextTab();
     void requestActivePreviousTab();
+    void closeRequested();
 
 protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
@@ -70,6 +72,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 private:
@@ -80,6 +83,6 @@ private:
     QSharedPointer<TabPrivate> d;
 };
 
-}
+} // namespace dfmplugin_titlebar
 
-#endif   // TAB_H
+#endif // TAB_H
