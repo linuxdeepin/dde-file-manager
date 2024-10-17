@@ -164,7 +164,7 @@ void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)
     connect(job, &AbstractBurnJob::requestFailureDialog, this, &BurnJobManager::showOpticalJobFailureDialog);
     connect(job, &AbstractBurnJob::requestErrorMessageDialog, DialogManagerInstance, &DialogManager::showErrorDialog);
     connect(job, &AbstractBurnJob::requestCloseTab, this, [](const QUrl &url) {
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Close", url);
     });
     connect(job, &AbstractBurnJob::requestReloadDisc, this, [](const QString &devId) {
         DevMngIns->mountBlockDevAsync(devId, {}, [devId](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {

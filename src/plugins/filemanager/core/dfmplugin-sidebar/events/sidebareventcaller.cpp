@@ -43,5 +43,5 @@ void SideBarEventCaller::sendShowFilePropertyDialog(const QUrl &url)
 
 bool SideBarEventCaller::sendCheckTabAddable(quint64 windowId)
 {
-    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+    return dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Addable", windowId).toBool();
 }

@@ -180,7 +180,7 @@ void Optical::bindEvents()
                             &OpticalEventReceiver::handleDropFiles);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleBlockShortcutPaste);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_Closeable", &OpticalEventReceiver::instance(),
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Tab_Closeable", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleTabCloseable);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", &OpticalEventReceiver::instance(), &OpticalEventReceiver::detailViewIcon);
@@ -205,7 +205,7 @@ void Optical::onDiscChanged(const QString &id)
     const auto &discUrl { OpticalHelper::transDiscRootById(id) };
     if (discUrl.isValid()) {
         emit OpticalSignalManager::instance()->discUnmounted(discUrl);
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", discUrl);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Close", discUrl);
     }
 }
 

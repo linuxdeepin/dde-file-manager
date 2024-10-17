@@ -15,8 +15,14 @@
 
 #include <QHBoxLayout>
 
+DWIDGET_BEGIN_NAMESPACE
+class DTitlebar;
+class DIconButton;
+DWIDGET_END_NAMESPACE
+
 namespace dfmplugin_titlebar {
 
+class TabBar;
 class TitleBarWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
@@ -25,6 +31,7 @@ public:
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
     NavWidget *navWidget() const;
+    DTitlebar *titleBar() const;
 
     void startSpinner();
     void stopSpinner();
@@ -32,10 +39,18 @@ public:
 
     void setViewModeState(int mode);
 
+    void initTabBar(const quint64 windowId);
+    void currentTabChanged(const int index);
+
 public slots:
     void handleHotkeyCtrlF();
     void handleHotkeyCtrlL();
     void handleHotketSwitchViewMode(int mode);
+    void handleHotketNextTab();
+    void handleHotketPreviousTab();
+    void handleHotketCloseCurrentTab();
+    void handleHotketCreateNewTab();
+    void handleHotketActivateTab(const int index);
 
 private:
     void initializeUi();
@@ -46,6 +61,7 @@ private:
     void showSearchButton();
     bool eventFilter(QObject *watched, QEvent *event) override;
     void toggleSearchButtonState(bool switchBtn = true);
+    TabBar *createTabBar(const quint64 windowId);
 
 signals:
     void currentUrlChanged(const QUrl &url);
@@ -56,9 +72,16 @@ private slots:
     void searchBarActivated();
     void searchBarDeactivated();
 
+    void onTabCreated();
+    void onTabRemoved(int index);
+    void onTabMoved(int from, int to);
+
 private:
     QUrl titlebarUrl;
-    QHBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
+    DTitlebar *topBar { nullptr };
+    QHBoxLayout *topBarCustomLayout { nullptr };
+    QVBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
+    QHBoxLayout *bottomBarLayout { nullptr };
     NavWidget *curNavWidget { nullptr };   // 导航小部件
     AddressBar *addressBar { nullptr };   // 地址编辑栏
     DToolButton *searchButton { nullptr };   // 搜索栏按钮

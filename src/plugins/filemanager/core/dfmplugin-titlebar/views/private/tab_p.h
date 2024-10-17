@@ -1,12 +1,12 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef TABPRIVATE_H
-#define TABPRIVATE_H
+#ifndef TAB_P_H
+#define TAB_P_H
 
 #include <dfm-base/dfm_base_global.h>
-#include "dfmplugin_workspace_global.h"
+#include "dfmplugin_titlebar_global.h"
 
 #include <QVariant>
 #include <QUrl>
@@ -19,7 +19,7 @@ namespace dfmbase {
 class AbstractBaseView;
 }
 
-namespace dfmplugin_workspace {
+namespace dfmplugin_titlebar {
 
 class TabPrivate
 {
@@ -32,6 +32,10 @@ public:
     QString tabAlias;
     QUrl url;
     QPointF originPos;
+
+    QRect closeButtonRect;
+    bool closeButtonHovered = false;
+    bool showCloseButton = true;
 
     int tabIndex = -1;
     int width = 0;
@@ -47,4 +51,4 @@ public:
 
 }
 
-#endif   // TABPRIVATE_H
+#endif // TAB_P_H

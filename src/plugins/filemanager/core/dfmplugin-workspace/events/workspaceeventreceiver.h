@@ -29,11 +29,7 @@ public:
 
 public slots:
     void handleTileBarSwitchModeTriggered(quint64 windowId, int mode);
-    void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
     void handleShowCustomTopWidget(quint64 windowId, const QString &scheme, bool visible);
-    bool handleTabAddable(quint64 windowId);
-    void handleCloseTabs(const QUrl &url);
-    void handleSetTabAlias(const QUrl &url, const QString &name);
     void handleSelectFiles(quint64 windowId, const QList<QUrl> &files);
     void handleSelectAll(quint64 windowId);
     void handleReverseSelect(quint64 windowId);
@@ -80,6 +76,8 @@ public slots:
     void handleRegisterDataCache(const QString &scheme);
     void handleSetAlwaysOpenInCurrentWindow(const quint64 windowID);
     void handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth);
+
+    bool handleCheckMountedDevPath(const QUrl &url);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

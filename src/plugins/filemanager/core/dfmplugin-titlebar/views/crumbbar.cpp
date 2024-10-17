@@ -7,6 +7,7 @@
 #include "models/crumbmodel.h"
 #include "utils/crumbmanager.h"
 #include "utils/titlebarhelper.h"
+#include "utils/tabbarmanager.h"
 #include "events/titlebareventcaller.h"
 
 #include <dfm-base/base/standardpaths.h>
@@ -379,7 +380,7 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
         return;
 
     quint64 id { window()->internalWinId() };
-    bool tabAddable { TitleBarEventCaller::sendCheckTabAddable(id) };
+    bool tabAddable { TabBarManager::instance()->canAddNewTab(id) };
     bool displayIcon { false };   // TODO: use dde-dconfig
     bool displayNewWindowAndTab { TitleBarHelper::newWindowAndTabEnabled };
     QMenu *menu { new QMenu() };

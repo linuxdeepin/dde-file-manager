@@ -187,7 +187,7 @@ void Search::bindEvents()
                             SearchHelper::instance(), &SearchHelper::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
                             SearchHelper::instance(), &SearchHelper::blockPaste);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url",
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Allow_Repeat_Url",
                             SearchHelper::instance(), &SearchHelper::allowRepeatUrl);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch",
                             SearchHelper::instance(), &SearchHelper::searchIconName);

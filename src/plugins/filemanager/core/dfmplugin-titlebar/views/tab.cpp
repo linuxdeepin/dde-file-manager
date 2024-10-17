@@ -1,17 +1,16 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tab.h"
 #include "private/tab_p.h"
-#include "utils/filedatamanager.h"
 
 #include <dfm-base/interfaces/abstractbaseview.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
-
 #include <dfm-framework/event/event.h>
+#include <dfm-framework/dpf.h>
 
 #include <DWidgetUtil>
 #include <DPalette>
@@ -24,14 +23,20 @@
 #include <QGraphicsScene>
 #include <QDrag>
 #include <QMimeData>
+#include <QApplication>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_workspace;
+
+DPTITLEBAR_USE_NAMESPACE
+
+TabPrivate::TabPrivate()
+{
+}
 
 Tab::Tab(QGraphicsObject *parent)
     : QGraphicsObject(parent),
-      d(new TabPrivate())
+    d(new TabPrivate())
 {
     setAcceptHoverEvents(true);
     setFlags(ItemIsSelectable);
@@ -50,7 +55,7 @@ void Tab::setCurrentUrl(const QUrl &url)
     QString fileName = getDisplayNameByUrl(url);
 
     d->tabAlias.clear();
-    dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_SetTabName", url, &d->tabAlias);
+    dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_SetTabName", url, &d->tabAlias);
 
     setTabText(fileName);
 }
@@ -149,51 +154,63 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     QPen pen = painter->pen();
     pen.setWidth(1);
 
-    // draw text
     QFont font;
-    font.setPixelSize(12);
-
     if (isChecked()) {
-        font.setWeight(QFont::Medium);
+        font.setBold(true);
     } else {
-        font.setWeight(QFont::Normal);
+        font.setBold(false);
     }
+
+    int tabMargin = 10;
+    int blueSquareWidth = isChecked() ? 5 : 0;
+    int blueSquareMargin = isChecked() ? 4 : 0;
+    int buttonSize = (d->hovered && d->showCloseButton) ? 16 : 0;
+    int buttonMargin = (d->hovered && d->showCloseButton) ? 4 : 0;
+
+    int textMargin = blueSquareWidth + blueSquareMargin;
+    int closeButtonMargin = buttonSize + buttonMargin;
 
     painter->setFont(font);
     QFontMetrics fm(font);
     QString tabName = d->tabAlias.isEmpty() ? d->tabText : d->tabAlias;
-    QString str = fm.elidedText(tabName, Qt::ElideRight, d->width - 10);
+    QString str = fm.elidedText(tabName, Qt::ElideRight, d->width - tabMargin - textMargin);
+    QString buttonHoveredStr = fm.elidedText(tabName, Qt::ElideRight, d->width - tabMargin - textMargin - buttonSize);
 
     DPalette pal = DPaletteHelper::instance()->palette(widget);
     QColor color;
 
     // draw backgound
-    if (isChecked()) {
-        color = pal.color(QPalette::Active, QPalette::Base);
-        color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, 0, 0, 0, +51);
-        painter->fillRect(boundingRect(), color);
-
-        color = pal.color(QPalette::Active, QPalette::Highlight);
-        QPen tPen = painter->pen();
-        tPen.setColor(color);
-        painter->setPen(tPen);
-        painter->drawText((d->width - fm.horizontalAdvance(str)) / 2, (d->height - fm.height()) / 2,
-                          fm.horizontalAdvance(str), fm.height(), 0, str);
-    } else if (d->hovered || (d->hovered && !isChecked())) {
-        color = pal.color(QPalette::Active, QPalette::Light);
-        color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, +2, +2, +2, +51);
-        painter->fillRect(boundingRect(), color);
-        painter->drawText((d->width - fm.horizontalAdvance(str)) / 2, (d->height - fm.height()) / 2,
-                          fm.horizontalAdvance(str), fm.height(), 0, str);
-    } else {
+    if (d->hovered) {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             color = QColor(235, 235, 235, 204);
         else
             color = QColor(30, 30, 30, 204);
         painter->fillRect(boundingRect(), color);
-        painter->drawText((d->width - fm.horizontalAdvance(str)) / 2, (d->height - fm.height()) / 2,
-                          fm.horizontalAdvance(str), fm.height(), 0, str);
+        
+    } else {
+        color = pal.color(QPalette::Active, QPalette::Base);
+        painter->fillRect(boundingRect(), color);
     }
+
+    if (isChecked()) {
+        QColor blueColor = pal.color(QPalette::Active, QPalette::Highlight);
+        painter->fillRect(QRect((d->width - fm.horizontalAdvance(str) - textMargin) / 2, (d->height - blueSquareWidth) / 2, blueSquareWidth, blueSquareWidth), blueColor);
+    }
+
+    // draw text
+    if (isChecked()) {
+        color = pal.color(QPalette::Active, QPalette::Text);
+        QPen tPen = painter->pen();
+        tPen.setColor(color);
+        painter->setPen(tPen);
+    } else {
+        color = pal.color(QPalette::Inactive, QPalette::Text);
+        QPen tPen = painter->pen();
+        tPen.setColor(color);
+        painter->setPen(tPen);
+    }
+    painter->drawText((d->width - fm.horizontalAdvance(str) - textMargin) / 2  + textMargin, (d->height - fm.height()) / 2,
+                          fm.horizontalAdvance(str), fm.height(), 0, buttonHoveredStr);
 
     // draw line
     pen.setColor(pal.color(QPalette::Inactive, QPalette::Shadow));
@@ -202,9 +219,37 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     int x = static_cast<int>(boundingRect().width());
 
     qDrawShadeLine(painter, QPoint(x, 0), QPoint(x, y), pal);
+    if (!isChecked()) {
+        qDrawShadeLine(painter, QPoint(0, y), QPoint(x, y), pal);
+    }
+
     QPalette::ColorGroup cp = isChecked() || d->hovered ? QPalette::Active : QPalette::Inactive;
     pen.setColor(pal.color(cp, QPalette::WindowText));
     painter->setPen(pen);
+
+    // 绘制关闭按钮
+    if (d->hovered && d->showCloseButton) {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+
+        d->closeButtonRect = QRect(d->width - buttonSize - buttonMargin, (d->height - buttonSize) / 2, buttonSize, buttonSize);
+
+        QColor buttonColor = d->closeButtonHovered ? pal.color(QPalette::Highlight) : pal.color(QPalette::Text);
+        painter->setPen(QPen(buttonColor, 1.5));
+
+        painter->drawLine(d->closeButtonRect.topLeft() + QPoint(4, 4), d->closeButtonRect.bottomRight() + QPoint(-4, -4));
+        painter->drawLine(d->closeButtonRect.topRight() + QPoint(-4, 4), d->closeButtonRect.bottomLeft() + QPoint(4, -4));
+        
+        painter->restore();
+    }
+}
+
+void Tab::setShowCloseButton(bool show)
+{
+    if (d->showCloseButton != show) {
+        d->showCloseButton = show;
+        update();
+    }
 }
 
 void Tab::onFileRootUrlChanged(const QUrl &url)
@@ -301,6 +346,11 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void Tab::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
+        if (d->closeButtonRect.contains(event->pos().toPoint())) {
+            emit closeRequested();
+            return;
+        }
+
         d->pressed = true;
         d->originPos = pos();
         setZValue(3);
@@ -312,6 +362,16 @@ void Tab::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     d->hovered = true;
     QGraphicsObject::hoverEnterEvent(event);
+}
+
+void Tab::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    bool wasHovered = d->closeButtonHovered;
+    d->closeButtonHovered = d->closeButtonRect.contains(event->pos().toPoint());
+    if (wasHovered != d->closeButtonHovered) {
+        update(d->closeButtonRect);
+    }
+    QGraphicsObject::hoverMoveEvent(event);
 }
 
 void Tab::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -375,3 +435,4 @@ QString Tab::getDisplayNameByUrl(const QUrl &url) const
 
     return url.fileName();
 }
+

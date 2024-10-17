@@ -8,6 +8,7 @@
 #include "views/renamebar.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
+#include "utils/filedatamanager.h"
 #include "events/workspaceeventreceiver.h"
 #include "menus/workspacemenuscene.h"
 #include "menus/sortanddisplaymenuscene.h"
@@ -74,6 +75,8 @@ bool Workspace::start()
     auto ret = DConfigManager::instance()->addConfig(DConfigInfo::kConfName, &err);
     if (!ret)
         fmWarning() << "File Preview: create dconfig failed: " << err;
+
+    FileDataManager::instance()->initMntedDevsCache();
 
     return true;
 }

@@ -10,13 +10,14 @@
 
 #include <dfm-framework/event/event.h>
 
+#include <DIconButton>
 #include <DGuiApplicationHelper>
-#include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
 
 #include <QAbstractButton>
+#include <QProxyStyle>
 
 using namespace dfmplugin_titlebar;
 
@@ -156,26 +157,27 @@ void NavWidget::onNewWindowOpended()
 
 void NavWidget::initializeUi()
 {
-    d->navBackButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
+    d->navBackButton = new DIconButton(DStyle::SP_ArrowLeave, this);
+    d->navBackButton->setFlat(true);
     d->navBackButton->setDisabled(true);
     d->navBackButton->setToolTip(tr("back"));
-    d->navForwardButton = new DButtonBoxButton(QStyle::SP_ArrowForward);
+
+    d->navForwardButton = new DIconButton(DStyle::SP_ArrowEnter, this);
+    d->navForwardButton->setFlat(true);
     d->navForwardButton->setDisabled(true);
     d->navForwardButton->setToolTip(tr("forward"));
-    d->buttonBox = new DButtonBox;
+
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->navBackButton), AcName::kAcComputerTitleBarBackBtn);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->navForwardButton), AcName::kAcComputerTitleBarForwardBtn);
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(d->buttonBox), AcName::kAcComputerTitleBarBtnBox);
 #endif
     d->hboxLayout = new QHBoxLayout;
 
-    d->buttonBox->setButtonList({ d->navBackButton, d->navForwardButton }, false);
     this->setLayout(d->hboxLayout);
-    d->hboxLayout->addWidget(d->buttonBox);
+    d->hboxLayout->addWidget(d->navBackButton);
+    d->hboxLayout->addWidget(d->navForwardButton);
 
     d->hboxLayout->setSpacing(0);
     d->hboxLayout->setContentsMargins(0, 0, 0, 0);
@@ -204,11 +206,11 @@ void NavWidget::changeSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     QSize smallSize(24, 24);
-    QSize normalSize(36, 36);
+    QSize normalSize(30, 30);
     d->navBackButton->setFixedSize(DSizeModeHelper::element(smallSize, normalSize));
     d->navForwardButton->setFixedSize(DSizeModeHelper::element(smallSize, normalSize));
 #else
-    QSize normalSize(36, 36);
+    QSize normalSize(30, 30);
     d->navBackButton->setFixedSize(normalSize);
     d->navForwardButton->setFixedSize(normalSize);
 #endif

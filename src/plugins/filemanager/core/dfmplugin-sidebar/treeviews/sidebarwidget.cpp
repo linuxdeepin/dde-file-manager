@@ -29,7 +29,6 @@
 #include <QDebug>
 #include <QCloseEvent>
 #include <QTimer>
-#include <QGraphicsEffect>
 
 using namespace dfmplugin_sidebar;
 DFMBASE_USE_NAMESPACE
@@ -321,12 +320,6 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
 
 void SideBarWidget::initializeUi()
 {
-    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
-    effect->setColor(QColor(0, 0, 0, 5));
-    effect->setOffset(4, 0);
-    effect->setBlurRadius(20);
-    setGraphicsEffect(effect);
-
     QHBoxLayout *hlayout = new QHBoxLayout(this);
     hlayout->setContentsMargins(0, 0, 0, 0);
     hlayout->setSpacing(0);

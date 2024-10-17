@@ -152,7 +152,7 @@ void SmbBrowser::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CopyFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CutFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PreViewFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Show_Addr", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookTitleBarAddrHandle);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Copy_Addr", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookTitleBarAddrHandle);
 }
