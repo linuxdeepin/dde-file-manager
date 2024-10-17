@@ -7,7 +7,6 @@
 #include "mounthelpers/cifsmounthelper.h"
 #include "mounthelpers/dlnfsmounthelper.h"
 #include "mounthelpers/commonmounthelper.h"
-#include "mounthelpers/ulnfsmounthelper.h"
 
 #include <QFile>
 
@@ -88,12 +87,9 @@ MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)
 {
     CifsMountHelper *cifsHelper = new CifsMountHelper(qq);
     DlnfsMountHelper *dlnfsHelper = new DlnfsMountHelper(qq);
-    UlnfsMountHelper *ulnfsHelper = new UlnfsMountHelper(qq);
     CommonMountHelper *commonHelper = new CommonMountHelper(qq);
 
     cifsHelper->cleanMountPoint();
-    mountHelpers.insert(MountFstypeSupportedField::kCifs, cifsHelper);
-    mountHelpers.insert(MountFstypeSupportedField::kUlnFs, ulnfsHelper);
     mountHelpers.insert(MountFstypeSupportedField::kDlnFs, dlnfsHelper);
     supportedFS.append(MountFstypeSupportedField::kDlnFs);
     mountHelpers.insert(MountFstypeSupportedField::kCommon, commonHelper);

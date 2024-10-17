@@ -64,12 +64,6 @@ set(DFM_DLNFS_SCRIPT_LAUNCHER
     ${AssetsPath}/scripts/file-manager.sh)
 install(PROGRAMS ${DFM_DLNFS_SCRIPT_LAUNCHER} DESTINATION bin)
 
-set(ULNFS_SCRIPT ${AssetsPath}/scripts/dfm-ulnfs-automount)
-install(FILES ${ULNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
-
-set(ULNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-ulnfs-automount)
-install(FILES ${ULNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
-
 set(Mimetypes "${ShareDir}/mimetypes")
 FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
 install(FILES ${MIMETYPE_FILES} DESTINATION ${Mimetypes})
