@@ -164,6 +164,10 @@ void FileManagerWindowPrivate::resetTitleBarSize()
         QSize size(DSizeModeHelper::element(32, 48), DSizeModeHelper::element(32, 48));
         expandButton->setIconSize(size);
     }
+    if (iconArea) {
+        QSize size(DSizeModeHelper::element(66, 95), DSizeModeHelper::element(40, 50));
+        iconArea->setFixedSize(size);
+    }
 }
 
 void FileManagerWindowPrivate::resetSideBarSize()
@@ -546,13 +550,11 @@ void FileManagerWindow::initializeUi()
 
         // icon area
         {
-            QWidget *iconArea = new QWidget(this);
-            QHBoxLayout *leftAreaLayout = new QHBoxLayout(iconArea);
-            iconArea->setWindowFlag(Qt::WindowTransparentForInput);
-            iconArea->move(0, 0);
-            iconArea->setFixedSize(d->kMinimumLeftWidth, 50);
+            d->iconArea = new QWidget(this);
+            QHBoxLayout *leftAreaLayout = new QHBoxLayout(d->iconArea);
+            d->iconArea->setWindowFlag(Qt::WindowTransparentForInput);
+            d->iconArea->move(0, 0);
             leftAreaLayout->setContentsMargins(0, 0, 0, 0);
-
             leftAreaLayout->addSpacing(10);
             if (d->iconLabel) {
                 auto icon = QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager"));
@@ -564,7 +566,7 @@ void FileManagerWindow::initializeUi()
                 leftAreaLayout->addWidget(d->expandButton, 0, Qt::AlignLeading | Qt::AlignVCenter);
             }
             d->resetTitleBarSize();
-            iconArea->show();
+            d->iconArea->show();
         }
 
         // right area

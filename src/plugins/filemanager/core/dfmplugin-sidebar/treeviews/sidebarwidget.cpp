@@ -321,7 +321,7 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
 void SideBarWidget::initializeUi()
 {
     QHBoxLayout *hlayout = new QHBoxLayout(this);
-    hlayout->setMargin(0);
+    hlayout->setContentsMargins(0, 0, 0, 0);
     hlayout->setSpacing(0);
     QWidget *leftSpacer = new QWidget(this);
     leftSpacer->setAutoFillBackground(true);
@@ -336,7 +336,7 @@ void SideBarWidget::initializeUi()
     QVBoxLayout *vlayout = new QVBoxLayout();
     vlayout->addWidget(topSpacer);
     vlayout->addWidget(sidebarView);
-    vlayout->setMargin(0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->setSpacing(0);
 
     hlayout->addWidget(leftSpacer);
