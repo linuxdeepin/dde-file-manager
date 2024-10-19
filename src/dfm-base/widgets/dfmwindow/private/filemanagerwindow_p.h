@@ -76,6 +76,7 @@ protected:
     DIconButton *iconLabel { nullptr };
     DIconButton *expandButton { nullptr };
     DVerticalLine *sidebarSep { nullptr };
+    QWidget *iconArea { nullptr };
 
     std::once_flag titleBarFlag;
     std::once_flag titleMenuFlag;
