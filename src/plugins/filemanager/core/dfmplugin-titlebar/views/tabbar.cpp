@@ -73,9 +73,9 @@ int TabBar::createTab()
     connect(tab, &Tab::requestActivePreviousTab, this, &TabBar::activatePreviousTab);
     connect(tab, &Tab::closeRequested, this, &TabBar::onTabCloseButtonClicked);
 
-    lastAddTabState = true;
+    playTabAnimation = false;
     setCurrentIndex(index);
-    lastAddTabState = false;
+    playTabAnimation = true;
 
     updateAddTabButtonState();
     updateTabCloseButtonVisibility();
@@ -91,8 +91,12 @@ void TabBar::removeTab(const int index, const bool &remainState)
 
     Q_EMIT tabRemoved(index);
 
-    if (currentIndex >= count())
-        setCurrentIndex(count() - 1);
+    playTabAnimation = true;
+    if (currentIndex < index) {
+        updateScreen();
+    } else {
+        setCurrentIndex(currentIndex - 1);
+    }
 
     updateAddTabButtonState();
     updateTabCloseButtonVisibility();
@@ -494,7 +498,7 @@ void TabBar::updateScreen()
             continue;
         }
 
-        if (!lastAddTabState) {
+        if (playTabAnimation) {
             QPropertyAnimation *animation = new QPropertyAnimation(tab, "geometry");
             animation->setDuration(50);
             animation->setStartValue(tab->geometry());
@@ -516,7 +520,7 @@ void TabBar::updateScreen()
         int btnX = lastX + 10;
         int btnY = (height() - tabAddButton->height()) / 2;
         QRect rect(btnX, btnY, tabAddButton->size().width(), tabAddButton->size().height());
-        if (!lastAddTabState) {
+        if (playTabAnimation) {
             QPropertyAnimation *animation = new QPropertyAnimation(tabAddButton, "geometry");
             animation->setDuration(50);
             animation->setStartValue(tabAddButton->geometry());
