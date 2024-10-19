@@ -15,7 +15,7 @@ DFMBASE_BEGIN_NAMESPACE
 inline constexpr char kDefaultCfgPath[] { "org.deepin.dde.file-manager" };
 inline constexpr char kPluginsDConfName[] { "org.deepin.dde.file-manager.plugins" };
 inline constexpr char kViewDConfName[] { "org.deepin.dde.file-manager.view" };
-inline constexpr char kAnimationDConfName[] {"org.deepin.dde.file-manager.animation"};
+inline constexpr char kAnimationDConfName[] { "org.deepin.dde.file-manager.animation" };
 
 inline constexpr char kKeyHideDisk[] { "dfm.disk.hidden" };
 inline constexpr char kTreeViewEnable[] { "dfm.treeview.enable" };
@@ -29,6 +29,8 @@ inline constexpr char kAnimationLayoutDuration[] { "dfm.animation.layout.duratio
 inline constexpr char kAnimationLayoutCurve[] { "dfm.animation.layout.curve" };
 inline constexpr char kAnimationDetailviewDuration[] { "dfm.animation.detailview.duration" };
 inline constexpr char kAnimationDetailviewCurve[] { "dfm.animation.detailview.curve" };
+inline constexpr char kAnimationSidebarDuration[] { "dfm.animation.sidebar.duration" };
+inline constexpr char kAnimationSidebarSidebarCurve[] { "dfm.animation.sidebar.curve" };
 inline constexpr char kAnimationResortCustomDuration[] { "dd.animation.resort.custom.duration" };
 inline constexpr char kAnimationResortCustomCurve[] { "dd.animation.resort.custom.curve" };
 inline constexpr char kAnimationResortAlignDuration[] { "dd.animation.resort.align.duration" };

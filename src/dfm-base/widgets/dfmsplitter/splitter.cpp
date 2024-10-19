@@ -35,9 +35,19 @@ Splitter::Splitter(Qt::Orientation orientation, QWidget *parent)
 {
 }
 
-void Splitter::moveSplitter(int pos, int index)
+int Splitter::splitPosition() const
 {
-    return QSplitter::moveSplitter(pos, index);
+    return curSplitPosition;
+}
+
+void Splitter::setSplitPosition(int position)
+{
+    if (curSplitPosition != position) {
+        curSplitPosition = position;
+        QList<int> sizes;
+        sizes << position << (width() - position);
+        setSizes(sizes);
+    }
 }
 
 QSplitterHandle *Splitter::createHandle()

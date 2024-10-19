@@ -31,12 +31,19 @@ protected:
 class Splitter : public QSplitter
 {
     Q_OBJECT
+    Q_PROPERTY(int splitPosition READ splitPosition WRITE setSplitPosition)
+
 public:
     explicit Splitter(Qt::Orientation orientation, QWidget *parent = nullptr);
-    void moveSplitter(int pos, int index);
+
+    int splitPosition() const;
+    void setSplitPosition(int position);
 
 protected:
     QSplitterHandle *createHandle() override;
+
+private:
+    int curSplitPosition { 0 };
 };
 }
 

@@ -8,6 +8,11 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+#include <DPlatformTheme>
+#include <DSizeMode>
+#include <DIconTheme>
 
 #include <QUrl>
 #include <QCloseEvent>
@@ -127,6 +132,15 @@ bool FileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     return false;
 }
 
+int FileManagerWindowPrivate::loadSidebarState() const
+{
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+    auto pos = state.value("sidebar", kDefaultLeftWidth).toInt();
+    if (pos >= kMinimumLeftWidth && pos <= kMaximumLeftWidth)
+        return pos;
+    return kDefaultLeftWidth;
+}
+
 int FileManagerWindowPrivate::splitterPosition() const
 {
     if (!splitter || splitter->sizes().isEmpty())
@@ -138,6 +152,91 @@ void FileManagerWindowPrivate::setSplitterPosition(int pos)
 {
     if (splitter)
         splitter->setSizes({ pos, splitter->width() - pos - splitter->handleWidth() });
+}
+
+void FileManagerWindowPrivate::resetTitleBarSize()
+{
+    if (iconLabel) {
+        QSize size(DSizeModeHelper::element(24, 32), DSizeModeHelper::element(24, 32));
+        iconLabel->setIconSize(size);
+    }
+    if (expandButton) {
+        QSize size(DSizeModeHelper::element(32, 48), DSizeModeHelper::element(32, 48));
+        expandButton->setIconSize(size);
+    }
+}
+
+void FileManagerWindowPrivate::resetSideBarSize()
+{
+    if (sideBar) {
+        sideBar->setMaximumWidth(kMaximumLeftWidth);
+        sideBar->setMinimumWidth(kMinimumLeftWidth);
+        if (splitter)
+            lastSidebarExpandedPostion = splitter->sizes().at(0);
+    }
+}
+
+void FileManagerWindowPrivate::animateSplitter(bool expanded)
+{
+    if (!sideBar || !sidebarSep)
+        return;
+
+    auto handleVisible = [expanded, this]() {
+        sideBar->setVisible(expanded);
+        sidebarSep->setVisible(expanded);
+    };
+
+    auto releaseAnimation = [this]() {
+        if (curSplitterAnimation) {
+            delete curSplitterAnimation;
+            curSplitterAnimation = nullptr;
+        }
+    };
+
+    // read from dconfig
+    bool animationEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+    int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve).toInt());
+
+    if (!animationEnable) {
+        handleVisible();
+        return;
+    }
+
+    sideBar->setVisible(true);
+    sideBar->setMinimumWidth(1);
+
+    bool lastAnimationStopped { false };
+    if (curSplitterAnimation && curSplitterAnimation->state() == QAbstractAnimation::Running) {
+        lastAnimationStopped = true;
+        curSplitterAnimation->stop();
+        releaseAnimation();
+    }
+
+    int start = splitter->sizes().at(0);
+    int end = 1;
+    if (expanded) {
+        start = 1;
+        end = lastSidebarExpandedPostion;
+        sidebarSep->setVisible(true);
+    } else {
+        lastSidebarExpandedPostion = lastAnimationStopped ? lastSidebarExpandedPostion : splitter->sizes().at(0);
+    }
+
+    curSplitterAnimation = new QPropertyAnimation(splitter, "splitPosition");
+    curSplitterAnimation->setEasingCurve(curve);
+    curSplitterAnimation->setDuration(duration);
+    curSplitterAnimation->setStartValue(start);
+    curSplitterAnimation->setEndValue(end);
+    curSplitterAnimation->start();
+
+    connect(curSplitterAnimation, &QPropertyAnimation::finished,
+            this, [this, expanded, handleVisible, releaseAnimation]() {
+                if (expanded)
+                    resetSideBarSize();
+                handleVisible();
+                releaseAnimation();
+            });
 }
 
 void FileManagerWindowPrivate::loadWindowState()
@@ -203,10 +302,13 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
     : DMainWindow(parent),
       d(new FileManagerWindowPrivate(url, this))
 {
-    // hide titlebar
-    titlebar()->setHidden(true);
-    titlebar()->setFixedHeight(0);
-    setTitlebarShadowEnabled(false);
+    auto hideTitlebar = [this]() {
+        // hide titlebar
+        titlebar()->setHidden(true);
+        titlebar()->setFixedHeight(0);
+        setTitlebarShadowEnabled(false);
+    };
+    hideTitlebar();
 
     // size
     resize(d->kDefaultWindowWidth, d->kDefaultWindowHeight);
@@ -226,6 +328,34 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
     d->rightBottomLayout = new QHBoxLayout;
     d->rightBottomLayout->setContentsMargins(0, 0, 0, 0);
     d->rightBottomLayout->setSpacing(0);
+
+    // icon label
+    d->iconLabel = new DIconButton(this);
+    d->iconLabel->setWindowFlags(Qt::WindowTransparentForInput);
+    d->iconLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    d->iconLabel->setFocusPolicy(Qt::NoFocus);
+    d->iconLabel->setFlat(true);
+
+    // expand button
+    d->expandButton = new DIconButton(this);
+    d->expandButton->setProperty("expand", true);
+    d->expandButton->setFlat(true);
+
+    // connections
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [hideTitlebar, this]() {
+        hideTitlebar();
+        d->resetTitleBarSize();
+    });
+
+    connect(DGuiApplicationHelper::instance()->systemTheme(), &DPlatformTheme::iconThemeNameChanged, this, [this]() {
+        d->iconLabel->update();
+    });
+
+    connect(d->expandButton, &DIconButton::clicked, this, [this]() {
+        bool isExpand = d->expandButton->property("expand").toBool();
+        d->expandButton->setProperty("expand", !isExpand);
+        d->animateSplitter(!isExpand);
+    });
 }
 
 FileManagerWindow::~FileManagerWindow()
@@ -405,51 +535,84 @@ void FileManagerWindow::initializeUi()
 {
     if (d->sideBar && d->titleBar && d->workspace) {
         // left area
-        d->sideBar->setContentsMargins(0, 0, 0, 0);
-        d->sideBar->setMaximumWidth(d->kMaximumLeftWidth);
-        d->sideBar->setMinimumWidth(d->kMinimumLeftWidth);
+        {
+            d->sideBar->setContentsMargins(0, 0, 0, 0);
+            d->resetSideBarSize();
+            d->sidebarSep = new DVerticalLine(this);
+            d->sidebarSep->setContentsMargins(0, 0, 0, 0);
+            d->sidebarSep->setVisible(true);
+            d->sideBar->layout()->addWidget(d->sidebarSep);
+        }
+
+        // icon area
+        {
+            QWidget *iconArea = new QWidget(this);
+            QHBoxLayout *leftAreaLayout = new QHBoxLayout(iconArea);
+            iconArea->setWindowFlag(Qt::WindowTransparentForInput);
+            iconArea->move(0, 0);
+            iconArea->setFixedSize(d->kMinimumLeftWidth, 50);
+            leftAreaLayout->setContentsMargins(0, 0, 0, 0);
+
+            leftAreaLayout->addSpacing(10);
+            if (d->iconLabel) {
+                auto icon = QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager"));
+                d->iconLabel->setIcon(icon);
+                leftAreaLayout->addWidget(d->iconLabel, 0, Qt::AlignLeading | Qt::AlignVCenter);
+            }
+            if (d->expandButton) {
+                d->expandButton->setIcon(DDciIcon::fromTheme("window_sidebar"));
+                leftAreaLayout->addWidget(d->expandButton, 0, Qt::AlignLeading | Qt::AlignVCenter);
+            }
+            d->resetTitleBarSize();
+            iconArea->show();
+        }
 
         // right area
-        d->rightArea = new QFrame(this);
-        auto minimumWidth = d->kMinimumWindowWidth - d->kMaximumLeftWidth;
-        d->rightArea->setMinimumWidth(minimumWidth > 0 ? minimumWidth : 80);
-        // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
-        //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
-        //              设置size policy可以生效
-        QSizePolicy sp = d->rightArea->sizePolicy();
-        sp.setHorizontalStretch(1);
-        d->rightArea->setSizePolicy(sp);
+        {
+            d->rightArea = new QFrame(this);
+            auto minimumWidth = d->kMinimumWindowWidth - d->kMaximumLeftWidth;
+            d->rightArea->setMinimumWidth(minimumWidth > 0 ? minimumWidth : 80);
+            // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
+            //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
+            //              设置size policy可以生效
+            QSizePolicy sp = d->rightArea->sizePolicy();
+            sp.setHorizontalStretch(1);
+            d->rightArea->setSizePolicy(sp);
 
-        d->rightLayout->addWidget(d->titleBar);
-        d->rightLayout->addLayout(d->rightBottomLayout, 1);
-        d->rightBottomLayout->addWidget(d->workspace, 1);
-        d->rightArea->setLayout(d->rightLayout);
+            d->rightLayout->addWidget(d->titleBar);
+            d->rightLayout->addLayout(d->rightBottomLayout, 1);
+            d->rightBottomLayout->addWidget(d->workspace, 1);
+            d->rightArea->setLayout(d->rightLayout);
+        }
 
         // splitter
-        d->splitter = new Splitter(Qt::Orientation::Horizontal, this);
-        d->splitter->setChildrenCollapsible(false);
-        d->splitter->setHandleWidth(0);
-        d->splitter->addWidget(d->sideBar);
-        d->splitter->addWidget(d->rightArea);
+        {
+            d->splitter = new Splitter(Qt::Orientation::Horizontal, this);
+            d->splitter->setChildrenCollapsible(false);
+            d->splitter->setHandleWidth(0);
+            d->splitter->addWidget(d->sideBar);
+            d->splitter->addWidget(d->rightArea);
+        }
 
         // central
-        QVBoxLayout *mainLayout = new QVBoxLayout;
-        QWidget *midWidget = new QWidget;
-        midWidget->setLayout(d->midLayout);
-        mainLayout->addWidget(midWidget);
-        mainLayout->setSpacing(0);
-        mainLayout->setContentsMargins(0, 0, 0, 0);
-        d->midLayout->insertWidget(0, d->splitter);
-        d->centralView->setLayout(mainLayout);
-        setCentralWidget(d->centralView);
+        {
+            QVBoxLayout *mainLayout = new QVBoxLayout;
+            QWidget *midWidget = new QWidget;
+            midWidget->setLayout(d->midLayout);
+            mainLayout->addWidget(midWidget);
+            mainLayout->setSpacing(0);
+            mainLayout->setContentsMargins(0, 0, 0, 0);
+            d->midLayout->insertWidget(0, d->splitter);
+            d->centralView->setLayout(mainLayout);
+            setCentralWidget(d->centralView);
+        }
     }
 }
 
 void FileManagerWindow::updateUi()
 {
-    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
-    int splitterPos = state.value("sidebar", d->kDefaultLeftWidth).toInt();
+    int splitterPos = d->loadSidebarState();
     d->setSplitterPosition(splitterPos);
 }
 
-}
+}   // namespace dfmbase
