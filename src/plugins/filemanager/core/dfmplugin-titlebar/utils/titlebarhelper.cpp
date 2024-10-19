@@ -101,15 +101,16 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
 
     auto window = FMWindowsIns.findWindowById(id);
     Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
-    auto defaultMenu = window->titlebar()->menu();
+    auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar());
+    Q_ASSERT_X(titleBarWidget, "TitleBar", "Cannot find titleBarWidget from window");
+    auto defaultMenu = titleBarWidget->titleBar()->menu();
     if (defaultMenu && !defaultMenu->isEmpty()) {
         for (auto *act : defaultMenu->actions()) {
             act->setParent(menu);
             menu->addAction(act);
         }
     }
-
-    auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar());
+    
     titleBarWidget->titleBar()->setMenu(menu);
 }
 

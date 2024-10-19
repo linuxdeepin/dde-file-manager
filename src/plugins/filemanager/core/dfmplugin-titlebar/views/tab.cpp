@@ -346,7 +346,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void Tab::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        if (d->closeButtonRect.contains(event->pos().toPoint())) {
+        if (d->hovered && d->showCloseButton && d->closeButtonRect.contains(event->pos().toPoint())) {
             emit closeRequested();
             return;
         }

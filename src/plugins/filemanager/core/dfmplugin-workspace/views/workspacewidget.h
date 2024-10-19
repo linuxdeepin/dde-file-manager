@@ -62,6 +62,7 @@ public slots:
     void onCreateNewWindow();
     void onRefreshCurrentView();
     void handleViewStateChanged();
+    void handleAboutPlaySplitterAnim(int startValue, int endValue);
 
 protected:
     void showEvent(QShowEvent *event) override;
