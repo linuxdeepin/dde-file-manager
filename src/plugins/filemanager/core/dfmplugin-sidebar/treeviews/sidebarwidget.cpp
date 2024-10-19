@@ -321,16 +321,22 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
 void SideBarWidget::initializeUi()
 {
     QHBoxLayout *hlayout = new QHBoxLayout(this);
-    hlayout->setContentsMargins(0, 0, 0, 0);
+    hlayout->setMargin(0);
     hlayout->setSpacing(0);
     QWidget *leftSpacer = new QWidget(this);
     leftSpacer->setAutoFillBackground(true);
     leftSpacer->setFixedWidth(2);
     leftSpacer->setBackgroundRole(QPalette::Base);
 
+    QWidget *topSpacer = new QWidget(this);
+    topSpacer->setAutoFillBackground(true);
+    topSpacer->setFixedHeight(50);
+    topSpacer->setBackgroundRole(QPalette::Base);
+
     QVBoxLayout *vlayout = new QVBoxLayout();
+    vlayout->addWidget(topSpacer);
     vlayout->addWidget(sidebarView);
-    vlayout->setContentsMargins(0, 0, 0, 0);
+    vlayout->setMargin(0);
     vlayout->setSpacing(0);
 
     hlayout->addWidget(leftSpacer);
@@ -342,7 +348,6 @@ void SideBarWidget::initializeUi()
     sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
     sidebarView->setFrameShape(QFrame::Shape::NoFrame);
     sidebarView->setAutoFillBackground(true);
-    setMaximumWidth(200);   // Set the sidebar's maximum width
 
     const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
     int splitState = state.value("sidebar", 200).toInt();
