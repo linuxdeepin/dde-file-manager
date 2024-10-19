@@ -90,6 +90,11 @@ void TitleBarWidget::currentTabChanged(const int index)
     curNavWidget->switchHistoryStack(index);
 }
 
+void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
+{
+    placeholder->setFixedWidth(qMax(0, 95 - position.toInt()));
+}
+
 void TitleBarWidget::handleHotkeyCtrlF()
 {
     if (searchButtonSwitchState)
@@ -177,10 +182,18 @@ void TitleBarWidget::initializeUi()
         maxBtn->setFixedSize(40, 40);
     }
 
-    QWidget *topCustomWidget = new QWidget;
+    QWidget *topCustomWidget = new QWidget(topBar);
     topBarCustomLayout = new QHBoxLayout;
     topBarCustomLayout->setContentsMargins(0, 0, 0, 0);
     topBarCustomLayout->setSpacing(0);
+
+    placeholder = new QWidget(topCustomWidget);
+    placeholder->setFixedHeight(40);
+    placeholder->setFixedWidth(0);
+    placeholder->setVisible(true);
+    placeholder->setObjectName("Placeholder");
+    placeholder->setAttribute(Qt::WA_TranslucentBackground);
+    topBarCustomLayout->addWidget(placeholder);
 
     topCustomWidget->setLayout(topBarCustomLayout);
     topBar->setCustomWidget(topCustomWidget);
@@ -318,6 +331,7 @@ void TitleBarWidget::initUiForSizeMode()
     crumbBar->setFixedHeight(36);
     addressBar->setFixedHeight(36);
 #endif
+    topBar->setFixedHeight(40);
 }
 
 void TitleBarWidget::showAddrsssBar(const QUrl &url)

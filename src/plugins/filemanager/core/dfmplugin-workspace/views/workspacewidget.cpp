@@ -243,6 +243,14 @@ void WorkspaceWidget::handleViewStateChanged()
     appearAnimDelayTimer->start();
 }
 
+void WorkspaceWidget::handleAboutPlaySplitterAnim(int startValue, int endValue)
+{
+    if (auto view = dynamic_cast<FileView *>(currentView())) {
+        int deltaWidth = startValue - endValue;
+        view->aboutToChangeWidth(deltaWidth);
+    }
+}
+
 void WorkspaceWidget::showEvent(QShowEvent *event)
 {
     AbstractFrame::showEvent(event);

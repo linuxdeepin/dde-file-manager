@@ -56,6 +56,8 @@ Q_SIGNALS:
     void currentUrlChanged(const QUrl &url);
     void currentViewStateChanged();
     void selectUrlChanged(const QList<QUrl> &urlList);
+    void aboutPlaySplitterAnimation(int startValue, int endValue);
+    void windowSplitterWidthChanged(const QVariant &value);
 
     // The following signals are used to send shortcut requests
     void reqRefresh();   // F5

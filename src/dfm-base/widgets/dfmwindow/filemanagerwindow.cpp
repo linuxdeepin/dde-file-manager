@@ -200,7 +200,7 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
     // read from dconfig
     bool animationEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
     int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
-    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve).toInt());
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve, 22).toInt());
 
     if (!animationEnable) {
         handleVisible();
@@ -232,7 +232,6 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
     curSplitterAnimation->setDuration(duration);
     curSplitterAnimation->setStartValue(start);
     curSplitterAnimation->setEndValue(end);
-    curSplitterAnimation->start();
 
     connect(curSplitterAnimation, &QPropertyAnimation::finished,
             this, [this, expanded, handleVisible, releaseAnimation]() {
@@ -241,6 +240,11 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
                 handleVisible();
                 releaseAnimation();
             });
+
+    connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, &FileManagerWindow::windowSplitterWidthChanged);
+
+    Q_EMIT q->aboutPlaySplitterAnimation(start, end);
+    curSplitterAnimation->start();
 }
 
 void FileManagerWindowPrivate::loadWindowState()

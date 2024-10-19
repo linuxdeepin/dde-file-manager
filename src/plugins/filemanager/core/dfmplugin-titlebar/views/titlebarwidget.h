@@ -41,6 +41,7 @@ public:
 
     void initTabBar(const quint64 windowId);
     void currentTabChanged(const int index);
+    void handleSplitterAnimation(const QVariant &position);
 
 public slots:
     void handleHotkeyCtrlF();
@@ -87,6 +88,8 @@ private:
     DToolButton *searchButton { nullptr };   // 搜索栏按钮
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
+    QWidget *placeholder { nullptr };
+    
     bool searchButtonSwitchState { false };
 };
 
