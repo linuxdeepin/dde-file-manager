@@ -101,6 +101,28 @@
             "permissions":"readwrite",
             "visibility":"private"
         },
+        "dfm.animation.sidebar.duration": {
+            "value":366,
+            "serial":0,
+            "flags":[],
+            "name":"Sidebar show animation duration",
+            "name[zh_CN]":"侧边栏出入动效时长",
+            "description[zh_CN]":"用于调整侧边栏开关时动效播放时长",
+            "description":"Used to adjust the sidebar show animation duration",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.animation.sidebar.curve": {
+            "value":22,
+            "serial":0,
+            "flags":[],
+            "name":"Sidebar show animation curve",
+            "name[zh_CN]":"侧边栏出入动效动画曲线",
+            "description[zh_CN]":"用于调整侧边栏出入时动效动画曲线",
+            "description":"Used to adjust the sidebar show animation curve",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
         "dd.animation.resort.custom.duration": {
             "value":366,
             "serial":0,
