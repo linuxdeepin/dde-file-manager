@@ -81,7 +81,7 @@ private:
     QList<Tab *> tabList {};
     DTK_WIDGET_NAMESPACE::DIconButton *tabAddButton { nullptr };
 
-    bool lastAddTabState { false };
+    bool playTabAnimation { true };
     bool barHovered { false };
     bool lastStateOndelete { false };
     int lastDeletedAverageWidth { 0 };

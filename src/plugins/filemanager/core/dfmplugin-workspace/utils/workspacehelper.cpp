@@ -432,6 +432,7 @@ void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
     connect(window, &FileManagerWindow::reqCreateWindow, widget, &WorkspaceWidget::onCreateNewWindow);
     connect(window, &FileManagerWindow::reqRefresh, widget, &WorkspaceWidget::onRefreshCurrentView);
     connect(window, &FileManagerWindow::currentViewStateChanged, widget, &WorkspaceWidget::handleViewStateChanged);
+    connect(window, &FileManagerWindow::aboutPlaySplitterAnimation, widget, &WorkspaceWidget::handleAboutPlaySplitterAnim);
 }
 
 void WorkspaceHelper::handleRefreshDir(const QList<QUrl> &urls)
