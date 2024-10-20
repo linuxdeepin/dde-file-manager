@@ -2429,7 +2429,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="140"/>
         <source>Wallpaper</source>
-        <translation>Papel de Parede</translation>
+        <translation>Papel de parede</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="150"/>
@@ -3117,7 +3117,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="260"/>
         <source>Open in new tab:</source>
-        <translation>Abrir em nova guia:</translation>
+        <translation>Abrir em nova aba:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
