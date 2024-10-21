@@ -112,6 +112,11 @@ bool Tab::isDragging() const
     return d->isDragging;
 }
 
+void Tab::setCanDrag(bool canDrag)
+{
+    d->canDrag = canDrag;
+}
+
 void Tab::setHovered(bool hovered)
 {
     d->hovered = hovered;
@@ -282,6 +287,9 @@ void Tab::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (!d->canDrag)
+        return QGraphicsObject::mouseMoveEvent(event);
+
     if (d->isDragging && !d->borderLeft) {
         d->borderLeft = true;
         update();

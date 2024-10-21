@@ -41,7 +41,7 @@ public:
     bool isDragging() const;
     void setHovered(bool hovered);
     bool isDragOutSide();
-
+    void setCanDrag(bool canDrag);
     bool borderLeft() const;
     void setBorderLeft(const bool flag);
 

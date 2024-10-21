@@ -78,7 +78,7 @@ int TabBar::createTab()
     playTabAnimation = true;
 
     updateAddTabButtonState();
-    updateTabCloseButtonVisibility();
+    updateTabsState();
     return index;
 }
 
@@ -95,11 +95,11 @@ void TabBar::removeTab(const int index, const bool &remainState)
     if (currentIndex < index) {
         updateScreen();
     } else {
-        setCurrentIndex(currentIndex - 1);
+        setCurrentIndex(qMax(currentIndex - 1, 0));
     }
 
     updateAddTabButtonState();
-    updateTabCloseButtonVisibility();
+    updateTabsState();
 }
 
 int TabBar::getCurrentIndex() const
@@ -553,11 +553,12 @@ void TabBar::handleTabAnimationFinished(const int index)
 {
 }
 
-void TabBar::updateTabCloseButtonVisibility()
+void TabBar::updateTabsState()
 {
     int tabCount = tabList.count();
     for (Tab *tab : tabList) {
         tab->setShowCloseButton(tabCount > 1);
+        tab->setCanDrag(tabCount > 1);
     }
 }
 
