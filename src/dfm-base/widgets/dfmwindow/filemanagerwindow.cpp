@@ -243,7 +243,7 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
 
     connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, &FileManagerWindow::windowSplitterWidthChanged);
 
-    Q_EMIT q->aboutPlaySplitterAnimation(start, end);
+    Q_EMIT q->aboutToPlaySplitterAnimation(start, end);
     curSplitterAnimation->start();
 }
 
