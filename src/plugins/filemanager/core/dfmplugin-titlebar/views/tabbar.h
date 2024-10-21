@@ -70,7 +70,7 @@ private:
     QSize tabSizeHint(const int &index);
     void setTabText(const int &index, const QString &text);
     void handleTabAnimationFinished(const int index);
-    void updateTabCloseButtonVisibility();
+    void updateTabsState();
     void updateAddTabButtonState();
 
     inline int getTabAreaWidth() const {
