@@ -243,7 +243,7 @@ void WorkspaceWidget::handleViewStateChanged()
     appearAnimDelayTimer->start();
 }
 
-void WorkspaceWidget::handleAboutPlaySplitterAnim(int startValue, int endValue)
+void WorkspaceWidget::handleAboutToPlaySplitterAnim(int startValue, int endValue)
 {
     if (auto view = dynamic_cast<FileView *>(currentView())) {
         int deltaWidth = startValue - endValue;
