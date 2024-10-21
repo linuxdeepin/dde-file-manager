@@ -101,17 +101,17 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
 
     auto window = FMWindowsIns.findWindowById(id);
     Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
-    auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar());
-    Q_ASSERT_X(titleBarWidget, "TitleBar", "Cannot find titleBarWidget from window");
-    auto defaultMenu = titleBarWidget->titleBar()->menu();
-    if (defaultMenu && !defaultMenu->isEmpty()) {
-        for (auto *act : defaultMenu->actions()) {
-            act->setParent(menu);
-            menu->addAction(act);
+    if (auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar())) {
+        auto defaultMenu = titleBarWidget->titleBar()->menu();
+        if (defaultMenu && !defaultMenu->isEmpty()) {
+            for (auto *act : defaultMenu->actions()) {
+                act->setParent(menu);
+                menu->addAction(act);
+            }
         }
+
+        titleBarWidget->titleBar()->setMenu(menu);
     }
-    
-    titleBarWidget->titleBar()->setMenu(menu);
 }
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
