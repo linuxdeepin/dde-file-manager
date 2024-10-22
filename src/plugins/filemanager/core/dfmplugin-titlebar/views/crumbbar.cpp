@@ -4,6 +4,7 @@
 
 #include "views/private/crumbbar_p.h"
 #include "views/crumbbar.h"
+#include "views/urlpushbutton.h"
 #include "models/crumbmodel.h"
 #include "utils/crumbmanager.h"
 #include "utils/titlebarhelper.h"
@@ -35,6 +36,8 @@ using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+static constexpr int kCrumbBarRectRadius { 8 };
+
 static QString getIconName(const CrumbData &c)
 {
     QString iconName = c.iconName;
@@ -43,26 +46,6 @@ static QString getIconName(const CrumbData &c)
         iconName.append("-symbolic");
 
     return iconName;
-}
-
-/*!
- * \class IconItemDelegate
- * \brief
- */
-
-IconItemDelegate::IconItemDelegate(QAbstractItemView *parent)
-    : DStyledItemDelegate(parent)
-{
-    setItemSpacing(6);
-    setMargins(QMargins(4, 0, 4, 0));
-}
-
-void IconItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    QStyleOptionViewItem opt = option;
-    opt.decorationAlignment = Qt::AlignCenter;
-    painter->setRenderHint(QPainter::SmoothPixmapTransform);
-    DStyledItemDelegate::paint(painter, opt, index);
 }
 
 /*!
@@ -87,24 +70,11 @@ CrumbBarPrivate::~CrumbBarPrivate()
  */
 void CrumbBarPrivate::clearCrumbs()
 {
-    leftArrow.hide();
-    rightArrow.hide();
-
-    if (crumbModel)
-        crumbModel->removeAll();
-}
-
-void CrumbBarPrivate::checkArrowVisiable()
-{
-    QScrollBar *scrollBar = crumbView.horizontalScrollBar();
-    if (!scrollBar)
-        return;
-
-    leftArrow.setVisible(scrollBar->maximum() > 0);
-    rightArrow.setVisible(scrollBar->maximum() > 0);
-
-    leftArrow.setEnabled(scrollBar->value() != scrollBar->minimum());
-    rightArrow.setEnabled(scrollBar->value() != scrollBar->maximum());
+    for (auto button : std::as_const(navButtons)) {
+        button->hide();
+        button->deleteLater();
+    }
+    navButtons.clear();
 }
 
 void CrumbBarPrivate::updateController(const QUrl &url)
@@ -159,63 +129,27 @@ void CrumbBarPrivate::writeUrlToClipboard(const QUrl &url)
     QGuiApplication::clipboard()->setText(copyPath.replace(QString(Global::Scheme::kFile) + "://", ""));
 }
 
+UrlPushButton *CrumbBarPrivate::buttonAt(QPoint pos) const
+{
+    UrlPushButton *button = nullptr;
+    for (int i = 0; i < navButtons.size(); ++i) {
+        if (navButtons[i]->geometry().contains(pos)) {
+            button = navButtons[i];
+            break;
+        }
+    }
+    return button;
+}
+
 void CrumbBarPrivate::initUI()
 {
     // Arrows
     QSize size(24, 24), iconSize(16, 16);
-#ifdef ENABLE_TESTING
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(&leftArrow), AcName::kAcComputerCrumbBarLeftArrow);
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(&rightArrow), AcName::kAcComputerCrumbBarRightArrow);
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(&crumbView), AcName::kAcComputerCrumbBarListView);
-#endif
-
-    leftArrow.setFocusPolicy(Qt::NoFocus);
-    leftArrow.setIcon(QIcon::fromTheme("go-previous"));
-    rightArrow.setIcon(QIcon::fromTheme("go-next"));
-    rightArrow.setFocusPolicy(Qt::NoFocus);
-
-    leftArrow.setFixedSize(size);
-    leftArrow.setIconSize(iconSize);
-    rightArrow.setFixedSize(size);
-    rightArrow.setIconSize(iconSize);
-    leftArrow.setFlat(true);
-    rightArrow.setFlat(true);
-    leftArrow.hide();
-    rightArrow.hide();
-
-    // Crumb List Layout
-    crumbView.setObjectName("DCrumbListScrollArea");
-
-    crumbView.setItemSpacing(6);
-    crumbView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    crumbView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    crumbView.setFocusPolicy(Qt::NoFocus);
-    crumbView.setContentsMargins(0, 0, 0, 0);
-    crumbView.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
-    crumbView.setIconSize({ 16, 16 });
-    crumbView.setHorizontalScrollMode(QAbstractItemView::ScrollPerItem);
-    crumbView.setOrientation(QListView::LeftToRight, false);
-    crumbView.setEditTriggers(QAbstractItemView::NoEditTriggers);
-    crumbView.setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
-
-    crumbModel = new CrumbModel(q);
-    crumbView.setModel(crumbModel);
-    crumbView.setContextMenuPolicy(Qt::CustomContextMenu);
-
-    // 点击listview空白可拖动窗口
-    crumbView.viewport()->installEventFilter(q);
-    crumbView.setItemDelegateForRow(0, new IconItemDelegate(&crumbView));
-    crumbView.setItemMargins(QMargins(0, 0, 0, 0));
 
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout(q);
-    crumbBarLayout->addWidget(&leftArrow);
-    crumbBarLayout->addWidget(&crumbView);
-    crumbBarLayout->addWidget(&rightArrow);
-    crumbBarLayout->setContentsMargins(0, 0, 0, 0);
+    crumbBarLayout->addStretch(1);
+    crumbBarLayout->setContentsMargins(kItemMargin / 2, kItemMargin / 2, kItemMargin / 2, kItemMargin / 2);
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 
@@ -229,38 +163,64 @@ void CrumbBarPrivate::initData()
 
 void CrumbBarPrivate::initConnections()
 {
-    QObject::connect(&crumbView, &QListView::customContextMenuRequested,
-                     q, &CrumbBar::onCustomContextMenu);
-
-    QObject::connect(&crumbView, &QListView::clicked,
-                     q, [=](const QModelIndex &index) {
-                         if (index.isValid()) {
-                             fmInfo() << "sig send selectedUrl: " << index.data().toUrl();
-                             emit q->selectedUrl(index.data(CrumbModel::FileUrlRole).toUrl());
-                         }
-                     });
-
-    q->connect(&leftArrow, &DPushButton::clicked,
-               q, [=]() {
-                   crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
-               });
-
-    q->connect(&rightArrow, &DPushButton::clicked,
-               q, [=]() {
-                   crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
-               });
-
-    q->connect(crumbView.horizontalScrollBar(), &QScrollBar::valueChanged,
-               q, [=]() {
-                   checkArrowVisiable();
-               });
-
     if (Application::instance()) {
         q->connect(Application::instance(),
                    &Application::csdClickableAreaAttributeChanged,
                    q, [=](bool enabled) {
                        setClickableAreaEnabled(enabled);
                    });
+    }
+}
+
+void CrumbBarPrivate::appendWidget(QWidget *widget, int stretch)
+{
+    crumbBarLayout->insertWidget(crumbBarLayout->count() - 1, widget, stretch);
+}
+
+void CrumbBarPrivate::updateButtonVisibility()
+{
+    const int buttonsCount = navButtons.count();
+    if (buttonsCount < 2) {
+        return;
+    }
+
+    int availableWidth = q->width();
+    QList<UrlPushButton *> buttonsToShow;
+    availableWidth -= navButtons[0]->minimumWidth();
+    buttonsToShow.append(navButtons[0]);
+    navButtons[1]->hide();
+    int stackedWidth = navButtons[1]->minimumWidth();
+
+    bool isLastButton = true;
+    QList<CrumbData> stackedDatas;
+    for (int i = navButtons.size() - 1; i > 1; --i) {
+        UrlPushButton *button = navButtons[i];
+        availableWidth -= button->minimumWidth();
+        // 优先减去堆叠按钮宽度
+        if ((availableWidth - stackedWidth) < 0)
+            availableWidth -= stackedWidth;
+        if (i == 0) {
+            buttonsToShow.append(button);
+        } else if ((availableWidth <= 0) && !isLastButton) {
+            button->hide();
+            for (auto data : button->crumbDatas()) {
+                stackedDatas.push_front(data);
+            }
+        } else {
+            buttonsToShow.append(button);
+        }
+        isLastButton = false;
+    }
+
+    // All buttons have the correct activation state and
+    // can be shown now
+    for (UrlPushButton *button : std::as_const(buttonsToShow)) {
+        button->show();
+    }
+    // 显示堆叠窗口
+    if (!stackedDatas.isEmpty()) {
+        navButtons[1]->setCrumbDatas(stackedDatas, true);
+        navButtons[1]->show();
     }
 }
 
@@ -280,6 +240,7 @@ CrumbBar::CrumbBar(QWidget *parent)
     : QFrame(parent), d(new CrumbBarPrivate(this))
 {
     setFrameShape(QFrame::NoFrame);
+    // setFrameShape(QFrame::Box);
 }
 
 CrumbBar::~CrumbBar()
@@ -301,90 +262,13 @@ QUrl CrumbBar::lastUrl() const
     }
 }
 
-void CrumbBar::mousePressEvent(QMouseEvent *event)
+void CrumbBar::customMenu(const QUrl &url, QMenu *menu)
 {
-    d->clickedPos = event->globalPos();
-
-    if (event->button() == Qt::RightButton && d->clickableAreaEnabled) {
-        event->accept();
-        return;
-    }
-
-    QModelIndex index = d->crumbView.indexAt(event->pos());
-    if (event->button() != Qt::RightButton || !index.isValid()) {
-        QFrame::mousePressEvent(event);
-    }
-}
-
-void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (!d->clickableAreaEnabled) {
-        return QFrame::mouseReleaseEvent(event);
-    }
-
-    QFrame::mouseReleaseEvent(event);
-}
-
-void CrumbBar::resizeEvent(QResizeEvent *event)
-{
-    d->checkArrowVisiable();
-
-    return QFrame::resizeEvent(event);
-}
-
-void CrumbBar::showEvent(QShowEvent *event)
-{
-    // d->crumbListScrollArea.horizontalScrollBar()->setPageStep(d->crumbListHolder->width());
-    d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
-
-    d->checkArrowVisiable();
-
-    return QFrame::showEvent(event);
-}
-
-bool CrumbBar::eventFilter(QObject *watched, QEvent *event)
-{
-    QMouseEvent *me = nullptr;
-    if (watched && watched->parent() == &d->crumbView && (me = dynamic_cast<QMouseEvent *>(event))) {
-        QEvent::Type type = event->type();
-        bool isMousePressed = type == QEvent::MouseButtonPress || type == QEvent::MouseButtonDblClick;
-        static QPoint pos;
-        if (isMousePressed) {
-            pos = QCursor::pos();
-        }
-
-        bool isIgnore = isMousePressed || type == QEvent::MouseMove;
-        if (isIgnore) {
-            event->ignore();
-            return true;
-        }
-
-        bool isDragging = (pos - QCursor::pos()).manhattanLength() > QApplication::startDragDistance();
-        if (type == QEvent::MouseButtonRelease && me->button() == Qt::LeftButton) {
-            event->ignore();
-            QModelIndex index = d->crumbView.indexAt(me->pos());
-            if (index.isValid() && index != d->crumbView.currentIndex() && !isDragging) {
-                d->crumbView.clicked(index);
-                return true;
-            }
-        }
-    }
-
-    return QFrame::eventFilter(watched, event);
-}
-
-void CrumbBar::onCustomContextMenu(const QPoint &point)
-{
-    QModelIndex index = d->crumbView.indexAt(point);
-    if (!index.isValid())
-        return;
-
     quint64 id { window()->internalWinId() };
     bool tabAddable { TabBarManager::instance()->canAddNewTab(id) };
     bool displayIcon { false };   // TODO: use dde-dconfig
     bool displayNewWindowAndTab { TitleBarHelper::newWindowAndTabEnabled };
-    QMenu *menu { new QMenu() };
-    QUrl url { index.data(CrumbModel::FileUrlRole).toUrl() };
+
     QIcon copyIcon, newWndIcon, newTabIcon, editIcon;
     if (displayIcon) {
         copyIcon = QIcon::fromTheme("edit-copy");
@@ -416,13 +300,85 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
 
     menu->addSeparator();
 
-    QUrl fullUrl { index.data(CrumbModel::FullUrlRole).toUrl() };
+    QUrl fullUrl = d->lastUrl;
     menu->addAction(editIcon, QObject::tr("Edit address"), this, [this, fullUrl]() {
         emit this->editUrl(fullUrl);
     });
+}
 
-    menu->exec(QCursor::pos());
-    delete menu;
+void CrumbBar::setPopupVisible(bool visible)
+{
+    if (d->popupVisible != visible) {
+        d->popupVisible = visible;
+        update();
+    }
+}
+
+void CrumbBar::mousePressEvent(QMouseEvent *event)
+{
+    d->clickedPos = event->globalPos();
+
+    if (event->button() == Qt::RightButton && d->clickableAreaEnabled) {
+        event->accept();
+        return;
+    }
+
+    auto button = d->buttonAt(event->pos());
+    if (event->button() != Qt::RightButton || !button) {
+        QFrame::mousePressEvent(event);
+    }
+}
+
+void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    QFrame::mouseReleaseEvent(event);
+
+    if (event->button() == Qt::LeftButton) {
+        QTimer::singleShot(0, this, [this]() {
+            editUrl(d->lastUrl);
+        });
+    }
+}
+
+void CrumbBar::resizeEvent(QResizeEvent *event)
+{
+    QTimer::singleShot(0, this, [this]() {
+        d->updateButtonVisibility();
+    });
+
+    return QFrame::resizeEvent(event);
+}
+
+void CrumbBar::showEvent(QShowEvent *event)
+{
+    return QFrame::showEvent(event);
+}
+
+bool CrumbBar::eventFilter(QObject *watched, QEvent *event)
+{
+    return QFrame::eventFilter(watched, event);
+}
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void CrumbBar::enterEvent(QEnterEvent *event)
+#else
+void CrumbBar::enterEvent(QEvent *event)
+#endif
+{
+    QFrame::enterEvent(event);
+    if (!d->hoverFlag) {
+        d->hoverFlag = true;
+        update();
+    }
+}
+
+void CrumbBar::leaveEvent(QEvent *event)
+{
+    QFrame::enterEvent(event);
+    if (d->hoverFlag) {
+        d->hoverFlag = false;
+        update();
+    }
 }
 
 void CrumbBar::onUrlChanged(const QUrl &url)
@@ -445,7 +401,17 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
     emit hideAddressBar(false);
 
     d->clearCrumbs();
-
+    bool updataFlag = false;
+    if (d->popupVisible) {
+        d->popupVisible = false;
+        updataFlag = true;
+    }
+    if (d->hoverFlag) {
+        d->hoverFlag = false;
+        updataFlag = true;
+    }
+    if (updataFlag)
+        update();
     if (!d->crumbController) {
         fmWarning("No controller found when trying to call DFMCrumbBar::updateCrumbs() !!!");
         fmDebug() << "updateCrumbs (no controller) : " << url;
@@ -454,29 +420,42 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
 
     d->lastUrl = url;
     QList<CrumbData> &&crumbDataList = d->crumbController->seprateUrl(url);
-
-    // create QStandardItem by crumb data
-    for (const CrumbData &c : crumbDataList) {
-        if (d->crumbModel) {
-            QStandardItem *listitem = nullptr;
-            if (c.iconName.isEmpty()) {
-                listitem = new QStandardItem(c.displayText);
-            } else {
-                listitem = new QStandardItem(QIcon::fromTheme(getIconName(c)), QString());
-            }
-
-            listitem->setTextAlignment(Qt::AlignCenter);
-            listitem->setCheckable(false);
-            Q_ASSERT(c.url.isValid());
-            listitem->setData(c.url, CrumbModel::Roles::FileUrlRole);
-            listitem->setData(url, CrumbModel::Roles::FullUrlRole);
-            d->crumbModel->appendRow(listitem);
+    for (int i = 0; i < crumbDataList.size(); ++i) {
+        auto button = new UrlPushButton(this);
+        button->setCrumbDatas(QList<CrumbData>() << crumbDataList[i]);
+        if (i < (crumbDataList.size() - 1)) {
+            QString subText = crumbDataList[i + 1].displayText;
+            button->setActiveSubDirectory(subText);
+        }
+        connect(button, &UrlPushButton::urlButtonActivated, this, &CrumbBar::selectedUrl);
+        button->installEventFilter(this);
+        d->appendWidget(button);
+        d->navButtons.append(button);
+        // 增加堆叠按钮
+        if (i == 0) {
+            button = new UrlPushButton(this);
+            button->hide();
+            button->setCrumbDatas(QList<CrumbData>(), true);
+            connect(button, &UrlPushButton::urlButtonActivated, this, &CrumbBar::selectedUrl);
+            button->installEventFilter(this);
+            d->appendWidget(button);
+            d->navButtons.append(button);
         }
     }
+    d->updateButtonVisibility();
+}
 
-    if (d->crumbView.selectionModel() && d->crumbModel)
-        d->crumbView.selectionModel()->select(d->crumbModel->lastIndex(), QItemSelectionModel::Select);
-
-    d->checkArrowVisiable();
-    d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+void CrumbBar::paintEvent(QPaintEvent *event)
+{
+    if (d->hoverFlag || d->popupVisible) {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.save();
+        painter.setPen(Qt::NoPen);
+        auto color = palette().color(QPalette::Button);
+        color.setAlphaF(0.3);
+        painter.setBrush(color);
+        painter.drawRoundedRect(rect(), kCrumbBarRectRadius, kCrumbBarRectRadius);
+        painter.restore();
+    }
 }

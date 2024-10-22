@@ -17,15 +17,7 @@
 DWIDGET_USE_NAMESPACE
 
 namespace dfmplugin_titlebar {
-
-// for first icon item icon AlignCenter...
-class IconItemDelegate : public DStyledItemDelegate
-{
-public:
-    explicit IconItemDelegate(QAbstractItemView *parent = nullptr);
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-};
-
+class UrlPushButton;
 class CrumbBar;
 class CrumbModel;
 class CrumbBarPrivate
@@ -33,14 +25,13 @@ class CrumbBarPrivate
     friend class CrumbBar;
     CrumbBar *const q;
 
-    DPushButton leftArrow;
-    DPushButton rightArrow;
-    DListView crumbView;
-    CrumbModel *crumbModel { nullptr };
+    QList<UrlPushButton *> navButtons;
     QHBoxLayout *crumbBarLayout;
     QPoint clickedPos;
     bool clickableAreaEnabled { false };
     QUrl lastUrl;
+    bool hoverFlag { false };   // 鼠标是否悬停在按钮上
+    bool popupVisible { false };
 
     CrumbInterface *crumbController { nullptr };
 
@@ -49,15 +40,18 @@ public:
     virtual ~CrumbBarPrivate();
 
     void clearCrumbs();
-    void checkArrowVisiable();
     void updateController(const QUrl &url);
     void setClickableAreaEnabled(bool enabled);
     void writeUrlToClipboard(const QUrl &url);
+    UrlPushButton *buttonAt(QPoint pos) const;
 
 private:
     void initUI();
     void initData();
     void initConnections();
+
+    void appendWidget(QWidget *widget, int stretch = 0);
+    void updateButtonVisibility();
 };
 }
 
