@@ -48,6 +48,7 @@ protected:
     void moveEvent(QMoveEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 Q_SIGNALS:
     void aboutToOpen();
