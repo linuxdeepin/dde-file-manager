@@ -190,66 +190,94 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
     if (!sideBar || !sidebarSep)
         return;
 
-    auto handleVisible = [expanded, this]() {
+    if (!isAnimationEnabled()) {
         sideBar->setVisible(expanded);
         sidebarSep->setVisible(expanded);
-    };
-
-    auto releaseAnimation = [this]() {
-        if (curSplitterAnimation) {
-            delete curSplitterAnimation;
-            curSplitterAnimation = nullptr;
-        }
-    };
-
-    // read from dconfig
-    bool animationEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
-    int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
-    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve, 22).toInt());
-
-    if (!animationEnable) {
-        handleVisible();
         return;
     }
 
+    bool lastAnimationStopped = setupAnimation(expanded);
+    handleWindowResize(expanded);
+
+    int start = expanded ? 1 : splitter->sizes().at(0);
+    int end = expanded ? lastSidebarExpandedPostion : 1;
+
+    if (!expanded && !lastAnimationStopped) {
+        lastSidebarExpandedPostion = splitter->sizes().at(0);
+    }
+
+    configureAnimation(start, end);
+    connectAnimationSignals();
+
+    Q_EMIT q->aboutToPlaySplitterAnimation(start, end);
+    curSplitterAnimation->start();
+}
+
+bool FileManagerWindowPrivate::isAnimationEnabled() const
+{
+    return DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+}
+
+bool FileManagerWindowPrivate::setupAnimation(bool expanded)
+{
     sideBar->setVisible(true);
     sideBar->setMinimumWidth(1);
 
-    bool lastAnimationStopped { false };
+    bool lastAnimationStopped = false;
     if (curSplitterAnimation && curSplitterAnimation->state() == QAbstractAnimation::Running) {
         lastAnimationStopped = true;
         curSplitterAnimation->stop();
-        releaseAnimation();
+        delete curSplitterAnimation;
+        curSplitterAnimation = nullptr;
     }
 
-    int start = splitter->sizes().at(0);
-    int end = 1;
+    return lastAnimationStopped;
+}
+
+void FileManagerWindowPrivate::handleWindowResize(bool expanded)
+{
     if (expanded) {
-        start = 1;
-        end = lastSidebarExpandedPostion;
+        int currentWindowWidth = q->width();
+        int requiredWidth = kMinimumRightWidth + lastSidebarExpandedPostion + splitter->handleWidth();
+        if (currentWindowWidth < requiredWidth) {
+            int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
+            auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve, 22).toInt());
+
+            auto *windowAnimation = new QPropertyAnimation(q, "geometry");
+            windowAnimation->setDuration(duration);
+            windowAnimation->setStartValue(q->geometry());
+            windowAnimation->setEndValue(QRect(q->x(), q->y(), requiredWidth, q->height()));
+            windowAnimation->setEasingCurve(curve);
+            windowAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+        }
         sidebarSep->setVisible(true);
-    } else {
-        lastSidebarExpandedPostion = lastAnimationStopped ? lastSidebarExpandedPostion : splitter->sizes().at(0);
     }
+}
+
+void FileManagerWindowPrivate::configureAnimation(int start, int end)
+{
+    int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve, 22).toInt());
 
     curSplitterAnimation = new QPropertyAnimation(splitter, "splitPosition");
     curSplitterAnimation->setEasingCurve(curve);
     curSplitterAnimation->setDuration(duration);
     curSplitterAnimation->setStartValue(start);
     curSplitterAnimation->setEndValue(end);
+}
 
-    connect(curSplitterAnimation, &QPropertyAnimation::finished,
-            this, [this, expanded, handleVisible, releaseAnimation]() {
-                if (expanded)
-                    resetSideBarSize();
-                handleVisible();
-                releaseAnimation();
-            });
+void FileManagerWindowPrivate::connectAnimationSignals()
+{
+    connect(curSplitterAnimation, &QPropertyAnimation::finished, this, [this]() {
+        if (curSplitterAnimation->endValue().toInt() > 1)
+            resetSideBarSize();
+        sideBar->setVisible(curSplitterAnimation->endValue().toInt() > 1);
+        sidebarSep->setVisible(curSplitterAnimation->endValue().toInt() > 1);
+        delete curSplitterAnimation;
+        curSplitterAnimation = nullptr;
+    });
 
     connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, &FileManagerWindow::windowSplitterWidthChanged);
-
-    Q_EMIT q->aboutToPlaySplitterAnimation(start, end);
-    curSplitterAnimation->start();
 }
 
 void FileManagerWindowPrivate::loadWindowState()
@@ -339,6 +367,8 @@ void FileManagerWindowPrivate::showSideBar()
     sideBar->setVisible(true);
     sidebarSep->setVisible(true);
     sideBarVisible = true;
+    expandButton->setProperty("expand", true);
+    emit q->windowSplitterWidthChanged(lastSidebarExpandedPostion);
 }
 
 void FileManagerWindowPrivate::hideSideBar()
@@ -346,6 +376,8 @@ void FileManagerWindowPrivate::hideSideBar()
     sideBar->setVisible(false);
     sidebarSep->setVisible(false);
     sideBarVisible = false;
+    expandButton->setProperty("expand", false);
+    emit q->windowSplitterWidthChanged(0);
 }
 
 /*!
