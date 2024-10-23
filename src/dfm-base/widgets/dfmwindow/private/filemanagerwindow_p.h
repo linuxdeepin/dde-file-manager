@@ -48,15 +48,18 @@ public:
     int loadSidebarState() const;
     void saveSidebarState();
 
+    void handleSplitterMoved(int pos, int index);
+
 protected:
     QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth { 680 };
+    static constexpr int kMinimumWindowWidth { 316 };
     static constexpr int kMinimumWindowHeight { 300 };
     static constexpr int kDefaultWindowWidth { 1100 };
     static constexpr int kDefaultWindowHeight { 700 };
     static constexpr int kMinimumLeftWidth { 95 };
     static constexpr int kMaximumLeftWidth { 600 };
     static constexpr int kDefaultLeftWidth { 200 };
+    static constexpr int kMinimumRightWidth { kMinimumWindowWidth };
 
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
     QFrame *rightArea { nullptr };
@@ -83,6 +86,15 @@ protected:
     std::once_flag sideBarFlag;
     std::once_flag workspaceFlag;
     std::once_flag detailVewFlag;
+
+    bool sideBarVisible { true };
+    bool sideBarShrinking { false };
+
+private:
+    void updateSideBarState();
+    void updateSideBarVisibility();
+    void showSideBar();
+    void hideSideBar();
 };
 
 }
