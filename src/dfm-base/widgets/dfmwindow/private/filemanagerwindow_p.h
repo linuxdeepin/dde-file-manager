@@ -95,6 +95,11 @@ private:
     void updateSideBarVisibility();
     void showSideBar();
     void hideSideBar();
+    bool setupAnimation(bool expanded);
+    void handleWindowResize(bool expanded);
+    void configureAnimation(int start, int end);
+    void connectAnimationSignals();
+    bool isAnimationEnabled() const;
 };
 
 }
