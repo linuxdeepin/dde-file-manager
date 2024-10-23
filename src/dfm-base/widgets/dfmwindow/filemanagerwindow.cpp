@@ -150,8 +150,13 @@ int FileManagerWindowPrivate::splitterPosition() const
 
 void FileManagerWindowPrivate::setSplitterPosition(int pos)
 {
-    if (splitter)
-        splitter->setSizes({ pos, splitter->width() - pos - splitter->handleWidth() });
+    if (splitter) {
+        if (sideBarVisible) {
+            splitter->setSizes({ pos, splitter->width() - pos - splitter->handleWidth() });
+        } else {
+            splitter->setSizes({ 0, splitter->width() });
+        }
+    }
 }
 
 void FileManagerWindowPrivate::resetTitleBarSize()
@@ -299,6 +304,48 @@ void FileManagerWindowPrivate::saveSidebarState()
         state["sidebar"] = width;
         Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
     }
+}
+
+void FileManagerWindowPrivate::updateSideBarState()
+{
+    int totalWidth = q->width();
+    int sideBarWidth = splitter->sizes().at(0);
+    int workspaceWidth = totalWidth - sideBarWidth - splitter->handleWidth();
+    sideBarShrinking = workspaceWidth <= kMinimumRightWidth;
+
+    if (!sideBarShrinking && sideBarWidth >= kMinimumLeftWidth)
+        lastSidebarExpandedPostion = sideBarWidth;
+}
+
+void FileManagerWindowPrivate::updateSideBarVisibility()
+{
+    int totalWidth = q->width();
+    bool shouldShowSidebar = totalWidth >= (kMinimumRightWidth + kMinimumLeftWidth + splitter->handleWidth());
+
+    if (shouldShowSidebar && !sideBarVisible) {
+        showSideBar();
+    } else if (!shouldShowSidebar && sideBarVisible) {
+        hideSideBar();
+    } else if (sideBarShrinking && sideBarVisible) {
+        int newSideBarWidth = totalWidth - kMinimumRightWidth - splitter->handleWidth();
+        if (newSideBarWidth <= kMinimumLeftWidth) {
+            hideSideBar();
+        }
+    }
+}
+
+void FileManagerWindowPrivate::showSideBar()
+{
+    sideBar->setVisible(true);
+    sidebarSep->setVisible(true);
+    sideBarVisible = true;
+}
+
+void FileManagerWindowPrivate::hideSideBar()
+{
+    sideBar->setVisible(false);
+    sidebarSep->setVisible(false);
+    sideBarVisible = false;
 }
 
 /*!
@@ -576,8 +623,7 @@ void FileManagerWindow::initializeUi()
         // right area
         {
             d->rightArea = new QFrame(this);
-            auto minimumWidth = d->kMinimumWindowWidth - d->kMaximumLeftWidth;
-            d->rightArea->setMinimumWidth(minimumWidth > 0 ? minimumWidth : 80);
+            d->rightArea->setMinimumWidth(d->kMinimumRightWidth);
             // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
             //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
             //              设置size policy可以生效
@@ -618,7 +664,19 @@ void FileManagerWindow::initializeUi()
 void FileManagerWindow::updateUi()
 {
     int splitterPos = d->loadSidebarState();
+    d->lastSidebarExpandedPostion = splitterPos;
     d->setSplitterPosition(splitterPos);
+}
+
+void FileManagerWindow::resizeEvent(QResizeEvent *event)
+{
+    DMainWindow::resizeEvent(event);
+
+    if (!d->sideBar || !d->titleBar || !d->workspace || !d->splitter)
+        return;
+
+    d->updateSideBarState();
+    d->updateSideBarVisibility();
 }
 
 }   // namespace dfmbase
