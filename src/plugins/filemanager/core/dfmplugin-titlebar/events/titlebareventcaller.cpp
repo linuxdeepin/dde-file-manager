@@ -101,3 +101,18 @@ ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)
     int defaultViewMode = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetDefaultViewMode", scheme).toInt();
     return static_cast<ViewMode>(defaultViewMode);
 }
+
+ItemRoles TitleBarEventCaller::sendCurrentSortRole(QWidget *sender)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    int currentSortRole = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", id).toInt();
+    return static_cast<ItemRoles>(currentSortRole);
+}
+
+void TitleBarEventCaller::sendSetSort(QWidget *sender, ItemRoles role)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", id, role);
+}

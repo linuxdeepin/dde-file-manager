@@ -69,5 +69,7 @@
         <file>icons/deepin/builtin/texts/dfm_server_collect_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_server_uncollect_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_view_filter_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_sortby_arrange_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewoption_16px.svg</file>
     </qresource>
 </RCC>
