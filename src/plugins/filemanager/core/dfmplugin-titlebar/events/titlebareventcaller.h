@@ -31,6 +31,8 @@ public:
     static void sendCheckAddressInputStr(QWidget *sender, QString *str);
     static void sendTabChanged(quint64 windowId, int tabIndex);
     static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
+    static DFMGLOBAL_NAMESPACE::ItemRoles sendCurrentSortRole(QWidget *sender);
+    static void sendSetSort(QWidget *sender, DFMGLOBAL_NAMESPACE::ItemRoles role);
 };
 
 }

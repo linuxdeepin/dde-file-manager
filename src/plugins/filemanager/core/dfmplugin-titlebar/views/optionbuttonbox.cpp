@@ -6,6 +6,7 @@
 #include "views/optionbuttonbox.h"
 #include "events/titlebareventcaller.h"
 #include "utils/optionbuttonmanager.h"
+#include "views/sortbybutton.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -126,6 +127,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
             d->treeViewButton->setHidden(state & OptionButtonManager::kHideTreeViewBtn);
 
         d->detailButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
+        d->sortByButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
         if (d->detailButton->isChecked())
             d->detailButton->click();
 
@@ -139,6 +141,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->listViewButton->setHidden(false);
         d->iconViewButton->setHidden(false);
         d->detailButton->setHidden(false);
+        d->sortByButton->setHidden(false);
         setContentsMargins(5, 0, 15, 0);
     }
 
@@ -199,6 +202,12 @@ void OptionButtonBox::initializeUi()
     d->detailButton->setFixedSize(buttonSize);
     d->detailButton->setToolTip(tr("detail view"));
     d->detailButton->setIconSize(buttonIconSize);
+
+    d->sortByButton = new SortByButton(this);
+    d->sortByButton->setFocusPolicy(Qt::NoFocus);
+    d->sortByButton->setToolTip(tr("Sort by"));
+    d->sortByButton->setIconSize(buttonIconSize);
+
     initUiForSizeMode();
 }
 
@@ -241,8 +250,9 @@ void OptionButtonBox::initUiForSizeMode()
     d->hBoxLayout->addWidget(d->listViewButton);
     if (d->treeViewButton)
         d->hBoxLayout->addWidget(d->treeViewButton);
-    d->hBoxLayout->addSpacing(10);
     d->hBoxLayout->addWidget(d->detailButton);
+    d->hBoxLayout->addSpacing(10);
+    d->hBoxLayout->addWidget(d->sortByButton);
     d->hBoxLayout->setSpacing(0);
     setLayout(d->hBoxLayout);
 }
