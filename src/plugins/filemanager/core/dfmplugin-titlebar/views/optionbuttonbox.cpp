@@ -153,7 +153,7 @@ void OptionButtonBox::initializeUi()
     QSize buttonSize(kToolButtonSize, kToolButtonSize);
     QSize buttonIconSize(kToolButtonIconSize, kToolButtonIconSize);
 
-    setContentsMargins(5, 0, 15, 0);
+    setContentsMargins(5, 0, 5, 0);
     d->buttonGroup = new QButtonGroup(this);
 
     d->iconViewButton = new DToolButton;
@@ -244,17 +244,24 @@ void OptionButtonBox::initUiForSizeMode()
         delete d->hBoxLayout;
         d->hBoxLayout = nullptr;
     }
+    int fixedWidth = 10;
     d->hBoxLayout = new QHBoxLayout;
     d->hBoxLayout->setContentsMargins(0, 0, 0, 0);
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
-    if (d->treeViewButton)
+    fixedWidth += d->iconViewButton->width() + d->listViewButton->width();
+    if (d->treeViewButton) {
         d->hBoxLayout->addWidget(d->treeViewButton);
+        fixedWidth += d->treeViewButton->width();
+    }
     d->hBoxLayout->addWidget(d->detailButton);
+    fixedWidth += d->detailButton->width();
     d->hBoxLayout->addSpacing(10);
     d->hBoxLayout->addWidget(d->sortByButton);
-    d->hBoxLayout->setSpacing(0);
+    fixedWidth += d->sortByButton->width() + 10;
+
     setLayout(d->hBoxLayout);
+    setFixedWidth(fixedWidth);
 }
 
 DToolButton *OptionButtonBox::listViewButton() const

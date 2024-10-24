@@ -7,6 +7,9 @@
 
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -318,6 +321,15 @@ bool SearchHelper::allowRepeatUrl(const QUrl &cur, const QUrl &pre)
 {
     if (cur.scheme() == scheme() && pre.scheme() == scheme())
         return true;
+    return false;
+}
+
+bool SearchHelper::crumbRedirectUrl(QUrl *redirectUrl)
+{
+    if (redirectUrl->scheme() == scheme()) {
+        *redirectUrl = searchTargetUrl(*redirectUrl);
+        return true;
+    }
     return false;
 }
 

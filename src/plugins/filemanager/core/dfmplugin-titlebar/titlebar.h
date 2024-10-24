@@ -41,6 +41,7 @@ class TitleBar : public dpf::Plugin
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_Crumb_Seprate)
+    DPF_EVENT_REG_HOOK(hook_Crumb_RedirectUrl)
     DPF_EVENT_REG_HOOK(hook_Show_Addr)
     DPF_EVENT_REG_HOOK(hook_Copy_Addr)
 
