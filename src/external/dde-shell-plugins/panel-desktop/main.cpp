@@ -233,6 +233,8 @@ public:
         DGuiApplicationHelper::loadTranslator(QStringLiteral("dde-file-manager"),
                                               desktop::translationDir(),
                                               { QLocale::system() });
+        if (qApp)
+            qApp->loadTranslator();
 
         // DBus
         {
