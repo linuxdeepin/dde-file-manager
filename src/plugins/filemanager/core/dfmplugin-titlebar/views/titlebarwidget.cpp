@@ -4,7 +4,8 @@
 
 #include "titlebarwidget.h"
 #include "tabbar.h"
-#include "tab.h"
+#include "tabbar.h"
+#include "searcheditwidget.h"
 #include "events/titlebareventcaller.h"
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
@@ -40,6 +41,10 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+inline constexpr int kSpacing { 10 };
+inline constexpr int kCriticalWidth { 650 };
+inline constexpr int kSearchEditMaxWidth { 240 };
+
 TitleBarWidget::TitleBarWidget(QFrame *parent)
     : AbstractFrame(parent)
 {
@@ -72,12 +77,12 @@ DTitlebar *TitleBarWidget::titleBar() const
 
 void TitleBarWidget::startSpinner()
 {
-    addressBar->startSpinner();
+    searchEditWidget->startSpinner();
 }
 
 void TitleBarWidget::stopSpinner()
 {
-    addressBar->stopSpinner();
+    searchEditWidget->stopSpinner();
 }
 
 void TitleBarWidget::initTabBar(const quint64 windowId)
@@ -97,10 +102,7 @@ void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 
 void TitleBarWidget::handleHotkeyCtrlF()
 {
-    if (searchButtonSwitchState)
-        searchButton->setChecked(!searchButton->isChecked());
-
-    onSearchButtonClicked();
+    searchEditWidget->activateEdit();
 }
 
 void TitleBarWidget::handleHotkeyCtrlL()
@@ -193,6 +195,7 @@ void TitleBarWidget::initializeUi()
     placeholder->setVisible(true);
     placeholder->setObjectName("Placeholder");
     placeholder->setAttribute(Qt::WA_TranslucentBackground);
+    placeholder->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     topBarCustomLayout->addWidget(placeholder);
 
     topCustomWidget->setLayout(topBarCustomLayout);
@@ -200,6 +203,7 @@ void TitleBarWidget::initializeUi()
 
     // nav
     curNavWidget = new NavWidget;
+    curNavWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // address
     addressBar = new AddressBar;
@@ -208,26 +212,17 @@ void TitleBarWidget::initializeUi()
     // crumb
     crumbBar = new CrumbBar;
 
-    // search button
-    searchButton = new DToolButton;
-    searchButton->setIcon(QIcon::fromTheme("dfm_search_button"));
-    searchButton->setFixedSize(kToolButtonSize, kToolButtonSize);
-    searchButton->setFocusPolicy(Qt::NoFocus);
-    searchButton->setToolTip(tr("search"));
-    searchButton->setVisible(false);
-
-    // temp search editor
-    auto searchEdit = new DSearchEdit;
-    searchEdit->setFixedHeight(30);
-    searchEdit->setMaximumWidth(240);
+    // search widget
+    searchEditWidget = new SearchEditWidget(this);
+    searchEditWidget->setFixedHeight(30);
+    searchEditWidget->setMaximumWidth(kSearchEditMaxWidth);
 
     // option button
     optionButtonBox = new OptionButtonBox;
+    optionButtonBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(crumbBar), AcName::kAcComputerTitleBarAddress);
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(searchButton), AcName::kAcComputerTitleBarSearchBtn);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(optionButtonBox), AcName::kAcComputerTitleBarOptionBtnBox);
 #endif
@@ -238,23 +233,21 @@ void TitleBarWidget::initializeUi()
     titleBarLayout->addWidget(topBar);
 
     bottomBarLayout = new QHBoxLayout;
-    bottomBarLayout->setContentsMargins(0, 5, 0, 5);
+    bottomBarLayout->setContentsMargins(kSpacing, 5, kSpacing, 5);
     bottomBarLayout->setSpacing(0);
 
-    bottomBarLayout->addSpacing(15);
     bottomBarLayout->addWidget(curNavWidget);
 
-    bottomBarLayout->addSpacing(10);
+    // bottomBarLayout->addSpacing(10);
     bottomBarLayout->addWidget(addressBar);
     bottomBarLayout->addWidget(crumbBar);
 
-    bottomBarLayout->addSpacing(10);
+    // bottomBarLayout->addSpacing(10);
     bottomBarLayout->addWidget(optionButtonBox, 0, Qt::AlignRight);
 
-    bottomBarLayout->addSpacing(5);
-    bottomBarLayout->addWidget(searchEdit, 1);
-    bottomBarLayout->addWidget(searchButton);
     bottomBarLayout->addSpacing(10);
+    bottomBarLayout->addWidget(searchEditWidget, 1);
+
 
     titleBarLayout->addLayout(bottomBarLayout);
 
@@ -273,7 +266,6 @@ void TitleBarWidget::initializeUi()
 
 void TitleBarWidget::initConnect()
 {
-    connect(searchButton, &DToolButton::clicked, this, &TitleBarWidget::onSearchButtonClicked);
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
@@ -282,12 +274,10 @@ void TitleBarWidget::initConnect()
         addressBar->show();
         addressBar->setFocus();
         addressBar->setText(text);
-        searchBarActivated();
     });
     connect(crumbBar, &CrumbBar::hideAddressBar, this, [this](bool cd) {
         addressBar->hide();
         crumbBar->show();
-        searchBarDeactivated();
         if (cd)
             TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
     });
@@ -299,7 +289,6 @@ void TitleBarWidget::initConnect()
     connect(addressBar, &AddressBar::escKeyPressed, this, [this]() {
         if (crumbBar->controller())
             crumbBar->controller()->processAction(CrumbInterface::kEscKeyPressed);
-        addressBar->stopSpinner();
     });
     connect(addressBar, &AddressBar::lostFocus, this, [this]() {
         if (crumbBar->controller())
@@ -313,6 +302,10 @@ void TitleBarWidget::initConnect()
     connect(addressBar, &AddressBar::urlChanged, this, &TitleBarWidget::onAddressBarJump);
     connect(addressBar, &AddressBar::pauseButtonClicked, this, [this]() {
         TitleBarEventCaller::sendStopSearch(this);
+    });
+
+    connect(searchEditWidget, &SearchEditWidget::clearButtonClicked, this, [this]() {
+        TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
     });
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -340,34 +333,23 @@ void TitleBarWidget::showAddrsssBar(const QUrl &url)
     addressBar->show();
     addressBar->setFocus();
     addressBar->setCurrentUrl(url);
-    searchBarActivated();
 }
 
 void TitleBarWidget::showCrumbBar()
 {
-    showSearchButton();
-
     if (crumbBar)
         crumbBar->show();
 
     if (addressBar) {
         addressBar->clear();
         addressBar->hide();
-        searchBarDeactivated();
     }
     setFocus();
 }
 
-void TitleBarWidget::showSearchButton()
-{
-    // if (searchButton)
-    //     searchButton->show();
-}
-
 void TitleBarWidget::showSearchFilterButton(bool visible)
 {
-    // if (searchButtonSwitchState)
-    //     searchButton->setVisible(visible);
+    searchEditWidget->setAdvancedButtonVisible(visible);
 }
 
 void TitleBarWidget::setViewModeState(int mode)
@@ -385,15 +367,6 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
 
     if (watched == addressBar) {
         switch (event->type()) {
-        case QEvent::FocusOut: {
-            // keep the `addressBar` displayed when click `filterButton`
-            bool posContains = searchButton->geometry().contains(mapFromGlobal(QCursor::pos()));
-            bool isChecked = searchButton->isChecked();
-            if (posContains || isChecked) {
-                addressBar->showOnFocusLostOnce();
-                return false;
-            }
-        } break;
         case QEvent::Hide:
             if (!crumbBar->controller()->isKeepAddressBar()) {
                 showCrumbBar();
@@ -408,24 +381,6 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
-{
-    if (switchBtn) {
-        searchButton->setObjectName("filterButton");
-        searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
-        searchButton->setCheckable(true);
-        searchButton->setToolTip(tr("advanced search"));
-        searchButtonSwitchState = true;
-    } else {
-        if (searchButton->isChecked())
-            TitleBarEventCaller::sendShowFilterView(this, false);
-        searchButton->setIcon(QIcon::fromTheme("dfm_search_button"));
-        searchButton->setCheckable(false);
-        searchButton->setToolTip(tr("search"));
-        searchButtonSwitchState = false;
-    }
-}
-
 TabBar *TitleBarWidget::createTabBar(const quint64 windowId)
 {
     auto tabBar = TabBarManager::instance()->createTabBar(windowId, this);
@@ -438,31 +393,12 @@ TabBar *TitleBarWidget::createTabBar(const quint64 windowId)
     return tabBar;
 }
 
-void TitleBarWidget::onSearchButtonClicked()
-{
-    if (!searchButtonSwitchState) {
-        showAddrsssBar(QUrl());
-    } else {
-        TitleBarEventCaller::sendShowFilterView(this, searchButton->isChecked());
-    }
-}
-
 void TitleBarWidget::onAddressBarJump()
 {
     const QString &currentDir = QDir::currentPath();
     if (dfmbase::FileUtils::isLocalFile(titlebarUrl))
         QDir::setCurrent(titlebarUrl.toLocalFile());
     QDir::setCurrent(currentDir);
-}
-
-void TitleBarWidget::searchBarActivated()
-{
-    toggleSearchButtonState(true);
-}
-
-void TitleBarWidget::searchBarDeactivated()
-{
-    toggleSearchButtonState(false);
 }
 
 void TitleBarWidget::onTabCreated()
@@ -478,4 +414,47 @@ void TitleBarWidget::onTabRemoved(int index)
 void TitleBarWidget::onTabMoved(int from, int to)
 {
     curNavWidget->moveNavStacks(from, to);
+}
+
+void TitleBarWidget::resizeEvent(QResizeEvent *event)
+{
+    AbstractFrame::resizeEvent(event);
+    
+    int totalWidth = width();
+    
+    // 计算其他固定宽度组件的总宽度
+    int fixedWidth = curNavWidget->width() + optionButtonBox->width() + kSpacing * 5;
+    
+    // 获取当前crumbBar或addressBar的宽度
+    int currentBarWidth = crumbBar->isVisible() ? crumbBar->width() : addressBar->width();
+    
+    if (totalWidth >= kCriticalWidth) {
+        // 当总宽度大于等于临界点时，优先设置searchEditWidget为最大宽度
+        searchEditWidget->setFixedWidth(kSearchEditMaxWidth);
+        
+        // 计算剩余宽度并分配给crumbBar或addressBar
+        int remainingWidth = totalWidth - fixedWidth - kSearchEditMaxWidth;
+        if (crumbBar->isVisible()) {
+            crumbBar->setFixedWidth(remainingWidth);
+        } else if (addressBar->isVisible()) {
+            addressBar->setFixedWidth(remainingWidth);
+        }
+    } else {
+        // 当总宽度小于临界点时，执行之前的算法
+        int idealSearchWidth = totalWidth - fixedWidth - currentBarWidth;
+        
+        // 调整searchEditWidget的宽度
+        int searchEditWidth = qBound(searchEditWidget->getMinimumWidth(), idealSearchWidth, kSearchEditMaxWidth);
+        searchEditWidget->setFixedWidth(searchEditWidth);
+        
+        // 只有当searchEditWidget达到边界值时，才调整crumbBar或addressBar的宽度
+        int remainingWidth = totalWidth - fixedWidth - searchEditWidth;
+        if (searchEditWidth == searchEditWidget->getMinimumWidth() || searchEditWidth == kSearchEditMaxWidth) {
+            if (crumbBar->isVisible()) {
+                crumbBar->setFixedWidth(remainingWidth);
+            } else if (addressBar->isVisible()) {
+                addressBar->setFixedWidth(remainingWidth);
+            }
+        }
+    }
 }

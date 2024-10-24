@@ -19,18 +19,11 @@ class AddressBar : public QLineEdit
     AddressBarPrivate *const d;
 
 public:
-    enum IndicatorType {
-        Search,
-        JumpTo
-    };
-
     explicit AddressBar(QWidget *parent = nullptr);
     bool completerViewVisible();
     void setCurrentUrl(const QUrl &url);
     QUrl currentUrl();
     void showOnFocusLostOnce();
-    QString text() const;
-    void clearSearchHistory();
 
 protected:
     bool event(QEvent *e) override;
@@ -40,12 +33,6 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     void showEvent(QShowEvent *event) override;
     void inputMethodEvent(QInputMethodEvent *e) override;
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    void enterEvent(QEvent *e) override;
-#else
-    void enterEvent(QEnterEvent *event) override;
-#endif
-    void leaveEvent(QEvent *e) override;
 
 Q_SIGNALS:
     void lostFocus();
@@ -53,10 +40,6 @@ Q_SIGNALS:
     void clearButtonPressed();
     void pauseButtonClicked();
     void urlChanged();
-
-public slots:
-    void startSpinner();
-    void stopSpinner();
 };
 
 }
