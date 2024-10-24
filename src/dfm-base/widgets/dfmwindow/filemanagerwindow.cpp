@@ -150,13 +150,8 @@ int FileManagerWindowPrivate::splitterPosition() const
 
 void FileManagerWindowPrivate::setSplitterPosition(int pos)
 {
-    if (splitter) {
-        if (sideBarVisible) {
-            splitter->setSizes({ pos, splitter->width() - pos - splitter->handleWidth() });
-        } else {
-            splitter->setSizes({ 0, splitter->width() });
-        }
-    }
+    if (splitter)
+        splitter->setSizes({ pos, splitter->width() - pos - splitter->handleWidth() });
 }
 
 void FileManagerWindowPrivate::resetTitleBarSize()
@@ -202,9 +197,8 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
     int start = expanded ? 1 : splitter->sizes().at(0);
     int end = expanded ? lastSidebarExpandedPostion : 1;
 
-    if (!expanded && !lastAnimationStopped) {
+    if (!expanded && !lastAnimationStopped)
         lastSidebarExpandedPostion = splitter->sizes().at(0);
-    }
 
     configureAnimation(start, end);
     connectAnimationSignals();
@@ -251,6 +245,7 @@ void FileManagerWindowPrivate::handleWindowResize(bool expanded)
             windowAnimation->start(QAbstractAnimation::DeleteWhenStopped);
         }
         sidebarSep->setVisible(true);
+        sideBarAutoVisible = true;
     }
 }
 
@@ -269,10 +264,11 @@ void FileManagerWindowPrivate::configureAnimation(int start, int end)
 void FileManagerWindowPrivate::connectAnimationSignals()
 {
     connect(curSplitterAnimation, &QPropertyAnimation::finished, this, [this]() {
-        if (curSplitterAnimation->endValue().toInt() > 1)
+        bool expanded = curSplitterAnimation->endValue().toInt() > 1;
+        if (expanded)
             resetSideBarSize();
-        sideBar->setVisible(curSplitterAnimation->endValue().toInt() > 1);
-        sidebarSep->setVisible(curSplitterAnimation->endValue().toInt() > 1);
+        sideBar->setVisible(expanded);
+        sidebarSep->setVisible(expanded);
         delete curSplitterAnimation;
         curSplitterAnimation = nullptr;
     });
@@ -313,7 +309,10 @@ void FileManagerWindowPrivate::saveWindowState()
     QVariantMap state;
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏属性都满足，才判断是全屏
     if ((states & kNetWmStateMaximizedHorz) == 0 || (states & kNetWmStateMaximizedVert) == 0) {
-        state["width"] = q->size().width();
+        int sideBarWidth = splitter->sizes().at(0);
+        int workspaceWidth = q->size().width() - sideBarWidth - splitter->handleWidth();
+        int minWidth = std::max(sideBarWidth, kMinimumLeftWidth) + kMinimumRightWidth + splitter->handleWidth();
+        state["width"] = std::max(q->size().width(), minWidth);
         state["height"] = q->size().height();
     } else {
         const QVariantMap &state1 = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
@@ -348,13 +347,13 @@ void FileManagerWindowPrivate::updateSideBarState()
 void FileManagerWindowPrivate::updateSideBarVisibility()
 {
     int totalWidth = q->width();
-    bool shouldShowSidebar = totalWidth >= (kMinimumRightWidth + kMinimumLeftWidth + splitter->handleWidth());
+    bool haveSpaceShowSidebar = totalWidth >= (kMinimumRightWidth + kMinimumLeftWidth + splitter->handleWidth());
 
-    if (shouldShowSidebar && !sideBarVisible) {
+    if (haveSpaceShowSidebar && !sideBarAutoVisible) {
         showSideBar();
-    } else if (!shouldShowSidebar && sideBarVisible) {
+    } else if (!haveSpaceShowSidebar && sideBarAutoVisible) {
         hideSideBar();
-    } else if (sideBarShrinking && sideBarVisible) {
+    } else if (sideBarShrinking && sideBarAutoVisible) {
         int newSideBarWidth = totalWidth - kMinimumRightWidth - splitter->handleWidth();
         if (newSideBarWidth <= kMinimumLeftWidth) {
             hideSideBar();
@@ -364,19 +363,25 @@ void FileManagerWindowPrivate::updateSideBarVisibility()
 
 void FileManagerWindowPrivate::showSideBar()
 {
+    if (sideBar && sideBar->isVisible())
+        return;
+
     sideBar->setVisible(true);
     sidebarSep->setVisible(true);
-    sideBarVisible = true;
     expandButton->setProperty("expand", true);
+    sideBarAutoVisible = true;
     emit q->windowSplitterWidthChanged(lastSidebarExpandedPostion);
 }
 
 void FileManagerWindowPrivate::hideSideBar()
 {
+    if (sideBar && !sideBar->isVisible())
+        return;
+
     sideBar->setVisible(false);
     sidebarSep->setVisible(false);
-    sideBarVisible = false;
     expandButton->setProperty("expand", false);
+    sideBarAutoVisible = false;
     emit q->windowSplitterWidthChanged(0);
 }
 

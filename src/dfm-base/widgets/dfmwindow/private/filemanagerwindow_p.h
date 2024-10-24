@@ -87,7 +87,7 @@ protected:
     std::once_flag workspaceFlag;
     std::once_flag detailVewFlag;
 
-    bool sideBarVisible { true };
+    bool sideBarAutoVisible { true };
     bool sideBarShrinking { false };
 
 private:
