@@ -7,6 +7,8 @@
 
 #include <dfm-base/dfm_log_defines.h>
 
+#include <QUrl>
+
 #define DPSEARCH_NAMESPACE dfmplugin_search
 #define DPSEARCH_BEGIN_NAMESPACE namespace DPSEARCH_NAMESPACE {
 #define DPSEARCH_END_NAMESPACE }
@@ -30,6 +32,9 @@ namespace CustomKey {
 inline constexpr char kDisableSearch[] { "Property_Key_DisableSearch" };
 inline constexpr char kRedirectedPath[] { "Property_Key_RedirectedPath" };
 inline constexpr char kUseNormalMenu[] { "Property_Key_UseNormalMenu" };
+inline constexpr char kCurmbUrl[] {"CrumbData_Key_Url"};
+inline constexpr char kCurmbIconName[] {"CrumbData_Key_IconName"};
+inline constexpr char kCurmbDisplayText[] {"CrumbData_Key_DisplayText"};
 }
 
 namespace SearchSettings {
@@ -48,5 +53,7 @@ inline constexpr char kDisplaySearchHistory[] { "displaySearchHistory" };
 }
 
 DPSEARCH_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QUrl *);
 
 #endif   // DFMPLUGIN_SEARCH_GLOBAL_H

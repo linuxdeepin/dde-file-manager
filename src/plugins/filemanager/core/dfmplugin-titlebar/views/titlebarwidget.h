@@ -23,6 +23,7 @@ DWIDGET_END_NAMESPACE
 namespace dfmplugin_titlebar {
 
 class TabBar;
+class SearchEditWidget;
 class TitleBarWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
@@ -53,25 +54,23 @@ public slots:
     void handleHotketCreateNewTab();
     void handleHotketActivateTab(const int index);
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private:
     void initializeUi();
     void initConnect();
     void initUiForSizeMode();
     void showAddrsssBar(const QUrl &url);   // switch addrasssBar and crumbBar show
     void showCrumbBar();
-    void showSearchButton();
     bool eventFilter(QObject *watched, QEvent *event) override;
-    void toggleSearchButtonState(bool switchBtn = true);
     TabBar *createTabBar(const quint64 windowId);
 
 signals:
     void currentUrlChanged(const QUrl &url);
 
 private slots:
-    void onSearchButtonClicked();
     void onAddressBarJump();
-    void searchBarActivated();
-    void searchBarDeactivated();
 
     void onTabCreated();
     void onTabRemoved(int index);
@@ -85,7 +84,7 @@ private:
     QHBoxLayout *bottomBarLayout { nullptr };
     NavWidget *curNavWidget { nullptr };   // 导航小部件
     AddressBar *addressBar { nullptr };   // 地址编辑栏
-    DToolButton *searchButton { nullptr };   // 搜索栏按钮
+    SearchEditWidget *searchEditWidget { nullptr };   // 搜索编辑栏
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
     QWidget *placeholder { nullptr };

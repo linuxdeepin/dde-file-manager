@@ -47,6 +47,7 @@ public:
     bool dragOutSide = false;
     bool checked = false;
     bool borderLeft = false;
+    bool canDrag = false;
 };
 
 }
