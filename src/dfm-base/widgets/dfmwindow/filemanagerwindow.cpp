@@ -310,7 +310,6 @@ void FileManagerWindowPrivate::saveWindowState()
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏属性都满足，才判断是全屏
     if ((states & kNetWmStateMaximizedHorz) == 0 || (states & kNetWmStateMaximizedVert) == 0) {
         int sideBarWidth = splitter->sizes().at(0);
-        int workspaceWidth = q->size().width() - sideBarWidth - splitter->handleWidth();
         int minWidth = std::max(sideBarWidth, kMinimumLeftWidth) + kMinimumRightWidth + splitter->handleWidth();
         state["width"] = std::max(q->size().width(), minWidth);
         state["height"] = q->size().height();
