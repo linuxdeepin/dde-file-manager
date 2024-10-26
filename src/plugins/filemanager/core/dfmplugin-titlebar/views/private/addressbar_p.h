@@ -75,7 +75,6 @@ public:
     explicit AddressBarPrivate(AddressBar *qq);
     void initializeUi();
     void initConnect();
-    void initUiForSizeMode();
     void initData();
     void updateHistory();
     void setCompleter(QCompleter *c);
