@@ -237,12 +237,8 @@ void TitleBarWidget::initializeUi()
     bottomBarLayout->setSpacing(0);
 
     bottomBarLayout->addWidget(curNavWidget);
-
-    // bottomBarLayout->addSpacing(10);
     bottomBarLayout->addWidget(addressBar);
     bottomBarLayout->addWidget(crumbBar);
-
-    // bottomBarLayout->addSpacing(10);
     bottomBarLayout->addWidget(optionButtonBox, 0, Qt::AlignRight);
 
     bottomBarLayout->addSpacing(10);
@@ -422,17 +418,17 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
     
     int totalWidth = width();
     
-    // 计算其他固定宽度组件的总宽度
+    // Calculate the total width of other fixed-width components
     int fixedWidth = curNavWidget->width() + optionButtonBox->width() + kSpacing * 5;
     
-    // 获取当前crumbBar或addressBar的宽度
+    // Get the width of the currently visible bar (crumbBar or addressBar)
     int currentBarWidth = crumbBar->isVisible() ? crumbBar->width() : addressBar->width();
     
     if (totalWidth >= kCriticalWidth) {
-        // 当总宽度大于等于临界点时，优先设置searchEditWidget为最大宽度
+        // When total width is greater than or equal to the critical point, prioritize setting searchEditWidget to maximum width
         searchEditWidget->setFixedWidth(kSearchEditMaxWidth);
         
-        // 计算剩余宽度并分配给crumbBar或addressBar
+        // Calculate remaining width and allocate to crumbBar or addressBar
         int remainingWidth = totalWidth - fixedWidth - kSearchEditMaxWidth;
         if (crumbBar->isVisible()) {
             crumbBar->setFixedWidth(remainingWidth);
@@ -440,14 +436,14 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
             addressBar->setFixedWidth(remainingWidth);
         }
     } else {
-        // 当总宽度小于临界点时，执行之前的算法
+        // When total width is less than the critical point, execute the previous algorithm
         int idealSearchWidth = totalWidth - fixedWidth - currentBarWidth;
         
-        // 调整searchEditWidget的宽度
+        // Adjust the width of searchEditWidget
         int searchEditWidth = qBound(searchEditWidget->getMinimumWidth(), idealSearchWidth, kSearchEditMaxWidth);
         searchEditWidget->setFixedWidth(searchEditWidth);
         
-        // 只有当searchEditWidget达到边界值时，才调整crumbBar或addressBar的宽度
+        // Only adjust the width of crumbBar or addressBar when searchEditWidget reaches its boundary values
         int remainingWidth = totalWidth - fixedWidth - searchEditWidth;
         if (searchEditWidth == searchEditWidget->getMinimumWidth() || searchEditWidth == kSearchEditMaxWidth) {
             if (crumbBar->isVisible()) {
