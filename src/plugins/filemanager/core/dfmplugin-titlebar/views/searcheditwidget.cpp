@@ -40,6 +40,8 @@ SearchEditWidget::SearchEditWidget(QWidget *parent)
     initConnect();
     initData();
     searchEdit->lineEdit()->installEventFilter(this);
+    searchEdit->installEventFilter(this);
+    advancedButton->installEventFilter(this);
 }
 
 void SearchEditWidget::activateEdit()
@@ -57,7 +59,7 @@ void SearchEditWidget::activateEdit()
         advancedButton->setChecked(!advancedButton->isChecked());
         TitleBarEventCaller::sendShowFilterView(this, advancedButton->isChecked());
     } else {
-        searchEdit->setFocus();
+        searchEdit->lineEdit()->setFocus();
     }
 }
 
@@ -137,6 +139,7 @@ void SearchEditWidget::onTextChanged(const QString &text)
     {
         urlCompleter->setCompletionPrefix("");
         completerBaseString = "";
+        completerView->hide();
         return;
     }
 
@@ -242,26 +245,21 @@ void SearchEditWidget::expandSearchEdit()
     }
 
     // 设置焦点到搜索编辑框
-    searchEdit->setFocus();
+    searchEdit->lineEdit()->setFocus();
 }
 
 void SearchEditWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
 
-    // 添加宽度检查
+    // Add width check
     if (event->size().width() <= 60) {
-        if (searchEdit->isVisible()) {
-            // 直接隐藏搜索框,显示搜索按钮
-            searchEdit->setVisible(false);
-            searchButton->setVisible(true);
-        }
+        // Directly hide search box and show search button
+        searchEdit->setVisible(false);
+        searchButton->setVisible(true);
     } else {
-        if (!searchEdit->isVisible()) {
-            // 直接显示搜索框,隐藏搜索按钮
-            searchEdit->setVisible(true);
-            searchButton->setVisible(false);
-        }
+        searchEdit->setVisible(true);
+        searchButton->setVisible(false);
     }
 
     spinner->setFixedSize(height() - 8, height() - 8);
@@ -300,12 +298,12 @@ bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
             handleInputMethodEvent(static_cast<QInputMethodEvent *>(event));
         }
     }
+
     return QWidget::eventFilter(watched, event);
 }
 
 void SearchEditWidget::focusOutEvent(QFocusEvent *event)
 {
-    qWarning() << "!!!!!!!!!!!!!!!!widget focusOutEvent";
     QWidget::focusOutEvent(event);
 
     if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
@@ -331,6 +329,9 @@ void SearchEditWidget::initUI()
 
     // search edit
     searchEdit = new DSearchEdit(this);
+    searchEdit->setVisible(true);
+    searchEdit->setFocusPolicy(Qt::StrongFocus);
+    searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
 
     // advanced search button
     advancedButton = new DToolButton(this);
@@ -358,8 +359,6 @@ void SearchEditWidget::initUI()
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
     spinner->hide();
-
-    setFocusPolicy(Qt::ClickFocus);
 
     // Completer List
     completerView = new CompleterView(searchEdit->lineEdit());
@@ -671,7 +670,6 @@ bool SearchEditWidget::handleKeyPress(QKeyEvent *keyEvent)
 
 void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 {
-    qWarning() << "!!!!!!!!!!!!!!! handleFocusInEvent";
     if (urlCompleter)
         urlCompleter->setWidget(searchEdit->lineEdit());
 
@@ -680,8 +678,7 @@ void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 {
-    qWarning() << "!!!!!!!!!!!!!!! handleFocusOutEvent";
-    if (e->reason() == Qt::ActiveWindowFocusReason || e->reason() == Qt::PopupFocusReason || e->reason() == Qt::OtherFocusReason) {
+    if (e->reason() == Qt::PopupFocusReason) {
         e->accept();
         searchEdit->lineEdit()->setFocus();
         return;
@@ -689,12 +686,15 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 
     completionPrefix.clear();
     completerView->hide();
+
     isSearchExpanded = false;
+    if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
+        advancedButton->setVisible(false);
+    }
 }
 
 void SearchEditWidget::handleInputMethodEvent(QInputMethodEvent *e)
 {
-    qWarning() << "!!!!!!!!!!!!!!! handleInputMethodEvent";
     if (searchEdit->lineEdit()->hasSelectedText()) {
         // fix bug#31692 搜索框输入中文后,全选已输入的,再次输入未覆盖之前的内容
         int pos = selectPosStart;
@@ -710,7 +710,6 @@ void SearchEditWidget::handleEnterEvent(QEvent *e)
 void SearchEditWidget::handleEnterEvent(QEnterEvent *e)
 #endif
 {
-    qWarning() << "!!!!!!!!!!!!!!! handleEnterEvent";
     if (spinner->isPlaying()) {
         spinner->hide();
         pauseButton->setVisible(true);
@@ -719,7 +718,6 @@ void SearchEditWidget::handleEnterEvent(QEnterEvent *e)
 
 void SearchEditWidget::handleLeaveEvent(QEvent *e)
 {
-    qWarning() << "!!!!!!!!!!!!!!! handleLeaveEvent";
     if (spinner->isPlaying()) {
         pauseButton->setVisible(false);
         spinner->show();
