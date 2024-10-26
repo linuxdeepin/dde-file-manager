@@ -68,8 +68,6 @@ void AddressBarPrivate::initializeUi()
     q->setAlignment(Qt::AlignHCenter);
     q->setAlignment(Qt::AlignLeft);
     q->setFocusPolicy(Qt::ClickFocus);
-
-    initUiForSizeMode();
 }
 
 void AddressBarPrivate::initConnect()
@@ -103,23 +101,6 @@ void AddressBarPrivate::initConnect()
         selectPosStart = posStart < posEnd ? posStart : posEnd;
         selectLength = q->selectionLength();
     });
-
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
-        initUiForSizeMode();
-    });
-#endif
-}
-
-void AddressBarPrivate::initUiForSizeMode()
-{
-// #ifdef DTKWIDGET_CLASS_DSizeMode
-//     pauseButton->setFixedSize(DSizeModeHelper::element(QSize(16, 16), QSize(24, 24)));
-//     pauseButton->setIconSize(DSizeModeHelper::element(QSize(16, 16), QSize(24, 24)));
-// #else
-//     pauseButton->setFixedSize(QSize(24, 24));
-//     pauseButton->setIconSize(QSize(24, 24));
-// #endif
 }
 
 void AddressBarPrivate::initData()
@@ -542,7 +523,7 @@ void AddressBar::focusOutEvent(QFocusEvent *e)
     // fix bug#38455 文管启动后第一次点击搜索，再点击筛选按钮，会导致搜索框隐藏
     // 第一次点击筛选按钮，会发出Qt::OtherFocusReason信号导致搜索框隐藏，所以将其屏蔽
     // zhangs: 2024/04/09：On wayland `Qt::ActiveWindowFocusReason` is triggered again! （bug-249081）
-    if (e->reason() == Qt::ActiveWindowFocusReason || e->reason() == Qt::PopupFocusReason || e->reason() == Qt::OtherFocusReason) {
+    if (e->reason() == Qt::ActiveWindowFocusReason || e->reason() == Qt::PopupFocusReason) {
         e->accept();
         setFocus();
         return;
