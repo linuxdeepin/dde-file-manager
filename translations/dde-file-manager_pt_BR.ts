@@ -38,7 +38,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="130"/>
         <source>Disks</source>
-        <translation>Dispositivos</translation>
+        <translation>Unidades e dispositivos de armazenamento</translation>
     </message>
 </context>
 <context>
@@ -4011,7 +4011,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide My Directories on the Computer page</source>
-        <translation>Ocultar Meus Diretórios na página Computador</translation>
+        <translation>Ocultar Meus diretórios na página Computador</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="205"/>
@@ -4095,12 +4095,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="368"/>
         <source>My Directories</source>
-        <translation>Meus Diretórios</translation>
+        <translation>Meus diretórios</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="373"/>
         <source>Disks</source>
-        <translation>Dispositivos</translation>
+        <translation>Unidades e dispositivos de armazenamento</translation>
     </message>
 </context>
 <context>
