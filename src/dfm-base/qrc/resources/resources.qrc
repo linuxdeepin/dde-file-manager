@@ -71,5 +71,11 @@
         <file>icons/deepin/builtin/texts/dfm_view_filter_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_sortby_arrange_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_viewoption_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewoptions_mingrid_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewoptions_maxgrid_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewoptions_minicon_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewoptions_maxicon_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewoptions_minlist_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_viewoptions_maxlist_16px.svg</file>
     </qresource>
 </RCC>

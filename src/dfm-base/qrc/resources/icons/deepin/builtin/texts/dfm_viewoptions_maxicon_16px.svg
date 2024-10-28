@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>网格视图/图标/大</title>
+    <g id="网格视图/图标/大" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标/单色图标/视图图标/图标尺寸-大" transform="translate(2, 1)" fill="#000000" fill-rule="nonzero">
+            <path d="M12,12 C12,13.1045695 11.1045695,14 10,14 L2,14 C0.8954305,14 0,13.1045695 0,12 L0,2 C0,0.8954305 0.8954305,0 2,0 L8,0 L12,4 L12,12 Z M7,1 L2,1 C1.44771525,1 1,1.44771525 1,2 L1,12 C1,12.5522847 1.44771525,13 2,13 L10,13 C10.5522847,13 11,12.5522847 11,12 L11,5 L8,5 C7.44771525,5 7,4.55228475 7,4 L7,1 Z" id="形状结合"></path>
+        </g>
+    </g>
+</svg>

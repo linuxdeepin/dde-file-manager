@@ -134,6 +134,7 @@ inline constexpr char kAcComputerTitleBarBackBtn[] { "back_button" };
 inline constexpr char kAcComputerTitleBarForwardBtn[] { "forword_button" };
 inline constexpr char kAcComputerTitleBarSearchBtn[] { "search_button" };
 inline constexpr char kAcComputerTitleBarDetailBtn[] { "detail_button" };
+inline constexpr char kAcComputerTitleBarViewOptionsBtn[] { "viewoptions_button" };
 inline constexpr char kAcComputerTitleBarListViewBtn[] { "listView_button" };
 inline constexpr char kAcComputerTitleBarIconViewBtn[] { "iconView_button" };
 inline constexpr char kAcComputerTitleBarTreeViewBtn[] { "treeView_button" };
