@@ -61,6 +61,12 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
             Q_EMIT self->iconSizeLevelChanged(value.toInt());
         } else if (aa == Application::kViewMode) {
             Q_EMIT self->viewModeChanged(value.toInt());
+        } else if (aa == Application::kGridDensityLevel) {
+            Q_EMIT self->gridDensityLevelChanged(value.toInt());
+        } else if (aa == Application::kListHeightLevel) {
+            Q_EMIT self->listHeightLevelChanged(value.toInt());
+        } else if (aa == Application::kShowedDisplayPreview) {
+            Q_EMIT self->showedDisplayPreviewChanged(value.toBool());
         }
     } else if (group == QT_STRINGIFY(GenericAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<Application::GenericAttribute>();
@@ -153,6 +159,28 @@ void Application::setAppAttribute(Application::ApplicationAttribute aa, const QV
             if (map.contains("iconSizeLevel")) {
                 qCDebug(logDFMBase) << "reset" << url << "iconSizeLevel to " << value.toInt();
                 map["iconSizeLevel"] = value;
+                settings->setValue("FileViewState", url, map);
+            }
+        }
+    } else if (key == "GridDensityLevel") {
+        auto settings = appObtuselySetting();
+        const QStringList &keys = settings->keyList("FileViewState");
+        for (const QString &url : keys) {
+            auto map = settings->value("FileViewState", url).toMap();
+            if (map.contains("gridDensityLevel")) {
+                qCDebug(logDFMBase) << "reset" << url << "gridDensityLevel to " << value.toInt();
+                map["gridDensityLevel"] = value;
+                settings->setValue("FileViewState", url, map);
+            }
+        }
+    } else if (key == "ListHeightLevel") {
+        auto settings = appObtuselySetting();
+        const QStringList &keys = settings->keyList("FileViewState");
+        for (const QString &url : keys) {
+            auto map = settings->value("FileViewState", url).toMap();
+            if (map.contains("listHeightLevel")) {
+                qCDebug(logDFMBase) << "reset" << url << "listHeightLevel to " << value.toInt();
+                map["listHeightLevel"] = value;
                 settings->setValue("FileViewState", url, map);
             }
         }
@@ -305,7 +333,7 @@ void Application::appAttributeTrigger(TriggerAttribute ta, quint64 winId)
         if (instance())
             Q_EMIT instance()->viewModeChanged(defaultViewMode);
         break;
-        }
+    }
     case kClearSearchHistory:
         Q_EMIT instance()->clearSearchHistory(winId);
         break;

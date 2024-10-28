@@ -7,6 +7,7 @@
 #include "events/titlebareventcaller.h"
 #include "utils/optionbuttonmanager.h"
 #include "views/sortbybutton.h"
+#include "views/viewoptionsbutton.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -72,6 +73,7 @@ void OptionButtonBoxPrivate::switchMode(ViewMode mode)
     default:
         break;
     }
+    viewOptionsButton->switchMode(mode, currentUrl);
 }
 
 void OptionButtonBoxPrivate::onViewModeChanged(int mode)
@@ -84,30 +86,30 @@ void OptionButtonBoxPrivate::onViewModeChanged(int mode)
     }
 }
 
-DToolButton *OptionButtonBox::detailButton() const
+ViewOptionsButton *OptionButtonBox::viewOptionsButton() const
 {
-    return d->detailButton;
+    return d->viewOptionsButton;
 }
 
-void OptionButtonBox::setDetailButton(DToolButton *detailButton)
+void OptionButtonBox::setViewOptionsButton(ViewOptionsButton *button)
 {
-    if (!detailButton) return;
+    if (!button) return;
 
-    if (!d->hBoxLayout->replaceWidget(detailButton, detailButton)->isEmpty()) {
+    if (!d->hBoxLayout->replaceWidget(d->viewOptionsButton, button)->isEmpty()) {
 
-        if (d->detailButton) {
-            delete d->detailButton;
-            d->detailButton = nullptr;
+        if (d->viewOptionsButton) {
+            delete d->viewOptionsButton;
+            d->viewOptionsButton = nullptr;
         }
 
-        if (!d->detailButton)
-            d->detailButton = detailButton;
+        if (!d->viewOptionsButton)
+            d->viewOptionsButton = button;
 
-        if (d->listViewButton->icon().isNull())
-            d->detailButton->setIcon(QIcon::fromTheme("dfrightview_detail"));
+        if (d->viewOptionsButton->icon().isNull())
+            d->viewOptionsButton->setIcon(QIcon::fromTheme("dfm_viewoption"));
 
-        d->detailButton->setCheckable(true);
-        d->detailButton->setFocusPolicy(Qt::NoFocus);
+        d->viewOptionsButton->setCheckable(false);
+        d->viewOptionsButton->setFocusPolicy(Qt::NoFocus);
     }
 }
 
@@ -118,6 +120,7 @@ void OptionButtonBox::setViewMode(int mode)
 
 void OptionButtonBox::onUrlChanged(const QUrl &url)
 {
+    d->currentUrl = url;
     d->loadViewMode(url);
     if (OptionButtonManager::instance()->hasVsibleState(url.scheme())) {
         auto state = OptionButtonManager::instance()->optBtnVisibleState(url.scheme());
@@ -126,10 +129,8 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         if (d->treeViewButton)
             d->treeViewButton->setHidden(state & OptionButtonManager::kHideTreeViewBtn);
 
-        d->detailButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
         d->sortByButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
-        if (d->detailButton->isChecked())
-            d->detailButton->click();
+        d->viewOptionsButton->setVisible(!(state & OptionButtonManager::kHideDetailSpaceBtn));
 
         if (state == OptionButtonManager::kHideAllBtn)
             setContentsMargins(0, 0, 0, 0);
@@ -140,12 +141,10 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
             d->treeViewButton->setHidden(false);
         d->listViewButton->setHidden(false);
         d->iconViewButton->setHidden(false);
-        d->detailButton->setHidden(false);
         d->sortByButton->setHidden(false);
+        d->viewOptionsButton->setHidden(false);
         setContentsMargins(5, 0, 15, 0);
     }
-
-    d->currentUrl = url;
 }
 
 void OptionButtonBox::initializeUi()
@@ -183,7 +182,7 @@ void OptionButtonBox::initializeUi()
         d->buttonGroup->addButton(d->treeViewButton);
     }
 
-    d->detailButton = new DToolButton;
+    d->viewOptionsButton = new ViewOptionsButton(this);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->listViewButton), AcName::kAcComputerTitleBarListViewBtn);
@@ -194,20 +193,19 @@ void OptionButtonBox::initializeUi()
                              qobject_cast<QWidget *>(d->treeViewButton), AcName::kAcComputerTitleBarTreeViewBtn);
     }
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(d->detailButton), AcName::kAcComputerTitleBarDetailBtn);
+                         qobject_cast<QWidget *>(d->viewOptionsButton), AcName::kAcComputerTitleBarViewOptionsBtn);
 #endif
-    d->detailButton->setCheckable(true);
-    d->detailButton->setFocusPolicy(Qt::NoFocus);
-    d->detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
-    d->detailButton->setFixedSize(buttonSize);
-    d->detailButton->setToolTip(tr("detail view"));
-    d->detailButton->setIconSize(buttonIconSize);
-
     d->sortByButton = new SortByButton(this);
     d->sortByButton->setFocusPolicy(Qt::NoFocus);
     d->sortByButton->setToolTip(tr("Sort by"));
     d->sortByButton->setIconSize(buttonIconSize);
 
+    d->viewOptionsButton->setFocusPolicy(Qt::NoFocus);
+    d->viewOptionsButton->setIcon(QIcon::fromTheme("dfm_viewoption"));
+    d->viewOptionsButton->setFixedSize(buttonSize);
+    d->viewOptionsButton->setToolTip(tr("View options"));
+    d->viewOptionsButton->setIconSize(buttonIconSize);
+    d->viewOptionsButton->setCheckable(false);
     initUiForSizeMode();
 }
 
@@ -225,7 +223,7 @@ void OptionButtonBox::initConnect()
         d->setViewMode(ViewMode::kTreeMode);
     });
 
-    connect(d->detailButton, &DToolButton::clicked, this, [this](bool checked) {
+    connect(d->viewOptionsButton, &ViewOptionsButton::displayPreviewVisibleChanged, this, [this](bool checked) {
         TitleBarEventCaller::sendDetailViewState(this, checked);
     });
 
@@ -254,8 +252,8 @@ void OptionButtonBox::initUiForSizeMode()
         d->hBoxLayout->addWidget(d->treeViewButton);
         fixedWidth += d->treeViewButton->width();
     }
-    d->hBoxLayout->addWidget(d->detailButton);
-    fixedWidth += d->detailButton->width();
+    d->hBoxLayout->addWidget(d->viewOptionsButton);
+    fixedWidth += d->viewOptionsButton->width();
     d->hBoxLayout->addSpacing(10);
     d->hBoxLayout->addWidget(d->sortByButton);
     fixedWidth += d->sortByButton->width() + 10;
@@ -273,7 +271,7 @@ void OptionButtonBox::setListViewButton(DToolButton *listViewButton)
 {
     if (!listViewButton) return;
 
-    if (!d->hBoxLayout->replaceWidget(listViewButton, listViewButton)->isEmpty()) {
+    if (!d->hBoxLayout->replaceWidget(d->listViewButton, listViewButton)->isEmpty()) {
 
         if (d->listViewButton) {
             delete d->listViewButton;
@@ -307,15 +305,15 @@ void OptionButtonBox::setIconViewButton(DToolButton *iconViewButton)
 {
     if (!iconViewButton) return;
 
-    if (!d->hBoxLayout->replaceWidget(iconViewButton, iconViewButton)->isEmpty()) {
+    if (!d->hBoxLayout->replaceWidget(d->iconViewButton, iconViewButton)->isEmpty()) {
 
         if (d->iconViewButton) {
             delete d->iconViewButton;
             d->iconViewButton = nullptr;
         }
 
-        if (!iconViewButton)
-            d->iconViewButton = iconViewButton;
+        // Fix logic error, should set the new button
+        d->iconViewButton = iconViewButton;
 
         if (d->iconViewButton->icon().isNull())
             d->iconViewButton->setIcon(QIcon::fromTheme("dfviewlist_icons"));
