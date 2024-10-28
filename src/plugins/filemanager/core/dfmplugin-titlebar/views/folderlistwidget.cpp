@@ -7,6 +7,7 @@
 #include "views/folderviewdelegate.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/application/application.h>
 
 #include <QVBoxLayout>
 #include <QStandardItemModel>
@@ -132,21 +133,24 @@ FolderListWidget::FolderListWidget(QWidget *parent)
 
 FolderListWidget::~FolderListWidget() = default;
 
-void FolderListWidget::setFolderList(const QList<CrumbData> &datas)
+void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked)
 {
     d->folderModel->clear();
     d->crumbDatas = datas;
     int dataNum = 0;
+    bool isShowedHiddenFiles = true;
+    if (!stacked)
+        isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
     for (auto data : datas) {
         auto info = InfoFactory::create<FileInfo>(data.url);
-        if (!info.isNull()) {
+        if (!info.isNull() && (isShowedHiddenFiles || !info->isAttributes(FileInfo::FileIsType::kIsHidden))) {
             QStandardItem *item = new QStandardItem(info->fileIcon(), data.displayText);
             d->folderModel->insertRow(dataNum, item);
             dataNum++;
         }
     }
-    int folderCount = datas.size() > kMaxFolderCount ? kMaxFolderCount : datas.size();
-    if (datas.size() > 1) {
+    int folderCount = dataNum > kMaxFolderCount ? kMaxFolderCount : dataNum;
+    if (dataNum > 1) {
         d->folderView->setViewportMargins(kItemMargin, kItemMargin, kItemMargin, kItemMargin);
         setFixedHeight(kItemMargin * 2 + kFolderItemHeight * folderCount);
     } else {
