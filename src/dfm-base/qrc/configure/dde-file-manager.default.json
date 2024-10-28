@@ -1,7 +1,7 @@
 {
     "ApplicationAttribute": {
         "AllwayOpenOnNewWindow": false,
-        "IconSizeLevel": 1,
+        "IconSizeLevel": 5,
         "ViewMode": 1,
         "ViewSizeAdjustable": true,
         "ViewComppactMode": false,
@@ -9,7 +9,10 @@
         "OpenFileMode": 1,
         "UrlOfNewWindow": "computer:///",
         "UrlOfNewTab": "",
-        "ThemeName": "light"
+        "ThemeName": "light",
+        "GridDensityLevel": 3,
+        "ListHeightLevel": 0,
+        "ShowedDisplayPreview": false
     },
     "GenericAttribute": {
         "IndexInternal": true,

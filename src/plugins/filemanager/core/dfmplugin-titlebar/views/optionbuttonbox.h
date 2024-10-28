@@ -22,6 +22,7 @@ public:
     QAction *action() const;
 };
 
+class ViewOptionsButton;
 class OptionButtonBoxPrivate;
 class OptionButtonBox : public QWidget
 {
@@ -33,10 +34,10 @@ public:
     explicit OptionButtonBox(QWidget *parent = nullptr);
     DTK_WIDGET_NAMESPACE::DToolButton *iconViewButton() const;
     DTK_WIDGET_NAMESPACE::DToolButton *listViewButton() const;
-    DTK_WIDGET_NAMESPACE::DToolButton *detailButton() const;
+    ViewOptionsButton *viewOptionsButton() const;
     void setIconViewButton(DTK_WIDGET_NAMESPACE::DToolButton *iconViewButton);
     void setListViewButton(DTK_WIDGET_NAMESPACE::DToolButton *listViewButton);
-    void setDetailButton(DTK_WIDGET_NAMESPACE::DToolButton *detailButton);
+    void setViewOptionsButton(ViewOptionsButton *button);
 
     void setViewMode(int mode);
 

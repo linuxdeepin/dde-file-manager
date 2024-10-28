@@ -21,6 +21,7 @@ namespace dfmplugin_titlebar {
 
 using DFMBASE_NAMESPACE::Global::ViewMode;
 class SortByButton;
+class ViewOptionsButton;
 class OptionButtonBox;
 class OptionButtonBoxPrivate : public QObject
 {
@@ -45,8 +46,8 @@ private:
     DTK_WIDGET_NAMESPACE::DToolButton *iconViewButton { nullptr };
     DTK_WIDGET_NAMESPACE::DToolButton *listViewButton { nullptr };
     DTK_WIDGET_NAMESPACE::DToolButton *treeViewButton { nullptr };
-    DTK_WIDGET_NAMESPACE::DToolButton *detailButton { nullptr };
     SortByButton *sortByButton { nullptr };
+    ViewOptionsButton *viewOptionsButton { nullptr };
     QHBoxLayout *hBoxLayout { nullptr };
 
     ViewMode currentMode { ViewMode::kIconMode };
