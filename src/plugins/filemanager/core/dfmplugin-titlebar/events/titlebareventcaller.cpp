@@ -24,7 +24,10 @@ void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Globa
 void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 {
     quint64 id = TitleBarHelper::windowId(sender);
-    Q_ASSERT(id > 0);
+    if (id < 1) {
+        fmWarning() << "Invalid window id: " << id;
+        return;
+    }
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Show", id, checked);
 }
 
