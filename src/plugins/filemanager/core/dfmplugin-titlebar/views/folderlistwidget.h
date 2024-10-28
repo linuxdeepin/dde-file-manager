@@ -21,7 +21,7 @@ public:
     explicit FolderListWidget(QWidget *parent = nullptr);
     ~FolderListWidget() override;
 
-    void setFolderList(const QList<CrumbData> &datas);
+    void setFolderList(const QList<CrumbData> &datas, bool stacked);
 
 Q_SIGNALS:
     void urlButtonActivated(const QUrl &url);

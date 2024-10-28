@@ -250,7 +250,7 @@ void UrlPushButtonPrivate::onSelectSubDirs()
         // 堆叠时显示堆叠目录
         requestCompleteByUrl(crumbDatas.last().url);
     } else {
-        folderListWidget->setFolderList(crumbDatas);
+        folderListWidget->setFolderList(crumbDatas, stacked);
         folderListWidget->move(popupPos);
         folderListWidget->show();
     }
@@ -285,7 +285,7 @@ void UrlPushButtonPrivate::onCompletionCompleted()
     const bool leftToRight = (q->layoutDirection() == Qt::LeftToRight);
     const int popupX = (leftToRight && !stacked) ? (q->width() - arrowWidth() - kBorderWidth) : 0;
     const QPoint popupPos = q->parentWidget()->mapToGlobal(q->geometry().bottomLeft() + QPoint(popupX, 0));
-    folderListWidget->setFolderList(datas);
+    folderListWidget->setFolderList(datas, stacked);
     folderListWidget->move(popupPos);
     folderListWidget->show();
 }
