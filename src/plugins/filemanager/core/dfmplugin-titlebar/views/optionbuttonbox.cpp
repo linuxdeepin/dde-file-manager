@@ -15,12 +15,14 @@
 
 #include <dfm-framework/event/event.h>
 
+#include <DMenu>
 #include <DGuiApplicationHelper>
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
 
+#include <QAction>
 #include <QDebug>
 
 using namespace dfmplugin_titlebar;
@@ -31,6 +33,25 @@ DGUI_USE_NAMESPACE
 OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
     : QObject(parent), q(parent)
 {
+}
+
+void OptionButtonBoxPrivate::updateCompactButton() 
+{
+    if (!compactButton)
+        return;
+        
+    // Update icon based on current view mode
+    switch (currentMode) {
+    case ViewMode::kIconMode:
+        compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
+        break;
+    case ViewMode::kListMode:
+        compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
+        break;
+    case ViewMode::kTreeMode:
+        compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
+        break;
+    }
 }
 
 void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
@@ -74,6 +95,7 @@ void OptionButtonBoxPrivate::switchMode(ViewMode mode)
         break;
     }
     viewOptionsButton->switchMode(mode, currentUrl);
+    updateCompactButton();
 }
 
 void OptionButtonBoxPrivate::onViewModeChanged(int mode)
@@ -116,6 +138,21 @@ void OptionButtonBox::setViewOptionsButton(ViewOptionsButton *button)
 void OptionButtonBox::setViewMode(int mode)
 {
     d->switchMode(static_cast<ViewMode>(mode));
+}
+
+void OptionButtonBox::updateOptionButtonBox(int parentWidth)
+{
+    if (parentWidth <= kCompactModeThreshold) {
+        if (!d->isCompactMode) {
+            switchToCompactMode();
+            updateFixedWidth();
+        }
+    } else {
+        if (d->isCompactMode) {
+            switchToNormalMode();
+            updateFixedWidth();
+        }
+    }
 }
 
 void OptionButtonBox::onUrlChanged(const QUrl &url)
@@ -206,6 +243,13 @@ void OptionButtonBox::initializeUi()
     d->viewOptionsButton->setToolTip(tr("View options"));
     d->viewOptionsButton->setIconSize(buttonIconSize);
     d->viewOptionsButton->setCheckable(false);
+
+    d->compactButton = new DToolButton(this);
+    d->compactButton->setPopupMode(DToolButton::InstantPopup);
+    d->compactButton->setFixedSize(48, kToolButtonSize);
+    d->compactButton->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
+    d->compactButton->setVisible(false);
+
     initUiForSizeMode();
 }
 
@@ -229,6 +273,38 @@ void OptionButtonBox::initConnect()
 
     connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);
 
+    auto menu = new DMenu(d->compactButton);
+    auto iconAction = menu->addAction(tr("Icon View"));
+    iconAction->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
+    iconAction->setCheckable(true);
+
+    auto listAction = menu->addAction(tr("List View"));
+    listAction->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
+    listAction->setCheckable(true);
+
+    auto treeAction = menu->addAction(tr("Tree View"));
+    treeAction->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
+    treeAction->setCheckable(true);
+    
+    auto updateCheckedState = [=]() {
+        iconAction->setChecked(d->currentMode == ViewMode::kIconMode);  
+        listAction->setChecked(d->currentMode == ViewMode::kListMode);
+        treeAction->setChecked(d->currentMode == ViewMode::kTreeMode);
+    };
+
+    connect(iconAction, &QAction::triggered, this, [this]() {
+        d->setViewMode(ViewMode::kIconMode);
+    });
+    connect(listAction, &QAction::triggered, this, [this]() {
+        d->setViewMode(ViewMode::kListMode);
+    });
+    connect(treeAction, &QAction::triggered, this, [this]() {
+        d->setViewMode(ViewMode::kTreeMode);
+    });
+
+    connect(menu, &DMenu::aboutToShow, this, updateCheckedState);
+    d->compactButton->setMenu(menu);
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         initUiForSizeMode();
@@ -242,24 +318,40 @@ void OptionButtonBox::initUiForSizeMode()
         delete d->hBoxLayout;
         d->hBoxLayout = nullptr;
     }
-    int fixedWidth = 10;
     d->hBoxLayout = new QHBoxLayout;
     d->hBoxLayout->setSpacing(0);
     d->hBoxLayout->setContentsMargins(0, 0, 0, 0);
+    d->hBoxLayout->addWidget(d->compactButton);
+    d->hBoxLayout->addSpacing(10);
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
-    fixedWidth += d->iconViewButton->width() + d->listViewButton->width();
     if (d->treeViewButton) {
         d->hBoxLayout->addWidget(d->treeViewButton);
-        fixedWidth += d->treeViewButton->width();
     }
     d->hBoxLayout->addWidget(d->viewOptionsButton);
-    fixedWidth += d->viewOptionsButton->width();
     d->hBoxLayout->addSpacing(10);
     d->hBoxLayout->addWidget(d->sortByButton);
-    fixedWidth += d->sortByButton->width() + 10;
 
     setLayout(d->hBoxLayout);
+}
+
+void OptionButtonBox::updateFixedWidth()
+{
+    int fixedWidth = 10;  // 起始间距
+    
+    // 视图模式按钮部分
+    if (d->isCompactMode) {
+        fixedWidth += d->compactButton->width();
+    } else {
+        fixedWidth += d->iconViewButton->width() + d->listViewButton->width();
+        if (d->treeViewButton) {
+            fixedWidth += d->treeViewButton->width();
+        }
+    }
+    
+    // 其他按钮部分（这部分在两种模式下都是一样的）
+    fixedWidth += d->viewOptionsButton->width() + 10 + d->sortByButton->width();
+    
     setFixedWidth(fixedWidth);
 }
 
@@ -295,6 +387,9 @@ OptionButtonBox::OptionButtonBox(QWidget *parent)
 {
     initializeUi();
     initConnect();
+    if (parent) {
+        updateOptionButtonBox(parent->width());
+    }
 }
 
 DToolButton *OptionButtonBox::iconViewButton() const
@@ -322,4 +417,35 @@ void OptionButtonBox::setIconViewButton(DToolButton *iconViewButton)
         d->iconViewButton->setCheckable(true);
         d->iconViewButton->setFocusPolicy(Qt::NoFocus);
     }
+}
+
+void OptionButtonBox::switchToCompactMode()
+{
+    // Hide normal buttons
+    d->iconViewButton->hide();
+    d->listViewButton->hide();
+    if (d->treeViewButton)
+        d->treeViewButton->hide();
+    
+    // Show compact button
+    if (d->compactButton) {
+        d->compactButton->show();
+        d->updateCompactButton();
+    }
+    
+    d->isCompactMode = true;
+}
+
+void OptionButtonBox::switchToNormalMode()
+{
+    if (d->compactButton)
+        d->compactButton->hide();
+        
+    // Show normal buttons
+    d->iconViewButton->show();
+    d->listViewButton->show();
+    if (d->treeViewButton)
+        d->treeViewButton->show();
+        
+    d->isCompactMode = false;
 }
