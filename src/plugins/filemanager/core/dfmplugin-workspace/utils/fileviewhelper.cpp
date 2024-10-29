@@ -282,17 +282,14 @@ int FileViewHelper::caculateListItemIndex(const QSize &itemSize, const QPoint &p
 
 int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos)
 {
-    int iconViewSpacing = kIconViewSpacing;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
-#endif
+    int iconViewSpacing = view->spacing();
 
-    int itemHeight = itemSize.height() + iconViewSpacing * 2;
+    int itemHeight = itemSize.height() + iconViewSpacing;
     if (pos.y() % itemHeight < iconViewSpacing
         || pos.y() % itemHeight > (itemHeight - iconViewSpacing))
         return -1;
 
-    int itemWidth = itemSize.width() + iconViewSpacing * 2;
+    int itemWidth = itemSize.width() + iconViewSpacing;
     if (pos.x() % itemWidth < iconViewSpacing
         || pos.x() % itemWidth > (itemWidth - iconViewSpacing))
         return -1;
